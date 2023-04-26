@@ -13,7 +13,7 @@ import {
 } from '../../../context'
 import { SuccessfulListingMsg } from '../../../components'
 
-import { checkMobile, notify, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, notify, truncateAddress } from '../../../utils'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
@@ -62,7 +62,6 @@ import {
   couldNotDeriveValueForBuyInstruction,
   couldNotFetchNFTMetaData,
   couldNotFetchUserData,
-  MESSAGE,
   pleaseTryAgain,
   successBidMatchedMessage,
   successfulListingMessage
@@ -88,7 +87,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   color: ${({ theme }) => theme.text20};
 
   .buyTitle {
-    ${tw`text-[25px] sm:ml-[140px] sm:mt-1 sm:text-[15px] sm:pt-2 font-medium text-center sm:text-left `}
+    ${tw`text-[24px] sm:ml-[140px] sm:mt-1 sm:text-[15px] sm:pt-2 font-medium text-center sm:text-left `}
     color: ${({ theme }) => theme.text20};
 
     strong {
@@ -168,8 +167,26 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px] absolute bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+    :disabled {
+      ${tw`text-[#636363] cursor-not-allowed`}
+      background: ${({ theme }) => theme.bg22} !important;
+    }
+  }
+  .semiSellButton {
+    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+    :disabled {
+      ${tw`text-[#636363] cursor-not-allowed`}
+      background: ${({ theme }) => theme.bg22} !important;
+    }
+  }
+  .semiBuyButton {
+    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+     h-[60px] text-white text-[20px] font-semibold flex items-center   justify-center`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
@@ -177,14 +194,11 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .buyButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px] absolute bottom-4 cursor-pointer rounded-[50px] border-none
+    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center justify-center`}
-
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-
     &:disabled {
-      cursor: not-allowed;
-      ${tw`text-[#636363]`}
+      ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22};
     }
   }
@@ -200,7 +214,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`h-[2px] w-[100vw] `}
   }
   .buyBtnContainer {
-    ${tw`flex items-center justify-center sm:mt-[20px] `}
+    ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-4  `}
   }
 
   .bm-title {
@@ -325,7 +339,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { general, nftMetadata, bidOnSingleNFT, ask } = useNFTDetails()
+  const { general, nftMetadata, bidOnSingleNFT, ask, bids } = useNFTDetails()
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
@@ -343,10 +357,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   )
   const orderTotal: number = useMemo(() => curBid, [curBid])
   const marketData = useMemo(() => prices['SOL/USDC'], [prices])
-  const fiatCalc: string = useMemo(
-    () => `${marketData && curBid ? (marketData.current * curBid).toFixed(3) : ''}`,
-    [marketData, curBid]
-  )
 
   const notEnough: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
@@ -379,6 +389,35 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     })
   }
 
+  const callCancelInstruction = async () => {
+    const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
+
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: buyerTradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+
+    const transaction = new Transaction().add(cancelIX)
+    const signature = await sendTransaction(transaction, connection)
+    console.log(signature)
+    const confirm = await connection.confirmTransaction(signature, 'finalized')
+    console.log(confirm)
+  }
   const derivePDAForExecuteSale = async () => {
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
@@ -565,7 +604,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
               (parseFloat(buyerPrice) / LAMPORTS_PER_SOL_NUMBER).toString()
             )
           )
-        } else notify(successfulListingMessage(signature, nftMetadata, buyerPrice.toString()))
+        } else {
+          setBidNow(null)
+          notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
+        }
       }
     } catch (error) {
       setIsLoading(false)
@@ -653,8 +695,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             <div className="rightAlign">{orderTotal} SOL</div>
           </div>
         </div>
-        <div className="buyBtnContainer" tw="!mt-auto">
-          <Button className="buyButton" disabled={notEnough} onClick={callBuyInstruction} loading={isLoading}>
+        <div className="buyBtnContainer">
+          <Button
+            className="buyButton"
+            disabled={notEnough || isLoading}
+            onClick={callBuyInstruction}
+            loading={isLoading}
+          >
             {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
           </Button>
         </div>

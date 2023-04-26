@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
+import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
@@ -9,13 +9,15 @@ import { SingleNFTCard } from './SingleNFTCard'
 import { fetchOpenBidByPages } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
+import { SellNFTModal } from './SellNFTModal'
 
 export const OpenBidNFTs = (): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag } = useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT } = useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked } = useNFTAggregator()
   const paginationNum = 30
+  const { general, nftMetadata } = useNFTDetails()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const [filteredOpenBid, setFilteredOpenBid] = useState<BaseNFT[]>(null)
 
@@ -29,7 +31,7 @@ export const OpenBidNFTs = (): ReactElement => {
     }
     if (searchInsideCollection && searchInsideCollection.length) {
       const filteredData = openBidArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.includes(searchInsideCollection)
+        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
       )
       setFilteredOpenBid(filteredData)
     }
@@ -82,12 +84,19 @@ export const OpenBidNFTs = (): ReactElement => {
     })
     e.stopPropagation()
   }
+
+  const handleModalClick = useCallback(() => {
+    if (buyNowClicked) return <BuyNFTModal />
+    if (bidNowClicked) return <BidNFTModal />
+    if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
+    if (general !== null && nftMetadata !== null) return <DetailViewNFT />
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
+
   const gridType = filteredOpenBid?.length > 10 ? '1fr' : '210px'
+
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
-      {<DetailViewNFT />}
-      {buyNowClicked && <BuyNFTModal />}
-      {bidNowClicked && <BidNFTModal />}
+      {handleModalClick()}
       <div className="gridContainer">
         {filteredOpenBid !== null ? (
           filteredOpenBid.map((item, index) => (

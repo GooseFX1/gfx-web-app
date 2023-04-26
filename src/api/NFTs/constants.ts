@@ -1,5 +1,11 @@
 export const NFT_API_BASE = 'nest-api'
 
+export enum NFT_PROFILE_OPTIONS {
+  ALL = 'All',
+  OFFERS = 'Offers',
+  ON_SALE = 'On_sale'
+}
+
 export enum NFT_COL_FILTER_OPTIONS {
   COLLECTION_NAME = 'CollectionName',
   FLOOR_PRICE = 'FloorPrice',
@@ -7,6 +13,11 @@ export enum NFT_COL_FILTER_OPTIONS {
   WEEKLY_VOLUME = 'WeeklyVolume',
   MONTHLY_VOLUME = 'MonthlyVolume',
   TOTAL_VOLUME = 'TotalVolume'
+}
+export enum NFT_ACTIVITY_ENDPOINT {
+  WALLET_ADDRESS = 'wallet_address',
+  MINT_ADDRESS = 'mint_address',
+  COLLECTION_ADDRESS = 'collection_address'
 }
 export const NFT_VOLUME_OPTIONS = {
   '7d': 'WeeklyVolume',
@@ -36,5 +47,6 @@ export enum NFT_API_ENDPOINTS {
   REWARDS = '/rewards',
   OWNERS = '/owners',
   DRAFTS = '/nft_drafts',
-  SEARCH = '/search'
+  SEARCH = '/search',
+  ACTIVITY = '/activity'
 }

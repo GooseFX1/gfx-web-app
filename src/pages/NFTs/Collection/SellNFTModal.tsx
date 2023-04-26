@@ -1,10 +1,11 @@
 import { Button } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, useState, FC, useMemo } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
 import {
   // useAccounts,
   useConnectionConfig,
+  useNFTAggregator,
   useNFTCollections,
   useNFTDetails
 } from '../../../context'
@@ -54,6 +55,7 @@ import 'styled-components/macro'
 const TEN_MILLION = 10000000
 
 import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
+import { TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
 
 export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   visible,
@@ -61,12 +63,14 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 }): ReactElement => {
   const { connection, network } = useConnectionConfig()
   const { general, setGeneral, ask, nftMetadata } = useNFTDetails()
+  const { setSellNFT } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(
     ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
   const { singleCollection } = useNFTCollections()
 
@@ -80,6 +84,13 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       message: <TransactionErrorMsg title={`NFT Listing error!`} itemName={itemName} supportText={error} />
     })
   }
+
+  useEffect(
+    () => () => {
+      setSellNFT(false)
+    },
+    []
+  )
 
   // const postAskToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN, ask: INFTAsk | undefined) => {
   //   console.log(ask)
@@ -135,11 +146,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     )
   })
 
-  const attemptConfirmTransaction = async (
-    buyerPrice: BN,
-    tradeState: [PublicKey, number],
-    signature: any
-  ): Promise<void> => {
+  const attemptConfirmTransaction = async (signature: any): Promise<void> => {
     try {
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
@@ -148,18 +155,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         setIsLoading(false)
         notify(successfulListingMsg(signature, nftMetadata, askPrice.toFixed(2)))
         setTimeout(() => handleClose(false), 1000)
-
-        // history.push(`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`)
-        // create asking price
-        // postAskToAPI(signature, buyerPrice, tokenSize, ask).then((res) => {
-        //   console.log('Ask data synced: ', res)
-        //   if (!res) {
-        //     handleTxError(nftMetadata.name, 'Listing has been canceled. Please try againg')
-        //     callCancelInstruction(wal, connection, general, tradeState, buyerPrice)
-        //   }
-        // })
-
-        // unsuccessfully list nft
       } else {
         handleTxError(nftMetadata.name, '')
       }
@@ -201,6 +196,33 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
   }
 
+  const callDelistInstruction = async (e: any) => {
+    e.preventDefault()
+    setDelistLoading(true)
+    const transaction = new Transaction()
+    let removeAskIX: TransactionInstruction | undefined = undefined
+    // if ask exists
+    if (ask !== null) {
+      // make web3 cancel
+      removeAskIX = await createRemoveAskIX()
+    }
+
+    // adds ixs to tx
+    if (ask && removeAskIX) transaction.add(removeAskIX)
+    try {
+      const signature = await wal.sendTransaction(transaction, connection)
+      console.log(signature)
+      setPendingTxSig(signature)
+      attemptConfirmTransaction(signature)
+        .then((res) => console.log('TX Confirmed', res))
+        .catch((err) => console.error(err))
+      setDelistLoading(false)
+    } catch (error) {
+      console.log('User exited signing transaction to list fixed price')
+      TransactionSignatureErrorNotify(nftMetadata.name)
+      setDelistLoading(false)
+    }
+  }
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
     if (parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice) {
@@ -294,21 +316,12 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(buyerPrice, tradeState, signature)
+      attemptConfirmTransaction(signature)
         .then((res) => console.log('TX Confirmed', res))
         .catch((err) => console.error(err))
     } catch (error) {
       console.log('User exited signing transaction to list fixed price')
-      notify({
-        type: 'error',
-        message: (
-          <TransactionErrorMsg
-            title={`Transaction Signature Error`}
-            itemName={nftMetadata.name}
-            supportText={`User exited signing transaction to list or modify price`}
-          />
-        )
-      })
+      TransactionSignatureErrorNotify(nftMetadata.name)
       setIsLoading(false)
     }
   }
@@ -373,7 +386,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       <>
         <div tw="flex flex-col items-center justify-center">
           <div className="buyTitle">
-            You are about to sell <br />
+            {!ask && `You are about to sell`}
+            {!ask && <br />}
             <strong> {general?.nft_name}</strong>
             {checkMobile() && <br />}
             {general?.collection_name && (
@@ -416,8 +430,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 
         <div tw="mt-4">
           <AppraisalValue
-            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
             width={360}
           />
         </div>
@@ -462,12 +476,18 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
               askPrice === null ||
               parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice
             }
+            tw="!bg-blue-1"
             onClick={callSellInstruction}
-            className="sellButton"
+            className={!ask ? 'sellButton' : 'semiSellButton'}
             loading={isLoading}
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'Sell'}</span>
           </Button>
+          {ask && (
+            <Button onClick={callDelistInstruction} className={'semiSellButton'} loading={isDelistLoading}>
+              <span tw="font-semibold">Delist item</span>
+            </Button>
+          )}
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

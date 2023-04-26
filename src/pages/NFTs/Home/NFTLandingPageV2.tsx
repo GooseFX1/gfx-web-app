@@ -15,7 +15,7 @@ import {
   useNFTDetails,
   useNFTProfile
 } from '../../../context'
-import { checkMobile } from '../../../utils'
+import { checkMobile, LOADING_ARR } from '../../../utils'
 import { LastRefreshedAnimation, RefreshIcon, STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
 import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
@@ -37,6 +37,7 @@ import Lottie from 'lottie-react'
 import { fetchGlobalSearchNFT, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -85,7 +86,7 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
   }
   .search-bar {
     transition: 0.5s ease;
-    ${tw`sm:w-0`}
+    ${tw`sm:w-0 !w-[100%]`}
   }
   .comingSoon {
     ${tw`text-grey-2`}
@@ -419,10 +420,12 @@ const FiltersContainer = () => {
     )
 }
 export const RefreshBtnWithAnimationNFT: FC = () => {
+  const { setAllCollections } = useNFTCollections()
   const { refreshClass, setRefreshClass, setRefreshClicked } = useNFTAggregator()
   const { setPageNumber } = useNFTAggregatorFilters()
   const refreshFeed = () => {
     setPageNumber(0)
+    setAllCollections(LOADING_ARR)
     setRefreshClass('rotateRefreshBtn')
     setRefreshClicked((prev) => prev + 1)
     setTimeout(() => {
@@ -499,13 +502,13 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                 <img className="searchImg" src={data?.collection?.profile_pic_link} alt="" />
                 <div className="searchText" tw="flex flex-col leading-[19px]">
                   <div>
-                    {data?.collection?.collection_name}
+                    {minimizeTheString(data?.collection?.collection_name, 30)}
                     {data?.collection?.is_verified && (
                       <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
                     )}
                   </div>
                   <div tw="text-[#636363] text-[15px] font-semibold">
-                    24h volume: {data?.collection?.daily_volume.toFixed(2)} SOL
+                    24h volume: {data?.collection?.daily_volume && data?.collection?.daily_volume.toFixed(2)} SOL
                   </div>
                 </div>
                 <div tw="text-[#b5b5b5] text-[13px] font-semibold ml-auto items-center mr-[10px] flex">

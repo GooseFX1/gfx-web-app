@@ -7,7 +7,13 @@ import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader, ArrowDropdown } from '../../../components'
-import { useNavCollapse, useNFTAggregator, useNFTDetails, useNFTProfile } from '../../../context'
+import {
+  useNavCollapse,
+  useNFTAggregator,
+  useNFTAggregatorFilters,
+  useNFTDetails,
+  useNFTProfile
+} from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
@@ -22,6 +28,7 @@ import { SellNFTModal } from '../Collection/SellNFTModal'
 import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -88,36 +95,38 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
+  const { searchInsideProfile } = useNFTAggregatorFilters()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
-  const [search, setSearch] = useState<string>('')
   const [loading, _setLoading] = useState<boolean>(false)
   const [isSol, setIsSol] = useState<boolean>(true)
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
-  const nftFilterArr = ['All', 'Offers', 'On Sale']
   const [nftFilter, setNftFilter] = useState<number>(0)
   const { general, nftMetadata } = useNFTDetails()
   const { buyNowClicked, bidNowClicked } = useNFTAggregator()
+  const { profileNFTOptions } = useNFTAggregatorFilters()
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
 
   useEffect(() => {
-    setFilteredCollectedItems(collectedItems)
-  }, [collectedItems])
+    if (collectedItems) {
+      if (searchInsideProfile && searchInsideProfile.length > 0) {
+        const filteredData = collectedItems.filter(({ nft_name }) =>
+          nft_name.toLowerCase().includes(searchInsideProfile.trim().toLowerCase())
+        )
+        setFilteredCollectedItems(filteredData)
+      } else {
+        setFilteredCollectedItems(collectedItems)
+      }
+    }
+
+    return () => setFilteredCollectedItems(undefined)
+  }, [searchInsideProfile, collectedItems, profileNFTOptions])
   // in place of original `setActivePoint`
   const setCollectedItemsPag = (x) => {
     activePointRef.current = x // keep updated
     setCollectedItems(x)
-  }
-
-  const toggleSol = () => {
-    setIsSol((prev) => !prev)
-  }
-
-  const setLoading = (x) => {
-    activePointLoader.current = x // keep updated
-    _setLoading(x)
   }
 
   useEffect(() => {

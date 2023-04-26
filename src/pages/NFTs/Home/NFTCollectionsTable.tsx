@@ -10,7 +10,7 @@ import {
   usePriceFeedFarm
 } from '../../../context'
 import { checkMobile } from '../../../utils'
-import { Loader } from '../../Farm/Columns'
+import { Loader, LoaderForImg } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
 import { useHistory } from 'react-router-dom'
@@ -211,37 +211,37 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       }
     >
       <td className="nftNameColumn">
-        {item ? (
-          <>
-            <Image
-              className="nftNameImg"
-              fallback={'/img/assets/Aggregator/Unknown.svg'}
-              src={`${
-                item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
-              }`}
-              alt="collection-icon"
-            />
-            <div className="nftCollectionName">
-              {item?.collection_name ? item?.collection_name.replaceAll('"', '') : ''}
-            </div>
-          </>
+        {item.profile_pic_link ? (
+          <Image
+            className="nftNameImg"
+            fallback={'/img/assets/Aggregator/Unknown.svg'}
+            src={`${
+              item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
+            }`}
+            alt="collection-icon"
+          />
         ) : (
           <div className="nftCollectionName">
-            <Loader />
+            <div tw="flex items-center ">
+              <LoaderForImg />
+            </div>
           </div>
         )}
-      </td>
-      <td className="tdItem">
-        {item?.floor_price !== null ? (
-          <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`h-5 w-5`} />
-        ) : item?.floor_price === null ? (
-          <PriceWithToken price={0} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        {item?.collection_name ? (
+          <div className="nftCollectionName">{item?.collection_name.replaceAll('"', '')}</div>
         ) : (
           <Loader />
         )}
       </td>
       <td className="tdItem">
-        {item ? (
+        {item?.floor_price >= 0 ? (
+          <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : (
+          <Loader />
+        )}
+      </td>
+      <td className="tdItem">
+        {item?.profile_pic_link ? (
           <PriceWithToken
             price={item?.gfx_appraisal_supported ? 50 : 0}
             token={currencyView}
@@ -251,8 +251,8 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           <Loader />
         )}
       </td>
-      <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
-      <td className="tdItem">{item ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
+      <td className="tdItem">{item?.collection_name ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
+      <td className="tdItem">{item?.collection_name ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">
         {item?.daily_volume !== undefined ? (
           <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />

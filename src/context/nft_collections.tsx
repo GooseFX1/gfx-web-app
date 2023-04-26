@@ -16,13 +16,14 @@ import {
   fetchSingleCollectionBySalesType,
   fetchSingleCollectionAction
 } from '../api/NFTs'
+import { LOADING_ARR } from '../utils'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
   const [collectionOwners, setCollectionOwners] = useState<CollectionOwner[]>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
-  const [allCollections, setAllCollections] = useState<NFTCollection[]>([])
+  const [allCollections, setAllCollections] = useState<NFTCollection[] | number[]>(LOADING_ARR)
   const [allCollectionLoading, setLoading] = useState<boolean>(false)
   const [detailedCollections, setAllDetailedCollections] = useState<NFTCollection[]>([])
   const [featuredCollections, setFeaturedCollections] = useState<NFTFeaturedCollection[]>([])

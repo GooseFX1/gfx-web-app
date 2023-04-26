@@ -20,7 +20,7 @@ const MESSAGE = styled.div`
 interface ISuccessfulListingMsg {
   title: string
   itemName: string
-  supportText: string
+  supportText?: string
   tx_url: string
 }
 

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { LAMPORTS_PER_SOL_NUMBER } from '../constants'
 
 export type ConditionalData<T> = 'not-supported' | 'loading' | T
 
@@ -133,6 +134,13 @@ export function debounce(callback: any, wait: number): (x: any) => void {
   }
 }
 
+export const formatSOLDisplay = (solValue: string | number): string => {
+  if (typeof solValue === 'string') {
+    return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+  } else if (solValue < 10000000) return solValue.toFixed(2)
+  else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+}
+
 export const createUUID = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
@@ -162,5 +170,6 @@ export const getDateInISOFormat = (): string => {
 
   return yyyy + '-' + mm + '-' + dd
 }
+export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`

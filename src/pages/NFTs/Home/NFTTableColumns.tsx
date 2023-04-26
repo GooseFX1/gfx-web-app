@@ -4,6 +4,7 @@ import { TokenToggleNFT } from '../../../components'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
 import 'styled-components/macro'
+import { LOADING_ARR } from '../../../utils'
 
 export const NFTColumnsTitleWeb = (): ReactElement => {
   const { setCurrency } = useNFTAggregator()
@@ -14,7 +15,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
   const handleSortChangeForVolume = (sortFilterRequest: string) => {
     if (NFT_VOLUME_OPTIONS[sortFilterRequest] === sortFilter) {
       setPageNumber(0)
-      setAllCollections([])
+      setAllCollections(LOADING_ARR)
       setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
       return
     }
@@ -25,7 +26,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
   }
   const handleSortFilterChange = (sortFilterRequest) => {
     setPageNumber(0)
-    setAllCollections([])
+    setAllCollections(LOADING_ARR)
     if (!sortFilter) {
       setSortType('DESC')
       setSortFilter(sortFilterRequest)
@@ -101,7 +102,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
 
 export const NFTActivitySectionWeb = (): ReactElement => (
   <tr>
-    <th>Item</th>
+    <th style={{ width: '17%' }}>Item</th>
     <th>Type</th>
     <th>Price</th>
     <th>Market</th>
