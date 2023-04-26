@@ -99,6 +99,7 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
   .graphic-img{
     width: 100%;
     height: 159px;
+    scale: 1.1;
   }
 
   .portfolio{

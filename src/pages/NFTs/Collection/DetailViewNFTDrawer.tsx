@@ -250,7 +250,7 @@ export const ButtonContainer = (): ReactElement => {
   const { general } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const isOwner: boolean = useMemo(() => {
-    if (ask) {
+    if (ask && pubKey) {
       if (ask?.wallet_key === pubKey.toString()) return true
     }
     return false
