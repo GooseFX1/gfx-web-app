@@ -340,7 +340,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask, bids } = useNFTDetails()
-  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(true)
+  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
