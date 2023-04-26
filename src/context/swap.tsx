@@ -15,7 +15,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useAccounts } from './accounts'
 import { useConnectionConfig, useSlippageConfig } from './settings'
 import { notify } from '../utils'
-import { swap, preSwapAmount, getTransactionHistory } from '../web3'
+import { swap, preSwapAmount, getTransactionHistory, confirmTransaction } from '../web3'
 import JSBI from 'jsbi'
 import CoinGecko from 'coingecko-api'
 
@@ -344,23 +344,16 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return await swap(tokenA, tokenB, inTokenAmount, outTokenAmount, slippage, wal, connection, network)
       } else {
         const swapResult = await exchange({
+          onTransaction: async (txid: string) => await confirmTransaction(connection, txid, 'confirmed'),
           wallet: {
             sendTransaction,
             publicKey: wallet?.adapter?.publicKey,
             signAllTransactions,
             signTransaction
           },
-          routeInfo: revertRoute(route),
-          onTransaction: async (txid: any) => {
-            const result = await connection.confirmTransaction(txid)
-            if (!result.value.err) {
-              return await connection.getTransaction(txid, {
-                commitment: 'confirmed'
-              })
-            }
-            return null
-          }
+          routeInfo: revertRoute(route)
         })
+
         return swapResult.txid
       }
     },

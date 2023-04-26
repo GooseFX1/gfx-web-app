@@ -1092,6 +1092,7 @@ export const SwapMain: FC = () => {
     slippage: slippage, // 1% slippage
     debounceTime: 2000 // debounce ms time before refresh
   })
+
   useEffect(() => {
     const handleResize = () => {
       // preventing duplicating remounts on resize
