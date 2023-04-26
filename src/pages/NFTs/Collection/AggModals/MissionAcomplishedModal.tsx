@@ -5,6 +5,7 @@ import 'styled-components/macro'
 import { useNFTAggregator, useNFTDetails } from '../../../../context'
 import { Button } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useHistory } from 'react-router-dom'
 
 const MISSION_WRAPPER = styled.div`
   ${tw`flex flex-col items-center mt-4`}
@@ -47,6 +48,7 @@ const MissionAccomplishedModal = (): ReactElement => {
   const nftName = general?.nft_name.split('#')[0]
   const { publicKey } = useWallet()
   const { setBuyNow } = useNFTAggregator()
+  const history = useHistory()
   useEffect(() => {
     setTimeout(() => {
       setBuyNow(undefined)
@@ -59,9 +61,9 @@ const MissionAccomplishedModal = (): ReactElement => {
 
       <div className="proudOwner">You are a proud owner of:</div>
       <div className="nftDetails">
-        <strong>{nftId ? nftId : '# NFT '}</strong>
+        <strong>{nftId ? nftId : general?.nft_name}</strong>
         by
-        <strong>{nftName}</strong>
+        <strong>{general?.collection_name ? general?.collection_name : nftName}</strong>
       </div>
 
       <div className="nftImage">
@@ -69,8 +71,8 @@ const MissionAccomplishedModal = (): ReactElement => {
       </div>
       {/* <div className="shareWithFriends">Share it with your friends!</div> */}
       <div className="shareMediaIcons"></div>
-      <Button>
-        <a href={`https://app.goosefx.io/nfts/profile/${publicKey.toBase58()}`}>Go to my collection</a>
+      <Button tw="absolute bottom-6">
+        <a onClick={() => history.push(`/nfts/profile/${publicKey?.toString()}`)}>Go to my collection</a>
       </Button>
     </MISSION_WRAPPER>
   )

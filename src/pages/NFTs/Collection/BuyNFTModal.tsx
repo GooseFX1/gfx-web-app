@@ -340,7 +340,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask, bids } = useNFTDetails()
-  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
+  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(true)
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
@@ -587,7 +587,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
 
     try {
-      const signature = await sendTransaction(transaction, connection, { skipPreflight: true })
+      const signature = await sendTransaction(transaction, connection)
 
       console.log(signature)
       setPendingTxSig(signature)
@@ -657,8 +657,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
         <div tw="mt-4">
           <AppraisalValue
-            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-            label={general.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
             width={360}
           />
         </div>

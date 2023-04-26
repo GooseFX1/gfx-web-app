@@ -253,9 +253,9 @@ export const RightSection: FC<{
                   />
                 )}
 
-                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                {/* <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
                   {likes ? likes : null}
-                </span>
+                </span> */}
                 <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                   <img
                     src="/img/assets/solScanBlack.svg"
@@ -267,7 +267,7 @@ export const RightSection: FC<{
                 <img
                   src="/img/assets/shareBlue.svg"
                   alt="share-icon"
-                  tw="ml-5 h-10 w-10"
+                  tw="ml-5 h-10 w-10 cursor-pointer"
                   className="share-icon"
                   onClick={() => {
                     setShareModal(true)

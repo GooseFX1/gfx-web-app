@@ -390,7 +390,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
               <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
             </a>
             <div onClick={() => setShareModal(true)} className="share-img">
-              <img src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+              <img tw="cursor-pointer" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
             </div>
           </SCAN_SHARE>
         )}
