@@ -12,7 +12,7 @@ const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: stri
 `
 
 const LOADER = () => (
-  <div tw="relative">
+  <div tw="relative top-[-1.6rem]">
     <Loader />
   </div>
 )
