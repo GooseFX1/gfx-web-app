@@ -129,6 +129,7 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
           onFocus={setFocusedFrom}
           pattern="\d+(\.\d+)?"
           placeholder={'0'}
+          value={inTokenAmount}
           className={'swap-input'}
         />
       </AmountField>

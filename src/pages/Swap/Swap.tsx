@@ -1081,9 +1081,9 @@ export const SwapMain: FC = () => {
     useSwap()
   const { network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
-  const [allowed, setallowed] = useState(false)
-  const [inAmountTotal, setInAmountTotal] = useState(0)
-  const [refreshed, setRefreshed] = useState(false)
+  const [allowed, setallowed] = useState<boolean>(false)
+  const [inAmountTotal, setInAmountTotal] = useState<number>(0)
+  const [refreshed, setRefreshed] = useState<boolean>(false)
   const [desktop, setDesktop] = useState<boolean>(window.innerWidth > 1200)
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens

@@ -26,7 +26,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) 
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (inTokenAmount === 0) {
+    } else if (inTokenAmount === 0 || inTokenAmount === null) {
       return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address)) / 10 ** tokenA.decimals) {
       return State.BalanceExceeded
@@ -74,8 +74,8 @@ export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) 
 
   return (
     <Button
-      height="50px"
-      width="220px"
+      height="44px"
+      width="222px"
       loading={loading}
       onClick={handleClick}
       cssStyle={
