@@ -46,7 +46,7 @@ interface IOrderDisplay {
 }
 
 export const AVAILABLE_MARKETS = (
-  supportedTokenList: string[]
+  supportedTokenList: Set<string>
 ): Array<{
   name: string
   programId: PublicKey
@@ -56,7 +56,7 @@ export const AVAILABLE_MARKETS = (
   const markets = MARKETS.filter(({ deprecated, name }) => {
     const ask = (name: string) => name.slice(0, name.indexOf('/'))
     const isWrappedStableCoin = name[name.indexOf('/') + 1] === 'W'
-    return !deprecated && !isWrappedStableCoin && supportedTokenList.find((token) => ask(name) === token)
+    return !deprecated && !isWrappedStableCoin && supportedTokenList.has(ask(name))
   })
   markets.push({
     name: 'GOFX/USDC',

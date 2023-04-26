@@ -13,20 +13,20 @@ enum State {
   PoolNotFound = 4
 }
 
-export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ exchange, route }) => {
+export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) => {
   const { getAmount } = useAccounts()
   const { mode } = useDarkMode()
   const { network } = useConnectionConfig()
-  const { inTokenAmount, loading, swapTokens, tokenA, tokenB } = useSwap()
+  const { inTokenAmount, loading, swapTokens, tokenA, tokenB, chosenRoutes, clickNo } = useSwap()
   const { connect, wallet } = useWallet()
   const { setVisible } = useWalletModal()
-
+  const route = useMemo(() => chosenRoutes[clickNo], [chosenRoutes, clickNo])
   const state = useMemo(() => {
     if (!wallet || !wallet?.adapter?.publicKey) {
       return State.Connect
     } else if (!tokenA || !tokenB) {
       return State.Enter
-    } else if (inTokenAmount === 0) {
+    } else if (inTokenAmount === 0 || inTokenAmount === null) {
       return State.Enter
     } else if (inTokenAmount > parseFloat(getAmount(tokenA.address)) / 10 ** tokenA.decimals) {
       return State.BalanceExceeded
@@ -74,8 +74,8 @@ export const SwapButton: FC<{ exchange?: (any: any) => void; route: any }> = ({ 
 
   return (
     <Button
-      height="50px"
-      width="220px"
+      height="44px"
+      width="222px"
       loading={loading}
       onClick={handleClick}
       cssStyle={

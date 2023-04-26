@@ -1,8 +1,9 @@
-import { useState, FC } from 'react'
+import { useState, FC, useCallback } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv, CenteredDiv } from '../styles'
 import { Image } from 'antd'
 import tw from 'twin.macro'
+import { useSwap } from '../context/swap'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
   padding: 0.75rem 1.5rem 0.75rem 0rem;
@@ -43,17 +44,13 @@ const Toggle = styled(CenteredDiv)<{ $mode: number }>`
   }
 `
 
-export const SwapTokenToggle: FC<{ toggleToken: () => void; tokenA: any; tokenB: any }> = ({
-  toggleToken,
-  tokenA,
-  tokenB
-}) => {
+export const SwapTokenToggle: FC<{ toggleToken: () => void }> = ({ toggleToken }) => {
   const [position, setPosition] = useState<number>(0)
-
-  const handleToggle = () => {
+  const { tokenA, tokenB } = useSwap()
+  const handleToggle = useCallback(() => {
     setPosition((prev) => (prev === 0 ? 1 : 0))
     toggleToken()
-  }
+  }, [toggleToken])
 
   return (
     <WRAPPER>

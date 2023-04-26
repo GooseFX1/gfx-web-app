@@ -1,16 +1,15 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState, useMemo } from 'react'
+import React, { FC, useEffect, useState, useMemo, useCallback, SyntheticEvent, useRef } from 'react'
 import { Input, Image } from 'antd'
 import styled from 'styled-components'
-import { TokenListProvider, TokenInfo } from '@solana/spl-token-registry'
+import { TokenInfo } from '@solana/spl-token-registry'
 import { Modal } from '../../components'
-import { ISwapToken, useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
+import { useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
 import { checkMobile } from '../../utils'
-import { Connection } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TOKEN_PROGRAM_ID } from '../../web3'
-
+import 'styled-components/macro'
 import tw from 'twin.macro'
 
 const BODY = styled.div`
@@ -173,7 +172,12 @@ const DESK_TOKEN_INFO = styled(TOKEN_INFO)`
     right: 1rem;
   }
 `
-
+const STRONG_CENTERED_TEXT = styled.strong`
+  ${tw`text-2xl mx-auto mt-4 font-bold`}
+`
+const FLEX = styled.div`
+  ${tw`flex flex-col`}
+`
 interface NewTokenInfo extends TokenInfo {
   imageURL?: string
   tokenBalance?: number
@@ -181,165 +185,145 @@ interface NewTokenInfo extends TokenInfo {
 
 export const Selector: FC<{
   height: string
-  otherToken: ISwapToken | null
-  setToken: Dispatch<SetStateAction<ISwapToken | null>>
-  token: ISwapToken | null
   balance?: number
-  connection?: Connection
-}> = ({ height, otherToken, setToken, token, connection }) => {
+  isReverse?: boolean
+}> = ({ height, isReverse = false }) => {
   const { mode } = useDarkMode()
-  const { tokens } = useTokenRegistry()
-  const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap() //CoinGeckoClient
-  const { chainId } = useConnectionConfig()
+  const { tokens, tokenMap } = useTokenRegistry()
+  const { tokenA: tA, tokenB: tB, CoinGeckoClient, coingeckoTokenMap, setTokenA: sTA, setTokenB: sTB } = useSwap()
+  const { connection } = useConnectionConfig()
   const { wallet } = useWallet()
   const [filterKeywords, setFilterKeywords] = useState<string>('')
   const [visible, setVisible] = useState<boolean>(false)
-  const r = new RegExp(filterKeywords, 'i')
-  const [updatedTokens, setUpdatedTokens] = useState<NewTokenInfo[]>(
-    tokens.map((tk) => ({
-      ...tk,
-      imageURL: `/img/crypto/${tk.symbol}.svg`
-    }))
-  )
+  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>([])
+  const timeoutRef = useRef<NodeJS.Timeout>(null)
 
+  // as Selector is reused for both tokenA and tokenB, we need to reverse the tokenA and tokenB when isReverse is true
+  const { tokenA, tokenB, setTokenA, setTokenB } = useMemo(() => {
+    if (isReverse) {
+      return { tokenA: tB, tokenB: tA, setTokenA: sTB, setTokenB: sTA }
+    }
+    return { tokenA: tA, tokenB: tB, setTokenA: sTA, setTokenB: sTB }
+  }, [tA, tB, sTA, sTB, isReverse])
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
-  const popularTokens = useMemo(
-    () => updatedTokens.filter((i) => POPULAR_TOKENS.includes(i.address)),
-    [updatedTokens]
-  )
+  const popularTokens = useMemo(() => tokens.filter((i) => POPULAR_TOKENS.has(i.address)), [tokens])
 
-  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>(updatedTokens)
+  const getTokenAccounts = useCallback(
+    async (wallet: string, tokens: NewTokenInfo[]) => {
+      try {
+        if (!wallet) return tokens
+        const filters = [
+          {
+            dataSize: 165 //size of account (bytes)
+          },
+          {
+            memcmp: {
+              offset: 32, //location of our query in the account (bytes)
+              bytes: wallet //our search criteria, a base58 encoded string
+            }
+          }
+        ]
+        const resultingAccounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, { filters: filters })
 
-  useEffect(() => {
-    setUpdatedTokens(
-      [...tokens].map((tk) => ({
-        ...tk,
-        imageURL: `/img/crypto/${tk.symbol}.svg`,
-        tokenBalance: 0
-      }))
-    )
-  }, [tokens])
-
-  async function getTokenAccounts(wallet: string, tokens: NewTokenInfo[]) {
-    try {
-      if (!wallet) return tokens
-      const filters = [
-        {
-          dataSize: 165 //size of account (bytes)
-        },
-        {
-          memcmp: {
-            offset: 32, //location of our query in the account (bytes)
-            bytes: wallet //our search criteria, a base58 encoded string
+        for (let i = 0; i < resultingAccounts.length; i++) {
+          const account = resultingAccounts[i]
+          const parsedAccountInfo: any = account.account.data
+          const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
+          if (tokenBalance <= 0) {
+            continue
+          }
+          const mintAddress: string = parsedAccountInfo['parsed']['info']['mint']
+          const token = tokenMap.get(mintAddress)
+          if (token) {
+            token.tokenBalance = tokenBalance
+            tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
           }
         }
-      ]
-      let accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, { filters: filters })
-      accounts = accounts.filter((account) => {
-        const parsedAccountInfo: any = account.account.data
-        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
-        return tokenBalance > 0
-      })
-      accounts.forEach((account) => {
-        //Parse the account data
-        const parsedAccountInfo: any = account.account.data
-        const mintAddress: string = parsedAccountInfo['parsed']['info']['mint']
-        const tokenBalance: number = parsedAccountInfo['parsed']['info']['tokenAmount']['uiAmount']
-        const token = tokens[tokens.findIndex((el) => el.address === mintAddress)]
-        if (token) {
-          token.tokenBalance = tokenBalance
-          tokens[tokens.findIndex((el) => el.address === mintAddress)] = token
-        }
-      })
-      return tokens
-    } catch {
-      return tokens
-    }
-  }
+
+        return tokens
+      } catch {
+        return tokens
+      }
+    },
+    [connection, tokens]
+  )
 
   useEffect(() => {
-    ;(async function () {
-      let newTokens = [...updatedTokens]
+    const process = async () => {
+      const r = new RegExp(filterKeywords.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'), 'i')
+
+      if (tokens.length == 0) {
+        setFilteredTokens([])
+      }
+      let newTokens = tokens
       if (!checkMobile()) {
-        newTokens = await getTokenAccounts(publicKey?.toBase58(), newTokens)
+        newTokens = await getTokenAccounts(publicKey?.toBase58(), tokens)
       }
 
-      //(O)3n to (O)2n in time complexity (due to two loops, one filter and one sort)
-      addAndFilterTokens([...newTokens], filterKeywords, tokenA, tokenB, chainId)
-    })()
-  }, [filterKeywords, updatedTokens, tokenA, tokenB, chainId, publicKey])
+      // compiles a subset of tokens based on filter criteria
+      const newFilteredTokens = []
 
-  const addAndFilterTokens = async (tokenList, filterKeywords, tokenA, tokenB, chainId) => {
-    if (tokenList.length < 1 && tokenA && tokenB) {
-      const chainList = (await new TokenListProvider().resolve()).filterByChainId(chainId).getList()
-      const filteredTokensListAlt = chainList.filter(({ address }) => filterKeywords === address)
-
-      if (filteredTokensListAlt.length > 0) {
-        tokenList.push({
-          ...filteredTokensListAlt?.[0],
-          imageURL: `/img/crypto/${filteredTokensListAlt?.[0].symbol}.svg`
-        })
-      }
-    }
-
-    const filteredTokensList = tokenList
-      .filter(
-        ({ address, name, symbol }) =>
-          (r.test(name.split('(')[0]) || r.test(symbol) || filterKeywords === address) &&
-          //the split by "(" is to remove every string in name of token with (Portal) or (Sollet) or any other.
-          otherToken?.address !== address
-      )
-      .sort((a, b) => {
-        const fa = a.symbol.toLowerCase(),
-          fb = b.symbol.toLowerCase()
-
-        if (fa < fb) {
-          return -1
-        }
-        if (fa > fb) {
-          return 1
-        }
-        return 0
-      })
-      .sort((a, b) => b?.tokenBalance - a?.tokenBalance)
-
-    setFilteredTokens(filteredTokensList)
-
-    if (filterKeywords.length > 1) {
-      //allow at least two inputs to allow less tokens being mapped and decrease load time for popular tokens
-      const popularityFilteredTokensList = (
-        await Promise.all(
-          filteredTokensList.map(async (tk) => {
-            const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tk.symbol.toLowerCase())
-            if (!token) return { ...tk, vol: 0 }
-
-            try {
-              const data = await CoinGeckoClient.coins.fetch(token?.id || null, {})
-              const res = Math.floor(data?.data?.market_data?.total_volume?.usd || 0)
-              return { ...tk, vol: !isNaN(res) ? res : 0 }
-            } catch {
-              return { ...tk, vol: 0 }
+      for (let i = 0; i < newTokens.length; i++) {
+        const token = newTokens[i]
+        if (r.test(token.name.split('(')[0]) || r.test(token.symbol) || filterKeywords === token.address) {
+          if (filterKeywords.trim().length > 0) {
+            const cgToken = coingeckoTokenMap.get(token.symbol)
+            if (!cgToken) {
+              newFilteredTokens.push(token)
+              continue
             }
-          })
-        )
-      ).sort((a, b) => b.vol - a.vol)
-
-      setFilteredTokens(popularityFilteredTokensList)
+            // potentially introduce Promise.all for this and keep track of indeces if needed in specific order
+            await CoinGeckoClient.coins
+              .fetch(cgToken.id, {})
+              .then((res) => {
+                const result = Math.floor(res?.data?.market_data?.total_volume?.usd || 0)
+                newFilteredTokens.push({ ...token, vol: !isNaN(result) ? result : 0 })
+              })
+              .catch((err) => {
+                console.error('COULD NOT FETCH COINGECKO DATA', err)
+                newFilteredTokens.push({ ...token, vol: 0 })
+              })
+            continue
+          }
+          newFilteredTokens.push(token)
+        }
+      }
+      setFilteredTokens(
+        newFilteredTokens.sort((a, b) => {
+          const symbol = a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
+          const tokenBalance = (b.tokenBalance || 0) - (a.tokenBalance || 0)
+          const vol = (b.vol || 0) - (a.vol || 0)
+          return symbol || tokenBalance || vol
+        })
+      )
     }
-  }
-
+    // debounced search helps with performance on large token sets
+    if (timeoutRef.current != null) {
+      clearTimeout(timeoutRef.current)
+    }
+    //instant clearing
+    if (filterKeywords.trim().length == 0) {
+      process()
+    } else {
+      timeoutRef.current = setTimeout(() => {
+        process()
+      }, 333)
+    }
+  }, [filterKeywords, tokens, tokenA, tokenB, publicKey])
+  const handleSearch = useCallback((e: SyntheticEvent) => {
+    setFilterKeywords((e.target as HTMLInputElement).value)
+  }, [])
+  const clearFilter = useCallback(() => {
+    setFilterKeywords('')
+  }, [])
   return (
     <>
       <SELECTOR_MODAL setVisible={setVisible} visible={visible} style={{ paddingTop: '18px' }}>
         <INPUT>
-          <Input
-            onChange={(x: any) => setFilterKeywords(x.target.value)}
-            placeholder="Search name or paste address"
-            value={filterKeywords}
-          />
+          <Input onChange={handleSearch} placeholder="Search name or paste address" value={filterKeywords} />
           <MAGNIFYING_GLASS>
             {filterKeywords.length > 0 ? (
-              <strong onClick={() => setFilterKeywords('')} style={{ cursor: 'pointer' }}>
+              <strong onClick={clearFilter} style={{ cursor: 'pointer' }}>
                 Cancel
               </strong>
             ) : mode === 'dark' ? (
@@ -356,7 +340,10 @@ export const Selector: FC<{
               <POPULAR_TK
                 key={index}
                 onClick={async () => {
-                  setToken({ address, decimals, symbol, name, logoURI })
+                  if (tokenB.address === address) {
+                    setTokenB(tokenA)
+                  }
+                  setTokenA({ address, decimals, symbol, name, logoURI })
                   setVisible(false)
                 }}
               >
@@ -382,49 +369,58 @@ export const Selector: FC<{
         </div>
         <GFX_HR />
         <BODY>
-          {filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI, tokenBalance }, index) => (
-            <TOKEN
-              key={index}
-              onClick={async () => {
-                setToken({ address, decimals, symbol, name, logoURI })
-                setVisible(false)
-              }}
-            >
-              <TOKEN_ICON>
-                <Image draggable={false} preview={false} src={imageURL} fallback={logoURI} alt="token" />
-              </TOKEN_ICON>
-              {checkMobile() ? (
-                <TOKEN_INFO>
-                  <span>{symbol}</span>
-                  <span>{name}</span>
-                </TOKEN_INFO>
-              ) : (
-                <DESK_TOKEN_INFO>
-                  <strong>{symbol}</strong>
-                  <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
-                  {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
-                </DESK_TOKEN_INFO>
-              )}
-            </TOKEN>
-          ))}
+          {filteredTokens.length == 0 ? (
+            <FLEX>
+              <STRONG_CENTERED_TEXT>No matching tokens found..</STRONG_CENTERED_TEXT>
+            </FLEX>
+          ) : (
+            filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI, tokenBalance }) => (
+              <TOKEN
+                key={address}
+                onClick={async () => {
+                  if (tokenB.address === address) {
+                    setTokenB(tokenA)
+                  }
+                  setTokenA({ address, decimals, symbol, name, logoURI })
+                  setVisible(false)
+                }}
+              >
+                <TOKEN_ICON>
+                  <Image draggable={false} preview={false} src={imageURL} fallback={logoURI} alt="token" />
+                </TOKEN_ICON>
+                {checkMobile() ? (
+                  <TOKEN_INFO>
+                    <span>{symbol}</span>
+                    <span>{name}</span>
+                  </TOKEN_INFO>
+                ) : (
+                  <DESK_TOKEN_INFO>
+                    <strong>{symbol}</strong>
+                    <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
+                    {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
+                  </DESK_TOKEN_INFO>
+                )}
+              </TOKEN>
+            ))
+          )}
         </BODY>
       </SELECTOR_MODAL>
       <SELECTOR $height={height} onClick={() => setVisible(true)}>
         <SpaceBetweenDiv className={'selector-inner'}>
           <div className={'icon-left'}>
-            {token ? (
+            {tokenA ? (
               <Image
                 draggable={false}
                 preview={false}
-                src={`/img/crypto/${token.symbol}.svg`}
-                fallback={token.logoURI || '/img/crypto/Unknown.svg'}
+                src={`/img/crypto/${tokenA.symbol}.svg`}
+                fallback={tokenA.logoURI || '/img/crypto/Unknown.svg'}
                 alt="token"
               />
             ) : (
               <></>
             )}
           </div>
-          <strong className={'text-primary'}>{token && token.symbol}</strong>
+          <strong className={'text-primary'}>{tokenA && tokenA.symbol}</strong>
 
           <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" className={'icon-right'} />
         </SpaceBetweenDiv>

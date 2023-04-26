@@ -15,8 +15,8 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 
 export const SOLSCAN_BASE = 'https://api.solscan.io'
 
-export const CURRENT_SUPPORTED_TOKEN_LIST = ['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT']
-export const FARM_SUPPORTED_TOKEN_LIST = ['GOFX']
+export const CURRENT_SUPPORTED_TOKEN_LIST = new Set(['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT'])
+export const FARM_SUPPORTED_TOKEN_LIST = new Set(['GOFX'])
 export const MODAL_TYPES = {
   FEES: 'FEES',
   REWARDS: 'REWARDS',
@@ -50,16 +50,16 @@ export const TOKEN_NAMES = {
   USDC: 'USDC'
 }
 
-export const TOKEN_BLACKLIST = ['APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt']
-export const POPULAR_TOKENS = [
+export const TOKEN_BLACKLIST = new Set(['APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt'])
+export const POPULAR_TOKENS = new Set([
   'So11111111111111111111111111111111111111112',
   'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
   'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
   'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
   'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'
-]
-
-export const SUPPORTED_TOKEN_LIST = [
+])
+//
+export const SUPPORTED_TOKEN_LIST = new Set([
   'AKRO',
   'ALEPH',
   'BOP',
@@ -145,7 +145,7 @@ export const SUPPORTED_TOKEN_LIST = [
   'ATLAS',
   'SWAG',
   'GENE'
-]
+])
 
 export const NFT_MARKET_TRANSACTION_FEE = 1
 

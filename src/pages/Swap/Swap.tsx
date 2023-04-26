@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Image } from 'antd'
@@ -24,10 +24,9 @@ import {
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../../styles'
 import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
-import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter, nFormatter, checkMobile } from '../../utils'
+import { notify, moneyFormatter, nFormatter, checkMobile, clamp } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import { logData } from '../../api/analytics'
@@ -95,7 +94,7 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navColl
 const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
   ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
 
-  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '42px' : '142px')};
+  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '35px' : '142px')};
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
@@ -198,11 +197,11 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
 
     .content {
       ${tw`w-[55%]`}
-
       div {
         ${({ theme }) => theme.ellipse}
       }
     }
+
     .price {
       ${tw`w-1/2 text-right`}
     }
@@ -211,7 +210,6 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
 
 const SWAP_ROUTES = styled.div<{ less: boolean }>`
   ${tw`relative mx-[24px] pb-[24px]`}
-
   .swap-content {
     ${tw`relative flex h-1/5 mt-0 mx-auto pb-3 pt-4 pl-4 justify-center
     sm:flex sm:flex-col sm:w-full sm:items-center sm:h-auto sm:justify-around 
@@ -221,6 +219,7 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
     @media (max-width: 1515px) {
       justify-content: ${({ less }) => (less ? 'center' : 'start')};
     }
+    ${({ theme }) => theme.customScrollBar('4px')};
   }
 
   .action {
@@ -260,12 +259,27 @@ const SubHeader = styled.div`
 const Socials = styled.div`
   ${tw`flex justify-between	w-full`}
 `
-
+const SocialsIcon = styled.div<{ $image: string }>`
+  ${tw`w-8 h-8`}
+  -webkit-mask-image: url(${({ $image }) => $image});
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-position-content: bottom;
+  background: ${({ theme }) => theme.text20};
+  &:hover {
+    -webkit-mask-image: url(${({ $image }) => $image});
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-position-content: bottom;
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  }
+`
 const SocialsButton = styled.div`
-  ${tw`dark:bg-black-1 bg-black-4 cursor-pointer text-smaller rounded-2xl py-1 px-3 leading-normal font-semibold`}
-  color: ${({ theme }) => theme.text14};
+  ${tw` cursor-pointer text-smaller rounded-2xl leading-normal font-semibold`}
+
   line-height: inherit;
 `
+
 //background-color: ${({ theme }) => theme.bg19};
 
 const SMALL_CLICKER_ICON = styled(Image)`
@@ -277,7 +291,7 @@ const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
   h-[575px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-12`}
-  
+
   background: ${({ theme }) => theme.swapSides2};
 `
 
@@ -303,7 +317,6 @@ const PriceTitle = styled.div`
 
 const HEADER_WRAPPER = styled(SpaceBetweenDiv)<{ $iconSize: string }>`
   ${tw`w-full`}
-
   > div {
     ${tw`flex items-center`}
   }
@@ -362,22 +375,20 @@ const SWAP_CONTENT = styled.div`
 
 const SwapContent: FC<{
   exchange?: (any: any) => void
-  routes: any
-  clickNo: number
   setRefreshed: React.Dispatch<React.SetStateAction<boolean>>
   refreshed: boolean
-}> = ({ exchange, routes, clickNo, setRefreshed, refreshed }) => {
+}> = ({ exchange, setRefreshed, refreshed }) => {
   const { wallet } = useWallet()
   const location = useLocation<ILocationState>()
   const { setEndpointName, network } = useConnectionConfig()
   const { mode } = useDarkMode()
   const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()
   const [settingsModalVisible, setSettingsModalVisible] = useState<boolean>(false)
-  const [route, setRoute] = useState(routes[clickNo])
+
   const [historyVisible, setHistoryVisible] = useState<boolean>(false)
   const [reloadTrigger, setReloadTrigger] = useState<boolean>(false)
   const [wrapModalVisible, setWrapModalVisible] = useState<boolean>(false)
-
+  const timeoutRef = useRef<NodeJS.Timeout>(null)
   useEffect(() => {
     logData('swap_page')
 
@@ -387,66 +398,79 @@ const SwapContent: FC<{
     }
   }, [location])
 
-  useEffect(() => {
-    setRoute(routes[clickNo])
-  }, [routes, clickNo])
-
-  const openSettings = (e: React.MouseEvent<HTMLElement>) => {
+  const openSettings = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setSettingsModalVisible(true)
-  }
+  }, [])
 
-  const openHistory = (e: React.MouseEvent<HTMLElement>) => {
+  const openHistory = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     setHistoryVisible(true)
-    setReloadTrigger(!reloadTrigger)
-  }
+    setReloadTrigger((prev) => !prev)
+  }, [])
 
-  const refresh = () => {
+  const refresh = useCallback(() => {
     setClickNo(0)
     setRoutes([])
     setRefreshed(true)
-    setTimeout(() => {
+    if (timeoutRef.current != null) {
+      //prevents duplicate timeouts from happening at once causing odd behaviour
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
       setRefreshed(false)
       amountPool?.()
+      timeoutRef.current = null
     }, 3000)
-  }
+  }, [amountPool])
 
-  const dateString = (date: Date) => {
+  const dateString = useCallback((date: Date) => {
     const datestring = date.toString().split(' ')
     const month = datestring[1]
     const day = datestring[2]
     const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     return `${month} ${day}, ${time}`
-  }
-
+  }, [])
+  //TODO: clean up and use proper property parsing for both localCSS + switch{from/to}
   const height = '56px'
 
-  const localCSS = css`
-    .swap-input {
-      height: ${height};
-      border-radius: 45px;
-      border: none;
-      padding-right: 20px;
-      font-size: 20px !important;
-      font-weight: 600;
-      &:hover {
-        border-color: #5755ff;
-      }
-      &:focus {
-        border-color: #5755ff;
-        box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
-      }
-    }
+  const localCSS = useMemo(
+    () => css`
+      .swap-input {
+        height: ${height};
+        border-radius: 45px;
+        border: none;
+        padding-right: 20px;
+        font-size: 20px !important;
+        font-weight: 600;
 
-    .ant-modal-centered {
-      top: -75px;
-    }
-    .ant-modal {
-      border-radius: 20px;
-    }
-  `
+        &:hover {
+          border-color: #5755ff;
+        }
 
+        &:focus {
+          border-color: #5755ff;
+          box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
+        }
+      }
+
+      .ant-modal-centered {
+        top: -75px;
+      }
+
+      .ant-modal {
+        border-radius: 20px;
+      }
+    `,
+    [height]
+  )
+  const showWrapSolModal = useCallback(() => {
+    setWrapModalVisible(true)
+  }, [])
+  const onSwitchClick = useCallback(() => {
+    setFocused('from')
+    switchTokens()
+  }, [switchTokens, setFocused])
   return (
     <SWAP_CONTENT>
       <SETTING_MODAL
@@ -503,7 +527,7 @@ const SwapContent: FC<{
             </div>
           )}
           <div
-            onClick={() => setWrapModalVisible(true)}
+            onClick={showWrapSolModal}
             tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
             dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10"
           >
@@ -524,21 +548,13 @@ const SwapContent: FC<{
       <BODY>
         <style>{localCSS}</style>
         <SwapFrom height={height} />
-        <SWITCH
-          measurements={64}
-          onClick={() => {
-            setFocused('from')
-            switchTokens()
-          }}
-        >
+        <SWITCH measurements={64} onClick={onSwitchClick}>
           <img className={`swap-switch`} src={`/img/assets/swap_switch.svg`} alt="switch" />
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
-      {checkMobile() && tokenA && tokenB && inTokenAmount > 0 && (
-        <AlternativesContent routes={routes} clickNo={clickNo} setClickNo={setClickNo} />
-      )}
-      <SwapButton exchange={exchange} route={route} />
+      {checkMobile() && tokenA && tokenB && inTokenAmount > 0 && <AlternativesContent />}
+      <SwapButton exchange={exchange} />
     </SWAP_CONTENT>
   )
 }
@@ -578,7 +594,7 @@ const TokenContent: FC = () => {
   const [socials, setSocials] = useState([])
   const [copiedAction, setCopiedAction] = useState(false)
   //CoinGeckoClient
-  const { tokenA, tokenB, CoinGeckoClient, coingeckoTokens } = useSwap()
+  const { tokenA, tokenB, CoinGeckoClient, coingeckoTokenMap } = useSwap()
   const [tokenDetails, setDetails] = useState([
     { name: 'Price', value: '0', currency: '$' },
     { name: 'FDV', value: '0', currency: '$' },
@@ -592,9 +608,6 @@ const TokenContent: FC = () => {
     { name: 'Holders', value: '0' }
   ])
   const [toggle, setToggle] = useState(false) //tokenA
-  const [token, setToken] = useState(tokenA)
-
-  const truncate = (address: string) => address.slice(0, 7) + '...' + address.slice(-6)
 
   useEffect(() => {
     try {
@@ -602,137 +615,180 @@ const TokenContent: FC = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [tokenA, tokenB])
+  }, [tokenA, tokenB, coingeckoTokenMap])
 
-  useEffect(() => {
-    if (toggle) {
-      setToken(tokenB)
-    } else {
-      setToken(tokenA)
-    }
-  }, [tokenA, tokenB])
-
-  const handleCopyTokenMint = () => {
+  const handleCopyTokenMint = useCallback(() => {
     setCopiedAction(true)
-    navigator.clipboard.writeText(token.address)
+    navigator.clipboard.writeText(toggle ? tokenB.address : tokenA.address)
     setTimeout(() => setCopiedAction(false), 800)
-  }
+  }, [tokenA, tokenB, toggle])
 
-  const fetchCoinGecko = async () => {
+  const fetchCoinGecko = useCallback(async () => {
     try {
       if (tokenA) {
-        const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tokenA.symbol.toLowerCase())
+        const token = coingeckoTokenMap.get(tokenA.name.toLowerCase())
+        if (token) {
+          const execution = []
+          execution.push(
+            CoinGeckoClient.coins.fetch(token?.id || null, {}),
+            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+          )
+          Promise.all(execution)
+            .then(async ([coinGeckoA, tokenHoldersA]) => {
+              const data = coinGeckoA?.data
+              // rate limiting causing data offset - find better way to query holder count
+              const res = tokenHoldersA?.status == 200 && (await tokenHoldersA?.json())
 
-        CoinGeckoClient.coins
-          .fetch(token?.id || null, {})
-          .then(async (cgData: any) => {
-            const data = cgData.data
-            let res = null
-
-            try {
-              const fetchData = await fetch(
-                'https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address
-              )
-              res = await fetchData.json()
-            } catch (e) {
-              console.error(e)
-            }
-
-            setDetails([
-              { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
-              {
-                name: 'FDV',
-                value:
-                  moneyFormatter(
+              setDetails([
+                { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
+                {
+                  name: 'FDV',
+                  value:
+                    moneyFormatter(
+                      Math.floor(
+                        data?.market_data?.fully_diluted_valuation?.usd ||
+                          data?.market_data?.total_supply * data?.market_data?.current_price?.usd
+                      )
+                    ) || '0',
+                  currency: '$'
+                },
+                {
+                  name: 'Total Max Supply',
+                  value:
                     Math.floor(
-                      data?.market_data?.fully_diluted_valuation?.usd ||
-                        data?.market_data?.total_supply * data?.market_data?.current_price?.usd
-                    )
-                  ) || '0',
-                currency: '$'
-              },
-              {
-                name: 'Total Max Supply',
-                value:
-                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() ||
-                  '0'
-              },
-              { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
-            ])
-            setSocials([
-              { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
-              { name: 'Coingecko', link: 'https://coingecko.com' },
-              { name: 'Website', link: data?.links?.homepage?.[0] }
-            ])
-          })
-          .catch((err) => console.error('ERROR: CoinGecko fetch', err))
+                      data?.market_data?.max_supply || data?.market_data?.total_supply
+                    )?.toLocaleString() || '0'
+                },
+                { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
+              ])
+              setSocials([
+                { name: 'Twitter', link: 'https://twitter.com/' + data?.links?.twitter_screen_name },
+                { name: 'Website', link: data?.links?.homepage?.[0] },
+                { name: 'Coingecko', link: 'https://coingecko.com' }
+              ])
+            })
+            .catch((err) => console.error('ERROR: CoinGecko fetch failed for tokenA', err))
+        }
       }
 
       if (tokenB) {
-        const token = coingeckoTokens.find((i) => i.symbol.toLowerCase() === tokenB.symbol.toLowerCase())
-
-        CoinGeckoClient.coins
-          .fetch(token?.id || null, {})
-          .then(async (cgData: any) => {
-            const data = cgData.data
-            let res = null
-
-            try {
-              const fetchData = await fetch(
-                'https://public-api.solscan.io/token/holders?tokenAddress=' + tokenB.address
-              )
-              res = await fetchData.json()
-            } catch (e) {
-              console.error(e)
-            }
-
-            setDetailsB([
-              { name: 'Price', value: data?.market_data?.current_price?.usd || '0.0', currency: '$' },
-              {
-                name: 'FDV',
-                value:
-                  moneyFormatter(
+        const token = coingeckoTokenMap.get(tokenB.name.toLowerCase())
+        if (token) {
+          const execution = []
+          execution.push(
+            CoinGeckoClient.coins.fetch(token?.id || null, {}),
+            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenB.address)
+          )
+          Promise.all(execution)
+            .then(async ([coingGeckoB, tokenHoldersB]) => {
+              const dataB = coingGeckoB?.data
+              const resB = tokenHoldersB?.status == 200 && (await tokenHoldersB?.json())
+              setDetailsB([
+                { name: 'Price', value: dataB?.market_data?.current_price?.usd || '0.0', currency: '$' },
+                {
+                  name: 'FDV',
+                  value:
+                    moneyFormatter(
+                      Math.floor(
+                        dataB?.market_data?.fully_diluted_valuation?.usd ||
+                          dataB?.market_data?.total_supply * dataB?.market_data?.current_price?.usd
+                      )
+                    ) || '0',
+                  currency: '$'
+                },
+                {
+                  name: 'Total Max Supply',
+                  value:
                     Math.floor(
-                      data?.market_data?.fully_diluted_valuation?.usd ||
-                        data?.market_data?.total_supply * data?.market_data?.current_price?.usd
-                    )
-                  ) || '0',
-                currency: '$'
-              },
-              {
-                name: 'Total Max Supply',
-                value:
-                  Math.floor(data?.market_data?.max_supply || data?.market_data?.total_supply)?.toLocaleString() ||
-                  '0'
-              },
-              { name: 'Holders', value: res?.total?.toLocaleString() || 0 }
-            ])
-          })
-          .catch((err) => console.error('ERROR: CoinGecko fetch', err))
+                      dataB?.market_data?.max_supply || dataB?.market_data?.total_supply
+                    )?.toLocaleString() || '0'
+                },
+                { name: 'Holders', value: resB?.total?.toLocaleString() || 0 }
+              ])
+            })
+            .catch((err) => console.error('ERROR: CoinGecko Fetch for tokenB failed', err))
+        }
       }
     } catch (e) {
       console.log(e)
     }
-  }
+  }, [tokenA, tokenB, coingeckoTokenMap, CoinGeckoClient])
+  const toggleToken = useCallback(() => {
+    setToggle((prev) => !prev)
+  }, [])
+  const { shortTokenName, address }: { shortTokenName: string; address: string } = useMemo(() => {
+    const returnObj = {
+      shortTokenName: '',
+      address: ''
+    }
+    if (toggle) {
+      returnObj.shortTokenName = tokenB.name
+      returnObj.address = `${tokenB.address.slice(0, 7)}...${tokenB.address.slice(-6)}`
+    } else {
+      returnObj.shortTokenName = tokenA.name
+      returnObj.address = `${tokenA.address.slice(0, 7)}...${tokenA.address.slice(-6)}`
+    }
 
+    if (returnObj.shortTokenName.length > 12) {
+      returnObj.shortTokenName = returnObj.shortTokenName.slice(0, 12)
+      returnObj.shortTokenName += '...'
+    }
+    returnObj.shortTokenName = `${returnObj.shortTokenName} (${toggle ? tokenB.symbol : tokenA.symbol})`
+    return returnObj
+  }, [toggle, tokenA, tokenB])
+  const tokenDetailItems: ReactNode[] = useMemo(() => {
+    if (!tokenDetails || tokenDetails.length == 0) {
+      return []
+    }
+    return tokenDetails.map((detail) => (
+      <AltTokenDetail key={detail.name + detail.value}>
+        <TokenTitleFDV>{detail.name}</TokenTitleFDV>
+        <SmallTitle>
+          {detail.currency || null} {detail.value}
+        </SmallTitle>
+      </AltTokenDetail>
+    ))
+  }, [tokenDetails])
+  const tokenDetailItemsB: ReactNode[] = useMemo(() => {
+    if (!tokenDetailsB || tokenDetailsB.length == 0) {
+      return []
+    }
+    return tokenDetailsB.map((detail) => (
+      <AltTokenDetail key={detail.name + detail.value}>
+        <TokenTitleFDV>{detail.name}</TokenTitleFDV>
+        <SmallTitle>
+          {detail.currency || null} {detail.value}
+        </SmallTitle>
+      </AltTokenDetail>
+    ))
+  }, [tokenDetailsB])
+  const handleSocialLinkClick = useCallback((link: string) => () => window.open(link, '_blank'), [])
+  const socialItems = useMemo(
+    () =>
+      socials.map((social) => (
+        <SocialsButton className={'group'} key={social.name} onClick={handleSocialLinkClick(social.link)}>
+          <SocialsIcon
+            $image={
+              social.name == 'Twitter'
+                ? '/img/assets/website.svg'
+                : social.name == 'Coingecko'
+                ? '/img/assets/coingecko.svg'
+                : '/img/assets/discord.svg'
+            }
+          />
+        </SocialsButton>
+      )),
+    [socials]
+  )
   return (
     <TOKEN_WRAPPER>
       <TokenHeader>
-        <SwapTokenToggle
-          toggleToken={() => {
-            setToggle(!toggle)
-            !toggle ? setToken(tokenB) : setToken(tokenA)
-          }}
-          tokenA={tokenA}
-          tokenB={tokenB}
-        />
+        <SwapTokenToggle toggleToken={toggleToken} />
 
         <SubHeader>
-          <TokenTitle>
-            {token?.name.length < 12 ? token?.name : token?.name.slice(0, 12) + '...'} ({token?.symbol})
-          </TokenTitle>
+          <TokenTitle>{shortTokenName}</TokenTitle>
           <COPY style={{ display: 'flex', alignItems: 'center' }}>
-            <SmallerTitle>{truncate(token?.address)}</SmallerTitle>
+            <SmallerTitle>{address}</SmallerTitle>
             <span className={`copy-button ${copiedAction ? 'copied' : ''}`} onClick={handleCopyTokenMint}>
               {copiedAction ? 'Copied!' : 'Copy'}
             </span>
@@ -740,30 +796,24 @@ const TokenContent: FC = () => {
         </SubHeader>
       </TokenHeader>
       <TokenListWrapper className={'no-scrollbar'}>
-        {(!toggle ? tokenDetails : tokenDetailsB).map((detail) => (
-          <AltTokenDetail key={detail.name}>
-            <TokenTitleFDV>{detail.name}</TokenTitleFDV>
-            <SmallTitle>
-              {detail.currency || null} {detail.value}
-            </SmallTitle>
-          </AltTokenDetail>
-        ))}
+        {!toggle ? tokenDetailItems : tokenDetailItemsB}
       </TokenListWrapper>
-      <Socials>
-        {socials.map((social) => (
-          <SocialsButton key={social.name} onClick={() => window.open(social.link, '_blank')}>
-            {social.name}
-          </SocialsButton>
-        ))}
-      </Socials>
+      <Socials>{socialItems}</Socials>
     </TOKEN_WRAPPER>
   )
 }
 
-const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes }) => {
-  const { tokenA, tokenB, inTokenAmount } = useSwap()
+interface PriceContentDetail {
+  name: string
+  value: string
+  extraValue?: string
+  icon?: string
+}
 
-  const [details, setDetails] = useState([
+const PriceContent: FC = () => {
+  const { tokenA, tokenB, inTokenAmount, clickNo, chosenRoutes: routes } = useSwap()
+  const { tokenMap } = useTokenRegistry()
+  const [details, setDetails] = useState<PriceContentDetail[]>([
     { name: 'Price Impact', value: '0%' },
     {
       name: checkMobile() ? 'Min. Received' : 'Minimum Received',
@@ -779,58 +829,82 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
   const [outAmount, setOutAmount] = useState(0)
   const [outTokenPercentage, setOutTokenPercentage] = useState(0)
   const [cheap, setCheap] = useState(true)
-  const [tokens, setTokens] = useState([])
 
-  useEffect(() => {
-    fetch(TOKEN_LIST_URL['mainnet-beta'])
-      .then((response) => response.json())
-      .then((result) => setTokens(result))
-  }, [])
+  const getPriceDetails = useCallback(
+    (out: number, route: any) => {
+      const totalLp = route.lpFee.amount / 10 ** tokenA.decimals || 0.0
+      let percent = route.lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
+      percent = isFinite(percent) ? percent : 0.0
+      const totalLpB = route.lpFee.amount / 10 ** tokenB.decimals || 0.0
+      let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
+      percentB = isFinite(percentB) ? percentB : 0.0
 
+      const token = tokenMap.get(route.lpFee.mint)
+      return { totalLp, totalLpB, percent, percentB, token }
+    },
+    [tokenMap, tokenA, inTokenAmount]
+  )
   useEffect(() => {
     const route = routes?.[clickNo]
     if (!route) return
     const out = route.outAmount / 10 ** tokenB.decimals
 
-    const getPriceDetails = (num: number) => {
-      const totalLp = route.marketInfos[num].lpFee.amount / 10 ** tokenA.decimals || 0.0
-      let percent = route.marketInfos[num].lpFee.pct || +((totalLp / inTokenAmount) * 100)?.toFixed(4) || 0.0
-      percent = isFinite(percent) ? percent : 0.0
-      const totalLpB = route.marketInfos[num].lpFee.amount / 10 ** tokenB.decimals || 0.0
-      let percentB = +((totalLpB / out) * 100)?.toFixed(4) || 0.0
-      percentB = isFinite(percentB) ? percentB : 0.0
-      const token = tokens.find((tk) => tk.address === route.marketInfos[num].lpFee.mint)
-      return { totalLp, totalLpB, percent, percentB, token }
-    }
-
     setOutAmount(out)
 
-    const priceDetails = [
+    const priceDetails: PriceContentDetail[] = [
       { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
         name: checkMobile() ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${
           tokenB.symbol
         }`
-      },
-      ...route?.marketInfos.slice(0, 3).map((market: any, num: number) => ({
+      }
+    ]
+
+    for (let i = 0; i < clamp(route?.marketInfos.length ?? 0, 0, 3); i++) {
+      const market = route.marketInfos[i]
+      const calculatedPriceDetails = getPriceDetails(out, market)
+      priceDetails.push({
         name: `Fees paid to ${market.amm.label || 'GooseFX'} LP`,
         value: `${nFormatter(
-          getPriceDetails(num).totalLp,
-          getPriceDetails(num).token?.decimals || tokenA.decimals
-        )} ${getPriceDetails(num).token?.symbol || tokenA.symbol} (${getPriceDetails(num).percent} %)`
-      })),
-
-      { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
-    ]
+          calculatedPriceDetails.totalLp,
+          calculatedPriceDetails.token?.decimals || tokenA.decimals
+        )} ${calculatedPriceDetails.token?.symbol || tokenA.symbol} (${calculatedPriceDetails.percent} %)`
+      })
+    }
+    priceDetails.push({
+      name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee',
+      value: '0.00005 SOL',
+      icon: 'info'
+    })
 
     setDetails(priceDetails)
 
     const percentageCheap = +(((route.outAmount - routes[0]?.outAmount) / route.outAmount) * 100).toFixed(5)
     setOutTokenPercentage(Math.abs(percentageCheap))
-    setCheap(percentageCheap < 0 ? false : true)
+    setCheap(percentageCheap >= 0)
   }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
-
+  const detailItems: ReactNode[] = useMemo(() => {
+    if (!details || details.length == 0) {
+      return []
+    }
+    return details.map((detail) => (
+      <AltTokenDetail key={detail.name + detail.value}>
+        <TokenTitleFees>
+          {detail.name}{' '}
+          {detail.icon && (
+            <Tooltip dark placement="top" color="#fff">
+              <span style={{ color: '#000' }}>
+                {'The amount of fee we take, in order to process your transaction.'}
+              </span>
+            </Tooltip>
+          )}
+        </TokenTitleFees>
+        <SmallTitle>{detail.value}</SmallTitle>
+        <SmallTitle>{detail.extraValue || null}</SmallTitle>
+      </AltTokenDetail>
+    ))
+  }, [details])
   return (
     <PRICE_WRAPPER>
       <PriceHeader>
@@ -868,138 +942,132 @@ const PriceContent: FC<{ clickNo: number; routes: any[] }> = ({ clickNo, routes 
           <strong>than CoinGecko</strong>
         </SmallTitleFlex>
       </TokenDetail>
-      <ListWrapper className={'no-scrollbar'}>
-        {details.map((detail, index) => (
-          <AltTokenDetail key={index}>
-            <TokenTitleFees>
-              {detail.name}{' '}
-              {detail.icon && (
-                <Tooltip dark placement="top" color="#fff">
-                  <span style={{ color: '#000' }}>
-                    {'The amount of fee we take, in order to process your transaction.'}
-                  </span>
-                </Tooltip>
-              )}
-            </TokenTitleFees>
-            <SmallTitle>{detail.value}</SmallTitle>
-            <SmallTitle>{detail.extraValue || null}</SmallTitle>
-          </AltTokenDetail>
-        ))}
-      </ListWrapper>
+      <ListWrapper className={'no-scrollbar'}>{detailItems}</ListWrapper>
     </PRICE_WRAPPER>
   )
 }
 
-const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void; routes: any[] }> = ({
-  setClickNo,
-  clickNo,
-  routes
-}) => {
+const AlternativesContent: FC = () => {
   const [less, setLess] = useState(false)
   const { mode } = useDarkMode()
-  const { tokenA, tokenB, outTokenAmount } = useSwap()
-  const [tokens, setTokens] = useState([])
-  const [details, setDetails] = useState([])
-
-  const swapAndFindBestPrice = (details) => {
-    const gfxindx = details.findIndex((deet) => deet.name.toLowerCase().includes('goosefx'))
-
-    if (
-      gfxindx >= 0 &&
-      details.length > 0 &&
-      details[gfxindx] &&
-      details[gfxindx]?.name.toLowerCase().includes('goosefx')
-    ) {
-      details[0].fastest = true
-      if (details[gfxindx].price < details[gfxindx + 1]?.price) {
-        details[gfxindx + 1].bestPrice = true
+  const { tokenMap } = useTokenRegistry()
+  const { tokenA, tokenB, outTokenAmount, chosenRoutes: routes, clickNo, setClickNo } = useSwap()
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1200 && window.innerWidth < 1300 && !less) {
+        setLess(true)
       }
-    } else {
-      details[0].bestPrice = true
     }
-    return details
-  }
-  useEffect(() => {
-    fetch(TOKEN_LIST_URL['mainnet-beta'])
-      .then((response) => response.json())
-      .then((result) => setTokens(result))
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
+  const { details, lessDetails }: { details: ReactNode[]; lessDetails: ReactNode[] } = useMemo(() => {
+    let goosefx = -1
+    const newDetails: {
+      name: any
+      value: string
+      price: number
+      outAmount: number
+      bestPrice?: boolean
+      fastest?: boolean
+    }[] = []
+    for (let i = 0; i < routes.length; i++) {
+      const market = routes[i].marketInfos
+      const name =
+        market.length === 1 ? market[0].amm.label : market[0].amm.label + ' x ' + market.slice(-1)[0].amm.label
 
-  useEffect(() => {
-    function getObjectDetails(no: number) {
-      const route = routes[no]
-      const market = route.marketInfos
-      let name =
-        market.length === 1
-          ? market[0].amm.label
-          : market[0].amm.label + ' x ' + route.marketInfos.slice(-1)[0].amm.label
-      name = name.length > 18 ? name.slice(0, 18) + '...' : name
-      const value =
-        route.marketInfos.length < 2
-          ? tokenA.symbol + ' • ' + tokenB.symbol
-          : tokenA.symbol +
-            ' • ' +
-            (tokens.find((i) => i.address === route.marketInfos[0].outputMint.toBase58())?.symbol || 'unknown') +
-            ' • ' +
-            tokenB.symbol
-      const out = +(route.outAmount / 10 ** tokenB.decimals).toFixed(6)
-      const outAmount = +(route.outAmount / 10 ** tokenB.decimals).toFixed(6)
-      return { name, value, price: out, outAmount }
-    }
-    let details = routes.map((_, k) => getObjectDetails(k))
-    if (details.length > 0) {
-      details = swapAndFindBestPrice(details)
-    }
-    setDetails(details)
-  }, [routes, tokenA.symbol, tokenB.symbol, tokens, outTokenAmount])
+      const price = +(routes[i].outAmount / 10 ** tokenB.decimals).toFixed(6)
 
+      newDetails.push({
+        name: name.length > 18 ? name.slice(0, 18) + '...' : name,
+        value:
+          market.length < 2
+            ? `${tokenA.symbol} • ${tokenB.symbol}`
+            : tokenA.symbol +
+              ' • ' +
+              (tokenMap.get(market[0].outputMint.toBase58())?.symbol || 'unknown') +
+              ' • ' +
+              tokenB.symbol,
+        price,
+        outAmount: price
+      })
+      if (goosefx == -1 && name.toLowerCase().includes('goosefx')) {
+        goosefx = i
+      }
+    }
+    // does intitial check before prepending gooesefx if possible and adds tags (best/fastest)
+    if (newDetails.length > 0) {
+      if (goosefx >= 0) {
+        newDetails[0].fastest = true
+        if (newDetails[goosefx].price < newDetails[goosefx + 1]?.price) {
+          newDetails[goosefx + 1].bestPrice = true
+        }
+      } else {
+        newDetails[0].bestPrice = true
+      }
+    }
+    const renderDetails = newDetails.map((detail, k) => (
+      <SWAP_ROUTE_ITEM
+        key={detail?.name + detail?.price}
+        $clicked={k === clickNo}
+        $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
+        onClick={() => setClickNo(k)}
+      >
+        <div className={'inner-container'}>
+          <TokenDetail className={'content'}>
+            <TokenTitle>{detail?.name}</TokenTitle>
+            <AltSmallTitle>{detail?.value}</AltSmallTitle>
+          </TokenDetail>
+          <TokenPrice className={'price'}>{detail?.price || null}</TokenPrice>
+          {detail.bestPrice && <ROUTE_TAG>Best Price</ROUTE_TAG>}
+          {detail.fastest && <ROUTE_TAG>Preferred</ROUTE_TAG>}
+        </div>
+      </SWAP_ROUTE_ITEM>
+    ))
+    return {
+      details: renderDetails,
+      lessDetails: renderDetails.slice(0, 2)
+    }
+  }, [routes, tokenA.symbol, tokenB.symbol, tokenMap, outTokenAmount, mode])
+  const toggleSetLess = useCallback(() => {
+    setLess((prev) => !prev)
+  }, [])
+  console.log(routes)
   return (
     <SWAP_ROUTES less={less || details.length < 4}>
       <div className="swap-content">
-        {routes?.length < 1
-          ? Array(2)
-              .fill(1)
-              .map((_, i) => (
-                <SkeletonCommon
-                  key={i}
-                  width={'342px'}
-                  height={checkMobile() ? '64px' : '75px'}
-                  borderRadius="10px"
-                  style={{
-                    marginRight: checkMobile() ? '0px' : '16px',
-                    marginBottom: checkMobile() ? '16px' : '0px',
-                    boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
-                  }}
-                />
-              ))
-          : (!less ? details : details.slice(0, 2)).map((detail, k) => (
-              <SWAP_ROUTE_ITEM
-                key={k}
-                $clicked={k === clickNo}
-                $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
-                onClick={() => setClickNo(k)}
-              >
-                <div className={'inner-container'}>
-                  <TokenDetail className={'content'}>
-                    <TokenTitle>{detail?.name}</TokenTitle>
-                    <AltSmallTitle>{detail?.value}</AltSmallTitle>
-                  </TokenDetail>
-                  <TokenPrice className={'price'}>{detail?.price || null}</TokenPrice>
-                  {detail.bestPrice && <ROUTE_TAG>Best Price</ROUTE_TAG>}
-                  {detail.fastest && <ROUTE_TAG>Preferred</ROUTE_TAG>}
-                </div>
-              </SWAP_ROUTE_ITEM>
-            ))}
+        {details?.length < 1 ? (
+          <>
+            <SkeletonCommon
+              width={'342px'}
+              height={checkMobile() ? '64px' : '75px'}
+              borderRadius="10px"
+              style={{
+                marginRight: checkMobile() ? '0px' : '16px',
+                marginBottom: checkMobile() ? '16px' : '0px',
+                boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
+              }}
+            />
+            <SkeletonCommon
+              width={'342px'}
+              height={checkMobile() ? '64px' : '75px'}
+              borderRadius="10px"
+              style={{
+                marginRight: checkMobile() ? '0px' : '16px',
+                marginBottom: checkMobile() ? '16px' : '0px',
+                boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
+              }}
+            />
+          </>
+        ) : less ? (
+          lessDetails
+        ) : (
+          details
+        )}
       </div>
-      {routes.length > 2 && (
+      {routes.length > 3 && (
         <div className="action">
-          <div
-            onClick={() => {
-              setLess((prev) => !prev)
-            }}
-          >
-            {less ? 'Show More' : 'Show Less'}
-          </div>
+          <div onClick={toggleSetLess}>{less ? 'Show More' : 'Show Less'}</div>
         </div>
       )}
     </SWAP_ROUTES>
@@ -1008,25 +1076,15 @@ const AlternativesContent: FC<{ clickNo: number; setClickNo: (n: number) => void
 
 export const SwapMain: FC = () => {
   const { isCollapsed } = useNavCollapse()
-  const desktop = window.innerWidth > 1300
-  const {
-    tokenA,
-    tokenB,
-    inTokenAmount,
-    outTokenAmount,
-    gofxOutAmount,
-    priceImpact,
-    chosenRoutes,
-    setRoutes,
-    setClickNo,
-    clickNo,
-    network
-  } = useSwap()
-  const { slippage } = useSlippageConfig()
-  const [allowed, setallowed] = useState(false)
-  const [inAmountTotal, setInAmountTotal] = useState(0)
-  const [refreshed, setRefreshed] = useState(false)
 
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount, gofxOutAmount, priceImpact, setRoutes, revertRoute } =
+    useSwap()
+  const { network } = useConnectionConfig()
+  const { slippage } = useSlippageConfig()
+  const [allowed, setallowed] = useState<boolean>(false)
+  const [inAmountTotal, setInAmountTotal] = useState<number>(0)
+  const [refreshed, setRefreshed] = useState<boolean>(false)
+  const [desktop, setDesktop] = useState<boolean>(window.innerWidth > 1200)
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -1035,82 +1093,66 @@ export const SwapMain: FC = () => {
     debounceTime: 2000 // debounce ms time before refresh
   })
 
-  const marketInfoFormat = (mkt: any): any => ({
-    ...mkt,
-    inAmount: JSBI.toNumber(mkt.inAmount),
-    outAmount: JSBI.toNumber(mkt.outAmount),
-    lpFee: {
-      ...mkt.lpFee,
-      amount: JSBI.toNumber(mkt.lpFee.amount)
-    },
-    platformFee: {
-      ...mkt.platformFee,
-      amount: JSBI.toNumber(mkt.platformFee.amount)
-    }
-  })
-
   useEffect(() => {
-    if (network === 'devnet') {
-      devnetRoutes()
-    } else {
-      mainnetRoutes()
+    const handleResize = () => {
+      // preventing duplicating remounts on resize
+      if (window.innerWidth > 1280 && !desktop) {
+        setDesktop(true)
+      } else if (window.innerWidth <= 1280 && desktop) {
+        setDesktop(false)
+      }
     }
-  }, [tokenA?.symbol, tokenB?.symbol, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network])
+    window.addEventListener('resize', handleResize)
 
-  const devnetRoutes = () => {
-    setRoutes([])
+    return () => window.removeEventListener('resize', handleResize)
+  }, [desktop])
+  useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
-    setInAmountTotal(Math.round(inAmountTotal))
+    const roundedTotal = Math.round(inAmountTotal)
+    setInAmountTotal(roundedTotal)
+    const newRoutes = []
+    if (network !== 'devnet') {
+      const supported =
+        (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenA?.symbol)) ||
+        (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenB?.symbol))
+      if (tokenA && tokenB) {
+        setallowed(true)
+      } else if (!routes || routes.length == 0) {
+        return
+      }
 
-    if (!tokenA || !tokenB || inAmountTotal <= 0) return
-    const GoFxRoute = {
-      marketInfos: [
-        {
-          outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
-          lpFee: { amount: 0.001 * inAmountTotal },
-
-          amm: {
-            label: 'GooseFX'
-          }
+      for (let i = 0; i < routes?.length; i++) {
+        const route = revertRoute(routes[i], true)
+        if (route.inAmount !== roundedTotal) {
+          continue
         }
-      ],
-      outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
-      outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-      priceImpactPct: priceImpact || 0
-    }
-    setRoutes([GoFxRoute])
-  }
+        newRoutes.push(route)
+      }
 
-  const mainnetRoutes = () => {
-    setRoutes([])
-    const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
-    setInAmountTotal(Math.round(inAmountTotal))
+      if (newRoutes.length > 0) {
+        // setting length cuts off unneeded routes - instead of using .slice to be conservative of ops/mem
+        newRoutes.length = clamp(newRoutes.length, 0, supported && tokenB ? 2 : 3)
+      }
 
-    const supported =
-      (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenA?.symbol)) ||
-      (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.includes(tokenB?.symbol))
+      if (tokenB && newRoutes.length > 0 && supported) {
+        newRoutes.unshift({
+          marketInfos: [
+            {
+              outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+              lpFee: { amount: 0.001 * inAmountTotal },
 
-    if (tokenA && tokenB) {
-      setallowed(true)
-    }
-
-    if (!routes && (!tokenA || !tokenB)) return
-    const filteredRoutes =
-      routes
-        ?.map((route) => ({
-          ...route,
-          inAmount: JSBI.toNumber(route.inAmount),
-          outAmount: JSBI.toNumber(route.outAmount),
-          amount: JSBI.toNumber(route.amount),
-          outAmountWithSlippage: JSBI.toNumber(route.otherAmountThreshold),
-          marketInfos: route.marketInfos.map((mkt) => marketInfoFormat(mkt))
-        }))
-        ?.filter((i) => i.inAmount === Math.round(inAmountTotal)) || []
-
-    const shortRoutes: any[] = supported ? filteredRoutes?.slice(0, 3) : filteredRoutes?.slice(0, 4)
-
-    if (tokenB && shortRoutes.length > 0) {
-      const GoFxRoute = {
+              amm: {
+                label: 'GooseFX'
+              }
+            }
+          ],
+          outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+          outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+          priceImpactPct: priceImpact || 0
+        })
+      }
+    } else if (tokenA && tokenB && inAmountTotal > 0) {
+      newRoutes.push({
         marketInfos: [
           {
             outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -1124,26 +1166,22 @@ export const SwapMain: FC = () => {
         outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
         outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
         priceImpactPct: priceImpact || 0
-      }
-
-      if (supported) {
-        shortRoutes.splice(0, 0, GoFxRoute)
-      }
+      })
     }
+    if (JSON.stringify(routes) != JSON.stringify(newRoutes)) {
+      setRoutes(newRoutes)
+    }
+  }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network, priceImpact])
 
-    setRoutes(shortRoutes)
-  }
-
-  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean; navCollapsed: boolean }> = ({
-    active,
-    isMobile,
-    navCollapsed
-  }) => (
-    <RefreshAlert $active={active} $isMobile={isMobile} $navCollapsed={navCollapsed}>
-      <div>
-        Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
-      </div>
-    </RefreshAlert>
+  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean; navCollapsed: boolean }> = useCallback(
+    ({ active, isMobile, navCollapsed }) => (
+      <RefreshAlert $active={active} $isMobile={isMobile} $navCollapsed={navCollapsed}>
+        <div>
+          Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
+        </div>
+      </RefreshAlert>
+    ),
+    []
   )
 
   if (checkMobile()) {
@@ -1151,14 +1189,8 @@ export const SwapMain: FC = () => {
       <WRAPPER>
         <RefreshedAnimation active={refreshed} isMobile={true} navCollapsed={isCollapsed} />
         <INNERWRAPPER $desktop={false} $navCollapsed={false}>
-          <SwapContent
-            exchange={exchange}
-            routes={chosenRoutes}
-            clickNo={clickNo}
-            setRefreshed={setRefreshed}
-            refreshed={refreshed}
-          />
-          {allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+          <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
+          {allowed && <PriceContent />}
           {allowed && <TokenContent />}
         </INNERWRAPPER>
       </WRAPPER>
@@ -1169,18 +1201,10 @@ export const SwapMain: FC = () => {
         <RefreshedAnimation active={refreshed} isMobile={false} navCollapsed={isCollapsed} />
         <INNERWRAPPER $desktop={desktop && allowed} $navCollapsed={isCollapsed}>
           {desktop && allowed && <TokenContent />}
-          <SwapContent
-            exchange={exchange}
-            routes={chosenRoutes}
-            clickNo={clickNo}
-            setRefreshed={setRefreshed}
-            refreshed={refreshed}
-          />
-          {desktop && allowed && <PriceContent routes={chosenRoutes} clickNo={clickNo} />}
+          <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
+          {desktop && allowed && <PriceContent />}
         </INNERWRAPPER>
-        {allowed && inTokenAmount > 0 && (
-          <AlternativesContent routes={chosenRoutes} clickNo={clickNo} setClickNo={setClickNo} />
-        )}
+        {allowed && inTokenAmount > 0 && <AlternativesContent />}
       </WRAPPER>
     )
   }
@@ -1191,25 +1215,24 @@ interface RouteParams {
 }
 
 const SwapMainProvider: FC = () => {
-  const { connection, setTokenA, setTokenB, network } = useSwap()
+  const { setTokenA, setTokenB } = useSwap()
+  const { network, connection } = useConnectionConfig()
   const { wallet } = useWallet()
-  const { tokens } = useTokenRegistry()
+  const { tokenMap } = useTokenRegistry()
   const { tradePair } = useParams<RouteParams>()
 
   useEffect(() => {
-    const token1 = tradePair
-      ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[0].toLowerCase())
-      : null
-    const token2 = tradePair
-      ? tokens?.find((i) => i.symbol.toLowerCase() === tradePair?.split('-')[1].toLowerCase())
-      : null
-    const usd = tokens?.find((i) => i.symbol === 'USDC')
-    const gfx = tokens?.find((i) => i.symbol === 'GOFX')
+    const [tradePairA, tradePairB] = (tradePair ?? '-').split('-')
+    //constant fetch time as opposed to n * 4 ops: token1 + token2 + usd + gofx = n*4 ops
+    const token1 = tokenMap.get(tradePairA)
+    const token2 = tokenMap.get(tradePairB)
+    const usd = tokenMap.get('USDC')
+    const sol = tokenMap.get('SOL')
 
     if (token1) {
       setTokenA({ address: token1.address, decimals: token1.decimals, symbol: token1.symbol, name: token1.name })
-    } else if (gfx) {
-      setTokenA({ address: gfx.address, decimals: gfx.decimals, symbol: gfx.symbol, name: gfx.name })
+    } else if (sol) {
+      setTokenA({ address: sol.address, decimals: sol.decimals, symbol: sol.symbol, name: sol.name })
     }
 
     if (token2) {
@@ -1217,8 +1240,7 @@ const SwapMainProvider: FC = () => {
     } else if (usd) {
       setTokenB({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
     }
-  }, [setTokenA, setTokenB, tokens, tradePair])
-
+  }, [setTokenA, setTokenB, tokenMap, tradePair])
   return (
     <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.adapter?.publicKey}>
       <SwapMain />

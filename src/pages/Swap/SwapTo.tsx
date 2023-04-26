@@ -52,8 +52,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
   const { getUIAmountString } = useAccounts()
   const { slippage } = useSlippageConfig()
   const { wallet } = useWallet()
-  const { outTokenAmount, setTokenB, tokenA, tokenB, connection } = useSwap()
-
+  const { outTokenAmount, tokenB } = useSwap()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const balance = useMemo(() => {
@@ -84,13 +83,7 @@ export const SwapTo: FC<{ height: string }> = ({ height }) => {
         $value={undefined}
         $down={true}
       >
-        <Selector
-          height={height}
-          otherToken={tokenA}
-          setToken={setTokenB}
-          token={tokenB}
-          connection={connection}
-        />
+        <Selector height={height} isReverse />
         <AMOUNT>
           <span>{outTokenAmount || 0}</span>
         </AMOUNT>
