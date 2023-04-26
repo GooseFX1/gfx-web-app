@@ -287,10 +287,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .offerBtn {
       ${tw`w-[115px] ml-2 text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]
-       flex items-center justify-center cursor-pointer`}
-    }
-    img {
-      ${tw`h-10 w-10 ml-3 cursor-pointer`}
+       flex items-center pl-3 cursor-pointer`}
     }
 
     .filtersViewCategory {

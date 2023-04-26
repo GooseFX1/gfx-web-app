@@ -253,7 +253,7 @@ export const HoverOnNFT: FC<{
       <span className="hoverButtons">
         {buttonType === 'Sell' || buttonType === 'Modify' ? (
           <Button
-            cssStyle={tw`bg-[#f06565] h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            cssStyle={tw`bg-red-1 h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
             {buttonType}

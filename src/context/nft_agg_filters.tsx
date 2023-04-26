@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useWallet } from '@solana/wallet-adapter-react'
 import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction, Dispatch } from 'react'
-import { NFT_COL_FILTER_OPTIONS } from '../api/NFTs'
+import { NFT_COL_FILTER_OPTIONS, NFT_PROFILE_OPTIONS } from '../api/NFTs'
 
 interface INFTAggConfig {
   sortFilter: string
@@ -14,15 +13,21 @@ interface INFTAggConfig {
   setTimelineDisplay: any
   searchInsideCollection?: string | undefined
   setSearchInsideCollection?: Dispatch<SetStateAction<string | undefined>>
+  searchInsideProfile?: string | undefined
+  setSearchInsideProfile?: Dispatch<SetStateAction<string | undefined>>
+  profileNFTOptions?: string
+  setProfileNFTOptions?: Dispatch<SetStateAction<string>>
 }
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)
 export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sortFilter, setSortFilter] = useState<string | null>(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
   const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('DESC')
+  const [profileNFTOptions, setProfileNFTOptions] = useState<string>(NFT_PROFILE_OPTIONS.ALL)
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [timelineDisplay, setTimelineDisplay] = useState('24h')
   const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)
+  const [searchInsideProfile, setSearchInsideProfile] = useState<string | undefined>(undefined)
 
   // this is for advace filters only
 
@@ -38,7 +43,11 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
         timelineDisplay: timelineDisplay,
         setTimelineDisplay: setTimelineDisplay,
         searchInsideCollection: searchInsideCollection,
-        setSearchInsideCollection: setSearchInsideCollection
+        setSearchInsideCollection: setSearchInsideCollection,
+        searchInsideProfile: searchInsideProfile,
+        setSearchInsideProfile: setSearchInsideProfile,
+        profileNFTOptions: profileNFTOptions,
+        setProfileNFTOptions: setProfileNFTOptions
       }}
     >
       {children}
@@ -62,7 +71,11 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     timelineDisplay,
     setTimelineDisplay,
     searchInsideCollection,
-    setSearchInsideCollection
+    setSearchInsideCollection,
+    searchInsideProfile,
+    setSearchInsideProfile,
+    profileNFTOptions,
+    setProfileNFTOptions
   } = context
   return {
     sortFilter,
@@ -74,6 +87,10 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     timelineDisplay,
     setTimelineDisplay,
     searchInsideCollection,
-    setSearchInsideCollection
+    setSearchInsideCollection,
+    searchInsideProfile,
+    setSearchInsideProfile,
+    profileNFTOptions,
+    setProfileNFTOptions
   }
 }

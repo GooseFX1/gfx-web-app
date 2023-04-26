@@ -1,6 +1,7 @@
 import { Button } from 'antd'
 import { FC, useMemo } from 'react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNFTCollections } from '../../../../context/nft_collections'
 import { useNFTDetails } from '../../../../context/nft_details'
 import { checkMobile } from '../../../../utils'
@@ -8,6 +9,19 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { AppraisalValue } from '../../../../utils/GenericDegsin'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import {
+  CancelInstructionAccounts,
+  CancelInstructionArgs,
+  createCancelInstruction
+} from '../../../../web3/auction-house/generated/instructions'
+import { AH_FEE_ACCT, AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY, TREASURY_MINT } from '../../../../web3/ids'
+import { useConnectionConfig } from '../../../../context'
+import { bnTo8, confirmTransaction } from '../../../../web3/utils'
+import BN from 'bn.js'
+import { tokenSize, tradeStatePDA } from '../../actions'
+import { successfulCancelBidMessage, TransactionSignatureErrorNotify } from './AggNotifications'
 
 const REVIEW_MODAL = styled.div`
   ${tw``}
@@ -21,13 +35,83 @@ export const ReviewBidModal: FC<{
 }> = ({ curBid, updateBidValue, handleSetCurBid, selectedBtn, setReviewClicked }) => {
   const { singleCollection } = useNFTCollections()
   const { general, ask, bids } = useNFTDetails()
+  const { wallet, sendTransaction } = useWallet()
+  const { connection } = useConnectionConfig()
+  const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+
   const buyerPrice = parseFloat(ask?.buyer_price ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER
   const highestBid: number = useMemo(
     () =>
       bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : 0,
     [bids]
   )
+  const yourPreviousBid = useMemo(
+    () => (bids.length ? bids.filter((b) => b.wallet_key === publicKey.toString()) : null),
+    [bids, wallet?.adapter, wallet?.adapter?.publicKey]
+  )
+  const derivePDAsForInstruction = async () => {
+    const buyerPriceInLamports = yourPreviousBid.length ? parseFloat(yourPreviousBid[0].buyer_price) : null
+    const buyerPrice: BN = new BN(buyerPriceInLamports)
 
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      yourPreviousBid[0].auction_house_key ? yourPreviousBid[0].auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      yourPreviousBid[0].auction_house_treasury_mint_key
+        ? yourPreviousBid[0]?.auction_house_treasury_mint_key
+        : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
+
+    if (!buyerTradeState) {
+      return {
+        buyerTradeState: undefined,
+        buyerPrice: undefined
+      }
+    }
+
+    return {
+      buyerTradeState,
+      buyerPrice
+    }
+  }
+
+  const callCancelInstruction = async () => {
+    const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
+
+    const cancelInstructionArgs: CancelInstructionArgs = {
+      buyerPrice: buyerPrice,
+      tokenSize: tokenSize
+    }
+
+    const cancelInstructionAccounts: CancelInstructionAccounts = {
+      wallet: publicKey,
+      tokenAccount: new PublicKey(general.token_account),
+      tokenMint: new PublicKey(general.mint_address),
+      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      auctionHouse: new PublicKey(AUCTION_HOUSE),
+      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      tradeState: buyerTradeState[0]
+    }
+
+    const cancelIX: TransactionInstruction = await createCancelInstruction(
+      cancelInstructionAccounts,
+      cancelInstructionArgs
+    )
+    try {
+      const transaction = new Transaction().add(cancelIX)
+      const signature = await sendTransaction(transaction, connection)
+      console.log(signature)
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      console.log(confirm)
+      if (confirm?.value?.err === null) {
+        successfulCancelBidMessage(signature, general.nft_name)
+      }
+    } catch (err) {
+      TransactionSignatureErrorNotify(general.nft_name)
+    }
+  }
   return (
     <REVIEW_MODAL>
       {checkMobile() && <img className="nftImgBid" src={general.image_url} alt="" />}
@@ -110,9 +194,26 @@ export const ReviewBidModal: FC<{
       </div>
 
       <div className="buyBtnContainer">
+        {/* {yourPreviousBid ? (
+          <div tw=" flex !bottom-0">
+            <Button className="semiBuyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
+              Review Offer
+            </Button>
+            <Button
+              className="semiSellButton"
+              tw="!mt[-10px]"
+              disabled={curBid <= 0}
+              onClick={callCancelInstruction}
+            >
+              Cancel bid
+            </Button>
+          </div>
+        ) : */}
+        (
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
+        )
       </div>
     </REVIEW_MODAL>
   )

@@ -34,7 +34,7 @@ export interface IActivity {
 
 const ACTIVITY_KIND = {
   EXECUTED_SALE: 'Sell',
-  BUY: 'Buy',
+  BUY: 'Bid',
   BID: 'Bid',
   SELL: 'Sell',
   CANCEL: 'Cancel'
@@ -308,7 +308,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <>
             <a
               href={`https://solscan.io/account/${activity?.buyer_wallet}`}
-              tw="text-white font-semibold underline cursor-pointer"
+              tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"
             >
@@ -324,7 +324,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <>
             <a
               href={`https://solscan.io/account/${activity?.seller_wallet}`}
-              tw="text-white font-semibold underline cursor-pointer"
+              tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"
             >

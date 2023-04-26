@@ -63,11 +63,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
         component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
       },
-      // {
-      //   order: '2',
-      //   name: `Created (${createdItems ? createdItems.length : 0})`,
-      //   component: <NFTDisplay parsedAccounts={createdItems} type={'created'} />
-      // },
       {
         order: 1,
         name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,

@@ -170,5 +170,6 @@ export const getDateInISOFormat = (): string => {
 
   return yyyy + '-' + mm + '-' + dd
 }
+export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`

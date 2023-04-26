@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
-import { SuccessfulListingMsg } from '../../../../components'
+import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../../components'
 import { INFTMetadata } from '../../../../types/nft_details'
 import { notify } from '../../../../utils'
 
@@ -67,6 +67,19 @@ export const couldNotDeriveValueForBuyInstruction = (): any =>
       </MESSAGE>
     )
   })
+
+export const TransactionSignatureErrorNotify = (nftName: string): any => {
+  notify({
+    type: 'error',
+    message: (
+      <TransactionErrorMsg
+        title={`Transaction Signature Error`}
+        itemName={nftName}
+        supportText={`User exited signing transaction to list or modify price`}
+      />
+    )
+  })
+}
 export const couldNotFetchUserData = (): any =>
   notify({
     type: 'error',
@@ -76,6 +89,15 @@ export const couldNotFetchUserData = (): any =>
       </MESSAGE>
     )
   })
+export const successfulCancelBidMessage = (signature: string, nftMetadata: string): any => ({
+  message: (
+    <SuccessfulListingMsg
+      title={`Successfully Canceled bid on ${nftMetadata}!`}
+      itemName={nftMetadata}
+      tx_url={`https://solscan.io/tx/${signature}`}
+    />
+  )
+})
 export const successfulListingMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
   message: (
     <SuccessfulListingMsg

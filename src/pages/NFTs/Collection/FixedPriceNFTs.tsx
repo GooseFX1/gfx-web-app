@@ -14,7 +14,8 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag, sortingAsc, setSellNFT, sellNFTClicked } = useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, setNftInBag, sortingAsc, setSortAsc, setSellNFT, sellNFTClicked } =
+    useNFTAggregator()
   const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection, setSingleCollection } =
     useNFTCollections()
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
@@ -30,6 +31,9 @@ export const FixedPriceNFTs = (): ReactElement => {
 
   useEffect(() => {
     setFixedPriceArr([])
+    return () => {
+      setSortAsc(false)
+    }
   }, [refreshClicked])
 
   const sortAndUpdateState = (sortArr: BaseNFT[]) => {
@@ -53,7 +57,7 @@ export const FixedPriceNFTs = (): ReactElement => {
     }
     if (searchInsideCollection && searchInsideCollection.length) {
       const filteredData = fixedPriceArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.includes(searchInsideCollection)
+        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
       )
       setFilteredFixPriced(sortAndUpdateState(filteredData))
     }

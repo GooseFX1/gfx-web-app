@@ -90,7 +90,18 @@ const ICON_WRAPPER_TD = styled.td`
 `
 
 export const Loader: FC = () => (
-  <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
+  <Skeleton.Button
+    active
+    size="small"
+    style={{ display: 'flex', height: '15px', width: '25px', borderRadius: '5px' }}
+  />
+)
+export const LoaderForImg: FC = () => (
+  <Skeleton.Button
+    active
+    size="small"
+    style={{ height: '47px', marginRight: '10px', width: '40px', borderRadius: '100%' }}
+  />
 )
 
 export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {

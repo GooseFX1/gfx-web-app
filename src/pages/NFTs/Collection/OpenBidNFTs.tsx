@@ -31,7 +31,7 @@ export const OpenBidNFTs = (): ReactElement => {
     }
     if (searchInsideCollection && searchInsideCollection.length) {
       const filteredData = openBidArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.includes(searchInsideCollection)
+        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
       )
       setFilteredOpenBid(filteredData)
     }

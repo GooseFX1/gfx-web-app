@@ -1,5 +1,11 @@
 export const NFT_API_BASE = 'nest-api'
 
+export enum NFT_PROFILE_OPTIONS {
+  ALL = 'All',
+  OFFERS = 'Offers',
+  ON_SALE = 'On_sale'
+}
+
 export enum NFT_COL_FILTER_OPTIONS {
   COLLECTION_NAME = 'CollectionName',
   FLOOR_PRICE = 'FloorPrice',
