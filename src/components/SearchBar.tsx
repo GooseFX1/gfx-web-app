@@ -1,7 +1,8 @@
-import React, { FC } from 'react'
+import React, { useCallback, FC } from 'react'
 import styled from 'styled-components'
 import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
+import debounce from 'lodash.debounce'
 import tw from 'twin.macro'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
@@ -51,13 +52,16 @@ width: 50%;
 
 export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, ...rest }) => {
   const { mode } = useDarkMode()
+
+  const handleInputValue = useCallback((e) => debouncer(e), [])
+
+  const debouncer = debounce((e) => {
+    setSearchFilter(e.target.value)
+  }, 500)
+
   return (
     <SEARCH_BAR_WRAPPER {...rest}>
-      <input
-        placeholder={placeholder || 'Search by nft name'}
-        value={filter}
-        onChange={(e) => setSearchFilter(e.target.value)}
-      />
+      <input placeholder={placeholder || 'Search by nft name'} value={filter} onChange={handleInputValue} />
       <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search_${mode}.svg`} />
     </SEARCH_BAR_WRAPPER>
   )
