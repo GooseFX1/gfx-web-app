@@ -22,6 +22,7 @@ import { Arrow } from '../../../components/common/Arrow'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 const STYLE = styled.div``
 
@@ -186,12 +187,15 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
 
 const getDisplayPrice = (currencyView: string, solPrice: number, item: any, timelineDisplay: string) => {
   const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
-  let floorPrice = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
-  floorPrice = floorPrice ? parseFloat(floorPrice.toFixed(2)) : 0
+  let floorPrice =
+    currencyView === 'USDC' ? truncateBigNumber(solPrice * (price > 0 ? price : 0)) : truncateBigNumber(price)
+  floorPrice = floorPrice ? floorPrice : 0
 
   let volume =
-    currencyView === 'USDC' ? item[volumeDict[timelineDisplay]] * solPrice : item[volumeDict[timelineDisplay]]
-  volume = volume > 0 ? parseFloat(volume.toFixed(2)) : 0
+    currencyView === 'USDC'
+      ? truncateBigNumber(item[volumeDict[timelineDisplay]] * solPrice)
+      : truncateBigNumber(item[volumeDict[timelineDisplay]])
+  volume = volume ? volume : 0
   return { floorPrice, volume }
 }
 const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {

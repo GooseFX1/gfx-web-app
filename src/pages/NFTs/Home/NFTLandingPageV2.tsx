@@ -38,6 +38,7 @@ import { fetchGlobalSearchNFT, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const CURRENCY_SWITCH = styled.div<{ $currency }>`
   .ant-switch {
@@ -274,12 +275,13 @@ const FiltersContainer = () => {
   const [menuPopup, setMenuPopup] = useState<boolean>(false)
   const history = useHistory()
   const { setCurrency } = useNFTAggregator()
-
+  const { wallet } = useWallet()
+  const pubKey = wallet?.adapter ? wallet?.adapter?.publicKey?.toString() : null
   const { mode } = useDarkMode()
   const { setTimelineDisplay, setSortFilter, setSortType, sortType, timelineDisplay } = useNFTAggregatorFilters()
 
   const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
-  const goProfile = () => sessionUser && history.push(`/nfts/profile/${sessionUser.pubkey}`)
+  const goProfile = () => sessionUser && history.push(`/nfts/profile/${pubKey}`)
 
   useEffect(() => {
     if (timelineDisplay === '7d' && sortType === 'DESC') {
@@ -321,7 +323,7 @@ const FiltersContainer = () => {
     return (
       <div>
         <SearchNFTMobile searchPopup={searchPopup} setSearchPopup={setSearchPopup} />
-        <MenuNFTPopup menuPopup={menuPopup} setMenuPopup={setMenuPopup} />
+        {/* <MenuNFTPopup menuPopup={menuPopup} setMenuPopup={setMenuPopup} /> */}
         <FILTERS_CONTAINER>
           <div className="flexContainer">
             <div className="iconImg">
@@ -331,9 +333,9 @@ const FiltersContainer = () => {
                 src={`/img/assets/search_${mode}.svg`}
               />
             </div>
-            <div className="iconImg" onClick={() => setMenuPopup(true)}>
+            {/* <div className="iconImg" onClick={() => setMenuPopup(true)}>
               <img src={`/img/assets/Aggregator/menu.svg`} />
-            </div>
+            </div> */}
             {sessionUser && (
               <AVATAR_NFT
                 fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}

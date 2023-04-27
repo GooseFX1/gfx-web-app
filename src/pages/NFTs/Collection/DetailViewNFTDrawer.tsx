@@ -19,6 +19,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 
+const DETAIL_VIEW = styled.div`
+  ${({ theme }) => theme.customScrollBar('0px')};
+`
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[390px]`}
   .generalItemValue {
@@ -39,9 +42,8 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         .ant-tabs-nav-wrap {
           ${tw`bg-[#3c3c3c]`}
-          border-radius: 15px 15px 15px 15px;
-          width: 100%;
-          .ant-tabs-nav-list {
+          border-radius: 15px 15px 0px 0px;
+           .ant-tabs-nav-list {
             ${tw`flex rounded-[40px]`}
             justify-content: space-around;
             width: 100% !important;
@@ -181,7 +183,7 @@ const ImageViewer = (): ReactElement => {
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-      <div tw="h-[calc(100vh - 6px)] overflow-y-scroll">
+      <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <img
           tw="w-[390px] h-[390px] mt-[30px] sm:h-[100%] sm:w-[100%] 
             rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
@@ -233,9 +235,11 @@ const ImageViewer = (): ReactElement => {
             label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
           />
         </div>
-        <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
-        <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
-      </div>
+        {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
+        <div tw="mt-8">
+          <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+      </DETAIL_VIEW>
     </div>
   ) : (
     <></>

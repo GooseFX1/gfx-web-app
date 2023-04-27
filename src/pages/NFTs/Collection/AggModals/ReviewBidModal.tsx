@@ -209,11 +209,10 @@ export const ReviewBidModal: FC<{
             </Button>
           </div>
         ) : */}
-        (
+
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
           Review Offer
         </Button>
-        )
       </div>
     </REVIEW_MODAL>
   )

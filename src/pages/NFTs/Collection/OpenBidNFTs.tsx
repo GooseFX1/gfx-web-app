@@ -25,6 +25,7 @@ export const OpenBidNFTs = (): ReactElement => {
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [openBidLoading, setOpenBidLoading] = useState<boolean>(false)
   const observer = useRef<any>()
+
   useEffect(() => {
     if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
       setFilteredOpenBid(openBidArr)
@@ -42,7 +43,7 @@ export const OpenBidNFTs = (): ReactElement => {
       if (openBidLoading) return
       if (observer.current) observer?.current.disconnect()
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !stopCalling) {
+        if (entries[0].isIntersecting && !stopCalling && !searchInsideCollection) {
           debounce(
             setPageNumber((prev) => prev + 1),
             100

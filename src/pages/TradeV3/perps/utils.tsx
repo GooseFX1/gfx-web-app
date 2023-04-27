@@ -554,7 +554,8 @@ export const truncateBigNumber = (bigNumber: number) => {
     else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
     return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
   }
-  return Number(bigNumber.toFixed(3))
+  if (!bigNumber) return 0
+  return Number(bigNumber.toFixed(2))
 }
 
 export const getProfitAmount = (side: OrderSide, price: string | number, percentage: number) => {

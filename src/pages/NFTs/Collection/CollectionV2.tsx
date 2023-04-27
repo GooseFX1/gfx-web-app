@@ -42,6 +42,7 @@ import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { ArrowClicker, ArrowDropdown, SearchBar } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -221,7 +222,10 @@ const NFTStatsContainer = () => {
             )}
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {singleCollection ? formatSOLDisplay(singleCollection[0].daily_volume) : 0} SOL
+                {singleCollection
+                  ? truncateBigNumber(parseFloat(formatSOLDisplay(singleCollection[0].daily_volume)))
+                  : 0}{' '}
+                SOL
               </div>
               <div className="subTitleText"> 24h volume </div>
             </div>
@@ -286,9 +290,10 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
       </div>
 
       <div className="filtersViewCategory">
+        {checkMobile() && <div className="activeItem" />}
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
           Listed ({fixedPriceWithinCollection && fixedPriceWithinCollection.total_count})
-          <div className="activeItem" />
+          {!checkMobile() && <div className="activeItem" />}
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
           All items ({singleCollection ? singleCollection[0].nfts_count : 0})

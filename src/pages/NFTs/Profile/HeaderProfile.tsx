@@ -95,7 +95,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   }, [])
 
   useEffect(() => {
-    console.log(isSessionUser, params.userAddress)
     if (
       !isSessionUser &&
       params.userAddress &&

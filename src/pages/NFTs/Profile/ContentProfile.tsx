@@ -20,7 +20,7 @@ type Props = {
 }
 
 const WRAPPER = styled.div<{ background?: string }>`
-  ${tw`flex`}
+  ${tw`flex h-[70vh]`}
 `
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
