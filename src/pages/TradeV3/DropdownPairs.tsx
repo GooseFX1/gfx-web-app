@@ -189,10 +189,8 @@ const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setSh
 
 const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
   const { tokenInfo } = usePriceFeed()
-  const { formatPair, getAskSymbolFromPair } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const [hoverBorder, setHoverBorder] = useState<boolean>(false)
-
-  const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
 
@@ -202,11 +200,11 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
-    <GRADIENT_BORDER $hoverBorder={hoverBorder}>
+    <GRADIENT_BORDER $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}>
       <DROPDOWN_PAIR_DIV
         onMouseEnter={() => setHoverBorder(true)}
         onMouseLeave={() => setHoverBorder(false)}
-        $hoverBorder={hoverBorder}
+        $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}
       >
         <img className="asset-icon" src={assetIcon} alt="" />
         <div className="spacing">{pair}</div>
