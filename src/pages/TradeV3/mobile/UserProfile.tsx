@@ -10,6 +10,8 @@ import { CollateralPanelMobi } from './CollateralPanelMobi'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
 import { DepositWithdraw } from '../perps/DepositWithdraw'
 import { ClosePosition } from '../ClosePosition'
+import { RotatingLoader } from '../../../components/RotatingLoader'
+import { PerpsEndModal } from '../PerpsEndModal'
 
 const WRAPPER = styled.div`
   .no-positions-found {
@@ -35,6 +37,22 @@ const SETTING_MODAL = styled(PopupCustom)`
     .ant-modal-close {
       ${tw`top-[30px]`}
     }
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
+`
+
+const END_MODAL = styled(PopupCustom)`
+  ${tw`!h-[384px] !w-[353px] rounded-bigger`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
   }
   .ant-modal-body {
     ${tw`py-0 px-[25px]`}
@@ -203,12 +221,23 @@ const FIXED_BOTTOM = styled.div`
 const OpenOrders: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, orders } = useTradeHistory()
-  const { perpsOpenOrders, orderBook } = useOrderBook()
+  const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const openOrderUI = isSpot ? orders : perpsOpenOrders
+
+  const cancelOrderFn = async (orderId: string) => {
+    setLoading(true)
+    const res = await perpsCancelOrder(orderId)
+    setLoading(false)
+    const arr = removedOrderIds
+    if (res && res.txid) {
+      arr.push(orderId)
+      setremoved(arr)
+    }
+  }
 
   const content = useMemo(
     () => (
@@ -218,11 +247,19 @@ const OpenOrders: FC = () => {
           openOrderUI.map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
               <div key={index} className="wrapper">
-                <div tw="mb-3.5 mt-2.5">
+                <div tw="mb-3.5 mt-2.5 flex">
                   <span tw="text-regular font-semibold dark:text-grey-5 text-black-4 mr-2.5">SOL/PERP</span>
                   <span tw="text-regular font-semibold" className={order.order.side}>
                     {order.order.side}
                   </span>
+                  <button
+                    tw="ml-auto mr-3.5 text-white font-semibold bg-red-2 rounded-tiny h-[30px] w-[88px] border-none"
+                    onClick={() => {
+                      cancelOrderFn(order.order.orderId)
+                    }}
+                  >
+                    {loading ? <RotatingLoader text="" textSize={8} iconSize={16} /> : 'Cancel'}
+                  </button>
                 </div>
                 <div tw="flex flex-row justify-between">
                   <div tw="flex flex-col">
@@ -332,6 +369,7 @@ const TradeHistoryComponent: FC = () => {
 }
 
 const Positions = () => {
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { traderInfo } = useTraderConfig()
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
@@ -346,11 +384,26 @@ const Positions = () => {
     return Number(traderInfo.pnl)
   }, [traderInfo])
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
-  const [closePositionModal, setClosePositionModal] = useState<boolean>(true)
+  const [closePositionModal, setClosePositionModal] = useState<boolean>(false)
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
     [perpsPrice, traderInfo.averagePosition.quantity]
   )
+  const [summaryData, setSummaryData] = useState<{
+    profit: boolean
+    entryPrice: string
+    exitPrice: string
+    leverage: string
+    pnl: string
+    percentageChange: string
+  }>({
+    profit: true,
+    entryPrice: '',
+    exitPrice: '',
+    leverage: '',
+    pnl: '',
+    percentageChange: ''
+  })
 
   return traderInfo.averagePosition.side && Number(roundedSize) ? (
     <POSITION_WRAPPER>
@@ -375,8 +428,45 @@ const Positions = () => {
             }
             className={mode === 'dark' ? 'dark' : ''}
           >
-            <ClosePosition setVisibleState={setClosePositionModal} setPerpsEndModal={null} setSummaryData={null} />
+            <ClosePosition
+              setVisibleState={setClosePositionModal}
+              setPerpsEndModal={setPerpsEndModal}
+              setSummaryData={setSummaryData}
+            />
           </SETTING_MODAL>
+        </>
+      )}
+      {perpsEndModal && (
+        <>
+          <END_MODAL
+            visible={true}
+            centered={true}
+            footer={null}
+            title={
+              <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5 sm:text-lg">
+                {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
+              </span>
+            }
+            closeIcon={
+              <img
+                src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                height="15px"
+                width="15px"
+                onClick={() => setPerpsEndModal(false)}
+              />
+            }
+            className={mode === 'dark' ? 'dark' : ''}
+          >
+            <PerpsEndModal
+              profit={summaryData.profit}
+              side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+              entryPrice={summaryData.entryPrice}
+              currentPrice={summaryData.exitPrice}
+              leverage={summaryData.leverage}
+              pnlAmount={summaryData.pnl}
+              percentageChange={summaryData.percentageChange}
+            />
+          </END_MODAL>
         </>
       )}
       <div tw="flex flex-row justify-between items-center mb-2">

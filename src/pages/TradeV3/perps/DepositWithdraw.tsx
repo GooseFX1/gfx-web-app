@@ -34,9 +34,13 @@ const WRAPPER = styled.div`
 
   .submit-btn {
     ${tw`block h-12.5 w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
-      text-average border-0 border-none bg-[#5855ff] sm:h-[45px] sm:w-full`}
+      text-average border-0 border-none bg-blue-1 sm:h-[45px] sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
+  }
+  .disabled {
+    background-color: ${({ theme }) => theme.bg22};
+    color: ${({ theme }) => theme.text28};
   }
 `
 
@@ -130,7 +134,6 @@ export const DepositWithdraw: FC<{
   const { devnetBalances: balances } = useAccounts()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
-  //const [amount, setAmount] = useState('')
   const [amount, setAmount] = useState('')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
@@ -175,7 +178,6 @@ export const DepositWithdraw: FC<{
       setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleInputChange = (e) => {
     const t = e.target.value
     if (!isNaN(+t)) {
@@ -192,6 +194,21 @@ export const DepositWithdraw: FC<{
       console.log(e)
     }
   }
+  const checkDisabled = () => {
+    if (tradeType !== 'deposit') {
+      if (!traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount || !+amount) return true
+    } else {
+      if (
+        !tokenAmount ||
+        !tokenAmount.uiAmountString ||
+        +tokenAmount.uiAmountString < +amount ||
+        !amount ||
+        !+amount
+      )
+        return true
+    }
+  }
+
   const menus = (
     <Menu>
       {perpTokenList.map((item, index) => (
@@ -248,7 +265,6 @@ export const DepositWithdraw: FC<{
             type="text"
             value={amount}
             onChange={handleInputChange}
-            //onChange={null}
           />
           <span className="token">{perpToken.token}</span>
         </INPUT>
@@ -267,14 +283,9 @@ export const DepositWithdraw: FC<{
         </div>
       </div>
       <button
-        className="submit-btn"
+        className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}
-        disabled={
-          tradeType !== 'deposit'
-            ? !traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount
-            : //: !tokenAmount || !tokenAmount.uiAmountString || +tokenAmount.uiAmountString < +amount || !amount
-              false
-        }
+        disabled={checkDisabled()}
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
       </button>

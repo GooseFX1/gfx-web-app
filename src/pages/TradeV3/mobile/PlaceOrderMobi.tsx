@@ -277,7 +277,7 @@ const SELECTOR = styled.div`
         bg-grey-4 rounded-circle cursor-pointer`}
     }
     > input[type='radio']:checked:after {
-      ${tw`rounded-circle w-[24px] h-[24px] relative top-[3px] left-[3px] inline-block`}
+      ${tw`rounded-circle w-[18px] h-[18px] relative top-1.5 left-1.5 inline-block`}
       background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
       content: '';
     }
@@ -1070,11 +1070,8 @@ export const PlaceOrderMobi = () => {
         {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
         {isGeoBlocked && (
           <Tooltip overlayClassName={`georestricted-dropdown ${mode}`} placement="top" arrow={false}>
-            <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
-            <div
-              style={{ color: mode === 'dark' ? 'white' : 'black', fontWeight: 600, fontSize: '13px' }}
-              color="linear-gradient(101.7deg, rgba(247, 147, 26, 0.18) 7.47%, rgba(220, 31, 255, 0.12) 87.05%);"
-            >
+            <img src={`/img/assets/georestrictedMobile_${mode}.svg`} alt="geoblocked-icon" />
+            <div style={{ color: mode === 'dark' ? '#3C3C3C' : '#FFFFFF', fontWeight: 600, fontSize: '11px' }}>
               GooseFX DEX is unavailable <br /> in your location.
             </div>
           </Tooltip>
