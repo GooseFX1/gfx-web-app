@@ -41,7 +41,7 @@ const WRAPPER = styled.div<{ $width; $mode }>`
 `
 
 export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
-  ${tw`flex flex-row items-center justify-center`}
+  ${tw`flex flex-row items-center justify-center cursor-pointer`}
   .textTitle {
     ${tw`font-semibold text-base`}
     color: ${({ $focus }) => ($focus ? '#fff' : '')} !important;

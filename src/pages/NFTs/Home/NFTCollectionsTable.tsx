@@ -137,6 +137,7 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
           {item?.collection_name !== undefined ? (
             <>
               <Image
+                preview={false}
                 className="nftNameImg"
                 fallback={'/img/assets/Aggregator/Unknown.svg'}
                 src={`${
@@ -213,6 +214,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       <td className="nftNameColumn">
         {item.profile_pic_link ? (
           <Image
+            preview={false}
             className="nftNameImg"
             fallback={'/img/assets/Aggregator/Unknown.svg'}
             src={`${

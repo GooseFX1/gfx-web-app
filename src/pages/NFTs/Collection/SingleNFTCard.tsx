@@ -163,7 +163,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {nftId ? nftId : '# Nft'}
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
-            <Tooltip title={AH_NAME(localAsk?.auction_house_key)}>
+            <Tooltip
+              title={AH_NAME(localAsk?.auction_house_key)}
+              overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
+            >
               {localAsk !== null && (
                 <img
                   className="ah-name"

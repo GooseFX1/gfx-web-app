@@ -33,7 +33,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     margin: 0 15px 0 0;
 
     .avatar-profile {
-      ${tw`w-[80px] h-[60px]  h-20 ml-[-5px] mt-[-25px] rounded-[50%] dark:border-black-1 border-white`}
+      ${tw`w-[80px] h-[60px] h-20 ml-[-5px] mt-[-25px] rounded-[50%] dark:border-black-2 border-white`}
       border: 5px solid;
     }
     .edit-icon {
