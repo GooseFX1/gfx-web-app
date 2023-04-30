@@ -1,14 +1,22 @@
-/* eslint-disable */
-import { useEffect, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { OrderBook } from '../OrderBook'
+import useWindowSize from '../../../utils/useWindowSize'
 
-const WRAPPER = styled.div<{ $index: number }>`
+const WRAPPER = styled.div<{ $index: number; $height: number }>`
   background: ${({ theme }) => theme.bg20};
-  top: 500px; //do not remove
-  height: 100vh;
+  position: absolute;
+  top: ${({ $height }) => ($height >= 820 ? '85' : '90')}%;
+  width: 100%;
+  height: 25%;
   border-radius: 25px 25px 0px 0px;
+  -webkit-transition: top 500ms ease-out;
+  -moz-transition: top 500ms ease-out;
+  -o-transition: top 500ms ease-out;
+  -ms-transition: top 500ms ease-out;
+  transition: top 500ms ease-out;
+  overflow: hidden;
 
   .header {
     ${tw`flex flex-row justify-around items-center h-[49px] relative`}
@@ -32,71 +40,52 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
 `
 
-export const OrderBookMobi = () => {
+export const OrderBookMobi: FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0)
   const [isScollUp, setIsScollUp] = useState<boolean>(true)
   const [initial, setInitial] = useState<number>(0)
+  const { height } = useWindowSize()
+  const orderbookContainer = document.getElementById('orderbook-wrapper')
 
-  // const handleOrderbookScroll = (e) => {
-  //   document.addEventListener('mousemove', eleMouseMove, false)
-  //   //console.log(e)
-  // }
+  const hanldeObScrollStart = (e) => {
+    setInitial(e.touches[0].clientY)
+  }
 
-  // function eleMouseMove(ev) {
-  //   console.log('ev', ev)
-  //   const ele = document.getElementById('orderbook-wrapper')
-  //   const pY = ev.pageY
-  //   console.log(pY)
-
-  //   ele.style.top = pY + 'px'
-
-  //   document.addEventListener('mouseup', eleMouseUp, false)
-  //   // test = pY;
-  //   // console.log("test after py:", test)
-
-  //   var test2 = pY.toString()
-  //   test2 = test2 + 'px'
-  //   ele.style.height = test2
-  // }
-
-  // function eleMouseUp() {
-  //   console.log('elemouseup called')
-  //   document.removeEventListener('mousemove', eleMouseMove, false)
-  //   document.removeEventListener('mouseup', eleMouseUp, false)
-  // }
-
-  const handleOrderbookScroll = (e) => {
-    //console.log(e.pageY)
-    if (initial === 0) {
-      setInitial(e.pageY)
-    }
-    setIsScollUp((prev) => !prev)
-    const orderbookContainer = document.getElementById('orderbook-wrapper')
-    orderbookContainer.style.width = '100%'
-    orderbookContainer.style.zIndex = '100'
-    orderbookContainer.style.transition = 'top 400ms ease-in-out'
-    if (initial === 0 || isScollUp === true) {
-      orderbookContainer.style.position = 'absolute'
-      orderbookContainer.style.height = 'calc(100% - 160px)'
+  const handleObScroll = (e) => {
+    const finalTouch = e.touches[0].clientY
+    if (Math.abs(initial - finalTouch) >= 25 && isScollUp) {
       orderbookContainer.style.top = '160px'
-    } else {
-      orderbookContainer.style.height = '100vh'
-      orderbookContainer.style.top = initial + 'px'
-      orderbookContainer.style.position = 'fixed'
+      orderbookContainer.style.height = 'calc(100% - 100px)'
+      //setIsScollUp(false)
+    } else if (Math.abs(initial - finalTouch) >= 25 && !isScollUp) {
+      if (height >= 820) orderbookContainer.style.top = '85%'
+      else orderbookContainer.style.top = '90%'
+      setTimeout(() => {
+        orderbookContainer.style.height = '25%'
+      }, 500)
+      //setIsScollUp(true)
     }
   }
 
+  const handleObScrollEnd = () => {
+    setIsScollUp(!isScollUp)
+  }
+
   return (
-    <WRAPPER $index={selectedTab} id="orderbook-wrapper">
+    <WRAPPER $index={selectedTab} $height={height} id="orderbook-wrapper">
       <div className="header">
-        {
-          <div
-            tw="absolute h-[5px] w-[34px] top-[7px] bg-[#636363] rounded-bigger"
-            onClick={(e) => {
-              handleOrderbookScroll(e)
-            }}
-          ></div>
-        }
+        <div
+          tw="absolute h-[35px] w-[70px] top-[7px]"
+          onTouchStart={(e) => {
+            hanldeObScrollStart(e)
+          }}
+          onTouchMove={(e) => {
+            handleObScroll(e)
+          }}
+          onTouchEnd={handleObScrollEnd}
+        >
+          <div tw="h-[5px] w-[34px] bg-[#636363] rounded-bigger mx-auto"></div>
+        </div>
         <span className={selectedTab === 0 ? 'tab active' : 'tab inactive'} onClick={() => setSelectedTab(0)}>
           Orderbook
         </span>
