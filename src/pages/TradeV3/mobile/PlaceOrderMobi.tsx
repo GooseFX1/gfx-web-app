@@ -105,13 +105,13 @@ const WRAPPER = styled.div`
 const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
   ${tw`flex justify-center items-start w-full flex-col h-full px-3`}
   .label {
-    ${tw`pb-1 flex flex-row justify-evenly text-regular font-semibold dark:text-grey-2 text-grey-1`}
+    ${tw`pb-[0.59vh] flex flex-row justify-evenly text-regular font-semibold dark:text-grey-2 text-grey-1`}
     > span {
       ${tw`text-regular font-semibold dark:text-grey-2 text-grey-1`}
     }
   }
   .label2 {
-    ${tw`pb-1`}
+    ${tw`pb-[0.59vh]`}
     > span {
       ${tw`text-regular font-semibold dark:text-grey-2 text-grey-1`}
     }
@@ -120,7 +120,7 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
     ${tw`w-full`}
   }
   .width {
-    ${tw`w-full ml-[-5%]`}
+    ${tw`w-full ml-[5%]`}
   }
   .space {
     ${tw`w-full`}
@@ -142,7 +142,7 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
     transition: transform 400ms ease-in-out;
   }
   .ant-input-affix-wrapper {
-    ${tw`font-medium rounded-tiny border border-solid h-[45px] dark:bg-black-2 bg-white`}
+    ${tw`font-medium rounded-tiny border border-solid h-[6.65vh] dark:bg-black-2 bg-white`}
     border-color: ${({ theme }) => theme.tokenBorder};
   }
   .ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover {
@@ -153,7 +153,7 @@ const INPUT_WRAPPER = styled.div<{ $rotateArrow: boolean }>`
     box-shadow: none;
   }
   .drawer {
-    ${tw`w-full h-[45px] flex justify-between items-center px-2 font-semibold 
+    ${tw`w-full h-[6.65vh] flex justify-between items-center px-2 font-semibold 
       text-tiny rounded-[10px] dark:bg-black-2 bg-white`}
     color: ${({ theme }) => theme.text21};
     border: 1.5px solid ${({ theme }) => theme.text28};
@@ -187,12 +187,12 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-[5px] w-[95%] text-left mt-[-8px]`}
+  ${tw`pl-[5px] w-[95%] text-left`}
   .ant-slider-rail {
-    ${tw`h-1.5 dark:bg-black-4 bg-grey-2`}
+    ${tw`h-[0.9vh] dark:bg-black-4 bg-grey-2`}
   }
   .ant-slider-with-marks {
-    ${tw`mb-2`}
+    ${tw``}
   }
   .ant-slider-step {
     .ant-slider-dot {
@@ -204,25 +204,25 @@ const LEVERAGE_WRAPPER = styled.div`
   }
   .ant-slider-mark {
     .ant-slider-mark-text {
-      ${tw`ml-0 my-1`}
+      ${tw`ml-0 my-[1.183vh]`}
     }
     .markSpan {
       ${tw`dark:text-grey-2 text-grey-1 text-tiny font-semibold ml-0`}
     }
   }
   .leverageText {
-    ${tw`text-regular dark:text-grey-2 text-grey-1 pl-2 font-semibold mt-[5%]`}
+    ${tw`text-regular dark:text-grey-2 text-grey-1 pl-2 font-semibold mt-[3.4vh]`}
   }
   .smallScreenLeverageText {
     ${tw`dark:text-grey-2 text-grey-1 pl-2 font-semibold`}
   }
   .leverageBar {
-    ${tw`mt-[-5px] mb-[30px]`}
+    ${tw`mb-[2.96vh]`}
   }
 `
 
 const ORDER_CATEGORY = styled.div`
-  ${tw`flex justify-center items-center h-5`}
+  ${tw`flex justify-center items-center h-[2.95vh]`}
   .orderCategoryCheckboxWrapper {
     ${tw`mx-3 flex items-center justify-center`}
     .ant-checkbox-wrapper {
@@ -245,7 +245,7 @@ const PLACE_ORDER_BUTTON = styled.button<{
   connected: boolean
   isGeoBlocked: boolean
 }>`
-  ${tw`w-[95%] mt-3 rounded-[30px] h-[45px] text-tiny font-semibold border-0 border-none mx-auto block`}
+  ${tw`w-[95%] mt-[1.77vh] rounded-[30px] h-[6.65vh] text-tiny font-semibold border-0 border-none mx-auto block`}
   background: ${({ $action, $orderSide, $connected, $isGeoBlocked, theme }) =>
     $action
       ? $orderSide === 'buy'
@@ -351,7 +351,7 @@ const TAKEPROFITWRAPPER = styled.div`
   }
   > input {
     ${tw`bg-white dark:bg-black-1 dark:text-grey-5 text-black-4 p-3 text-regular 
-    font-semibold ml-10 w-4/5 h-[45px] rounded-small`}
+    font-semibold ml-10 w-4/5 h-[6.65vh] rounded-small`}
     outline: none;
     border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
@@ -870,7 +870,7 @@ export const PlaceOrderMobi = () => {
           </SETTING_MODAL>
         </>
       )}
-      <div tw="flex flex-row mb-3">
+      <div tw="flex flex-row mb-[1.77vh]">
         <INPUT_WRAPPER $rotateArrow={showMarketDrawer}>
           <div className="drawer">
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
@@ -913,7 +913,7 @@ export const PlaceOrderMobi = () => {
           </div>
         </div>
       </div>
-      <div tw="flex flex-row items-end mb-3">
+      <div tw="flex flex-row items-end mb-[1.77vh]">
         <INPUT_WRAPPER>
           <div className="label holder">
             <span>Size</span>
@@ -1077,7 +1077,7 @@ export const PlaceOrderMobi = () => {
           </Tooltip>
         )}
       </PLACE_ORDER_BUTTON>
-      <div tw="flex flex-row justify-between my-2 mx-5">
+      <div tw="flex flex-row justify-between my-[2.95vh] mx-5">
         {isSpot ? (
           <>
             {' '}
