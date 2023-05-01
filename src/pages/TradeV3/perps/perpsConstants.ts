@@ -160,3 +160,4 @@ export const BETA = new Fractional({ m: new anchor.BN(2), exp: new anchor.BN(1) 
 export const GAMMA = new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(1) })
 export const GET_ORDERBOOK = '/perps-apis/getOrderBook'
 export const GET_OPEN_ORDERS = '/perps-apis/getAllOpenOrders'
+export const GET_ANALYTICS_DATA = '/perps-apis/getUserAnalytics'

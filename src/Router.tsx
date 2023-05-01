@@ -19,6 +19,7 @@ import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
 import { TraderProvider } from './context/trader_risk_group'
 import AggCommingSoon from './pages/NFTs/Home/AggCommingSoon'
+import { TradeAnalyticsWrapper } from './pages/Analytics/trade/TradeAnalyticsWrapper'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -62,6 +63,9 @@ export const Router: FC = () => (
           </Route>
           <Route exact path="/analytics">
             <AnalyticsWrapper />
+          </Route>
+          <Route exact path="/analytics/trade">
+            <TradeAnalyticsWrapper />
           </Route>
           <Route>
             <GenericNotFound />
