@@ -8,18 +8,25 @@ import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
+import { useDarkMode } from '../../../context'
 
 const STYLED_POPUP = styled(PopupCustom)`
   &.ant-modal {
     ${tw`top-0 m-0 max-w-full rounded-none`}
     background: ${({ theme }) => theme.bg2};
   }
+  .ant-modal-close {
+    visibility: hidden;
+  }
   .ant-modal-content {
     display: flex;
   }
   .ant-modal-body {
     padding-top: 16px !important;
-    padding-left: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 10px;
   }
   .searchBarContainer {
     ${tw`text-[15px] ml-4 w-[80vw]`}
@@ -55,7 +62,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .searchWrapper {
-    ${tw`ml-2 mt-2`}
+    ${tw`ml-2 mt-2 h-[calc(100vh - 95px)]`}
   }
   .recentTitle {
     ${tw`font-semibold text-[18px] pb-1 pt-2 text-[#636363]`}
@@ -89,11 +96,16 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
       footer={null}
     >
       <div className="wrapper">
-        <SearchBar
-          className="searchBarContainer"
-          placeholder="Search by collection or item"
-          setSearchFilter={setSearchFilter}
-        />
+        <div tw="flex items-center">
+          <SearchBar
+            className="searchBarContainer"
+            placeholder="Search by collection"
+            setSearchFilter={setSearchFilter}
+          />
+          <div>
+            <img onClick={() => setSearchPopup(false)} src="/img/assets/close-white-icon.svg" />
+          </div>
+        </div>
         {!searchFilter && (
           <div className="searchGraphic">
             <img src="/img/assets/Aggregator/searchGraphic.png" />
@@ -132,8 +144,9 @@ const RecentNFT = () => {
 }
 
 const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
-  console.log(searchResult)
   const history = useHistory()
+  const { mode } = useDarkMode()
+
   return (
     <div className="searchWrapper">
       <div className="recentTitle">Collections</div>
@@ -143,23 +156,36 @@ const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
             className="displayRow"
             key={index}
             onClick={() =>
-              history.push(`/nfts/collection/${encodeURIComponent(ar.collection_name).replaceAll('%20', '_')}`)
+              history.push(
+                `/nfts/collection/${encodeURIComponent(ar?.collection?.collection_name).replaceAll('%20', '_')}`
+              )
             }
           >
-            <img className="nftImg" src={ar.profile_pic_link} alt="" />
+            <img className="nftImg" src={ar?.collection?.profile_pic_link} alt="" />
             <div>
               <div className="title">
-                {ar.collection_name}
-                {ar.is_verified && (
+                {minimizeTheString(ar?.collection?.collection_name, 30)}
+                {ar?.collection?.is_verified && (
                   <img tw="w-[18px] h-[18px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
                 )}
               </div>
               <div className="greyText">
                 24h Volume:{' '}
-                <PriceWithToken token="SOL" price={ar.daily_volume} cssStyle={tw`ml-1 text-white w-5 h-5`} />
+                <PriceWithToken
+                  token="SOL"
+                  price={ar?.collection?.daily_volume}
+                  cssStyle={tw`ml-1 text-white w-5 h-5`}
+                />
               </div>
             </div>
-            {/* <div className="alignRight">{ar.itemsListed} Listed</div> */}
+            <div className="alignRight" tw="flex justify-center items-center">
+              <div>{ar.listed_count} Listed</div>
+              <div>
+                <div>
+                  <img tw="w-3 h-3 ml-1" src={`/img/assets/Aggregator/arrow-right-${mode}.svg`} alt="arrow" />{' '}
+                </div>
+              </div>
+            </div>
           </div>
         ))}
     </div>

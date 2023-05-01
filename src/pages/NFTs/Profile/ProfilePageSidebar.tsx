@@ -59,7 +59,7 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
       .social-item {
         display: inline-block;
         width: 35px;
-        margin: 0 ${({ theme }) => theme.margin(2)};
+        margin: 0 5px;
         background: #2a2a2a;
         border-radius: 50%;
         display: flex;
@@ -80,12 +80,14 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
         }
       }
       .social-icon {
-        width: 35px;
-        height: 30px;
+        ${tw`w-[35px] h-[30px]`}
         background-color: ${({ theme }) => theme.bg25};
       }
+      .twitterHeight {
+        height: 18px;
+      }
       .height{
-        height: 17px;
+        height: 25px;
       }
     }
   }
@@ -310,12 +312,9 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             )}
           </div>
         )}
-        {currentUserProfile &&
-        currentUserProfile.twitter_link &&
-        currentUserProfile.instagram_link &&
-        currentUserProfile.telegram_link ? (
+        {(currentUserProfile && currentUserProfile?.twitter_link) || currentUserProfile?.telegram_link ? (
           <div className="social-list">
-            {currentUserProfile.twitter_link && (
+            {currentUserProfile?.twitter_link && (
               <a
                 className="social-item"
                 target={'_blank'}
@@ -326,16 +325,37 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
                 onMouseLeave={() => {
                   setTwitterHover(false)
                 }}
-                href={validExternalLink(currentUserProfile.twitter_link)}
+                href={validExternalLink(currentUserProfile?.twitter_link)}
               >
                 <img
-                  className={twitterHover ? 'social-icon height' : 'social-icon'}
+                  className={twitterHover ? 'social-icon twitterHeight' : 'social-icon'}
                   src={twitterHover ? '/img/assets/twitterHover.svg' : '/img/assets/twitterNew.svg'}
                   alt=""
                 />
               </a>
             )}
-            {currentUserProfile.instagram_link && (
+            {currentUserProfile?.discord_profile && (
+              <a
+                className="social-item"
+                target={'_blank'}
+                rel="noreferrer"
+                onMouseEnter={() => {
+                  setDiscordHover(true)
+                }}
+                onMouseLeave={() => {
+                  setDiscordHover(false)
+                }}
+                href={validExternalLink(currentUserProfile?.discord_profile)}
+              >
+                <img
+                  className={discordHover ? 'social-icon height' : 'social-icon'}
+                  src={discordHover ? '/img/assets/discordHover.svg' : '/img/assets/discordNew.svg'}
+                  alt=""
+                />
+              </a>
+            )}
+
+            {currentUserProfile?.telegram_link && (
               <a
                 className="social-item"
                 target={'_blank'}
@@ -346,31 +366,11 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
                 onMouseLeave={() => {
                   setTelegramHover(false)
                 }}
-                href={validExternalLink(currentUserProfile.instagram_link)}
+                href={validExternalLink(currentUserProfile?.telegram_link)}
               >
                 <img
-                  className="social-icon"
+                  className={telegramHover ? 'social-icon height' : 'social-icon'}
                   src={telegramHover ? '/img/assets/telegramHover.svg' : '/img/assets/telegramNew.svg'}
-                  alt=""
-                />
-              </a>
-            )}
-            {currentUserProfile.telegram_link && (
-              <a
-                className="social-item"
-                target={'_blank'}
-                rel={'noreferrer'}
-                onMouseEnter={() => {
-                  setDiscordHover(true)
-                }}
-                onMouseLeave={() => {
-                  setDiscordHover(false)
-                }}
-                href={validExternalLink(currentUserProfile.telegram_link)}
-              >
-                <img
-                  className="social-icon"
-                  src={discordHover ? '/img/assets/discordHover.svg' : '/img/assets/discordNew.svg'}
                   alt=""
                 />
               </a>

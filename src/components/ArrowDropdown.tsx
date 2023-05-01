@@ -15,7 +15,8 @@ const ARROW_CLICKER = styled(CenteredDiv)<{
   img {
     ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
     transition: transform 200ms ease-in-out;
-    ${({ $cssStyle }) => $cssStyle};
+    ${tw`w-[14px] ml-2`}
+    ${({ $cssStyle }) => $cssStyle} !important;
   }
 `
 

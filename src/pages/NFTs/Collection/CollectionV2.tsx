@@ -40,8 +40,9 @@ import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
-import { ArrowClicker, ArrowDropdown, SearchBar } from '../../../components'
+import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -175,10 +176,10 @@ const NFTStatsContainer = () => {
             </div>
             {checkMobile() && (
               <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
-                <div onClick={() => setSweepCollection(true)}>
+                {/*   <div onClick={() => setSweepCollection(true)}>
                   <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
                 </div>
-                {/* <div>
+                <div>
                   <SortDropdown />
                 </div> */}
               </div>
@@ -221,7 +222,10 @@ const NFTStatsContainer = () => {
             )}
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {singleCollection ? formatSOLDisplay(singleCollection[0].daily_volume) : 0} SOL
+                {singleCollection
+                  ? truncateBigNumber(parseFloat(formatSOLDisplay(singleCollection[0].daily_volume)))
+                  : 0}{' '}
+                SOL
               </div>
               <div className="subTitleText"> 24h volume </div>
             </div>
@@ -251,6 +255,11 @@ export const NFTGridContainer = (): ReactElement => {
   const [open, setOpen] = useState<boolean>(true)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
+  const activityAddress = singleCollection
+    ? singleCollection[0]?.verified_collection_address
+      ? singleCollection[0]?.verified_collection_address
+      : singleCollection[0].first_verified_creator_address
+    : null
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
@@ -259,10 +268,7 @@ export const NFTGridContainer = (): ReactElement => {
         {displayIndex === 0 && <FixedPriceNFTs />}
         {displayIndex === 1 && <OpenBidNFTs />}
         {displayIndex === 2 && (
-          <ActivityNFTSection
-            address={singleCollection[0]?.collection_address}
-            typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS}
-          />
+          <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
         )}
       </div>
     </GRID_CONTAINER>
@@ -273,6 +279,8 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection } = useNFTAggregatorFilters()
   const { mode } = useDarkMode()
+  const { setCurrency } = useNFTAggregator()
+
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
@@ -282,13 +290,20 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           style={{ width: 332 }}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
+        {checkMobile() && displayIndex === 0 && (
+          <div tw="mr-[15px]">
+            {' '}
+            <TokenToggleNFT toggleToken={setCurrency} />
+          </div>
+        )}
         {!checkMobile() && displayIndex === 0 && <SortDropdown />}
       </div>
 
       <div className="filtersViewCategory">
+        {checkMobile() && <div className="activeItem" />}
         <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
           Listed ({fixedPriceWithinCollection && fixedPriceWithinCollection.total_count})
-          <div className="activeItem" />
+          {!checkMobile() && <div className="activeItem" />}
         </div>
         <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
           All items ({singleCollection ? singleCollection[0].nfts_count : 0})

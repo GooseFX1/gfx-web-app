@@ -19,6 +19,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 
+const DETAIL_VIEW = styled.div`
+  ${({ theme }) => theme.customScrollBar('0px')};
+`
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[390px]`}
   .generalItemValue {
@@ -39,9 +42,8 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         .ant-tabs-nav-wrap {
           ${tw`bg-[#3c3c3c]`}
-          border-radius: 15px 15px 15px 15px;
-          width: 100%;
-          .ant-tabs-nav-list {
+          border-radius: 15px 15px 0px 0px;
+           .ant-tabs-nav-list {
             ${tw`flex rounded-[40px]`}
             justify-content: space-around;
             width: 100% !important;
@@ -96,7 +98,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
 
       .ant-tabs-content-holder {
-        ${tw`sm:mb-12 sm:rounded-none h-[230px] mt-8`}
+        ${tw`sm:mb-12  h-[230px] mt-8`}
         background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
         padding: 15px 0;
@@ -181,9 +183,9 @@ const ImageViewer = (): ReactElement => {
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-      <div tw="h-[calc(100vh - 6px)] overflow-y-scroll">
+      <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <img
-          tw="w-[390px] h-[390px] mt-[30px] sm:h-[100%] sm:w-[100%] 
+          tw="w-[390px] h-[390px] mt-[30px] sm:h-[85%] sm:w-[100%] sm:max-h-[390px]
             rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
           height={'100%'}
           src={general.image_url}
@@ -233,9 +235,11 @@ const ImageViewer = (): ReactElement => {
             label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
           />
         </div>
-        <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" />
-        <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
-      </div>
+        {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
+        <div tw="mt-8">
+          <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+      </DETAIL_VIEW>
     </div>
   ) : (
     <></>
@@ -266,7 +270,9 @@ export const ButtonContainer = (): ReactElement => {
         <>
           {ask && (
             <div>
-              <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
+              <label tw="dark:text-grey-1 text-black-3 font-semibold  sm:text-[14px] text-average">
+                On Sale for:
+              </label>
               <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
                 <span>{formatSOLDisplay(ask.buyer_price)}</span>
                 <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />

@@ -36,7 +36,10 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
   const [displayIndex, setDisplayIndex] = useState<number>(0)
 
   return (
-    <GRID_CONTAINER tw="h-[calc(80vh - 32px)] w-[77vw] sm:w-[100vw] mt-[32px]" navCollapsed={isCollapsed}>
+    <GRID_CONTAINER
+      tw="h-[calc(80vh - 32px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
+      navCollapsed={isCollapsed}
+    >
       <FiltersContainer
         collections={tabPanes[0].name}
         favourited={tabPanes[1].name}
@@ -55,25 +58,30 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
       <div className="flitersFlexContainer">
-        {!checkMobile() && (
-          <>
-            <SearchBar
-              setSearchFilter={setSearchInsideProfile}
-              style={{ width: 332 }}
-              placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
-            />
-            <ProfileNFTFiltersDropdown />
-          </>
-        )}
+        <>
+          <SearchBar
+            setSearchFilter={setSearchInsideProfile}
+            style={{ width: 330 }}
+            placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
+          />
+          {!checkMobile() && <ProfileNFTFiltersDropdown />}
+          {checkMobile() && (
+            <div tw="mr-8">
+              <TokenToggleNFT toggleToken={setCurrency} />{' '}
+            </div>
+          )}
+        </>
       </div>
 
       <div className="filtersViewCategory" tw="mr-[10px] sm:mr-0">
+        {checkMobile() && <div className="activeItemProfile" />}
+
         <div
           className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(0)}
         >
           {collections}
-          <div className="activeItemProfile" />
+          {!checkMobile() && <div className="activeItemProfile" />}
         </div>
         <div
           className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}

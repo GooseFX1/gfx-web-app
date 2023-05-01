@@ -22,7 +22,7 @@ export const HOLD_TIGHT = styled.div`
   color: ${({ theme }) => theme.text20};
   .holdTightText {
     color: ${({ theme }) => theme.text30};
-    ${tw`text-[35px] font-semibold mt-[-40px]`}
+    ${tw`text-[35px] sm:text-[25px] font-semibold mt-[-40px]`}
   }
 `
 
@@ -39,7 +39,7 @@ export const HoldTight: FC = () => {
         )}
       </div>
       <div className="holdTightText">Hold tight!</div>
-      <div tw="text-[25px] font-semibold mt-4 ">We are almost there</div>
+      <div tw="text-[25px] sm:text-[18px] font-semibold mt-4 ">We are almost there</div>
     </HOLD_TIGHT>
   )
 }

@@ -77,7 +77,7 @@ export const FixedPriceNFTs = (): ReactElement => {
       if (fixedPriceLoading) return
       if (observer.current) observer?.current.disconnect()
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && !stopCalling) {
+        if (entries[0].isIntersecting && !stopCalling && !searchInsideCollection) {
           debounce(
             setPageNumber((prev) => prev + 1),
             100

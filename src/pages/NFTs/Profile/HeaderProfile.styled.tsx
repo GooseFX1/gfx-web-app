@@ -7,7 +7,7 @@ import 'styled-components/macro'
 export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
   ${tw`relative h-[112px]`}
   @media(max-width: 500px) {
-    ${tw`flex flex-col justify-between pb-[20px] h-[50vh] sm:h-[180px]`}
+    ${tw`flex flex-col justify-between pb-[20px] h-[50vh] sm:h-[160px]`}
     align-items: inherit;
     background: url(${({ background }) => background});
     background-repeat: no-repeat;
@@ -33,15 +33,19 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     margin: 0 15px 0 0;
 
     .avatar-profile {
-      ${tw`w-[80px] h-[60px] h-20 ml-[-5px] mt-[-25px] rounded-[50%] dark:border-black-2 border-white`}
+      ${tw`w-[80px] h-[60px] h-20 ml-[-5px] sm:ml-2.5 mt-[-25px] rounded-[50%] dark:border-black-2 border-white`}
       border: 5px solid;
     }
     .edit-icon {
-      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] right-[-20px] w-[30px]`}
+      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] sm:right-[-32px] right-[-20px] w-[30px] `}
     }
   }
+  .profileBio {
+    ${({ theme }) => theme.customScrollBar(0)}
+    ${tw`dark:text-grey-2 w-[220px] h-10 overflow-y-auto sm:text-[13px] font-semibold  `}
+  }
   .name-wrap {
-    ${tw`mt-[100px] ml-[-170px]`}
+    ${tw`mt-[100px] ml-[-170px] sm:ml-4 sm:mt-[125px] sm:absolute`}
   }
   .name {
     @media (max-width: 500px) {
@@ -58,9 +62,12 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     width: 24px;
     height: 24px;
   }
+  .solscan-img {
+    ${tw`right-10 mr-6`}
+  }
   .social-list {
     @media (max-width: 500px) {
-      margin-top: 0;
+      ${tw`sm:absolute right-4 mt-[120px]`}
     }
     margin-top: ${({ theme }) => theme.margin(2)};
     ${({ theme }) => theme.flexCenter}
@@ -93,8 +100,8 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     }
   }
   .complete-profile {
-    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative
-     font-semibold text-[15px] text-white cursor-pointer`}
+    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative sm:mt-[140px] sm:mr-2.5 
+    sm:w-[145px] font-semibold text-[15px] text-white cursor-pointer text-[13px]`}
     background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
     @media (max-width: 500px) {
       font-size: 14px;

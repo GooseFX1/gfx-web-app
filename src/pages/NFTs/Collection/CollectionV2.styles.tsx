@@ -68,7 +68,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex items-center sm:w-[100%] sm:ml-0 ml-[32%] absolute sm:flex sm:justify-between sm:mt-2`}
+          ${tw`flex items-center sm:w-[95%] sm:ml-2 ml-[32%] sm:mt-2 sm:relative absolute sm:flex sm:justify-between `}
 
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
@@ -278,7 +278,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex dark:bg-[#272727] bg-grey-6 h-[70px] sm:h-[58px] sm:flex-col `}
+    ${tw`duration-500 items-center flex dark:bg-[#272727] bg-grey-6 h-[70px] sm:h-[100px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
@@ -291,10 +291,10 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
 
     .filtersViewCategory {
-      ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10`}
+       ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10 sm:w-[100%]`}
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium mt-2 items-center `}
+      ${tw`text-[15px] flex font-medium mt-2 sm:w-[100%] items-center `}
     }
     .flexContainer {
       margin-left: auto;
@@ -304,39 +304,40 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selected {
       color: ${({ theme }) => theme.text4};
-      ${tw`w-[140px] sm:w-[128px] mb-4 items-center sm:mt-1 text-[14px]
+      ${tw`w-[140px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[14px]
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
       /* color: ${({ theme }) => theme.text4}; */
-      ${tw`w-[170px] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
+      ${tw`w-[170px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
     .flexItem {
-      ${tw` w-[140px] sm:w-[130px] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+      ${tw` w-[140px] sm:w-[33%] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .flexItemProfile {
-      ${tw`w-[170px] sm:w-[140px] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
+      ${tw`w-[170px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
       items-center flex justify-between flex-col cursor-pointer`}
     }
     .activeItem {
-      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[70%]`}
+      ${tw`h-2  block mt-3 sm:mt-8 rounded-b-circle sm:absolute font-semibold duration-500 
+      bg-[#5855ff] w-[70%] sm:w-[20%]`}
       content: '';
-      width: 70%;
-      transform: rotate(180deg);
+       transform: rotate(180deg);
       margin-left: ${index * 280 + `px`};
       @media (max-width: 500px) {
-        margin-left: ${index * 260 + `px`};
+        margin-left: calc( ${index * 33.2 + `%`} + 30px);
       }
     }
     .activeItemProfile {
-      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold duration-500 bg-[#5855ff] w-[68%] `}
+      ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold sm:absolute
+       duration-500 bg-[#5855ff] w-[65%] sm:w-[20%] sm:mt-[32px]`}
       content: '';
       transform: rotate(180deg);
       margin-left: ${index * 340 + `px`};
       @media (max-width: 500px) {
-        margin-left: ${index * 300 + `px`};
+        margin-left: calc( ${index * 33.2 + `%`} + 25px);
       }
     }
   `}

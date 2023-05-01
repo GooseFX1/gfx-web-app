@@ -20,7 +20,9 @@ export type NFTCollection = {
   tagline: string | null
   size: number | null
   category_tags: string | null
+  first_verified_creator_address?: string | null
   is_verified: boolean
+  verified_collection_address?: string | null
   collection_address_type: string
   gfx_appraisal_supported: boolean
   floor_price: number
