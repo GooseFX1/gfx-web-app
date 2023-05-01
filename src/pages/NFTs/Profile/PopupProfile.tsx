@@ -11,6 +11,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Loader } from '../../../components'
+import { checkMobile } from '../../../utils'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -194,16 +195,16 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               />
             </Upload>
           </CenteredDiv>
-          <div tw="ml-20">
+          <div tw="ml-20 sm:ml-16">
             <div className="titleHeader">
               Username <OptionalText />
             </div>
             <div>
               <InputContainer setVariableState={setUsername} stateVariable={username} />
             </div>
-            <UnderLine width={260} />
+            <UnderLine width={checkMobile() ? 190 : 260} />
             <div tw="flex justify-between items-center">
-              <PublicURLText />
+              <PublicUsernameText />
               <div tw="flex">
                 <div className="publicURLText">{username ? username?.length : 0} </div>
                 <div className="publicURLWhiteText"> /30</div>
@@ -211,7 +212,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             </div>
           </div>
         </div>
-        <div className="profilePicText">Profile Pitcure</div>
+        <div className="profilePicText">Profile Picture</div>
         <div>
           <div className="titleHeader">
             Bio <OptionalText />
@@ -219,7 +220,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div>
             <InputContainer setVariableState={setBio} stateVariable={bio} />
           </div>
-          <UnderLine width={438} />
+          <UnderLine width={checkMobile() ? 360 : 438} />
           <div tw="flex justify-between items-center">
             <div className="publicURLText">Share with the world who you are!</div>
             <div tw="flex">
@@ -228,7 +229,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             </div>
           </div>
         </div>
-        <div className="titleHeaderBlue" tw="!text-[20px]">
+        <div className="titleHeaderBlue" tw="text-[20px] sm:text-[18px]">
           Social Media Links
         </div>
         <div tw="flex">
@@ -237,7 +238,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <div>
               <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} />
             </div>
-            <UnderLine width={200} />
+            <UnderLine width={checkMobile() ? 170 : 200} />
             <PublicURLText />
           </div>
           <div className="titleHeader" tw="ml-4">
@@ -245,7 +246,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <div>
               <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
             </div>
-            <UnderLine width={200} />
+            <UnderLine width={checkMobile() ? 170 : 200} />
             <PublicURLText />
           </div>
         </div>
@@ -255,7 +256,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <div>
               <InputContainer setVariableState={setTelegramLink} stateVariable={telegramLink} />
             </div>
-            <UnderLine width={200} />
+            <UnderLine width={checkMobile() ? 170 : 200} />
             <PublicURLText />
           </div>
           <div className="titleHeader" tw="ml-4">
@@ -263,7 +264,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <div>
               <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />
             </div>
-            <UnderLine width={200} />
+            <UnderLine width={checkMobile() ? 170 : 200} />
             <PublicURLText />
           </div>
         </div>
@@ -386,6 +387,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
 
 const OptionalText = () => <span className="optional">(optional)</span>
 const PublicURLText = () => <div className="publicURLText">Will be used as Public URL</div>
+const PublicUsernameText = () => <div className="publicURLText">Will be Public username</div>
 const UnderLine: FC<{ width: number }> = ({ width }) => (
   <div className="underLine" style={{ width: width, height: 2 }} />
 )

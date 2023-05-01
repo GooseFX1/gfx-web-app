@@ -5,7 +5,7 @@ import { Loader } from '../../../components'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { useNavCollapse } from '../../../context'
-import { checkMobile, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
 import styled from 'styled-components'
@@ -112,6 +112,9 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   .tableHeader {
     ${tw`text-[15px] font-semibold h-[26px]`}
   }
+  .nftActivityImg {
+    ${tw`w-[42px] h-[42px] rounded-[10px] ml-2 mt-2`}
+  }
   .nftNameColumn {
     text-align: left;
     width: 17%;
@@ -121,17 +124,18 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     }
   }
   .collectionName {
-    ${tw`ml-16 flex text-[15px] sm:ml-16 sm:mt-0
+    ${tw`ml-16 flex text-[15px] sm:ml-16 sm:mt-0 
      sm:flex sm:justify-between sm:items-center w-[140%]`}/* padding-top: 0!important; */
   }
   .nftCollectionName {
-    ${tw`ml-16 sm:-mt-11 -mt-10`}
+    ${tw`ml-16 sm:-mt-11 -mt-10 sm:w-[180px]`}
     padding-top: 0!important;
   }
   .textContainer {
-    ${tw`text-[15px] text-right pt-3 mr-[45px] `}
+    ${tw`text-[15px] text-right pt-3 mr-[45px]  flex flex-col`}
   }
   .primaryText {
+    ${tw`ml-auto`}
     color: ${({ theme }) => theme.text30};
     img {
       ${tw`h-[20px] w-[20px] ml-2`}
@@ -141,10 +145,10 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     color: ${({ theme }) => theme.text20};
   }
   .solscan {
-    ${tw`h-[35px] w-[35px] -mt-11 ml-auto`}
+    ${tw`h-[35px] w-[35px] -mt-11 sm:mt-[-80px] ml-auto sm:ml-auto`}
   }
   .priceActivity {
-    ${tw`flex flex-col w-[42%]`}
+    ${tw`flex flex-col w-[42%] pr-2`}
   }
 `
 const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
@@ -163,6 +167,7 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
   }, [])
 
   const { isCollapsed } = useNavCollapse()
+  console.log(activityData)
   return (
     <WRAPPER_TABLE $navCollapsed={isCollapsed}>
       <table>
@@ -184,21 +189,38 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
 
 const NFTActivityRowMobile = ({ activityData }: any): any => (
   <>
-    {activityData.map((item, index) => (
+    {activityData.map((activity: IActivity, index: number) => (
+      <NFTActivityRowMobileContents activity={activity} index={index} key={index} />
+    ))}
+  </>
+)
+const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
+  const [nftDetails, setNFTDetails] = useState<any>()
+  useEffect(() => {
+    ;(async () => {
+      const { data } = await fetchSingleNFT(activity?.mint_address)
+      setNFTDetails(data.data[0])
+    })()
+  }, [])
+
+  return (
+    <>
       <tr className="tableRow" key={index}>
         <td className="nftNameColumn" colSpan={4}>
-          {item?.collectionId ? (
+          {activity?.collection_id && (
             <div>
-              <img src={item.img} alt="" />
-              <div className="nftCollectionName">{item?.collectionId}</div>
+              <img className="nftActivityImg" src={nftDetails?.image_url} alt="" />
+              <div className="nftCollectionName">{minimizeTheString(nftDetails?.nft_name, 18)}</div>
               <div className="collectionName">
                 Type:
-                <GradientText text={item?.type} fontSize={15} fontWeight={600} />
+                <GradientText text={ACTIVITY_KIND[activity?.kind]} fontSize={15} fontWeight={600} />
+                <img
+                  tw="h-5 w-5 ml-0"
+                  src={`/img/assets/Aggregator/${AH_NAME(activity?.auction_house)}.svg`}
+                  alt={`${AH_NAME(activity?.auction_house)}-icon`}
+                  style={{ height: 30 }}
+                />
               </div>
-            </div>
-          ) : (
-            <div>
-              <Loader />
             </div>
           )}
         </td>
@@ -206,29 +228,35 @@ const NFTActivityRowMobile = ({ activityData }: any): any => (
         <td></td>
         <td></td>
         {/* <td></td> */}
-        <td className="priceActivity">
+        <td className="priceActivity" tw="flex items-end justify-end">
           <div className="textContainer">
             <div className="primaryText">
-              {item?.price}
-              <img src="/img/crypto/SOL.png" />
+              <PriceWithToken token="SOL" price={formatSOLDisplay(activity?.price)} />
             </div>
             <div className="secondaryText">
-              <div>{item?.clock}</div>
+              <div>
+                {activity?.clock ? (
+                  <>{new Date(activity?.clock * 1000)?.toLocaleTimeString().substring(0, 5)}</>
+                ) : (
+                  <></>
+                )}
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <a target="_blank" href={`https://solscan.io/tx/${activity?.tx_sig}`} rel="noreferrer">
             <img src="/img/assets/Aggregator/solscan.svg" className="solscan" />
-          </div>
+          </a>
         </td>
       </tr>
-    ))}
-  </>
-)
+    </>
+  )
+}
+
 const NFTActivityRowWeb = ({ activityData }: any): any => (
   <>
     {activityData.map((activity: IActivity, index: number) => (
-      <NFTActivityRowWebContents activity={activity} index={index} />
+      <NFTActivityRowWebContents activity={activity} index={index} key={index} />
     ))}
   </>
 )
@@ -237,7 +265,6 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
   useEffect(() => {
     ;(async () => {
       const { data } = await fetchSingleNFT(activity?.mint_address)
-      console.log(data.data[0])
       setNFTDetails(data.data[0])
     })()
   }, [])
@@ -250,7 +277,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
             <div tw="flex flex-col mt-4.5 ml-2">
               <Tooltip title={nftDetails?.nft_name}>
                 <div tw="flex items-center ">
-                  <div>{minimizeTheString(nftDetails?.nft_name)}</div>
+                  <div>{minimizeTheString(nftDetails?.nft_name, 12)}</div>
                   <a target="_blank" href={`https://solscan.io/tx/${activity?.tx_sig}`} rel="noreferrer">
                     <img src="/img/assets/solscan.png" alt="solscan" tw="!h-5 !w-5 ml-1" />
                   </a>

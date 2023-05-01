@@ -66,7 +66,7 @@ import {
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { getNFTMetadata } from '../../../web3/nfts/utils'
+import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -91,7 +91,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20};
 
     strong {
-      ${tw`sm:text-[20px] font-bold sm:mt-[-10px] leading-6`}
+      ${tw`sm:text-[16px] font-bold sm:mt-[-10px] leading-4`}
       color: ${({ theme }) => theme.text32};
     }
   }
@@ -141,7 +141,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] rounded-[5px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
   .currentBid {
-    ${tw`text-[14px] font-semibold ml-4 sm:mt-[10px] text-[#636363] `}
+    ${tw`text-[14px] font-semibold ml-4 sm:mt-[6px] text-[#636363] `}
   }
   .maxBid {
     ${tw`text-[25px] sm:text-[20px] font-semibold leading-7 sm:mt-[20px]	`}
@@ -159,7 +159,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .priceText {
-    ${tw`text-[25px] font-semibold mt-2`}
+    ${tw`text-[25px] font-semibold mt-2 sm:mt-8`}
     color: ${({ theme }) => theme.text12};
   }
   .priceValue {
@@ -194,7 +194,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .buyButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
+    ${tw`w-[520px] sm:w-[334px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     &:disabled {
@@ -340,7 +340,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { connected, wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { general, nftMetadata, bidOnSingleNFT, ask, bids } = useNFTDetails()
-  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
+  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(true)
   const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
@@ -615,34 +615,42 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
   }
 
-  if (missionAccomplished) return <MissionAccomplishedModal />
+  if (missionAccomplished) return <HoldTight />
   else if (isLoading && isBuyingNow && pendingTxSig) return <HoldTight />
   else
     return (
       <div>
-        <div tw="flex flex-col items-center justify-center">
-          <div className="buyTitle">
-            You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-            <strong>{general?.nft_name} </strong> {checkMobile() && <br />}
-            <strong>{general?.collection_name && `by ${general?.collection_name}`}</strong>
-          </div>
-          {singleCollection && singleCollection[0]?.is_verified && (
-            <div className="verifiedText">
-              <div>
-                {!checkMobile() && (
-                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-                )}
-                This is a verified {checkMobile() && <br />} Creator
-                {checkMobile() && (
-                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-                )}
-              </div>
+        <div>
+          {checkMobile() && <img className="nftImgBid" src={general.image_url} alt="" />}
+
+          <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
+            <div className="buyTitle">
+              You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
+              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 15 : 30)} </strong>{' '}
+              {checkMobile() && <br />}
+              <strong>
+                {general?.collection_name &&
+                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 15 : 30)}`}
+              </strong>
             </div>
-          )}
+            {singleCollection && singleCollection[0]?.is_verified && (
+              <div className="verifiedText">
+                <div>
+                  {!checkMobile() && (
+                    <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                  )}
+                  This is a verified {checkMobile() && <br />} Creator
+                  {checkMobile() && (
+                    <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="vContainer">
-          <img className="nftImg" src={general?.image_url} alt="" />
+          {!checkMobile() && <img className="nftImg" src={general?.image_url} alt="" />}
         </div>
 
         <div className="vContainer">

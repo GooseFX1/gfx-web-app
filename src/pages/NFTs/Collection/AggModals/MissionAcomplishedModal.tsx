@@ -15,13 +15,14 @@ const MISSION_WRAPPER = styled.div`
   }
   .missionAccomplished {
     color: ${({ theme }) => theme.text7};
-    ${tw`text-[35px] font-semibold`}
+    ${tw`text-[35px] font-semibold sm:text-[22px] sm:flex-col`}
   }
   .nftImage {
-    ${tw`w-[254px] flex items-center justify-center h-[254px] mt-[62px] rounded-[15px]`};
+    ${tw`w-[254px] sm:w-[154px] sm:h-[154px] flex items-center justify-center 
+    h-[254px] mt-[62px] sm:mt-14 rounded-[15px]`};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     img {
-      ${tw`w-[250px] h-[250px] rounded-[15px]`};
+      ${tw`w-[250px] h-[250px] sm:w-[150px] sm:h-[150px]  rounded-[15px]`};
     }
   }
   .shareWithFriends {
@@ -29,14 +30,15 @@ const MISSION_WRAPPER = styled.div`
     ${tw`text-[20px] font-semibold mt-[61px]`}
   }
   .nftDetails {
-    ${tw`text-[25px] font-medium mt-4`}
+    ${tw`text-[25px] sm:text-[18px] text-center	 font-medium mt-4`}
     strong {
       color: ${({ theme }) => theme.text30};
-      ${tw`font-semibold ml-1.5 mr-1.5`}
+      ${tw`font-semibold sm:text-[18px] ml-1.5 mr-1.5`}
     }
   }
   .ant-btn {
-    ${tw`border-none h-[56px] w-[520px]  text-white rounded-[50px] mt-[100px] bg-blue-1 text-[20px] font-semibold`}
+    ${tw`border-none h-[56px] w-[520px] sm:w-[334px] text-white rounded-[50px]
+     mt-[100px] bg-blue-1 text-[20px] font-semibold`}
     &.hover {
       ${tw`text-white`}
     }
@@ -44,7 +46,6 @@ const MISSION_WRAPPER = styled.div`
 `
 const MissionAccomplishedModal = (): ReactElement => {
   const { general } = useNFTDetails()
-  const nftId = '#' + general?.nft_name.split('#')[1]
   const nftName = general?.nft_name.split('#')[0]
   const { publicKey } = useWallet()
   const { setBuyNow } = useNFTAggregator()
@@ -52,7 +53,7 @@ const MissionAccomplishedModal = (): ReactElement => {
   useEffect(() => {
     setTimeout(() => {
       setBuyNow(undefined)
-    }, 4000)
+    }, 8000)
   }, [])
 
   return (
@@ -61,7 +62,7 @@ const MissionAccomplishedModal = (): ReactElement => {
 
       <div className="proudOwner">You are a proud owner of:</div>
       <div className="nftDetails">
-        <strong>{nftId ? nftId : general?.nft_name}</strong>
+        <strong>{general?.nft_name}</strong>
         by
         <strong>{general?.collection_name ? general?.collection_name : nftName}</strong>
       </div>

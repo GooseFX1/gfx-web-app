@@ -293,7 +293,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     ${tw`text-[#b5b5b5] h-[2px]`}
   }
   .publicURLText {
-    ${tw`text-[13px] font-semibold mt-2 text-[#636363]`}
+    ${tw`text-[13px] sm:text-[12px] font-semibold mt-2 text-[#636363]`}
   }
   .publicURLWhiteText {
     ${tw`text-[13px] font-semibold mt-2 text-[#ffffff]`}
@@ -311,14 +311,14 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     ${tw`text-[13px] mt-[10px] font-semibold text-[#b5b5b5]`}
   }
   .ant-modal-body {
-    ${tw`py-6 px-[30px]`}
+    ${tw`py-6 px-[30px] sm:px-[20px] `}
   }
   .title {
     color: ${({ theme }) => theme.text30};
     ${tw`text-[20px] font-semibold`}
   }
   .saveChanges {
-    ${tw`w-[440px] sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[28px] rounded-[50px] border-none
+    ${tw`w-[440px] sm:w-[364px] sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[28px] rounded-[50px] border-none
      h-[53px] text-white text-[20px] font-semibold flex items-center justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     :disabled {

@@ -5,6 +5,7 @@ import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { Connection } from '@solana/web3.js'
 import { StringPublicKey, getParsedNftAccountsByOwner, ParsedAccount } from '../web3'
 import { completeNFTUserProfile } from '../api/NFTs'
+import { truncateAddress } from '../utils'
 
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
@@ -144,7 +145,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         uuid: userObj.uuid ? userObj.uuid : null,
         user_id: userObj.user_id ? userObj.user_id : null,
         pubkey: userObj.pubkey ? userObj.pubkey : '',
-        nickname: userObj.nickname ? userObj.nickname : 'Unnamed',
+        nickname: userObj.nickname ? userObj.nickname : userObj.pubkey ? truncateAddress(userObj.pubkey) : '',
         email: userObj.email ? userObj.email : '',
         bio: userObj.bio ? userObj.bio : '',
         twitter_link: userObj.twitter_link ? userObj.twitter_link : '',

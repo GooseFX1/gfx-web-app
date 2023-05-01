@@ -98,7 +98,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
 
       .ant-tabs-content-holder {
-        ${tw`sm:mb-12 sm:rounded-none h-[230px] mt-8`}
+        ${tw`sm:mb-12  h-[230px] mt-8`}
         background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
         padding: 15px 0;
@@ -185,7 +185,7 @@ const ImageViewer = (): ReactElement => {
       </div>
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <img
-          tw="w-[390px] h-[390px] mt-[30px] sm:h-[100%] sm:w-[100%] 
+          tw="w-[390px] h-[390px] mt-[30px] sm:h-[85%] sm:w-[100%] sm:max-h-[390px]
             rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
           height={'100%'}
           src={general.image_url}
@@ -270,7 +270,9 @@ export const ButtonContainer = (): ReactElement => {
         <>
           {ask && (
             <div>
-              <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
+              <label tw="dark:text-grey-1 text-black-3 font-semibold  sm:text-[14px] text-average">
+                On Sale for:
+              </label>
               <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
                 <span>{formatSOLDisplay(ask.buyer_price)}</span>
                 <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />

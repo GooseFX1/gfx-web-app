@@ -40,7 +40,7 @@ import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
-import { ArrowClicker, ArrowDropdown, SearchBar } from '../../../components'
+import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
@@ -176,10 +176,10 @@ const NFTStatsContainer = () => {
             </div>
             {checkMobile() && (
               <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
-                <div onClick={() => setSweepCollection(true)}>
+                {/*   <div onClick={() => setSweepCollection(true)}>
                   <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
                 </div>
-                {/* <div>
+                <div>
                   <SortDropdown />
                 </div> */}
               </div>
@@ -255,6 +255,11 @@ export const NFTGridContainer = (): ReactElement => {
   const [open, setOpen] = useState<boolean>(true)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
+  const activityAddress = singleCollection
+    ? singleCollection[0]?.verified_collection_address
+      ? singleCollection[0]?.verified_collection_address
+      : singleCollection[0].first_verified_creator_address
+    : null
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
@@ -263,10 +268,7 @@ export const NFTGridContainer = (): ReactElement => {
         {displayIndex === 0 && <FixedPriceNFTs />}
         {displayIndex === 1 && <OpenBidNFTs />}
         {displayIndex === 2 && (
-          <ActivityNFTSection
-            address={singleCollection[0]?.collection_address}
-            typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS}
-          />
+          <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
         )}
       </div>
     </GRID_CONTAINER>
@@ -277,6 +279,8 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection } = useNFTAggregatorFilters()
   const { mode } = useDarkMode()
+  const { setCurrency } = useNFTAggregator()
+
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
@@ -286,6 +290,12 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           style={{ width: 332 }}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
+        {checkMobile() && displayIndex === 0 && (
+          <div tw="mr-[15px]">
+            {' '}
+            <TokenToggleNFT toggleToken={setCurrency} />
+          </div>
+        )}
         {!checkMobile() && displayIndex === 0 && <SortDropdown />}
       </div>
 

@@ -22,6 +22,7 @@ import { bnTo8, confirmTransaction } from '../../../../web3/utils'
 import BN from 'bn.js'
 import { tokenSize, tradeStatePDA } from '../../actions'
 import { successfulCancelBidMessage, TransactionSignatureErrorNotify } from './AggNotifications'
+import { minimizeTheString } from '../../../../web3/nfts/utils'
 
 const REVIEW_MODAL = styled.div`
   ${tw``}
@@ -119,8 +120,12 @@ export const ReviewBidModal: FC<{
         <div className="buyTitle">
           You are about to bid for:
           <br />
-          <strong>{general?.nft_name} </strong> {checkMobile() && <br />}
-          <strong>{general?.collection_name && `by ${general?.collection_name}`}</strong>
+          <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 16 : 30)} </strong>
+          {checkMobile() && <br />}
+          <strong>
+            {general?.collection_name &&
+              `by ${minimizeTheString(general?.collection_name, checkMobile() ? 16 : 30)}`}
+          </strong>
         </div>
         {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
@@ -138,9 +143,8 @@ export const ReviewBidModal: FC<{
       </div>
       <div className="vContainer" tw="flex">
         {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
-        <div tw="flex flex-col">
-          <div className="currentBid">Existing </div>
-          <div className="currentBid">Hightest Bid</div>
+        <div tw="flex flex-col sm:mt-6">
+          <div className="currentBid">Existing {!checkMobile() && <br />} Hightest Bid</div>
           <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
             {highestBid}
             <img src={`/img/crypto/SOL.svg`} />
@@ -148,7 +152,7 @@ export const ReviewBidModal: FC<{
         </div>
       </div>
 
-      <div tw="mt-[30px]">
+      <div tw="mt-[30px] sm:mt-[10px]">
         <AppraisalValue
           text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
           label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
@@ -156,7 +160,7 @@ export const ReviewBidModal: FC<{
         />
       </div>
       <div className="vContainer">
-        <div className="maxBid" tw="!mt-8 sm:mt-[20px]">
+        <div className="maxBid" tw="mt-8 sm:mt-[12px]">
           Enter Maximum Bid
         </div>
       </div>

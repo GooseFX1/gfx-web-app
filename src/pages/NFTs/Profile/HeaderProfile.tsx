@@ -21,7 +21,7 @@ import {
 } from '../../../web3'
 import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
-import { checkMobile, notify } from '../../../utils'
+import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { StyledHeaderProfile, SETTLE_BALANCE_MODAL, MARGIN_VERTICAL } from './HeaderProfile.styled'
 import BN from 'bn.js'
 import { IAppParams } from '../../../types/app_params.d'
@@ -305,7 +305,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
       {checkMobile() ? (
-        <div tw="flex justify-between" id="row">
+        <div tw="flex justify-between sm:ml-2 sm:mt-3" id="row">
           <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '18px', left: '24px' }}>
             <FloatingActionButton height={40} onClick={() => history.goBack()}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
@@ -322,14 +322,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       )}
 
       {checkMobile() && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '35px'
-          }}
-        >
+        <div tw="flex justify-between items-center h-[35px]">
           <div className="avatar-profile-wrap">
             <Image
               className="avatar-profile"
@@ -351,20 +344,32 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               />
             )}
           </div>
-          <div className="name-wrap">
+          <div className="name-wrap" tw="ml-4">
             {currentUserProfile === undefined ? (
               <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
             ) : (
-              <span className="name">
+              <div className="name">
                 {currentUserProfile.nickname !== null && currentUserProfile.nickname.length > 0
                   ? currentUserProfile.nickname
-                  : 'Unnamed'}
-              </span>
+                  : truncateAddress(wallet?.adapter?.publicKey?.toString())}
+              </div>
+            )}
+            {currentUserProfile === undefined ? (
+              <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+            ) : (
+              <div className="profileBio">
+                {currentUserProfile.bio && currentUserProfile.nickname.length > 0
+                  ? currentUserProfile.bio
+                  : 'Add your bio and share with the world who you are!'}
+              </div>
             )}
             {currentUserProfile && currentUserProfile.is_verified && (
               <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
             )}
           </div>
+          <a href={`https://solscan.io/account/${params?.userAddress}`} target="_blank" rel="noreferrer">
+            <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
+          </a>
           {currentUserProfile === undefined ? (
             <div className="social-list">
               {[1, 2, 3, 4].map((_, key) => (
@@ -373,27 +378,17 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 </span>
               ))}
             </div>
-          ) : currentUserProfile.twitter_link && currentUserProfile.telegram_link ? (
+          ) : currentUserProfile.twitter_link ? (
             <div className="social-list">
               {currentUserProfile.twitter_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.twitter_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/twitter.svg`} alt="" />
+                <a href={validExternalLink(currentUserProfile.twitter_link)} target={'_blank'} rel={'noreferrer'}>
+                  <img tw="h-5 w-6 mr-3" src={`/img/assets/Aggregator/twitter.svg`} alt="" />
                 </a>
               )}
 
               {currentUserProfile.telegram_link && (
-                <a
-                  className="social-item"
-                  href={validExternalLink(currentUserProfile.telegram_link)}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                >
-                  <img className="social-icon" src={`/img/assets/facebook.svg`} alt="" />
+                <a href={validExternalLink(currentUserProfile.telegram_link)} target={'_blank'} rel={'noreferrer'}>
+                  <img tw="h-6 w-6 mr-3" src={`/img/assets/Aggregator/telegram.svg`} alt="" />
                 </a>
               )}
             </div>

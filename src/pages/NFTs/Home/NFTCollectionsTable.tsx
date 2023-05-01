@@ -103,21 +103,18 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   )
 }
 
-const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => {
-  console.log('object')
-  return (
-    <>
-      {allItems.map((item, index) => (
-        <NFTRowMobileItem
-          item={item}
-          key={index}
-          index={index}
-          lastRowElementRef={index + 1 === allItems.length ? lastRowElementRef : null}
-        />
-      ))}
-    </>
-  )
-}
+const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => (
+  <>
+    {allItems.map((item, index) => (
+      <NFTRowMobileItem
+        item={item}
+        key={index}
+        index={index}
+        lastRowElementRef={index + 1 === allItems.length ? lastRowElementRef : null}
+      />
+    ))}
+  </>
+)
 const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
   const { timelineDisplay } = useNFTAggregatorFilters()
   const { currencyView } = useNFTAggregator()
