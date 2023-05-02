@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable prefer-const */
 import { useWallet } from '@solana/wallet-adapter-react'
 import React, { FC, useEffect, useState } from 'react'
@@ -64,11 +65,11 @@ const columns = [
     dataIndex: 'volume',
     key: 'volume'
   },
-  {
-    title: 'Updated Time',
-    dataIndex: 'lastUpdatedTime',
-    key: 'lastUpdatedTime'
-  },
+  // {
+  //   title: 'Updated Time',
+  //   dataIndex: 'lastUpdatedTime',
+  //   key: 'lastUpdatedTime'
+  // },
   {
     title: 'Health',
     dataIndex: 'health',
@@ -110,12 +111,14 @@ export const TradeAnalyticsWrapper: FC = () => {
   const [tableData, setTableData] = useState<any[]>(null)
   const [numberOfTraders, setNumberOfTraders] = useState<number>(0)
   const [processedData, setProcessedData] = useState(null)
+  const [mostRecent, setMostRecent] = useState<number>(null) //time of most recent data point
 
   const getAnalyticsData = async () => {
     const res = await httpClient('api-services').get(`${GET_ANALYTICS_DATA}`)
     if (res.status === 200) {
       console.log(res)
       setTableData(res.data.traderData)
+      setNumberOfTraders(res.data.totalTraders)
     } else {
       setNumberOfTraders(0)
       setTableData(null)
@@ -132,33 +135,66 @@ export const TradeAnalyticsWrapper: FC = () => {
   }
   const processData = () => {
     const dataSource = []
+    let recent = null
     tableData.map((item, index) => {
-      const processedTime = new Date(item.lastUpdatedTime).toString()
-      let processedHealth = '100'
-      console.log('health is: ', item.health)
+      //const processedTime =
+
+      if (item.lastUpdatedTime > recent) recent = item.lastUpdatedTime
+      let processedHealth = 100
       if (item.health === null) {
-        processedHealth = 'N/A'
+        processedHealth = null
       } else if (item.health !== '100') {
-        const tempHealth = 100 + Number(item.health)
-        if (!Number.isNaN(tempHealth)) processedHealth = tempHealth.toString()
-        else processedHealth = 'N/A'
-      }
-      console.log('processed health: ', processedHealth)
+        const tempHealth = 100 + Number(Number(item.health).toFixed(2))
+        if (!Number.isNaN(tempHealth)) processedHealth = tempHealth
+        else processedHealth = null
+      } else if (item.health === '100') processedHealth = 100
+
+      let liquidationPrice = item.liquidationPrice
+      if (liquidationPrice === '0.00') liquidationPrice = null
+      else if (Number.isNaN(+liquidationPrice)) liquidationPrice = null
+      else liquidationPrice = Number(Number(liquidationPrice).toFixed(2))
+
+      let unrealisedPnl = item.unrealisedPnl
+      if (unrealisedPnl === '0.00') unrealisedPnl = null
+      else if (Number.isNaN(+unrealisedPnl)) unrealisedPnl = null
+      else unrealisedPnl = Number(Number(unrealisedPnl).toFixed(2))
+
+      let potfolioValue = item.potfolioValue
+      if (potfolioValue === '0.00') potfolioValue = null
+      else if (Number.isNaN(+potfolioValue)) potfolioValue = null
+      else potfolioValue = Number(Number(potfolioValue).toFixed(2))
+
+      let totalDeposited = item.totalDeposited
+      if (totalDeposited === '0.00') totalDeposited = null
+      else if (Number.isNaN(+totalDeposited)) totalDeposited = null
+      else totalDeposited = Number(Number(totalDeposited).toFixed(2))
+
+      let totalWithdrawn = item.totalWithdrawn
+      if (totalWithdrawn === '0.00') totalWithdrawn = null
+      else if (Number.isNaN(+totalWithdrawn)) totalWithdrawn = null
+      else totalWithdrawn = Number(Number(totalWithdrawn).toFixed(2))
+
+      let volume = item.volume
+      if (volume === '0.00') volume = null
+      else if (Number.isNaN(+volume)) volume = null
+      else volume = Number(Number(volume).toFixed(2))
+
       dataSource.push({
         key: index.toString(),
         walletAddress: item.walletAddress,
         traderAddress: item.trader,
-        volume: Number(item.volume).toFixed(2),
-        lastUpdatedTime: processedTime,
+        volume: volume,
+        //lastUpdatedTime: processedTime,
         health: processedHealth,
-        liquidationPrice: item.liquidationPrice,
-        unrealisedPnl: item.unrealisedPnl,
-        potfolioValue: item.potfolioValue,
-        totalWithdrawn: item.totalWithdrawn,
-        totalDeposited: item.totalDeposited
+        liquidationPrice: liquidationPrice,
+        unrealisedPnl: unrealisedPnl,
+        potfolioValue: potfolioValue,
+        totalWithdrawn: totalWithdrawn,
+        totalDeposited: totalDeposited
       })
     })
     setProcessedData(dataSource)
+    setMostRecent(recent)
   }
 
   useEffect(() => {
@@ -198,8 +234,8 @@ export const TradeAnalyticsWrapper: FC = () => {
     </WRAPPER>
   ) : (
     <TABLE_WRAPPER>
-      <div>No of traders: </div>
-      <div>{numberOfTraders}</div>
+      <div>No of traders: {numberOfTraders}</div>
+      <div>Time last updated: {new Date(mostRecent).toString()}</div>
       <Table dataSource={processedData}>
         {columns.map((item, index) => (
           <Table.Column
@@ -222,6 +258,10 @@ export const TradeAnalyticsWrapper: FC = () => {
                 )
               return <span>{item}</span>
             }}
+            sorter={(a: number, b: number) => {
+              return a[columns[index].key] - b[columns[index].key]
+            }}
+            sortDirections={['descend', 'ascend']}
           />
         ))}
       </Table>
