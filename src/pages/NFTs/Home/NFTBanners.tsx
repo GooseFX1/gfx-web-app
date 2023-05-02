@@ -116,13 +116,6 @@ const ORANGE_BTN = styled(MainButton)`
   background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
 `
 
-const EXPLORE_BTN = styled(MainButton)`
-  background: white;
-  span {
-    ${tw`text-[15px] font-semibold text-[#00A5A1] `}
-  }
-`
-
 const TERTIERY_BTN = styled(MainButton)`
   background: ${({ theme }) => theme.primary3} !important;
 `
@@ -192,31 +185,7 @@ export const NFTBanners = ({ showBanner }: any) => {
               </TERTIERY_BTN>
             </div>
           </SLIDER_ITEM>
-          <SLIDER_ITEM $bg={true} $url={`${process.env.PUBLIC_URL}/img/assets/multiChainBg.png`}>
-            <div className="home-slider-content">
-              <h1 className="home-slider-title">
-                <div className="logoCenter">
-                  <img
-                    tw="rounded-[10px]"
-                    style={{ width: 52, height: 48 }}
-                    src={`${process.env.PUBLIC_URL}/img/assets/multiChainLogo.png`}
-                    alt=""
-                  />
-                </div>
-              </h1>
-              <div className="launchpad">Launchpad</div>
-              {/* <h1 className="home-slider-title">View Live Mints</h1> */}
-              <EXPLORE_BTN
-                className="home-slider-button"
-                height={'40px'}
-                status="action"
-                width={'140px'}
-                onClick={handleCreatorApply}
-              >
-                <span>Explore</span>
-              </EXPLORE_BTN>
-            </div>
-          </SLIDER_ITEM>
+
           {/* <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM> */}
         </Slider>
         <div className="fade"></div>
