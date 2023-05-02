@@ -41,8 +41,8 @@ const WRAPPER = styled.div`
     color: ${({ theme }) => theme.text4};
   }
 `
-const TABLE_WRAPPER = styled.div`
-  ${tw`h-full w-full`}
+const DATA_WRAPPER = styled.div`
+  ${tw`h-full w-full p-5`}
   .publicKey {
     ${tw`cursor-pointer`}
   }
@@ -213,11 +213,11 @@ export const TradeAnalyticsWrapper: FC = () => {
       </div>
     </WRAPPER>
   ) : (
-    <TABLE_WRAPPER>
+    <DATA_WRAPPER>
       <div>No of traders: {numberOfTraders}</div>
       <div>Time last updated: {new Date(mostRecent).toString()}</div>
       <TradeAnalyticsData processedData={processedData} />
       <HighchartsReact highcharts={Highcharts} options={options} />
-    </TABLE_WRAPPER>
+    </DATA_WRAPPER>
   )
 }

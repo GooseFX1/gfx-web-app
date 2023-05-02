@@ -1,7 +1,23 @@
-import { Table, Tooltip } from 'antd'
-import { FC } from 'react'
+import { Input, Table, Tooltip } from 'antd'
+import { FC, useEffect, useState } from 'react'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+
+const WRAPPER = styled.div`
+  ${tw`h-full w-full py-5`}
+  .ant-input {
+    ${tw`w-1/6 my-5`}
+  }
+`
 
 export const TradeAnalyticsData: FC<{ processedData: any }> = ({ processedData }) => {
+  const [searchInput, setSearchInput] = useState(null)
+  const [filteredData, setFilteredData] = useState([])
+
+  useEffect(() => {
+    if (!searchInput || searchInput === '') setFilteredData(processedData)
+  }, [processedData, searchInput])
+
   const columns = [
     {
       title: 'Wallet',
@@ -65,33 +81,46 @@ export const TradeAnalyticsData: FC<{ processedData: any }> = ({ processedData }
     }
   }
 
+  const handleChange = (e) => {
+    const input = e.target.value.toLowerCase()
+    setSearchInput(input)
+    const dataToSet = processedData.filter((item) => {
+      if (item.walletAddress.toLowerCase().includes(input) || item.traderAddress.toLowerCase().includes(input))
+        return item
+    })
+    setFilteredData(dataToSet)
+  }
+
   return (
-    <Table dataSource={processedData}>
-      {columns.map((item, index) => (
-        <Table.Column
-          title={item.title}
-          key={item.key}
-          dataIndex={item.dataIndex}
-          render={(item) => {
-            if (index == 0 || index === 1)
-              return (
-                <Tooltip title={item}>
-                  <span
-                    className="publicKey"
-                    onClick={() => {
-                      navigator.clipboard.writeText(item)
-                    }}
-                  >
-                    {truncateAddress(item).formatted}
-                  </span>
-                </Tooltip>
-              )
-            return <span>{item}</span>
-          }}
-          sorter={(a: number, b: number) => a[columns[index].key] - b[columns[index].key]}
-          sortDirections={['descend', 'ascend']}
-        />
-      ))}
-    </Table>
+    <WRAPPER>
+      <Input value={searchInput} onChange={(e) => handleChange(e)} placeholder="Search Wallet/Trader Address" />
+      <Table dataSource={filteredData}>
+        {columns.map((item, index) => (
+          <Table.Column
+            title={item.title}
+            key={item.key}
+            dataIndex={item.dataIndex}
+            render={(item) => {
+              if (index == 0 || index === 1)
+                return (
+                  <Tooltip title={item}>
+                    <span
+                      className="publicKey"
+                      onClick={() => {
+                        navigator.clipboard.writeText(item)
+                      }}
+                    >
+                      {truncateAddress(item).formatted}
+                    </span>
+                  </Tooltip>
+                )
+              return <span>{item}</span>
+            }}
+            sorter={(a: number, b: number) => a[columns[index].key] - b[columns[index].key]}
+            sortDirections={['descend', 'ascend']}
+          />
+        ))}
+      </Table>
+    </WRAPPER>
   )
 }
