@@ -1,7 +1,5 @@
-/* eslint-disable arrow-body-style */
-/* eslint-disable prefer-const */
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { isAdminAllowed } from '../../../api/NFTLaunchpad'
@@ -10,8 +8,9 @@ import { Connect } from '../../../layouts'
 import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
 import { httpClient } from '../../../api'
 import { GET_ANALYTICS_DATA } from '../../TradeV3/perps/perpsConstants'
-import { Table, Tooltip } from 'antd'
-//import AnalyticsDashboard from './AnalyticsDashboard'
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+import { TradeAnalyticsData } from './TradeAnalyticsTable'
 
 const CONNECT_WALLET_WRAPPER = styled.div`
   ${tw`w-full flex-col flex items-center justify-center`}
@@ -49,60 +48,6 @@ const TABLE_WRAPPER = styled.div`
   }
 `
 
-const columns = [
-  {
-    title: 'Wallet',
-    dataIndex: 'walletAddress',
-    key: 'walletAddress'
-  },
-  {
-    title: 'Trader Address',
-    dataIndex: 'traderAddress',
-    key: 'traderAddress'
-  },
-  {
-    title: 'Volume',
-    dataIndex: 'volume',
-    key: 'volume'
-  },
-  // {
-  //   title: 'Updated Time',
-  //   dataIndex: 'lastUpdatedTime',
-  //   key: 'lastUpdatedTime'
-  // },
-  {
-    title: 'Health',
-    dataIndex: 'health',
-    key: 'health'
-  },
-
-  {
-    title: 'Liq. Price',
-    dataIndex: 'liquidationPrice',
-    key: 'liquidationPrice'
-  },
-  {
-    title: 'Unreliazed PNL',
-    dataIndex: 'unrealisedPnl',
-    key: 'unrealisedPnl'
-  },
-  {
-    title: 'Portfolio Value',
-    dataIndex: 'potfolioValue',
-    key: 'potfolioValue'
-  },
-  {
-    title: 'Total Deposited',
-    dataIndex: 'totalDeposited',
-    key: 'totalDeposited'
-  },
-  {
-    title: 'Total Withdrawn',
-    dataIndex: 'totalWithdrawn',
-    key: 'totalWithdrawn'
-  }
-]
-
 export const TradeAnalyticsWrapper: FC = () => {
   const { wallet, connected } = useWallet()
   const { toggleCollapse } = useNavCollapse()
@@ -112,27 +57,56 @@ export const TradeAnalyticsWrapper: FC = () => {
   const [numberOfTraders, setNumberOfTraders] = useState<number>(0)
   const [processedData, setProcessedData] = useState(null)
   const [mostRecent, setMostRecent] = useState<number>(null) //time of most recent data point
+  const [volumeData, setVolumeData] = useState([])
+  const [volumeSeries, setVolumeSeries] = useState(null)
+
+  const options = useMemo(
+    () => ({
+      title: {
+        text: 'Total Trading Volume'
+      },
+      chart: {
+        type: 'spline'
+      },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          rotation: -20,
+          style: {
+            fontSize: '8px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: 'Volume (in Dollars)'
+        }
+      },
+      series: [
+        {
+          //type: 'column',
+          data: volumeSeries,
+          name: 'Total Trading Volume'
+        }
+      ]
+    }),
+    [volumeSeries]
+  )
 
   const getAnalyticsData = async () => {
     const res = await httpClient('api-services').get(`${GET_ANALYTICS_DATA}`)
     if (res.status === 200) {
-      console.log(res)
       setTableData(res.data.traderData)
       setNumberOfTraders(res.data.totalTraders)
+      setVolumeData(res.data.volumeData)
     } else {
       setNumberOfTraders(0)
       setTableData(null)
     }
   }
 
-  const truncateAddress = (walletAddress) => {
-    const formatted =
-      walletAddress.slice(0, 4) + '...' + walletAddress.slice(walletAddress.length - 5, walletAddress.length - 1)
-    return {
-      formatted: formatted,
-      original: walletAddress
-    }
-  }
   const processData = () => {
     const dataSource = []
     let recent = null
@@ -195,11 +169,17 @@ export const TradeAnalyticsWrapper: FC = () => {
     })
     setProcessedData(dataSource)
     setMostRecent(recent)
+    const volumeSource = []
+    const sortedData = volumeData.sort((a, b) => a.lastUpdatedTime - b.lastUpdatedTime)
+    sortedData.map((item) => {
+      volumeSource.push([item.lastUpdatedTime, item.totalVolume])
+    })
+    setVolumeSeries(volumeSource)
   }
 
   useEffect(() => {
-    if (tableData && tableData.length) processData()
-  }, [tableData])
+    if (tableData && tableData.length && volumeData && volumeData.length) processData()
+  }, [tableData, volumeData])
 
   useEffect(() => {
     toggleCollapse(true)
@@ -236,35 +216,8 @@ export const TradeAnalyticsWrapper: FC = () => {
     <TABLE_WRAPPER>
       <div>No of traders: {numberOfTraders}</div>
       <div>Time last updated: {new Date(mostRecent).toString()}</div>
-      <Table dataSource={processedData}>
-        {columns.map((item, index) => (
-          <Table.Column
-            title={item.title}
-            key={item.key}
-            dataIndex={item.dataIndex}
-            render={(item) => {
-              if (index == 0 || index === 1)
-                return (
-                  <Tooltip title={item}>
-                    <span
-                      className="publicKey"
-                      onClick={() => {
-                        navigator.clipboard.writeText(item)
-                      }}
-                    >
-                      {truncateAddress(item).formatted}
-                    </span>
-                  </Tooltip>
-                )
-              return <span>{item}</span>
-            }}
-            sorter={(a: number, b: number) => {
-              return a[columns[index].key] - b[columns[index].key]
-            }}
-            sortDirections={['descend', 'ascend']}
-          />
-        ))}
-      </Table>
+      <TradeAnalyticsData processedData={processedData} />
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </TABLE_WRAPPER>
   )
 }
