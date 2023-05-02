@@ -21,6 +21,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
+import { Swap } from 'goosefx-ssl-sdk'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useHistory } from 'react-router-dom'
@@ -50,7 +51,8 @@ import {
   TOKEN_PROGRAM_ID,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TREASURY_PREFIX,
-  createExecuteSaleInstruction
+  createExecuteSaleInstruction,
+  SYNTH_DEFAULT_MINT
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
@@ -67,10 +69,11 @@ import {
   successfulListingMessage
 } from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
+import { VAULT_MINT } from '../../TradeV3/perps/perpsConstants'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
-  ${tw`flex flex-col mt-[-30px] `}
+  ${tw`flex flex-col mt-[-30px] sm:mt-0  `}
   .ant-modal-content {
     height: 100%;
   }
@@ -167,15 +170,16 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
-     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+    ${tw`w-[520px] sm:h-[50px] sm:w-[90vw] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px]
+     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
     }
   }
   .semiSellButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+    ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE]
+     rounded-[50px] border-none sm:max-w[180px]
      h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -183,7 +187,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .semiBuyButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px] border-none
+    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] 
+    rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center   justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
 
@@ -530,8 +535,19 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
     const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
 
-    const transaction = new Transaction().add(buyIX)
+    const transaction = new Transaction()
     if (isBuyingNow) {
+      const swap = new Swap(connection)
+      const swapIX = await swap.createSwapIx(
+        new PublicKey(VAULT_MINT),
+        new PublicKey(SYNTH_DEFAULT_MINT),
+        BigInt(1000000),
+        BigInt(10),
+        wallet?.adapter?.publicKey
+      )
+      swapIX.forEach((ix) => transaction.add(ix))
+      transaction.add(buyIX)
+
       const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
 
       const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)

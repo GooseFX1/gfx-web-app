@@ -56,6 +56,7 @@ const TEN_MILLION = 10000000
 
 import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
 import { TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   visible,
@@ -384,37 +385,35 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       footer={null}
     >
       <>
-        <div tw="flex flex-col items-center justify-center">
-          <div className="buyTitle">
-            {!ask && `You are about to sell`}
-            {!ask && <br />}
-            <strong> {general?.nft_name}</strong>
-            {checkMobile() && <br />}
-            {general?.collection_name && (
-              <>
-                {' by '} <strong> {general?.collection_name}</strong>
-              </>
-            )}
-          </div>
-          <div className="verifiedText">
+        <div>
+          {checkMobile() && <img className="nftImgBid" src={general.image_url} alt="" />}
+
+          <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
+            <div className="buyTitle">
+              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 30 : 30)} </strong>{' '}
+              {checkMobile() && <br />}
+              <strong>
+                {general?.collection_name &&
+                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 30 : 30)}`}
+              </strong>
+            </div>
             {singleCollection && singleCollection[0]?.is_verified && (
-              <div>
-                {!checkMobile() && (
-                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-                )}
-                This is a verified {checkMobile() && <br />} Creator
-                {checkMobile() && (
-                  <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
-                )}
+              <div className="verifiedText">
+                <div>
+                  {!checkMobile() && (
+                    <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                  )}
+                  This is a verified {checkMobile() && <br />} Creator
+                  {checkMobile() && (
+                    <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+                  )}
+                </div>
               </div>
             )}
           </div>
         </div>
-        <div className="vContainer">
-          <img className="nftImg" src={general?.image_url} alt="" />
-        </div>
 
-        <div className="vContainer">
+        <div className="vContainer" tw="sm:mt-20">
           <div className="priceText">Price</div>
         </div>
         <div className="vContainer">

@@ -24,6 +24,7 @@ const DETAIL_VIEW = styled.div`
 `
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[390px]`}
+  z-index: 0;
   .generalItemValue {
     color: ${({ theme }) => theme.text32};
     ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
@@ -39,7 +40,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         position: relative;
         z-index: 1;
         height: 60px !important;
-
+ 
         .ant-tabs-nav-wrap {
           ${tw`bg-[#3c3c3c]`}
           border-radius: 15px 15px 0px 0px;
@@ -50,6 +51,13 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
             padding-right: 0 !important;
             height: 100% !important;
             padding-top: 0 !important;
+            .ant-tabs-tab{
+              ${tw`w-[33%]  `}
+              .ant-tabs-tab-btn {
+                ${tw`!pl-3`}
+              }
+            }
+            
           }
         }
 

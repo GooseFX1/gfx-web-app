@@ -296,7 +296,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10 sm:w-[100%]`}
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium mt-2 sm:w-[100%] items-center `}
+      ${tw`text-[15px] flex font-medium sm:mt-2.5 mt-2 sm:w-[100%] items-center `}
     }
     .flexContainer {
       margin-left: auto;

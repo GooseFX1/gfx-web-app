@@ -63,7 +63,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     height: 24px;
   }
   .solscan-img {
-    ${tw`right-10 mr-6`}
+    ${tw`sm:right-0 sm:absolute mr-6`}
   }
   .social-list {
     @media (max-width: 500px) {

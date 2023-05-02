@@ -57,7 +57,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
-      <div className="flitersFlexContainer">
+      <div className="flitersFlexContainer" tw="sm:mt-4">
         <>
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
@@ -66,9 +66,12 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           />
           {!checkMobile() && <ProfileNFTFiltersDropdown />}
           {checkMobile() && (
-            <div tw="mr-8">
-              <TokenToggleNFT toggleToken={setCurrency} />{' '}
-            </div>
+            <>
+              <div tw="mr-3">
+                <TokenToggleNFT toggleToken={setCurrency} />{' '}
+              </div>
+              <ProfileNFTFiltersDropdown />
+            </>
           )}
         </>
       </div>
@@ -113,10 +116,14 @@ const ProfileNFTFiltersDropdown = () => {
         placement="bottomRight"
         trigger={checkMobile() ? ['click'] : ['hover']}
       >
-        <div tw="flex items-center">
-          <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
-          <Arrow height="9px" width="18px" cssStyle={tw`ml-[-25px]`} invert={arrow} />
-        </div>
+        {checkMobile() ? (
+          <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5" />
+        ) : (
+          <div tw="flex items-center">
+            <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
+            <Arrow height="9px" width="18px" cssStyle={tw`ml-[-25px]`} invert={arrow} />
+          </div>
+        )}
       </Dropdown>
     </div>
   )
@@ -158,7 +165,6 @@ const ProfileNFTOptionsList: FC<{ setArrow: any }> = ({ setArrow }) => {
           value="desc"
         />
       </div>
-      {checkMobile() && <div className="option">Share</div>}
     </DROPDOWN_CONTAINER>
   )
 }
