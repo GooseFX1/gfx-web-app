@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { useEffect, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { OrderBook } from '../OrderBook'
@@ -14,6 +13,8 @@ const WRAPPER = styled.div<{ $index: number }>`
   border-radius: 25px 25px 0px 0px;
   transition: top 500ms ease-in-out;
   overflow: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   .header {
     ${tw`flex flex-row justify-around items-center h-[49px] relative`}
@@ -34,9 +35,13 @@ const WRAPPER = styled.div<{ $index: number }>`
       transition: left 500ms ease-in-out;
     }
   }
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `
 const SLIDER = styled.div<{ $rotateArrow: boolean }>`
-  ${tw`absolute h-5 w-1/5 top-0 rounded-b-average flex flex-row justify-center items-center left-[38%]`}
+  ${tw`absolute h-5 w-1/5 top-0 rounded-b-average flex flex-row justify-center 
+    items-center left-[38%] border-[1.5px] border-t-0 border-white border-solid`}
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
   .arrow-icon {
     ${({ $rotateArrow }) => $rotateArrow && 'transform: rotateZ(180deg);'}
@@ -44,17 +49,16 @@ const SLIDER = styled.div<{ $rotateArrow: boolean }>`
   }
 `
 
-export const OrderBookMobi = () => {
+export const OrderBookMobi: FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0)
-  const [isScollUp, setIsScollUp] = useState<boolean>(true)
+  const [isScrollUp, setIsScrollUp] = useState<boolean>(true)
 
-  const handleOrderbookScroll = (e) => {
-    console.log('state', isScollUp)
+  const handleOrderbookScroll = () => {
     const orderbookContainer = document.getElementById('orderbook-wrapper')
-    if (isScollUp === true) {
+    if (isScrollUp === true) {
       orderbookContainer.style.top = '160px'
       orderbookContainer.style.overflow = 'scroll'
-      orderbookContainer.style.height = 'calc(100% - 160px)'
+      orderbookContainer.style.height = 'calc(100% - 130px)'
     } else {
       orderbookContainer.style.top = '85%'
       orderbookContainer.style.overflow = 'hidden'
@@ -62,18 +66,13 @@ export const OrderBookMobi = () => {
         orderbookContainer.style.height = '25%'
       }, 500)
     }
-    setIsScollUp((prev) => !prev)
+    setIsScrollUp((prev) => !prev)
   }
 
   return (
     <WRAPPER $index={selectedTab} id="orderbook-wrapper">
       <div className="header">
-        <SLIDER
-          $rotateArrow={isScollUp}
-          onClick={(e) => {
-            handleOrderbookScroll(e)
-          }}
-        >
+        <SLIDER $rotateArrow={isScrollUp} onClick={handleOrderbookScroll}>
           <img className="arrow-icon" src="/img/assets/arrow-down.svg" alt="arrow" width="20px" height="10px" />
         </SLIDER>
         <span className={selectedTab === 0 ? 'tab active' : 'tab inactive'} onClick={() => setSelectedTab(0)}>
