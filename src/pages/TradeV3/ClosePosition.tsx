@@ -178,6 +178,22 @@ export const ClosePosition: FC<{
     return '0.0'
   }, [selectedExitQty])
 
+  const slippage = useMemo(() => {
+    if (Number.isNaN(exitPrice) || exitPrice === 0) return 'N/A'
+    if (Number.isNaN(price) || price === 0) return 'N/A'
+    if (Number(displayExitQty) < 0) {
+      if (exitPrice - price > 0) {
+        const percentage = ((exitPrice - price) / price) * 100
+        return percentage.toFixed(2) + '%'
+      } else return 'N/A'
+    } else {
+      if (price - exitPrice > 0) {
+        const percentage = ((price - exitPrice) / price) * 100
+        return percentage.toFixed(2) + '%'
+      } else return 'N/A'
+    }
+  }, [exitPrice, price, displayExitQty])
+
   return (
     <WRAPPER>
       <div tw="flex items-center mt-8 mb-7 sm:mt-[22px] sm:mb-5">
@@ -214,7 +230,7 @@ export const ClosePosition: FC<{
         </ROW>
         <ROW>
           <span>Est. Slippage</span>
-          <span className="value">0.0000%</span>
+          <span className="value">{slippage}</span>
         </ROW>
         <ROW>
           <span>New Est. Liquidation Price</span>
