@@ -1,4 +1,4 @@
-import apiClient from '../../api'
+import { httpClient } from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT } from '../../types/nft_details.d'
@@ -6,7 +6,7 @@ import { validateUUID } from '../../utils'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
       address: address
     })
     const user = await res.data[0]
@@ -34,7 +34,7 @@ export const completeNFTUserProfile = async (address: string): Promise<any> => {
 
 export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
+    const res = await httpClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
       user_id: updatedUser.uuid,
       new_user_data: {
         nickname: updatedUser.nickname,
@@ -58,7 +58,7 @@ export const fetchSingleCollectionAction = async (endpoint: string, paramValue: 
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
@@ -71,7 +71,7 @@ export const fetchSingleCollectionBySalesType = async (endpoint: string, paramVa
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
@@ -84,7 +84,7 @@ export const fetchOpenBidByPages = async (paramValue: string, offset: number, li
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.OPEN_BID}?${
         isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
       }&offset=${offset}&limit=${limit}`
@@ -98,7 +98,7 @@ export const fetchOpenBidByPages = async (paramValue: string, offset: number, li
 export const fetchFixedPriceByPages = async (paramValue: string, offset: number, limit: number): Promise<any> => {
   const isUUID: boolean = validateUUID(paramValue)
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.FIXED_PRICE}?${
         isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
       }&offset=${offset}&limit=${limit}`
@@ -111,7 +111,7 @@ export const fetchFixedPriceByPages = async (paramValue: string, offset: number,
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   if (!address) return
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
     return await res
   } catch (err) {
     return err
@@ -119,7 +119,7 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
 }
 export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SEARCH}?collection_name=${collectionName}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SEARCH}?collection_name=${collectionName}`)
     return await res.data
   } catch (err) {
     return err
@@ -128,7 +128,7 @@ export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any>
 //eslint-disable-next-line
 export const fetchNFTById = async (nftUUID: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.SINGLE_NFT}?nft_id=${nftUUID}&network=mainnet`
     )
     return res.data
@@ -139,7 +139,7 @@ export const fetchNFTById = async (nftUUID: string): Promise<any> => {
 
 export const fetchRewardsByAddress = async (address: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.REWARDS}?address=${address}&network=mainnet`
     )
     return await res
@@ -150,7 +150,7 @@ export const fetchRewardsByAddress = async (address: string): Promise<any> => {
 
 export const registerSingleNFT = async (nft: IRegisterNFT): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
       nft_data: nft
     })
     return res
@@ -161,7 +161,7 @@ export const registerSingleNFT = async (nft: IRegisterNFT): Promise<any> => {
 
 export const removeNonCollectionListing = async (address: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
+    const res = await httpClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.SINGLE_ITEM}`, {
       data: {
         mint_address: address
       }
@@ -174,7 +174,7 @@ export const removeNonCollectionListing = async (address: string): Promise<any> 
 
 export const fetchAllSingleNFTs = async (): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_SINGLE_ITEM}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_SINGLE_ITEM}`)
     return res.data.single_items
   } catch (error) {
     return error
@@ -183,7 +183,7 @@ export const fetchAllSingleNFTs = async (): Promise<any> => {
 
 export const fetchActivityOfAddress = async (address: string, typeOfAddress: string): Promise<any> => {
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ACTIVITY}?${typeOfAddress}=${address}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ACTIVITY}?${typeOfAddress}=${address}`)
     return res.data
   } catch (error) {
     return error
