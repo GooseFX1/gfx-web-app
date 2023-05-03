@@ -33,7 +33,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     }
 
     .nftStatsContainer {
-      ${tw`mt-[20px] mb-[20px] ml-4 sm:ml-2 sm:mr-2 mr-5 flex items-center`}
+      ${tw`flex items-center my-[20px] mx-4 sm:ml-2 sm:mr-2`}
       .backBtn {
         ${tw`h-[40px] w-10 rounded-full flex items-center justify-center cursor-pointer`}
         background: ${({ theme }) => theme.backBtnBg};
@@ -53,6 +53,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
             ${tw`sm:ml-0 ml-4 h-[65px] w-[65px] sm:h-[55px] sm:w-[55px] rounded-full`}
           }
         }
+
         .shareMobile {
           ${tw`h-[48px] w-[48px] ml-auto`}
         }
@@ -68,7 +69,8 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex items-center sm:w-[95%] sm:ml-2 ml-[32%] sm:mt-2 sm:relative absolute sm:flex sm:justify-between `}
+          ${tw`flex flex-grow justify-center items-center
+          sm:w-[95%] sm:ml-2 sm:mt-2 sm:relative sm:flex sm:justify-between `}
 
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
