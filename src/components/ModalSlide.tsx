@@ -16,8 +16,8 @@ const WRAPPER = styled.div`
   background: ${({ theme }) => theme.modalBackground};
 `
 const MODAL = styled.div`
-  ${tw`fixed left-0 right-0 bottom-[-35px] w-screen rounded-t-bigger z-[1000]`}
-  height: calc(72vh + 35px);
+  ${tw`fixed left-0 right-0 bottom-0 w-screen rounded-t-bigger z-[1000] min-h-[500px] max-h-[100vh]`}
+  
   animation: slideIn .625s linear;
 }
 @keyframes slideIn {

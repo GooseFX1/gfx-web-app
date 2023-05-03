@@ -154,10 +154,8 @@ export function colors(mode: string): Colors {
       linear-gradient(94.33deg, rgba(247, 147, 26, 0.3) 5.26%, rgba(224, 60, 255, 0.3) 96.87%);`,
 
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
-    bgReward:
-      mode === 'dark'
-        ? 'linear-gradient(115deg, #9625ae 6%, rgba(62, 53, 187, 0) 97%)'
-        : 'linear-gradient(145deg, #9625ae 6%, rgba(16, 6, 156, 0.56) 99%)',
+    bgEarn: 'linear-gradient(90deg, #35BB7B 0%, #194A5E 100%)',
+    bgRefer: 'linear-gradient(90deg, rgba(254, 231, 149, 0.4) 0%, #F7931B 100%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',

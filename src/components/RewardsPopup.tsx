@@ -10,16 +10,23 @@ import useBreakPoint from '../hooks/useBreakPoint'
 // import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 
 const REWARD_INFO = styled.div`
-  ${tw`w-[68%] h-[75vh] rounded-bigger`}
+  ${tw`w-full min-w-[65%]  rounded-bigger`}
 `
 
-const REWARD_REDIRECT = styled.div`
-  ${tw`flex flex-col justify-center w-[32%] rounded-tr-bigger`}
-  background-image: ${({ theme }) => theme.bgReward};
+const REWARD_REDIRECT = styled.div<{ $index: number }>`
+  ${tw`flex flex-col min-w-max w-[35%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
+  background-image: ${({ theme, $index }) => {
+    switch ($index) {
+      case 0:
+        return theme.bgEarn
+      case 1:
+        return theme.bgRefer
+    }
+  }};
 `
 
 const Wrapper = styled.div`
-  ${tw`h-full w-full flex rounded-t-bigger`}
+  ${tw`h-full min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
   font-family: Montserrat !important;
   background-color: ${({ theme }) => theme.bg9};
 `
@@ -100,15 +107,18 @@ export const RewardsButton: FC = () => {
   )
 }
 
-export const RewardsPopup: FC = () => (
-  <Wrapper>
-    <REWARD_INFO>
-      <RewardInfoComponent />
-    </REWARD_INFO>
-    <REWARD_REDIRECT>
-      <RewardRedirectComponent />
-    </REWARD_REDIRECT>
-  </Wrapper>
-)
+export const RewardsPopup: FC = () => {
+  const [panelIndex, setPanelIndex] = useState(0)
+  return (
+    <Wrapper>
+      <REWARD_INFO>
+        <RewardInfoComponent panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+      </REWARD_INFO>
+      <REWARD_REDIRECT $index={panelIndex}>
+        <RewardRedirectComponent panelIndex={panelIndex} />
+      </REWARD_REDIRECT>
+    </Wrapper>
+  )
+}
 
 export default RewardsPopup
