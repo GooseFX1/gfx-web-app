@@ -10,7 +10,7 @@ import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../NFTs/Skeleton/SkeletonCommon'
 
 const HEADER = styled.div`
-  ${tw`flex flex-row justify-between m-[1.4vh]`}
+  ${tw`flex flex-row justify-between m-2.5 `}
   .up24h {
     ${tw`text-green-3`}
   }
