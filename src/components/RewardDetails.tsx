@@ -11,7 +11,6 @@ import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { useAnimateButtonSlide } from '../pages/Farm/FarmFilterHeader'
 import { Input } from 'antd'
-import { Flex } from './twComponents/containers'
 
 // const REWARD_INFO_TEXT = styled.div`
 //   ${tw`py-8 px-10`}
@@ -267,22 +266,13 @@ const ReferAndEarn: FC = () => {
   )
 }
 
-interface RewardInfoComponentProps {
+interface RewardSegmentProps {
   panelIndex: number
-  setPanelIndex: (index: number) => void
+  children: React.ReactNode
 }
-
-export const RewardInfoComponent: FC<RewardInfoComponentProps> = ({ panelIndex, setPanelIndex }) => {
-  const sliderRef = useRef<HTMLDivElement>(null)
-  const buttonRefs = useRef<HTMLButtonElement[]>([])
-  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs, panelIndex)
+export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, children }) => {
   const { mode } = useDarkMode()
-  const onChangePanel = (el: BaseSyntheticEvent) => {
-    const index = parseInt(el.currentTarget.dataset.index)
-    setPanelIndex(index)
-    handleSlide(index)
-    // change panel data
-  }
+  const breakpoint = useBreakPoint()
   const panels = useMemo(
     () => [
       {
@@ -308,48 +298,63 @@ export const RewardInfoComponent: FC<RewardInfoComponentProps> = ({ panelIndex, 
   }, [panels, panelIndex])
   return (
     <div css={tw`flex flex-col md:px-6 px-11 pt-3 h-full items-center font-semibold bg-grey-5 dark:bg-black-2`}>
-      <div css={tw`flex flex-row justify-center w-full items-center relative text-lg z-[0]`}>
-        <div
-          ref={sliderRef}
-          css={tw` w-full bg-[#5855ff]  h-[44px]  rounded-[36px] z-[-1] absolute transition-all`}
-        />
-        <button
-          css={tw`sm:m-auto min-w-max sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`}
-          ref={(el) => {
-            buttonRefs.current[0] = el
-            if (panelIndex == 0) {
-              handleSlide(0)
-            }
-          }}
-          data-index={0}
-          onClick={onChangePanel}
-        >
-          Earn
-        </button>
-        <button
-          css={tw`sm:m-auto min-w-max sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`}
-          ref={(el) => {
-            buttonRefs.current[1] = el
-            if (panelIndex == 1) {
-              handleSlide(1)
-            }
-          }}
-          data-index={1}
-          onClick={onChangePanel}
-        >
-          Refer
-        </button>
-      </div>
+      {!breakpoint.isMobile && children}
       <div css={tw`flex flex-col gap-4 pt-6 h-full items-center`}>
         <RewardInfo {...panel} />
       </div>
     </div>
   )
 }
-interface RewardRedirectComponentProps {
+interface PanelSelectorProps {
   panelIndex: number
+  setPanelIndex: (value: number) => void
+}
+export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelIndex }) => {
+  const sliderRef = useRef<HTMLDivElement>(null)
+  const buttonRefs = useRef<HTMLButtonElement[]>([])
+  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs, panelIndex)
+  const onChangePanel = (el: BaseSyntheticEvent) => {
+    const index = parseInt(el.currentTarget.dataset.index)
+    setPanelIndex(index)
+    handleSlide(index)
+    // change panel data
+  }
+  return (
+    <div css={tw`flex flex-row justify-center w-full items-center relative text-lg z-[0]`}>
+      <div
+        ref={sliderRef}
+        css={tw` w-full bg-[#5855ff]  h-[44px]  rounded-[36px] z-[-1] absolute transition-all`}
+      />
+      <button
+        css={tw`sm:m-auto min-w-max  cursor-pointer w-[120px] text-center border-none border-0 
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`}
+        ref={(el) => {
+          buttonRefs.current[0] = el
+          if (panelIndex == 0) {
+            handleSlide(0)
+          }
+        }}
+        data-index={0}
+        onClick={onChangePanel}
+      >
+        Earn
+      </button>
+      <button
+        css={tw`sm:m-auto min-w-max  cursor-pointer w-[120px] text-center border-none border-0 
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`}
+        ref={(el) => {
+          buttonRefs.current[1] = el
+          if (panelIndex == 1) {
+            handleSlide(1)
+          }
+        }}
+        data-index={1}
+        onClick={onChangePanel}
+      >
+        Refer
+      </button>
+    </div>
+  )
 }
 
 const EarnRewardsRedirect: FC = () => {
@@ -377,7 +382,7 @@ const EarnRewardsRedirect: FC = () => {
   const gofx = 1554.0
   const claimReward = 0.0
   return (
-    <Flex column rest={'items-center h-full'}>
+    <div css={tw`flex flex-col gap-4 items-center h-full`}>
       <div tw={'flex flex-col items-center'}>
         <p tw={'text-[20px] font-semibold text-[#EEE] mb-0'}>Rewards</p>
         <p tw={'text-[40px] font-semibold text-[#FFF] mb-0'}>{apr}% APY</p>
@@ -402,7 +407,7 @@ const EarnRewardsRedirect: FC = () => {
       <p css={tw`mt-auto text-white text-[13px] font-semibold leading-[16px] text-center`}>
         During cooldown no rewards will be earned
       </p>
-    </Flex>
+    </div>
   )
 }
 interface ReferFriendProps {
@@ -455,9 +460,10 @@ const ReferAndEarnRedirect: FC = () => {
   )
 }
 
-export const RewardRedirectComponent: FC<RewardRedirectComponentProps> = ({ panelIndex }) => {
+export const RewardRedirectComponent: FC<RewardSegmentProps> = ({ panelIndex, children }) => {
   //const history = useHistory()
   const { rewardToggle } = useRewardToggle()
+  const breakpoint = useBreakPoint()
   // const handleStakeClick = () => {
   //   rewardToggle(false)
   //   history.push('/farm')
@@ -496,6 +502,7 @@ export const RewardRedirectComponent: FC<RewardRedirectComponentProps> = ({ pane
   }, [panelIndex])
   return (
     <FLEX_COL_CONTAINER>
+      {breakpoint.isMobile && children}
       <CLOSE_ICON onClick={closeRewardModal}>
         <img src={`${window.origin}/img/assets/close-button.svg`} alt="copy_address" />
       </CLOSE_ICON>

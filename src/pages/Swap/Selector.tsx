@@ -6,7 +6,7 @@ import { Modal } from '../../components'
 import { useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
-import { checkMobile } from '../../utils'
+import { aborter, checkMobile } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TOKEN_PROGRAM_ID } from '../../web3'
 import 'styled-components/macro'
@@ -195,7 +195,7 @@ export const Selector: FC<{
   const { wallet } = useWallet()
   const [filterKeywords, setFilterKeywords] = useState<string>('')
   const [visible, setVisible] = useState<boolean>(false)
-  const [filteredTokens, setFilteredTokens] = useState<NewTokenInfo[]>([])
+  const [filteredTokens, setFilteredTokens] = useState<React.ReactNode[]>([])
   const timeoutRef = useRef<NodeJS.Timeout>(null)
 
   // as Selector is reused for both tokenA and tokenB, we need to reverse the tokenA and tokenB when isReverse is true
@@ -274,7 +274,7 @@ export const Selector: FC<{
             }
             // potentially introduce Promise.all for this and keep track of indeces if needed in specific order
             await CoinGeckoClient.coins
-              .fetch(cgToken.id, {})
+              .fetch(cgToken.id, { signal: aborter.addSignal(`selector-useEffect-${cgToken.id}`) })
               .then((res) => {
                 const result = Math.floor(res?.data?.market_data?.total_volume?.usd || 0)
                 newFilteredTokens.push({ ...token, vol: !isNaN(result) ? result : 0 })
@@ -288,13 +288,43 @@ export const Selector: FC<{
           newFilteredTokens.push(token)
         }
       }
+      // if there is a better way to do this please do it ;)
       setFilteredTokens(
-        newFilteredTokens.sort((a, b) => {
-          const symbol = a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
-          const tokenBalance = (b.tokenBalance || 0) - (a.tokenBalance || 0)
-          const vol = (b.vol || 0) - (a.vol || 0)
-          return symbol || tokenBalance || vol
-        })
+        newFilteredTokens
+          .sort((a, b) => {
+            const symbol = a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
+            const tokenBalance = (b.tokenBalance || 0) - (a.tokenBalance || 0)
+            const vol = (b.vol || 0) - (a.vol || 0)
+            return symbol || tokenBalance || vol
+          })
+          .map(({ address, decimals, name, symbol, imageURL, logoURI, tokenBalance }) => (
+            <TOKEN
+              key={address}
+              onClick={async () => {
+                if (tokenB.address === address) {
+                  setTokenB(tokenA)
+                }
+                setTokenA({ address, decimals, symbol, name, logoURI })
+                setVisible(false)
+              }}
+            >
+              <TOKEN_ICON>
+                <Image draggable={false} preview={false} src={imageURL} fallback={logoURI} alt="token" />
+              </TOKEN_ICON>
+              {checkMobile() ? (
+                <TOKEN_INFO>
+                  <span>{symbol}</span>
+                  <span>{name}</span>
+                </TOKEN_INFO>
+              ) : (
+                <DESK_TOKEN_INFO>
+                  <strong>{symbol}</strong>
+                  <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
+                  {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
+                </DESK_TOKEN_INFO>
+              )}
+            </TOKEN>
+          ))
       )
     }
     // debounced search helps with performance on large token sets
@@ -309,6 +339,9 @@ export const Selector: FC<{
         process()
       }, 333)
     }
+    return () => {
+      aborter.abortBulkWithPrefix('selector-useEffect')
+    }
   }, [filterKeywords, tokens, tokenA, tokenB, publicKey])
   const handleSearch = useCallback((e: SyntheticEvent) => {
     setFilterKeywords((e.target as HTMLInputElement).value)
@@ -316,6 +349,39 @@ export const Selector: FC<{
   const clearFilter = useCallback(() => {
     setFilterKeywords('')
   }, [])
+  const popularTokenItems = useMemo(
+    () =>
+      popularTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
+        <POPULAR_TK
+          key={index}
+          onClick={async () => {
+            if (tokenB.address === address) {
+              setTokenB(tokenA)
+            }
+            setTokenA({ address, decimals, symbol, name, logoURI })
+            setVisible(false)
+          }}
+        >
+          <div>
+            <img
+              src={imageURL || logoURI}
+              alt="token-icon"
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                if (e.currentTarget.src === logoURI) {
+                  e.currentTarget.src = '/img/crypto/Unknown.svg'
+                } else {
+                  e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
+                }
+              }}
+            />
+          </div>
+
+          <strong>{symbol}</strong>
+        </POPULAR_TK>
+      )),
+    []
+  )
   return (
     <>
       <SELECTOR_MODAL setVisible={setVisible} visible={visible} style={{ paddingTop: '18px' }}>
@@ -335,37 +401,7 @@ export const Selector: FC<{
         </INPUT>
         <div>
           <POP_TEXT>Most Popular</POP_TEXT>
-          <POPULAR>
-            {popularTokens.map(({ address, decimals, name, symbol, imageURL, logoURI }, index) => (
-              <POPULAR_TK
-                key={index}
-                onClick={async () => {
-                  if (tokenB.address === address) {
-                    setTokenB(tokenA)
-                  }
-                  setTokenA({ address, decimals, symbol, name, logoURI })
-                  setVisible(false)
-                }}
-              >
-                <div>
-                  <img
-                    src={imageURL || logoURI}
-                    alt="token-icon"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null
-                      if (e.currentTarget.src === logoURI) {
-                        e.currentTarget.src = '/img/crypto/Unknown.svg'
-                      } else {
-                        e.currentTarget.src = logoURI || '/img/crypto/Unknown.svg'
-                      }
-                    }}
-                  />
-                </div>
-
-                <strong>{symbol}</strong>
-              </POPULAR_TK>
-            ))}
-          </POPULAR>
+          <POPULAR>{popularTokenItems}</POPULAR>
         </div>
         <GFX_HR />
         <BODY>
@@ -374,34 +410,7 @@ export const Selector: FC<{
               <STRONG_CENTERED_TEXT>No matching tokens found..</STRONG_CENTERED_TEXT>
             </FLEX>
           ) : (
-            filteredTokens.map(({ address, decimals, name, symbol, imageURL, logoURI, tokenBalance }) => (
-              <TOKEN
-                key={address}
-                onClick={async () => {
-                  if (tokenB.address === address) {
-                    setTokenB(tokenA)
-                  }
-                  setTokenA({ address, decimals, symbol, name, logoURI })
-                  setVisible(false)
-                }}
-              >
-                <TOKEN_ICON>
-                  <Image draggable={false} preview={false} src={imageURL} fallback={logoURI} alt="token" />
-                </TOKEN_ICON>
-                {checkMobile() ? (
-                  <TOKEN_INFO>
-                    <span>{symbol}</span>
-                    <span>{name}</span>
-                  </TOKEN_INFO>
-                ) : (
-                  <DESK_TOKEN_INFO>
-                    <strong>{symbol}</strong>
-                    <strong className="token-name"> ({name.replaceAll('(', '').replaceAll(')', '')})</strong>
-                    {tokenBalance > 0 && <strong className="token-balance"> {tokenBalance}</strong>}
-                  </DESK_TOKEN_INFO>
-                )}
-              </TOKEN>
-            ))
+            filteredTokens
           )}
         </BODY>
       </SELECTOR_MODAL>

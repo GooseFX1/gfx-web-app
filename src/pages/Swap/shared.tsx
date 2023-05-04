@@ -55,5 +55,12 @@ export const AmountField = styled.div<{ $balance: string; $height: string; $valu
     font-size: 18px;
     line-height: 22px;
     color: ${({ theme }) => theme.text11};
+    &::-webkit-input-placeholder,
+    -moz-placeholder,
+    -ms-input-placeholder,
+    -moz-placeholder {
+      /* Chrome/Opera/Safari */
+      color: ${({ theme }) => theme.text11};
+    }
   }
 `

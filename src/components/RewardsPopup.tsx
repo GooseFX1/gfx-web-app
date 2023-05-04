@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 import { useRewardToggle } from '../context/reward_toggle'
-import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
+import { PanelSelector, RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
 import tw from 'twin.macro'
 
 const REWARD_INFO = styled.div`
@@ -63,10 +63,14 @@ export const RewardsPopup: FC = () => {
   return (
     <Wrapper>
       <REWARD_INFO>
-        <RewardInfoComponent panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        <RewardInfoComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardInfoComponent>
       </REWARD_INFO>
       <REWARD_REDIRECT $index={panelIndex}>
-        <RewardRedirectComponent panelIndex={panelIndex} />
+        <RewardRedirectComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardRedirectComponent>
       </REWARD_REDIRECT>
     </Wrapper>
   )
