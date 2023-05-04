@@ -1006,7 +1006,7 @@ export const PlaceOrder: FC = () => {
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
                     overlayClassName={`takep-stopl-container ${mode}`}
-                    offset={[15, 15]}
+                    offset={[11, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
                     menu={{ items: getTakeProfitItems(), onClick: handleMenuClick }}
@@ -1077,17 +1077,20 @@ export const PlaceOrder: FC = () => {
 }
 
 const SELECTOR = styled.div`
-  ${tw`bg-black-4 dark:bg-[#555555] w-[160px] h-16 rounded-[5px] pt-2 pb-3 pl-2.5`}
+  ${tw`w-[240%] h-16 rounded-tiny pt-2 pb-3 pl-2.5 relative`}
+  background: ${({ theme }) => theme.bg26};
   .selectorDropdown {
     ${tw`cursor-pointer`}
   }
   > div {
     ${tw`flex items-center mb-2`}
     > span {
-      ${tw`text-white text-regular font-semibold`}
+      ${tw`text-regular font-semibold`}
+      color: ${({ theme }) => theme.text4};
     }
     > input[type='radio'] {
-      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
+      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] rounded-small cursor-pointer`}
+      background: ${({ theme }) => theme.bg23};
     }
     > input[type='radio']:checked:after {
       ${tw`rounded-small w-[9px] h-[9px] relative top-[-4px] left-[3px] inline-block`}

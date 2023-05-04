@@ -2,7 +2,7 @@
 import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
-import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
+import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
 
@@ -216,6 +216,13 @@ const SPREAD_FOOTER = styled.div`
   border-bottom: none;
   border-left: none;
   border-right: none;
+
+  .spreadDropdown {
+    > span {
+      background: none;
+      cursor: pointer;
+    }
+  }
 `
 
 const Loader: FC = () => (
@@ -236,6 +243,7 @@ function usePrevious(value) {
 
 export const OrderBook: FC = () => {
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
+  const { mode } = useDarkMode()
   const { order, setFocused, setOrder } = useOrder()
   const { orderBook } = useOrderBook()
   const [bids] = useState<MarketSide>('bids')
@@ -491,7 +499,7 @@ export const OrderBook: FC = () => {
           <div>{spreadAbsolute[1]}%</div>
           <div>
             {
-              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']} overlayClassName={`spread-dropdown ${mode}`}>
                 <div className="spreadDropdown">
                   {SPREADS[spreadIndex]}
                   <DownOutlined />
