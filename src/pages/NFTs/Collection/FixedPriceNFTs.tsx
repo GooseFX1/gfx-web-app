@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
+import {
+  useConnectionConfig,
+  useNFTAggregator,
+  useNFTAggregatorFilters,
+  useNFTCollections,
+  useNFTDetails
+} from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
@@ -14,12 +20,22 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag, sortingAsc, setSortAsc, setSellNFT, sellNFTClicked } =
-    useNFTAggregator()
+  const {
+    buyNowClicked,
+    bidNowClicked,
+    setNftInBag,
+    sortingAsc,
+    setSortAsc,
+    setSellNFT,
+    sellNFTClicked,
+    openJustModal
+  } = useNFTAggregator()
   const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection, setSingleCollection } =
     useNFTCollections()
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const paginationNum = 30
+  const urlSearchParams = new URLSearchParams(window.location.search)
+  const params = Object.fromEntries(urlSearchParams.entries())
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const { refreshClicked } = useNFTAggregator()
   const [pageNumber, setPageNumber] = useState<number>(0)
@@ -27,7 +43,8 @@ export const FixedPriceNFTs = (): ReactElement => {
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const [filteredFixedPrice, setFilteredFixPriced] = useState<BaseNFT[] | undefined>(null)
   const observer = useRef<any>()
-  const { general, nftMetadata } = useNFTDetails()
+  const { general, nftMetadata, fetchGeneral } = useNFTDetails()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     setFixedPriceArr([])
@@ -90,6 +107,12 @@ export const FixedPriceNFTs = (): ReactElement => {
   )
 
   useEffect(() => {
+    if (params.address && (general === null || nftMetadata === null)) {
+      fetchGeneral(params.address, connection)
+    }
+  }, [params.address])
+
+  useEffect(() => {
     const UUID = singleCollection ? singleCollection[0].uuid : undefined
     if (UUID) {
       fetchFixedPriceNFTs(UUID)
@@ -131,17 +154,21 @@ export const FixedPriceNFTs = (): ReactElement => {
     e.stopPropagation()
   }
 
+  const handleDrawerOpen = useCallback(() => {
+    if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
+  }, [nftMetadata, general])
+
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-    if (general !== null && nftMetadata !== null) return <DetailViewNFT />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
+  }, [buyNowClicked, bidNowClicked, sellNFTClicked])
 
   const gridType = filteredFixedPrice?.length > 10 ? '1fr' : '210px'
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
+      {handleDrawerOpen()}
       {handleModalClick()}
       {fixedPriceWithinCollection && fixedPriceWithinCollection.total_count === 0 ? (
         <NoContent type="collected" />

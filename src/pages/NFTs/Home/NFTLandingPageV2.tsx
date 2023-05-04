@@ -375,7 +375,7 @@ const FiltersContainer = () => {
               </STYLED_BUTTON>
             ))}
           </ButtonContainer>
-          <div tw="ml-auto mt-2.5 mr-2.5">
+          <div tw="ml-auto sm:mt-0 mt-2.5 mr-2.5">
             <TokenToggleNFT toggleToken={setCurrency} />
           </div>
         </div>

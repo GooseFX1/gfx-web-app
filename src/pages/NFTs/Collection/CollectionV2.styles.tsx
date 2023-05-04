@@ -170,7 +170,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer mt-[20px] mx-auto z-[0]`}
+      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto z-[0]`}
 
     img {
       ${tw`rounded-[15px]`}
@@ -296,7 +296,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10 sm:w-[100%]`}
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium mt-2 sm:w-[100%] items-center `}
+      ${tw`text-[15px] flex font-medium sm:mt-2.5 mt-2 sm:w-[100%] items-center `}
     }
     .flexContainer {
       margin-left: auto;

@@ -43,6 +43,7 @@ export const ProfileItemDetails: FC<{
       onClose={() => setDrawerSingleNFT(false)}
       getContainer={elem}
       visible={visible}
+      height={checkMobile() ? '655px' : '786px'}
       width={checkMobile() ? '100%' : '460px'}
       bodyStyle={{ padding: '0' }}
     >
@@ -72,7 +73,6 @@ export const ProfileItemDetails: FC<{
               width={ask ? '200px' : '100%'}
               cssStyle={tw`bg-red-1 mr-2`}
               onClick={() => {
-                setDrawerSingleNFT(false)
                 setSellModal(true)
               }}
             >

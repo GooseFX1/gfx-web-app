@@ -9,6 +9,8 @@ interface INFTAggConfig {
   setSortAsc: any
   setBuyNow: Dispatch<SetStateAction<any>>
   setBidNow: Dispatch<SetStateAction<any>>
+  setOpenJustModal: Dispatch<SetStateAction<any>>
+  openJustModal: boolean
   nftInBag: any
   setNftInBag: any
   buyNowClicked: any
@@ -37,6 +39,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [refreshClass, setRefreshClass] = useState<string>('')
   const [refreshClicked, setRefreshClicked] = useState<number>(0)
   const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
+  const [openJustModal, setOpenJustModal] = useState<boolean>(false)
 
   const setCurrency = () => {
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
@@ -69,7 +72,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         refreshClicked: refreshClicked,
         setRefreshClass: setRefreshClass,
         lastRefreshedClass: lastRefreshedClass,
-        setLastRefreshedClass: setLastRefreshClass
+        setLastRefreshedClass: setLastRefreshClass,
+        openJustModal: openJustModal,
+        setOpenJustModal: setOpenJustModal
       }}
     >
       {children}
@@ -103,6 +108,8 @@ export const useNFTAggregator = (): INFTAggConfig => {
     setRefreshClicked: context.setRefreshClicked,
     setRefreshClass: context.setRefreshClass,
     lastRefreshedClass: context.lastRefreshedClass,
-    setLastRefreshedClass: context.setLastRefreshedClass
+    setLastRefreshedClass: context.setLastRefreshedClass,
+    openJustModal: context.openJustModal,
+    setOpenJustModal: context.setOpenJustModal
   }
 }

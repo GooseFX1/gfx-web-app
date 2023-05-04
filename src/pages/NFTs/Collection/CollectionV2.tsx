@@ -162,7 +162,9 @@ const NFTStatsContainer = () => {
             >
               {collection ? (
                 <Tooltip title={collection.collection_name}>
-                  <div tw="sm:text-[22px] ml-3 font-bold">{minimizeTheString(collection.collection_name, 20)}</div>
+                  <div tw="sm:text-[22px] ml-3 font-bold">
+                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 20)}
+                  </div>
                 </Tooltip>
               ) : (
                 <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />

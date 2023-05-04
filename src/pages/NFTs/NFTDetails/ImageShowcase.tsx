@@ -1,8 +1,10 @@
 import { FC } from 'react'
-import styled, { css } from 'styled-components'
 import { useNFTDetails } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { checkMobile } from '../../../utils'
+import styled, { css } from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 //#region styles
 const LEFT_SECTION = styled.div`
@@ -15,17 +17,11 @@ const LEFT_SECTION = styled.div`
     margin-top: 30px;
 
     .close-icon-holder {
-      height: 30px;
-      width: 30px;
-      border-radius: 50%;
+      ${tw`h-[30px] w-[30px] absolute flex items-center cursor-pointer rounded-[50%]`}
       background: #131313;
-      position: absolute;
-      display: flex;
-      align-items: center;
       justify-content: center;
       top: 12px;
-      left: 12px;
-      cursor: pointer;
+      right: 12px;
     }
 
     .ls-image {

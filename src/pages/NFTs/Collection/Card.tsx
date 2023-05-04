@@ -182,10 +182,8 @@ export const Card: FC<ICard> = (props) => {
     [currencyView, solPrice]
   )
 
-  const handleModal = useCallback(() => {
-    if (showSellNFTModal) {
-      return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
-    } else if (showDrawerSingleNFT) {
+  const handelDrawer = useCallback(() => {
+    if (showDrawerSingleNFT) {
       return (
         <ProfileItemDetails
           visible={showDrawerSingleNFT}
@@ -195,11 +193,18 @@ export const Card: FC<ICard> = (props) => {
         />
       )
     }
-  }, [showSellNFTModal, showDrawerSingleNFT, setShowSellNFTModal, setDrawerSingleNFT])
+  }, [showDrawerSingleNFT])
+
+  const handleModal = useCallback(() => {
+    if (showSellNFTModal) {
+      return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
+    }
+  }, [showSellNFTModal, setShowSellNFTModal, setDrawerSingleNFT])
 
   return (
     filterAndShow && (
       <>
+        {handelDrawer()}
         {handleModal()}
         <div className="gridItem">
           <div

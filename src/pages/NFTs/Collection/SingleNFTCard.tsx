@@ -222,7 +222,7 @@ export const HoverOnNFT: FC<{
   buttonType?: string
   setNFTDetails: any
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {
-  const { setBidNow, setBuyNow, setSellNFT } = useNFTAggregator()
+  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
@@ -233,7 +233,7 @@ export const HoverOnNFT: FC<{
       setVisible(true)
       return
     }
-
+    setOpenJustModal(true)
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()
     setIsLoadingBeforeRelocate(false)
@@ -256,7 +256,7 @@ export const HoverOnNFT: FC<{
       <span className="hoverButtons">
         {buttonType === 'Sell' || buttonType === 'Modify' ? (
           <Button
-            cssStyle={tw`bg-red-1 h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            cssStyle={tw`bg-red-1 h-[28px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
             {buttonType}
@@ -273,9 +273,8 @@ export const HoverOnNFT: FC<{
         {ask && (
           <Button
             height="28px"
-            width="75px"
             className="pinkGradient"
-            cssStyle={tw`text-[13px] font-semibold ml-2 `}
+            cssStyle={tw`text-[13px] font-semibold w-[75px] sm:w-[70px] ml-2 sm:ml-1 sm:text-[13px] `}
             onClick={(e) => goToDetailsForModal(e, 'buy')}
           >
             Buy now

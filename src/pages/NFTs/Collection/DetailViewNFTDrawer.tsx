@@ -1,8 +1,9 @@
 import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Col, Drawer, Row, Tabs, Tooltip } from 'antd'
 
 import { Button } from '../../../components/Button'
-import { useNFTProfile, useNFTAggregator, useNFTDetails, useConnectionConfig } from '../../../context'
+import { useNFTProfile, useNFTAggregator, useNFTDetails } from '../../../context'
 import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
 import { GradientText } from '../adminPage/components/UpcomingMints'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
@@ -10,20 +11,20 @@ import TabPane from 'antd/lib/tabs/TabPane'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { AsksAndBidsForNFT, AttributesTabContent } from '../NFTDetails/AttributesTabContent'
 import { useHistory } from 'react-router-dom'
-
-// import { INFTGeneralData } from '../../../types/nft_details'
-// import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { AH_NAME } from '../../../web3/agg_program_ids'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { ImageShowcase } from '../NFTDetails/ImageShowcase'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
 `
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[390px]`}
+  z-index: 0;
   .generalItemValue {
     color: ${({ theme }) => theme.text32};
     ${tw`text-[15px] leading-9 font-semibold pr-2 pl-4`}
@@ -39,24 +40,23 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         position: relative;
         z-index: 1;
         height: 60px !important;
-
+ 
         .ant-tabs-nav-wrap {
           ${tw`bg-[#3c3c3c]`}
           border-radius: 15px 15px 0px 0px;
            .ant-tabs-nav-list {
-            ${tw`flex rounded-[40px]`}
+            ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
-            width: 100% !important;
-            padding-right: 0 !important;
-            height: 100% !important;
-            padding-top: 0 !important;
+            .ant-tabs-tab{
+              ${tw`w-[33%] `}
+            }
+            
           }
         }
 
         &:before {
           content: '';
-          position: absolute;
-          ${tw`absolute top-0  left-0 w-[100%] h-[100%]`}
+          ${tw` top-0  left-0 w-[100%] h-[100%]`}
           background-color: ${theme.tabContentBidBackground};
           border-radius: 15px 15px 0 0;
         }
@@ -81,7 +81,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         ${tw`text-[#636363] text-[15px] font-semibold sm:!m-0 sm:!p-0`}
 
         .ant-tabs-tab-btn {
-          ${tw`sm:text-tiny sm:!my-0 sm:!mx-5 text-[17px]`}
+          ${tw`sm:text-tiny text-[17px]`}
 
           &:before {
             content: '' !important;
@@ -119,17 +119,8 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 export const DetailViewNFT: FC = (): JSX.Element => {
   const { buyNowClicked } = useNFTAggregator()
   const elem = document.getElementById('nft-aggerator-container') //TODO-PROFILE: Stop background scroll
-  const urlSearchParams = new URLSearchParams(window.location.search)
-  const params = Object.fromEntries(urlSearchParams.entries())
   const history = useHistory()
-  const { general, setNftMetadata, nftMetadata, setGeneral, fetchGeneral } = useNFTDetails()
-  const { connection } = useConnectionConfig()
-
-  useEffect(() => {
-    if (params.address && (general === null || nftMetadata === null)) {
-      fetchGeneral(params.address, connection)
-    }
-  }, [params.address])
+  const { general, setNftMetadata, nftMetadata, setGeneral } = useNFTDetails()
 
   const goBackToNFTCollections = () => {
     history.replace({
@@ -138,6 +129,12 @@ export const DetailViewNFT: FC = (): JSX.Element => {
     })
   }
 
+  useEffect(
+    () => () => {
+      goBackToNFTCollections()
+    },
+    []
+  )
   useEffect(() => general === null && goBackToNFTCollections(), [general])
 
   const closeTheDrawer = () => {
@@ -173,24 +170,13 @@ const ImageViewer = (): ReactElement => {
 
   return general ? (
     <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[30px]">
-      <div
-        tw="h-[30px] w-[30px] rounded-[50%] top-[8px] left-[8px] cursor-pointer
-          bg-black-1 absolute flex items-center justify-center"
-        onClick={() => {
-          setGeneral(null)
-          setNftMetadata(null)
-        }}
-      >
-        <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
-      </div>
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
-        <img
-          tw="w-[390px] h-[390px] mt-[30px] sm:h-[85%] sm:w-[100%] sm:max-h-[390px]
-            rounded-[20px] shadow-[3px 3px 14px 0px rgb(0 0 0 / 43%)]"
-          height={'100%'}
-          src={general.image_url}
-          alt="the-nft"
+        <ImageShowcase
+          setShowSingleNFT={() => {
+            setGeneral(null)
+          }}
         />
+
         <div tw="mt-4 flex items-center justify-between">
           <div tw="flex flex-col">
             <div tw="flex items-center">
@@ -209,7 +195,11 @@ const ImageViewer = (): ReactElement => {
               </Tooltip>
             </div>
             <div>
-              <GradientText text={general.collection_name} fontSize={20} fontWeight={600} />
+              <GradientText
+                text={minimizeTheString(general.collection_name, checkMobile() ? 12 : 20)}
+                fontSize={20}
+                fontWeight={600}
+              />
             </div>
           </div>
           <div tw="flex items-center">
@@ -284,7 +274,6 @@ export const ButtonContainer = (): ReactElement => {
             width={ask ? '250px' : '100%'}
             cssStyle={tw`bg-red-1 mr-2`}
             onClick={() => {
-              console.log('set sell ')
               //setDrawerSingleNFT(false)
               setSellNFT(true)
             }}
@@ -369,10 +358,9 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
     () => nftMetadata && nftMetadata.attributes && nftMetadata.attributes.length > 0,
     [nftMetadata]
   )
-
   return (
     <RIGHT_SECTION_TABS activeTab={activeTab}>
-      <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
+      <Tabs defaultActiveKey="1" onChange={(key) => setActiveTab(key)}>
         <TabPane tab="Activity" key="1">
           <AsksAndBidsForNFT />
         </TabPane>
@@ -387,4 +375,12 @@ export const NFTTabSections: FC<{ activeTab: string; setActiveTab: any }> = ({
   )
 }
 
+{
+  /* <TabPane tab="Attributes" key="2">
+<AttributesTabContent data={hasAttributes ? nftMetadata.attributes : []} />
+</TabPane>
+<TabPane tab="Details" key="3">
+<NFTDetailsTab />
+</TabPane> */
+}
 export default DetailViewNFT

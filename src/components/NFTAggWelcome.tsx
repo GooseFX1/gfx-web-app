@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, FC, useState, MouseEventHandler } from 'react'
+import React, { ReactElement, FC, useState, MouseEventHandler, useCallback } from 'react'
 import Slider from 'react-slick'
 import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
 import { Button, Checkbox } from 'antd'
@@ -15,25 +15,39 @@ const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text7};
 
   .slick-prev {
-    ${tw`w-auto top-[105%] left-[10px] dark:text-white text-[#3c3c3c] text-[15px] font-semibold leading-normal`}
+    ${tw`w-auto sm:absolute top-[105%] sm:top-[530px] left-[10px] dark:text-white 
+    text-[#3c3c3c] text-[15px] font-semibold leading-normal`}
     &:before {
       display: none;
     }
   }
 
   .slick-next {
-    ${tw`w-auto top-[105%] right-[10px] text-[15px] dark:text-white text-[#3c3c3c] font-semibold leading-normal`}
+    ${tw`w-auto top-[105%] right-[10px] text-[15px] dark:text-white text-[#3c3c3c] font-semibold
+    sm:absolute sm:top-[530px] leading-normal`}
     &:before {
       display: none;
     }
   }
 
   .slick-dots {
-    ${tw`w-[65%] ml-[75px]`}
+    ${tw`w-[65%] ml-[75px] sm:ml-[57px] sm:absolute sm:bottom-[-80px] sm:pt-10`}
+  }
+  .slick-dots li.slick-active button:before {
+    color: ${({ theme }) => theme.text32};
+    opacity: 1;
+    ${tw`text-[10px]`}
+  }
+  .slick-dots li button:before {
+    color: ${({ theme }) => theme.text1};
+    ${tw`text-[8px]`}
+  }
+  .slick-dots li:last-child {
+    display: none;
   }
 
   .closeBtn {
-    ${tw`absolute -top-8 mr-[420px] h-5 w-5 cursor-pointer `}
+    ${tw`absolute  -top-8 sm:mr-[-300px] mr-[420px] h-5 w-5 cursor-pointer   z-10 `}
   }
   .bannerContainer {
     background: ${({ theme }) => theme.bg23};
@@ -106,14 +120,28 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
 )
 
 const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElement => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0)
+
+  const showNextButton = useCallback(() => {
+    if (checkMobile()) {
+      return currentSlide === 2 ? 'Start' : 'Next'
+    }
+    return currentSlide === 3 ? 'Start' : 'Next'
+  }, [currentSlide])
+
   const settings = {
-    dots: false,
+    dots: true,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: <div> Next</div>,
-    prevArrow: <div> Prev</div>
+    beforeChange: (current, next) => {
+      setCurrentSlide(next)
+      if (checkMobile() && next === 3) rewardToggle(false)
+      if (!checkMobile() && next === 4) rewardToggle(false)
+    },
+    nextArrow: <span> {showNextButton()}</span>,
+    prevArrow: <div> {currentSlide !== 0 && `Prev`}</div>
   }
   return (
     <WRAPPER>
@@ -167,6 +195,7 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
               <h3>Get Rewarded!</h3>
               <div className="subText">For every sale through our marketplace, you can earn $GOFX</div>
             </div>
+            {<div className="slide"></div>}
           </Slider>
         </div>
       </div>
@@ -179,10 +208,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`flex text-[20px] mt-1 font-semibold items-center justify-center `}
     color: ${({ theme }) => theme.text11};
   }
-  .ant-modal-close-x {
-    display: none;
-    visibility: hidden;
-  }
+
   .ant-btn {
     background: ${({ theme }) => theme.bg22};
     border: none;
