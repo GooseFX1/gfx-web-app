@@ -112,10 +112,14 @@ export const RewardsPopup: FC = () => {
   return (
     <Wrapper>
       <REWARD_INFO>
-        <RewardInfoComponent panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        <RewardInfoComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardInfoComponent>
       </REWARD_INFO>
       <REWARD_REDIRECT $index={panelIndex}>
-        <RewardRedirectComponent panelIndex={panelIndex} />
+        <RewardRedirectComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardRedirectComponent>
       </REWARD_REDIRECT>
     </Wrapper>
   )
