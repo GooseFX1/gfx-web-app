@@ -128,7 +128,9 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
       <tr
         ref={lastRowElementRef}
         key={index}
-        onClick={() => history.push(`/NFTs/collection/${item.collection_name.replaceAll(' ', '_')}`)}
+        onClick={() =>
+          history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
+        }
       >
         <td className="index"> {index + 1}</td>
         <td className="nftNameColumn">

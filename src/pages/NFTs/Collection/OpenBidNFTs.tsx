@@ -12,7 +12,8 @@ import { debounce } from '../../../utils'
 import { SellNFTModal } from './SellNFTModal'
 
 export const OpenBidNFTs = (): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT } = useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT, openJustModal } =
+    useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked } = useNFTAggregator()
@@ -86,17 +87,22 @@ export const OpenBidNFTs = (): ReactElement => {
     e.stopPropagation()
   }
 
+  const handleDrawerOpen = useCallback(() => {
+    console.log(openJustModal)
+    if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
+  }, [nftMetadata, general, openJustModal])
+
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-    if (general !== null && nftMetadata !== null) return <DetailViewNFT />
   }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
 
   const gridType = filteredOpenBid?.length > 10 ? '1fr' : '210px'
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
+      {handleDrawerOpen()}
       {handleModalClick()}
       <div className="gridContainer">
         {filteredOpenBid !== null ? (

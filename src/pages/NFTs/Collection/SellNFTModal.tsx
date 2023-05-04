@@ -64,7 +64,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 }): ReactElement => {
   const { connection, network } = useConnectionConfig()
   const { general, setGeneral, ask, nftMetadata } = useNFTDetails()
-  const { setSellNFT } = useNFTAggregator()
+  const { setSellNFT, setOpenJustModal } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(
@@ -74,6 +74,11 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
   const { singleCollection } = useNFTCollections()
+
+  const closeTheModal = () => {
+    setOpenJustModal(false)
+    handleClose()
+  }
 
   const totalToReceive = useMemo(() => (askPrice ? askPrice : 0.0) - NFT_MARKET_TRANSACTION_FEE / 100, [askPrice])
 
@@ -92,49 +97,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     },
     []
   )
-
-  // const postAskToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN, ask: INFTAsk | undefined) => {
-  //   console.log(ask)
-
-  //   const sellObject = {
-  //     ask_id: null,
-  //     clock: Date.now().toString(),
-  //     tx_sig: txSig,
-  //     wallet_key: wallet?.adapter?.publicKey.toBase58(),
-  //     auction_house_key: AUCTION_HOUSE,
-  //     token_account_key: general.token_account,
-  //     auction_house_treasury_mint_key: TREASURY_MINT,
-  //     token_account_mint_key: general.mint_address,
-  //     buyer_price: buyerPrice.toString(),
-  //     token_size: tokenSize.toString(),
-  //     non_fungible_id: general.non_fungible_id,
-  //     collection_id: general.collection_id,
-  //     user_id: sessionUser.user_id
-  //   }
-
-  //   try {
-  //     const res = await sellNFT(sellObject)
-
-  //     if (res.isAxiosError) {
-  //       notify({
-  //         type: 'error',
-  //         message: (
-  //           <TransactionErrorMsg
-  //             title={`NFT Listing error!`}
-  //             itemName={nftMetadata.name}
-  //             supportText={`Please try again, if the error persists please contact support.`}
-  //           />
-  //         )
-  //       })
-  //       return false
-  //     } else {
-  //       return true
-  //     }
-  //   } catch (error) {
-  //     console.error(error)
-  //     return false
-  //   }
-  // }
 
   const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
     message: (
@@ -381,7 +343,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       visible={visible}
-      onCancel={handleClose}
+      onCancel={closeTheModal}
       footer={null}
     >
       <>
@@ -397,6 +359,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
                   `by ${minimizeTheString(general?.collection_name, checkMobile() ? 30 : 30)}`}
               </strong>
             </div>
+            {!checkMobile() && <img className="nftImg" src={general.image_url} alt="" />}
+
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">
                 <div>
@@ -454,7 +418,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
         )}
 
-        <div className="hContainer" tw="mt-8">
+        <div className="hContainer" tw="sm:mt-10 mt-12">
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>

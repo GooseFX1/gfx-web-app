@@ -170,7 +170,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer mt-[20px] mx-auto z-[0]`}
+      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto z-[0]`}
 
     img {
       ${tw`rounded-[15px]`}

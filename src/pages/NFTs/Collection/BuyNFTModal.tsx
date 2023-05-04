@@ -137,6 +137,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`text-[17px] font-semibold mt-1`}
   }
   .rightAlign {
+    color: ${({ theme }) => theme.text32};
     ${tw`text-[17px] text-white font-semibold`}
   }
 
@@ -229,21 +230,24 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     text-align: center;
   }
 `
-const handleCloseModal = (setGeneral, setModal, isLoading) => {
-  if (!isLoading) {
-    setGeneral(null)
-    setModal(false)
-  }
-}
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BuyNFTModal = (): ReactElement => {
-  const { buyNowClicked, setBuyNow } = useNFTAggregator()
+  const { buyNowClicked, setBuyNow, openJustModal, setOpenJustModal } = useNFTAggregator()
   const { ask, setGeneral } = useNFTDetails()
   const { connected } = useWallet()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { setVisible } = useWalletModal()
   const sellerPrice: number = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+
+  const handleCloseModal = (setGeneral, setModal, isLoading) => {
+    if (!isLoading) {
+      setBuyNow(false)
+      setModal(false)
+    }
+    openJustModal && setGeneral(null)
+    setOpenJustModal(false)
+  }
 
   useEffect(() => {
     if (buyNowClicked) {
@@ -271,7 +275,7 @@ export const BuyNFTModal = (): ReactElement => {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BidNFTModal = (): ReactElement => {
   const { ask } = useNFTDetails()
-  const { bidNowClicked, setBidNow } = useNFTAggregator()
+  const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
@@ -303,7 +307,8 @@ export const BidNFTModal = (): ReactElement => {
     setSelectedBtn(undefined)
     setReviewClicked(false)
     setBidNow(false)
-    setGeneral(null)
+    openJustModal && setGeneral(null)
+    setOpenJustModal(false)
   }
 
   return (

@@ -38,7 +38,6 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
       height: 85px;
 
       .ant-tabs-nav-wrap {
-        overflow: initial;
         display: block;
 
         .ant-tabs-nav-list {

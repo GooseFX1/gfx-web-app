@@ -29,7 +29,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     padding-left: 10px;
   }
   .searchBarContainer {
-    ${tw`text-[15px] ml-4 w-[80vw]`}
+    ${tw`text-[15px] ml-1.5  w-[82vw]`}
     border: 1px solid;
   }
   .wrapper {
@@ -51,12 +51,13 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .alignRight {
     ${tw`ml-auto mr-2 mt-1.5 text-[15px] font-semibold`}
+    color: ${({ theme }) => theme.text32};
     img {
       ${tw`h-[20px] w-[20px] ml-1`}
     }
   }
   .displayRow {
-    ${tw`flex mt-2.5 mb-2 `}
+    ${tw`flex mt-2.5 mb-2.5`}
     .nftImg {
       ${tw`w-[35px] rounded-[5px] h-[35px] mt-1`}
     }
@@ -77,6 +78,7 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
   const [searchFilter, setSearchFilter] = useState<string>('')
   const [prevSearches, setPrevSearches] = useState<any>('undefined')
   const [searchResult, setSearchResult] = useState<any>([])
+  const { mode } = useDarkMode()
   useEffect(() => {
     if (searchFilter && searchFilter.length > 1) {
       fetchGlobalSearchNFT(searchFilter)
@@ -103,7 +105,7 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
             setSearchFilter={setSearchFilter}
           />
           <div>
-            <img onClick={() => setSearchPopup(false)} src="/img/assets/close-white-icon.svg" />
+            <img tw="mr-2 mt-[-1]" onClick={() => setSearchPopup(false)} src={`/img/assets/close-${mode}.svg`} />
           </div>
         </div>
         {!searchFilter && (
@@ -163,20 +165,16 @@ const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
           >
             <img className="nftImg" src={ar?.collection?.profile_pic_link} alt="" />
             <div>
-              <div className="title">
+              <div className="title" tw="sm:flex sm:items-center">
                 {minimizeTheString(ar?.collection?.collection_name, 30)}
                 {ar?.collection?.is_verified && (
-                  <img tw="w-[18px] h-[18px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                  <img
+                    tw="w-[18px] sm:h-[15px] sm:w-[15px] h-[18px] ml-1"
+                    src="/img/assets/Aggregator/verifiedNFT.svg"
+                  />
                 )}
               </div>
-              <div className="greyText">
-                24h Volume:{' '}
-                <PriceWithToken
-                  token="SOL"
-                  price={ar?.collection?.daily_volume}
-                  cssStyle={tw`ml-1 text-white w-5 h-5`}
-                />
-              </div>
+              <div className="greyText">24h Volume: {ar?.collection?.daily_volume} SOL</div>
             </div>
             <div className="alignRight" tw="flex justify-center items-center">
               <div>{ar.listed_count} Listed</div>

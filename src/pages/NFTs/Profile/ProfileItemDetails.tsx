@@ -73,7 +73,6 @@ export const ProfileItemDetails: FC<{
               width={ask ? '200px' : '100%'}
               cssStyle={tw`bg-red-1 mr-2`}
               onClick={() => {
-                setDrawerSingleNFT(false)
                 setSellModal(true)
               }}
             >
