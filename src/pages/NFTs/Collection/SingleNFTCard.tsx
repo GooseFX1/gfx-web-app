@@ -152,7 +152,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
             />
           )}
           {item ? (
-            <img className="nftImg" src={item?.image_url} alt="nft" />
+            <div className="nftImg">
+              <img src={item?.image_url} alt="nft" />
+            </div>
           ) : (
             <SkeletonCommon width="100%" height="auto" />
           )}

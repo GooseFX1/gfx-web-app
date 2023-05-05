@@ -172,15 +172,15 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto z-[0]`}
 
-    img {
-      ${tw`rounded-[15px]`}
-    }
-
     .gridItemContainer {
       ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
       .nftImg {
-        ${tw`w-full h-[170px] `}
+        ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[15px]`}
+        img {
+          height: auto;
+          width: 100%;
+        }
       }
       .hoverAddToBag {
         ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
@@ -188,11 +188,9 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       .hoverButtons {
         ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
       }
-      div {
-        ${tw`absolute opacity-0`}
-      }
+
       .hoverNFT {
-        ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
+        ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
         background: ${({ theme }) => theme.hoverGradient};
       }
       .loadingNFT {

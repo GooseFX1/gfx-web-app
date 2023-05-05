@@ -10,7 +10,7 @@ import React, {
 } from 'react'
 import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
+import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { moneyFormatter } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
@@ -53,6 +53,7 @@ type ICard = {
 
 export const Card: FC<ICard> = (props) => {
   const { mode } = useDarkMode()
+  const history = useHistory()
   const { connection } = useConnectionConfig()
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
@@ -222,13 +223,14 @@ export const Card: FC<ICard> = (props) => {
                 setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
               />
             )}
-            <img
-              className="nftImg"
-              src={
-                localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`
-              }
-              alt="nft"
-            />
+            <div className="nftImg">
+              <img
+                src={
+                  localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`
+                }
+                alt="nft"
+              />
+            </div>
           </div>
           <div className={'nftTextContainer'}>
             <div className="collectionId">
@@ -250,6 +252,11 @@ export const Card: FC<ICard> = (props) => {
                 )}
                 fontSize={15}
                 fontWeight={600}
+                onClick={(e) =>
+                  localSingleNFT?.collection_name !== null
+                    ? history.push(`/nfts/collection/${localSingleNFT?.collection_name}`)
+                    : null
+                }
               />
             )}
 

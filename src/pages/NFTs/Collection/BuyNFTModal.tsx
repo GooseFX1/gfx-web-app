@@ -106,7 +106,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`flex flex-col items-center justify-center`}
   }
   .vContainer {
-    ${tw`flex items-center justify-center relative`}
+    ${tw`flex items-center justify-center relative mt-2`}
     input::-webkit-outer-spin-button,
     input::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -158,8 +158,13 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text32};
   }
   .nftImgBid {
-    ${tw`w-[165px] h-[165px] sm:mt-[150px] rounded-[10px]
-     left-0 mt-[25px] sm:mt-2 sm:h-[125px] sm:w-[125px] sm:left-0 `}
+    ${tw`w-[165px] h-[165px] flex items-center overflow-hidden rounded-[15px] sm:mt-[150px] rounded-[10px]
+     left-0 sm:h-[125px] sm:w-[125px] sm:left-0 `}
+
+    img {
+      height: auto;
+      width: 100%;
+    }
   }
 
   .priceText {

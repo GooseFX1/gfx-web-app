@@ -142,7 +142,11 @@ export const ReviewBidModal: FC<{
         )}
       </div>
       <div className="vContainer" tw="flex">
-        {!checkMobile() && <img className="nftImgBid" src={general?.image_url} alt="" />}
+        {!checkMobile() && (
+          <div tw="mt-6" className="nftImgBid">
+            <img src={general?.image_url} alt="" />
+          </div>
+        )}
         <div tw="flex flex-col sm:mt-6">
           <div className="currentBid">Existing {!checkMobile() && <br />} Hightest Bid</div>
           <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
