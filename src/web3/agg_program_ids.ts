@@ -7,31 +7,13 @@ export const AH_PROGRAM_IDS = {
   '29xtkHHFLUHXiLoxTzbC7U8kekTwN3mVQSkfXnB1sQ6e': 'Coral Cube',
   BAmKB58MgkeYF2VueVBfASL5q8Qf6VKp4nA4cRuVUVft: 'Fractal',
   '9SvsTjqk3YoicaYnC4VW1f8QAN9ku7QCCk6AyfUdzc9t': 'Holaplex',
-  FwXH8GJfeL9sdvfaDBRkZknYgXds4MPGwErvDau6A13c: 'Unknown',
-  EJfVzwy5x7eKUiYnMXhDV1qjtkmsj9EwwzFZfo18tWT7: 'Unknown',
-  '8AHtQDuFa8pPTm5Wcyxp6qQdJwxN4nMPkmV9dyBUBpXU': 'Unknown',
-  ErdZAQfgn1ZtFBWfLhENEX9GDewGPDCodXRTUbYZt87d: 'Unknown',
-  AxrRwpzk4T6BsWhttPwVCmfeEMbfbasv1QxVc5JhUfvB: 'Unknown',
-  '3uYxtNzhuQ9mgQD2hLcxY6NZ2WXnjHjaQhetmaK211GK': 'Unknown',
-  BFuH1xRrnqhUKL8S7mNPJSanARLprsExAPJvDXnS6uVi: 'Unknown',
-  '3nAR6ZWZQA1uSNcRy3Qya2ihLU9dhaWKfZavoSiRrXzj': 'Unknown',
-  DEGEN3pHdRWgdPsp4PyKT8jmi2arvnpqJpkYiibHfQzA: 'Unknown',
-  G6zwimoXCxao9EN2vfCki6iqCUPtFcNXEun3b7GmV1cy: 'Unknown',
-  A5CsrtsB6K8DCfFf86jQhpaLSmrYAy38r89JAy73jGGw: 'Unknown',
-  HLBWsikGLFBS9tt6aLvhtr3UgF9wQnDPSYEb84VWMcZG: 'Unknown',
-  HemqA3E6kyHCPfgdgTVfDRwBpnHr4aKQv6qnQeRhRcgb: 'Unknown',
-  h9TFnGe8zdiNnou4VeuRzSXAt4MmTsNioTxba9nmG2T: 'Unknown',
-  '6HuS897u72U6y87VLfNkks6pRBMgtzuTHx6vpLhNmqVH': 'Unknown',
-  '6gysn49dh2tfwbqvLqWpJNwisjkZCJoX3AyjuyFUn89C': 'Unknown',
-  JDtW36AVm1XJtLWqEr7gsb5mU7EYXSScsEHf23wzJBYr: 'Unknown',
-  '2TV6dHcznWwqWMuKrw2CnaXVM1tBYY5bbkFdHh3fuk6f': 'Unknown',
-  '4EJ8EhynnZbk9753jv9WCCsJYV13NqnAHgFH2VeshiL2': 'Unknown',
-  o7maU9R9C77bSGkYoLDrLgCJYYLMHGf2cnGZW8UWexQ: 'Unknown',
-  GCa8W7x4mh1RnyVXVYx6RBNa7upohc9PpoWJGMuYa27z: 'Unknown',
-  Hvy8TQ6iuKmLQgWaEHBQksMMYAEH8aaPmD1pD2VMNToZ: 'Unknown',
-  Fmi98rgkH9jU4mEwp9ZEkaNMEdWpj97U9xXuRcVjCP9p: 'Unknown',
-  H58RPwoTqa2FvySxD7w8PMV4c9V9RCU7cHb5msDbUrv1: 'Unknown'
+  M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K: 'Magic Eden',
+  AARTcKUzLYaWmK7D1otgyAoFn5vQqBiTrxjwrvjvsVJa: 'Solsea',
+  '6T4f5bdrd9ffTtehqAj9BGyxahysRGcaUZeDzA1XN52N': 'Solsea',
+  '5SKmrbAxnHV2sgqyDXkGrLrokZYtWWVEEk5Soed7VLVN': 'YAWW',
+  HYPERfwdTjyJ2SCaKHmpF2MtrXqWxrsotYDsTrshHWq8: 'Hyperspace',
+  A7p8451ktDCHq5yYaHczeLMYsjRsAkzc3hCXcSrwYHU7: 'Digital Eyes'
 }
 
 export const AH_NAME = (prop: string): string =>
-  Object.hasOwn(AH_PROGRAM_IDS, prop) ? AH_PROGRAM_IDS[prop] : 'Unknown'
+  Object.hasOwn(AH_PROGRAM_IDS, prop) ? AH_PROGRAM_IDS[prop] : 'Metaplex'
