@@ -121,7 +121,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return new Map(data)
   }, [coingeckoTokens])
   const amountPoolJup = useCallback(async () => {
-    if (tokenA && tokenB) {
+    if (tokenA && tokenB && chosenRoutes.length > 0) {
       let outTokenAmount = 0
       setLoading(true)
       if (
@@ -263,7 +263,7 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     amountPoolGfx()
-  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo, loading])
+  }, [inTokenAmount, slippage, tokenA, tokenB, clickNo])
 
   useEffect(() => {
     CoinGeckoClient.coins
@@ -411,7 +411,10 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [tokenA, tokenB])
 
   //default - on switching tokens clear routes
-  useEffect(() => setRoutes([]), [tokenA, tokenB])
+  useEffect(() => {
+    setRoutes([])
+    setClickNo(0)
+  }, [tokenA, tokenB, inTokenAmount])
 
   return (
     <SwapContext.Provider

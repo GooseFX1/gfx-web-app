@@ -26,13 +26,14 @@ import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
-import { notify, moneyFormatter, nFormatter, checkMobile, clamp } from '../../utils'
+import { notify, moneyFormatter, nFormatter, checkMobile, clamp, aborter } from '../../utils'
 import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import { logData } from '../../api/analytics'
 import JSBI from 'jsbi'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div`
   ${tw`w-screen not-italic`}
@@ -184,11 +185,7 @@ const SWAP_ROUTE_ITEM = styled.div<{ $clicked?: boolean; $cover: string }>`
   sm:h-16.25 sm:mt-0 sm:mx-0 sm:mb-4 sm:min-w-[80vw] sm:!w-[316px]`}
 
   background: ${({ theme, $clicked }) =>
-    $clicked
-      ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)'
-      : checkMobile()
-      ? theme.bg10
-      : theme.bg20};
+    $clicked ? 'linear-gradient(90deg,rgba(247,147,26,0.5) 0%,rgba(220,31,255,0.5) 100%)' : theme.bg20};
   box-shadow: 0 6px 9px 0 rgba(36, 36, 36, 0.1);
 
   .inner-container {
@@ -471,6 +468,7 @@ const SwapContent: FC<{
     setFocused('from')
     switchTokens()
   }, [switchTokens, setFocused])
+  const breakpoint = useBreakPoint()
   return (
     <SWAP_CONTENT>
       <SETTING_MODAL
@@ -502,7 +500,7 @@ const SwapContent: FC<{
       </SETTING_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
-          <span>{checkMobile() ? 'Swap' : dateString(new Date())}</span>
+          <span>{breakpoint.isMobile ? 'Swap' : dateString(new Date())}</span>
           <img src={`/img/crypto/jup_${mode}.svg`} alt="jupiter-icon" className={'jup-icon'} />
         </HEADER_TITLE>
 
@@ -510,7 +508,7 @@ const SwapContent: FC<{
           {wallet?.adapter?.publicKey && (
             <div
               onClick={openHistory}
-              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
+              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10
                   rounded-circle mr-2 cursor-pointer"
             >
               <img
@@ -528,7 +526,7 @@ const SwapContent: FC<{
           )}
           <div
             onClick={showWrapSolModal}
-            tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
+            tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest
             dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10"
           >
             wSOL
@@ -553,7 +551,7 @@ const SwapContent: FC<{
         </SWITCH>
         <SwapTo height={height} />
       </BODY>
-      {checkMobile() && tokenA && tokenB && inTokenAmount > 0 && <AlternativesContent />}
+      {breakpoint.isMobile && tokenA && tokenB && inTokenAmount > 0 && <AlternativesContent />}
       <SwapButton exchange={exchange} />
     </SWAP_CONTENT>
   )
@@ -615,6 +613,9 @@ const TokenContent: FC = () => {
     } catch (error) {
       console.log(error)
     }
+    return () => {
+      aborter.abortBulkWithPrefix('tokens-content-fetch-coin-gecko')
+    }
   }, [tokenA, tokenB, coingeckoTokenMap])
 
   const handleCopyTokenMint = useCallback(() => {
@@ -630,8 +631,12 @@ const TokenContent: FC = () => {
         if (token) {
           const execution = []
           execution.push(
-            CoinGeckoClient.coins.fetch(token?.id || null, {}),
-            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address)
+            CoinGeckoClient.coins.fetch(token?.id || null, {
+              signal: aborter.addSignal('tokens-content-fetch-coin-gecko-' + token?.id)
+            }),
+            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenA.address, {
+              signal: aborter.addSignal('tokens-content-fetch-coin-gecko-' + tokenA.address)
+            })
           )
           Promise.all(execution)
             .then(async ([coinGeckoA, tokenHoldersA]) => {
@@ -676,8 +681,12 @@ const TokenContent: FC = () => {
         if (token) {
           const execution = []
           execution.push(
-            CoinGeckoClient.coins.fetch(token?.id || null, {}),
-            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenB.address)
+            CoinGeckoClient.coins.fetch(token?.id || null, {
+              signal: aborter.addSignal('tokens-content-fetch-coin-gecko-' + token?.id)
+            }),
+            fetch('https://public-api.solscan.io/token/holders?tokenAddress=' + tokenB.address, {
+              signal: aborter.addSignal('tokens-content-fetch-coin-gecko-' + tokenB.address)
+            })
           )
           Promise.all(execution)
             .then(async ([coingGeckoB, tokenHoldersB]) => {
@@ -813,10 +822,11 @@ interface PriceContentDetail {
 const PriceContent: FC = () => {
   const { tokenA, tokenB, inTokenAmount, clickNo, chosenRoutes: routes } = useSwap()
   const { tokenMap } = useTokenRegistry()
+  const breakpoint = useBreakPoint()
   const [details, setDetails] = useState<PriceContentDetail[]>([
     { name: 'Price Impact', value: '0%' },
     {
-      name: checkMobile() ? 'Min. Received' : 'Minimum Received',
+      name: breakpoint.isMobile ? 'Min. Received' : 'Minimum Received',
       value: 0 + ' ' + tokenB.symbol
     },
     {
@@ -824,7 +834,7 @@ const PriceContent: FC = () => {
       value: `${0} ${tokenA.symbol} (${0} %)`,
       extraValue: `0 ${tokenB.symbol} (0%)`
     },
-    { name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
+    { name: breakpoint.isMobile ? 'Trans. Fee' : 'Transaction Fee', value: '0.00005 SOL', icon: 'info' }
   ])
   const [outAmount, setOutAmount] = useState(0)
   const [outTokenPercentage, setOutTokenPercentage] = useState(0)
@@ -854,7 +864,7 @@ const PriceContent: FC = () => {
     const priceDetails: PriceContentDetail[] = [
       { name: 'Price Impact', value: `< ${Number(route.priceImpactPct).toFixed(6)}%` },
       {
-        name: checkMobile() ? 'Min. Received' : 'Minimum Received',
+        name: breakpoint.isMobile ? 'Min. Received' : 'Minimum Received',
         value: `${nFormatter(route.outAmountWithSlippage / 10 ** tokenB.decimals, tokenB.decimals)} ${
           tokenB.symbol
         }`
@@ -873,7 +883,7 @@ const PriceContent: FC = () => {
       })
     }
     priceDetails.push({
-      name: checkMobile() ? 'Trans. Fee' : 'Transaction Fee',
+      name: breakpoint.isMobile ? 'Trans. Fee' : 'Transaction Fee',
       value: '0.00005 SOL',
       icon: 'info'
     })
@@ -883,7 +893,7 @@ const PriceContent: FC = () => {
     const percentageCheap = +(((route.outAmount - routes[0]?.outAmount) / route.outAmount) * 100).toFixed(5)
     setOutTokenPercentage(Math.abs(percentageCheap))
     setCheap(percentageCheap >= 0)
-  }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes])
+  }, [clickNo, inTokenAmount, tokenA.symbol, tokenB.symbol, routes, breakpoint.isMobile])
   const detailItems: ReactNode[] = useMemo(() => {
     if (!details || details.length == 0) {
       return []
@@ -1008,7 +1018,7 @@ const AlternativesContent: FC = () => {
     }
     const renderDetails = newDetails.map((detail, k) => (
       <SWAP_ROUTE_ITEM
-        key={detail?.name + detail?.price}
+        key={detail?.name + detail?.price + k}
         $clicked={k === clickNo}
         $cover={mode === 'dark' ? '#3c3b3ba6' : '#ffffffa6'}
         onClick={() => setClickNo(k)}
@@ -1032,29 +1042,29 @@ const AlternativesContent: FC = () => {
   const toggleSetLess = useCallback(() => {
     setLess((prev) => !prev)
   }, [])
-  console.log(routes)
+  const breakpoint = useBreakPoint()
   return (
-    <SWAP_ROUTES less={less || details.length < 4}>
+    <SWAP_ROUTES less={less || details.length < 3}>
       <div className="swap-content">
         {details?.length < 1 ? (
           <>
             <SkeletonCommon
               width={'342px'}
-              height={checkMobile() ? '64px' : '75px'}
+              height={breakpoint.isMobile ? '64px' : '75px'}
               borderRadius="10px"
               style={{
-                marginRight: checkMobile() ? '0px' : '16px',
-                marginBottom: checkMobile() ? '16px' : '0px',
+                marginRight: breakpoint.isMobile ? '0px' : '16px',
+                marginBottom: breakpoint.isMobile ? '16px' : '0px',
                 boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
               }}
             />
             <SkeletonCommon
               width={'342px'}
-              height={checkMobile() ? '64px' : '75px'}
+              height={breakpoint.isMobile ? '64px' : '75px'}
               borderRadius="10px"
               style={{
-                marginRight: checkMobile() ? '0px' : '16px',
-                marginBottom: checkMobile() ? '16px' : '0px',
+                marginRight: breakpoint.isMobile ? '0px' : '16px',
+                marginBottom: breakpoint.isMobile ? '16px' : '0px',
                 boxShadow: '0 6px 9px 0 rgba(36, 36, 36, 0.1)'
               }}
             />
@@ -1084,7 +1094,7 @@ export const SwapMain: FC = () => {
   const [allowed, setallowed] = useState<boolean>(false)
   const [inAmountTotal, setInAmountTotal] = useState<number>(0)
   const [refreshed, setRefreshed] = useState<boolean>(false)
-  const [desktop, setDesktop] = useState<boolean>(window.innerWidth > 1200)
+  const breakpoint = useBreakPoint()
   const { routes, exchange } = useJupiter({
     amount: JSBI.BigInt(inAmountTotal), // raw input amount of tokens
     inputMint: new PublicKey(tokenA?.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -1094,27 +1104,14 @@ export const SwapMain: FC = () => {
   })
 
   useEffect(() => {
-    const handleResize = () => {
-      // preventing duplicating remounts on resize
-      if (window.innerWidth > 1280 && !desktop) {
-        setDesktop(true)
-      } else if (window.innerWidth <= 1280 && desktop) {
-        setDesktop(false)
-      }
-    }
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [desktop])
-  useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     const roundedTotal = Math.round(inAmountTotal)
     setInAmountTotal(roundedTotal)
     const newRoutes = []
+    const supported =
+      (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenA?.symbol)) ||
+      (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenB?.symbol))
     if (network !== 'devnet') {
-      const supported =
-        (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenA?.symbol)) ||
-        (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenB?.symbol))
       if (tokenA && tokenB) {
         setallowed(true)
       } else if (!routes || routes.length == 0) {
@@ -1127,11 +1124,6 @@ export const SwapMain: FC = () => {
           continue
         }
         newRoutes.push(route)
-      }
-
-      if (newRoutes.length > 0) {
-        // setting length cuts off unneeded routes - instead of using .slice to be conservative of ops/mem
-        newRoutes.length = clamp(newRoutes.length, 0, supported && tokenB ? 2 : 3)
       }
 
       if (tokenB && newRoutes.length > 0 && supported) {
@@ -1168,7 +1160,9 @@ export const SwapMain: FC = () => {
         priceImpactPct: priceImpact || 0
       })
     }
-    if (JSON.stringify(routes) != JSON.stringify(newRoutes)) {
+    if (newRoutes.length > 0) {
+      // truncates routes to 2 or 3
+      newRoutes.length = clamp(newRoutes.length, 0, 3)
       setRoutes(newRoutes)
     }
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network, priceImpact])
@@ -1199,10 +1193,10 @@ export const SwapMain: FC = () => {
     return (
       <WRAPPER>
         <RefreshedAnimation active={refreshed} isMobile={false} navCollapsed={isCollapsed} />
-        <INNERWRAPPER $desktop={desktop && allowed} $navCollapsed={isCollapsed}>
-          {desktop && allowed && <TokenContent />}
+        <INNERWRAPPER $desktop={breakpoint.isDesktop && allowed} $navCollapsed={isCollapsed}>
+          {breakpoint.isDesktop && allowed && <TokenContent />}
           <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
-          {desktop && allowed && <PriceContent />}
+          {breakpoint.isDesktop && allowed && <PriceContent />}
         </INNERWRAPPER>
         {allowed && inTokenAmount > 0 && <AlternativesContent />}
       </WRAPPER>

@@ -6,7 +6,7 @@ import { Modal } from '../../components'
 import { useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
-import { checkMobile } from '../../utils'
+import { aborter, checkMobile } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TOKEN_PROGRAM_ID } from '../../web3'
 import 'styled-components/macro'
@@ -274,7 +274,7 @@ export const Selector: FC<{
             }
             // potentially introduce Promise.all for this and keep track of indeces if needed in specific order
             await CoinGeckoClient.coins
-              .fetch(cgToken.id, {})
+              .fetch(cgToken.id, { signal: aborter.addSignal('selector-useEffect-' + cgToken.id) })
               .then((res) => {
                 const result = Math.floor(res?.data?.market_data?.total_volume?.usd || 0)
                 newFilteredTokens.push({ ...token, vol: !isNaN(result) ? result : 0 })
@@ -309,6 +309,7 @@ export const Selector: FC<{
         process()
       }, 333)
     }
+    return () => aborter.abortBulkWithPrefix('selector-useEffect-')
   }, [filterKeywords, tokens, tokenA, tokenB, publicKey])
   const handleSearch = useCallback((e: SyntheticEvent) => {
     setFilterKeywords((e.target as HTMLInputElement).value)
