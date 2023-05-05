@@ -8,7 +8,7 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 const CONTAINER = styled.div`
   min-height: 300px;
   flex-wrap: wrap;
-  ${tw`dark:bg-[#272727] bg-[#e2e2e2] duration-500 flex absolute z-[10]`}
+  ${tw`dark:bg-[#1c1c1c] bg-[#e2e2e2] duration-500 flex absolute z-[10]`}
 `
 
 const ITEM = styled.div`
