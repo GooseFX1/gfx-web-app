@@ -5,7 +5,7 @@ import { IAttributesTabItemData } from '../../../types/nft_details'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useDarkMode, useNFTDetails, usePriceFeedFarm } from '../../../context'
-import { truncateAddress } from '../../../utils'
+import { truncateAddress, parseUnixTimestamp } from '../../../utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
@@ -45,7 +45,7 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
         <PILL_SECONDARY $mode={`${mode}`} key={index}>
           <div className="layer">
             <div tw="text-[13px] font-medium dark:text-grey-2 text-grey-1">{item.trait_type} </div>
-            <div tw="text-[13px] font-medium dark:text-grey-5 text-black-4">{trimString(item.value)}</div>
+            <div tw="text-[13px] font-medium dark:text-grey-5 text-black-4 truncate">{trimString(item.value)}</div>
           </div>
         </PILL_SECONDARY>
       ))}
@@ -66,6 +66,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
     )
   const { prices } = usePriceFeedFarm()
   const solPrice = prices['SOL/USDC']?.current
+
   return (
     <div tw="flex-col">
       {bids.length > 0 &&
@@ -73,7 +74,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
           <div tw="flex items-center justify-between mt-1 dark:text-grey-5 text-grey-1" key={bid.clock}>
             <div tw="ml-6">
               Bid by <span className="bidBy">{truncateAddress(bid.wallet_key)} </span>
-              <div>{new Date(parseInt(bid.clock) * 1000).toString().substring(0, 16)}</div>
+              <div>{parseUnixTimestamp(bid.clock)}</div>
             </div>
             <div tw="mr-6">
               <PriceWithToken
@@ -94,7 +95,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             </a> */}
             <div tw="ml-3">
               Ask by <span className="bidBy">{truncateAddress(ask.wallet_key)} </span>
-              <div>{new Date(parseInt(ask.clock)).toString().substring(0, 16)}</div>
+              <div>{parseUnixTimestamp(ask.clock)}</div>
             </div>
           </div>
           <div tw="mr-2">
