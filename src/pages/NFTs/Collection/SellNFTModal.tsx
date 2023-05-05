@@ -297,7 +297,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
 
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
-    console.log(curAskingPrice)
     const tradeState: [PublicKey, number] = await tradeStatePDA(
       usrAddr,
       AUCTION_HOUSE,
@@ -439,9 +438,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
               askPrice === null ||
               parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice
             }
-            tw="!bg-blue-1"
             onClick={callSellInstruction}
-            className={!ask ? 'sellButton' : 'semiSellButton'}
+            className={!ask ? 'sellButton' : 'semiSellButton' + ' blueBg'}
             loading={isLoading}
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'Sell'}</span>

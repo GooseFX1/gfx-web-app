@@ -301,6 +301,14 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   //   </StyledMenu>
   // )
 
+  let profilePic = currentUserProfile?.profile_pic_link
+  if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
+
+  const getFirstAndLast = useMemo(
+    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
+    [params.userAddress]
+  )
+
   return (
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
@@ -324,21 +332,21 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       {checkMobile() && (
         <div tw="flex justify-between items-center h-[35px]">
           <div className="avatar-profile-wrap">
-            <Image
-              className="avatar-profile"
-              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-              src={
-                currentUserProfile
-                  ? currentUserProfile.profile_pic_link
-                  : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`
-              }
-              preview={false}
-              alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
-            />
+            {profilePic ? (
+              <Image
+                className="avatar-profile"
+                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                src={profilePic ? profilePic : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+                preview={false}
+                alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
+              />
+            ) : (
+              <div className="no-dp-avatar">{getFirstAndLast} </div>
+            )}
             {connected && currentUserProfile && isSessionUser && (
               <img
                 className="edit-icon"
-                src={`/img/assets/Aggregator/editBtn.svg`}
+                src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
                 alt=""
                 onClick={() => setProfileModal(true)}
               />

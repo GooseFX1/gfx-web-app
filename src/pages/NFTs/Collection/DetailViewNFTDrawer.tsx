@@ -48,7 +48,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
             ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
             .ant-tabs-tab{
-              ${tw`w-[33%] `}
+              ${tw`w-[33%] sm:!pl-5 `}
             }
             
           }

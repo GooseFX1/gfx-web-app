@@ -15,11 +15,12 @@ export const Arrow: FC<{
   height: string
   width: string
   invert: boolean
+  whiteColor?: boolean
   cssStyle?: TwStyle
   [x: string]: any
-}> = ({ height, width, cssStyle, invert, ...props }) => {
+}> = ({ height, width, cssStyle, whiteColor, invert, ...props }) => {
   const { mode } = useDarkMode()
-  const ArrowImg = `/img/assets/arrow-down-${mode}.svg`
+  const ArrowImg = !whiteColor ? `/img/assets/arrow-down-${mode}.svg` : `/img/assets/arrow-down-dark.svg`
 
   return (
     <>

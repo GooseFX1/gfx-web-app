@@ -70,6 +70,19 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 3s ease-in-out;
   }
+  .no-dp-avatar-sm {
+    ${tw`dark:border-black-1 h-11 w-11 rounded-full cursor-pointer mr-5 
+    text-grey-1  bg-grey-2 text-[15px] font-semibold justify-center
+         border-white  dark:bg-black-2 flex items-center  `}
+  }
+  .no-dp-avatar-lg {
+    ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
+         border-white h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]`}
+    border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
+    @media (max-width: 500px) {
+      border: 5px solid ${({ theme }) => theme.bgForNFTCollection};
+    }
+  }
 
   @keyframes openAnimation {
     0% {
@@ -336,14 +349,7 @@ const FiltersContainer = () => {
             {/* <div className="iconImg" onClick={() => setMenuPopup(true)}>
               <img src={`/img/assets/Aggregator/menu.svg`} />
             </div> */}
-            {sessionUser && (
-              <AVATAR_NFT
-                fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                src={sessionUser.profile_pic_link}
-                preview={false}
-                onClick={goProfile}
-              />
-            )}
+            {sessionUser && <CurrentUserProfilePic goProfile={goProfile} />}
           </div>
           <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
             <div className="slider-animation"></div>
@@ -409,14 +415,7 @@ const FiltersContainer = () => {
             <RefreshBtnWithAnimationNFT />
           </div>
 
-          {sessionUser && (
-            <AVATAR_NFT
-              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-              src={sessionUser ? sessionUser.profile_pic_link : ''}
-              preview={false}
-              onClick={goProfile}
-            />
-          )}
+          {sessionUser && <CurrentUserProfilePic goProfile={goProfile} />}
         </div>
       </FILTERS_CONTAINER>
     )
@@ -440,7 +439,26 @@ export const RefreshBtnWithAnimationNFT: FC = () => {
     </RefreshIcon>
   )
 }
+export const CurrentUserProfilePic: FC<{ goProfile: any }> = ({ goProfile }) => {
+  const { sessionUser } = useNFTProfile()
+  const { wallet } = useWallet()
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey.toString(), [wallet?.adapter?.publicKey])
+  let userPic = sessionUser?.profile_pic_link
+  if (userPic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') userPic = null
 
+  const getFirstAndLast = useMemo(() => pubKey[0] + pubKey[pubKey.length - 1], [sessionUser])
+  return (
+    <div>
+      {userPic ? (
+        <AVATAR_NFT src={userPic} preview={false} onClick={goProfile} />
+      ) : (
+        <div className="no-dp-avatar-sm" onClick={goProfile}>
+          {getFirstAndLast}
+        </div>
+      )}
+    </div>
+  )
+}
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
   const { mode } = useDarkMode()
   const eyeImg = `/img/assets/hideEye.svg`

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Connect } from './Connect'
 import { More } from './More'
 import { Tabs } from './Tabs'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { RewardsButton } from '../components/RewardsPopup'
 import { useDarkMode } from '../context'
 import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../styles'
@@ -168,7 +169,7 @@ export const MainNav: FC = () => {
             <BUTTONS>
               <RewardsButton />
               <Connect />
-              {pathname.split('/')[1] === 'nfts' && <MyNFTBag />}
+              {/* {pathname.split('/')[1] === 'nfts' && <MyNFTBag />} */}
               <More />
             </BUTTONS>
           </>

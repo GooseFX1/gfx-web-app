@@ -13,6 +13,8 @@ import { generateTinyURL } from '../../../api/tinyUrl'
 import { Share } from '../Share'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
+import { Tooltip } from 'antd'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
@@ -232,7 +234,12 @@ export const RightSection: FC<{
           <div tw="flex justify-between my-5">
             <div>
               {/* TODO: Fetch Collection Name */}
-              <div className="rs-name">{general?.nft_name}</div>
+              <Tooltip
+                title={general?.nft_name}
+                overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
+              >
+                <div className="rs-name">{minimizeTheString(general?.nft_name, 20)}</div>
+              </Tooltip>
             </div>
 
             <div className="ls-bottom-panel">
