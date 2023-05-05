@@ -195,14 +195,14 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               />
             </Upload>
           </CenteredDiv>
-          <div tw="ml-20 sm:ml-16">
+          <div tw="ml-20 sm:ml-14">
             <div className="titleHeader">
               Username <OptionalText />
             </div>
             <div>
               <InputContainer setVariableState={setUsername} stateVariable={username} />
             </div>
-            <UnderLine width={checkMobile() ? 190 : 260} />
+            <UnderLine width={checkMobile() ? 180 : 260} />
             <div tw="flex justify-between items-center">
               <PublicUsernameText />
               <div tw="flex">
@@ -220,7 +220,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div>
             <InputContainer setVariableState={setBio} stateVariable={bio} />
           </div>
-          <UnderLine width={checkMobile() ? 360 : 438} />
+          <UnderLine width={checkMobile() ? 340 : 438} />
           <div tw="flex justify-between items-center">
             <div className="publicURLText">Share with the world who you are!</div>
             <div tw="flex">
@@ -238,15 +238,15 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <div>
               <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} />
             </div>
-            <UnderLine width={checkMobile() ? 170 : 200} />
+            <UnderLine width={checkMobile() ? 160 : 200} />
             <PublicURLText />
           </div>
-          <div className="titleHeader" tw="ml-4">
+          <div className="titleHeader" tw="ml-3">
             Discord <OptionalText />
             <div>
               <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
             </div>
-            <UnderLine width={checkMobile() ? 170 : 200} />
+            <UnderLine width={checkMobile() ? 160 : 200} />
             <PublicURLText />
           </div>
         </div>

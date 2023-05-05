@@ -37,8 +37,13 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
         border-radius: 50%;
         border: 8px solid;
       }
+      .no-dp-avatar {
+        ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
+         border-white h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]`}
+        border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
+      }
       .icon {
-        ${tw`h-10 w-10 absolute bottom-[-5px] right-[-1px] cursor-pointer`}
+        ${tw`h-10 w-10 absolute bottom-[-14px] right-[-2px] cursor-pointer`}
       }
     }
 
@@ -81,7 +86,7 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
       }
       .social-icon {
         ${tw`w-[35px] h-[30px]`}
-        background-color: ${({ theme }) => theme.bg25};
+        background-color: ${({ theme }) => theme.bg26};
       }
       .twitterHeight {
         height: 18px;
@@ -270,13 +275,21 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
     await navigator.clipboard.writeText(window.location.href)
   }
 
+  const getFirstAndLast = useMemo(
+    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
+    [params.userAddress]
+  )
+
+  let profilePic = currentUserProfile?.profile_pic_link
+  if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
+
   return (
     <PROFILE navCollapsed={isCollapsed}>
       {handleModal()}
       <div className="profile-pic">
         {!checkMobile() && (
           <div className="avatar-profile-wrap">
-            {currentUserProfile && currentUserProfile.profile_pic_link ? (
+            {currentUserProfile && profilePic ? (
               <img
                 className="avatar-profile"
                 src={currentUserProfile.profile_pic_link}
@@ -285,22 +298,16 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
                 width="116px"
               />
             ) : (
-              <img
-                className="avatar-profile"
-                src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-                alt="avatar-image"
-                height="116px"
-                width="116px"
-              />
+              <div className="no-dp-avatar"> {getFirstAndLast} </div>
             )}
-            {isSessionUser && currentUserProfile && currentUserProfile.profile_pic_link ? (
+            {isSessionUser && currentUserProfile && profilePic ? (
               <img
                 className="icon"
                 src={`/img/assets/Aggregator/editBtn.svg`}
                 alt="edit-image"
                 onClick={() => setProfileModal(true)}
               />
-            ) : isSessionUser && currentUserProfile && !currentUserProfile.profile_pic_link ? (
+            ) : isSessionUser && currentUserProfile && !profilePic ? (
               <img
                 className="icon"
                 src={`/img/assets/addImage.svg`}

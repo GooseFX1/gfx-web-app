@@ -137,7 +137,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`text-[17px] font-semibold mt-1`}
   }
   .rightAlign {
-    color: ${({ theme }) => theme.text32};
+    color: ${({ theme }) => theme.text32} !important;
     ${tw`text-[17px] text-white font-semibold`}
   }
 
@@ -155,7 +155,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`h-12 mt-2  w-[220px] bg-none sm:h-[48px]
     sm:mt-0 border-none text-center rounded-[25px] text-[40px]  font-semibold`}
     background: ${({ theme }) => theme.bg26};
-    color: ${({ theme }) => theme.text30};
+    color: ${({ theme }) => theme.text32};
   }
   .nftImgBid {
     ${tw`w-[165px] h-[165px] sm:mt-[150px] rounded-[10px]
@@ -172,16 +172,19 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .sellButton {
     ${tw`w-[520px] sm:h-[50px] sm:w-[90vw] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px]
-     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
     }
   }
+  .blueBg {
+    ${tw`!bg-blue-1`}
+  }
   .semiSellButton {
     ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE]
      rounded-[50px] border-none sm:max-w[180px]
-     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F24244] justify-center`}
+     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;

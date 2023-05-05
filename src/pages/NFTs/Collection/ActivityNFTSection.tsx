@@ -14,6 +14,7 @@ import 'styled-components/macro'
 import { AH_NAME } from '../../../web3'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Tooltip } from 'antd'
+import NoContent from '../Profile/NoContent'
 export interface IActivity {
   activity_id: number
   uuid: string
@@ -43,6 +44,7 @@ const ACTIVITY_KIND = {
 export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   overflow-x: hidden;
   width: 100%;
+  background: ${({ theme }) => theme.bg17};
 
   ${({ theme }) => theme.customScrollBar('0px')}
   @media(max-width: 500px) {
@@ -53,7 +55,6 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
       width: 100%;
     }
     ${tw`w-full`}
-    background: ${({ theme }) => theme.bg17};
   }
   thead,
   tbody,
@@ -167,22 +168,25 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
   }, [])
 
   const { isCollapsed } = useNavCollapse()
-  console.log(activityData)
   return (
     <WRAPPER_TABLE $navCollapsed={isCollapsed}>
-      <table>
-        {!checkMobile() && (
-          <thead className="tableHeader">
-            <NFTActivitySectionWeb />
-          </thead>
-        )}
-        <tbody>
-          {/* <NFTTableRow allItems={allItems} /> */}
-          {checkMobile()
-            ? activityData && <NFTActivityRowMobile activityData={activityData} />
-            : activityData && <NFTActivityRowWeb activityData={activityData} />}
-        </tbody>
-      </table>
+      {activityData.length ? (
+        <table>
+          {!checkMobile() && (
+            <thead className="tableHeader">
+              <NFTActivitySectionWeb />
+            </thead>
+          )}
+          <tbody>
+            {/* <NFTTableRow allItems={allItems} /> */}
+            {checkMobile()
+              ? activityData && <NFTActivityRowMobile activityData={activityData} />
+              : activityData && <NFTActivityRowWeb activityData={activityData} />}
+          </tbody>
+        </table>
+      ) : (
+        <NoContent type="activity" />
+      )}
     </WRAPPER_TABLE>
   )
 }

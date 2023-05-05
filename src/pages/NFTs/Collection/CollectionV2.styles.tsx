@@ -35,7 +35,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     .nftStatsContainer {
       ${tw`flex items-center my-[20px] mx-4 sm:ml-2 sm:mr-2`}
       .backBtn {
-        ${tw`h-[40px] w-10 rounded-full flex items-center justify-center cursor-pointer`}
+        ${tw`h-[40px] w-[40px] rounded-full flex items-center justify-center cursor-pointer`}
         background: ${({ theme }) => theme.backBtnBg};
         img {
           ${tw`h-[18px] `}

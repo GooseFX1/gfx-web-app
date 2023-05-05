@@ -121,7 +121,7 @@ const ProfileNFTFiltersDropdown = () => {
         ) : (
           <div tw="flex items-center">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
-            <Arrow height="9px" width="18px" cssStyle={tw`ml-[-25px]`} invert={arrow} />
+            <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-[-25px]`} invert={arrow} />
           </div>
         )}
       </Dropdown>
