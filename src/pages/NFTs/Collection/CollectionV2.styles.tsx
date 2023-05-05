@@ -139,7 +139,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full dark:bg-[#272727] bg-grey-6`}
+  ${tw`w-full dark:bg-[#1c1c1c] bg-grey-6`}
   ${({ theme }) => theme.customScrollBar('4px')}
   overflow-y: auto;
   .profile-content-loading {
@@ -280,7 +280,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex dark:bg-[#272727] bg-grey-6 h-[70px] sm:h-[100px] sm:flex-col `}
+    ${tw`duration-500 items-center flex dark:bg-[#1c1c1c] bg-grey-6 h-[70px] sm:h-[100px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
