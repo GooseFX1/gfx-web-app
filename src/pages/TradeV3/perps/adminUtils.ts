@@ -3,6 +3,7 @@ import { Connection, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solan
 import {
   CREATE_RISK_STATE_ACCOUNT_DISCRIMINANT,
   DEX_ID,
+  FEE_COLLECTOR,
   FEES_ID,
   FIND_FEES_DISCRIMINANT,
   FIND_FEES_DISCRIMINANT_LEN,
@@ -188,7 +189,7 @@ export const initializeTraderFeeAcctIx = (args) => {
 export const adminInitialiseMPG = async (connection: Connection, wallet: any) => {
   const marketProductGroupss = anchor.web3.Keypair.generate()
   const vaultMint = new PublicKey(VAULT_MINT)
-  const feeCollector = anchor.web3.Keypair.generate().publicKey
+  const feeCollector = new PublicKey(FEE_COLLECTOR)
   const riskModelConfigurationAcct = anchor.web3.Keypair.generate().publicKey
   const feeOutputRegister = anchor.web3.Keypair.generate()
   const riskOutputRegister = anchor.web3.Keypair.generate()
