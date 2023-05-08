@@ -9,7 +9,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     color: ${({ theme }) => theme.text30};
     ${({ theme }) => theme.customScrollBar(0)};
     .ant-drawer-content {
-      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] rounded-[30px]`}
+      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] `}
     }
 
     .lastRefreshed {
@@ -192,41 +192,51 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    img {
-      ${tw`rounded-[15px]`}
-    }
   }
+
   .gridItemCollections {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+  }
+  .gridGradientInner {
+    ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[15px] dark:bg-black-1 bg-white 
+      duration-500 cursor-pointer    mx-auto  z-[0]`}
+  }
 
-    .gridItemContainer {
-      ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
+  .gridItemContainer {
+    ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
-      .nftImg {
-        ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[15px]`}
-        img {
-          height: auto;
-          width: 100%;
-        }
-      }
-      .hoverAddToBag {
-        ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
-      }
-      .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
-      }
-
-      .hoverNFT {
-        ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
-        background: ${({ theme }) => theme.hoverGradient};
-      }
-      .loadingNFT {
-        ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
-         w-[190px] h-[295px] rounded-[15px] pl-1`}
-        background: ${({ theme }) => theme.hoverGradient};
+    .nftImg {
+      ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[15px]`}
+      img {
+        height: auto;
+        width: 100%;
       }
     }
+    .hoverAddToBag {
+      ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
+    }
+    .hoverButtons {
+      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
+    }
+
+    .hoverNFT {
+      ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
+      background: ${({ theme }) => theme.hoverGradient};
+    }
+    .loadingNFT {
+      ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
+         w-[190px] h-[295px] rounded-[15px] pl-1`}
+      background: ${({ theme }) => theme.hoverGradient};
+    }
+
+    .hoverAddToBag {
+      ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
+    }
+    .hoverButtons {
+      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
+    }
+
     .hoverNFT {
       ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
       background: ${({ theme }) => theme.hoverGradient};
