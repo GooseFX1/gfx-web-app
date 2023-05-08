@@ -7,7 +7,6 @@ import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'
 import { useNFTProfile } from '../../../context'
 import { isValidSolanaAddress } from '../../../web3'
-import { SellNFTModal } from '../Collection/SellNFTModal'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -15,9 +14,21 @@ import 'styled-components/macro'
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   ${tw`-mt-20 pt-20 flex flex-col`}
+  .ant-drawer-content {
+    ${tw`sm:rounded-[20px]`}
+  }
   .ant-drawer-body {
     ${tw`dark:bg-black-2 bg-grey-4`}
-    ${({ theme }) => theme.customScrollBar('4px')}
+    ${({ theme }) => theme.customScrollBar('0px')}
+  }
+  .no-dp-avatar {
+    ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
+           h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]
+         sm:h-[80px] sm:w-[80px] sm:ml-[-5px] sm:ml-2.5 sm:mt-[-25px]   `}
+    border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
+    @media (max-width: 500px) {
+      border: 5px solid ${({ theme }) => theme.bgForNFTCollection};
+    }
   }
 
   ${({ background }) => `
@@ -59,13 +70,13 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
           }
 
           .ant-tabs-tab {
-            margin: 0 30px;
             .ant-tabs-tab-btn {
               padding: 16px 0;
               color: ${({ theme }) => theme.text28};
               font-size: 15px;
+              // margin: 0 12px;
               @media(max-width: 500px){
-                margin: 0 32px;
+                margin: 0 12px;
               }
             }
           }

@@ -88,7 +88,6 @@ export const OpenBidNFTs = (): ReactElement => {
   }
 
   const handleDrawerOpen = useCallback(() => {
-    console.log(openJustModal)
     if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
   }, [nftMetadata, general, openJustModal])
 

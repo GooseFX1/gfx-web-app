@@ -1,6 +1,8 @@
 import React, { ReactNode, FC } from 'react'
 import { Modal } from 'antd'
 import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 import { SVGDynamicReverseMode } from '../../../styles/utils'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
@@ -29,6 +31,7 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
       display: flex;
       height: 24px;
       width: 24px;
+      ${tw`sm:h-[18px] sm:w-[18px]`}
     }
   }
 `

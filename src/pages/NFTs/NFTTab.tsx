@@ -37,7 +37,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 
   return (
     <GRID_CONTAINER
-      tw="h-[calc(80vh - 32px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
+      tw="h-[calc(90vh - 32px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
       navCollapsed={isCollapsed}
     >
       <FiltersContainer
@@ -56,22 +56,19 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   const { setSearchInsideProfile } = useNFTAggregatorFilters()
 
   return (
-    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none">
+    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none sm:rounded-t-[30px]">
       <div className="flitersFlexContainer" tw="sm:mt-4">
         <>
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
-            style={{ width: 330 }}
+            style={{ width: checkMobile() ? 260 : 330 }}
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
           />
           {!checkMobile() && <ProfileNFTFiltersDropdown />}
           {checkMobile() && (
-            <>
-              <div tw="mr-3">
-                <TokenToggleNFT toggleToken={setCurrency} />{' '}
-              </div>
-              <ProfileNFTFiltersDropdown />
-            </>
+            <div tw="ml-2 items-center flex">
+              <TokenToggleNFT toggleToken={setCurrency} /> <ProfileNFTFiltersDropdown />
+            </div>
           )}
         </>
       </div>

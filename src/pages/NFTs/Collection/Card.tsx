@@ -199,96 +199,105 @@ export const Card: FC<ICard> = (props) => {
     if (showSellNFTModal) {
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     }
-  }, [showSellNFTModal, setShowSellNFTModal, setDrawerSingleNFT])
+  }, [showSellNFTModal, setDrawerSingleNFT])
 
+  const gridItemSmall = {
+    height: '293px',
+    width: '188px'
+  }
   return (
     filterAndShow && (
       <>
         {handelDrawer()}
         {handleModal()}
-        <div className="gridItem">
-          <div
-            className="gridItemContainer"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
-          >
-            {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
-            {hover && (
-              <HoverOnNFT
-                buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
-                item={localSingleNFT}
-                ask={!isOwner && localAsk ? localAsk : null}
-                setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
-              />
-            )}
-            <img
-              className="nftImg"
-              src={
-                localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`
-              }
-              alt="nft"
-            />
-          </div>
-          <div className={'nftTextContainer'}>
-            <div className="collectionId">
-              <Tooltip title={localSingleNFT?.nft_name}>
-                <div className="collectionId">{localSingleNFT && minimizeTheString(localSingleNFT.nft_name)}</div>
-              </Tooltip>
-
-              {localSingleNFT && localSingleNFT.is_verified && (
-                <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+        <div className={localAsk?.buyer_price ? 'gridGradient' : 'gridItemRegular'}>
+          <div className={localAsk?.buyer_price ? 'gridGradientInner' : 'gridItem'}>
+            <div
+              className="gridItemContainer"
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
+            >
+              {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
+              {hover && (
+                <HoverOnNFT
+                  buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
+                  item={localSingleNFT}
+                  ask={!isOwner && localAsk ? localAsk : null}
+                  setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
+                />
               )}
+              <img
+                className="nftImg"
+                src={
+                  localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`
+                }
+                alt="nft"
+              />
+              {localAsk?.buyer_price && <div className="onSaleText">On sell</div>}
             </div>
-            {localSingleNFT && (
-              <GradientText
-                text={minimizeTheString(
-                  localSingleNFT?.collection_name !== null
-                    ? localSingleNFT?.collection_name
-                    : 'No Collection Name',
-                  18
-                )}
-                fontSize={15}
-                fontWeight={600}
-              />
-            )}
-
-            <div>
-              {localSingleNFT ? (
-                <div>
-                  <div className="nftPrice">
-                    {displayPrice !== null ? (
-                      <PriceWithToken
-                        cssStyle={tw``}
-                        price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
-                        token={currencyView}
-                      />
-                    ) : (
-                      'No price'
-                    )}
-                    {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
+            <div className={'nftTextContainer'}>
+              <div className="collectionId">
+                <Tooltip title={localSingleNFT?.nft_name}>
+                  <div className="collectionId">
+                    {localSingleNFT && minimizeTheString(localSingleNFT.nft_name)}
                   </div>
-                </div>
-              ) : (
-                <SkeletonCommon width="64px" height="24px" />
-              )}
-              <div className="apprisalPriceProfile">
-                NA
-                <img
-                  src={`/img/assets/Aggregator/Tooltip.svg`}
-                  alt={'tooltip'}
-                  onClick={() => props.setGfxAppraisal(true)}
-                />
-              </div>
+                </Tooltip>
 
-              {sessionUser && !isOwner && (
-                <img
-                  className="card-like"
-                  src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
-                  alt="heart-red"
-                  // onClick={() => handleToggleLike()}
+                {localSingleNFT && localSingleNFT.is_verified && (
+                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                )}
+              </div>
+              {localSingleNFT && (
+                <GradientText
+                  text={minimizeTheString(
+                    localSingleNFT?.collection_name !== null
+                      ? localSingleNFT?.collection_name
+                      : 'No Collection Name',
+                    18
+                  )}
+                  fontSize={15}
+                  fontWeight={600}
                 />
               )}
+
+              <div>
+                {localSingleNFT ? (
+                  <div>
+                    <div className="nftPrice">
+                      {displayPrice !== null ? (
+                        <PriceWithToken
+                          cssStyle={tw``}
+                          price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
+                          token={currencyView}
+                        />
+                      ) : (
+                        'No price'
+                      )}
+                      {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
+                    </div>
+                  </div>
+                ) : (
+                  <SkeletonCommon width="64px" height="24px" />
+                )}
+                <div className="apprisalPriceProfile">
+                  NA
+                  <img
+                    src={`/img/assets/Aggregator/Tooltip.svg`}
+                    alt={'tooltip'}
+                    onClick={() => props.setGfxAppraisal(true)}
+                  />
+                </div>
+
+                {sessionUser && !isOwner && (
+                  <img
+                    className="card-like"
+                    src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
+                    alt="heart-red"
+                    // onClick={() => handleToggleLike()}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

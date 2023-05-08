@@ -50,12 +50,7 @@ const options = {
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },
-  // created: {
-  //   mainText: 'No NFT’s Created',
-  //   subText: 'Start your journey as a creator today.',
-  //   textButton: 'Create NFT',
-  //   bgButton: '#3735bb'
-  // },
+
   favorited: {
     mainText: 'No Favorites',
     subText: 'Explore and like your most favorite ones.',

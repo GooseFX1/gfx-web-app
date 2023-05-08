@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, useMemo, useState } from 'react'
+import { FC, ReactElement, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -17,9 +17,9 @@ const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-white dark:bg-black-2`}
   border-top-right-radius: 20px;
   ${({ theme }) => theme.customScrollBar('1px')}
-  height: ${({ navCollapsed }) => (navCollapsed ? '85vh' : '80vh')};
+  height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
   .profileContent {
-    ${tw`overflow-y-auto`}
+    ${tw`overflow-y-auto overflow-x-hidden`}
     ${({ theme }) => theme.customScrollBar('2px')}
     height: ${({ navCollapsed }) => (navCollapsed ? '720px' : '640px')};
   }
@@ -37,11 +37,7 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
         border-radius: 50%;
         border: 8px solid;
       }
-      .no-dp-avatar {
-        ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
-         border-white h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]`}
-        border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
-      }
+    
       .icon {
         ${tw`h-10 w-10 absolute bottom-[-14px] right-[-2px] cursor-pointer`}
       }
@@ -275,11 +271,6 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
     await navigator.clipboard.writeText(window.location.href)
   }
 
-  const getFirstAndLast = useMemo(
-    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
-    [params.userAddress]
-  )
-
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
 
@@ -298,24 +289,15 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
                 width="116px"
               />
             ) : (
-              <div className="no-dp-avatar"> {getFirstAndLast} </div>
+              <WalletProfilePicture />
             )}
-            {isSessionUser && currentUserProfile && profilePic ? (
+            {isSessionUser && currentUserProfile && (
               <img
                 className="icon"
-                src={`/img/assets/Aggregator/editBtn.svg`}
+                src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
                 alt="edit-image"
                 onClick={() => setProfileModal(true)}
               />
-            ) : isSessionUser && currentUserProfile && !profilePic ? (
-              <img
-                className="icon"
-                src={`/img/assets/addImage.svg`}
-                alt="add-image"
-                onClick={() => setProfileModal(true)}
-              />
-            ) : (
-              <></>
             )}
           </div>
         )}
@@ -406,7 +388,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
           <div className="bio">{currentUserProfile.bio}</div>
         ) : (
           <div className="bio">
-            Add your bio and share with the <br /> world who you are!
+            Add your bio and share with <br /> the world who you are!
           </div>
         )}
         <img src="/img/assets/profileGraphic.svg" alt="profile-graphic" className="graphic-img" />
@@ -434,4 +416,14 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
       </div>
     </PROFILE>
   )
+}
+
+export const WalletProfilePicture = (): ReactElement => {
+  const params = useParams<IAppParams>()
+
+  const getFirstAndLast = useMemo(
+    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
+    [params.userAddress]
+  )
+  return <div className="no-dp-avatar">{getFirstAndLast} </div>
 }

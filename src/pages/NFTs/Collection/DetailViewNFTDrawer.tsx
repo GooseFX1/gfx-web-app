@@ -43,12 +43,13 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
  
         .ant-tabs-nav-wrap {
           ${tw`bg-[#3c3c3c]`}
-          border-radius: 15px 15px 0px 0px;
+          background: ${({ theme }) => theme.sweepModalCard};
+          border-radius: 15px 15px 20px 20px;
            .ant-tabs-nav-list {
             ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
             .ant-tabs-tab{
-              ${tw`w-[33%] sm:!pl-5 `}
+              ${tw`  sm:!pl-5 `}
             }
             
           }
@@ -58,7 +59,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
           content: '';
           ${tw` top-0  left-0 w-[100%] h-[100%]`}
           background-color: ${theme.tabContentBidBackground};
-          border-radius: 15px 15px 0 0;
+          border-radius: 15px 15px 20px 20px;
         }
       }
 
@@ -98,10 +99,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
 
       .ant-tabs-content-holder {
-        ${tw`sm:mb-12  h-[230px] mt-8`}
+        ${tw`sm:mb-12  h-[230px] mt-2`}
         background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
-        padding: 15px 0;
+        padding: 28px 0px 15px 0;
         border-radius: 0 0 25px 25px;
 
         .ant-tabs-content {
@@ -169,7 +170,7 @@ const ImageViewer = (): ReactElement => {
   const { sessionUser } = useNFTProfile()
 
   return general ? (
-    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[30px]">
+    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[15px]">
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <ImageShowcase
           setShowSingleNFT={() => {
@@ -203,12 +204,12 @@ const ImageViewer = (): ReactElement => {
             </div>
           </div>
           <div tw="flex items-center">
-            {sessionUser !== null && (
+            {/* {sessionUser !== null && (
               <img
                 tw="h-7 w-8 mr-[12px] cursor-pointer"
                 src={`/img/assets/heart-${sessionUser.user_likes.includes(general.uuid) ? 'red' : 'empty'}.svg`}
               />
-            )}
+            )} */}
             <div tw="flex items-center">
               <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                 <img tw="h-10 w-10 mr-[12px] ml-4 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />

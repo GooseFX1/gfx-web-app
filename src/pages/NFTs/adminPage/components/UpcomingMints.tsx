@@ -144,11 +144,13 @@ export const GradientText: FC<{
   text: string | number
   fontSize: number
   fontWeight: number
-}> = ({ text, fontSize, fontWeight }) => (
+  lineHeight?: number
+}> = ({ text, fontSize, fontWeight, lineHeight }) => (
   <GRADIENT_TEXT
     style={{
       fontSize: fontSize + 'px',
-      fontWeight: fontWeight ? fontWeight : 600
+      fontWeight: fontWeight ? fontWeight : 600,
+      lineHeight: lineHeight ? lineHeight + 'px' : 'auto'
     }}
   >
     {text}

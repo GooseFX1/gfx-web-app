@@ -4,7 +4,7 @@ import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } fr
 import styled, { css } from 'styled-components'
 import 'styled-components/macro'
 import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
-import NFTAggWelcome, { NFTAggTerms } from '../../../components/NFTAggWelcome'
+import { NFTAggWelcome } from '../../../components/NFTAggWelcome'
 import {
   useConnectionConfig,
   useDarkMode,
@@ -70,18 +70,12 @@ const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 3s ease-in-out;
   }
+
   .no-dp-avatar-sm {
-    ${tw`dark:border-black-1 h-11 w-11 rounded-full cursor-pointer mr-5 
-    text-grey-1  bg-grey-2 text-[15px] font-semibold justify-center
-         border-white  dark:bg-black-2 flex items-center  `}
-  }
-  .no-dp-avatar-lg {
-    ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
-         border-white h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]`}
-    border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
-    @media (max-width: 500px) {
-      border: 5px solid ${({ theme }) => theme.bgForNFTCollection};
-    }
+    ${tw` h-11 w-11 rounded-full cursor-pointer 
+    text-grey-1  bg-white text-[14px] font-semibold justify-center
+          dark:bg-black-4 dark:text-grey-4 flex items-center p-0.5 `}
+    border: 1.5px solid #B5B5B5 !important;
   }
 
   @keyframes openAnimation {
@@ -175,7 +169,7 @@ const AVATAR_NFT = styled(Image)`
   ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
-  ${tw`relative z-0 mr-1`}
+  ${tw`relative z-0 mr-1 ml-2`}
   .slider-animation-timeline {
     ${tw`absolute w-[60px] h-[44px] rounded-[36px]  z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 25}%;
@@ -202,17 +196,6 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   }
 `
 
-const MOBILE_FILTERS_HEADER = styled.div`
-  .flexContainer {
-    ${tw`h-[40px] flex ml-[10px] mb-4`}
-  }
-  .iconImg {
-    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full mr-3`}
-    border: 1px solid #cacaca;
-    background: ${({ theme }) => theme.bg0};
-  }
-`
-
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name: 'All' }]
 
@@ -222,7 +205,7 @@ const NFTLandingPageV2 = (): ReactElement => {
   const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
-  const [showTerms, setShowTerms] = useState<boolean>(false)
+  const [showTerms, setShowTerms] = useState<boolean>(true)
   const { setGeneral } = useNFTDetails()
   const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
 
@@ -254,10 +237,15 @@ const NFTLandingPageV2 = (): ReactElement => {
       })
     )
   }
+
+  const handleWelcomeModal = useCallback(() => {
+    if (hasOnboarded)
+      return <NFTAggWelcome setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />
+  }, [hasOnboarded])
+
   return (
     <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
-      {<NFTAggTerms setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />}
-      {hasOnboarded && <ModalSlide modalType={MODAL_TYPES.NFT_AGG_WELCOME} rewardToggle={handleHasOnboarded} />}
+      {handleWelcomeModal()}
       {!checkMobile() && (
         <>
           <BannerContainer showBanner={showBanner}>
@@ -285,7 +273,6 @@ const FiltersContainer = () => {
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
-  const [menuPopup, setMenuPopup] = useState<boolean>(false)
   const history = useHistory()
   const { setCurrency } = useNFTAggregator()
   const { wallet } = useWallet()
@@ -293,7 +280,7 @@ const FiltersContainer = () => {
   const { mode } = useDarkMode()
   const { setTimelineDisplay, setSortFilter, setSortType, sortType, timelineDisplay } = useNFTAggregatorFilters()
 
-  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${pubKey}`)
 
   useEffect(() => {
@@ -366,6 +353,7 @@ const FiltersContainer = () => {
           </ButtonContainer>
 
           {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
+          {/* mobile */}
         </FILTERS_CONTAINER>
         <div className="flexContainer" style={{ marginBottom: 20 }}>
           <ButtonContainer $poolIndex={timelineIndex}>
@@ -392,6 +380,8 @@ const FiltersContainer = () => {
       <FILTERS_CONTAINER>
         <SearchBar
           className="search-bar"
+          width={'398px'}
+          bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections or markets"
         />
@@ -407,6 +397,7 @@ const FiltersContainer = () => {
             </STYLED_BUTTON>
           ))}
         </ButtonContainer>
+        {/* Web */}
         {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
         <div tw="flex items-center mr-6 ml-auto">
           {/* <MarketDropdown /> */}
@@ -435,7 +426,12 @@ export const RefreshBtnWithAnimationNFT: FC = () => {
   }
   return (
     <RefreshIcon onClick={() => refreshFeed()}>
-      <img src={'/img/assets/refresh.svg'} tw="ml-2 mr-3 h-11 w-11" className={refreshClass} alt="refresh" />
+      <img
+        src={'/img/assets/refresh.svg'}
+        tw="relative z-10 ml-5 mr-5 h-11 w-11"
+        className={refreshClass}
+        alt="refresh"
+      />
     </RefreshIcon>
   )
 }
@@ -452,8 +448,10 @@ export const CurrentUserProfilePic: FC<{ goProfile: any }> = ({ goProfile }) => 
       {userPic ? (
         <AVATAR_NFT src={userPic} preview={false} onClick={goProfile} />
       ) : (
-        <div className="no-dp-avatar-sm" onClick={goProfile}>
-          {getFirstAndLast}
+        <div className="borderAvatar">
+          <div className="no-dp-avatar-sm" onClick={goProfile}>
+            {getFirstAndLast}
+          </div>
         </div>
       )}
     </div>
@@ -522,7 +520,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                 <img className="searchImg" src={data?.collection?.profile_pic_link} alt="" />
                 <div className="searchText" tw="flex flex-col leading-[19px]">
                   <div>
-                    {minimizeTheString(data?.collection?.collection_name, 30)}
+                    {minimizeTheString(data?.collection?.collection_name, 25)}
                     {data?.collection?.is_verified && (
                       <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
                     )}
@@ -568,8 +566,8 @@ const TimeLineDropdown = (): ReactElement => {
       trigger={[checkMobile() ? 'click' : 'hover']}
     >
       <div className="dropdownBtn" tw="h-[44px] w-[104px] ">
-        <div tw="ml-6">{timelineDisplay}</div>
-        <Arrow height="9px" width="18px" invert={arrow} />
+        <div tw="ml-[22px]">{timelineDisplay}</div>
+        <Arrow height="9px" width="18px" cssStyle={tw`mr-1`} invert={arrow} />
       </div>
     </Dropdown>
   )

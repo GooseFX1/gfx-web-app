@@ -47,13 +47,13 @@ export const ProfileItemDetails: FC<{
       width={checkMobile() ? '100%' : '460px'}
       bodyStyle={{ padding: '0' }}
     >
-      <div tw="px-[30px]">
+      <div tw="px-[16px]">
         <ImageShowcase setShowSingleNFT={setDrawerSingleNFT} />
         <RightSection status={''} />
       </div>
       <div
         tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
-              dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
+              dark:bg-black-2 bg-grey-5 px-[24px] flex items-center justify-between
               border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
       >
         {isOwner ? (
@@ -71,7 +71,7 @@ export const ProfileItemDetails: FC<{
             <Button
               height="56px"
               width={ask ? '200px' : '100%'}
-              cssStyle={tw`bg-red-1 mr-2`}
+              cssStyle={tw`bg-red-1 mr-2 sm:mr-0`}
               onClick={() => {
                 setSellModal(true)
               }}

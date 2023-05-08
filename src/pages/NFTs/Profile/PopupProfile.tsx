@@ -164,6 +164,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         height={'630px'}
         width={'500px'}
         title={null}
+        centered={true}
         visible={visible ? true : false}
         onCancel={onCancel}
         footer={null}

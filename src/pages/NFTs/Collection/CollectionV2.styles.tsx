@@ -7,8 +7,9 @@ import { useDarkMode } from '../../../context'
 export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
   ${({ navCollapsed }) => css`
     color: ${({ theme }) => theme.text30};
+    ${({ theme }) => theme.customScrollBar(0)};
     .ant-drawer-content {
-      ${tw`dark:bg-black-2 bg-grey-4`}
+      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] rounded-[30px]`}
     }
 
     .lastRefreshed {
@@ -33,7 +34,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     }
 
     .nftStatsContainer {
-      ${tw`flex items-center my-[20px] mx-4 sm:ml-2 sm:mr-2`}
+      ${tw`flex items-center mt-[38px] mb-[20px] mx-4 sm:ml-2 sm:mr-2`}
       .backBtn {
         ${tw`h-[40px] w-[40px] rounded-full flex items-center justify-center cursor-pointer`}
         background: ${({ theme }) => theme.backBtnBg};
@@ -69,21 +70,29 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex flex-grow justify-center items-center
+          ${tw`flex flex-grow justify-center items-center absolute left-[32%] sm:!left-0
           sm:w-[95%] sm:ml-2 sm:mt-2 sm:relative sm:flex sm:justify-between `}
 
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
           }
           .titleText {
-            ${tw`text-[20px] sm:text-[18px] text-center font-semibold`}
+            ${tw`text-[20px] sm:text-[18px] text-center font-semibold leading-none dark:text-grey-5 text-black-4`}
+            img {
+              ${tw`h-[20px] w-[20px] mr-1 mb-1`}
+            }
+          }
+          .titleTextNoSupport {
+            ${tw`text-[20px] sm:text-[18px] text-center font-semibold text-grey-1 leading-none`}
             img {
               ${tw`h-[20px] w-[20px] mr-1 mb-1`}
             }
           }
           .subTitleText {
-            ${tw`text-[15px] sm:text-[12px] text-center font-semibold`}
-            color: ${({ theme }) => theme.text20};
+            ${tw`text-[15px] sm:text-[12px] text-center font-semibold dark:text-grey-2 `}
+          }
+          .subTitleTextNoSupport {
+            ${tw`text-[15px] sm:text-[12px] text-center font-semibold text-grey-1`}
           }
         }
       }
@@ -122,7 +131,7 @@ export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, set
 }
 export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
   ${({ navCollapsed }) => css`
-    height: calc(100vh - 110px - ${navCollapsed ? '0px' : '80px'});
+    height: calc(100vh - 128px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
       height: auto;
@@ -139,9 +148,10 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full dark:bg-[#1c1c1c] bg-grey-6`}
-  ${({ theme }) => theme.customScrollBar('4px')}
+  ${tw`w-full dark:bg-black-2 bg-grey-6`}
+  ${({ theme }) => theme.customScrollBar('0px')}
   overflow-y: auto;
+
   .profile-content-loading {
     position: relative;
     height: calc(100vh - 260px);
@@ -161,89 +171,113 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-3 sm:grid-cols-2 rounded-xl overflow-y-auto pb-[300px]`}
-    ${({ theme }) => theme.customScrollBar('2px')}
+    ${tw`grid pl-3 sm:pl-1 sm:grid-cols-2 rounded-xl overflow-y-auto pb-[300px]`}
+    ${({ theme }) => theme.customScrollBar('0px')}
   }
   .pinkGradient {
+    background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+  }
+  .onSaleText {
+    ${tw`text-white text-[15px] font-semibold absolute left-4 mt-2 !opacity-100`}
+  }
+  .gridItemRegular {
+    ${tw`  mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+  }
+  .gridGradient {
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px]  
+      duration-500 cursor-pointer   mt-[15px] p-[1px] mx-auto  `}
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
 
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto z-[0]`}
+      duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+    img {
+      ${tw`rounded-[15px]`}
+    }
+  }
+  .gridItemCollections {
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
 
     img {
       ${tw`rounded-[15px]`}
     }
+  .gridGradientInner {
+    ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[15px] dark:bg-black-1 bg-white 
+      duration-500 cursor-pointer    mx-auto  z-[0]`}
+    img {
+      ${tw`rounded-[15px]`}
+    }
+  }
 
-    .gridItemContainer {
-      ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
+  .gridItemContainer {
+    ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
-      .nftImg {
-        ${tw`w-full h-[170px] `}
-      }
-      .hoverAddToBag {
-        ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
-      }
-      .hoverButtons {
-        ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
-      }
-      div {
-        ${tw`absolute opacity-0`}
-      }
-      .hoverNFT {
-        ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
-        background: ${({ theme }) => theme.hoverGradient};
-      }
-      .loadingNFT {
-        ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
+    .nftImg {
+      ${tw`w-full h-[170px] `}
+    }
+    .hoverAddToBag {
+      ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
+    }
+    .hoverButtons {
+      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
+    }
+    div {
+      ${tw`absolute opacity-0`}
+    }
+    .hoverNFT {
+      ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
+      background: ${({ theme }) => theme.hoverGradient};
+    }
+    .loadingNFT {
+      ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
          w-[190px] h-[295px] rounded-[15px] pl-1`}
-        background: ${({ theme }) => theme.hoverGradient};
-      }
+      background: ${({ theme }) => theme.hoverGradient};
     }
-    .nftTextContainer {
-      ${tw`relative p-[8px] dark:text-white text-black-4`}
-    }
-    .collectionId {
-      ${tw`text-[13px] font-semibold flex items-center `}
+  }
+  .nftTextContainer {
+    ${tw`relative p-[8px] dark:text-white text-black-4`}
+  }
+  .collectionId {
+    ${tw`text-[13px] font-semibold flex items-center leading-[18px] `}
 
-      .isVerified {
-        ${tw` ml-2 w-[15px] h-[15px]`}
-      }
-
-      .ah-name {
-        ${tw`w-[22px] h-[22px] absolute top-[8px] right-[8px]`}
-      }
-    }
-    .nftPrice {
-      ${tw`font-semibold text-[15px] flex items-center pt-2`}
-      img {
-        ${tw`w-5 h-5 ml-2.5`}
-      }
-    }
-    .apprisalPrice {
-      ${tw`font-semibold text-[15px] mt-[-2px] text-grey-1 flex items-center`}
-      img {
-        ${tw`w-[20px] h-[20px] ml-2.5`}
-      }
-    }
-    .apprisalPriceProfile {
-      ${tw`font-semibold text-[15px] mt-[8px] text-[#636363] flex items-center`}
-      img {
-        ${tw`w-[20px] h-[20px] ml-2.5`}
-      }
+    .isVerified {
+      ${tw` ml-2 w-[15px] h-[15px]`}
     }
 
-    .card-like {
-      ${tw`absolute right-[10px] bottom-[10px] w-[20px] h-[20px]`}
+    .ah-name {
+      ${tw`w-[22px] h-[22px] absolute top-[8px] right-[8px]`}
     }
+  }
+  .nftPrice {
+    ${tw`font-semibold text-[15px] flex items-center pt-2`}
+    img {
+      ${tw`w-5 h-5 ml-2.5`}
+    }
+  }
+  .apprisalPrice {
+    ${tw`font-semibold text-[15px] mt-[-2px] text-grey-1 flex items-center`}
+    img {
+      ${tw`w-[20px] h-[20px] ml-2.5`}
+    }
+  }
+  .apprisalPriceProfile {
+    ${tw`font-semibold text-[15px] mt-[8px] text-[#636363] flex items-center`}
+    img {
+      ${tw`w-[20px] h-[20px] ml-2.5`}
+    }
+  }
+
+  .card-like {
+    ${tw`absolute right-[10px] bottom-[10px] w-[20px] h-[20px]`}
   }
 `
 export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
-  ${({ theme }) => theme.customScrollBar('4px')}
+  ${({ theme }) => theme.customScrollBar('0px')}
   .checkboxContainer {
     ${tw`ml-auto`}
     input {
@@ -282,9 +316,10 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
     ${tw`duration-500 items-center flex dark:bg-[#1c1c1c] bg-grey-6 h-[70px] sm:h-[100px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
+   
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
-      ${tw`w-[185px] text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]
+      ${tw`w-[185px] text-white h-[40px] bg-[#5855ff] rounded-3xl ml-[15px]	font-semibold text-[15px]
        flex items-center justify-center cursor-pointer`}
     }
     .offerBtn {
@@ -306,7 +341,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selected {
       color: ${({ theme }) => theme.text4};
-      ${tw`w-[140px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[14px]
+      ${tw`w-[140px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[15px]
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
@@ -316,7 +351,8 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     }
     .flexItem {
-      ${tw` w-[140px] sm:w-[33%] mb-4 sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+      ${tw` w-[140px] sm:w-[33%] mb-4 font-medium text-[15px] dark:text-grey-1 text-grey-2
+       sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .flexItemProfile {
       ${tw`w-[170px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
@@ -329,7 +365,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        transform: rotate(180deg);
       margin-left: ${index * 280 + `px`};
       @media (max-width: 500px) {
-        margin-left: calc( ${index * 33.2 + `%`} + 30px);
+        margin-left: calc( ${index * 33.2 + `%`} + 6.5%);
       }
     }
     .activeItemProfile {

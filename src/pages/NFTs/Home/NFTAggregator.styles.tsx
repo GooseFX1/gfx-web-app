@@ -50,7 +50,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 
   thead {
-    ${tw`dark:bg-black-3 bg-black-4 text-base font-semibold h-[64px] sm:h-[52px] rounded-[20px 20px 5px 5px]`}
+    ${tw`dark:bg-black-5 bg-black-4 text-base font-semibold h-[64px] sm:h-[52px] rounded-[20px 20px 5px 5px]`}
 
     tr {
       ${tw`h-full`}
@@ -82,7 +82,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
 
       &:hover {
-        ${tw`dark:bg-black-4 bg-grey-5`}
+        ${tw`dark:bg-[#181818] bg-[#e2e2e2]`}
       }
 
       &:after {

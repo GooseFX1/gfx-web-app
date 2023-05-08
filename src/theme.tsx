@@ -86,6 +86,8 @@ export function colors(mode: string): Colors {
     text37: mode === 'dark' ? '#b5b5b5' : '#636363',
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
+    text38: mode === 'dark' ? '#ffffff' : '#5855ff',
+
     bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
     askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
@@ -229,7 +231,7 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
-    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#d9d9d9',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#3c3c3c',
     sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
     sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 

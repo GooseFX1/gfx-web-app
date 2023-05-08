@@ -48,6 +48,7 @@ export interface Colors {
   text33: Color
   text34: Color
   text37: Color
+  text38: Color
   bidColor: Color
   askColor: Color
   textWhitePurple: Color
