@@ -10,7 +10,6 @@ import RelaxPopup from '../pages/NFTs/CreatorPage/Popup/Relax'
 import DisclaimerPopup from '../pages/NFTs/CreatorPage/Popup/Disclaimer'
 import tw from 'twin.macro'
 import { ApprovePopup, RejectPopup } from '../pages/NFTs/adminPage/components/AdminPagePopup'
-import NFTAggWelcome from './NFTAggWelcome'
 
 const WRAPPER = styled.div`
   ${tw`absolute top-0 left-0 right-0 bottom-0 h-screen w-screen overflow-hidden z-[999]`}
@@ -63,7 +62,6 @@ export const ModalSlide: FC<IModalSlide> = (props: IModalSlide) => (
       {props.modalType === MODAL_TYPES.APPROVE_PROJECT && <ApprovePopup rewardToggle={props.rewardToggle} />}
       {props.modalType === MODAL_TYPES.REJECT_PROJECT && <RejectPopup rewardToggle={props.rewardToggle} />}
       {props.modalType === MODAL_TYPES.NFT_MENU && <MenuPopup rewardToggle={props.rewardToggle} />}
-      {props.modalType === MODAL_TYPES.NFT_AGG_WELCOME && <NFTAggWelcome rewardToggle={props.rewardToggle} />}
     </MODAL>
   </WRAPPER>
 )

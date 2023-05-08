@@ -43,6 +43,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
+import { useCallback } from 'react'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -125,14 +126,18 @@ const NFTStatsContainer = () => {
       setTimeout(() => setLastRefreshedClass(' '), 3000)
     }
   }, [lastRefreshedClass])
+
+  const handleAppraisalPopup = useCallback(() => {
+    if (appraisalPopup) return <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
+  }, [appraisalPopup])
+
   return (
     <div tw="flex flex-col">
       <div tw="flex justify-center">
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
       </div>
-
+      {handleAppraisalPopup()}
       <div className="nftStatsContainer">
-        <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
         {!checkMobile() && (
           <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
             <img src="/img/assets/arrow-leftdark.svg" />
@@ -163,7 +168,7 @@ const NFTStatsContainer = () => {
               {collection ? (
                 <Tooltip title={collection.collection_name}>
                   <div tw="sm:text-[22px] ml-3 font-bold">
-                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 20)}
+                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 15)}
                   </div>
                 </Tooltip>
               ) : (
@@ -197,10 +202,10 @@ const NFTStatsContainer = () => {
                 alt="appraisal-icon"
               />
               <div className="wrapper" style={{ marginLeft: 8 }}>
-                <div className="titleText" tw="leading-none">
+                <div className={collection?.gfx_appraisal_supported ? 'titleText' : 'titleTextNoSupport'}>
                   Appraisal
                 </div>
-                <div className="subTitleText">
+                <div className={collection?.gfx_appraisal_supported ? 'subTitleText' : 'subTitleTextNoSupport'}>
                   {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
                 </div>
               </div>
@@ -293,8 +298,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
         {checkMobile() && displayIndex === 0 && (
-          <div tw="mr-[15px]">
-            {' '}
+          <div tw="ml-3">
             <TokenToggleNFT toggleToken={setCurrency} />
           </div>
         )}
@@ -313,6 +317,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
           Activity
         </div>
+        {!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}
       </div>
     </NFT_FILTERS_CONTAINER>
   )

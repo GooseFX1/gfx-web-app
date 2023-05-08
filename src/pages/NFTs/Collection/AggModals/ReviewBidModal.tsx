@@ -1,4 +1,4 @@
-import { Button } from 'antd'
+import { Button, Tooltip } from 'antd'
 import { FC, useMemo } from 'react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -23,9 +23,10 @@ import BN from 'bn.js'
 import { tokenSize, tradeStatePDA } from '../../actions'
 import { successfulCancelBidMessage, TransactionSignatureErrorNotify } from './AggNotifications'
 import { minimizeTheString } from '../../../../web3/nfts/utils'
+import { BorderBottom } from '../SellNFTModal'
 
 const REVIEW_MODAL = styled.div`
-  ${tw``}
+  ${tw`h-[100%]`}
 `
 export const ReviewBidModal: FC<{
   curBid: number
@@ -120,12 +121,22 @@ export const ReviewBidModal: FC<{
         <div className="buyTitle">
           You are about to bid for:
           <br />
-          <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 16 : 30)} </strong>
+          <Tooltip
+            overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
+            title={general?.nft_name}
+          >
+            <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 20)} </strong>
+          </Tooltip>
           {checkMobile() && <br />}
-          <strong>
-            {general?.collection_name &&
-              `by ${minimizeTheString(general?.collection_name, checkMobile() ? 16 : 30)}`}
-          </strong>
+          <Tooltip
+            overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
+            title={general?.collection_name}
+          >
+            <strong>
+              {general?.collection_name &&
+                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
+            </strong>
+          </Tooltip>
         </div>
         {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
@@ -156,7 +167,7 @@ export const ReviewBidModal: FC<{
         </div>
       </div>
 
-      <div tw="mt-[30px] sm:mt-[10px]">
+      <div tw="mt-[30px] sm:mt-1">
         <AppraisalValue
           text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
           label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
@@ -164,7 +175,7 @@ export const ReviewBidModal: FC<{
         />
       </div>
       <div className="vContainer">
-        <div className="maxBid" tw="mt-8 sm:mt-[12px]">
+        <div className="maxBid" tw="mt-6 sm:mt-[12px]">
           Enter Maximum Bid
         </div>
       </div>
@@ -178,7 +189,15 @@ export const ReviewBidModal: FC<{
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div className="vContainer" tw="mt-[40px] sm:mt-[30px] flex items-center !justify-between">
+      <div tw=" flex items-center justify-center mt-2 text-red-2">
+        {curBid < (highestBid || buyerPrice) &&
+          `Offer ${highestBid > buyerPrice ? highestBid : buyerPrice} or more`}
+      </div>
+      <div
+        className="vContainer"
+        tw="mt-[40px] sm:mt-[30px] flex items-center !absolute bottom-[120px] sm:bottom-[100px]
+         !justify-between ml-1.5 sm:ml-1 w-[calc(100% - 60px)] sm:w-[calc(100% - 56px)]"
+      >
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
           onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
@@ -200,9 +219,7 @@ export const ReviewBidModal: FC<{
           </div>
         )}
       </div>
-
-      <div className="buyBtnContainer">
-        {/* {yourPreviousBid ? (
+      {/* {yourPreviousBid ? (
           <div tw=" flex !bottom-0">
             <Button className="semiBuyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
               Review Offer
@@ -217,9 +234,10 @@ export const ReviewBidModal: FC<{
             </Button>
           </div>
         ) : */}
-
+      <BorderBottom />
+      <div className="buyBtnContainer">
         <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
-          Review Offer
+          <div>Review Offer</div>
         </Button>
       </div>
     </REVIEW_MODAL>

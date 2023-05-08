@@ -29,6 +29,7 @@ import { FLOATING_ACTION_ICON } from '../../../styles'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { WalletProfilePicture } from './ProfilePageSidebar'
 
 // const DROPDOWN = styled(Dropdown)`
 //   width: auto;
@@ -304,18 +305,13 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
 
-  const getFirstAndLast = useMemo(
-    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
-    [params.userAddress]
-  )
-
   return (
     <StyledHeaderProfile mode={mode}>
       {handleModal()}
       {checkMobile() ? (
         <div tw="flex justify-between sm:ml-2 sm:mt-3" id="row">
           <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '18px', left: '24px' }}>
-            <FloatingActionButton height={40} onClick={() => history.goBack()}>
+            <FloatingActionButton height={40} onClick={() => history.push('/nfts')}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
           </div>
@@ -323,7 +319,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         </div>
       ) : (
         <div tw="absolute top-[12px] left-[12px]">
-          <FloatingActionButton height={40} onClick={() => history.goBack()}>
+          <FloatingActionButton height={40} onClick={() => history.push('/nfts')}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>
         </div>
@@ -341,13 +337,15 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 alt={currentUserProfile ? currentUserProfile.nickname : 'loading'}
               />
             ) : (
-              <div className="no-dp-avatar">{getFirstAndLast} </div>
+              <WalletProfilePicture />
+              // mobile version
             )}
             {connected && currentUserProfile && isSessionUser && (
               <img
                 className="edit-icon"
                 src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
                 alt=""
+                tw="sm:h-[30px] sm:w-[30px]"
                 onClick={() => setProfileModal(true)}
               />
             )}
@@ -366,9 +364,14 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
             ) : (
               <div className="profileBio">
-                {currentUserProfile.bio && currentUserProfile.nickname.length > 0
-                  ? currentUserProfile.bio
-                  : 'Add your bio and share with the world who you are!'}
+                {currentUserProfile.bio ? (
+                  currentUserProfile.bio
+                ) : (
+                  <div>
+                    {' '}
+                    Add your bio and share with <br /> the world who you are!
+                  </div>
+                )}
               </div>
             )}
             {currentUserProfile && currentUserProfile.is_verified && (

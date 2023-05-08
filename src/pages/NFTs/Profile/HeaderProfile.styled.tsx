@@ -27,12 +27,6 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     cursor: pointer;
   }
 
-  .no-dp-avatar {
-    ${tw`w-[80px] h-[60px] h-20 ml-[-5px] sm:ml-2.5 mt-[-25px] rounded-[50%]  
-    dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
-         border-white  dark:bg-black-2 flex items-center  rounded-[50%]`}
-    border: 5px solid ${({ theme }) => theme.bgForNFTCollection};
-  }
   .avatar-profile-wrap {
     position: relative;
     ${tw`w-[60px] h-[60px]`}

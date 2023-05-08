@@ -244,7 +244,7 @@ export const RightSection: FC<{
 
             <div className="ls-bottom-panel">
               <div className="img-holder">
-                {sessionUser && isFavorited ? (
+                {/* {sessionUser && isFavorited ? (
                   <img
                     className="ls-favorite-heart"
                     src={`/img/assets/heart-red.svg`}
@@ -258,7 +258,7 @@ export const RightSection: FC<{
                     alt="heart-empty"
                     onClick={handleToggleLike}
                   />
-                )}
+                )} */}
 
                 <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
                   {likes ? likes : null}

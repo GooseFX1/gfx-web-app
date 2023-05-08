@@ -14,7 +14,7 @@ const LEFT_SECTION = styled.div`
     justify-content: space-between;
     color: ${theme.text1};
     position: relative;
-    margin-top: 30px;
+    margin-top: 15px;
 
     .close-icon-holder {
       ${tw`h-[30px] w-[30px] absolute flex items-center cursor-pointer rounded-[50%]`}

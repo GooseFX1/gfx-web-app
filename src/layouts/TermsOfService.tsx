@@ -16,6 +16,7 @@ const TEXT_AREA = styled.div`
   .text-area-inner {
     ${tw`h-full w-full p-[12px] rounded-[8px] overflow-auto`}
     background: ${({ theme }) => theme.bg1};
+    ${({ theme }) => theme.customScrollBar('4px')}
   }
 
   h3 {
@@ -41,6 +42,9 @@ const TEXT_AREA = styled.div`
 
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
+  &.ant-modal {
+    ${tw`!rounded-[20px]`}
+  }
 
   .ant-modal-body {
     ${tw`sm:px-3!`}
@@ -131,6 +135,7 @@ export const TermsOfService: FC<{
       centerTitle
       setVisible={changeTOSState}
       visible={toShow}
+      centered={true}
       large={true}
       maskClosable={false}
     >

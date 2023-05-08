@@ -50,7 +50,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         .ant-tabs-nav-wrap {
           background-color: #1f1f1f;
-          border-radius: 15px 15px 0 0;
+          border-radius: 15px 15px 20px 20px;
           width: 100%;
           .ant-tabs-nav-list {
             display: flex;
@@ -70,7 +70,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
           width: 100%;
           height: 100%;
           background-color: ${theme.tabContentBidBackground};
-          border-radius: 15px 15px 0 0;
+          border-radius: 15px 15px 20px 20px;
         }
       }
 
@@ -119,11 +119,11 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
       .ant-tabs-content-holder {
         ${tw`sm:mb-12 sm:rounded-none`}
-        height: 230px;
+        height: 235px;
         background-color: #131313;
         transform: translateY(-32px);
         margin-top: 32px;
-        padding: 15px 0;
+        padding: 32px 15px 0;
         border-radius: 0 0 25px 25px;
 
         .ant-tabs-content {

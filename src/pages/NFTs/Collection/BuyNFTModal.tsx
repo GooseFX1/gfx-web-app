@@ -70,6 +70,7 @@ import {
 } from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { VAULT_MINT } from '../../TradeV3/perps/perpsConstants'
+import { BorderBottom } from './SellNFTModal'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -77,15 +78,23 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .ant-modal-content {
     height: 100%;
   }
+  .borderBottom {
+    background: ${({ theme }) => theme.tokenBorder};
+  }
   .ant-modal-close-x {
     visibility: ${({ lockModal }) => (lockModal ? 'hidden' : 'visible')};
     img {
-      ${tw`w-5 h-5 mt-[-5px] ml-2`}
+      ${tw`w-5 h-5 mt-[-5px] sm:h-[15px] sm:w-[15px] ml-2 opacity-70`}
     }
   }
   &.ant-modal {
-    ${tw`max-w-full sm:bottom-[-10px] sm:mt-auto sm:absolute sm:h-[600px]`}
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px]`}
     background-color: ${({ theme }) => theme.bg26};
+    border-radius: 20px;
+
+    @media (max-width: 500px) {
+      border-radius: 20px 20px 0 0;
+    }
   }
   color: ${({ theme }) => theme.text20};
 
@@ -99,8 +108,9 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px] text-[#fff] sm:text-[15px] mt-2 mb-1
+    ${tw`font-semibold text-[16px]   sm:text-[15px] mt-2 mb-1
         sm:text-left sm:ml-[140px] sm:mt-[5px] h-4`}
+    color: ${({ theme }) => theme.text38};
   }
   .hContainer {
     ${tw`flex flex-col items-center justify-center`}
@@ -131,7 +141,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`h-[35px] sm:w-[18px]  sm:h-[18px] w-[35px] mr-2 sm:mt-0 sm:ml-2`}
   }
   .rowContainer {
-    ${tw`flex items-center justify-between w-[90%]`}
+    ${tw`flex items-center justify-between w-[100%]`}
   }
   .leftAlign {
     ${tw`text-[17px] font-semibold mt-1`}
@@ -140,12 +150,16 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text32} !important;
     ${tw`text-[17px] text-white font-semibold`}
   }
+  .rightAlignFinal {
+    color: ${({ theme }) => theme.text7} !important;
+    ${tw`text-[17px] text-white font-bold`}
+  }
 
   .nftImg {
     ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] rounded-[5px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
   .currentBid {
-    ${tw`text-[14px] font-semibold ml-4 sm:mt-[6px] text-[#636363] `}
+    ${tw`text-[14px] font-semibold ml-4 sm:mt-[6px]  `}
   }
   .maxBid {
     ${tw`text-[25px] sm:text-[20px] font-semibold leading-7 sm:mt-[20px]	`}
@@ -168,7 +182,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .priceText {
-    ${tw`text-[25px] font-semibold mt-2 sm:mt-8`}
+    ${tw`text-[25px] font-semibold mt-2 sm:mt-14`}
     color: ${({ theme }) => theme.text12};
   }
   .priceValue {
@@ -176,7 +190,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:h-[50px] sm:w-[90vw] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] rounded-[50px]
+    ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]  bottom-4  
+    sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
      border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -196,7 +211,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .semiBuyButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE] 
+    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  cursor-pointer text-[#EEEEEE] 
     rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center   justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -208,8 +223,9 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .buyButton {
-    ${tw`w-[520px] sm:w-[334px] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
-     h-[60px] text-white text-[20px] font-semibold flex items-center justify-center`}
+    ${tw`w-[520px] sm:w-[calc(100vw - 56px)]    
+    sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
+     h-[60px] text-white text-[20px] !font-semibold flex items-center justify-center ml-1.5 sm:ml-1`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     &:disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -218,7 +234,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .priceNumber {
     ${tw`text-[40px] font-semibold flex items-center mt-[-12px] justify-center `}
-    color: ${({ theme }) => theme.text31};
+    color: ${({ theme }) => theme.text7};
     img {
       ${tw`h-[25px] w-[25px] ml-3`}
     }
@@ -227,8 +243,12 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     background: ${({ theme }) => theme.tokenBorder};
     ${tw`h-[2px] w-[100vw] `}
   }
+  .feesContainer {
+    ${tw`flex items-center flex-col w-[calc(100% - 60px)] sm:w-[calc(100% - 48px )]
+    sm:ml-0 ml-1.5 justify-between sm:mt-[20px] absolute bottom-[120px] sm:bottom-[100px]  `}
+  }
   .buyBtnContainer {
-    ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-4  `}
+    ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-7 sm:bottom-4  `}
   }
 
   .bm-title {
@@ -269,9 +289,10 @@ export const BuyNFTModal = (): ReactElement => {
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '655px' : '780px'}
+      height={checkMobile() ? '603px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
+      centered={checkMobile() ? false : true}
       visible={buyNowClicked ? true : false}
       onCancel={() => handleCloseModal(setGeneral, setBuyNow, isLoading)}
       footer={null}
@@ -322,9 +343,10 @@ export const BidNFTModal = (): ReactElement => {
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '600px' : '780px'}
+      height={checkMobile() ? '603px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
+      centered={checkMobile() ? false : true}
       visible={bidNowClicked ? true : false}
       onCancel={() => !isLoading && handleModalClose()}
       footer={null}
@@ -549,18 +571,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
 
     const transaction = new Transaction()
-    if (isBuyingNow) {
-      const swap = new Swap(connection)
-      const swapIX = await swap.createSwapIx(
-        new PublicKey(VAULT_MINT),
-        new PublicKey(SYNTH_DEFAULT_MINT),
-        BigInt(1000000),
-        BigInt(10),
-        wallet?.adapter?.publicKey
-      )
-      swapIX.forEach((ix) => transaction.add(ix))
-      transaction.add(buyIX)
+    transaction.add(buyIX)
 
+    if (isBuyingNow) {
       const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
 
       const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
@@ -655,11 +668,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
             <div className="buyTitle">
               You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 15 : 30)} </strong>{' '}
+              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 20)} </strong>{' '}
               {checkMobile() && <br />}
               <strong>
                 {general?.collection_name &&
-                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 15 : 30)}`}
+                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 20)}`}
               </strong>
             </div>
             {singleCollection && singleCollection[0]?.is_verified && (
@@ -683,12 +696,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         </div>
 
         <div className="vContainer">
-          <div className="priceText">Price</div>
+          <div className="priceText">My Bid</div>
         </div>
 
         <div className="vContainer">
-          <div className={'priceValue'}>
-            {curBid} <img tw="h-[25px] w-[25px]" src={`/img/crypto/SOL.svg`} />
+          <div className={'priceValue'} tw="flex items-center">
+            <div>{curBid}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
           </div>
         </div>
 
@@ -718,20 +731,27 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           </div>
         )}
 
-        <div className="hContainer" style={{ height: pendingTxSig ? 140 : 185 }}>
+        <div className="feesContainer">
           <div className="rowContainer">
-            <div className="leftAlign">My Bid</div>
+            <div className="leftAlign">Price per item</div>
             <div className="rightAlign">{curBid} SOL</div>
           </div>
+          {!checkMobile() && (
+            <div className="rowContainer">
+              <div className="leftAlign">Quantity</div>
+              <div className="rightAlign">1 NFT</div>
+            </div>
+          )}
           <div className="rowContainer">
             <div className="leftAlign">Service Fee</div>
             <div className="rightAlign"> {servicePriceCalc} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total Price</div>
-            <div className="rightAlign">{orderTotal} SOL</div>
+            <div className="rightAlignFinal">{orderTotal} SOL</div>
           </div>
         </div>
+        <BorderBottom />
         <div className="buyBtnContainer">
           <Button
             className="buyButton"

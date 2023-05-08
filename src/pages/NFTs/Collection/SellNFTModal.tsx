@@ -341,6 +341,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       height={checkMobile() ? '655px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
+      centered={checkMobile() ? false : true}
       visible={visible}
       onCancel={closeTheModal}
       footer={null}
@@ -351,6 +352,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 
           <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
             <div className="buyTitle">
+              You are about to sell <br />
               <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 30 : 30)} </strong>{' '}
               {checkMobile() && <br />}
               <strong>
@@ -417,7 +419,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
         )}
 
-        <div className="hContainer" tw="sm:mt-10 mt-12">
+        <div className="feesContainer">
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>
@@ -428,9 +430,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>
-            <div className="rightAlign"> {totalToReceive.toFixed(2)} SOL</div>
+            <div className="rightAlignFinal"> {totalToReceive.toFixed(2)} SOL</div>
           </div>
         </div>
+        {checkMobile() && <BorderBottom />}
         <div className="buyBtnContainer">
           <Button
             disabled={
@@ -453,4 +456,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       </>
     </STYLED_POPUP_BUY_MODAL>
   )
+}
+
+export const BorderBottom = (): ReactElement => {
+  if (checkMobile())
+    return <div className="borderBottom" tw="h-0.5 sm:absolute bottom-[80px] w-[100vw] ml-[-24px]"></div>
+  else return <></>
 }

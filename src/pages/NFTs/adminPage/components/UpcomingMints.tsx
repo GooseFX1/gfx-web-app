@@ -145,11 +145,13 @@ export const GradientText: FC<{
   fontSize: number
   fontWeight: number
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
-}> = ({ text, fontSize, fontWeight, onClick }) => (
+  lineHeight?: number
+}> = ({ text, fontSize, fontWeight, lineHeight, onClick }) => (
   <GRADIENT_TEXT
     style={{
       fontSize: fontSize + 'px',
-      fontWeight: fontWeight ? fontWeight : 600
+      fontWeight: fontWeight ? fontWeight : 600,
+      lineHeight: lineHeight ? lineHeight + 'px' : 'auto'
     }}
     onClick={onClick}
   >

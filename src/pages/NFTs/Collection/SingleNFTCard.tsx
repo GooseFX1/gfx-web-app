@@ -1,4 +1,4 @@
-import { useState, FC, useEffect, useMemo, ReactElement } from 'react'
+import { useState, FC, useEffect, useMemo, ReactElement, useCallback } from 'react'
 import axios from 'axios'
 import {
   useConnectionConfig,
@@ -131,10 +131,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   let displayPrice = currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice
   displayPrice = parseFloat(displayPrice.toFixed(2))
 
+  const handleAppraisalPopup = useCallback(() => {
+    if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
+  }, [apprisalPopup])
+
   return (
     <>
-      <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
-      <div className="gridItem" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
+      {handleAppraisalPopup()}
+      <div className="gridItemCollections" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
         <div
           className="gridItemContainer"
           onMouseEnter={() => setHover(true)}
@@ -183,6 +187,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               text={minimizeTheString(singleCollection[0].collection_name)}
               fontSize={15}
               fontWeight={600}
+              lineHeight={18}
             />
           ) : (
             <SkeletonCommon width="100px" height="20px" />
@@ -195,7 +200,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
             {item?.gfx_appraisal_value ? item?.gfx_appraisal_value.substring(0, 4) : 'NA'}
             {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
           </div>
-          {sessionUser &&
+          {/* {sessionUser &&
             (isFavorite ? (
               <img
                 tw="absolute right-[10px] bottom-[10px] w-[20px] h-[20px]"
@@ -210,7 +215,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
                 alt="heart-empty"
                 onClick={() => console.log('like')}
               />
-            ))}
+            ))} */}
         </div>
       </div>
     </>
@@ -258,10 +263,10 @@ export const HoverOnNFT: FC<{
       <span className="hoverButtons">
         {buttonType === 'Sell' || buttonType === 'Modify' ? (
           <Button
-            cssStyle={tw`bg-red-1 h-[28px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
+            cssStyle={tw`bg-red-1 h-[28px] w-[90px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
-            {buttonType}
+            {buttonType === 'Sell' ? 'Sell now' : 'Edit Price'}
           </Button>
         ) : (
           <Button

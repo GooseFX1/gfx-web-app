@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, FC, useState, MouseEventHandler, useCallback } from 'react'
+import React, { ReactElement, FC, useState, MouseEventHandler, useMemo } from 'react'
 import Slider from 'react-slick'
 import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
 import { Button, Checkbox } from 'antd'
@@ -11,36 +11,85 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const WRAPPER = styled.div`
-  ${tw`flex items-center justify-center -mt-14`}
+  ${tw`flex items-center justify-center`}
   color: ${({ theme }) => theme.text7};
-
+`
+const STYLED_POPUP = styled(PopupCustom)`
+  .title {
+    ${tw`flex text-[20px] mt-1 font-semibold items-center justify-center `}
+    color: ${({ theme }) => theme.text11};
+  }
+  .ant-modal-content {
+    ${tw`h-[100%]`}
+  }
+  .ant-modal-close {
+    opacity: 0.6;
+    ${tw`sm:h-[16px] sm:w-[16px]`}
+  }
+  &.ant-modal {
+    background: ${({ theme }) => theme.bg25};
+  }
+  .ant-btn {
+    background: ${({ theme }) => theme.bg22};
+    border: none;
+    border-radius: 50px;
+    ${tw`h-[42px] w-[165px]  `}
+    span {
+      ${tw`font-semibold text-white text-[15px]`}
+    }
+    :disabled {
+      opacity: 0.5;
+      span {
+        ${tw`text-[#636363]`}
+      }
+    }
+  }
+  .welcomeImg {
+    ${tw`w-[500px] -ml-6 h-[250px] mt-10`}
+  }
+  .textContainer {
+    ${tw`flex items-center text-[12px] mt-6 `}
+    color: ${({ theme }) => theme.text20};
+  }
+  .agreeText {
+    ${tw`ml-2 font-medium`}
+  }
+  .termsText {
+    ${tw`mt-8 h-[155px] p-1 text-[12px] font-medium overflow-y-auto rounded-lg	`}
+    border: 1px solid ${({ theme }) => theme.borderBottom};
+    ${({ theme }) => theme.customScrollBar('0px')};
+    color: ${({ theme }) => theme.text20};
+  }
   .slick-prev {
-    ${tw`w-auto sm:absolute top-[105%] sm:top-[530px] left-[10px] dark:text-white 
-    text-[#3c3c3c] text-[15px] font-semibold leading-normal`}
+    ${tw`w-auto sm:absolute top-[548px] ml-[-6px] sm:top-[530px]  
+      text-[15px] font-semibold leading-normal sm:top-[500px] sm:ml-[25px]`}
+    color: ${({ theme }) => theme.text38};
     &:before {
       display: none;
     }
   }
 
   .slick-next {
-    ${tw`w-auto top-[105%] right-[10px] text-[15px] dark:text-white text-[#3c3c3c] font-semibold
-    sm:absolute sm:top-[530px] leading-normal`}
+    ${tw`w-auto top-[548px]  text-[15px] mr-[-6px] font-semibold
+    sm:absolute sm:top-[500px] sm:mr-[20px] leading-normal`}
+    color: ${({ theme }) => theme.text38};
+
     &:before {
       display: none;
     }
   }
 
   .slick-dots {
-    ${tw`w-[65%] ml-[75px] sm:ml-[57px] sm:absolute sm:bottom-[-80px] sm:pt-10`}
+    ${tw`w-[65%] ml-[80px] sm:ml-[57px] sm:absolute sm:bottom-[-68px] sm:pt-10`}
   }
   .slick-dots li.slick-active button:before {
     color: ${({ theme }) => theme.text32};
     opacity: 1;
-    ${tw`text-[10px]`}
+    ${tw`text-[8px]`}
   }
   .slick-dots li button:before {
     color: ${({ theme }) => theme.text1};
-    ${tw`text-[8px]`}
+    ${tw`text-[6px]`}
   }
   .slick-dots li:last-child {
     display: none;
@@ -50,11 +99,10 @@ const WRAPPER = styled.div`
     ${tw`absolute  -top-8 sm:mr-[-300px] mr-[420px] h-5 w-5 cursor-pointer   z-10 `}
   }
   .bannerContainer {
-    background: ${({ theme }) => theme.bg23};
-    ${tw`h-[600px] w-[500px] rounded-3xl flex items-center justify-center pl-2 pr-2 sm:w-[90%] `}
+    ${tw`mt-8 sm:mt-0 rounded-3xl flex items-center justify-center sm:px-0  px-2 sm:w-[100%] `}
   }
   .sliderContainer {
-    ${tw`h-5/6 w-11/12 sm:h-[90%]`}
+    ${tw`h-5/6 w-11/12 sm:w-[100%] sm:h-[90%]`}
 
     img {
       ${tw`h-[300px] w-auto sm:h-[280px] m-auto `}
@@ -88,7 +136,7 @@ const WRAPPER = styled.div`
       ${tw`text-[18px] `}
     }
     .subText {
-      ${tw`font-medium text-[15px] p-1`}
+      ${tw`font-medium text-[15px] sm:w-[292px]`}
       color: ${({ theme }) => theme.text20};
     }
   }
@@ -99,14 +147,17 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
     height={checkMobile() ? '553px' : '630px'}
     width={checkMobile() ? '354px' : '500px'}
     title={null}
+    centered={true}
     visible={showTerms ? true : false}
     onCancel={() => setShowTerms(false)}
     footer={null}
   >
-    <WRAPPER tw="!mt-2">
+    <WRAPPER>
       <div className="slide">
         <h3>
-          <div>Track NFT collections like never before!</div>
+          <div>
+            Track NFT collections <br /> like never before!
+          </div>
         </h3>
         <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
         <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
@@ -119,39 +170,33 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
   </STYLED_POPUP>
 )
 
-const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElement => {
+export const NFTAggWelcome = ({ setShowTerms, showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
 
-  const showNextButton = useCallback(() => {
-    if (checkMobile()) {
-      return currentSlide === 2 ? 'Start' : 'Next'
-    }
-    return currentSlide === 3 ? 'Start' : 'Next'
-  }, [currentSlide])
-
+  const showNextButton = useMemo(() => (currentSlide === 2 ? 'Start' : 'Next'), [currentSlide])
   const settings = {
-    dots: true,
+    dots: checkMobile() ? true : false,
     infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     beforeChange: (current, next) => {
       setCurrentSlide(next)
-      if (checkMobile() && next === 3) rewardToggle(false)
-      if (!checkMobile() && next === 4) rewardToggle(false)
+      if (next === 3) setShowTerms(false)
     },
-    nextArrow: <span> {showNextButton()}</span>,
-    prevArrow: <div> {currentSlide !== 0 && `Prev`}</div>
+    nextArrow: <div> {showNextButton}</div>,
+    prevArrow: <div> {currentSlide !== 0 && `Previous`}</div>
   }
   return (
-    <WRAPPER>
-      <img
-        className="closeBtn"
-        onClick={() => rewardToggle(false)}
-        src={'/img/assets/close-gray-icon.svg'}
-        alt=""
-      />
-
+    <STYLED_POPUP
+      height={checkMobile() ? '553px' : '630px'}
+      width={checkMobile() ? '354px' : '500px'}
+      title={null}
+      centered={true}
+      visible={showTerms ? true : false}
+      onCancel={() => currentSlide === 2 && setShowPopup(false)}
+      footer={null}
+    >
       <div className="bannerContainer">
         <div className="sliderContainer">
           <Slider {...settings}>
@@ -172,23 +217,13 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
                 like never before!
               </h2>
               <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
-              <h3 style={{ fontSize: '18px', fontWeight: '600' }}>*For individual assets in a collection</h3>
+              <h3 tw="!text-[15px] font-semibold">*For individual assets in a collection</h3>
               <div className="subText">
                 Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data,
                 not listing prices.
               </div>
             </div>
-            {!checkMobile() && (
-              <div className="slide">
-                <h2>Unique Features!</h2>
-                <img src={'/img/assets/uniqueFeaturesGraphic.png'} alt="" />
-                <h3>Explore our Unique Features!</h3>
-                <div className="subText">
-                  Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data,
-                  not listing prices.
-                </div>
-              </div>
-            )}
+
             <div className="slide">
               <h2>GFX Platform Token</h2>
               <img src={'/img/assets/GOFXrewardsGraphic.png'} alt="" />
@@ -199,94 +234,6 @@ const NFTAggWelcome: FC<{ rewardToggle: any }> = ({ rewardToggle }): ReactElemen
           </Slider>
         </div>
       </div>
-    </WRAPPER>
-  )
-}
-
-const STYLED_POPUP = styled(PopupCustom)`
-  .title {
-    ${tw`flex text-[20px] mt-1 font-semibold items-center justify-center `}
-    color: ${({ theme }) => theme.text11};
-  }
-
-  .ant-btn {
-    background: ${({ theme }) => theme.bg22};
-    border: none;
-    border-radius: 50px;
-    ${tw`h-[42px] w-[165px]  `}
-    span {
-      ${tw`font-semibold text-white text-[15px]`}
-    }
-    :disabled {
-      opacity: 0.5;
-      span {
-        ${tw`text-[#636363]`}
-      }
-    }
-  }
-  .welcomeImg {
-    ${tw`w-[500px] -ml-6 h-[250px] mt-10`}
-  }
-  .textContainer {
-    ${tw`flex items-center text-[12px] mt-6 `}
-    color: ${({ theme }) => theme.text20};
-  }
-  .agreeText {
-    ${tw`ml-2 font-medium`}
-  }
-  .termsText {
-    ${tw`mt-8 h-[155px] p-1 text-[12px] font-medium overflow-y-auto rounded-lg	`}
-    border: 1px solid ${({ theme }) => theme.borderBottom};
-    ${({ theme }) => theme.customScrollBar('0px')};
-    color: ${({ theme }) => theme.text20};
-  }
-`
-
-export const NFTAggTerms = ({ setShowTerms, showTerms, setShowPopup }: any) => {
-  const [checboxChecked, setChecbox] = useState<boolean>(false)
-  return (
-    <STYLED_POPUP
-      height={'630px'}
-      width={'500px'}
-      title={null}
-      visible={showTerms ? true : false}
-      onCancel={() => setShowTerms(true)}
-      footer={null}
-    >
-      <div className="title">Welcome to GooseFX!</div>
-      <img className="welcomeImg" src="/img/assets/Aggregator/termsServiceGraphic.png" />
-      <div className="termsText">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nulla, laudantium similique ullam quam
-        dignissimos suscipit nobis a nesciunt cumque voluptate reprehenderit expedita libero atque nam delectus.
-        Magnam, soluta laborum. Minus quam incidunt libero provident sed illum dolor doloribus quo veniam non
-        voluptate eligendi ea iure, perspiciatis nesciunt quas inventore architecto a eaque molestias sunt ad
-        pariatur? Veritatis deleniti quidem autem neque soluta temporibus adipisci, cupiditate magnam deserunt
-        aliquam exercitationem accusantium ipsam eligendi. Blanditiis quo sint nisi fugiat quibusdam ducimus vero
-        consequuntur explicabo odit sed dicta adipisci distinctio magni nemo, animi velit voluptatibus, provident
-        illo inventore ut autem temporibus eaque. Nisi ullam ab officia tenetur error unde itaque quae excepturi
-        similique impedit necessitatibus nihil m agnam dicta aut blanditiis praesentium accusamus iure, amet cum
-        corporis id n eque. Ipsum ut voluptate dicta culpa, autem sequi laudantium inventore repudi andae illo
-        obcaecati consequuntur nostrum nisi? Nesciunt omnis quos veritatis deleniti repellat, quibusdam id beatae
-        culpa, sequi impedit officia vitae nobis non tenetur cumque numquam sunt autem nihil reici ipsa ex,
-        necessitatibus ab alias id, illo iste aliquid numquam architecto itaque.
-      </div>
-      <div className="textContainer">
-        <Checkbox onChange={() => setChecbox((prev) => !prev)} />
-        <div className="agreeText">I agree GooseFX terms and conditions and protocol disclaimer.</div>
-        <Button
-          className="btn"
-          disabled={!checboxChecked}
-          onClick={() => {
-            setShowTerms(false)
-            setShowPopup(true)
-          }}
-        >
-          {' '}
-          Continue{' '}
-        </Button>
-      </div>
     </STYLED_POPUP>
   )
 }
-
-export default NFTAggWelcome
