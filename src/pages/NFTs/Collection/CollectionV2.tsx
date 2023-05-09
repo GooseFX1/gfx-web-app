@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, useEffect, useMemo } from 'react'
-import { Dropdown, Tooltip } from 'antd'
+import React, { ReactElement, useState, useEffect, useMemo, FC } from 'react'
+import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
@@ -37,13 +37,16 @@ import { OpenBidNFTs } from './OpenBidNFTs'
 import { FixedPriceNFTs } from './FixedPriceNFTs'
 import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
-import { RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
+import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
+import { Arrow } from '../../../components/common/Arrow'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -110,6 +113,8 @@ const NFTStatsContainer = () => {
     () => (singleCollection ? singleCollection[0].floor_price / LAMPORTS_PER_SOL_NUMBER : 0),
     [collection]
   )
+  const { wallet } = useWallet()
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
     setFirstPageLoad(false)
@@ -166,11 +171,11 @@ const NFTStatsContainer = () => {
               style={{ fontSize: collection?.collection_name?.length > 20 ? '25px' : '35px' }}
             >
               {collection ? (
-                <Tooltip title={collection.collection_name}>
+                <GenericTooltip text={collection.collection_name}>
                   <div tw="sm:text-[22px] ml-3 font-bold">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 15)}
                   </div>
-                </Tooltip>
+                </GenericTooltip>
               ) : (
                 <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
               )}
@@ -238,10 +243,14 @@ const NFTStatsContainer = () => {
             </div>
           </div>
           {!checkMobile() && (
-            <div tw="ml-auto" className="moreOptions">
+            <div tw="ml-auto mr-1" className="moreOptions">
               <div>
                 <RefreshBtnWithAnimationNFT />
               </div>
+              <div>
+                <img tw="h-11 w-11 !mr-0" src="/img/assets/shareBlue.svg" alt="" />
+              </div>
+              {pubKey && <div tw="!w-10">{<CurrentUserProfilePic />}</div>}
               {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
                 <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
               </div>   
@@ -325,13 +334,14 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 
 const SortDropdown = () => {
   const { sortingAsc } = useNFTAggregator()
+  const [arrow, setArrow] = useState<boolean>(false)
 
   return (
     <div>
       <Dropdown
         align={{ offset: [0, 16] }}
         destroyPopupOnHide
-        overlay={<OverlayOptions />}
+        overlay={<OverlayOptions setArrow={setArrow} />}
         placement="bottomRight"
         trigger={checkMobile() ? ['click'] : ['hover']}
       >
@@ -343,7 +353,7 @@ const SortDropdown = () => {
           <div className="sortingBtn">
             Price:
             <>{sortingAsc ? ' Ascending' : ' Descending'}</>
-            <ArrowClicker arrowRotation={!sortingAsc} cssStyle={tw`!h-4 !w-4 !ml-1`} />
+            <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-2`} invert={arrow} />
           </div>
         )}
       </Dropdown>
@@ -351,9 +361,12 @@ const SortDropdown = () => {
   )
 }
 
-const OverlayOptions = () => {
+const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
   const { sortingAsc, setSortAsc } = useNFTAggregator()
-
+  useEffect(() => {
+    setArrow(true)
+    return () => setArrow(false)
+  }, [])
   return (
     <DROPDOWN_CONTAINER>
       <div className="option" onClick={() => setSortAsc(true)}>

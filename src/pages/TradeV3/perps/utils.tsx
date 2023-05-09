@@ -540,6 +540,8 @@ export const getExitQuntity = (traderBalances, activeProduct) => {
 }
 
 export const truncateBigNumber = (bigNumber: number) => {
+  if (!bigNumber) return 0
+
   if (bigNumber > 1000000) {
     const beforeDecimal = (bigNumber / 1000000).toString().split('.')[0]
     let afterDecimal = (bigNumber / 1000000).toString().split('.')[1]
@@ -554,7 +556,6 @@ export const truncateBigNumber = (bigNumber: number) => {
     else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
     return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
   }
-  if (!bigNumber) return 0
   return Number(bigNumber.toFixed(2))
 }
 

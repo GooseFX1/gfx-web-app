@@ -165,7 +165,7 @@ const FILTERS_CONTAINER = styled.div`
   }
 `
 
-const AVATAR_NFT = styled(Image)`
+export const AVATAR_NFT = styled(Image)`
   ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
@@ -336,7 +336,7 @@ const FiltersContainer = () => {
             {/* <div className="iconImg" onClick={() => setMenuPopup(true)}>
               <img src={`/img/assets/Aggregator/menu.svg`} />
             </div> */}
-            {sessionUser && <CurrentUserProfilePic goProfile={goProfile} />}
+            {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
           </div>
           <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
             <div className="slider-animation"></div>
@@ -402,11 +402,15 @@ const FiltersContainer = () => {
         <div tw="flex items-center mr-6 ml-auto">
           {/* <MarketDropdown /> */}
           <TimeLineDropdown />
-          <div>
+          <div tw="ml-4">
             <RefreshBtnWithAnimationNFT />
           </div>
 
-          {sessionUser && <CurrentUserProfilePic goProfile={goProfile} />}
+          {sessionUser && wallet?.adapter?.publicKey && (
+            <div tw="ml-4">
+              <CurrentUserProfilePic />
+            </div>
+          )}
         </div>
       </FILTERS_CONTAINER>
     )
@@ -426,33 +430,36 @@ export const RefreshBtnWithAnimationNFT: FC = () => {
   }
   return (
     <RefreshIcon onClick={() => refreshFeed()}>
-      <img
-        src={'/img/assets/refresh.svg'}
-        tw="relative z-10 ml-5 mr-5 h-11 w-11"
-        className={refreshClass}
-        alt="refresh"
-      />
+      <img src={'/img/assets/refresh.svg'} tw="relative z-10   h-11 w-11" className={refreshClass} alt="refresh" />
     </RefreshIcon>
   )
 }
-export const CurrentUserProfilePic: FC<{ goProfile: any }> = ({ goProfile }) => {
+const PROFILE_PIC = styled.div`
+  border: 1.5px solid #b5b5b5 !important;
+`
+export const CurrentUserProfilePic = (): ReactElement => {
   const { sessionUser } = useNFTProfile()
   const { wallet } = useWallet()
   const pubKey = useMemo(() => wallet?.adapter?.publicKey.toString(), [wallet?.adapter?.publicKey])
+  const history = useHistory()
   let userPic = sessionUser?.profile_pic_link
   if (userPic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') userPic = null
 
-  const getFirstAndLast = useMemo(() => pubKey[0] + pubKey[pubKey.length - 1], [sessionUser])
+  const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
+  const goProfile = () => history.push(`/nfts/profile/${pubKey}`)
+
   return (
     <div>
       {userPic ? (
         <AVATAR_NFT src={userPic} preview={false} onClick={goProfile} />
       ) : (
-        <div className="borderAvatar">
-          <div className="no-dp-avatar-sm" onClick={goProfile}>
-            {getFirstAndLast}
-          </div>
-        </div>
+        <PROFILE_PIC
+          tw="h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
+          dark:bg-black-4 dark:text-grey-4 flex items-center p-0.5"
+          onClick={goProfile}
+        >
+          {getFirstAndLast}
+        </PROFILE_PIC>
       )}
     </div>
   )

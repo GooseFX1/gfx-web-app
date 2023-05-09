@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect, useRef } from 'react'
 import {
   // useAccounts,
   useConnectionConfig,
@@ -13,15 +13,16 @@ import {
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
 import { checkMobile, notify } from '../../../utils'
-import { AppraisalValue } from '../../../utils/GenericDegsin'
-import { PublicKey, TransactionInstruction, Transaction } from '@solana/web3.js'
+import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
+import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
   tradeStatePDA,
   // getBuyInstructionAccounts,
   tokenSize,
   // callCancelInstruction,
   freeSellerTradeStatePDA,
-  getSellInstructionAccounts
+  getSellInstructionAccounts,
+  freeSellerTradeStatePDAAgg
 } from '../actions'
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 // import { useHistory } from 'react-router-dom'
@@ -45,7 +46,13 @@ import {
   getMetadata,
   StringPublicKey,
   bnTo8,
-  confirmTransaction
+  confirmTransaction,
+  ExecuteSaleInstructionArgs,
+  ExecuteSaleInstructionAccounts,
+  TOKEN_PROGRAM_ID,
+  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+  TREASURY_PREFIX,
+  createExecuteSaleInstruction
 } from '../../../web3'
 import { GFX_LINK } from '../../../styles'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -55,15 +62,27 @@ import 'styled-components/macro'
 const TEN_MILLION = 10000000
 
 import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
-import { TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { couldNotFetchNFTMetaData, TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
+import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
+import { web3 } from '@project-serum/anchor'
 
 export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   visible,
   handleClose
 }): ReactElement => {
   const { connection, network } = useConnectionConfig()
-  const { general, setGeneral, ask, nftMetadata } = useNFTDetails()
+  const { general, setGeneral, ask, nftMetadata, bids } = useNFTDetails()
+  const highestBid = useMemo(() => {
+    if (bids.length > 0) {
+      return bids.reduce((maxBid, currentBid) => {
+        const maxBidPrice = parseFloat(maxBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+        const currentBidPrice = parseFloat(currentBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+
+        return currentBidPrice > maxBidPrice ? currentBid : maxBid
+      })
+    }
+  }, [bids])
+  const bidPrice = parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER
   const { setSellNFT, setOpenJustModal } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
@@ -74,6 +93,11 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
   const { singleCollection } = useNFTCollections()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const orderTotal: number = useMemo(() => bidPrice, [bidPrice])
+
+  const isSellingNow = useMemo(() => bidPrice === askPrice, [askPrice])
 
   const closeTheModal = () => {
     setOpenJustModal(false)
@@ -90,6 +114,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       message: <TransactionErrorMsg title={`NFT Listing error!`} itemName={itemName} supportText={error} />
     })
   }
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus()
+  }, [inputRef.current])
 
   useEffect(
     () => () => {
@@ -126,6 +154,85 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
   }
 
+  const derivePDAForExecuteSale = async () => {
+    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+    const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
+      new PublicKey(highestBid?.wallet_key),
+      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE, // try this
+      general.token_account,
+      general.mint_address
+    )
+    return {
+      freeTradeStateAgg,
+      programAsSignerPDA
+    }
+  }
+  const buyerPublicKey = useMemo(() => new PublicKey(highestBid.wallet_key), [highestBid])
+  const derivePDAsForInstructionSell = async () => {
+    const buyerPriceInLamports = orderTotal * LAMPORTS_PER_SOL_NUMBER // bidPrice
+    const bidPrice: BN = new BN(buyerPriceInLamports)
+    const buyerReceiptTokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [buyerPublicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), toPublicKey(general.mint_address).toBuffer()],
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    )
+    const auctionHouseTreasuryAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [
+        Buffer.from(AUCTION_HOUSE_PREFIX),
+        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        Buffer.from(TREASURY_PREFIX)
+      ],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
+    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [
+        Buffer.from(AUCTION_HOUSE_PREFIX),
+        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        buyerPublicKey.toBuffer()
+      ],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
+
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      buyerPublicKey,
+      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(bidPrice)
+    )
+    const sellerTradeState: [PublicKey, number] = await tradeStatePDA(
+      wallet?.adapter?.publicKey,
+      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE, // try changing this
+      general.token_account,
+      general.mint_address,
+      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(bidPrice)
+    )
+
+    if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
+      return {
+        metaDataAccount: undefined,
+        escrowPaymentAccount: undefined,
+        buyerTradeState: undefined,
+        buyerPrice: undefined
+      }
+    }
+
+    return {
+      metaDataAccount,
+      escrowPaymentAccount,
+      buyerTradeState,
+      bidPrice,
+      sellerTradeState,
+      buyerReceiptTokenAccount,
+      auctionHouseTreasuryAddress
+    }
+  }
   const derivePDAsForInstruction = async () => {
     const buyerPriceInLamports = askPrice * LAMPORTS_PER_SOL_NUMBER
     const buyerPrice: BN = new BN(buyerPriceInLamports)
@@ -275,8 +382,72 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     if (ask && removeAskIX) transaction.add(removeAskIX)
     transaction.add(sellIX)
 
+    if (isSellingNow) {
+      const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
+      const {
+        metaDataAccount,
+        escrowPaymentAccount,
+        buyerTradeState,
+        buyerPrice,
+        buyerReceiptTokenAccount,
+        auctionHouseTreasuryAddress,
+        sellerTradeState
+      } = await derivePDAsForInstructionSell()
+
+      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
+      if (!onChainNFTMetadata) {
+        couldNotFetchNFTMetaData()
+        setIsLoading(false)
+        return
+      }
+
+      const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
+        pubkey: new PublicKey(creator.address),
+        isWritable: true,
+        isSigner: false
+      }))
+
+      const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
+        escrowPaymentBump: escrowPaymentAccount[1],
+        freeTradeStateBump: freeTradeStateAgg[1],
+        programAsSignerBump: programAsSignerPDA[1],
+        buyerPrice: buyerPrice,
+        tokenSize: tokenSize
+      }
+      const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = {
+        buyer: new PublicKey(highestBid.wallet_key),
+        seller: wallet?.adapter?.publicKey,
+        tokenAccount: new PublicKey(highestBid?.token_account_key),
+        tokenMint: new PublicKey(highestBid?.token_account_mint_key),
+        metadata: new PublicKey(metaDataAccount),
+        treasuryMint: new PublicKey(isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
+        escrowPaymentAccount: escrowPaymentAccount[0],
+        sellerPaymentReceiptAccount: new PublicKey(highestBid?.wallet_key),
+        buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
+        authority: new PublicKey(isSellingNow ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+        auctionHouse: new PublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE),
+        auctionHouseFeeAccount: new PublicKey(isSellingNow ? highestBid?.auction_house_fee_account : AH_FEE_ACCT),
+        auctionHouseTreasury: auctionHouseTreasuryAddress[0],
+        buyerTradeState: buyerTradeState[0],
+        sellerTradeState: tradeState[0],
+        freeTradeState: freeTradeStateAgg[0],
+        systemProgram: SystemProgram.programId,
+        programAsSigner: programAsSignerPDA[0],
+        rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
+        ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+        anchorRemainingAccounts: creatorAccounts
+      }
+
+      const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
+        executeSaleInstructionAccounts,
+        executeSaleInstructionArgs
+      )
+
+      transaction.add(executeSaleIX)
+    }
+
     try {
-      const signature = await wal.sendTransaction(transaction, connection)
+      const signature = await wal.sendTransaction(transaction, connection, { skipPreflight: true })
       console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(signature)
@@ -353,12 +524,16 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
             <div className="buyTitle">
               You are about to sell <br />
-              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 30 : 30)} </strong>{' '}
+              <GenericTooltip text={general?.nft_name}>
+                <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
+              </GenericTooltip>
               {checkMobile() && <br />}
-              <strong>
-                {general?.collection_name &&
-                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 30 : 30)}`}
-              </strong>
+              <GenericTooltip text={general?.collection_name}>
+                <strong>
+                  {general?.collection_name &&
+                    `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
+                </strong>
+              </GenericTooltip>
             </div>
             {!checkMobile() && <img className="nftImg" src={general.image_url} alt="" />}
 
@@ -386,6 +561,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
             className="enterBid"
             placeholder="0.0"
             type="number"
+            ref={inputRef}
             value={askPrice}
             onChange={(e) => updateAskPrice(e)}
           />

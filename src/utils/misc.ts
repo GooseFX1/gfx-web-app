@@ -135,6 +135,7 @@ export function debounce(callback: any, wait: number): (x: any) => void {
 }
 
 export const formatSOLDisplay = (solValue: string | number): string => {
+  if (!solValue) return '0'
   if (typeof solValue === 'string') {
     return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
   } else if (solValue < 10000000) return solValue.toFixed(2)

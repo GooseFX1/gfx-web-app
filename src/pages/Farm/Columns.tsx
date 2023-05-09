@@ -1,11 +1,12 @@
 import React, { FC, ReactElement } from 'react'
 
 import { match, Pattern } from 'ts-pattern'
-import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
 import { Skeleton } from 'antd'
+import styled from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { IFarmData } from './CustomTableList'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -115,11 +116,17 @@ export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {
   )
 }
 
-export const HeaderTooltipMode: FC<{ text: string }> = ({ text }): JSX.Element => {
+export const GenericTooltip: FC<{ text: string; children?: any }> = ({ text, children }): JSX.Element => {
   const { mode } = useDarkMode()
+  if (children)
+    return (
+      <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        {children}
+      </Tooltip>
+    )
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
-      <Tooltip dark placement="bottomLeft" color={mode === 'dark' ? '#eeeeee' : '#000'}>
+      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
         <span>{text}</span>
       </Tooltip>
     )

@@ -73,7 +73,16 @@ export const AsksAndBidsForNFT = (): ReactElement => {
         bids.map((bid) => (
           <div tw="flex items-center justify-between mt-1 dark:text-grey-5 text-grey-1" key={bid.clock}>
             <div tw="ml-6">
-              Bid by <span className="bidBy">{truncateAddress(bid.wallet_key)} </span>
+              Bid by{' '}
+              <a
+                href={`https://solscan.io/account/${bid.wallet_key}`}
+                target="_blank"
+                rel="noreferrer"
+                tw="underline"
+                className="bidBy"
+              >
+                {truncateAddress(bid.wallet_key)}{' '}
+              </a>
               <div>{parseUnixTimestamp(bid.clock)}</div>
             </div>
             <div tw="mr-6">
@@ -94,7 +103,16 @@ export const AsksAndBidsForNFT = (): ReactElement => {
               <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
             </a> */}
             <div tw="ml-3">
-              Ask by <span className="bidBy">{truncateAddress(ask.wallet_key)} </span>
+              Ask by{' '}
+              <a
+                href={`https://solscan.io/account/${ask.wallet_key}`}
+                target="_blank"
+                rel="noreferrer"
+                tw="underline"
+                className="bidBy"
+              >
+                {truncateAddress(ask.wallet_key)}{' '}
+              </a>
               <div>{parseUnixTimestamp(ask.clock)}</div>
             </div>
           </div>

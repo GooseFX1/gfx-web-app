@@ -170,7 +170,7 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
   </STYLED_POPUP>
 )
 
-export const NFTAggWelcome = ({ setShowTerms, showTerms, setShowPopup }: any) => {
+export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
 
   const showNextButton = useMemo(() => (currentSlide === 2 ? 'Start' : 'Next'), [currentSlide])
@@ -182,7 +182,7 @@ export const NFTAggWelcome = ({ setShowTerms, showTerms, setShowPopup }: any) =>
     slidesToScroll: 1,
     beforeChange: (current, next) => {
       setCurrentSlide(next)
-      if (next === 3) setShowTerms(false)
+      if (next === 3) setShowPopup(false)
     },
     nextArrow: <div> {showNextButton}</div>,
     prevArrow: <div> {currentSlide !== 0 && `Previous`}</div>
@@ -194,7 +194,7 @@ export const NFTAggWelcome = ({ setShowTerms, showTerms, setShowPopup }: any) =>
       title={null}
       centered={true}
       visible={showTerms ? true : false}
-      onCancel={() => currentSlide === 2 && setShowPopup(false)}
+      onCancel={() => setShowPopup(false)}
       footer={null}
     >
       <div className="bannerContainer">

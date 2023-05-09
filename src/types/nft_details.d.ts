@@ -101,6 +101,8 @@ export type INFTBid = {
   bid_id: number
   clock: string
   tx_sig: string
+  auction_house_authority?: string
+  auction_house_fee_account?: string
   wallet_key: string
   auction_house_key: string
   token_account_key: string

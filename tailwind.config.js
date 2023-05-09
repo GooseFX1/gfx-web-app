@@ -49,6 +49,7 @@ module.exports = {
         'purple-2': '#9625AE',
         'green-1': '#50BB35',
         'green-2': '#71C25D',
+        'green-3': '#80CE00',
         'red-1': '#F06565',
         'red-2': '#F35355',
         'green-gradient-1': '#8ADE75',

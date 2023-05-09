@@ -360,16 +360,15 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   : truncateAddress(wallet?.adapter?.publicKey?.toString())}
               </div>
             )}
-            {currentUserProfile === undefined ? (
-              <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-            ) : (
+            {currentUserProfile !== undefined && (
               <div className="profileBio">
                 {currentUserProfile.bio ? (
                   currentUserProfile.bio
                 ) : (
                   <div>
                     {' '}
-                    Add your bio and share with <br /> the world who you are!
+                    Add your bio and share <br />
+                    with the world who you <br /> are!
                   </div>
                 )}
               </div>
@@ -378,28 +377,30 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
             )}
           </div>
-          <a href={`https://solscan.io/account/${params?.userAddress}`} target="_blank" rel="noreferrer">
-            <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
-          </a>
+          <div tw="flex items-center mt-4">
+            <a href={`https://solscan.io/account/${params?.userAddress}`} target="_blank" rel="noreferrer">
+              <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
+            </a>
+            <img src="/img/assets/shareBlue.svg" tw="h-10 w-10 mr-2.5 ml-3" />
+          </div>
+
           {currentUserProfile === undefined ? (
             <div className="social-list">
-              {[1, 2, 3, 4].map((_, key) => (
-                <span className="social-item" key={key}>
-                  <SkeletonCommon width="35px" height="35px" borderRadius="50%" />
-                </span>
+              {[1, 2, 3, 4].map((key) => (
+                <div key={key}></div>
               ))}
             </div>
           ) : currentUserProfile.twitter_link ? (
             <div className="social-list">
               {currentUserProfile.twitter_link && (
                 <a href={validExternalLink(currentUserProfile.twitter_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-5 w-6 mr-3" src={`/img/assets/Aggregator/twitter.svg`} alt="" />
+                  <img tw="h-5 w-6 ml-3 mt-2" src={`/img/assets/Aggregator/twitter.svg`} alt="" />
                 </a>
               )}
 
               {currentUserProfile.telegram_link && (
                 <a href={validExternalLink(currentUserProfile.telegram_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-6 w-6 mr-3" src={`/img/assets/Aggregator/telegram.svg`} alt="" />
+                  <img tw="h-6 w-6 ml-3" src={`/img/assets/Aggregator/telegram.svg`} alt="" />
                 </a>
               )}
             </div>

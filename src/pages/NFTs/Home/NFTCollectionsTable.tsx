@@ -9,7 +9,7 @@ import {
   useNFTCollections,
   usePriceFeedFarm
 } from '../../../context'
-import { checkMobile } from '../../../utils'
+import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { Loader, LoaderForImg } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
@@ -256,7 +256,19 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           <Loader />
         )}
       </td>
-      <td className="tdItem">{item?.collection_name ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
+      <td className="tdItem">
+        {item?.collection_name ? (
+          <>
+            {item?.daily_change >= 0 ? (
+              <div tw="dark:text-green-2 text-green-3">+ {formatSOLDisplay(item?.daily_change)} %</div>
+            ) : (
+              <div tw="text-red-2"> {formatSOLDisplay(item?.daily_change)} %</div>
+            )}
+          </>
+        ) : (
+          <Loader />
+        )}
+      </td>
       <td className="tdItem">{item?.collection_name ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
       <td className="tdItem">
         {item?.daily_volume !== undefined ? (

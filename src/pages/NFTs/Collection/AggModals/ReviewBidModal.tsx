@@ -1,14 +1,14 @@
-import { Button, Tooltip } from 'antd'
-import { FC, useMemo } from 'react'
+import { Button } from 'antd'
+import { FC, useEffect, useMemo, useRef } from 'react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNFTCollections } from '../../../../context/nft_collections'
 import { useNFTDetails } from '../../../../context/nft_details'
-import { checkMobile } from '../../../../utils'
+import { checkMobile, formatSOLDisplay } from '../../../../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { AppraisalValue } from '../../../../utils/GenericDegsin'
+import { AppraisalValue, GenericTooltip } from '../../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import {
@@ -25,6 +25,10 @@ import { successfulCancelBidMessage, TransactionSignatureErrorNotify } from './A
 import { minimizeTheString } from '../../../../web3/nfts/utils'
 import { BorderBottom } from '../SellNFTModal'
 
+const PERCENT_80 = 0.8
+const PERCENT_90 = 0.9
+const PERCENT_100 = 1
+
 const REVIEW_MODAL = styled.div`
   ${tw`h-[100%]`}
 `
@@ -40,6 +44,12 @@ export const ReviewBidModal: FC<{
   const { wallet, sendTransaction } = useWallet()
   const { connection } = useConnectionConfig()
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const floorPrice = singleCollection ? singleCollection[0]?.floor_price : 0
+
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus()
+  }, [inputRef.current])
 
   const buyerPrice = parseFloat(ask?.buyer_price ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER
   const highestBid: number = useMemo(
@@ -47,6 +57,7 @@ export const ReviewBidModal: FC<{
       bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : 0,
     [bids]
   )
+  const userBidPrice = useMemo(() => (buyerPrice > 0 ? buyerPrice : floorPrice ? floorPrice : 0.1), [buyerPrice])
   const yourPreviousBid = useMemo(
     () => (bids.length ? bids.filter((b) => b.wallet_key === publicKey.toString()) : null),
     [bids, wallet?.adapter, wallet?.adapter?.publicKey]
@@ -121,22 +132,16 @@ export const ReviewBidModal: FC<{
         <div className="buyTitle">
           You are about to bid for:
           <br />
-          <Tooltip
-            overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
-            title={general?.nft_name}
-          >
-            <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 20)} </strong>
-          </Tooltip>
+          <GenericTooltip text={general?.nft_name}>
+            <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 15)} </strong>
+          </GenericTooltip>
           {checkMobile() && <br />}
-          <Tooltip
-            overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
-            title={general?.collection_name}
-          >
+          <GenericTooltip text={general?.collection_name}>
             <strong>
               {general?.collection_name &&
-                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
+                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 15)}`}
             </strong>
-          </Tooltip>
+          </GenericTooltip>
         </div>
         {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
@@ -184,6 +189,7 @@ export const ReviewBidModal: FC<{
           className="enterBid"
           placeholder="0.0"
           type="number"
+          ref={inputRef}
           value={curBid >= 0 ? curBid : undefined}
           onChange={(e) => updateBidValue(e)}
         />
@@ -200,22 +206,22 @@ export const ReviewBidModal: FC<{
       >
         <div
           className={selectedBtn === 0 ? 'bidButtonSelected' : 'bidButton'}
-          onClick={() => handleSetCurBid(buyerPrice + 10, 0)}
+          onClick={() => handleSetCurBid(formatSOLDisplay(userBidPrice * PERCENT_80), 0)}
         >
-          {buyerPrice + 10}
+          {formatSOLDisplay(userBidPrice * PERCENT_80)}
         </div>
         <div
           className={selectedBtn === 1 ? 'bidButtonSelected' : 'bidButton'}
-          onClick={() => handleSetCurBid(buyerPrice + 20, 1)}
+          onClick={() => handleSetCurBid(formatSOLDisplay(userBidPrice * PERCENT_90), 1)}
         >
-          {buyerPrice + 20}
+          {formatSOLDisplay(userBidPrice * PERCENT_90)}
         </div>
         {!checkMobile() && (
           <div
             className={selectedBtn === 2 ? 'bidButtonSelected' : 'bidButton'}
-            onClick={() => handleSetCurBid(buyerPrice + 30, 2)}
+            onClick={() => handleSetCurBid(formatSOLDisplay(userBidPrice * PERCENT_100), 2)}
           >
-            {buyerPrice + 30}
+            {formatSOLDisplay(userBidPrice * PERCENT_100)}
           </div>
         )}
       </div>

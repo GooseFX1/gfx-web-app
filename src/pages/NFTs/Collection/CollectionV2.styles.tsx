@@ -177,8 +177,9 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
+
   .onSaleText {
-    ${tw`text-white text-[15px] font-semibold absolute left-4 mt-2 !opacity-100`}
+    ${tw`text-white text-[15px]   font-semibold absolute left-4 mt-2 !opacity-100`}
   }
   .gridItemRegular {
     ${tw`  mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
@@ -248,17 +249,17 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .nftTextContainer {
-    ${tw`relative p-[8px] dark:text-white text-black-4`}
+    ${tw`relative p-2.5 dark:text-white text-black-4 h-[120px]`}
   }
   .collectionId {
-    ${tw`text-[13px] font-semibold flex items-center leading-[18px] `}
+    ${tw`text-[13px] font-semibold flex items-center leading-[18px] justify-between`}
 
     .isVerified {
       ${tw` ml-2 w-[15px] h-[15px]`}
     }
 
     .ah-name {
-      ${tw`w-[22px] h-[22px] absolute top-[8px] right-[8px]`}
+      ${tw`w-[22px] h-[22px] mr-1  `}
     }
   }
   .nftPrice {
@@ -274,7 +275,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .apprisalPriceProfile {
-    ${tw`font-semibold text-[15px] mt-[8px] text-[#636363] flex items-center`}
+    ${tw`font-semibold text-[15px] mt-[8px] text-[#636363] absolute bottom-2.5 flex items-center`}
     img {
       ${tw`w-[20px] h-[20px] ml-2.5`}
     }

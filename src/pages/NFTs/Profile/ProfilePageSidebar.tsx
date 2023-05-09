@@ -14,12 +14,12 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
-${tw`w-[23vw] bg-white dark:bg-black-2`}
+${tw`w-[23vw] bg-white dark:bg-black-1`}
   border-top-right-radius: 20px;
   ${({ theme }) => theme.customScrollBar('1px')}
   height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
   .profileContent {
-    ${tw`overflow-y-auto overflow-x-hidden`}
+    ${tw`overflow-y-auto overflow-x-hidden mt-[-20px]`}
     ${({ theme }) => theme.customScrollBar('2px')}
     height: ${({ navCollapsed }) => (navCollapsed ? '720px' : '640px')};
   }
@@ -61,7 +61,6 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
         display: inline-block;
         width: 35px;
         margin: 0 5px;
-        background: #2a2a2a;
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -82,7 +81,6 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
       }
       .social-icon {
         ${tw`w-[35px] h-[30px]`}
-        background-color: ${({ theme }) => theme.bg26};
       }
       .twitterHeight {
         height: 18px;
@@ -100,9 +98,10 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
   }
 
   .graphic-img{
-    width: 100%;
-    height: 159px;
-    scale: 1.1;
+    width: 23vw;
+    height: auto;
+    scale: 1;
+    ${tw``}
   }
 
   .portfolio{
@@ -127,13 +126,12 @@ ${tw`w-[23vw] bg-white dark:bg-black-2`}
 
 const SCAN_SHARE = styled.div`
   display: flex;
-  justify-content: space-evenly;
   align-items: center;
+  ${tw`px-6`}
 
   > span {
-    font-size: 30px;
     color: ${({ theme }) => theme.text7};
-    font-weight: 600;
+    ${tw`font-semibold text-[30px]`}
   }
   .solscan-img {
     height: 40px;
@@ -376,11 +374,16 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
         {params && params.userAddress && (
           <SCAN_SHARE>
             <span>{truncateAddress(params.userAddress)}</span>
-            <a href={`https://solscan.io/account/${params.userAddress}`} target="_blank" rel="noreferrer">
+            <a
+              tw="ml-auto mr-3"
+              href={`https://solscan.io/account/${params.userAddress}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
             </a>
             <div onClick={() => setShareModal(true)} className="share-img">
-              <img tw="cursor-pointer" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+              <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
             </div>
           </SCAN_SHARE>
         )}
@@ -391,7 +394,9 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             Add your bio and share with <br /> the world who you are!
           </div>
         )}
-        <img src="/img/assets/profileGraphic.svg" alt="profile-graphic" className="graphic-img" />
+        <div>
+          <img src="/img/assets/profileGraphic.svg" alt="profile-graphic" className="graphic-img" />
+        </div>
         <div className="portfolio">
           <span>Portfolio Value</span>{' '}
           <div tw="inline-block">

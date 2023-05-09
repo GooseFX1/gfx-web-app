@@ -28,7 +28,7 @@ import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Tooltip } from 'antd'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -169,17 +169,16 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {nftId ? nftId : '# Nft'}
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
-            <Tooltip
-              title={AH_NAME(localAsk?.auction_house_key)}
-              overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
-            >
-              {localAsk !== null && (
-                <img
-                  className="ah-name"
-                  src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
-                />
-              )}
-            </Tooltip>
+            {localAsk !== null && (
+              <GenericTooltip text={AH_NAME(localAsk?.auction_house_key)}>
+                <div>
+                  <img
+                    className="ah-name"
+                    src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
+                  />
+                </div>
+              </GenericTooltip>
+            )}
           </div>
 
           {singleCollection ? (

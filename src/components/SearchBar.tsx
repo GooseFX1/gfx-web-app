@@ -29,7 +29,7 @@ ${tw`sm:w-3/4 sm:!h-[45px] rounded-[45px] pb-5 !h-11 rounded-[45px]`}
   }
 
   > input {
-    ${tw`sm:w-full text-[15px] h-[40px]`}
+    ${tw`sm:w-full text-[15px] duration-500  h-[40px]`}
     text-align: left;
     background: ${({ theme }) => theme.searchbarBackground};
     background: ${({ bgColor }) => bgColor} !important;

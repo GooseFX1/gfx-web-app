@@ -14,14 +14,13 @@ import {
 import { SuccessfulListingMsg } from '../../../components'
 
 import { checkMobile, formatSOLDisplay, notify, truncateAddress } from '../../../utils'
-import { AppraisalValue } from '../../../utils/GenericDegsin'
+import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
-import { Swap } from 'goosefx-ssl-sdk'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useHistory } from 'react-router-dom'
@@ -69,7 +68,6 @@ import {
   successfulListingMessage
 } from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
-import { VAULT_MINT } from '../../TradeV3/perps/perpsConstants'
 import { BorderBottom } from './SellNFTModal'
 const TEN_MILLION = 10000000
 
@@ -103,7 +101,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20};
 
     strong {
-      ${tw`sm:text-[16px] font-bold sm:mt-[-10px] leading-4`}
+      ${tw`sm:text-[16px] font-bold sm:mt-[-10px] leading-3`}
       color: ${({ theme }) => theme.text32};
     }
   }
@@ -172,7 +170,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text32};
   }
   .nftImgBid {
-    ${tw`w-[165px] h-[165px] flex items-center overflow-hidden rounded-[15px] sm:mt-[150px] rounded-[10px]
+    ${tw`w-[165px] h-[165px] flex items-center overflow-hidden rounded-[15px] sm:mt-[0px] rounded-[10px]
      left-0 sm:h-[125px] sm:w-[125px] sm:left-0 `}
 
     img {
@@ -190,7 +188,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]  bottom-4  
+    ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]   
     sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
      border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
     :disabled {
@@ -202,7 +200,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`!bg-blue-1`}
   }
   .semiSellButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]  bottom-4 cursor-pointer text-[#EEEEEE]
+    ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]   cursor-pointer text-[#EEEEEE]
      rounded-[50px] border-none sm:max-w[180px]
      h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
     :disabled {
@@ -668,12 +666,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
             <div className="buyTitle">
               You are about to {isBuyingNow ? 'buy' : 'bid for'}: <br />
-              <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 20)} </strong>{' '}
+              <GenericTooltip text={general?.nft_name}>
+                <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
+              </GenericTooltip>
               {checkMobile() && <br />}
-              <strong>
-                {general?.collection_name &&
-                  `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 20)}`}
-              </strong>
+              <GenericTooltip text={general?.collection_name}>
+                <strong>
+                  {general?.collection_name &&
+                    `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 12)}`}
+                </strong>
+              </GenericTooltip>
             </div>
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">
@@ -736,12 +738,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             <div className="leftAlign">Price per item</div>
             <div className="rightAlign">{curBid} SOL</div>
           </div>
-          {!checkMobile() && (
+          {/* {!checkMobile() && (
             <div className="rowContainer">
               <div className="leftAlign">Quantity</div>
               <div className="rightAlign">1 NFT</div>
             </div>
-          )}
+          )} */}
           <div className="rowContainer">
             <div className="leftAlign">Service Fee</div>
             <div className="rightAlign"> {servicePriceCalc} SOL</div>

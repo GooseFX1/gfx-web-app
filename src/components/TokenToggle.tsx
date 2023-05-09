@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, FC, useMemo } from 'react'
+import { useState, FC, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../styles'
 import tw from 'twin.macro'
@@ -85,9 +85,10 @@ export const TokenToggle: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, ico
 export const TokenToggleNFT: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, icons }: ITokenToggle) => {
   const { currencyView } = useNFTAggregator()
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     toggleToken()
-  }
+  }, [currencyView])
+
   const position = useMemo(() => (currencyView === 'SOL' ? 0 : 1), [currencyView])
   return (
     <TOGGLE_WRAPPER position={position} onClick={handleToggle}>

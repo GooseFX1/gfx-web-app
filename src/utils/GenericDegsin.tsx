@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tooltip } from '../components'
-import { HeaderTooltipMode } from '../pages/Farm/Columns'
 import { useDarkMode } from '../context'
 
 export const HeaderTooltip = (text: string): ReactElement =>
@@ -72,7 +71,7 @@ export const TableHeaderTitle = (
 ): ReactElement => (
   <STYLED_TITLE $focus={focus}>
     <div className="textTitle">{text}</div>
-    {infoText && <HeaderTooltipMode text={infoText} />}
+    {infoText && <GenericTooltip text={infoText} />}
     {isArrowDown && (
       <img className={'arrowDown' + (invert ? ' invert' : '')} src={`/img/assets/arrow-down-dark.svg`} alt="" />
     )}
@@ -101,5 +100,23 @@ export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): Rea
         </div>
       </div>
     </WRAPPER>
+  )
+}
+
+// if you want info icon send infoIcon = true else just send children
+export const GenericTooltip: FC<{ text: string; children?: any }> = ({ text, children }): JSX.Element => {
+  const { mode } = useDarkMode()
+  if (children)
+    return (
+      <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        {children}
+      </Tooltip>
+    )
+  return (
+    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <span>{text}</span>
+      </Tooltip>
+    )
   )
 }
