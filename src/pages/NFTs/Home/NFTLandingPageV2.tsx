@@ -492,7 +492,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const { allCollections } = useNFTCollections()
   const history = useHistory()
   const { mode } = useDarkMode()
-  const [searchResultArr, setSearchResult] = useState<any>([...allCollections])
+  const [searchResultArr, setSearchResult] = useState<any>()
 
   const globalSearchCall = () => {
     fetchGlobalSearchNFT(searchFilter)
@@ -508,7 +508,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   }, [searchFilter])
   return (
     <SEARCH_RESULT_CONTAINER>
-      {searchResultArr &&
+      {searchResultArr && searchResultArr.length > 0 ? (
         searchResultArr.map(
           (data: any, index) =>
             data?.collection && (
@@ -544,7 +544,12 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                 </div>
               </div>
             )
-        )}
+        )
+      ) : (
+        <div tw="flex justify-center">
+          <div tw="dark:text-white text-grey-1 font-semibold h-full">No Results</div>
+        </div>
+      )}
     </SEARCH_RESULT_CONTAINER>
   )
 }
