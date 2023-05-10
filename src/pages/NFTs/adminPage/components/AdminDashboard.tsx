@@ -8,7 +8,8 @@ import { useNavCollapse, useNFTAdmin } from '../../../../context'
 import { Connect } from '../../../../layouts'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import ReviewTable from './ReviewTable'
-import UpcomingMints, { GradientText } from './UpcomingMints'
+import UpcomingMints from './UpcomingMints'
+import { GradientText } from '../../../../components/GradientText'
 
 const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   ${tw`flex`}

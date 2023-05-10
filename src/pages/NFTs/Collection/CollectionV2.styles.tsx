@@ -70,7 +70,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex flex-grow justify-center items-center absolute left-[32%] sm:!left-0
+          ${tw`flex flex-grow justify-center items-center sm:!left-0
           sm:w-[95%] sm:ml-2 sm:mt-2 sm:relative sm:flex sm:justify-between `}
 
           .wrapper {

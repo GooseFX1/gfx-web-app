@@ -28,7 +28,7 @@ import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../..
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
 // import styled, { css } from 'styled-components'
-import { GradientText } from '../adminPage/components/UpcomingMints'
+import { GradientText } from '../../../components/GradientText'
 import { HoverOnNFT } from './SingleNFTCard'
 import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -242,7 +242,7 @@ export const Card: FC<ICard> = (props) => {
               {localAsk?.buyer_price && <div className="onSaleText">On sale</div>}
             </div>
             <div className={'nftTextContainer'}>
-              <div className="collectionId">
+              <div>
                 <GenericTooltip text={localSingleNFT?.nft_name}>
                   <div className="collectionId">
                     {localSingleNFT && minimizeTheString(localSingleNFT.nft_name)}

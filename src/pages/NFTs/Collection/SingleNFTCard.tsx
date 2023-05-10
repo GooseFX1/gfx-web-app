@@ -11,7 +11,7 @@ import {
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { GradientText } from '../adminPage/components/UpcomingMints'
+import { GradientText } from '../../../components/GradientText'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'

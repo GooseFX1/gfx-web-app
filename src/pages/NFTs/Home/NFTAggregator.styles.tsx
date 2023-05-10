@@ -156,8 +156,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 `
 export const SEARCH_RESULT_CONTAINER = styled.div`
-  ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-8`}
-  border-radius: 10px;
+  ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-8 py-3 border-solid border-grey-3 rounded-[10px]`}
   box-shadow: -3px 9px 8px 0 rgba(0, 0, 0, 0.2);
   background: ${({ theme }) => theme.bg20};
   ${({ theme }) => theme.customScrollBar('4px')};

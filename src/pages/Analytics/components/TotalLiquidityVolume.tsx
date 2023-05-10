@@ -1,7 +1,7 @@
 import React, { useEffect, useState, FC } from 'react'
 import { getTotalLiquidityVolume } from '../../../api/analytics'
 import { moneyFormatterWithComma } from '../../../utils'
-import { GradientText } from '../../NFTs/adminPage/components/UpcomingMints'
+import { GradientText } from '../../../components/GradientText'
 import { TVLChart } from './TVLChart'
 
 export const TotalLiquidityVolume: FC = () => {
