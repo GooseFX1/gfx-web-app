@@ -12,7 +12,7 @@ import {
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
-import { checkMobile, notify } from '../../../utils'
+import { checkMobile, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
@@ -82,7 +82,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       })
     }
   }, [bids])
-  const bidPrice = parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER
+  const bidPrice = useMemo(
+    () => (highestBid ? parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0),
+    [highestBid]
+  )
   const { setSellNFT, setOpenJustModal } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
@@ -104,7 +107,14 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     handleClose()
   }
 
+  useEffect(() => {
+    if (highestBid) {
+      setAskPrice(formatSOLNumber(highestBid.buyer_price))
+    }
+  }, [highestBid])
+
   const totalToReceive = useMemo(() => (askPrice ? askPrice : 0.0) - NFT_MARKET_TRANSACTION_FEE / 100, [askPrice])
+  const buyerPublicKey = useMemo(() => (highestBid ? new PublicKey(highestBid.wallet_key) : null), [highestBid])
 
   const handleTxError = (itemName: string, error: string) => {
     setPendingTxSig(null)
@@ -160,8 +170,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
     const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
-      new PublicKey(highestBid?.wallet_key),
-      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE, // try this
+      isSellingNow ? new PublicKey(highestBid.wallet_key) : wallet?.adapter?.publicKey,
+      AUCTION_HOUSE,
       general.token_account,
       general.mint_address
     )
@@ -170,7 +180,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       programAsSignerPDA
     }
   }
-  const buyerPublicKey = useMemo(() => new PublicKey(highestBid.wallet_key), [highestBid])
   const derivePDAsForInstructionSell = async () => {
     const buyerPriceInLamports = orderTotal * LAMPORTS_PER_SOL_NUMBER // bidPrice
     const bidPrice: BN = new BN(buyerPriceInLamports)
@@ -388,7 +397,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         metaDataAccount,
         escrowPaymentAccount,
         buyerTradeState,
-        buyerPrice,
+        bidPrice,
         buyerReceiptTokenAccount,
         auctionHouseTreasuryAddress,
         sellerTradeState
@@ -409,9 +418,9 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 
       const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
         escrowPaymentBump: escrowPaymentAccount[1],
-        freeTradeStateBump: freeTradeStateAgg[1],
+        freeTradeStateBump: freeTradeState[1],
         programAsSignerBump: programAsSignerPDA[1],
-        buyerPrice: buyerPrice,
+        buyerPrice: bidPrice,
         tokenSize: tokenSize
       }
       const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = {
@@ -422,15 +431,15 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         metadata: new PublicKey(metaDataAccount),
         treasuryMint: new PublicKey(isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
         escrowPaymentAccount: escrowPaymentAccount[0],
-        sellerPaymentReceiptAccount: new PublicKey(highestBid?.wallet_key),
+        sellerPaymentReceiptAccount: wallet?.adapter?.publicKey,
         buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
         authority: new PublicKey(isSellingNow ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
         auctionHouse: new PublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE),
         auctionHouseFeeAccount: new PublicKey(isSellingNow ? highestBid?.auction_house_fee_account : AH_FEE_ACCT),
         auctionHouseTreasury: auctionHouseTreasuryAddress[0],
         buyerTradeState: buyerTradeState[0],
-        sellerTradeState: tradeState[0],
-        freeTradeState: freeTradeStateAgg[0],
+        sellerTradeState: sellerTradeState[0],
+        freeTradeState: freeTradeState[0],
         systemProgram: SystemProgram.programId,
         programAsSigner: programAsSignerPDA[0],
         rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
@@ -447,7 +456,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
 
     try {
-      const signature = await wal.sendTransaction(transaction, connection, { skipPreflight: true })
+      const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(signature)

@@ -245,13 +245,14 @@ export const Card: FC<ICard> = (props) => {
               <div>
                 <GenericTooltip text={localSingleNFT?.nft_name}>
                   <div className="collectionId">
-                    {localSingleNFT && minimizeTheString(localSingleNFT.nft_name)}
+                    <div tw="flex items-center">
+                      {localSingleNFT && minimizeTheString(localSingleNFT.nft_name, 14)}
+                      {localSingleNFT && localSingleNFT.is_verified && (
+                        <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                      )}
+                    </div>
                   </div>
                 </GenericTooltip>
-
-                {localSingleNFT && localSingleNFT.is_verified && (
-                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
-                )}
               </div>
               {localSingleNFT && (
                 <GradientText

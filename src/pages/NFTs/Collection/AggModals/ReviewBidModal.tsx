@@ -4,7 +4,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNFTCollections } from '../../../../context/nft_collections'
 import { useNFTDetails } from '../../../../context/nft_details'
-import { checkMobile, formatSOLDisplay } from '../../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber } from '../../../../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -16,8 +16,14 @@ import {
   CancelInstructionArgs,
   createCancelInstruction
 } from '../../../../web3/auction-house/generated/instructions'
-import { AH_FEE_ACCT, AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY, TREASURY_MINT } from '../../../../web3/ids'
-import { useConnectionConfig } from '../../../../context'
+import {
+  AH_FEE_ACCT,
+  AUCTION_HOUSE,
+  AUCTION_HOUSE_AUTHORITY,
+  TREASURY_MINT,
+  WRAPPED_SOL_MINT
+} from '../../../../web3/ids'
+import { useAccounts, useConnectionConfig } from '../../../../context'
 import { bnTo8, confirmTransaction } from '../../../../web3/utils'
 import BN from 'bn.js'
 import { tokenSize, tradeStatePDA } from '../../actions'
@@ -43,21 +49,49 @@ export const ReviewBidModal: FC<{
   const { general, ask, bids } = useNFTDetails()
   const { wallet, sendTransaction } = useWallet()
   const { connection } = useConnectionConfig()
+  const { getUIAmount } = useAccounts()
+
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const floorPrice = singleCollection ? singleCollection[0]?.floor_price : 0
+
+  const floorPrice = useMemo(
+    () => (singleCollection ? formatSOLNumber(singleCollection[0]?.floor_price) : 0),
+    [singleCollection]
+  )
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus()
   }, [inputRef.current])
 
-  const buyerPrice = parseFloat(ask?.buyer_price ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER
+  const listingPrice = useMemo(() => (ask?.buyer_price ? formatSOLNumber(ask?.buyer_price) : 0), [ask])
   const highestBid: number = useMemo(
     () =>
       bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : 0,
     [bids]
   )
-  const userBidPrice = useMemo(() => (buyerPrice > 0 ? buyerPrice : floorPrice ? floorPrice : 0.1), [buyerPrice])
+  const userBidPrice = useMemo(
+    () => (listingPrice > 0 ? listingPrice : floorPrice ? floorPrice : 0.1),
+    [listingPrice]
+  )
+  const notEnough: boolean = useMemo(
+    () => (curBid >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
+    [curBid]
+  )
+
+  //bid can not be more than listing price
+  //bid can not be less than 50% of the listing price - Minimum offer (50%)
+
+  const displayErrorMsg = useMemo(() => {
+    if (curBid && listingPrice) {
+      if (curBid < listingPrice / 2) return `Offer ${formatSOLDisplay(listingPrice / 2)} (50%) or more`
+      if (curBid > listingPrice) return `You can buy this NFT at ${formatSOLDisplay(listingPrice)}`
+    }
+    if (curBid && floorPrice) {
+      if (curBid < floorPrice / 2) return `Offer ${formatSOLDisplay(floorPrice / 2)} (50%) of floor price or more`
+    }
+    return false
+  }, [curBid])
+
   const yourPreviousBid = useMemo(
     () => (bids.length ? bids.filter((b) => b.wallet_key === publicKey.toString()) : null),
     [bids, wallet?.adapter, wallet?.adapter?.publicKey]
@@ -195,10 +229,7 @@ export const ReviewBidModal: FC<{
         />
         <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
       </div>
-      <div tw=" flex items-center justify-center mt-2 text-red-2">
-        {curBid < (highestBid || buyerPrice) &&
-          `Offer ${highestBid > buyerPrice ? highestBid : buyerPrice} or more`}
-      </div>
+      <div tw=" flex items-center justify-center mt-2 text-red-2">{displayErrorMsg}</div>
       <div
         className="vContainer"
         tw="mt-[40px] sm:mt-[30px] flex items-center !absolute bottom-[120px] sm:bottom-[100px]
@@ -242,8 +273,12 @@ export const ReviewBidModal: FC<{
         ) : */}
       <BorderBottom />
       <div className="buyBtnContainer">
-        <Button className="buyButton" disabled={curBid <= 0} onClick={() => setReviewClicked(true)}>
-          <div>Review Offer</div>
+        <Button
+          className="buyButton"
+          disabled={curBid <= 0 || (displayErrorMsg ? true : false) || notEnough}
+          onClick={() => setReviewClicked(true)}
+        >
+          <div>{notEnough ? 'Insufficient SOL' : `Review Offer`}</div>
         </Button>
       </div>
     </REVIEW_MODAL>

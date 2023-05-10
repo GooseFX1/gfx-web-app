@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactElement, useEffect, useState } from 'react'
+import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { fetchActivityOfAddress, fetchSingleNFT, NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { Loader } from '../../../components'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { useNavCollapse } from '../../../context'
+import { useNavCollapse, useNFTAggregator, usePriceFeedFarm } from '../../../context'
 import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
@@ -15,6 +15,7 @@ import { AH_NAME } from '../../../web3'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Tooltip } from 'antd'
 import NoContent from '../Profile/NoContent'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
 export interface IActivity {
   activity_id: number
   uuid: string
@@ -265,6 +266,16 @@ const NFTActivityRowWeb = ({ activityData }: any): any => (
 )
 const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
   const [nftDetails, setNFTDetails] = useState<any>()
+  const { currencyView } = useNFTAggregator()
+  const { solPrice } = usePriceFeedFarm()
+
+  const displayPrice = useMemo(() => {
+    if (currencyView === 'USDC') {
+      return formatSOLDisplay(parseFloat(activity?.price) * solPrice)
+    }
+    return formatSOLDisplay(activity?.price)
+  }, [activity?.price, currencyView])
+
   useEffect(() => {
     ;(async () => {
       const { data } = await fetchSingleNFT(activity?.mint_address)
@@ -278,14 +289,14 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <div tw="flex">
             <img className="nftNameImg" src={nftDetails.image_url} alt="" />
             <div tw="flex flex-col mt-4.5 ml-2">
-              <Tooltip title={nftDetails?.nft_name}>
+              <GenericTooltip text={nftDetails?.nft_name}>
                 <div tw="flex items-center ">
                   <div>{minimizeTheString(nftDetails?.nft_name, 12)}</div>
                   <a target="_blank" href={`https://solscan.io/tx/${activity?.tx_sig}`} rel="noreferrer">
                     <img src="/img/assets/solscan.png" alt="solscan" tw="!h-5 !w-5 ml-1" />
                   </a>
                 </div>
-              </Tooltip>
+              </GenericTooltip>
 
               <GradientText
                 text={minimizeTheString(
@@ -311,8 +322,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
       <td className="tdItem" tw="flex items-center justify-center">
         {activity?.price ? (
           <div tw="flex items-center justify-center pl-2">
-            {(parseFloat(activity?.price) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)}
-            <img src={'/img/crypto/SOL.svg'} tw="w-5 h-5 ml-1" />
+            <PriceWithToken token={currencyView} price={displayPrice} cssStyle={tw`w-5 h-5 ml-1`} />
           </div>
         ) : (
           <Loader />

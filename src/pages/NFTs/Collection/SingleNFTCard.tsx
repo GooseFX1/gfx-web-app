@@ -165,7 +165,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
         </div>
         <div className="nftTextContainer">
           <div className="collectionId">
-            <div>
+            <div tw="flex items-center">
               {nftId ? nftId : '# Nft'}
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>

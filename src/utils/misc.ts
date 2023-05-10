@@ -141,6 +141,10 @@ export const formatSOLDisplay = (solValue: string | number): string => {
   } else if (solValue < 10000000) return solValue.toFixed(2)
   else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
 }
+export const formatSOLNumber = (solValue: string | number): number => {
+  if (typeof solValue === 'string') return parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER
+  return solValue / LAMPORTS_PER_SOL_NUMBER
+}
 
 export const createUUID = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
