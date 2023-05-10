@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
+import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
@@ -14,7 +15,8 @@ import { Share } from '../Share'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
-import { Tooltip } from 'antd'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { GradientText } from '../../../components/GradientText'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
@@ -115,6 +117,7 @@ const RIGHT_SECTION = styled.div`
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
+  const history = useHistory()
   const { sessionUser, likeDislike } = useNFTProfile()
   const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
   // const { prices } = usePriceFeedFarm()
@@ -232,14 +235,33 @@ export const RightSection: FC<{
       ) : (
         <div>
           <div tw="flex justify-between my-5">
-            <div>
-              {/* TODO: Fetch Collection Name */}
-              <Tooltip
-                title={general?.nft_name}
-                overlayInnerStyle={{ fontFamily: 'Montserrat', fontWeight: '600', fontSize: '12px' }}
-              >
-                <div className="rs-name">{minimizeTheString(general?.nft_name, 20)}</div>
-              </Tooltip>
+            <div tw="cursor-pointer">
+              <div>
+                <GenericTooltip text={general?.nft_name}>
+                  <div tw="text-lg dark:text-white text-black-4 font-semibold">
+                    {general && minimizeTheString(general.nft_name, 20)}
+                  </div>
+                </GenericTooltip>
+
+                {general && general.is_verified && (
+                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                )}
+              </div>
+              {general && (
+                <GradientText
+                  text={minimizeTheString(
+                    general?.collection_name !== null ? general?.collection_name : 'No Collection Name',
+                    18
+                  )}
+                  fontSize={20}
+                  fontWeight={600}
+                  onClick={(e) =>
+                    general?.collection_name !== null
+                      ? history.push(`/nfts/collection/${general?.collection_name}`)
+                      : null
+                  }
+                />
+              )}
             </div>
 
             <div className="ls-bottom-panel">

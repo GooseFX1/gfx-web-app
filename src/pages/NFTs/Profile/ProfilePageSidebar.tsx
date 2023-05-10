@@ -124,29 +124,6 @@ ${tw`w-[23vw] bg-white dark:bg-black-1`}
 }
 `
 
-const SCAN_SHARE = styled.div`
-  display: flex;
-  align-items: center;
-  ${tw`px-6`}
-
-  > span {
-    color: ${({ theme }) => theme.text7};
-    ${tw`font-semibold text-[30px]`}
-  }
-  .solscan-img {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-
-  .share-img {
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
-  }
-`
-
 const SOL = styled.div`
   ${tw`font-semibold text-[20px] w-[90%]`}
   margin: 0 auto;
@@ -372,20 +349,30 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
       </div>
       <div className="profileContent">
         {params && params.userAddress && (
-          <SCAN_SHARE>
-            <span>{truncateAddress(params.userAddress)}</span>
-            <a
-              tw="ml-auto mr-3"
-              href={`https://solscan.io/account/${params.userAddress}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
-            </a>
-            <div onClick={() => setShareModal(true)} className="share-img">
-              <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+          <div tw="flex flex-wrap justify-between items-center px-6 pt-6">
+            <div>
+              <span tw="font-semibold text-[30px] dark:text-white text-black-4">
+                {truncateAddress(params.userAddress)}
+              </span>
             </div>
-          </SCAN_SHARE>
+            <div tw="flex">
+              <a
+                tw="ml-auto mr-3"
+                href={`https://solscan.io/account/${params.userAddress}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  src="/img/assets/solscanBlack.svg"
+                  alt="solscan-icon"
+                  tw="h-[40px] w-[40px] rounded cursor-pointer"
+                />
+              </a>
+              <div onClick={() => setShareModal(true)} tw="h-[40px] w-[40px] cursor-pointer">
+                <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
+              </div>
+            </div>
+          </div>
         )}
         {currentUserProfile && currentUserProfile.bio ? (
           <div className="bio">{currentUserProfile.bio}</div>

@@ -18,7 +18,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
     ${tw`sm:rounded-[20px]`}
   }
   .ant-drawer-body {
-    ${tw`dark:bg-black-2 bg-grey-4`}
+    ${tw`dark:bg-black-2 bg-grey-5`}
     ${({ theme }) => theme.customScrollBar('0px')}
   }
   .no-dp-avatar {
