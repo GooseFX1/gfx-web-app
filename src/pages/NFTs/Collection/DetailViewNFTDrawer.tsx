@@ -1,10 +1,11 @@
-import { FC, ReactElement, useEffect, useMemo, useState } from 'react'
+import { FC, ReactElement, useEffect, useMemo, useState, useCallback } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Col, Drawer, Row, Tabs, Tooltip } from 'antd'
+import { Col, Drawer, Row, Tabs } from 'antd'
+import { INFTAsk } from '../../../types/nft_details'
 
 import { Button } from '../../../components/Button'
 import { useNFTProfile, useNFTAggregator, useNFTDetails } from '../../../context'
-import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, truncateAddress, capitalizeFirstLetter } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'
@@ -18,6 +19,7 @@ import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
 import { minimizeTheString } from '../../../web3/nfts/utils'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
@@ -169,6 +171,14 @@ const ImageViewer = (): ReactElement => {
   const { general, setNftMetadata, ask, setGeneral } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
 
+  const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
+    if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
+    const name = ask.marketplace_name
+    const splitString = name.split('_')
+    const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
+    return capString.join(' ')
+  }, [])
+
   return general ? (
     <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[15px]">
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
@@ -184,16 +194,18 @@ const ImageViewer = (): ReactElement => {
               <div tw="text-[20px] font-semibold">
                 {general?.nft_name?.split('#')[1] ? '#' + general?.nft_name?.split('#')[1] : '# Nft'}
               </div>
-              <Tooltip title={AH_NAME(ask?.auction_house_key)}>
-                {ask && (
+              {ask && (
+                <GenericTooltip text={handleMarketplaceFormat(ask)}>
                   <img
                     tw="h-[22px] w-[22px] ml-2.5"
-                    src={`/img/assets/Aggregator/${AH_NAME(ask?.auction_house_key)}.svg`}
-                    alt={`${AH_NAME(ask?.auction_house_key)}-icon`}
+                    src={`/img/assets/Aggregator/${
+                      ask?.marketplace_name === null ? AH_NAME(ask?.auction_house_key) : ask?.marketplace_name
+                    }.svg`}
+                    alt="marketplace icon"
                     style={{ height: 30 }}
                   />
-                )}
-              </Tooltip>
+                </GenericTooltip>
+              )}
             </div>
             <div>
               <GradientText

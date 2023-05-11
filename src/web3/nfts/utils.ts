@@ -62,7 +62,7 @@ export const getDateInArray = (): string[] => {
   return daylist
 }
 
-export const getNFTMetadata = async (metadataAccountPublicKey: String, connection: Connection): Promise<any> => {
+export const getNFTMetadata = async (metadataAccountPublicKey: string, connection: Connection): Promise<any> => {
   try {
     const metadataAddress = new PublicKey(metadataAccountPublicKey)
     const metadataAccount = await connection.getAccountInfo(metadataAddress)

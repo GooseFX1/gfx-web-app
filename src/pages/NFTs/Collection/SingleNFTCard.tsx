@@ -23,7 +23,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { formatSOLDisplay, notify, toTitleCase } from '../../../utils'
+import { formatSOLDisplay, notify, capitalizeFirstLetter } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -135,6 +135,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
+  const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
+    if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
+    const name = ask.marketplace_name
+    const splitString = name.split('_')
+    const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
+    return capString.join(' ')
+  }, [])
+
   return (
     <>
       {handleAppraisalPopup()}
@@ -170,9 +178,17 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
             {localAsk !== null && (
-              <GenericTooltip text={toTitleCase(localAsk?.marketplace_name.replaceAll('_', ' '))}>
+              <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
                 <div>
-                  <img className="ah-name" src={`/img/assets/Aggregator/${localAsk?.marketplace_name}.svg`} />
+                  <img
+                    className="ah-name"
+                    alt="marketplace icon"
+                    src={`/img/assets/Aggregator/${
+                      localAsk?.marketplace_name === null
+                        ? AH_NAME(localAsk?.auction_house_key)
+                        : localAsk?.marketplace_name
+                    }.svg`}
+                  />
                 </div>
               </GenericTooltip>
             )}
@@ -190,7 +206,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           )}
 
           <div className="nftPrice">
-            {localAsk ? <PriceWithToken price={displayPrice} token={currencyView} /> : 'No Ask'}
+            {localAsk && <PriceWithToken price={displayPrice} token={currencyView} />}
+            {localAsk === null && <span tw="dark:text-grey-3 text-grey-4 font-semibold">Not Listed</span>}
           </div>
           <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
             {item?.gfx_appraisal_value ? item?.gfx_appraisal_value.substring(0, 4) : 'NA'}
