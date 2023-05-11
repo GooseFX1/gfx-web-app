@@ -218,7 +218,6 @@ export const DETAILS_TAB_CONTENT = styled.div`
       }
       .dtc-item-title {
         ${tw`text-tiny`}
-        color: ${theme.text17};
       }
     }
   `}
@@ -295,35 +294,6 @@ export const RightSectionTabs: FC<{
     })
     return res
   }, [bids, publicKey])
-
-  const nftData = useMemo(
-    () =>
-      isLoading
-        ? []
-        : [
-            {
-              title: 'Mint address',
-              value: truncateAddress(general.mint_address)
-            },
-            {
-              title: 'Token Address',
-              value: general.token_account ? truncateAddress(general.token_account) : ''
-            },
-            {
-              title: 'Owner',
-              value: general.owner ? truncateAddress(general.owner) : ''
-            },
-            {
-              title: 'Artist Royalties',
-              value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
-            },
-            {
-              title: 'Transaction Fee',
-              value: `${NFT_MARKET_TRANSACTION_FEE}%`
-            }
-          ],
-    [general]
-  )
 
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)

@@ -23,7 +23,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { formatSOLDisplay, notify } from '../../../utils'
+import { formatSOLDisplay, notify, toTitleCase } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -170,7 +170,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
             {localAsk !== null && (
-              <GenericTooltip text={localAsk?.marketplace_name.replaceAll('_', ' ')}>
+              <GenericTooltip text={toTitleCase(localAsk?.marketplace_name.replaceAll('_', ' '))}>
                 <div>
                   <img className="ah-name" src={`/img/assets/Aggregator/${localAsk?.marketplace_name}.svg`} />
                 </div>

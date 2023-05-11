@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useRef, FC, useCallback } from 'react'
+import React, { useState, useEffect, useRef, FC, useCallback, useMemo } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
@@ -103,7 +103,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
   const [nftFilter, setNftFilter] = useState<number>(0)
   const { general, nftMetadata } = useNFTDetails()
-  const { buyNowClicked, bidNowClicked } = useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
   const { profileNFTOptions } = useNFTAggregatorFilters()
 
   const activePointRef = useRef(collectedItems)
@@ -141,7 +141,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.singleNFTs, props.parsedAccounts])
+  }, [props.singleNFTs, props.parsedAccounts, refreshClicked])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []
@@ -194,7 +194,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     </>
   )
 
-  const gridType = filteredCollectedItems?.length > 7 ? '1fr' : '210px'
+  const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
 
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />

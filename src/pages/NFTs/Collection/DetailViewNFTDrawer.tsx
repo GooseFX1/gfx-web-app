@@ -31,7 +31,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   }
   .bidBy {
     ${tw`font-semibold`}
-    color: ${({ theme }) => theme.text32};
+    color: ${({ theme }) => theme.text30};
   }
   ${({ theme }) => css`
     position: relative;
@@ -222,7 +222,7 @@ const ImageViewer = (): ReactElement => {
 
         <div tw="mt-[30px]">
           <AppraisalValue
-            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value}` : null}
             label={general.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
           />
         </div>
@@ -341,7 +341,7 @@ const NFTDetailsTab = (): ReactElement => {
     <div>
       {nftData.map((item, index) => (
         <Row justify="space-between" align="middle" className="dtc-item" key={index}>
-          <Col tw="text-[15px] font-semibold leading-9 ml-4 dark:text-white text-grey-1">{item.title}</Col>
+          <Col tw="text-[15px] font-semibold leading-9 ml-4">{item.title}</Col>
           <Col tw="dark:text-white text-black-4 font-semibold mr-4">{item.value}</Col>
         </Row>
       ))}

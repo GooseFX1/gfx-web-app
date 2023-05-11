@@ -164,8 +164,15 @@ const FILTERS_CONTAINER = styled.div`
       bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
   }
 `
-
-export const AVATAR_NFT = styled(Image)`
+const PROFILE_PIC_WRAPPER = styled.div`
+  .avatarNFT {
+    ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
+  }
+  .userPopupProfilePic {
+    ${tw`h-[100px] w-[100px] rounded-full cursor-pointer `}
+  }
+`
+const AVATAR_NFT = styled(Image)`
   ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
@@ -197,7 +204,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 `
 
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
-const timelineVolume = [{ name: '24h' }, { name: '7d' }, { name: '30d' }, { name: 'All' }]
+const timelineVolume = [{ name: '24h' }, { name: '7d' }]
 
 const NFTLandingPageV2 = (): ReactElement => {
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
@@ -435,9 +442,12 @@ export const RefreshBtnWithAnimationNFT: FC = () => {
   )
 }
 const PROFILE_PIC = styled.div`
+  ${tw`rounded-full cursor-pointer text-grey-1 text-[14px] font-semibold justify-center flex items-center p-0.5`}
+  background: ${({ theme }) => theme.profilePicBg};
+  color: ${({ theme }) => theme.text10};
   border: 1.5px solid #b5b5b5 !important;
 `
-export const CurrentUserProfilePic = (): ReactElement => {
+export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize }): ReactElement => {
   const { sessionUser } = useNFTProfile()
   const { wallet } = useWallet()
   const pubKey = useMemo(() => wallet?.adapter?.publicKey.toString(), [wallet?.adapter?.publicKey])
@@ -447,11 +457,23 @@ export const CurrentUserProfilePic = (): ReactElement => {
 
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
   const goProfile = () => history.push(`/nfts/profile/${pubKey}`)
+  if (mediumSize)
+    return (
+      <PROFILE_PIC_WRAPPER>
+        {userPic ? (
+          <img className="userPopupProfilePic" src={userPic} alt="profile-pic" />
+        ) : (
+          <PROFILE_PIC tw="h-[100px] w-[100px] !border-none text-[30px]" onClick={goProfile}>
+            {getFirstAndLast}
+          </PROFILE_PIC>
+        )}
+      </PROFILE_PIC_WRAPPER>
+    )
 
   return (
-    <div>
+    <PROFILE_PIC_WRAPPER>
       {userPic ? (
-        <AVATAR_NFT src={userPic} preview={false} onClick={goProfile} />
+        <img src={userPic} className="avatarNFT" onClick={goProfile} />
       ) : (
         <PROFILE_PIC
           tw="h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
@@ -461,7 +483,7 @@ export const CurrentUserProfilePic = (): ReactElement => {
           {getFirstAndLast}
         </PROFILE_PIC>
       )}
-    </div>
+    </PROFILE_PIC_WRAPPER>
   )
 }
 const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
@@ -655,18 +677,12 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
   }, [])
 
   return (
-    <DROPDOWN_CONTAINER tw="w-[104px] h-[155px]">
+    <DROPDOWN_CONTAINER tw="w-[104px] h-20">
       <div className="option" onClick={() => setTimelineDisplay('24h')}>
         24h <input type={'radio'} name="sort" checked={timelineDisplay === '24h'} value="asc" />
       </div>
       <div className="option" onClick={() => setTimelineDisplay('7d')}>
         7d <input type={'radio'} name="sort" checked={timelineDisplay === '7d'} value="desc" />
-      </div>
-      <div className="option" onClick={() => setTimelineDisplay('30d')}>
-        30d <input type={'radio'} name="sort" checked={timelineDisplay === '30d'} value="desc" />
-      </div>
-      <div className="option" onClick={() => setTimelineDisplay('All')}>
-        All <input type={'radio'} name="sort" checked={timelineDisplay === 'All'} value="desc" />
       </div>
     </DROPDOWN_CONTAINER>
   )

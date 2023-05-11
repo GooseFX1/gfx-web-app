@@ -564,7 +564,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
 
         <div tw="mt-8">
           <AppraisalValue
-            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value}` : null}
             label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
             width={360}
           />
@@ -611,7 +611,10 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
               value={askPrice}
               onChange={(e) => updateAskPrice(e)}
             />
-            <img src="/img/crypto/SOL.svg" tw="absolute h-[52px] right-[8px] top-[26px]" />
+            <img
+              src="/img/crypto/SOL.svg"
+              tw="absolute h-[52px] right-[8px] top-[26px] sm:h-12 sm:top-0 sm:right-0"
+            />
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Price</div>

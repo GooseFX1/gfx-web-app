@@ -12,6 +12,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Loader } from '../../../components'
 import { checkMobile } from '../../../utils'
+import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -172,12 +173,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         <div className="title">Profile</div>
         <div tw="flex mt-5">
           <CenteredDiv>
-            <Image
-              fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-              src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
-              preview={false}
-              className="profile-image-upload"
-            />
+            <CurrentUserProfilePic mediumSize={true} />
 
             <Upload
               beforeUpload={beforeChange}
