@@ -542,21 +542,27 @@ export const getExitQuntity = (traderBalances, activeProduct) => {
 export const truncateBigNumber = (bigNumber: number) => {
   if (!bigNumber) return 0
 
-  if (bigNumber > 1000000) {
-    const beforeDecimal = (bigNumber / 1000000).toString().split('.')[0]
-    let afterDecimal = (bigNumber / 1000000).toString().split('.')[1]
-    if (afterDecimal === '0') afterDecimal = null
-    else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
-    return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
+  try {
+    if (bigNumber > 1000000) {
+      const nArray = (bigNumber / 1000000).toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray.length > 1 ? nArray[1] : null
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
+      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
+    }
+    if (bigNumber > 1000) {
+      const nArray = (bigNumber / 1000).toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray[1]
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
+      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
+    }
+    return Number(bigNumber.toFixed(2))
+  } catch (error) {
+    console.log('BIG NUM ERROR', bigNumber)
   }
-  if (bigNumber > 1000) {
-    const beforeDecimal = (bigNumber / 1000).toString().split('.')[0]
-    let afterDecimal = (bigNumber / 1000).toString().split('.')[1]
-    if (afterDecimal === '0') afterDecimal = null
-    else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
-    return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
-  }
-  return Number(bigNumber.toFixed(2))
 }
 
 export const getProfitAmount = (side: OrderSide, price: string | number, percentage: number) => {
