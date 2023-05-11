@@ -382,7 +382,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
           </div>
         )}
         <div>
-          <img src="/img/assets/profileGraphic.svg" alt="profile-graphic" className="graphic-img" />
+          <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
         </div>
         <div className="portfolio">
           <span>Portfolio Value</span>{' '}

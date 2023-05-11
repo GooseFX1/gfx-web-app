@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
 import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
@@ -97,14 +97,14 @@ export const OpenBidNFTs = (): ReactElement => {
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
   }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
 
-  const gridType = filteredOpenBid?.length > 10 ? '1fr' : '210px'
+  const gridType = useMemo(() => (filteredOpenBid?.length > 10 ? '1fr' : '210px'), [filteredOpenBid])
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
       <div className="gridContainer">
-        {filteredOpenBid !== null ? (
+        {filteredOpenBid ? (
           filteredOpenBid.map((item, index) => (
             <SingleNFTCard
               item={item}
