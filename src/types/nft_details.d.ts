@@ -122,18 +122,19 @@ export type INFTAsk = {
   clock: string
   tx_sig: string
   wallet_key: string
-  auction_house_key: string
-  token_account_key: string
-  auction_house_treasury_mint_key: string
+  auction_house_key: string | null
+  token_account_key: string | null
+  auction_house_treasury_mint_key: string | null
   token_account_mint_key: string
   buyer_price: string
   token_size: string
   non_fungible_id: number
   collection_id: number
   user_id: string | null
-  seller_trade_state: string
-  auction_house_authority: string
-  auction_house_fee_account: string
+  seller_trade_state: string | null
+  auction_house_authority: string | null
+  auction_house_fee_account: string | null
+  marketplace_name: string | null
 }
 
 export interface INFTGeneralData {

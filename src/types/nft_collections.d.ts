@@ -34,6 +34,7 @@ export type NFTCollection = {
   marketcap: number | null
   daily_change: number | null
   nfts_count: number
+  floor_mint: string | null
 }
 
 export type CollectionOwner = {
