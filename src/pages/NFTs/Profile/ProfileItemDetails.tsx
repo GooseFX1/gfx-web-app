@@ -71,12 +71,12 @@ export const ProfileItemDetails: FC<{
             <Button
               height="56px"
               width={ask ? '200px' : '100%'}
-              cssStyle={tw`bg-red-1 mr-2 sm:mr-0`}
+              cssStyle={tw`bg-red-2 mr-2 sm:mr-0`}
               onClick={() => {
                 setSellModal(true)
               }}
             >
-              <span tw="text-regular font-semibold text-white">{ask ? 'Modify Price' : 'List Item'}</span>
+              <span tw="text-regular font-semibold text-white">{ask ? 'Modify Listing' : 'List Item'}</span>
             </Button>
           </>
         ) : (

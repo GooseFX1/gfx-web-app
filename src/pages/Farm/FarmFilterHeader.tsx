@@ -48,9 +48,9 @@ const STYLED_FARM_HEADER = styled.div`
   ${tw`w-[100%] sm:mt-0`}
   ${tw`sm:block sm:pt-[2px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
   .search-bar {
-    ${tw`h-[60px] m-0 bg-black mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!pl-[15px]`}
+    ${tw`h-[60px] m-0 mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!pl-[15px]`}
     input {
-      ${tw`bg-black `}
+      ${tw`dark:bg-black-2 bg-grey-1 text-white`}
     }
   }
   .pools {
@@ -64,7 +64,7 @@ const STYLED_FARM_HEADER = styled.div`
     ${tw`ml-9`}
   }
   .selectedBackground {
-    ${tw`text-white`}
+    color: white !important;
     transition: 500ms ease-in-out;
     @media (max-width: 500px) {
       background: none;
@@ -72,10 +72,10 @@ const STYLED_FARM_HEADER = styled.div`
   }
 `
 export const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto  cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 
+  ${tw`sm:m-auto cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 
   font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] text-grey-2 dark:text-grey-1`}
   background: none;
-  /* color: ${({ theme }) => theme.text17}; */
+
   :disabled {
     ${tw`cursor-wait`}
   }
