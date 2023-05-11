@@ -223,7 +223,7 @@ const ImageViewer = (): ReactElement => {
         <div tw="mt-[30px]">
           <AppraisalValue
             text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
-            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
+            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
           />
         </div>
         {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
@@ -273,13 +273,13 @@ export const ButtonContainer = (): ReactElement => {
           <Button
             height="56px"
             width={ask ? '250px' : '100%'}
-            cssStyle={tw`bg-red-1 mr-2`}
+            cssStyle={tw`bg-red-2 mr-2`}
             onClick={() => {
               //setDrawerSingleNFT(false)
               setSellNFT(true)
             }}
           >
-            <span tw="text-regular font-semibold text-white">{ask ? 'Modify Price' : 'List Item'}</span>
+            <span tw="text-regular font-semibold text-white">{ask ? 'Modify Listing' : 'List Item'}</span>
           </Button>
         </>
       ) : (

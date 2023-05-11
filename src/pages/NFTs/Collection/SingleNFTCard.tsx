@@ -170,12 +170,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
             {localAsk !== null && (
-              <GenericTooltip text={AH_NAME(localAsk?.auction_house_key)}>
+              <GenericTooltip text={localAsk?.marketplace_name.replaceAll('_', ' ')}>
                 <div>
-                  <img
-                    className="ah-name"
-                    src={`/img/assets/Aggregator/${AH_NAME(localAsk?.auction_house_key)}.svg`}
-                  />
+                  <img className="ah-name" src={`/img/assets/Aggregator/${localAsk?.marketplace_name}.svg`} />
                 </div>
               </GenericTooltip>
             )}
@@ -260,14 +257,24 @@ export const HoverOnNFT: FC<{
         />
       )} */}
       <span className="hoverButtons">
-        {buttonType === 'Sell' || buttonType === 'Modify' ? (
+        {buttonType === 'Sell' && (
           <Button
-            cssStyle={tw`bg-red-1 h-[28px] w-[90px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
+            cssStyle={tw`bg-red-1 h-[28px] w-[108px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
-            {buttonType === 'Sell' ? 'Sell now' : 'Edit Price'}
+            Sell now
           </Button>
-        ) : (
+        )}
+        {buttonType === 'Modify' && (
+          <Button
+            cssStyle={tw`bg-blue-1 h-[28px] w-[108px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
+            onClick={(e) => goToDetailsForModal(e, 'sell')}
+          >
+            Modify Price
+          </Button>
+        )}
+
+        {buttonType !== 'Modify' && buttonType !== 'Sell' && (
           <Button
             cssStyle={tw`bg-[#5855ff]   h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'bid')}

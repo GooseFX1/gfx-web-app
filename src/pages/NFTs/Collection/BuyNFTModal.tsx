@@ -164,11 +164,15 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20}
   }
   .enterBid {
-    ${tw`h-12 mt-2  w-[220px] bg-none sm:h-[48px]
-    sm:mt-0 border-none text-center rounded-[25px] text-[40px]  font-semibold`}
-    background: ${({ theme }) => theme.bg26};
+    ${tw`h-[64px] my-5 px-[24px] w-full bg-none
+    border-transparent rounded-circle text-[40px] font-semibold sm:mt-0 sm:h-[48px]`}
+    background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text32};
+    &:focus {
+      border: 1px solid white;
+    }
   }
+
   .nftImgBid {
     ${tw`w-[165px] h-[165px] flex items-center overflow-hidden rounded-[15px] sm:mt-[0px] rounded-[10px]
      left-0 sm:h-[125px] sm:w-[125px] sm:left-0 `}
@@ -188,9 +192,9 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
-    ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]   
+    ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]
     sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
-     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
+     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-1 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;

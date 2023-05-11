@@ -178,9 +178,6 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
 
-  .onSaleText {
-    ${tw`text-white text-[15px]   font-semibold absolute left-4 mt-2 !opacity-100`}
-  }
   .gridItemRegular {
     ${tw`  mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
   }

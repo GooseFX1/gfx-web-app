@@ -562,10 +562,15 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           </div>
         </div>
 
-        <div className="vContainer" tw="sm:mt-20">
-          <div className="priceText">Price</div>
+        <div tw="mt-8">
+          <AppraisalValue
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
+            width={360}
+          />
         </div>
-        <div className="vContainer">
+
+        {/* <div className="vContainer">
           <input
             className="enterBid"
             placeholder="0.0"
@@ -574,16 +579,8 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
             value={askPrice}
             onChange={(e) => updateAskPrice(e)}
           />
-          <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
-        </div>
-
-        <div tw="mt-4">
-          <AppraisalValue
-            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
-            label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'Apprasial Not Supported'}
-            width={360}
-          />
-        </div>
+          <img src="/img/crypto/SOL.svg" tw="absolute right-[12px] top-[17px]" />
+        </div> */}
 
         {pendingTxSig && (
           <div tw="mt-3 text-center">
@@ -605,6 +602,17 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         )}
 
         <div className="feesContainer">
+          <div tw="relative">
+            <input
+              className="enterBid"
+              placeholder="0.0"
+              type="number"
+              ref={inputRef}
+              value={askPrice}
+              onChange={(e) => updateAskPrice(e)}
+            />
+            <img src="/img/crypto/SOL.svg" tw="absolute h-[52px] right-[8px] top-[26px]" />
+          </div>
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>
@@ -620,6 +628,11 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
         </div>
         {checkMobile() && <BorderBottom />}
         <div className="buyBtnContainer">
+          {ask && (
+            <Button onClick={callDelistInstruction} className={'semiSellButton'} loading={isDelistLoading}>
+              <span tw="font-semibold">Delist item</span>
+            </Button>
+          )}
           <Button
             disabled={
               askPrice <= 0 ||
@@ -632,11 +645,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'Sell'}</span>
           </Button>
-          {ask && (
-            <Button onClick={callDelistInstruction} className={'semiSellButton'} loading={isDelistLoading}>
-              <span tw="font-semibold">Delist item</span>
-            </Button>
-          )}
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>
