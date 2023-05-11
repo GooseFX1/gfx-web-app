@@ -39,6 +39,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { Tag } from '../../../components/Tag'
 import { Tooltip } from 'antd'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 
@@ -207,6 +208,7 @@ export const Card: FC<ICard> = (props) => {
     height: '293px',
     width: '188px'
   }
+
   return (
     filterAndShow && (
       <>
@@ -239,7 +241,17 @@ export const Card: FC<ICard> = (props) => {
                   alt="nft"
                 />
               </div>
-              {localAsk?.buyer_price && <div className="onSaleText">On sale</div>}
+              {(localBids.length > 0 || localAsk !== null) && (
+                <div tw="absolute left-[16px] top-[14px]">
+                  <Tag loading={false}>
+                    <span tw="font-semibold">
+                      {localAsk?.buyer_price && 'On sale'}
+                      {localAsk?.buyer_price && localBids.length > 0 && ' / '}
+                      {localBids.length > 0 && `${localBids.length} Bid${localBids.length === 1 ? '' : 's'}`}
+                    </span>
+                  </Tag>
+                </div>
+              )}
             </div>
             <div className={'nftTextContainer'}>
               <div>
