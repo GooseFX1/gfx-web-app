@@ -16,13 +16,15 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Tooltip } from 'antd'
 import NoContent from '../Profile/NoContent'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { parseUnixTimestamp } from '../../../utils'
+
 export interface IActivity {
   activity_id: number
   uuid: string
   tx_sig: string
   kind: string
   auction_house: string
-  clock: number
+  clock: string
   user_id: any
   non_fungible_id: number
   non_fungible_uuid: string
@@ -84,12 +86,8 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   }
   tbody td,
   thead th {
-    width: 13.5%;
     float: left;
     text-align: center;
-  }
-  .tdItem {
-    ${tw`align-top text-center pt-[28px]`}
   }
 
   tbody {
@@ -111,14 +109,20 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     }
   }
   .tableHeader {
-    ${tw`text-[15px] font-semibold h-[26px]`}
+    ${tw`text-[15px] font-semibold h-[42px]`}
+    tr {
+      ${tw`h-full`}
+    }
+    .table-col-header {
+      ${tw`flex justify-center items-center h-full`}
+    }
   }
   .nftActivityImg {
     ${tw`w-[42px] h-[42px] rounded-[10px] ml-2 mt-2`}
   }
   .nftNameColumn {
     text-align: left;
-    width: 17%;
+    width: 26%;
     .nftNameImg {
       border-radius: 5px;
       ${tw`w-10 h-10 sm:mt-3 ml-4 mt-5`}
@@ -238,13 +242,7 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
               <PriceWithToken token="SOL" price={formatSOLDisplay(activity?.price)} />
             </div>
             <div className="secondaryText">
-              <div>
-                {activity?.clock ? (
-                  <>{new Date(activity?.clock * 1000)?.toLocaleTimeString().substring(0, 5)}</>
-                ) : (
-                  <></>
-                )}
-              </div>
+              <div>{activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <Loader />}</div>
             </div>
           </div>
 
@@ -316,10 +314,10 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           </div>
         )}
       </td>
-      <td className="tdItem" tw="dark:text-white text-grey-1">
+      <td tw="align-top w-[10%] text-center pt-[28px] dark:text-white text-grey-1">
         {activity?.kind ? <>{ACTIVITY_KIND[activity?.kind]} </> : <Loader />}
       </td>
-      <td className="tdItem" tw="flex items-center justify-center">
+      <td tw="align-top text-center pt-[28px] flex items-center justify-center w-[13%]">
         {activity?.price ? (
           <div tw="flex items-center justify-center pl-2">
             <PriceWithToken token={currencyView} price={displayPrice} cssStyle={tw`w-5 h-5 ml-1`} />
@@ -328,7 +326,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <Loader />
         )}
       </td>
-      <td className="tdItem">
+      <td tw="align-top text-center pt-[28px] w-[13%]">
         {activity?.auction_house ? (
           <div tw="flex items-center justify-center pl-2">
             {AH_NAME(activity?.auction_house)}
@@ -343,7 +341,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <Loader />
         )}
       </td>
-      <td className="tdItem">
+      <td tw="align-top text-center pt-[28px] w-[13%]">
         {activity?.buyer_wallet ? (
           <>
             <a
@@ -359,7 +357,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <Loader />
         )}
       </td>
-      <td className="tdItem">
+      <td tw="align-top text-center pt-[28px] w-[13%]">
         {activity?.seller_wallet ? (
           <>
             <a
@@ -375,12 +373,8 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <Loader />
         )}
       </td>
-      <td className="tdItem">
-        {activity?.clock ? (
-          <>{new Date(activity?.clock * 1000)?.toLocaleTimeString().substring(0, 5)}</>
-        ) : (
-          <Loader />
-        )}
+      <td tw="align-top text-center pt-[28px] w-[10%]">
+        {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <Loader />}
       </td>
     </tr>
   )
