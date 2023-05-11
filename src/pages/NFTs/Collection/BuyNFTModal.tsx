@@ -286,6 +286,9 @@ export const BuyNFTModal = (): ReactElement => {
         setBuyNow(false)
       }
     }
+    return () => {
+      handleCloseModal(setGeneral, setBuyNow, false)
+    }
   }, [buyNowClicked])
 
   return (
@@ -327,6 +330,9 @@ export const BidNFTModal = (): ReactElement => {
         setVisible(true)
         setBidNow(false)
       }
+    }
+    return () => {
+      handleModalClose()
     }
   }, [bidNowClicked])
   const handleSetCurBid = (value: number, index: number) => {
@@ -398,7 +404,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     [curBid]
   )
   const orderTotal: number = useMemo(() => curBid, [curBid])
-  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
   const notEnough: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),

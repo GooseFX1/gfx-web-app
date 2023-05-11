@@ -52,14 +52,8 @@ const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
 
-  const {
-    singleCollection,
-    fetchSingleCollection,
-    setSingleCollection,
-    setFixedPriceWithinCollection,
-    setOpenBidWithinCollection,
-    setCollectionOwners
-  } = useNFTCollections()
+  const { fetchSingleCollection, setSingleCollection, setFixedPriceWithinCollection, setOpenBidWithinCollection } =
+    useNFTCollections()
   const [err, setErr] = useState(false)
   const { refreshClicked } = useNFTAggregator()
   useEffect(
@@ -67,14 +61,15 @@ const CollectionV2 = (): ReactElement => {
       setSingleCollection(undefined)
       setFixedPriceWithinCollection(undefined)
       setOpenBidWithinCollection(undefined)
-      setCollectionOwners(undefined)
     },
     []
   )
 
   useEffect(() => {
     const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
-    fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : false))
+    fetchSingleCollection(curColNameParam).then((res) => {
+      setErr(res && res.status === 400 ? true : false)
+    })
 
     return null
   }, [fetchSingleCollection, params.collectionName, refreshClicked])
@@ -82,7 +77,7 @@ const CollectionV2 = (): ReactElement => {
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fecthSingleCollection
   return err ? (
-    <GenericNotFound />
+    <GenericNotFound redirectLink="/nfts" redirectString="Go to NFT Aggerator " />
   ) : (
     <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
       <NFTStatsContainer />

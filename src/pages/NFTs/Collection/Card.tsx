@@ -137,6 +137,8 @@ export const Card: FC<ICard> = (props) => {
     }
   }, [localAsk, localBids, profileNFTOptions])
 
+  const gradientBg = useMemo(() => localAsk?.buyer_price || localBids.length, [localAsk, localBids])
+
   const openDetails = async (target: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
     setHover(false)
@@ -204,18 +206,13 @@ export const Card: FC<ICard> = (props) => {
     }
   }, [showSellNFTModal, setDrawerSingleNFT])
 
-  const gridItemSmall = {
-    height: '293px',
-    width: '188px'
-  }
-
   return (
     filterAndShow && (
       <>
         {handelDrawer()}
         {handleModal()}
-        <div className={localAsk?.buyer_price ? 'gridGradient' : 'gridItemRegular'}>
-          <div className={localAsk?.buyer_price ? 'gridGradientInner' : 'gridItem'}>
+        <div className={gradientBg ? 'gridGradient' : 'gridItemRegular'}>
+          <div className={gradientBg ? 'gridGradientInner' : 'gridItem'}>
             <div
               className="gridItemContainer"
               onMouseEnter={() => setHover(true)}
