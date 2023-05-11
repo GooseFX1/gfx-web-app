@@ -68,6 +68,7 @@ export const Card: FC<ICard> = (props) => {
   const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
   const [showBidNFTModal, setShowBidNFTModal] = useState<boolean>(false)
   const [showSellNFTModal, setShowSellNFTModal] = useState<boolean>(false)
+  const [showDelistModal, setShowDelistModal] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const { currencyView } = useNFTAggregator()
@@ -192,6 +193,7 @@ export const Card: FC<ICard> = (props) => {
       return (
         <ProfileItemDetails
           visible={showDrawerSingleNFT}
+          setShowDelistModal={setShowDelistModal}
           setDrawerSingleNFT={setDrawerSingleNFT}
           setSellModal={setShowSellNFTModal}
           singleNFT={props.singleNFT}
@@ -201,10 +203,15 @@ export const Card: FC<ICard> = (props) => {
   }, [showDrawerSingleNFT])
 
   const handleModal = useCallback(() => {
+    if (showDelistModal)
+      return (
+        <SellNFTModal visible={showDelistModal} handleClose={() => setShowDelistModal(false)} delistNFT={true} />
+      )
+
     if (showSellNFTModal) {
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     }
-  }, [showSellNFTModal, setDrawerSingleNFT])
+  }, [showSellNFTModal, setDrawerSingleNFT, showDelistModal])
 
   return (
     filterAndShow && (

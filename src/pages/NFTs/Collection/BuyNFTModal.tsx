@@ -95,15 +95,27 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   color: ${({ theme }) => theme.text20};
-
+  .delistText {
+    ${tw`text-[24px] sm:mt-1 sm:text-[20px] sm:pt-4 font-medium text-center `}
+    color: ${({ theme }) => theme.text20};
+    strong {
+      ${tw`sm:text-[20px] font-bold sm:mt-[-10px] leading-3`}
+      color: ${({ theme }) => theme.text30};
+    }
+  }
   .buyTitle {
     ${tw`text-[24px] sm:ml-[140px] sm:mt-1 sm:text-[15px] sm:pt-2 font-medium text-center sm:text-left `}
     color: ${({ theme }) => theme.text20};
 
     strong {
       ${tw`sm:text-[16px] font-bold sm:mt-[-10px] leading-3`}
-      color: ${({ theme }) => theme.text32};
+      color: ${({ theme }) => theme.text30};
     }
+  }
+  .cancelText {
+    ${tw`text-[20px] font-semibold mt-4 text-center cursor-pointer 
+    sm:absolute sm:bottom-6`};
+    color: ${({ theme }) => theme.text30};
   }
   .verifiedText {
     ${tw`font-semibold text-[16px]   sm:text-[15px] mt-2 mb-1
@@ -197,7 +209,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .sellButton {
     ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]
     sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
-     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-1 justify-center`}
+     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
@@ -209,7 +221,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .semiSellButton {
     ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]   cursor-pointer text-[#EEEEEE]
      rounded-[50px] border-none sm:max-w[180px]
-     h-[60px] text-white text-[20px] font-semibold flex items-center bg-[#F35355] justify-center`}
+     h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;

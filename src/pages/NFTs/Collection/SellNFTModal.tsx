@@ -12,7 +12,7 @@ import {
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
-import { checkMobile, formatSOLNumber, notify } from '../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
@@ -65,10 +65,13 @@ import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
 import { couldNotFetchNFTMetaData, TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { web3 } from '@project-serum/anchor'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import DelistNFTModal from './DelistNFTModal'
 
-export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
+export const SellNFTModal: FC<{ visible: boolean; handleClose: any; delistNFT?: boolean }> = ({
   visible,
-  handleClose
+  handleClose,
+  delistNFT
 }): ReactElement => {
   const { connection, network } = useConnectionConfig()
   const { general, setGeneral, ask, nftMetadata, bids } = useNFTDetails()
@@ -515,6 +518,15 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
   }
   const nftID = general?.nft_name.split('#')[1]
+  if (delistNFT)
+    return (
+      <DelistNFTModal
+        visible={visible}
+        closeTheModal={closeTheModal}
+        isDelistLoading={isDelistLoading}
+        callDelistInstruction={callDelistInstruction}
+      />
+    )
 
   return (
     <STYLED_POPUP_BUY_MODAL

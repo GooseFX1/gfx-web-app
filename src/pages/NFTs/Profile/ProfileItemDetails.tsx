@@ -17,7 +17,8 @@ export const ProfileItemDetails: FC<{
   setDrawerSingleNFT: any
   setSellModal: any
   singleNFT: any
-}> = ({ visible, setDrawerSingleNFT, setSellModal, singleNFT }): JSX.Element => {
+  setShowDelistModal: any
+}> = ({ visible, setDrawerSingleNFT, setSellModal, singleNFT, setShowDelistModal }): JSX.Element => {
   const { ask, bids, general } = useNFTDetails()
   const { setBidNow, setBuyNow } = useNFTAggregator()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
@@ -59,19 +60,22 @@ export const ProfileItemDetails: FC<{
         {isOwner ? (
           <>
             {ask && (
-              <div>
-                <label tw="dark:text-grey-1 text-black-3 font-semibold text-average">On Sale for:</label>
-                <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
-                  <span>{currentAsk}</span>
-                  <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />
-                </div>
-              </div>
+              <Button
+                height="56px"
+                width={ask ? '200px' : '100%'}
+                cssStyle={tw`bg-red-2 mr-2 sm:mr-0`}
+                onClick={() => {
+                  setShowDelistModal(true)
+                }}
+              >
+                <span tw="text-regular font-semibold text-white">Delist </span>
+              </Button>
             )}
 
             <Button
               height="56px"
               width={ask ? '200px' : '100%'}
-              cssStyle={tw`bg-red-2 mr-2 sm:mr-0`}
+              cssStyle={tw`bg-blue-1 ml-2  sm:mr-0`}
               onClick={() => {
                 setSellModal(true)
               }}
