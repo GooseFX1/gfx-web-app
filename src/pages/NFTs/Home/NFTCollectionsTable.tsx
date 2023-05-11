@@ -120,8 +120,28 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
   const { currencyView } = useNFTAggregator()
   const history = useHistory()
   const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC']?.current
-  const { floorPrice, volume } = getDisplayPrice(currencyView, solPrice, item, timelineDisplay)
+  // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+
+  const floorPrice = useMemo(() => {
+    const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
+    const fp = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
+    return truncateBigNumber(fp)
+  }, [item, solPrice, currencyView])
+
+  const volume = useMemo(() => {
+    const v =
+      currencyView === 'USDC' ? item[volumeDict[timelineDisplay]] * solPrice : item[volumeDict[timelineDisplay]]
+    return truncateBigNumber(v)
+  }, [item, solPrice, currencyView])
+
+  const marketcap = useMemo(() => {
+    if (item.marketcap === null) return 0
+
+    const marketcap = currencyView === 'USDC' ? item.marketcap * solPrice : item.marketcap
+
+    return marketcap
+  }, [item, solPrice, currencyView])
 
   return (
     <>
@@ -184,36 +204,42 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
   )
 }
 
-const getDisplayPrice = (currencyView: string, solPrice: number, item: any, timelineDisplay: string) => {
-  const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
-  let floorPrice =
-    currencyView === 'USDC' ? truncateBigNumber(solPrice * (price > 0 ? price : 0)) : truncateBigNumber(price)
-  floorPrice = floorPrice ? floorPrice : 0
-
-  let volume =
-    currencyView === 'USDC'
-      ? truncateBigNumber(item[volumeDict[timelineDisplay]] * solPrice)
-      : truncateBigNumber(item[volumeDict[timelineDisplay]])
-  volume = volume ? volume : 0
-  return { floorPrice, volume }
-}
 const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   const { currencyView } = useNFTAggregator()
   const history = useHistory()
   const { timelineDisplay } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC']?.current
-  const { floorPrice, volume } = getDisplayPrice(currencyView, solPrice, item, timelineDisplay)
+
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+  // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
+  const floorPrice = useMemo(() => {
+    const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
+    const fp = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
+    return truncateBigNumber(fp)
+  }, [item, solPrice, currencyView])
+
+  const volume = useMemo(() => {
+    const v =
+      currencyView === 'USDC' ? item[volumeDict[timelineDisplay]] * solPrice : item[volumeDict[timelineDisplay]]
+    return truncateBigNumber(v)
+  }, [item, solPrice, currencyView])
+
+  const marketcap = useMemo(() => {
+    if (!item.marketcap || item.marketcap === 0) return 0.0
+
+    const marketcap = currencyView === 'USDC' ? item.marketcap * solPrice : item.marketcap
+
+    return truncateBigNumber(marketcap)
+  }, [item, solPrice, currencyView])
+
+  const handleRelocate = useCallback(
+    (e: any) =>
+      history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`),
+    [item]
+  )
 
   return (
-    <tr
-      ref={lastRowElementRef}
-      className="tableRow"
-      key={index}
-      onClick={() =>
-        history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
-      }
-    >
+    <tr ref={lastRowElementRef} className="tableRow" key={index} onClick={handleRelocate}>
       <td className="nftNameColumn">
         {item.profile_pic_link ? (
           <Image
@@ -240,13 +266,13 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       </td>
       <td className="tdItem">
         {item?.floor_price >= 0 ? (
-          <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          <PriceWithToken price={floorPrice ? floorPrice : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
         )}
       </td>
       <td className="tdItem">
-        {item?.profile_pic_link ? (
+        {item ? (
           <PriceWithToken
             price={item?.gfx_appraisal_supported ? 50 : 0}
             token={currencyView}
@@ -257,22 +283,28 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item?.collection_name ? (
+        {item ? (
           <>
-            {item?.daily_change >= 0 ? (
-              <div tw="dark:text-green-2 text-green-3">+ {formatSOLDisplay(item?.daily_change)} %</div>
-            ) : (
-              <div tw="text-red-2"> {formatSOLDisplay(item?.daily_change)} %</div>
+            {(item?.daily_change === null || item?.daily_change === 0) && (
+              <div tw="dark:text-grey-5 text-grey-1"> {item?.daily_change ? item.daily_change : '0'} %</div>
+            )}
+            {item?.daily_change !== null && item?.daily_change > 0 && (
+              <div tw="dark:text-green-2 text-green-3">+ {item?.daily_change ? item.daily_change : '0'} %</div>
+            )}
+            {item?.daily_change !== null && item?.daily_change < 0 && (
+              <div tw="text-red-2"> {item?.daily_change ? item.daily_change : '0'} %</div>
             )}
           </>
         ) : (
           <Loader />
         )}
       </td>
-      <td className="tdItem">{item?.collection_name ? <div tw="text-grey-2">Coming soon</div> : <Loader />}</td>
+      <td className="tdItem">
+        {marketcap ? <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} /> : <Loader />}
+      </td>
       <td className="tdItem">
         {item?.daily_volume !== undefined ? (
-          <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          <PriceWithToken price={volume ? volume : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
         )}
