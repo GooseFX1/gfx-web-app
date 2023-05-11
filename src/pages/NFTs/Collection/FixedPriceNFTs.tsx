@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   useConnectionConfig,
   useNFTAggregator,
@@ -164,12 +164,13 @@ export const FixedPriceNFTs = (): ReactElement => {
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
   }, [buyNowClicked, bidNowClicked, sellNFTClicked])
 
-  const gridType = filteredFixedPrice?.length > 10 ? '1fr' : '210px'
+  const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
+      {!fixedPriceWithinCollection && <NFTLoading />}
       {fixedPriceWithinCollection && fixedPriceWithinCollection.total_count === 0 ? (
         <NoContent type="collected" />
       ) : (

@@ -58,7 +58,7 @@ export function colors(mode: string): Colors {
     text6: mode === 'dark' ? '#cccccc' : '#353535',
     text7: mode === 'dark' ? white : '#3C3C3C',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
-    text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
+    text10: mode === 'dark' ? '#3C3C3C' : '#636363',
     text11: mode === 'dark' ? '#eeeeee' : '#636363',
     text12: mode === 'dark' ? '#909090' : '#636363',
     text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
@@ -222,7 +222,7 @@ export function colors(mode: string): Colors {
 
     // sell categories
     sellTabBg: mode === 'dark' ? 'rgba(42, 42, 42, 0.35)' : '#CACACA',
-    sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
+    profilePicBg: mode === 'dark' ? '#131313' : '#B5B5B5',
 
     // time panel
     timePanelBackground: mode === 'dark' ? '#131313' : '#ffffff',

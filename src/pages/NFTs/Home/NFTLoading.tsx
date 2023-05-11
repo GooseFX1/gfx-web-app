@@ -20,7 +20,7 @@ const ITEM = styled.div`
 
 const NFTLoading: FC = () => (
   <CONTAINER>
-    {[...Array(25)].map((_, index) => (
+    {[...Array(50)].map((_, index) => (
       <ITEM key={index}>
         <div tw="flex">
           <SkeletonCommon width="170px" height="170px" style={{ marginRight: '10px' }} />

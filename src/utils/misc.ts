@@ -134,8 +134,11 @@ export function debounce(callback: any, wait: number): (x: any) => void {
   }
 }
 
-export const formatSOLDisplay = (solValue: string | number): string => {
+export const formatSOLDisplay = (solValue: string | number, dontDivide?: boolean): string => {
   if (!solValue) return '0'
+  if (typeof solValue === 'string' && dontDivide) {
+    return parseFloat(solValue).toFixed(2)
+  }
   if (typeof solValue === 'string') {
     return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
   } else if (solValue < 10000000) return solValue.toFixed(2)
@@ -145,6 +148,12 @@ export const formatSOLNumber = (solValue: string | number): number => {
   if (typeof solValue === 'string') return parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER
   return solValue / LAMPORTS_PER_SOL_NUMBER
 }
+
+export const toTitleCase = (str: string): string =>
+  str
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
 
 export const createUUID = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

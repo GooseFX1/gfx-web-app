@@ -15,6 +15,7 @@ import { checkMobile } from '../../utils'
 import { SearchBar, TokenToggle, TokenToggleNFT } from '../../components'
 import { NFT_PROFILE_OPTIONS } from '../../api/NFTs'
 import { Arrow } from '../../components/common/Arrow'
+import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
 
 const NFT_TAB = styled.div``
 
@@ -96,7 +97,8 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           Activity
         </div>
       </div>
-      <div tw="mr-6">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
+      <div tw="mr-4">{!checkMobile() && <RefreshBtnWithAnimationNFT />}</div>
+      <div tw="mr-2">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
     </NFT_FILTERS_CONTAINER>
   )
 }
@@ -116,7 +118,7 @@ const ProfileNFTFiltersDropdown = () => {
         {checkMobile() ? (
           <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5" />
         ) : (
-          <div tw="flex items-center">
+          <div tw="flex items-center ml-2">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
             <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-[-25px]`} invert={arrow} />
           </div>

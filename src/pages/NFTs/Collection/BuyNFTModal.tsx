@@ -171,6 +171,9 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     &:focus {
       border: 1px solid white;
     }
+    &:focus-visible {
+      outline: 1.5px solid #fff;
+    }
   }
 
   .nftImgBid {
@@ -286,6 +289,9 @@ export const BuyNFTModal = (): ReactElement => {
         setBuyNow(false)
       }
     }
+    return () => {
+      handleCloseModal(setGeneral, setBuyNow, false)
+    }
   }, [buyNowClicked])
 
   return (
@@ -327,6 +333,9 @@ export const BidNFTModal = (): ReactElement => {
         setVisible(true)
         setBidNow(false)
       }
+    }
+    return () => {
+      handleModalClose()
     }
   }, [bidNowClicked])
   const handleSetCurBid = (value: number, index: number) => {
@@ -398,7 +407,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     [curBid]
   )
   const orderTotal: number = useMemo(() => curBid, [curBid])
-  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
   const notEnough: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
@@ -713,7 +721,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
         <div tw="mt-4">
           <AppraisalValue
-            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value} SOL` : null}
+            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value}` : null}
             label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
             width={360}
           />

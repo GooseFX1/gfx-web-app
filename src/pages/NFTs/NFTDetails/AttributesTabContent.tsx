@@ -97,13 +97,13 @@ export const AsksAndBidsForNFT = (): ReactElement => {
         ))}
 
       {ask && (
-        <div tw="flex items-center justify-between px-[12px] py-2 dark:text-grey-5 text-grey-1">
+        <div tw="flex items-center justify-between px-[12px] py-2 dark:text-grey-5 text-grey-1 font-medium text-[15px]">
           <div tw="flex ">
             {/* <a href={`https://solscan.io/tx/${ask.tx_sig}`} target="_blank" rel="noreferrer">
               <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
             </a> */}
             <div tw="ml-3">
-              Ask by{' '}
+              Listed by{' '}
               <a
                 href={`https://solscan.io/account/${ask.wallet_key}`}
                 target="_blank"

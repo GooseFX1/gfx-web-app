@@ -4,6 +4,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tooltip } from '../components'
 import { useDarkMode } from '../context'
+import { formatSOLDisplay } from './misc'
 
 export const HeaderTooltip = (text: string): ReactElement =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
@@ -33,7 +34,7 @@ const WRAPPER = styled.div<{ $width; $mode }>`
     color: ${({ theme }) => theme.text7};
     ${tw`text-[18px] font-semibold`}
   }
-  .appraisal {
+  .appraisalTitle {
     ${tw`text-[18px] font-semibold`}
     color: ${({ theme }) => theme.text12};
   }
@@ -89,12 +90,22 @@ export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): Rea
     <WRAPPER $width={width} $mode={mode}>
       <div className="outerCover">
         <div className="innerCover">
-          <div tw="absolute left-0">
-            <img src={'/img/assets/Aggregator/Tooltip.svg'} alt="gfx-appraisal-icon" style={{ height: 30 }} />
-          </div>
+          <GenericTooltip
+            text="The GFX Appraisal Value emphasizes
+executed sales data, not floor prices."
+          >
+            <div tw="absolute left-0 cursor-pointer">
+              <img src={'/img/assets/Aggregator/Tooltip.svg'} alt="gfx-appraisal-icon" style={{ height: 30 }} />
+            </div>
+          </GenericTooltip>
+
           <div className="hContainer">
-            <div tw="text-average font-semibold dark:text-grey-2 text-grey-1">{label}</div>
-            <div tw="text-average font-semibold dark:text-grey-5 text-black-4">{text}</div>
+            <div className="appraisalTitle" tw="text-average font-semibold">
+              {label}
+            </div>
+            <div className="appraisalResult" tw="text-average font-semibold">
+              {text && `${formatSOLDisplay(text, true)} SOL`}
+            </div>
           </div>
         </div>
       </div>

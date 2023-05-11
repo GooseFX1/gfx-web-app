@@ -281,6 +281,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     color: ${({ theme }) => theme.text34};
   }
   .inputContainer {
+    color: ${({ theme }) => theme.text30};
     ${tw`bg-none text-[15px] w-[90%] font-semibold mb-1 mt-0.5`}
     border: none;
     background: none;
@@ -309,7 +310,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
   }
   .profilePicText {
-    ${tw`text-[13px] mt-[10px] font-semibold text-[#b5b5b5]`}
+    ${tw`text-[13px] mt-[10px] ml-2 font-semibold text-[#b5b5b5]`}
   }
   .ant-modal-body {
     ${tw`py-6 px-[30px] sm:px-[20px] `}

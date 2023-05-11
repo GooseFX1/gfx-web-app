@@ -159,7 +159,7 @@ export interface Colors {
 
   // sell categories
   sellTabBg: Color
-  sellTabActiveBg: Color
+  profilePicBg: Color
 
   // time panel
   timePanelBackground: Color

@@ -92,18 +92,17 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
       const collectionData = await res.data
       if (collectionData.collection === null) return null
-
       setSingleCollection(collectionData)
       // const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
       // setFixedPriceWithinCollection(fpData)
       // const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
       // setOpenBidWithinCollection(obData)
-      const ownersData = await fetchCollectionOwners(collectionData.collection[0].uuid)
-      setCollectionOwners(ownersData)
+      // const ownersData = await fetchCollectionOwners(collectionData.collection[0].uuid)
+      // setCollectionOwners(ownersData)
 
       return res
     } catch (err) {
-      return err
+      return { status: 400 }
     }
   }, [])
 

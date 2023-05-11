@@ -208,7 +208,7 @@ export const ReviewBidModal: FC<{
 
       <div tw="mt-[30px] sm:mt-1">
         <AppraisalValue
-          text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value} SOL` : null}
+          text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value}` : null}
           label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
           width={360}
         />
@@ -227,9 +227,9 @@ export const ReviewBidModal: FC<{
           value={curBid >= 0 ? curBid : undefined}
           onChange={(e) => updateBidValue(e)}
         />
-        <img src="/img/crypto/SOL.svg" tw="w-8 h-8 mt-3 ml-[-30px] sm:mt-0 " />
+        <img src="/img/crypto/SOL.svg" tw="absolute h-[52px] right-[8px] top-[26px] sm:h-12 sm:top-0 sm:right-0" />
       </div>
-      <div tw=" flex items-center justify-center mt-2 text-red-2">{displayErrorMsg}</div>
+      <div tw=" flex items-center justify-center text-red-2  mt-[-18px] sm:mt-[-12px]">{displayErrorMsg}</div>
       <div
         className="vContainer"
         tw="mt-[40px] sm:mt-[30px] flex items-center !absolute bottom-[120px] sm:bottom-[100px]
