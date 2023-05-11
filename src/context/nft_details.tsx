@@ -1,6 +1,6 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState, useReducer, useMemo } from 'react'
 import { Connection } from '@solana/web3.js'
-import apiClient from '../api'
+import { httpClient } from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { StringPublicKey, getParsedAccountByMint } from '../web3'
 import { useConnectionConfig } from './settings'
@@ -51,7 +51,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchGeneral = useCallback(async (address: string, conncetion: Connection): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
       const nft: INFTGeneralData = await res.data
 
       const parsedAccounts = await getParsedAccountByMint({
@@ -89,7 +89,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const bidOnSingleNFT = useCallback(async (bidObject: any): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
+      const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
         bid: bidObject,
         network: network === 'devnet' ? network : 'mainnet'
       })
@@ -106,7 +106,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeBidOnSingleNFT = useCallback(async (bidUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.BID}`, {
+      const res = await httpClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.BID}`, {
         data: {
           bid_id: bidUUID
         }
@@ -137,7 +137,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const sellNFT = useCallback(async (paramValue: any): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
         ask: paramValue,
         network: network === 'devnet' ? network : 'mainnet'
       })
@@ -149,7 +149,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const patchNFTAsk = useCallback(async (ask: INFTAsk): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
         ask_uuid: ask.uuid,
         new_ask_data: {
           clock: ask.clock,
@@ -176,7 +176,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
         data: {
           ask_id: askUUID
         }

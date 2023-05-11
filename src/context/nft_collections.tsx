@@ -9,7 +9,7 @@ import {
   NFTFeaturedCollection,
   NFTUpcomingCollection
 } from '../types/nft_collections.d'
-import apiClient from '../api'
+import { httpClient } from '../api'
 import {
   NFT_API_BASE,
   NFT_API_ENDPOINTS,
@@ -33,7 +33,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   //eslint-disable-next-line
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
       setAllCollections(res.data)
       return res.data
     } catch (err) {
@@ -50,7 +50,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   ) => {
     try {
       setLoading(true)
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
         params: {
           filter: filterColumn ? filterColumn : null,
           sort: sortPref ? sortPref : null,
@@ -70,7 +70,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchFeaturedCollections = useCallback(async () => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
       setFeaturedCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -80,7 +80,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   //eslint-disable-next-line
   const fetchUpcomingCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
       setUpcomingCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -109,7 +109,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchCollectionOwners = useCallback(async (collectionId: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.OWNERS}?collection_id=${collectionId}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.OWNERS}?collection_id=${collectionId}`)
       const owners = await res.data
       return owners
     } catch (err) {
