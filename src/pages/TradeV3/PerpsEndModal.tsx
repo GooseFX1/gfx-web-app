@@ -89,7 +89,7 @@ export const PerpsEndModal: FC<{
         </div>
       )}
       <div tw="relative top-[-50px] text-center font-semibold text-regular dark:text-grey-5 text-black-4 sm:top-[-25px]">
-        Take a screenshot, <br /> and share it with your friends!
+        Take a screenshot!
       </div>
     </WRAPPER>
   )
