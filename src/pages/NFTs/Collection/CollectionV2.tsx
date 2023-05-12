@@ -88,15 +88,8 @@ const CollectionV2 = (): ReactElement => {
 
 const NFTStatsContainer = () => {
   const history = useHistory()
-  const { mode } = useDarkMode()
-  const {
-    singleCollection,
-    fixedPriceWithinCollection,
-    setOpenBidWithinCollection,
-    setFixedPriceWithinCollection
-  } = useNFTCollections()
+  const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
   const { lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
-  const [sweepCollection, setSweepCollection] = useState<boolean>(false)
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
 
@@ -139,11 +132,11 @@ const NFTStatsContainer = () => {
       {handleAppraisalPopup()}
       <div className="nftStatsContainer">
         {!checkMobile() && (
-          <button className="backBtn" onClick={(e) => history.push('/nfts')} tw="border-0">
+          <button className="backBtn" onClick={() => history.push('/nfts')} tw="border-0">
             <img src="/img/assets/arrow-leftdark.svg" />
           </button>
         )}
-        <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} />
+        {/* <SweepCollectionDrawer sweepCollection={sweepCollection} setSweepCollection={setSweepCollection} /> */}
 
         <div className="collectionNameContainer">
           <div className="collectionName">
@@ -299,6 +292,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
           style={{ width: 332 }}
+          bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
         {checkMobile() && displayIndex === 0 && (
@@ -345,7 +339,7 @@ const SortDropdown = () => {
             <img className="shareBtn" src="/img/assets/Aggregator/shareBtn.svg" />
           </div>
         ) : (
-          <div className="sortingBtn">
+          <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
             Price:
             <>{sortingAsc ? ' Ascending' : ' Descending'}</>
             <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-2`} invert={arrow} />

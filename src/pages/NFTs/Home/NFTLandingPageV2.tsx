@@ -60,11 +60,14 @@ const CURRENCY_SWITCH = styled.div<{ $currency }>`
     background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
   }
 `
-const WRAPPER = styled.div<{ $navCollapsed; $currency }>`
+const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
   /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
+  .addBorder {
+    border: 1px solid #b5b5b5 !important;
+  }
   .lastRefreshed {
     ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
     color: ${({ theme }) => theme.tabNameColor};
@@ -152,9 +155,10 @@ const FILTERS_CONTAINER = styled.div`
     ${tw`w-11 mr-5 ml-2 h-11 rounded-full cursor-pointer`}
   }
   .dropdownBtn {
-    ${tw`rounded-full flex justify-center border-none dark:bg-[#1f1f1f] justify-between p-1 pr-2 cursor-pointer
+    ${tw`rounded-full flex justify-center border-none dark:bg-black-2 justify-between p-1 pr-2 cursor-pointer
       bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
   }
+
   &.ant-dropdown {
     ${tw`dark:bg-[#3c3c3c] h-[50px] w-[100px] bg-[pink]
       bg-white items-center text-[#3c3c3c] mx-2 dark:text-[#fff] font-semibold text-[15px]`}
@@ -251,7 +255,7 @@ const NFTLandingPageV2 = (): ReactElement => {
   }, [hasOnboarded])
 
   return (
-    <WRAPPER $navCollapsed={isCollapsed} $currency={currencyView}>
+    <NFT_AGG_WRAP $navCollapsed={isCollapsed} $currency={currencyView}>
       {handleWelcomeModal()}
       {!checkMobile() && (
         <>
@@ -269,7 +273,7 @@ const NFTLandingPageV2 = (): ReactElement => {
       <FiltersContainer />
 
       <NFTCollectionsTable showBanner={showBanner} />
-    </WRAPPER>
+    </NFT_AGG_WRAP>
   )
 }
 
@@ -388,7 +392,7 @@ const FiltersContainer = () => {
         <SearchBar
           className="search-bar"
           width={'398px'}
-          bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+          bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections or markets"
         />
@@ -445,7 +449,7 @@ const PROFILE_PIC = styled.div`
   ${tw`rounded-full cursor-pointer text-grey-1 text-[14px] font-semibold justify-center flex items-center p-0.5`}
   background: ${({ theme }) => theme.profilePicBg};
   color: ${({ theme }) => theme.text10};
-  border: 1.5px solid #b5b5b5 !important;
+  border: 1px solid #b5b5b5 !important;
 `
 export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize }): ReactElement => {
   const { sessionUser } = useNFTProfile()
@@ -477,7 +481,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
       ) : (
         <PROFILE_PIC
           tw="h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
-          dark:bg-black-4 dark:text-grey-4 flex items-center p-0.5"
+          dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5"
           onClick={goProfile}
         >
           {getFirstAndLast}
@@ -599,7 +603,7 @@ const TimeLineDropdown = (): ReactElement => {
       placement="bottomRight"
       trigger={[checkMobile() ? 'click' : 'hover']}
     >
-      <div className="dropdownBtn" tw="h-[44px] w-[104px] ">
+      <div className={`dropdownBtn ${arrow ? `addBorder` : ``}`} tw="h-[44px] w-[104px]">
         <div tw="ml-[22px]">{timelineDisplay}</div>
         <Arrow height="9px" width="18px" cssStyle={tw`mr-1`} invert={arrow} />
       </div>

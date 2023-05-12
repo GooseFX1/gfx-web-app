@@ -47,7 +47,7 @@ const ACTIVITY_KIND = {
 export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   overflow-x: hidden;
   width: 100%;
-  ${tw`dark:bg-black-2 bg-grey-6`}
+  ${tw`dark:bg-black-1 bg-grey-6`}
   ${({ theme }) => theme.customScrollBar('0px')}
   @media(max-width: 500px) {
     height: 100vh !important;

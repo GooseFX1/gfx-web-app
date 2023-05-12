@@ -16,6 +16,7 @@ import 'styled-components/macro'
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-white dark:bg-black-1`}
   border-top-right-radius: 20px;
+  border: 1px solid #3C3C3C;
   ${({ theme }) => theme.customScrollBar('1px')}
   height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
   .profileContent {

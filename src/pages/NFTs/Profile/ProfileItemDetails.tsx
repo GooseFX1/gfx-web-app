@@ -45,10 +45,10 @@ export const ProfileItemDetails: FC<{
       getContainer={elem}
       visible={visible}
       height={checkMobile() ? '655px' : '786px'}
-      width={checkMobile() ? '100%' : '460px'}
+      width={checkMobile() ? '100%' : '450px'}
       bodyStyle={{ padding: '0' }}
     >
-      <div tw="px-[16px]">
+      <div tw="px-[30px]">
         <ImageShowcase setShowSingleNFT={setDrawerSingleNFT} />
         <RightSection status={''} />
       </div>

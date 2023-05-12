@@ -156,6 +156,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
           {hover && (
             <HoverOnNFT
+              mintAddress={item.mint_address}
+              collectionName={item.collection_name}
               item={item}
               buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
               setNFTDetails={setNFTDetails}
@@ -236,16 +238,23 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 }
 
 export const HoverOnNFT: FC<{
+  mintAddress?: string
+  collectionName?: string
   addNftToBag?: any
   item: BaseNFT
   ask: INFTAsk | null | boolean
   buttonType?: string
   setNFTDetails: any
-}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType }): ReactElement => {
+}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
+
+  const openInNewTab = useCallback((url) => {
+    const win = window.open(url, '_blank')
+    win.focus()
+  }, [])
 
   const goToDetailsForModal = async (e, type) => {
     e.stopPropagation()
@@ -253,6 +262,18 @@ export const HoverOnNFT: FC<{
       setVisible(true)
       return
     }
+
+    if (ask && ask['marketplace_name'] && type === 'buy') {
+      switch (ask['marketplace_name']) {
+        case 'MAGIC_EDEN':
+          openInNewTab(`https://magiceden.io/item-details/${mintAddress}`)
+          return
+        case 'TENSOR':
+          openInNewTab(`https://www.tensor.trade/item/${mintAddress}`)
+          return
+      }
+    }
+
     setOpenJustModal(true)
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()

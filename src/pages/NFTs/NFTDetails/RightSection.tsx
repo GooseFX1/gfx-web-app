@@ -242,10 +242,6 @@ export const RightSection: FC<{
                     {general && minimizeTheString(general.nft_name, 20)}
                   </div>
                 </GenericTooltip>
-
-                {general && general.is_verified && (
-                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
-                )}
               </div>
               {general && (
                 <GradientText

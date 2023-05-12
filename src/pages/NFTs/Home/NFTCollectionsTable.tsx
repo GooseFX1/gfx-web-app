@@ -288,11 +288,14 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
             {(item?.daily_change === null || item?.daily_change === 0) && (
               <div tw="dark:text-grey-5 text-grey-1"> {item?.daily_change ? item.daily_change : '0'} %</div>
             )}
+
             {item?.daily_change !== null && item?.daily_change > 0 && (
-              <div tw="dark:text-green-2 text-green-3">+ {item?.daily_change ? item.daily_change : '0'} %</div>
+              <div tw="dark:text-green-2 text-green-3">
+                + {item?.daily_change ? formatSOLDisplay(item.daily_change, true) : '0'} %
+              </div>
             )}
             {item?.daily_change !== null && item?.daily_change < 0 && (
-              <div tw="text-red-2"> {item?.daily_change ? item.daily_change : '0'} %</div>
+              <div tw="text-red-2"> {item?.daily_change ? formatSOLDisplay(item.daily_change, true) : '0'} %</div>
             )}
           </>
         ) : (
@@ -300,7 +303,11 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {marketcap ? <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} /> : <Loader />}
+        {marketcap !== undefined ? (
+          <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} />
+        ) : (
+          <Loader />
+        )}
       </td>
       <td className="tdItem">
         {item?.daily_volume !== undefined ? (
@@ -309,16 +316,8 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           <Loader />
         )}
       </td>
-      <td
-        style={{
-          width: '5%',
-          justifyContent: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          rotate: '270deg'
-        }}
-      >
-        <Arrow height="8px" width="16px" invert={false} />
+      <td className="rotate270">
+        <Arrow height="10px" width="16px" invert={false} cssStyle={tw`mt-auto mb-2 dark:opacity-80`} />
       </td>
     </tr>
   )
