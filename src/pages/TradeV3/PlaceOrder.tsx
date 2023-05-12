@@ -853,7 +853,7 @@ export const PlaceOrder: FC = () => {
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
-                  offset={[-125, 15]}
+                  offset={[-120, 15]}
                   onVisibleChange={() => {
                     setDropdownVisible(true)
                   }}
@@ -1006,7 +1006,7 @@ export const PlaceOrder: FC = () => {
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
                     overlayClassName={`takep-stopl-container ${mode}`}
-                    offset={[11, 15]}
+                    offset={[11, 9]}
                     onVisibleChange={null}
                     placement="bottomLeft"
                     menu={{ items: getTakeProfitItems(), onClick: handleMenuClick }}
@@ -1024,7 +1024,7 @@ export const PlaceOrder: FC = () => {
                   <ArrowDropdown
                     arrowRotation={false}
                     overlayClassName="takep-stopl-container"
-                    offset={[-120, 15]}
+                    offset={[11, 9]}
                     onVisibleChange={null}
                     placement="bottomLeft"
                     menu={{ getTakeProfitItems, onClick: handleMenuClick }}
@@ -1077,7 +1077,7 @@ export const PlaceOrder: FC = () => {
 }
 
 const SELECTOR = styled.div`
-  ${tw`w-[240%] h-16 rounded-tiny pt-2 pb-3 pl-2.5 relative`}
+  ${tw`w-[150px] h-16 rounded-tiny pt-2 pb-3 pl-2.5 relative`}
   background: ${({ theme }) => theme.bg26};
   .selectorDropdown {
     ${tw`cursor-pointer`}
