@@ -263,6 +263,25 @@ export const ButtonContainer = (): ReactElement => {
     return false
   }, [sessionUser, sessionUserParsedAccounts, ask, wallet?.adapter?.publicKey])
 
+  const openInNewTab = useCallback((url) => {
+    const win = window.open(url, '_blank')
+    win.focus()
+  }, [])
+
+  const handleBuynowClicked = () => {
+    if (ask && ask['marketplace_name']) {
+      switch (ask['marketplace_name']) {
+        case 'MAGIC_EDEN':
+          openInNewTab(`https://magiceden.io/item-details/${general?.mint_address}`)
+          return
+        case 'TENSOR':
+          openInNewTab(`https://www.tensor.trade/item/${general?.mint_address}`)
+          return
+      }
+    }
+    setBuyNow(general)
+  }
+
   return (
     <div
       tw="absolute left-0 z-10 right-0 bottom-0 h-[86px] w-[100%] 
@@ -309,7 +328,7 @@ export const ButtonContainer = (): ReactElement => {
               height="56px"
               width="185px"
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
-              onClick={() => setBuyNow(general)}
+              onClick={() => handleBuynowClicked()}
             >
               <span tw="text-regular font-semibold text-white">Buy Now</span>
             </Button>

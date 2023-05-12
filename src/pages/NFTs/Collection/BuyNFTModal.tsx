@@ -238,6 +238,12 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
       background: ${({ theme }) => theme.bg22} !important;
     }
   }
+  .termsText {
+    ${tw`text-[13px] font-medium`}
+    strong {
+      ${tw`font-semibold text-white`}
+    }
+  }
 
   .buyButton {
     ${tw`w-[520px] sm:w-[calc(100vw - 56px)]    

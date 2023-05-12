@@ -161,7 +161,7 @@ const SweepBtnContainer = (): ReactElement => (
   </div>
 )
 
-const TermsText = (): ReactElement => (
+export const TermsText = (): ReactElement => (
   <div className="sweepText">
     By clicking ¨Sweep now¨, you agree to the <strong> GooseFx Terms of Service.</strong>
   </div>

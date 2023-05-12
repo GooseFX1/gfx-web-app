@@ -18,7 +18,21 @@ export const MESSAGE = styled.div`
     height: 20px;
   }
 `
-
+export const successfulListingMsg = (
+  message: string,
+  signature: string,
+  nftMetadata: INFTMetadata,
+  price: string
+): any => ({
+  message: (
+    <SuccessfulListingMsg
+      title={`Successfully ${message} ${nftMetadata.name}!`}
+      itemName={nftMetadata.name}
+      supportText={`My price: ${price}`}
+      tx_url={`https://solscan.io/tx/${signature}`}
+    />
+  )
+})
 export const pleaseTryAgain = (isBuyingNow: boolean, message: string): any => {
   notify({
     type: 'error',

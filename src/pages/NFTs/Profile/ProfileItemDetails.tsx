@@ -18,7 +18,15 @@ export const ProfileItemDetails: FC<{
   setSellModal: any
   singleNFT: any
   setShowDelistModal: any
-}> = ({ visible, setDrawerSingleNFT, setSellModal, singleNFT, setShowDelistModal }): JSX.Element => {
+  setShowAcceptBidModal: any
+}> = ({
+  visible,
+  setDrawerSingleNFT,
+  setSellModal,
+  singleNFT,
+  setShowDelistModal,
+  setShowAcceptBidModal
+}): JSX.Element => {
   const { ask, bids, general } = useNFTDetails()
   const { setBidNow, setBuyNow } = useNFTAggregator()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
@@ -36,6 +44,7 @@ export const ProfileItemDetails: FC<{
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
+
   return (
     <Drawer
       title={null}
@@ -49,7 +58,11 @@ export const ProfileItemDetails: FC<{
       bodyStyle={{ padding: '0' }}
     >
       <div tw="px-[30px]">
-        <ImageShowcase setShowSingleNFT={setDrawerSingleNFT} />
+        <ImageShowcase
+          setShowSingleNFT={setDrawerSingleNFT}
+          isOwner={isOwner}
+          setShowAcceptBidModal={setShowAcceptBidModal}
+        />
         <RightSection status={''} />
       </div>
       <div
