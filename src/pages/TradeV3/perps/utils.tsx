@@ -540,7 +540,7 @@ export const getExitQuntity = (traderBalances, activeProduct) => {
 }
 
 export const truncateBigNumber = (bigNumber: number) => {
-  if (!bigNumber) return 0
+  if (!bigNumber || bigNumber === null) return 0
 
   try {
     if (bigNumber > 1000000) {

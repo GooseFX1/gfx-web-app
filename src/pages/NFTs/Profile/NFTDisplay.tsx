@@ -173,27 +173,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
-  const Menu: FC<Props> = ({ nftFilterArr, setNftFilter }): JSX.Element => (
-    <>
-      <DROPDOWN_WRAPPER>
-        {nftFilterArr.map((item, index) => (
-          <div key={index}>
-            <span>{item}</span>
-            <input
-              type="radio"
-              value={item}
-              name="nft_filter"
-              checked={index === nftFilter}
-              onChange={() => {
-                setNftFilter(index)
-              }}
-            />
-          </div>
-        ))}
-      </DROPDOWN_WRAPPER>
-    </>
-  )
-
   const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
 
   const handleModalClick = useCallback(() => {

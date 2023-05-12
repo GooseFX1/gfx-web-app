@@ -90,8 +90,8 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             checkIfVolumeSelected()
           )}
         </th>
-        <th className="borderRow2" tw="mt-2">
-          <div style={{ marginTop: 17 }}>
+        <th className="borderRow2">
+          <div>
             <TokenToggleNFT toggleToken={setCurrency} />
           </div>
         </th>

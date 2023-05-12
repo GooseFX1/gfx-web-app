@@ -1,10 +1,11 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { useNFTDetails } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { checkMobile } from '../../../utils'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
 //#region styles
 const LEFT_SECTION = styled.div`
@@ -22,6 +23,12 @@ const LEFT_SECTION = styled.div`
       justify-content: center;
       top: 12px;
       right: 12px;
+    }
+
+    .acceptBidBtn {
+      ${tw`w-[254px] h-11 absolute ml-[68px] cursor-pointer
+       bottom-[30px] rounded-[100px] font-semibold flex items-center justify-center text-[15px] `}
+      background: linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);
     }
 
     .ls-image {
@@ -92,8 +99,18 @@ const LEFT_SECTION = styled.div`
 `
 //#endregion
 
-export const ImageShowcase: FC<{ setShowSingleNFT?: any }> = ({ setShowSingleNFT, ...rest }) => {
-  const { general, nftMetadata } = useNFTDetails()
+export const ImageShowcase: FC<{ setShowSingleNFT?: any; setShowAcceptBidModal?: any; isOwner?: boolean }> = ({
+  setShowSingleNFT,
+  isOwner,
+  setShowAcceptBidModal,
+  ...rest
+}) => {
+  const { general, nftMetadata, bids } = useNFTDetails()
+  const highestBid: number = useMemo(
+    () =>
+      bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : 0,
+    [bids]
+  )
 
   return general && nftMetadata ? (
     <LEFT_SECTION {...rest}>
@@ -105,8 +122,14 @@ export const ImageShowcase: FC<{ setShowSingleNFT?: any }> = ({ setShowSingleNFT
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-
-      <img className="ls-image" height={'100%'} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      {highestBid && isOwner && (
+        <div className="acceptBidBtn" onClick={() => setShowAcceptBidModal(true)}>
+          Accept Highest Bid {highestBid} SOL
+        </div>
+      )}
+      <div tw="w-[390px] h-[390px]">
+        <img className="ls-image" height={'100%'} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+      </div>
     </LEFT_SECTION>
   ) : (
     <SkeletonCommon width="100%" height={checkMobile() ? '360px' : '500px'} borderRadius="10px" />

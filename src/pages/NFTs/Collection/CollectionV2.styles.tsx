@@ -11,6 +11,9 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     .ant-drawer-content {
       ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] `}
     }
+    .addBorder {
+      border: 1px solid #b5b5b5 !important;
+    }
 
     .lastRefreshed {
       ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
@@ -148,7 +151,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
 `
 
 export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
-  ${tw`w-full dark:bg-black-2 bg-grey-6`}
+  ${tw`w-full `}
   ${({ theme }) => theme.customScrollBar('0px')}
   overflow-y: auto;
 
@@ -171,7 +174,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-3 sm:pl-1 sm:grid-cols-2 rounded-xl overflow-y-auto pb-[300px]`}
+    ${tw`grid pl-3 sm:pl-1 sm:grid-cols-2  overflow-y-auto pb-[300px] dark:bg-black-1 bg-grey-6 `}
     ${({ theme }) => theme.customScrollBar('0px')}
   }
   .pinkGradient {
@@ -190,11 +193,13 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+    border: 1px solid #3C3C3C; // change lite mode
   }
 
   .gridItemCollections {
-    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] 
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+    border: 1px solid #3C3C3C; // change lite mode
   }
   .gridGradientInner {
     ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[15px] dark:bg-black-1 bg-white 
@@ -286,6 +291,7 @@ export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[185px] text-[15px] font-semibold`}
   background-color: ${({ theme }) => theme.dropdownBackground};
   color: ${({ theme }) => theme.text1};
+  border: 1px solid #b5b5b5;
   ${({ theme }) => theme.customScrollBar('0px')}
   .checkboxContainer {
     ${tw`ml-auto`}
@@ -312,7 +318,8 @@ export const DROPDOWN_CONTAINER = styled.div`
       ${tw`text-white text-regular font-semibold`}
     }
     > input[type='radio'] {
-      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-2 rounded-small cursor-pointer`}
+      ${tw`appearance-none absolute right-3 h-[15px] w-[15px]   rounded-small cursor-pointer`}
+      background: ${({ theme }) => theme.bg22};
     }
     > input[type='radio']:checked:after {
       ${tw`rounded-small w-[10px] h-[10px] relative top-[-4px] left-[2.3px] inline-block`}
@@ -323,12 +330,12 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex dark:bg-[#1c1c1c] bg-grey-6 h-[70px] sm:h-[100px] sm:flex-col `}
+    ${tw`duration-500 items-center flex h-[70px] sm:h-[100px] sm:flex-col `}
     border-radius: 30px 30px 0 0;
    
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
-      ${tw`w-[185px] text-white h-[40px] bg-[#5855ff] rounded-3xl ml-[15px]	font-semibold text-[15px]
+      ${tw`w-[189px] text-white h-[44px] dark:bg-black-2 bg-white rounded-3xl ml-[15px]	font-semibold text-[15px]
        flex items-center justify-center cursor-pointer`}
     }
     .offerBtn {

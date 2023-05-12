@@ -14,6 +14,7 @@ import {
 } from '../../context'
 import { logData } from '../../api/analytics'
 import styled from 'styled-components'
+import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 
 const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
   position: relative;
@@ -77,6 +78,9 @@ const NFTAgg: FC = (): ReactElement => {
         <Switch>
           <Route exact path={path}>
             <NFTLandingPageV2 />
+          </Route>
+          <Route exact path={'/nfts/NestQuest'}>
+            <NestQuestSingleListing />
           </Route>
           <Route exact path="/nfts/collection/:collectionName">
             <CollectionV2 />

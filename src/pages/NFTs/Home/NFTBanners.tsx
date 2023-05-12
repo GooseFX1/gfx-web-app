@@ -142,13 +142,13 @@ export const NFTBanners = ({ showBanner }: any) => {
     showModal(true)
   }
   const history = useHistory()
-  const goNestQuestSingleListing = () => history.push(`/NFTs/NestQuest`)
+  const goNestQuestSingleListing = () => history.push(`/nfts/NestQuest`)
   return (
     <>
       <CAROUSEL_WRAPPER showBanner={showBanner}>
         {modal && <CreatorsLanding showModal={showModal} />}
         <Slider {...settings}>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.svg`} />
+          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.png`} />
 
           <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
             <div className="home-slider-content">

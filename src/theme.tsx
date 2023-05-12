@@ -184,7 +184,7 @@ export function colors(mode: string): Colors {
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
     tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
-    dropdownBackground: mode === 'dark' ? '#3C3C3C' : '#ffffff',
+    dropdownBackground: mode === 'dark' ? '#1c1c1c' : '#ffffff',
 
     //color changing options
     blackToGrey: mode === 'dark' ? '' : 'invert(30%)',

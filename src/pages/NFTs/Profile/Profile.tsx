@@ -22,12 +22,12 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
     ${({ theme }) => theme.customScrollBar('0px')}
   }
   .no-dp-avatar {
-    ${tw`dark:border-black-1 text-grey-1  bg-grey-2 text-[30px] font-semibold justify-center
+    ${tw`dark:border-black-1 text-grey-1  bg-grey-6 text-[30px] sm:text-[24px] font-semibold justify-center
            h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]
-         sm:h-[80px] sm:w-[80px] sm:ml-[-5px] sm:ml-2.5 sm:mt-[-25px]   `}
+         sm:h-[70px] sm:w-[70px] sm:ml-[-5px] sm:ml-2.5 sm:mt-[-25px]`}
     border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
     @media (max-width: 500px) {
-      border: 5px solid ${({ theme }) => theme.bgForNFTCollection};
+      border: 1.5px solid ${({ theme }) => theme.bgForNFTCollection};
     }
   }
 

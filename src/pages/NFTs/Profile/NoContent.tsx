@@ -6,7 +6,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const NO_CONTENT = styled.div`
-  ${tw`flex items-center justify-center`}
+  ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6`}
   height: calc(100vh - 260px);
   text-align: center;
   padding: 10px 0;

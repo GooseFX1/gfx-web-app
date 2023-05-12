@@ -57,7 +57,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   const { setSearchInsideProfile } = useNFTAggregatorFilters()
 
   return (
-    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none sm:rounded-t-[30px]">
+    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6  sm:rounded-t-[30px]">
       <div className="flitersFlexContainer" tw="sm:mt-4">
         <>
           <SearchBar

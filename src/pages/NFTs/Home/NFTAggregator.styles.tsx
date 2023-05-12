@@ -30,7 +30,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 
   table {
-    ${tw`dark:bg-black-3 bg-white mt-[10px] w-full `}
+    ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full `}
     border-radius: 20px 20px 0 0;
     overflow-x: hidden;
 
@@ -50,10 +50,12 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 
   thead {
-    ${tw`dark:bg-black-5 bg-black-4 text-base font-semibold h-[64px] sm:h-[52px] rounded-[20px 20px 5px 5px]`}
+    ${tw`sm:dark:bg-black-5 sm:bg-black-4 text-base font-semibold h-[64px] 
+    sm:h-[52px] rounded-[20px 20px 5px 5px]`}
 
     tr {
-      ${tw`h-full`}
+      ${tw`h-[60px] sm:h-full`}
+      border-bottom: 1px solid ${({ theme }) => theme.text32};
 
       th {
         ${tw`h-full dark:text-grey-1 text-grey-2 text-center`}
@@ -70,7 +72,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
     );
-    ${({ theme }) => theme.customScrollBar('4px')}
+    ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;
 
     @media (max-width: 500px) {
@@ -78,8 +80,8 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
 
     tr {
-      ${tw`dark:bg-black-2 bg-white cursor-pointer`}
-      border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+      ${tw`dark:bg-black-2 bg-white mt-[15px] sm:mb-0 
+      rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto`}
 
       &:hover {
         ${tw`dark:bg-[#181818] bg-[#e2e2e2]`}
@@ -93,7 +95,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       }
     }
     td {
-      ${tw`h-[76px] sm:h-[78px] text-[15px] font-semibold text-center dark:text-grey-5 text-grey-1`}
+      ${tw`h-[100%] sm:h-[78px]  text-[15px] font-semibold text-center dark:text-grey-5 text-grey-1`}
       text-align: center;
     }
   }
@@ -112,7 +114,10 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   .tdItem {
     ${tw`text-center flex items-center justify-center sm:w-[30%]`}
   }
-
+  .rotate270 {
+    ${tw`!flex !w-[5%] !justify-center !items-center`}
+    rotate: 270deg;
+  }
   .index {
     ${tw`sm:w-[5%] flex items-center ml-[6px]`}
   }
@@ -141,14 +146,14 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
   .borderRow {
     border-radius: 20px 0px 0px 25px;
-    ${tw`w-[25%] pr-[10%] cursor-pointer`}
+    ${tw`w-[25%] flex pl-1 !justify-start cursor-pointer`}
     @media(max-width: 500px) {
       ${tw`w-[42%] h-[52px] pr-0`}
     }
   }
 
   .borderRow2 {
-    ${tw`w-[5%] dark:text-black-2 text-grey-1`}
+    ${tw`w-[5%] dark:text-black-2 text-grey-1 !flex !justify-end pt-4 !items-center`}
 
     @media (max-width: 500px) {
       ${tw`w-[26%] h-[52px]`}
@@ -159,7 +164,7 @@ export const SEARCH_RESULT_CONTAINER = styled.div`
   ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-8 py-3 border-solid border-grey-3 rounded-[10px]`}
   box-shadow: -3px 9px 8px 0 rgba(0, 0, 0, 0.2);
   background: ${({ theme }) => theme.bg20};
-  ${({ theme }) => theme.customScrollBar('4px')};
+  ${({ theme }) => theme.customScrollBar('1px')};
 
   overflow-y: scroll;
   .searchResultRow {

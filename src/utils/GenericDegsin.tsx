@@ -124,7 +124,7 @@ export const GenericTooltip: FC<{ text: string; children?: any }> = ({ text, chi
     )
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
-      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+      <Tooltip dark placement="topLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
         <span>{text}</span>
       </Tooltip>
     )

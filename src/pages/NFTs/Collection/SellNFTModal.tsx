@@ -12,7 +12,7 @@ import {
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
-import { checkMobile, formatSOLNumber, notify } from '../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
@@ -62,14 +62,22 @@ import 'styled-components/macro'
 const TEN_MILLION = 10000000
 
 import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
-import { couldNotFetchNFTMetaData, TransactionSignatureErrorNotify } from './AggModals/AggNotifications'
+import {
+  couldNotFetchNFTMetaData,
+  successfulListingMsg,
+  TransactionSignatureErrorNotify
+} from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { web3 } from '@project-serum/anchor'
+import DelistNFTModal from './DelistNFTModal'
+import AcceptBidModal from './AcceptBidModal'
 
-export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
-  visible,
-  handleClose
-}): ReactElement => {
+export const SellNFTModal: FC<{
+  visible: boolean
+  handleClose: any
+  delistNFT?: boolean
+  acceptBid?: boolean
+}> = ({ visible, handleClose, delistNFT, acceptBid }): ReactElement => {
   const { connection, network } = useConnectionConfig()
   const { general, setGeneral, ask, nftMetadata, bids } = useNFTDetails()
   const highestBid = useMemo(() => {
@@ -82,6 +90,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       })
     }
   }, [bids])
+
   const bidPrice = useMemo(
     () => (highestBid ? parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0),
     [highestBid]
@@ -136,17 +145,6 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     []
   )
 
-  const successfulListingMsg = (signature: any, nftMetadata: any, price: string) => ({
-    message: (
-      <SuccessfulListingMsg
-        title={`Successfully listed ${nftMetadata.name}!`}
-        itemName={nftMetadata.name}
-        supportText={`My price: ${price}`}
-        tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
-      />
-    )
-  })
-
   const attemptConfirmTransaction = async (signature: any): Promise<void> => {
     try {
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
@@ -154,7 +152,9 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
       // successfully list nft
       if (confirm.value.err === null) {
         setIsLoading(false)
-        notify(successfulListingMsg(signature, nftMetadata, askPrice.toFixed(2)))
+        if (isSellingNow)
+          notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
+        else notify(successfulListingMsg('listed', signature, nftMetadata, askPrice.toFixed(2)))
         setTimeout(() => handleClose(false), 1000)
       } else {
         handleTxError(nftMetadata.name, '')
@@ -392,7 +392,7 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     transaction.add(sellIX)
 
     if (isSellingNow) {
-      const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
+      const { programAsSignerPDA } = await derivePDAForExecuteSale()
       const {
         metaDataAccount,
         escrowPaymentAccount,
@@ -515,6 +515,25 @@ export const SellNFTModal: FC<{ visible: boolean; handleClose: any }> = ({
     }
   }
   const nftID = general?.nft_name.split('#')[1]
+  if (acceptBid)
+    return (
+      <AcceptBidModal
+        visible={visible}
+        bidPrice={bidPrice}
+        closeTheModal={closeTheModal}
+        isLoading={isLoading}
+        callSellInstruction={callSellInstruction}
+      />
+    )
+  if (delistNFT)
+    return (
+      <DelistNFTModal
+        visible={visible}
+        closeTheModal={closeTheModal}
+        isDelistLoading={isDelistLoading}
+        callDelistInstruction={callDelistInstruction}
+      />
+    )
 
   return (
     <STYLED_POPUP_BUY_MODAL
