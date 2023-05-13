@@ -29,6 +29,7 @@ export const Tooltip: FC<{
   children: ReactNode
   notInherit?: boolean
   title?: string
+  overlayClassName?: string
 }> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children, notInherit, infoIcon = true, title }) => {
   const { mode } = useDarkMode()
 
