@@ -180,7 +180,7 @@ const ImageViewer = (): ReactElement => {
   }, [])
 
   return general ? (
-    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[15px]">
+    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[30px]">
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <ImageShowcase
           setShowSingleNFT={() => {

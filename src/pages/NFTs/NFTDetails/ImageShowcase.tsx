@@ -33,6 +33,7 @@ const LEFT_SECTION = styled.div`
 
     .ls-image {
       border-radius: 20px;
+      object-fit: cover;
       box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
     }
 
@@ -108,7 +109,7 @@ export const ImageShowcase: FC<{ setShowSingleNFT?: any; setShowAcceptBidModal?:
   const { general, nftMetadata, bids } = useNFTDetails()
   const highestBid: number = useMemo(
     () =>
-      bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : 0,
+      bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : -1,
     [bids]
   )
 
@@ -128,7 +129,13 @@ export const ImageShowcase: FC<{ setShowSingleNFT?: any; setShowAcceptBidModal?:
         </div>
       )}
       <div tw="w-[390px] h-[390px]">
-        <img className="ls-image" height={'100%'} src={general?.image_url || nftMetadata?.image} alt="the-nft" />
+        <img
+          className="ls-image"
+          height={'100%'}
+          width={'100%'}
+          src={general?.image_url || nftMetadata?.image}
+          alt="the-nft"
+        />
       </div>
     </LEFT_SECTION>
   ) : (

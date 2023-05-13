@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, ReactElement, useMemo, useState } from 'react'
+import { FC, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -12,6 +12,7 @@ import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-white dark:bg-black-1`}
@@ -179,7 +180,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
 
-  const handleModal = () => {
+  const handleModal = useCallback(() => {
     if (profileModal) {
       return <PopupProfile visible={profileModal} setVisible={setProfileModal} handleCancel={handleCancel} />
     } else if (shareModal) {
@@ -194,7 +195,8 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
     } else {
       return false
     }
-  }
+  }, [profileModal, shareModal])
+
   const validExternalLink = (url: string): string => {
     if (url.includes('https://') || url.includes('http://')) {
       return url
@@ -400,7 +402,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             <div>Wallet Ballance</div>
             <span>{userSol ? userSol : '0.00'}</span>
             <span className="sol">SOL</span>
-            <img src="/img/crypto/sol.png" alt="sol-icon" />
+            <img src="/img/crypto/SOL.png" alt="sol-icon" />
           </SOL>
         ) : (
           <div tw="h-20"> </div>

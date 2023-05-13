@@ -88,7 +88,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             <div tw="mr-6">
               <PriceWithToken
                 token="SOL"
-                cssStyle={tw`h-[18px] w-[18px]`}
+                cssStyle={tw`h-[18px] w-[18px] ml-auto`}
                 price={parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
               />
               <div>{((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
@@ -119,7 +119,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
           <div tw="mr-2">
             <PriceWithToken
               token="SOL"
-              cssStyle={tw`h-[18px] w-[18px]`}
+              cssStyle={tw`h-[18px] w-[18px] ml-auto`}
               price={parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
             />
             <div>{((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
