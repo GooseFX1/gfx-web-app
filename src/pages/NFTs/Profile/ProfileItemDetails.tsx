@@ -11,6 +11,7 @@ import { checkMobile } from '../../../utils'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const ProfileItemDetails: FC<{
   visible: boolean
@@ -28,13 +29,21 @@ export const ProfileItemDetails: FC<{
   setShowAcceptBidModal
 }): JSX.Element => {
   const { ask, bids, general } = useNFTDetails()
-  const { setBidNow, setBuyNow } = useNFTAggregator()
+  const { setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
+  const { wallet } = useWallet()
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const elem = document.getElementById('nft-profile-container') //TODO-PROFILE: Stop background scroll
   const currentAsk: number | null = useMemo(
     () => (ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null),
     [ask]
   )
+  const myBid = useMemo(() => {
+    if (bids.length > 0) {
+      return bids.filter((bid) => bid.wallet_key === pubKey.toString())
+    }
+    return null
+  }, [bids])
 
   const isOwner: boolean = useMemo(() => {
     // if (props.userId) return true
@@ -98,14 +107,25 @@ export const ProfileItemDetails: FC<{
           </>
         ) : (
           <>
-            <Button
-              height="56px"
-              width={ask ? '185px' : '100%'}
-              cssStyle={tw`bg-blue-1 mr-2`}
-              onClick={() => setBidNow(general)}
-            >
-              <span tw="text-regular font-semibold text-white">Bid</span>
-            </Button>
+            {myBid ? (
+              <Button
+                height="56px"
+                width={ask ? '185px' : '100%'}
+                cssStyle={tw`bg-red-2 mr-2`}
+                onClick={() => setCancelBidClicked(general)}
+              >
+                <span tw="text-regular font-semibold text-white">Cancel Bid</span>
+              </Button>
+            ) : (
+              <Button
+                height="56px"
+                width={ask ? '185px' : '100%'}
+                cssStyle={tw`bg-blue-1 mr-2`}
+                onClick={() => setBidNow(general)}
+              >
+                <span tw="text-regular font-semibold text-white">Bid</span>
+              </Button>
+            )}
             {ask && (
               <Button
                 height="56px"

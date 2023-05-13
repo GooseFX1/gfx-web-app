@@ -29,6 +29,7 @@ import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+import CancelBidModal from '../Collection/CancelBidModal'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -95,7 +96,8 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
-  const { searchInsideProfile } = useNFTAggregatorFilters()
+  const { searchInsideProfile, profileNFTOptions } = useNFTAggregatorFilters()
+  const { cancelBidClicked } = useNFTAggregator()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
   const [loading, _setLoading] = useState<boolean>(false)
@@ -104,7 +106,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [nftFilter, setNftFilter] = useState<number>(0)
   const { general, nftMetadata } = useNFTDetails()
   const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
-  const { profileNFTOptions } = useNFTAggregatorFilters()
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
@@ -178,8 +179,9 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
+    if (cancelBidClicked) return <CancelBidModal />
     if (gfxAppraisalPopup) return <GFXApprisalPopup setShowTerms={setGfxAppraisal} showTerms={gfxAppraisalPopup} />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata, gfxAppraisalPopup])
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, gfxAppraisalPopup, cancelBidClicked])
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>

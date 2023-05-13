@@ -74,15 +74,15 @@ const AcceptBidModal: FC<{
         <div className="cancelText" tw="!bottom-[58px] absolute" onClick={closeTheModal}>
           Cancel
         </div>
-        <TermsText />
+        <TermsTextNFT string="Accept" />
       </div>
     </STYLED_POPUP_BUY_MODAL>
   )
 }
 
-const TermsText = (): ReactElement => (
+export const TermsTextNFT: FC<{ string }> = ({ string }): ReactElement => (
   <div className="termsText" tw="absolute bottom-4">
-    By clicking ¨Accept¨, you agree to the <strong> Terms of Service.</strong>
+    By clicking ¨{string}¨, you agree to the <strong> Terms of Service.</strong>
   </div>
 )
 
