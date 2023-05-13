@@ -52,20 +52,16 @@ const SwapVolume: FC = () => {
       <GradientText fontSize={28} fontWeight={600} text={'Swap Volume'} />
       <div style={{ display: 'flex' }}>
         <CARD>
-          Day :{' '}
-          {swapData?.totalVolumeTradeDay && moneyFormatterWithComma(swapData?.totalVolumeTradeDay.toFixed(2), '$')}
+          Day : {swapData?.totalVolumeTradeDay && moneyFormatterWithComma(swapData?.totalVolumeTradeDay, '$', 2)}
         </CARD>
         <CARD>
-          week :{' '}
-          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeWeek.toFixed(2), '$')}
+          week : {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeWeek, '$', 2)}
         </CARD>
         <CARD>
-          month :{' '}
-          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeMonth.toFixed(2), '$')}
+          month : {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTradeMonth, '$', 2)}
         </CARD>
         <CARD>
-          Total Swap :
-          {swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTrade.toFixed(2), '$')}
+          Total Swap :{swapData?.totalVolumeTrade && moneyFormatterWithComma(swapData?.totalVolumeTrade, '$', 2)}
         </CARD>
       </div>
       <SwapVolumeChart data={swapDataGraph} />

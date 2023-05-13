@@ -23,7 +23,7 @@ export const TotalLiquidityVolume: FC = () => {
         <span>
           <GradientText text={'Stake Volume'} fontSize={20} fontWeight={500} /> :
           {farmData ? (
-            ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.stakeVolume?.toFixed(2))
+            ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.stakeVolume, '', 2)
           ) : (
             <a href="/farm"> If not loading..Please load farm page </a>
           )}{' '}
@@ -31,15 +31,13 @@ export const TotalLiquidityVolume: FC = () => {
         <br />
         <span>
           <GradientText text={'SSL Volume'} fontSize={20} fontWeight={500} /> :
-          {farmData
-            ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.sslVolume?.toFixed(2))
-            : 'Loading...'}{' '}
+          {farmData ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.sslVolume, '', 2) : 'Loading...'}{' '}
         </span>{' '}
         <br />
         <span>
           <GradientText text={'Farm TVL'} fontSize={20} fontWeight={500} /> :
           {farmData
-            ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.totalVolume?.toFixed(2))
+            ? ` $ ` + moneyFormatterWithComma(farmData?.aggregatedVolume?.totalVolume, '', 2)
             : ' Loading...'}{' '}
         </span>
       </h5>

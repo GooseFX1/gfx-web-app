@@ -23,7 +23,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { formatSOLDisplay, notify, capitalizeFirstLetter } from '../../../utils'
+import { formatSOLDisplay, notify, capitalizeFirstLetter, commafy } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -125,11 +125,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     e.stopPropagation()
     e.preventDefault()
   }
+
   const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC']?.current
-  const nftNativePrice = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
-  let displayPrice = currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice
-  displayPrice = parseFloat(displayPrice.toFixed(2))
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+  const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
+  const displayPrice: number = useMemo(
+    () => (currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice),
+    [currencyView, nftNativePrice, solPrice]
+  )
 
   const handleAppraisalPopup = useCallback(() => {
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
@@ -208,7 +211,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           )}
 
           <div className="nftPrice">
-            {localAsk && <PriceWithToken price={displayPrice} token={currencyView} />}
+            {localAsk && (
+              <PriceWithToken price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)} token={currencyView} />
+            )}
             {localAsk === null && <span tw="dark:text-grey-3 text-grey-4 font-semibold">Not Listed</span>}
           </div>
           <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>

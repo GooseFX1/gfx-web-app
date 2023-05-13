@@ -12,7 +12,7 @@ import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { moneyFormatter } from '../../../utils'
+import { moneyFormatter, commafy } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
 import {
   useNFTProfile,
@@ -183,8 +183,8 @@ export const Card: FC<ICard> = (props) => {
   //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
   const dynamicPriceValue = useCallback(
     (value: number) => {
-      if (currencyView === 'USDC') return `${(value * solPrice).toFixed(2)}`
-      return `${value.toFixed(2)}`
+      const price = currencyView === 'USDC' ? value * solPrice : value
+      return commafy(price, price % 1 !== 0 ? 2 : 0)
     },
     [currencyView, solPrice]
   )
