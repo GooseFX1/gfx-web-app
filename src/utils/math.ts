@@ -62,10 +62,11 @@ export const percentFormatter = (number: number): string => {
   if (!isNotEmpty(number)) return '0'
   return number.toFixed(0) + '%'
 }
-function commafy(num, decimal) {
-  let str: any = parseFloat(num).toFixed(decimal)
+export const commafy = (num: number, decimal: number): string => {
+  let str: any = num.toFixed(decimal)
   str = str.toString().split('.')
-  if (str[0].length >= 5) {
+
+  if (str[0].length >= 3) {
     str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,')
   }
   if (str[1] && str[1].length >= 5) {
