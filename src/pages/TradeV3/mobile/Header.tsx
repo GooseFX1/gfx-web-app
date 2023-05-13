@@ -1,49 +1,36 @@
-/* eslint-disable */
-import { useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DropdownPairs } from '../DropdownPairs'
 import { useCrypto, useOrderBook, usePriceFeed } from '../../../context'
 import { getPerpsPrice } from '../perps/utils'
-import { Loader } from '../../../components'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../NFTs/Skeleton/SkeletonCommon'
 
 const HEADER = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 10px;
-
+  ${tw`flex flex-row justify-between m-2.5 `}
   .up24h {
-    color: #50bb35;
+    ${tw`text-green-3`}
   }
   .down24h {
-    color: #f06565;
+    ${tw`text-red-1`}
   }
   .change-icn {
-    margin-right: 4px;
+    ${tw`mr-1`}
   }
   .ant-drawer-body {
-    padding: 0;
+    ${tw`p-0`}
   }
   .open-orders {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    font-weight: 600;
-    font-size: 13px;
-    color: #ffffff;
-    height: 18px;
-    width: 18px;
+    ${tw`flex flex-row items-center justify-center absolute top-[-5px] right-[-5px] 
+    font-semibold text-tiny h-[18px] w-[18px] rounded-circle text-white`}
     background: linear-gradient(127.87deg, #f7931a 9.69%, #dc1fff 111.25%);
-    text-align: center;
-    border-radius: 50%;
   }
 `
 
-export const Header = () => {
+export const Header: FC = () => {
   const { connected, wallet } = useWallet()
   const { selectedCrypto, isSpot } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
@@ -96,7 +83,8 @@ export const Header = () => {
                 onClick={() => {
                   setUserProfile(true)
                 }}
-                tw="h-10 w-10 rounded-circle flex items-center justify-center border-[#cacaca] border border-solid text-grey-4 mr-2.5 font-semibold relative"
+                tw="h-10 w-10 rounded-circle flex items-center justify-center border-[1.5px] 
+                border-solid border-grey-4 dark:text-grey-2 text-black-4 mr-2.5 font-semibold relative"
               >
                 {publicKeyUi}{' '}
                 {!isSpot && (
@@ -107,7 +95,7 @@ export const Header = () => {
             <DropdownPairs />
           </div>
           <div tw="flex flex-col">
-            <span tw="text-lg text-grey-5 font-semibold">$ {tokenPrice}</span>
+            <span tw="text-lg dark:text-grey-5 text-black-4 font-semibold">$ {tokenPrice}</span>
             <div tw="flex flex-row items-center">
               {classNameChange === 'up24h' ? (
                 <img className="change-icn" src="/img/assets/24hourup.png" height="10" alt="up-icon" />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios'
 
 export default function useBlacklisted(): boolean {
@@ -33,7 +33,9 @@ export default function useBlacklisted(): boolean {
       })
   }
 
-  setCountry()
+  useEffect(() => {
+    setCountry()
+  }, [])
 
   return blacklisted
 }

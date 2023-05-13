@@ -193,3 +193,5 @@ export const parseUnixTimestamp = (unixTime: string): string => {
   date.setUTCSeconds(Number(unixTime))
   return date.toLocaleString('en-US', { timeZone: 'UTC' })
 }
+
+export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)

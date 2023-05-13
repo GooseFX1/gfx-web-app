@@ -7,6 +7,7 @@ import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'
+import useBlacklisted from '../../utils/useBlacklisted'
 
 const SELECTED_PAIR_CTN = styled.div`
   ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
@@ -37,7 +38,7 @@ const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
   }
   .spacing {
     ${tw`mr-auto text-regular font-semibold`}
-    color: ${({ theme }) => theme.text11};
+    color: ${({ theme }) => theme.text32};
   }
 `
 
@@ -55,7 +56,6 @@ const DROPDOWN_MODAL = styled(Modal)`
         ${tw`pb-3`}
         border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       }
-
       > div {
         > span {
           ${tw`w-full`}
@@ -67,7 +67,6 @@ const DROPDOWN_MODAL = styled(Modal)`
   .dropdown-modal-search {
     ${tw`w-[440px] m-0 sm:w-full`}
     background-color: ${({ theme }) => theme.bg2} !important;
-
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
     }
@@ -75,7 +74,6 @@ const DROPDOWN_MODAL = styled(Modal)`
       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
     }
   }
-
   .popular {
     ${tw`font-semibold text-regular my-2.5 mx-2`}
     color: ${({ theme }) => theme.text11};
@@ -96,7 +94,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .popular-tokens {
-    ${tw`rounded-[27px] flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
+    ${tw`rounded-half flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
     background: ${({ theme }) => theme.bg2};
     border: 1.5px solid ${({ theme }) => theme.tokenBorder};
 
@@ -105,7 +103,7 @@ const DROPDOWN_MODAL = styled(Modal)`
     }
 
     .pair {
-      ${tw`font-semibold text-tiny`}
+      ${tw`font-semibold text-regular`}
       color: ${({ theme }) => theme.text11};
     }
   }
@@ -124,12 +122,11 @@ const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
 
 const MODAL_TITLE = styled.div`
   ${tw`flex flex-row justify-center items-center`}
-
   .btn {
     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
   }
   .active {
-    ${tw`!text-white w-[90px] h-9 text-regular font-semibold border border-solid border-black rounded-[40px]`}
+    ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
   }
 `
@@ -192,10 +189,8 @@ const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setSh
 
 const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
   const { tokenInfo } = usePriceFeed()
-  const { formatPair, getAskSymbolFromPair } = useCrypto()
+  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const [hoverBorder, setHoverBorder] = useState<boolean>(false)
-
-  const formattedPair = useMemo(() => formatPair(pair), [formatPair, pair])
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
 
@@ -205,11 +200,11 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
-    <GRADIENT_BORDER $hoverBorder={hoverBorder}>
+    <GRADIENT_BORDER $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}>
       <DROPDOWN_PAIR_DIV
         onMouseEnter={() => setHoverBorder(true)}
         onMouseLeave={() => setHoverBorder(false)}
-        $hoverBorder={hoverBorder}
+        $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}
       >
         <img className="asset-icon" src={assetIcon} alt="" />
         <div className="spacing">{pair}</div>
@@ -231,6 +226,7 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   const { isSpot, setIsSpot } = useCrypto()
+  const isGeoBlocked = useBlacklisted()
 
   const handleToggle = (e: string) => {
     if (e === 'spot') setIsSpot(true)
@@ -243,7 +239,10 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
         <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
           Spot
         </div>
-        <div onClick={() => handleToggle('perps')} className={!isSpot ? 'active btn' : 'btn'}>
+        <div
+          onClick={isGeoBlocked ? null : () => handleToggle('perps')}
+          className={!isSpot ? 'active btn' : 'btn'}
+        >
           Perps
         </div>
       </MODAL_TITLE>

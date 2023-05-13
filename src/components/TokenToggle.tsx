@@ -35,7 +35,7 @@ const ICON = styled(CenteredDiv)`
 `
 
 const Toggle = styled(CenteredImg)<{ $mode: number }>`
-  ${tw`relative mx-[12px] h-[25px] w-[50px] rounded-[40px]`}
+  ${tw`relative mx-[12px] h-[25px] w-12.5 rounded-[40px]`}
 
   background: ${({ $mode }) =>
     $mode === 0

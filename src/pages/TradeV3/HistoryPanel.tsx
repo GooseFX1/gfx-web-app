@@ -457,11 +457,6 @@ export const HistoryPanel: FC = () => {
                 title={
                   <div tw="flex items-center">
                     <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                    {/*<img
-                      src="/img/assets/refresh.svg"
-                      alt="refresh-icon"
-                      tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
-                    />*/}
                   </div>
                 }
                 closeIcon={
@@ -557,7 +552,6 @@ export const HistoryPanel: FC = () => {
                   <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
                   <button onClick={handleClosePosition}>Close</button>
-                  {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}
                 </div>
               ) : (
                 <div className="no-positions-found">

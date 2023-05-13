@@ -1,5 +1,10 @@
-import React from 'react'
-import { ThemeProvider as StyledComponentsThemeProvider, css, DefaultTheme } from 'styled-components'
+import React, { useCallback } from 'react'
+import {
+  ThemeProvider as StyledComponentsThemeProvider,
+  css,
+  DefaultTheme,
+  createGlobalStyle
+} from 'styled-components'
 import { useDarkMode } from './context'
 import type { Colors, Text } from './types/theme'
 
@@ -425,41 +430,41 @@ export function theme(mode: string): DefaultTheme {
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
 
-      &::-webkit-scrollbar {
+      *::-webkit-scrollbar {
         width: ${size};
       }
 
-      &::-webkit-scrollbar-track {
+      *::-webkit-scrollbar-track {
         background: transparent;
       }
 
-      &::-webkit-scrollbar-thumb {
+      *::-webkit-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
       }
 
-      &::-moz-scrollbar {
+      *::-moz-scrollbar {
         width: ${size};
       }
 
-      &::-moz-scrollbar-track {
+      *::-moz-scrollbar-track {
         background: transparent;
       }
 
-      &::-moz-scrollbar-thumb {
+      *::-moz-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
       }
 
-      &::-ms-scrollbar {
+      *::-ms-scrollbar {
         width: ${size};
       }
 
-      &::-ms-scrollbar-track {
+      *::-ms-scrollbar-track {
         background: transparent;
       }
 
-      &::-ms-scrollbar-thumb {
+      *::-ms-scrollbar-thumb {
         background-color: ${({ theme }) => theme.scrollBarColor};
         border-radius: 20px;
       }
@@ -468,10 +473,59 @@ export function theme(mode: string): DefaultTheme {
     `
   }
 }
+const GlobalStyle = createGlobalStyle`
+      scrollbar-width: thin;
+      scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
 
+      *::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
+      }
+
+      *::-moz-scrollbar {
+        width: 4px;
+      }
+
+      *::-moz-scrollbar-track {
+        background: transparent;
+      }
+
+      *::-moz-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
+      }
+
+      *::-ms-scrollbar {
+        width: 4px;
+      }
+
+      *::-ms-scrollbar-track {
+        background: transparent;
+      }
+
+      *::-ms-scrollbar-thumb {
+        background-color: ${({ theme }) => theme.scrollBarColor};
+        border-radius: 20px;
+      }
+
+      -ms-overflow-style: none !important;
+`
 //eslint-disable-next-line
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { mode } = useDarkMode()
-
-  return <StyledComponentsThemeProvider theme={() => theme(mode)}>{children}</StyledComponentsThemeProvider>
+  const memoTheme = useCallback(() => theme(mode), [mode])
+  return (
+    <StyledComponentsThemeProvider theme={memoTheme}>
+      <GlobalStyle />
+      {children}
+    </StyledComponentsThemeProvider>
+  )
 }

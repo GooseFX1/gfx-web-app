@@ -73,7 +73,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .slick-prev,
   .slick-next {
-    ${tw`w-[50px] h-[50px] mr-8`}
+    ${tw`w-12.5 h-12.5 mr-8`}
     z-index: 200;
     &.slick-disabled {
       opacity: 0;

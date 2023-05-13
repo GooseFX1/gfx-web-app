@@ -47,11 +47,12 @@ const WRAPPER = styled.div`
 `
 
 const DROPDOWN_ITEMS = styled.div`
-  .green {
-    ${tw`text-[#80CE00]`}
+  .item {
+    color: ${({ theme }) => theme.text11};
   }
   > input[type='radio'] {
-    ${tw`appearance-none absolute right-3 h-[15px] w-[15px] bg-black-1 rounded-small cursor-pointer`}
+    ${tw`appearance-none absolute right-3 h-[15px] w-[15px] rounded-small cursor-pointer`}
+    background: ${({ theme }) => theme.bg22};
   }
   > input[type='radio']:checked:after {
     ${tw`rounded-small w-[9px] h-[9px] relative top-[-2px] left-[3px] inline-block`}
@@ -61,19 +62,20 @@ const DROPDOWN_ITEMS = styled.div`
 `
 
 const DROPDOWN_INPUT = styled.div`
-  ${tw`relative w-[135px] h-6 rounded-[5px] border border-solid border-grey-1 mx-[5px]`}
+  ${tw`relative w-[135px] h-6 rounded-tiny mx-[5px]`}
+  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   background: ${({ theme }) => theme.bg20};
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-  /* Firefox */
   input[type='number'] {
     -moz-appearance: textfield;
   }
   .dropdown-input {
-    ${tw`w-[70%] h-full pl-1 pr-2 rounded-[5px] py-[5px] text-grey-2 text-tiny font-semibold border-0`}
+    ${tw`w-[70%] h-full pl-1 pr-2 rounded-tiny py-[5px] text-tiny font-semibold border-0`}
+    color: ${({ theme }) => theme.text28};
     background: ${({ theme }) => theme.bg20};
     outline: none;
     ::placeholder {
@@ -87,8 +89,11 @@ const DROPDOWN_SAVE = styled.div`
     ${tw`text-tiny text-grey-1 font-semibold cursor-not-allowed absolute bottom-[10px] right-[10px] z-[100]`}
     pointer-events: none;
   }
-  &.save-enable {
+  &.save-enable.dark {
     ${tw`text-tiny text-white font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
+  }
+  &.save-enable.lite {
+    ${tw`text-tiny text-blue-1 font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
   }
 `
 
@@ -163,8 +168,7 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   ${tw`flex justify-center items-start flex-col h-full px-3`}
   width: ${({ $halfWidth }) => ($halfWidth ? '50%' : '100%')};
   .label {
-    ${tw`pb-1 text-tiny font-semibold`}
-    color: ${({ theme }) => theme.text37};
+    ${tw`pb-1 text-tiny font-semibold dark:text-grey-2 text-grey-1`}
   }
   img {
     height: 20px;
@@ -201,13 +205,11 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     border-color: ${({ theme }) => theme.tokenBorder};
     background: ${({ theme }) => theme.bg2};
     .green {
-      ${tw`text-[#80CE00]`}
-      width: 90%;
-      overflow-y: hidden;
-      text-align: left;
+      ${tw`text-green-3 w-[90%] text-left text-regular`}
     }
     .red {
-      ${tw`text-[#F35355]`}
+      ${tw`text-red-2 w-[90%] text-left text-regular`}
+      overflow-y: hidden;
     }
   }
   .dropdownContainer.lite {
@@ -216,9 +218,8 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
     }
   }
   .focus-border {
+    ${tw`rounded-tiny p-px`}
     background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-    border-radius: 5px;
-    padding: 1px;
   }
   .take-profit {
     ${tw`cursor-pointer border-[1.5px] border-solid border dark:border-grey-2 border-grey-1`}
@@ -315,6 +316,7 @@ const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string;
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
   width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
+  cursor: ${({ $action }) => ($action ? 'pointer' : 'not-allowed')};
 `
 
 const FEES = styled.div`
@@ -510,6 +512,7 @@ export const PlaceOrder: FC = () => {
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
       return ButtonState.CanPlaceOrder
     } else {
+      if (geoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
       if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
@@ -695,13 +698,11 @@ export const PlaceOrder: FC = () => {
     let items = []
     items = TAKE_PROFIT_ARRAY.map((item, index) => {
       const html = (
-        <DROPDOWN_ITEMS
-          className="dropdown-items"
-          tw="mb-2 flex flex-row px-[5px]"
-          onClick={() => calcTakeProfit(item.value, index)}
-        >
-          <span tw="mr-2 font-semibold text-tiny text-grey-5">{item.display}</span>
-          <span className="green" tw="font-semibold text-tiny mr-auto">
+        <DROPDOWN_ITEMS tw="mb-2 flex flex-row px-[5px]" onClick={() => calcTakeProfit(item.value, index)}>
+          <span className="item" tw="mr-2 font-semibold text-tiny text-grey-5">
+            {item.display}
+          </span>
+          <span tw="font-semibold text-tiny mr-auto text-green-3">
             {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
           </span>
           <input
@@ -735,7 +736,7 @@ export const PlaceOrder: FC = () => {
     })
     const saveBtnHTML = (
       <DROPDOWN_SAVE
-        className={checkDisabled() ? 'save-disable' : 'save-enable'}
+        className={checkDisabled() ? 'save-disable' : 'save-enable ' + `${mode}`}
         onClick={!checkDisabled() && handleSave}
       >
         Save
@@ -980,7 +981,7 @@ export const PlaceOrder: FC = () => {
             </ORDER_CATEGORY>
             <PLACE_ORDER_BUTTON
               $action={buttonState === ButtonState.CanPlaceOrder}
-              onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+              onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
               $orderSide={order.side}
               $isSpot={isSpot}
             >
@@ -1004,7 +1005,7 @@ export const PlaceOrder: FC = () => {
                   </span>
                   <ArrowDropdown
                     arrowRotation={takeProfitArrow}
-                    overlayClassName="takep-stopl-container"
+                    overlayClassName={`takep-stopl-container ${mode}`}
                     offset={[15, 15]}
                     onVisibleChange={null}
                     placement="bottomLeft"
@@ -1053,7 +1054,7 @@ export const PlaceOrder: FC = () => {
               </ORDER_CATEGORY>
               <PLACE_ORDER_BUTTON
                 $action={buttonState === ButtonState.CanPlaceOrder}
-                onClick={() => (isSpot ? placeOrder() : handlePlaceOrder())}
+                onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : handlePlaceOrder())}
                 $orderSide={order.side}
                 $isSpot={isSpot}
               >

@@ -26,6 +26,11 @@ const WRAPPER = styled.div`
       top: 15px;
       right: 15px;
     }
+    .lite {
+      .arrow-icon {
+        filter: invert(28%) sepia(88%) saturate(1781%) hue-rotate(230deg) brightness(99%) contrast(105%);
+      }
+    }
   }
   .heart-icon {
     ${tw`ml-2`}
@@ -46,7 +51,7 @@ const WRAPPER = styled.div`
     ${tw`mr-4`}
   }
   .green {
-    ${tw`bg-green-2`}
+    ${tw`bg-green-3`}
   }
   .red {
     ${tw`bg-red-1`}
@@ -78,7 +83,7 @@ const WRAPPER = styled.div`
 `
 
 const SELECTOR = styled.div`
-  ${tw`w-[40vw] h-20 rounded-[5px] pt-2 pb-3 pl-2.5`}
+  ${tw`w-[40vw] h-20 rounded-tiny pt-2 pb-3 pl-2.5`}
   border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg20};
   > div {
@@ -230,10 +235,10 @@ export const CollateralPanelMobi = ({ setUserProfile }) => {
     <WRAPPER>
       <div tw="flex flex-row justify-evenly items-center mt-2.5 mb-3.75">
         {connected && publicKey && (
-          <div tw="dark:text-grey-2 text-black-4 font-semibold text-average ml-[-30px]">{publicKeyUi}</div>
+          <div tw="dark:text-grey-2 text-black-4 font-semibold text-average ml-[-45px]">{publicKeyUi}</div>
         )}
         <div className="deposit-wrapper" onClick={handleDropdownClick}>
-          <div className="white-background">
+          <div className={`white-background ${mode}`}>
             <div className="deposit-btn">{collateralPanelInfo}</div>
             <ArrowDropdown
               arrowRotation={arrowRotation}
@@ -299,7 +304,7 @@ export const CollateralPanelMobi = ({ setUserProfile }) => {
             <div className="health-icon">
               <span className="key">Leverage</span>
             </div>
-            <span className="value">{sliderValue}</span>
+            <span className="value">{sliderValue ? sliderValue : '-'}</span>
           </ACCOUNT_ROW>
         </div>
       ) : (

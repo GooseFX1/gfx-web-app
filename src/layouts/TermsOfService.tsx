@@ -56,7 +56,7 @@ const CONFIRM = styled.div`
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
-  ${tw`h-[50px] w-[60%] rounded-circle border-none`}
+  ${tw`h-12.5 w-[60%] rounded-circle border-none`}
   background-color: ${({ theme }) => theme.bg22};
   background-image: ${({ theme, checked }) =>
     checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};

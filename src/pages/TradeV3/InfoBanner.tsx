@@ -203,7 +203,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
-  const geoBlocked = useBlacklisted()
+  const isGeoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const { height, width } = useWindowSize()
@@ -313,9 +313,9 @@ export const InfoBanner: FC<{
             Spot
           </span>
           <span
-            className={'perps toggle ' + (geoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
+            className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
             key="perps"
-            onClick={geoBlocked ? null : () => handleToggle('perps')}
+            onClick={isGeoBlocked ? null : () => handleToggle('perps')}
           >
             Perps
           </span>
@@ -394,7 +394,7 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {isSpot && geoBlocked && (
+      {isSpot && isGeoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
           <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
