@@ -103,6 +103,7 @@ export const couldNotFetchUserData = (): any =>
       </MESSAGE>
     )
   })
+
 export const successfulCancelBidMessage = (signature: string, nftMetadata: string): any => ({
   message: (
     <SuccessfulListingMsg
@@ -127,6 +128,16 @@ export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMet
   message: (
     <SuccessfulListingMsg
       title={`Your bid matched!`}
+      itemName={nftMetadata.name}
+      supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+      tx_url={`https://solscan.io/tx/${signature} `}
+    />
+  )
+})
+export const successBidRemovedMsg = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
+  message: (
+    <SuccessfulListingMsg
+      title={`Bid Removed Successfully!`}
       itemName={nftMetadata.name}
       supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
       tx_url={`https://solscan.io/tx/${signature} `}

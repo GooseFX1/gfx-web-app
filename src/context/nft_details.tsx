@@ -14,6 +14,7 @@ import {
   IMetadataContext,
   INFTGeneralData
 } from '../types/nft_details.d'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
@@ -24,7 +25,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [bids, setBids] = useState<INFTBid[]>([])
   const [ask, setAsk] = useState<INFTAsk>()
+  const [myBidToNFT, setMyBidToNFT] = useState<INFTBid[] | undefined>([])
   const [totalLikes, setTotalLikes] = useState<number | null>(null)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const reducer = (state, newState) => ({ ...state, ...newState })
   const [userInput, setUserInput] = useReducer(reducer, {
@@ -68,6 +72,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
       setGeneral({ ...nft.data[0], ...accountInfo })
       setBids(nft.bids)
+      if (publicKey) {
+        const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+        setMyBidToNFT(myBid)
+      }
       setAsk(nft.asks.length > 0 ? nft.asks[0] : undefined)
       setTotalLikes(nft.total_likes)
       return res
@@ -201,6 +209,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         setNftMetadata,
         bids,
         setBids,
+        myBidToNFT,
+        setMyBidToNFT,
         bidOnSingleNFT,
         curHighestBid,
         removeBidOnSingleNFT,
@@ -249,6 +259,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     sellNFT: context.sellNFT,
     removeNFTListing: context.removeNFTListing,
     totalLikes: context.totalLikes,
-    setTotalLikes: context.setTotalLikes
+    setTotalLikes: context.setTotalLikes,
+    myBidToNFT: context.myBidToNFT,
+    setMyBidToNFT: context.setMyBidToNFT
   }
 }

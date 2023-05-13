@@ -100,13 +100,13 @@ const LEFT_SECTION = styled.div`
 `
 //#endregion
 
-export const ImageShowcase: FC<{ setShowSingleNFT?: any; setShowAcceptBidModal?: any; isOwner?: boolean }> = ({
-  setShowSingleNFT,
-  isOwner,
-  setShowAcceptBidModal,
-  ...rest
-}) => {
+export const ImageShowcase: FC<{
+  setShowSingleNFT?: any
+  setShowAcceptBidModal?: any
+  isOwner?: boolean
+}> = ({ setShowSingleNFT, isOwner, setShowAcceptBidModal, ...rest }) => {
   const { general, nftMetadata, bids } = useNFTDetails()
+
   const highestBid: number = useMemo(
     () =>
       bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : -1,
@@ -128,6 +128,7 @@ export const ImageShowcase: FC<{ setShowSingleNFT?: any; setShowAcceptBidModal?:
           Accept Highest Bid {highestBid} SOL
         </div>
       )}
+
       <div tw="w-[390px] h-[390px]">
         <img
           className="ls-image"

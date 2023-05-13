@@ -154,6 +154,8 @@ export interface INFTDetailsConfig {
   nftMetadata: INFTMetadata
   setNftMetadata: Dispatch<SetStateAction<INFTMetadata>>
   bids: INFTBid[]
+  myBidToNFT?: INFTBid[]
+  setMyBidToNFT?: (b: INFTBid[]) => void
   setBids: (b: INFTBid[]) => void
   bidOnSingleNFT: any
   curHighestBid: INFTBid | undefined

@@ -1,7 +1,7 @@
 import { FC, ReactElement, useEffect, useMemo, useState, useCallback } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Col, Drawer, Row, Tabs } from 'antd'
-import { INFTAsk } from '../../../types/nft_details'
+import { INFTAsk, INFTBid } from '../../../types/nft_details'
 
 import { Button } from '../../../components/Button'
 import { useNFTProfile, useNFTAggregator, useNFTDetails } from '../../../context'
@@ -168,7 +168,7 @@ export const DetailViewNFT: FC = (): JSX.Element => {
 
 const ImageViewer = (): ReactElement => {
   const [activeTab, setActiveTab] = useState('1')
-  const { general, setNftMetadata, ask, setGeneral } = useNFTDetails()
+  const { general, ask, setGeneral } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
@@ -252,9 +252,9 @@ const ImageViewer = (): ReactElement => {
 export const ButtonContainer = (): ReactElement => {
   const { ask } = useNFTDetails()
   const { wallet } = useWallet()
-  const { setSellNFT, setBidNow, setBuyNow } = useNFTAggregator()
+  const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
   const pubKey = wallet?.adapter?.publicKey
-  const { general } = useNFTDetails()
+  const { general, bids } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const isOwner: boolean = useMemo(() => {
     if (ask && pubKey) {
@@ -281,6 +281,12 @@ export const ButtonContainer = (): ReactElement => {
     }
     setBuyNow(general)
   }
+  const myBid = useMemo(() => {
+    if (bids.length > 0) {
+      return bids.filter((bid) => bid.wallet_key === pubKey.toString())
+    }
+    return null
+  }, [bids])
 
   return (
     <div
@@ -315,14 +321,25 @@ export const ButtonContainer = (): ReactElement => {
         </>
       ) : (
         <>
-          <Button
-            height="56px"
-            width={ask ? '185px' : '100%'}
-            cssStyle={tw`bg-blue-1 mr-2`}
-            onClick={() => setBidNow(general)}
-          >
-            <span tw="text-regular font-semibold text-white">Bid</span>
-          </Button>
+          {myBid ? (
+            <Button
+              height="56px"
+              width={ask ? '185px' : '100%'}
+              cssStyle={tw`bg-red-2 mr-2`}
+              onClick={() => setCancelBidClicked(general)}
+            >
+              <span tw="text-regular font-semibold text-white">Cancel Bid</span>
+            </Button>
+          ) : (
+            <Button
+              height="56px"
+              width={ask ? '185px' : '100%'}
+              cssStyle={tw`bg-blue-1 mr-2`}
+              onClick={() => setBidNow(general)}
+            >
+              <span tw="text-regular font-semibold text-white">Bid</span>
+            </Button>
+          )}
           {ask && (
             <Button
               height="56px"

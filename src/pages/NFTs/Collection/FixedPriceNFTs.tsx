@@ -17,14 +17,23 @@ import { debounce } from '../../../utils'
 import NoContent from '../Profile/NoContent'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
+import CancelBidModal from './CancelBidModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
-  const { buyNowClicked, bidNowClicked, setNftInBag, setSellNFT, sellNFTClicked, openJustModal, refreshClicked } =
-    useNFTAggregator()
+  const {
+    buyNowClicked,
+    bidNowClicked,
+    setNftInBag,
+    setSellNFT,
+    sellNFTClicked,
+    openJustModal,
+    refreshClicked,
+    cancelBidClicked
+  } = useNFTAggregator()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const {
     singleCollection,
@@ -153,8 +162,9 @@ export const FixedPriceNFTs = (): ReactElement => {
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
+    if (cancelBidClicked) return <CancelBidModal />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [buyNowClicked, bidNowClicked, sellNFTClicked])
+  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
 
