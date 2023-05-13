@@ -4,9 +4,6 @@ import { createContext, ReactNode, useContext, useState, FC, useEffect, SetState
 import { ICreatorData } from '../types/nft_launchpad'
 
 interface INFTAggConfig {
-  sortingAsc: boolean
-  nftCollections: any[]
-  setSortAsc: any
   setBuyNow: Dispatch<SetStateAction<any>>
   setBidNow: Dispatch<SetStateAction<any>>
   setOpenJustModal: Dispatch<SetStateAction<any>>
@@ -29,8 +26,6 @@ interface INFTAggConfig {
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [sortingAsc, setSortAsc] = useState<boolean>(true)
-  const [nftCollections, setCollections] = useState<any[]>([])
   const [nftInBag, setNftInBag] = useState<any[]>([])
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
@@ -45,18 +40,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
   }
 
-  useEffect(() => {
-    const sortedData = [...nftCollections]
-    sortedData.sort((a, b) => (sortingAsc ? a.nftPrice - b.nftPrice : b.nftPrice - a.nftPrice))
-    sortedData.length && setCollections(sortedData)
-  }, [sortingAsc])
-
   return (
     <NFTAggContext.Provider
       value={{
-        sortingAsc: sortingAsc,
-        setSortAsc: setSortAsc,
-        nftCollections: nftCollections,
         buyNowClicked: buyNowClicked,
         bidNowClicked: bidNowClicked,
         setBidNow: setBidNow,
@@ -90,9 +76,6 @@ export const useNFTAggregator = (): INFTAggConfig => {
   }
 
   return {
-    sortingAsc: context.sortingAsc,
-    setSortAsc: context.setSortAsc,
-    nftCollections: context.nftCollections,
     buyNowClicked: context.buyNowClicked,
     setBidNow: context.setBidNow,
     bidNowClicked: context.bidNowClicked,

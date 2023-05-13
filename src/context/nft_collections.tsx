@@ -7,7 +7,8 @@ import {
   NFTCollection,
   CollectionOwner,
   NFTFeaturedCollection,
-  NFTUpcomingCollection
+  NFTUpcomingCollection,
+  CollectionSort
 } from '../types/nft_collections.d'
 import { httpClient } from '../api'
 import {
@@ -29,6 +30,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [featuredCollections, setFeaturedCollections] = useState<NFTFeaturedCollection[]>([])
   const [upcomingCollections, setUpcomingCollections] = useState<NFTUpcomingCollection[]>([])
   const [nftMenuPopup, setNFTMenuPopup] = useState<boolean>(false)
+  const [collectionSort, setCollectionSort] = useState<CollectionSort>('ASC')
 
   //eslint-disable-next-line
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
@@ -162,7 +164,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         fixedPriceWithinCollection,
         openBidWithinCollection,
         nftMenuPopup,
-        setNFTMenuPopup
+        setNFTMenuPopup,
+        collectionSort,
+        setCollectionSort
       }}
     >
       {children}
@@ -178,28 +182,5 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     throw new Error('Missing NFT collection context')
   }
 
-  return {
-    allCollectionLoading: context.allCollectionLoading,
-    allCollections: context.allCollections,
-    setAllCollections: context.setAllCollections,
-    detailedCollections: context.detailedCollections,
-    collectionOwners: context.collectionOwners,
-    fetchCollectionOwners: context.fetchAllCollections,
-    featuredCollections: context.featuredCollections,
-    upcomingCollections: context.upcomingCollections,
-    fetchAllCollections: context.fetchAllCollections,
-    fetchAllCollectionsByPages: context.fetchAllCollectionsByPages,
-    fetchFeaturedCollections: context.fetchFeaturedCollections,
-    fetchUpcomingCollections: context.fetchUpcomingCollections,
-    singleCollection: context.singleCollection,
-    setSingleCollection: context.setSingleCollection,
-    setCollectionOwners: context.setCollectionOwners,
-    setFixedPriceWithinCollection: context.setFixedPriceWithinCollection,
-    setOpenBidWithinCollection: context.setOpenBidWithinCollection,
-    fetchSingleCollection: context.fetchSingleCollection,
-    fixedPriceWithinCollection: context.fixedPriceWithinCollection,
-    openBidWithinCollection: context.openBidWithinCollection,
-    nftMenuPopup: context.nftMenuPopup,
-    setNFTMenuPopup: context.setNFTMenuPopup
-  }
+  return context
 }

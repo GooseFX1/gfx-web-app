@@ -155,13 +155,13 @@ const NFTStatsContainer = () => {
               <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
             )}
             <div
-              tw="sm:text-[22px] ml-2 font-bold flex items-center"
+              tw="sm:text-[22px] font-bold flex items-center"
               style={{ fontSize: collection?.collection_name?.length > 20 ? '25px' : '35px' }}
             >
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
                   <div tw="sm:text-[22px] ml-3 font-bold">
-                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 15)}
+                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 20)}
                   </div>
                 </GenericTooltip>
               ) : (
@@ -169,7 +169,7 @@ const NFTStatsContainer = () => {
               )}
               {collection && collection.is_verified && (
                 <img
-                  style={{ height: 25, width: 25, marginLeft: 8 }}
+                  style={{ height: 25, width: 25, margin: '0 8px' }}
                   src="/img/assets/Aggregator/verifiedNFT.svg"
                 />
               )}
@@ -322,7 +322,7 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
 }
 
 const SortDropdown = () => {
-  const { sortingAsc } = useNFTAggregator()
+  const { collectionSort } = useNFTCollections()
   const [arrow, setArrow] = useState<boolean>(false)
 
   return (
@@ -341,7 +341,7 @@ const SortDropdown = () => {
         ) : (
           <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
             Price:
-            <>{sortingAsc ? ' Ascending' : ' Descending'}</>
+            <>{collectionSort === 'ASC' ? ' Ascending' : ' Descending'}</>
             <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-2`} invert={arrow} />
           </div>
         )}
@@ -351,18 +351,18 @@ const SortDropdown = () => {
 }
 
 const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
-  const { sortingAsc, setSortAsc } = useNFTAggregator()
+  const { collectionSort, setCollectionSort } = useNFTCollections()
   useEffect(() => {
     setArrow(true)
     return () => setArrow(false)
   }, [])
   return (
     <DROPDOWN_CONTAINER>
-      <div className="option" onClick={() => setSortAsc(true)}>
-        Price: Ascending <input type={'radio'} checked={sortingAsc} name="sort" value="asc" />
+      <div className="option" onClick={() => setCollectionSort('ASC')}>
+        Price: Ascending <input type={'radio'} checked={collectionSort === 'ASC'} name="sort" value="asc" />
       </div>
-      <div className="option" onClick={() => setSortAsc(false)}>
-        Price: Descending <input type={'radio'} checked={!sortingAsc} name="sort" value="desc" />
+      <div className="option" onClick={() => setCollectionSort('DESC')}>
+        Price: Descending <input type={'radio'} checked={collectionSort === 'DESC'} name="sort" value="desc" />
       </div>
       {checkMobile() && <div className="option">Share</div>}
     </DROPDOWN_CONTAINER>

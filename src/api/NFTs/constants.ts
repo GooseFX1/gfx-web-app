@@ -48,5 +48,6 @@ export enum NFT_API_ENDPOINTS {
   OWNERS = '/owners',
   DRAFTS = '/nft_drafts',
   SEARCH = '/search',
-  ACTIVITY = '/activity'
+  ACTIVITY = '/activity',
+  STATS = '/banner_stats'
 }

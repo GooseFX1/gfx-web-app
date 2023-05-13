@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   useConnectionConfig,
@@ -12,7 +11,7 @@ import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
 import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
-import { fetchFixedPriceByPages, fetchOpenBidByPages } from '../../../api/NFTs'
+import { fetchFixedPriceByPages } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
 import NoContent from '../Profile/NoContent'
@@ -20,74 +19,27 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
-  const {
-    buyNowClicked,
-    bidNowClicked,
-    setNftInBag,
-    sortingAsc,
-    setSortAsc,
-    setSellNFT,
-    sellNFTClicked,
-    openJustModal
-  } = useNFTAggregator()
-  const { singleCollection, fixedPriceWithinCollection, setFixedPriceWithinCollection, setSingleCollection } =
-    useNFTCollections()
-  const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
-  const paginationNum = 30
+  const { general, nftMetadata, fetchGeneral } = useNFTDetails()
+  const { connection } = useConnectionConfig()
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
+  const { buyNowClicked, bidNowClicked, setNftInBag, setSellNFT, sellNFTClicked, openJustModal, refreshClicked } =
+    useNFTAggregator()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
-  const { refreshClicked } = useNFTAggregator()
+  const {
+    singleCollection,
+    fixedPriceWithinCollection,
+    setFixedPriceWithinCollection,
+    collectionSort,
+    setCollectionSort
+  } = useNFTCollections()
+  const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
-  const [filteredFixedPrice, setFilteredFixPriced] = useState<BaseNFT[] | undefined>(null)
+  const [filteredFixedPrice, setFilteredFixPrice] = useState<BaseNFT[] | null>(null)
   const observer = useRef<any>()
-  const { general, nftMetadata, fetchGeneral } = useNFTDetails()
-  const { connection } = useConnectionConfig()
-
-  useEffect(() => {
-    setFixedPriceArr([])
-    return () => {
-      setSortAsc(false)
-    }
-  }, [refreshClicked])
-
-  const sortAndUpdateState = (sortArr: BaseNFT[]) => {
-    let sortedArray
-    if (sortingAsc) {
-      sortedArray = sortArr.sort((a, b) => a?.nft_price - b?.nft_price)
-    }
-    if (!sortingAsc) {
-      sortedArray = sortArr.sort((a, b) => b?.nft_price - a?.nft_price)
-    }
-    return sortedArray
-  }
-
-  useEffect(() => {
-    setFilteredFixPriced(sortAndUpdateState([...fixedPriceArr]))
-  }, [sortingAsc])
-
-  useEffect(() => {
-    if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
-      setFilteredFixPriced(sortAndUpdateState(fixedPriceArr))
-    }
-    if (searchInsideCollection && searchInsideCollection.length) {
-      const filteredData = fixedPriceArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
-      )
-      setFilteredFixPriced(sortAndUpdateState(filteredData))
-    }
-  }, [searchInsideCollection, fixedPriceArr])
-
-  useEffect(
-    () => () => {
-      setFixedPriceArr([])
-      setSearchInsideCollection(undefined)
-      setPageNumber(0)
-    },
-    []
-  )
+  const paginationNum = 30
 
   const lastCardRef = useCallback(
     (node) => {
@@ -95,10 +47,7 @@ export const FixedPriceNFTs = (): ReactElement => {
       if (observer.current) observer?.current.disconnect()
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !stopCalling && !searchInsideCollection) {
-          debounce(
-            setPageNumber((prev) => prev + 1),
-            100
-          )
+          debounce(handleScroll(), 100)
         }
       })
       if (node) observer.current.observe(node)
@@ -106,44 +55,87 @@ export const FixedPriceNFTs = (): ReactElement => {
     [fixedPriceLoading]
   )
 
+  const handleScroll = useCallback(() => {
+    setPageNumber((prev) => prev + 1)
+    fetchFixedPriceNFTs(pageNumber + 1, collectionSort)
+  }, [pageNumber, collectionSort])
+
+  const resetLocalState = useCallback(() => {
+    setFixedPriceArr([])
+    setPageNumber(0)
+    setCollectionSort('DESC')
+    setSearchInsideCollection(undefined)
+  }, [])
+
+  const fetchFixedPriceNFTs = useCallback(
+    async (curPage: number, sort: 'ASC' | 'DESC'): Promise<void> => {
+      // needs single collection for uuid else it exits
+      if (singleCollection === undefined) return
+      setFixedPriceLoading(true)
+
+      try {
+        const fpData = await fetchFixedPriceByPages(
+          singleCollection[0].uuid,
+          curPage * paginationNum,
+          (curPage + 1) * paginationNum,
+          sort
+        )
+
+        const baseNFTs: BaseNFT[] = fpData.data.nft_data
+        if (baseNFTs.length < paginationNum) setStopCalling(true)
+
+        if (fixedPriceWithinCollection === undefined) setFixedPriceWithinCollection(fpData.data)
+
+        // adds price data property to basenft object
+        const nftDataWithPrice = baseNFTs.map((nft: BaseNFT, i: number) => ({
+          ...nft,
+          nft_price: parseFloat(fpData.data.nft_prices[i]) / LAMPORTS_PER_SOL_NUMBER
+        }))
+
+        setFixedPriceArr((prev) => [...prev, ...nftDataWithPrice])
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setFixedPriceLoading(false)
+      }
+    },
+    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr]
+  )
+
   useEffect(() => {
+    // enables nft details drawer deeplink
     if (params.address && (general === null || nftMetadata === null)) {
       fetchGeneral(params.address, connection)
     }
   }, [params.address])
 
   useEffect(() => {
-    const UUID = singleCollection ? singleCollection[0].uuid : undefined
-    if (UUID) {
-      fetchFixedPriceNFTs(UUID)
-    }
-  }, [pageNumber, singleCollection])
+    setFixedPriceArr([])
+    setPageNumber(0)
+    setSearchInsideCollection(undefined)
 
-  const fetchFixedPriceNFTs = async (UUID) => {
-    setFixedPriceLoading(true)
-    try {
-      const fpData = await fetchFixedPriceByPages(
-        UUID,
-        pageNumber * paginationNum,
-        (pageNumber + 1) * paginationNum
+    fetchFixedPriceNFTs(0, collectionSort)
+  }, [collectionSort])
+
+  useEffect(() => {
+    // TODO: Is there a way to filter and not call the Request URL: https://nest-api.goosefx.io/nft?mint_address=<val>
+    if (!searchInsideCollection || searchInsideCollection.length === 0) {
+      setFilteredFixPrice(fixedPriceArr)
+    }
+    if (searchInsideCollection && searchInsideCollection.length > 0) {
+      const filteredData = fixedPriceArr.filter((fixedPriceNFT: ISingleNFT) =>
+        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
       )
-      if (fpData.data.nft_data.length < paginationNum) setStopCalling(true)
-      await setFixedPriceWithinCollection(fpData.data)
-      const nftDataWithPrice = []
-      for (let i = 0; i < fpData.data.nft_data.length; i++) {
-        nftDataWithPrice.push({
-          ...fpData.data.nft_data[i],
-          nft_price: parseFloat(fpData.data.nft_prices[i]) / LAMPORTS_PER_SOL_NUMBER
-        })
-      }
-
-      setFixedPriceArr((prev) => [...prev, ...nftDataWithPrice])
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setFixedPriceLoading(false)
+      setFilteredFixPrice(filteredData)
     }
-  }
+  }, [searchInsideCollection, fixedPriceArr])
+
+  useEffect(() => refreshClicked && resetLocalState(), [refreshClicked])
+
+  useEffect(() => {
+    fetchFixedPriceNFTs(0, collectionSort)
+    return resetLocalState()
+  }, [singleCollection])
 
   const addNftToBag = (e, nftItem, ask) => {
     setNftInBag((prev) => {
@@ -170,7 +162,7 @@ export const FixedPriceNFTs = (): ReactElement => {
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
-      {!fixedPriceWithinCollection && <NFTLoading />}
+      {fixedPriceWithinCollection === undefined && <NFTLoading />}
       {fixedPriceWithinCollection && fixedPriceWithinCollection.total_count === 0 ? (
         <NoContent type="collected" />
       ) : (

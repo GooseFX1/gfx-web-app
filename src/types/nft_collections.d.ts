@@ -78,6 +78,8 @@ export type NFTUpcomingCollection = {
   upcoming_collection_description: string
 }
 
+export type CollectionSort = 'ASC' | 'DESC'
+
 export interface INFTCollectionConfig {
   allCollections: NFTCollection[] | number[]
   setAllCollections: any
@@ -101,4 +103,6 @@ export interface INFTCollectionConfig {
   openBidWithinCollection: IOpenBidWithinCollection
   setNFTMenuPopup: Dispatch<SetStateAction<boolean>>
   nftMenuPopup: boolean
+  collectionSort: CollectionSort
+  setCollectionSort: Dispatch<SetStateAction<CollectionSort>>
 }

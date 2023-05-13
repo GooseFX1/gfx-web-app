@@ -95,13 +95,18 @@ export const fetchOpenBidByPages = async (paramValue: string, offset: number, li
   }
 }
 
-export const fetchFixedPriceByPages = async (paramValue: string, offset: number, limit: number): Promise<any> => {
+export const fetchFixedPriceByPages = async (
+  paramValue: string,
+  offset: number,
+  limit: number,
+  sort: 'ASC' | 'DESC'
+): Promise<any> => {
   const isUUID: boolean = validateUUID(paramValue)
   try {
     const res = await httpClient(NFT_API_BASE).get(
       `${NFT_API_ENDPOINTS.FIXED_PRICE}?${
         isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
-      }&offset=${offset}&limit=${limit}`
+      }&offset=${offset}&limit=${limit}&filter=ListingPrice&sort=${sort}`
     )
     return await res
   } catch (err) {
@@ -184,6 +189,21 @@ export const fetchAllSingleNFTs = async (): Promise<any> => {
 export const fetchActivityOfAddress = async (address: string, typeOfAddress: string): Promise<any> => {
   try {
     const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ACTIVITY}?${typeOfAddress}=${address}`)
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+export type StatsResponse = {
+  total_collections: number
+  total_marketcap: number
+  total_daily_volume: number
+}
+
+export const fetchNestAggStats = async (): Promise<StatsResponse> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.STATS}`)
     return res.data
   } catch (error) {
     return error

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Checkbox, Dropdown, Switch } from 'antd'
 import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } from 'react'
 import styled, { css } from 'styled-components'
-import 'styled-components/macro'
 import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFTAggWelcome } from '../../../components/NFTAggWelcome'
 import {
@@ -15,7 +13,8 @@ import {
   useNFTDetails,
   useNFTProfile
 } from '../../../context'
-import { checkMobile, LOADING_ARR } from '../../../utils'
+import { checkMobile, commafy, LOADING_ARR } from '../../../utils'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { LastRefreshedAnimation, RefreshIcon, STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
 import MenuNFTPopup from './MenuNFTPopup'
 import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
@@ -25,7 +24,7 @@ import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
-import { Image } from 'antd'
+import { Image, Checkbox, Dropdown, Switch } from 'antd'
 import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3/agg_program_ids'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
@@ -34,7 +33,7 @@ import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
-import { fetchGlobalSearchNFT, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
+import { fetchGlobalSearchNFT, fetchNestAggStats, StatsResponse, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
@@ -580,17 +579,40 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   )
 }
 
-const StatsContainer = ({ showBanner, setShowBanner }: any) => (
-  <div tw="h-[36px] my-[20px] ml-[20px] flex items-center justify-between">
-    <div tw="flex justify-between items-center w-[60vw] xl:w-[80vw]">
-      <Pill loading={false} label={'Collection'} value={'9155'} />
-      <Pill loading={false} label={'Market Cap:'} value={'12.33M'} />
-      <Pill loading={false} label={'24h Volume:'} value={'22M'} />
-      <Pill loading={false} label={'Total volume traded:'} value={'127.82M'} />
+const StatsContainer = ({ showBanner, setShowBanner }: any) => {
+  const [aggStats, setAggStats] = useState<StatsResponse | null>(null)
+
+  useEffect(() => {
+    fetchNestAggStats()
+      .then((stats) => setAggStats(stats))
+      .catch((err) => console.error(err))
+
+    return () => setAggStats(null)
+  }, [])
+
+  return (
+    <div tw="h-[36px] my-[20px] ml-[20px] flex items-center justify-between">
+      <div tw="flex justify-between items-center w-[630px]">
+        <Pill
+          loading={aggStats === null}
+          label={'Collections:'}
+          value={aggStats !== null ? commafy(aggStats.total_collections, 0) : '0'}
+        />
+        <Pill
+          loading={aggStats === null}
+          label={'Market Cap:'}
+          value={`${truncateBigNumber(aggStats?.total_marketcap)}`}
+        />
+        <Pill
+          loading={aggStats === null}
+          label={'24h Volume:'}
+          value={`${truncateBigNumber(aggStats?.total_daily_volume)}`}
+        />
+      </div>
+      <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
     </div>
-    <ShowBannerEye showBanner={showBanner} setShowBanner={setShowBanner} />
-  </div>
-)
+  )
+}
 
 const TimeLineDropdown = (): ReactElement => {
   const [arrow, setArrow] = useState<boolean>(false)
