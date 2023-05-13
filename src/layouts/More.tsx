@@ -12,8 +12,8 @@ import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { Button } from '../components'
 
-const ICON = styled(CenteredImg)<{ $mode: boolean }>`
-  ${tw`h-[36px] w-[36px] cursor-pointer`}
+export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
+  ${tw`h-[36px] w-[36px] cursor-pointer ml-2`}
 
   img {
     filter: opacity(${({ $mode }) => ($mode ? 1 : 0.7)});
@@ -142,6 +142,7 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
+  const checkIfNFT = window.location.href.toLowerCase().includes('nfts')
 
   return (
     <Dropdown
@@ -151,7 +152,7 @@ export const More: FC = () => {
       placement="bottomRight"
       trigger={['hover']}
     >
-      <ICON $mode={mode === 'dark'}>
+      <ICON $mode={mode === 'dark'} style={{ paddingLeft: checkIfNFT ? '28px' : 0 }}>
         <img src={`/img/assets/more_icon.svg`} alt="more" />
       </ICON>
     </Dropdown>

@@ -1068,8 +1068,9 @@ export const PlaceOrderMobi = () => {
         $isGeoBlocked={isGeoBlocked}
       >
         {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+        {/* <Tooltip overlayClassName={`georestricted-dropdown ${mode}`} placement="top" arrow={false}> */}
         {isGeoBlocked && (
-          <Tooltip overlayClassName={`georestricted-dropdown ${mode}`} placement="top" arrow={false}>
+          <Tooltip placement="top">
             <img src={`/img/assets/georestrictedMobile_${mode}.svg`} alt="geoblocked-icon" />
             <div style={{ color: mode === 'dark' ? '#3C3C3C' : '#FFFFFF', fontWeight: 600, fontSize: '11px' }}>
               GooseFX DEX is unavailable <br /> in your location.

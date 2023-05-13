@@ -1,15 +1,91 @@
-import React, { useState, useEffect, useRef } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect, useRef, FC, useCallback, useMemo } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
 import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
-import { SearchBar, Loader } from '../../../components'
-import { useNFTProfile } from '../../../context'
+import { SearchBar, Loader, ArrowDropdown } from '../../../components'
+import {
+  useNavCollapse,
+  useNFTAggregator,
+  useNFTAggregatorFilters,
+  useNFTDetails,
+  useNFTProfile
+} from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { CenteredDiv } from '../../../styles'
+import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
+import Loading from '../Home/Loading'
+import NFTLoading from '../Home/NFTLoading'
+import { SellNFTModal } from '../Collection/SellNFTModal'
+import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+
+const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
+  ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
+  border-radius: 30px;
+  background-image: linear-gradient(to right, #f7931a 25%, #ac1cc7 100%);
+  position: absolute;
+  right: 20px;
+  top: 30px;
+
+  > div {
+    ${tw`h-[30px] w-[30px]`}
+    ${({ theme }) => theme.roundedBorders}
+    box-shadow: 0 3.5px 3.5px 0 rgba(0, 0, 0, 0.25);
+    background-image: url('/img/assets/solana-logo.png');
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    transform: translateX(${({ $mode }) => ($mode ? '-12px' : '12px')});
+  }
+`
+
+const DROPDOWN_WRAPPER = styled.div`
+  padding: 12px;
+  width: 115px;
+  height: 98px;
+  border-radius: 5px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background-color: ${({ theme }) => theme.bg23};
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  input[type='radio'] {
+    width: 15px;
+    height: 15px;
+    appearance: none;
+    border-radius: 50%;
+    outline: none;
+    background: ${({ theme }) => theme.bg24};
+    accent-color: yellow;
+    cursor: pointer;
+  }
+
+  input[type='radio']:checked {
+    background-image: linear-gradient(111deg, #f7931a 11%, #ac1cc7 94%);
+    border: 3px solid #1c1c1c;
+  }
+`
+
+interface Props {
+  nftFilterArr: string[]
+  setNftFilter: (index: number) => void
+}
 
 interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
@@ -19,23 +95,38 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
+  const { searchInsideProfile } = useNFTAggregatorFilters()
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
   const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
-  const [search, setSearch] = useState<string>('')
   const [loading, _setLoading] = useState<boolean>(false)
+  const [isSol, setIsSol] = useState<boolean>(true)
+  const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
+  const [nftFilter, setNftFilter] = useState<number>(0)
+  const { general, nftMetadata } = useNFTDetails()
+  const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
+  const { profileNFTOptions } = useNFTAggregatorFilters()
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
 
+  useEffect(() => {
+    if (collectedItems) {
+      if (searchInsideProfile && searchInsideProfile.length > 0) {
+        const filteredData = collectedItems.filter(({ nft_name }) =>
+          nft_name.toLowerCase().includes(searchInsideProfile.trim().toLowerCase())
+        )
+        setFilteredCollectedItems(filteredData)
+      } else {
+        setFilteredCollectedItems(collectedItems)
+      }
+    }
+
+    return () => setFilteredCollectedItems(undefined)
+  }, [searchInsideProfile, collectedItems, profileNFTOptions])
   // in place of original `setActivePoint`
   const setCollectedItemsPag = (x) => {
     activePointRef.current = x // keep updated
     setCollectedItems(x)
-  }
-
-  const setLoading = (x) => {
-    activePointLoader.current = x // keep updated
-    _setLoading(x)
   }
 
   useEffect(() => {
@@ -50,37 +141,28 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.singleNFTs, props.parsedAccounts])
-
-  useEffect(() => {
-    if (collectedItems) {
-      if (search.length > 0) {
-        const filteredData = collectedItems.filter(({ nft_name }) =>
-          nft_name.toLowerCase().includes(search.trim().toLowerCase())
-        )
-        setFilteredCollectedItems(filteredData)
-      } else {
-        setFilteredCollectedItems(collectedItems)
-      }
-    }
-
-    return () => setFilteredCollectedItems(undefined)
-  }, [search, collectedItems])
+  }, [props.singleNFTs, props.parsedAccounts, refreshClicked])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
-    const nfts = []
+    const nfts: ISingleNFT[] = []
     for (let i = 0; i < parsedAccounts.length; i++) {
       try {
         const val = await axios.get(parsedAccounts[i].data.uri)
+
         nfts.push({
+          uuid: null,
           non_fungible_id: null,
           nft_name: val.data.name,
           nft_description: val.data.description,
           mint_address: parsedAccounts[i].mint,
           metadata_url: parsedAccounts[i].data.uri,
           image_url: val.data.image,
-          animation_url: '',
+          animation_url: val.data.properties?.files > 0 ? val.data.properties?.files[0].uri : '',
           collection_id: null,
+          collection_name: val.data.collection ? val.data.collection.name : null,
+          collection_address: null,
+          gfx_appraisal_value: null,
+          is_verified: false,
           token_account: null,
           owner: nonSessionProfile === undefined ? sessionUser.pubkey : nonSessionProfile.pubkey
         })
@@ -91,55 +173,31 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
-  useEffect(() => {
-    window.addEventListener('scroll', scrolling, true)
+  const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
 
-    return () => window.removeEventListener('scroll', scrolling, true)
-  }, [])
-
-  const scrolling = debounce(() => {
-    handleScroll()
-  }, 100)
-
-  const handleScroll = () => {
-    const border = document.getElementById('border')
-    if (border !== null) {
-      const mainHeight = window.innerHeight
-      const totalscroll = mainHeight + border.scrollTop + 100
-
-      if (Math.ceil(totalscroll) < border.scrollHeight || activePointLoader.current) {
-        setLoading(false)
-      }
-    }
-  }
+  const handleModalClick = useCallback(() => {
+    if (buyNowClicked) return <BuyNFTModal />
+    if (bidNowClicked) return <BidNFTModal />
+    if (gfxAppraisalPopup) return <GFXApprisalPopup setShowTerms={setGfxAppraisal} showTerms={gfxAppraisalPopup} />
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, gfxAppraisalPopup])
 
   return (
-    <StyledTabContent>
-      {!checkMobile() && (
-        <div className="actions-group">
-          <SearchBar className={'profile-search-bar'} filter={search} setFilter={setSearch} />
-        </div>
-      )}
+    <NFT_COLLECTIONS_GRID gridType={gridType}>
+      {handleModalClick()}
       {filteredCollectedItems === undefined ? (
-        <div className="profile-content-loading">
-          <div>
-            <Loader />
-          </div>
-        </div>
-      ) : filteredCollectedItems && filteredCollectedItems.length > 0 ? (
-        <div className="cards-list" id="border">
-          <Row gutter={[24, 24]}>
-            {filteredCollectedItems.map((nft: ISingleNFT) => (
-              <Col sm={10} md={7} lg={6} xl={4} xxl={4} key={nft.mint_address} span={checkMobile() ? 12 : ''}>
-                <Card singleNFT={nft} />
-              </Col>
-            ))}
-          </Row>
-        </div>
-      ) : (
+        <>
+          <NFTLoading />
+        </>
+      ) : filteredCollectedItems.length === 0 ? (
         <NoContent type={props.type} />
+      ) : (
+        <div className="gridContainerProfile" tw="h-[75vh]">
+          {filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
+            <Card singleNFT={nft} key={index} setGfxAppraisal={setGfxAppraisal} />
+          ))}
+        </div>
       )}
-    </StyledTabContent>
+    </NFT_COLLECTIONS_GRID>
   )
 }
 

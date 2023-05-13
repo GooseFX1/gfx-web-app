@@ -1,15 +1,16 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { INFTProfile, INFTUserActivity, INFTProfileConfig } from '../types/nft_profile.d'
-import apiClient from '../api'
+import { httpClient } from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { Connection } from '@solana/web3.js'
 import { StringPublicKey, getParsedNftAccountsByOwner, ParsedAccount } from '../web3'
 import { completeNFTUserProfile } from '../api/NFTs'
+import { truncateAddress } from '../utils'
 
 export type UserFetchType = 'address' | 'user_id' | 'nickname'
 
 export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [sessionUser, setSessionUser] = useState<INFTProfile>()
+  const [sessionUser, setSessionUser] = useState<INFTProfile | null>(null)
   const [nonSessionProfile, setNonSessionProfile] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
   const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
@@ -19,7 +20,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const fetchSessionUser = useCallback(
     async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
       try {
-        const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
+        const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SESSION_USER}?${type}=${parameter}`)
         if (res.data.length > 0) {
           const userLikes = await fetchUserLikes(res.data[0].uuid)
           const user = { ...res.data[0], user_likes: userLikes }
@@ -70,7 +71,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchUserActivity = useCallback(async (userUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${userUUID}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_ACTIVITY}?user_id=${userUUID}`)
 
       setUserActivity(res.data.slice(res.data.length - 11, res.data.length - 1))
       return res
@@ -81,7 +82,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchUserLikes = useCallback(async (userUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${userUUID}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.ALL_USER_LIKES}?user_id=${userUUID}`)
       if (res.data.length > 0 && Array.isArray(res.data)) {
         return res.data.map((nft) => nft.uuid)
       } else {
@@ -95,7 +96,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const likeDislike = useCallback(async (user_id: string, nft_id: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
+      const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.LIKE}`, {
         nft_id,
         user_id
       })
@@ -116,7 +117,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const fetchNonSessionProfile = useCallback(
     async (type: UserFetchType, parameter: string, connection: Connection): Promise<any> => {
       try {
-        const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.NON_SESSION_USER}?${type}=${parameter}`)
+        const res = await httpClient(NFT_API_BASE).get(
+          `${NFT_API_ENDPOINTS.NON_SESSION_USER}?${type}=${parameter}`
+        )
         if (res.data.length > 0) {
           const userLikes = await fetchUserLikes(res.data[0].uuid)
           const user = { ...res.data[0], user_likes: userLikes }
@@ -144,7 +147,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         uuid: userObj.uuid ? userObj.uuid : null,
         user_id: userObj.user_id ? userObj.user_id : null,
         pubkey: userObj.pubkey ? userObj.pubkey : '',
-        nickname: userObj.nickname ? userObj.nickname : 'Unnamed',
+        nickname: userObj.nickname ? userObj.nickname : userObj.pubkey ? truncateAddress(userObj.pubkey) : '',
         email: userObj.email ? userObj.email : '',
         bio: userObj.bio ? userObj.bio : '',
         twitter_link: userObj.twitter_link ? userObj.twitter_link : '',

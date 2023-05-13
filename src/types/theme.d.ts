@@ -45,7 +45,10 @@ export interface Colors {
   text35: Color
   text36: Color
   text32: Color
+  text33: Color
+  text34: Color
   text37: Color
+  text38: Color
   bidColor: Color
   askColor: Color
   textWhitePurple: Color
@@ -54,7 +57,8 @@ export interface Colors {
   tableBorder: Color
   borderBottom: Color
   multiplierBorder: Color
-
+  bgForNFTCollection: Color
+  dropdownBackground: Color
   // backgrounds / greys
   bg0: Color
   bg1: Color
@@ -72,6 +76,7 @@ export interface Colors {
   bg14: Color
   bg15: Color
   bg16: Color
+  bg17: Color
   bg18: Color
   bg19: Color
   bg20: Color
@@ -80,9 +85,11 @@ export interface Colors {
   bg23: Color
   bg24: Color
   bg25: Color
+  bg26: Color
   lpbg: Color
   pbbg: Color
   goBtn: Color
+  backBtnBg: Color
   innerCircle: Color
   circleBoxShadow: Color
   swapSides1: Color
@@ -100,6 +107,7 @@ export interface Colors {
   darkButton: Color
   scrollBarColor: Color
   opacity: Color
+  hoverGradient: Color
 
   // speciality colors
   appLayoutFooterBorder: Color
@@ -151,7 +159,7 @@ export interface Colors {
 
   // sell categories
   sellTabBg: Color
-  sellTabActiveBg: Color
+  profilePicBg: Color
 
   // time panel
   timePanelBackground: Color

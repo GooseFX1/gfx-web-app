@@ -42,7 +42,12 @@ export type ExecuteSaleInstructionAccounts = {
   buyerTradeState: web3.PublicKey
   sellerTradeState: web3.PublicKey
   freeTradeState: web3.PublicKey
+  tokenProgram?: web3.PublicKey
+  systemProgram?: web3.PublicKey
+  ataProgram?: web3.PublicKey
   programAsSigner: web3.PublicKey
+  rent?: web3.PublicKey
+  anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
 const executeSaleInstructionDiscriminator = [37, 74, 217, 157, 79, 49, 35, 6]
@@ -74,7 +79,8 @@ export function createExecuteSaleInstruction(
     buyerTradeState,
     sellerTradeState,
     freeTradeState,
-    programAsSigner
+    programAsSigner,
+    anchorRemainingAccounts
   } = accounts
 
   const [data] = executeSaleStruct.serialize({
@@ -188,7 +194,7 @@ export function createExecuteSaleInstruction(
       isSigner: false
     }
   ]
-
+  anchorRemainingAccounts.map((creator) => keys.push(creator))
   const ix = new web3.TransactionInstruction({
     programId: new web3.PublicKey(AUCTION_HOUSE_PROGRAM_ID),
     keys,

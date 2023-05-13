@@ -1,13 +1,13 @@
 import { FC, useState, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
-import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
+import { PublicKey, TransactionInstruction, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
 import { MainButton, Modal, SuccessfulListingMsg } from '../../../components'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useNFTDetails, useConnectionConfig, useAccounts } from '../../../context'
-import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { NFT_MARKET_TRANSACTION_FEE, LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import BN from 'bn.js'
 import {
   AUCTION_HOUSE,
@@ -208,7 +208,7 @@ const PURCHASE_MODAL = styled(Modal)`
   }
 `
 
-const MESSAGE = styled.div`
+export const MESSAGE = styled.div`
   margin: -12px 0;
   font-size: 12px;
   font-weight: 700;
@@ -241,7 +241,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
 
   const [mode, setMode] = useState<string>(purchasePrice ? 'review' : 'bid')
   const [bidPriceInput, setBidPriceInput] = useState<string>(
-    purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL}` : ''
+    purchasePrice ? `${parseFloat(purchasePrice) / LAMPORTS_PER_SOL_NUMBER}` : ''
   )
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
@@ -249,7 +249,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
   const creator = useMemo(() => {
-    if (nftMetadata === undefined) return null
+    if (nftMetadata === null) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return truncateAddress(addr)
@@ -329,7 +329,7 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   }
 
   const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = bidPrice * LAMPORTS_PER_SOL
+    const buyerPriceInLamports = bidPrice * LAMPORTS_PER_SOL_NUMBER
     const buyerPrice: BN = new BN(buyerPriceInLamports)
 
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
@@ -339,7 +339,14 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
 
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      purchasePrice ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      purchasePrice ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       return {
@@ -365,21 +372,6 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
     const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
-      notify({
-        type: 'error',
-        message: (
-          <MESSAGE>
-            <Row className="m-title" justify="space-between" align="middle">
-              <Col>Open bid error!</Col>
-              <Col>
-                <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
-              </Col>
-            </Row>
-            <div>Could not derive values for buy instructions</div>
-          </MESSAGE>
-        )
-      })
-
       setTimeout(() => setVisible(false), 1000)
       return
     }
@@ -450,10 +442,12 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   }
 
   const postBidToAPI = async (txSig: any, buyerPrice: BN, tokenSize: BN) => {
+    if (!publicKey) return
+
     const bidObject = {
       clock: Date.now().toString(),
       tx_sig: txSig,
-      wallet_key: publicKey.toBase58(),
+      wallet_key: publicKey?.toBase58(),
       auction_house_key: AUCTION_HOUSE,
       token_account_key: general.token_account,
       auction_house_treasury_mint_key: TREASURY_MINT,
@@ -563,8 +557,8 @@ export const BidModal: FC<IBidModal> = ({ setVisible, visible, purchasePrice }: 
   return (
     <PURCHASE_MODAL setVisible={setVisible} title="" visible={visible} onCancel={onCancel}>
       <div className="bm-title">
-        You are about to{' '}
-        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL}` === ask.buyer_price
+        You are about to
+        {purchasePrice && `${parseFloat(bidPriceInput) * LAMPORTS_PER_SOL_NUMBER}` === ask.buyer_price
           ? 'purchase'
           : 'bid on'}{' '}
       </div>

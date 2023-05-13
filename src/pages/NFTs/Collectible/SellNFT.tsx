@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useMemo, useState, useEffect, FC } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -220,7 +221,7 @@ export const SellNFT: FC = () => {
   )
 
   const creator = useMemo(() => {
-    if (nftMetadata === undefined) return null
+    if (nftMetadata === null) return null
     if (nftMetadata.properties.creators.length > 0) {
       const addr = nftMetadata.properties.creators[0].address
       return truncateAddress(addr)
@@ -278,9 +279,13 @@ export const SellNFT: FC = () => {
     const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
     const tradeState: [PublicKey, number] = await tradeStatePDA(
       wallet?.adapter?.publicKey,
-      general,
+      AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      TREASURY_MINT,
       bnTo8(buyerPrice)
     )
+
     const freeTradeState: [PublicKey, number] = await freeSellerTradeStatePDA(wallet?.adapter?.publicKey, general)
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
@@ -366,7 +371,7 @@ export const SellNFT: FC = () => {
 
     let removeAskIX: TransactionInstruction | undefined = undefined
     // if ask exists
-    if (ask !== undefined) {
+    if (ask !== null) {
       // make web3 cancel
       removeAskIX = await createRemoveAskIX()
     }
@@ -434,10 +439,7 @@ export const SellNFT: FC = () => {
     }
 
     try {
-      const res =
-        ask === undefined
-          ? await sellNFT(sellObject)
-          : await patchNFTAsk({ ...sellObject, ask_id: ask.ask_id, uuid: ask.uuid })
+      const res = await sellNFT(sellObject)
 
       if (res.isAxiosError) {
         notify({
@@ -468,7 +470,15 @@ export const SellNFT: FC = () => {
     }
 
     const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
-    const tradeState: [PublicKey, number] = await tradeStatePDA(usrAddr, general, bnTo8(curAskingPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      usrAddr,
+      AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      TREASURY_MINT,
+      bnTo8(curAskingPrice)
+    )
+
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: curAskingPrice,
       tokenSize: tokenSize
@@ -624,8 +634,8 @@ export const SellNFT: FC = () => {
                 <SellCategory setCategory={setCategory} category={category} />
 
                 <SECTION_TITLE>
-                  {ask === undefined ? 'Set' : 'Edit'} Asking Price:{' '}
-                  {ask !== undefined && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
+                  {ask === null ? 'Set' : 'Edit'} Asking Price:{' '}
+                  {ask !== null && <PRICE> {parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL} SOL</PRICE>}
                 </SECTION_TITLE>
                 <STYLED_FORM form={form} layout="vertical" initialValues={{}}>
                   {category === 'open-bid' && (
@@ -661,8 +671,7 @@ export const SellNFT: FC = () => {
                         data={[
                           {
                             id: 'minimumBid',
-                            defaultValue:
-                              ask === undefined ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
+                            defaultValue: ask === null ? '' : `${parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL}`,
                             placeholder: 'Enter asking price',
                             hint: (
                               <div>

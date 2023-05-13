@@ -1,109 +1,81 @@
-import styled from 'styled-components'
 import { Dropdown, Menu } from 'antd'
 import { Modal } from '../../../components'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 export const StyledHeaderProfile = styled.div<{ mode?: string; background?: string }>`
-  ${({ theme, mode, background }) => `
-  position: relative;
-  height: 30vh;
-  padding: ${theme.margin(3)};
-  padding-bottom: ${theme.margin(8)};
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  background: ${
-    mode === 'dark'
-      ? 'linear-gradient(180deg, rgba(19, 19, 19, 1) 17.43%, rgba(85, 50, 111, 1) 85.26%)'
-      : 'linear-gradient(180deg, #eeeeee 17.43%, #C986FB 85.26%);'
-  };
-
-  @media(max-width: 500px){
-    height: 50vh;
-    flex-direction: column;
+  ${tw`relative h-[112px]`}
+  @media(max-width: 500px) {
+    ${tw`flex flex-col justify-between pb-[20px] h-[50vh] sm:h-[160px]`}
     align-items: inherit;
-    justify-content: space-between;
-    background: url(${background});
+    background: url(${({ background }) => background});
     background-repeat: no-repeat;
     background-size: cover;
   }
 
-  .row{
-    display: flex;
-    justify-content: space-between;
-
-    .ant-dropdown{
-      z-index: 0;
-    }
-  }
-  
-
   .back-icon {
     position: absolute;
-    top: 55px;
+    top: 85px;
     left: 55px;
     transform: rotate(90deg);
     width: 26px;
-    filter: ${
+    filter: ${({ mode }) =>
       mode === 'dark'
         ? 'invert(96%) sepia(96%) saturate(15%) hue-rotate(223deg) brightness(103%) contrast(106%)'
-        : '#000'
-    };
+        : '#000'};
     cursor: pointer;
   }
 
   .avatar-profile-wrap {
     position: relative;
-    width: 80px;
+    ${tw`w-[60px] h-[60px]`}
     margin: 0 15px 0 0;
+
     .avatar-profile {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
+      ${tw`w-[70px] h-[70px] h-20 ml-[-5px] sm:ml-2.5 mt-[-25px] rounded-[50%] dark:border-black-2 border-white`}
+      border: 5px solid;
     }
     .edit-icon {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      bottom: -5px;
-      right: -1px;
-      cursor: pointer;
+      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] sm:right-[-32px] right-[-20px] w-[30px] `}
     }
+  }
+  .profileBio {
+    ${({ theme }) => theme.customScrollBar(0)}
+    ${tw`dark:text-grey-2 w-[220px] h-10 overflow-y-auto sm:text-[13px] font-semibold leading-[15px] `}
   }
   .name-wrap {
-    @media(max-width: 500px){
-      margin-left: 0;
-    }
-    display: flex;
-    align-items: start;
-    margin-left: ${theme.margin(1)};
+    ${tw`mt-[100px] ml-[-170px] sm:ml-4 sm:mt-[125px] sm:absolute`}
   }
   .name {
-    @media(max-width: 500px){
+    @media (max-width: 500px) {
       font-size: 20px;
       margin-left: 0;
     }
-    color: ${theme.text1};
+    ${tw`text-grey-5`}
     font-size: 35px;
     font-weight: 600;
     display: inline-block;
-    margin-right: ${theme.margin(1)};
+    margin-right: ${({ theme }) => theme.margin(1)};
   }
   .check-icon {
     width: 24px;
     height: 24px;
   }
+  .solscan-img {
+    ${tw` `}
+  }
   .social-list {
-    @media(max-width: 500px){
-      margin-top: 0;
+    @media (max-width: 500px) {
+      ${tw`sm:absolute right-4 mt-[120px]`}
     }
-    margin-top: ${theme.margin(2)};
-    ${theme.flexCenter}
+    margin-top: ${({ theme }) => theme.margin(2)};
+    ${({ theme }) => theme.flexCenter}
     .social-item {
       display: inline-block;
       width: 35px;
-      margin: 0 ${theme.margin(1)};
-      background: #2A2A2A;
+      margin: 0 ${({ theme }) => theme.margin(1)};
+      background: #2a2a2a;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -112,7 +84,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     .social-item-yt {
       height: 35px;
       width: 35px;
-      background-color: #0D0D0D;
+      background-color: #0d0d0d;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -127,53 +99,15 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
       height: 35px;
     }
   }
-  .complete-profile{
-    height: 43px;
-    width: 153px;
+  .complete-profile {
+    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative sm:mt-[140px] sm:mr-2.5 
+    sm:w-[145px] font-semibold text-[15px] text-white cursor-pointer text-[13px]`}
     background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 45px;
-    color: #ffffff;
-    font-size: 14px;
-  }
-  .action-wrap {    
-    margin-left: auto;
-    display: flex;
-    justify-content: flex-end;
-    align-items: end;
-
-    .btn-create {
-      color: ${theme.white};
-      background-color: #3735bb;
-      height: 43px;
-      min-width: 132px;
-      font-size: 17px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      ${theme.roundedBorders}
-    }
-    .btn-create2 {
-      background-color: #bb3535;
-      margin-right: 10px;
-    }
-    .btn-purple {
-      height: 43px;
-      min-width: 132px;
-      font-size: 17px;
-      font-weight: 700;
-      padding: 0 16px;
-      margin-right: 12px;
-      color: ${theme.white};
-      background-color: ${theme.secondary3};
-      border: none;
-      cursor: pointer;
-      ${theme.roundedBorders}
+    @media (max-width: 500px) {
+      font-size: 14px;
+      position: static;
     }
   }
-`}
 `
 export const StyledDropdown = styled(Dropdown)`
   height: auto;
@@ -229,6 +163,7 @@ export const StyledMenu = styled(Menu)`
 export const SETTLE_BALANCE_MODAL = styled(Modal)`
   &.ant-modal {
     width: 501px !important;
+    border-radius: 15px;
   }
 
   .ant-modal-body {

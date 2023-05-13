@@ -1,0 +1,10 @@
+<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="15" cy="15" r="15" fill="url(#et8fhitcha)"/>
+    <path d="M11.5 10h-3v10h3v-3l7-1.5V20h3V10h-3v3l-7 1.5V10z" fill="#fff"/>
+    <defs>
+        <linearGradient id="et8fhitcha" x1="0" y1="16.5" x2="30" y2="17" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#2E22AC"/>
+            <stop offset="1" stop-color="#408CCC"/>
+        </linearGradient>
+    </defs>
+</svg>

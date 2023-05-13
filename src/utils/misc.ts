@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { LAMPORTS_PER_SOL_NUMBER } from '../constants'
 
 export type ConditionalData<T> = 'not-supported' | 'loading' | T
 
@@ -133,6 +134,27 @@ export function debounce(callback: any, wait: number): (x: any) => void {
   }
 }
 
+export const formatSOLDisplay = (solValue: string | number, dontDivide?: boolean): string => {
+  if (!solValue) return '0'
+  if (typeof solValue === 'string' && dontDivide) {
+    return parseFloat(solValue).toFixed(2)
+  }
+  if (typeof solValue === 'string') {
+    return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+  } else if (solValue < 10000000) return solValue.toFixed(2)
+  else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+}
+export const formatSOLNumber = (solValue: string | number): number => {
+  if (typeof solValue === 'string') return parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER
+  return solValue / LAMPORTS_PER_SOL_NUMBER
+}
+
+export const toTitleCase = (str: string): string =>
+  str
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+
 export const createUUID = (): string =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
@@ -162,7 +184,14 @@ export const getDateInISOFormat = (): string => {
 
   return yyyy + '-' + mm + '-' + dd
 }
+export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`
+
+export const parseUnixTimestamp = (unixTime: string): string => {
+  const date = new Date(0)
+  date.setUTCSeconds(Number(unixTime))
+  return date.toLocaleString('en-US', { timeZone: 'UTC' })
+}
 
 export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)

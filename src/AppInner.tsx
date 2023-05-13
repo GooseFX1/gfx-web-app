@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Router } from './Router'
-import {
-  AccountsProvider,
-  DarkModeProvider,
-  SettingsProvider,
-  TokenRegistryProvider,
-  WalletProvider,
-  RewardToggleProvider,
-  CryptoProvider
-} from './context'
+import { DarkModeProvider, SettingsProvider, WalletProvider } from './context'
 import ThemeProvider from './theme'
 import './App.less'
 import { USER_CONFIG_CACHE } from './types/app_params'
@@ -41,15 +33,7 @@ export default function AppInner(): JSX.Element {
         <ThemeProvider>
           <SettingsProvider>
             <WalletProvider>
-              <TokenRegistryProvider>
-                <AccountsProvider>
-                  <RewardToggleProvider>
-                    <CryptoProvider>
-                      <Router />
-                    </CryptoProvider>
-                  </RewardToggleProvider>
-                </AccountsProvider>
-              </TokenRegistryProvider>
+              <Router />
             </WalletProvider>
           </SettingsProvider>
         </ThemeProvider>

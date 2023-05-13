@@ -269,7 +269,7 @@ export const UpLoadNFT = (): JSX.Element => {
   }, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
-    if (nftMintingData === undefined) {
+    if (nftMintingData === null) {
       setNftInitState()
     }
 
@@ -573,7 +573,7 @@ export const UpLoadNFT = (): JSX.Element => {
     { name: 'HTML', value: MetadataCategory.HTML, icon: 'domains' }
   ]
 
-  return nftMintingData === undefined ? (
+  return nftMintingData === null ? (
     <div>...Loading</div>
   ) : (
     <>

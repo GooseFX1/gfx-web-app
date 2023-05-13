@@ -26,7 +26,8 @@ export const MODAL_TYPES = {
   SUBMIT: 'SUBMIT',
   RELAX: 'RELAX',
   APPROVE_PROJECT: 'APPROVE_PROJECT',
-  REJECT_PROJECT: 'REJECT_PROJECT'
+  REJECT_PROJECT: 'REJECT_PROJECT',
+  NFT_AGG_WELCOME: 'NFT_AGG_WELCOME'
 }
 export const CAROUSEL = [
   { name: 'Create', id: 0, position: 1, redirect: 'NFTs/create' },
@@ -182,4 +183,5 @@ export const generateListOfSSLTokens = (network: WalletAdapterNetwork): IFarmDat
 export const NQ_GOFX_PRICE = 500
 export const NQ_SOL_PRICE = 1
 export const LAMPORTS_PER_SOL = BigInt(1000000000)
+export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)

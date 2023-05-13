@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react'
-import { Row, Col } from 'antd'
 import { useParams, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useNFTDetails, useConnectionConfig } from '../../../context'
@@ -10,6 +9,7 @@ import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
 import { IAppParams } from '../../../types/app_params.d'
 import { FLOATING_ACTION_ICON } from '../../../styles'
 import { checkMobile } from '../../../utils'
+import 'styled-components/macro'
 
 const NFT_DETAILS = styled.div`
   position: relative;
@@ -33,7 +33,7 @@ export const NFTDetails: FC<{
   const params = useParams<IAppParams>()
 
   useEffect(() => {
-    if (general === undefined && nftMetadata === undefined) {
+    if (general === null && nftMetadata === null) {
       fetchGeneral(params.nftMintAddress, connection)
     }
 
@@ -48,14 +48,10 @@ export const NFTDetails: FC<{
         </FloatingActionButton>
       </div>
       {!checkMobile() ? (
-        <Row gutter={[12, 16]} className="nd-content" justify="space-around" align="middle">
-          <Col sm={10} xl={9} xxl={8}>
-            <ImageShowcase />
-          </Col>
-          <Col sm={10} xl={9} xxl={7} className="nd-details">
-            <RightSection status={status} />
-          </Col>
-        </Row>
+        <>
+          <ImageShowcase />
+          <RightSection status={status} />
+        </>
       ) : (
         <>
           <ImageShowcase />

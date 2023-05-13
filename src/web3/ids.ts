@@ -461,7 +461,7 @@ export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyY
 
 // AUCTION HOUSE CONSTANTS
 export const AUCTION_HOUSE_PREFIX = 'auction_house'
-
+export const TREASURY_PREFIX = 'treasury'
 export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 
 export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'

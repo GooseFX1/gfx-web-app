@@ -1,5 +1,8 @@
-import styled from 'styled-components'
 import { Form, Modal } from 'antd'
+import { PopupCustom } from '../Popup/PopupCustom'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 export const StyledPopupProfile = styled(Modal)`
   @media (max-width: 500px) {
@@ -134,9 +137,11 @@ export const StyledFormProfile = styled(Form)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  .ant-upload-span {
+    display: none !important;
+  }
   .profile-pic-upload-zone {
-    max-width: 100%;
+    max-width: 10%;
     .ant-upload-list-text {
       display: none;
     }
@@ -261,4 +266,71 @@ export const StyledFormProfile = styled(Form)`
     }
   }
 `}
+`
+
+export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
+  &.ant-modal {
+    ${tw`dark:text-[20px] mt-12 sm:mt-0  text-[10px]`}
+    background-color: ${({ theme }) => theme.walletModalWallet};
+  }
+  .ant-upload-span {
+    display: none !important;
+  }
+  .optional {
+    ${tw`text-[15px] font-semibold`}
+    color: ${({ theme }) => theme.text34};
+  }
+  .inputContainer {
+    color: ${({ theme }) => theme.text30};
+    ${tw`bg-none text-[15px] w-[90%] font-semibold mb-1 mt-0.5`}
+    border: none;
+    background: none;
+    :focus {
+      outline: none;
+    }
+  }
+  .underLine {
+    background: #b5b5b5;
+    ${tw`text-[#b5b5b5] h-[2px]`}
+  }
+  .publicURLText {
+    ${tw`text-[13px] sm:text-[10px] font-semibold mt-2 text-[#636363]`}
+  }
+  .publicURLWhiteText {
+    ${tw`text-[13px] font-semibold mt-2 sm:text-[10px]  `}
+    color: ${({ theme }) => theme.textWhitePurple}
+  }
+
+  .titleHeader {
+    color: ${({ theme }) => theme.text30};
+    ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
+  }
+  .titleHeaderBlue {
+    color: ${({ theme }) => theme.text31};
+    ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
+  }
+  .profilePicText {
+    ${tw`text-[13px] mt-[10px] ml-2 font-semibold text-[#b5b5b5]`}
+  }
+  .ant-modal-body {
+    ${tw`py-6 px-[30px] sm:px-[20px] `}
+  }
+  .title {
+    color: ${({ theme }) => theme.text30};
+    ${tw`text-[20px] font-semibold`}
+  }
+  .saveChanges {
+    ${tw`w-[440px] sm:w-[88%] sm:absolute sm:pl-[16px]
+      sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[28px] rounded-[50px] border-none
+     h-[53px] text-white text-[20px] font-semibold flex items-center justify-center`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    :disabled {
+      cursor: not-allowed;
+      ${tw`text-[#636363]`}
+      background: ${({ theme }) => theme.bg22};
+    }
+  }
+  .profile-image-upload {
+    ${tw`w-[100px] h-[100px] rounded-[50%] cursor-pointer`}
+  }
 `

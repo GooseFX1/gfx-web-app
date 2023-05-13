@@ -36,12 +36,12 @@ const WRAPPED_LOADER = styled.div`
   }
 `
 
-const WRAPPER = styled.button<{ $connected: boolean }>`
+const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
   ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
   ${({ $connected }) => $connected && `padding-left: 4px;`}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
-
+  width: ${({ $width }) => ($width ? $width : 'fit-content')};
   &:hover {
     background-color: ${({ theme }) => theme.secondary2};
   }
@@ -110,7 +110,7 @@ const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ 
   )
 }
 
-export const Connect: FC = () => {
+export const Connect: FC<{ width?: string }> = ({ width }) => {
   const { connect, select, wallet, connected } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
@@ -177,7 +177,7 @@ export const Connect: FC = () => {
   }, [])
 
   return (
-    <WRAPPER $connected={!!base58} onClick={onSpanClick}>
+    <WRAPPER $connected={!!base58} $width={width} onClick={onSpanClick}>
       {wallet && base58 && (
         <WALLET_ICON>
           <img src={wallet.adapter.icon} alt={`${wallet.adapter.name}_icon`} />

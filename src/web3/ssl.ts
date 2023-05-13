@@ -22,7 +22,12 @@ import {
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
-import { findAssociatedTokenAddress, createAssociatedTokenAccountIx, getNetworkConnectionText } from './utils'
+import {
+  findAssociatedTokenAddress,
+  createAssociatedTokenAccountIx,
+  getNetworkConnectionText,
+  confirmTransaction
+} from './utils'
 import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
 import { TOKEN_NAMES } from '../constants'
 import { TxnReturn } from './stake'
@@ -225,7 +230,7 @@ export const executeBurn = async (
     signature = await wallet.sendTransaction(burnPTTX, connection)
     console.log(signature)
 
-    const confirm = await connection.confirmTransaction(signature, 'confirmed')
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm, 'burn amount')
     return { confirm, signature }
   } catch (error) {
@@ -274,7 +279,7 @@ export const executeMint = async (
     signature = await wallet.sendTransaction(mintPTTX, connection)
     console.log(signature)
 
-    const confirm = await connection.confirmTransaction(signature, 'confirmed')
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm, 'mint amount')
     return { confirm, signature }
   } catch (error) {
@@ -338,7 +343,7 @@ export const executeWithdraw = async (
       signature = await wallet.sendTransaction(withdrawTX, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm, 'withdraw amount')
       return { confirm, signature }
     } catch (error) {
@@ -352,7 +357,7 @@ export const executeWithdraw = async (
       signature = await wallet.sendTransaction(withdrawTX, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm, 'withdraw amount')
       return { confirm, signature }
     } catch (error) {

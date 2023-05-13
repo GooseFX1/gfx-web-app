@@ -376,7 +376,6 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const swapTokens = useCallback(
     async (route: any, exchange: any) => {
       if (!tokenA || !tokenB) return
-
       setLoading(true)
       const inTokens = `${inTokenAmount} ${tokenA.symbol}`
       const outTokens = `${outTokenAmount * (1 - slippage)} ${tokenB.symbol}`
