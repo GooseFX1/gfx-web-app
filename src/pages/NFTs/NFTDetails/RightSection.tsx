@@ -283,7 +283,7 @@ export const RightSection: FC<{
                 </span>
                 <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                   <img
-                    src="/img/assets/solScanBlack.svg"
+                    src="/img/assets/solscanBlack.svg"
                     alt="solscan-icon"
                     tw="ml-5 h-10 w-10"
                     className="solscan-icon"

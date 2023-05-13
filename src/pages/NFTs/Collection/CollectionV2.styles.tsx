@@ -339,7 +339,8 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        flex items-center justify-center cursor-pointer`}
     }
     .offerBtn {
-      ${tw`w-[115px] ml-2 text-white h-[40px] bg-[#5855ff] rounded-3xl	font-semibold text-[15px]
+      ${tw`w-[115px] ml-2 text-white h-[40px] dark:bg-black-2 bg-white rounded-3xl text-black-4 dark:text-white
+      	font-semibold text-[15px]
        flex items-center pl-3 cursor-pointer`}
     }
 

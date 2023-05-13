@@ -55,6 +55,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { setCurrency } = useNFTAggregator()
   const { setSearchInsideProfile } = useNFTAggregatorFilters()
+  const { mode } = useDarkMode()
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6  sm:rounded-t-[30px]">
@@ -63,6 +64,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
             style={{ width: checkMobile() ? 260 : 330 }}
+            bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
           />
           {!checkMobile() && <ProfileNFTFiltersDropdown />}
@@ -120,7 +122,7 @@ const ProfileNFTFiltersDropdown = () => {
         ) : (
           <div tw="flex items-center ml-2">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
-            <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-[-25px]`} invert={arrow} />
+            <Arrow height="9px" width="18px" cssStyle={tw`ml-[-25px]`} invert={arrow} />
           </div>
         )}
       </Dropdown>

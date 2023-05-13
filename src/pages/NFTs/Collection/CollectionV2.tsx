@@ -47,6 +47,7 @@ import { useCallback } from 'react'
 import { Arrow } from '../../../components/common/Arrow'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Share } from '../Share'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -92,6 +93,7 @@ const NFTStatsContainer = () => {
   const { lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
+  const [shareModal, setShareModal] = useState<boolean>(false)
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
@@ -120,16 +122,34 @@ const NFTStatsContainer = () => {
     }
   }, [lastRefreshedClass])
 
-  const handleAppraisalPopup = useCallback(() => {
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+  const onShare = async (social: string) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+  }
+  const handlePopup = useCallback(() => {
     if (appraisalPopup) return <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
-  }, [appraisalPopup])
+    if (shareModal)
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+  }, [appraisalPopup, shareModal])
 
   return (
     <div tw="flex flex-col">
       <div tw="flex justify-center">
         <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
       </div>
-      {handleAppraisalPopup()}
+      {handlePopup()}
       <div className="nftStatsContainer">
         {!checkMobile() && (
           <button className="backBtn" onClick={() => history.push('/nfts')} tw="border-0">
@@ -236,7 +256,12 @@ const NFTStatsContainer = () => {
                 <RefreshBtnWithAnimationNFT />
               </div>
               <div>
-                <img tw="h-11 w-11 !mr-0" src="/img/assets/shareBlue.svg" alt="" />
+                <img
+                  tw="h-11 w-11 !mr-0"
+                  src="/img/assets/shareBlue.svg"
+                  alt=""
+                  onClick={() => setShareModal(true)}
+                />
               </div>
               {pubKey && <div tw="!w-10">{<CurrentUserProfilePic />}</div>}
               {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
