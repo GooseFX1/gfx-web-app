@@ -13,7 +13,7 @@ import {
 } from '../../../context'
 import { SuccessfulListingMsg } from '../../../components'
 
-import { checkMobile, formatSOLDisplay, notify, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
@@ -328,7 +328,7 @@ export const BuyNFTModal = (): ReactElement => {
   )
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const BidNFTModal = (): ReactElement => {
+export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
   const { ask } = useNFTDetails()
   const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
@@ -457,35 +457,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     })
   }
 
-  const callCancelInstruction = async () => {
-    const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
-
-    const cancelInstructionArgs: CancelInstructionArgs = {
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: publicKey,
-      tokenAccount: new PublicKey(general.token_account),
-      tokenMint: new PublicKey(general.mint_address),
-      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-      tradeState: buyerTradeState[0]
-    }
-
-    const cancelIX: TransactionInstruction = await createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    )
-
-    const transaction = new Transaction().add(cancelIX)
-    const signature = await sendTransaction(transaction, connection)
-    console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'finalized')
-    console.log(confirm)
-  }
   const derivePDAForExecuteSale = async () => {
     const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
       [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
@@ -600,6 +571,20 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
     const transaction = new Transaction()
     transaction.add(buyIX)
+    try {
+      const escrowBalance = await connection.getBalance(escrowPaymentAccount[0])
+
+      if (escrowBalance > 0) {
+        const initialIX = SystemProgram.transfer({
+          fromPubkey: wallet?.adapter?.publicKey,
+          toPubkey: escrowPaymentAccount[0],
+          lamports: escrowBalance >= curBid * LAMPORTS_PER_SOL_NUMBER ? buyerPrice : buyerPrice - escrowBalance
+        })
+        transaction.add(initialIX)
+      }
+    } catch (err) {
+      console.log(err)
+    }
 
     if (isBuyingNow) {
       const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()

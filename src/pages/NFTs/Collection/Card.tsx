@@ -42,6 +42,7 @@ import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { Tag } from '../../../components/Tag'
 import { Tooltip } from 'antd'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 //#region styles
 const DIVV = styled.div``
@@ -60,9 +61,12 @@ export const Card: FC<ICard> = (props) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
-  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
+  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
+  const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
@@ -104,6 +108,10 @@ export const Card: FC<ICard> = (props) => {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
+          if (publicKey) {
+            const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+            setLocalBidToNFT(myBid)
+          }
           setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
           setLocalTotalLikes(nft.total_likes)
         }
@@ -162,6 +170,7 @@ export const Card: FC<ICard> = (props) => {
     await setBids(localBids)
     await setAsk(localAsk)
     await setTotalLikes(localTotalLikes)
+    await setMyBidToNFT(localBidToNFT)
     const res = await axios.get(localSingleNFT.metadata_url)
     const metaData = await res.data
     await setNftMetadata(metaData)
@@ -238,6 +247,7 @@ export const Card: FC<ICard> = (props) => {
                 <HoverOnNFT
                   buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
                   item={localSingleNFT}
+                  myBidToNFT={localBidToNFT}
                   ask={!isOwner && localAsk ? localAsk : null}
                   setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
                 />

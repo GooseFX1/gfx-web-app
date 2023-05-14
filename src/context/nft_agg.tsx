@@ -22,6 +22,8 @@ interface INFTAggConfig {
   setRefreshClicked?: any
   lastRefreshedClass?: string
   setLastRefreshedClass?: any
+  cancelBidClicked?: any
+  setCancelBidClicked?: Dispatch<SetStateAction<any>>
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -29,6 +31,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [nftInBag, setNftInBag] = useState<any[]>([])
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
+  const [cancelBidClicked, setCancelBidClicked] = useState<boolean | any>(undefined)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
   const [refreshClass, setRefreshClass] = useState<string>('')
@@ -60,7 +63,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         lastRefreshedClass: lastRefreshedClass,
         setLastRefreshedClass: setLastRefreshClass,
         openJustModal: openJustModal,
-        setOpenJustModal: setOpenJustModal
+        setOpenJustModal: setOpenJustModal,
+        setCancelBidClicked: setCancelBidClicked,
+        cancelBidClicked: cancelBidClicked
       }}
     >
       {children}
@@ -93,6 +98,8 @@ export const useNFTAggregator = (): INFTAggConfig => {
     lastRefreshedClass: context.lastRefreshedClass,
     setLastRefreshedClass: context.setLastRefreshedClass,
     openJustModal: context.openJustModal,
-    setOpenJustModal: context.setOpenJustModal
+    setOpenJustModal: context.setOpenJustModal,
+    setCancelBidClicked: context.setCancelBidClicked,
+    cancelBidClicked: context.cancelBidClicked
   }
 }

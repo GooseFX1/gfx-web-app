@@ -38,8 +38,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
     useNFTCollections()
   const { refreshClicked, setRefreshClass } = useNFTAggregator()
-  const { sortFilter, sortType, pageNumber, setPageNumber } = useNFTAggregatorFilters()
-  const [allItems, setAllItems] = useState<NFTCollection[] | number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9])
+  const { sortFilter, sortType, pageNumber, setPageNumber, timelineDisplay } = useNFTAggregatorFilters()
   const paginationNumber = 20
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const observer = useRef<any>()
@@ -63,17 +62,17 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   useEffect(() => {
     if (sortFilter && !firstLoad) {
       setTimeout(() => {
-        setAllCollections([])
         fetchAllCollectionsByPages(0, paginationNumber, sortFilter, sortType)
-      }, 1000)
+      }, 500)
     }
   }, [refreshClicked])
 
   useEffect(() => {
     if (sortFilter && !firstLoad) {
+      setAllCollections([])
       fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
     }
-  }, [sortFilter, sortType])
+  }, [sortFilter, sortType, timelineDisplay])
 
   useEffect(() => {
     ;(async () => {
@@ -272,7 +271,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item ? (
+        {item?.profile_pic_link ? (
           <PriceWithToken
             price={item?.gfx_appraisal_supported ? 50 : 0}
             token={currencyView}
@@ -283,7 +282,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item ? (
+        {item?.profile_pic_link ? (
           <>
             {(item?.daily_change === null || item?.daily_change === 0) && (
               <div tw="dark:text-grey-5 text-grey-1"> {item?.daily_change ? item.daily_change : '0'} %</div>
@@ -303,14 +302,14 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {marketcap !== undefined ? (
+        {item?.profile_pic_link !== undefined ? (
           <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
         )}
       </td>
       <td className="tdItem">
-        {item?.daily_volume !== undefined ? (
+        {item?.profile_pic_link !== undefined ? (
           <PriceWithToken price={volume ? volume : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />

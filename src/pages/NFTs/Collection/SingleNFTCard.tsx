@@ -44,11 +44,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
+  const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
   const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const isOwner: boolean = useMemo(() => {
     const findAccount: undefined | ParsedAccount =
@@ -110,6 +113,10 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
           setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
+          if (publicKey) {
+            const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+            setLocalBidToNFT(myBid)
+          }
           setLocalTotalLikes(nft.total_likes)
         }
       })
@@ -162,6 +169,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
               mintAddress={item.mint_address}
               collectionName={item.collection_name}
               item={item}
+              myBidToNFT={localBidToNFT}
               buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
               setNFTDetails={setNFTDetails}
               addNftToBag={addNftToBag}
@@ -247,11 +255,12 @@ export const HoverOnNFT: FC<{
   collectionName?: string
   addNftToBag?: any
   item: BaseNFT
+  myBidToNFT: INFTBid[]
   ask: INFTAsk | null | boolean
-  buttonType?: string
+  buttonType: string
   setNFTDetails: any
-}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress }): ReactElement => {
-  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal } = useNFTAggregator()
+}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT }): ReactElement => {
+  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
@@ -283,11 +292,23 @@ export const HoverOnNFT: FC<{
     setIsLoadingBeforeRelocate(true)
     await setNFTDetails()
     setIsLoadingBeforeRelocate(false)
-    if (type === 'bid') setBidNow(item)
-    else if (type === 'sell') setSellNFT(item)
-    else setBuyNow(item)
+    switch (type) {
+      case 'bid':
+        setBidNow(item)
+        break
+      case 'sell':
+        setSellNFT(item)
+        break
+      case 'buy':
+        setBuyNow(item)
+        break
+      case 'cancel':
+        setCancelBidClicked(item)
+        break
+    }
   }
 
+  console.log(myBidToNFT)
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
@@ -316,8 +337,16 @@ export const HoverOnNFT: FC<{
             Modify Price
           </Button>
         )}
+        {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length > 0 && (
+          <Button
+            cssStyle={tw`bg-red-2  h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            onClick={(e) => goToDetailsForModal(e, 'cancel')}
+          >
+            Cancel
+          </Button>
+        )}
 
-        {buttonType !== 'Modify' && buttonType !== 'Sell' && (
+        {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length === 0 && (
           <Button
             cssStyle={tw`bg-[#5855ff]   h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
             onClick={(e) => goToDetailsForModal(e, 'bid')}
@@ -330,7 +359,7 @@ export const HoverOnNFT: FC<{
           <Button
             height="28px"
             className="pinkGradient"
-            cssStyle={tw`text-[13px] font-semibold w-[75px] sm:w-[70px] ml-2 sm:ml-1 sm:text-[13px] `}
+            cssStyle={tw`text-[13px] font-semibold h-[35px] w-[80px] sm:w-[70px] ml-2 sm:ml-1 sm:text-[13px] `}
             onClick={(e) => goToDetailsForModal(e, 'buy')}
           >
             Buy now

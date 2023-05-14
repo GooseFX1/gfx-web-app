@@ -10,13 +10,14 @@ import { fetchOpenBidByPages } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
 import { SellNFTModal } from './SellNFTModal'
+import CancelBidModal from './CancelBidModal'
 
 export const OpenBidNFTs = (): ReactElement => {
   const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT, openJustModal } =
     useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
-  const { refreshClicked } = useNFTAggregator()
+  const { refreshClicked, cancelBidClicked } = useNFTAggregator()
   const paginationNum = 30
   const { general, nftMetadata } = useNFTDetails()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
@@ -94,8 +95,9 @@ export const OpenBidNFTs = (): ReactElement => {
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
+    if (cancelBidClicked) return <CancelBidModal />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked])
+  }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked, cancelBidClicked])
 
   const gridType = useMemo(() => (filteredOpenBid?.length > 10 ? '1fr' : '210px'), [filteredOpenBid])
 
