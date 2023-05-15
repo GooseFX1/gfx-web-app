@@ -3,7 +3,7 @@ import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
 
 const PRICE = styled.div<{ $cssStyle: TwStyle }>`
-  ${tw`flex justify-center font-semibold items-center text-[15px] duration-500`}
+  ${tw`flex justify-center font-semibold items-center text-[15px] duration-500 `}
   ${({ $cssStyle }) => $cssStyle};
   color: ${({ theme }) => theme.text11};
 
@@ -27,7 +27,7 @@ export const PriceWithToken: FC<{
   return (
     <>
       <PRICE $cssStyle={cssStyle} {...props}>
-        {price} <img src={tokenImg} alt="arrow" />
+        <div tw="mr-1">{price}</div> <img src={tokenImg} alt="arrow" />
       </PRICE>
     </>
   )

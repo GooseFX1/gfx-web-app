@@ -29,7 +29,7 @@ import { TraderProvider } from './context/trader_risk_group'
 
 // import NFTLandingPageV2 from './pages/NFTs/Home/NFTLandingPageV2'
 import NFTAgg from './pages/NFTs/NFTAgg'
-import { NFTs } from './pages/NFTs/NFTs'
+// import { NFTs } from './pages/NFTs/NFTs'
 import { TradeAnalyticsWrapper } from './pages/Analytics/trade/TradeAnalyticsWrapper'
 
 export const Router: FC = () => (
@@ -71,11 +71,11 @@ export const Router: FC = () => (
                           <AdminWrapper />
                         </NFTAdminProvider>
                       </Route>
-                      <Route path="/nfts-v1">
+                      {/* <Route path="/nfts-v1">
                         <NFTProfileProvider>
                           <NFTs />
                         </NFTProfileProvider>
-                      </Route>
+                      </Route> */}
                       <Route path="/nfts">
                         <NFTCollectionProvider>
                           <PriceFeedFarmProvider>

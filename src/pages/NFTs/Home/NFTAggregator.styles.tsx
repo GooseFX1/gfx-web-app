@@ -55,7 +55,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
     tr {
       ${tw`h-[60px] sm:h-full`}
-      border-bottom: 1px solid ${({ theme }) => theme.text32};
+      border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
 
       th {
         ${tw`h-full dark:text-grey-1 text-grey-2 text-center`}
@@ -84,7 +84,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto`}
 
       &:hover {
-        ${tw`dark:bg-[#181818] bg-[#e2e2e2]`}
+        border: 1px solid #b5b5b5;
       }
 
       &:after {

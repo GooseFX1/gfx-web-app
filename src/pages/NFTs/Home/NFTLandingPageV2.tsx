@@ -605,7 +605,7 @@ const StatsContainer = ({ showBanner, setShowBanner }: any) => {
         />
         <Pill
           loading={aggStats === null}
-          label={'24h Volume:'}
+          label={'24H Volume:'}
           value={`${truncateBigNumber(aggStats?.total_daily_volume)}`}
         />
       </div>

@@ -9,6 +9,7 @@ import { checkMobile } from '../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useDarkMode } from '../context'
 
 const WRAPPER = styled.div`
   ${tw`flex items-center justify-center`}
@@ -142,33 +143,36 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 `
 
-export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = ({ showTerms, setShowTerms }) => (
-  <STYLED_POPUP
-    height={checkMobile() ? '553px' : '630px'}
-    width={checkMobile() ? '354px' : '500px'}
-    title={null}
-    centered={true}
-    visible={showTerms ? true : false}
-    onCancel={() => setShowTerms(false)}
-    footer={null}
-  >
-    <WRAPPER>
-      <div className="slide">
-        <h3>
-          <div>
-            Track NFT collections <br /> like never before!
+export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = ({ showTerms, setShowTerms }) => {
+  const { mode } = useDarkMode()
+  return (
+    <STYLED_POPUP
+      height={checkMobile() ? '553px' : '630px'}
+      width={checkMobile() ? '354px' : '500px'}
+      title={null}
+      centered={true}
+      visible={showTerms ? true : false}
+      onCancel={() => setShowTerms(false)}
+      footer={null}
+    >
+      <WRAPPER>
+        <div className="slide">
+          <h3>
+            <div>
+              Track NFT collections <br /> like never before!
+            </div>
+          </h3>
+          <img className="trackNFTImg" src={`/img/assets/GFXappraisalGraphic${mode}.png`} alt="" />
+          <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
+          <div className="subText">
+            Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not
+            listing prices.
           </div>
-        </h3>
-        <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
-        <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
-        <div className="subText">
-          Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not
-          listing prices.
         </div>
-      </div>
-    </WRAPPER>
-  </STYLED_POPUP>
-)
+      </WRAPPER>
+    </STYLED_POPUP>
+  )
+}
 
 export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)

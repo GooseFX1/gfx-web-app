@@ -40,12 +40,15 @@ const AcceptBidModal: FC<{
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
           {checkMobile() && <br />}
-          <GenericTooltip text={general?.collection_name}>
-            <strong>
-              {general?.collection_name &&
-                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
-            </strong>
-          </GenericTooltip>
+          {general?.collection_name && (
+            <>
+              {' '}
+              by{' '}
+              <GenericTooltip text={general?.collection_name}>
+                <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+              </GenericTooltip>
+            </>
+          )}
         </div>
 
         <div className="feesContainer" tw="!bottom-[180px]">

@@ -92,6 +92,7 @@ export function colors(mode: string): Colors {
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
     text38: mode === 'dark' ? '#ffffff' : '#5855ff',
+    text39: mode === 'dark' ? '#eeeeee' : '#5855ff',
 
     bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
     askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
@@ -136,6 +137,7 @@ export function colors(mode: string): Colors {
     bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
     bg26: mode === 'dark' ? '#1c1c1c' : '#ffffff',
     bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
+    borderForNFTCard: mode === 'dark' ? '1px solid #3c3c3c' : 'none',
     backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',

@@ -75,7 +75,7 @@ export const ProfileItemDetails: FC<{
         <RightSection status={''} />
       </div>
       <div
-        tw="absolute left-0 right-0 bottom-0 h-[86px] w-[100%] 
+        tw="absolute left-0 right-0 bottom-0 h-[75px] w-[100%] 
               dark:bg-black-2 bg-grey-5 px-[24px] flex items-center justify-between
               border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
       >
@@ -83,19 +83,19 @@ export const ProfileItemDetails: FC<{
           <>
             {ask && (
               <Button
-                height="56px"
+                height="44px"
                 width={ask ? '200px' : '100%'}
                 cssStyle={tw`bg-red-2 mr-2 sm:mr-0`}
                 onClick={() => {
                   setShowDelistModal(true)
                 }}
               >
-                <span tw="text-regular font-semibold text-white">Delist </span>
+                <span tw="text-regular font-semibold text-white">Remove Listing </span>
               </Button>
             )}
 
             <Button
-              height="56px"
+              height="44px"
               width={ask ? '200px' : '100%'}
               cssStyle={tw`bg-blue-1 ml-2  sm:mr-0`}
               onClick={() => {
@@ -109,7 +109,7 @@ export const ProfileItemDetails: FC<{
           <>
             {myBid ? (
               <Button
-                height="56px"
+                height="44px"
                 width={ask ? '185px' : '100%'}
                 cssStyle={tw`bg-red-2 mr-2`}
                 onClick={() => setCancelBidClicked(general)}
@@ -118,7 +118,7 @@ export const ProfileItemDetails: FC<{
               </Button>
             ) : (
               <Button
-                height="56px"
+                height="44px"
                 width={ask ? '185px' : '100%'}
                 cssStyle={tw`bg-blue-1 mr-2`}
                 onClick={() => setBidNow(general)}
@@ -128,7 +128,7 @@ export const ProfileItemDetails: FC<{
             )}
             {ask && (
               <Button
-                height="56px"
+                height="44px"
                 width="185px"
                 cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
                 onClick={() => setBuyNow(general)}

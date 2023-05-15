@@ -48,13 +48,14 @@ import { useWallet } from '@solana/wallet-adapter-react'
 const DIVV = styled.div``
 type ICard = {
   singleNFT: ISingleNFT
+  nftDetails?: any
   className?: string
   listingType?: string
   userId?: string
   setGfxAppraisal?: Dispatch<SetStateAction<boolean>>
 }
 
-export const Card: FC<ICard> = (props) => {
+export const Card: FC<ICard> = ({ singleNFT, nftDetails, className, listingType, userId, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connection } = useConnectionConfig()
@@ -93,39 +94,49 @@ export const Card: FC<ICard> = (props) => {
   )
 
   const isOwner: boolean = useMemo(() => {
-    if (props.userId) return true
+    if (userId) return true
     const findAccount: undefined | ParsedAccount =
-      props.singleNFT && sessionUserParsedAccounts !== undefined
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === props.singleNFT.mint_address)
+      singleNFT && sessionUserParsedAccounts !== undefined
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
 
   useEffect(() => {
-    if (props.singleNFT) {
-      fetchSingleNFT(props.singleNFT.mint_address).then((res) => {
-        if (res && res.status === 200) {
-          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
-          const nft: INFTGeneralData = res.data
-          setLocalBids(nft.bids)
-          if (publicKey) {
-            const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
-            setLocalBidToNFT(myBid)
-          }
-          setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
-          setLocalTotalLikes(nft.total_likes)
-        }
-      })
+    if (nftDetails) {
+      nftDetails.data.length > 0 ? setlocalSingleNFT(nftDetails.data[0]) : setlocalSingleNFT(singleNFT)
+      setLocalBids(nftDetails.bids)
+      if (publicKey) {
+        const myBid = nftDetails.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+        setLocalBidToNFT(myBid)
+      }
+      setLocalAsk(nftDetails.asks.length > 0 ? nftDetails.asks[0] : null)
+      setLocalTotalLikes(nftDetails.total_likes)
     }
+    // if (singleNFT) {
+    //   fetchSingleNFT(singleNFT.mint_address).then((res) => {
+    //     if (res && res.status === 200) {
+    //       res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(singleNFT)
+    //       const nft: INFTGeneralData = res.data
+    //       setLocalBids(nft.bids)
+    //       if (publicKey) {
+    //         const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+    //         setLocalBidToNFT(myBid)
+    //       }
+    //       setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
+    //       setLocalTotalLikes(nft.total_likes)
+    //     }
+    //   })
+    // }
 
     return () => {
       setIsLoadingBeforeRelocate(false)
     }
-  }, [props.singleNFT, isOwner])
+  }, [singleNFT, isOwner, nftDetails])
 
   useEffect(() => {
-    if (props.singleNFT && sessionUser && sessionUser.user_likes) {
-      setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.uuid))
+    if (singleNFT && sessionUser && sessionUser.user_likes) {
+      setIsFavorited(sessionUser.user_likes.includes(singleNFT.uuid))
     }
   }, [sessionUser])
 
@@ -207,7 +218,7 @@ export const Card: FC<ICard> = (props) => {
           setShowDelistModal={setShowDelistModal}
           setDrawerSingleNFT={setDrawerSingleNFT}
           setSellModal={setShowSellNFTModal}
-          singleNFT={props.singleNFT}
+          singleNFT={singleNFT}
         />
       )
     }
@@ -228,7 +239,7 @@ export const Card: FC<ICard> = (props) => {
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     }
   }, [showSellNFTModal, setDrawerSingleNFT, showDelistModal, showAcceptBid])
-
+  if (!nftDetails) return <></>
   return (
     filterAndShow && (
       <>
@@ -266,7 +277,7 @@ export const Card: FC<ICard> = (props) => {
                 <div tw="absolute left-[16px] top-[14px]">
                   <Tag loading={false}>
                     <span tw="font-semibold">
-                      {localAsk?.buyer_price && 'On sale'}
+                      {localAsk?.buyer_price && 'Listed'}
                       {localAsk?.buyer_price && localBids.length > 0 && ' / '}
                       {localBids.length > 0 && `${localBids.length} Bid${localBids.length === 1 ? '' : 's'}`}
                     </span>
@@ -328,7 +339,7 @@ export const Card: FC<ICard> = (props) => {
                   <img
                     src={`/img/assets/Aggregator/Tooltip.svg`}
                     alt={'tooltip'}
-                    onClick={() => props.setGfxAppraisal(true)}
+                    onClick={() => setGfxAppraisal(true)}
                   />
                 </div>
 

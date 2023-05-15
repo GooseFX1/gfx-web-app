@@ -247,7 +247,7 @@ const NFTStatsContainer = () => {
                   : 0}{' '}
                 SOL
               </div>
-              <div className="subTitleText"> 24h volume </div>
+              <div className="subTitleText"> 24H volume </div>
             </div>
           </div>
           {!checkMobile() && (
@@ -367,7 +367,7 @@ const SortDropdown = () => {
           <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
             Price:
             <>{collectionSort === 'ASC' ? ' Ascending' : ' Descending'}</>
-            <Arrow height="9px" width="18px" whiteColor={true} cssStyle={tw`ml-2`} invert={arrow} />
+            <Arrow height="9px" width="18px" cssStyle={tw`ml-2`} invert={arrow} />
           </div>
         )}
       </Dropdown>

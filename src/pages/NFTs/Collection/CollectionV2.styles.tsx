@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { token } from '@project-serum/anchor/dist/cjs/utils'
 import { ReactElement, FC } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
@@ -193,13 +194,13 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    border: 1px solid #3C3C3C; // change lite mode
+    border: 1px solid ${({ theme }) => theme.tokenBorder}; // change lite mode
   }
 
   .gridItemCollections {
-    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] 
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    border: 1px solid #3C3C3C; // change lite mode
+    border: ${({ theme }) => theme.borderForNFTCard} // change lite mode
   }
   .gridGradientInner {
     ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[15px] dark:bg-black-1 bg-white 
@@ -220,11 +221,11 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
     }
     .hoverButtons {
-      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
+      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[100%] py-[15px]`}
     }
 
     .hoverNFT {
-      ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
+      ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px]`}
       background: ${({ theme }) => theme.hoverGradient};
     }
     .loadingNFT {
@@ -236,14 +237,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     .hoverAddToBag {
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
     }
-    .hoverButtons {
-      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[96%] pr-2`}
-    }
 
-    .hoverNFT {
-      ${tw`opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px] pl-1`}
-      background: ${({ theme }) => theme.hoverGradient};
-    }
     .loadingNFT {
       ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
          w-[190px] h-[295px] rounded-[15px] pl-1`}
@@ -331,12 +325,11 @@ export const DROPDOWN_CONTAINER = styled.div`
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
     ${tw`duration-500 items-center flex h-[70px] sm:h-[100px] sm:flex-col `}
-    border-radius: 30px 30px 0 0;
    
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
-      ${tw`w-[189px] text-white h-[44px] dark:bg-black-2 bg-white rounded-3xl ml-[15px]	font-semibold text-[15px]
-       flex items-center justify-center cursor-pointer`}
+      ${tw`w-[189px] text-black-4 dark:text-white h-[44px] dark:bg-black-2 bg-white rounded-3xl ml-[15px]	
+      font-semibold text-[15px] flex items-center justify-center cursor-pointer`}
     }
     .offerBtn {
       ${tw`w-[115px] ml-2 text-white h-[40px] dark:bg-black-2 bg-white rounded-3xl text-black-4 dark:text-white
@@ -363,7 +356,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selectedProfile {
       /* color: ${({ theme }) => theme.text4}; */
-      ${tw`w-[170px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
+      ${tw`w-[165px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
@@ -372,7 +365,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
     }
     .flexItemProfile {
-      ${tw`w-[170px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
+      ${tw`w-[165px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
       items-center flex justify-between flex-col cursor-pointer`}
     }
     .activeItem {
@@ -390,7 +383,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        duration-500 bg-[#5855ff] w-[65%] sm:w-[20%] sm:mt-[32px]`}
       content: '';
       transform: rotate(180deg);
-      margin-left: ${index * 340 + `px`};
+      margin-left: ${index * 330 + `px`};
       @media (max-width: 500px) {
         margin-left: calc( ${index * 33.2 + `%`} + 25px);
       }

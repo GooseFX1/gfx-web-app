@@ -174,7 +174,7 @@ const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
                   />
                 )}
               </div>
-              <div className="greyText">24h Volume: {ar?.collection?.daily_volume} SOL</div>
+              <div className="greyText">24H Volume: {ar?.collection?.daily_volume} SOL</div>
             </div>
             <div className="alignRight" tw="flex justify-center items-center">
               <div>{ar.listed_count} Listed</div>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useRef, FC, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useRef, FC, useCallback, useMemo, Dispatch, SetStateAction } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
@@ -8,6 +8,7 @@ import { Card } from '../Collection/Card'
 import NoContent from './NoContent'
 import { SearchBar, Loader, ArrowDropdown } from '../../../components'
 import {
+  useDarkMode,
   useNavCollapse,
   useNFTAggregator,
   useNFTAggregatorFilters,
@@ -28,7 +29,7 @@ import { SellNFTModal } from '../Collection/SellNFTModal'
 import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
-import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+import { fetchSingleNFT, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import CancelBidModal from '../Collection/CancelBidModal'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
@@ -92,18 +93,19 @@ interface INFTDisplay {
   type: 'collected' | 'created' | 'favorited'
   parsedAccounts?: ParsedAccount[]
   singleNFTs?: ISingleNFT[]
+  setNumberOfNFTs?: Dispatch<SetStateAction<number>>
 }
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
+  const { mode } = useDarkMode()
   const { searchInsideProfile, profileNFTOptions } = useNFTAggregatorFilters()
   const { cancelBidClicked } = useNFTAggregator()
+  const [nftApiResponses, setNftApiResponses] = useState(null)
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
-  const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>()
+  const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>(null)
   const [loading, _setLoading] = useState<boolean>(false)
-  const [isSol, setIsSol] = useState<boolean>(true)
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
-  const [nftFilter, setNftFilter] = useState<number>(0)
   const { general, nftMetadata } = useNFTDetails()
   const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
 
@@ -121,8 +123,6 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         setFilteredCollectedItems(collectedItems)
       }
     }
-
-    return () => setFilteredCollectedItems(undefined)
   }, [searchInsideProfile, collectedItems, profileNFTOptions])
   // in place of original `setActivePoint`
   const setCollectedItemsPag = (x) => {
@@ -146,21 +146,24 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []
-    for (let i = 0; i < parsedAccounts.length; i++) {
-      try {
-        const val = await axios.get(parsedAccounts[i].data.uri)
+    const metaDataResponse = []
+    parsedAccounts.map((account) => metaDataResponse.push(axios.get(account.data.uri)))
+    const responses = await Promise.all(metaDataResponse.map((metaData) => metaData.catch((e) => e)))
+    const val = responses.filter((result) => result.status === 200)
 
+    for (let i = 0; i < val.length; i++) {
+      try {
         nfts.push({
           uuid: null,
           non_fungible_id: null,
-          nft_name: val.data.name,
-          nft_description: val.data.description,
+          nft_name: val[i].data.name,
+          nft_description: val[i].data.description,
           mint_address: parsedAccounts[i].mint,
           metadata_url: parsedAccounts[i].data.uri,
-          image_url: val.data.image,
-          animation_url: val.data.properties?.files > 0 ? val.data.properties?.files[0].uri : '',
+          image_url: val[i].data.image,
+          animation_url: val[i].data.properties?.files > 0 ? val[i].data.properties?.files[0].uri : '',
           collection_id: null,
-          collection_name: val.data.collection ? val.data.collection.name : null,
+          collection_name: val[i].data.collection ? val[i].data.collection.name : null,
           collection_address: null,
           gfx_appraisal_value: null,
           is_verified: false,
@@ -174,6 +177,23 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return nfts
   }
 
+  useEffect(() => {
+    if (filteredCollectedItems?.length) {
+      ;(async () => {
+        const apiResponses = filteredCollectedItems?.length
+          ? filteredCollectedItems.map((item) => fetchSingleNFT(item.mint_address))
+          : []
+        const nftResponses = await Promise.all(apiResponses.map((api) => api.catch((e) => e)))
+        const validResults = nftResponses.filter((result) => result.status === 200).map((result) => result.data)
+        setNftApiResponses(validResults)
+      })()
+    }
+  }, [filteredCollectedItems])
+
+  useEffect(() => {
+    if (nftApiResponses) props.setNumberOfNFTs(nftApiResponses.length)
+  }, [nftApiResponses])
+
   const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
 
   const handleModalClick = useCallback(() => {
@@ -186,17 +206,23 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
       {handleModalClick()}
-      {filteredCollectedItems === undefined ? (
+      {nftApiResponses === null ? (
         <>
           <NFTLoading />
         </>
-      ) : filteredCollectedItems.length === 0 ? (
+      ) : filteredCollectedItems?.length === 0 && nftApiResponses === null ? (
         <NoContent type={props.type} />
       ) : (
         <div className="gridContainerProfile" tw="h-[75vh]">
-          {filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
-            <Card singleNFT={nft} key={index} setGfxAppraisal={setGfxAppraisal} />
-          ))}
+          {nftApiResponses?.length &&
+            filteredCollectedItems.map((nft: ISingleNFT, index: number) => (
+              <Card
+                singleNFT={nft}
+                key={index}
+                nftDetails={nftApiResponses[index]}
+                setGfxAppraisal={setGfxAppraisal}
+              />
+            ))}
         </div>
       )}
     </NFT_COLLECTIONS_GRID>

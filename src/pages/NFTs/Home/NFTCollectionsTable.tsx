@@ -273,7 +273,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       <td className="tdItem">
         {item?.profile_pic_link ? (
           <PriceWithToken
-            price={item?.gfx_appraisal_supported ? 50 : 0}
+            price={item?.gfx_appraisal_supported ? 0 : 0}
             token={currencyView}
             cssStyle={tw`h-5 w-5`}
           />
@@ -301,16 +301,17 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           <Loader />
         )}
       </td>
+
       <td className="tdItem">
         {item?.profile_pic_link !== undefined ? (
-          <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          <PriceWithToken price={volume ? volume : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
         )}
       </td>
       <td className="tdItem">
         {item?.profile_pic_link !== undefined ? (
-          <PriceWithToken price={volume ? volume : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          <PriceWithToken price={marketcap} token={currencyView} cssStyle={tw`h-5 w-5`} />
         ) : (
           <Loader />
         )}

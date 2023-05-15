@@ -107,6 +107,19 @@ export const SellNFTModal: FC<{
   const { singleCollection } = useNFTCollections()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
+  const [onChainNFTMetadata, setOnChainNFTMetadata] = useState<any>()
+
+  useEffect(() => {
+    ;(async () => {
+      const metadata = await getNFTMetadata(await getMetadata(general.mint_address), connection)
+      setOnChainNFTMetadata(metadata)
+    })()
+  }, [])
+
+  const sellerFeeBasisPoints = useMemo(
+    () => (onChainNFTMetadata ? onChainNFTMetadata.data.sellerFeeBasisPoints : 0),
+    [onChainNFTMetadata]
+  )
   const orderTotal: number = useMemo(() => bidPrice, [bidPrice])
 
   const isSellingNow = useMemo(() => bidPrice === askPrice, [askPrice])
@@ -121,8 +134,14 @@ export const SellNFTModal: FC<{
       setAskPrice(formatSOLNumber(highestBid.buyer_price))
     }
   }, [highestBid])
-
-  const totalToReceive = useMemo(() => (askPrice ? askPrice : 0.0) - NFT_MARKET_TRANSACTION_FEE / 100, [askPrice])
+  const serviceFee = useMemo(
+    () => (askPrice ? (askPrice * (sellerFeeBasisPoints / 100) + NFT_MARKET_TRANSACTION_FEE) / 100 : 0),
+    [sellerFeeBasisPoints, askPrice]
+  )
+  const totalToReceive = useMemo(
+    () => (askPrice ? askPrice - (serviceFee + NFT_MARKET_TRANSACTION_FEE / 100) : 0),
+    [askPrice]
+  )
   const buyerPublicKey = useMemo(() => (highestBid ? new PublicKey(highestBid.wallet_key) : null), [highestBid])
 
   const handleTxError = (itemName: string, error: string) => {
@@ -403,7 +422,6 @@ export const SellNFTModal: FC<{
         sellerTradeState
       } = await derivePDAsForInstructionSell()
 
-      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
       if (!onChainNFTMetadata) {
         couldNotFetchNFTMetaData()
         setIsLoading(false)
@@ -556,12 +574,15 @@ export const SellNFTModal: FC<{
                 <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
               </GenericTooltip>
               {checkMobile() && <br />}
-              <GenericTooltip text={general?.collection_name}>
-                <strong>
-                  {general?.collection_name &&
-                    `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
-                </strong>
-              </GenericTooltip>
+              {general?.collection_name && (
+                <>
+                  {' '}
+                  by{' '}
+                  <GenericTooltip text={general?.collection_name}>
+                    <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+                  </GenericTooltip>
+                </>
+              )}
             </div>
             {!checkMobile() && <img className="nftImg" src={general.image_url} alt="" />}
 
@@ -583,9 +604,13 @@ export const SellNFTModal: FC<{
 
         <div tw="mt-8">
           <AppraisalValue
-            text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value}` : null}
+            text={
+              general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
+                ? `${general?.gfx_appraisal_value}`
+                : null
+            }
             label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
-            width={360}
+            width={390}
           />
         </div>
 
@@ -641,7 +666,7 @@ export const SellNFTModal: FC<{
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Service Fee</div>
-            <div className="rightAlign"> {NFT_MARKET_TRANSACTION_FEE / 100} SOL</div>
+            <div className="rightAlign"> {serviceFee.toFixed(3)} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>

@@ -183,19 +183,22 @@ const CancelBidModal = (): ReactElement => {
       footer={null}
     >
       <div tw="flex flex-col items-center">
-        <div className="delistText" tw="!text-[20px]">
+        <div className="delistText" tw="!text-[20px] !font-semibold">
           Are you sure you want to Cancel the bid
           <br />
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
           {checkMobile() && <br />}
-          <GenericTooltip text={general?.collection_name}>
-            <strong>
-              {general?.collection_name &&
-                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
-            </strong>
-          </GenericTooltip>
+          {general?.collection_name && (
+            <>
+              {' '}
+              by{' '}
+              <GenericTooltip text={general?.collection_name}>
+                <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+              </GenericTooltip>
+            </>
+          )}
         </div>
 
         <div className="feesContainer" tw="!bottom-[180px]">
@@ -220,7 +223,7 @@ const CancelBidModal = (): ReactElement => {
         <div className="cancelText" tw="!bottom-[58px] absolute" onClick={closeTheModal}>
           {!isLoading && `Cancel`}
         </div>
-        <TermsTextNFT string="Remove Bid" />
+        <TermsTextNFT string="Remove" />
       </div>
     </STYLED_POPUP_BUY_MODAL>
   )

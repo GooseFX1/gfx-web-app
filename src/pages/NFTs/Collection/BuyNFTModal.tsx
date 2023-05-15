@@ -96,11 +96,11 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   color: ${({ theme }) => theme.text20};
   .delistText {
-    ${tw`text-[24px] sm:mt-1 sm:text-[20px] sm:pt-4 font-medium text-center `}
+    ${tw`text-[20px] sm:mt-1 sm:text-[20px] sm:pt-4 font-medium text-center `}
     color: ${({ theme }) => theme.text20};
     strong {
       ${tw`sm:text-[20px] font-bold sm:mt-[-10px] leading-3`}
-      color: ${({ theme }) => theme.text30};
+      color: ${({ theme }) => theme.text32};
     }
   }
   .buyTitle {
@@ -114,8 +114,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .cancelText {
     ${tw`text-[20px] font-semibold mt-4 text-center cursor-pointer 
-    sm:absolute sm:bottom-6`};
-    color: ${({ theme }) => theme.text30};
+    absolute sm:bottom-6`};
+    color: ${({ theme }) => theme.text20};
   }
   .verifiedText {
     ${tw`font-semibold text-[16px]   sm:text-[15px] mt-2 mb-1
@@ -139,8 +139,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .bidButton {
-    ${tw`w-[160px] h-[60px] sm:h-[50px] rounded-[50px] items-center cursor-pointer
-    justify-center flex  text-[20px] font-semibold`}
+    ${tw`w-[160px] h-[56px] sm:h-[50px] rounded-[50px] items-center cursor-pointer
+    justify-center flex  text-[18px] font-semibold`}
     background: ${({ theme }) => theme.bg22};
   }
   .bidButtonSelected {
@@ -154,15 +154,16 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`flex items-center justify-between w-[100%]`}
   }
   .leftAlign {
-    ${tw`text-[17px] font-semibold mt-1`}
+    ${tw`text-[18px] font-semibold mt-1`}
+    color: ${({ theme }) => theme.text37} !important;
   }
   .rightAlign {
     color: ${({ theme }) => theme.text32} !important;
-    ${tw`text-[17px] text-white font-semibold`}
+    ${tw`text-[18px] text-white font-semibold`}
   }
   .rightAlignFinal {
     color: ${({ theme }) => theme.text7} !important;
-    ${tw`text-[17px] text-white font-bold`}
+    ${tw`text-[18px] text-white font-bold`}
   }
 
   .nftImg {
@@ -209,7 +210,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .sellButton {
     ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]
     sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
-     border-none  h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
+     border-none  h-[56px] text-white text-[18px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
@@ -240,15 +241,18 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .termsText {
     ${tw`text-[13px] font-medium`}
+    color: ${({ theme }) => theme.text37};
+
     strong {
-      ${tw`font-semibold text-white`}
+      ${tw`font-semibold underline`}
+      color: ${({ theme }) => theme.text38};
     }
   }
 
   .buyButton {
     ${tw`w-[520px] sm:w-[calc(100vw - 56px)]    
     sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
-     h-[60px] text-white text-[20px] !font-semibold flex items-center justify-center ml-1.5 sm:ml-1`}
+     h-[56px] text-white text-[18px] !font-semibold flex items-center justify-center ml-1.5 sm:ml-1`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     &:disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -574,7 +578,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     try {
       const escrowBalance = await connection.getBalance(escrowPaymentAccount[0])
 
-      if (escrowBalance > 0) {
+      if (escrowBalance > 0.01 * LAMPORTS_PER_SOL_NUMBER) {
         const initialIX = SystemProgram.transfer({
           fromPubkey: wallet?.adapter?.publicKey,
           toPubkey: escrowPaymentAccount[0],
@@ -685,12 +689,15 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
                 <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
               </GenericTooltip>
               {checkMobile() && <br />}
-              <GenericTooltip text={general?.collection_name}>
-                <strong>
-                  {general?.collection_name &&
-                    `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 12)}`}
-                </strong>
-              </GenericTooltip>
+              {general?.collection_name && (
+                <>
+                  {' '}
+                  by{' '}
+                  <GenericTooltip text={general?.collection_name}>
+                    <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+                  </GenericTooltip>
+                </>
+              )}
             </div>
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">
@@ -726,7 +733,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <AppraisalValue
             text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value}` : null}
             label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
-            width={360}
+            width={390}
           />
         </div>
         {pendingTxSig && (

@@ -36,6 +36,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
   const params = useParams<IAppParams>()
+  const [noOfNFTs, setNumberOfNFTs] = useState<number>(0)
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
@@ -60,8 +61,14 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     () => [
       {
         order: 1,
-        name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
-        component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
+        name: `Collection (${noOfNFTs})`,
+        component: (
+          <NFTDisplay
+            parsedAccounts={currentUserParsedAccounts}
+            type={'collected'}
+            setNumberOfNFTs={setNumberOfNFTs}
+          />
+        )
       },
       {
         order: 1,
@@ -76,7 +83,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         )
       }
     ],
-    [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
+    [currentUserParsedAccounts, createdItems, userActivity, favoritedItems, noOfNFTs]
   )
 
   useEffect(() => {

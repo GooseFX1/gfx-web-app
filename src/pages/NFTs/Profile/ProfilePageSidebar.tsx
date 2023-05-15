@@ -15,10 +15,10 @@ import 'styled-components/macro'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
-${tw`w-[23vw] bg-white dark:bg-black-1`}
+${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
   border-top-right-radius: 20px;
-  border: 1px solid #3C3C3C;
-  ${({ theme }) => theme.customScrollBar('1px')}
+  border: 1px solid ${({ theme }) => theme.tokenBorder};
+  ${({ theme }) => theme.customScrollBar(0)}
   height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
   .profileContent {
     ${tw`overflow-y-auto overflow-x-hidden mt-[-20px]`}
@@ -393,7 +393,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
             <span tw="text-[#b5b5b5] text-[15px] font-semibold ">(Coming soon)</span>
           </div>
           <div className="track-portfolio">
-            Track your colection portfolio like <br /> never before!
+            Track your collection portfolio like <br /> never before!
           </div>
         </div>
 

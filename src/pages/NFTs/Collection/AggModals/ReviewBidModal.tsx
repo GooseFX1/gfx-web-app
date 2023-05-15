@@ -170,12 +170,15 @@ export const ReviewBidModal: FC<{
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 15)} </strong>
           </GenericTooltip>
           {checkMobile() && <br />}
-          <GenericTooltip text={general?.collection_name}>
-            <strong>
-              {general?.collection_name &&
-                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 15)}`}
-            </strong>
-          </GenericTooltip>
+          {general?.collection_name && (
+            <>
+              {' '}
+              by{' '}
+              <GenericTooltip text={general?.collection_name}>
+                <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+              </GenericTooltip>
+            </>
+          )}
         </div>
         {singleCollection && singleCollection[0]?.is_verified && (
           <div className="verifiedText">
@@ -208,9 +211,9 @@ export const ReviewBidModal: FC<{
 
       <div tw="mt-[30px] sm:mt-1">
         <AppraisalValue
-          text={general?.gfx_appraisal_value ? `${general.gfx_appraisal_value}` : null}
-          label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
-          width={360}
+          text={parseFloat(general?.gfx_appraisal_value) > 0 ? `${general.gfx_appraisal_value}` : null}
+          label={parseFloat(general?.gfx_appraisal_value) > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'}
+          width={390}
         />
       </div>
       <div className="vContainer">

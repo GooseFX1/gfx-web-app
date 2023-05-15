@@ -49,6 +49,7 @@ export interface Colors {
   text34: Color
   text37: Color
   text38: Color
+  text39: Color
   bidColor: Color
   askColor: Color
   textWhitePurple: Color
@@ -210,6 +211,7 @@ export interface Colors {
   filterArrowDown: Color
   tableHeader: Color
   cellBackground: Color
+  borderForNFTCard: Color
 
   // secondary
   secondary1: Color

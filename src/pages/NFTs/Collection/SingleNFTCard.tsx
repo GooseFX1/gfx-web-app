@@ -23,12 +23,13 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { formatSOLDisplay, notify, capitalizeFirstLetter, commafy } from '../../../utils'
+import { formatSOLDisplay, notify, capitalizeFirstLetter, commafy, formatSOLNumber } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { Tag } from '../../../components/Tag'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
   item,
@@ -152,7 +153,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
     return capString.join(' ')
   }, [])
-
   return (
     <>
       {handleAppraisalPopup()}
@@ -183,6 +183,13 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
           ) : (
             <SkeletonCommon width="100%" height="auto" />
           )}
+          {localBidToNFT.length > 0 && (
+            <div tw="absolute left-[16px] top-[14px]">
+              <Tag loading={false}>
+                <span tw="font-semibold">{'Bid Placed'}</span>
+              </Tag>
+            </div>
+          )}
         </div>
         <div className="nftTextContainer">
           <div className="collectionId">
@@ -195,7 +202,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
                 <div>
                   <img
                     className="ah-name"
-                    alt="marketplace icon"
+                    alt="marketplace"
                     src={`/img/assets/Aggregator/${
                       localAsk?.marketplace_name === null
                         ? AH_NAME(localAsk?.auction_house_key)
@@ -225,7 +232,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
             {localAsk === null && <span tw="dark:text-grey-3 text-grey-4 font-semibold">Not Listed</span>}
           </div>
           <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
-            {item?.gfx_appraisal_value ? item?.gfx_appraisal_value.substring(0, 4) : 'NA'}
+            {item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
+              ? parseFloat(item?.gfx_appraisal_value).toFixed(2)
+              : 'NA'}
             {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
           </div>
           {/* {sessionUser &&
@@ -307,8 +316,6 @@ export const HoverOnNFT: FC<{
         break
     }
   }
-
-  console.log(myBidToNFT)
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
@@ -320,18 +327,31 @@ export const HoverOnNFT: FC<{
           onClick={(e) => addNftToBag(e, item, ask)}
         />
       )} */}
+      {myBidToNFT.length > 0 && (
+        <div
+          tw="flex absolute dark:text-grey-5 bottom-10  text-black-4 left-[30px] font-semibold
+         !text-[15px] items-center"
+        >
+          {`My Bid: `}
+          <PriceWithToken
+            price={formatSOLDisplay(myBidToNFT[0].buyer_price)}
+            token="SOL"
+            cssStyle={tw`h-5 w-5 !text-black-4 dark:!text-grey-5 ml-1`}
+          />
+        </div>
+      )}
       <span className="hoverButtons">
         {buttonType === 'Sell' && (
           <Button
-            cssStyle={tw`bg-red-1 h-[28px] w-[108px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
+            cssStyle={tw`bg-red-2 h-[35px] w-[80px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
-            Sell now
+            List Item
           </Button>
         )}
         {buttonType === 'Modify' && (
           <Button
-            cssStyle={tw`bg-blue-1 h-[28px] w-[108px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 ml-2`}
+            cssStyle={tw`bg-blue-1 h-[35px] w-[108px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
             Modify Price
@@ -339,7 +359,7 @@ export const HoverOnNFT: FC<{
         )}
         {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length > 0 && (
           <Button
-            cssStyle={tw`bg-red-2  h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            cssStyle={tw`bg-red-2  h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
             onClick={(e) => goToDetailsForModal(e, 'cancel')}
           >
             Cancel
@@ -348,7 +368,7 @@ export const HoverOnNFT: FC<{
 
         {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length === 0 && (
           <Button
-            cssStyle={tw`bg-[#5855ff]   h-[28px] w-[75px] text-[13px] font-semibold mr-2 ml-2`}
+            cssStyle={tw`bg-[#5855ff]   h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
             onClick={(e) => goToDetailsForModal(e, 'bid')}
           >
             Bid
@@ -357,9 +377,8 @@ export const HoverOnNFT: FC<{
 
         {ask && (
           <Button
-            height="28px"
             className="pinkGradient"
-            cssStyle={tw`text-[13px] font-semibold h-[35px] w-[80px] sm:w-[70px] ml-2 sm:ml-1 sm:text-[13px] `}
+            cssStyle={tw`text-[13px] font-semibold h-[35px] w-[80px] sm:w-[70px]  sm:ml-1 sm:text-[13px] `}
             onClick={(e) => goToDetailsForModal(e, 'buy')}
           >
             Buy now

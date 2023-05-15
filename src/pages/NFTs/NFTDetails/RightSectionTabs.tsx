@@ -218,6 +218,7 @@ export const DETAILS_TAB_CONTENT = styled.div`
       }
       .dtc-item-title {
         ${tw`text-tiny`}
+        color: ${theme.text11};
       }
     }
   `}

@@ -177,7 +177,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
             })()}
           </TAB_ICON>
           <LABEL $mode={mode} $hover={cleanedPathName === path}>
-            {path.slice(1)}
+            {path.slice(1) === 'nfts' ? 'NFTs' : path.slice(1)}
           </LABEL>
         </TAB>
       ))}

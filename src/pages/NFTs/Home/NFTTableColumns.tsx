@@ -79,8 +79,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             false
           )}
         </th>
-        <th>{TableHeaderTitle('24h Change', '24 hours change based on the GFX Appraisal Value.', false)}</th>
-        <th>{TableHeaderTitle('Marketcap', '', false)}</th>
+        <th>{TableHeaderTitle('24H Change', '24 hours change based on Volume.', false)}</th>
         <th onClick={() => handleSortChangeForVolume(timelineDisplay)}>
           {TableHeaderTitle(
             `${timelineDisplay} Volume`,
@@ -90,6 +89,8 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             checkIfVolumeSelected()
           )}
         </th>
+        <th>{TableHeaderTitle('Marketcap', '', false)}</th>
+
         <th className="borderRow2">
           <div>
             <TokenToggleNFT toggleToken={setCurrency} />

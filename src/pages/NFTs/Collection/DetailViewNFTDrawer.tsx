@@ -20,6 +20,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { Share } from '../Share'
+import { copyToClipboard } from './CollectionHeader'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
@@ -33,8 +35,16 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   }
   .bidBy {
     ${tw`font-semibold`}
-    color: ${({ theme }) => theme.text30};
+    color: ${({ theme }) => theme.text39};
   }
+  .dtc-item-value {
+    ${tw`text-[15px] font-semibold`}
+    color:${({ theme }) => theme.text32};
+  }
+  .dtc-item-title {
+    ${tw`text-[15px] font-semibold text-grey-1`}
+  }
+
   ${({ theme }) => css`
     position: relative;
  
@@ -44,9 +54,8 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         height: 60px !important;
  
         .ant-tabs-nav-wrap {
-          ${tw`bg-[#3c3c3c]`}
-          background: ${({ theme }) => theme.sweepModalCard};
-          border-radius: 15px 15px 20px 20px;
+          border-radius: 15px 15px 0px 0px;
+          border: 1px solid ${({ theme }) => theme.tokenBorder};
            .ant-tabs-nav-list {
             ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
@@ -60,7 +69,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
         &:before {
           content: '';
           ${tw` top-0  left-0 w-[100%] h-[100%]`}
-          background-color: ${theme.tabContentBidBackground};
+          background-color: ${theme.bgForNFTCollection};
           border-radius: 15px 15px 20px 20px;
         }
       }
@@ -81,7 +90,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       }
 
       .ant-tabs-tab {
-        ${tw`text-[#636363] text-[15px] font-semibold sm:!m-0 sm:!p-0`}
+        ${tw`text-[#636363] text-[15px] font-medium sm:!m-0 sm:!p-0`}
 
         .ant-tabs-tab-btn {
           ${tw`sm:text-tiny text-[17px]`}
@@ -94,7 +103,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         &.ant-tabs-tab-active {
           .ant-tabs-tab-btn {
-            color: #fff;
+            color: ${({ theme }) => theme.text39};
           }
         }
       }
@@ -102,6 +111,8 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
       .ant-tabs-content-holder {
         ${tw`sm:mb-12  h-[230px] mt-2`}
+        border: 1px solid ${({ theme }) => theme.tokenBorder};
+
         background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
         padding: 28px 0px 15px 0;
@@ -126,6 +137,9 @@ export const DetailViewNFT: FC = (): JSX.Element => {
   const { general, setNftMetadata, nftMetadata, setGeneral } = useNFTDetails()
 
   const goBackToNFTCollections = () => {
+    setGeneral(null)
+    setNftMetadata(null)
+    console.log('setting nul')
     history.replace({
       pathname: location.pathname,
       search: ''
@@ -170,6 +184,30 @@ const ImageViewer = (): ReactElement => {
   const [activeTab, setActiveTab] = useState('1')
   const { general, ask, setGeneral } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
+  const [shareModal, setShareModal] = useState<boolean>(false)
+  const gfxAppraisalValue = general?.gfx_appraisal_value
+    ? parseFloat(general?.gfx_appraisal_value) > 0
+      ? general?.gfx_appraisal_value
+      : null
+    : null
+  const onShare = async (social: string) => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+  }
+
+  const handleShareModal = useCallback(
+    () => (
+      <Share
+        visible={shareModal}
+        handleCancel={() => setShareModal(false)}
+        socials={['twitter', 'telegram', 'facebook', 'copy link']}
+        handleShare={onShare}
+      />
+    ),
+    [shareModal]
+  )
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
     if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
@@ -187,7 +225,7 @@ const ImageViewer = (): ReactElement => {
             setGeneral(null)
           }}
         />
-
+        {handleShareModal()}
         <div tw="mt-4 flex items-center justify-between">
           <div tw="flex flex-col">
             <div tw="flex items-center">
@@ -226,7 +264,11 @@ const ImageViewer = (): ReactElement => {
               <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                 <img tw="h-10 w-10 mr-[12px] ml-4 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
               </a>
-              <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/shareBlue.svg`} />
+              <img
+                tw="h-10 w-10 cursor-pointer"
+                src={`/img/assets/shareBlue.svg`}
+                onClick={() => setShareModal(true)}
+              />
             </div>
           </div>
         </div>
@@ -234,8 +276,8 @@ const ImageViewer = (): ReactElement => {
 
         <div tw="mt-[30px]">
           <AppraisalValue
-            text={general.gfx_appraisal_value ? `${general.gfx_appraisal_value}` : null}
-            label={general.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
+            text={gfxAppraisalValue ? gfxAppraisalValue : null}
+            label={gfxAppraisalValue ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
           />
         </div>
         {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
@@ -290,7 +332,7 @@ export const ButtonContainer = (): ReactElement => {
 
   return (
     <div
-      tw="absolute left-0 z-10 right-0 bottom-0 h-[86px] w-[100%] 
+      tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] 
         dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
         border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
     >
@@ -308,7 +350,7 @@ export const ButtonContainer = (): ReactElement => {
             </div>
           )}
           <Button
-            height="56px"
+            height="44px"
             width={ask ? '250px' : '100%'}
             cssStyle={tw`bg-red-2 mr-2`}
             onClick={() => {
@@ -323,7 +365,7 @@ export const ButtonContainer = (): ReactElement => {
         <>
           {myBid ? (
             <Button
-              height="56px"
+              height="44px"
               width={ask ? '185px' : '100%'}
               cssStyle={tw`bg-red-2 mr-2`}
               onClick={() => setCancelBidClicked(general)}
@@ -332,7 +374,7 @@ export const ButtonContainer = (): ReactElement => {
             </Button>
           ) : (
             <Button
-              height="56px"
+              height="44px"
               width={ask ? '185px' : '100%'}
               cssStyle={tw`bg-blue-1 mr-2`}
               onClick={() => setBidNow(general)}
@@ -342,7 +384,7 @@ export const ButtonContainer = (): ReactElement => {
           )}
           {ask && (
             <Button
-              height="56px"
+              height="44px"
               width="185px"
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
               onClick={() => handleBuynowClicked()}
@@ -389,8 +431,12 @@ const NFTDetailsTab = (): ReactElement => {
     <div>
       {nftData.map((item, index) => (
         <Row justify="space-between" align="middle" className="dtc-item" key={index}>
-          <Col tw="text-[15px] font-semibold leading-9 ml-4">{item.title}</Col>
-          <Col tw="dark:text-white text-black-4 font-semibold mr-4">{item.value}</Col>
+          <Col className="dtc-item-title" tw="text-[15px] font-semibold leading-9 ml-4">
+            {item.title}
+          </Col>
+          <Col className="dtc-item-value" tw="font-semibold mr-4">
+            {item.value}
+          </Col>
         </Row>
       ))}
     </div>

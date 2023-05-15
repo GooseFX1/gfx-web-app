@@ -39,6 +39,12 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         // fetches user nfts in wallet and sets them to state
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setParsedAccounts(parsedAccounts)
+        setInterval(async () => {
+          const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
+          setParsedAccounts((prev) =>
+            prev ? (prev?.length === parsedAccounts.length ? [...prev] : parsedAccounts) : undefined
+          )
+        }, 15000)
         return res
       } catch (err) {
         return err
@@ -127,9 +133,16 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         } else {
           _setUser(undefined, setNonSessionProfile)
         }
-        // fetches user nfts in wallet and sets them to state
+        // fetches user nfts in wallet and sets them to stat
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setNonSessionUserParsedAccounts(parsedAccounts)
+        setInterval(async () => {
+          const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
+          setNonSessionUserParsedAccounts((prev) =>
+            prev ? (prev?.length === parsedAccounts.length ? [...prev] : parsedAccounts) : undefined
+          )
+        }, 15000)
+
         return res
       } catch (err) {
         return err

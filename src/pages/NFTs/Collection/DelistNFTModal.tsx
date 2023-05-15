@@ -1,5 +1,7 @@
 import { Button } from 'antd'
 import React, { FC } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 // import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -8,7 +10,7 @@ import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useNFTDetails } from '../../../context'
-import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { TermsTextNFT } from './AcceptBidModal'
 
 const DelistNFTModal: FC<{
   isDelistLoading: boolean
@@ -30,39 +32,41 @@ const DelistNFTModal: FC<{
     >
       <div tw="flex flex-col items-center">
         <div className="delistText">
-          Are you sure you want to delist
+          Are you sure you want to Remove Listing
           <br />
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
           {checkMobile() && <br />}
-          <GenericTooltip text={general?.collection_name}>
-            <strong>
-              {general?.collection_name &&
-                `by ${minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}`}
-            </strong>
-          </GenericTooltip>
+          {general?.collection_name && (
+            <>
+              {' '}
+              by{' '}
+              <GenericTooltip text={general?.collection_name}>
+                <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
+              </GenericTooltip>
+            </>
+          )}
         </div>
 
-        <div className="priceText" tw="!mt-6 mb-2 sm:!mt-10">
-          Price
+        <div className="feesContainer" tw="!bottom-[180px]">
+          <div className="rowContainer">
+            <div className="leftAlign">Listing Price</div>
+            <div className="rightAlign">{formatSOLDisplay(ask?.buyer_price)} SOL</div>
+          </div>
         </div>
-        <PriceWithToken
-          price={formatSOLDisplay(ask?.buyer_price)}
-          token={'SOL'}
-          cssStyle={tw`h-6 w-6 !text-[40px]`}
-        />
         <Button
           onClick={callDelistInstruction}
           className={'sellButton'}
-          tw="mt-[30px] sm:!absolute sm:!bottom-[70px]"
+          tw="bottom-[100px] !absolute sm:!bottom-[70px]"
           loading={isDelistLoading}
         >
-          <span tw="font-semibold text-[20px]">Yes, Delist item</span>
+          <span tw="font-semibold text-[20px]">Remove Listing</span>
         </Button>
-        <div className="cancelText" onClick={closeTheModal}>
+        <div className="cancelText" tw="bottom-[58px]" onClick={closeTheModal}>
           Cancel
         </div>
+        <TermsTextNFT string="Remove" />
       </div>
     </STYLED_POPUP_BUY_MODAL>
   )

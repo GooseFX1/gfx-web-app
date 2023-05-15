@@ -66,8 +66,11 @@ export const FixedPriceNFTs = (): ReactElement => {
 
   const handleScroll = useCallback(() => {
     setPageNumber((prev) => prev + 1)
-    fetchFixedPriceNFTs(pageNumber + 1, collectionSort)
-  }, [pageNumber, collectionSort])
+  }, [collectionSort])
+
+  useEffect(() => {
+    fetchFixedPriceNFTs(pageNumber, collectionSort)
+  }, [pageNumber])
 
   const resetLocalState = useCallback(() => {
     setFixedPriceArr([])
@@ -108,7 +111,7 @@ export const FixedPriceNFTs = (): ReactElement => {
         setFixedPriceLoading(false)
       }
     },
-    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr]
+    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber]
   )
 
   useEffect(() => {
@@ -156,8 +159,8 @@ export const FixedPriceNFTs = (): ReactElement => {
   }
 
   const handleDrawerOpen = useCallback(() => {
-    if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
-  }, [nftMetadata, general])
+    if (general !== null && nftMetadata !== null && params.address && !openJustModal) return <DetailViewNFT />
+  }, [nftMetadata, general, params.address])
 
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />

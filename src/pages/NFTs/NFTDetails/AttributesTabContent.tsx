@@ -44,8 +44,10 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
       {data.map((item, index) => (
         <PILL_SECONDARY $mode={`${mode}`} key={index}>
           <div className="layer">
-            <div tw="text-[13px] font-medium dark:text-grey-2 text-grey-1">{item.trait_type} </div>
-            <div tw="text-[13px] font-medium dark:text-grey-5 text-black-4 truncate">{trimString(item.value)}</div>
+            <div tw="text-[13px] font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
+            <div tw="text-[13px] font-semibold dark:text-grey-5 text-black-4 truncate">
+              {trimString(item.value)}
+            </div>
           </div>
         </PILL_SECONDARY>
       ))}
@@ -135,8 +137,7 @@ const PILL_SECONDARY = styled.div<{ $mode: string }>`
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
-      : `linear-gradient(to bottom, rgba(116, 116, 116, 0.2), rgba(116, 116, 116, 0.2)), 
-      linear-gradient(to right, #f7931a 1%, #e03cff 100%), linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)`};
+      : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.3) 5.25%, rgba(172, 28, 199, 0.3) 97.61%)`};
 
   .layer {
     ${tw`h-full flex flex-col font-semibold text-[15px] items-start pl-2 w-full leading-[18px]
