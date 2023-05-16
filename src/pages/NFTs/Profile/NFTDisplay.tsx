@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import React, { useState, useEffect, useRef, FC, useCallback, useMemo, Dispatch, SetStateAction } from 'react'
 import axios from 'axios'
 import { Row, Col } from 'antd'
@@ -103,9 +103,10 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { cancelBidClicked } = useNFTAggregator()
   const [nftApiResponses, setNftApiResponses] = useState(null)
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
-  const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>(null)
+  const [filteredCollectedItems, setFilteredCollectedItems] = useState<ISingleNFT[]>([])
   const [loading, _setLoading] = useState<boolean>(false)
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const { general, nftMetadata } = useNFTDetails()
   const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
 
@@ -119,8 +120,10 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           nft_name.toLowerCase().includes(searchInsideProfile.trim().toLowerCase())
         )
         setFilteredCollectedItems(filteredData)
+        if (filteredCollectedItems.length !== 0) setIsLoading(false)
       } else {
         setFilteredCollectedItems(collectedItems)
+        if (filteredCollectedItems.length !== 0) setIsLoading(false)
       }
     }
   }, [searchInsideProfile, collectedItems, profileNFTOptions])
@@ -129,6 +132,13 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     activePointRef.current = x // keep updated
     setCollectedItems(x)
   }
+
+  useEffect(() => {
+    if (filteredCollectedItems.length === 0)
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 5000)
+  }, [])
 
   useEffect(() => {
     if (props.singleNFTs) {
@@ -206,11 +216,9 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
       {handleModalClick()}
-      {nftApiResponses === null ? (
-        <>
-          <NFTLoading />
-        </>
-      ) : filteredCollectedItems?.length === 0 && nftApiResponses === null ? (
+      {filteredCollectedItems?.length === 0 && isLoading ? (
+        <NFTLoading />
+      ) : filteredCollectedItems?.length === 0 && !isLoading ? (
         <NoContent type={props.type} />
       ) : (
         <div className="gridContainerProfile" tw="h-[75vh]">
