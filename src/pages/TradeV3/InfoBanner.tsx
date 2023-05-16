@@ -335,7 +335,7 @@ export const InfoBanner: FC<{
           </INFO_STATS>
           <INFO_STATS>
             <>
-              <div>24hr Volume</div>
+              <div>24H Volume</div>
               {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
             </>
           </INFO_STATS>
@@ -389,7 +389,7 @@ export const InfoBanner: FC<{
       {!isSpot && (
         <INFO_STATS>
           <>
-            <div>Funding Rate</div>
+            <div>1H Funding Rate</div>
             {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
