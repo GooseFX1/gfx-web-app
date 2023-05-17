@@ -20,7 +20,7 @@ import { GradientText } from '../../../components/GradientText'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
 import AdditionalFilters from './AdditionalFilters'
-import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
+
 import {
   COLLECTION_VIEW_WRAPPER,
   GRID_CONTAINER,
@@ -289,16 +289,21 @@ export const NFTGridContainer = (): ReactElement => {
       ? singleCollection[0]?.verified_collection_address
       : singleCollection[0].first_verified_creator_address
     : null
+
+  const NFTDisplayComponent = useMemo(() => {
+    if (displayIndex === 0) return <FixedPriceNFTs />
+    if (displayIndex === 1) return <OpenBidNFTs />
+    if (displayIndex === 2)
+      return (
+        <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
+      )
+  }, [displayIndex, activityAddress])
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         {/* <AdditionalFilters open={open} setOpen={setOpen} /> */}
-        {displayIndex === 0 && <FixedPriceNFTs />}
-        {displayIndex === 1 && <OpenBidNFTs />}
-        {displayIndex === 2 && (
-          <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
-        )}
+        {NFTDisplayComponent}
       </div>
     </GRID_CONTAINER>
   )

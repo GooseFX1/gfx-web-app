@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, ReactElement, useCallback, useMemo, useState } from 'react'
+import { FC, memo, ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -12,7 +12,6 @@ import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { PriceWithToken } from '../../../components/common/PriceWithToken'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
@@ -22,7 +21,7 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
   height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
   .profileContent {
     ${tw`overflow-y-auto overflow-x-hidden mt-[-20px]`}
-    ${({ theme }) => theme.customScrollBar('2px')}
+    ${({ theme }) => theme.customScrollBar('0px')}
     height: ${({ navCollapsed }) => (navCollapsed ? '720px' : '640px')};
   }
 
@@ -103,7 +102,7 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
     width: 23vw;
     height: auto;
     scale: 1;
-    ${tw``}
+    ${tw`object-cover`}
   }
 
   .portfolio{
@@ -156,7 +155,7 @@ type Props = {
   isSessionUser: boolean
 }
 
-export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
+const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -167,7 +166,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
       return undefined
     }
   }, [isSessionUser, sessionUser, nonSessionProfile])
-  const { mode } = useDarkMode()
+
   const [profileModal, setProfileModal] = useState(false)
   const [shareModal, setShareModal] = useState(false)
   const handleCancel = () => setProfileModal(false)
@@ -413,6 +412,7 @@ export const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Ele
   )
 }
 
+export default memo(ProfilePageSidebar)
 export const WalletProfilePicture = (): ReactElement => {
   const params = useParams<IAppParams>()
 

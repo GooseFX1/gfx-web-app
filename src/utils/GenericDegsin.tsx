@@ -19,14 +19,14 @@ const WRAPPER = styled.div<{ $width; $mode }>`
     background: ${({ theme }) => theme.bg26};
     text: ${({ theme }) => theme.text20};
     ${tw`relative p-1 sm:p-2 
-      rounded-xl sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`}
+      rounded-[8.5px] sm:w-[98.5%] w-[98.8%] h-[64px] flex items-center justify-center`}
   }
   .hContainer {
     ${tw`flex flex-col items-center justify-center`}
   }
   .outerCover {
     width: ${({ $width }) => ($width ? $width + 'px' : '100%')} !important;
-    ${tw`w-[100%] sm:w-[100%] h-[68px] rounded-xl flex items-center justify-center`}
+    ${tw`w-[100%] sm:w-[100%] h-[68px] rounded-[10px] flex items-center justify-center`}
     background: linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);
   }
   .appraisalResult {

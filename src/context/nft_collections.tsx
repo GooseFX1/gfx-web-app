@@ -44,31 +44,29 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
-  const fetchAllCollectionsByPages = async (
-    offset: number,
-    limit: number,
-    filterColumn?: string,
-    sortPref?: string
-  ) => {
-    try {
-      setLoading(true)
-      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
-        params: {
-          filter: filterColumn ? filterColumn : null,
-          sort: sortPref ? sortPref : null,
-          offset: offset,
-          limit: limit
-        }
-      })
-      if (offset === 0) setAllCollections(res.data)
-      else setAllCollections((prev) => [...prev, ...res.data])
-      setLoading(false)
-      return res.data
-    } catch (err) {
-      console.error(err)
-      return []
-    }
-  }
+  const fetchAllCollectionsByPages = useCallback(
+    async (offset: number, limit: number, filterColumn?: string, sortPref?: string) => {
+      try {
+        setLoading(true)
+        const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
+          params: {
+            filter: filterColumn ? filterColumn : null,
+            sort: sortPref ? sortPref : null,
+            offset: offset,
+            limit: limit
+          }
+        })
+        if (offset === 0) setAllCollections(res.data)
+        else setAllCollections((prev) => [...prev, ...res.data])
+        setLoading(false)
+        return res.data
+      } catch (err) {
+        console.error(err)
+        return []
+      }
+    },
+    []
+  )
 
   const fetchFeaturedCollections = useCallback(async () => {
     try {

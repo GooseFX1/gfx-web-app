@@ -1,4 +1,14 @@
-import React, { createContext, Dispatch, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
@@ -88,14 +98,14 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     [connection, wallet?.adapter?.publicKey]
   )
 
-  const refreshTokenData = async () => {
+  const refreshTokenData = useCallback(async () => {
     ;(async () => {
       const { data } = await getFarmTokenPrices()
       setPrices(data)
 
       setPriceFetched(true)
     })()
-  }
+  }, [])
 
   useEffect(() => {
     if (prices['SOL/USDC']) {

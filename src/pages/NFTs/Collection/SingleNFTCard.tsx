@@ -7,7 +7,8 @@ import {
   useNFTDetails,
   useNFTProfile,
   usePriceFeedFarm,
-  useWalletModal
+  useWalletModal,
+  useNFTAggregatorFilters
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -70,6 +71,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
+  const { searchInsideCollection } = useNFTAggregatorFilters()
 
   const setNFTDetails = async (): Promise<boolean> => {
     try {
@@ -273,7 +275,6 @@ export const HoverOnNFT: FC<{
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
-
   const openInNewTab = useCallback((url) => {
     const win = window.open(url, '_blank')
     win.focus()

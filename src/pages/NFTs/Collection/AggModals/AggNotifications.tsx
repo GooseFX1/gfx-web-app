@@ -33,7 +33,7 @@ export const successfulListingMsg = (
     />
   )
 })
-export const pleaseTryAgain = (isBuyingNow: boolean, message: string): any => {
+export const pleaseTryAgain = (isBuyingNow = false, message: string): any => {
   notify({
     type: 'error',
     message: (

@@ -218,7 +218,10 @@ const ImageViewer = (): ReactElement => {
   }, [])
 
   return general ? (
-    <div tw="flex flex-col justify-between relative h-full dark:text-white text-black px-[30px]">
+    <div
+      tw="flex flex-col justify-between relative h-full dark:bg-black-1 border-solid dark:border-l-black-4
+    border-r-0 border-t-0 dark:text-white text-black px-[30px] border-l-grey-4"
+    >
       <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
         <ImageShowcase
           setShowSingleNFT={() => {
@@ -333,7 +336,7 @@ export const ButtonContainer = (): ReactElement => {
   return (
     <div
       tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] 
-        dark:bg-black-2 bg-grey-5 px-[30px] flex items-center justify-between
+        dark:bg-black-1 bg-grey-5 px-[30px] flex items-center justify-between
         border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
     >
       {isOwner ? (

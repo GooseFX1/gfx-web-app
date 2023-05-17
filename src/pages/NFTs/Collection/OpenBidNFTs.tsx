@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
-import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
+import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
 import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
-import { fetchOpenBidByPages } from '../../../api/NFTs'
+import { fetchOpenBidByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
 import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
+import { BidNFTModal } from './AggModals/BidNFTModal'
 
 export const OpenBidNFTs = (): ReactElement => {
   const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT, openJustModal } =
@@ -22,6 +23,10 @@ export const OpenBidNFTs = (): ReactElement => {
   const { general, nftMetadata } = useNFTDetails()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const [filteredOpenBid, setFilteredOpenBid] = useState<BaseNFT[]>(null)
+  const collectionId = useMemo(
+    () => (singleCollection ? singleCollection[0].collection_id : null),
+    [singleCollection]
+  )
 
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
@@ -29,15 +34,22 @@ export const OpenBidNFTs = (): ReactElement => {
   const observer = useRef<any>()
 
   useEffect(() => {
-    if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
-      setFilteredOpenBid(openBidArr)
+    const fetchFilteredOpenBid = async () => {
+      if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
+        setFilteredOpenBid(openBidArr)
+      }
+
+      if (searchInsideCollection && searchInsideCollection.length > 1) {
+        try {
+          const resultArr = await fetchSearchNFTbyCollection(collectionId, searchInsideCollection)
+          setFilteredOpenBid(resultArr.nfts)
+        } catch (err) {
+          console.log(err)
+        }
+      }
     }
-    if (searchInsideCollection && searchInsideCollection.length) {
-      const filteredData = openBidArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
-      )
-      setFilteredOpenBid(filteredData)
-    }
+
+    fetchFilteredOpenBid()
   }, [searchInsideCollection, openBidArr])
 
   const lastCardRef = useCallback(

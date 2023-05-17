@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Col, Row } from 'antd'
 import {
   useAccounts,
@@ -56,7 +56,6 @@ import {
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
 import { web3 } from '@project-serum/anchor'
-import { ReviewBidModal } from './AggModals/ReviewBidModal'
 import { HoldTight } from './AggModals/HoldTight'
 import MissionAccomplishedModal from './AggModals/MissionAcomplishedModal'
 import {
@@ -69,6 +68,7 @@ import {
 } from './AggModals/AggNotifications'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { BorderBottom } from './SellNFTModal'
+import { TermsTextNFT } from './AcceptBidModal'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -170,14 +170,15 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] rounded-[5px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
   }
   .currentBid {
-    ${tw`text-[14px] font-semibold ml-4 sm:mt-[6px]  `}
+    color: ${({ theme }) => theme.text22};
+    ${tw`text-[20px] font-semibold ml-4 sm:mt-[6px]  `};
   }
   .maxBid {
-    ${tw`text-[25px] sm:text-[20px] font-semibold leading-7 sm:mt-[20px]	`}
+    ${tw`text-[20px] sm:text-[20px] font-semibold leading-[30px] sm:mt-[20px]	`}
     color: ${({ theme }) => theme.text20}
   }
   .enterBid {
-    ${tw`h-[64px] my-5 px-[24px] w-full bg-none
+    ${tw`h-[55px]  px-[24px] w-[360px] bg-none
     border-transparent rounded-circle text-[40px] font-semibold sm:mt-0 sm:h-[48px]`}
     background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text32};
@@ -190,7 +191,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .nftImgBid {
-    ${tw`w-[165px] h-[165px] flex items-center overflow-hidden rounded-[15px] sm:mt-[0px] rounded-[10px]
+    ${tw`w-[140px] h-[140px] flex items-center overflow-hidden rounded-[15px] sm:mt-[0px] rounded-[10px]
      left-0 sm:h-[125px] sm:w-[125px] sm:left-0 `}
 
     img {
@@ -275,7 +276,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     sm:ml-0 ml-1.5 justify-between sm:mt-[20px] absolute bottom-[120px] sm:bottom-[100px]  `}
   }
   .buyBtnContainer {
-    ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-7 sm:bottom-4  `}
+    ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-[50px] sm:bottom-4  `}
   }
 
   .bm-title {
@@ -332,72 +333,6 @@ export const BuyNFTModal = (): ReactElement => {
   )
 }
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
-  const { ask } = useNFTDetails()
-  const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
-  const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
-  const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
-  const purchasePrice = useMemo(() => parseFloat(ask ? ask?.buyer_price : '0') / LAMPORTS_PER_SOL_NUMBER, [ask])
-  const [curBid, setCurBid] = useState<number | undefined>(purchasePrice ? purchasePrice : undefined)
-  const { connected } = useWallet()
-  const { setGeneral } = useNFTDetails()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const { setVisible } = useWalletModal()
-  const updateBidValue = (e) => {
-    if (parseFloat(e.target.value) < TEN_MILLION) setCurBid(e.target.value)
-    handleSetCurBid(e.target.value, -1)
-  }
-
-  useEffect(() => {
-    if (bidNowClicked) {
-      if (!connected) {
-        setVisible(true)
-        setBidNow(false)
-      }
-    }
-    return () => {
-      handleModalClose()
-    }
-  }, [bidNowClicked])
-  const handleSetCurBid = (value: number, index: number) => {
-    setCurBid(value)
-    setSelectedBtn(index)
-  }
-  const handleModalClose = () => {
-    setCurBid(0)
-    setSelectedBtn(undefined)
-    setReviewClicked(false)
-    setBidNow(false)
-    openJustModal && setGeneral(null)
-    setOpenJustModal(false)
-  }
-
-  return (
-    <STYLED_POPUP_BUY_MODAL
-      lockModal={isLoading}
-      height={checkMobile() ? '603px' : '780px'}
-      width={checkMobile() ? '100%' : '580px'}
-      title={null}
-      centered={checkMobile() ? false : true}
-      visible={bidNowClicked ? true : false}
-      onCancel={() => !isLoading && handleModalClose()}
-      footer={null}
-    >
-      {reviewBtnClicked ? (
-        <FinalPlaceBid curBid={curBid} isLoading={isLoading} setIsLoading={setIsLoading} />
-      ) : (
-        <ReviewBidModal
-          curBid={curBid}
-          selectedBtn={selectedBtn}
-          updateBidValue={updateBidValue}
-          handleSetCurBid={handleSetCurBid}
-          setReviewClicked={setReviewClicked}
-        />
-      )}
-    </STYLED_POPUP_BUY_MODAL>
-  )
-}
 
 const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any }> = ({
   curBid,
@@ -430,7 +365,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   )
   const orderTotal: number = useMemo(() => curBid, [curBid])
 
-  const notEnough: boolean = useMemo(
+  const notEnoughSol: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
     [curBid]
   )
@@ -779,12 +714,15 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         <div className="buyBtnContainer">
           <Button
             className="buyButton"
-            disabled={notEnough || isLoading}
+            disabled={notEnoughSol || isLoading}
             onClick={callBuyInstruction}
             loading={isLoading}
           >
-            {notEnough ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
+            {notEnoughSol ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
           </Button>
+        </div>
+        <div tw="ml-[90px]">
+          <TermsTextNFT string="Buy Now" />
         </div>
       </div>
     )

@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
-import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction, Dispatch } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  FC,
+  useEffect,
+  SetStateAction,
+  Dispatch,
+  useCallback
+} from 'react'
 import { ICreatorData } from '../types/nft_launchpad'
 
 interface INFTAggConfig {
@@ -39,9 +49,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
   const [openJustModal, setOpenJustModal] = useState<boolean>(false)
 
-  const setCurrency = () => {
+  const setCurrency = useCallback(() => {
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
-  }
+  }, [])
 
   return (
     <NFTAggContext.Provider

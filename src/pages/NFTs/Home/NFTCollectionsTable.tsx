@@ -23,6 +23,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
+import { fetchSingleNFT } from '../../../api/NFTs'
 
 const STYLE = styled.div``
 
@@ -208,6 +209,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   const history = useHistory()
   const { timelineDisplay } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
+  const [gfxAppraisal, setGfxAppraisal] = useState(null)
 
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
   // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
@@ -216,6 +218,19 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
     const fp = currencyView === 'USDC' ? solPrice * (price > 0 ? price : 0) : price
     return truncateBigNumber(fp)
   }, [item, solPrice, currencyView])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let singleNFTDetails = null
+      if (item.gfx_appraisal_supported && item.floor_mint) {
+        singleNFTDetails = await fetchSingleNFT(item.floor_mint)
+        const appraisalValue = parseFloat(singleNFTDetails.data.data[0]?.gfx_appraisal_value) || 0
+        setGfxAppraisal(appraisalValue > 0 ? formatSOLDisplay(appraisalValue) : 0)
+      }
+    }
+
+    fetchData()
+  }, [item.gfx_appraisal_supported])
 
   const volume = useMemo(() => {
     const v =
@@ -271,18 +286,19 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="tdItem">
-        {item?.profile_pic_link ? (
-          <PriceWithToken
-            price={item?.gfx_appraisal_supported ? 0 : 0}
-            token={currencyView}
-            cssStyle={tw`h-5 w-5`}
-          />
+        {item?.floor_price >= 0 ? (
+          // gfx appraisal
+          gfxAppraisal ? (
+            <PriceWithToken price={gfxAppraisal ? gfxAppraisal : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          ) : (
+            'NA'
+          )
         ) : (
           <Loader />
         )}
       </td>
       <td className="tdItem">
-        {item?.profile_pic_link ? (
+        {item?.collection_name ? (
           <>
             {(item?.daily_change === null || item?.daily_change === 0) && (
               <div tw="dark:text-grey-5 text-grey-1"> {item?.daily_change ? item.daily_change : '0'} %</div>

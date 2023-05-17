@@ -6,7 +6,8 @@ import React, {
   FC,
   ReactElement,
   SetStateAction,
-  Dispatch
+  Dispatch,
+  memo
 } from 'react'
 import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -32,7 +33,7 @@ import { GradientText } from '../../../components/GradientText'
 import { HoverOnNFT } from './SingleNFTCard'
 import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BidNFTModal } from './BuyNFTModal'
+import { BidNFTModal } from './AggModals/BidNFTModal'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
@@ -55,7 +56,7 @@ type ICard = {
   setGfxAppraisal?: Dispatch<SetStateAction<boolean>>
 }
 
-export const Card: FC<ICard> = ({ singleNFT, nftDetails, className, listingType, userId, setGfxAppraisal }) => {
+const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connection } = useConnectionConfig()
@@ -359,4 +360,6 @@ export const Card: FC<ICard> = ({ singleNFT, nftDetails, className, listingType,
     )
   )
 }
+
+export default memo(Card)
 export const LoadingDiv = (): ReactElement => <div className="loadingNFT" />

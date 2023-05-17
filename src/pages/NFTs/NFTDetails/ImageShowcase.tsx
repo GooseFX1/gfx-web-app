@@ -1,11 +1,13 @@
 import { FC, useMemo } from 'react'
 import { useNFTDetails } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
-import { checkMobile } from '../../../utils'
+import { checkMobile, formatSOLDisplay } from '../../../utils'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { Tag } from '../../../components/Tag'
 
 //#region styles
 const LEFT_SECTION = styled.div`
@@ -34,7 +36,6 @@ const LEFT_SECTION = styled.div`
     .ls-image {
       border-radius: 20px;
       object-fit: cover;
-      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
     }
 
     .ls-bottom-panel {
@@ -106,7 +107,12 @@ export const ImageShowcase: FC<{
   isOwner?: boolean
 }> = ({ setShowSingleNFT, isOwner, setShowAcceptBidModal, ...rest }) => {
   const { general, nftMetadata, bids } = useNFTDetails()
-
+  const wallet = useWallet()
+  const publicKey = wallet.publicKey
+  const isBidder = useMemo(
+    () => (publicKey ? bids.filter((bid) => bid.wallet_key === publicKey.toString()) : null),
+    [bids]
+  )
   const highestBid: number = useMemo(
     () =>
       bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : -1,
@@ -126,6 +132,13 @@ export const ImageShowcase: FC<{
       {highestBid && isOwner && (
         <div className="acceptBidBtn" onClick={() => setShowAcceptBidModal(true)}>
           Accept Highest Bid {highestBid} SOL
+        </div>
+      )}
+      {isBidder && isBidder.length > 0 && (
+        <div tw="w-[254px] h-11 absolute left-[68px] bottom-[30px]">
+          <Tag loading={false} cssStyle={tw`h-11 w-[252px] text-[15px] text-white`}>
+            <div>My Bid: {formatSOLDisplay(isBidder[0].buyer_price)} SOL </div>
+          </Tag>
         </div>
       )}
 

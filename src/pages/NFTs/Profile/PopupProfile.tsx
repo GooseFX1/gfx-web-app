@@ -227,7 +227,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           </div>
         </div>
         <div className="titleHeaderBlue" tw="text-[20px] sm:text-[18px]">
-          Social Media Links
+          Socials
         </div>
         <div tw="flex">
           <div className="titleHeader">

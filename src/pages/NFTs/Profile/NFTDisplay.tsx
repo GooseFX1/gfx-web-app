@@ -4,17 +4,10 @@ import axios from 'axios'
 import { Row, Col } from 'antd'
 import { checkMobile } from '../../../utils'
 import { ParsedAccount } from '../../../web3'
-import { Card } from '../Collection/Card'
+import Card from '../Collection/Card'
 import NoContent from './NoContent'
-import { SearchBar, Loader, ArrowDropdown } from '../../../components'
-import {
-  useDarkMode,
-  useNavCollapse,
-  useNFTAggregator,
-  useNFTAggregatorFilters,
-  useNFTDetails,
-  useNFTProfile
-} from '../../../context'
+import { Loader, ArrowDropdown } from '../../../components'
+import { useNFTAggregator, useNFTAggregatorFilters, useNFTDetails, useNFTProfile } from '../../../context'
 import { StyledTabContent } from './TabContent.styled'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import debounce from 'lodash.debounce'
@@ -26,11 +19,12 @@ import { GRID_CONTAINER, NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2
 import Loading from '../Home/Loading'
 import NFTLoading from '../Home/NFTLoading'
 import { SellNFTModal } from '../Collection/SellNFTModal'
-import { BidNFTModal, BuyNFTModal } from '../Collection/BuyNFTModal'
+import { BuyNFTModal } from '../Collection/BuyNFTModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { fetchSingleNFT, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import CancelBidModal from '../Collection/CancelBidModal'
+import { BidNFTModal } from '../Collection/AggModals/BidNFTModal'
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
@@ -98,7 +92,6 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
-  const { mode } = useDarkMode()
   const { searchInsideProfile, profileNFTOptions } = useNFTAggregatorFilters()
   const { cancelBidClicked } = useNFTAggregator()
   const [nftApiResponses, setNftApiResponses] = useState(null)
@@ -152,12 +145,11 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.singleNFTs, props.parsedAccounts, refreshClicked])
+  }, [props.singleNFTs, props.parsedAccounts, refreshClicked, nftApiResponses])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []
-    const metaDataResponse = []
-    parsedAccounts.map((account) => metaDataResponse.push(axios.get(account.data.uri)))
+    const metaDataResponse = parsedAccounts.map((account) => axios.get(account.data.uri))
     const responses = await Promise.all(metaDataResponse.map((metaData) => metaData.catch((e) => e)))
     const val = responses.filter((result) => result.status === 200)
 
@@ -201,7 +193,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   }, [filteredCollectedItems])
 
   useEffect(() => {
-    if (nftApiResponses) props.setNumberOfNFTs(nftApiResponses.length)
+    if (nftApiResponses && props.type === 'collected') props.setNumberOfNFTs(nftApiResponses.length)
   }, [nftApiResponses])
 
   const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])

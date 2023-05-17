@@ -7,7 +7,7 @@ import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
 import styled from 'styled-components'
-import { ProfilePageSidebar } from './ProfilePageSidebar'
+import ProfilePageSidebar from './ProfilePageSidebar'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
 import ActivityNFTSection from '../Collection/ActivityNFTSection'
@@ -71,19 +71,24 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         )
       },
       {
-        order: 1,
+        order: 2,
         name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
         component: <NFTDisplay singleNFTs={favoritedItems ? favoritedItems : []} type={'favorited'} />
       },
       {
-        order: 2,
+        order: 3,
+        name: `My Bids`,
+        component: <NFTDisplay singleNFTs={[]} type={'favorited'} />
+      },
+      {
+        order: 4,
         name: 'Activity',
         component: (
           <ActivityNFTSection address={params.userAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.WALLET_ADDRESS} />
         )
       }
     ],
-    [currentUserParsedAccounts, createdItems, userActivity, favoritedItems, noOfNFTs]
+    [currentUserParsedAccounts, favoritedItems, noOfNFTs]
   )
 
   useEffect(() => {

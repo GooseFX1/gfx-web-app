@@ -6,18 +6,19 @@ import {
   useNFTCollections,
   useNFTDetails
 } from '../../../context'
-import { BidNFTModal, BuyNFTModal } from './BuyNFTModal'
+import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
-import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
+import { BaseNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
-import { fetchFixedPriceByPages } from '../../../api/NFTs'
+import { fetchFixedPriceByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
 import { debounce } from '../../../utils'
 import NoContent from '../Profile/NoContent'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
+import { BidNFTModal } from './AggModals/BidNFTModal'
 
 export const FixedPriceNFTs = (): ReactElement => {
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
@@ -45,10 +46,15 @@ export const FixedPriceNFTs = (): ReactElement => {
   const [fixedPriceArr, setFixedPriceArr] = useState<BaseNFT[]>([])
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const [filteredFixedPrice, setFilteredFixPrice] = useState<BaseNFT[] | null>(null)
   const observer = useRef<any>()
   const paginationNum = 30
+  const collectionId = useMemo(
+    () => (singleCollection ? singleCollection[0].collection_id : null),
+    [singleCollection]
+  )
 
   const lastCardRef = useCallback(
     (node) => {
@@ -69,13 +75,14 @@ export const FixedPriceNFTs = (): ReactElement => {
   }, [collectionSort])
 
   useEffect(() => {
-    fetchFixedPriceNFTs(pageNumber, collectionSort)
+    if (pageNumber !== 0) fetchFixedPriceNFTs(pageNumber, collectionSort)
   }, [pageNumber])
 
   const resetLocalState = useCallback(() => {
     setFixedPriceArr([])
     setPageNumber(0)
     setCollectionSort('DESC')
+    setFirstLoad(true)
     setSearchInsideCollection(undefined)
   }, [])
 
@@ -105,6 +112,7 @@ export const FixedPriceNFTs = (): ReactElement => {
         }))
 
         setFixedPriceArr((prev) => [...prev, ...nftDataWithPrice])
+        setFirstLoad(false)
       } catch (error) {
         console.error(error)
       } finally {
@@ -125,28 +133,36 @@ export const FixedPriceNFTs = (): ReactElement => {
     setFixedPriceArr([])
     setPageNumber(0)
     setSearchInsideCollection(undefined)
-
-    fetchFixedPriceNFTs(0, collectionSort)
+    !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
   }, [collectionSort])
 
   useEffect(() => {
     // TODO: Is there a way to filter and not call the Request URL: https://nest-api.goosefx.io/nft?mint_address=<val>
-    if (!searchInsideCollection || searchInsideCollection.length === 0) {
-      setFilteredFixPrice(fixedPriceArr)
+
+    const fetchData = async () => {
+      if (!searchInsideCollection || searchInsideCollection.length === 0) {
+        setFilteredFixPrice(fixedPriceArr)
+      }
+      if (searchInsideCollection && searchInsideCollection.length > 1) {
+        // Your async code here
+        try {
+          const resultArr = await fetchSearchNFTbyCollection(collectionId, searchInsideCollection, true)
+          setFilteredFixPrice(resultArr.nfts)
+        } catch (err) {
+          console.log(err)
+        }
+      }
     }
-    if (searchInsideCollection && searchInsideCollection.length > 0) {
-      const filteredData = fixedPriceArr.filter((fixedPriceNFT: ISingleNFT) =>
-        fixedPriceNFT.nft_name.toLowerCase().includes(searchInsideCollection.toLowerCase())
-      )
-      setFilteredFixPrice(filteredData)
-    }
+
+    fetchData()
   }, [searchInsideCollection, fixedPriceArr])
 
   useEffect(() => refreshClicked && resetLocalState(), [refreshClicked])
 
   useEffect(() => {
-    fetchFixedPriceNFTs(0, collectionSort)
-    return resetLocalState()
+    console.log('single collections', firstLoad)
+    firstLoad && fetchFixedPriceNFTs(0, collectionSort)
+    return () => resetLocalState()
   }, [singleCollection])
 
   const addNftToBag = (e, nftItem, ask) => {
@@ -181,15 +197,18 @@ export const FixedPriceNFTs = (): ReactElement => {
       ) : (
         <div className="gridContainer">
           {filteredFixedPrice !== null ? (
-            filteredFixedPrice.map((item, index) => (
-              <SingleNFTCard
-                item={item}
-                key={index}
-                lastCardRef={index + 1 === filteredFixedPrice.length ? lastCardRef : null}
-                index={index}
-                addNftToBag={addNftToBag}
-              />
-            ))
+            <>
+              {filteredFixedPrice.map((item, index) => (
+                <SingleNFTCard
+                  item={item}
+                  key={index}
+                  lastCardRef={index + 1 === filteredFixedPrice.length ? lastCardRef : null}
+                  index={index}
+                  addNftToBag={addNftToBag}
+                />
+              ))}
+              {/* TODO add a Loading Div here <div>Loading div comming</div> */}
+            </>
           ) : (
             <NFTLoading />
           )}
