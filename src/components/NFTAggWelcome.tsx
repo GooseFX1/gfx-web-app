@@ -176,6 +176,7 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
 
 export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
+  const { mode } = useDarkMode()
 
   const showNextButton = useMemo(() => (currentSlide === 2 ? 'Start' : 'Next'), [currentSlide])
   const settings = {
@@ -220,7 +221,7 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
                 <br />
                 like never before!
               </h2>
-              <img className="trackNFTImg" src={'/img/assets/GFXappraisalGraphic.png'} alt="" />
+              <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`} alt="" />
               <h3 tw="!text-[15px] font-semibold">*For individual assets in a collection</h3>
               <div className="subText">
                 Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data,

@@ -77,11 +77,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       },
       {
         order: 3,
-        name: `My Bids`,
-        component: <NFTDisplay singleNFTs={[]} type={'favorited'} />
-      },
-      {
-        order: 4,
         name: 'Activity',
         component: (
           <ActivityNFTSection address={params.userAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.WALLET_ADDRESS} />

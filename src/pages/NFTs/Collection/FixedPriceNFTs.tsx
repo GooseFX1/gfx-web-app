@@ -192,7 +192,7 @@ export const FixedPriceNFTs = (): ReactElement => {
       {handleDrawerOpen()}
       {handleModalClick()}
       {filteredFixedPrice === null && <NFTLoading />}
-      {fixedPriceWithinCollection && filteredFixedPrice?.length === 0 ? (
+      {fixedPriceWithinCollection && filteredFixedPrice?.length === 0 && !searchInsideCollection ? (
         <NoContent type="collected" />
       ) : (
         <div className="gridContainer">

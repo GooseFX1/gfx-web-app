@@ -409,7 +409,7 @@ export const ButtonContainer = (): ReactElement => {
 const NFTDetailsTab = (): ReactElement => {
   const { general, nftMetadata } = useNFTDetails()
   const solscanLink = `https://solscan.io/token/`
-  const profileLink = `https://app.goosefx.io/profile/`
+  const profileLink = `https://app.goosefx.io/nfts/profile/`
 
   const nftData = useMemo(
     () => [

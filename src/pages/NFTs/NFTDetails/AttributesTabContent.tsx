@@ -43,22 +43,14 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
   return data.length > 0 ? (
     <ATTRIBUTES_TAB_CONTENT {...rest}>
       {data.map((item, index) => (
-        // <PILL_SECONDARY $mode={`${mode}`} key={index}>
-        //   <div className="layer">
-        //     <div tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
-        //     <div tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
-        //       {trimString(item.value)}
-        //     </div>
-        //   </div>
-        // </PILL_SECONDARY>
-        <Tag key={index} loading={false} cssStyle={tw`h-[48px] items-start justify-start`}>
-          <span tw="flex flex-col w-[100%] items-start">
-            <span tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </span>
-            <span tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
+        <PILL_SECONDARY $mode={`${mode}`} key={index}>
+          <div className="layer">
+            <div tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
+            <div tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
               {trimString(item.value)}
-            </span>
-          </span>
-        </Tag>
+            </div>
+          </div>
+        </PILL_SECONDARY>
       ))}
     </ATTRIBUTES_TAB_CONTENT>
   ) : (
@@ -142,14 +134,14 @@ export const AsksAndBidsForNFT = (): ReactElement => {
 }
 
 const PILL_SECONDARY = styled.div<{ $mode: string }>`
-  ${tw`rounded-[5.5px] h-[48px] p-[1.5px] text-[#fff] w-full`}
+  ${tw`rounded-[5.5px] h-[48px] p-[1.5px] flex items-center justify-center text-[#fff] w-full`}
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96.79deg, rgba(247, 147, 26, 0.92) 4.25%, rgba(172, 28, 199, 0.8) 97.61%)'
       : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.93) 4.25%, rgba(172, 28, 199, 0.8) 97.61%);`};
 
   .layer {
-    ${tw`h-full flex flex-col font-semibold text-[15px]  items-start pl-2 mt-[1px] w-full leading-[18px]
-       dark:bg-[#101010b3] bg-[#fef3f390] rounded-[4.5px]`}
+    ${tw`h-full flex flex-col font-semibold text-[15px]  items-start pl-2  w-full leading-[18px]
+       dark:bg-[#101010b3] bg-[#fef3f3c2] rounded-[4.5px]`}
   }
 `

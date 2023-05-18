@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div`
   ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6`}
@@ -41,6 +43,7 @@ const NO_CONTENT = styled.div`
 
 interface Props {
   type: string
+  setDisplayIndex?: Dispatch<SetStateAction<number>>
 }
 
 const options = {
@@ -50,7 +53,12 @@ const options = {
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },
-
+  noItems: {
+    mainText: 'No Items',
+    subText: 'Start buying or bidding for items in this collection \n to see your items here.',
+    textButton: 'See Listed Items',
+    bgButton: '#5855ff'
+  },
   favorited: {
     mainText: 'No Favorites',
     subText: 'Explore and like your most favorite ones.',
@@ -64,10 +72,12 @@ const options = {
   }
 }
 
-const NoContent = ({ type }: Props) => {
+const NoContent = ({ type, setDisplayIndex }: Props) => {
   const history = useHistory()
   const obj = options[type]
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const handleNoContentClick = () => {
     switch (type) {
@@ -79,6 +89,9 @@ const NoContent = ({ type }: Props) => {
         break
       case 'favorited':
         history.push('/nfts')
+        break
+      case 'noItems':
+        setDisplayIndex(0)
         break
       default:
         console.error('Profile button issue')
@@ -95,10 +108,16 @@ const NoContent = ({ type }: Props) => {
         />
         <div className="main-text">{obj.mainText}</div>
         <div className="sub-text">{obj.subText}</div>
-        {obj.textButton && (
-          <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
-            {obj.textButton}
-          </button>
+        {!publicKey && type === 'noItems' ? (
+          <div tw="ml-[200px] mt-8">
+            <Connect width="150px" />
+          </div>
+        ) : (
+          obj.textButton && (
+            <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
+              {obj.textButton}
+            </button>
+          )
         )}
       </div>
     </NO_CONTENT>

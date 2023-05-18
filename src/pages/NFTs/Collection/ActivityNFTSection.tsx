@@ -37,10 +37,10 @@ export interface IActivity {
 }
 
 const ACTIVITY_KIND = {
-  EXECUTED_SALE: 'Sell',
+  EXECUTED_SALE: 'Execute Sell',
   BUY: 'Bid',
   BID: 'Bid',
-  SELL: 'Sell',
+  SELL: 'Listed',
   CANCEL: 'Cancel'
 }
 
@@ -345,7 +345,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
         {activity?.buyer_wallet ? (
           <>
             <a
-              href={`https://solscan.io/account/${activity?.buyer_wallet}`}
+              href={`https://app.goosefx.io/nfts/profile/${activity?.buyer_wallet}`}
               tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"
@@ -361,7 +361,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
         {activity?.seller_wallet ? (
           <>
             <a
-              href={`https://solscan.io/account/${activity?.seller_wallet}`}
+              href={`https://app.goosefx.io/nfts/profile/${activity?.seller_wallet}`}
               tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"

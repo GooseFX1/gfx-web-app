@@ -293,7 +293,7 @@ export const NFTGridContainer = (): ReactElement => {
 
   const NFTDisplayComponent = useMemo(() => {
     if (displayIndex === 0) return <FixedPriceNFTs />
-    if (displayIndex === 1) return <MyItemsNFTs />
+    if (displayIndex === 1) return <MyItemsNFTs setDisplayIndex={setDisplayIndex} />
     if (displayIndex === 2) return <OpenBidNFTs />
     if (displayIndex === 3)
       return (

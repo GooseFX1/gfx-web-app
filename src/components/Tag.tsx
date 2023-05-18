@@ -32,10 +32,9 @@ const TAG = styled.div<{ $mode: string; $cssStyle: TwStyle }>`
     font-size: 15px;
     line-height: 18px;
     padding: 1px 6px;
-    background: ${({ $mode }) => ($mode === 'dark' ? '#101010b3' : '#c3c0c063')};
+    background: ${({ $mode }) => ($mode === 'dark' ? '#3c3b3b80' : '#94949452')};
     border-radius: 4.5px;
     ${({ $cssStyle }) => $cssStyle};
-
     filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));
   }
 `

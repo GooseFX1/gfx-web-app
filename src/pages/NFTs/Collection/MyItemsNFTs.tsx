@@ -1,7 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, FC, memo, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
-import { Connect } from '../../../layouts'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import NFTLoading from '../Home/NFTLoading'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
@@ -10,8 +9,9 @@ import { SellNFTModal } from './SellNFTModal'
 import { SingleNFTCard } from './SingleNFTCard'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import NoContent from '../Profile/NoContent'
 
-const MyItemsNFTs = () => {
+const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = ({ setDisplayIndex }) => {
   const { myNFTsByCollection } = useNFTCollections()
   const [displayNFTs, setDisplayNFTs] = useState<any[]>(null)
   const { openJustModal, sellNFTClicked, setSellNFT } = useNFTAggregator()
@@ -29,7 +29,7 @@ const MyItemsNFTs = () => {
       )
       setDisplayNFTs(filteredResult)
     } else setDisplayNFTs(myNFTsByCollection)
-  }, [searchInsideCollection])
+  }, [searchInsideCollection, myNFTsByCollection])
 
   const detailDrawer = useMemo(() => {
     if (general !== null && nftMetadata !== null && params.address && !openJustModal) return <DetailViewNFT />
@@ -41,20 +41,20 @@ const MyItemsNFTs = () => {
 
   const gridType = useMemo(() => (displayNFTs?.length > 7 ? '1fr' : '210px'), [displayNFTs])
 
-  return publicKey ? (
+  return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
       {detailDrawer}
       {modal}
       {displayNFTs === null && <NFTLoading />}
+      {displayNFTs?.length === 0 && !searchInsideCollection && (
+        <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />
+      )}
+      {!publicKey && <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />}
 
       <div className="gridContainer">
         {displayNFTs && displayNFTs.map((myNFT, index) => <SingleNFTCard item={myNFT.data[0]} index={index} />)}
       </div>
     </NFT_COLLECTIONS_GRID>
-  ) : (
-    <div tw="flex items-center w-[100vw] justify-center h-[100%]">
-      <Connect />
-    </div>
   )
 }
 

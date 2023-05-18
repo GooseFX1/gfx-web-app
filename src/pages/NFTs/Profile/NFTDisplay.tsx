@@ -147,6 +147,19 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     return () => setCollectedItemsPag(undefined)
   }, [props.singleNFTs, props.parsedAccounts, refreshClicked])
 
+  const getCollectionName = useCallback((value) => {
+    if (value?.data?.collection?.name) {
+      return value.data.collection.name
+    }
+    if (value?.data?.name) {
+      if (value?.data?.name.includes('#')) {
+        return value.data.name.split('#')[0]
+      }
+      return value.data.name
+    }
+    return null
+  }, [])
+
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []
     const metaDataResponse = parsedAccounts.map((account) => axios.get(account.data.uri))
@@ -165,7 +178,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           image_url: val[i].data.image,
           animation_url: val[i].data.properties?.files > 0 ? val[i].data.properties?.files[0].uri : '',
           collection_id: null,
-          collection_name: val[i].data.collection ? val[i].data.collection.name : null,
+          collection_name: getCollectionName(val[i]),
           collection_address: null,
           gfx_appraisal_value: null,
           is_verified: false,

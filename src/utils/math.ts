@@ -64,6 +64,7 @@ export const percentFormatter = (number: number): string => {
 }
 
 export const commafy = (num: number, decimal: number): string => {
+  if (!num) return '0'
   let str: any = num.toFixed(decimal)
   str = str.split('.')
 

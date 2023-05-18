@@ -12,42 +12,45 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
   const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType, timelineDisplay } =
     useNFTAggregatorFilters()
 
-  const handleSortChangeForVolume = useCallback((sortFilterRequest: string) => {
-    if (NFT_VOLUME_OPTIONS[sortFilterRequest] === sortFilter) {
+  const handleSortChangeForVolume = useCallback(
+    (sortFilterRequest: string) => {
+      if (NFT_VOLUME_OPTIONS[sortFilterRequest] === sortFilter) {
+        setPageNumber(0)
+        setAllCollections(LOADING_ARR)
+        setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
+        return
+      }
+      if (sortFilterRequest === '24h') setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+      if (sortFilterRequest === '7d') setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
+      setSortType('DESC')
+    },
+    [timelineDisplay, sortFilter, sortType]
+  )
+
+  const handleSortFilterChange = useCallback(
+    (sortFilterRequest) => {
       setPageNumber(0)
       setAllCollections(LOADING_ARR)
-      setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
-      return
-    }
-    if (sortFilterRequest === '24h') setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
-    if (sortFilterRequest === '7d') setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
-    if (sortFilterRequest === '30d') setSortFilter(NFT_COL_FILTER_OPTIONS.MONTHLY_VOLUME)
-    if (sortFilterRequest === 'All') setSortFilter(NFT_COL_FILTER_OPTIONS.TOTAL_VOLUME)
-  }, [])
-  const handleSortFilterChange = useCallback((sortFilterRequest) => {
-    setPageNumber(0)
-    setAllCollections(LOADING_ARR)
-    if (!sortFilter) {
-      setSortType('DESC')
-      setSortFilter(sortFilterRequest)
-    }
-    if (sortFilter === sortFilterRequest) {
-      setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
-    } else {
-      setSortType('DESC')
-      setSortFilter(sortFilterRequest)
-    }
-  }, [])
+      if (!sortFilter) {
+        setSortType('DESC')
+        setSortFilter(sortFilterRequest)
+      }
+      if (sortFilter === sortFilterRequest) {
+        setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
+      } else {
+        setSortType('DESC')
+        setSortFilter(sortFilterRequest)
+      }
+    },
+    [sortFilter, sortType, timelineDisplay]
+  )
+
   const checkIfVolumeSelected = useCallback(() => {
-    if (
-      sortFilter === NFT_COL_FILTER_OPTIONS.DAILY_VOLUME ||
-      sortFilter === NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME ||
-      sortFilter === NFT_COL_FILTER_OPTIONS.MONTHLY_VOLUME ||
-      sortFilter === NFT_COL_FILTER_OPTIONS.TOTAL_VOLUME
-    )
+    if (sortFilter === NFT_COL_FILTER_OPTIONS.DAILY_VOLUME || sortFilter === NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
       return true
     return false
-  }, [])
+  }, [sortFilter, timelineDisplay, sortType])
+
   return (
     <tr>
       <>
