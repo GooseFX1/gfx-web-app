@@ -345,7 +345,7 @@ const FiltersContainer: FC<{
       index: 0
     },
     {
-      label: `My Items (${myNFTsByCollection.length})`,
+      label: `My Items (${myNFTsByCollection?.length})`,
       index: 1
     },
     {
