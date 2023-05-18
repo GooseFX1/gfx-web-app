@@ -1,9 +1,9 @@
-import React, { useCallback, FC } from 'react'
+import React, { useCallback, FC, useRef } from 'react'
 import tw, { styled } from 'twin.macro'
 
 import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
-import debounce from 'lodash.debounce'
+// import debounce from 'lodash.debounce'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number }>`
 ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
@@ -51,21 +51,43 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
       ${tw`absolute w-[16px] right-4`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
+    .ant-image-clear {
+      ${tw`absolute w-[16px] right-10 cursor-pointer`}
+      filter: ${({ theme }) => theme.filterWhiteIcon};
+    }
   }
 `
 
 export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, bgColor, width, ...rest }) => {
   const { mode } = useDarkMode()
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleInputValue = useCallback((e) => debouncer(e), [])
+  const handleInputValue = useCallback((e) => {
+    debouncer(e)
+  }, [])
 
-  const debouncer = debounce((e) => {
-    setSearchFilter(e.target.value)
-  }, 500)
+  const debouncer = (e) => setSearchFilter(e.target.value)
+  const handleCloseClick = useCallback(() => {
+    setSearchFilter('')
+    inputRef.current?.focus()
+  }, [])
+
   return (
     <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} {...rest}>
-      <input placeholder={placeholder || 'Search by nft name'} value={filter} onChange={handleInputValue} />
+      <input
+        placeholder={placeholder || 'Search by nft name'}
+        ref={inputRef}
+        value={filter}
+        onChange={handleInputValue}
+      />
       <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />
+      {filter && (
+        <img
+          className="ant-image-clear"
+          src={`/img/assets/close-${mode}.svg`}
+          onClick={() => handleCloseClick()}
+        />
+      )}
     </SEARCH_BAR_WRAPPER>
   )
 }

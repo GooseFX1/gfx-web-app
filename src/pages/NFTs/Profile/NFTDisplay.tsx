@@ -145,7 +145,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
     }
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.singleNFTs, props.parsedAccounts, refreshClicked, nftApiResponses])
+  }, [props.singleNFTs, props.parsedAccounts, refreshClicked])
 
   const fetchNFTData = async (parsedAccounts: ParsedAccount[]) => {
     const nfts: ISingleNFT[] = []

@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFTAggWelcome } from '../../../components/NFTAggWelcome'
 import {
-  useConnectionConfig,
   useDarkMode,
   useNavCollapse,
   useNFTAggregator,
@@ -16,7 +15,6 @@ import {
 import { checkMobile, commafy, LOADING_ARR } from '../../../utils'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { LastRefreshedAnimation, RefreshIcon, STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
-import MenuNFTPopup from './MenuNFTPopup'
 import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
@@ -26,8 +24,6 @@ import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
 import { Image, Checkbox, Dropdown, Switch } from 'antd'
 import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3/agg_program_ids'
-import { ModalSlide } from '../../../components/ModalSlide'
-import { MODAL_TYPES } from '../../../constants'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import ShowEyeLite from '../../../animations/showEyelite.json'
@@ -38,27 +34,8 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
+import debounce from 'lodash.debounce'
 
-const CURRENCY_SWITCH = styled.div<{ $currency }>`
-  .ant-switch {
-    ${tw`h-[26px] sm:h-[26px] sm:w-[50px] w-[50px] ml-auto mr-3`}
-    background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%) !important;
-  }
-  .ant-switch-handle {
-    ${tw`h-[26px] w-[26px] left-[-2px]  top-[0px]`}
-    ::before {
-      ${tw`h-[26px] w-[26px] rounded-[40px] duration-500`}
-      background-size: 26px;
-      background: url(${({ $currency }) => `/img/crypto/${$currency}.svg`}) center;
-    }
-  }
-  .ant-switch-checked {
-    .ant-switch-handle {
-      left: calc(100% - 25px);
-    }
-    background: linear-gradient(90.95deg, #f7931a 25.41%, #ac1cc7 99.19%) !important;
-  }
-`
 const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
   /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
   transition: 0.5s ease;
@@ -390,7 +367,8 @@ const FiltersContainer = () => {
       <FILTERS_CONTAINER>
         <SearchBar
           className="search-bar"
-          width={'398px'}
+          width={'425px'}
+          filter={searchFilter}
           bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections or markets"
@@ -519,8 +497,14 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const { mode } = useDarkMode()
   const [searchResultArr, setSearchResult] = useState<any>()
 
-  const globalSearchCall = () => {
-    fetchGlobalSearchNFT(searchFilter)
+  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [])
+
+  const debouncer = debounce((searchQuery) => {
+    globalSearchCall(searchQuery)
+  }, 500)
+
+  const globalSearchCall = (searchQuery) => {
+    fetchGlobalSearchNFT(searchQuery)
       .then((res) => {
         setSearchResult(res.collections)
       })
@@ -528,7 +512,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   }
   useEffect(() => {
     if (searchFilter && searchFilter.length > 1) {
-      globalSearchCall()
+      handleSearch(searchFilter)
     }
   }, [searchFilter])
   return (
@@ -632,7 +616,7 @@ const TimeLineDropdown = (): ReactElement => {
     </Dropdown>
   )
 }
-
+// V2
 const MarketDropdown = (): ReactElement => {
   const [arrow, setArrow] = useState<boolean>(false)
   return (

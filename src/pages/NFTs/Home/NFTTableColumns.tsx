@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactElement, useCallback } from 'react'
 import { NFT_COL_FILTER_OPTIONS, NFT_VOLUME_OPTIONS } from '../../../api/NFTs'
 import { TokenToggleNFT } from '../../../components'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
@@ -12,7 +12,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
   const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType, timelineDisplay } =
     useNFTAggregatorFilters()
 
-  const handleSortChangeForVolume = (sortFilterRequest: string) => {
+  const handleSortChangeForVolume = useCallback((sortFilterRequest: string) => {
     if (NFT_VOLUME_OPTIONS[sortFilterRequest] === sortFilter) {
       setPageNumber(0)
       setAllCollections(LOADING_ARR)
@@ -23,8 +23,8 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
     if (sortFilterRequest === '7d') setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
     if (sortFilterRequest === '30d') setSortFilter(NFT_COL_FILTER_OPTIONS.MONTHLY_VOLUME)
     if (sortFilterRequest === 'All') setSortFilter(NFT_COL_FILTER_OPTIONS.TOTAL_VOLUME)
-  }
-  const handleSortFilterChange = (sortFilterRequest) => {
+  }, [])
+  const handleSortFilterChange = useCallback((sortFilterRequest) => {
     setPageNumber(0)
     setAllCollections(LOADING_ARR)
     if (!sortFilter) {
@@ -34,11 +34,11 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
     if (sortFilter === sortFilterRequest) {
       setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
     } else {
-      setSortType('ASC')
+      setSortType('DESC')
       setSortFilter(sortFilterRequest)
     }
-  }
-  const checkIfVolumeSelected = () => {
+  }, [])
+  const checkIfVolumeSelected = useCallback(() => {
     if (
       sortFilter === NFT_COL_FILTER_OPTIONS.DAILY_VOLUME ||
       sortFilter === NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME ||
@@ -47,7 +47,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
     )
       return true
     return false
-  }
+  }, [])
   return (
     <tr>
       <>
@@ -60,10 +60,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             sortFilter === NFT_COL_FILTER_OPTIONS.COLLECTION_NAME || !sortFilter
           )}
         </th>
-        <th
-          style={{ cursor: 'pointer' }}
-          onClick={() => handleSortFilterChange(NFT_COL_FILTER_OPTIONS.FLOOR_PRICE)}
-        >
+        <th onClick={() => handleSortFilterChange(NFT_COL_FILTER_OPTIONS.FLOOR_PRICE)}>
           {TableHeaderTitle(
             'Floor Price',
             '',
@@ -89,7 +86,15 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             checkIfVolumeSelected()
           )}
         </th>
-        <th>{TableHeaderTitle('Marketcap', '', false)}</th>
+        <th onClick={() => handleSortFilterChange(NFT_COL_FILTER_OPTIONS.MARKET_CAP)}>
+          {TableHeaderTitle(
+            'Marketcap',
+            '',
+            true,
+            (sortFilter === NFT_COL_FILTER_OPTIONS.MARKET_CAP || !sortFilter) && sortType === 'DESC',
+            sortFilter === NFT_COL_FILTER_OPTIONS.MARKET_CAP || !sortFilter
+          )}
+        </th>
 
         <th className="borderRow2">
           <div>

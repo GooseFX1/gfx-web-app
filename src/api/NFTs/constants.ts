@@ -12,7 +12,8 @@ export enum NFT_COL_FILTER_OPTIONS {
   DAILY_VOLUME = 'DailyVolume',
   WEEKLY_VOLUME = 'WeeklyVolume',
   MONTHLY_VOLUME = 'MonthlyVolume',
-  TOTAL_VOLUME = 'TotalVolume'
+  TOTAL_VOLUME = 'TotalVolume',
+  MARKET_CAP = 'MarketCap'
 }
 export enum NFT_ACTIVITY_ENDPOINT {
   WALLET_ADDRESS = 'wallet_address',

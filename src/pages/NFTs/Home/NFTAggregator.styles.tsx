@@ -50,7 +50,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 
   thead {
-    ${tw`sm:dark:bg-black-5 sm:bg-black-4 text-base font-semibold h-[64px] 
+    ${tw`sm:dark:bg-black-5 sm:bg-black-4 text-base font-semibold  
     sm:h-[52px] rounded-[20px 20px 5px 5px]`}
 
     tr {
@@ -161,12 +161,17 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 `
 export const SEARCH_RESULT_CONTAINER = styled.div`
-  ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-8 py-3 border-solid border-grey-3 rounded-[10px]`}
+  ${tw`absolute w-[420px] max-h-[290px] min-h-[50px] z-20 mt-14 ml-[26px] py-3 border-solid
+   border-grey-3 rounded-[10px]`}
   box-shadow: -3px 9px 8px 0 rgba(0, 0, 0, 0.2);
   background: ${({ theme }) => theme.bg20};
-  ${({ theme }) => theme.customScrollBar('1px')};
 
   overflow-y: scroll;
+  ${({ theme }) => theme.customScrollBar('0px')} !important;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
   .searchResultRow {
     ${tw`h-[50px] mt-0.5 text-[15px] font-semibold cursor-pointer `}
     color: ${({ theme }) => theme.text1};

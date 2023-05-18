@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { useDarkMode } from '../context'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'twin.macro'
 import 'styled-components/macro'
 import { SkeletonCommon } from '../pages/NFTs/Skeleton/SkeletonCommon'
@@ -14,24 +15,25 @@ interface IProps {
 const TAG = styled.div<{ $mode: string; $cssStyle: TwStyle }>`
   background: ${({ $mode }) =>
     $mode === 'dark'
-      ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
-      : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.8) 4.25%, rgba(172, 28, 199, 0.8) 97.61%);`};
-  border-radius: 5px;
+      ? 'linear-gradient(96.79deg, rgba(247, 147, 26, 0.92) 4.25%, rgba(172, 28, 199, 0.8) 97.61%)'
+      : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.93) 4.25%, rgba(172, 28, 199, 0.8) 97.61%);`};
+  border-radius: 5.5px;
   padding: 1px;
   color: white;
 
   div {
     height: 100%;
     width: 100%;
-    ${tw`flex items-center font-semibold`}
-
+    display: flex;
+    align-items: center;
+    font-weight: 600px;
     justify-content: center;
     font-weight: 600;
     font-size: 15px;
     line-height: 18px;
     padding: 1px 6px;
-    background: ${({ $mode }) => ($mode === 'dark' ? '#3c3b3b80' : '#94949452')};
-    border-radius: 5px;
+    background: ${({ $mode }) => ($mode === 'dark' ? '#101010b3' : '#c3c0c063')};
+    border-radius: 4.5px;
     ${({ $cssStyle }) => $cssStyle};
 
     filter: drop-shadow(0px 6px 9px rgba(36, 36, 36, 0.15));

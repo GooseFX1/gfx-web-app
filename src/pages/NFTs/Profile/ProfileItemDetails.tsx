@@ -75,9 +75,9 @@ export const ProfileItemDetails: FC<{
         <RightSection status={''} />
       </div>
       <div
-        tw="absolute left-0 right-0 bottom-0 h-[75px] w-[100%] 
-              dark:bg-black-1 bg-grey-5 px-[24px] flex items-center justify-between
-              border-solid border-b-0 border-l-0 border-r-0 dark:border-black-4 border-grey-4"
+        tw="absolute left-0 right-0 bottom-0 h-[75px] w-[100%] border-1
+              dark:bg-black-1 bg-grey-5 px-[24px] flex items-center justify-between 
+              border-solid border-b-0  dark:border-t-black-4 border-r-0 dark:border-l-black-4 border-grey-4"
       >
         {isOwner ? (
           <>

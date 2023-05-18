@@ -72,6 +72,9 @@ module.exports = {
       fontFamily: {
         display: ['Monserrat']
       },
+      borderWidth: {
+        1: '1px'
+      },
       borderRadius: {
         tiny: '5px',
         small: '10px',

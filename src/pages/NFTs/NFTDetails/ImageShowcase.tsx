@@ -26,9 +26,12 @@ const LEFT_SECTION = styled.div`
       top: 12px;
       right: 12px;
     }
-
+    .bgGradient {
+      ${tw`w-[390px] absolute h-[100%] opacity-80  rounded-[20px]`}
+      background: ${({ theme }) => theme.hoverGradient};
+    }
     .acceptBidBtn {
-      ${tw`w-[254px] h-11 absolute ml-[68px] cursor-pointer
+      ${tw`w-[254px] h-11 absolute ml-[68px] cursor-pointer text-white
        bottom-[30px] rounded-[100px] font-semibold flex items-center justify-center text-[15px] `}
       background: linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);
     }
@@ -130,16 +133,22 @@ export const ImageShowcase: FC<{
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
       {highestBid && isOwner && (
-        <div className="acceptBidBtn" onClick={() => setShowAcceptBidModal(true)}>
-          Accept Highest Bid {highestBid} SOL
-        </div>
+        <>
+          <div className="bgGradient" />
+          <div className="acceptBidBtn" onClick={() => setShowAcceptBidModal(true)}>
+            Accept Highest Bid {highestBid} SOL
+          </div>
+        </>
       )}
       {isBidder && isBidder.length > 0 && (
-        <div tw="w-[254px] h-11 absolute left-[68px] bottom-[30px]">
-          <Tag loading={false} cssStyle={tw`h-11 w-[252px] text-[15px] text-white`}>
-            <div>My Bid: {formatSOLDisplay(isBidder[0].buyer_price)} SOL </div>
-          </Tag>
-        </div>
+        <>
+          <div className="bgGradient" />
+          <div tw="w-[254px] h-11 absolute left-[68px] bottom-[30px]">
+            <Tag loading={false} cssStyle={tw`h-11 w-[252px] text-[15px] `}>
+              <div>My Bid: {formatSOLDisplay(isBidder[0].buyer_price)} SOL </div>
+            </Tag>
+          </div>
+        </>
       )}
 
       <div tw="w-[390px] h-[390px]">
