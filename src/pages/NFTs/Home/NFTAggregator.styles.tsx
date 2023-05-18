@@ -80,11 +80,11 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
 
     tr {
-      ${tw`dark:bg-black-2 bg-white mt-[15px] sm:mb-0 
-      rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto`}
+      ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid dark:border-black-2 border-white
+      sm:mb-0 rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto`}
 
       &:hover {
-        border: 1px solid #b5b5b5;
+        ${tw`border-grey-2`}
       }
 
       &:after {
