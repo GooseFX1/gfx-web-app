@@ -22,6 +22,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
 import { copyToClipboard } from './CollectionHeader'
+import { ParsedAccount } from '../../../web3/nfts/types'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
@@ -139,7 +140,6 @@ export const DetailViewNFT: FC = (): JSX.Element => {
   const goBackToNFTCollections = () => {
     setGeneral(null)
     setNftMetadata(null)
-    console.log('setting nul')
     history.replace({
       pathname: location.pathname,
       search: ''
@@ -217,7 +217,7 @@ const ImageViewer = (): ReactElement => {
     return capString.join(' ')
   }, [])
 
-  return general ? (
+  return (
     <div
       tw="flex flex-col justify-between relative h-full dark:bg-black-1 border-solid border-1 dark:border-l-black-4
     border-r-0 border-t-0 dark:text-white text-black px-[30px] border-l-grey-4"
@@ -289,24 +289,22 @@ const ImageViewer = (): ReactElement => {
         </div>
       </DETAIL_VIEW>
     </div>
-  ) : (
-    <></>
   )
 }
 
 export const ButtonContainer = (): ReactElement => {
-  const { ask } = useNFTDetails()
   const { wallet } = useWallet()
   const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
   const pubKey = wallet?.adapter?.publicKey
-  const { general, bids } = useNFTDetails()
+  const { general, bids, ask } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const isOwner: boolean = useMemo(() => {
-    if (ask && pubKey) {
-      if (ask?.wallet_key === pubKey.toString()) return true
-    }
-    return false
-  }, [sessionUser, sessionUserParsedAccounts, ask, wallet?.adapter?.publicKey])
+    const findAccount: undefined | ParsedAccount =
+      general && sessionUserParsedAccounts !== undefined
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === general.mint_address)
+        : undefined
+    return findAccount === undefined ? false : true
+  }, [sessionUser, sessionUserParsedAccounts, ask, general, wallet?.adapter?.publicKey])
 
   const openInNewTab = useCallback((url) => {
     const win = window.open(url, '_blank')
@@ -337,7 +335,7 @@ export const ButtonContainer = (): ReactElement => {
     <div
       tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] dark:border-l-black-4
         dark:bg-black-1 bg-grey-5 px-[30px] flex items-center justify-between  border-solid
-        border-1   dark:border-t-black-4"
+        border-1 border-b-0  dark:border-t-black-4"
     >
       {isOwner ? (
         <>

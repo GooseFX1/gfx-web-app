@@ -7,8 +7,7 @@ import {
   useNFTDetails,
   useNFTProfile,
   usePriceFeedFarm,
-  useWalletModal,
-  useNFTAggregatorFilters
+  useWalletModal
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -32,7 +31,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Tag } from '../../../components/Tag'
 
-export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any; lastCardRef: any }> = ({
+export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any; lastCardRef?: any }> = ({
   item,
   index,
   addNftToBag,
@@ -43,7 +42,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
-
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
   const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
@@ -63,7 +61,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
 
-  const nftId = item
+  const nftId = item?.nft_name
     ? item.nft_name.includes('#')
       ? '#' + item.nft_name.split('#')[1]
       : minimizeTheString(item.nft_name)
@@ -71,7 +69,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag: any;
 
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
-  const { searchInsideCollection } = useNFTAggregatorFilters()
 
   const setNFTDetails = async (): Promise<boolean> => {
     try {

@@ -8,6 +8,7 @@ import { useDarkMode, useNFTDetails, usePriceFeedFarm } from '../../../context'
 import { truncateAddress, parseUnixTimestamp } from '../../../utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { Tag } from '../../../components/Tag'
 
 const ATTRIBUTES_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -42,14 +43,22 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
   return data.length > 0 ? (
     <ATTRIBUTES_TAB_CONTENT {...rest}>
       {data.map((item, index) => (
-        <PILL_SECONDARY $mode={`${mode}`} key={index}>
-          <div className="layer">
-            <div tw="text-[13px] font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
-            <div tw="text-[13px] font-semibold dark:text-grey-5 text-black-4 truncate">
+        // <PILL_SECONDARY $mode={`${mode}`} key={index}>
+        //   <div className="layer">
+        //     <div tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
+        //     <div tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
+        //       {trimString(item.value)}
+        //     </div>
+        //   </div>
+        // </PILL_SECONDARY>
+        <Tag key={index} loading={false} cssStyle={tw`h-[48px] items-start justify-start`}>
+          <span tw="flex flex-col w-[100%] items-start">
+            <span tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </span>
+            <span tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
               {trimString(item.value)}
-            </div>
-          </div>
-        </PILL_SECONDARY>
+            </span>
+          </span>
+        </Tag>
       ))}
     </ATTRIBUTES_TAB_CONTENT>
   ) : (
@@ -133,14 +142,14 @@ export const AsksAndBidsForNFT = (): ReactElement => {
 }
 
 const PILL_SECONDARY = styled.div<{ $mode: string }>`
-  ${tw`rounded-[5px] h-[45px] p-[2px] text-[#fff] w-full`}
+  ${tw`rounded-[5.5px] h-[48px] p-[1.5px] text-[#fff] w-full`}
   background: ${({ $mode }) =>
     $mode === 'dark'
-      ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)'
-      : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.3) 5.25%, rgba(172, 28, 199, 0.3) 97.61%)`};
+      ? 'linear-gradient(96.79deg, rgba(247, 147, 26, 0.92) 4.25%, rgba(172, 28, 199, 0.8) 97.61%)'
+      : `linear-gradient(96.79deg, rgba(247, 147, 26, 0.93) 4.25%, rgba(172, 28, 199, 0.8) 97.61%);`};
 
   .layer {
-    ${tw`h-full flex flex-col font-semibold text-[15px] items-start pl-2 w-full leading-[18px]
-       dark:bg-[#1c1c1cb3] bg-[#ffffff57] rounded-[5px]`}
+    ${tw`h-full flex flex-col font-semibold text-[15px]  items-start pl-2 mt-[1px] w-full leading-[18px]
+       dark:bg-[#101010b3] bg-[#fef3f390] rounded-[4.5px]`}
   }
 `

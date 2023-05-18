@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   INFTCollectionConfig,
   IOpenBidWithinCollection,
@@ -15,9 +15,13 @@ import {
   NFT_API_BASE,
   NFT_API_ENDPOINTS,
   fetchSingleCollectionBySalesType,
-  fetchSingleCollectionAction
+  fetchSingleCollectionAction,
+  fetchMyNFTByCollection
 } from '../api/NFTs'
 import { LOADING_ARR } from '../utils'
+import { BaseNFT } from '../types/nft_details'
+import { useNFTProfile } from './nft_profile'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
@@ -31,6 +35,21 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   const [upcomingCollections, setUpcomingCollections] = useState<NFTUpcomingCollection[]>([])
   const [nftMenuPopup, setNFTMenuPopup] = useState<boolean>(false)
   const [collectionSort, setCollectionSort] = useState<CollectionSort>('ASC')
+  const [myNFTsByCollection, setMyNFTsCollection] = useState<BaseNFT[]>(null)
+  const { sessionUserParsedAccounts } = useNFTProfile()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+
+  useEffect(() => {
+    if (!publicKey) setMyNFTsCollection([])
+    if (sessionUserParsedAccounts.length && singleCollection && publicKey) {
+      ;(async () => {
+        const mintAddresses: string[] = sessionUserParsedAccounts.map((acc) => acc.mint)
+        const myNFTs = await fetchMyNFTByCollection(singleCollection[0].uuid, mintAddresses)
+        setMyNFTsCollection(myNFTs.data)
+      })()
+    }
+  }, [sessionUserParsedAccounts, singleCollection, publicKey])
 
   //eslint-disable-next-line
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
@@ -143,6 +162,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       value={{
         allCollectionLoading,
         allCollections,
+        myNFTsByCollection,
         detailedCollections,
         featuredCollections,
         setAllCollections,

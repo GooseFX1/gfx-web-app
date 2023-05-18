@@ -1,4 +1,4 @@
-import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection } from './nft_details.d'
+import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection, BaseNFT } from './nft_details.d'
 
 export enum COLLECTION_TYPES {
   NFT_COLLECTION = 'NFTCollection',
@@ -83,6 +83,7 @@ export type CollectionSort = 'ASC' | 'DESC'
 export interface INFTCollectionConfig {
   allCollections: NFTCollection[] | number[]
   setAllCollections: any
+  myNFTsByCollection: any[]
   allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]

@@ -70,7 +70,7 @@ import {
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { web3 } from '@project-serum/anchor'
 import DelistNFTModal from './DelistNFTModal'
-import AcceptBidModal from './AcceptBidModal'
+import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
 
 export const SellNFTModal: FC<{
   visible: boolean
@@ -601,8 +601,22 @@ export const SellNFTModal: FC<{
             )}
           </div>
         </div>
+        <div className="sellInputContainer">
+          <input
+            className="enterBid"
+            placeholder="0.0"
+            type="number"
+            ref={inputRef}
+            value={askPrice}
+            onChange={(e) => updateAskPrice(e)}
+          />
+          <img
+            src="/img/crypto/SOL.svg"
+            tw="absolute h-[35px] w-[35px] right-[8px] top-[10px] sm:h-12 sm:top-0 sm:right-0"
+          />
+        </div>
 
-        <div tw="mt-8">
+        <div tw="mt-[125px]">
           <AppraisalValue
             text={
               general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
@@ -646,20 +660,6 @@ export const SellNFTModal: FC<{
         )}
 
         <div className="feesContainer">
-          <div tw="relative">
-            <input
-              className="enterBid"
-              placeholder="0.0"
-              type="number"
-              ref={inputRef}
-              value={askPrice}
-              onChange={(e) => updateAskPrice(e)}
-            />
-            <img
-              src="/img/crypto/SOL.svg"
-              tw="absolute h-[52px] right-[8px] top-[26px] sm:h-12 sm:top-0 sm:right-0"
-            />
-          </div>
           <div className="rowContainer">
             <div className="leftAlign">Price</div>
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>
@@ -690,8 +690,11 @@ export const SellNFTModal: FC<{
             className={!ask ? 'sellButton' : 'semiSellButton' + ' blueBg'}
             loading={isLoading}
           >
-            <span tw="font-semibold">{ask ? 'Modify Price' : 'Sell'}</span>
+            <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
           </Button>
+        </div>
+        <div tw="ml-[90px]">
+          <TermsTextNFT string={'List Item'} />
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

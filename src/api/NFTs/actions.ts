@@ -122,6 +122,18 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
     return err
   }
 }
+export const fetchMyNFTByCollection = async (collectionId: string, mintAddresses: string[]): Promise<any> => {
+  if (!mintAddresses.length) return
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.NFTS_COLLECTION}`, {
+      collection_id: collectionId,
+      mint_addresses: mintAddresses
+    })
+    return await res
+  } catch (err) {
+    return err
+  }
+}
 
 export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any> => {
   try {

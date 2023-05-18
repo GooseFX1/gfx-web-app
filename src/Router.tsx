@@ -77,13 +77,13 @@ export const Router: FC = () => (
                         </NFTProfileProvider>
                       </Route> */}
                       <Route path="/nfts">
-                        <NFTCollectionProvider>
-                          <PriceFeedFarmProvider>
-                            <NFTProfileProvider>
+                        <NFTProfileProvider>
+                          <NFTCollectionProvider>
+                            <PriceFeedFarmProvider>
                               <NFTAgg />
-                            </NFTProfileProvider>
-                          </PriceFeedFarmProvider>
-                        </NFTCollectionProvider>
+                            </PriceFeedFarmProvider>
+                          </NFTCollectionProvider>
+                        </NFTProfileProvider>
                       </Route>
                       <Route exact path="/farm">
                         <Farm />

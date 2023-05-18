@@ -48,6 +48,7 @@ import { Arrow } from '../../../components/common/Arrow'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
+import MyItemsNFTs from './MyItemsNFTs'
 
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
@@ -292,8 +293,9 @@ export const NFTGridContainer = (): ReactElement => {
 
   const NFTDisplayComponent = useMemo(() => {
     if (displayIndex === 0) return <FixedPriceNFTs />
-    if (displayIndex === 1) return <OpenBidNFTs />
-    if (displayIndex === 2)
+    if (displayIndex === 1) return <MyItemsNFTs />
+    if (displayIndex === 2) return <OpenBidNFTs />
+    if (displayIndex === 3)
       return (
         <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
       )
@@ -309,16 +311,56 @@ export const NFTGridContainer = (): ReactElement => {
   )
 }
 
-const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): ReactElement => {
+const FilterCategory: FC<{ displayIndex: number; currentIndex: number; onClick: () => void }> = ({
+  displayIndex,
+  currentIndex,
+  onClick,
+  children
+}) => {
+  const isSelected = displayIndex === currentIndex
+  const className = isSelected ? 'selected' : 'flexItem'
+
+  return (
+    <div className={className} onClick={onClick}>
+      {children}
+      {!checkMobile() && currentIndex === 0 && <div className="activeItem" />}
+    </div>
+  )
+}
+
+const FiltersContainer: FC<{
+  setOpen: (open: boolean) => void
+  displayIndex: number
+  setDisplayIndex: (index: number) => void
+}> = ({ setOpen, displayIndex, setDisplayIndex }) => {
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { myNFTsByCollection } = useNFTCollections()
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
+
+  const filterCategories = [
+    {
+      label: `Listed (${fixedPriceWithinCollection?.total_count ?? 0})`,
+      index: 0
+    },
+    {
+      label: `My Items (${myNFTsByCollection.length})`,
+      index: 1
+    },
+    {
+      label: `All items (${singleCollection ? singleCollection[0].nfts_count : 0})`,
+      index: 2
+    },
+    {
+      label: 'Activity',
+      index: 3
+    }
+  ]
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
-        {/* <img onClick={() => setOpen((prev) => !prev)} src={`/img/assets/Aggregator/filtersIcon${mode}.svg`} /> */}
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
           style={{ width: 332 }}
@@ -334,17 +376,16 @@ const FiltersContainer = ({ setOpen, displayIndex, setDisplayIndex }: any): Reac
       </div>
 
       <div className="filtersViewCategory">
-        {checkMobile() && <div className="activeItem" />}
-        <div className={displayIndex === 0 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(0)}>
-          Listed ({fixedPriceWithinCollection && fixedPriceWithinCollection.total_count})
-          {!checkMobile() && <div className="activeItem" />}
-        </div>
-        <div className={displayIndex === 1 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(1)}>
-          All items ({singleCollection ? singleCollection[0].nfts_count : 0})
-        </div>
-        <div className={displayIndex === 2 ? 'selected' : 'flexItem'} onClick={() => setDisplayIndex(2)}>
-          Activity
-        </div>
+        {filterCategories.map((category) => (
+          <FilterCategory
+            key={category.index}
+            displayIndex={displayIndex}
+            currentIndex={category.index}
+            onClick={() => setDisplayIndex(category.index)}
+          >
+            {category.label}
+          </FilterCategory>
+        ))}
         {!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}
       </div>
     </NFT_FILTERS_CONTAINER>

@@ -109,7 +109,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
 
     strong {
       ${tw`sm:text-[16px] font-bold sm:mt-[-10px] leading-3`}
-      color: ${({ theme }) => theme.text30};
+      color: ${({ theme }) => theme.text32};
     }
   }
   .cancelText {
@@ -178,15 +178,15 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20}
   }
   .enterBid {
-    ${tw`h-[55px]  px-[24px] w-[360px] bg-none
-    border-transparent rounded-circle text-[40px] font-semibold sm:mt-0 sm:h-[48px]`}
+    ${tw`h-[55px] px-[24px] w-[360px] bg-none
+    border-transparent rounded-circle text-[24px] font-semibold sm:mt-0 sm:h-[48px]`}
     background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text32};
     &:focus {
-      border: 1px solid white;
+      border: 1px solid ${({ theme }) => theme.text30};
     }
     &:focus-visible {
-      outline: 1.5px solid #fff;
+      outline: 1px solid ${({ theme }) => theme.text30};
     }
   }
 
@@ -270,6 +270,19 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .drawLine {
     background: ${({ theme }) => theme.tokenBorder};
     ${tw`h-[2px] w-[100vw] `}
+  }
+  .sellInputContainer {
+    position: absolute;
+    margin-left: calc(110px - 24px);
+    margin-top: 35px;
+    input:focus {
+      border: 1px solid ${({ theme }) => theme.text32};
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
   .feesContainer {
     ${tw`flex items-center flex-col w-[calc(100% - 60px)] sm:w-[calc(100% - 48px )]

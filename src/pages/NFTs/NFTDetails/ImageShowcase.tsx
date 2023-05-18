@@ -132,7 +132,7 @@ export const ImageShowcase: FC<{
       >
         <img src="/img/assets/close-white-icon.svg" alt="" height="12px" width="12px" />
       </div>
-      {highestBid && isOwner && (
+      {highestBid > 0 && isOwner && (
         <>
           <div className="bgGradient" />
           <div className="acceptBidBtn" onClick={() => setShowAcceptBidModal(true)}>
