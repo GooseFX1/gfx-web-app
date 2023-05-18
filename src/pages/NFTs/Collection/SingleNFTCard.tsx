@@ -56,18 +56,18 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   const isOwner: boolean = useMemo(() => {
     const findAccount: undefined | ParsedAccount =
       item && sessionUserParsedAccounts !== undefined
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === item.mint_address)
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === item?.mint_address)
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
 
   const nftId = item?.nft_name
-    ? item.nft_name.includes('#')
-      ? '#' + item.nft_name.split('#')[1]
-      : minimizeTheString(item.nft_name)
+    ? item?.nft_name.includes('#')
+      ? '#' + item?.nft_name.split('#')[1]
+      : minimizeTheString(item?.nft_name)
     : null
 
-  const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item.uuid) : false), [item])
+  const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item?.uuid) : false), [item])
   const { currencyView } = useNFTAggregator()
 
   const setNFTDetails = async (): Promise<boolean> => {
@@ -99,15 +99,15 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   }
 
   const goToDetails = async (item): Promise<void> => {
-    history.push(`${history.location.pathname}?address=${item.mint_address}`)
+    history.push(`${history.location.pathname}?address=${item?.mint_address}`)
     setIsLoadingBeforeRelocate(true)
     setHover(false)
     await setNFTDetails()
   }
 
   useEffect(() => {
-    if (item.mint_address) {
-      fetchSingleNFT(item.mint_address).then((res) => {
+    if (item?.mint_address) {
+      fetchSingleNFT(item?.mint_address).then((res) => {
         if (res && res.status === 200) {
           res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
           const nft: INFTGeneralData = res.data
@@ -165,8 +165,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
 
           {hover && (
             <HoverOnNFT
-              mintAddress={item.mint_address}
-              collectionName={item.collection_name}
+              mintAddress={item?.mint_address}
+              collectionName={item?.collection_name}
               item={item}
               myBidToNFT={localBidToNFT}
               buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
@@ -194,7 +194,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
           <div className="collectionId">
             <div tw="flex items-center">
               {nftId ? nftId : '# Nft'}
-              {item.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
+              {item?.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
             </div>
             {localAsk !== null && (
               <GenericTooltip text={handleMarketplaceFormat(localAsk)}>

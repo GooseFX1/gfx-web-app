@@ -41,9 +41,16 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   .dtc-item-value {
     ${tw`text-[15px] font-semibold`}
     color:${({ theme }) => theme.text32};
+    a {
+      ${tw`text-[15px] font-semibold`}
+      color:${({ theme }) => theme.text32};
+    }
   }
   .dtc-item-title {
     ${tw`text-[15px] font-semibold text-grey-1`}
+    a {
+      ${tw`text-[15px] font-semibold text-grey-1`}
+    }
   }
 
   ${({ theme }) => css`
@@ -401,20 +408,38 @@ export const ButtonContainer = (): ReactElement => {
 
 const NFTDetailsTab = (): ReactElement => {
   const { general, nftMetadata } = useNFTDetails()
+  const solscanLink = `https://solscan.io/token/`
+  const profileLink = `https://app.goosefx.io/profile/`
 
   const nftData = useMemo(
     () => [
       {
         title: 'Mint address',
-        value: truncateAddress(general.mint_address)
+        value: (
+          <a target="_blank" rel="noreferrer" href={solscanLink + general?.mint_address}>
+            {truncateAddress(general?.mint_address)}
+          </a>
+        )
       },
       {
         title: 'Token Address',
-        value: general.token_account ? truncateAddress(general.token_account) : ''
+        value: general.token_account ? (
+          <a target="_blank" rel="noreferrer" href={solscanLink + general?.token_account}>
+            {truncateAddress(general?.token_account)}
+          </a>
+        ) : (
+          ''
+        )
       },
       {
         title: 'Owner',
-        value: general.owner ? truncateAddress(general.owner) : ''
+        value: general.owner ? (
+          <a target="_blank" rel="noreferrer" href={profileLink + general?.owner}>
+            {truncateAddress(general?.owner)}
+          </a>
+        ) : (
+          ''
+        )
       },
       {
         title: 'Artist Royalties',

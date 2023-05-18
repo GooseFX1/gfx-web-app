@@ -147,7 +147,9 @@ export const FixedPriceNFTs = (): ReactElement => {
         // Your async code here
         try {
           const resultArr = await fetchSearchNFTbyCollection(collectionId, searchInsideCollection, true)
-          setFilteredFixPrice(resultArr.nfts)
+          const resArr = resultArr.listings ? resultArr.listings : []
+          const arr = resArr.map((arr) => arr.nft)
+          setFilteredFixPrice(arr)
         } catch (err) {
           console.log(err)
         }
@@ -160,7 +162,6 @@ export const FixedPriceNFTs = (): ReactElement => {
   useEffect(() => refreshClicked && resetLocalState(), [refreshClicked])
 
   useEffect(() => {
-    console.log('single collections', firstLoad)
     firstLoad && fetchFixedPriceNFTs(0, collectionSort)
     return () => resetLocalState()
   }, [singleCollection])
@@ -186,19 +187,18 @@ export const FixedPriceNFTs = (): ReactElement => {
   }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
-
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
-      {fixedPriceWithinCollection === undefined && <NFTLoading />}
-      {fixedPriceWithinCollection && fixedPriceWithinCollection.total_count === 0 ? (
+      {filteredFixedPrice === null && <NFTLoading />}
+      {fixedPriceWithinCollection && filteredFixedPrice?.length === 0 ? (
         <NoContent type="collected" />
       ) : (
         <div className="gridContainer">
           {filteredFixedPrice !== null ? (
             <>
-              {filteredFixedPrice.map((item, index) => (
+              {filteredFixedPrice.map((item: any, index) => (
                 <SingleNFTCard
                   item={item}
                   key={index}
