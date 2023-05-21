@@ -17,6 +17,7 @@ import {
   DEX_ID,
   FEES_ID,
   FEE_OUTPUT_REGISTER,
+  GET_FUNDING_RATE,
   MPG_ID,
   MPs,
   ORDERBOOK_P_ID,
@@ -69,6 +70,7 @@ import { notify, removeFloatingPointError } from '../utils'
 import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
 import { adminCreateMarket, adminInitialiseMPG, updateFeesIx } from '../pages/TradeV3/perps/adminUtils'
+import { httpClient } from '../api'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -300,19 +302,19 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const mpg = rawData.mpg
     const trg = rawData.trg
     if (mpg) {
-      try {
-        const res = wasm.get_funding_rate(mpg.data, BigInt(0))
-        setFundingRate(
-          displayFractional(
-            new Fractional({
-              m: new anchor.BN(res.m.toString()),
-              exp: new anchor.BN(res.exp.toString())
-            })
-          )
-        )
-      } catch (e) {
-        console.log('error in funding rate: ', e)
-      }
+      //try {
+      //  const res = wasm.get_funding_rate(mpg.data, BigInt(0))
+      //  setFundingRate(
+      //    displayFractional(
+      //      new Fractional({
+      //        m: new anchor.BN(res.m.toString()),
+      //        exp: new anchor.BN(res.exp.toString())
+      //      })
+      //    )
+      //  )
+      //} catch (e) {
+      //  console.log('error in funding rate: ', e)
+      //}
       try {
         const re = wasm.get_on_chain_price(mpg.data, BigInt(0))
         const re2 = new Fractional({ m: new anchor.BN(re.m.toString()), exp: new anchor.BN(re.exp.toString()) })
@@ -467,7 +469,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setOnChainPrice('0')
     setOpenInterests('0')
     setAccountHealth('100')
-    setFundingRate('0')
+    //setFundingRate('0')
     setMaxWithdrawable('0')
     setTraderVolume('0')
   }
@@ -494,10 +496,20 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // })
     // console.log(res3)
   }
+
+  const getFundingRate = async () => {
+    const res = await httpClient('api-services').post(`${GET_FUNDING_RATE}`, {
+      API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+      pairName: 'SOL-PERP'
+    })
+    setFundingRate(res.data.fundingRate)
+  }
+
   useEffect(() => {
     setMPG(new PublicKey(MPG_ID))
     setActiveProduct(MPs[0])
     setCollateralPrice()
+    getFundingRate()
   }, [])
 
   useEffect(() => {

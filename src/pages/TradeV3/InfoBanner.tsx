@@ -389,7 +389,7 @@ export const InfoBanner: FC<{
       {!isSpot && (
         <INFO_STATS>
           <>
-            <div>1H Funding Rate</div>
+            <div>1H Funding</div>
             {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
