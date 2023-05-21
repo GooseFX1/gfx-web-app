@@ -10,7 +10,8 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
     color: ${({ theme }) => theme.text30};
     ${({ theme }) => theme.customScrollBar(0)};
     .ant-drawer-content {
-      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] `}
+      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] sm:border-solid sm:border-1 sm:dark:border-black-4 
+      sm:border-grey-2 `}
     }
     .addBorder {
       border: 1px solid #b5b5b5 !important;
@@ -93,7 +94,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
             }
           }
           .subTitleText {
-            ${tw`text-[15px] sm:text-[12px] text-center font-semibold dark:text-grey-2 `}
+            ${tw`text-[15px] sm:text-[12px] text-center font-semibold text-grey-1 dark:text-grey-2 `}
           }
           .subTitleTextNoSupport {
             ${tw`text-[15px] sm:text-[12px] text-center font-semibold text-grey-1`}
@@ -194,7 +195,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   .gridItem {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    border: 1px solid ${({ theme }) => theme.tokenBorder}; // change lite mode
+    border: 1px solid ${({ theme }) => theme.borderForNFTCard}; // change lite mode
   }
 
   .gridItemCollections {
@@ -203,8 +204,8 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     border:1px solid ${({ theme }) => theme.borderForNFTCard} // change lite mode
   }
   .gridGradientInner {
-    ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer    mx-auto  z-[0]`}
+    ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[14px] dark:bg-black-1 bg-white 
+      duration-500 cursor-pointer mx-auto z-[0]`}
   }
 
   .gridItemContainer {
@@ -338,7 +339,10 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
 
     .filtersViewCategory {
-       ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 sm:mt-1 mt-10 sm:w-[100%]`}
+       ${tw`text-[15px] flex font-semibold ml-auto overflow-x-auto sm:ml-0 sm:mt-1 mt-10 sm:w-[100%]`};
+       ::-webkit-scrollbar {
+      display: none;
+    }
     }
     .flitersFlexContainer {
       ${tw`text-[15px] flex font-medium sm:mt-2.5 mt-2 sm:w-[100%] items-center `}
@@ -351,8 +355,9 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selected {
       color: ${({ theme }) => theme.text4};
-      ${tw`w-[140px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[15px]
-       font-semibold  flex justify-between flex-col cursor-pointer`}
+      ${tw`w-[140px] sm:w-[33%] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
+       font-semibold  flex justify-between flex-col sm:pl-2 sm:pr-6 cursor-pointer`}
+        white-space: nowrap; /* Prevent content from wrapping */
     }
     .flexItemProfile {
       ${tw`w-[130px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
@@ -363,9 +368,11 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
+    
     .flexItem {
-      ${tw` w-[140px] sm:w-[33%] mb-4 font-medium text-[15px] dark:text-grey-1 text-grey-2
+      ${tw` w-[140px] sm:pl-2 sm:pr-6 mb-4 font-medium text-[15px] dark:text-grey-1 text-grey-2
        sm:mt-1 items-center flex justify-between flex-col cursor-pointer`}
+        white-space: nowrap; /* Prevent content from wrapping */
     }
    
     .activeItem {
@@ -377,6 +384,11 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       @media (max-width: 500px) {
         margin-left: calc( ${index * 33.2 + `%`} + 6.5%);
       }
+    }
+    .activeItemMobile {
+      ${tw`!h-[7px]  sm:mt-[0px] rounded-b-circle  font-semibold duration-500 
+      bg-blue-1 text-blue-1  sm:w-[60px] relative duration-500`}
+       transform: rotate(180deg);
     }
     .activeItemProfile {
       ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold sm:absolute

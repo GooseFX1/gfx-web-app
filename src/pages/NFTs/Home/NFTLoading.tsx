@@ -34,4 +34,18 @@ const NFTLoading: FC = () => (
   </CONTAINER>
 )
 
+export const NFTRowLoading: FC = () => (
+  <CONTAINER>
+    {[...Array(20)].map((_, index) => (
+      <div tw="w-[100%]" key={index}>
+        <div tw="flex items-center justify-between m-3">
+          <SkeletonCommon width="200px" height="30px" />
+          <SkeletonCommon width="100px" height="24px" />
+          <SkeletonCommon width="100px" height="24px" />
+        </div>
+      </div>
+    ))}
+  </CONTAINER>
+)
+
 export default NFTLoading

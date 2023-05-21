@@ -34,7 +34,7 @@ const WRAPPER = styled.div<{ $width; $mode }>`
     ${tw`text-[18px] font-semibold`}
   }
   .appraisalTitle {
-    ${tw`text-[18px] font-semibold`}
+    ${tw`text-[18px] font-semibold sm:text-[16px]`}
     color: ${({ theme }) => theme.text20};
   }
 `

@@ -2,13 +2,14 @@ import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../../context'
 import styled from 'styled-components'
-import tw from 'twin.macro'
+import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
 
-const NO_CONTENT = styled.div`
+const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
   ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6`}
+  ${({ $cssStyle }) => $cssStyle};
   height: calc(100vh - 260px);
   text-align: center;
   padding: 10px 0;
@@ -44,6 +45,7 @@ const NO_CONTENT = styled.div`
 interface Props {
   type: string
   setDisplayIndex?: Dispatch<SetStateAction<number>>
+  cssStyle?: TwStyle
 }
 
 const options = {
@@ -72,7 +74,7 @@ const options = {
   }
 }
 
-const NoContent = ({ type, setDisplayIndex }: Props) => {
+const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
   const history = useHistory()
   const obj = options[type]
   const { mode } = useDarkMode()
@@ -99,7 +101,7 @@ const NoContent = ({ type, setDisplayIndex }: Props) => {
   }
 
   return (
-    <NO_CONTENT>
+    <NO_CONTENT $cssStyle={cssStyle}>
       <div className="spacing">
         <img
           className="no-data-image"

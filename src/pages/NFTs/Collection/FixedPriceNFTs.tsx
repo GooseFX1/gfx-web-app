@@ -132,6 +132,7 @@ export const FixedPriceNFTs = (): ReactElement => {
   useEffect(() => {
     setFixedPriceArr([])
     setPageNumber(0)
+    setFilteredFixPrice(null)
     setSearchInsideCollection(undefined)
     !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
   }, [collectionSort])
@@ -191,7 +192,7 @@ export const FixedPriceNFTs = (): ReactElement => {
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
-      {filteredFixedPrice === null && <NFTLoading />}
+      {fixedPriceLoading && <NFTLoading />}
       {fixedPriceWithinCollection && filteredFixedPrice?.length === 0 && !searchInsideCollection ? (
         <NoContent type="collected" />
       ) : (

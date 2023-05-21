@@ -24,6 +24,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { fetchSingleNFT } from '../../../api/NFTs'
+import { ArrowIcon } from '../Collection/CollectionV2.styles'
 
 const STYLE = styled.div``
 
@@ -152,10 +153,10 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
           history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
         }
       >
-        <td className="index"> {index + 1}</td>
         <td className="nftNameColumn">
           {item?.collection_name !== undefined ? (
             <>
+              <div className="index">{index + 1} </div>
               <Image
                 preview={false}
                 className="nftNameImg"
@@ -176,9 +177,13 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                 </div>
 
                 <div className="nftCollectionFloor">
-                  <div className="grey">Floor: </div>
+                  <div tw="text-grey-1 mr-1">Floor: </div>
                   <div>
-                    <PriceWithToken price={floorPrice} token={currencyView} cssStyle={tw`w-5 h-5`} />
+                    <PriceWithToken
+                      price={floorPrice}
+                      token={currencyView}
+                      cssStyle={tw`h-5 w-5 !ml-0 dark:text-grey-6 text-black-4`}
+                    />
                   </div>
                 </div>
               </div>
@@ -191,9 +196,18 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
         </td>
         <td className="tdItem">
           {item?.daily_volume !== undefined ? (
-            <div tw="flex flex-col items-center justify-center">
-              <PriceWithToken price={volume} token={currencyView} cssStyle={tw`h-5 w-5`} />
-              <div className="grey">{timelineDisplay} volume </div>
+            <div tw="flex items-center">
+              <div tw="flex flex-col items-center justify-center">
+                <PriceWithToken
+                  price={volume}
+                  token={currencyView}
+                  cssStyle={tw`h-5 w-5 dark:text-grey-6 text-black-4`}
+                />
+                <div tw="text-grey-1">{timelineDisplay} volume </div>
+              </div>
+              <div className="rotate90" tw="ml-2">
+                <Arrow height="10px" width="10px" invert={true} />
+              </div>
             </div>
           ) : (
             <Loader />

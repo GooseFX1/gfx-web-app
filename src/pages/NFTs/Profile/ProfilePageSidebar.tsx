@@ -119,16 +119,15 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
     }
 
     .track-portfolio{
-        ${tw`text-[15px] font-semibold mb-8 mt-[11px]`}
+        ${tw`text-[15px] font-semibold mb-8 mt-[11px] dark:text-grey-5 text-grey-1`}
     }
   }
 }
 `
 
 const SOL = styled.div`
-  ${tw`font-semibold text-[20px] w-[90%]`}
+  ${tw`font-semibold text-[20px] w-[90%] text-grey-1 dark:text-grey-5`}
   margin: 0 auto;
-  color: ${({ theme }) => theme.text4};
 
   > div {
     margin-bottom: 12px;
@@ -148,6 +147,7 @@ const SOL = styled.div`
     height: 20px;
     width: 20px;
     margin-left: 7px;
+    margin-top: -8px;
   }
 `
 
@@ -399,8 +399,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
         {isSessionUser ? (
           <SOL>
             <div>Wallet Ballance</div>
-            <span>{userSol ? userSol : '0.00'}</span>
-            <span className="sol">SOL</span>
+            <span tw="dark:text-grey-5 text-black-4">{userSol ? userSol : '0.00'} SOL</span>
             <img src="/img/crypto/SOL.png" alt="sol-icon" />
           </SOL>
         ) : (

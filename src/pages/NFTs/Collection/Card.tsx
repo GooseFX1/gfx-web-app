@@ -136,10 +136,10 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
   }, [singleNFT, isOwner, nftDetails])
 
   useEffect(() => {
-    if (singleNFT && sessionUser && sessionUser.user_likes) {
-      setIsFavorited(sessionUser.user_likes.includes(singleNFT.uuid))
+    if (localSingleNFT && sessionUser && sessionUser.user_likes) {
+      setIsFavorited(sessionUser.user_likes.includes(localSingleNFT?.uuid))
     }
-  }, [sessionUser])
+  }, [sessionUser, localSingleNFT])
 
   const handleToggleLike = async () => {
     if (sessionUser && sessionUser.uuid) {
@@ -344,12 +344,12 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
                   />
                 </div>
 
-                {sessionUser && !isOwner && (
+                {sessionUser && (
                   <img
                     className="card-like"
                     src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
                     alt="heart-red"
-                    // onClick={() => handleToggleLike()}
+                    onClick={() => handleToggleLike()}
                   />
                 )}
               </div>

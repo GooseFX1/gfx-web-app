@@ -196,13 +196,9 @@ const NFTStatsContainer = () => {
               )}
             </div>
             {checkMobile() && (
-              <div className="title" style={{ display: 'flex', marginLeft: 'auto' }}>
-                {/*   <div onClick={() => setSweepCollection(true)}>
-                  <img className="sweepMobile" src="/img/assets/Aggregator/sweepButtonMobile.svg" />
-                </div>
-                <div>
-                  <SortDropdown />
-                </div> */}
+              <div className="title" tw="flex ml-auto">
+                <CurrentUserProfilePic />
+                <SortDropdown />
               </div>
             )}
           </div>
@@ -215,7 +211,7 @@ const NFTStatsContainer = () => {
                 src="/img/assets/Aggregator/Tooltip.svg"
                 alt="appraisal-icon"
               />
-              <div className="wrapper" style={{ marginLeft: 8 }}>
+              <div className="wrapper" tw="ml-2">
                 <div className={collection?.gfx_appraisal_supported ? 'titleText' : 'titleTextNoSupport'}>
                   Appraisal
                 </div>
@@ -297,7 +293,11 @@ export const NFTGridContainer = (): ReactElement => {
     if (displayIndex === 2) return <OpenBidNFTs />
     if (displayIndex === 3)
       return (
-        <ActivityNFTSection address={activityAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS} />
+        <ActivityNFTSection
+          cssStyle={tw`bg-grey-5`}
+          address={activityAddress}
+          typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS}
+        />
       )
   }, [displayIndex, activityAddress])
   return (
@@ -322,8 +322,9 @@ const FilterCategory: FC<{ displayIndex: number; currentIndex: number; onClick: 
 
   return (
     <div className={className} onClick={onClick}>
-      {children}
+      <div>{children}</div>
       {!checkMobile() && currentIndex === 0 && <div className="activeItem" />}
+      {checkMobile() && isSelected && <div className="activeItemMobile"></div>}
     </div>
   )
 }
@@ -349,7 +350,7 @@ const FiltersContainer: FC<{
       index: 1
     },
     {
-      label: `All items (${singleCollection ? singleCollection[0].nfts_count : 0})`,
+      label: `All items (${singleCollection ? truncateBigNumber(singleCollection[0].nfts_count) : 0})`,
       index: 2
     },
     {

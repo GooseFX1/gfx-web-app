@@ -101,6 +101,10 @@ module.exports = {
         '85p': '85%',
         inherit: 'inherit'
       },
+      rotate: {
+        90: '90deg',
+        270: '270deg'
+      },
       minWidth: {
         330: '330px',
         vw: '100vw'

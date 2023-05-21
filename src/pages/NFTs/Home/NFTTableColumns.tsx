@@ -3,8 +3,14 @@ import { NFT_COL_FILTER_OPTIONS, NFT_VOLUME_OPTIONS } from '../../../api/NFTs'
 import { TokenToggleNFT } from '../../../components'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
+import styled from 'styled-components'
+import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LOADING_ARR } from '../../../utils'
+
+const TOKEN_DIV = styled.div`
+  ${tw`mr-2`}
+`
 
 export const NFTColumnsTitleWeb = (): ReactElement => {
   const { setCurrency } = useNFTAggregator()
@@ -100,9 +106,9 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         </th>
 
         <th className="borderRow2">
-          <div>
+          <TOKEN_DIV>
             <TokenToggleNFT toggleToken={setCurrency} />
-          </div>
+          </TOKEN_DIV>
         </th>
       </>
     </tr>
@@ -111,7 +117,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
 
 export const NFTActivitySectionWeb = (): ReactElement => (
   <tr>
-    <th className={'table-col-header'} style={{ width: '26%' }}>
+    <th className={'table-col-header'} tw="!w-[26%] !justify-start pl-5">
       Item
     </th>
     <th className={'table-col-header'} style={{ width: '10%' }}>

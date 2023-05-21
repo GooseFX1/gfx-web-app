@@ -55,7 +55,7 @@ const CancelBidModal = (): ReactElement => {
     return null
   }, [bids])
 
-  const myBidPrice = useMemo(() => (myBid ? formatSOLNumber(myBid[0].buyer_price) : 0), [myBid])
+  const myBidPrice = useMemo(() => (myBid.length > 0 ? formatSOLNumber(myBid[0].buyer_price) : 0), [myBid])
   const askPrice = useMemo(() => (ask ? formatSOLNumber(ask?.buyer_price) : 0), [ask])
   const closeTheModal = () => {
     if (!isLoading) setCancelBidClicked(undefined)

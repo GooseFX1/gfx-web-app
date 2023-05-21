@@ -37,16 +37,17 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   addNftToBag,
   lastCardRef
 }) => {
-  const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
+  const [localUserBidToNFT, setLocalUserBidToNFT] = useState<INFTBid[] | null>([])
   const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
+  const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const history = useHistory()
@@ -60,6 +61,21 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
+
+  useEffect(() => {
+    if (item && sessionUser && sessionUser.user_likes) {
+      setIsFavorited(sessionUser.user_likes.includes(item.uuid))
+    }
+  }, [sessionUser])
+
+  const handleToggleLike = async (e) => {
+    if (sessionUser && sessionUser.uuid) {
+      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+      setIsFavorited(res.data.action === 'liked')
+      e.stopPropagation()
+    }
+  }
 
   const nftId = item?.nft_name
     ? item?.nft_name.includes('#')
@@ -113,10 +129,6 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
           const nft: INFTGeneralData = res.data
           setLocalBids(nft.bids)
           setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
-          if (publicKey) {
-            const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
-            setLocalBidToNFT(myBid)
-          }
           setLocalTotalLikes(nft.total_likes)
         }
       })
@@ -125,7 +137,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     return () => {
       setIsLoadingBeforeRelocate(false)
     }
-  }, [item])
+  }, [])
+
+  useEffect(() => {
+    if (publicKey) {
+      const myBid = localBids.filter((bid) => bid.wallet_key === publicKey.toString())
+      setLocalUserBidToNFT(myBid)
+    }
+  }, [publicKey, localBids])
 
   const handleInfoIconClicked = (e) => {
     setGFXApprisalPopup(true)
@@ -168,7 +187,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
               mintAddress={item?.mint_address}
               collectionName={item?.collection_name}
               item={item}
-              myBidToNFT={localBidToNFT}
+              myBidToNFT={localUserBidToNFT}
               buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
               setNFTDetails={setNFTDetails}
               addNftToBag={addNftToBag}
@@ -182,7 +201,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
           ) : (
             <SkeletonCommon width="100%" height="auto" />
           )}
-          {localBidToNFT.length > 0 && (
+          {localUserBidToNFT.length > 0 && (
             <div tw="absolute left-[16px] top-[14px]">
               <Tag loading={false}>
                 <span tw="font-semibold">{'Bid Placed'}</span>
@@ -236,22 +255,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
               : 'NA'}
             {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
           </div>
-          {/* {sessionUser &&
-            (isFavorite ? (
-              <img
-                tw="absolute right-[10px] bottom-[10px] w-[20px] h-[20px]"
-                src={`/img/assets/heart-red.svg`}
-                alt="heart-red"
-                onClick={() => console.log('unlike')}
-              />
-            ) : (
-              <img
-                tw="absolute right-[10px] bottom-[10px] w-[20px] h-[20px]"
-                src={`/img/assets/heart-empty.svg`}
-                alt="heart-empty"
-                onClick={() => console.log('like')}
-              />
-            ))} */}
+          {/* {sessionUser && !isOwner && (
+            <img
+              className="card-like"
+              src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
+              alt="heart-red"
+              onClick={(e) => handleToggleLike(e)}
+            />
+          )} */}
         </div>
       </div>
     </>

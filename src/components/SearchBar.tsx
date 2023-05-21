@@ -1,4 +1,4 @@
-import React, { useCallback, FC, useRef } from 'react'
+import React, { useCallback, FC, useRef, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 
 import { SpaceBetweenDiv } from '../styles'
@@ -58,7 +58,15 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
   }
 `
 
-export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, bgColor, width, ...rest }) => {
+export const SearchBar: FC<any> = ({
+  placeholder,
+  setSearchFilter,
+  filter,
+  bgColor,
+  shouldFocus,
+  width,
+  ...rest
+}) => {
   const { mode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -71,6 +79,10 @@ export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, bgCol
     setSearchFilter('')
     inputRef.current?.focus()
   }, [])
+
+  useEffect(() => {
+    if (shouldFocus) inputRef.current?.focus()
+  }, [inputRef?.current])
 
   return (
     <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} {...rest}>

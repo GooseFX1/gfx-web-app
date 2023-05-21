@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC, ReactElement } from 'react'
+import React, { useEffect, useState, FC, ReactElement, MutableRefObject, useCallback } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -72,8 +72,8 @@ const STYLED_FARM_HEADER = styled.div`
   }
 `
 export const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] text-grey-2 dark:text-grey-1`}
+  ${tw`sm:m-auto cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 sm:font-medium
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] text-grey-1`}
   background: none;
 
   :disabled {
@@ -142,6 +142,50 @@ const TEMP_BANNER = styled.h2`
 `
 
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
+/**
+ * Animates a absolute button components left, top and width to always match the button it is animating to
+ * @param slideRef - the ref of the absolute button component that is to be animated
+ * @param buttonRefs - the ref[] of the buttons that the slideRef is to be animated to
+ * @param index - the index of the buttonRefs that the slideRef is to be animated to on mount
+ */
+export const useAnimateButtonSlide = (
+  slideRef: MutableRefObject<HTMLDivElement | null>,
+  buttonRefs: MutableRefObject<HTMLButtonElement[]>,
+  index?: number,
+  customCallback?: (index: number) => void
+): ((index: number) => void) => {
+  const handleSlide = useCallback(
+    (index) => {
+      if (!slideRef.current || !buttonRefs.current.length) {
+        console.log('Warning: SlideRef or ButtonRefs not set', { slideRef, buttonRefs })
+        return
+      }
+      if (!buttonRefs.current[index]) {
+        console.log('Warning: ButtonRefs not set')
+        return
+      }
+      if (customCallback) {
+        customCallback(index)
+        return
+      }
+      const left = `${buttonRefs.current[index].offsetLeft}px`
+      const width = `${buttonRefs.current[index].offsetWidth}px`
+      const top = `${buttonRefs.current[index].offsetTop}px`
+      if (slideRef.current.style.left !== left) {
+        slideRef.current.style.left = left
+      }
+      if (slideRef.current.style.width !== width) {
+        slideRef.current.style.width = width
+      }
+      if (slideRef.current.style.top !== top) {
+        slideRef.current.style.top = top
+      }
+    },
+    [slideRef.current, buttonRefs.current, customCallback, index]
+  )
+
+  return handleSlide
+}
 
 export const FarmFilter: FC = () => {
   const {

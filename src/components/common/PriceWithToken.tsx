@@ -4,12 +4,12 @@ import 'styled-components/macro'
 
 const PRICE = styled.div<{ $cssStyle: TwStyle }>`
   ${tw`flex justify-center font-semibold items-center text-[15px] duration-500 `}
+  color: ${({ theme }) => theme.text32};
   ${({ $cssStyle }) => $cssStyle};
-  color: ${({ theme }) => theme.text11};
 
   width: fit-content !important;
   img {
-    ${tw`ml-[5px]`}
+    ${tw`ml-1`}
     ${({ $cssStyle }) => $cssStyle};
   }
 `

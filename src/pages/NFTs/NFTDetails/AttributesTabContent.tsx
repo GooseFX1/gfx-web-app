@@ -5,10 +5,11 @@ import { IAttributesTabItemData } from '../../../types/nft_details'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useDarkMode, useNFTDetails, usePriceFeedFarm } from '../../../context'
-import { truncateAddress, parseUnixTimestamp } from '../../../utils'
+import { truncateAddress, parseUnixTimestamp, formatSOLNumber } from '../../../utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Tag } from '../../../components/Tag'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 const ATTRIBUTES_TAB_CONTENT = styled.div`
   ${({ theme }) => css`
@@ -92,9 +93,11 @@ export const AsksAndBidsForNFT = (): ReactElement => {
               <PriceWithToken
                 token="SOL"
                 cssStyle={tw`h-[18px] w-[18px] ml-auto`}
-                price={parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+                price={truncateBigNumber(formatSOLNumber(bid.buyer_price))}
               />
-              <div>{((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
+              <div>
+                {truncateBigNumber((parseFloat(bid.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice)} USDC
+              </div>
             </div>
           </div>
         ))}
@@ -123,9 +126,9 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             <PriceWithToken
               token="SOL"
               cssStyle={tw`h-[18px] w-[18px] ml-auto`}
-              price={parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER}
+              price={truncateBigNumber(formatSOLNumber(ask.buyer_price))}
             />
-            <div>{((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice).toFixed(1)} USDC</div>
+            <div>{truncateBigNumber((parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER) * solPrice)} USDC</div>
           </div>
         </div>
       )}

@@ -8,8 +8,7 @@ import { useNavCollapse, useNFTAggregator, usePriceFeedFarm } from '../../../con
 import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
-import styled from 'styled-components'
-import tw from 'twin.macro'
+import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
 import { AH_NAME } from '../../../web3'
 import { minimizeTheString } from '../../../web3/nfts/utils'
@@ -17,6 +16,7 @@ import { Tooltip } from 'antd'
 import NoContent from '../Profile/NoContent'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { parseUnixTimestamp } from '../../../utils'
+import { NFTRowLoading } from '../Home/NFTLoading'
 
 export interface IActivity {
   activity_id: number
@@ -44,10 +44,11 @@ const ACTIVITY_KIND = {
   CANCEL: 'Cancel'
 }
 
-export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
+export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`
   overflow-x: hidden;
   width: 100%;
   ${tw`dark:bg-black-1 bg-grey-6`}
+  ${({ $cssStyle }) => $cssStyle};
   ${({ theme }) => theme.customScrollBar('0px')}
   @media(max-width: 500px) {
     height: 100vh !important;
@@ -103,7 +104,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     color: ${({ theme }) => theme.text20};
   }
   .tableRow {
-    ${tw``}
+    ${tw`h-14`}
     @media(max-width: 500px) {
       /* border-bottom: 1px solid ${({ theme }) => theme.borderBottom} ; */
     }
@@ -122,7 +123,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
   }
   .nftNameColumn {
     text-align: left;
-    width: 26%;
+    width: 25%;
     .nftNameImg {
       border-radius: 5px;
       ${tw`w-10 h-10 sm:mt-3 ml-4 mt-5`}
@@ -153,27 +154,32 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed }>`
     ${tw`h-[35px] w-[35px] -mt-11 sm:mt-[-80px] ml-auto sm:ml-auto`}
   }
   .priceActivity {
-    ${tw`flex flex-col w-[42%] pr-2`}
+    ${tw`flex flex-col w-[75%] pr-2`}
   }
 `
-const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
+const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string; cssStyle?: TwStyle }> = ({
   address,
-  typeOfAddress
+  typeOfAddress,
+  cssStyle
 }): ReactElement => {
   const [activityData, setActivityData] = useState<IActivity[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
       if (address && typeOfAddress) {
+        setIsLoading(true)
         const data = await fetchActivityOfAddress(address, typeOfAddress)
         setActivityData(data)
+        setIsLoading(false)
       }
     })()
   }, [])
 
   const { isCollapsed } = useNavCollapse()
   return (
-    <WRAPPER_TABLE $navCollapsed={isCollapsed}>
+    <WRAPPER_TABLE $navCollapsed={isCollapsed} $cssStyle={cssStyle}>
+      {isLoading && <NFTRowLoading />}
       {activityData.length ? (
         <table>
           {!checkMobile() && (
@@ -189,7 +195,7 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string }> = ({
           </tbody>
         </table>
       ) : (
-        <NoContent type="activity" />
+        <NoContent type="activity" cssStyle={cssStyle} />
       )}
     </WRAPPER_TABLE>
   )
@@ -232,9 +238,6 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
             </div>
           )}
         </td>
-        <td></td>
-        <td></td>
-        <td></td>
         {/* <td></td> */}
         <td className="priceActivity" tw="flex items-end justify-end">
           <div className="textContainer">
@@ -242,7 +245,13 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
               <PriceWithToken token="SOL" price={formatSOLDisplay(activity?.price)} />
             </div>
             <div className="secondaryText">
-              <div>{activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <Loader />}</div>
+              <div>
+                {activity && activity.clock ? (
+                  <>{parseUnixTimestamp(activity?.clock).split(',')[1]}</>
+                ) : (
+                  <Loader />
+                )}
+              </div>
             </div>
           </div>
 

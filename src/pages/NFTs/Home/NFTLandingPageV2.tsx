@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback } from 'react'
+import React, { ReactElement, useMemo, useState, FC, useEffect, useCallback, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFTAggWelcome } from '../../../components/NFTAggWelcome'
@@ -14,7 +14,12 @@ import {
 } from '../../../context'
 import { checkMobile, commafy, LOADING_ARR } from '../../../utils'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
-import { LastRefreshedAnimation, RefreshIcon, STYLED_BUTTON } from '../../Farm/FarmFilterHeader'
+import {
+  LastRefreshedAnimation,
+  RefreshIcon,
+  STYLED_BUTTON,
+  useAnimateButtonSlide
+} from '../../Farm/FarmFilterHeader'
 import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
@@ -41,6 +46,7 @@ const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
+  ${({ theme }) => theme.customScrollBar(0)}
   .addBorder {
     border: 1px solid #b5b5b5 !important;
   }
@@ -48,6 +54,9 @@ const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
     ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 3s ease-in-out;
+  }
+  .borderBottom {
+    background: ${({ theme }) => theme.tokenBorder} !important;
   }
 
   .no-dp-avatar-sm {
@@ -159,13 +168,13 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1 ml-2`}
   .slider-animation-timeline {
     ${tw`absolute w-[60px] h-[44px] rounded-[36px]  z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 25}%;
+    left: ${({ $poolIndex }) => $poolIndex * 50}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
   .slider-animation {
     ${tw`absolute w-[85px] h-[44px] rounded-[36px]  z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 50}%;
+    /* left: ${({ $poolIndex }) => $poolIndex * 50}%; */
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -176,7 +185,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
     transition: left 500ms ease-in-out;
   }
   .selectedBackground {
-    ${tw`text-white duration-500`}
+    ${tw`text-white font-semibold duration-500`}
     @media (max-width: 500px) {
       background: none;
     }
@@ -247,11 +256,12 @@ const NFTLandingPageV2 = (): ReactElement => {
         </>
       )}
       <FiltersContainer />
-
+      <BorderBottom />
       <NFTCollectionsTable showBanner={showBanner} />
     </NFT_AGG_WRAP>
   )
 }
+const BorderBottom = () => checkMobile() && <div tw="h-[1px] dark:bg-black-4 bg-grey-4 mx-[15px]"></div>
 
 const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
@@ -269,6 +279,9 @@ const FiltersContainer = () => {
 
   const { sessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${pubKey}`)
+  const buttonRefs = useRef<HTMLButtonElement[]>([])
+  const sliderRef = useRef<HTMLDivElement>(null)
+  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs)
 
   useEffect(() => {
     if (timelineDisplay === '7d' && sortType === 'DESC') {
@@ -284,6 +297,7 @@ const FiltersContainer = () => {
   const handleClick = (poolName, index) => {
     setPoolIndex(index)
     setPoolFilter(poolName)
+    handleSlide(index)
     if (poolName === 'Trending') {
       setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
       setSortType('DESC')
@@ -306,6 +320,27 @@ const FiltersContainer = () => {
     console.log(sessionUser ? 'LANDING - Session user - ' + sessionUser.pubkey : ' LANDING NO SESSION USER')
   }, [sessionUser])
 
+  const poolTypeButtons = useMemo(
+    () =>
+      poolTypes.map((pool, index) => (
+        <STYLED_BUTTON
+          ref={(el) => {
+            buttonRefs.current[index] = el
+            if (index == poolIndex) {
+              handleSlide(poolIndex)
+            }
+          }}
+          key={pool.name}
+          style={{ width: 85, marginRight: 10 }}
+          onClick={() => handleClick(pool.name, index)}
+          className={pool.name === poolFilter ? 'selectedBackground' : ''}
+        >
+          {pool.name}
+        </STYLED_BUTTON>
+      )),
+    [poolIndex]
+  )
+
   if (checkMobile())
     return (
       <div>
@@ -326,17 +361,8 @@ const FiltersContainer = () => {
             {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
           </div>
           <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
-            <div className="slider-animation"></div>
-            {poolTypes.map((pool, index) => (
-              <STYLED_BUTTON
-                key={pool.name}
-                style={{ width: 85, marginRight: 10 }}
-                onClick={() => handleClick(pool.name, index)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
-            ))}
+            <div ref={sliderRef} className="slider-animation"></div>
+            {poolTypeButtons}
           </ButtonContainer>
 
           {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}

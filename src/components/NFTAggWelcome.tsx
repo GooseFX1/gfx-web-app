@@ -162,7 +162,7 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
               Track NFT collections <br /> like never before!
             </div>
           </h3>
-          <img className="trackNFTImg" src={`/img/assets/GFXappraisalGraphic${mode}.png`} alt="" />
+          <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXappraisalGraphic${mode}.png`} alt="" />
           <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
           <div className="subText">
             Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not

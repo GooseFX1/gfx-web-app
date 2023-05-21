@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactElement, useEffect, useState } from 'react'
+import React, { FC, ReactElement, useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { fetchGlobalSearchNFT } from '../../../api/NFTs'
 import { SearchBar } from '../../../components'
@@ -10,6 +10,8 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useDarkMode } from '../../../context'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
+import debounce from 'lodash.debounce'
 
 const STYLED_POPUP = styled(PopupCustom)`
   &.ant-modal {
@@ -29,15 +31,14 @@ const STYLED_POPUP = styled(PopupCustom)`
     padding-left: 10px;
   }
   .searchBarContainer {
-    ${tw`text-[15px] ml-1.5  w-[82vw]`}
-    border: 1px solid;
+    ${tw`text-[15px] ml-1.5 w-[82vw]`}
   }
   .wrapper {
     ${tw`w-[95vw]`}
   }
   .title {
     ${tw`ml-2 font-semibold text-[15px]`}
-    color: ${({ theme }) => theme.text11};
+    color: ${({ theme }) => theme.text32};
   }
   .greyText {
     line-height: 14px;
@@ -50,7 +51,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .alignRight {
-    ${tw`ml-auto mr-2 mt-1.5 text-[15px] font-semibold`}
+    ${tw`ml-auto mt-1.5 text-[15px] font-semibold`}
     color: ${({ theme }) => theme.text32};
     img {
       ${tw`h-[20px] w-[20px] ml-1`}
@@ -59,7 +60,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   .displayRow {
     ${tw`flex mt-2.5 mb-2.5`}
     .nftImg {
-      ${tw`w-[35px] rounded-[5px] h-[35px] mt-1`}
+      ${tw`w-[35px] rounded-[100%] h-[35px] mt-1`}
     }
   }
   .searchWrapper {
@@ -79,15 +80,25 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
   const [prevSearches, setPrevSearches] = useState<any>('undefined')
   const [searchResult, setSearchResult] = useState<any>([])
   const { mode } = useDarkMode()
+  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [])
+
+  const debouncer = debounce((searchQuery) => {
+    globalSearchCall(searchQuery)
+  }, 500)
+
+  const globalSearchCall = (searchQuery) => {
+    fetchGlobalSearchNFT(searchQuery)
+      .then((res) => {
+        setSearchResult(res.collections)
+      })
+      .catch((err) => console.log(err))
+  }
   useEffect(() => {
-    if (searchFilter && searchFilter.length > 1) {
-      fetchGlobalSearchNFT(searchFilter)
-        .then((res) => {
-          setSearchResult(res.collections)
-        })
-        .catch((err) => console.log(err))
+    if (searchFilter && searchFilter.length > 0) {
+      handleSearch(searchFilter)
     }
   }, [searchFilter])
+
   return (
     <STYLED_POPUP
       height={'100vh'}
@@ -101,17 +112,23 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
         <div tw="flex items-center">
           <SearchBar
             className="searchBarContainer"
+            shouldFocus={true}
+            bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             placeholder="Search by collection"
             setSearchFilter={setSearchFilter}
           />
           <div>
-            <img tw="mr-2 mt-[-1]" onClick={() => setSearchPopup(false)} src={`/img/assets/close-${mode}.svg`} />
+            <img
+              tw="right-[18px] absolute h-4 w-4 top-[30px]"
+              onClick={() => setSearchPopup(false)}
+              src={`/img/assets/close-${mode}.svg`}
+            />
           </div>
         </div>
         {!searchFilter && (
           <div className="searchGraphic">
             <img src="/img/assets/Aggregator/searchGraphic.png" />
-            Find your favourite NFT's <br />
+            Find your favorite NFT's <br />
             by collection or item.
           </div>
         )}
@@ -166,7 +183,7 @@ const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
             <img className="nftImg" src={ar?.collection?.profile_pic_link} alt="" />
             <div>
               <div className="title" tw="sm:flex sm:items-center">
-                {minimizeTheString(ar?.collection?.collection_name, 30)}
+                {minimizeTheString(ar?.collection?.collection_name, 18)}
                 {ar?.collection?.is_verified && (
                   <img
                     tw="w-[18px] sm:h-[15px] sm:w-[15px] h-[18px] ml-1"
@@ -174,7 +191,7 @@ const RecentCollection: FC<{ searchResult: any }> = ({ searchResult }) => {
                   />
                 )}
               </div>
-              <div className="greyText">24H Volume: {ar?.collection?.daily_volume} SOL</div>
+              <div className="greyText">24H Volume: {truncateBigNumber(ar?.collection?.daily_volume)} SOL</div>
             </div>
             <div className="alignRight" tw="flex justify-center items-center">
               <div>{ar.listed_count} Listed</div>

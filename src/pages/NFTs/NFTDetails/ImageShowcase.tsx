@@ -27,7 +27,7 @@ const LEFT_SECTION = styled.div`
       right: 12px;
     }
     .bgGradient {
-      ${tw`w-[390px] absolute h-[100%] opacity-80  rounded-[20px]`}
+      ${tw`w-[390px] sm:w-[360px] absolute h-[100%] opacity-80  rounded-[20px]`}
       background: ${({ theme }) => theme.hoverGradient};
     }
     .acceptBidBtn {
@@ -151,7 +151,7 @@ export const ImageShowcase: FC<{
         </>
       )}
 
-      <div tw="w-[390px] h-[390px]">
+      <div tw="w-[390px] h-[390px] sm:w-[360px] sm:h-[360px]">
         <img
           className="ls-image"
           height={'100%'}

@@ -27,6 +27,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   @media(max-width: 500px) {
     height: calc(100vh - 200px);
     padding: 0;
+    margin-top: 0px;
   }
 
   table {
@@ -68,6 +69,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   }
 
   tbody {
+    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[15px]`}
     height: calc(
       100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')} -
         ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
@@ -81,7 +83,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid dark:border-black-2 border-white
-      sm:mb-0 rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto`}
+      sm:mb-0 rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto sm:rounded-[10px]`}
 
       &:hover {
         ${tw`border-grey-2`}
@@ -95,7 +97,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
       }
     }
     td {
-      ${tw`h-[100%] sm:h-[78px]  text-[15px] font-semibold text-center dark:text-grey-5 text-grey-1`}
+      ${tw`h-[100%] sm:h-[78px]  text-[15px] font-semibold text-center dark:text-grey-5 text-black-4`}
       text-align: center;
     }
   }
@@ -111,22 +113,25 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     }
   }
 
+  .rotate90 {
+    rotate: 90deg;
+  }
   .tdItem {
-    ${tw`text-center flex items-center justify-center sm:w-[30%]`}
+    ${tw`text-center flex items-center justify-center sm:w-auto`}
   }
   .rotate270 {
     ${tw`!flex !w-[5%] !justify-center !items-center`}
     rotate: 270deg;
   }
   .index {
-    ${tw`sm:w-[5%] flex items-center ml-[6px]`}
+    ${tw` flex items-center ml-[6px]`}
   }
   .nftNameImg {
-    ${tw`w-10 h-10 sm:mt-0 sm:h-[42px] sm:w-[42px] ml-4  rounded-full sm:ml-[8px]`}
+    ${tw`w-10 h-10 sm:mt-0 sm:h-[42px] sm:w-[42px] ml-4 rounded-full  sm:ml-1`}
   }
   .nftNameColumn {
     text-align: left;
-    ${tw`w-[25%] sm:w-[60%] flex items-center  `}
+    ${tw`w-[25%] sm:w-[65%] flex items-center justify-start `}
     span {
       ${tw` ml-[6px] font-semibold text-[15px]`}
     }
@@ -138,10 +143,6 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   .nftCollectionFloor {
     ${tw`ml-16 -mt-10  sm:ml-0 sm:mt-[0px] sm:ml-0 flex text-[15px] items-center font-semibold`}
     padding-top: 0!important;
-  }
-  .grey {
-    ${tw`mr-1`}
-    color: ${({ theme }) => theme.text17}
   }
 
   .borderRow {
