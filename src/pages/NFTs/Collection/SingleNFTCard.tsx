@@ -1,4 +1,4 @@
-import { useState, FC, useEffect, useMemo, ReactElement, useCallback } from 'react'
+import { useState, FC, useEffect, useMemo, ReactElement, useCallback, Dispatch, SetStateAction } from 'react'
 import axios from 'axios'
 import {
   useConnectionConfig,
@@ -21,7 +21,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Button } from '../../../components/Button'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
 import { formatSOLDisplay, notify, capitalizeFirstLetter, commafy, formatSOLNumber } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
@@ -184,6 +184,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
 
           {hover && (
             <HoverOnNFT
+              setHover={setHover}
               mintAddress={item?.mint_address}
               collectionName={item?.collection_name}
               item={item}
@@ -245,7 +246,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
 
           <div className="nftPrice">
             {localAsk && (
-              <PriceWithToken price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)} token={currencyView} />
+              <PriceWithToken
+                price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)}
+                token={currencyView}
+                cssStyle={tw`!ml-0`}
+              />
             )}
             {localAsk === null && <span tw="dark:text-grey-3 text-grey-4 font-semibold">Not Listed</span>}
           </div>
@@ -278,53 +283,45 @@ export const HoverOnNFT: FC<{
   ask: INFTAsk | null | boolean
   buttonType: string
   setNFTDetails: any
-}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT }): ReactElement => {
+  setHover?: Dispatch<SetStateAction<boolean>>
+}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT, setHover }): ReactElement => {
   const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
-  const openInNewTab = useCallback((url) => {
-    const win = window.open(url, '_blank')
-    win.focus()
-  }, [])
 
-  const goToDetailsForModal = async (e, type) => {
-    e.stopPropagation()
-    if (!wallet?.adapter?.connected) {
-      setVisible(true)
-      return
-    }
-
-    if (ask && ask['marketplace_name'] && type === 'buy') {
-      switch (ask['marketplace_name']) {
-        case 'MAGIC_EDEN':
-          openInNewTab(`https://magiceden.io/item-details/${mintAddress}`)
-          return
-        case 'TENSOR':
-          openInNewTab(`https://www.tensor.trade/item/${mintAddress}`)
-          return
+  const goToDetailsForModal = useCallback(
+    async (e, type) => {
+      e.stopPropagation()
+      if (!wallet?.adapter?.connected) {
+        setVisible(true)
+        return
       }
-    }
 
-    setOpenJustModal(true)
-    setIsLoadingBeforeRelocate(true)
-    await setNFTDetails()
-    setIsLoadingBeforeRelocate(false)
-    switch (type) {
-      case 'bid':
-        setBidNow(item)
-        break
-      case 'sell':
-        setSellNFT(item)
-        break
-      case 'buy':
-        setBuyNow(item)
-        break
-      case 'cancel':
-        setCancelBidClicked(item)
-        break
-    }
-  }
+      if (redirectBasedOnMarketplace(ask, type, mintAddress)) return
+      setOpenJustModal(true)
+      setIsLoadingBeforeRelocate(true)
+      await setNFTDetails()
+      setIsLoadingBeforeRelocate(false)
+      setHover(false)
+
+      switch (type) {
+        case 'bid':
+          setBidNow(item)
+          break
+        case 'sell':
+          setSellNFT(item)
+          break
+        case 'buy':
+          setBuyNow(item)
+          break
+        case 'cancel':
+          setCancelBidClicked(item)
+          break
+      }
+    },
+    [wallet?.adapter?.connected, ask, mintAddress, setNFTDetails, setHover, item]
+  )
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}

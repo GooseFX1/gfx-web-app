@@ -3,7 +3,6 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import { Button } from '../../../components/Button'
 import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 // import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -174,7 +173,7 @@ const CancelBidModal = (): ReactElement => {
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '50%' : '393px'}
+      height={checkMobile() ? '390px' : '393px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -183,13 +182,12 @@ const CancelBidModal = (): ReactElement => {
       footer={null}
     >
       <div tw="flex flex-col items-center">
-        <div className="delistText" tw="!text-[20px] !font-semibold">
-          Are you sure you want to Cancel the bid
+        <div className="delistText" tw="!text-[20px] sm:!text-[15px] !font-semibold">
+          Are you sure you want to remove the bid
           <br />
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
-          {checkMobile() && <br />}
           {general?.collection_name && (
             <>
               {' '}
@@ -215,15 +213,15 @@ const CancelBidModal = (): ReactElement => {
         <Button
           onClick={callCancelInstruction}
           className={'sellButton'}
-          tw="!bottom-[100px] !h-[56px] !absolute sm:!bottom-[70px]"
+          tw="!bottom-[100px]     absolute sm:!bottom-[85px]"
           loading={isLoading}
         >
-          <span tw="font-semibold text-[20px]">Remove Bid</span>
+          <span tw="font-semibold text-[20px] sm:text-[16px] ">Remove Bid</span>
         </Button>
-        <div className="cancelText" tw="!bottom-[58px] absolute" onClick={closeTheModal}>
+        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[50px] " onClick={closeTheModal}>
           {!isLoading && `Cancel`}
         </div>
-        <TermsTextNFT string="Remove" />
+        {<TermsTextNFT string="Remove" />}
       </div>
     </STYLED_POPUP_BUY_MODAL>
   )

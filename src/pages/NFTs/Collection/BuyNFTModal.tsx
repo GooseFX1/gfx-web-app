@@ -19,7 +19,13 @@ import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
+import {
+  PublicKey,
+  TransactionInstruction,
+  Transaction,
+  SystemProgram,
+  VersionedTransaction
+} from '@solana/web3.js'
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
@@ -69,6 +75,9 @@ import {
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
+import axios from 'axios'
+import { ITensorBuyIX } from '../../../types/nft_details'
+import { getTensorBuyInstruction } from '../../../api/NFTs'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -96,10 +105,10 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   color: ${({ theme }) => theme.text20};
   .delistText {
-    ${tw`text-[20px] sm:mt-1 sm:text-[20px] sm:pt-4 font-medium text-center `}
+    ${tw`text-[20px] sm:mt-1 sm:text-[15px] sm:pt-4 font-medium text-center `}
     color: ${({ theme }) => theme.text20};
     strong {
-      ${tw`sm:text-[20px] font-bold sm:mt-[-10px] leading-3`}
+      ${tw`sm:text-[15px] font-bold sm:mt-[-10px] leading-3`}
       color: ${({ theme }) => theme.text32};
     }
   }
@@ -113,8 +122,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .cancelText {
-    ${tw`text-[20px] font-semibold mt-4 text-center cursor-pointer 
-    absolute sm:bottom-6`};
+    ${tw`text-[20px] sm:text-[16px] font-semibold mt-4 text-center cursor-pointer 
+    absolute`};
     color: ${({ theme }) => theme.text20};
   }
   .verifiedText {
@@ -154,12 +163,12 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`flex items-center justify-between w-[100%]`}
   }
   .leftAlign {
-    ${tw`text-[18px] font-semibold mt-1`}
+    ${tw`text-[18px] font-semibold mt-1 sm:text-[15px]`}
     color: ${({ theme }) => theme.text37} !important;
   }
   .rightAlign {
     color: ${({ theme }) => theme.text32} !important;
-    ${tw`text-[18px] text-white font-semibold`}
+    ${tw`text-[18px] text-white font-semibold sm:text-[15px]`}
   }
   .rightAlignFinal {
     color: ${({ theme }) => theme.text7} !important;
@@ -178,15 +187,15 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20}
   }
   .enterBid {
-    ${tw`h-[55px] px-[24px] w-[360px] bg-none
-    border-transparent rounded-circle text-[24px] font-semibold sm:mt-0 sm:h-[48px]`}
+    ${tw`h-[55px] px-[24px] w-[360px] bg-none sm:w-[calc(100vw - 48px)]
+    border-transparent rounded-circle text-[24px] font-semibold sm:mt-0 sm:h-[50px]`}
     background: ${({ theme }) => theme.bg2};
     color: ${({ theme }) => theme.text32};
     &:focus {
-      border: 1px solid ${({ theme }) => theme.text30};
+      border: 1px solid ${({ theme }) => theme.text11};
     }
     &:focus-visible {
-      outline: 1px solid ${({ theme }) => theme.text30};
+      outline: 1px solid ${({ theme }) => theme.text11};
     }
   }
 
@@ -210,7 +219,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .sellButton {
     ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]
-    sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] 
+    sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] sm:h-[45px]
      border-none  h-[56px] text-white text-[18px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -241,19 +250,20 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .termsText {
-    ${tw`text-[13px] font-medium`}
+    ${tw`text-[13px] sm:text-[12px] font-medium`}
     color: ${({ theme }) => theme.text37};
+    white-space: nowrap !important;
 
-    strong {
-      ${tw`font-semibold underline`}
+    strong,
+    a {
+      ${tw`font-semibold underline cursor-pointer`}
       color: ${({ theme }) => theme.text38};
     }
   }
 
   .buyButton {
-    ${tw`w-[520px] sm:w-[calc(100vw - 56px)]    
-    sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
-     h-[56px] text-white text-[18px] !font-semibold flex items-center justify-center ml-1.5 sm:ml-1`}
+    ${tw`w-[520px] sm:w-[calc(100vw - 56px)] sm:h-[50px] sm:text-[15px]  cursor-pointer rounded-[50px] border-none
+     h-[56px] text-white text-[18px] sm:text-[16px] !font-semibold flex items-center justify-center ml-1.5 sm:ml-1`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     &:disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -274,7 +284,8 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .sellInputContainer {
     position: absolute;
     margin-left: calc(110px - 24px);
-    margin-top: 35px;
+    ${tw`sm:ml-0 sm:mt-2.5`}
+    margin-top: 10px;
     input:focus {
       border: 1px solid ${({ theme }) => theme.text32};
     }
@@ -286,7 +297,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .feesContainer {
     ${tw`flex items-center flex-col w-[calc(100% - 60px)] sm:w-[calc(100% - 48px )]
-    sm:ml-0 ml-1.5 justify-between sm:mt-[20px] absolute bottom-[120px] sm:bottom-[100px]  `}
+    sm:ml-0 ml-1.5 justify-between sm:mt-[10px] absolute bottom-[120px] sm:bottom-[130px]  `}
   }
   .buyBtnContainer {
     ${tw`flex items-center justify-between sm:mt-[20px] absolute bottom-[50px] sm:bottom-4  `}
@@ -354,21 +365,17 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 }) => {
   const { setBidNow } = useNFTAggregator()
   const { singleCollection } = useNFTCollections()
-  const { prices } = usePriceFeedFarm()
   const { getUIAmount } = useAccounts()
-  const history = useHistory()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
-  const { connected, wallet, sendTransaction } = useWallet()
+  const { wallet, sendTransaction } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { general, nftMetadata, bidOnSingleNFT, ask, bids } = useNFTDetails()
+  const { general, nftMetadata, ask } = useNFTDetails()
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
-  const [mode, setMode] = useState<string>(curBid ? 'review' : 'bid')
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
-
   const isBuyingNow: boolean = useMemo(
-    () => parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid,
+    () => parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid || ask.marketplace_name === 'TENSOR',
     [curBid]
   )
 
@@ -382,11 +389,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
     [curBid]
   )
-
-  useEffect(() => {
-    setMode('bid')
-    setIsLoading(false)
-  }, [])
 
   useEffect(() => {
     if (wallet?.adapter?.connected && publicKey) {
@@ -479,10 +481,65 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
   }
 
-  const callBuyInstruction = async (e: any) => {
+  const handleNotifications = async (tx: Transaction | VersionedTransaction, buyerPrice: string, isBuyingNow) => {
+    try {
+      const signature = await sendTransaction(tx, connection)
+
+      console.log(signature)
+      setPendingTxSig(signature)
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      setIsLoading(false)
+      if (confirm.value.err === null) {
+        if (isBuyingNow) {
+          setMissionAccomplished(true)
+          notify(
+            successBidMatchedMessage(
+              signature,
+              nftMetadata,
+              (parseFloat(buyerPrice) / LAMPORTS_PER_SOL_NUMBER).toString()
+            )
+          )
+        } else {
+          setBidNow(null)
+          notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
+        }
+      }
+    } catch (error) {
+      setIsLoading(false)
+      pleaseTryAgain(isBuyingNow, error?.message)
+    }
+  }
+  const callTensorAPIs = async () => {
+    try {
+      const res: ITensorBuyIX = await getTensorBuyInstruction(
+        parseFloat(ask.buyer_price),
+        wallet?.adapter?.publicKey?.toString(),
+        ask.wallet_key,
+        ask.token_account_mint_key
+      )
+
+      const tx = res.data.legacy_tx
+        ? Transaction.from(Buffer.from(res.data.bytes))
+        : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
+
+      await handleNotifications(tx, ask.buyer_price, true)
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
+      // notify()
+    }
+  }
+
+  const handleBuyFlow = async (e: any) => {
     e.preventDefault()
     setIsLoading(true)
-
+    if (ask['marketplace_name'] === 'TENSOR') {
+      //TODO add flow
+      callTensorAPIs()
+      return
+    } else callBuyInstruction()
+  }
+  const callBuyInstruction = async () => {
     const {
       metaDataAccount,
       escrowPaymentAccount,
@@ -592,34 +649,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
       transaction.add(executeSaleIX)
     }
-
-    try {
-      const signature = await sendTransaction(transaction, connection)
-
-      console.log(signature)
-      setPendingTxSig(signature)
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
-      console.log(confirm, 'confirming')
-      setIsLoading(false)
-      if (confirm.value.err === null) {
-        if (isBuyingNow) {
-          setMissionAccomplished(true)
-          notify(
-            successBidMatchedMessage(
-              signature,
-              nftMetadata,
-              (parseFloat(buyerPrice) / LAMPORTS_PER_SOL_NUMBER).toString()
-            )
-          )
-        } else {
-          setBidNow(null)
-          notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
-        }
-      }
-    } catch (error) {
-      setIsLoading(false)
-      pleaseTryAgain(isBuyingNow, error?.message)
-    }
+    await handleNotifications(transaction, buyerPrice, isBuyingNow)
   }
 
   if (missionAccomplished) return <MissionAccomplishedModal />
@@ -668,7 +698,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         </div>
 
         <div className="vContainer">
-          <div className="priceText">My Bid</div>
+          <div className="priceText">Price</div>
         </div>
 
         <div className="vContainer">
@@ -728,13 +758,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <Button
             className="buyButton"
             disabled={notEnoughSol || isLoading}
-            onClick={callBuyInstruction}
+            onClick={handleBuyFlow}
             loading={isLoading}
           >
             {notEnoughSol ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
           </Button>
         </div>
-        <div tw="ml-[90px]">
+        <div tw="absolute left-[calc(50% - 180px)] w-auto sm:left-[calc(50% - 165px)] bottom-0 sm:bottom-[75px]">
           <TermsTextNFT string="Buy Now" />
         </div>
       </div>

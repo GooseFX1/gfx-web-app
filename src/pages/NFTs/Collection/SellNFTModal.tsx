@@ -555,7 +555,7 @@ export const SellNFTModal: FC<{
 
   return (
     <STYLED_POPUP_BUY_MODAL
-      height={checkMobile() ? '655px' : '780px'}
+      height={checkMobile() ? '610px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -601,6 +601,9 @@ export const SellNFTModal: FC<{
             )}
           </div>
         </div>
+        <div className="maxBid" tw="text-center mt-8 sm:!mt-24">
+          Enter Price
+        </div>
         <div className="sellInputContainer">
           <input
             className="enterBid"
@@ -612,18 +615,18 @@ export const SellNFTModal: FC<{
           />
           <img
             src="/img/crypto/SOL.svg"
-            tw="absolute h-[35px] w-[35px] right-[8px] top-[10px] sm:h-12 sm:top-0 sm:right-0"
+            tw="absolute h-[35px] w-[35px] right-[8px] sm:h-[30px] sm:w-[30px] top-[10px] sm:top-[10px] sm:right-2"
           />
         </div>
 
-        <div tw="mt-[125px]">
+        <div tw="mt-[100px]">
           <AppraisalValue
             text={
               general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
                 ? `${general?.gfx_appraisal_value}`
                 : null
             }
-            label={general?.gfx_appraisal_value ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
+            label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'GFX Appraisal Not Supported'}
             width={390}
           />
         </div>
@@ -670,9 +673,10 @@ export const SellNFTModal: FC<{
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>
-            <div className="rightAlignFinal"> {totalToReceive.toFixed(2)} SOL</div>
+            <div className="rightAlign"> {totalToReceive.toFixed(2)} SOL</div>
           </div>
         </div>
+
         {checkMobile() && <BorderBottom />}
         <div className="buyBtnContainer">
           {ask && (
@@ -693,8 +697,8 @@ export const SellNFTModal: FC<{
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
           </Button>
         </div>
-        <div tw="ml-[90px]">
-          <TermsTextNFT string={'List Item'} />
+        <div tw="bottom-0 left-[90px] w-[100%] sm:w-[auto]  sm:mb-[75px] absolute sm:left-auto sm:right-auto   ">
+          <TermsTextNFT string={'List'} />
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

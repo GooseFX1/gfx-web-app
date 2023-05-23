@@ -289,6 +289,8 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
       setNFTDetails(data.data[0])
     })()
   }, [])
+  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
+  const profileLink = hostURL + `/nfts/profile/`
   return (
     <tr className="tableRow" key={index}>
       <td className="nftNameColumn">
@@ -354,7 +356,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
         {activity?.buyer_wallet ? (
           <>
             <a
-              href={`https://app.goosefx.io/nfts/profile/${activity?.buyer_wallet}`}
+              href={profileLink + `${activity?.buyer_wallet}`}
               tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"
@@ -370,7 +372,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
         {activity?.seller_wallet ? (
           <>
             <a
-              href={`https://app.goosefx.io/nfts/profile/${activity?.seller_wallet}`}
+              href={profileLink + `${activity?.seller_wallet}`}
               tw="dark:text-white text-purple-1  font-semibold underline cursor-pointer"
               target="_blank"
               rel="noreferrer"

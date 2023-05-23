@@ -95,6 +95,7 @@ const NFTStatsContainer = () => {
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const [shareModal, setShareModal] = useState<boolean>(false)
+  const { sessionUser } = useNFTProfile()
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),

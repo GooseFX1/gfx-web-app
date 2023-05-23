@@ -1,7 +1,7 @@
 import { httpClient } from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
-import { IRegisterNFT } from '../../types/nft_details.d'
+import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
@@ -232,6 +232,25 @@ export const fetchNestAggStats = async (): Promise<StatsResponse> => {
   try {
     const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.STATS}`)
     return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+export const getTensorBuyInstruction = async (
+  buyerPrice: number,
+  buyerKey: string,
+  ownerKey: string,
+  mintAddress: string
+): Promise<ITensorBuyIX> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.TENSOR_BUY}`, {
+      price: buyerPrice,
+      buyer: buyerKey,
+      owner: ownerKey,
+      mint: mintAddress
+    })
+    return res
   } catch (error) {
     return error
   }

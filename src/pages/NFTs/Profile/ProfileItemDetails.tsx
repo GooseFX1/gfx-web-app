@@ -53,6 +53,7 @@ export const ProfileItemDetails: FC<{
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
+  const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
 
   return (
     <Drawer
@@ -66,7 +67,7 @@ export const ProfileItemDetails: FC<{
       width={checkMobile() ? '100%' : '450px'}
       bodyStyle={{ padding: '0' }}
     >
-      <div tw="px-[30px]">
+      <div tw="px-[30px] sm:px-[14px]">
         <ImageShowcase
           setShowSingleNFT={setDrawerSingleNFT}
           isOwner={isOwner}
@@ -76,7 +77,7 @@ export const ProfileItemDetails: FC<{
       </div>
       <div
         tw="absolute left-0 right-0 bottom-0 h-[75px] w-[100%] border-1
-              dark:bg-black-1 bg-grey-5 px-[24px] flex items-center justify-between 
+              dark:bg-black-1 bg-grey-5 px-[24px] sm:px-[14px] flex items-center justify-between 
               border-solid border-b-0  dark:border-t-black-4 border-r-0 dark:border-l-black-4 border-grey-4"
       >
         {isOwner ? (
@@ -84,8 +85,8 @@ export const ProfileItemDetails: FC<{
             {ask && (
               <Button
                 height="44px"
-                width={ask ? '200px' : '100%'}
-                cssStyle={tw`bg-red-2 mr-2 sm:mr-0`}
+                width={ask ? '190px' : '100%'}
+                cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
                 onClick={() => {
                   setShowDelistModal(true)
                 }}
@@ -96,13 +97,13 @@ export const ProfileItemDetails: FC<{
 
             <Button
               height="44px"
-              width={ask ? '200px' : '100%'}
-              cssStyle={tw`bg-blue-1 ml-2  sm:mr-0`}
+              width={ask ? '190px' : '100%'}
+              cssStyle={bgForBtn}
               onClick={() => {
                 setSellModal(true)
               }}
             >
-              <span tw="text-regular font-semibold text-white">{ask ? 'Modify Listing' : 'List Item'}</span>
+              <span tw="text-regular font-semibold text-white">{ask ? 'Edit Price' : 'List Item'}</span>
             </Button>
           </>
         ) : (
@@ -110,7 +111,7 @@ export const ProfileItemDetails: FC<{
             {myBid ? (
               <Button
                 height="44px"
-                width={ask ? '185px' : '100%'}
+                width={ask ? '180px' : '100%'}
                 cssStyle={tw`bg-red-2 mr-2`}
                 onClick={() => setCancelBidClicked(general)}
               >
@@ -119,7 +120,7 @@ export const ProfileItemDetails: FC<{
             ) : (
               <Button
                 height="44px"
-                width={ask ? '185px' : '100%'}
+                width={ask ? '180px' : '100%'}
                 cssStyle={tw`bg-blue-1 mr-2`}
                 onClick={() => setBidNow(general)}
               >
@@ -129,7 +130,7 @@ export const ProfileItemDetails: FC<{
             {ask && (
               <Button
                 height="44px"
-                width="185px"
+                width="180px"
                 cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
                 onClick={() => setBuyNow(general)}
               >

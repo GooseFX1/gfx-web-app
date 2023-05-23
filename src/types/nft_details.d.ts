@@ -172,3 +172,10 @@ export interface INFTDetailsConfig {
   totalLikes: number
   setTotalLikes: Dispatch<SetStateAction<number>>
 }
+
+export interface ITensorBuyIX {
+  data: {
+    legacy_tx: boolean
+    bytes: any[]
+  }
+}

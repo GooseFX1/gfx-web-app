@@ -20,18 +20,18 @@ const LEFT_SECTION = styled.div`
     margin-top: 15px;
 
     .close-icon-holder {
-      ${tw`h-[30px] w-[30px] absolute flex items-center cursor-pointer rounded-[50%]`}
+      ${tw`h-[30px] w-[30px] absolute flex items-center cursor-pointer rounded-[50%] z-10`}
       background: #131313;
       justify-content: center;
       top: 12px;
       right: 12px;
     }
     .bgGradient {
-      ${tw`w-[390px] sm:w-[360px] absolute h-[100%] opacity-80  rounded-[20px]`}
+      ${tw`w-[390px] sm:w-[100%] absolute h-[100%] opacity-70  rounded-[20px]`}
       background: ${({ theme }) => theme.hoverGradient};
     }
     .acceptBidBtn {
-      ${tw`w-[254px] h-11 absolute ml-[68px] cursor-pointer text-white
+      ${tw`w-[254px] h-11 absolute ml-[68px] sm:ml-[40%] cursor-pointer text-white
        bottom-[30px] rounded-[100px] font-semibold flex items-center justify-center text-[15px] `}
       background: linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);
     }
@@ -151,7 +151,7 @@ export const ImageShowcase: FC<{
         </>
       )}
 
-      <div tw="w-[390px] h-[390px] sm:w-[360px] sm:h-[360px]">
+      <div tw="w-[390px] h-[390px] sm:w-[100%] sm:h-[360px]">
         <img
           className="ls-image"
           height={'100%'}

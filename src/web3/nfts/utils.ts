@@ -2,6 +2,7 @@ import { deserializeUnchecked } from 'borsh'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
 import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
+import { INFTAsk } from '../../types/nft_details'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -79,4 +80,17 @@ export const getNFTMetadata = async (metadataAccountPublicKey: string, connectio
     console.error(err)
     return err
   }
+}
+
+// type MarketplaceNames = 'MAGIC_EDEN' | 'OTHER_MARKETPLACE'
+
+export const redirectBasedOnMarketplace = (ask: INFTAsk | boolean, type: string, mintAddress: string): boolean => {
+  if (ask && ask['marketplace_name'] && type === 'buy') {
+    switch (ask['marketplace_name']) {
+      case 'MAGIC_EDEN':
+        window.open(`https://magiceden.io/item-details/${mintAddress}`, '_blank')
+        return true
+    }
+  }
+  return false
 }

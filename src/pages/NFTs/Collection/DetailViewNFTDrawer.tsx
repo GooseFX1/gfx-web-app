@@ -18,7 +18,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
 import { copyToClipboard } from './CollectionHeader'
@@ -68,7 +68,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
             ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
             .ant-tabs-tab{
-              ${tw`  sm:!pl-5 `}
+              ${tw`sm:!pl-[8%]`}
             }
             
           }
@@ -319,16 +319,7 @@ export const ButtonContainer = (): ReactElement => {
   }, [])
 
   const handleBuynowClicked = () => {
-    if (ask && ask['marketplace_name']) {
-      switch (ask['marketplace_name']) {
-        case 'MAGIC_EDEN':
-          openInNewTab(`https://magiceden.io/item-details/${general?.mint_address}`)
-          return
-        case 'TENSOR':
-          openInNewTab(`https://www.tensor.trade/item/${general?.mint_address}`)
-          return
-      }
-    }
+    if (redirectBasedOnMarketplace(ask, 'buy', general?.mint_address)) return
     setBuyNow(general)
   }
   const myBid = useMemo(() => {
@@ -371,10 +362,10 @@ export const ButtonContainer = (): ReactElement => {
         </>
       ) : (
         <>
-          {myBid.length > 0 ? (
+          {myBid?.length > 0 ? (
             <Button
               height="44px"
-              width={ask ? '185px' : '100%'}
+              width={ask ? '180px' : '100%'}
               cssStyle={tw`bg-red-2 mr-2`}
               onClick={() => setCancelBidClicked(general)}
             >
@@ -383,7 +374,7 @@ export const ButtonContainer = (): ReactElement => {
           ) : (
             <Button
               height="44px"
-              width={ask ? '185px' : '100%'}
+              width={ask ? '180px' : '100%'}
               cssStyle={tw`bg-blue-1 mr-2`}
               onClick={() => setBidNow(general)}
             >
@@ -393,7 +384,7 @@ export const ButtonContainer = (): ReactElement => {
           {ask && (
             <Button
               height="44px"
-              width="185px"
+              width="180px"
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
               onClick={() => handleBuynowClicked()}
             >
@@ -409,7 +400,8 @@ export const ButtonContainer = (): ReactElement => {
 const NFTDetailsTab = (): ReactElement => {
   const { general, nftMetadata } = useNFTDetails()
   const solscanLink = `https://solscan.io/token/`
-  const profileLink = `https://app.goosefx.io/nfts/profile/`
+  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
+  const profileLink = hostURL + `/nfts/profile/`
 
   const nftData = useMemo(
     () => [

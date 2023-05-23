@@ -43,6 +43,9 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
   .profileBio {
     ${({ theme }) => theme.customScrollBar(0)}
     ${tw`dark:text-grey-2 w-[220px] h-10 overflow-y-auto sm:text-[13px] font-semibold leading-[15px] `}
+    ::-webkit-scrollbar {
+      display: none;
+    }
   }
   .name-wrap {
     ${tw`mt-[100px] ml-[-170px] sm:ml-4 sm:mt-[125px] sm:absolute`}

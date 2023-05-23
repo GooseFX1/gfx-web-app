@@ -58,12 +58,12 @@ const DelistNFTModal: FC<{
         <Button
           onClick={callDelistInstruction}
           className={'sellButton'}
-          tw="bottom-[100px] !absolute sm:!bottom-[70px]"
+          tw="bottom-[100px] !absolute sm:!bottom-[85px]"
           loading={isDelistLoading}
         >
-          <span tw="font-semibold text-[20px]">Remove Listing</span>
+          <span tw="font-semibold text-[20px] sm:text-[16px]">Remove Listing</span>
         </Button>
-        <div className="cancelText" tw="bottom-[58px]" onClick={closeTheModal}>
+        <div className="cancelText" tw="bottom-[58px] sm:bottom-[45px]" onClick={closeTheModal}>
           Cancel
         </div>
         <TermsTextNFT string="Remove" />

@@ -63,7 +63,6 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { getUIAmount } = useAccounts()
-  const wal = useWallet()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const floorPrice = useMemo(
@@ -110,7 +109,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
 
   useEffect(() => {
     if (bidNowClicked) {
-      if (!connected) {
+      if (!wallet?.adapter?.publicKey) {
         setVisible(true)
         setBidNow(false)
       }
@@ -251,7 +250,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '603px' : '780px'}
+      height={checkMobile() ? '610px' : '780px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -293,33 +292,35 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
             </div>
           )}
         </div>
-        <div className="vContainer" tw="flex">
-          {!checkMobile() && (
-            <div tw="mt-6" className="nftImgBid">
-              <img src={general?.image_url} alt="" />
-            </div>
-          )}
-          {listingPrice ? (
-            <div tw="flex flex-col sm:mt-6">
-              <div className="currentBid">Listed Price</div>
-              <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
-                {listingPrice}
-                <img src={`/img/crypto/SOL.svg`} />
+        {!checkMobile() && (
+          <div className="vContainer" tw="flex">
+            {!checkMobile() && (
+              <div tw="mt-6" className="nftImgBid">
+                <img src={general?.image_url} alt="" />
               </div>
-            </div>
-          ) : (
-            <div tw="flex flex-col sm:mt-6">
-              <div className="currentBid">Existing {!checkMobile() && <br />} Hightest Bid</div>
-              <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
-                {highestBid}
-                <img src={`/img/crypto/SOL.svg`} />
+            )}
+            {listingPrice ? (
+              <div tw="flex flex-col sm:mt-6">
+                <div className="currentBid">Listed Price</div>
+                <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
+                  {listingPrice}
+                  <img src={`/img/crypto/SOL.svg`} />
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div tw="flex flex-col sm:mt-6">
+                <div className="currentBid">Existing {!checkMobile() && <br />} Hightest Bid</div>
+                <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
+                  {highestBid}
+                  <img src={`/img/crypto/SOL.svg`} />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="vContainer">
-          <div className="maxBid" tw="mt-6 sm:mt-[12px]">
+          <div className="maxBid" tw="mt-6 sm:!mt-10">
             Enter Bid
           </div>
         </div>
@@ -334,14 +335,17 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           />
           <img
             src="/img/crypto/SOL.svg"
-            tw="absolute h-[35px] right-[96px] top-[10px] sm:h-12 sm:top-0 sm:right-0"
+            tw="absolute h-[35px]  ml-[300px] top-[10px] sm:ml-0 sm:top-2.5 sm:!h-[30px] sm:right-2"
           />
         </div>
-        <div tw=" flex items-center font-semibold h-2 justify-center text-red-2 mt-4  sm:mt-[-12px]">
+        <div
+          tw=" flex items-center font-semibold h-2 justify-center text-red-2 mt-4 text-center
+          sm:mt-5 sm:text-[12px] sm:font-medium "
+        >
           {displayErrorMsg}
         </div>
 
-        <div tw="mt-[20px]  sm:mt-1">
+        <div tw="mt-[20px]  sm:mt-4">
           <AppraisalValue
             text={parseFloat(general?.gfx_appraisal_value) > 0 ? `${general.gfx_appraisal_value}` : null}
             label={parseFloat(general?.gfx_appraisal_value) > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'}
@@ -395,7 +399,10 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           </div>
           <div className="rowContainer">
             <div className="leftAlign"> Bidding Wallet Address</div>
-            <div className="rightAlign"> {truncateAddress(wal.publicKey.toString())} </div>
+            <div className="rightAlign">
+              {' '}
+              {wallet?.adapter?.publicKey && truncateAddress(wallet?.adapter?.publicKey.toString())}{' '}
+            </div>
           </div>
         </div>
         <BorderBottom />
@@ -409,7 +416,10 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
             <div>{notEnoughSol ? 'Insufficient SOL' : `Place Bid`}</div>
           </Button>
         </div>
-        <div tw="bottom-0 left-[90px] w-[100%] absolute">
+        <div
+          tw="bottom-0 left-[calc(50% - 180px)] sm:left-[calc(50% - 165px)] 
+        w-auto sm:mb-[75px] absolute "
+        >
           <TermsTextNFT string={'Place Bid'} />
         </div>
       </div>

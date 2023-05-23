@@ -240,7 +240,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
       return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
     }
   }, [showSellNFTModal, setDrawerSingleNFT, showDelistModal, showAcceptBid])
-  if (!nftDetails) return <></>
+  if (!nftDetails) return null
   return (
     filterAndShow && (
       <>
@@ -259,6 +259,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
                 <HoverOnNFT
                   buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
                   item={localSingleNFT}
+                  setHover={setHover}
                   myBidToNFT={localBidToNFT}
                   ask={!isOwner && localAsk ? localAsk : null}
                   setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}

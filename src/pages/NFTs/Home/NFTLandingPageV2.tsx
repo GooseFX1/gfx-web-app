@@ -454,37 +454,47 @@ const PROFILE_PIC = styled.div`
   color: ${({ theme }) => theme.text10};
   border: 1px solid #b5b5b5 !important;
 `
+
+// TODO: Mini mise the code using tailwind
 export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize }): ReactElement => {
   const { sessionUser } = useNFTProfile()
   const { wallet } = useWallet()
-  const pubKey = useMemo(() => wallet?.adapter?.publicKey.toString(), [wallet?.adapter?.publicKey])
   const history = useHistory()
+  const pubKey = useMemo(
+    () => wallet?.adapter?.publicKey && wallet?.adapter?.publicKey?.toString(),
+    [wallet?.adapter?.publicKey]
+  )
   let userPic = sessionUser?.profile_pic_link
   if (userPic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') userPic = null
 
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
   const goProfile = () => history.push(`/nfts/profile/${pubKey}`)
-  if (mediumSize)
-    return (
-      <PROFILE_PIC_WRAPPER>
-        {userPic ? (
-          <img className="userPopupProfilePic" src={userPic} alt="profile-pic" />
-        ) : (
-          <PROFILE_PIC tw="h-[100px] w-[100px] !border-none text-[30px]" onClick={goProfile}>
-            {getFirstAndLast}
-          </PROFILE_PIC>
-        )}
-      </PROFILE_PIC_WRAPPER>
-    )
+  if (!wallet?.adapter?.publicKey) return null
+  // if (mediumSize)
+  //   return (
+  //     <PROFILE_PIC_WRAPPER>
+  //       {userPic ? (
+  //         <img className="userPopupProfilePic" src={userPic} alt="profile-pic" />
+  //       ) : (
+  //         <PROFILE_PIC tw="h-[100px] w-[100px] !border-none text-[30px]" onClick={goProfile}>
+  //           {getFirstAndLast}
+  //         </PROFILE_PIC>
+  //       )}
+  //     </PROFILE_PIC_WRAPPER>
+  //   )
 
   return (
     <PROFILE_PIC_WRAPPER>
       {userPic ? (
-        <img src={userPic} className="avatarNFT" onClick={goProfile} />
+        <img src={userPic} className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'} onClick={goProfile} />
       ) : (
         <PROFILE_PIC
-          tw="h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
-          dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5"
+          css={[
+            mediumSize
+              ? tw`h-[100px] w-[100px] !border-none text-[30px]`
+              : tw`h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
+        dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5`
+          ]}
           onClick={goProfile}
         >
           {getFirstAndLast}

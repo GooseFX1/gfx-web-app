@@ -51,5 +51,6 @@ export enum NFT_API_ENDPOINTS {
   DRAFTS = '/nft_drafts',
   SEARCH = '/search',
   ACTIVITY = '/activity',
-  STATS = '/banner_stats'
+  STATS = '/banner_stats',
+  TENSOR_BUY = '/tensor/buy_tx'
 }
