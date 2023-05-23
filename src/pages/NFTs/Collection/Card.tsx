@@ -72,13 +72,10 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
-  const [showBidNFTModal, setShowBidNFTModal] = useState<boolean>(false)
-  const [showSellNFTModal, setShowSellNFTModal] = useState<boolean>(false)
-  const [showDelistModal, setShowDelistModal] = useState<boolean>(false)
   const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
-  const { currencyView } = useNFTAggregator()
+  const { currencyView, delistNFT, setDelistNFT, sellNFTClicked, setSellNFT } = useNFTAggregator()
   const { profileNFTOptions } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -165,18 +162,10 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
     setIsLoadingBeforeRelocate(true)
     setHover(false)
     await setNFTDetails()
-    if (target === MODAL_TARGET.SELL) setShowSellNFTModal(true)
+    if (target === MODAL_TARGET.SELL) setSellNFT(true)
     if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
-    if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
+    // if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
-
-  // const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
-  //   if (isOwner) {
-  //     return ask === null ? 'Sell' : 'Edit Ask'
-  //   } else {
-  //     return ask === null ? 'Bid' : 'Buy Now'
-  //   }
-  // }
 
   const setNFTDetails = async () => {
     await setBids(localBids)
@@ -215,37 +204,20 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
       return (
         <ProfileItemDetails
           visible={showDrawerSingleNFT}
-          setShowAcceptBidModal={setShowAcceptBidModal}
-          setShowDelistModal={setShowDelistModal}
+          setShowDelistModal={setDelistNFT}
           setDrawerSingleNFT={setDrawerSingleNFT}
-          setSellModal={setShowSellNFTModal}
+          setSellModal={setSellNFT}
           singleNFT={singleNFT}
         />
       )
     }
   }, [showDrawerSingleNFT])
 
-  const handleModal = useCallback(() => {
-    if (showAcceptBid)
-      return (
-        <SellNFTModal visible={showAcceptBid} handleClose={() => setShowAcceptBidModal(false)} acceptBid={true} />
-      )
-
-    if (showDelistModal)
-      return (
-        <SellNFTModal visible={showDelistModal} handleClose={() => setShowDelistModal(false)} delistNFT={true} />
-      )
-
-    if (showSellNFTModal) {
-      return <SellNFTModal visible={showSellNFTModal} handleClose={() => setShowSellNFTModal(false)} />
-    }
-  }, [showSellNFTModal, setDrawerSingleNFT, showDelistModal, showAcceptBid])
   if (!nftDetails) return null
   return (
     filterAndShow && (
       <>
         {handelDrawer()}
-        {handleModal()}
         <div className={gradientBg ? 'gridGradient' : 'gridItemRegular'}>
           <div className={gradientBg ? 'gridGradientInner' : 'gridItem'}>
             <div

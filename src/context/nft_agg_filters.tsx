@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createContext, ReactNode, useContext, useState, FC, useEffect, SetStateAction, Dispatch } from 'react'
-import { NFT_COL_FILTER_OPTIONS, NFT_PROFILE_OPTIONS } from '../api/NFTs'
+import { NFT_COL_FILTER_OPTIONS, NFT_PROFILE_OPTIONS, TIMELINE } from '../api/NFTs'
 
 interface INFTAggConfig {
   sortFilter: string
@@ -25,7 +25,7 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
   const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('DESC')
   const [profileNFTOptions, setProfileNFTOptions] = useState<string>(NFT_PROFILE_OPTIONS.ALL)
   const [pageNumber, setPageNumber] = useState<number>(0)
-  const [timelineDisplay, setTimelineDisplay] = useState('24h')
+  const [timelineDisplay, setTimelineDisplay] = useState(TIMELINE.TWENTY_FOUR_H)
   const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)
   const [searchInsideProfile, setSearchInsideProfile] = useState<string | undefined>(undefined)
 

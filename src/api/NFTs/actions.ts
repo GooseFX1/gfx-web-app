@@ -3,6 +3,7 @@ import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
+import jwt from 'jsonwebtoken'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -241,15 +242,28 @@ export const getTensorBuyInstruction = async (
   buyerPrice: number,
   buyerKey: string,
   ownerKey: string,
-  mintAddress: string
+  mintAddress: string,
+  secretKey: string
 ): Promise<ITensorBuyIX> => {
   try {
-    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.TENSOR_BUY}`, {
-      price: buyerPrice,
-      buyer: buyerKey,
-      owner: ownerKey,
-      mint: mintAddress
-    })
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 10,
+        iat: Math.floor(Date.now() / 1000),
+        price: buyerPrice,
+        buyer: buyerKey,
+        owner: ownerKey,
+        mint: mintAddress
+      },
+      secretKey
+    )
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.TENSOR_BUY}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    )
     return res
   } catch (error) {
     return error

@@ -33,7 +33,9 @@ export const FixedPriceNFTs = (): ReactElement => {
     sellNFTClicked,
     openJustModal,
     refreshClicked,
-    cancelBidClicked
+    cancelBidClicked,
+    delistNFT,
+    setDelistNFT
   } = useNFTAggregator()
   const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
   const {
@@ -72,7 +74,7 @@ export const FixedPriceNFTs = (): ReactElement => {
 
   const handleScroll = useCallback(() => {
     setPageNumber((prev) => prev + 1)
-  }, [collectionSort])
+  }, [])
 
   useEffect(() => {
     if (pageNumber !== 0) fetchFixedPriceNFTs(pageNumber, collectionSort)
@@ -103,7 +105,8 @@ export const FixedPriceNFTs = (): ReactElement => {
         const baseNFTs: BaseNFT[] = fpData.data.nft_data
         if (baseNFTs.length < paginationNum) setStopCalling(true)
 
-        if (fixedPriceWithinCollection === undefined) setFixedPriceWithinCollection(fpData.data)
+        //  if (fixedPriceWithinCollection === undefined)
+        setFixedPriceWithinCollection(fpData.data)
 
         // adds price data property to basenft object
         const nftDataWithPrice = baseNFTs.map((nft: BaseNFT, i: number) => ({
@@ -133,6 +136,7 @@ export const FixedPriceNFTs = (): ReactElement => {
     setFixedPriceArr([])
     setPageNumber(0)
     setFilteredFixPrice(null)
+    setStopCalling(false)
     setSearchInsideCollection(undefined)
     !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
   }, [collectionSort])
@@ -178,14 +182,16 @@ export const FixedPriceNFTs = (): ReactElement => {
 
   const handleDrawerOpen = useCallback(() => {
     if (general !== null && nftMetadata !== null && params.address && !openJustModal) return <DetailViewNFT />
-  }, [nftMetadata, general, params.address])
+  }, [nftMetadata, general, params.address, openJustModal])
 
   const handleModalClick = useCallback(() => {
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (cancelBidClicked) return <CancelBidModal />
+    if (delistNFT)
+      return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={true} />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked])
+  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
   return (

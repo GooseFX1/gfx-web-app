@@ -37,7 +37,9 @@ const ATTRIBUTES_ITEM = styled.div`
   border-radius: 10px;
   overflow: hidden;
 `
-const trimString = (str: string) => (str.length > 20 ? str.substring(0, 20) + '...' : str)
+
+const TRIM_LEN = 16
+const trimString = (str: string) => (str.length > TRIM_LEN ? str.substring(0, TRIM_LEN) + '...' : str)
 
 export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ data, ...rest }) => {
   const { mode } = useDarkMode()
@@ -46,9 +48,11 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
       {data.map((item, index) => (
         <PILL_SECONDARY $mode={`${mode}`} key={index}>
           <div className="layer">
-            <div tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">{item.trait_type} </div>
+            <div tw="text-[15px] mt-1 font-semibold dark:text-grey-2 text-grey-1">
+              {trimString(item.trait_type)}
+            </div>
             <div tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
-              {trimString(item.value)}
+              {trimString(item.value + item.value)}
             </div>
           </div>
         </PILL_SECONDARY>

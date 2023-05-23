@@ -212,7 +212,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
     .nftImg {
-      ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[15px]`}
+      ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[8px]`}
       img {
         height: auto;
         width: 100%;
@@ -345,7 +345,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     }
     .flitersFlexContainer {
-      ${tw`text-[15px] flex font-medium sm:mt-2.5 mt-2 sm:w-[100%] items-center `}
+      ${tw`text-[15px] flex ml-[-10px] font-medium sm:mt-2.5 mt-1 sm:w-[100%] items-center `}
     }
     .flexContainer {
       margin-left: auto;
@@ -354,9 +354,8 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`mt-10 text-[15px] font-medium`}
     }
     .selected {
-      color: ${({ theme }) => theme.text4};
       ${tw`w-[140px] sm:w-[33%] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
-       font-semibold  flex justify-between flex-col sm:pl-2 sm:pr-6 cursor-pointer`}
+       font-semibold dark:text-grey-5 text-black-4 flex justify-between flex-col sm:pl-2 sm:pr-6 cursor-pointer`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
     .flexItemProfile {

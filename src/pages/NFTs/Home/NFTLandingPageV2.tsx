@@ -34,7 +34,13 @@ import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import ShowEyeLite from '../../../animations/showEyelite.json'
 import ShowEyeDark from '../../../animations/showEyedark.json'
 import Lottie from 'lottie-react'
-import { fetchGlobalSearchNFT, fetchNestAggStats, StatsResponse, NFT_COL_FILTER_OPTIONS } from '../../../api/NFTs'
+import {
+  fetchGlobalSearchNFT,
+  fetchNestAggStats,
+  StatsResponse,
+  NFT_COL_FILTER_OPTIONS,
+  TIMELINE
+} from '../../../api/NFTs'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
@@ -193,7 +199,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 `
 
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
-const timelineVolume = [{ name: '24h' }, { name: '7d' }]
+const timelineVolume = [{ name: TIMELINE.TWENTY_FOUR_H }, { name: TIMELINE.SEVEN_D }]
 
 const NFTLandingPageV2 = (): ReactElement => {
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
@@ -266,7 +272,7 @@ const BorderBottom = () => checkMobile() && <div tw="h-[1px] dark:bg-black-4 bg-
 const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
   const [timelineIndex, setTimelineIndex] = useState<number>(0)
-  const [timelineName, setTimelineName] = useState<string>('24h')
+  const [timelineName, setTimelineName] = useState<string>(TIMELINE.TWENTY_FOUR_H)
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
@@ -276,7 +282,7 @@ const FiltersContainer = () => {
   const pubKey = wallet?.adapter ? wallet?.adapter?.publicKey?.toString() : null
   const { mode } = useDarkMode()
   const { setTimelineDisplay, setSortFilter, setSortType, sortType, timelineDisplay } = useNFTAggregatorFilters()
-
+  const { setAllCollections } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
   const goProfile = () => sessionUser && history.push(`/nfts/profile/${pubKey}`)
   const buttonRefs = useRef<HTMLButtonElement[]>([])
@@ -284,29 +290,30 @@ const FiltersContainer = () => {
   const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs)
 
   useEffect(() => {
-    if (timelineDisplay === '7d' && sortType === 'DESC') {
+    if (timelineDisplay === TIMELINE.SEVEN_D && sortType === 'DESC') {
       setPoolIndex(1)
       setPoolFilter('Trending')
     }
-    if (timelineDisplay === '24h' && sortType === 'DESC') {
+    if (timelineDisplay === TIMELINE.TWENTY_FOUR_H && sortType === 'DESC') {
       setPoolIndex(0)
       setPoolFilter('Popular')
     }
   }, [sortType, timelineDisplay])
 
   const handleClick = (poolName, index) => {
+    setAllCollections(LOADING_ARR)
     setPoolIndex(index)
     setPoolFilter(poolName)
     handleSlide(index)
     if (poolName === 'Trending') {
       setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
       setSortType('DESC')
-      setTimelineDisplay('7d')
+      setTimelineDisplay(TIMELINE.SEVEN_D)
     }
     if (poolName === 'Popular') {
       setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
       setSortType('DESC')
-      setTimelineDisplay('24h')
+      setTimelineDisplay(TIMELINE.TWENTY_FOUR_H)
     }
   }
 
@@ -528,7 +535,6 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
 }
 
 const SearchResultContainer = ({ searchFilter }: any) => {
-  const { allCollections } = useNFTCollections()
   const history = useHistory()
   const { mode } = useDarkMode()
   const [searchResultArr, setSearchResult] = useState<any>()
@@ -547,7 +553,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
       .catch((err) => console.log(err))
   }
   useEffect(() => {
-    if (searchFilter && searchFilter.length > 1) {
+    if (searchFilter && searchFilter.length > 0) {
       handleSearch(searchFilter)
     }
   }, [searchFilter])
@@ -724,11 +730,13 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
 
   return (
     <DROPDOWN_CONTAINER tw="w-[104px] h-20">
-      <div className="option" onClick={() => setTimelineDisplay('24h')}>
-        24h <input type={'radio'} name="sort" checked={timelineDisplay === '24h'} value="asc" />
+      <div className="option" onClick={() => setTimelineDisplay(TIMELINE.TWENTY_FOUR_H)}>
+        {TIMELINE.TWENTY_FOUR_H}{' '}
+        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.TWENTY_FOUR_H} value="asc" />
       </div>
-      <div className="option" onClick={() => setTimelineDisplay('7d')}>
-        7d <input type={'radio'} name="sort" checked={timelineDisplay === '7d'} value="desc" />
+      <div className="option" onClick={() => setTimelineDisplay(TIMELINE.SEVEN_D)}>
+        {TIMELINE.SEVEN_D}{' '}
+        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.SEVEN_D} value="desc" />
       </div>
     </DROPDOWN_CONTAINER>
   )

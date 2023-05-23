@@ -10,11 +10,12 @@ import { SingleNFTCard } from './SingleNFTCard'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import NoContent from '../Profile/NoContent'
+import CancelBidModal from './CancelBidModal'
 
 const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = ({ setDisplayIndex }) => {
   const { myNFTsByCollection } = useNFTCollections()
   const [displayNFTs, setDisplayNFTs] = useState<any[]>(null)
-  const { openJustModal, sellNFTClicked, setSellNFT } = useNFTAggregator()
+  const { openJustModal, sellNFTClicked, setSellNFT, setDelistNFT, delistNFT } = useNFTAggregator()
   const { searchInsideCollection } = useNFTAggregatorFilters()
   const { general, nftMetadata } = useNFTDetails()
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -32,15 +33,17 @@ const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = (
   }, [searchInsideCollection, myNFTsByCollection])
 
   const detailDrawer = useMemo(() => {
-    if (general !== null && nftMetadata !== null && params.address && !openJustModal) return <DetailViewNFT />
+    if (general !== null && nftMetadata !== null && params.address) return <DetailViewNFT />
   }, [nftMetadata, general, params.address])
 
   const modal = useMemo(() => {
+    if (delistNFT)
+      return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={delistNFT} />
+
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [sellNFTClicked])
+  }, [sellNFTClicked, delistNFT])
 
   const gridType = useMemo(() => (displayNFTs?.length > 7 ? '1fr' : '210px'), [displayNFTs])
-
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
       {detailDrawer}

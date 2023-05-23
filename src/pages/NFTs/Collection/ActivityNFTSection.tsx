@@ -37,11 +37,11 @@ export interface IActivity {
 }
 
 const ACTIVITY_KIND = {
-  EXECUTED_SALE: 'Execute Sell',
+  EXECUTED_SALE: 'Sell',
   BUY: 'Bid',
   BID: 'Bid',
   SELL: 'Listed',
-  CANCEL: 'Cancel'
+  CANCEL: 'Delist'
 }
 
 export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`

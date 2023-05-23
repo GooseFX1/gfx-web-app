@@ -34,6 +34,10 @@ interface INFTAggConfig {
   setLastRefreshedClass?: any
   cancelBidClicked?: any
   setCancelBidClicked?: Dispatch<SetStateAction<any>>
+  delistNFT?: boolean
+  setDelistNFT?: Dispatch<SetStateAction<boolean>>
+  showAcceptBid?: boolean
+  setShowAcceptBidModal?: Dispatch<SetStateAction<boolean>>
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -41,6 +45,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [nftInBag, setNftInBag] = useState<any[]>([])
   const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
   const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
+  const [delistNFT, setDelistNFT] = useState<boolean>(false)
   const [cancelBidClicked, setCancelBidClicked] = useState<boolean | any>(undefined)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
@@ -48,6 +53,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [refreshClicked, setRefreshClicked] = useState<number>(0)
   const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
   const [openJustModal, setOpenJustModal] = useState<boolean>(false)
+  const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
 
   const setCurrency = useCallback(() => {
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
@@ -75,7 +81,11 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         openJustModal: openJustModal,
         setOpenJustModal: setOpenJustModal,
         setCancelBidClicked: setCancelBidClicked,
-        cancelBidClicked: cancelBidClicked
+        cancelBidClicked: cancelBidClicked,
+        delistNFT: delistNFT,
+        setDelistNFT: setDelistNFT,
+        showAcceptBid: showAcceptBid,
+        setShowAcceptBidModal: setShowAcceptBidModal
       }}
     >
       {children}
@@ -89,27 +99,57 @@ export const useNFTAggregator = (): INFTAggConfig => {
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
+  const {
+    buyNowClicked,
+    setBidNow,
+    bidNowClicked,
+    setBuyNow,
+    nftInBag,
+    setNftInBag,
+    currencyView,
+    setCurrency,
+    setSellNFT,
+    sellNFTClicked,
+    refreshClass,
+    refreshClicked,
+    setRefreshClicked,
+    setRefreshClass,
+    lastRefreshedClass,
+    setLastRefreshedClass,
+    openJustModal,
+    setOpenJustModal,
+    setCancelBidClicked,
+    cancelBidClicked,
+    delistNFT,
+    setDelistNFT,
+    showAcceptBid,
+    setShowAcceptBidModal
+  } = useContext(NFTAggContext)
 
   return {
-    buyNowClicked: context.buyNowClicked,
-    setBidNow: context.setBidNow,
-    bidNowClicked: context.bidNowClicked,
-    setBuyNow: context.setBuyNow,
-    nftInBag: context.nftInBag,
-    setNftInBag: context.setNftInBag,
-    currencyView: context.currencyView,
-    setCurrency: context.setCurrency,
-    setSellNFT: context.setSellNFT,
-    sellNFTClicked: context.sellNFTClicked,
-    refreshClass: context.refreshClass,
-    refreshClicked: context.refreshClicked,
-    setRefreshClicked: context.setRefreshClicked,
-    setRefreshClass: context.setRefreshClass,
-    lastRefreshedClass: context.lastRefreshedClass,
-    setLastRefreshedClass: context.setLastRefreshedClass,
-    openJustModal: context.openJustModal,
-    setOpenJustModal: context.setOpenJustModal,
-    setCancelBidClicked: context.setCancelBidClicked,
-    cancelBidClicked: context.cancelBidClicked
+    buyNowClicked,
+    setBidNow,
+    bidNowClicked,
+    setBuyNow,
+    nftInBag,
+    setNftInBag,
+    currencyView,
+    setCurrency,
+    setSellNFT,
+    sellNFTClicked,
+    refreshClass,
+    refreshClicked,
+    setRefreshClicked,
+    setRefreshClass,
+    lastRefreshedClass,
+    setLastRefreshedClass,
+    openJustModal,
+    setOpenJustModal,
+    setCancelBidClicked,
+    cancelBidClicked,
+    delistNFT,
+    setDelistNFT,
+    showAcceptBid,
+    setShowAcceptBidModal
   }
 }

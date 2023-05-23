@@ -376,11 +376,19 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
             </div>
           </div>
         )}
-        {currentUserProfile && currentUserProfile.bio ? (
+
+        {currentUserProfile && currentUserProfile?.bio ? (
           <div className="bio">{currentUserProfile.bio}</div>
         ) : (
           <div className="bio">
-            Add your bio and share with <br /> the world who you are!
+            {sessionUser ? (
+              <>
+                {' '}
+                Add your bio and share with <br /> the world who you are!
+              </>
+            ) : (
+              <>No Bio</>
+            )}
           </div>
         )}
         <div>

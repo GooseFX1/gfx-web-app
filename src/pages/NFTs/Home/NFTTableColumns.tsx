@@ -1,5 +1,5 @@
 import { ReactElement, useCallback } from 'react'
-import { NFT_COL_FILTER_OPTIONS, NFT_VOLUME_OPTIONS } from '../../../api/NFTs'
+import { NFT_COL_FILTER_OPTIONS, NFT_VOLUME_OPTIONS, TIMELINE } from '../../../api/NFTs'
 import { TokenToggleNFT } from '../../../components'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections } from '../../../context'
 import { TableHeaderTitle } from '../../../utils/GenericDegsin'
@@ -26,8 +26,8 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         setSortType((prev) => (prev === 'DESC' ? 'ASC' : 'DESC'))
         return
       }
-      if (sortFilterRequest === '24h') setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
-      if (sortFilterRequest === '7d') setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
+      if (sortFilterRequest === TIMELINE.TWENTY_FOUR_H) setSortFilter(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+      if (sortFilterRequest === TIMELINE.SEVEN_D) setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
       setSortType('DESC')
     },
     [timelineDisplay, sortFilter, sortType]
@@ -117,7 +117,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
 
 export const NFTActivitySectionWeb = (): ReactElement => (
   <tr>
-    <th className={'table-col-header'} tw="!w-[26%] !justify-start pl-5">
+    <th className={'table-col-header'} tw="!w-[25%] !justify-start pl-5">
       Item
     </th>
     <th className={'table-col-header'} style={{ width: '10%' }}>

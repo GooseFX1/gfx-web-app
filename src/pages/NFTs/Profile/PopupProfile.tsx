@@ -197,7 +197,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               Username <OptionalText />
             </div>
             <div>
-              <InputContainer setVariableState={setUsername} stateVariable={username} />
+              <InputContainer setVariableState={setUsername} stateVariable={username} maxLength={30} />
             </div>
             <UnderLine width={checkMobile() ? 180 : 260} />
             <div tw="flex justify-between items-center">
@@ -215,7 +215,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             Bio <OptionalText />
           </div>
           <div>
-            <InputContainer setVariableState={setBio} stateVariable={bio} />
+            <InputContainer setVariableState={setBio} stateVariable={bio} maxLength={100} />
           </div>
           <UnderLine width={checkMobile() ? 340 : 438} />
           <div tw="flex justify-between items-center">
@@ -233,7 +233,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           <div className="titleHeader">
             Twitter <OptionalText />
             <div>
-              <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} />
+              <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} maxLength={40} />
             </div>
             <UnderLine width={checkMobile() ? 160 : 200} />
             <PublicURLText />
@@ -276,110 +276,6 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
       </STYLED_PROFILE_POPUP>
     </>
   )
-  // return (
-  //   <>
-  //     <StyledPopupProfile
-  //       title={isCompletingProfile ? 'Complete profile' : 'Edit profile'}
-  //       visible={visible}
-  //       footer={null}
-  //       maskClosable
-  //       onCancel={onCancel}
-  //       closeIcon={
-  //         <div>
-  //           <SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close" />
-  //         </div>
-  //       }
-  //     >
-  //       <StyledFormProfile
-  //         form={form}
-  //         layout="vertical"
-  //         requiredMark="optional"
-  //         initialValues={sessionUser}
-  //         onFinish={onFinish}
-  //       >
-  //         <section>
-  //           <CenteredDiv>
-  //             <Image
-  //               fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-  //               src={profileImage ? URL?.createObjectURL(profileImage) : sessionUser.profile_pic_link}
-  //               preview={false}
-  //               className="profile-image-upload"
-  //             />
-  //           </CenteredDiv>
-
-  //           <CenteredDiv style={{ margin: '32px 0' }}>
-  //             <Upload
-  //               beforeUpload={beforeChange}
-  //               onChange={handleUpload}
-  //               maxCount={1}
-  //               className={'profile-pic-upload-zone'}
-  //               onPreview={() => false}
-  //               accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
-  //             >
-  //               Update Profile Picture
-  //             </Upload>
-  //           </CenteredDiv>
-
-  //           <div className="full-width">
-  //             <div className="half-width">
-  // <Form.Item
-  //   name="nickname"
-  //   label="Name"
-  //   rules={[{ required: true, message: 'Please input create name!' }]}
-  // >
-  //   <Input />
-  // </Form.Item>
-  //             </div>
-  //             <div className="half-width">
-  // <Form.Item label="Email" name="email">
-  //   <Input />
-  // </Form.Item>
-  //               <div className="hint">Will be used for notifications</div>
-  //             </div>
-  //           </div>
-  //           <Form.Item name="bio" label="Bio">
-  //             <Input />
-  //           </Form.Item>
-  //         </section>
-  //         <br />
-  //         <section>
-  //           <div className="section-label">Social media links</div>
-  //           <div className="full-width">
-  //             <div className="half-width">
-  //               <Form.Item label="Instagram" name="instagram_link">
-  //                 <Input />
-  //               </Form.Item>
-  //               <div className="hint">Will be used as public URL</div>
-  //             </div>
-  //             <div className="half-width">
-  //               <Form.Item label="Twitter" name="twitter_link">
-  //                 <Input />
-  //               </Form.Item>
-  //               <div className="hint">Will be used as public URL</div>
-  //             </div>
-  //           </div>
-  //           <div className="full-width">
-  //             <div className="half-width">
-  //               <Form.Item label="Telegram" name="telegram_link">
-  //                 <Input />
-  //               </Form.Item>
-  //               <div className="hint">Will be used as public URL</div>
-  //             </div>
-  //             <div className="half-width">
-  //               <Form.Item label="Youtube" name="youtube_link">
-  //                 <Input />
-  //               </Form.Item>
-  //               <div className="hint">Will be used as public URL</div>
-  //             </div>
-  //           </div>
-  //           <Button className="btn-save" type="primary" htmlType="submit" disabled={isLoading}>
-  //             {isLoading ? <Loader /> : 'Save changes'}
-  //           </Button>
-  //         </section>
-  //       </StyledFormProfile>
-  //     </StyledPopupProfile>
-  //   </>
-  // )
 }
 
 const OptionalText = () => <span className="optional">(optional)</span>
@@ -391,7 +287,7 @@ const UnderLine: FC<{ width: number }> = ({ width }) => (
 const InputContainer: FC<{ setVariableState: any; stateVariable: any; maxLength?: number }> = ({
   setVariableState,
   stateVariable,
-  maxLength
+  maxLength = 40
 }) => {
   const handleChange = (e) => {
     if (maxLength && e.target.value.length < maxLength) setVariableState(e.target.value)

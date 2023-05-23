@@ -28,7 +28,7 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
   }
 
   > input {
-    ${tw`sm:w-full text-[15px] duration-500 h-[44px] rounded-circle p-[0 42px 0 18px]`}
+    ${tw`sm:w-full text-[15px] duration-500 h-[44px] rounded-circle p-[0 55px 0 18px]`}
     text-align: left;
     background: ${({ bgColor, theme }) => (bgColor ? bgColor : theme.searchbarBackground)};
     flex: 1;
@@ -37,9 +37,8 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
     color: ${({ theme }) => theme.text1};
     font-family: 'Montserrat';
     border: transparent;
-    outline: none;
     &:focus {
-      border: 1px solid ${({ theme }) => theme.text11};
+      outline: 1.5px solid ${({ theme }) => theme.text11};
     }
     ::placeholder {
       color: ${({ theme }) => theme.text18};

@@ -183,7 +183,7 @@ const CancelBidModal = (): ReactElement => {
     >
       <div tw="flex flex-col items-center">
         <div className="delistText" tw="!text-[20px] sm:!text-[15px] !font-semibold">
-          Are you sure you want to remove the bid
+          Are you sure you want to Remove the bid
           <br />
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}

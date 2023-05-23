@@ -12,6 +12,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { ButtonContainer } from '../Collection/DetailViewNFTDrawer'
 
 export const ProfileItemDetails: FC<{
   visible: boolean
@@ -19,15 +20,7 @@ export const ProfileItemDetails: FC<{
   setSellModal: any
   singleNFT: any
   setShowDelistModal: any
-  setShowAcceptBidModal: any
-}> = ({
-  visible,
-  setDrawerSingleNFT,
-  setSellModal,
-  singleNFT,
-  setShowDelistModal,
-  setShowAcceptBidModal
-}): JSX.Element => {
+}> = ({ visible, setDrawerSingleNFT, setSellModal, singleNFT, setShowDelistModal }): JSX.Element => {
   const { ask, bids, general } = useNFTDetails()
   const { setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
@@ -68,14 +61,10 @@ export const ProfileItemDetails: FC<{
       bodyStyle={{ padding: '0' }}
     >
       <div tw="px-[30px] sm:px-[14px]">
-        <ImageShowcase
-          setShowSingleNFT={setDrawerSingleNFT}
-          isOwner={isOwner}
-          setShowAcceptBidModal={setShowAcceptBidModal}
-        />
+        <ImageShowcase setShowSingleNFT={setDrawerSingleNFT} isOwner={isOwner} />
         <RightSection status={''} />
       </div>
-      <div
+      {/* <div
         tw="absolute left-0 right-0 bottom-0 h-[75px] w-[100%] border-1
               dark:bg-black-1 bg-grey-5 px-[24px] sm:px-[14px] flex items-center justify-between 
               border-solid border-b-0  dark:border-t-black-4 border-r-0 dark:border-l-black-4 border-grey-4"
@@ -85,8 +74,8 @@ export const ProfileItemDetails: FC<{
             {ask && (
               <Button
                 height="44px"
-                width={ask ? '190px' : '100%'}
-                cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
+                width={ask ? '185px' : '100%'}
+                cssStyle={tw`bg-red-2 mr-0 sm:mr-2  sm:!ml-0`}
                 onClick={() => {
                   setShowDelistModal(true)
                 }}
@@ -97,7 +86,7 @@ export const ProfileItemDetails: FC<{
 
             <Button
               height="44px"
-              width={ask ? '190px' : '100%'}
+              width={ask ? '185px' : '100%'}
               cssStyle={bgForBtn}
               onClick={() => {
                 setSellModal(true)
@@ -139,7 +128,8 @@ export const ProfileItemDetails: FC<{
             )}
           </>
         )}
-      </div>
+      </div> */}
+      <ButtonContainer />
     </Drawer>
   )
 }

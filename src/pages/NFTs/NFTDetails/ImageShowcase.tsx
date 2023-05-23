@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react'
-import { useNFTDetails } from '../../../context'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
 import styled, { css } from 'styled-components'
@@ -31,7 +31,7 @@ const LEFT_SECTION = styled.div`
       background: ${({ theme }) => theme.hoverGradient};
     }
     .acceptBidBtn {
-      ${tw`w-[254px] h-11 absolute ml-[68px] sm:ml-[40%] cursor-pointer text-white
+      ${tw`w-[254px] h-11 absolute ml-[68px] sm:ml-[calc(50% - 127px)] cursor-pointer text-white
        bottom-[30px] rounded-[100px] font-semibold flex items-center justify-center text-[15px] `}
       background: linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);
     }
@@ -106,19 +106,19 @@ const LEFT_SECTION = styled.div`
 
 export const ImageShowcase: FC<{
   setShowSingleNFT?: any
-  setShowAcceptBidModal?: any
   isOwner?: boolean
-}> = ({ setShowSingleNFT, isOwner, setShowAcceptBidModal, ...rest }) => {
+}> = ({ setShowSingleNFT, isOwner, ...rest }) => {
   const { general, nftMetadata, bids } = useNFTDetails()
   const wallet = useWallet()
   const publicKey = wallet.publicKey
+  const { setShowAcceptBidModal } = useNFTAggregator()
   const isBidder = useMemo(
     () => (publicKey ? bids.filter((bid) => bid.wallet_key === publicKey.toString()) : null),
     [bids]
   )
   const highestBid: number = useMemo(
     () =>
-      bids.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : -1,
+      bids?.length > 0 ? Math.max(...bids.map((b) => parseFloat(b.buyer_price) / LAMPORTS_PER_SOL_NUMBER)) : -1,
     [bids]
   )
 

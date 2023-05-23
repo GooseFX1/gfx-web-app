@@ -341,6 +341,7 @@ const FiltersContainer: FC<{
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
 
+  // TODO add this inside use memo
   const filterCategories = [
     {
       label: `Listed (${fixedPriceWithinCollection?.total_count ?? 0})`,

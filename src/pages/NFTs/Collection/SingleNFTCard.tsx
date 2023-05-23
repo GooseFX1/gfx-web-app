@@ -137,7 +137,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     return () => {
       setIsLoadingBeforeRelocate(false)
     }
-  }, [])
+  }, [item])
 
   useEffect(() => {
     if (publicKey) {
@@ -164,6 +164,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
+  const gradientBg = useMemo(() => isOwner && localAsk?.buyer_price, [localAsk, isOwner])
+
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
     if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
     const name = ask.marketplace_name
@@ -174,93 +176,99 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   return (
     <>
       {handleAppraisalPopup()}
-      <div className="gridItemCollections" key={index} onClick={() => goToDetails(item)} ref={lastCardRef}>
-        <div
-          className="gridItemContainer"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
+      <div
+        className={gradientBg ? 'gridGradient' : 'gridItemRegular'}
+        key={index}
+        onClick={() => goToDetails(item)}
+        ref={lastCardRef}
+      >
+        <div className={gradientBg ? 'gridGradientInner' : 'gridItem'}>
+          <div
+            className="gridItemContainer"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          >
+            {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
 
-          {hover && (
-            <HoverOnNFT
-              setHover={setHover}
-              mintAddress={item?.mint_address}
-              collectionName={item?.collection_name}
-              item={item}
-              myBidToNFT={localUserBidToNFT}
-              buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
-              setNFTDetails={setNFTDetails}
-              addNftToBag={addNftToBag}
-              ask={isOwner ? null : localAsk ? localAsk : null}
-            />
-          )}
-          {item ? (
-            <div className="nftImg">
-              <img src={item?.image_url} alt="nft" />
-            </div>
-          ) : (
-            <SkeletonCommon width="100%" height="auto" />
-          )}
-          {localUserBidToNFT.length > 0 && (
-            <div tw="absolute left-[16px] top-[14px]">
-              <Tag loading={false}>
-                <span tw="font-semibold">{'Bid Placed'}</span>
-              </Tag>
-            </div>
-          )}
-        </div>
-        <div className="nftTextContainer">
-          <div className="collectionId">
-            <div tw="flex items-center">
-              {nftId ? nftId : '# Nft'}
-              {item?.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
-            </div>
-            {localAsk !== null && (
-              <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
-                <div>
-                  <img
-                    className="ah-name"
-                    alt="marketplace"
-                    src={`/img/assets/Aggregator/${
-                      localAsk?.marketplace_name === null
-                        ? AH_NAME(localAsk?.auction_house_key)
-                        : localAsk?.marketplace_name
-                    }.svg`}
-                  />
-                </div>
-              </GenericTooltip>
-            )}
-          </div>
-
-          {singleCollection ? (
-            <GradientText
-              text={minimizeTheString(singleCollection[0].collection_name)}
-              fontSize={15}
-              fontWeight={600}
-              lineHeight={18}
-            />
-          ) : (
-            <SkeletonCommon width="100px" height="20px" />
-          )}
-
-          <div className="nftPrice">
-            {localAsk && (
-              <PriceWithToken
-                price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)}
-                token={currencyView}
-                cssStyle={tw`!ml-0`}
+            {hover && (
+              <HoverOnNFT
+                setHover={setHover}
+                mintAddress={item?.mint_address}
+                collectionName={item?.collection_name}
+                item={item}
+                myBidToNFT={localUserBidToNFT}
+                buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
+                setNFTDetails={setNFTDetails}
+                addNftToBag={addNftToBag}
+                ask={isOwner ? null : localAsk ? localAsk : null}
               />
             )}
-            {localAsk === null && <span tw="dark:text-grey-3 text-grey-4 font-semibold">Not Listed</span>}
+            {item ? (
+              <div className="nftImg">
+                <img src={item?.image_url} alt="nft" />
+              </div>
+            ) : (
+              <SkeletonCommon width="100%" height="auto" />
+            )}
+            {localUserBidToNFT.length > 0 && (
+              <div tw="absolute left-[16px] top-[14px]">
+                <Tag loading={false}>
+                  <span tw="font-semibold">{'Bid Placed'}</span>
+                </Tag>
+              </div>
+            )}
           </div>
-          <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
-            {item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
-              ? parseFloat(item?.gfx_appraisal_value).toFixed(2)
-              : 'NA'}
-            {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
-          </div>
-          {/* {sessionUser && !isOwner && (
+          <div className="nftTextContainer">
+            <div className="collectionId">
+              <div tw="flex items-center">
+                {nftId ? nftId : '# Nft'}
+                {item?.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
+              </div>
+              {localAsk !== null && (
+                <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
+                  <div>
+                    <img
+                      className="ah-name"
+                      alt="marketplace"
+                      src={`/img/assets/Aggregator/${
+                        localAsk?.marketplace_name === null
+                          ? AH_NAME(localAsk?.auction_house_key)
+                          : localAsk?.marketplace_name
+                      }.svg`}
+                    />
+                  </div>
+                </GenericTooltip>
+              )}
+            </div>
+
+            {singleCollection ? (
+              <GradientText
+                text={minimizeTheString(singleCollection[0].collection_name)}
+                fontSize={15}
+                fontWeight={600}
+                lineHeight={18}
+              />
+            ) : (
+              <SkeletonCommon width="100px" height="20px" />
+            )}
+
+            <div className="nftPrice">
+              {localAsk && (
+                <PriceWithToken
+                  price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)}
+                  token={currencyView}
+                  cssStyle={tw`!ml-0`}
+                />
+              )}
+              {localAsk === null && <span tw="dark:text-grey-3 h-7 text-grey-4 font-semibold">Not Listed</span>}
+            </div>
+            <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
+              {item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
+                ? parseFloat(item?.gfx_appraisal_value).toFixed(2)
+                : 'NA'}
+              {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
+            </div>
+            {/* {sessionUser && !isOwner && (
             <img
               className="card-like"
               src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
@@ -268,6 +276,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
               onClick={(e) => handleToggleLike(e)}
             />
           )} */}
+          </div>
         </div>
       </div>
     </>
@@ -298,7 +307,7 @@ export const HoverOnNFT: FC<{
         return
       }
 
-      if (redirectBasedOnMarketplace(ask, type, mintAddress)) return
+      if (redirectBasedOnMarketplace(ask as INFTAsk, type, mintAddress)) return
       setOpenJustModal(true)
       setIsLoadingBeforeRelocate(true)
       await setNFTDetails()

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactElement, useState, FC, useMemo, useEffect, useRef, useCallback } from 'react'
-import { Col, Row } from 'antd'
 import {
   useAccounts,
   useConnectionConfig,
@@ -8,10 +7,9 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
-  usePriceFeedFarm,
   useWalletModal
 } from '../../../context'
-import { SuccessfulListingMsg } from '../../../components'
+import { jwt } from 'jsonwebtoken'
 
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
@@ -29,7 +27,6 @@ import {
 import { tradeStatePDA, getBuyInstructionAccounts, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { useHistory } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BN from 'bn.js'
 import {
@@ -44,9 +41,6 @@ import {
   getMetadata,
   BuyInstructionAccounts,
   createBuyInstruction,
-  createCancelInstruction,
-  CancelInstructionArgs,
-  CancelInstructionAccounts,
   StringPublicKey,
   toPublicKey,
   bnTo8,
@@ -56,8 +50,7 @@ import {
   TOKEN_PROGRAM_ID,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TREASURY_PREFIX,
-  createExecuteSaleInstruction,
-  SYNTH_DEFAULT_MINT
+  createExecuteSaleInstruction
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
@@ -75,9 +68,8 @@ import {
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
-import axios from 'axios'
 import { ITensorBuyIX } from '../../../types/nft_details'
-import { getTensorBuyInstruction } from '../../../api/NFTs'
+import { getTensorBuyInstruction, NFT_MARKETS } from '../../../api/NFTs'
 const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -232,7 +224,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   .semiSellButton {
     ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]   cursor-pointer text-[#EEEEEE]
      rounded-[50px] border-none sm:max-w[180px]
-     h-[60px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
+     h-[56px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
       background: ${({ theme }) => theme.bg22} !important;
@@ -311,7 +303,6 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 `
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const BuyNFTModal = (): ReactElement => {
   const { buyNowClicked, setBuyNow, openJustModal, setOpenJustModal } = useNFTAggregator()
   const { ask, setGeneral } = useNFTDetails()
@@ -356,13 +347,12 @@ export const BuyNFTModal = (): ReactElement => {
     </STYLED_POPUP_BUY_MODAL>
   )
 }
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 
 const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any }> = ({
   curBid,
   isLoading,
   setIsLoading
-}) => {
+}): ReactElement => {
   const { setBidNow } = useNFTAggregator()
   const { singleCollection } = useNFTCollections()
   const { getUIAmount } = useAccounts()
@@ -375,7 +365,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
   const isBuyingNow: boolean = useMemo(
-    () => parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid || ask.marketplace_name === 'TENSOR',
+    () =>
+      parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid ||
+      ask.marketplace_name === NFT_MARKETS.TENSOR,
     [curBid]
   )
 
@@ -515,9 +507,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         parseFloat(ask.buyer_price),
         wallet?.adapter?.publicKey?.toString(),
         ask.wallet_key,
-        ask.token_account_mint_key
+        ask.token_account_mint_key,
+        process.env.REACT_APP_JWT_SECRET_KEY
       )
-
       const tx = res.data.legacy_tx
         ? Transaction.from(Buffer.from(res.data.bytes))
         : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
@@ -533,8 +525,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleBuyFlow = async (e: any) => {
     e.preventDefault()
     setIsLoading(true)
-    if (ask['marketplace_name'] === 'TENSOR') {
-      //TODO add flow
+    if (ask.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return
     } else callBuyInstruction()

@@ -9,7 +9,7 @@ import {
   useNFTCollections,
   usePriceFeedFarm
 } from '../../../context'
-import { checkMobile, formatSOLDisplay } from '../../../utils'
+import { checkMobile, formatSOLDisplay, LOADING_ARR } from '../../../utils'
 import { Loader, LoaderForImg } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
@@ -29,8 +29,8 @@ import { ArrowIcon } from '../Collection/CollectionV2.styles'
 const STYLE = styled.div``
 
 const volumeDict = {
-  '24h': 'daily_volume',
-  '7d': 'weekly_volume',
+  '24H': 'daily_volume',
+  '7D': 'weekly_volume',
   '30d': 'monthly_volume',
   All: 'total_volume'
 }
@@ -71,7 +71,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
 
   useEffect(() => {
     if (sortFilter && !firstLoad) {
-      setAllCollections([])
+      setAllCollections(LOADING_ARR)
       fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
     }
   }, [sortFilter, sortType, timelineDisplay])

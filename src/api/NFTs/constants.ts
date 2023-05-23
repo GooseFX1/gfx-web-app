@@ -5,7 +5,11 @@ export enum NFT_PROFILE_OPTIONS {
   OFFERS = 'Offers',
   ON_SALE = 'On_sale'
 }
-
+export enum TIMELINE {
+  TWENTY_FOUR_H = '24H',
+  THIRTY_D = '30D',
+  SEVEN_D = '7D'
+}
 export enum NFT_COL_FILTER_OPTIONS {
   COLLECTION_NAME = 'CollectionName',
   FLOOR_PRICE = 'FloorPrice',
@@ -21,10 +25,15 @@ export enum NFT_ACTIVITY_ENDPOINT {
   COLLECTION_ADDRESS = 'collection_address'
 }
 export const NFT_VOLUME_OPTIONS = {
-  '7d': 'WeeklyVolume',
-  '30d': 'MonthlyVolume',
-  '24h': 'DailyVolume',
+  '7D': 'WeeklyVolume',
+  '30D': 'MonthlyVolume',
+  '24H': 'DailyVolume',
   All: 'TotalVolume'
+}
+
+export enum NFT_MARKETS {
+  TENSOR = 'TENSOR',
+  MAGIC_EDEN = 'MAGIC_EDEN'
 }
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',

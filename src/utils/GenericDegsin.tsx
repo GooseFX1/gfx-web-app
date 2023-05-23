@@ -50,7 +50,6 @@ export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
   .arrowDown {
     ${tw`sm:w-[17px] cursor-pointer sm:h-[8px] w-[18px] h-[7px] ml-[10px] duration-500`}
     transform: scale(1.5);
-    opacity: ${({ $focus }) => ($focus ? 1 : 0.85)};
   }
   .invert {
     ${tw`h-[10px]`}

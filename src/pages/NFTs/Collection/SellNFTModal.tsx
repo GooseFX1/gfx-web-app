@@ -1,6 +1,4 @@
-import { Button } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
 import React, { ReactElement, useState, FC, useMemo, useEffect, useRef } from 'react'
 import {
   // useAccounts,
@@ -10,7 +8,7 @@ import {
   useNFTDetails
 } from '../../../context'
 // import { INFTAsk } from '../../../types/nft_details.d'
-import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
+import { Button, SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
@@ -95,7 +93,7 @@ export const SellNFTModal: FC<{
     () => (highestBid ? parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0),
     [highestBid]
   )
-  const { setSellNFT, setOpenJustModal } = useNFTAggregator()
+  const { setSellNFT, setOpenJustModal, setRefreshClicked } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(
@@ -170,6 +168,10 @@ export const SellNFTModal: FC<{
       console.log(confirm)
       // successfully list nft
       if (confirm.value.err === null) {
+        setTimeout(() => {
+          console.log('refreshing after 15 sec')
+          setRefreshClicked((prev) => prev + 1)
+        }, 15000)
         setIsLoading(false)
         if (isSellingNow)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
@@ -311,8 +313,8 @@ export const SellNFTModal: FC<{
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(signature)
-        .then((res) => console.log('TX Confirmed', res))
+      attemptConfirmTransaction(signature) //refresh page after 15 seconds
+        .then(() => console.log('TX Confirmed'))
         .catch((err) => console.error(err))
       setDelistLoading(false)
     } catch (error) {
@@ -374,8 +376,6 @@ export const SellNFTModal: FC<{
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
-
-    console.log(metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice.toString())
 
     const sellInstructionArgs: SellInstructionArgs = {
       tradeStateBump: tradeState[1],
@@ -601,7 +601,7 @@ export const SellNFTModal: FC<{
             )}
           </div>
         </div>
-        <div className="maxBid" tw="text-center mt-8 sm:!mt-24">
+        <div className="maxBid" tw="text-center mt-6 sm:!mt-[75px]">
           Enter Price
         </div>
         <div className="sellInputContainer">
@@ -619,7 +619,7 @@ export const SellNFTModal: FC<{
           />
         </div>
 
-        <div tw="mt-[100px]">
+        <div tw="mt-[100px] sm:mt-[90px]">
           <AppraisalValue
             text={
               general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
@@ -679,11 +679,6 @@ export const SellNFTModal: FC<{
 
         {checkMobile() && <BorderBottom />}
         <div className="buyBtnContainer">
-          {ask && (
-            <Button onClick={callDelistInstruction} className={'semiSellButton'} loading={isDelistLoading}>
-              <span tw="font-semibold">Delist item</span>
-            </Button>
-          )}
           <Button
             disabled={
               askPrice <= 0 ||
@@ -691,13 +686,16 @@ export const SellNFTModal: FC<{
               parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice
             }
             onClick={callSellInstruction}
-            className={!ask ? 'sellButton' : 'semiSellButton' + ' blueBg'}
+            className={'sellButton' + ' blueBg'}
             loading={isLoading}
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
           </Button>
         </div>
-        <div tw="bottom-0 left-[90px] w-[100%] sm:w-[auto]  sm:mb-[75px] absolute sm:left-auto sm:right-auto   ">
+        <div
+          tw="bottom-0 left-[calc(50% - 160px)] sm:left-[calc(50% - 150px)] 
+        sm:w-[auto] sm:mb-[75px] absolute sm:right-auto"
+        >
           <TermsTextNFT string={'List'} />
         </div>
       </>

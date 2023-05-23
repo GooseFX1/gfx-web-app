@@ -118,12 +118,12 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
 
       .ant-tabs-content-holder {
-        ${tw`sm:mb-12  h-[230px] mt-2`}
+        ${tw`sm:mb-12  mb-0 h-[240px] mt-1`}
         border: 1px solid ${({ theme }) => theme.tokenBorder};
 
         background-color: ${({ theme }) => theme.bgForNFTCollection};
         transform: translateY(-32px);
-        padding: 28px 0px 15px 0;
+        padding: 28px 0px 0px 0;
         border-radius: 0 0 25px 25px;
 
         .ant-tabs-content {
@@ -301,7 +301,7 @@ const ImageViewer = (): ReactElement => {
 
 export const ButtonContainer = (): ReactElement => {
   const { wallet } = useWallet()
-  const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
+  const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked, setDelistNFT } = useNFTAggregator()
   const pubKey = wallet?.adapter?.publicKey
   const { general, bids, ask } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
@@ -328,6 +328,7 @@ export const ButtonContainer = (): ReactElement => {
     }
     return null
   }, [bids])
+  const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
 
   return (
     <div
@@ -338,20 +339,21 @@ export const ButtonContainer = (): ReactElement => {
       {isOwner ? (
         <>
           {ask && (
-            <div>
-              <label tw="dark:text-grey-1 text-black-3 font-semibold  sm:text-[14px] text-average">
-                On Sale for:
-              </label>
-              <div tw="flex items-center text-lg dark:text-grey-5 text-black-2 font-semibold">
-                <span>{formatSOLDisplay(ask.buyer_price)}</span>
-                <img src={`/img/crypto/SOL.svg`} alt={'SOL'} tw="h-[20px] ml-2" />
-              </div>
-            </div>
+            <Button
+              height="44px"
+              width={ask ? '190px' : '100%'}
+              cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
+              onClick={() => {
+                setDelistNFT(true)
+              }}
+            >
+              <span tw="text-regular font-semibold text-white">Remove Listing </span>
+            </Button>
           )}
           <Button
             height="44px"
-            width={ask ? '250px' : '100%'}
-            cssStyle={tw`bg-red-2 mr-2`}
+            width={ask ? '190px' : '100%'}
+            cssStyle={bgForBtn}
             onClick={() => {
               //setDrawerSingleNFT(false)
               setSellNFT(true)

@@ -101,7 +101,17 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { general, nftMetadata } = useNFTDetails()
-  const { buyNowClicked, bidNowClicked, refreshClicked } = useNFTAggregator()
+  const {
+    buyNowClicked,
+    bidNowClicked,
+    setDelistNFT,
+    refreshClicked,
+    sellNFTClicked,
+    delistNFT,
+    showAcceptBid,
+    setShowAcceptBidModal,
+    setSellNFT
+  } = useNFTAggregator()
 
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
@@ -212,11 +222,32 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
 
   const handleModalClick = useCallback(() => {
+    if (showAcceptBid)
+      return (
+        <SellNFTModal visible={showAcceptBid} handleClose={() => setShowAcceptBidModal(false)} acceptBid={true} />
+      )
+
+    if (delistNFT)
+      return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={true} />
+
+    if (sellNFTClicked) {
+      return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
+    }
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (cancelBidClicked) return <CancelBidModal />
     if (gfxAppraisalPopup) return <GFXApprisalPopup setShowTerms={setGfxAppraisal} showTerms={gfxAppraisalPopup} />
-  }, [buyNowClicked, bidNowClicked, general, nftMetadata, gfxAppraisalPopup, cancelBidClicked])
+  }, [
+    buyNowClicked,
+    bidNowClicked,
+    general,
+    nftMetadata,
+    gfxAppraisalPopup,
+    cancelBidClicked,
+    sellNFTClicked,
+    delistNFT,
+    showAcceptBid
+  ])
 
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType}>
