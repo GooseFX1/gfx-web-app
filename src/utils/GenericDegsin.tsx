@@ -8,7 +8,7 @@ import { formatSOLDisplay } from './misc'
 import { GFXApprisalPopup } from '../components/NFTAggWelcome'
 
 export const HeaderTooltip = (text: string): ReactElement =>
-  <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+  <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="info-icon" /> && (
     <Tooltip dark placement="bottomLeft" color="#000000">
       <span>{text}</span>
     </Tooltip>

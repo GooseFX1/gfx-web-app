@@ -83,7 +83,7 @@ export const Modal: FC<{
     >
       <HEADER style={centerTitle && { justifyContent: 'center' }}>
         {bigTitle ? <BIG_TITLE>{title}</BIG_TITLE> : <TITLE>{title}</TITLE>}
-        <CLOSE_ICON onClick={handleCancel}>
+        <CLOSE_ICON className="close-icon-root" onClick={handleCancel}>
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
           ) : (

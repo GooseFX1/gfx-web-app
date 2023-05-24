@@ -21,6 +21,18 @@ const BODY = styled.div`
 const SELECTOR_MODAL = styled(Modal)`
   ${tw`top-[-24px]! w-[628px]! sm:w-full!`}
   background-color: ${({ theme }) => theme.bg20} !important;
+
+  .close-icon-root {
+    top: 35px;
+  }
+
+  .ant-input:hover {
+    border-color: #b5b5b5;
+  }
+
+  .ant-modal-body {
+    padding-bottom: 0;
+  }
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
@@ -49,7 +61,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
 `
 
 const INPUT = styled.div`
-  ${tw`relative w-[528px] sm:w-[290px]`}
+  ${tw`relative w-[528px] sm:w-11/12`}
 
   input {
     height: ${({ theme }) => theme.margin(5)};
@@ -125,8 +137,7 @@ const POPULAR = styled.div`
 `
 
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`flex justify-between h-[40px] w-auto ml-[12px] sm:m-[4px]`}
-  border-radius: 20px;
+  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] sm:m-1 sm:ml-0`}
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
   padding: 0 16px 0 4px;
