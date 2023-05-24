@@ -302,12 +302,13 @@ const ImageViewer = (): ReactElement => {
 export const ButtonContainer = (): ReactElement => {
   const { wallet } = useWallet()
   const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked, setDelistNFT } = useNFTAggregator()
-  const pubKey = wallet?.adapter?.publicKey
   const { general, bids, ask } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
+
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const isOwner: boolean = useMemo(() => {
     const findAccount: undefined | ParsedAccount =
-      general && sessionUserParsedAccounts !== undefined
+      general && sessionUser !== null && sessionUserParsedAccounts.length > 0
         ? sessionUserParsedAccounts.find((acct) => acct.mint === general.mint_address)
         : undefined
     return findAccount === undefined ? false : true
