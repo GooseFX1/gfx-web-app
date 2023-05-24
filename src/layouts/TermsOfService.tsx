@@ -48,11 +48,12 @@ const TOS_MODAL = styled(Modal)`
 
   .ant-modal-body {
     ${tw`sm:px-3!`}
+    max-height: 80vh !important;
   }
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-8 sm:mt-0!`}
+  ${tw`flex p-2 mt-4 sm:pb-0 sm:mt-0`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`

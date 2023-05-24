@@ -67,20 +67,22 @@ const DROPDOWN_MODAL = styled(Modal)`
   .dropdown-modal-search {
     ${tw`w-[440px] m-0 sm:w-full`}
     background-color: ${({ theme }) => theme.bg2} !important;
+    border-radius: 50px !important;
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
+      border-radius: 50px !important;
     }
     > input::placeholder {
       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
     }
   }
   .popular {
-    ${tw`font-semibold text-regular my-2.5 mx-2`}
+    ${tw`font-semibold text-regular my-2.5 mr-2`}
     color: ${({ theme }) => theme.text11};
   }
 
   .popular-container {
-    ${tw`flex flex-row items-center justify-around flex-wrap`}
+    ${tw`flex flex-row items-center justify-start flex-wrap`}
   }
   .allPairContainer {
     ${tw`overflow-y-auto`}
