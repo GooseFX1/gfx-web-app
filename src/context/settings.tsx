@@ -97,7 +97,12 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
 
     // creates connection - temp ws url
-    return new Connection(endpoint, { commitment: 'confirmed', wsEndpoint: 'wss://api.devnet.solana.com' })
+    return new Connection(endpoint, {
+      commitment: 'confirmed',
+      wsEndpoint: 'wss://api.devnet.solana.com',
+      httpAgent: false,
+      disableRetryOnRateLimit: true
+    })
   }, [endpointName, endpoint])
 
   useEffect(() => {

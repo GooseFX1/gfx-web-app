@@ -421,11 +421,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
 
 export default memo(ProfilePageSidebar)
 export const WalletProfilePicture = (): ReactElement => {
-  const params = useParams<IAppParams>()
+  const { mode } = useDarkMode()
 
-  const getFirstAndLast = useMemo(
-    () => params.userAddress && params.userAddress[0] + params.userAddress[params.userAddress.length - 1],
-    [params.userAddress]
+  return (
+    <div className="no-dp-avatar">
+      <img tw="h-full" src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`} alt="profile picture" />
+    </div>
   )
-  return <div className="no-dp-avatar">{getFirstAndLast} </div>
 }

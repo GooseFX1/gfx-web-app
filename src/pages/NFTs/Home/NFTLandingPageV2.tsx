@@ -161,7 +161,7 @@ const FILTERS_CONTAINER = styled.div`
 `
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
-    ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
+    ${tw`h-[44px] w-[44px] rounded-full cursor-pointer mr-5`}
   }
   .userPopupProfilePic {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer `}
@@ -465,6 +465,7 @@ const PROFILE_PIC = styled.div`
 // TODO: Mini mise the code using tailwind
 export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize }): ReactElement => {
   const { sessionUser } = useNFTProfile()
+  const { mode } = useDarkMode()
   const { wallet } = useWallet()
   const history = useHistory()
   const pubKey = useMemo(
@@ -491,21 +492,25 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
   //   )
 
   return (
-    <PROFILE_PIC_WRAPPER>
+    <PROFILE_PIC_WRAPPER onClick={goProfile}>
       {userPic ? (
         <img src={userPic} className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'} onClick={goProfile} />
       ) : (
-        <PROFILE_PIC
-          css={[
-            mediumSize
-              ? tw`h-[100px] w-[100px] !border-none text-[30px]`
-              : tw`h-11 w-11 rounded-full cursor-pointer text-grey-1  bg-white text-[14px] font-semibold justify-center
-        dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5`
-          ]}
-          onClick={goProfile}
-        >
-          {getFirstAndLast}
-        </PROFILE_PIC>
+        // <PROFILE_PIC
+        //   css={[
+        //     mediumSize
+        //       ? tw`h-[100px] w-[100px] !border-none text-[30px]`
+        //       : tw`h-11 w-11 rounded-full cursor-pointer text-grey-1 bg-white text-[14px] font-semibold
+        // justify-center dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5`
+        //   ]}
+        // >
+        //   {getFirstAndLast}
+        // </PROFILE_PIC>
+        <img
+          className={'avatarNFT'}
+          src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+          alt="profile picture"
+        />
       )}
     </PROFILE_PIC_WRAPPER>
   )

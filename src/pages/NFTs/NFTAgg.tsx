@@ -49,7 +49,7 @@ const NFTAgg: FC = (): ReactElement => {
       if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
         fetchSessionUser('address', wallet?.adapter?.publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
-            const userProfileStatus = localStorage.getItem(wallet?.adapter?.publicKey.toBase58())
+            const userProfileStatus = localStorage.getItem(wallet?.adapter?.publicKey?.toBase58())
             if (res.data.length === 0 && userProfileStatus === null) {
               localStorage.setItem(
                 wallet?.adapter?.publicKey.toBase58(),
@@ -57,7 +57,7 @@ const NFTAgg: FC = (): ReactElement => {
               )
             } else {
               localStorage.setItem(
-                wallet?.adapter?.publicKey.toBase58(),
+                wallet?.adapter?.publicKey?.toBase58(),
                 JSON.stringify({ pubKey: wallet?.adapter?.publicKey.toBase58(), isNew: false })
               )
             }
