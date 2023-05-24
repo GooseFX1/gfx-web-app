@@ -52,7 +52,7 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
               {trimString(item.trait_type)}
             </div>
             <div tw="text-[15px] font-semibold dark:text-grey-5 text-black-4 truncate">
-              {trimString(item.value + item.value)}
+              {trimString(item.value)}
             </div>
           </div>
         </PILL_SECONDARY>

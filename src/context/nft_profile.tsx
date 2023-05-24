@@ -14,7 +14,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const [nonSessionProfile, setNonSessionProfile] = useState<INFTProfile>()
   const [userActivity, setUserActivity] = useState<INFTUserActivity[]>([])
   const [sessionUserParsedAccounts, setParsedAccounts] = useState<ParsedAccount[]>([])
-  const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>()
+  const [nonSessionUserParsedAccounts, setNonSessionUserParsedAccounts] = useState<ParsedAccount[]>([])
   const [userCurrency, setUserCurrency] = useState<string>('SOL')
   const refreshNFTS = useRef(null)
 
@@ -47,14 +47,16 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         // fetches user nfts in wallet and sets them to state
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setParsedAccounts(parsedAccounts)
-        console.log(refreshNFTS.current)
-        if (refreshNFTS) clearInterval(refreshNFTS.current)
-        refreshNFTS.current = setInterval(async () => {
-          const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
-          setParsedAccounts((prev) =>
-            prev ? (prev?.length === parsedAccounts.length ? [...prev] : parsedAccounts) : undefined
-          )
+        if (refreshNFTS) clearInterval(refreshNFTS)
+
+        refreshNFTS = setInterval(async () => {
+          const updatedPA = await getParsedAccounts(parameter as StringPublicKey, connection)
+          setParsedAccounts((prev) => {
+            if (prev === undefined) return []
+            return prev.length !== updatedPA.length ? updatedPA : [...prev]
+          })
         }, 15000)
+
         return res
       } catch (err) {
         return err
@@ -146,13 +148,14 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         // fetches user nfts in wallet and sets them to stat
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setNonSessionUserParsedAccounts(parsedAccounts)
-        console.log(refreshNFTS.current)
-        if (refreshNFTS.current) clearInterval(refreshNFTS.current)
-        refreshNFTS.current = setInterval(async () => {
-          const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
-          setNonSessionUserParsedAccounts((prev) =>
-            prev ? (prev?.length === parsedAccounts.length ? [...prev] : parsedAccounts) : undefined
-          )
+
+        if (refreshNFTS) clearInterval(refreshNFTS)
+        refreshNFTS = setInterval(async () => {
+          const updatedPA = await getParsedAccounts(parameter as StringPublicKey, connection)
+          setNonSessionUserParsedAccounts((prev) => {
+            if (prev === undefined) return []
+            return prev.length !== updatedPA.length ? updatedPA : [...prev]
+          })
         }, 15000)
 
         return res

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, FC, useMemo, useEffect, useRef, useCallback } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
 import {
   useAccounts,
   useConnectionConfig,
@@ -9,9 +8,8 @@ import {
   useNFTProfile,
   useWalletModal
 } from '../../../context'
-import { jwt } from 'jsonwebtoken'
 
-import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
@@ -24,7 +22,7 @@ import {
   SystemProgram,
   VersionedTransaction
 } from '@solana/web3.js'
-import { tradeStatePDA, getBuyInstructionAccounts, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
+import { tradeStatePDA, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -70,7 +68,7 @@ import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
 import { getTensorBuyInstruction, NFT_MARKETS } from '../../../api/NFTs'
-const TEN_MILLION = 10000000
+// const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col mt-[-30px] sm:mt-0  `}
@@ -304,9 +302,9 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
 `
 
 export const BuyNFTModal = (): ReactElement => {
+  const { sessionUser } = useNFTProfile()
   const { buyNowClicked, setBuyNow, openJustModal, setOpenJustModal } = useNFTAggregator()
   const { ask, setGeneral } = useNFTDetails()
-  const { connected } = useWallet()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { setVisible } = useWalletModal()
   const sellerPrice: number = parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER
@@ -321,16 +319,14 @@ export const BuyNFTModal = (): ReactElement => {
   }
 
   useEffect(() => {
-    if (buyNowClicked) {
-      if (!connected) {
-        setVisible(true)
-        setBuyNow(false)
-      }
+    if (sessionUser === null && buyNowClicked) {
+      setVisible(true)
+      setBuyNow(false)
     }
     return () => {
       handleCloseModal(setGeneral, setBuyNow, false)
     }
-  }, [buyNowClicked])
+  }, [sessionUser, buyNowClicked])
 
   return (
     <STYLED_POPUP_BUY_MODAL
@@ -501,15 +497,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       pleaseTryAgain(isBuyingNow, error?.message)
     }
   }
-  const callTensorAPIs = async () => {
+  const callTensorAPIs = async (): Promise<void> => {
     try {
       const res: ITensorBuyIX = await getTensorBuyInstruction(
         parseFloat(ask.buyer_price),
-        wallet?.adapter?.publicKey?.toString(),
+        publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
         process.env.REACT_APP_JWT_SECRET_KEY
       )
+
       const tx = res.data.legacy_tx
         ? Transaction.from(Buffer.from(res.data.bytes))
         : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
@@ -530,7 +527,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       return
     } else callBuyInstruction()
   }
-  const callBuyInstruction = async () => {
+  const callBuyInstruction = async (): Promise<void> => {
     const {
       metaDataAccount,
       escrowPaymentAccount,

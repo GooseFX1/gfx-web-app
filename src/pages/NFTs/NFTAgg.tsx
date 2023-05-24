@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, FC } from 'react'
+import React, { ReactElement, useEffect, useMemo, FC } from 'react'
 import { Route, Switch, useRouteMatch, useLocation } from 'react-router-dom'
 import CollectionV2 from './Collection/CollectionV2'
 import NFTLandingPageV2 from './Home/NFTLandingPageV2'
@@ -34,7 +34,8 @@ const NFTAgg: FC = (): ReactElement => {
   const location = useLocation<ILocationState>()
   const { connection } = useConnectionConfig()
   const { wallet } = useWallet()
-  const { sessionUser, setSessionUser, fetchSessionUser } = useNFTProfile()
+  const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   useEffect(() => {
     refreshTokenData()
@@ -45,20 +46,20 @@ const NFTAgg: FC = (): ReactElement => {
   }, [location])
 
   useEffect(() => {
-    if (wallet?.adapter?.connected) {
-      if (!sessionUser || sessionUser.pubkey !== wallet?.adapter?.publicKey.toBase58()) {
-        fetchSessionUser('address', wallet?.adapter?.publicKey.toBase58(), connection).then((res) => {
+    if (publicKey !== null && publicKey !== undefined) {
+      if (!sessionUser || sessionUser.pubkey !== publicKey.toBase58()) {
+        fetchSessionUser('address', publicKey.toBase58(), connection).then((res) => {
           if (res && res.status === 200) {
-            const userProfileStatus = localStorage.getItem(wallet?.adapter?.publicKey?.toBase58())
+            const userProfileStatus = localStorage.getItem(publicKey.toBase58())
             if (res.data.length === 0 && userProfileStatus === null) {
               localStorage.setItem(
-                wallet?.adapter?.publicKey.toBase58(),
-                JSON.stringify({ pubKey: wallet?.adapter?.publicKey.toBase58(), isNew: true })
+                publicKey.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: true })
               )
             } else {
               localStorage.setItem(
-                wallet?.adapter?.publicKey?.toBase58(),
-                JSON.stringify({ pubKey: wallet?.adapter?.publicKey.toBase58(), isNew: false })
+                publicKey?.toBase58(),
+                JSON.stringify({ pubKey: publicKey.toBase58(), isNew: false })
               )
             }
           } else {
@@ -68,9 +69,10 @@ const NFTAgg: FC = (): ReactElement => {
       }
     } else {
       setSessionUser(null)
+      setParsedAccounts([])
     }
     return null
-  }, [wallet?.adapter?.publicKey])
+  }, [publicKey])
 
   return Object.keys(prices) ? (
     <BODY_NFT $navCollapsed={isCollapsed}>

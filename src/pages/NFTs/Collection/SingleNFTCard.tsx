@@ -73,8 +73,9 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   const params = Object.fromEntries(urlSearchParams.entries())
 
   const isOwner: boolean = useMemo(() => {
+    if (sessionUser === null) return false
     const findAccount: undefined | ParsedAccount =
-      item && sessionUserParsedAccounts !== undefined
+      item && sessionUser !== null && sessionUserParsedAccounts.length > 0
         ? sessionUserParsedAccounts.find((acct) => acct.mint === item?.mint_address)
         : undefined
     return findAccount === undefined ? false : true
@@ -205,7 +206,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
-  const gradientBg = useMemo(() => isOwner && localAsk?.buyer_price, [localAsk, isOwner])
+  const gradientBg: boolean = useMemo(() => isOwner && localAsk !== null, [localAsk, isOwner])
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
     if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
@@ -214,16 +215,17 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
     return capString.join(' ')
   }, [])
+
   return (
     <>
       {handleAppraisalPopup()}
       <div
-        className={gradientBg ? 'gridGradient' : 'gridItemRegular'}
+        className={gradientBg ? 'gridGradient ' : 'gridItemRegular '}
         key={index}
         onClick={() => goToDetails(item)}
         ref={lastCardRef}
       >
-        <div className={gradientBg ? 'gridGradientInner' : 'gridItem'}>
+        <div className={gradientBg ? 'gridGradientInner ' : 'gridItem '}>
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
@@ -341,15 +343,15 @@ export const HoverOnNFT: FC<{
   setNFTDetails: any
   setHover?: Dispatch<SetStateAction<boolean>>
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT, setHover }): ReactElement => {
+  const { sessionUser } = useNFTProfile()
   const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked } = useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
-  const { wallet } = useWallet()
   const { setVisible } = useWalletModal()
 
   const goToDetailsForModal = useCallback(
     async (e, type) => {
       e.stopPropagation()
-      if (!wallet?.adapter?.connected) {
+      if (sessionUser === null) {
         setVisible(true)
         return
       }
@@ -376,8 +378,9 @@ export const HoverOnNFT: FC<{
           break
       }
     },
-    [wallet?.adapter?.connected, ask, mintAddress, setNFTDetails, setHover, item]
+    [sessionUser, ask, mintAddress, setNFTDetails, setHover, item]
   )
+
   return (
     <div className="hoverNFT">
       {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}

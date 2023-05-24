@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 
 import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
-// import debounce from 'lodash.debounce'
+import debounce from 'lodash.debounce'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number }>`
 ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
@@ -74,7 +74,8 @@ export const SearchBar: FC<any> = ({
     debouncer(e)
   }, [])
 
-  const debouncer = (e) => setSearchFilter(e.target.value)
+  const debouncer = debounce((e) => setSearchFilter(e.target.value), 500)
+
   const handleCloseClick = useCallback(() => {
     setSearchFilter('')
     inputRef.current?.focus()

@@ -52,11 +52,10 @@ type ICard = {
   nftDetails?: any
   className?: string
   listingType?: string
-  userId?: string
   setGfxAppraisal?: Dispatch<SetStateAction<boolean>>
 }
 
-const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => {
+const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connection } = useConnectionConfig()
@@ -92,9 +91,8 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
   )
 
   const isOwner: boolean = useMemo(() => {
-    if (userId) return true
     const findAccount: undefined | ParsedAccount =
-      singleNFT && sessionUserParsedAccounts !== undefined
+      singleNFT && sessionUser !== null && sessionUserParsedAccounts.length > 0
         ? sessionUserParsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
         : undefined
     return findAccount === undefined ? false : true
