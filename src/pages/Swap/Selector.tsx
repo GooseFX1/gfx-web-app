@@ -133,7 +133,7 @@ const TOKEN = styled.div`
 `
 
 const POPULAR = styled.div`
-  ${tw`flex justify-center p-0 sm:flex-wrap sm:justify-start`}
+  ${tw`flex justify-center ml-[-6px] p-0 sm:flex-wrap sm:justify-start sm:ml-0`}
 `
 
 const POPULAR_TK = styled(TOKEN)`
