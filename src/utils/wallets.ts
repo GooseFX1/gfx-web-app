@@ -4,12 +4,12 @@ import {
   GlowWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
-  SolletExtensionWalletAdapter,
-  SolletWalletAdapter,
-  SlopeWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
-  SolongWalletAdapter
+  SolongWalletAdapter,
+  BraveWalletAdapter,
+  Coin98WalletAdapter,
+  CoinbaseWalletAdapter
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -39,7 +39,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
   new SolongWalletAdapter(),
-  new SolletExtensionWalletAdapter({ network }),
-  new SolletWalletAdapter({ network }),
-  new SlopeWalletAdapter()
+  new BraveWalletAdapter(),
+  new Coin98WalletAdapter(),
+  new CoinbaseWalletAdapter()
 ]
