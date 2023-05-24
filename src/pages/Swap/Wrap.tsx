@@ -276,7 +276,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     <BODY $mode={mode}>
       <div>
         <TITLE>Wrap / Unwrap SOL</TITLE>
-        <Tooltip placement="top" notInherit={true}>
+        <Tooltip placement="top" notInherit={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
           You can now manually wrap SOL and unwrap wSOL here.
         </Tooltip>
       </div>

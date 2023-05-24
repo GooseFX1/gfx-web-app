@@ -29,14 +29,12 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
   }
 `
 const STYLED_POPUP = styled(PopupCustom)`
-  color: ${({ theme }) => theme.text11};
-  ${tw`dark:text-[pink] text-[10px]`}
+  ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
   .ant-modal-body {
     ${tw`py-6 px-0 pr-1`}
   }
   &.ant-modal {
-    ${tw`dark:text-[20px]   text-[10px]`}
-    background-color: ${({ theme }) => theme.walletModalWallet};
+    ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
   }
   .ant-modal-content {
     overflow-y: scroll;
@@ -46,15 +44,13 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .show-more {
-    ${tw`text-average pl-4 font-semibold underline mt-3.75 text-center cursor-pointer`}
-    color: ${({ theme }) => theme.text38};
+    ${tw`text-average pl-4 font-semibold underline mt-3.75 text-center cursor-pointer dark:text-white text-blue-1`}
   }
   .ant-modal-close-x {
     ${tw`!w-5 !h-5 `}
   }
   .titleContainer {
-    ${tw`flex items-center text-lg text-center justify-center font-semibold leading-7`}
-    color: ${({ theme }) => theme.text32};
+    ${tw`flex items-center text-lg text-center justify-center font-semibold leading-7 dark:text-grey-5 text-black-4`}
   }
   .wallets-container {
     ${tw`mt-[22px]`}
@@ -66,8 +62,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   }
   .detected {
-    ${tw`text-regular font-semibold ml-[-20px] mt-2 justify-center flex`}
-    color: ${({ theme }) => theme.text29};
+    ${tw`text-regular font-semibold ml-[-20px] mt-2 justify-center flex dark:text-grey-2 text-purple-1`}
   }
   .textDetected {
     ${tw`mr-3.75 text-tiny font-semibold text-green-3`}

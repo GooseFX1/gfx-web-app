@@ -8,7 +8,7 @@ import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const TEXT_AREA = styled.div`
-  ${tw`h-[470px] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px]`}
+  ${tw`h-[62vh] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px]`}
   background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
   color: ${({ theme }) => theme.text28};
   flex-grow: 0;
@@ -43,7 +43,7 @@ const TEXT_AREA = styled.div`
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
   &.ant-modal {
-    ${tw`!rounded-[20px]`}
+    ${tw`!rounded-bigger`}
   }
 
   .ant-modal-body {
@@ -53,7 +53,7 @@ const TOS_MODAL = styled(Modal)`
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-4 sm:pb-0 sm:mt-0`}
+  ${tw`flex p-2 mt-0 sm:pb-0`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
