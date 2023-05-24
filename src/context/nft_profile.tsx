@@ -47,9 +47,9 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         // fetches user nfts in wallet and sets them to state
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setParsedAccounts(parsedAccounts)
-        if (refreshNFTS) clearInterval(refreshNFTS)
+        if (refreshNFTS.current) clearInterval(refreshNFTS.current)
 
-        refreshNFTS = setInterval(async () => {
+        refreshNFTS.current = setInterval(async () => {
           const updatedPA = await getParsedAccounts(parameter as StringPublicKey, connection)
           setParsedAccounts((prev) => {
             if (prev === undefined) return []
@@ -149,8 +149,8 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
         const parsedAccounts = await getParsedAccounts(parameter as StringPublicKey, connection)
         setNonSessionUserParsedAccounts(parsedAccounts)
 
-        if (refreshNFTS) clearInterval(refreshNFTS)
-        refreshNFTS = setInterval(async () => {
+        if (refreshNFTS.current) clearInterval(refreshNFTS.current)
+        refreshNFTS.current = setInterval(async () => {
           const updatedPA = await getParsedAccounts(parameter as StringPublicKey, connection)
           setNonSessionUserParsedAccounts((prev) => {
             if (prev === undefined) return []

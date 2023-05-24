@@ -354,7 +354,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { getUIAmount } = useAccounts()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
   const { wallet, sendTransaction } = useWallet()
-  const { connection, network } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const { general, nftMetadata, ask } = useNFTDetails()
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
