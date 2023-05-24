@@ -79,6 +79,7 @@ export const Modal: FC<{
       maskClosable
       visible={visible}
       width={large ? '50vw' : 350}
+      wrapClassName={mode === 'dark' ? 'dark' : ''}
       {...props}
     >
       <HEADER style={centerTitle && { justifyContent: 'center' }}>

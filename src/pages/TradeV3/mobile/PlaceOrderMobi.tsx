@@ -171,12 +171,10 @@ const TITLE = styled.span`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[392px] !w-11/12 rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[392px] !w-11/12 rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
-    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0 mb-2.5`}
-    background-color: ${({ theme }) => theme.bg25};
+    ${tw`rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0 mb-2.5 dark:bg-black-2 bg-grey-5`}
   }
   .ant-modal-content {
     ${tw`shadow-none`}
@@ -864,7 +862,6 @@ export const PlaceOrderMobi = () => {
                 onClick={() => setConfirmationModal(false)}
               />
             }
-            className={mode === 'dark' ? 'dark' : ''}
           >
             <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
           </SETTING_MODAL>

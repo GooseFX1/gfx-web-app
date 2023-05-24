@@ -24,8 +24,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
 const END_MODAL = styled(PopupCustom)`
-  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
@@ -229,8 +228,7 @@ const TRADE_HISTORY = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[478px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[478px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
@@ -467,7 +465,6 @@ export const HistoryPanel: FC = () => {
                     onClick={() => setClosePositionModal(false)}
                   />
                 }
-                className={mode === 'dark' ? 'dark' : ''}
               >
                 <ClosePosition
                   setVisibleState={setClosePositionModal}
@@ -496,7 +493,6 @@ export const HistoryPanel: FC = () => {
                     onClick={() => setPerpsEndModal(false)}
                   />
                 }
-                className={mode === 'dark' ? 'dark' : ''}
               >
                 <PerpsEndModal
                   profit={summaryData.profit}

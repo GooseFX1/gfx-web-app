@@ -104,13 +104,13 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
 `
 
 const SETTING_MODAL = styled(Modal)`
+  ${tw`dark:bg-black-2 bg-white`}
   width: 628px !important;
-  background-color: ${({ theme }) => theme.bg20} !important;
 `
 
 const SWAP_HISTORY_MODAL = styled(Modal)`
+  ${tw`dark:bg-black-2 bg-white`}
   width: 628px !important;
-  background-color: ${({ theme }) => theme.bg20} !important;
 
   .ant-modal-body {
     max-height: 80vh !important;
@@ -483,7 +483,7 @@ const SwapContent: FC<{
         bigTitle={false}
         title="Settings"
         visible={settingsModalVisible}
-        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'hidden' }}
       >
         <Settings setVisible={setSettingsModalVisible} />
       </SETTING_MODAL>
@@ -492,7 +492,7 @@ const SwapContent: FC<{
         bigTitle={false}
         title="SOL / WSOL"
         visible={wrapModalVisible}
-        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'hidden' }}
       >
         <Wrap setVisible={setWrapModalVisible} />
       </SETTING_MODAL>
@@ -501,7 +501,7 @@ const SwapContent: FC<{
         bigTitle={false}
         title="Swap History"
         visible={historyVisible}
-        style={{ overflowY: 'auto', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'auto' }}
       >
         <History reload={reloadTrigger} />
       </SWAP_HISTORY_MODAL>

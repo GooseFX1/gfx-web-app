@@ -24,8 +24,7 @@ const WRAPPER = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[402px] !w-11/12 rounded-half`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[402px] !w-11/12 rounded-half dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
@@ -44,8 +43,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const END_MODAL = styled(PopupCustom)`
-  ${tw`!h-[384px] !w-[353px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[384px] !w-[353px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
@@ -426,7 +424,6 @@ const Positions = () => {
                 onClick={() => setClosePositionModal(false)}
               />
             }
-            className={mode === 'dark' ? 'dark' : ''}
           >
             <ClosePosition
               setVisibleState={setClosePositionModal}
@@ -455,7 +452,6 @@ const Positions = () => {
                 onClick={() => setPerpsEndModal(false)}
               />
             }
-            className={mode === 'dark' ? 'dark' : ''}
           >
             <PerpsEndModal
               profit={summaryData.profit}

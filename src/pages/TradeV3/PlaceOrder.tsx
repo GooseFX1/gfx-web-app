@@ -323,12 +323,9 @@ const FEES = styled.div`
   ${tw`flex items-center justify-center my-2`}
 
   div {
-    margin-left: 0;
-    margin-right: 5px;
+    ${tw`ml-0 mr-[5px]`}
     img {
-      height: 14px !important;
-      width: 14px !important;
-      margin-left: 0 !important;
+      ${tw`!ml-0 !h-3.5 !w-3.5`}
     }
   }
 
@@ -338,12 +335,10 @@ const FEES = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[536px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[536px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
-    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
-    background-color: ${({ theme }) => theme.bg25};
+    ${tw`rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0 dark:bg-black-2 bg-grey-5`}
   }
   .ant-modal-content {
     ${tw`shadow-none`}
@@ -808,7 +803,6 @@ export const PlaceOrder: FC = () => {
                   onClick={() => setConfirmationModal(false)}
                 />
               }
-              className={mode === 'dark' ? 'dark' : ''}
             >
               <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
             </SETTING_MODAL>
