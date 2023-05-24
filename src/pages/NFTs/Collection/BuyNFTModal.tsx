@@ -705,24 +705,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             width={390}
           />
         </div>
-        {pendingTxSig && (
-          <div className="bm-title">
-            <span>
-              <img
-                style={{ height: '26px', marginRight: '6px' }}
-                src={`/img/assets/solscan.png`}
-                alt="solscan-icon"
-              />
-            </span>
-            <GFX_LINK
-              href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
-              target={'_blank'}
-              rel="noreferrer"
-            >
-              View Transaction
-            </GFX_LINK>
-          </div>
-        )}
+        {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
 
         <div className="feesContainer">
           <div className="rowContainer">
@@ -761,3 +744,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       </div>
     )
 }
+
+export const PendingTransaction: FC<{ pendingTxSig: string }> = ({ pendingTxSig }): ReactElement => (
+  <div className="bm-title">
+    <span>
+      <img style={{ height: '26px', marginRight: '6px' }} src={`/img/assets/solscan.png`} alt="solscan-icon" />
+    </span>
+    <GFX_LINK href={`https://solscan.io/tx/${pendingTxSig}`} target={'_blank'} rel="noreferrer">
+      View Transaction
+    </GFX_LINK>
+  </div>
+)

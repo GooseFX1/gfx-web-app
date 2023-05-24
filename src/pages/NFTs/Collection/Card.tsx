@@ -140,9 +140,14 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
 
   const handleToggleLike = async () => {
     if (sessionUser && sessionUser.uuid) {
-      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
-      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      setIsFavorited(res.data.action === 'liked')
+      try {
+        const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+        console.log(res)
+        setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+        setIsFavorited(res.data.action === 'liked')
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 
@@ -317,14 +322,14 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, userId, setGfxAppraisal }) => 
                   />
                 </div>
 
-                {sessionUser && (
+                {/* {sessionUser && (
                   <img
                     className="card-like"
                     src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
                     alt="heart-red"
                     onClick={() => handleToggleLike()}
                   />
-                )}
+                )} */}
               </div>
             </div>
           </div>

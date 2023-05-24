@@ -8,7 +8,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
-  ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6`}
+  ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6 h-[100%]`}
   ${({ $cssStyle }) => $cssStyle};
   height: calc(100vh - 260px);
   text-align: center;

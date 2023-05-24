@@ -92,7 +92,7 @@ interface INFTDisplay {
 
 const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   const { sessionUser, nonSessionProfile } = useNFTProfile()
-  const { searchInsideProfile, profileNFTOptions } = useNFTAggregatorFilters()
+  const { searchInsideProfile, profileNFTOptions, setProfileNFTOptions } = useNFTAggregatorFilters()
   const { cancelBidClicked } = useNFTAggregator()
   const [nftApiResponses, setNftApiResponses] = useState(null)
   const [collectedItems, setCollectedItems] = useState<ISingleNFT[]>()
@@ -129,7 +129,7 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
         if (filteredCollectedItems.length !== 0) setIsLoading(false)
       }
     }
-  }, [searchInsideProfile, collectedItems, profileNFTOptions])
+  }, [searchInsideProfile, collectedItems])
   // in place of original `setActivePoint`
   const setCollectedItemsPag = (x) => {
     activePointRef.current = x // keep updated
@@ -137,10 +137,11 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
   }
 
   useEffect(() => {
+    setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL)
     if (filteredCollectedItems.length === 0)
       setTimeout(() => {
         setIsLoading(false)
-      }, 5000)
+      }, 7000)
   }, [])
 
   useEffect(() => {
@@ -217,9 +218,20 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
 
   useEffect(() => {
     if (nftApiResponses && props.type === 'collected') props.setNumberOfNFTs(nftApiResponses.length)
-  }, [nftApiResponses])
+  }, [nftApiResponses, refreshClicked])
 
-  const gridType = useMemo(() => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'), [filteredCollectedItems])
+  const gridType = useMemo(() => {
+    if (nftApiResponses) {
+      if (profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS) {
+        return nftApiResponses.filter((res) => res.bids.length > 0).length > 7 ? '1fr' : '210px'
+      }
+      if (profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE) {
+        return nftApiResponses.filter((res) => res.asks.length > 0).length > 7 ? '1fr' : '210px'
+      }
+    }
+
+    return filteredCollectedItems?.length > 7 ? '1fr' : '210px'
+  }, [filteredCollectedItems, profileNFTOptions])
 
   const handleModalClick = useCallback(() => {
     if (showAcceptBid)

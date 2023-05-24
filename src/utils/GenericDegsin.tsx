@@ -45,7 +45,7 @@ export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
     ${tw`font-semibold text-base dark:text-white text-grey-1`}
   }
   .info-icon {
-    ${tw`w-[20px] h-[20px] block ml-2`}
+    ${tw`!w-[20px] !h-[20px] block ml-2`}
   }
   .arrowDown {
     ${tw`sm:w-[17px] cursor-pointer sm:h-[8px] w-[18px] h-[7px] ml-[10px] duration-500`}

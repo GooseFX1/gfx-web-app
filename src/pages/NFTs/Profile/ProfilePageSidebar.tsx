@@ -178,6 +178,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const [discordHover, setDiscordHover] = useState<boolean>(false)
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
+  const { mode } = useDarkMode()
 
   const handleModal = useCallback(() => {
     if (profileModal) {
@@ -392,7 +393,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
           </div>
         )}
         <div>
-          <img src="/img/assets/profileGraphic.png" alt="profile-graphic" className="graphic-img" />
+          <img
+            src={`/img/assets/Aggregator/profileGraphic${mode}.png`}
+            alt="profile-graphic"
+            className="graphic-img"
+          />
         </div>
         <div className="portfolio">
           <span>Portfolio Value</span>{' '}

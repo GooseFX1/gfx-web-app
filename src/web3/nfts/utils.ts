@@ -4,6 +4,7 @@ import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex
 import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
 import { INFTAsk } from '../../types/nft_details'
 import { NFT_MARKETS } from '../../api/NFTs'
+import { capitalizeFirstLetter } from '../../utils/misc'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -94,4 +95,10 @@ export const redirectBasedOnMarketplace = (ask: INFTAsk, type: string, mintAddre
     }
   }
   return false
+}
+
+export const handleMarketplaceFormat = (name: string): string => {
+  const splitString = name.split('_')
+  const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
+  return capString.join(' ')
 }

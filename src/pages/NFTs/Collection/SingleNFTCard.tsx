@@ -1,4 +1,14 @@
-import { useState, FC, useEffect, useMemo, ReactElement, useCallback, Dispatch, SetStateAction } from 'react'
+import {
+  useState,
+  FC,
+  useEffect,
+  useMemo,
+  ReactElement,
+  useCallback,
+  Dispatch,
+  SetStateAction,
+  useRef
+} from 'react'
 import axios from 'axios'
 import {
   useConnectionConfig,
@@ -7,7 +17,8 @@ import {
   useNFTDetails,
   useNFTProfile,
   usePriceFeedFarm,
-  useWalletModal
+  useWalletModal,
+  useDarkMode
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -30,6 +41,7 @@ import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Tag } from '../../../components/Tag'
+import { Image } from 'antd'
 
 export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any; lastCardRef?: any }> = ({
   item,
@@ -40,7 +52,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
-  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral } = useNFTDetails()
+  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, general, nftMetadata } = useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -50,9 +62,15 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+  const [activeCard, setActiveCard] = useState<boolean>(false)
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const { currencyView } = useNFTAggregator()
+  const refreshCard = useRef(null)
+
+  const urlSearchParams = new URLSearchParams(window.location.search)
+  const params = Object.fromEntries(urlSearchParams.entries())
 
   const isOwner: boolean = useMemo(() => {
     const findAccount: undefined | ParsedAccount =
@@ -62,20 +80,54 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
 
+  const { prices } = usePriceFeedFarm()
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+  const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
+  const displayPrice: number = useMemo(
+    () => (currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice),
+    [currencyView, nftNativePrice, solPrice]
+  )
+
+  const { mode } = useDarkMode()
   useEffect(() => {
     if (item && sessionUser && sessionUser.user_likes) {
       setIsFavorited(sessionUser.user_likes.includes(item.uuid))
     }
   }, [sessionUser])
 
-  const handleToggleLike = async (e) => {
-    if (sessionUser && sessionUser.uuid) {
-      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
-      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      setIsFavorited(res.data.action === 'liked')
-      e.stopPropagation()
+  useEffect(() => {
+    if (item?.mint_address) {
+      updateLocalStates(item)
     }
-  }
+    return () => {
+      setIsLoadingBeforeRelocate(false)
+    }
+  }, [item])
+
+  useEffect(() => {
+    if (activeCard) {
+      refreshCard.current = setInterval(() => updateLocalStates(item), 3000)
+    } else {
+      if (refreshCard.current) clearInterval(refreshCard.current)
+    }
+  }, [activeCard])
+
+  useEffect(() => {
+    if (!activeCard) clearInterval(refreshCard.current)
+  }, [activeCard])
+
+  useEffect(() => {
+    if (!params.address) {
+      setActiveCard(false)
+    }
+  }, [params])
+
+  useEffect(() => {
+    if (publicKey) {
+      const myBid = localBids.filter((bid) => bid.wallet_key === publicKey.toString())
+      setLocalUserBidToNFT(myBid)
+    }
+  }, [publicKey, localBids])
 
   const nftId = item?.nft_name
     ? item?.nft_name.includes('#')
@@ -84,14 +136,28 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     : null
 
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item?.uuid) : false), [item])
-  const { currencyView } = useNFTAggregator()
+
+  const updateLocalStates = useCallback(
+    async (item: BaseNFT) =>
+      fetchSingleNFT(item?.mint_address).then(async (res) => {
+        if (res && res.status === 200) {
+          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
+          const nft: INFTGeneralData = res.data
+          await setLocalBids(nft.bids)
+          await setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
+          await setLocalTotalLikes(nft.total_likes)
+          if (activeCard) setNFTDetails()
+        }
+      }),
+    [item]
+  )
 
   const setNFTDetails = async (): Promise<boolean> => {
+    await setActiveCard(true)
     try {
       const res = await axios.get(localSingleNFT.metadata_url)
-      await setBids(localBids)
-      await setAsk(localAsk)
-      await setTotalLikes(localTotalLikes)
+      // micro optimizations
+      await Promise.all([setBids(localBids), setAsk(localAsk), setTotalLikes(localTotalLikes)])
       const metaData = await res.data
       await setNftMetadata(metaData)
       const parsedAccounts = await getParsedAccountByMint({
@@ -114,6 +180,14 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     }
   }
 
+  const handleToggleLike = async (e) => {
+    if (sessionUser && sessionUser.uuid) {
+      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+      setIsFavorited(res.data.action === 'liked')
+      e.stopPropagation()
+    }
+  }
   const goToDetails = async (item): Promise<void> => {
     history.push(`${history.location.pathname}?address=${item?.mint_address}`)
     setIsLoadingBeforeRelocate(true)
@@ -121,44 +195,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     await setNFTDetails()
   }
 
-  useEffect(() => {
-    if (item?.mint_address) {
-      fetchSingleNFT(item?.mint_address).then((res) => {
-        if (res && res.status === 200) {
-          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
-          const nft: INFTGeneralData = res.data
-          setLocalBids(nft.bids)
-          setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
-          setLocalTotalLikes(nft.total_likes)
-        }
-      })
-    }
-
-    return () => {
-      setIsLoadingBeforeRelocate(false)
-    }
-  }, [item])
-
-  useEffect(() => {
-    if (publicKey) {
-      const myBid = localBids.filter((bid) => bid.wallet_key === publicKey.toString())
-      setLocalUserBidToNFT(myBid)
-    }
-  }, [publicKey, localBids])
-
-  const handleInfoIconClicked = (e) => {
+  const handleInfoIconClicked = useCallback((e) => {
     setGFXApprisalPopup(true)
     e.stopPropagation()
     e.preventDefault()
-  }
-
-  const { prices } = usePriceFeedFarm()
-  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
-  const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
-  const displayPrice: number = useMemo(
-    () => (currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice),
-    [currencyView, nftNativePrice, solPrice]
-  )
+  }, [])
 
   const handleAppraisalPopup = useCallback(() => {
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
@@ -205,7 +246,13 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
             )}
             {item ? (
               <div className="nftImg">
-                <img src={item?.image_url} alt="nft" />
+                <Image
+                  src={item?.image_url}
+                  width={'100%'}
+                  preview={false}
+                  fallback={`/img/assets/nft-preview-${mode}.svg`}
+                  alt="NFT Preview"
+                />
               </div>
             ) : (
               <SkeletonCommon width="100%" height="auto" />

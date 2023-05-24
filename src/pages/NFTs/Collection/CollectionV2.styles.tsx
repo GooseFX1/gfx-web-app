@@ -55,9 +55,9 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           .sweepMobile {
             ${tw`h-[48px] w-[48px] ml-auto`}
           }
-          img {
-            ${tw`sm:ml-0 ml-4 h-[65px] w-[65px] sm:h-[55px] sm:w-[55px] rounded-full`}
-          }
+        }
+        .collectionNameImage {
+          ${tw`sm:ml-0 ml-4 h-[65px] w-[65px] sm:h-[55px] sm:w-[55px] rounded-full`}
         }
 
         .shareMobile {

@@ -45,7 +45,7 @@ import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
 import { Arrow } from '../../../components/common/Arrow'
-import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
@@ -96,6 +96,7 @@ const NFTStatsContainer = () => {
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const [shareModal, setShareModal] = useState<boolean>(false)
   const { sessionUser } = useNFTProfile()
+  const { mode } = useDarkMode()
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
@@ -165,6 +166,7 @@ const NFTStatsContainer = () => {
             {collection ? (
               <Image
                 preview={false}
+                className="collectionNameImage"
                 fallback={'/img/assets/Aggregator/Unknown.svg'}
                 src={`${
                   collection.profile_pic_link === undefined
@@ -189,11 +191,19 @@ const NFTStatsContainer = () => {
               ) : (
                 <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
               )}
-              {collection && collection.is_verified && (
+              {collection && collection.is_verified ? (
                 <img
                   style={{ height: 25, width: 25, margin: '0 8px' }}
                   src="/img/assets/Aggregator/verifiedNFT.svg"
                 />
+              ) : (
+                <div tw="mt-1.5">
+                  {TableHeaderTitle(
+                    '',
+                    'This is an unverified Collection Please do your own Research about this Collection ',
+                    false
+                  )}
+                </div>
               )}
             </div>
             {checkMobile() && (

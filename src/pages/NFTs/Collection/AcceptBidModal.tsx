@@ -8,7 +8,7 @@ import { STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import { checkMobile } from '../../../utils'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
-import { useConnectionConfig, useNFTDetails } from '../../../context'
+import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { Button } from '../../../components/Button'
 import { getMetadata } from '../../../web3/nfts/metadata'
@@ -23,6 +23,7 @@ const AcceptBidModal: FC<{
   const { general } = useNFTDetails()
   const [onChainNFTMetadata, setOnChainNFTMetadata] = useState<any>()
   const { connection } = useConnectionConfig()
+  const { setOpenJustModal } = useNFTAggregator()
 
   useEffect(() => {
     ;(async () => {
@@ -32,7 +33,9 @@ const AcceptBidModal: FC<{
         setOnChainNFTMetadata(onChainMetadata)
       }
     })()
+    return () => setOpenJustModal(false)
   }, [general])
+
   const sellerFeeBasisPoints = useMemo(
     () => (onChainNFTMetadata?.data ? onChainNFTMetadata.data.sellerFeeBasisPoints / 100 : 0),
     [onChainNFTMetadata]

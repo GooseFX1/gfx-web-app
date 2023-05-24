@@ -1,24 +1,33 @@
 import { Button } from 'antd'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 // import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
+import { PendingTransaction, STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
-import { useNFTDetails } from '../../../context'
+import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { TermsTextNFT } from './AcceptBidModal'
 
 const DelistNFTModal: FC<{
   isDelistLoading: boolean
   closeTheModal: any
   visible: boolean
+  pendingTxSig?: string | null
   callDelistInstruction: any
-}> = ({ visible, closeTheModal, isDelistLoading, callDelistInstruction }) => {
+}> = ({ visible, closeTheModal, isDelistLoading, callDelistInstruction, pendingTxSig }) => {
   const { general, ask } = useNFTDetails()
+  const { setOpenJustModal } = useNFTAggregator()
+
+  useEffect(
+    () => () => {
+      setOpenJustModal(false)
+    },
+    []
+  )
 
   return (
     <STYLED_POPUP_BUY_MODAL
@@ -48,7 +57,7 @@ const DelistNFTModal: FC<{
             </>
           )}
         </div>
-
+        {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
         <div className="feesContainer" tw="!bottom-[180px]">
           <div className="rowContainer">
             <div className="leftAlign">Listing Price</div>
@@ -60,6 +69,7 @@ const DelistNFTModal: FC<{
           className={'sellButton'}
           tw="bottom-[100px] !absolute sm:!bottom-[85px]"
           loading={isDelistLoading}
+          disabled={isDelistLoading}
         >
           <span tw="font-semibold text-[20px] sm:text-[16px]">Remove Listing</span>
         </Button>

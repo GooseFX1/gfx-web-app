@@ -54,9 +54,13 @@ const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = (
       )}
       {!publicKey && <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />}
 
-      <div className="gridContainer">
-        {displayNFTs && displayNFTs.map((myNFT, index) => <SingleNFTCard item={myNFT.data[0]} index={index} />)}
-      </div>
+      {displayNFTs && displayNFTs.length > 0 && (
+        <div className="gridContainer">
+          {displayNFTs.map((myNFT, index) => (
+            <SingleNFTCard key={index} item={myNFT.data[0]} index={index} />
+          ))}
+        </div>
+      )}
     </NFT_COLLECTIONS_GRID>
   )
 }

@@ -437,7 +437,9 @@ const NFTDetailsTab = (): ReactElement => {
       },
       {
         title: 'Artist Royalties',
-        value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
+        value: `${
+          nftMetadata.seller_fee_basis_points ? (nftMetadata.seller_fee_basis_points / 100).toFixed(2) : 0
+        }%`
       },
       {
         title: 'Transaction Fee',

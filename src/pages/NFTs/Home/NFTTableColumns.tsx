@@ -117,7 +117,7 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
 
 export const NFTActivitySectionWeb = (): ReactElement => (
   <tr>
-    <th className={'table-col-header'} tw="!w-[25%] !justify-start pl-5">
+    <th className={'table-col-header'} tw="!w-[20%] !justify-start pl-5">
       Item
     </th>
     <th className={'table-col-header'} style={{ width: '10%' }}>
@@ -135,7 +135,7 @@ export const NFTActivitySectionWeb = (): ReactElement => (
     <th className={'table-col-header'} style={{ width: '13%' }}>
       Seller
     </th>
-    <th className={'table-col-header'} style={{ width: '10%' }}>
+    <th className={'table-col-header'} style={{ width: '15%' }}>
       Time
     </th>
   </tr>

@@ -41,7 +41,7 @@ const CancelBidModal = (): ReactElement => {
   const { connection } = useConnectionConfig()
   const [userEscrowBalance, setUserEscrowBalance] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { setCancelBidClicked, cancelBidClicked, setRefreshClicked } = useNFTAggregator()
+  const { setCancelBidClicked, cancelBidClicked, setRefreshClicked, setOpenJustModal } = useNFTAggregator()
 
   const [escrowPaymentAccount, setEscrowPaymentAccount] = useState<[PublicKey, number]>()
 
@@ -62,6 +62,13 @@ const CancelBidModal = (): ReactElement => {
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
   }, [wallet?.adapter?.publicKey, publicKey])
+
+  useEffect(
+    () => () => {
+      setOpenJustModal(false)
+    },
+    []
+  )
 
   const fetchEscrowPayment = async (): Promise<number | undefined> => {
     try {

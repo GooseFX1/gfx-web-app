@@ -4,6 +4,7 @@ import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../../component
 import { INFTMetadata } from '../../../../types/nft_details'
 import { notify } from '../../../../utils'
 
+const NETWORK_MSG = 'Changes will reflect after Solana network confirmation. Please try reloading.'
 export const MESSAGE = styled.div`
   margin: -12px 0;
   font-size: 12px;
@@ -21,14 +22,15 @@ export const MESSAGE = styled.div`
 export const successfulListingMsg = (
   message: string,
   signature: string,
-  nftMetadata: INFTMetadata,
+  nftMetadata: INFTMetadata | any,
   price: string
 ): any => ({
   message: (
     <SuccessfulListingMsg
       title={`Successfully ${message} ${nftMetadata.name}!`}
-      itemName={nftMetadata.name}
+      itemName={nftMetadata?.name}
       supportText={`My price: ${price}`}
+      additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature}`}
     />
   )
@@ -109,6 +111,7 @@ export const successfulCancelBidMessage = (signature: string, nftMetadata: strin
     <SuccessfulListingMsg
       title={`Successfully Canceled bid on ${nftMetadata}!`}
       itemName={nftMetadata}
+      additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature}`}
     />
   )
@@ -119,6 +122,7 @@ export const successfulListingMessage = (signature: string, nftMetadata: INFTMet
       title={`Successfully placed a bid on ${nftMetadata?.name}!`}
       itemName={nftMetadata.name}
       supportText={`Bid of: ${price}`}
+      additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature}`}
     />
   )
@@ -127,9 +131,10 @@ export const successfulListingMessage = (signature: string, nftMetadata: INFTMet
 export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
   message: (
     <SuccessfulListingMsg
-      title={`Your bid matched!`}
+      title={`NFT purchased Successfully!`}
       itemName={nftMetadata.name}
       supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+      additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature} `}
     />
   )
@@ -140,6 +145,7 @@ export const successBidRemovedMsg = (signature: string, nftMetadata: INFTMetadat
       title={`Bid Removed Successfully!`}
       itemName={nftMetadata.name}
       supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+      additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature} `}
     />
   )

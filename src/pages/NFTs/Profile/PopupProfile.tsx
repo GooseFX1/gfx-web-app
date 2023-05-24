@@ -47,7 +47,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     form.setFieldsValue(sessionUser)
     if (sessionUser) {
       setUsername(sessionUser.nickname ? sessionUser.nickname : '')
-      setBio(sessionUser.bio ? sessionUser.nickname : '')
+      setBio(sessionUser.bio ? sessionUser.bio : '')
       setTwitterLink(sessionUser.twitter_link ? sessionUser.twitter_link : '')
       setDiscordLink(sessionUser.discord_profile ? sessionUser.discord_profile : '')
       setWebsiteLink(sessionUser.website_link ? sessionUser.website_link : '')

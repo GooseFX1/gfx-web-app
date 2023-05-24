@@ -12,7 +12,7 @@ import {
   useNFTDetails,
   useNFTProfile
 } from '../../../context'
-import { checkMobile, commafy, LOADING_ARR } from '../../../utils'
+import { checkMobile, commafy, LOADING_ARR, notify } from '../../../utils'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import {
   LastRefreshedAnimation,
@@ -46,6 +46,7 @@ import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import debounce from 'lodash.debounce'
+import { successfulListingMsg } from '../Collection/AggModals/AggNotifications'
 
 const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
   /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
@@ -162,6 +163,9 @@ const FILTERS_CONTAINER = styled.div`
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
     ${tw`h-[44px] w-[44px] rounded-full cursor-pointer mr-5`}
+  }
+  .avatarNFTMedium {
+    ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
   }
   .userPopupProfilePic {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer `}
@@ -402,9 +406,10 @@ const FiltersContainer = () => {
           className="search-bar"
           width={'425px'}
           filter={searchFilter}
+          cssStyle={tw`!text-black-4  !font-semibold dark:text-grey-5`}
           bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
-          placeholder="Search by collections or markets"
+          placeholder="Search by collections"
         />
         <ButtonContainer $poolIndex={poolIndex}>
           <div className="slider-animation-web"></div>
@@ -507,7 +512,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
         //   {getFirstAndLast}
         // </PROFILE_PIC>
         <img
-          className={'avatarNFT'}
+          className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'}
           src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
           alt="profile picture"
         />

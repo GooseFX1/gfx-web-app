@@ -11,7 +11,7 @@ import {
 import { Button, SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { registerSingleNFT } from '../../../api/NFTs'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
-import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
+import { AppraisalValue, GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
   tradeStatePDA,
@@ -133,11 +133,15 @@ export const SellNFTModal: FC<{
     }
   }, [highestBid])
   const serviceFee = useMemo(
-    () => (askPrice ? (askPrice * (sellerFeeBasisPoints / 100) + NFT_MARKET_TRANSACTION_FEE) / 100 : 0),
+    () => (askPrice ? NFT_MARKET_TRANSACTION_FEE / 100 : 0),
+    [sellerFeeBasisPoints, askPrice]
+  )
+  const creatorFee = useMemo(
+    () => (askPrice * (sellerFeeBasisPoints / 100)) / 100,
     [sellerFeeBasisPoints, askPrice]
   )
   const totalToReceive = useMemo(
-    () => (askPrice ? askPrice - (serviceFee + NFT_MARKET_TRANSACTION_FEE / 100) : 0),
+    () => (askPrice ? askPrice - (creatorFee + serviceFee + NFT_MARKET_TRANSACTION_FEE / 100) : 0),
     [askPrice]
   )
   const buyerPublicKey = useMemo(() => (highestBid ? new PublicKey(highestBid.wallet_key) : null), [highestBid])
@@ -162,7 +166,7 @@ export const SellNFTModal: FC<{
     []
   )
 
-  const attemptConfirmTransaction = async (signature: any): Promise<void> => {
+  const attemptConfirmTransaction = async (signature: any, notifyStr?: string): Promise<void> => {
     try {
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
@@ -172,10 +176,13 @@ export const SellNFTModal: FC<{
           console.log('refreshing after 15 sec')
           setRefreshClicked((prev) => prev + 1)
         }, 15000)
-        setIsLoading(false)
         if (isSellingNow)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
-        else notify(successfulListingMsg('listed', signature, nftMetadata, askPrice.toFixed(2)))
+        else
+          notify(
+            successfulListingMsg(notifyStr ? notifyStr : 'Listed', signature, nftMetadata, askPrice.toFixed(2))
+          )
+        setIsLoading(false)
         setTimeout(() => handleClose(false), 1000)
       } else {
         handleTxError(nftMetadata.name, '')
@@ -313,7 +320,7 @@ export const SellNFTModal: FC<{
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(signature) //refresh page after 15 seconds
+      await attemptConfirmTransaction(signature, 'Delisted')
         .then(() => console.log('TX Confirmed'))
         .catch((err) => console.error(err))
       setDelistLoading(false)
@@ -547,6 +554,7 @@ export const SellNFTModal: FC<{
     return (
       <DelistNFTModal
         visible={visible}
+        pendingTxSig={pendingTxSig}
         closeTheModal={closeTheModal}
         isDelistLoading={isDelistLoading}
         callDelistInstruction={callDelistInstruction}
@@ -601,7 +609,7 @@ export const SellNFTModal: FC<{
             )}
           </div>
         </div>
-        <div className="maxBid" tw="text-center mt-6 sm:!mt-[75px]">
+        <div className="maxBid" tw="text-center mt-4 sm:!mt-[75px]">
           Enter Price
         </div>
         <div className="sellInputContainer">
@@ -619,7 +627,7 @@ export const SellNFTModal: FC<{
           />
         </div>
 
-        <div tw="mt-[100px] sm:mt-[90px]">
+        <div tw="mt-[90px]">
           <AppraisalValue
             text={
               general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
@@ -668,8 +676,15 @@ export const SellNFTModal: FC<{
             <div className="rightAlign">{askPrice >= 0 ? askPrice : 0} SOL</div>
           </div>
           <div className="rowContainer">
-            <div className="leftAlign">Service Fee</div>
+            <div className="leftAlign" tw="flex">
+              Service Fee
+              {/* {TableHeaderTitle('', `Creator Fee (${sellerFeeBasisPoints / 100}%) `, false)}{' '} */}
+            </div>
             <div className="rightAlign"> {serviceFee.toFixed(3)} SOL</div>
+          </div>
+          <div className="rowContainer">
+            <div className="leftAlign">Creators Fee</div>
+            <div className="rightAlign"> {creatorFee.toFixed(2)} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>

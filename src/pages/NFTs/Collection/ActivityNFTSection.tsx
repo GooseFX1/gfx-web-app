@@ -11,7 +11,7 @@ import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
 import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
 import { AH_NAME } from '../../../web3'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
 import { Tooltip } from 'antd'
 import NoContent from '../Profile/NoContent'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
@@ -27,6 +27,7 @@ export interface IActivity {
   clock: string
   user_id: any
   non_fungible_id: number
+  marketplace_name?: string
   non_fungible_uuid: string
   buyer_wallet: any
   seller_wallet: string
@@ -37,7 +38,7 @@ export interface IActivity {
 }
 
 const ACTIVITY_KIND = {
-  EXECUTED_SALE: 'Sell',
+  EXECUTED_SALE: 'Sale',
   BUY: 'Bid',
   BID: 'Bid',
   SELL: 'Listed',
@@ -216,6 +217,13 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
       setNFTDetails(data.data[0])
     })()
   }, [])
+  console.log(activity?.marketplace_name)
+
+  // src={`/img/assets/Aggregator/${
+  //   localAsk?.marketplace_name === null
+  //     ? AH_NAME(localAsk?.auction_house_key)
+  //     : localAsk?.marketplace_name
+  // }.svg`}
 
   return (
     <>
@@ -230,7 +238,9 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
                 <GradientText text={ACTIVITY_KIND[activity?.kind]} fontSize={15} fontWeight={600} />
                 <img
                   tw="h-5 w-5 ml-0"
-                  src={`/img/assets/Aggregator/${AH_NAME(activity?.auction_house)}.svg`}
+                  src={`/img/assets/Aggregator/${
+                    activity?.marketplace_name ? activity?.marketplace_name : AH_NAME(activity?.auction_house)
+                  }.svg`}
                   alt={`${AH_NAME(activity?.auction_house)}-icon`}
                   style={{ height: 30 }}
                 />
@@ -291,9 +301,21 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
   }, [])
   const hostURL = useMemo(() => window.location.origin, [window.location.origin])
   const profileLink = hostURL + `/nfts/profile/`
+
+  console.log(activity?.marketplace_name)
+
+  const marketImage = useMemo(
+    () =>
+      activity?.marketplace_name
+        ? activity?.marketplace_name
+        : activity?.auction_house
+        ? AH_NAME(activity?.auction_house)
+        : null,
+    [activity]
+  )
   return (
     <tr className="tableRow" key={index}>
-      <td className="nftNameColumn">
+      <td className="nftNameColumn" tw="!w-[20%]">
         {nftDetails?.nft_name ? (
           <div tw="flex">
             <img className="nftNameImg" src={nftDetails.image_url} alt="" />
@@ -338,13 +360,13 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
         )}
       </td>
       <td tw="align-top text-center pt-[28px] w-[13%]">
-        {activity?.auction_house ? (
+        {activity?.auction_house || marketImage ? (
           <div tw="flex items-center justify-center pl-2">
-            {AH_NAME(activity?.auction_house)}
+            {marketImage ? handleMarketplaceFormat(marketImage) : AH_NAME(activity?.auction_house)}
             <img
               tw="h-5 w-5 ml-1"
-              src={`/img/assets/Aggregator/${AH_NAME(activity?.auction_house)}.svg`}
-              alt={`${AH_NAME(activity?.auction_house)}-icon`}
+              src={`/img/assets/Aggregator/${marketImage}.svg`}
+              alt={`${marketImage}-icon`}
               style={{ height: 30 }}
             />
           </div>
@@ -384,7 +406,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <Loader />
         )}
       </td>
-      <td tw="align-top text-center pt-[28px] w-[10%]">
+      <td tw="align-top text-center pt-[28px] w-[15%]">
         {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <Loader />}
       </td>
     </tr>

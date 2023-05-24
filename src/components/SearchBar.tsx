@@ -28,15 +28,17 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
   }
 
   > input {
-    ${tw`sm:w-full text-[15px] duration-500 h-[44px] rounded-circle p-[0 55px 0 18px]`}
     text-align: left;
     background: ${({ bgColor, theme }) => (bgColor ? bgColor : theme.searchbarBackground)};
     flex: 1;
-
-    ${({ $cssStyle }) => $cssStyle};
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text32};
     font-family: 'Montserrat';
     border: transparent;
+
+    ${({ $cssStyle }) => $cssStyle};
+    ${tw`sm:w-full text-[15px] font-semibold duration-500 h-[44px]
+      !font-semibold  rounded-circle p-[0 40px 0 35px]`}
+
     &:focus {
       outline: 1.5px solid ${({ theme }) => theme.text11};
     }
@@ -45,13 +47,12 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
     }
   }
 
-
     .ant-image-img {
-      ${tw`absolute w-[16px] right-4`}
+      ${tw`absolute w-[16px] left-3`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
     .ant-image-clear {
-      ${tw`absolute w-[16px] right-10 cursor-pointer`}
+      ${tw`absolute h-6 w-6 right-3 cursor-pointer`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
   }
@@ -95,7 +96,7 @@ export const SearchBar: FC<any> = ({
       {filter && (
         <img
           className="ant-image-clear"
-          src={`/img/assets/close-${mode}.svg`}
+          src={`/img/assets/Aggregator/removeSearch${mode}.svg`}
           onClick={() => handleCloseClick()}
         />
       )}
