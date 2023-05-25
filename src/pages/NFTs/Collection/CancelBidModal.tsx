@@ -45,7 +45,10 @@ const CancelBidModal = (): ReactElement => {
 
   const [escrowPaymentAccount, setEscrowPaymentAccount] = useState<[PublicKey, number]>()
 
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const publicKey = useMemo(
+    () => wallet?.adapter?.publicKey,
+    [wallet?.adapter?.publicKey, wallet?.adapter?.publicKey]
+  )
 
   const myBid = useMemo(() => {
     if (bids.length > 0) {

@@ -303,6 +303,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
 
   .titleHeader {
     color: ${({ theme }) => theme.text32};
+    white-space: nowrap;
     ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
   }
   .titleHeaderBlue {

@@ -162,7 +162,7 @@ const FILTERS_CONTAINER = styled.div`
 `
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
-    ${tw`h-[44px] w-[44px] rounded-full cursor-pointer mr-5`}
+    ${tw`h-[44px] w-[44px] sm:h-10 sm:w-10 rounded-full cursor-pointer mr-5`}
   }
   .avatarNFTMedium {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
@@ -371,10 +371,10 @@ const FiltersContainer = () => {
             </div> */}
             {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
           </div>
-          <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
+          {/* <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
             <div ref={sliderRef} className="slider-animation"></div>
             {poolTypeButtons}
-          </ButtonContainer>
+          </ButtonContainer> */}
 
           {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
           {/* mobile */}
@@ -478,7 +478,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
     [wallet?.adapter?.publicKey]
   )
   let userPic = sessionUser?.profile_pic_link
-  if (userPic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') userPic = null
+  if (userPic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') userPic = null
 
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
   const goProfile = () => history.push(`/nfts/profile/${pubKey}`)
@@ -513,7 +513,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
         // </PROFILE_PIC>
         <img
           className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'}
-          src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
+          src={`/img/assets/Aggregator/avatar-${mode}.svg`}
           alt="profile picture"
         />
       )}

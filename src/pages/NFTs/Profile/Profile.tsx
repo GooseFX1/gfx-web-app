@@ -129,8 +129,8 @@ export const Profile: FC = (): JSX.Element => {
   const { wallet } = useWallet()
 
   const publicKey = useMemo(
-    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter?.publicKey]
+    () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey, wallet?.adapter]
   )
   const isSessionUser = useMemo(
     () => (publicKey !== null ? params.userAddress === publicKey?.toBase58() : false),
@@ -150,7 +150,7 @@ export const Profile: FC = (): JSX.Element => {
       setNonSessionUserParsedAccounts([])
       setUserActivity([])
     }
-  }, [sessionUser, publicKey, wallet?.adapter?.connected, params.userAddress])
+  }, [sessionUser, publicKey, wallet?.adapter?.publicKey, wallet?.adapter, params.userAddress])
 
   useEffect(() => {
     const backgroundArray = [

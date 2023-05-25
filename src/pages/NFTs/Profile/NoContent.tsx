@@ -8,9 +8,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
-  ${tw`flex items-center justify-center dark:bg-black-1 bg-grey-6 h-[100%]`}
+  ${tw`flex items-center justify-center h-[calc(100vh - 260px)]  sm:h-[calc(100vh - 200px)]
+  dark:bg-black-1 bg-grey-6 h-[100%]`}
   ${({ $cssStyle }) => $cssStyle};
-  height: calc(100vh - 260px);
   text-align: center;
   padding: 10px 0;
 
@@ -79,7 +79,7 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
   const obj = options[type]
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
 
   const handleNoContentClick = () => {
     switch (type) {

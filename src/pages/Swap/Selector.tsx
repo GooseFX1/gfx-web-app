@@ -216,7 +216,10 @@ export const Selector: FC<{
     }
     return { tokenA: tA, tokenB: tB, setTokenA: sTA, setTokenB: sTB }
   }, [tA, tB, sTA, sTB, isReverse])
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const publicKey = useMemo(
+    () => wallet?.adapter?.publicKey,
+    [wallet, wallet?.adapter, wallet?.adapter?.publicKey]
+  )
   const popularTokens = useMemo(() => tokens.filter((i) => POPULAR_TOKENS.has(i.address)), [tokens])
 
   const getTokenAccounts = useCallback(

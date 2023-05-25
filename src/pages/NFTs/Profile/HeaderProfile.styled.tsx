@@ -37,25 +37,29 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
       border: 5px solid;
     }
     .edit-icon {
-      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] sm:right-[-32px] right-[-20px] w-[30px] `}
+      ${tw`absolute cursor-pointer h-[30px] bottom-[0px] sm:top-5 sm:right-[-25px] right-[-20px] w-[30px] `}
     }
   }
   .profileBio {
     ${({ theme }) => theme.customScrollBar(0)}
-    ${tw`dark:text-grey-2 w-[220px] h-10 overflow-y-auto sm:text-[13px] font-semibold leading-[15px] `}
+    ${tw`dark:text-grey-2 w-[220px] sm:text-right
+     h-10 overflow-y-auto sm:text-[13px] font-semibold leading-[15px] `}
     ::-webkit-scrollbar {
       display: none;
     }
   }
+  .wallet-wrap {
+    ${tw`mt-[100px] sm:absolute sm:left-0  sm:mt-[125px] `}
+  }
   .name-wrap {
-    ${tw`mt-[100px] ml-[-170px] sm:ml-4 sm:mt-[125px] sm:absolute`}
+    ${tw`mt-[100px] ml-[-170px] sm:right-3 sm:mt-[10px] sm:absolute`}
   }
   .name {
     @media (max-width: 500px) {
       font-size: 20px;
       margin-left: 0;
     }
-    ${tw`text-grey-5`}
+    ${tw`text-grey-5 sm:text-right sm:w-full`}
     font-size: 35px;
     font-weight: 600;
     display: inline-block;

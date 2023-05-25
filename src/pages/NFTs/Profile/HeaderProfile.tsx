@@ -6,7 +6,7 @@ import { Image } from 'antd'
 // import styled from 'styled-components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { useNFTProfile, useDarkMode, useConnectionConfig } from '../../../context'
+import { useNFTProfile, useDarkMode, useConnectionConfig, useAccounts } from '../../../context'
 import { ILocationState } from '../../../types/app_params.d'
 import { Button } from '../../../components'
 import { PopupProfile } from './PopupProfile'
@@ -17,7 +17,8 @@ import {
   AUCTION_HOUSE_PROGRAM_ID,
   toPublicKey,
   createWithdrawInstruction,
-  confirmTransaction
+  confirmTransaction,
+  WRAPPED_SOL_MINT
 } from '../../../web3'
 import { callWithdrawInstruction } from '../actions'
 import { MainButton, SuccessfulListingMsg, FloatingActionButton } from '../../../components'
@@ -30,6 +31,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { WalletProfilePicture } from './ProfilePageSidebar'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
 
 // const DROPDOWN = styled(Dropdown)`
 //   width: auto;
@@ -303,8 +305,14 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   // )
 
   let profilePic = currentUserProfile?.profile_pic_link
-  if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
+  if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') profilePic = null
   const goToBackPage = useCallback(() => history.goBack(), [])
+
+  const { getUIAmount } = useAccounts()
+  const solBalance = useMemo(
+    () => getUIAmount(WRAPPED_SOL_MINT.toString()),
+    [wallet?.adapter, wallet?.adapter?.publicKey]
+  )
 
   return (
     <StyledHeaderProfile mode={mode}>
@@ -351,6 +359,27 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               />
             )}
           </div>
+
+          <div className="wallet-wrap" tw="ml-4">
+            {currentUserProfile === undefined ? (
+              <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
+            ) : (
+              wallet?.adapter?.publicKey && (
+                <>
+                  <div tw="sm:text-[15px] font-semibold text-grey-2">Wallet Balance</div>
+                  <div className="name" tw="!text-left !text-[15px] font-semibold">
+                    {
+                      <PriceWithToken
+                        token="SOL"
+                        price={solBalance.toFixed(2) + ' SOL'}
+                        cssStyle={tw`!text-grey-5 h-5 w-5`}
+                      />
+                    }
+                  </div>
+                </>
+              )
+            )}
+          </div>
           <div className="name-wrap" tw="ml-4">
             {currentUserProfile === undefined ? (
               <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
@@ -368,8 +397,9 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 ) : (
                   <div>
                     {' '}
-                    Add your bio and share <br />
-                    with the world who you <br /> are!
+                    Complete your profile
+                    <br />
+                    and start sharing!
                   </div>
                 )}
               </div>
@@ -378,11 +408,10 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <img className="check-icon" src={`/img/assets/check-icon.svg`} alt="is-verified-user" />
             )}
           </div>
-          <div tw="flex items-center mt-4">
+          <div tw="flex items-center mt-4 sm:absolute sm:top-0 right-2">
             <a href={`https://solscan.io/account/${params?.userAddress}`} target="_blank" rel="noreferrer">
               <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
             </a>
-            <img src="/img/assets/shareBlue.svg" tw="h-10 w-10 mr-2.5 ml-3" />
           </div>
 
           {currentUserProfile === undefined ? (

@@ -65,7 +65,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT } = useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
   const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
   const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
@@ -192,6 +192,10 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
     setIsLoadingBeforeRelocate(false)
     return true
   }
+
+  useEffect(() => {
+    if (showDrawerSingleNFT) setNFTDetails()
+  }, [localAsk, localBids])
 
   //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
   const dynamicPriceValue = useCallback(

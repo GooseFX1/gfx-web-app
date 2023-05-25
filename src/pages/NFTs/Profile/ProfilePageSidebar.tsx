@@ -250,7 +250,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   }
 
   let profilePic = currentUserProfile?.profile_pic_link
-  if (profilePic === 'https://i.pinimg.com/564x/ee/23/b8/ee23b8469c14f3e819e4e0ce5cd60c2c.jpg') profilePic = null
+  if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') profilePic = null
 
   return (
     <PROFILE navCollapsed={isCollapsed}>
@@ -430,7 +430,7 @@ export const WalletProfilePicture = (): ReactElement => {
 
   return (
     <div className="no-dp-avatar">
-      <img tw="h-full" src={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`} alt="profile picture" />
+      <img tw="h-full" src={`/img/assets/Aggregator/avatar-${mode}.svg`} alt="profile picture" />
     </div>
   )
 }
