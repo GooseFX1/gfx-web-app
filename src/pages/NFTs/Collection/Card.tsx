@@ -223,10 +223,10 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   if (!nftDetails) return null
   return (
     filterAndShow && (
-      <>
+      <div tw="pt-3 px-[6px]">
         {handelDrawer()}
-        <div className={gradientBg ? 'gridGradient' : 'gridItemRegular'}>
-          <div className={gradientBg ? 'gridGradientInner' : 'gridItem'}>
+        <div className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}>
+          <div className={'gridItem'}>
             <div
               className="gridItemContainer"
               onMouseEnter={() => setHover(true)}
@@ -336,7 +336,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
             </div>
           </div>
         </div>
-      </>
+      </div>
     )
   )
 }

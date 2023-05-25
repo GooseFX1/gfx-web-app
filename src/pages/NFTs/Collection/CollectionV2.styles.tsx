@@ -142,7 +142,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
       height: auto;
     }
     .flexContainer {
-      ${tw`flex h-screen`}
+      ${tw`flex h-screen px-[12px]`}
     }
 
     .filtersContainer {
@@ -176,7 +176,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-3 sm:pl-1 sm:grid-cols-2  overflow-y-auto pb-[300px] dark:bg-black-1 bg-grey-6 `}
+    ${tw`grid p-3 sm:pl-1 sm:grid-cols-2  overflow-y-auto pb-[300px] dark:bg-black-1 bg-grey-6 `}
     ${({ theme }) => theme.customScrollBar('0px')}
   }
   .pinkGradient {
@@ -184,18 +184,17 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItemRegular {
-    ${tw`  mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
+    ${tw`w-full h-full p-[1px] sm:mt-[8px] rounded-[15px] mx-auto sm:ml-0.5 z-[0]`}
+    background: ${({ theme }) => theme.borderForNFTCard};
   }
   .gridGradient {
-    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px]  
-      duration-500 cursor-pointer   mt-[15px] p-[1px] mx-auto  `}
+    ${tw`p-[2px]`}
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
 
   .gridItem {
-    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer  sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    border: 1px solid ${({ theme }) => theme.borderForNFTCard}; // change lite mode
+    ${tw`h-full w-full sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+      duration-500 cursor-pointer sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
   }
 
   .gridItemCollections {
@@ -203,16 +202,12 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
     border:1px solid ${({ theme }) => theme.borderForNFTCard} // change lite mode
   }
-  .gridGradientInner {
-    ${tw`h-[293px] w-[188px] sm:w-[183px] rounded-[14px] dark:bg-black-1 bg-white 
-      duration-500 cursor-pointer mx-auto z-[0]`}
-  }
 
   .gridItemContainer {
     ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
     .nftImg {
-      ${tw`flex items-center w-[170px] h-[170px] overflow-hidden rounded-[8px]`}
+      ${tw`flex items-center w-full h-full max-h-[164px] overflow-hidden rounded-[8px]`}
       img {
         height: auto;
         width: 100%;

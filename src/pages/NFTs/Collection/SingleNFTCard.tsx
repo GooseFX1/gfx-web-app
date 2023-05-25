@@ -217,15 +217,15 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   }, [])
 
   return (
-    <>
+    <div tw="pt-4 px-[8px]">
       {handleAppraisalPopup()}
       <div
-        className={gradientBg ? 'gridGradient ' : 'gridItemRegular '}
+        className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}
         key={index}
         onClick={() => goToDetails(item)}
         ref={lastCardRef}
       >
-        <div className={gradientBg ? 'gridGradientInner ' : 'gridItem '}>
+        <div className={'gridItem'}>
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
@@ -328,7 +328,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
