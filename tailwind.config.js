@@ -38,6 +38,7 @@ module.exports = {
         'black-3': '#1F1F1F',
         'black-4': '#3C3C3C',
         'black-5': '#1E1E1E',
+        'black-6': '#2A2A2A',
         'grey-1': '#636363',
         'grey-2': '#B5B5B5',
         'grey-3': '#7D7D7D',
@@ -63,6 +64,7 @@ module.exports = {
       },
       padding: {
         0.75: '3px',
+        3.75: '15px',
         '10p': '10%'
       },
       margin: {

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {
   BackpackWalletAdapter,
   GlowWalletAdapter,
@@ -6,10 +5,12 @@ import {
   SolflareWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
-  SolongWalletAdapter,
+  LedgerWalletAdapter,
   BraveWalletAdapter,
   Coin98WalletAdapter,
-  CoinbaseWalletAdapter
+  CoinbaseWalletAdapter,
+  NightlyWalletAdapter,
+  ExodusWalletAdapter
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -38,8 +39,10 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
   new SolflareWalletAdapter({ network }),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
-  new SolongWalletAdapter(),
+  new LedgerWalletAdapter(),
   new BraveWalletAdapter(),
   new Coin98WalletAdapter(),
-  new CoinbaseWalletAdapter()
+  new CoinbaseWalletAdapter(),
+  new NightlyWalletAdapter(),
+  new ExodusWalletAdapter()
 ]
