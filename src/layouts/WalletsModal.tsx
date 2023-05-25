@@ -10,11 +10,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 
 const NAME = styled.div`
-  ${tw`text-[14px] sm:text-[12px]
-   font-semibold text-center m-auto flex justify-center  mt-5 items-center `}
-  @media(max-width:500px) {
-    ${tw`mt-[15px] text-[12px]`}
-  }
+  ${tw`text-[14px] font-semibold text-center m-auto flex justify-center mt-5 items-center sm:mt-3.75 sm:text-[12px]`}
 `
 const DETECTED_NAME = styled.div`
   ${tw`text-regular font-semibold`}
@@ -37,14 +33,14 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
   }
   .ant-modal-content {
-    overflow-y: scroll;
-    height: calc(100% - 15px);
+    ${tw`h-full overflow-y-scroll`}
     ::-webkit-scrollbar {
       display: none;
     }
   }
   .show-more {
-    ${tw`text-average pl-4 font-semibold underline mt-3.75 text-center cursor-pointer dark:text-white text-blue-1`}
+    ${tw`text-average pl-4 font-semibold underline mt-3.75 text-center 
+      cursor-pointer dark:text-white text-blue-1 pb-3.75`}
   }
   .ant-modal-close-x {
     ${tw`!w-5 !h-5 `}
@@ -56,7 +52,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`mt-[22px]`}
   }
   .wallets-holder {
-    margin: 0 15px;
+    ${tw`my-0 mx-3.75`}
   }
   .wallet-border {
     border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
@@ -104,8 +100,8 @@ export const WalletsModal: FC = () => {
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
     <STYLED_POPUP
-      width={'396px'}
-      height={'354px'}
+      width={'354px'}
+      height={'396px'}
       visible={visible}
       title={null}
       footer={null}

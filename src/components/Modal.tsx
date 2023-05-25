@@ -1,13 +1,12 @@
 import React, { FC, ReactNode } from 'react'
 import { Modal as AntModal } from 'antd'
-import styled from 'styled-components'
+import tw, { styled } from 'twin.macro'
 import { useDarkMode } from '../context'
 import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
-import tw from 'twin.macro'
 
 const ANTMODAL = styled(AntModal)`
+  ${tw`dark:bg-black-6 bg-white`}
   ${({ theme }) => theme.customScrollBar('4px')};
-  background-color: ${({ theme }) => theme.bg9};
 `
 
 const CLOSE_ICON = styled(CenteredImg)`
