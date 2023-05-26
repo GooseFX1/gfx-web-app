@@ -84,10 +84,10 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
         ${tw`w-[35px] h-[30px]`}
       }
       .twitterHeight {
-        height: 18px;
+        height: 17px;
       }
       .height{
-        height: 25px;
+        height: 30px;
       }
     }
   }
@@ -176,6 +176,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const [twitterHover, setTwitterHover] = useState<boolean>(false)
   const [telegramHover, setTelegramHover] = useState<boolean>(false)
   const [discordHover, setDiscordHover] = useState<boolean>(false)
+  const [websiteHover, setWebsiteHover] = useState<boolean>(false)
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
@@ -292,7 +293,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 onMouseLeave={() => {
                   setTwitterHover(false)
                 }}
-                href={validExternalLink(currentUserProfile?.twitter_link)}
+                href={validExternalLink(
+                  currentUserProfile?.telegram_link.includes('twitter.com')
+                    ? currentUserProfile?.twitter_link
+                    : 'twitter.com/' + currentUserProfile?.telegram_link
+                )}
               >
                 <img
                   className={twitterHover ? 'social-icon twitterHeight' : 'social-icon'}
@@ -321,6 +326,26 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 />
               </a>
             )}
+            {currentUserProfile?.website_link && (
+              <a
+                className="social-item"
+                target={'_blank'}
+                rel="noreferrer"
+                onMouseEnter={() => {
+                  setWebsiteHover(true)
+                }}
+                onMouseLeave={() => {
+                  setWebsiteHover(false)
+                }}
+                href={validExternalLink(currentUserProfile?.website_link)}
+              >
+                <img
+                  className={websiteHover ? 'social-icon height' : 'social-icon'}
+                  src={websiteHover ? '/img/assets/website-hover.svg' : '/img/assets/website.svg'}
+                  alt=""
+                />
+              </a>
+            )}
 
             {currentUserProfile?.telegram_link && (
               <a
@@ -333,7 +358,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 onMouseLeave={() => {
                   setTelegramHover(false)
                 }}
-                href={validExternalLink(currentUserProfile?.telegram_link)}
+                href={validExternalLink(
+                  currentUserProfile?.telegram_link.includes('t.me/')
+                    ? currentUserProfile?.telegram_link
+                    : 't.me/' + currentUserProfile?.telegram_link
+                )}
               >
                 <img
                   className={telegramHover ? 'social-icon height' : 'social-icon'}
@@ -355,7 +384,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
           <div tw="flex flex-wrap justify-between items-center px-6 pt-6">
             <div>
               <span tw="font-semibold text-[30px] dark:text-white text-black-4">
-                {truncateAddress(params.userAddress)}
+                {currentUserProfile?.nickname ?? truncateAddress(params.userAddress)}
               </span>
             </div>
             <div tw="flex">
@@ -371,7 +400,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                   tw="h-[40px] w-[40px] rounded cursor-pointer"
                 />
               </a>
-              <div onClick={() => setShareModal(true)} tw="h-[40px] w-[40px] cursor-pointer">
+              <div onClick={() => copyToClipboard()} tw="h-[40px] w-[40px] cursor-pointer">
                 <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
               </div>
             </div>

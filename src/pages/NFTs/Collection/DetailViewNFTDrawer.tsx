@@ -18,10 +18,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
-import { minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
+import { copyToClipboard, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
-import { copyToClipboard } from './CollectionHeader'
 import { ParsedAccount } from '../../../web3/nfts/types'
 
 const DETAIL_VIEW = styled.div`
@@ -229,7 +228,7 @@ const ImageViewer = (): ReactElement => {
       tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4
     border-r-0 border-t-0 dark:text-white text-black px-[29px] sm:px-[14px]  border-l-grey-4 sm:border-l-0"
     >
-      <DETAIL_VIEW tw="h-[calc(100vh - 6px)] overflow-y-scroll">
+      <DETAIL_VIEW tw="h-[calc(100vh - 0px)] overflow-y-scroll">
         <ImageShowcase
           setShowSingleNFT={() => {
             setGeneral(null)
@@ -277,7 +276,7 @@ const ImageViewer = (): ReactElement => {
               <img
                 tw="h-10 w-10 cursor-pointer"
                 src={`/img/assets/shareBlue.svg`}
-                onClick={() => setShareModal(true)}
+                onClick={() => copyToClipboard()}
               />
             </div>
           </div>
@@ -287,7 +286,7 @@ const ImageViewer = (): ReactElement => {
         <div tw="mt-[30px]">
           <AppraisalValue
             text={gfxAppraisalValue ? gfxAppraisalValue : null}
-            label={gfxAppraisalValue ? 'Apprasial Value' : 'GFX Apprasial Not Supported'}
+            label={gfxAppraisalValue ? 'Appraisal Value' : 'Appraisal Not Supported'}
           />
         </div>
         {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
@@ -331,11 +330,12 @@ export const ButtonContainer = (): ReactElement => {
   }, [bids])
   const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
 
+  if (!isOwner && !ask) return null
   return (
     <div
-      tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] dark:border-l-black-4
+      tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] dark:border-l-black-4 
         dark:bg-black-1 bg-grey-5 px-[30px] sm:px-[14px] flex items-center justify-between  border-solid
-        border-1 border-b-0 border-r-0 dark:border-t-black-4 border-grey-4  dark:border-l-black-4"
+        border-1 !border-b-0 border-r-0 dark:border-t-black-4 border-grey-4  dark:border-l-black-4"
     >
       {isOwner ? (
         <>
@@ -365,7 +365,7 @@ export const ButtonContainer = (): ReactElement => {
         </>
       ) : (
         <>
-          {myBid?.length > 0 ? (
+          {myBid?.length > 0 && (
             <Button
               height="44px"
               width={ask ? '180px' : '100%'}
@@ -374,20 +374,11 @@ export const ButtonContainer = (): ReactElement => {
             >
               <span tw="text-regular font-semibold text-white">Cancel Bid</span>
             </Button>
-          ) : (
-            <Button
-              height="44px"
-              width={ask ? '180px' : '100%'}
-              cssStyle={tw`bg-blue-1 mr-2`}
-              onClick={() => setBidNow(general)}
-            >
-              <span tw="text-regular font-semibold text-white">Bid</span>
-            </Button>
           )}
           {ask && (
             <Button
               height="44px"
-              width="180px"
+              width="100%"
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
               onClick={() => handleBuynowClicked()}
             >

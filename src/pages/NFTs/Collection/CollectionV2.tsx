@@ -39,7 +39,7 @@ import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
@@ -125,9 +125,6 @@ const NFTStatsContainer = () => {
     }
   }, [lastRefreshedClass])
 
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
-  }
   const onShare = async (social: string) => {
     if (social === 'copy link') {
       copyToClipboard()
@@ -178,32 +175,29 @@ const NFTStatsContainer = () => {
             ) : (
               <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
             )}
-            <div
-              tw="sm:text-[22px] font-bold flex items-center"
-              style={{ fontSize: collection?.collection_name?.length > 20 ? '25px' : '35px' }}
-            >
+            <div tw="sm:text-[22px] font-bold flex items-center text-[25px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="sm:text-[22px] ml-3 font-bold">
-                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 20)}
+                  <div tw="sm:text-[22px] ml-3 font-bold max-w-[250px]">
+                    {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
+                    {collection && collection.is_verified ? (
+                      <img
+                        style={{ height: 25, width: 25, margin: '0 8px' }}
+                        src="/img/assets/Aggregator/verifiedNFT.svg"
+                      />
+                    ) : (
+                      <div tw="mt-1.5">
+                        {TableHeaderTitle(
+                          '',
+                          'This is an unverified Collection Please do your own Research about this Collection ',
+                          false
+                        )}
+                      </div>
+                    )}
                   </div>
                 </GenericTooltip>
               ) : (
                 <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
-              )}
-              {collection && collection.is_verified ? (
-                <img
-                  style={{ height: 25, width: 25, margin: '0 8px' }}
-                  src="/img/assets/Aggregator/verifiedNFT.svg"
-                />
-              ) : (
-                <div tw="mt-1.5">
-                  {TableHeaderTitle(
-                    '',
-                    'This is an unverified Collection Please do your own Research about this Collection ',
-                    false
-                  )}
-                </div>
               )}
             </div>
             {checkMobile() && (
@@ -268,7 +262,7 @@ const NFTStatsContainer = () => {
                   tw="h-11 w-11 !mr-0"
                   src="/img/assets/shareBlue.svg"
                   alt=""
-                  onClick={() => setShareModal(true)}
+                  onClick={() => copyToClipboard()}
                 />
               </div>
               {pubKey && <div tw="!w-10">{<CurrentUserProfilePic />}</div>}
@@ -346,7 +340,7 @@ const FiltersContainer: FC<{
   setDisplayIndex: (index: number) => void
 }> = ({ setOpen, displayIndex, setDisplayIndex }) => {
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
-  const { setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { setSearchInsideCollection, searchInsideCollection } = useNFTAggregatorFilters()
   const { myNFTsByCollection } = useNFTCollections()
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
@@ -377,6 +371,7 @@ const FiltersContainer: FC<{
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
           style={{ width: 332 }}
+          filter={searchInsideCollection}
           bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
@@ -399,7 +394,7 @@ const FiltersContainer: FC<{
             {category.label}
           </FilterCategory>
         ))}
-        {!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}
+        <div tw="mr-4">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
       </div>
     </NFT_FILTERS_CONTAINER>
   )

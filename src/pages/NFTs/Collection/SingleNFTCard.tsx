@@ -43,12 +43,13 @@ import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Tag } from '../../../components/Tag'
 import { Image } from 'antd'
 
-export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any; lastCardRef?: any }> = ({
-  item,
-  index,
-  addNftToBag,
-  lastCardRef
-}) => {
+export const SingleNFTCard: FC<{
+  item: BaseNFT
+  index: number
+  myItems?: boolean
+  addNftToBag?: any
+  lastCardRef?: any
+}> = ({ item, index, myItems = false, addNftToBag, lastCardRef }) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
@@ -63,6 +64,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [activeCard, setActiveCard] = useState<boolean>(false)
+  const { myNFTsByCollection } = useNFTCollections()
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
@@ -80,6 +82,11 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
         : undefined
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
+
+  const hideThisNFT = useMemo(() => {
+    const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item.mint_address)
+    return currentNFT.length && currentNFT[0].asks.length === 0 && !myItems
+  }, [myNFTsByCollection])
 
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -216,6 +223,8 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
     return capString.join(' ')
   }, [])
 
+  if (hideThisNFT) return null
+
   return (
     <div tw="pt-4 px-[8px]">
       {handleAppraisalPopup()}
@@ -255,6 +264,13 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
                   fallback={`/img/assets/nft-preview-${mode}.svg`}
                   alt="NFT Preview"
                 />
+                {isOwner && localAsk !== null && (
+                  <div tw="absolute left-[16px] top-[14px]">
+                    <Tag loading={false}>
+                      <span tw="font-semibold">{localAsk?.buyer_price && 'Listed'}</span>
+                    </Tag>
+                  </div>
+                )}
               </div>
             ) : (
               <SkeletonCommon width="100%" height="auto" />
@@ -306,7 +322,7 @@ export const SingleNFTCard: FC<{ item: BaseNFT; index: number; addNftToBag?: any
                 <PriceWithToken
                   price={commafy(displayPrice, displayPrice % 1 !== 0 ? 2 : 0)}
                   token={currencyView}
-                  cssStyle={tw`!ml-0`}
+                  cssStyle={tw`!ml-0 dark:text-grey-2 text-black-4`}
                 />
               )}
               {localAsk === null && <span tw="dark:text-grey-3 h-7 text-grey-4 font-semibold">Not Listed</span>}
@@ -338,15 +354,22 @@ export const HoverOnNFT: FC<{
   addNftToBag?: any
   item: BaseNFT
   myBidToNFT: INFTBid[]
-  ask: INFTAsk | null | boolean
+  ask: INFTAsk
   buttonType: string
   setNFTDetails: any
   setHover?: Dispatch<SetStateAction<boolean>>
 }> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT, setHover }): ReactElement => {
   const { sessionUser } = useNFTProfile()
-  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked } = useNFTAggregator()
+  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT } =
+    useNFTAggregator()
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { setVisible } = useWalletModal()
+
+  const showBidBtn = useMemo(
+    () =>
+      buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length === 0 && ask && !ask.marketplace_name,
+    [ask, buttonType, myBidToNFT]
+  )
 
   const goToDetailsForModal = useCallback(
     async (e, type) => {
@@ -364,6 +387,9 @@ export const HoverOnNFT: FC<{
       setHover(false)
 
       switch (type) {
+        case 'delist':
+          setDelistNFT(true)
+          break
         case 'bid':
           setBidNow(item)
           break
@@ -415,12 +441,20 @@ export const HoverOnNFT: FC<{
           </Button>
         )}
         {buttonType === 'Modify' && (
-          <Button
-            cssStyle={tw`bg-blue-1 h-[35px] w-[108px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
-            onClick={(e) => goToDetailsForModal(e, 'sell')}
-          >
-            Modify Price
-          </Button>
+          <>
+            <Button
+              cssStyle={tw`bg-red-2 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 `}
+              onClick={(e) => goToDetailsForModal(e, 'delist')}
+            >
+              Delist
+            </Button>
+            <Button
+              cssStyle={tw`bg-blue-1 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
+              onClick={(e) => goToDetailsForModal(e, 'sell')}
+            >
+              Modify
+            </Button>
+          </>
         )}
         {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length > 0 && (
           <Button
@@ -431,7 +465,7 @@ export const HoverOnNFT: FC<{
           </Button>
         )}
 
-        {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length === 0 && (
+        {showBidBtn && (
           <Button
             cssStyle={tw`bg-[#5855ff]   h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
             onClick={(e) => goToDetailsForModal(e, 'bid')}

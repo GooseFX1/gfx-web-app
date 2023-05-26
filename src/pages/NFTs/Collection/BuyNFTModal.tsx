@@ -10,7 +10,7 @@ import {
 } from '../../../context'
 
 import { checkMobile, formatSOLDisplay, notify } from '../../../utils'
-import { AppraisalValue, GenericTooltip } from '../../../utils/GenericDegsin'
+import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -200,11 +200,11 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .priceText {
-    ${tw`text-[25px] font-semibold mt-2 sm:mt-14`}
+    ${tw`text-[25px] font-semibold sm:mt-14`}
     color: ${({ theme }) => theme.text12};
   }
   .priceValue {
-    ${tw`text-xl font-semibold leading-none`}
+    ${tw`text-[25px] font-semibold leading-none`}
     color: ${({ theme }) => theme.text7};
   }
   .sellButton {
@@ -371,7 +371,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     () => (curBid ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * curBid).toFixed(3)) : 0),
     [curBid]
   )
-  const orderTotal: number = useMemo(() => curBid, [curBid])
+  const royalty = useMemo(() => nftMetadata.seller_fee_basis_points / 100, [nftMetadata])
+
+  const orderTotal: number = useMemo(() => curBid + servicePriceCalc + (curBid * royalty) / 100, [curBid])
 
   const notEnoughSol: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
@@ -686,21 +688,23 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           {!checkMobile() && <img className="nftImg" src={general?.image_url} alt="" />}
         </div>
 
-        <div className="vContainer">
+        {/* <div className="vContainer">
           <div className="priceText">Price</div>
-        </div>
+        </div> */}
 
-        <div className="vContainer">
-          <div className={'priceValue'} tw="flex items-center">
+        <div className="vContainer" tw="flex items-center !mt-2 justify-center">
+          <div className="priceText">Price:</div>
+
+          <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
             <div>{curBid}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
           </div>
         </div>
 
         <div tw="mt-4">
-          <AppraisalValue
+          <AppraisalValueSmall
             text={general?.gfx_appraisal_value ? `${general?.gfx_appraisal_value}` : null}
             label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
-            width={390}
+            width={246}
           />
         </div>
         {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
@@ -716,6 +720,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
               <div className="rightAlign">1 NFT</div>
             </div>
           )} */}
+          <div className="rowContainer">
+            <div className="leftAlign">Royalty {royalty}%</div>
+            <div className="rightAlign"> {((royalty * curBid) / 100).toFixed(2)} SOL</div>
+          </div>
           <div className="rowContainer">
             <div className="leftAlign">Service Fee</div>
             <div className="rightAlign"> {servicePriceCalc} SOL</div>

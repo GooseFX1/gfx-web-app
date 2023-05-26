@@ -90,6 +90,44 @@ interface IAppraisalValue {
   width?: number
 }
 
+export const AppraisalValueSmall: FC<IAppraisalValue> = ({ text, label, width }): ReactElement => {
+  const { mode } = useDarkMode()
+  const [appraisalPopup, setAppraisalPopup] = useState<boolean>(false)
+
+  const handlePopup = useCallback(
+    () => <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setAppraisalPopup} />,
+    [appraisalPopup]
+  )
+
+  return (
+    <WRAPPER $width={width} $mode={mode}>
+      {handlePopup()}
+      <div className="outerCover" tw="!h-[58px]">
+        <div className="innerCover" tw="!h-[55px] !rounded-[9.5px]">
+          <GenericTooltip text="The GFX Appraisal Value emphasizes executed sales data, not floor prices.">
+            <div tw="absolute left-0 cursor-pointer">
+              <img
+                src={'/img/assets/Aggregator/Tooltip.svg'}
+                alt="gfx-appraisal-icon"
+                tw="!h-[22px] !w-[22px] ml-[10px]"
+                onClick={() => setAppraisalPopup(true)}
+              />
+            </div>
+          </GenericTooltip>
+
+          <div className="hContainer" tw="ml-4.5">
+            <div className="appraisalTitle" tw="!text-[15px] font-semibold">
+              {label}
+            </div>
+            <div className="appraisalResult" tw="!text-[15px] font-semibold">
+              {text && `${formatSOLDisplay(text, true)} SOL`}
+            </div>
+          </div>
+        </div>
+      </div>
+    </WRAPPER>
+  )
+}
 export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): ReactElement => {
   const { mode } = useDarkMode()
   const [appraisalPopup, setAppraisalPopup] = useState<boolean>(false)
@@ -104,10 +142,7 @@ export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): Rea
       {handlePopup()}
       <div className="outerCover">
         <div className="innerCover">
-          <GenericTooltip
-            text="The GFX Appraisal Value emphasizes
-executed sales data, not floor prices."
-          >
+          <GenericTooltip text="The GFX Appraisal Value emphasizes executed sales data, not floor prices.">
             <div tw="absolute left-0 cursor-pointer">
               <img
                 src={'/img/assets/Aggregator/Tooltip.svg'}

@@ -75,8 +75,10 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
           }
         }
         .generalStats {
-          ${tw`flex flex-grow justify-center items-center sm:!left-0
+          ${tw`flex  justify-center items-center sm:!left-0  
           sm:w-[95%] sm:ml-2 sm:mt-2 sm:relative sm:flex sm:justify-between `}
+          position: absolute;
+          left: calc(50% - 270px);
 
           .wrapper {
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
@@ -136,7 +138,7 @@ export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, set
 }
 export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
   ${({ navCollapsed }) => css`
-    height: calc(100vh - 128px - ${navCollapsed ? '0px' : '80px'});
+    height: calc(100vh - 180px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
       height: auto;
@@ -224,11 +226,6 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px]`}
       background: ${({ theme }) => theme.hoverGradient};
     }
-    .loadingNFT {
-      ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
-         w-[190px] h-[295px] rounded-[15px] pl-1`}
-      background: ${({ theme }) => theme.hoverGradient};
-    }
 
     .hoverAddToBag {
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
@@ -236,7 +233,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
     .loadingNFT {
       ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
-         w-[190px] h-[295px] rounded-[15px] pl-1`}
+         w-[100%] h-[292px] rounded-[15px] pl-1`}
       background: ${({ theme }) => theme.hoverGradient};
     }
   }
@@ -255,13 +252,13 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .nftPrice {
-    ${tw`font-semibold text-[15px] flex items-center pt-2`}
+    ${tw`font-semibold text-[15px] flex items-center pt-3`}
     img {
       ${tw`w-5 h-5 ml-2.5`}
     }
   }
   .apprisalPrice {
-    ${tw`font-semibold text-[15px] mt-[-2px] text-grey-1 flex items-center`}
+    ${tw`font-semibold text-[15px] mt-[-2px] dark:text-grey-5 text-grey-1 flex items-center`}
     img {
       ${tw`w-[20px] h-[20px] ml-2.5`}
     }

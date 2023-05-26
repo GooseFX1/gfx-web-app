@@ -10,7 +10,7 @@ import {
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { Button, SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
-import { AppraisalValue, GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
+import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
   tradeStatePDA,
@@ -594,14 +594,14 @@ export const SellNFTModal: FC<{
         </div>
 
         <div tw="mt-[90px]">
-          <AppraisalValue
+          <AppraisalValueSmall
             text={
               general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
                 ? `${general?.gfx_appraisal_value}`
                 : null
             }
-            label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'GFX Appraisal Not Supported'}
-            width={390}
+            label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
+            width={246}
           />
         </div>
 

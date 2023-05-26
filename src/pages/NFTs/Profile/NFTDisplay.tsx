@@ -239,10 +239,10 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
       )
 
     if (delistNFT)
-      return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={true} />
+      return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={delistNFT} />
 
     if (sellNFTClicked) {
-      return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
+      return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} delistNFT={delistNFT} />
     }
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />

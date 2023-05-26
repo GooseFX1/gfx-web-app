@@ -19,7 +19,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   }
   .ant-drawer-body {
     ${tw`dark:bg-black-1 bg-grey-5 border-solid border-l-grey-4 border-[1px]
-    dark:border-l-black-4 border-t-0 border-r-0`}
+    dark:border-l-black-4 border-t-0 border-r-0 border-b-0`}
     ${({ theme }) => theme.customScrollBar(0)}
     ::-webkit-scrollbar {
       display: none;
@@ -127,6 +127,7 @@ export const Profile: FC = (): JSX.Element => {
     setNonSessionUserParsedAccounts
   } = useNFTProfile()
   const { wallet } = useWallet()
+  const [prevWallet, setPrevWallet] = useState<string>(null)
 
   const publicKey = useMemo(
     () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
@@ -136,6 +137,15 @@ export const Profile: FC = (): JSX.Element => {
     () => (publicKey !== null ? params.userAddress === publicKey?.toBase58() : false),
     [publicKey]
   )
+
+  useEffect(() => {
+    if (prevWallet !== publicKey?.toString()) {
+      if (sessionUser && publicKey) {
+        history.push(`/nfts/profile/${publicKey.toString()}`)
+      }
+      setPrevWallet(publicKey ? publicKey?.toString() : null)
+    }
+  }, [prevWallet, publicKey, sessionUser])
 
   useEffect(() => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)

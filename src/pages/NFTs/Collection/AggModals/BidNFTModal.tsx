@@ -15,7 +15,7 @@ import {
 } from '../../../../context'
 import { GFX_LINK } from '../../../../styles'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../../utils'
-import { AppraisalValue } from '../../../../utils/GenericDegsin'
+import { AppraisalValueSmall } from '../../../../utils/GenericDegsin'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -346,10 +346,10 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
         </div>
 
         <div tw="mt-[20px]  sm:mt-4">
-          <AppraisalValue
+          <AppraisalValueSmall
             text={parseFloat(general?.gfx_appraisal_value) > 0 ? `${general.gfx_appraisal_value}` : null}
             label={parseFloat(general?.gfx_appraisal_value) > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'}
-            width={390}
+            width={246}
           />
         </div>
         {pendingTxSig && (

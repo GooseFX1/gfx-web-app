@@ -146,15 +146,18 @@ export const FixedPriceNFTs = (): ReactElement => {
   }, [collectionSort])
 
   const debouncer = useCallback(
-    debounce((searchQuery) => {
-      globalSearchCall(searchQuery)
+    debounce((searchQuery, collectionId) => {
+      globalSearchCall(searchQuery, collectionId)
     }, 500),
     []
   )
 
-  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [debouncer])
+  const handleSearch = useCallback(
+    (searchQuery) => debouncer(searchQuery, collectionId),
+    [debouncer, collectionId]
+  )
 
-  const globalSearchCall = async (searchQuery) => {
+  const globalSearchCall = async (searchQuery, collectionId) => {
     const resultArr = await fetchSearchNFTbyCollection(collectionId, searchQuery, true)
     const resArr = resultArr.listings ? resultArr.listings : []
     const arr = resArr.map((arr) => arr.nft)

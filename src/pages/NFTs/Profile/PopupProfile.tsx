@@ -46,12 +46,12 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   useEffect(() => {
     form.setFieldsValue(sessionUser)
     if (sessionUser) {
-      setUsername(sessionUser.nickname ? sessionUser.nickname : '')
-      setBio(sessionUser.bio ? sessionUser.bio : '')
-      setTwitterLink(sessionUser.twitter_link ? sessionUser.twitter_link : '')
-      setDiscordLink(sessionUser.discord_profile ? sessionUser.discord_profile : '')
-      setWebsiteLink(sessionUser.website_link ? sessionUser.website_link : '')
-      setTelegramLink(sessionUser.telegram_link ? sessionUser.telegram_link : '')
+      setUsername(sessionUser.nickname ?? '')
+      setBio(sessionUser.bio ?? '')
+      setTwitterLink(sessionUser.twitter_link ?? '')
+      setDiscordLink(sessionUser.discord_profile ?? '')
+      setWebsiteLink(sessionUser.website_link ?? '')
+      setTelegramLink(sessionUser.telegram_link ?? '')
     }
 
     return () => form.setFieldsValue(undefined)
@@ -170,7 +170,9 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         onCancel={onCancel}
         footer={null}
       >
-        <div className="title">Profile</div>
+        <div className="title">
+          Profile <OptionalText />
+        </div>
         <div tw="flex mt-5">
           <CenteredDiv>
             <CurrentUserProfilePic mediumSize={true} />
@@ -193,9 +195,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             </Upload>
           </CenteredDiv>
           <div tw="ml-20 sm:ml-14">
-            <div className="titleHeader">
-              Username <OptionalText />
-            </div>
+            <div className="titleHeader">Username</div>
             <div>
               <InputContainer setVariableState={setUsername} stateVariable={username} maxLength={30} />
             </div>
@@ -211,9 +211,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         </div>
         <div className="profilePicText">Profile Picture</div>
         <div>
-          <div className="titleHeader">
-            Bio <OptionalText />
-          </div>
+          <div className="titleHeader">Bio</div>
           <div>
             <InputContainer setVariableState={setBio} stateVariable={bio} maxLength={100} />
           </div>
@@ -231,7 +229,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         </div>
         <div tw="flex">
           <div className="titleHeader">
-            Twitter <OptionalText />
+            Twitter
             <div>
               <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} maxLength={40} />
             </div>
@@ -239,7 +237,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <PublicURLText />
           </div>
           <div className="titleHeader" tw="ml-3">
-            Discord <OptionalText />
+            Discord
             <div>
               <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
             </div>
@@ -249,7 +247,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         </div>
         <div tw="flex">
           <div className="titleHeader">
-            Telegram <OptionalText />
+            Telegram
             <div>
               <InputContainer setVariableState={setTelegramLink} stateVariable={telegramLink} />
             </div>
@@ -257,7 +255,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
             <PublicURLText />
           </div>
           <div className="titleHeader" tw="ml-4">
-            Website <OptionalText />
+            Website
             <div>
               <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />
             </div>

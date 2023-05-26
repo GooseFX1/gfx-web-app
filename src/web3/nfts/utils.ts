@@ -5,6 +5,7 @@ import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
 import { INFTAsk } from '../../types/nft_details'
 import { NFT_MARKETS } from '../../api/NFTs'
 import { capitalizeFirstLetter } from '../../utils/misc'
+import { notify } from '../../utils'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -101,4 +102,9 @@ export const handleMarketplaceFormat = (name: string): string => {
   const splitString = name.split('_')
   const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
   return capString.join(' ')
+}
+
+export const copyToClipboard = async (): Promise<void> => {
+  await navigator.clipboard.writeText(window.location.href)
+  await notify({ message: `Copied to Clipboard`, icon: 'error' })
 }
