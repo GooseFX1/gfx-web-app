@@ -23,6 +23,7 @@ import {
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { GradientText } from '../../../components/GradientText'
+import { RotatingLoader } from '../../../components/RotatingLoader'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
@@ -83,7 +84,8 @@ export const SingleNFTCard: FC<{
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
 
-  const hideThisNFT = useMemo(() => {
+  const hideThisNFT: boolean = useMemo(() => {
+    if (myNFTsByCollection === null) return false
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item.mint_address)
     return currentNFT.length && currentNFT[0].asks.length === 0 && !myItems
   }, [myNFTsByCollection])
@@ -235,13 +237,21 @@ export const SingleNFTCard: FC<{
         ref={lastCardRef}
       >
         <div className={'gridItem'}>
+          {isLoadingBeforeRelocate && (
+            <div
+              tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
+                  duration-300 w-full rounded-[15px] opacity-50"
+            >
+              <div tw="h-[50%] w-full">
+                <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
+              </div>
+            </div>
+          )}
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
           >
-            {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
-
             {hover && (
               <HoverOnNFT
                 setHover={setHover}
@@ -253,6 +263,7 @@ export const SingleNFTCard: FC<{
                 setNFTDetails={setNFTDetails}
                 addNftToBag={addNftToBag}
                 ask={isOwner ? null : localAsk ? localAsk : null}
+                setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
               />
             )}
             {item ? (
@@ -358,11 +369,19 @@ export const HoverOnNFT: FC<{
   buttonType: string
   setNFTDetails: any
   setHover?: Dispatch<SetStateAction<boolean>>
-}> = ({ addNftToBag, item, ask, setNFTDetails, buttonType, mintAddress, myBidToNFT, setHover }): ReactElement => {
+  setIsLoadingBeforeRelocate: Dispatch<SetStateAction<boolean>>
+}> = ({
+  item,
+  ask,
+  setNFTDetails,
+  buttonType,
+  myBidToNFT,
+  setHover,
+  setIsLoadingBeforeRelocate
+}): ReactElement => {
   const { sessionUser } = useNFTProfile()
   const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT } =
     useNFTAggregator()
-  const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const { setVisible } = useWalletModal()
 
   const showBidBtn = useMemo(
@@ -379,7 +398,7 @@ export const HoverOnNFT: FC<{
         return
       }
 
-      if (redirectBasedOnMarketplace(ask as INFTAsk, type, mintAddress)) return
+      if (redirectBasedOnMarketplace(ask as INFTAsk, type, item?.mint_address)) return
       setOpenJustModal(true)
       setIsLoadingBeforeRelocate(true)
       await setNFTDetails()
@@ -404,12 +423,11 @@ export const HoverOnNFT: FC<{
           break
       }
     },
-    [sessionUser, ask, mintAddress, setNFTDetails, setHover, item]
+    [sessionUser, ask, setNFTDetails, setHover, item]
   )
 
   return (
     <div className="hoverNFT">
-      {isLoadingBeforeRelocate && <div className="loadingNFT" tw="ml-[-4px]" />}
       {/* {addNftToBag && ask && (
         <img
           className="hoverAddToBag"

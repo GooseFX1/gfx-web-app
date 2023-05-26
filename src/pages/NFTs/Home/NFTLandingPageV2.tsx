@@ -25,6 +25,7 @@ import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
 import { Arrow } from '../../../components/common/Arrow'
+import { RotatingLoader } from '../../../components/RotatingLoader'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
 import { Image, Checkbox, Dropdown, Switch } from 'antd'
@@ -547,7 +548,7 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
 const SearchResultContainer = ({ searchFilter }: any) => {
   const history = useHistory()
   const { mode } = useDarkMode()
-  const [searchResultArr, setSearchResult] = useState<any>()
+  const [searchResultArr, setSearchResult] = useState<null | any[]>(null)
 
   const debouncer = useCallback(
     debounce((searchQuery) => {
@@ -573,7 +574,8 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   }, [searchFilter])
   return (
     <SEARCH_RESULT_CONTAINER>
-      {searchResultArr && searchResultArr.length > 0 ? (
+      {searchResultArr !== null &&
+        searchResultArr.length > 0 &&
         searchResultArr.map(
           (data: any, index) =>
             data?.collection && (
@@ -609,10 +611,15 @@ const SearchResultContainer = ({ searchFilter }: any) => {
                 </div>
               </div>
             )
-        )
-      ) : (
+        )}
+      {searchResultArr !== null && searchResultArr.length === 0 && (
         <div tw="flex justify-center">
           <div tw="dark:text-white text-grey-1 font-semibold h-full">No Results</div>
+        </div>
+      )}
+      {searchResultArr === null && (
+        <div tw="flex justify-center">
+          <RotatingLoader textSize={25} iconSize={25} iconColor={'#5855FF'} />
         </div>
       )}
     </SEARCH_RESULT_CONTAINER>

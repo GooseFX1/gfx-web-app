@@ -178,7 +178,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid p-3 sm:pl-1 sm:grid-cols-2  overflow-y-auto pb-[300px] dark:bg-black-1 bg-grey-6 `}
+    ${tw`grid p-3 sm:pl-1 sm:grid-cols-2  overflow-y-auto pb-[316px] dark:bg-black-1 bg-grey-6 `}
     ${({ theme }) => theme.customScrollBar('0px')}
   }
   .pinkGradient {
@@ -195,7 +195,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItem {
-    ${tw`h-full w-full sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
+    ${tw`relative h-full w-full sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
   }
 
@@ -209,7 +209,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     ${tw`flex p-[8px] pb-0 justify-center relative z-[1] `}
 
     .nftImg {
-      ${tw`flex items-center w-full h-full max-h-[164px] overflow-hidden rounded-[8px]`}
+      ${tw`flex items-center w-full min-h-[164px] max-h-[184px] overflow-hidden rounded-[8px]`}
       img {
         height: auto;
         width: 100%;
@@ -229,12 +229,6 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
     .hoverAddToBag {
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
-    }
-
-    .loadingNFT {
-      ${tw`absolute opacity-100 z-[1000] duration-300  flex items-center
-         w-[100%] h-[292px] rounded-[15px] pl-1`}
-      background: ${({ theme }) => theme.hoverGradient};
     }
   }
   .nftTextContainer {

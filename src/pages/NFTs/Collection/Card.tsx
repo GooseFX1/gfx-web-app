@@ -35,6 +35,7 @@ import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { RotatingLoader } from '../../../components/RotatingLoader'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -165,8 +166,8 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
     setIsLoadingBeforeRelocate(true)
     setHover(false)
     await setNFTDetails()
-    // if (target === MODAL_TARGET.SELL) setSellNFT(true)
-    // if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
+    if (target === MODAL_TARGET.SELL) setSellNFT(true)
+    if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
     // if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
 
@@ -208,6 +209,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
 
   const handelDrawer = useCallback(() => {
     if (showDrawerSingleNFT) {
+      console.log('NFT')
       return (
         <ProfileItemDetails
           visible={showDrawerSingleNFT}
@@ -227,13 +229,22 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
         {handelDrawer()}
         <div className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}>
           <div className={'gridItem'}>
+            {isLoadingBeforeRelocate && (
+              <div
+                tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
+                duration-300 w-full rounded-[15px] opacity-50"
+              >
+                <div tw="h-[50%] w-full">
+                  <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
+                </div>
+              </div>
+            )}
             <div
               className="gridItemContainer"
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
               onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
             >
-              {isLoadingBeforeRelocate && <div className="loadingNFT" tw="mt-[-8px]" />}
               {hover && (
                 <HoverOnNFT
                   buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
@@ -242,6 +253,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                   myBidToNFT={localBidToNFT}
                   ask={!isOwner && localAsk ? localAsk : null}
                   setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
+                  setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
                 />
               )}
               <div className="nftImg">
@@ -342,4 +354,13 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
 }
 
 export default memo(Card)
-export const LoadingDiv = (): ReactElement => <div className="loadingNFT" />
+export const LoadingDiv = (): ReactElement => (
+  <div
+    tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
+                  duration-300 w-full rounded-[15px] opacity-50"
+  >
+    <div tw="h-[50%] w-[87%]">
+      <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
+    </div>
+  </div>
+)
