@@ -158,7 +158,7 @@ const ProfileNFTOptionsList: FC<{ setArrow: any }> = ({ setArrow }) => {
         />
       </div>
       <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.ON_SALE)}>
-        {NFT_PROFILE_OPTIONS.ON_SALE.replace('_', ' ')}
+        {NFT_PROFILE_OPTIONS.ON_SALE}
         <input
           type={'radio'}
           checked={profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE}

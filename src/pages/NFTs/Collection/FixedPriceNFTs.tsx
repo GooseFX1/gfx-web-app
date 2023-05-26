@@ -1,4 +1,6 @@
 import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   useConnectionConfig,
   useNFTAggregator,
@@ -13,12 +15,13 @@ import { BaseNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchFixedPriceByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
-import { debounce } from '../../../utils'
+import { debounce as debounce2 } from '../../../utils'
 import NoContent from '../Profile/NoContent'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
+import debounce from 'lodash.debounce'
 
 export const FixedPriceNFTs = (): ReactElement => {
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
@@ -64,7 +67,8 @@ export const FixedPriceNFTs = (): ReactElement => {
       if (observer.current) observer?.current.disconnect()
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && !stopCalling && !searchInsideCollection) {
-          debounce(handleScroll(), 100)
+          debounce2(handleScroll(), 100)
+          // TODO Look at this in detail later
         }
       })
       if (node) observer.current.observe(node)
@@ -83,7 +87,7 @@ export const FixedPriceNFTs = (): ReactElement => {
   const resetLocalState = useCallback(() => {
     setFixedPriceArr([])
     setPageNumber(0)
-    setCollectionSort('DESC')
+    setCollectionSort('ASC')
     setFirstLoad(true)
     setSearchInsideCollection(undefined)
   }, [])
@@ -141,6 +145,22 @@ export const FixedPriceNFTs = (): ReactElement => {
     !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
   }, [collectionSort])
 
+  const debouncer = useCallback(
+    debounce((searchQuery) => {
+      globalSearchCall(searchQuery)
+    }, 500),
+    []
+  )
+
+  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [debouncer])
+
+  const globalSearchCall = async (searchQuery) => {
+    const resultArr = await fetchSearchNFTbyCollection(collectionId, searchQuery, true)
+    const resArr = resultArr.listings ? resultArr.listings : []
+    const arr = resArr.map((arr) => arr.nft)
+    setFilteredFixPrice(arr)
+  }
+
   useEffect(() => {
     // TODO: Is there a way to filter and not call the Request URL: https://nest-api.goosefx.io/nft?mint_address=<val>
 
@@ -151,10 +171,7 @@ export const FixedPriceNFTs = (): ReactElement => {
       if (searchInsideCollection && searchInsideCollection.length > 1) {
         // Your async code here
         try {
-          const resultArr = await fetchSearchNFTbyCollection(collectionId, searchInsideCollection, true)
-          const resArr = resultArr.listings ? resultArr.listings : []
-          const arr = resArr.map((arr) => arr.nft)
-          setFilteredFixPrice(arr)
+          handleSearch(searchInsideCollection)
         } catch (err) {
           console.log(err)
         }

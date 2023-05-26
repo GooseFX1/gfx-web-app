@@ -475,7 +475,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
       console.log(signature)
       setPendingTxSig(signature)
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       setIsLoading(false)
       if (confirm.value.err === null) {
         if (isBuyingNow) {
@@ -494,6 +494,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       }
     } catch (error) {
       setIsLoading(false)
+      console.log(error)
       pleaseTryAgain(isBuyingNow, error?.message)
     }
   }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { IAttributesTabItemData } from '../../../types/nft_details'
 import tw from 'twin.macro'
@@ -74,6 +74,8 @@ export const AsksAndBidsForNFT = (): ReactElement => {
     )
   const { prices } = usePriceFeedFarm()
   const solPrice = prices['SOL/USDC']?.current
+  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
+  const profileLink = hostURL + `/nfts/profile/`
 
   return (
     <div tw="flex-col">
@@ -83,7 +85,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             <div tw="ml-6">
               Bid by{' '}
               <a
-                href={`https://solscan.io/account/${bid.wallet_key}`}
+                href={profileLink + `${bid.wallet_key}`}
                 target="_blank"
                 rel="noreferrer"
                 tw="underline"
@@ -115,7 +117,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             <div tw="ml-3">
               Listed by{' '}
               <a
-                href={`https://solscan.io/account/${ask.wallet_key}`}
+                href={profileLink + `${ask.wallet_key}`}
                 target="_blank"
                 rel="noreferrer"
                 tw="underline"

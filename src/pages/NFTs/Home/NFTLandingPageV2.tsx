@@ -549,11 +549,14 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   const { mode } = useDarkMode()
   const [searchResultArr, setSearchResult] = useState<any>()
 
-  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [])
+  const debouncer = useCallback(
+    debounce((searchQuery) => {
+      globalSearchCall(searchQuery)
+    }, 500),
+    []
+  )
 
-  const debouncer = debounce((searchQuery) => {
-    globalSearchCall(searchQuery)
-  }, 500)
+  const handleSearch = useCallback((searchQuery) => debouncer(searchQuery), [debouncer])
 
   const globalSearchCall = (searchQuery) => {
     fetchGlobalSearchNFT(searchQuery)
@@ -562,6 +565,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
       })
       .catch((err) => console.log(err))
   }
+
   useEffect(() => {
     if (searchFilter && searchFilter.length > 0) {
       handleSearch(searchFilter)

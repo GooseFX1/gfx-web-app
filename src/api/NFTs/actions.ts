@@ -147,7 +147,7 @@ export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any>
 export const fetchSearchNFTbyCollection = async (
   collectionId: number,
   nftName: string,
-  isListed: boolean = false
+  isListed = false
 ): Promise<any> => {
   try {
     const res = await httpClient(NFT_API_BASE).get(

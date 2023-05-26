@@ -9,7 +9,6 @@ import {
 } from '../../../context'
 // import { INFTAsk } from '../../../types/nft_details.d'
 import { Button, SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
-import { registerSingleNFT } from '../../../api/NFTs'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValue, GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
@@ -347,39 +346,6 @@ export const SellNFTModal: FC<{
     }
 
     setIsLoading(true)
-
-    // asserts current NFT does not belong to collection, is one-off
-    if (general.uuid === null) {
-      try {
-        const registeredNFT = await registerSingleNFT({
-          nft_name: general.nft_name,
-          nft_description: general.nft_description,
-          mint_address: general.mint_address,
-          metadata_url: general.metadata_url,
-          image_url: general.image_url,
-          animation_url: general.animation_url
-        })
-
-        setGeneral({
-          uuid: registeredNFT.data.uuid,
-          non_fungible_id: registeredNFT.data.non_fungible_id,
-          ...general
-        })
-      } catch (error) {
-        notify({
-          type: 'error',
-          message: (
-            <TransactionErrorMsg
-              title={`Error Registering NFT!`}
-              itemName={nftMetadata.name}
-              supportText={`Please try again, if the error persists please contact support.`}
-            />
-          )
-        })
-
-        return
-      }
-    }
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
