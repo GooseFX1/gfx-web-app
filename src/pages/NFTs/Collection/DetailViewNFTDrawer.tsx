@@ -392,7 +392,7 @@ export const ButtonContainer = (): ReactElement => {
 }
 
 const NFTDetailsTab = (): ReactElement => {
-  const { general, nftMetadata } = useNFTDetails()
+  const { general, nftMetadata, onChainMetadata } = useNFTDetails()
   const solscanLink = `https://solscan.io/token/`
   const hostURL = useMemo(() => window.location.origin, [window.location.origin])
   const profileLink = hostURL + `/nfts/profile/`
@@ -430,7 +430,9 @@ const NFTDetailsTab = (): ReactElement => {
       {
         title: 'Artist Royalties',
         value: `${
-          nftMetadata.seller_fee_basis_points ? (nftMetadata.seller_fee_basis_points / 100).toFixed(2) : 0
+          onChainMetadata.data.sellerFeeBasisPoints
+            ? (onChainMetadata.data.sellerFeeBasisPoints / 100).toFixed(2)
+            : 0
         }%`
       },
       {

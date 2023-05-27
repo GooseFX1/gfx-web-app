@@ -27,13 +27,13 @@ import { RotatingLoader } from '../../../components/RotatingLoader'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, AH_NAME, ParsedAccount } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, AH_NAME, ParsedAccount, getMetadata } from '../../../web3'
 import { LoadingDiv } from './Card'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Button } from '../../../components/Button'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
+import { getNFTMetadata, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
 import { formatSOLDisplay, notify, capitalizeFirstLetter, commafy, formatSOLNumber } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
@@ -54,7 +54,7 @@ export const SingleNFTCard: FC<{
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
-  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, general, nftMetadata } = useNFTDetails()
+  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata } = useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -92,12 +92,24 @@ export const SingleNFTCard: FC<{
 
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+
   const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
+  const appraisalPriceNative: number = useMemo(
+    () =>
+      item?.gfx_appraisal_value && parseInt(item?.gfx_appraisal_value) > 0
+        ? parseInt(item?.gfx_appraisal_value)
+        : 0,
+    [item?.gfx_appraisal_value]
+  )
+
   const displayPrice: number = useMemo(
     () => (currencyView === 'USDC' ? nftNativePrice * solPrice : nftNativePrice),
     [currencyView, nftNativePrice, solPrice]
   )
-
+  const displayAppraisalPrice: number = useMemo(
+    () => (currencyView === 'USDC' ? solPrice * appraisalPriceNative : appraisalPriceNative),
+    [item?.gfx_appraisal_value, currencyView, appraisalPriceNative]
+  )
   const { mode } = useDarkMode()
   useEffect(() => {
     if (item && sessionUser && sessionUser.user_likes) {
@@ -170,6 +182,8 @@ export const SingleNFTCard: FC<{
       await Promise.all([setBids(localBids), setAsk(localAsk), setTotalLikes(localTotalLikes)])
       const metaData = await res.data
       await setNftMetadata(metaData)
+      const onChainData = await getNFTMetadata(await getMetadata(localSingleNFT.mint_address), connection)
+      setOnChainMetadata(onChainData)
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: localSingleNFT.mint_address as StringPublicKey,
         connection: connection
@@ -339,9 +353,7 @@ export const SingleNFTCard: FC<{
               {localAsk === null && <span tw="dark:text-grey-3 h-7 text-grey-4 font-semibold">Not Listed</span>}
             </div>
             <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
-              {item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
-                ? parseFloat(item?.gfx_appraisal_value).toFixed(2)
-                : 'NA'}
+              {displayAppraisalPrice ? displayAppraisalPrice.toFixed(2) : 'NA'}
               {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
             </div>
             {/* {sessionUser && !isOwner && (

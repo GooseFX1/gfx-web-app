@@ -12,7 +12,8 @@ import {
   INFTBid,
   INFTAsk,
   IMetadataContext,
-  INFTGeneralData
+  INFTGeneralData,
+  IOnChainMetadata
 } from '../types/nft_details.d'
 import { useWallet } from '@solana/wallet-adapter-react'
 
@@ -22,6 +23,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const { network } = useConnectionConfig()
   const [general, setGeneral] = useState<ISingleNFT | null>(null)
   const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>(null)
+  const [onChainMetadata, setOnChainMetadata] = useState<IOnChainMetadata | null>(null)
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [bids, setBids] = useState<INFTBid[]>([])
   const [ask, setAsk] = useState<INFTAsk>()
@@ -224,7 +226,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         sellNFT,
         removeNFTListing,
         totalLikes,
-        setTotalLikes
+        setTotalLikes,
+        onChainMetadata,
+        setOnChainMetadata
       }}
     >
       {children}
@@ -261,6 +265,8 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     totalLikes: context.totalLikes,
     setTotalLikes: context.setTotalLikes,
     myBidToNFT: context.myBidToNFT,
-    setMyBidToNFT: context.setMyBidToNFT
+    setMyBidToNFT: context.setMyBidToNFT,
+    onChainMetadata: context.onChainMetadata,
+    setOnChainMetadata: context.setOnChainMetadata
   }
 }

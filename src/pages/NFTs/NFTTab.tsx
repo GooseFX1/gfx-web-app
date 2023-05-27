@@ -38,7 +38,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 
   return (
     <GRID_CONTAINER
-      tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh -  50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
+      tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
       navCollapsed={isCollapsed}
     >
       <FiltersContainer

@@ -25,7 +25,7 @@ import {
   useNFTAggregatorFilters
 } from '../../../context'
 import { fetchSingleNFT, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
 // import styled, { css } from 'styled-components'
@@ -36,7 +36,7 @@ import { SellNFTModal } from './SellNFTModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { RotatingLoader } from '../../../components/RotatingLoader'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -63,7 +63,8 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
-  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT } = useNFTDetails()
+  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT, setOnChainMetadata } =
+    useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -166,16 +167,22 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
     setIsLoadingBeforeRelocate(true)
     setHover(false)
     await setNFTDetails()
-    if (target === MODAL_TARGET.SELL) setSellNFT(true)
-    if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
+    // if (target === MODAL_TARGET.SELL) setSellNFT(true)
+    // if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
     // if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
 
   const setNFTDetails = async () => {
-    await setBids(localBids)
-    await setAsk(localAsk)
-    await setTotalLikes(localTotalLikes)
-    await setMyBidToNFT(localBidToNFT)
+    // micro optimizations
+    await Promise.all([
+      setBids(localBids),
+      setAsk(localAsk),
+      setTotalLikes(localTotalLikes),
+      setMyBidToNFT(localBidToNFT)
+    ])
+
+    const onChainData = await getNFTMetadata(await getMetadata(localSingleNFT.mint_address), connection)
+    setOnChainMetadata(onChainData)
     const res = await axios.get(localSingleNFT.metadata_url)
     const metaData = await res.data
     await setNftMetadata(metaData)

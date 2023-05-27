@@ -10,7 +10,29 @@ export interface IDetailTabItemData {
   title?: string
   value?: string
 }
+export interface ICreator {
+  address?: string
+  verified?: number
+  share?: number
+}
 
+export interface IData {
+  name?: string
+  symbol?: string
+  uri?: string
+  sellerFeeBasisPoints?: number
+  creators?: ICreator[]
+}
+
+export interface IOnChainMetadata {
+  key?: number
+  updateAuthority?: string
+  mint?: string
+  data?: IData
+  primarySaleHappened?: number
+  isMutable?: number
+  editionNonce?: number
+}
 export interface ITradingHistoryTabItemData {
   id?: string
   price?: number
@@ -171,6 +193,8 @@ export interface INFTDetailsConfig {
   removeNFTListing: (id: string) => Promise<any>
   totalLikes: number
   setTotalLikes: Dispatch<SetStateAction<number>>
+  onChainMetadata: IOnChainMetadata
+  setOnChainMetadata: Dispatch<SetStateAction<IOnChainMetadata>>
 }
 
 export interface ITensorBuyIX {

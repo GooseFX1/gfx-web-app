@@ -8,14 +8,17 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
-  ${tw`flex items-center justify-center h-[calc(100vh - 260px)]  sm:h-[calc(100vh - 200px)]
-  dark:bg-black-1 bg-grey-6 h-[100%]`}
+  ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 200px)]
+  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)]`}
+  /* tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]" */
+
   ${({ $cssStyle }) => $cssStyle};
   text-align: center;
   padding: 10px 0;
 
   .no-data-image {
-    max-width: 160px;
+    max-width: 143px;
+    max-height: 123px;
     margin-bottom: 20px;
   }
   .main-text {
@@ -62,8 +65,8 @@ const options = {
     bgButton: '#5855ff'
   },
   favorited: {
-    mainText: 'No Favorites',
-    subText: 'Explore and like your most favorite ones.',
+    mainText: 'No Items Liked',
+    subText: 'Explore and like your most favorite ones. Coming soon',
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },

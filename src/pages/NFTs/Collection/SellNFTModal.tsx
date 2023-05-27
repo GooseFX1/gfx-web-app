@@ -106,6 +106,21 @@ export const SellNFTModal: FC<{
 
   const [onChainNFTMetadata, setOnChainNFTMetadata] = useState<any>()
 
+  const appraisalValueAsFloat = useMemo(
+    () => (general?.gfx_appraisal_value ? parseFloat(general?.gfx_appraisal_value) : null),
+    [general?.gfx_appraisal_value]
+  )
+
+  const appraisalValueText = useMemo(
+    () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? `${general?.gfx_appraisal_value}` : null),
+    [appraisalValueAsFloat, general?.gfx_appraisal_value]
+  )
+
+  const appraisalValueLabel = useMemo(
+    () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'),
+    [appraisalValueAsFloat]
+  )
+
   useEffect(() => {
     ;(async () => {
       const metadata = await getNFTMetadata(await getMetadata(general.mint_address), connection)
@@ -594,15 +609,7 @@ export const SellNFTModal: FC<{
         </div>
 
         <div tw="mt-[90px]">
-          <AppraisalValueSmall
-            text={
-              general?.gfx_appraisal_value && parseFloat(general?.gfx_appraisal_value) > 0
-                ? `${general?.gfx_appraisal_value}`
-                : null
-            }
-            label={general?.gfx_appraisal_value ? 'Appraisal Value' : 'Appraisal Not Supported'}
-            width={246}
-          />
+          <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
         </div>
 
         {/* <div className="vContainer">

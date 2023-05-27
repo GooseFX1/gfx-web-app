@@ -294,9 +294,9 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                   setTwitterHover(false)
                 }}
                 href={validExternalLink(
-                  currentUserProfile?.telegram_link.includes('twitter.com')
+                  currentUserProfile?.twitter_link.includes('twitter.com/')
                     ? currentUserProfile?.twitter_link
-                    : 'twitter.com/' + currentUserProfile?.telegram_link
+                    : 'twitter.com/' + currentUserProfile?.twitter_link
                 )}
               >
                 <img
@@ -317,7 +317,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 onMouseLeave={() => {
                   setDiscordHover(false)
                 }}
-                href={validExternalLink(currentUserProfile?.discord_profile)}
+                href={validExternalLink(
+                  currentUserProfile?.discord_profile.includes('discordapp.com/users/')
+                    ? currentUserProfile?.discord_profile
+                    : `discordapp.com/users/` + currentUserProfile?.discord_profile
+                )}
               >
                 <img
                   className={discordHover ? 'social-icon height' : 'social-icon'}
