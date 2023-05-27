@@ -318,19 +318,20 @@ export const ButtonContainer = (): ReactElement => {
     win.focus()
   }, [])
 
+  const showBid = !ask || (ask && ask.marketplace_name === null)
+
   const handleBuynowClicked = () => {
     if (redirectBasedOnMarketplace(ask, 'buy', general?.mint_address)) return
     setBuyNow(general)
   }
   const myBid = useMemo(() => {
-    if (bids.length > 0) {
-      return bids.filter((bid) => bid.wallet_key === pubKey.toString())
+    if (bids.length > 0 && pubKey) {
+      return bids.filter((bid) => bid.wallet_key === pubKey?.toString())
     }
     return null
-  }, [bids])
+  }, [bids, pubKey])
   const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
 
-  if (!isOwner && !ask) return null
   return (
     <div
       tw="absolute left-0 z-10 right-0 bottom-0 h-[75px] w-[100%] dark:border-l-black-4 
@@ -375,10 +376,22 @@ export const ButtonContainer = (): ReactElement => {
               <span tw="text-regular font-semibold text-white">Cancel Bid</span>
             </Button>
           )}
+
+          {/* show bid only if from our market place should not show for tensor and ME listings */}
+          {showBid && (
+            <Button
+              height="44px"
+              width={ask ? (showBid ? '180px' : '180px') : '100%'}
+              cssStyle={tw`bg-blue-1 mr-2`}
+              onClick={() => setBidNow(general)}
+            >
+              <span tw="text-regular font-semibold text-white">Bid</span>
+            </Button>
+          )}
           {ask && (
             <Button
               height="44px"
-              width="100%"
+              width={showBid ? '180px' : '100%'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
               onClick={() => handleBuynowClicked()}
             >
@@ -430,8 +443,8 @@ const NFTDetailsTab = (): ReactElement => {
       {
         title: 'Artist Royalties',
         value: `${
-          onChainMetadata.data.sellerFeeBasisPoints
-            ? (onChainMetadata.data.sellerFeeBasisPoints / 100).toFixed(2)
+          onChainMetadata?.data?.sellerFeeBasisPoints
+            ? (onChainMetadata?.data?.sellerFeeBasisPoints / 100).toFixed(2)
             : 0
         }%`
       },

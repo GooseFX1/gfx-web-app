@@ -31,12 +31,6 @@ export const ProfileItemDetails: FC<{
     () => (ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null),
     [ask]
   )
-  const myBid = useMemo(() => {
-    if (bids.length > 0) {
-      return bids.filter((bid) => bid.wallet_key === pubKey.toString())
-    }
-    return null
-  }, [bids])
 
   const isOwner: boolean = useMemo(() => {
     // if (props.userId) return true
@@ -129,7 +123,7 @@ export const ProfileItemDetails: FC<{
           </>
         )}
       </div> */}
-      <ButtonContainer />
+      <ButtonContainer showBid={true} />
     </Drawer>
   )
 }

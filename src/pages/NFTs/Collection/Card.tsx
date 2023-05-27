@@ -168,7 +168,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
     setHover(false)
     await setNFTDetails()
     // if (target === MODAL_TARGET.SELL) setSellNFT(true)
-    // if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
+    if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
     // if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
 
@@ -258,6 +258,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                   item={localSingleNFT}
                   setHover={setHover}
                   myBidToNFT={localBidToNFT}
+                  showBid={true}
                   ask={!isOwner && localAsk ? localAsk : null}
                   setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
                   setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}

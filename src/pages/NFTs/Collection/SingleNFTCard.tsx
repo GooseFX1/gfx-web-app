@@ -378,6 +378,7 @@ export const HoverOnNFT: FC<{
   item: BaseNFT
   myBidToNFT: INFTBid[]
   ask: INFTAsk
+  showBid?: boolean
   buttonType: string
   setNFTDetails: any
   setHover?: Dispatch<SetStateAction<boolean>>
@@ -388,6 +389,7 @@ export const HoverOnNFT: FC<{
   setNFTDetails,
   buttonType,
   myBidToNFT,
+  showBid,
   setHover,
   setIsLoadingBeforeRelocate
 }): ReactElement => {
@@ -398,8 +400,11 @@ export const HoverOnNFT: FC<{
 
   const showBidBtn = useMemo(
     () =>
-      buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length === 0 && ask && !ask.marketplace_name,
-    [ask, buttonType, myBidToNFT]
+      buttonType !== 'Modify' &&
+      buttonType !== 'Sell' &&
+      myBidToNFT.length === 0 &&
+      (showBid || (ask && !ask.marketplace_name)),
+    [ask, buttonType, myBidToNFT, showBid]
   )
 
   const goToDetailsForModal = useCallback(

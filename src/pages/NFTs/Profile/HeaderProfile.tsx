@@ -314,17 +314,17 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
 
-  const isProfileComplete = useMemo(() => {
-    if (
-      currentUserProfile?.nickname &&
-      currentUserProfile?.discord_profile !== 'discordapp.com/users/' &&
-      currentUserProfile?.telegram_link !== 't.me/' &&
-      currentUserProfile?.twitter_link !== 'twitter.com' &&
-      currentUserProfile?.website_link !== ''
-    )
-      return true
-    return false
-  }, [currentUserProfile])
+  // const isProfileComplete = useMemo(() => {
+  //   if (
+  //     currentUserProfile?.nickname &&
+  //     currentUserProfile?.discord_profile !== 'discordapp.com/users/' &&
+  //     currentUserProfile?.telegram_link !== 't.me/' &&
+  //     currentUserProfile?.twitter_link !== 'twitter.com' &&
+  //     currentUserProfile?.website_link !== ''
+  //   )
+  //     return true
+  //   return false
+  // }, [currentUserProfile])
 
   return (
     <StyledHeaderProfile mode={mode}>
@@ -470,7 +470,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </Button>
           )}
 
-          {isSessionUser && !isProfileComplete && connected && publicKey && (
+          {isSessionUser && connected && publicKey && (
             <Button
               height={'44px'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}
