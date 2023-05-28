@@ -288,7 +288,7 @@ const InputContainer: FC<{ setVariableState: any; stateVariable: any; maxLength?
   maxLength = 40
 }) => {
   const handleChange = (e) => {
-    if (maxLength && e.target.value.length < maxLength) setVariableState(e.target.value)
+    if (maxLength && e.target.value.length <= maxLength) setVariableState(e.target.value)
     if (!maxLength) setVariableState(e.target.value)
   }
   return (

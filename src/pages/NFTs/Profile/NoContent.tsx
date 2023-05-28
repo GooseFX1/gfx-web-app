@@ -8,7 +8,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
-  ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 200px)]
+  ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 100px)]
   dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)]`}
   /* tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]" */
 
@@ -17,15 +17,14 @@ const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
   padding: 10px 0;
 
   .no-data-image {
-    max-width: 143px;
-    max-height: 123px;
+    ${tw`max-w-[143px] max-h-[123px] sm:max-h-[80px] sm:max-w-[80px]`}
     margin-bottom: 20px;
   }
   .main-text {
-    ${tw`text-[20px] font-semibold mb-1.5 text-black-4 dark:text-grey-5`}
+    ${tw`text-[20px] sm:text-[18px] font-semibold mb-1.5 text-black-4 dark:text-grey-5`}
   }
   .sub-text {
-    ${tw`text-[15px] font-medium text-grey-1 dark:text-grey-2`}
+    ${tw`text-[15px] sm:text-[13px] font-medium text-grey-1 dark:text-grey-2`}
   }
   .btn {
     min-width: 132px;

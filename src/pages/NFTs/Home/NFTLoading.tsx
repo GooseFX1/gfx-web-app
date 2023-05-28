@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { checkMobile } from '../../../utils'
 
 const CONTAINER = styled.div`
   min-height: 300px;
@@ -39,9 +40,9 @@ export const NFTRowLoading: FC = () => (
     {[...Array(20)].map((_, index) => (
       <div tw="w-[100%]" key={index}>
         <div tw="flex items-center justify-between m-3">
-          <SkeletonCommon width="200px" height="30px" />
-          <SkeletonCommon width="100px" height="24px" />
-          <SkeletonCommon width="100px" height="24px" />
+          <SkeletonCommon width={checkMobile() ? '150px' : '200px'} height="30px" />
+          <SkeletonCommon width="80px" height="24px" />
+          <SkeletonCommon width="80px" height="24px" />
         </div>
       </div>
     ))}

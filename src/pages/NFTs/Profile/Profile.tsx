@@ -27,7 +27,7 @@ const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   }
   .no-dp-avatar {
     ${tw`dark:border-black-1 text-grey-1  bg-grey-6 text-[30px] sm:text-[24px] font-semibold justify-center
-           h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%]
+           h-[116px] dark:bg-black-2 flex items-center w-[116px] rounded-[50%] sm:pt-[1px]
          sm:h-[70px] sm:w-[70px] sm:ml-[-5px] sm:ml-2.5 sm:mt-[-25px]`}
     border: 8px solid ${({ theme }) => theme.bgForNFTCollection};
     @media (max-width: 500px) {

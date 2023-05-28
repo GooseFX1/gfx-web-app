@@ -163,7 +163,7 @@ const FILTERS_CONTAINER = styled.div`
 `
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
-    ${tw`h-[44px] w-[44px] sm:h-10 sm:w-10 rounded-full cursor-pointer mr-5`}
+    ${tw`h-[44px] w-[44px] sm:h-10 sm:w-10 rounded-full cursor-pointer mr-5 sm:mr-0`}
   }
   .avatarNFTMedium {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
@@ -176,7 +176,7 @@ const AVATAR_NFT = styled(Image)`
   ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
 `
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
-  ${tw`relative z-0 mr-1 ml-2`}
+  ${tw`relative z-0 mr-1 ml-2 sm:ml-0`}
   .slider-animation-timeline {
     ${tw`absolute w-[60px] h-[44px] rounded-[36px]  z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 50}%;
@@ -332,6 +332,10 @@ const FiltersContainer = () => {
     console.log(sessionUser ? 'LANDING - Session user - ' + sessionUser.pubkey : ' LANDING NO SESSION USER')
   }, [sessionUser])
 
+  const searchModal = useMemo(() => {
+    if (searchPopup) return <SearchNFTMobile searchPopup={searchPopup} setSearchPopup={setSearchPopup} />
+  }, [searchPopup])
+
   const poolTypeButtons = useMemo(
     () =>
       poolTypes.map((pool, index) => (
@@ -356,7 +360,7 @@ const FiltersContainer = () => {
   if (checkMobile())
     return (
       <div>
-        <SearchNFTMobile searchPopup={searchPopup} setSearchPopup={setSearchPopup} />
+        {searchModal}
         {/* <MenuNFTPopup menuPopup={menuPopup} setMenuPopup={setMenuPopup} /> */}
         <FILTERS_CONTAINER>
           <div className="flexContainer">

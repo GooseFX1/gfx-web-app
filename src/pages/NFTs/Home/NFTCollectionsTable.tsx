@@ -203,9 +203,9 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                   token={currencyView}
                   cssStyle={tw`h-5 w-5 dark:text-grey-6 text-black-4`}
                 />
-                <div tw="text-grey-1">{timelineDisplay} volume </div>
+                <div tw="text-grey-1">{timelineDisplay} Volume </div>
               </div>
-              <div className="rotate90" tw="ml-2">
+              <div className="rotate90" tw="ml-2.5">
                 <Arrow height="10px" width="10px" invert={true} />
               </div>
             </div>
@@ -239,12 +239,17 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       if (item.gfx_appraisal_supported && item.floor_mint) {
         singleNFTDetails = await fetchSingleNFT(item.floor_mint)
         const appraisalValue = parseFloat(singleNFTDetails.data.data[0]?.gfx_appraisal_value) || 0
-        setGfxAppraisal(appraisalValue > 0 ? formatSOLDisplay(appraisalValue) : 0)
+        setGfxAppraisal(appraisalValue > 0 ? appraisalValue : 0)
       }
     }
 
     fetchData()
   }, [item.gfx_appraisal_supported])
+
+  const gfxAppraisalDisplay = useMemo(() => {
+    if (gfxAppraisal > 0 && currencyView === 'USDC') return truncateBigNumber(gfxAppraisal * solPrice)
+    return truncateBigNumber(gfxAppraisal)
+  }, [currencyView, gfxAppraisal])
 
   const volume = useMemo(() => {
     const v =
@@ -302,8 +307,12 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       <td className="tdItem">
         {item?.floor_price >= 0 ? (
           // gfx appraisal
-          gfxAppraisal ? (
-            <PriceWithToken price={gfxAppraisal ? gfxAppraisal : 0} token={currencyView} cssStyle={tw`h-5 w-5`} />
+          gfxAppraisalDisplay ? (
+            <PriceWithToken
+              price={gfxAppraisalDisplay ? gfxAppraisalDisplay : 0}
+              token={currencyView}
+              cssStyle={tw`h-5 w-5`}
+            />
           ) : (
             'NA'
           )

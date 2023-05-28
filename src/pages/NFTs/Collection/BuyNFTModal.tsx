@@ -200,7 +200,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .priceText {
-    ${tw`text-[25px] font-semibold sm:mt-14`}
+    ${tw`text-[25px] font-semibold`}
     color: ${({ theme }) => theme.text12};
   }
   .priceValue {
@@ -706,11 +706,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           {!checkMobile() && <img className="nftImg" src={general?.image_url} alt="" />}
         </div>
 
-        {/* <div className="vContainer">
-          <div className="priceText">Price</div>
-        </div> */}
-
-        <div className="vContainer" tw="flex items-center !mt-2 justify-center">
+        <div className="vContainer" tw="flex items-center !mt-2 sm:!mt-8 justify-center">
           <div className="priceText">Price:</div>
 
           <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">

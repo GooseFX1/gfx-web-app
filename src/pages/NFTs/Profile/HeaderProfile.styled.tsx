@@ -107,7 +107,7 @@ export const StyledHeaderProfile = styled.div<{ mode?: string; background?: stri
     }
   }
   .complete-profile {
-    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative sm:mt-[140px] sm:mr-2.5 
+    ${tw`w-[160px] h-[44px] flex items-center rounded-[45px] justify-center relative sm:mt-[130px] sm:mr-2.5 
     sm:w-[145px] font-semibold text-[15px] text-white cursor-pointer text-[13px]`}
     background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
     @media (max-width: 500px) {

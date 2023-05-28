@@ -5,7 +5,7 @@ import { Loader } from '../../../components'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { useNavCollapse, useNFTAggregator, usePriceFeedFarm } from '../../../context'
-import { checkMobile, formatSOLDisplay, truncateAddress } from '../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber, truncateAddress } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
 import tw, { TwStyle, styled } from 'twin.macro'
@@ -17,6 +17,7 @@ import NoContent from '../Profile/NoContent'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { parseUnixTimestamp } from '../../../utils'
 import { NFTRowLoading } from '../Home/NFTLoading'
+import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 export interface IActivity {
   activity_id: number
@@ -82,6 +83,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`
     height: calc(100vh - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
     overflow-y: auto;
     transition: 0.5s ease;
+    ${tw`sm:h-[100%]`}
   }
   td {
     ${tw`h-[76px] sm:h-[72px]`}
@@ -132,7 +134,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`
   }
   .collectionName {
     ${tw`ml-16 flex text-[15px] sm:ml-16 sm:mt-0 
-     sm:flex sm:justify-between sm:items-center w-[140%]`}/* padding-top: 0!important; */
+     sm:flex sm:justify-start sm:items-center w-[140%]`}/* padding-top: 0!important; */
   }
   .nftCollectionName {
     ${tw`ml-16 sm:-mt-11 -mt-10 sm:w-[180px]`}
@@ -211,14 +213,19 @@ const NFTActivityRowMobile = ({ activityData }: any): any => (
 )
 const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
   const [nftDetails, setNFTDetails] = useState<any>()
+  const { currencyView } = useNFTAggregator()
+  const { solPrice } = usePriceFeedFarm()
   useEffect(() => {
     ;(async () => {
       const { data } = await fetchSingleNFT(activity?.mint_address)
       setNFTDetails(data.data[0])
     })()
   }, [])
-  console.log(activity?.marketplace_name)
 
+  const displayPrice = useMemo(() => {
+    if (currencyView === 'USDC') return truncateBigNumber(solPrice * formatSOLNumber(activity?.price))
+    return truncateBigNumber(formatSOLNumber(activity?.price))
+  }, [currencyView, activity])
   // src={`/img/assets/Aggregator/${
   //   localAsk?.marketplace_name === null
   //     ? AH_NAME(localAsk?.auction_house_key)
@@ -234,10 +241,11 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
               <img className="nftActivityImg" src={nftDetails?.image_url} alt="" />
               <div className="nftCollectionName">{minimizeTheString(nftDetails?.nft_name, 18)}</div>
               <div className="collectionName">
-                Type:
+                <div tw="mr-2">Type:</div>
+
                 <GradientText text={ACTIVITY_KIND[activity?.kind]} fontSize={15} fontWeight={600} />
                 <img
-                  tw="h-5 w-5 ml-0"
+                  tw="h-5 w-5 ml-2"
                   src={`/img/assets/Aggregator/${
                     activity?.marketplace_name ? activity?.marketplace_name : AH_NAME(activity?.auction_house)
                   }.svg`}
@@ -252,7 +260,7 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
         <td className="priceActivity" tw="flex items-end justify-end">
           <div className="textContainer">
             <div className="primaryText">
-              <PriceWithToken token="SOL" price={formatSOLDisplay(activity?.price)} />
+              <PriceWithToken token={currencyView} price={displayPrice} />
             </div>
             <div className="secondaryText">
               <div>
@@ -301,8 +309,6 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
   }, [])
   const hostURL = useMemo(() => window.location.origin, [window.location.origin])
   const profileLink = hostURL + `/nfts/profile/`
-
-  console.log(activity?.marketplace_name)
 
   const marketImage = useMemo(
     () =>

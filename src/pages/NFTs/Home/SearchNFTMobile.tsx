@@ -113,6 +113,7 @@ const SearchNFTMobile: FC<{ searchPopup: boolean; setSearchPopup: any }> = ({
           <SearchBar
             className="searchBarContainer"
             shouldFocus={true}
+            filter={searchFilter}
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             placeholder="Search by collection"
             setSearchFilter={setSearchFilter}

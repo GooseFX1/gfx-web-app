@@ -123,7 +123,7 @@ export const ProfileItemDetails: FC<{
           </>
         )}
       </div> */}
-      <ButtonContainer showBid={true} />
+      <ButtonContainer />
     </Drawer>
   )
 }

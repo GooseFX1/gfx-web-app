@@ -3,7 +3,7 @@ export const NFT_API_BASE = 'nest-api'
 export enum NFT_PROFILE_OPTIONS {
   ALL = 'All',
   OFFERS = 'Offers',
-  ON_SALE = 'On_sale'
+  ON_SALE = 'Listed'
 }
 export enum TIMELINE {
   TWENTY_FOUR_H = '24H',

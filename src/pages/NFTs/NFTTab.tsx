@@ -58,15 +58,16 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   const { mode } = useDarkMode()
 
   return (
-    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6  sm:rounded-t-[30px]">
-      <div className="flitersFlexContainer" tw="sm:mt-4">
+    <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6">
+      <div className="flitersFlexContainer" tw="sm:mt-4 sm:pl-1">
         <>
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
-            style={{ width: checkMobile() ? '80%' : 330 }}
+            style={{ width: checkMobile() ? '100%' : 330 }}
             bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
           />
+
           {!checkMobile() && <ProfileNFTFiltersDropdown />}
           {checkMobile() && (
             <div tw="ml-2 items-center flex">
@@ -118,7 +119,7 @@ const ProfileNFTFiltersDropdown = () => {
         trigger={checkMobile() ? ['click'] : ['hover']}
       >
         {checkMobile() ? (
-          <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5" />
+          <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5 sm:mr-3" />
         ) : (
           <div tw="flex items-center ml-2">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>

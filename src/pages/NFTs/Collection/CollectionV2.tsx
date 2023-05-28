@@ -201,7 +201,7 @@ const NFTStatsContainer = () => {
               )}
             </div>
             {checkMobile() && (
-              <div className="title" tw="flex ml-auto">
+              <div className="title" tw="flex ml-auto items-center">
                 <CurrentUserProfilePic />
                 <SortDropdown />
               </div>
@@ -249,7 +249,7 @@ const NFTStatsContainer = () => {
                   : 0}{' '}
                 SOL
               </div>
-              <div className="subTitleText"> 24H volume </div>
+              <div className="subTitleText"> 24H Volume </div>
             </div>
           </div>
           {!checkMobile() && (
@@ -375,7 +375,7 @@ const FiltersContainer: FC<{
           bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
         />
-        {checkMobile() && displayIndex === 0 && (
+        {checkMobile() && (
           <div tw="ml-3">
             <TokenToggleNFT toggleToken={setCurrency} />
           </div>
@@ -443,7 +443,11 @@ const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
       <div className="option" onClick={() => setCollectionSort('DESC')}>
         Price: Descending <input type={'radio'} checked={collectionSort === 'DESC'} name="sort" value="desc" />
       </div>
-      {checkMobile() && <div className="option">Share</div>}
+      {checkMobile() && (
+        <div className="option" onClick={copyToClipboard}>
+          Share
+        </div>
+      )}
     </DROPDOWN_CONTAINER>
   )
 }

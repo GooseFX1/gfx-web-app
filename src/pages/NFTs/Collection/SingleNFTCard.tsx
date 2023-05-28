@@ -242,7 +242,7 @@ export const SingleNFTCard: FC<{
   if (hideThisNFT) return null
 
   return (
-    <div tw="pt-4 px-[8px]">
+    <div tw="pt-4 px-[8px] sm:px-1 sm:pt-2 ">
       {handleAppraisalPopup()}
       <div
         className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}
@@ -290,7 +290,7 @@ export const SingleNFTCard: FC<{
                   alt="NFT Preview"
                 />
                 {isOwner && localAsk !== null && (
-                  <div tw="absolute left-[16px] top-[14px]">
+                  <div tw="absolute left-[16px] top-[14px] sm:left-3 sm:top-2.5">
                     <Tag loading={false}>
                       <span tw="font-semibold">{localAsk?.buyer_price && 'Listed'}</span>
                     </Tag>

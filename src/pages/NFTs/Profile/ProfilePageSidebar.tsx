@@ -280,7 +280,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
             )}
           </div>
         )}
-        {(currentUserProfile && currentUserProfile?.twitter_link) || currentUserProfile?.telegram_link ? (
+        {currentUserProfile &&
+        (currentUserProfile?.twitter_link ||
+          currentUserProfile?.discord_profile ||
+          currentUserProfile?.website_link ||
+          currentUserProfile?.telegram_link) ? (
           <div className="social-list">
             {currentUserProfile?.twitter_link && (
               <a

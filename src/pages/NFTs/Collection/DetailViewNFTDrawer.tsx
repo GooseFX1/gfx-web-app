@@ -66,10 +66,6 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
            .ant-tabs-nav-list {
             ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
             justify-content: space-around;
-            .ant-tabs-tab{
-              ${tw`sm:!pl-[8%]`}
-            }
-            
           }
         }
 

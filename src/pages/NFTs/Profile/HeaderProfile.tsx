@@ -29,9 +29,10 @@ import { IAppParams } from '../../../types/app_params.d'
 import { FLOATING_ACTION_ICON } from '../../../styles'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { LAMPORTS_PER_SOL_NUMBER, USER_SOCIALS } from '../../../constants'
 import { WalletProfilePicture } from './ProfilePageSidebar'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { copyToClipboard, validateSocialLinks } from '../../../web3/nfts/utils'
 
 // const DROPDOWN = styled(Dropdown)`
 //   width: auto;
@@ -189,11 +190,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   }
 
   const onShare = async (social: string) => {
-    if (social === 'copy link') {
-      copyToClipboard()
-      return
-    }
-
     const res = await generateTinyURL(
       `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
         window.location.pathname
@@ -228,10 +224,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       default:
         break
     }
-  }
-
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
   }
 
   const successfulEscrowWithdrawMsg = (signature: any, amount: string) => ({
@@ -313,6 +305,18 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     () => getUIAmount(WRAPPED_SOL_MINT.toString()),
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
+  const isProfileComplete = useMemo(() => {
+    if (
+      currentUserProfile?.bio &&
+      currentUserProfile?.discord_profile &&
+      currentUserProfile?.twitter_link &&
+      currentUserProfile?.nickname &&
+      currentUserProfile?.website_link &&
+      currentUserProfile?.telegram_link
+    )
+      return true
+    return false
+  }, [currentUserProfile])
 
   // const isProfileComplete = useMemo(() => {
   //   if (
@@ -351,7 +355,8 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
           <div className="avatar-profile-wrap">
             {profilePic ? (
               <Image
-                className="avatar-profile"
+                width={70}
+                height={70}
                 fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
                 src={profilePic ? profilePic : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
                 preview={false}
@@ -421,6 +426,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             )}
           </div>
           <div tw="flex items-center mt-4 sm:absolute sm:top-0 right-2">
+            <img src="/img/assets/shareBlue.svg" tw="h-10 w-10 mr-2" onClick={copyToClipboard} />
             <a href={`https://solscan.io/account/${params?.userAddress}`} target="_blank" rel="noreferrer">
               <img src="/img/assets/solscanBlack.svg" alt="solscan-icon" className="solscan-img" />
             </a>
@@ -432,17 +438,42 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 <div key={key}></div>
               ))}
             </div>
-          ) : currentUserProfile.twitter_link ? (
+          ) : currentUserProfile.twitter_link ||
+            currentUserProfile?.discord_profile ||
+            currentUserProfile?.telegram_link ||
+            currentUserProfile?.website_link ? (
             <div className="social-list">
               {currentUserProfile.twitter_link && (
-                <a href={validExternalLink(currentUserProfile.twitter_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-5 w-6 ml-3 mt-2" src={`/img/assets/Aggregator/twitter.svg`} alt="" />
+                <a
+                  href={validateSocialLinks(currentUserProfile.twitter_link, USER_SOCIALS.TWITTER)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img tw="h-5 w-6 ml-2" src={`/img/assets/twitterNew.svg`} alt="" />
                 </a>
               )}
 
               {currentUserProfile.telegram_link && (
-                <a href={validExternalLink(currentUserProfile.telegram_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-6 w-6 ml-3" src={`/img/assets/Aggregator/telegram.svg`} alt="" />
+                <a
+                  href={validateSocialLinks(currentUserProfile.telegram_link, USER_SOCIALS.TELEGRAM)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img tw="h-6 w-6 ml-2" src={`/img/assets/telegramNew.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.discord_profile && (
+                <a
+                  href={validateSocialLinks(currentUserProfile.discord_profile, USER_SOCIALS.DISCORD)}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                >
+                  <img tw="h-6 w-6 ml-2" src={`/img/assets/discordNew.svg`} alt="" />
+                </a>
+              )}
+              {currentUserProfile.website_link && (
+                <a href={validExternalLink(currentUserProfile.website_link)} target={'_blank'} rel={'noreferrer'}>
+                  <img tw="h-6 w-6 ml-2" src={`/img/assets/website.svg`} alt="" />
                 </a>
               )}
             </div>
@@ -470,7 +501,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </Button>
           )}
 
-          {isSessionUser && connected && publicKey && (
+          {isSessionUser && connected && !isProfileComplete && publicKey && (
             <Button
               height={'44px'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}

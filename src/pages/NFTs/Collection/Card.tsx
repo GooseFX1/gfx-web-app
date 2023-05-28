@@ -13,7 +13,7 @@ import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { moneyFormatter, commafy } from '../../../utils'
+import { moneyFormatter, commafy, checkMobile } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
 import {
   useNFTProfile,
@@ -232,7 +232,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   if (!nftDetails) return null
   return (
     filterAndShow && (
-      <div tw="pt-3 px-[6px]">
+      <div tw="sm:pt-1 pt-3 px-[6px]">
         {handelDrawer()}
         <div className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}>
           <div className={'gridItem'}>
@@ -305,7 +305,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                     localSingleNFT?.collection_name !== null
                       ? localSingleNFT?.collection_name
                       : 'No Collection Name',
-                    18
+                    checkMobile() ? 12 : 18
                   )}
                   fontSize={15}
                   fontWeight={600}

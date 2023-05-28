@@ -1,10 +1,10 @@
-import { FC, ReactElement, useCallback, useState } from 'react'
+import { Dispatch, FC, ReactElement, SetStateAction, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tooltip } from '../components'
 import { useDarkMode } from '../context'
-import { formatSOLDisplay } from './misc'
+import { checkMobile, formatSOLDisplay } from './misc'
 import { GFXApprisalPopup } from '../components/NFTAggWelcome'
 
 export const HeaderTooltip = (text: string): ReactElement =>
@@ -142,16 +142,13 @@ export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): Rea
       {handlePopup()}
       <div className="outerCover">
         <div className="innerCover">
-          <GenericTooltip text="The GFX Appraisal Value emphasizes executed sales data, not floor prices.">
-            <div tw="absolute left-0 cursor-pointer">
-              <img
-                src={'/img/assets/Aggregator/Tooltip.svg'}
-                alt="gfx-appraisal-icon"
-                tw="!h-[28px] !w-[28px] ml-[15px]"
-                onClick={() => setAppraisalPopup(true)}
-              />
-            </div>
-          </GenericTooltip>
+          {checkMobile() ? (
+            <InfoImgGFXAppraisal setAppraisalPopup={setAppraisalPopup} />
+          ) : (
+            <GenericTooltip text={`The GFX Appraisal Value emphasizes executed sales data, not floor prices.`}>
+              <InfoImgGFXAppraisal setAppraisalPopup={setAppraisalPopup} />
+            </GenericTooltip>
+          )}
 
           <div className="hContainer">
             <div className="appraisalTitle" tw="text-average font-semibold">
@@ -166,6 +163,18 @@ export const AppraisalValue: FC<IAppraisalValue> = ({ text, label, width }): Rea
     </WRAPPER>
   )
 }
+const InfoImgGFXAppraisal: FC<{ setAppraisalPopup: Dispatch<SetStateAction<boolean>> }> = ({
+  setAppraisalPopup
+}) => (
+  <div tw="absolute left-0 cursor-pointer">
+    <img
+      src={'/img/assets/Aggregator/Tooltip.svg'}
+      alt="gfx-appraisal-icon"
+      tw="!h-[28px] !w-[28px] ml-[15px]"
+      onClick={() => setAppraisalPopup(true)}
+    />
+  </div>
+)
 
 // if you want info icon send infoIcon = true else just send children
 export const GenericTooltip: FC<{ text: string; children?: any; tooltipMode?: boolean }> = ({

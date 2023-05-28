@@ -6,6 +6,7 @@ import { INFTAsk } from '../../types/nft_details'
 import { NFT_MARKETS } from '../../api/NFTs'
 import { capitalizeFirstLetter } from '../../utils/misc'
 import { notify } from '../../utils'
+import { USER_SOCIALS } from '../../constants'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -106,5 +107,22 @@ export const handleMarketplaceFormat = (name: string): string => {
 
 export const copyToClipboard = async (): Promise<void> => {
   await navigator.clipboard.writeText(window.location.href)
-  await notify({ message: `Copied to Clipboard`, icon: 'error' })
+  await notify({ message: `Copied to Clipboard`, icon: 'error', notificationDuration: 2000 })
+}
+const validExternalLink = (url: string): string => {
+  if (url.includes('https://') || url.includes('http://')) {
+    return url
+  } else {
+    return `https://${url}`
+  }
+}
+export const validateSocialLinks = (url: string, social: string): string => {
+  switch (social) {
+    case USER_SOCIALS.TWITTER:
+      return validExternalLink(url.includes(USER_SOCIALS.TWITTER) ? url : `twitter.com/${url}`)
+    case USER_SOCIALS.TELEGRAM:
+      return validExternalLink(url.includes(USER_SOCIALS.TELEGRAM) ? url : `t.me/${url}`)
+    case USER_SOCIALS.DISCORD:
+      return validExternalLink(url.includes(USER_SOCIALS.DISCORD) ? url : `discordapp.com/users/${url}`)
+  }
 }
