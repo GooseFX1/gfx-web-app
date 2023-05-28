@@ -5,7 +5,7 @@ import tw from 'twin.macro'
 import { useNFTAdmin } from '../../../../context'
 import AdminDashboard from './AdminDashboard'
 import { Connect } from '../../../../layouts'
-import { GradientText } from './UpcomingMints'
+import { GradientText } from '../../../../components/GradientText'
 
 const CONNECT_WALLET_WRAPPER = styled.div`
   ${tw`w-full flex-col flex items-center justify-center`}

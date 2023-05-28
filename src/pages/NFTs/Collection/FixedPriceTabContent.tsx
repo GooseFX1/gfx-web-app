@@ -1,7 +1,7 @@
 import { useState, useEffect, FC, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Row, Col } from 'antd'
-import { Card } from './Card'
+import Card from './Card'
 import { useNFTCollections } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { Loader } from '../../../components'

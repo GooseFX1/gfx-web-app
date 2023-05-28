@@ -1,20 +1,22 @@
-import React, { FC } from 'react'
-import styled from 'styled-components'
+import React, { useCallback, FC, useRef, useEffect } from 'react'
+import tw, { styled } from 'twin.macro'
+
 import { SpaceBetweenDiv } from '../styles'
-import tw from 'twin.macro'
 import { useDarkMode } from '../context'
+// import debounce from 'lodash.debounce'
 
-const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)`
-${tw`sm:w-3/4 sm:!h-[45px]`}
+const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number }>`
+${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
   width: 50%;
-  max-width: 583px;
-  height: 44px !important;
-  padding-bottom: 20px;
-  margin: 0 ${({ theme }) => theme.margin(3)};
-  padding: ${({ theme }) => theme.margin(1)} ${({ theme }) => theme.margin(3)};
-  border-radius: 45px;
-  background: ${({ theme }) => theme.searchbarBackground} !important;
+  max-width: ${({ width }) => (width ? width : '583px')} !important;
 
+  margin: 0 0 0 ${({ theme }) => theme.margin(3)};
+  background: transparent;
+
+  @media(max-width: 500px){
+    margin: 0 0 0 10px;
+  }
+  
   .ant-image {
     ${tw`sm:relative sm:left-2.5`}
     filter: ${({ theme }) => theme.filterWhiteIcon};
@@ -26,39 +28,79 @@ ${tw`sm:w-3/4 sm:!h-[45px]`}
   }
 
   > input {
-    ${tw`sm:w-full`}
-    height: ${({ theme }) => theme.margin(5)};
-    font-size: 16px;
     text-align: left;
-    background: ${({ theme }) => theme.searchbarBackground} !important;
+    background: ${({ bgColor, theme }) => (bgColor ? bgColor : theme.searchbarBackground)};
     flex: 1;
-    color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.text32};
     font-family: 'Montserrat';
-    border: none;
-    outline: none;
+    border: transparent;
+
+    ${({ $cssStyle }) => $cssStyle};
+    ${tw`sm:w-full text-[15px] font-semibold duration-500 h-[44px]
+      !font-semibold  rounded-circle p-[0 40px 0 35px]`}
+
+    &:focus {
+      outline: 1.5px solid ${({ theme }) => theme.text11};
+    }
     ::placeholder {
       color: ${({ theme }) => theme.text18};
     }
   }
 
-
     .ant-image-img {
+      ${tw`absolute w-[16px] left-3`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
-      width: 16px;
+    }
+    .ant-image-clear {
+      ${tw`absolute h-6 w-6 right-3 cursor-pointer`}
+      filter: ${({ theme }) => theme.filterWhiteIcon};
     }
   }
 `
 
-export const SearchBar: FC<any> = ({ placeholder, setSearchFilter, filter, ...rest }) => {
+export const SearchBar: FC<any> = ({
+  placeholder,
+  setSearchFilter,
+  filter,
+  bgColor,
+  shouldFocus,
+  width,
+  ...rest
+}) => {
   const { mode } = useDarkMode()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleInputValue = useCallback((e) => {
+    debouncer(e)
+  }, [])
+
+  const debouncer = (e) => setSearchFilter(e.target.value)
+
+  const handleCloseClick = useCallback(() => {
+    setSearchFilter('')
+    inputRef.current?.focus()
+  }, [])
+
+  useEffect(() => {
+    if (shouldFocus) inputRef.current?.focus()
+  }, [inputRef?.current])
+
   return (
-    <SEARCH_BAR_WRAPPER {...rest}>
+    <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} {...rest}>
       <input
         placeholder={placeholder || 'Search by nft name'}
+        ref={inputRef}
         value={filter}
-        onChange={(e) => setSearchFilter(e.target.value)}
+        onChange={handleInputValue}
       />
-      <img style={{ height: '20px', width: '20px' }} src={`/img/assets/search_${mode}.svg`} />
+      <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />
+      {filter && (
+        <img
+          className="ant-image-clear"
+          src={`/img/assets/Aggregator/removeSearch${mode}.svg`}
+          onClick={() => handleCloseClick()}
+        />
+      )}
     </SEARCH_BAR_WRAPPER>
   )
 }

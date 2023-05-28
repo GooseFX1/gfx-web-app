@@ -1,7 +1,10 @@
 import React, { ReactNode, FC } from 'react'
 import { Modal } from 'antd'
 import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 import { SVGDynamicReverseMode } from '../../../styles/utils'
+import { useDarkMode } from '../../../context'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
   * {
@@ -29,6 +32,7 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
       display: flex;
       height: 24px;
       width: 24px;
+      ${tw`sm:h-[18px] sm:w-[18px]`}
     }
   }
 `
@@ -40,14 +44,19 @@ export const PopupCustom: FC<{
   closeIcon: any
   className?: string
   [x: string]: any
-}> = ({ width, height, children, className, ...props }) => (
-  <STYLED_POPUP
-    className={className}
-    width={width}
-    height={height}
-    closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close-icn" />}
-    {...props}
-  >
-    {children}
-  </STYLED_POPUP>
-)
+}> = ({ width, height, children, className, ...props }) => {
+  const { mode } = useDarkMode()
+  return (
+    <STYLED_POPUP
+      className={className}
+      width={width}
+      height={height}
+      closeIcon={<SVGDynamicReverseMode src={`/img/assets/close-white-icon.svg`} alt="close-icn" />}
+      centered
+      wrapClassName={mode === 'dark' ? 'dark' : ''}
+      {...props}
+    >
+      {children}
+    </STYLED_POPUP>
+  )
+}

@@ -41,6 +41,7 @@ export const MINT_DECIMALS = 6
 
 //export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
 export const VAULT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+export const FEE_COLLECTOR = '6YxEQCvytma1a5w9FdeLtUE8gcsRheJsfcLeiBkkjBZ8'
 
 //export const MPG_ID = '7EUw8KH3KHoNNtMrKGswab3gWwM5tBqBbHKZ8eUiSQWP'
 //export const MPG_ID = '33dgY7mZmMybc5CKEmnPk9G5T2Njr1oBJTeiG9aVfoRB'
@@ -53,11 +54,11 @@ export const VAULT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 // export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
 // export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 
-export const MPG_ID = 'JCWvXRYxfEqV6vBasius1pBnvZHM1pcxi5Z68UhBoAYB'
+export const MPG_ID = 'E9xDgYChJ6QP5xGRwoU6FtjWDXsnmoYu3DWECUU2fXAp'
 
-export const RISK_OUTPUT_REGISTER = '9zRkDHGTY8XLYEggqvUvQzD68rvCW58Ptg7YMd2jh1BT'
-export const FEE_OUTPUT_REGISTER = '8xuXKsUm5p4xg3T84Ys4s82BftnRwPQhxbSyBddZYc5E'
-export const RISK_MODEL_CONFIG_ACCT = 'D2MXQcScXcfQYkvmg1UgUdN3yFSjyz5GCV9FJkd7NChC'
+export const RISK_OUTPUT_REGISTER = 'Dkf3R6Q1LDLdxBrn6hvpafuX9xUcRnuYDjX75SYVxmmc'
+export const FEE_OUTPUT_REGISTER = 'HaGFeaU28JkhBR1hJkwtqr5NuraPCiy6AwADVqnMgM2p'
+export const RISK_MODEL_CONFIG_ACCT = 'GgbsFnvJJYvrEMde6vFkj2txxpEkPmFyo3iHVFPjsPDc'
 
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
@@ -104,11 +105,11 @@ export const PERPS_COLLATERAL = [
 
 export const MPs = [
   {
-    id: '14ZciACGpRfFD1cnM8EqfnFkontUJAPDanWfojG3a64K',
-    orderbook_id: 'DBgPn36WaLuz9YW3QUssYFrUdffc9ZTghBKMC4kESU14',
-    bids: '5AX6UuMSotgRLQiwKaT1CU68v2L3Djs7rX6jwh9QBbG1',
-    asks: '13riJnSLztyYTA6zP25RunosQX4tN3r9cxQBBdZhWzZw',
-    event_queue: '22EYyAPkiegp7WP43NHrS7baqRD41EhPC45ifn7Y6jNk',
+    id: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
+    orderbook_id: 'Ggw9mU8vfP3NucANaPJBZSZMRSiMPrsvFmxj5wM3qvn3',
+    bids: 'DmB2CBjeLAh6awvWvySuygSom1JHdT95ZVEQmZF4TBXD',
+    asks: 'FPTSdA4vPQRz4KyjKi5YYdNNq9EbKDSgKMNyadrbVhG8',
+    event_queue: '2Kv94KZTX8yePkdNZT1zXpzDaTpLYLpeiv7Gp8vLA6kL',
     tick_size: 100,
     decimals: 5
   }
@@ -160,3 +161,5 @@ export const BETA = new Fractional({ m: new anchor.BN(2), exp: new anchor.BN(1) 
 export const GAMMA = new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(1) })
 export const GET_ORDERBOOK = '/perps-apis/getOrderBook'
 export const GET_OPEN_ORDERS = '/perps-apis/getAllOpenOrders'
+export const GET_ANALYTICS_DATA = '/perps-apis/getUserAnalytics'
+export const GET_FUNDING_RATE = '/perps-apis/getFundingRate'

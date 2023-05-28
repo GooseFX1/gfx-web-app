@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, FC, useMemo, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
@@ -7,12 +8,10 @@ import { Col, Row, Tabs } from 'antd'
 import { SpaceBetweenDiv } from '../../../styles'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, INFTBid } from '../../../types/nft_details'
-import { TradingHistoryTabContent } from './TradingHistoryTabContent'
-import { AttributesTabContent } from './AttributesTabContent'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { checkMobile, notify, truncateAddress } from '../../../utils'
+import { notify, truncateAddress } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -21,16 +20,19 @@ import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
+  TREASURY_MINT,
   AH_FEE_ACCT,
   CancelInstructionArgs,
   CancelInstructionAccounts,
   createCancelInstruction,
   createWithdrawInstruction,
   toPublicKey,
-  bnTo8
+  bnTo8,
+  confirmTransaction
 } from '../../../web3'
 import BN from 'bn.js'
 import tw from 'twin.macro'
+import { NFTTabSections } from '../Collection/DetailViewNFTDrawer'
 
 const { TabPane } = Tabs
 
@@ -40,151 +42,162 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
     position: relative;
     margin-bottom: 20px;
 
-    .ant-tabs-nav {
-      position: relative;
-      z-index: 1;
+    .buy-sell-screen {
+      .ant-tabs-nav {
+        position: relative;
+        z-index: 1;
+        height: 60px !important;
 
-      .ant-tabs-nav-wrap {
-        background-color: #000;
-        border-radius: 15px 15px 25px 25px;
-        padding-top: ${theme.margin(1.5)};
-        padding-bottom: ${theme.margin(1.5)};
-        .ant-tabs-nav-list {
-          justify-content: space-around;
+        .ant-tabs-nav-wrap {
+          background-color: #1f1f1f;
+          border-radius: 15px 15px 20px 20px;
           width: 100%;
+          .ant-tabs-nav-list {
+            display: flex;
+            justify-content: space-around;
+            width: 100% !important;
+            padding-right: 0 !important;
+            height: 100% !important;
+            padding-top: 0 !important;
+          }
+        }
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: ${theme.tabContentBidBackground};
+          border-radius: 15px 15px 20px 20px;
         }
       }
 
-      &:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: ${theme.tabContentBidBackground};
-        border-radius: 15px 15px 0 0;
+      .ant-tabs-ink-bar {
+        display: none;
       }
-    }
 
-    .ant-tabs-ink-bar {
-      display: none;
-    }
+      .ant-tabs-top {
+        > .ant-tabs-nav {
+          margin-bottom: 0;
 
-    .ant-tabs-top {
-      > .ant-tabs-nav {
-        margin-bottom: 0;
-
-        &::before {
-          border: none;
+          &::before {
+            border: none;
+          }
         }
       }
-    }
 
-    .ant-tabs-tab {
-      color: #616161;
-      font-size: 14px;
-      font-weight: 500;
-      ${tw`sm:ml-0`}
+      .ant-tabs-tab {
+        color: #616161;
+        font-size: 14px;
+        font-weight: 500;
+        ${tw`sm:!m-0 sm:!p-0`}
 
-      .ant-tabs-tab-btn {
-        ${tw`sm:text-tiny`}
-        font-size: 17px;
-      }
-
-      &.ant-tabs-tab-active {
         .ant-tabs-tab-btn {
-          color: #fff;
+          ${tw`sm:text-tiny sm:!my-0 sm:!mx-5`}
+          font-size: 17px;
+
+          &:before {
+            content: '' !important;
+            height: 0 !important;
+          }
+        }
+
+        &.ant-tabs-tab-active {
+          .ant-tabs-tab-btn {
+            color: #fff;
+          }
+        }
+      }
+
+      .desc {
+        font-size: 11px;
+        padding: ${({ theme }) => theme.margin(3)};
+        font-family: Montserrat;
+      }
+
+      .ant-tabs-content-holder {
+        ${tw`sm:mb-12 sm:rounded-none`}
+        height: 235px;
+        background-color: #131313;
+        transform: translateY(-32px);
+        margin-top: 32px;
+        padding: 32px 15px 0;
+        border-radius: 0 0 25px 25px;
+
+        .ant-tabs-content {
+          height: 100%;
+          overflow-x: none;
+          overflow-y: scroll;
+          ${({ theme }) => theme.customScrollBar('6px')};
         }
       }
     }
-
-    .desc {
-      font-size: 11px;
-      padding: ${({ theme }) => theme.margin(3)};
-      font-family: Montserrat;
-    }
-
-    .ant-tabs-content-holder {
-      ${tw`sm:mb-12 sm:rounded-none`}
-      height: 275px;
-      background-color: ${theme.tabContentBidBackground};
-      transform: translateY(-32px);
-      padding-top: ${({ theme }) => theme.margin(4)};
-      padding-bottom: ${({ theme }) => theme.margin(8)};
-      border-radius: 0 0 25px 25px;
-
-      .ant-tabs-content {
-        height: 100%;
-        overflow-x: none;
-        overflow-y: scroll;
-        ${({ theme }) => theme.customScrollBar('6px')};
-      }
-    }
-
     .rst-footer {
-      ${tw`sm:block`}
-      width: 100%;
-      position: absolute;
+      ${tw`sm:block sm:w-full`}
+      width: 32%;
+      position: fixed;
       display: flex;
-      left: 0;
+      right: 0;
       bottom: 0;
       padding: ${theme.margin(2)};
       border-radius: 0 0 25px 25px;
       border-top: 1px solid ${theme.borderColorTabBidFooter};
       background: ${theme.tabContentBidFooterBackground};
       backdrop-filter: blur(23.9091px);
+      z-index: 1;
 
       .last-bid {
         margin: 0 auto;
       }
+    }
+    .rst-footer-button {
+      flex: 1;
+      color: #fff;
+      white-space: nowrap;
+      height: 55px;
+      ${theme.flexCenter}
+      font-size: 17px;
+      font-weight: 600;
+      border: none;
+      border-radius: 29px;
+      padding: 0 ${theme.margin(2)};
+      cursor: pointer;
 
-      .rst-footer-button {
-        flex: 1;
-        color: #fff;
-        white-space: nowrap;
-        height: 55px;
-        ${theme.flexCenter}
-        font-size: 17px;
-        font-weight: 600;
-        border: none;
-        border-radius: 29px;
-        padding: 0 ${theme.margin(2)};
-        cursor: pointer;
-
-        &:not(:last-child) {
-          margin-right: ${theme.margin(1.5)};
-        }
-
-        &:hover {
-          opacity: 0.8;
-        }
-
-        &-buy {
-          background-color: ${theme.success};
-        }
-
-        &-bid {
-          background-color: ${theme.primary2};
-        }
-
-        &-sell {
-          background-color: #bb3535;
-        }
-
-        &-flat {
-          background-color: transparent;
-          color: ${theme.text1};
-        }
+      &:not(:last-child) {
+        margin-right: ${theme.margin(1.5)};
       }
 
-      .rst-footer-share-button {
-        cursor: pointer;
-
-        &:hover {
-          opacity: 0.8;
-        }
+      &:hover {
+        opacity: 0.8;
       }
+
+      &-buy {
+        background-color: ${theme.success};
+      }
+
+      &-bid {
+        background-color: ${theme.primary2};
+      }
+
+      &-sell {
+        background-color: #bb3535;
+      }
+
+      &-flat {
+        background-color: transparent;
+        color: ${theme.text1};
+      }
+    }
+
+    .rst-footer-share-button {
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
     }
   `}
 `
@@ -195,17 +208,17 @@ export const DETAILS_TAB_CONTENT = styled.div`
     color: ${theme.white};
 
     .dtc-item {
-      padding: ${theme.margin(0.5)} 0;
+      margin-bottom: 15px;
       font-size: 16px;
       font-weight: 500;
 
       .dtc-item-value {
-        ${tw`sm:text-tiny`}
+        ${tw`text-tiny`}
         color: ${theme.text4};
       }
       .dtc-item-title {
-        ${tw`sm:text-tiny`}
-        color: ${theme.text7};
+        ${tw`text-tiny`}
+        color: ${theme.text11};
       }
     }
   `}
@@ -214,6 +227,7 @@ export const DETAILS_TAB_CONTENT = styled.div`
 const REMOVE_MODAL = styled(Modal)`
   &.ant-modal {
     width: 501px !important;
+    border-radius: 15px;
   }
 
   .ant-modal-body {
@@ -254,7 +268,7 @@ export const RightSectionTabs: FC<{
   const [removeBidModal, setRemoveBidModal] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string>()
 
-  const isLoading = general === undefined || nftMetadata === undefined
+  const isLoading = general === null || nftMetadata === null
 
   enum NFT_ACTIONS {
     BID = 'bid',
@@ -282,39 +296,17 @@ export const RightSectionTabs: FC<{
     return res
   }, [bids, publicKey])
 
-  const nftData = useMemo(
-    () =>
-      isLoading
-        ? []
-        : [
-            {
-              title: 'Mint address',
-              value: truncateAddress(general.mint_address)
-            },
-            {
-              title: 'Token Address',
-              value: general.token_account ? truncateAddress(general.token_account) : ''
-            },
-            {
-              title: 'Owner',
-              value: general.owner ? truncateAddress(general.owner) : ''
-            },
-            {
-              title: 'Artist Royalties',
-              value: `${(nftMetadata.seller_fee_basis_points / 100).toFixed(2)}%`
-            },
-            {
-              title: 'Transaction Fee',
-              value: `${NFT_MARKET_TRANSACTION_FEE}%`
-            }
-          ],
-    [general]
-  )
-
   const derivePDAsForInstruction = async () => {
     const buyerPrice: BN = new BN(ask.buyer_price)
 
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      isBuying ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isBuying ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     if (!tradeState) {
       throw Error(`Could not derive values for instructions`)
@@ -377,7 +369,7 @@ export const RightSectionTabs: FC<{
   })
 
   const handleUpdateAsk = (action: string) => {
-    action === 'remove' ? setRemoveAskModal(true) : history.push(`/NFTs/sell/${general.mint_address}`)
+    action === 'remove' ? setRemoveAskModal(true) : history.push(`/nfts/sell/${general.mint_address}`)
   }
 
   const handleSetBid = (type: string) => {
@@ -411,7 +403,14 @@ export const RightSectionTabs: FC<{
 
     const buyerPrice: BN = new BN(userRecentBid.buyer_price)
     console.log(buyerPrice)
-    const tradeState: [PublicKey, number] = await tradeStatePDA(publicKey, general, bnTo8(buyerPrice))
+    const tradeState: [PublicKey, number] = await tradeStatePDA(
+      publicKey,
+      isBuying ? ask?.auction_house_key : AUCTION_HOUSE,
+      general.token_account,
+      general.mint_address,
+      isBuying ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
+      bnTo8(buyerPrice)
+    )
 
     const cancelInstructionArgs: CancelInstructionArgs = {
       buyerPrice: buyerPrice,
@@ -437,7 +436,8 @@ export const RightSectionTabs: FC<{
     const signature = await wal.sendTransaction(transaction, connection)
     console.log(signature)
     setPendingTxSig(signature)
-    const confirm = await connection.confirmTransaction(signature, 'finalized')
+
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm)
 
     if (confirm.value.err === null) {
@@ -478,7 +478,7 @@ export const RightSectionTabs: FC<{
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
 
-      const confirm = await connection.confirmTransaction(signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
 
       if (confirm.value.err === null) {
@@ -541,116 +541,5 @@ export const RightSectionTabs: FC<{
     }
   }, [pendingTxSig, removeAskModal, userRecentBid, removeBidModal, bidModal])
 
-  return isLoading ? (
-    <div></div>
-  ) : (
-    <RIGHT_SECTION_TABS activeTab={activeTab} {...rest}>
-      {handleModal()}
-      <Tabs defaultActiveKey="1" centered onChange={(key) => setActiveTab(key)}>
-        <>
-          <TabPane tab="Details" key="1">
-            <DETAILS_TAB_CONTENT {...rest}>
-              {nftData.map((item, index) => (
-                <Row justify="space-between" align="middle" className="dtc-item" key={index}>
-                  <Col className="dtc-item-title">{item.title}</Col>
-                  <Col className="dtc-item-value">{item.value}</Col>
-                </Row>
-              ))}
-            </DETAILS_TAB_CONTENT>
-          </TabPane>
-          <TabPane tab="Trading History" key="2">
-            <TradingHistoryTabContent />
-          </TabPane>
-          <TabPane tab="Attributes" key="3">
-            <AttributesTabContent data={nftMetadata.attributes} />
-          </TabPane>
-        </>
-      </Tabs>
-      {publicKey && (
-        <SpaceBetweenDiv className="rst-footer">
-          {sessionUser && sessionUser.uuid ? (
-            publicKey.toBase58() === general.owner ? (
-              <>
-                <button
-                  className={`rst-footer-button rst-footer-button-${ask === undefined ? 'sell' : 'flat'}`}
-                  onClick={() => handleUpdateAsk('list')}
-                >
-                  {ask === undefined ? 'List Item' : 'Edit Ask Price'}
-                </button>
-                {ask && (
-                  <button
-                    className="rst-footer-button rst-footer-button-sell"
-                    onClick={() => handleUpdateAsk('remove')}
-                  >
-                    Remove Ask Price
-                  </button>
-                )}
-              </>
-            ) : !checkMobile() ? (
-              <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
-                    className="rst-footer-button rst-footer-button-flat"
-                  >
-                    Cancel Last Bid
-                  </button>
-                )}
-                <button
-                  onClick={() => handleSetBid(NFT_ACTIONS.BID)}
-                  className={'rst-footer-button rst-footer-button-bid'}
-                >
-                  Bid
-                </button>
-                {ask && (
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
-                    className="rst-footer-button rst-footer-button-buy"
-                  >
-                    Buy Now
-                  </button>
-                )}
-              </SpaceBetweenDiv>
-            ) : (
-              <>
-                <div>
-                  {bids.find((bid) => bid.wallet_key === publicKey.toBase58()) && (
-                    <button
-                      onClick={() => handleSetBid(NFT_ACTIONS.CANCEL_BID)}
-                      className="rst-footer-button rst-footer-button-flat last-bid"
-                    >
-                      Cancel Last Bid
-                    </button>
-                  )}
-                </div>
-                <SpaceBetweenDiv style={{ flexGrow: 1 }}>
-                  <button
-                    onClick={() => handleSetBid(NFT_ACTIONS.BID)}
-                    className={'rst-footer-button rst-footer-button-bid'}
-                  >
-                    Bid
-                  </button>
-                  {ask && (
-                    <button
-                      onClick={() => handleSetBid(NFT_ACTIONS.BUY)}
-                      className="rst-footer-button rst-footer-button-buy"
-                    >
-                      Buy Now
-                    </button>
-                  )}
-                </SpaceBetweenDiv>
-              </>
-            )
-          ) : (
-            <button
-              className="rst-footer-button rst-footer-button-bid"
-              onClick={() => history.push(`/NFTs/profile/${publicKey.toBase58()}`)}
-            >
-              Complete profile
-            </button>
-          )}
-        </SpaceBetweenDiv>
-      )}
-    </RIGHT_SECTION_TABS>
-  )
+  return isLoading ? <div></div> : <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />
 }

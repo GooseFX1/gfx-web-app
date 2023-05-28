@@ -1,13 +1,12 @@
 import React, { FC, ReactNode } from 'react'
 import { Modal as AntModal } from 'antd'
-import styled from 'styled-components'
+import tw, { styled } from 'twin.macro'
 import { useDarkMode } from '../context'
 import { CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../styles'
-import tw from 'twin.macro'
 
 const ANTMODAL = styled(AntModal)`
+  ${tw`dark:bg-black-6 bg-white`}
   ${({ theme }) => theme.customScrollBar('4px')};
-  background-color: ${({ theme }) => theme.bg9};
 `
 
 const CLOSE_ICON = styled(CenteredImg)`
@@ -68,7 +67,7 @@ export const Modal: FC<{
     <ANTMODAL
       bodyStyle={{
         borderRadius: '20px',
-        maxHeight: '85vh',
+        maxHeight: '660px',
         fontFamily: 'Montserrat',
         ...style
       }}
@@ -79,11 +78,12 @@ export const Modal: FC<{
       maskClosable
       visible={visible}
       width={large ? '50vw' : 350}
+      wrapClassName={mode === 'dark' ? 'dark' : ''}
       {...props}
     >
       <HEADER style={centerTitle && { justifyContent: 'center' }}>
         {bigTitle ? <BIG_TITLE>{title}</BIG_TITLE> : <TITLE>{title}</TITLE>}
-        <CLOSE_ICON onClick={handleCancel}>
+        <CLOSE_ICON className="close-icon-root" onClick={handleCancel}>
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
           ) : (

@@ -8,19 +8,17 @@ import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const TEXT_AREA = styled.div`
-  ${tw`h-[470px] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px]`}
+  ${tw`h-[62vh] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px] dark:text-grey-2 text-grey-1`}
   background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-  color: ${({ theme }) => theme.text28};
   flex-grow: 0;
 
   .text-area-inner {
-    ${tw`h-full w-full p-[12px] rounded-[8px] overflow-auto`}
-    background: ${({ theme }) => theme.bg1};
+    ${tw`h-full w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
+    ${({ theme }) => theme.customScrollBar('4px')}
   }
 
   h3 {
-    font-weight: 600;
-    color: ${({ theme }) => theme.text28};
+    ${tw`dark:text-grey-2 text-grey-1 font-semibold`}
   }
 
   p {
@@ -41,18 +39,22 @@ const TEXT_AREA = styled.div`
 
 const TOS_MODAL = styled(Modal)`
   ${tw`w-[600px]! sm:w-full! p-0!`}
+  &.ant-modal {
+    ${tw`!rounded-bigger`}
+  }
 
   .ant-modal-body {
     ${tw`sm:px-3!`}
+    max-height: 80vh !important;
   }
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-8 sm:mt-0!`}
+  ${tw`flex p-2 mt-0 sm:pb-0`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
-  ${tw`h-[50px] w-[60%] rounded-circle border-none`}
+  ${tw`h-12.5 w-[60%] rounded-circle border-none`}
   background-color: ${({ theme }) => theme.bg22};
   background-image: ${({ theme, checked }) =>
     checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
@@ -131,6 +133,7 @@ export const TermsOfService: FC<{
       centerTitle
       setVisible={changeTOSState}
       visible={toShow}
+      centered={true}
       large={true}
       maskClosable={false}
     >

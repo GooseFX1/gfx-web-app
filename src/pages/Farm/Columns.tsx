@@ -1,11 +1,12 @@
 import React, { FC, ReactElement } from 'react'
 
 import { match, Pattern } from 'ts-pattern'
-import styled from 'styled-components'
 import { Tooltip } from '../../components/Tooltip'
 import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
 import { Skeleton } from 'antd'
+import styled from 'styled-components'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 import { IFarmData } from './CustomTableList'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -90,7 +91,18 @@ const ICON_WRAPPER_TD = styled.td`
 `
 
 export const Loader: FC = () => (
-  <Skeleton.Button active size="small" style={{ display: 'flex', height: '15px', borderRadius: '5px' }} />
+  <Skeleton.Button
+    active
+    size="small"
+    style={{ display: 'flex', height: '15px', width: '25px', borderRadius: '5px' }}
+  />
+)
+export const LoaderForImg: FC = () => (
+  <Skeleton.Button
+    active
+    size="small"
+    style={{ height: '47px', marginRight: '10px', width: '40px', borderRadius: '100%' }}
+  />
 )
 
 export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {
@@ -104,7 +116,25 @@ export const HeaderTooltip: FC<{ text: string }> = ({ text }): JSX.Element => {
   )
 }
 
-const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
+export const GenericTooltip: FC<{ text: string; children?: any }> = ({ text, children }): JSX.Element => {
+  const { mode } = useDarkMode()
+  if (children)
+    return (
+      <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        {children}
+      </Tooltip>
+    )
+  return (
+    <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
+      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <span>{text}</span>
+      </Tooltip>
+    )
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const Title = (text: string, infoText: string, isArrowDown: boolean, invert?: boolean) => (
   <STYLED_TITLE>
     <div className="textTitle">{text}</div>
     {infoText && <HeaderTooltip text={infoText} />}

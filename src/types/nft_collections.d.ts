@@ -1,4 +1,4 @@
-import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection } from './nft_details.d'
+import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection, BaseNFT } from './nft_details.d'
 
 export enum COLLECTION_TYPES {
   NFT_COLLECTION = 'NFTCollection',
@@ -6,32 +6,35 @@ export enum COLLECTION_TYPES {
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
 
-export type NFTBaseCollection = {
+export type NFTCollection = {
   uuid: string
   collection_id: number
   collection_name: string
+  collection_address: string
   collection_description: string
   profile_pic_link: string
   banner_link: string | null
   banner_2_link: string | null
   banner_3_link: string | null
-  title: string
-  tagline: string
-  size: number
-  category_tags: string
+  title: string | null
+  tagline: string | null
+  size: number | null
+  category_tags: string | null
+  first_verified_creator_address?: string | null
   is_verified: boolean
-}
-
-export type NFTCollection = {
-  collection_id: number
-  collection_floor: null | number
-  collection_vol: {
-    daily: number
-    monthly: number
-    weekly: number
-    yearly: number
-  }
-  collection: NFTBaseCollection
+  verified_collection_address?: string | null
+  collection_address_type: string
+  gfx_appraisal_supported: boolean
+  floor_price: number
+  daily_volume: number
+  weekly_volume: number
+  monthly_volume: number
+  yearly_volume: number
+  total_volume: number
+  marketcap: number | null
+  daily_change: number | null
+  nfts_count: number
+  floor_mint: string | null
 }
 
 export type CollectionOwner = {
@@ -49,8 +52,9 @@ export type CollectionOwner = {
 export interface IFixedPriceWithinCollection {
   collection_floor: null | number
   collection_id: number
-  nft_data: any[]
-  nft_prices: any[]
+  nft_data: BaseNFT[]
+  nft_prices: string[]
+  total_count: number
 }
 
 export interface IOpenBidWithinCollection {
@@ -74,15 +78,20 @@ export type NFTUpcomingCollection = {
   upcoming_collection_description: string
 }
 
+export type CollectionSort = 'ASC' | 'DESC'
+
 export interface INFTCollectionConfig {
-  allCollections: NFTBaseCollection[]
+  allCollections: NFTCollection[] | number[]
+  setAllCollections: any
+  myNFTsByCollection: any[]
+  allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]
+  fetchAllCollectionsByPages: any
   fetchCollectionOwners: (collectionId: string) => Promise<any>
   featuredCollections: NFTFeaturedCollection[]
   upcomingCollections: NFTUpcomingCollection[]
   fetchAllCollections: any
-  fetchAllCollectionDetails: (collections: NFTBaseCollection[]) => Promise<void>
   fetchFeaturedCollections: any
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
@@ -95,4 +104,6 @@ export interface INFTCollectionConfig {
   openBidWithinCollection: IOpenBidWithinCollection
   setNFTMenuPopup: Dispatch<SetStateAction<boolean>>
   nftMenuPopup: boolean
+  collectionSort: CollectionSort
+  setCollectionSort: Dispatch<SetStateAction<CollectionSort>>
 }

@@ -16,6 +16,8 @@ export interface INFTProfile {
   youtube_link: string
   profile_pic_link: string
   is_verified: boolean
+  website_link?: string
+  discord_profile?: string
   user_likes: string[]
 }
 

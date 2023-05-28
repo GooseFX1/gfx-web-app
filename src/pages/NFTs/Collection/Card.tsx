@@ -1,230 +1,188 @@
-import React, { useState, useEffect, useMemo, FC } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  FC,
+  ReactElement,
+  SetStateAction,
+  Dispatch,
+  memo
+} from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { Row } from 'antd'
-import styled, { css } from 'styled-components'
-import { moneyFormatter } from '../../../utils'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useHistory } from 'react-router-dom'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { moneyFormatter, commafy } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
-import { useNFTProfile, useNFTDetails, useConnectionConfig, useDarkMode, usePriceFeed } from '../../../context'
-import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, ParsedAccount } from '../../../web3'
-import { Loader } from '../../../components'
+import {
+  useNFTProfile,
+  useNFTDetails,
+  useConnectionConfig,
+  useDarkMode,
+  useNFTAggregator,
+  usePriceFeedFarm,
+  useNFTAggregatorFilters
+} from '../../../context'
+import { fetchSingleNFT, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
+// import styled, { css } from 'styled-components'
+import { GradientText } from '../../../components/GradientText'
+import { HoverOnNFT } from './SingleNFTCard'
+import { SellNFTModal } from './SellNFTModal'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { BidNFTModal } from './AggModals/BidNFTModal'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { RotatingLoader } from '../../../components/RotatingLoader'
+import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import { Tag } from '../../../components/Tag'
+import { Tooltip } from 'antd'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 //#region styles
-const CARD = styled.div`
-  width: 100%;
-  cursor: pointer;
-  background-color: ${({ theme }) => theme.cardBg};
-  ${({ theme }) => theme.largeBorderRadius}
-
-  .card-image-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 0 auto;
-    padding: ${({ theme }) => theme.margin(2)};
-
-    .ant-image-mask {
-      display: none;
-    }
-    .card-image {
-      object-fit: contain;
-      width: 100%;
-      max-height: 300px;
-      ${({ theme }) => theme.largeBorderRadius}
-    }
-    .card-remaining {
-      position: absolute;
-      right: 10px;
-      bottom: 7px;
-      padding: ${({ theme }) => `${theme.margin(0.5)} ${theme.margin(1)}`};
-      background-color: #000;
-      font-size: 9px;
-    }
-  }
-  .card-info {
-    padding: 0 ${({ theme }) => theme.margin(2)} ${({ theme }) => theme.margin(2)};
-  }
-  .card-details {
-    position: relative;
-    height: 30px;
-
-    margin-bottom: ${({ theme }) => theme.margin(0.5)};
-    text-align: left;
-    .card-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: ${({ theme }) => theme.white};
-      font-family: Montserrat;
-      width: calc(100% - 48px);
-      ${({ theme }) => theme.ellipse}
-    }
-    .card-favorite-heart-container {
-      position: absolute;
-      top: 0;
-      right: 0;
-      display: flex;
-    }
-    .card-favorite-heart {
-      margin-right: ${({ theme }) => theme.margin(0.5)};
-    }
-    .card-featured-heart {
-      width: 30px;
-      height: 30px;
-      transform: translateY(4px);
-    }
-    .card-favorite-heart--disabled {
-      cursor: not-allowed;
-    }
-    .card-favorite-number {
-      color: ${({ theme }) => theme.hintInputColor};
-      font-size: 13px;
-      font-weight: 600;
-    }
-  }
-  .card-price {
-  }
-`
-
-const BID_BUTTON = styled.button<{ cardStatus: string }>`
-  min-width: 76px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: none;
-  border-radius: 50px;
-  color: ${({ theme }) => theme.white};
-  font-family: Montserrat;
-  ${({ cardStatus, theme }) => css`
-    height: 34px;
-    background-color: ${cardStatus === 'unlisted' ? '#bb3535' : cardStatus === 'listed' ? `#bb3535` : '#3735bb'};
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 600;
-    padding: ${theme.margin(1)} ${theme.margin(2)};
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  `}
-`
-
-const LIGHT_TEXT = styled.span`
-  color: ${({ theme }) => theme.hintInputColor};
-`
-
-const COVER = styled.div<{ $mode: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 16px;
-  bottom: 16px;
-  left: 16px;
-  right: 16px;
-  background-color: ${({ $mode }) => ($mode ? 'rgb(0 0 0 / 66%)' : 'rgb(202 202 202 / 71%)')};
-  z-index: 10;
-  cursor: default;
-  ${({ theme }) => theme.largeBorderRadius}
-
-  div {
-    top: 40%;
-  }
-`
-//#endregion
-
+const DIVV = styled.div``
 type ICard = {
   singleNFT: ISingleNFT
+  nftDetails?: any
   className?: string
   listingType?: string
-  userId?: string
+  setGfxAppraisal?: Dispatch<SetStateAction<boolean>>
 }
 
-export const Card: FC<ICard> = (props) => {
-  const history = useHistory()
+const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
+  const history = useHistory()
   const { connection } = useConnectionConfig()
   const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
-  const { prices } = usePriceFeed()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
-  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes } = useNFTDetails()
+  const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT, setOnChainMetadata } =
+    useNFTDetails()
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
-  const [localAsk, setLocalAsk] = useState<INFTAsk>()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const [localAsk, setLocalAsk] = useState<INFTAsk | null>(null)
+  const [localBidToNFT, setLocalBidToNFT] = useState<INFTBid[] | null>([])
   const [localTotalLikes, setLocalTotalLikes] = useState<number>()
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
+  const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
+  const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
+  const [hover, setHover] = useState<boolean>(false)
+  const { currencyView, delistNFT, setDelistNFT, sellNFTClicked, setSellNFT } = useNFTAggregator()
+  const { profileNFTOptions } = useNFTAggregatorFilters()
+  const { prices } = usePriceFeedFarm()
+  const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
 
-  const displayPrice: string = useMemo(
-    () =>
-      localAsk !== undefined
-        ? localAsk.buyer_price
-        : localBids.length > 0
-        ? localBids[localBids.length - 1].buyer_price
-        : '0',
+  enum MODAL_TARGET {
+    DRAWER = 'drawer',
+    SELL = 'sell',
+    BID = 'bid'
+  }
+
+  const displayPrice: string | null = useMemo(
+    () => (localAsk !== null ? localAsk.buyer_price : null),
     [localAsk, localBids, sessionUser]
   )
 
   const isOwner: boolean = useMemo(() => {
-    if (props.userId) return true
     const findAccount: undefined | ParsedAccount =
-      props.singleNFT && sessionUserParsedAccounts !== undefined
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === props.singleNFT.mint_address)
+      singleNFT && sessionUser !== null && sessionUserParsedAccounts.length > 0
+        ? sessionUserParsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
         : undefined
     return findAccount === undefined ? false : true
-  }, [sessionUserParsedAccounts])
+  }, [sessionUser, sessionUserParsedAccounts])
 
   useEffect(() => {
-    if (props.singleNFT) {
-      fetchSingleNFT(props.singleNFT.mint_address).then((res) => {
-        if (res && res.status === 200) {
-          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(props.singleNFT)
-          const nft: INFTGeneralData = res.data
-          setLocalBids(nft.bids)
-          setLocalAsk(nft.asks[0])
-          setLocalTotalLikes(nft.total_likes)
-        }
-      })
+    if (nftDetails) {
+      nftDetails.data.length > 0 ? setlocalSingleNFT(nftDetails.data[0]) : setlocalSingleNFT(singleNFT)
+      setLocalBids(nftDetails.bids)
+      if (publicKey) {
+        const myBid = nftDetails.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+        setLocalBidToNFT(myBid)
+      }
+      setLocalAsk(nftDetails.asks.length > 0 ? nftDetails.asks[0] : null)
+      setLocalTotalLikes(nftDetails.total_likes)
     }
+    // if (singleNFT) {
+    //   fetchSingleNFT(singleNFT.mint_address).then((res) => {
+    //     if (res && res.status === 200) {
+    //       res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(singleNFT)
+    //       const nft: INFTGeneralData = res.data
+    //       setLocalBids(nft.bids)
+    //       if (publicKey) {
+    //         const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+    //         setLocalBidToNFT(myBid)
+    //       }
+    //       setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
+    //       setLocalTotalLikes(nft.total_likes)
+    //     }
+    //   })
+    // }
 
     return () => {
       setIsLoadingBeforeRelocate(false)
     }
-  }, [props.singleNFT])
+  }, [singleNFT, isOwner, nftDetails])
 
   useEffect(() => {
-    if (props.singleNFT && sessionUser && sessionUser.user_likes) {
-      setIsFavorited(sessionUser.user_likes.includes(props.singleNFT.uuid))
+    if (localSingleNFT && sessionUser && sessionUser.user_likes) {
+      setIsFavorited(sessionUser.user_likes.includes(localSingleNFT?.uuid))
     }
-  }, [sessionUser])
+  }, [sessionUser, localSingleNFT])
 
   const handleToggleLike = async () => {
     if (sessionUser && sessionUser.uuid) {
-      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
-      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      setIsFavorited(res.data.action === 'liked')
+      try {
+        const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+        console.log(res)
+        setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+        setIsFavorited(res.data.action === 'liked')
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 
-  const goToDetails = async (address: string): Promise<void> => {
+  const filterAndShow = useMemo(() => {
+    if (profileNFTOptions === NFT_PROFILE_OPTIONS.ALL) return true
+    if (profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS) {
+      return localBids.length ? true : false
+    }
+    if (profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE) {
+      return localAsk ? true : false
+    }
+  }, [localAsk, localBids, profileNFTOptions])
+
+  const gradientBg = useMemo(() => localAsk?.buyer_price || localBids.length, [localAsk, localBids])
+
+  const openDetails = async (target: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
-    await setNFTDetailsBeforeLocate()
-    history.push(`/NFTs/details/${address}`)
+    setHover(false)
+    await setNFTDetails()
+    // if (target === MODAL_TARGET.SELL) setSellNFT(true)
+    // if (target === MODAL_TARGET.DRAWER) setDrawerSingleNFT(true)
+    // if (target === MODAL_TARGET.BID) setShowBidNFTModal(true)
   }
 
-  const getButtonText = (isOwner: boolean, ask: INFTAsk | undefined): string => {
-    if (isOwner) {
-      return ask === undefined ? 'Sell' : 'Edit Ask'
-    } else {
-      return ask === undefined ? 'Bid' : 'Buy Now'
-    }
-  }
+  const setNFTDetails = async () => {
+    // micro optimizations
+    await Promise.all([
+      setBids(localBids),
+      setAsk(localAsk),
+      setTotalLikes(localTotalLikes),
+      setMyBidToNFT(localBidToNFT)
+    ])
 
-  const setNFTDetailsBeforeLocate = async () => {
-    await setBids(localBids)
-    await setAsk(localAsk)
-    await setTotalLikes(localTotalLikes)
+    const onChainData = await getNFTMetadata(await getMetadata(localSingleNFT.mint_address), connection)
+    setOnChainMetadata(onChainData)
     const res = await axios.get(localSingleNFT.metadata_url)
     const metaData = await res.data
     await setNftMetadata(metaData)
@@ -243,97 +201,173 @@ export const Card: FC<ICard> = (props) => {
     return true
   }
 
-  const dynamicPriceValue = (currency: string, priceFeed: any, value: number) => {
-    const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
+  useEffect(() => {
+    if (showDrawerSingleNFT) setNFTDetails()
+  }, [localAsk, localBids])
 
-    return `${moneyFormatter(val)} ${currency}`
-  }
+  //const val = currency === 'USD' ? value * priceFeed['SOL/USDC']?.current : value
+  const dynamicPriceValue = useCallback(
+    (value: number) => {
+      const price = currencyView === 'USDC' ? value * solPrice : value
+      return commafy(price, price % 1 !== 0 ? 2 : 0)
+    },
+    [currencyView, solPrice]
+  )
 
-  return (
-    <CARD {...props} className="card">
-      <div
-        className="card-image-wrapper"
-        onClick={() => (localSingleNFT !== undefined ? goToDetails(localSingleNFT.mint_address) : null)}
-      >
-        {isLoadingBeforeRelocate && (
-          <COVER $mode={mode === 'dark'}>
-            <Loader />
-          </COVER>
-        )}
-
-        <img
-          className="card-image"
-          src={localSingleNFT ? localSingleNFT.image_url : `${window.origin}/img/assets/nft-preview-${mode}.svg`}
-          alt="nft"
+  const handelDrawer = useCallback(() => {
+    if (showDrawerSingleNFT) {
+      console.log('NFT')
+      return (
+        <ProfileItemDetails
+          visible={showDrawerSingleNFT}
+          setShowDelistModal={setDelistNFT}
+          setDrawerSingleNFT={setDrawerSingleNFT}
+          setSellModal={setSellNFT}
+          singleNFT={singleNFT}
         />
-      </div>
-      <div className={'card-info'}>
-        <div className="card-details">
-          {localSingleNFT ? (
-            <div className="card-name">{localSingleNFT.nft_name}</div>
-          ) : (
-            <SkeletonCommon width="130px" height="25px" />
-          )}
+      )
+    }
+  }, [showDrawerSingleNFT])
 
-          {localSingleNFT && localSingleNFT.uuid !== null && (
-            <span className="card-favorite-heart-container">
-              {sessionUser && isFavorited ? (
-                <img
-                  className="card-favorite-heart"
-                  src={`/img/assets/heart-red.svg`}
-                  alt="heart-selected"
-                  onClick={handleToggleLike}
-                />
-              ) : (
-                <img
-                  className={`card-favorite-heart ${!sessionUser ? 'card-favorite-heart--disabled' : ''}`}
-                  src={`/img/assets/heart-empty.svg`}
-                  alt="heart-empty"
-                  onClick={handleToggleLike}
+  if (!nftDetails) return null
+  return (
+    filterAndShow && (
+      <div tw="pt-3 px-[6px]">
+        {handelDrawer()}
+        <div className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}>
+          <div className={'gridItem'}>
+            {isLoadingBeforeRelocate && (
+              <div
+                tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
+                duration-300 w-full rounded-[15px] opacity-50"
+              >
+                <div tw="h-[50%] w-full">
+                  <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
+                </div>
+              </div>
+            )}
+            <div
+              className="gridItemContainer"
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
+            >
+              {hover && (
+                <HoverOnNFT
+                  buttonType={isOwner ? (localAsk?.buyer_price ? 'Modify' : 'Sell') : 'bid'}
+                  item={localSingleNFT}
+                  setHover={setHover}
+                  myBidToNFT={localBidToNFT}
+                  ask={!isOwner && localAsk ? localAsk : null}
+                  setNFTDetails={() => (isOwner ? openDetails(MODAL_TARGET.SELL) : openDetails(MODAL_TARGET.BID))}
+                  setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
                 />
               )}
-              <span
-                className={`card-favorite-number ${isFavorited ? 'card-favorite-number-highlight' : ''} ${
-                  !sessionUser ? 'card-favorite-heart--disabled' : ''
-                }`}
-              >
-                {localTotalLikes}
-              </span>
-            </span>
-          )}
-        </div>
-        <Row justify="space-between" align="middle">
-          {localSingleNFT ? (
-            <div className="card-price">
-              {displayPrice === '0' ? (
-                <LIGHT_TEXT>No Bids</LIGHT_TEXT>
-              ) : (
-                dynamicPriceValue(userCurrency, prices, parseFloat(displayPrice) / LAMPORTS_PER_SOL)
+              <div className="nftImg">
+                <img
+                  src={
+                    localSingleNFT
+                      ? localSingleNFT.image_url
+                      : `${window.origin}/img/assets/nft-preview-${mode}.svg`
+                  }
+                  alt="nft"
+                />
+              </div>
+              {(localBids.length > 0 || localAsk !== null) && (
+                <div tw="absolute left-[16px] top-[14px]">
+                  <Tag loading={false}>
+                    <span tw="font-semibold">
+                      {localAsk?.buyer_price && 'Listed'}
+                      {localAsk?.buyer_price && localBids.length > 0 && ' / '}
+                      {localBids.length > 0 && `${localBids.length} Bid${localBids.length === 1 ? '' : 's'}`}
+                    </span>
+                  </Tag>
+                </div>
               )}
             </div>
-          ) : (
-            <SkeletonCommon width="64px" height="24px" />
-          )}
+            <div className={'nftTextContainer'}>
+              <div>
+                <GenericTooltip text={localSingleNFT?.nft_name}>
+                  <div className="collectionId">
+                    <div tw="flex items-center">
+                      {localSingleNFT && minimizeTheString(localSingleNFT.nft_name, 14)}
+                      {localSingleNFT && localSingleNFT.is_verified && (
+                        <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                      )}
+                    </div>
+                  </div>
+                </GenericTooltip>
+              </div>
+              {localSingleNFT && (
+                <GradientText
+                  text={minimizeTheString(
+                    localSingleNFT?.collection_name !== null
+                      ? localSingleNFT?.collection_name
+                      : 'No Collection Name',
+                    18
+                  )}
+                  fontSize={15}
+                  fontWeight={600}
+                  onClick={(e) =>
+                    localSingleNFT?.collection_name !== null
+                      ? history.push(`/nfts/collection/${localSingleNFT?.collection_name}`)
+                      : null
+                  }
+                />
+              )}
+              <div>
+                {localSingleNFT ? (
+                  <div>
+                    <div className="nftPrice">
+                      {displayPrice !== null ? (
+                        <PriceWithToken
+                          cssStyle={tw``}
+                          price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
+                          token={currencyView}
+                        />
+                      ) : (
+                        ''
+                      )}
+                      {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
+                    </div>
+                  </div>
+                ) : (
+                  <SkeletonCommon width="64px" height="24px" />
+                )}
+                <div className="apprisalPriceProfile">
+                  NA
+                  <img
+                    src={`/img/assets/Aggregator/Tooltip.svg`}
+                    alt={'tooltip'}
+                    onClick={() => setGfxAppraisal(true)}
+                  />
+                </div>
 
-          {sessionUser &&
-            (localSingleNFT ? (
-              isOwner ? (
-                <BID_BUTTON
-                  cardStatus={localAsk ? 'listed' : 'unlisted'}
-                  onClick={() => goToDetails(localSingleNFT.mint_address)}
-                >
-                  {getButtonText(isOwner, localAsk)}
-                </BID_BUTTON>
-              ) : (
-                <BID_BUTTON cardStatus={'bid'} onClick={() => goToDetails(localSingleNFT.mint_address)}>
-                  {getButtonText(isOwner, localAsk)}
-                </BID_BUTTON>
-              )
-            ) : (
-              <SkeletonCommon width="76px" height="32px" borderRadius="50px" />
-            ))}
-        </Row>
+                {/* {sessionUser && (
+                  <img
+                    className="card-like"
+                    src={`/img/assets/heart-${isFavorited ? 'red' : 'empty'}.svg`}
+                    alt="heart-red"
+                    onClick={() => handleToggleLike()}
+                  />
+                )} */}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </CARD>
+    )
   )
 }
+
+export default memo(Card)
+export const LoadingDiv = (): ReactElement => (
+  <div
+    tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
+                  duration-300 w-full rounded-[15px] opacity-50"
+  >
+    <div tw="h-[50%] w-[87%]">
+      <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
+    </div>
+  </div>
+)

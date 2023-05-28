@@ -10,9 +10,9 @@ import { checkMobile } from '../../utils'
 
 const MorePoolImg = styled.div`
   .animation-404 {
-    width: 188px; 
+    width: 188px;
     height: 120px;
-    margin top: 70px;
+    margin-top: 70px;
   }
 `
 

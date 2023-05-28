@@ -10,7 +10,7 @@ import { HeaderTooltip } from '../Farm/Columns'
 import { Connect } from '../../layouts'
 
 const STYLED_SOL = styled.div`
-  ${tw`flex items-center justify-between rounded-[60px] h-[50px] w-[372px] w-[90%] my-[20px] mx-auto`}
+  ${tw`flex items-center justify-between rounded-[60px] h-12.5 w-[372px] w-[90%] my-[20px] mx-auto`}
   background-color: ${({ theme }) => theme.solPillBg};
 
   .value {

@@ -24,8 +24,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
 
 const END_MODAL = styled(PopupCustom)`
-  ${tw`!h-[450px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
@@ -229,8 +228,7 @@ const TRADE_HISTORY = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[478px] !w-[500px] rounded-bigger`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[478px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
@@ -457,11 +455,6 @@ export const HistoryPanel: FC = () => {
                 title={
                   <div tw="flex items-center">
                     <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                    {/*<img
-                      src="/img/assets/refresh.svg"
-                      alt="refresh-icon"
-                      tw="ml-auto ml-auto h-10 w-10 cursor-pointer mr-10"
-                    />*/}
                   </div>
                 }
                 closeIcon={
@@ -472,7 +465,6 @@ export const HistoryPanel: FC = () => {
                     onClick={() => setClosePositionModal(false)}
                   />
                 }
-                className={mode === 'dark' ? 'dark' : ''}
               >
                 <ClosePosition
                   setVisibleState={setClosePositionModal}
@@ -501,7 +493,6 @@ export const HistoryPanel: FC = () => {
                     onClick={() => setPerpsEndModal(false)}
                   />
                 }
-                className={mode === 'dark' ? 'dark' : ''}
               >
                 <PerpsEndModal
                   profit={summaryData.profit}
@@ -557,7 +548,6 @@ export const HistoryPanel: FC = () => {
                   <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
                   <button onClick={handleClosePosition}>Close</button>
-                  {/*<button onClick={() => setClosePosition(true)}>Close Position</button>*/}
                 </div>
               ) : (
                 <div className="no-positions-found">

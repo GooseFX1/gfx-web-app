@@ -54,7 +54,10 @@ const HOME_BTN = styled(MainButton)`
   }
 `
 
-export const GenericNotFound: FC = () => {
+export const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = ({
+  redirectLink,
+  redirectString
+}) => {
   const { mode } = useDarkMode()
   const history = useHistory()
 
@@ -70,9 +73,9 @@ export const GenericNotFound: FC = () => {
           status={'action'}
           width={'267px'}
           radius={'20px'}
-          onClick={() => history.push('/swap')}
+          onClick={() => history.push(redirectLink ? redirectLink : '/swap')}
         >
-          <span> Go Back Home</span>
+          <span> {redirectString ? redirectString : `Go Back Home`}</span>
         </HOME_BTN>
       </div>
     </PAGE_CONTAINER>

@@ -1,26 +1,31 @@
 import React, { FC, ReactElement } from 'react'
 import { Dropdown, Row } from 'antd'
-import styled from 'styled-components'
 import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
+import tw, { TwStyle, styled } from 'twin.macro'
+import 'styled-components/macro'
+// import { Loader } from './Loader'
 
-const ARROW_CLICKER = styled(CenteredDiv)<{ $arrowRotation?: boolean; $measurements?: string }>`
-  margin-left: ${({ theme }) => theme.margin(1)};
+const ARROW_CLICKER = styled(CenteredDiv)<{
+  $arrowRotation?: boolean
+  $cssStyle?: TwStyle
+}>`
+  ${tw`cursor-pointer`}
   border: none;
   background: transparent;
-  cursor: pointer;
   img {
-    ${({ theme, $measurements }) => theme.measurements($measurements ? $measurements : theme.margin(1.5))}
     ${({ $arrowRotation }) => $arrowRotation && 'transform: rotateZ(180deg);'}
     transition: transform 200ms ease-in-out;
+    ${tw`w-[14px] ml-2`}
+    ${({ $cssStyle }) => $cssStyle} !important;
   }
 `
 
 export const ArrowClicker: FC<{
   arrowRotation?: boolean
-  measurements?: string
+  cssStyle?: TwStyle
   [x: string]: any
-}> = ({ arrowRotation, measurements, ...props }) => (
-  <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements} {...props}>
+}> = ({ arrowRotation, cssStyle, ...props }) => (
+  <ARROW_CLICKER $arrowRotation={arrowRotation} $cssStyle={cssStyle} {...props}>
     <SVGDynamicMode src={`/img/assets/arrow.svg`} alt="arrow" />
   </ARROW_CLICKER>
 )

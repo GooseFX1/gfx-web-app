@@ -12,6 +12,7 @@ import { Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
 import { serum } from '../web3'
 import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'
+import useBlacklisted from '../utils/useBlacklisted'
 
 interface ICrypto {
   market?: Market
@@ -60,7 +61,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getPairWithMarketAddress = () => {
     let pairSet = pairsToset[0]
-    let isSpotCheck = false
+    let isSpotCheck = useBlacklisted()
     try {
       const paths = window.location.href.split('/')
       const marketAddress = paths[4]

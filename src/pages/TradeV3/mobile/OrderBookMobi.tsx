@@ -1,30 +1,31 @@
-/* eslint-disable */
-import { useEffect, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { OrderBook } from '../OrderBook'
 
 const WRAPPER = styled.div<{ $index: number }>`
   background: ${({ theme }) => theme.bg20};
-  top: 500px; //do not remove
-  height: 100vh;
+  position: absolute;
+  top: 85%;
+  height: 25%;
+  width: 100%;
+  z-index: 100;
   border-radius: 25px 25px 0px 0px;
+  transition: top 500ms ease-in-out;
+  overflow: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
   .header {
     ${tw`flex flex-row justify-around items-center h-[49px] relative`}
     border-bottom: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
   .active {
-    font-size: 15px;
-    font-weight: 600;
-    color: #eeeeee;
+    ${tw`font-semibold text-regular dark:text-grey-5 text-black-4`}
   }
   .inactive {
-    font-size: 15px;
-    font-weight: 500;
-    color: #b5b5b5;
+    ${tw`font-medium text-regular dark:text-grey-2 text-grey-1`}
   }
-
   .tab {
     &:after {
       ${tw`absolute bottom-0 block h-[7px] w-[60px] rounded-t-circle`}
@@ -34,73 +35,46 @@ const WRAPPER = styled.div<{ $index: number }>`
       transition: left 500ms ease-in-out;
     }
   }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`
+const SLIDER = styled.div<{ $rotateArrow: boolean }>`
+  ${tw`absolute h-5 w-1/5 top-0 rounded-b-average flex flex-row justify-center 
+    items-center left-[38%] border-[1.5px] border-t-0 border-white border-solid`}
+  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+  .arrow-icon {
+    ${({ $rotateArrow }) => $rotateArrow && 'transform: rotateZ(180deg);'}
+    transition: transform 400ms ease-in-out;
+  }
 `
 
-export const OrderBookMobi = () => {
+export const OrderBookMobi: FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0)
-  const [isScollUp, setIsScollUp] = useState<boolean>(true)
-  const [initial, setInitial] = useState<number>(0)
+  const [isScrollUp, setIsScrollUp] = useState<boolean>(true)
 
-  // const handleOrderbookScroll = (e) => {
-  //   document.addEventListener('mousemove', eleMouseMove, false)
-  //   //console.log(e)
-  // }
-
-  // function eleMouseMove(ev) {
-  //   console.log('ev', ev)
-  //   const ele = document.getElementById('orderbook-wrapper')
-  //   const pY = ev.pageY
-  //   console.log(pY)
-
-  //   ele.style.top = pY + 'px'
-
-  //   document.addEventListener('mouseup', eleMouseUp, false)
-  //   // test = pY;
-  //   // console.log("test after py:", test)
-
-  //   var test2 = pY.toString()
-  //   test2 = test2 + 'px'
-  //   ele.style.height = test2
-  // }
-
-  // function eleMouseUp() {
-  //   console.log('elemouseup called')
-  //   document.removeEventListener('mousemove', eleMouseMove, false)
-  //   document.removeEventListener('mouseup', eleMouseUp, false)
-  // }
-
-  const handleOrderbookScroll = (e) => {
-    //console.log(e.pageY)
-    if (initial === 0) {
-      setInitial(e.pageY)
-    }
-    setIsScollUp((prev) => !prev)
+  const handleOrderbookScroll = () => {
     const orderbookContainer = document.getElementById('orderbook-wrapper')
-    orderbookContainer.style.width = '100%'
-    orderbookContainer.style.zIndex = '100'
-    orderbookContainer.style.transition = 'top 400ms ease-in-out'
-    if (initial === 0 || isScollUp === true) {
-      orderbookContainer.style.position = 'absolute'
-      orderbookContainer.style.height = 'calc(100% - 160px)'
+    if (isScrollUp === true) {
       orderbookContainer.style.top = '160px'
+      orderbookContainer.style.overflow = 'scroll'
+      orderbookContainer.style.height = 'calc(100% - 130px)'
     } else {
-      orderbookContainer.style.height = '100vh'
-      orderbookContainer.style.top = initial + 'px'
-      orderbookContainer.style.position = 'fixed'
+      orderbookContainer.style.top = '85%'
+      orderbookContainer.style.overflow = 'hidden'
+      setTimeout(() => {
+        orderbookContainer.style.height = '25%'
+      }, 500)
     }
+    setIsScrollUp((prev) => !prev)
   }
 
   return (
     <WRAPPER $index={selectedTab} id="orderbook-wrapper">
       <div className="header">
-        {
-          <div
-            tw="absolute h-[5px] w-[34px] top-[7px] bg-[#636363] rounded-bigger"
-            onClick={(e) => {
-              handleOrderbookScroll(e)
-            }}
-          ></div>
-        }
+        <SLIDER $rotateArrow={isScrollUp} onClick={handleOrderbookScroll}>
+          <img className="arrow-icon" src="/img/assets/arrow-down.svg" alt="arrow" width="20px" height="10px" />
+        </SLIDER>
         <span className={selectedTab === 0 ? 'tab active' : 'tab inactive'} onClick={() => setSelectedTab(0)}>
           Orderbook
         </span>

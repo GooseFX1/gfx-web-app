@@ -13,27 +13,34 @@ const WRAPPER = styled.div`
   .input-row {
     ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
   }
-
+  .deposit {
+    ${tw`text-regular font-semibold mt-3.75 sm:text-tiny`}
+    color: ${({ theme }) => theme.text37};
+  }
   .percentage {
     ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
     background: ${({ theme }) => theme.bg22};
   }
 
   .percentage-num {
-    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full text-[16px]`}
-    color: ${({ theme }) => theme.text37};
+    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center 
+    justify-center h-full text-[16px] sm:text-regular text-grey-1`}
   }
 
   .selected {
-    ${tw`rounded-half text-white`}
+    ${tw`rounded-half text-grey-5`}
     background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
   }
 
   .submit-btn {
-    ${tw`block h-[50px] w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
-      text-average border-0 border-none bg-[#5855ff] sm:h-[45px] sm:w-full`}
+    ${tw`block h-12.5 w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
+      text-average border-0 border-none bg-blue-1 sm:h-[45px] sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
+  }
+  .disabled {
+    background-color: ${({ theme }) => theme.bg22};
+    color: ${({ theme }) => theme.text28};
   }
 `
 
@@ -61,14 +68,14 @@ const SELECTED_COIN = styled.div`
     ${tw`flex items-center mr-2.5`}
 
     .available-bal {
-      ${tw`mr-3.75 text-[16px] font-semibold`}
-      color: ${({ theme }) => theme.text28};
+      ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
+      color: ${({ theme }) => theme.text32};
     }
   }
 `
 
 const COIN_INFO = styled.div`
-  ${tw`flex items-center mr-auto h-[50px]`}
+  ${tw`flex items-center mr-auto h-12.5`}
 
   > * {
     ${tw`mr-2.5`}
@@ -87,7 +94,7 @@ const COIN_INFO = styled.div`
 
 const LABEL = styled.div`
   ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text11};
 `
 
 const INPUT = styled.div`
@@ -115,7 +122,7 @@ const INPUT = styled.div`
     -moz-appearance: textfield;
   }
   .token {
-    ${tw`text-[16px] font-semibold`}
+    ${tw`text-[16px] font-semibold sm:text-regular`}
     color: ${({ theme }) => theme.text11}
   }
 `
@@ -127,7 +134,6 @@ export const DepositWithdraw: FC<{
   const { devnetBalances: balances } = useAccounts()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
-  //const [amount, setAmount] = useState('')
   const [amount, setAmount] = useState('')
   const perpTokenList = PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
@@ -172,7 +178,6 @@ export const DepositWithdraw: FC<{
       setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleInputChange = (e) => {
     const t = e.target.value
     if (!isNaN(+t)) {
@@ -189,6 +194,21 @@ export const DepositWithdraw: FC<{
       console.log(e)
     }
   }
+  const checkDisabled = () => {
+    if (tradeType !== 'deposit') {
+      if (!traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount || !+amount) return true
+    } else {
+      if (
+        !tokenAmount ||
+        !tokenAmount.uiAmountString ||
+        +tokenAmount.uiAmountString < +amount ||
+        !amount ||
+        !+amount
+      )
+        return true
+    }
+  }
+
   const menus = (
     <Menu>
       {perpTokenList.map((item, index) => (
@@ -208,12 +228,7 @@ export const DepositWithdraw: FC<{
     <WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <LABEL>Asset</LABEL>
-        {tradeType === 'deposit' && (
-          <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1 mt-3.75 sm:text-tiny">
-            {' '}
-            Deposit Limit: $1,000,000.00{' '}
-          </span>
-        )}
+        {tradeType === 'deposit' && <span className="deposit"> Deposit Limit: $1,000,000.00 </span>}
       </div>
       <Dropdown overlay={menus} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
         <SELECTED_COIN>
@@ -250,7 +265,6 @@ export const DepositWithdraw: FC<{
             type="text"
             value={amount}
             onChange={handleInputChange}
-            //onChange={null}
           />
           <span className="token">{perpToken.token}</span>
         </INPUT>
@@ -269,14 +283,9 @@ export const DepositWithdraw: FC<{
         </div>
       </div>
       <button
-        className="submit-btn"
+        className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}
-        disabled={
-          tradeType !== 'deposit'
-            ? !traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount
-            : //: !tokenAmount || !tokenAmount.uiAmountString || +tokenAmount.uiAmountString < +amount || !amount
-              false
-        }
+        disabled={checkDisabled()}
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
       </button>

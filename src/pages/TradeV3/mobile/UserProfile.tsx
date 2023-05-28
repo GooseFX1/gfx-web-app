@@ -10,6 +10,8 @@ import { CollateralPanelMobi } from './CollateralPanelMobi'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
 import { DepositWithdraw } from '../perps/DepositWithdraw'
 import { ClosePosition } from '../ClosePosition'
+import { RotatingLoader } from '../../../components/RotatingLoader'
+import { PerpsEndModal } from '../PerpsEndModal'
 
 const WRAPPER = styled.div`
   .no-positions-found {
@@ -22,8 +24,7 @@ const WRAPPER = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[402px] !w-11/12 rounded-half`}
-  background-color: ${({ theme }) => theme.bg25};
+  ${tw`!h-[402px] !w-11/12 rounded-half dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
@@ -41,48 +42,55 @@ const SETTING_MODAL = styled(PopupCustom)`
   }
 `
 
+const END_MODAL = styled(PopupCustom)`
+  ${tw`!h-[384px] !w-[353px] rounded-bigger dark:bg-black-2 bg-grey-5`}
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
+`
+
 const POSITION_WRAPPER = styled.div`
-  margin: 0 10px;
-  border-bottom: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
+  ${tw`border-[1.5px] border-solid dark:border-black-4 border-grey-4 my-0 mx-[2.5px]`}
   button {
-    ${tw`h-[30px] w-[75px] bg-red-1 rounded-tiny text-tiny font-semibold border-none m-[5px] text-white mr-[20px]`}
+    ${tw`h-[30px] w-[75px] bg-red-1 rounded-tiny text-tiny font-semibold border-none m-[5px] text-white mr-5`}
     outline: none;
   }
   .label {
     ${tw`text-tiny font-semibold dark:text-grey-2 text-grey-1`}
   }
   .value {
-    ${tw`text-regular font-semibold dark:text-grey-5 text-grey-1`}
+    ${tw`text-regular font-semibold dark:text-grey-5 text-black-4`}
   }
   .long {
-    ${tw`text-[#80CE00]`}
+    ${tw`text-green-3 text-regular font-semibold`}
   }
   .short {
-    ${tw`text-red-1`}
+    ${tw`text-red-1 text-regular font-semibold`}
   }
 `
 
 const TABS = styled.div`
   .header-wrapper {
-    display: flex;
-    height: 40px;
-    width: 150%;
+    ${tw`flex flex-row h-10 w-[150%]`}
     -ms-overflow-style: none;
     scrollbar-width: none;
     .open-order-header {
       ${tw`flex flex-row`}
       .count {
-        ${tw`h-[18px] w-[18px] font-semibold ml-2.5 rounded-circle text-tiny`}
+        ${tw`flex flex-row items-center justify-center h-[18px] text-white w-[18px] font-semibold ml-2.5 rounded-circle text-tiny`}
         background-image: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-        color: ${({ theme }) => theme.white};
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
     }
     > div {
-      width: 34%;
-      height: 100%;
+      ${tw`h-full w-[34%]`}
     }
   }
 
@@ -91,19 +99,15 @@ const TABS = styled.div`
   }
 
   .tab {
-    border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+    ${tw`border border-solid dark:border-black-4 border-grey-4`}
     border-top: none;
-    cursor: pointer;
   }
   .active {
-    ${tw`text-[#3C3C3C] dark:text-[#EEEEEE]`}
+    ${tw`text-black-4 dark:text-grey-5 p-0.5`}
     background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-    padding: 2px;
   }
   .white-background {
-    background: ${({ theme }) => theme.bg20};
-    width: 100%;
-    height: 100%;
+    ${tw`h-full w-full dark:bg-black-2 bg-white`}
   }
   .activeTab {
     background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
@@ -112,12 +116,11 @@ const TABS = styled.div`
   .field {
     ${tw`dark:text-grey-2 text-grey-1 flex justify-center items-center text-tiny font-semibold h-full`}
   }
-  ${tw`h-full w-full relative overflow-y-hidden`}
-  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+  ${tw`h-full w-full relative overflow-y-hidden border border-solid dark:border-black-4 border-grey-4`}
 `
 
 const OPEN_ORDER = styled.div`
-  margin: 10px;
+  ${tw`m-2.5`}
   .label {
     ${tw`text-tiny font-semibold dark:text-grey-2 text-grey-1`}
   }
@@ -126,12 +129,17 @@ const OPEN_ORDER = styled.div`
   }
   .wrapper {
     border-bottom: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
+  }
+  .Long {
+    ${tw`text-green-3`}
+  }
+  .Short {
+    ${tw`text-red-2`}
   }
 `
 
 const TRADE_HISTORY = styled.div`
-  margin: 10px;
-  margin-top: 0;
+  ${tw`m-2.5 mt-0`}
   .label {
     ${tw`text-tiny font-semibold dark:text-grey-2 text-grey-1`}
   }
@@ -139,14 +147,14 @@ const TRADE_HISTORY = styled.div`
     ${tw`text-regular font-semibold dark:text-grey-5 text-grey-1 mb-2.5`}
   }
   .wrapper {
-    margin-top: 10px;
+    ${tw`mt-2.5`}
     border-bottom: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
   .Long {
-    ${tw`text-[#80CE00]`}
+    ${tw`text-green-3`}
   }
   .Short {
-    ${tw`text-[#F35355]`}
+    ${tw`text-red-2`}
   }
 `
 
@@ -154,7 +162,7 @@ const HEADER = styled.div`
   ${tw`flex items-center`}
 
   .cta {
-    ${tw`rounded-bigger w-[120px] h-[40px] mr-[13px] cursor-pointer`}
+    ${tw`rounded-bigger w-[120px] h-10 mr-[13px]`}
 
     .btn {
       ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
@@ -162,7 +170,7 @@ const HEADER = styled.div`
     }
 
     .gradient-bg {
-      ${tw`h-full w-full rounded-bigger `}
+      ${tw`h-full w-full rounded-bigger`}
       background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
     }
   }
@@ -180,12 +188,12 @@ const HEADER = styled.div`
     }
 
     .white-background {
-      background-color: ${({ theme }) => theme.white};
+      ${tw`bg-white`}
     }
   }
 
   img {
-    ${tw`ml-auto h-10 w-10 cursor-pointer mr-[50px]`}
+    ${tw`ml-auto h-10 w-10 mr-[50px]`}
   }
 `
 
@@ -211,12 +219,23 @@ const FIXED_BOTTOM = styled.div`
 const OpenOrders: FC = () => {
   const { formatPair, isSpot } = useCrypto()
   const { cancelOrder, orders } = useTradeHistory()
-  const { perpsOpenOrders, orderBook } = useOrderBook()
+  const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const openOrderUI = isSpot ? orders : perpsOpenOrders
+
+  const cancelOrderFn = async (orderId: string) => {
+    setLoading(true)
+    const res = await perpsCancelOrder(orderId)
+    setLoading(false)
+    const arr = removedOrderIds
+    if (res && res.txid) {
+      arr.push(orderId)
+      setremoved(arr)
+    }
+  }
 
   const content = useMemo(
     () => (
@@ -226,11 +245,19 @@ const OpenOrders: FC = () => {
           openOrderUI.map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
               <div key={index} className="wrapper">
-                <div tw="mb-3.5">
+                <div tw="mb-3.5 mt-2.5 flex">
                   <span tw="text-regular font-semibold dark:text-grey-5 text-black-4 mr-2.5">SOL/PERP</span>
-                  <span tw="text-regular font-semibold text-[#80CE00]" className={order.order.side}>
+                  <span tw="text-regular font-semibold" className={order.order.side}>
                     {order.order.side}
                   </span>
+                  <button
+                    tw="ml-auto mr-3.5 text-white font-semibold bg-red-2 rounded-tiny h-[30px] w-[88px] border-none"
+                    onClick={() => {
+                      cancelOrderFn(order.order.orderId)
+                    }}
+                  >
+                    {loading ? <RotatingLoader text="" textSize={8} iconSize={16} /> : 'Cancel'}
+                  </button>
                 </div>
                 <div tw="flex flex-row justify-between">
                   <div tw="flex flex-col">
@@ -247,7 +274,7 @@ const OpenOrders: FC = () => {
                   </div>
                   <div tw="flex flex-col">
                     <span className="label">Condition</span>
-                    <span className="value" tw="!text-[#80CE00]">
+                    <span className="value" tw="!text-green-3">
                       Open
                     </span>
                   </div>
@@ -340,6 +367,7 @@ const TradeHistoryComponent: FC = () => {
 }
 
 const Positions = () => {
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
   const { traderInfo } = useTraderConfig()
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
@@ -359,6 +387,21 @@ const Positions = () => {
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
     [perpsPrice, traderInfo.averagePosition.quantity]
   )
+  const [summaryData, setSummaryData] = useState<{
+    profit: boolean
+    entryPrice: string
+    exitPrice: string
+    leverage: string
+    pnl: string
+    percentageChange: string
+  }>({
+    profit: true,
+    entryPrice: '',
+    exitPrice: '',
+    leverage: '',
+    pnl: '',
+    percentageChange: ''
+  })
 
   return traderInfo.averagePosition.side && Number(roundedSize) ? (
     <POSITION_WRAPPER>
@@ -381,10 +424,45 @@ const Positions = () => {
                 onClick={() => setClosePositionModal(false)}
               />
             }
-            className={mode === 'dark' ? 'dark' : ''}
           >
-            <ClosePosition setVisibleState={setClosePositionModal} setPerpsEndModal={null} setSummaryData={null} />
+            <ClosePosition
+              setVisibleState={setClosePositionModal}
+              setPerpsEndModal={setPerpsEndModal}
+              setSummaryData={setSummaryData}
+            />
           </SETTING_MODAL>
+        </>
+      )}
+      {perpsEndModal && (
+        <>
+          <END_MODAL
+            visible={true}
+            centered={true}
+            footer={null}
+            title={
+              <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5 sm:text-lg">
+                {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
+              </span>
+            }
+            closeIcon={
+              <img
+                src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+                height="15px"
+                width="15px"
+                onClick={() => setPerpsEndModal(false)}
+              />
+            }
+          >
+            <PerpsEndModal
+              profit={summaryData.profit}
+              side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+              entryPrice={summaryData.entryPrice}
+              currentPrice={summaryData.exitPrice}
+              leverage={summaryData.leverage}
+              pnlAmount={summaryData.pnl}
+              percentageChange={summaryData.percentageChange}
+            />
+          </END_MODAL>
         </>
       )}
       <div tw="flex flex-row justify-between items-center mb-2">
@@ -454,13 +532,11 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
         </div>
       </div>
-      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
-        {/*<div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>*/}
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
         <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
       </div>
-      {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
     </HEADER>
   )
 }

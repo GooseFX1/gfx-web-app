@@ -19,10 +19,9 @@ export const StyledTabContent = styled.div`
         
     .profile-search-bar {
       position: absolute;
-      left: 40px;
-      width: 430px;
+      width: 332px;
       padding: 12px 24px;
-      margin-left: 0 !important;
+      margin: 0 20px 0 15px !important;
       z-index: 20;
       
       > div:nth-child(1) {

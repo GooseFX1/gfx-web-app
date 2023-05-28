@@ -14,7 +14,7 @@ import {
   SignatureResult
 } from '@solana/web3.js'
 import { SYSTEM } from './ids'
-import { findAssociatedTokenAddress } from './utils'
+import { confirmTransaction, findAssociatedTokenAddress } from './utils'
 import { STAKE_PREFIX, toPublicKey, ADDRESSES } from '../web3'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { CONTROLLER_LAYOUT, STAKING_ACCOUNT_LAYOUT } from 'goosefx-ssl-sdk'
@@ -113,7 +113,7 @@ const stakeAmount = async (
     signature = await wallet.sendTransaction(stakeAmountTX, connection, { skipPreflight: true })
     console.log(signature)
 
-    const confirm = await connection.confirmTransaction(signature, 'confirmed')
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
     console.log(confirm, 'stake amount')
     return { confirm, signature }
   } catch (error) {
@@ -154,8 +154,7 @@ export const executeUnstakeAndClaim = async (
     const unstakeAmountTX: Transaction = new Transaction().add(unstakeAmountIX)
     const signature = await wallet.sendTransaction(unstakeAmountTX, connection, { skipPreflight: true })
     console.log(signature)
-    const confirm = await connection.confirmTransaction(signature, 'processed')
-    console.log(confirm)
+    const confirm = await confirmTransaction(connection, signature, 'confirmed')
 
     return { confirm, signature }
   } catch (error) {

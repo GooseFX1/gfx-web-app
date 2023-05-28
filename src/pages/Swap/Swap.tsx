@@ -9,7 +9,6 @@ import { SwapButton } from './SwapButton'
 import { SwapFrom } from './SwapFrom'
 import { SwapTo } from './SwapTo'
 import { Modal, Tooltip, SwapTokenToggle } from '../../components'
-
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import {
   useDarkMode,
@@ -105,8 +104,21 @@ const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
 `
 
 const SETTING_MODAL = styled(Modal)`
+  ${tw`dark:bg-black-2 bg-white`}
   width: 628px !important;
-  background-color: ${({ theme }) => theme.bg20} !important;
+`
+
+const SWAP_HISTORY_MODAL = styled(Modal)`
+  ${tw`dark:bg-black-2 bg-white`}
+  width: 628px !important;
+
+  .ant-modal-body {
+    max-height: 80vh !important;
+
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+  }
 `
 
 const BODY = styled.div`
@@ -450,11 +462,6 @@ const SwapContent: FC<{
           box-shadow: 0 0 0 2px rgb(23 125 220 / 20%);
         }
       }
-
-      .ant-modal-centered {
-        top: -75px;
-      }
-
       .ant-modal {
         border-radius: 20px;
       }
@@ -476,7 +483,7 @@ const SwapContent: FC<{
         bigTitle={false}
         title="Settings"
         visible={settingsModalVisible}
-        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'hidden' }}
       >
         <Settings setVisible={setSettingsModalVisible} />
       </SETTING_MODAL>
@@ -485,19 +492,19 @@ const SwapContent: FC<{
         bigTitle={false}
         title="SOL / WSOL"
         visible={wrapModalVisible}
-        style={{ overflowY: 'hidden', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'hidden' }}
       >
         <Wrap setVisible={setWrapModalVisible} />
       </SETTING_MODAL>
-      <SETTING_MODAL
+      <SWAP_HISTORY_MODAL
         setVisible={setHistoryVisible}
         bigTitle={false}
         title="Swap History"
         visible={historyVisible}
-        style={{ overflowY: 'auto', backgroundColor: mode === 'dark' ? '#1c1c1c' : 'white' }}
+        style={{ overflowY: 'auto' }}
       >
         <History reload={reloadTrigger} />
-      </SETTING_MODAL>
+      </SWAP_HISTORY_MODAL>
       <HEADER_WRAPPER $iconSize="40px">
         <HEADER_TITLE>
           <span>{breakpoint.isMobile ? 'Swap' : dateString(new Date())}</span>
@@ -508,7 +515,7 @@ const SwapContent: FC<{
           {wallet?.adapter?.publicKey && (
             <div
               onClick={openHistory}
-              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10 
+              tw="flex justify-center items-center dark:bg-black-1 bg-grey-4 h-10 w-10
                   rounded-circle mr-2 cursor-pointer"
             >
               <img
@@ -524,13 +531,15 @@ const SwapContent: FC<{
               />
             </div>
           )}
-          <div
-            onClick={showWrapSolModal}
-            tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest 
+          {!checkMobile() && (
+            <div
+              onClick={showWrapSolModal}
+              tw="mr-2.5 text-black-3 text-center cursor-pointer h-[40px] w-[40px] text-smallest
             dark:text-white dark:bg-black-4 bg-grey-4 rounded-[100%] leading-10"
-          >
-            wSOL
-          </div>
+            >
+              wSOL
+            </div>
+          )}
           <div onClick={refresh} style={{ cursor: 'pointer' }}>
             <img
               src={`/img/assets/refresh.svg`}

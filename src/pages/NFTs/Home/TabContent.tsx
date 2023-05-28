@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import styled from 'styled-components'
-import { NFTBaseCollection, NFTCollection } from '../../../types/nft_collections.d'
-import { NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../../../api/NFTs'
+import { NFTCollection } from '../../../types/nft_collections.d'
 import { nFormatter } from '../../../utils'
 import { useNFTProfile, usePriceFeed, useDarkMode } from '../../../context'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -127,23 +126,15 @@ const TabContent = ({ detailedCollections, collectionFilter, sort }: ITabContent
   const setCollectionSort = async (collections: NFTCollection[]) => {
     if (collectionFilter === 'floor') {
       if (sort === 'high') {
-        setCollectionExtras(collections.sort((a, b) => b.collection_floor - a.collection_floor))
+        setCollectionExtras(collections.sort((a, b) => b.floor_price - a.floor_price))
       } else if (sort === 'low') {
-        setCollectionExtras(collections.sort((a, b) => a.collection_floor - b.collection_floor))
+        setCollectionExtras(collections.sort((a, b) => a.floor_price - b.floor_price))
       }
     } else if (collectionFilter === 'volume') {
       if (sort === 'high') {
-        setCollectionExtras(
-          collections.sort((a, b) =>
-            b.collection_vol && a.collection_vol ? b.collection_vol.weekly - a.collection_vol.weekly : null
-          )
-        )
+        setCollectionExtras(collections.sort((a, b) => b.weekly_volume - a.weekly_volume))
       } else if (sort === 'low') {
-        setCollectionExtras(
-          collections.sort((a, b) =>
-            a.collection_vol && b.collection_vol ? a.collection_vol.weekly - b.collection_vol.weekly : null
-          )
-        )
+        setCollectionExtras(collections.sort((a, b) => a.weekly_volume - b.weekly_volume))
       }
     }
   }
@@ -207,7 +198,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
     <ANALYTIC_ITEM
       onClick={() =>
         isCollection
-          ? history.push(`/NFTs/collection/${collection.collection[0].collection_name.replaceAll(' ', '_')}`)
+          ? history.push(`/NFTs/collection/${collection.collection_name.replaceAll(' ', '_')}`)
           : console.log('Error: Analytics No collection')
       }
     >
@@ -217,8 +208,8 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
         <Image
           className="analytic-image"
           src={
-            collection.collection[0].profile_pic_link.length > 0
-              ? collection.collection[0].profile_pic_link
+            collection.profile_pic_link.length > 0
+              ? collection.profile_pic_link
               : `/img/assets/nft-preview-${mode}.svg`
           }
           fallback={`/img/assets/nft-preview-${mode}.svg`}
@@ -229,13 +220,9 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
       <div className="analytic-content">
         <div style={{ position: 'relative' }}>
           <h2 className="title">
-            {!isCollection ? (
-              <SkeletonCommon width="149px" height="28px" />
-            ) : (
-              collection.collection[0].collection_name
-            )}
+            {!isCollection ? <SkeletonCommon width="149px" height="28px" /> : collection.collection_name}
           </h2>
-          {isCollection && collection && collection.collection[0].is_verified && (
+          {isCollection && collection && collection.is_verified && (
             <img className="check-icon" src={`${process.env.PUBLIC_URL}/img/assets/check-icon.svg`} alt="" />
           )}
         </div>
@@ -248,8 +235,8 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               </div>
             ) : collectionFilter === 'floor' ? (
               <div>
-                {collection.collection_floor
-                  ? dynamicPriceValue(userCurrency, prices, collection.collection_floor / LAMPORTS_PER_SOL)
+                {collection.floor_price
+                  ? dynamicPriceValue(userCurrency, prices, collection.floor_price / LAMPORTS_PER_SOL)
                   : '0'}
                 <img
                   className="currency-icon"
@@ -259,9 +246,7 @@ const AnalyticItem = ({ collection, collectionFilter }: IAnalyticItem) => {
               </div>
             ) : (
               collectionFilter === 'volume' &&
-              (collection.collection_vol
-                ? dynamicPriceValue(userCurrency, prices, collection.collection_vol.weekly)
-                : '0')
+              (collection.weekly_volume ? dynamicPriceValue(userCurrency, prices, collection.weekly_volume) : '0')
             )}
           </div>
         </div>

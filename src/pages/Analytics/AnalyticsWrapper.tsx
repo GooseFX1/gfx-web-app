@@ -5,7 +5,7 @@ import tw from 'twin.macro'
 import { isAdminAllowed } from '../../api/NFTLaunchpad'
 import { useNavCollapse } from '../../context'
 import { Connect } from '../../layouts'
-import { GradientText } from '../NFTs/adminPage/components/UpcomingMints'
+import { GradientText } from '../../components/GradientText'
 import AnalyticsDashboard from './AnalyticsDashboard'
 
 const CONNECT_WALLET_WRAPPER = styled.div`

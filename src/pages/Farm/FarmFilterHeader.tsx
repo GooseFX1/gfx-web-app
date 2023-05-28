@@ -10,27 +10,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { CenteredDiv } from '../../styles'
 
 const ABSTRACT = styled.div`
-  .lastRefreshed {
-    ${tw`flex flex-col h-[0px] justify-end items-center w-full sm:text-sm`}
-    color: ${({ theme }) => theme.tabNameColor};
-    animation: openAnimation 3s ease-in-out;
-  }
-
-  @keyframes openAnimation {
-    0% {
-      height: 0px;
-    }
-    30% {
-      height: 64px;
-    }
-    50% {
-      height: 64px;
-    }
-    100% {
-      height: 0px;
-    }
-  }
-
   .generalStatsBg {
     display: flex;
     ${tw`overflow-hidden h-9 whitespace-nowrap font-semibold text-sm mb-1`}
@@ -69,9 +48,9 @@ const STYLED_FARM_HEADER = styled.div`
   ${tw`w-[100%] sm:mt-0`}
   ${tw`sm:block sm:pt-[2px] sm:pb-[8px] sm:px-[15px] flex flex-row items-center justify-between pb-[23px]`}
   .search-bar {
-    ${tw`h-[60px] m-0 bg-black mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!pl-[15px]`}
+    ${tw`h-[60px] m-0 mr-52 sm:mr-0 w-[25vw] sm:w-[400px] sm:!pl-[15px]`}
     input {
-      ${tw`bg-black `}
+      ${tw`dark:bg-black-2 bg-grey-1 text-white`}
     }
   }
   .pools {
@@ -85,25 +64,24 @@ const STYLED_FARM_HEADER = styled.div`
     ${tw`ml-9`}
   }
   .selectedBackground {
-    ${tw`text-white`}
+    color: white !important;
     transition: 500ms ease-in-out;
     @media (max-width: 500px) {
       background: none;
     }
   }
 `
-const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto sm:w-1/3 cursor-pointer w-[120px] text-center border-none border-0 
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 `}
-  font-family: 'Montserrat';
+export const STYLED_BUTTON = styled.button`
+  ${tw`sm:m-auto cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 sm:font-medium
+  font-semibold text-base h-[44px] rounded-[36px] duration-700 text-[15px] text-grey-1`}
   background: none;
-  color: ${({ theme }) => theme.text17};
+
   :disabled {
     ${tw`cursor-wait`}
   }
 `
 
-const ButtonContainer = styled.div<{ $poolIndex: number }>`
+export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 sm:mt-2`}
   .slider-animation {
     ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
@@ -119,7 +97,7 @@ const ButtonContainer = styled.div<{ $poolIndex: number }>`
   }
 `
 
-const RefreshIcon = styled.button`
+export const RefreshIcon = styled.button`
   ${tw`cursor-pointer  sm:ml-10 rounded-full border-0 p-0 bg-transparent`}
   .rotateRefreshBtn {
     -webkit-animation: cog 1s infinite;
@@ -176,13 +154,6 @@ export const useAnimateButtonSlide = (
   index?: number,
   customCallback?: (index: number) => void
 ): ((index: number) => void) => {
-  useEffect(() => {
-    const interval = setInterval(() => handleSlide(index), 33)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [slideRef.current, buttonRefs.current, index])
-
   const handleSlide = useCallback(
     (index) => {
       if (!slideRef.current || !buttonRefs.current.length) {
@@ -215,6 +186,7 @@ export const useAnimateButtonSlide = (
 
   return handleSlide
 }
+
 export const FarmFilter: FC = () => {
   const {
     poolFilter,
@@ -358,7 +330,7 @@ export const FarmFilter: FC = () => {
   )
 }
 
-export const RefreshBtnWithAnimation: FC = () => {
+export const RefreshBtnWithAnimation: FC = (): ReactElement => {
   const { refreshClass, setRefreshClass, setCounter } = useFarmContext()
   const refreshFeed = () => {
     setRefreshClass('rotateRefreshBtn')
@@ -370,7 +342,9 @@ export const RefreshBtnWithAnimation: FC = () => {
     </RefreshIcon>
   )
 }
-const LastRefreshedAnimation = ({ lastRefreshedClass }: any) => (
+export const LastRefreshedAnimation: FC<{ lastRefreshedClass: string }> = ({
+  lastRefreshedClass
+}): ReactElement => (
   <div className={lastRefreshedClass}>
     {lastRefreshedClass === 'lastRefreshed' && (
       <strong>

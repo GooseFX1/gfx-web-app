@@ -5,6 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
+  font-family: 'Montserrat';
   -ms-overflow-style: none !important;
   &::selection {
     background: #5755ff;
@@ -536,14 +537,15 @@ span:hover {
 .ant-checkbox-checked .ant-checkbox-inner {
   background: #5755ff;
 }
-.takep-stopl-container {
+.takep-stopl-container.dark {
   .ant-dropdown-menu {
     background: #1c1c1c;
     border: 1px solid #b5b5b5;
     height: 132px;
-    width: 148px;
+    width: 150px;
     border-radius: 5px;
     position: relative;
+    box-shadow: none;
   }
   .ant-dropdown-menu-item {
     padding: 0;
@@ -551,5 +553,95 @@ span:hover {
   }
   .ant-dropdown-menu-item:hover {
     background-color: #1c1c1c;
+  }
+}
+.takep-stopl-container.lite {
+  .ant-dropdown-menu {
+    background: #ffffff;
+    border: 1px solid #636363;
+    height: 132px;
+    width: 150px;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: none;
+  }
+  .ant-dropdown-menu-item {
+    padding: 0;
+    position: static;
+  }
+  .ant-dropdown-menu-item:hover {
+    background-color: #ffffff;
+  }
+}
+.georestricted-dropdown.dark {
+  height: 80px;
+  width: 280px;
+  padding: 0 !important;
+  max-width: 100% !important;
+  .ant-tooltip-content {
+    height: 100%;
+    width: 100%;
+    .ant-tooltip-arrow {
+      > span::before {
+        background-color: #eeeeee;
+      }
+    }
+    .ant-tooltip-inner {
+      max-width: 100% !important;
+      height: 100%;
+      background: #eeeeee !important;
+      padding: 0 !important;
+      justify-content: center;
+      > span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 0 !important;
+        > img {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+.georestricted-dropdown.lite {
+  height: 80px;
+  width: 280px;
+  padding: 0 !important;
+  max-width: 100% !important;
+  .ant-tooltip-content {
+    height: 100%;
+    width: 100%;
+    .ant-tooltip-arrow {
+      > span::before {
+        background-color: #3c3c3c;
+      }
+    }
+    .ant-tooltip-inner {
+      max-width: 100% !important;
+      height: 100%;
+      background: #3c3c3c !important;
+      padding: 0 !important;
+      justify-content: center;
+      > span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 0 !important;
+        > img {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+.spread-dropdown.lite {
+  > ul {
+    background-color: #cacaca;
+    > li {
+      > span {
+        color: #3c3c3c;
+      }
+    }
   }
 }

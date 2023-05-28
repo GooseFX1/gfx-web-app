@@ -2,18 +2,99 @@ import React, { useState, useEffect, FC } from 'react'
 import { StyledTableList } from './TableList.styled'
 import NoContent from './NoContent'
 import { fetchNFTById } from '../../../api/NFTs'
-import { SearchBar, Loader } from '../../../components'
+import { SearchBar, Loader, ArrowDropdown } from '../../../components'
 import { StyledTabContent } from './TabContent.styled'
 import { useNFTProfile, useConnectionConfig } from '../../../context'
 import { checkMobile, truncateAddress } from '../../../utils'
 import { INFTUserActivity } from '../../../types/nft_profile.d'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import { CenteredDiv } from '../../../styles'
+
+const WRAPPER = styled.div`
+  background-color: ${({ theme }) => theme.primary3};
+  position: absolute;
+  left: 367px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  width: 115px;
+  border-radius: 59px;
+  display: flex;
+  justify-content: center;
+
+  .ant-row {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+`
+
+const REFRESH = styled.div`
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: 110px;
+  cursor: pointer;
+`
+const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
+  ${tw`h-[25px] w-[50px] rounded-[40px] cursor-pointer`}
+  border-radius: 30px;
+  background-image: linear-gradient(to right, #f7931a 25%, #ac1cc7 100%);
+  position: absolute;
+  right: 20px;
+  top: 30px;
+
+  > div {
+    ${tw`h-[30px] w-[30px]`}
+    ${({ theme }) => theme.roundedBorders}
+    box-shadow: 0 3.5px 3.5px 0 rgba(0, 0, 0, 0.25);
+    background-image: url('/img/assets/solana-logo.png');
+    background-position: center; 
+    background-size: 100%;
+    background-repeat: no-repeat;
+    transform: translateX(${({ $mode }) => ($mode ? '-12px' : '12px')});
+`
+
+const DROPDOWN_WRAPPER = styled.div`
+  padding: 12px;
+  width: 115px;
+  height: 98px;
+  border-radius: 5px;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background-color: ${({ theme }) => theme.bg23};
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  input[type='radio'] {
+    width: 15px;
+    height: 15px;
+    appearance: none;
+    border-radius: 50%;
+    outline: none;
+    background: ${({ theme }) => theme.bg24};
+    accent-color: yellow;
+    cursor: pointer;
+  }
+
+  input[type='radio']:checked {
+    background-image: linear-gradient(111deg, #f7931a 11%, #ac1cc7 94%);
+    border: 3px solid #1c1c1c;
+  }
+`
 
 export const columns = [
   {
     title: 'Event',
     dataIndex: 'kind',
     key: 'kind',
-    render: (text): JSX.Element => <span className="text-normal">{text === 'bid_matched' ? 'sold' : text}</span>
+    render: (text): JSX.Element => <span className="normal-text">{text === 'bid_matched' ? 'sold' : text}</span>
   },
   {
     title: 'Item',
@@ -22,8 +103,8 @@ export const columns = [
     render: (record): JSX.Element => (
       <div className="item">
         <img className="image" src={record.image_url} alt="" />
-        <div className="text">
-          <div className="text-name">{record.name}</div>
+        <div className="content">
+          <div className="content-name">{record.name}</div>
         </div>
       </div>
     )
@@ -44,25 +125,25 @@ export const columns = [
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
-    render: (text): JSX.Element => <span className="text-normal">{text}</span>
+    render: (text): JSX.Element => <span className="normal-text">{text}</span>
   },
   {
     title: 'From',
     dataIndex: 'from',
     key: 'from',
-    render: (text): JSX.Element => <span className="from">{text}</span>
+    render: (text): JSX.Element => <span className="sender">{text}</span>
   },
   {
     title: 'To',
     dataIndex: 'to',
     key: 'to',
-    render: (text): JSX.Element => <span className="from">{text}</span>
+    render: (text): JSX.Element => <span className="sender">{text}</span>
   },
   {
     title: 'Date',
     dataIndex: 'date',
     key: 'date',
-    render: (text): JSX.Element => <span className="text-normal">{text}</span>
+    render: (text): JSX.Element => <span className="normal-text">{text}</span>
   }
 ]
 
@@ -70,10 +151,43 @@ interface IProps {
   data: INFTUserActivity[]
 }
 
+interface Props {
+  nftFilterArr: string[]
+  setNftFilter: (index: number) => void
+}
+
 const Activity: FC<IProps> = (props) => {
   const [activityLog, setActivitLog] = useState<any>([])
   const { sessionUser, nonSessionProfile } = useNFTProfile()
   const { connection } = useConnectionConfig()
+  const [isSol, setIsSol] = useState<boolean>(true)
+  const nftFilterArr = ['All', 'Offers', 'On Sale']
+  const [nftFilter, setNftFilter] = useState<number>(0)
+
+  const toggleSol = () => {
+    setIsSol((prev) => !prev)
+  }
+
+  const Menu: FC<Props> = ({ nftFilterArr, setNftFilter }): JSX.Element => (
+    <>
+      <DROPDOWN_WRAPPER>
+        {nftFilterArr.map((item, index) => (
+          <div key={index}>
+            <span>{item}</span>
+            <input
+              type="radio"
+              value={item}
+              name="nft_filter"
+              checked={index === nftFilter}
+              onChange={() => {
+                setNftFilter(index)
+              }}
+            />
+          </div>
+        ))}
+      </DROPDOWN_WRAPPER>
+    </>
+  )
 
   useEffect(() => {
     fetchActivity(props.data).then((actvsLog) => setActivitLog(actvsLog))
@@ -123,11 +237,32 @@ const Activity: FC<IProps> = (props) => {
   return (
     <StyledTabContent>
       {!checkMobile() && (
-        <div className="actions-group">
-          <div className="search-group">
-            <SearchBar className={'profile-search-bar '} />
+        <>
+          <div className="actions-group">
+            <div className="search-group">
+              <SearchBar className={'profile-search-bar '} />
+            </div>
           </div>
-        </div>
+          <WRAPPER>
+            <ArrowDropdown
+              measurements="16px"
+              offset={[4, 8]}
+              placement="bottom"
+              overlay={<Menu nftFilterArr={nftFilterArr} setNftFilter={setNftFilter} />}
+              onVisibleChange={() => {
+                console.log('haha')
+              }}
+            >
+              <div className="active">{nftFilterArr[nftFilter]}</div>
+            </ArrowDropdown>
+          </WRAPPER>
+          <REFRESH>
+            <img src="/img/assets/refresh.svg" alt="refresh" />
+          </REFRESH>
+          <Toggle $mode={isSol} onClick={toggleSol}>
+            <div />
+          </Toggle>
+        </>
       )}
       {!activityLog ? (
         <div className="profile-content-loading">

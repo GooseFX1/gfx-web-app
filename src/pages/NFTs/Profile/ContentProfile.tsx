@@ -1,15 +1,27 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
-import { useNFTProfile } from '../../../context'
+import { useNFTAggregator, useNFTProfile } from '../../../context'
 import { ISingleNFT } from '../../../types/nft_details.d'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs/actions'
 import { NFTTab } from '../NFTTab'
 import NFTDisplay from './NFTDisplay'
-import Activity from './Activity'
+import styled from 'styled-components'
+import ProfilePageSidebar from './ProfilePageSidebar'
+import { checkMobile } from '../../../utils'
+import tw from 'twin.macro'
+import ActivityNFTSection from '../Collection/ActivityNFTSection'
+import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
+import { useParams } from 'react-router-dom'
+import { IAppParams } from '../../../types/app_params'
 
 type Props = {
   isSessionUser: boolean
 }
+
+const WRAPPER = styled.div<{ background?: string }>`
+  ${tw`flex h-[70vh]`}
+`
 
 export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element => {
   const {
@@ -23,11 +35,13 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
-
+  const { refreshClicked } = useNFTAggregator()
+  const params = useParams<IAppParams>()
+  const [noOfNFTs, setNumberOfNFTs] = useState<number>(0)
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
       return nonSessionProfile
-    } else if (sessionUser !== undefined && isSessionUser) {
+    } else if (sessionUser !== null && isSessionUser) {
       return sessionUser
     } else {
       return undefined
@@ -47,27 +61,30 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const tabPanes = useMemo(
     () => [
       {
-        order: '1',
-        name: `Collection (${currentUserParsedAccounts ? currentUserParsedAccounts.length : 0})`,
-        component: <NFTDisplay parsedAccounts={currentUserParsedAccounts} type={'collected'} />
+        order: 1,
+        name: `Collection (${noOfNFTs})`,
+        component: (
+          <NFTDisplay
+            parsedAccounts={currentUserParsedAccounts}
+            type={'collected'}
+            setNumberOfNFTs={setNumberOfNFTs}
+          />
+        )
       },
       {
-        order: '2',
-        name: `Created (${createdItems ? createdItems.length : 0})`,
-        component: <NFTDisplay parsedAccounts={createdItems} type={'created'} />
-      },
-      {
-        order: '3',
-        name: `Favorited (${favoritedItems ? favoritedItems.length : 0})`,
+        order: 2,
+        name: `Liked (${favoritedItems ? favoritedItems.length : 0})`,
         component: <NFTDisplay singleNFTs={favoritedItems ? favoritedItems : []} type={'favorited'} />
       },
       {
-        order: '4',
+        order: 3,
         name: 'Activity',
-        component: <Activity data={userActivity ? userActivity : []} />
+        component: (
+          <ActivityNFTSection address={params.userAddress} typeOfAddress={NFT_ACTIVITY_ENDPOINT.WALLET_ADDRESS} />
+        )
       }
     ],
-    [currentUserParsedAccounts, createdItems, userActivity, favoritedItems]
+    [currentUserParsedAccounts, favoritedItems, noOfNFTs, refreshClicked]
   )
 
   useEffect(() => {
@@ -92,15 +109,15 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     return null
   }, [currentUserProfile])
 
-  useEffect(() => {
-    if (currentUserProfile && currentUserProfile.uuid) {
-      fetchUserActivity(currentUserProfile.uuid)
-    } else {
-      setUserActivity([])
-    }
+  // useEffect(() => {
+  //   if (currentUserProfile && currentUserProfile.uuid) {
+  //     fetchUserActivity(currentUserProfile.uuid)
+  //   } else {
+  //     setUserActivity([])
+  //   }
 
-    return null
-  }, [currentUserProfile, fetchUserActivity, setUserActivity])
+  //   return null
+  // }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
   const fetchFavorites = async (userLikes: string[]) => {
     const favorites: ISingleNFT[] = await Promise.all(userLikes.map((nftUUID: string) => fetchNFTById(nftUUID)))
@@ -108,5 +125,12 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     setFavoritedItems(favorites.map((f: any) => f.data[0]))
   }
 
-  return <NFTTab tabPanes={tabPanes} />
+  return !checkMobile() ? (
+    <WRAPPER>
+      <ProfilePageSidebar isSessionUser={isSessionUser} />
+      <NFTTab tabPanes={tabPanes} />
+    </WRAPPER>
+  ) : (
+    <NFTTab tabPanes={tabPanes} />
+  )
 }

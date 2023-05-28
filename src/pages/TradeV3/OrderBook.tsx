@@ -2,7 +2,7 @@
 import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
-import { MarketSide, useCrypto, useOrder, useOrderBook, useTradeHistory } from '../../context'
+import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook, useTradeHistory } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
 
@@ -12,10 +12,9 @@ const HEADER = styled.div`
   ${tw`h-[31px] w-full p-0 text-xs h-7`}
   border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   & div {
-    ${tw`flex justify-between items-center h-full px-2 dark:text-[#B5B5B5] text-[#636363]`}
-
+    ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
     span {
-      ${tw`inline-block w-1/3 text-xs font-medium`}
+      ${tw`inline-block w-1/3 text-tiny font-medium`}
     }
     span:nth-child(2) {
       ${tw`text-center`}
@@ -28,7 +27,6 @@ const HEADER = styled.div`
     }
   }
   div:nth-child(2) {
-    color: ${({ theme }) => theme.text23};
     ${tw`mt-3.75`}
     span {
       ${tw`text-smallest`}
@@ -218,6 +216,13 @@ const SPREAD_FOOTER = styled.div`
   border-bottom: none;
   border-left: none;
   border-right: none;
+
+  .spreadDropdown {
+    > span {
+      background: none;
+      cursor: pointer;
+    }
+  }
 `
 
 const Loader: FC = () => (
@@ -238,6 +243,7 @@ function usePrevious(value) {
 
 export const OrderBook: FC = () => {
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto } = useCrypto()
+  const { mode } = useDarkMode()
   const { order, setFocused, setOrder } = useOrder()
   const { orderBook } = useOrderBook()
   const [bids] = useState<MarketSide>('bids')
@@ -493,7 +499,7 @@ export const OrderBook: FC = () => {
           <div>{spreadAbsolute[1]}%</div>
           <div>
             {
-              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']}>
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']} overlayClassName={`spread-dropdown ${mode}`}>
                 <div className="spreadDropdown">
                   {SPREADS[spreadIndex]}
                   <DownOutlined />

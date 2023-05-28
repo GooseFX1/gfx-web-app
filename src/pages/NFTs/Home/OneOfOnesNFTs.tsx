@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styled from 'styled-components'
 import { ArrowClicker } from '../../../components'
-import { Card } from '../Collection/Card'
+import Card from '../Collection/Card'
 import { checkMobile } from '../../../utils'
 import tw from 'twin.macro'
 

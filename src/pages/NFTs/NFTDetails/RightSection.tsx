@@ -1,24 +1,39 @@
-import React, { useEffect, useMemo, FC, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect, useMemo, FC } from 'react'
+import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
-import { checkMobile, moneyFormatter, truncateAddress } from '../../../utils'
+// import { moneyFormatter } from '../../../utils'
 import { RightSectionTabs } from './RightSectionTabs'
-import { useNFTDetails, usePriceFeed, useNFTProfile } from '../../../context'
+import { useNFTDetails, useNFTProfile, usePriceFeedFarm } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import { notify } from '../../../utils'
+import { generateTinyURL } from '../../../api/tinyUrl'
+import { Share } from '../Share'
 import tw from 'twin.macro'
+import 'styled-components/macro'
+import { minimizeTheString } from '../../../web3/nfts/utils'
+import { GenericTooltip } from '../../../utils/GenericDegsin'
+import { GradientText } from '../../../components/GradientText'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
   ${({ theme }) => css`
-    ${tw`sm:w-[90%] sm:mx-auto`}
     display: flex;
     flex-direction: column;
+    margin-top: 15px;
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+    }
 
     color: ${theme.text1};
     text-align: left;
-    height: 100%;
 
     .rs-title {
       font-size: 18px;
@@ -73,14 +88,14 @@ const RIGHT_SECTION = styled.div`
       font-size: 22px;
       font-weight: 600;
       margin-bottom: ${theme.margin(0.5)};
-      color: ${theme.text7};
+      background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .rs-intro {
-      ${tw`sm:text-[14px] sm:text-[#b5b5b5] sm:mb-0`}
       font-size: 15px;
       font-weight: 500;
-      max-height: 70px;
       margin-bottom: ${theme.margin(1.5)};
       color: ${theme.text4};
       overflow-y: scroll;
@@ -97,132 +112,33 @@ const RIGHT_SECTION = styled.div`
     }
   `}
 `
-
-const GRID_INFO = styled(Row)`
-  ${({ theme }) => css`
-  width: 100%;
-  margin-bottom: ${theme.margin(3)};
-
-  .gi-item {
-    .gi-item-category-title {
-      font-size: 19px;
-      font-weight: 600;
-      margin-bottom: ${theme.margin(1)};
-      color: ${theme.text7};
-    }
-
-    .gi-item-thumbnail-wrapper {
-      position: relative;
-      margin-right: ${theme.margin(1)};
-
-      .gi-item-check-icon {
-        position: absolute;
-        right: 4px;
-        bottom: -3px;
-        width: 15px;
-        height: 15px;
-      }
-    }
-
-    .gi-item-thumbnail {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-right: ${theme.margin(1)};
-    }
-
-    .gi-item-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-right: ${theme.margin(1)};
-      background: ${theme.bg1};
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      
-      img {
-        width: 16px;
-        height: 16px;
-      }
-    }
-
-    .gi-item-title {
-      font-size: 18px;
-      font-weight: 500;
-      color: ${theme.text4};
-      text-transform: capitalize;
-    }
-  `}
-`
-
-const ROW_CONTAINER = styled.div`
-${tw`my-6`}
-.gi-item {
-  ${tw`flex flex-row justify-between`}
-
-  .gi-item-category-title {
-    ${tw`text-tiny font-semibold mb-6`}
-    color: #b5b5b5;
-  }
-
-  .gi-item-thumbnail-wrapper {
-    ${tw`relative mr-2 flex flex-row`}
-
-    .gi-item-check-icon {
-      ${tw`absolute h-[15px] w-[15px] left-5 bottom-[15px]`}
-    }
-
-    .gi-item-icon {
-      ${tw`w-[30px] h-[30px] rounded-circle mr-2 flex flex-row justify-center items-center`}
-      
-      img {
-        ${tw`w-[16px] h-[16px]`}
-      }
-    }
-  }
-
-  .gi-item-thumbnail {
-    ${tw`w-[30px] h-[30px] rounded-circle mr-2`}
-  }
-
-  .gi-item-title {
-    ${tw`text-tiny font-medium capitalize underline`}
-    color: ${({ theme }) => theme.text4};
-    text-decoration-color: grey;
-  }
-`
 //#endregion
 
 export const RightSection: FC<{
   status: MintItemViewStatus
 }> = ({ status, ...rest }) => {
-  const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
-  const { prices } = usePriceFeed()
+  const history = useHistory()
   const { sessionUser, likeDislike } = useNFTProfile()
-  const [likes, setLikes] = useState(0)
-  const [isFavorited, setIsFavorited] = useState(false)
+  const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
+  // const { prices } = usePriceFeedFarm()
+  const [isFavorited, setIsFavorited] = useState<boolean>(false)
+  const [likes, setLikes] = useState<number>(0)
+  const [shareModal, setShareModal] = useState<boolean>(false)
 
-  const creator = useMemo(() => {
-    if (nftMetadata?.collection) {
-      return Array.isArray(nftMetadata.collection) ? nftMetadata.collection[0].name : nftMetadata.collection?.name
-    } else if (nftMetadata?.properties?.creators?.length > 0) {
-      const addr = nftMetadata?.properties?.creators?.[0]?.address
-      return truncateAddress(addr)
-    } else {
-      return null
-    }
-  }, [nftMetadata])
+  // const price: number | null = useMemo(() => {
+  //   if (ask) {
+  //     return parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL
+  //   } else {
+  //     return curHighestBid ? parseFloat(curHighestBid.buyer_price) / LAMPORTS_PER_SOL : null
+  //   }
+  // }, [curHighestBid, ask])
 
-  const price: number | null = useMemo(() => {
-    if (ask) {
-      return parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL
-    } else {
-      return curHighestBid ? parseFloat(curHighestBid.buyer_price) / LAMPORTS_PER_SOL : null
-    }
-  }, [curHighestBid, ask])
+  // const marketData = useMemo(() => prices['SOL/USDC'], [prices])
 
-  const marketData = useMemo(() => prices['SOL/USDC'], [prices])
+  // const fiatCalc: string = useMemo(
+  //   () => `${marketData && bidPrice ? (marketData.current * bidPrice).toFixed(3) : ''}`,
+  //   [marketData, bidPrice]
+  // )
 
   useEffect(() => {
     if (general && sessionUser) {
@@ -234,6 +150,10 @@ export const RightSection: FC<{
     setLikes(totalLikes)
   }, [totalLikes])
 
+  if (nftMetadata === null) {
+    return <div>Error loading metadata</div>
+  }
+
   const handleToggleLike = () => {
     if (sessionUser) {
       likeDislike(sessionUser.uuid, general.uuid).then(() => {
@@ -242,44 +162,70 @@ export const RightSection: FC<{
     }
   }
 
-  const fiat = `${marketData && price ? (marketData.current * price).toFixed(3) : ''} USD`
-  const isForCharity = false
+  const isLoading = nftMetadata === null || general === null
 
-  if (nftMetadata === null) {
-    return <div>Error loading metadata</div>
+  const onShare = async (social: string): Promise<void> => {
+    if (social === 'copy link') {
+      copyToClipboard()
+      return
+    }
+
+    const res = await generateTinyURL(
+      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
+        window.location.pathname
+      }`,
+      ['gfx', 'nest-exchange', social]
+    )
+
+    if (res.status !== 200) {
+      notify({ type: 'error', message: 'Error creating sharing url' })
+      return
+    }
+
+    const tinyURL = res.data.data.tiny_url
+
+    switch (social) {
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=Check%20out%20this%20item%20on%20Nest%20NFT%
+          20Exchange&url=${tinyURL}&via=GooseFX1&original_referer=${window.location.host}${window.location.pathname}`
+        )
+        break
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20this%20item%20on%20Nest%20NFT%20Exchange`
+        )
+        break
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
+        break
+      default:
+        break
+    }
   }
 
-  const isLoading = nftMetadata === undefined || general === undefined
+  const copyToClipboard = async () => {
+    await navigator.clipboard.writeText(window.location.href)
+  }
+
+  const handleModal = () => {
+    if (shareModal) {
+      return (
+        <Share
+          visible={shareModal}
+          handleCancel={() => setShareModal(false)}
+          socials={['twitter', 'telegram', 'facebook', 'copy link']}
+          handleShare={onShare}
+        />
+      )
+    } else {
+      return false
+    }
+  }
 
   return (
     <RIGHT_SECTION {...rest}>
-      {isLoading && !checkMobile() ? (
-        <>
-          <SkeletonCommon width="100%" height="75px" borderRadius="10px" />
-          <br />
-        </>
-      ) : (
-        !checkMobile() && (
-          <div>
-            <Row justify="space-between">
-              <Col className="rs-title">
-                {price ? `Current ${ask ? 'Asking Price' : 'Bid'}` : 'No Current Bids'}{' '}
-              </Col>
-            </Row>
-            {price && (
-              <Row align="middle" gutter={8} className="rs-prices">
-                <Col>
-                  <img className="rs-solana-logo" src={`/img/assets/solana-logo.png`} alt="" />
-                </Col>
-                <Col className="rs-price">{`${moneyFormatter(price)} SOL`}</Col>
-                <Col>
-                  <span className="rs-fiat">{`${fiat}`}</span>
-                </Col>
-              </Row>
-            )}
-          </div>
-        )
-      )}
+      {handleModal()}
 
       {isLoading ? (
         <>
@@ -287,132 +233,76 @@ export const RightSection: FC<{
           <br />
         </>
       ) : (
-        <Row justify="space-between" align="middle">
-          <Col span={24}>
-            <div className="name-icon-row">
-              <div className="rs-name">{general?.nft_name || nftMetadata?.name}</div>
-              {checkMobile() && general.uuid ? (
-                <>
-                  {sessionUser && isFavorited ? (
-                    <img
-                      className="ls-favorite-heart"
-                      src={`/img/assets/heart-red.svg`}
-                      alt="heart-red"
-                      onClick={handleToggleLike}
-                      height="23px"
-                      width="25px"
-                    />
-                  ) : (
-                    <img
-                      className="ls-favorite-heart"
-                      src={`/img/assets/heart-empty.svg`}
-                      alt="heart-empty"
-                      onClick={handleToggleLike}
-                      height="23px"
-                      width="25px"
-                    />
+        <div>
+          <div tw="flex justify-between my-5">
+            <div tw="cursor-pointer">
+              <div>
+                <GenericTooltip text={general?.nft_name}>
+                  <div tw="text-lg dark:text-white text-black-4 font-semibold">
+                    {general && minimizeTheString(general.nft_name, 20)}
+                  </div>
+                </GenericTooltip>
+              </div>
+              {general && (
+                <GradientText
+                  text={minimizeTheString(
+                    general?.collection_name !== null ? general?.collection_name : 'No Collection Name',
+                    18
                   )}
-                  <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
-                    {likes}
-                  </span>
-                </>
-              ) : (
-                <></>
+                  fontSize={20}
+                  fontWeight={600}
+                  onClick={(e) =>
+                    general?.collection_name !== null
+                      ? history.push(`/nfts/collection/${general?.collection_name}`)
+                      : null
+                  }
+                />
               )}
             </div>
-            <div className="rs-intro">{nftMetadata.description}</div>
-          </Col>
-          <Col span={24}>
-            {isForCharity && (
-              <Row align="middle" wrap={false}>
-                <img src={`/img/assets/heart-charity.svg`} alt="charity-icon" style={{ marginRight: '12px' }} />
-                <div className="rs-charity-text">Auction for charity</div>
-              </Row>
-            )}
-          </Col>
-        </Row>
-      )}
 
-      {isLoading ? (
-        <SkeletonCommon width="100%" height="300px" borderRadius="10px" />
-      ) : !checkMobile() ? (
-        <GRID_INFO justify="space-between">
-          <Col className="gi-item">
-            <div className="gi-item-category-title">Creator</div>
-            <Row align="middle">
-              <div className="gi-item-thumbnail-wrapper">
-                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
-              </div>
-              <div className="gi-item-title">{creator}</div>
-            </Row>
-          </Col>
-          {nftMetadata.collection && (
-            <Col className="gi-item">
-              <div className="gi-item-category-title">Collection</div>
-              <Row align="middle">
-                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <div className="gi-item-title">
-                  {Array.isArray(nftMetadata.collection)
-                    ? nftMetadata.collection[0].name
-                    : nftMetadata.collection.name}
-                </div>
-              </Row>
-            </Col>
-          )}
-          <Col className="gi-item">
-            <div className="gi-item-category-title">Category</div>
-            <Row align="middle">
-              <div className="gi-item-icon">
+            <div className="ls-bottom-panel">
+              <div className="img-holder">
+                {/* {sessionUser && isFavorited ? (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-red.svg`}
+                    alt="heart-red"
+                    onClick={handleToggleLike}
+                  />
+                ) : (
+                  <img
+                    className="ls-favorite-heart"
+                    src={`/img/assets/heart-empty.svg`}
+                    alt="heart-empty"
+                    onClick={handleToggleLike}
+                  />
+                )} */}
+
+                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                  {likes ? likes : null}
+                </span>
+                <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
+                  <img
+                    src="/img/assets/solscanBlack.svg"
+                    alt="solscan-icon"
+                    tw="ml-5 h-10 w-10"
+                    className="solscan-icon"
+                  />
+                </a>
                 <img
-                  src={`/img/assets/${
-                    nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
-                  }.svg`}
-                  alt=""
+                  src="/img/assets/shareBlue.svg"
+                  alt="share-icon"
+                  tw="ml-5 h-10 w-10 cursor-pointer"
+                  className="share-icon"
+                  onClick={() => {
+                    setShareModal(true)
+                  }}
                 />
               </div>
-              <div className="gi-item-title">{nftMetadata.properties.category}</div>
-            </Row>
-          </Col>
-        </GRID_INFO>
-      ) : (
-        <ROW_CONTAINER>
-          <div className="gi-item">
-            <div className="gi-item-category-title">Created by:</div>
-            <div className="gi-item-thumbnail-wrapper">
-              <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-              <img className="gi-item-check-icon" src={`/img/assets/check-icon.svg`} alt="" />
-              <div className="gi-item-title">{creator}</div>
             </div>
           </div>
-          {nftMetadata.collection && (
-            <div className="gi-item">
-              <div className="gi-item-category-title">Collection</div>
-              <div className="gi-item-thumbnail-wrapper">
-                <img className="gi-item-thumbnail" src="https://placeimg.com/30/30" alt="" />
-                <div className="gi-item-title">
-                  {Array.isArray(nftMetadata.collection)
-                    ? nftMetadata.collection[0].name
-                    : nftMetadata.collection.name}
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="gi-item">
-            <div className="gi-item-category-title">Category</div>
-            <div className="gi-item-thumbnail-wrapper">
-              <div className="gi-item-icon">
-                <img
-                  src={`/img/assets/${
-                    nftMetadata.properties.category === 'image' ? 'art' : nftMetadata.properties.category
-                  }.svg`}
-                  alt=""
-                />
-              </div>
-              <div className="gi-item-title">{nftMetadata.properties.category}</div>
-            </div>
-          </div>
-        </ROW_CONTAINER>
+          <div tw="my-5 text-regular">{nftMetadata.description}</div>
+        </div>
       )}
 
       <RightSectionTabs status={status} />

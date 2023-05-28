@@ -21,9 +21,11 @@ export const RotatingLoader: FC<{ textSize: number; iconSize: number; text?: str
 
   return (
     <WRAPPER>
-      <span className="loadingText" style={{ fontSize: textSize }}>
-        {text}
-      </span>
+      {text.length > 0 && (
+        <span className="loadingText" style={{ fontSize: textSize }}>
+          {text}
+        </span>
+      )}
       <Spin style={{ fontSize: iconSize }} indicator={antIcon} />
     </WRAPPER>
   )

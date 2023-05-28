@@ -21,6 +21,18 @@ const BODY = styled.div`
 const SELECTOR_MODAL = styled(Modal)`
   ${tw`top-[-24px]! w-[628px]! sm:w-full!`}
   background-color: ${({ theme }) => theme.bg20} !important;
+
+  .close-icon-root {
+    top: 35px;
+  }
+
+  .ant-input:hover {
+    border-color: #b5b5b5;
+  }
+
+  .ant-modal-body {
+    padding-bottom: 0;
+  }
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
@@ -34,7 +46,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     color: ${({ theme }) => theme.white};
 
     .text-primary {
-      ${tw`sm:w-[50px] sm:text-[15px]`}
+      ${tw`sm:w-12.5 sm:text-[15px]`}
       ${({ theme }) => theme.ellipse}
     }
 
@@ -49,7 +61,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
 `
 
 const INPUT = styled.div`
-  ${tw`relative w-[528px] sm:w-[290px]`}
+  ${tw`relative w-[528px] sm:w-11/12`}
 
   input {
     height: ${({ theme }) => theme.margin(5)};
@@ -121,12 +133,11 @@ const TOKEN = styled.div`
 `
 
 const POPULAR = styled.div`
-  ${tw`flex justify-center p-0 sm:flex-wrap sm:justify-start`}
+  ${tw`flex justify-center ml-[-6px] p-0 sm:flex-wrap sm:justify-start sm:ml-0`}
 `
 
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`flex justify-between h-[40px] w-auto ml-[12px] sm:m-[4px]`}
-  border-radius: 20px;
+  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] sm:m-1 sm:ml-0`}
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
   padding: 0 16px 0 4px;
@@ -205,7 +216,10 @@ export const Selector: FC<{
     }
     return { tokenA: tA, tokenB: tB, setTokenA: sTA, setTokenB: sTB }
   }, [tA, tB, sTA, sTB, isReverse])
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const publicKey = useMemo(
+    () => wallet?.adapter?.publicKey,
+    [wallet, wallet?.adapter, wallet?.adapter?.publicKey]
+  )
   const popularTokens = useMemo(() => tokens.filter((i) => POPULAR_TOKENS.has(i.address)), [tokens])
 
   const getTokenAccounts = useCallback(
@@ -274,7 +288,7 @@ export const Selector: FC<{
             }
             // potentially introduce Promise.all for this and keep track of indeces if needed in specific order
             await CoinGeckoClient.coins
-              .fetch(cgToken.id, { signal: aborter.addSignal(`selector-useEffect-${cgToken.id}`) })
+              .fetch(cgToken.id, { signal: aborter.addSignal('selector-useEffect-' + cgToken.id) })
               .then((res) => {
                 const result = Math.floor(res?.data?.market_data?.total_volume?.usd || 0)
                 newFilteredTokens.push({ ...token, vol: !isNaN(result) ? result : 0 })
@@ -339,9 +353,7 @@ export const Selector: FC<{
         process()
       }, 333)
     }
-    return () => {
-      aborter.abortBulkWithPrefix('selector-useEffect')
-    }
+    return () => aborter.abortBulkWithPrefix('selector-useEffect-')
   }, [filterKeywords, tokens, tokenA, tokenB, publicKey])
   const handleSearch = useCallback((e: SyntheticEvent) => {
     setFilterKeywords((e.target as HTMLInputElement).value)

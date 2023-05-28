@@ -1,6 +1,6 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useState, useReducer, useMemo } from 'react'
 import { Connection } from '@solana/web3.js'
-import apiClient from '../api'
+import { httpClient } from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { StringPublicKey, getParsedAccountByMint } from '../web3'
 import { useConnectionConfig } from './settings'
@@ -12,28 +12,34 @@ import {
   INFTBid,
   INFTAsk,
   IMetadataContext,
-  INFTGeneralData
+  INFTGeneralData,
+  IOnChainMetadata
 } from '../types/nft_details.d'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)
 
 export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
-  const [general, setGeneral] = useState<ISingleNFT>()
-  const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>()
+  const [general, setGeneral] = useState<ISingleNFT | null>(null)
+  const [nftMetadata, setNftMetadata] = useState<INFTMetadata | null>(null)
+  const [onChainMetadata, setOnChainMetadata] = useState<IOnChainMetadata | null>(null)
   const [nftMintingData, setNftMintingData] = useState<IMetadataContext>()
   const [bids, setBids] = useState<INFTBid[]>([])
   const [ask, setAsk] = useState<INFTAsk>()
-  const [totalLikes, setTotalLikes] = useState<number>()
-  const initialState = {
+  const [myBidToNFT, setMyBidToNFT] = useState<INFTBid[] | undefined>([])
+  const [totalLikes, setTotalLikes] = useState<number | null>(null)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+
+  const reducer = (state, newState) => ({ ...state, ...newState })
+  const [userInput, setUserInput] = useReducer(reducer, {
     type: 'fixed-price',
     expiration: '1',
     bid: '0',
     price: '0',
     royalties: '3'
-  }
-  const reducer = (state, newState) => ({ ...state, ...newState })
-  const [userInput, setUserInput] = useReducer(reducer, initialState)
+  })
 
   const curHighestBid: INFTBid | undefined = useMemo(() => {
     if (bids.length === 0) return undefined
@@ -51,7 +57,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const fetchGeneral = useCallback(async (address: string, conncetion: Connection): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
       const nft: INFTGeneralData = await res.data
 
       const parsedAccounts = await getParsedAccountByMint({
@@ -68,6 +74,10 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
       setGeneral({ ...nft.data[0], ...accountInfo })
       setBids(nft.bids)
+      if (publicKey) {
+        const myBid = nft.bids.filter((bid) => bid.wallet_key === publicKey.toString())
+        setMyBidToNFT(myBid)
+      }
       setAsk(nft.asks.length > 0 ? nft.asks[0] : undefined)
       setTotalLikes(nft.total_likes)
       return res
@@ -89,7 +99,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const bidOnSingleNFT = useCallback(async (bidObject: any): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
+      const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.BID}`, {
         bid: bidObject,
         network: network === 'devnet' ? network : 'mainnet'
       })
@@ -106,7 +116,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeBidOnSingleNFT = useCallback(async (bidUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.BID}`, {
+      const res = await httpClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.BID}`, {
         data: {
           bid_id: bidUUID
         }
@@ -137,7 +147,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const sellNFT = useCallback(async (paramValue: any): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ASK}`, {
         ask: paramValue,
         network: network === 'devnet' ? network : 'mainnet'
       })
@@ -149,7 +159,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const patchNFTAsk = useCallback(async (ask: INFTAsk): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.ASK}`, {
         ask_uuid: ask.uuid,
         new_ask_data: {
           clock: ask.clock,
@@ -176,7 +186,7 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
 
   const removeNFTListing = useCallback(async (askUUID: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
+      const res = await httpClient(NFT_API_BASE).delete(`${NFT_API_ENDPOINTS.ASK}`, {
         data: {
           ask_id: askUUID
         }
@@ -201,6 +211,8 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         setNftMetadata,
         bids,
         setBids,
+        myBidToNFT,
+        setMyBidToNFT,
         bidOnSingleNFT,
         curHighestBid,
         removeBidOnSingleNFT,
@@ -214,7 +226,9 @@ export const NFTDetailsProvider: FC<{ children: ReactNode }> = ({ children }) =>
         sellNFT,
         removeNFTListing,
         totalLikes,
-        setTotalLikes
+        setTotalLikes,
+        onChainMetadata,
+        setOnChainMetadata
       }}
     >
       {children}
@@ -249,6 +263,10 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     sellNFT: context.sellNFT,
     removeNFTListing: context.removeNFTListing,
     totalLikes: context.totalLikes,
-    setTotalLikes: context.setTotalLikes
+    setTotalLikes: context.setTotalLikes,
+    myBidToNFT: context.myBidToNFT,
+    setMyBidToNFT: context.setMyBidToNFT,
+    onChainMetadata: context.onChainMetadata,
+    setOnChainMetadata: context.setOnChainMetadata
   }
 }

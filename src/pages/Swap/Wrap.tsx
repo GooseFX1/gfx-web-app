@@ -9,7 +9,7 @@ import { notify } from '../../utils'
 
 import { NATIVE_MINT, getAssociatedTokenAddress, createCloseAccountInstruction } from '@solana/spl-token-v2'
 import { useConnectionConfig } from '../../context'
-import { wrapSolToken, signAndSendRawTransaction } from '../../web3'
+import { wrapSolToken, signAndSendRawTransaction, confirmTransaction } from '../../web3'
 import { Transaction } from '@solana/web3.js'
 
 //#region styles
@@ -212,7 +212,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
       const txn = await wrapSolToken(wal, connection, Math.floor(value * 10 ** 9))
       const finalResult = await signAndSendRawTransaction(connection, txn, wal)
 
-      const result = finalResult ? await connection.confirmTransaction(finalResult) : null
+      const result = finalResult ? await confirmTransaction(connection, finalResult, 'confirmed') : null
 
       if (!result.value.err) {
         notify({
@@ -276,7 +276,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     <BODY $mode={mode}>
       <div>
         <TITLE>Wrap / Unwrap SOL</TITLE>
-        <Tooltip placement="top" notInherit={true}>
+        <Tooltip placement="top" notInherit={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
           You can now manually wrap SOL and unwrap wSOL here.
         </Tooltip>
       </div>

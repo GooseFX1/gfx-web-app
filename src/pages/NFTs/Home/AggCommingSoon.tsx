@@ -3,7 +3,7 @@ import { useDarkMode } from '../../../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { GradientText } from '../adminPage/components/UpcomingMints'
+import { GradientText } from '../../../components/GradientText'
 
 const WRAPPER = styled.div`
   font-family: Montserrat !important;

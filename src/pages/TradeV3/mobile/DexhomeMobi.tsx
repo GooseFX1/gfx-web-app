@@ -1,10 +1,11 @@
-/* eslint-disable */
+import { FC } from 'react'
 import tw, { styled } from 'twin.macro'
+import { useCrypto } from '../../../context'
 import { Header } from './Header'
 import { OrderBookMobi } from './OrderBookMobi'
 import { PlaceOrderMobi } from './PlaceOrderMobi'
 
-const WRAPPER = styled.div`
+const WRAPPER = styled.div<{ isSpot: boolean }>`
   ${tw`mt-[100px] overflow-hidden`}
   height: calc(100vh - 100px);
 
@@ -15,15 +16,15 @@ const WRAPPER = styled.div`
     ${tw`rounded-tl-half rounded-tr-half`}
   }
   .ant-drawer-content {
-    ${tw`rounded-tl-half rounded-tr-half`}
+    ${tw`rounded-tl-half rounded-tr-half dark:bg-black-2 bg-grey-5`}
   }
   .user-profile-drawer {
     .ant-drawer-body {
       ${tw`p-0`}
     }
     .ant-drawer-content {
+      height: ${({ $isSpot }) => ($isSpot ? '100%' : 'calc(100% - 75px)')};
       ${tw`dark:bg-black-2 bg-white`}
-      height: calc(100% - 75px);
     }
   }
   .takep-stopl-container {
@@ -33,9 +34,10 @@ const WRAPPER = styled.div`
   }
 `
 
-export const DexhomeMobi = () => {
+export const DexhomeMobi: FC = () => {
+  const { isSpot } = useCrypto()
   return (
-    <WRAPPER id="dex-mobi-home">
+    <WRAPPER $isSpot={isSpot} id="dex-mobi-home">
       <Header />
       <PlaceOrderMobi />
       <OrderBookMobi />

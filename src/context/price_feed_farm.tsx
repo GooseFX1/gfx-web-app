@@ -1,4 +1,14 @@
-import React, { createContext, Dispatch, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
@@ -39,6 +49,7 @@ interface IPriceFeedConfig {
   stakeProgram: Program
   SSLProgram: Program
   stakeAccountKey: PublicKey
+  solPrice: number
 }
 
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
@@ -49,6 +60,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const [statsData, setStatsData] = useState<IStats | null>()
   const [stakeAccountKey, setAccountKey] = useState<PublicKey>()
   const wal = useWallet()
+  const [solPrice, setSolPrice] = useState<number>(0)
   const { wallet } = useWallet()
   const { network, connection } = useConnectionConfig()
   const stakeProgram: Program = useMemo(
@@ -86,13 +98,20 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     [connection, wallet?.adapter?.publicKey]
   )
 
-  const refreshTokenData = async () => {
+  const refreshTokenData = useCallback(async () => {
     ;(async () => {
       const { data } = await getFarmTokenPrices()
       setPrices(data)
+
       setPriceFetched(true)
     })()
-  }
+  }, [])
+
+  useEffect(() => {
+    if (prices['SOL/USDC']) {
+      setSolPrice(prices['SOL/USDC'].current)
+    }
+  }, [prices])
 
   return (
     <PriceFeedFarmContext.Provider
@@ -104,7 +123,8 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         setStatsData,
         stakeProgram,
         SSLProgram,
-        stakeAccountKey
+        stakeAccountKey,
+        solPrice
       }}
     >
       {children}
@@ -126,6 +146,7 @@ export const usePriceFeedFarm = (): IPriceFeedConfig => {
     setStatsData: context.setStatsData,
     stakeProgram: context.stakeProgram,
     SSLProgram: context.SSLProgram,
-    stakeAccountKey: context.stakeAccountKey
+    stakeAccountKey: context.stakeAccountKey,
+    solPrice: context.solPrice
   }
 }

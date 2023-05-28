@@ -63,7 +63,7 @@ export function colors(mode: string): Colors {
     text6: mode === 'dark' ? '#cccccc' : '#353535',
     text7: mode === 'dark' ? white : '#3C3C3C',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
-    text10: mode === 'dark' ? '#4b4b4b' : '#BDBDBD',
+    text10: mode === 'dark' ? '#3C3C3C' : '#636363',
     text11: mode === 'dark' ? '#eeeeee' : '#636363',
     text12: mode === 'dark' ? '#909090' : '#636363',
     text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
@@ -73,7 +73,7 @@ export function colors(mode: string): Colors {
     text17: mode === 'dark' ? '#636363' : '#B9B9B9',
     text18: mode === 'dark' ? '#727272' : '#BABABA',
     text19: mode === 'dark' ? '#919191' : '#B6B6B6',
-    text20: mode === 'dark' ? '#636363' : '#b5b5b5',
+    text20: mode === 'dark' ? '#b5b5b5' : '#636363',
     text21: mode === 'dark' ? '#e7e7e7' : '#636363',
     text22: mode === 'dark' ? '#9C9C9C' : '#3C3C3C',
     text23: mode === 'dark' ? '#9A9A9A' : '#BABABA',
@@ -86,12 +86,16 @@ export function colors(mode: string): Colors {
     text30: mode === 'dark' ? '#ffffff' : '#8d4cdd',
     text31: mode === 'dark' ? '#636363' : '#8d4cdd',
     text32: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
+    text33: mode === 'dark' ? '#b5b5b5' : '#3c3c3c',
+    text34: mode === 'dark' ? '#636363' : '#b5b5b5',
     text37: mode === 'dark' ? '#b5b5b5' : '#636363',
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
+    text38: mode === 'dark' ? '#ffffff' : '#5855ff',
+    text39: mode === 'dark' ? '#eeeeee' : '#5855ff',
+
     bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
     askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
-
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
     text1h: '#7d7d7d',
@@ -122,6 +126,7 @@ export function colors(mode: string): Colors {
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
     bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
+    bg17: mode === 'dark' ? '#272727' : '#e2e2e2',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
     bg20: mode === 'dark' ? '#1c1c1c' : white,
@@ -130,9 +135,13 @@ export function colors(mode: string): Colors {
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
     bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
+    bg26: mode === 'dark' ? '#1c1c1c' : '#ffffff',
+    bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
+    borderForNFTCard: mode === 'dark' ? ' #3c3c3c' : ' #B5B5B5',
+    backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
-    borderBottom: mode === 'dark' ? '#555555' : '#cacaca',
+    borderBottom: mode === 'dark' ? '#555555' : '#CACACA',
     multiplierBorder: mode === 'dark' ? '#b5b5b5' : '#5855ff',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
     pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',
@@ -169,13 +178,18 @@ export function colors(mode: string): Colors {
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#484747' : '#ABABAB',
     walletModalWallet: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
-    searchbarBackground: mode === 'dark' ? '#1e1e1e' : '#fff',
+    searchbarBackground: mode === 'dark' ? '#131313' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
+    hoverGradient:
+      mode === 'dark'
+        ? 'linear-gradient(360deg, #131313 0%, rgba(19, 19, 19, 0) 120%)'
+        : 'linear-gradient(360deg, #fff 0%, rgba(255, 255, 255, 0) 100%)',
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
     tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
+    dropdownBackground: mode === 'dark' ? '#1c1c1c' : '#ffffff',
 
     //color changing options
     blackToGrey: mode === 'dark' ? '' : 'invert(30%)',
@@ -213,7 +227,7 @@ export function colors(mode: string): Colors {
 
     // sell categories
     sellTabBg: mode === 'dark' ? 'rgba(42, 42, 42, 0.35)' : '#CACACA',
-    sellTabActiveBg: mode === 'dark' ? '#131313' : '#404040',
+    profilePicBg: mode === 'dark' ? '#131313' : '#B5B5B5',
 
     // time panel
     timePanelBackground: mode === 'dark' ? '#131313' : '#ffffff',
@@ -222,7 +236,7 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
-    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#d9d9d9',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#3c3c3c',
     sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
     sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 

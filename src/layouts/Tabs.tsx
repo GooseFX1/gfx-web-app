@@ -5,7 +5,7 @@ import tw from 'twin.macro'
 import { useDarkMode } from '../context'
 import { CenteredDiv, CenteredImg, SVGToPrimary2, SVGToWhite } from '../styles'
 
-const TABS = ['/swap', '/trade', '/NFTs', '/farm']
+const TABS = ['/swap', '/trade', '/nfts', '/farm']
 
 const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
   ${tw`h-[3.5] w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`};
@@ -177,7 +177,7 @@ export const Tabs: FC<IProps> = (props: IProps): JSX.Element => {
             })()}
           </TAB_ICON>
           <LABEL $mode={mode} $hover={cleanedPathName === path}>
-            {path.slice(1)}
+            {path.slice(1) === 'nfts' ? 'NFTs' : path.slice(1)}
           </LABEL>
         </TAB>
       ))}

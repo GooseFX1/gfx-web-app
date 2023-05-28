@@ -1,4 +1,5 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useState } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   INFTCollectionConfig,
   IOpenBidWithinCollection,
@@ -7,26 +8,53 @@ import {
   CollectionOwner,
   NFTFeaturedCollection,
   NFTUpcomingCollection,
-  NFTBaseCollection
+  CollectionSort
 } from '../types/nft_collections.d'
-import apiClient from '../api'
-import { NFT_API_BASE, NFT_API_ENDPOINTS, fetchSingleCollectionBySalesType } from '../api/NFTs'
+import { httpClient } from '../api'
+import {
+  NFT_API_BASE,
+  NFT_API_ENDPOINTS,
+  fetchSingleCollectionBySalesType,
+  fetchSingleCollectionAction,
+  fetchMyNFTByCollection
+} from '../api/NFTs'
+import { LOADING_ARR } from '../utils'
+import { BaseNFT } from '../types/nft_details'
+import { useNFTProfile } from './nft_profile'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
   const [collectionOwners, setCollectionOwners] = useState<CollectionOwner[]>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
-  const [allCollections, setAllCollections] = useState<NFTBaseCollection[]>([])
+  const [allCollections, setAllCollections] = useState<NFTCollection[] | number[]>(LOADING_ARR)
+  const [allCollectionLoading, setLoading] = useState<boolean>(false)
   const [detailedCollections, setAllDetailedCollections] = useState<NFTCollection[]>([])
   const [featuredCollections, setFeaturedCollections] = useState<NFTFeaturedCollection[]>([])
   const [upcomingCollections, setUpcomingCollections] = useState<NFTUpcomingCollection[]>([])
   const [nftMenuPopup, setNFTMenuPopup] = useState<boolean>(false)
+  const [collectionSort, setCollectionSort] = useState<CollectionSort>('ASC')
+  const [myNFTsByCollection, setMyNFTsCollection] = useState<BaseNFT[] | null>(null)
+  const { sessionUserParsedAccounts } = useNFTProfile()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+
+  useEffect(() => {
+    if (!publicKey) setMyNFTsCollection([])
+    if (sessionUserParsedAccounts.length && singleCollection && publicKey) {
+      ;(async () => {
+        const mintAddresses: string[] = sessionUserParsedAccounts.map((acc) => acc.mint)
+        const myNFTs = await fetchMyNFTByCollection(singleCollection[0].uuid, mintAddresses)
+        setMyNFTsCollection(myNFTs.data)
+      })()
+    }
+  }, [sessionUserParsedAccounts, singleCollection, publicKey])
 
   //eslint-disable-next-line
   const fetchAllCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS)
       setAllCollections(res.data)
       return res.data
     } catch (err) {
@@ -35,26 +63,33 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [])
 
-  const fetchAllCollectionDetails = async (collections: NFTBaseCollection[]) => {
-    const collectionsDetails = await Promise.all(
-      collections.map(async (collection: NFTBaseCollection) => await _fetchCollectionDetails(collection.uuid))
-    )
-    setAllDetailedCollections(collectionsDetails === null ? [] : collectionsDetails)
-  }
-
-  const _fetchCollectionDetails = async (collectionUUID: string) => {
-    try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, collectionUUID)
-      return res.data
-    } catch (error) {
-      console.error('Failed to fetch single collection details')
-      return null
-    }
-  }
+  const fetchAllCollectionsByPages = useCallback(
+    async (offset: number, limit: number, filterColumn?: string, sortPref?: string) => {
+      try {
+        setLoading(true)
+        const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.ALL_COLLECTIONS, {
+          params: {
+            filter: filterColumn ? filterColumn : null,
+            sort: sortPref ? sortPref : null,
+            offset: offset,
+            limit: limit
+          }
+        })
+        if (offset === 0) setAllCollections(res.data)
+        else setAllCollections((prev) => [...prev, ...res.data])
+        setLoading(false)
+        return res.data
+      } catch (err) {
+        console.error(err)
+        return []
+      }
+    },
+    []
+  )
 
   const fetchFeaturedCollections = useCallback(async () => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.FEATURED_COLLECTIONS)
       setFeaturedCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -64,7 +99,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   //eslint-disable-next-line
   const fetchUpcomingCollections = useCallback(async (loadingCallback: (isLoading: boolean) => void) => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
+      const res = await httpClient(NFT_API_BASE).get(NFT_API_ENDPOINTS.UPCOMING_COLLECTIONS)
       setUpcomingCollections(res.data)
     } catch (err) {
       console.error(err)
@@ -73,27 +108,26 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchSingleCollection = useCallback(async (paramValue: string): Promise<any> => {
     try {
-      const res = await fetchSingleCollectionBySalesType(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
+      const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
       const collectionData = await res.data
       if (collectionData.collection === null) return null
-
       setSingleCollection(collectionData)
-      const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
-      setFixedPriceWithinCollection(fpData)
-      const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
-      setOpenBidWithinCollection(obData)
-      const ownersData = await fetchCollectionOwners(collectionData.collection[0].uuid)
-      setCollectionOwners(ownersData)
+      // const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
+      // setFixedPriceWithinCollection(fpData)
+      // const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
+      // setOpenBidWithinCollection(obData)
+      // const ownersData = await fetchCollectionOwners(collectionData.collection[0].uuid)
+      // setCollectionOwners(ownersData)
 
       return res
     } catch (err) {
-      return err
+      return { status: 400 }
     }
   }, [])
 
   const fetchCollectionOwners = useCallback(async (collectionId: string): Promise<any> => {
     try {
-      const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.OWNERS}?collection_id=${collectionId}`)
+      const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.OWNERS}?collection_id=${collectionId}`)
       const owners = await res.data
       return owners
     } catch (err) {
@@ -126,12 +160,15 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
   return (
     <NFTCollectionContext.Provider
       value={{
+        allCollectionLoading,
         allCollections,
+        myNFTsByCollection,
         detailedCollections,
         featuredCollections,
+        setAllCollections,
         upcomingCollections,
         fetchAllCollections,
-        fetchAllCollectionDetails,
+        fetchAllCollectionsByPages,
         fetchFeaturedCollections,
         fetchUpcomingCollections,
         singleCollection,
@@ -145,7 +182,9 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         fixedPriceWithinCollection,
         openBidWithinCollection,
         nftMenuPopup,
-        setNFTMenuPopup
+        setNFTMenuPopup,
+        collectionSort,
+        setCollectionSort
       }}
     >
       {children}
@@ -161,26 +200,5 @@ export const useNFTCollections = (): INFTCollectionConfig => {
     throw new Error('Missing NFT collection context')
   }
 
-  return {
-    allCollections: context.allCollections,
-    detailedCollections: context.detailedCollections,
-    collectionOwners: context.collectionOwners,
-    fetchCollectionOwners: context.fetchAllCollections,
-    featuredCollections: context.featuredCollections,
-    upcomingCollections: context.upcomingCollections,
-    fetchAllCollections: context.fetchAllCollections,
-    fetchAllCollectionDetails: context.fetchAllCollectionDetails,
-    fetchFeaturedCollections: context.fetchFeaturedCollections,
-    fetchUpcomingCollections: context.fetchUpcomingCollections,
-    singleCollection: context.singleCollection,
-    setSingleCollection: context.setSingleCollection,
-    setCollectionOwners: context.setCollectionOwners,
-    setFixedPriceWithinCollection: context.setFixedPriceWithinCollection,
-    setOpenBidWithinCollection: context.setOpenBidWithinCollection,
-    fetchSingleCollection: context.fetchSingleCollection,
-    fixedPriceWithinCollection: context.fixedPriceWithinCollection,
-    openBidWithinCollection: context.openBidWithinCollection,
-    nftMenuPopup: context.nftMenuPopup,
-    setNFTMenuPopup: context.setNFTMenuPopup
-  }
+  return context
 }

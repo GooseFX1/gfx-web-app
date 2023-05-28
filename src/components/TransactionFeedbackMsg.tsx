@@ -7,6 +7,9 @@ const MESSAGE = styled.div`
   font-size: 12px;
   font-weight: 700;
 
+  .add-text {
+    font-weight: 600;
+  }
   .m-title {
     margin-bottom: 16px;
   }
@@ -20,7 +23,8 @@ const MESSAGE = styled.div`
 interface ISuccessfulListingMsg {
   title: string
   itemName: string
-  supportText: string
+  supportText?: string
+  additionalText?: string
   tx_url: string
 }
 
@@ -34,6 +38,7 @@ export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
     </Row>
     <div>{props.itemName}</div>
     <div>{props.supportText}</div>
+    <div className="add-text">{props.additionalText}</div>
     <div>
       <a
         style={{ color: 'white', fontWeight: 'bold', textDecoration: 'underline' }}

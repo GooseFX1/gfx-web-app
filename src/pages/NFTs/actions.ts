@@ -35,7 +35,10 @@ export const tokenSize: BN = new BN(1)
 
 export const tradeStatePDA = async (
   publicKey: PublicKey,
-  general: ISingleNFT,
+  auctionHouse: StringPublicKey,
+  tokenAccount: string,
+  mintAddress: string,
+  treasuryMint: StringPublicKey,
   buyerPrice: Uint8Array
 ): Promise<undefined | [PublicKey, number]> => {
   try {
@@ -43,10 +46,10 @@ export const tradeStatePDA = async (
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
         publicKey.toBuffer(),
-        toPublicKey(AUCTION_HOUSE).toBuffer(),
-        toPublicKey(general.token_account).toBuffer(),
-        toPublicKey(TREASURY_MINT).toBuffer(),
-        toPublicKey(general.mint_address).toBuffer(),
+        toPublicKey(auctionHouse).toBuffer(),
+        toPublicKey(tokenAccount).toBuffer(),
+        toPublicKey(treasuryMint).toBuffer(),
+        toPublicKey(mintAddress).toBuffer(),
         buyerPrice,
         bnTo8(tokenSize)
       ],
@@ -57,7 +60,32 @@ export const tradeStatePDA = async (
     return undefined
   }
 }
+export const freeSellerTradeStatePDAAgg = async (
+  publicKey: PublicKey,
+  auctionHouse: StringPublicKey,
+  tokenAccount: string,
+  mintAddress: string
+): Promise<undefined | [PublicKey, number]> => {
+  try {
+    const pda = await PublicKey.findProgramAddress(
+      [
+        Buffer.from(AUCTION_HOUSE_PREFIX),
+        publicKey.toBuffer(),
+        toPublicKey(auctionHouse).toBuffer(),
+        toPublicKey(tokenAccount).toBuffer(),
+        toPublicKey(TREASURY_MINT).toBuffer(),
+        toPublicKey(mintAddress).toBuffer(),
+        bnTo8(new BN(0)),
+        bnTo8(tokenSize)
+      ],
+      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+    )
 
+    return pda
+  } catch (err) {
+    return undefined
+  }
+}
 export const freeSellerTradeStatePDA = async (
   publicKey: PublicKey,
   general: ISingleNFT

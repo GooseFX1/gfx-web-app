@@ -43,7 +43,7 @@ export const Collection: FC = (): JSX.Element => {
   useEffect(() => {
     const curColNameParam = params.collectionName.replaceAll('_', ' ')
 
-    if (!singleCollection || singleCollection.collection.collection_name !== curColNameParam) {
+    if (!singleCollection || singleCollection.collection_name !== curColNameParam) {
       fetchSingleCollection(curColNameParam).then((res) => setErr(res && res.status === 200 ? false : true))
     }
 

@@ -17,7 +17,7 @@ const TRADING_HISTORY_TAB_CONTENT = styled.div`
     font-weight: 500;
 
     .thtc-not-found {
-      ${tw`sm:text-center`}
+      ${tw`text-center`}
       width: 100%;
       height: 100%;
       padding: ${theme.margin(0.5)} ${theme.margin(1.5)};
