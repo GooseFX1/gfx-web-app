@@ -298,7 +298,6 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
 
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') profilePic = null
-  const goToBackPage = useCallback(() => history.goBack(), [])
 
   const { getUIAmount } = useAccounts()
   const solBalance = useMemo(
@@ -336,7 +335,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       {checkMobile() ? (
         <div tw="flex justify-between sm:ml-2 sm:mt-3" id="row">
           <div style={{ position: checkMobile() ? 'static' : 'absolute', top: '18px', left: '24px' }}>
-            <FloatingActionButton height={40} onClick={goToBackPage}>
+            <FloatingActionButton height={40} onClick={() => history.push('/nfts')}>
               <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
             </FloatingActionButton>
           </div>
@@ -344,7 +343,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         </div>
       ) : (
         <div tw="absolute top-[12px] left-[12px]">
-          <FloatingActionButton height={40} onClick={goToBackPage}>
+          <FloatingActionButton height={40} onClick={() => history.push('/nfts')}>
             <FLOATING_ACTION_ICON src={`/img/assets/arrow.svg`} alt="back" />
           </FloatingActionButton>
         </div>
@@ -411,13 +410,15 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <div className="profileBio">
                 {currentUserProfile.bio ? (
                   currentUserProfile.bio
-                ) : (
+                ) : sessionUser ? (
                   <div>
                     {' '}
                     Complete your profile
                     <br />
                     and start sharing!
                   </div>
+                ) : (
+                  <div> No Bio </div>
                 )}
               </div>
             )}
@@ -478,9 +479,11 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               )}
             </div>
           ) : (
-            <div className="complete-profile" onClick={() => setProfileModal(true)}>
-              Complete Profile
-            </div>
+            sessionUser && (
+              <div className="complete-profile" onClick={() => setProfileModal(true)}>
+                Complete Profile
+              </div>
+            )
           )}
         </div>
       )}

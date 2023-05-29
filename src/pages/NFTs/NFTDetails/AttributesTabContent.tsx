@@ -114,7 +114,7 @@ export const AsksAndBidsForNFT = (): ReactElement => {
             {/* <a href={`https://solscan.io/tx/${ask.tx_sig}`} target="_blank" rel="noreferrer">
               <img tw="h-10 w-10 cursor-pointer" src={`/img/assets/solscanBlack.svg`} />
             </a> */}
-            <div tw="ml-3">
+            <div tw="ml-3 !font-medium">
               Listed by{' '}
               <a
                 href={profileLink + `${ask.wallet_key}`}

@@ -183,7 +183,7 @@ const CancelBidModal = (): ReactElement => {
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '390px' : '393px'}
+      height={checkMobile() ? '460px' : '393px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -193,8 +193,7 @@ const CancelBidModal = (): ReactElement => {
     >
       <div tw="flex flex-col items-center">
         <div className="delistText" tw="!text-[20px] sm:!text-[15px] !font-semibold">
-          Are you sure you want to Remove the bid
-          <br />
+          Are you sure you want to Remove <br /> the bid{' '}
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
@@ -209,7 +208,7 @@ const CancelBidModal = (): ReactElement => {
           )}
         </div>
 
-        <div className="feesContainer" tw="!bottom-[180px]">
+        <div className="feesContainer" tw="!bottom-[250px]">
           <div className="rowContainer">
             <div className="leftAlign">Buy Now Price</div>
             <div className="rightAlign"> {askPrice} SOL</div>
@@ -223,12 +222,12 @@ const CancelBidModal = (): ReactElement => {
         <Button
           onClick={callCancelInstruction}
           className={'sellButton'}
-          tw="!bottom-[100px]     absolute sm:!bottom-[85px]"
+          tw="!bottom-[100px]     absolute sm:!bottom-[60px]"
           loading={isLoading}
         >
           <span tw="font-semibold text-[20px] sm:text-[16px] ">Remove Bid</span>
         </Button>
-        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[50px] " onClick={closeTheModal}>
+        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[20px] " onClick={closeTheModal}>
           {!isLoading && `Cancel`}
         </div>
         {<TermsTextNFT string="Remove" />}

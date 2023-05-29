@@ -64,7 +64,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
           border-radius: 15px 15px 0px 0px;
           border: 1px solid ${({ theme }) => theme.tokenBorder};
            .ant-tabs-nav-list {
-            ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%]`}
+            ${tw`flex rounded-[40px] !pr-0 !pt-0 !h-[100%] !w-[100%] text-[15px]`}
             justify-content: space-around;
           }
         }
@@ -93,10 +93,10 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
       }
 
       .ant-tabs-tab {
-        ${tw`text-[#636363] text-[15px] font-medium sm:!m-0 sm:!p-0`}
+        ${tw`text-[#636363] text-[15px] font-medium sm:!m-0 sm:!p-0 `}
 
         .ant-tabs-tab-btn {
-          ${tw`sm:text-tiny text-[17px]`}
+          ${tw` text-[15px]`}
 
           &:before {
             content: '' !important;
@@ -106,6 +106,7 @@ const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
 
         &.ant-tabs-tab-active {
           .ant-tabs-tab-btn {
+            ${tw`font-semibold text-[15px]`}
             color: ${({ theme }) => theme.text39};
           }
         }
@@ -339,7 +340,7 @@ export const ButtonContainer = (): ReactElement => {
           {ask && (
             <Button
               height="44px"
-              width={ask ? '190px' : '100%'}
+              width={ask ? (checkMobile() ? '170px' : '190px') : '100%'}
               cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
               onClick={() => {
                 setDelistNFT(true)
@@ -350,7 +351,7 @@ export const ButtonContainer = (): ReactElement => {
           )}
           <Button
             height="44px"
-            width={ask ? '190px' : '100%'}
+            width={ask ? (checkMobile() ? '170px' : '190px') : '100%'}
             cssStyle={bgForBtn}
             onClick={() => {
               //setDrawerSingleNFT(false)

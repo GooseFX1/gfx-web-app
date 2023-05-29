@@ -24,28 +24,23 @@ import {
   usePriceFeedFarm,
   useNFTAggregatorFilters
 } from '../../../context'
-import { fetchSingleNFT, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
 // import styled, { css } from 'styled-components'
 import { GradientText } from '../../../components/GradientText'
-import { HoverOnNFT } from './SingleNFTCard'
-import { SellNFTModal } from './SellNFTModal'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BidNFTModal } from './AggModals/BidNFTModal'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { Tag } from '../../../components/Tag'
-import { Tooltip } from 'antd'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
-
+import { HoverOnNFT } from './HoverOnNFT'
 //#region styles
 const DIVV = styled.div``
 type ICard = {

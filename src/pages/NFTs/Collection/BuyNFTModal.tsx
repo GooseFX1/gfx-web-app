@@ -95,7 +95,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   color: ${({ theme }) => theme.text20};
   .delistText {
-    ${tw`text-[20px] sm:mt-1 sm:text-[15px] sm:pt-4 font-medium text-center `}
+    ${tw`text-[20px] sm:mt-1 sm:text-[15px] sm:pt-0 font-medium text-center `}
     color: ${({ theme }) => theme.text20};
     strong {
       ${tw`sm:text-[15px] font-bold sm:mt-[-10px] leading-3`}

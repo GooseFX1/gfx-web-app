@@ -34,6 +34,7 @@ export const StyledPopupProfile = styled(Modal)`
   .ant-modal-content {
     border-radius: 0;
     box-shadow: none;
+    height:100%;
   }
   .ant-modal-body {
     padding: ${theme.margin(1)} ${theme.margin(5.5)} ${theme.margin(4)};
@@ -269,9 +270,18 @@ export const StyledFormProfile = styled(Form)`
 `
 
 export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
-  &.ant-modal {
+  /* &.ant-modal {
     ${tw`dark:text-[20px] mt-12 sm:mt-0  text-[10px]`}
     background-color: ${({ theme }) => theme.walletModalWallet};
+  } */
+  &.ant-modal {
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute`}
+    background-color: ${({ theme }) => theme.bg26};
+    border-radius: 20px;
+
+    @media (max-width: 500px) {
+      border-radius: 20px 20px 0 0;
+    }
   }
   .ant-upload-span {
     display: none !important;
@@ -300,7 +310,16 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
     ${tw`text-[13px] font-semibold mt-2 sm:text-[10px]  `}
     color: ${({ theme }) => theme.textWhitePurple}
   }
-
+  .scrollContainer {
+    ${tw`sm:h-[480px] sm:overflow-y-auto sm:w-[100%] sm:mt-0`}
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .buyBtnContainer {
+    ${tw`flex items-center w-[100%]
+     justify-between sm:mt-[20px] absolute bottom-[50px] sm:bottom-4  `}
+  }
   .titleHeader {
     color: ${({ theme }) => theme.text32};
     white-space: nowrap;
@@ -308,7 +327,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
   }
   .titleHeaderBlue {
     color: ${({ theme }) => theme.text32};
-    ${tw`text-[18px] font-semibold mt-3 leading-[23px]`}
+    ${tw`text-[18px] font-semibold mt-3 leading-[23px] `}
   }
   .profilePicText {
     ${tw`text-[13px] mt-[10px] ml-2 font-semibold text-[#b5b5b5]`}
@@ -318,11 +337,15 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
   }
   .title {
     color: ${({ theme }) => theme.text32};
-    ${tw`text-[20px] font-semibold`}
+    ${tw`text-[20px] font-semibold sm:mt-[-8px] sm:pb-1.5`}
+  }
+
+  .separator {
+    ${tw`sm:h-[1px] h-0 dark:bg-black-4 bg-grey-4 sm:w-[99vw] sm:absolute  sm:left-0`}
   }
   .saveChanges {
-    ${tw`w-[440px] sm:w-[88%] sm:absolute sm:pl-[16px]
-      sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[28px] rounded-[50px] border-none
+    ${tw`w-[440px] sm:w-[calc(100% - 40px)] sm:absolute
+      sm:h-[50px] sm:text-[15px]  cursor-pointer mt-[20px] sm:mt-3 rounded-[50px] border-none
      h-[53px] text-white text-[20px] font-semibold flex items-center justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     :disabled {

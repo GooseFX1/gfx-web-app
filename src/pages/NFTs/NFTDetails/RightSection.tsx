@@ -14,9 +14,10 @@ import { generateTinyURL } from '../../../api/tinyUrl'
 import { Share } from '../Share'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { minimizeTheString } from '../../../web3/nfts/utils'
+import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { GradientText } from '../../../components/GradientText'
+import { NFTTabSections } from '../Collection/DetailViewNFTDrawer'
 
 //#region styles
 const RIGHT_SECTION = styled.div`
@@ -121,6 +122,8 @@ export const RightSection: FC<{
   const { sessionUser, likeDislike } = useNFTProfile()
   const { general, nftMetadata, curHighestBid, ask, totalLikes } = useNFTDetails()
   // const { prices } = usePriceFeedFarm()
+  const [activeTab, setActiveTab] = useState('1')
+
   const [isFavorited, setIsFavorited] = useState<boolean>(false)
   const [likes, setLikes] = useState<number>(0)
   const [shareModal, setShareModal] = useState<boolean>(false)
@@ -166,7 +169,6 @@ export const RightSection: FC<{
 
   const onShare = async (social: string): Promise<void> => {
     if (social === 'copy link') {
-      copyToClipboard()
       return
     }
 
@@ -202,10 +204,6 @@ export const RightSection: FC<{
       default:
         break
     }
-  }
-
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
   }
 
   const handleModal = () => {
@@ -294,9 +292,7 @@ export const RightSection: FC<{
                   alt="share-icon"
                   tw="ml-5 h-10 w-10 cursor-pointer"
                   className="share-icon"
-                  onClick={() => {
-                    setShareModal(true)
-                  }}
+                  onClick={copyToClipboard}
                 />
               </div>
             </div>
@@ -304,8 +300,7 @@ export const RightSection: FC<{
           <div tw="my-5 text-regular">{nftMetadata.description}</div>
         </div>
       )}
-
-      <RightSectionTabs status={status} />
+      <NFTTabSections setActiveTab={setActiveTab} activeTab={activeTab} />
     </RIGHT_SECTION>
   )
 }

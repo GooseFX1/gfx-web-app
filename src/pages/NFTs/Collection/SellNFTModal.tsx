@@ -558,7 +558,7 @@ export const SellNFTModal: FC<{
 
           <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
             <div className="buyTitle">
-              You are about to sell <br />
+              You are about to List: <br />
               <GenericTooltip text={general?.nft_name}>
                 <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
               </GenericTooltip>
@@ -590,7 +590,7 @@ export const SellNFTModal: FC<{
             )}
           </div>
         </div>
-        <div className="maxBid" tw="text-center mt-4 sm:!mt-[75px]">
+        <div className="maxBid" tw="text-center mt-4 sm:!mt-[100px]">
           Enter Price
         </div>
         <div className="sellInputContainer">
@@ -674,7 +674,7 @@ export const SellNFTModal: FC<{
               parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice
             }
             onClick={callSellInstruction}
-            className={'sellButton' + ' blueBg'}
+            className={ask ? `sellButton blueBg` : `sellButton`}
             loading={isLoading}
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
@@ -684,7 +684,7 @@ export const SellNFTModal: FC<{
           tw="bottom-0 left-[calc(50% - 160px)] sm:left-[calc(50% - 150px)] 
         sm:w-[auto] sm:mb-[75px] absolute sm:right-auto"
         >
-          <TermsTextNFT string={'List'} />
+          <TermsTextNFT string={ask ? 'List' : 'Modify '} />
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

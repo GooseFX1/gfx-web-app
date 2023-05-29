@@ -12,6 +12,7 @@ import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { copyToClipboard } from '../../../web3/nfts/utils'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
@@ -207,7 +208,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   }
   const onShare = async (social: string) => {
     if (social === 'copy link') {
-      copyToClipboard()
       return
     }
 
@@ -245,9 +245,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
       default:
         break
     }
-  }
-  const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(window.location.href)
   }
 
   let profilePic = currentUserProfile?.profile_pic_link
@@ -408,7 +405,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                   tw="h-[40px] w-[40px] rounded cursor-pointer"
                 />
               </a>
-              <div onClick={() => copyToClipboard()} tw="h-[40px] w-[40px] cursor-pointer">
+              <div onClick={copyToClipboard} tw="h-[40px] w-[40px] cursor-pointer">
                 <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
               </div>
             </div>

@@ -237,7 +237,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     ${tw`relative p-2.5 sm:px-2.5 sm:py-1 dark:text-white text-black-4 sm:h-[105px] h-[120px]`}
   }
   .collectionId {
-    ${tw`text-[13px] font-semibold flex items-center leading-[18px] justify-between`}
+    ${tw`text-[15px] font-semibold flex items-center leading-[18px] justify-between`}
 
     .isVerified {
       ${tw` ml-2 w-[15px] h-[15px]`}

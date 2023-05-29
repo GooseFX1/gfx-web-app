@@ -31,7 +31,7 @@ const DelistNFTModal: FC<{
 
   return (
     <STYLED_POPUP_BUY_MODAL
-      height={checkMobile() ? '50%' : '357px'}
+      height={checkMobile() ? '460px' : '357px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -41,8 +41,8 @@ const DelistNFTModal: FC<{
     >
       <div tw="flex flex-col items-center">
         <div className="delistText">
-          Are you sure you want to Remove Listing
-          <br />
+          Are you sure you want to Remove <br />
+          the Listing{' '}
           <GenericTooltip text={general?.nft_name}>
             <strong>{minimizeTheString(general?.nft_name, checkMobile() ? 12 : 16)} </strong>{' '}
           </GenericTooltip>
@@ -58,7 +58,7 @@ const DelistNFTModal: FC<{
           )}
         </div>
         {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
-        <div className="feesContainer" tw="!bottom-[180px]">
+        <div className="feesContainer" tw="!bottom-[180px] sm:!bottom-[280px]">
           <div className="rowContainer">
             <div className="leftAlign">Listing Price</div>
             <div className="rightAlign">{formatSOLDisplay(ask?.buyer_price)} SOL</div>
@@ -67,16 +67,16 @@ const DelistNFTModal: FC<{
         <Button
           onClick={callDelistInstruction}
           className={'sellButton'}
-          tw="bottom-[100px] !absolute sm:!bottom-[85px]"
+          tw="bottom-[100px] !absolute sm:!bottom-[60px]"
           loading={isDelistLoading}
           disabled={isDelistLoading}
         >
           <span tw="font-semibold text-[20px] sm:text-[16px]">Remove Listing</span>
         </Button>
-        <div className="cancelText" tw="bottom-[58px] sm:bottom-[45px]" onClick={closeTheModal}>
+        <div className="cancelText" tw="bottom-[58px] sm:bottom-[25px]" onClick={closeTheModal}>
           Cancel
         </div>
-        <TermsTextNFT string="Remove" />
+        {<TermsTextNFT string="Remove" />}
       </div>
     </STYLED_POPUP_BUY_MODAL>
   )

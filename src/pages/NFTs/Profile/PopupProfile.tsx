@@ -13,6 +13,8 @@ import 'styled-components/macro'
 import { Loader } from '../../../components'
 import { checkMobile } from '../../../utils'
 import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
+import { BorderBottom } from '../Collection/SellNFTModal'
+import { USER_SOCIALS } from '../../../constants'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -31,7 +33,7 @@ const WRAP = styled.div``
 export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) => {
   const { sessionUser, setSessionUser } = useNFTProfile()
   const [form] = Form.useForm()
-  const isCompletingProfile = useMemo(() => sessionUser.uuid === null, [sessionUser])
+  const isCompletingProfile = useMemo(() => sessionUser?.uuid === null, [sessionUser])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [profileImage, setProfileImage] = useState<File>()
   const { mode } = useDarkMode()
@@ -48,12 +50,11 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     if (sessionUser) {
       setUsername(sessionUser.nickname ?? '')
       setBio(sessionUser.bio ?? '')
-      setTwitterLink(sessionUser.twitter_link ?? '')
-      setDiscordLink(sessionUser.discord_profile ?? '')
+      setTwitterLink(sessionUser.twitter_link === '' ? USER_SOCIALS.TWITTER : sessionUser?.twitter_link)
+      setDiscordLink(sessionUser.discord_profile === null ? USER_SOCIALS.DISCORD : sessionUser?.discord_profile)
       setWebsiteLink(sessionUser.website_link ?? '')
-      setTelegramLink(sessionUser.telegram_link ?? '')
+      setTelegramLink(sessionUser.telegram_link === '' ? USER_SOCIALS.TELEGRAM : sessionUser?.telegram_link)
     }
-
     return () => form.setFieldsValue(undefined)
   }, [sessionUser])
 
@@ -77,12 +78,12 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
           nickname: username,
           profile_pic_link: imageLink !== '' ? imageLink : sessionUser.profile_pic_link,
           bio: bio,
-          twitter_link: twitterLink,
-          telegram_link: telegramLink,
+          twitter_link: twitterLink === USER_SOCIALS.TWITTER ? '' : twitterLink,
+          telegram_link: telegramLink === USER_SOCIALS.TELEGRAM ? '' : telegramLink,
           is_verified: sessionUser.is_verified,
           user_likes: sessionUser.user_likes,
           website_link: websiteLink ? websiteLink : null,
-          discord_profile: discordLink ? discordLink : null
+          discord_profile: discordLink === USER_SOCIALS.DISCORD ? null : discordLink
         }
         await updateProfile(updatedProfile)
       }
@@ -162,10 +163,10 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   return (
     <>
       <STYLED_PROFILE_POPUP
-        height={'630px'}
-        width={'500px'}
+        height={checkMobile() ? '610px' : '630px'}
+        width={checkMobile() ? '100%' : '500px'}
         title={null}
-        centered={true}
+        centered={!checkMobile()}
         visible={visible ? true : false}
         onCancel={onCancel}
         footer={null}
@@ -173,96 +174,101 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         <div className="title">
           Profile <OptionalText />
         </div>
-        <div tw="flex mt-5">
-          <CenteredDiv>
-            <CurrentUserProfilePic mediumSize={true} />
+        {checkMobile() && <Separator />}
+        <div className="scrollContainer">
+          <div tw="flex mt-5 sm:mt-2">
+            <CenteredDiv>
+              <CurrentUserProfilePic mediumSize={true} />
 
-            <Upload
-              beforeUpload={beforeChange}
-              onChange={handleUpload}
-              maxCount={1}
-              name=""
-              className={'profile-pic-upload-zone'}
-              onPreview={() => false}
-              accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
-            >
-              <img
-                tw="mt-[15px] z-10 ml-[-30px] absolute cursor-pointer"
-                className="icon"
-                src={`/img/assets/Aggregator/editBtn.svg`}
-                alt="edit-image"
-              />
-            </Upload>
-          </CenteredDiv>
-          <div tw="ml-20 sm:ml-14">
-            <div className="titleHeader">Username</div>
-            <div>
-              <InputContainer setVariableState={setUsername} stateVariable={username} maxLength={30} />
-            </div>
-            <UnderLine width={checkMobile() ? 180 : 260} />
-            <div tw="flex justify-between items-center">
-              <PublicUsernameText />
-              <div tw="flex">
-                <div className="publicURLText">{username ? username?.length : 0} </div>
-                <div className="publicURLWhiteText"> /30</div>
+              <Upload
+                beforeUpload={beforeChange}
+                onChange={handleUpload}
+                maxCount={1}
+                name=""
+                className={'profile-pic-upload-zone'}
+                onPreview={() => false}
+                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+              >
+                <img
+                  tw="mt-[15px] z-10 ml-[-30px] sm:mt-12 sm:ml-[-25px] sm:relative absolute cursor-pointer"
+                  className="icon"
+                  src={`/img/assets/Aggregator/editBtn.svg`}
+                  alt="edit-image"
+                />
+              </Upload>
+            </CenteredDiv>
+            <div tw="ml-20 sm:ml-8 sm:w-[calc(100% - 100px)]">
+              <div className="titleHeader">Username</div>
+              <div>
+                <InputContainer setVariableState={setUsername} stateVariable={username} maxLength={30} />
+              </div>
+              <UnderLine width={checkMobile() ? '100%' : 260} />
+              <div tw="flex justify-between items-center">
+                <PublicUsernameText />
+                <div tw="flex">
+                  <div className="publicURLText">{username ? username?.length : 0} </div>
+                  <div className="publicURLWhiteText"> /30</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="profilePicText">Profile Picture</div>
-        <div>
-          <div className="titleHeader">Bio</div>
+          {!checkMobile() && <div className="profilePicText">Profile Picture</div>}
           <div>
-            <InputContainer setVariableState={setBio} stateVariable={bio} maxLength={100} />
+            <div className="titleHeader">Bio</div>
+            <div>
+              <InputContainer setVariableState={setBio} stateVariable={bio} maxLength={100} />
+            </div>
+            <UnderLine width={checkMobile() ? '100%' : 438} />
+            <div tw="flex justify-between items-center">
+              <div className="publicURLText">Share with the world who you are!</div>
+              <div tw="flex">
+                <div className="publicURLText">{bio ? bio.length : 0}</div>{' '}
+                <div className="publicURLWhiteText"> /100</div>
+              </div>
+            </div>
           </div>
-          <UnderLine width={checkMobile() ? 340 : 438} />
-          <div tw="flex justify-between items-center">
-            <div className="publicURLText">Share with the world who you are!</div>
-            <div tw="flex">
-              <div className="publicURLText">{bio ? bio.length : 0}</div>{' '}
-              <div className="publicURLWhiteText"> /100</div>
+          <div className="titleHeaderBlue" tw="text-[20px] sm:text-[18px]">
+            Socials
+          </div>
+          <div tw="flex sm:block">
+            <div className="titleHeader">
+              Twitter
+              <div>
+                <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} maxLength={40} />
+              </div>
+              <UnderLine width={checkMobile() ? '100%' : 200} />
+              <PublicURLText />
+            </div>
+            <div className="titleHeader" tw="ml-3 sm:ml-0">
+              Discord
+              <div>
+                <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
+              </div>
+              <UnderLine width={checkMobile() ? '100%' : 200} />
+              <PublicURLText />
+            </div>
+          </div>
+          <div tw="flex sm:block">
+            <div className="titleHeader">
+              Telegram
+              <div>
+                <InputContainer setVariableState={setTelegramLink} stateVariable={telegramLink} />
+              </div>
+              <UnderLine width={checkMobile() ? '100%' : 200} />
+              <PublicURLText />
+            </div>
+            <div className="titleHeader" tw="ml-4 sm: ml-0">
+              Website
+              <div>
+                <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />
+              </div>
+              <UnderLine width={checkMobile() ? '100%' : 200} />
+              <PublicURLText />
             </div>
           </div>
         </div>
-        <div className="titleHeaderBlue" tw="text-[20px] sm:text-[18px]">
-          Socials
-        </div>
-        <div tw="flex">
-          <div className="titleHeader">
-            Twitter
-            <div>
-              <InputContainer setVariableState={setTwitterLink} stateVariable={twitterLink} maxLength={40} />
-            </div>
-            <UnderLine width={checkMobile() ? 160 : 200} />
-            <PublicURLText />
-          </div>
-          <div className="titleHeader" tw="ml-3">
-            Discord
-            <div>
-              <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
-            </div>
-            <UnderLine width={checkMobile() ? 160 : 200} />
-            <PublicURLText />
-          </div>
-        </div>
-        <div tw="flex">
-          <div className="titleHeader">
-            Telegram
-            <div>
-              <InputContainer setVariableState={setTelegramLink} stateVariable={telegramLink} />
-            </div>
-            <UnderLine width={checkMobile() ? 160 : 200} />
-            <PublicURLText />
-          </div>
-          <div className="titleHeader" tw="ml-4">
-            Website
-            <div>
-              <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />
-            </div>
-            <UnderLine width={checkMobile() ? 160 : 200} />
-            <PublicURLText />
-          </div>
-        </div>
+
+        <Separator />
         <Button
           className="saveChanges"
           loading={isLoading}
@@ -279,9 +285,11 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
 const OptionalText = () => <span className="optional">(optional)</span>
 const PublicURLText = () => <div className="publicURLText">Will be used as Public URL</div>
 const PublicUsernameText = () => <div className="publicURLText">Will be Public username</div>
-const UnderLine: FC<{ width: number }> = ({ width }) => (
-  <div className="underLine" style={{ width: width, height: 2 }} />
+const UnderLine: FC<{ width: string | number; height?: number }> = ({ width, height }) => (
+  <div className="underLine" style={{ width: width, height: height ?? 2 }} />
 )
+
+const Separator = () => <div className="separator"> </div>
 const InputContainer: FC<{ setVariableState: any; stateVariable: any; maxLength?: number }> = ({
   setVariableState,
   stateVariable,

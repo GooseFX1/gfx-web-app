@@ -5,7 +5,7 @@ import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
-import { checkMobile } from '../../../utils'
+import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
@@ -52,7 +52,7 @@ const AcceptBidModal: FC<{
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '50%' : '393px'}
+      height={checkMobile() ? '460px' : '393px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -78,7 +78,7 @@ const AcceptBidModal: FC<{
           )}
         </div>
         {/* // TODO: Seller fees */}
-        <div className="feesContainer" tw="!bottom-[180px]">
+        <div className="feesContainer" tw="!bottom-[260px]">
           <div className="rowContainer">
             <div className="leftAlign">Hightest Bid</div>
             <div className="rightAlign">{bidPrice} SOL</div>
@@ -95,13 +95,13 @@ const AcceptBidModal: FC<{
         <Button
           onClick={callSellInstruction}
           className={'buyButton'}
-          tw="!bottom-[100px]   absolute  sm:!bottom-[85px]"
+          tw="!bottom-[100px]   absolute  sm:!bottom-[55px]"
           loading={isLoading}
         >
-          <span tw="font-semibold text-[20px] sm:text-[16px]">Yes, Accept bid</span>
+          <span tw="font-semibold text-[20px] sm:text-[16px]"> Accept {formatSOLDisplay(totalToReceive)} SOL</span>
         </Button>
 
-        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[50px] " onClick={closeTheModal}>
+        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[20px] " onClick={closeTheModal}>
           {!isLoading && `Cancel`}
         </div>
         <TermsTextNFT string="Accept" />
@@ -111,7 +111,7 @@ const AcceptBidModal: FC<{
 }
 
 export const TermsTextNFT: FC<{ string }> = ({ string }): ReactElement => (
-  <div className="termsText" tw="absolute bottom-4">
+  <div className="termsText" tw="absolute bottom-4 sm:bottom-[120px]">
     By clicking ¨{string}¨, you agree to{' '}
     <a target="_blank" rel="noopener noreferrer" href="https://docs.goosefx.io/risks">
       {' '}

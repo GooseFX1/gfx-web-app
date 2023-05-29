@@ -9,8 +9,7 @@ import { Connect } from '../../../layouts'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
   ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 100px)]
-  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)]`}
-  /* tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]" */
+  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)] sm:mt-[-140px] `}
 
   ${({ $cssStyle }) => $cssStyle};
   text-align: center;

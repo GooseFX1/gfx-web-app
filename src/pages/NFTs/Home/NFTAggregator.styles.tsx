@@ -25,7 +25,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   ${({ theme }) => theme.customScrollBar('0px')}
 
   @media(max-width: 500px) {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 220px);
     padding: 0;
     margin-top: 0px;
   }
@@ -37,7 +37,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
     @media (max-width: 500px) {
       width: 100vw;
-      height: calc(100vh - 200px);
+      height: calc(100vh - 220px);
       ${tw`sticky mt-[0px]`}
     }
   }

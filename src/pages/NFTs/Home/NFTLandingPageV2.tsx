@@ -169,7 +169,7 @@ const PROFILE_PIC_WRAPPER = styled.div`
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
   }
   .userPopupProfilePic {
-    ${tw`h-[100px] w-[100px] rounded-full cursor-pointer `}
+    ${tw`h-[100px] w-[100px] rounded-full cursor-pointer sm:h-[70px] sm:w-[70px]`}
   }
 `
 const AVATAR_NFT = styled(Image)`
@@ -283,6 +283,7 @@ const FiltersContainer = () => {
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
   const history = useHistory()
   const { setCurrency } = useNFTAggregator()
+  const { setPageNumber } = useNFTAggregatorFilters()
   const { wallet } = useWallet()
   const pubKey = wallet?.adapter ? wallet?.adapter?.publicKey?.toString() : null
   const { mode } = useDarkMode()
@@ -310,6 +311,8 @@ const FiltersContainer = () => {
     setPoolIndex(index)
     setPoolFilter(poolName)
     handleSlide(index)
+    setPageNumber(0)
+
     if (poolName === 'Trending') {
       setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
       setSortType('DESC')
@@ -323,6 +326,7 @@ const FiltersContainer = () => {
   }
 
   const handleClickTimeline = (poolName, index) => {
+    setPageNumber(0)
     setTimelineIndex(index)
     setTimelineName(poolName)
     setTimelineDisplay(poolName)
@@ -488,18 +492,6 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
   const goProfile = () => history.push(`/nfts/profile/${pubKey}`)
   if (!wallet?.adapter?.publicKey) return null
-  // if (mediumSize)
-  //   return (
-  //     <PROFILE_PIC_WRAPPER>
-  //       {userPic ? (
-  //         <img className="userPopupProfilePic" src={userPic} alt="profile-pic" />
-  //       ) : (
-  //         <PROFILE_PIC tw="h-[100px] w-[100px] !border-none text-[30px]" onClick={goProfile}>
-  //           {getFirstAndLast}
-  //         </PROFILE_PIC>
-  //       )}
-  //     </PROFILE_PIC_WRAPPER>
-  //   )
 
   return (
     <PROFILE_PIC_WRAPPER onClick={goProfile}>
