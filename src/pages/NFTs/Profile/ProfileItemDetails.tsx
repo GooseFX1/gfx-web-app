@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react'
+import { FC, useMemo, useEffect } from 'react'
 import { Drawer } from 'antd'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -21,7 +21,7 @@ export const ProfileItemDetails: FC<{
   singleNFT: any
   setShowDelistModal: any
 }> = ({ visible, setDrawerSingleNFT, setSellModal, singleNFT, setShowDelistModal }): JSX.Element => {
-  const { ask, bids, general } = useNFTDetails()
+  const { ask, bids, general, setGeneral, setNftMetadata } = useNFTDetails()
   const { setBidNow, setBuyNow, setCancelBidClicked } = useNFTAggregator()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { wallet } = useWallet()
@@ -41,6 +41,14 @@ export const ProfileItemDetails: FC<{
     return findAccount === undefined ? false : true
   }, [sessionUser, sessionUserParsedAccounts])
   const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
+
+  useEffect(
+    () => () => {
+      setGeneral(null)
+      setNftMetadata(null)
+    },
+    []
+  )
 
   return (
     <Drawer

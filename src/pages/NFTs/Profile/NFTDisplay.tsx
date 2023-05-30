@@ -209,7 +209,9 @@ const NFTDisplay = (props: INFTDisplay): JSX.Element => {
           ? filteredCollectedItems.map((item) => fetchSingleNFT(item.mint_address))
           : []
         const nftResponses = await Promise.all(apiResponses.map((api) => api.catch((e) => e)))
-        const validResults = nftResponses.filter((result) => result.status === 200).map((result) => result.data)
+        const validResults = nftResponses
+          .filter((result) => result.status === 200 && result.data.data.length > 0)
+          .map((result) => result.data)
         setNftApiResponses(validResults)
       })()
     }
