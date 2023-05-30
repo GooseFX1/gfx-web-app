@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react'
+import React, { FC, ReactElement, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -6,12 +6,21 @@ import { useNFTAggregator, useNFTDetails } from '../../../../context'
 import { Button } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
+import { formatSOLDisplay } from '../../../../utils'
+import Lottie from 'lottie-react'
+import confettiAnimation from '../../../../animations/confettiAnimation.json'
 
 const MISSION_WRAPPER = styled.div`
   ${tw`flex flex-col items-center mt-4`}
   .proudOwner {
     ${tw`mt-2 text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text28};
+  }
+  .confettiAnimation {
+    position: absolute;
+    top: 0px;
+    z-index: 3;
+    pointer-events: none;
   }
   .missionAccomplished {
     color: ${({ theme }) => theme.text7};
@@ -37,14 +46,14 @@ const MISSION_WRAPPER = styled.div`
     }
   }
   .ant-btn {
-    ${tw`border-none h-[56px] w-[520px] sm:w-[334px] text-white rounded-[50px]
-     mt-[100px] bg-blue-1 text-[20px] font-semibold`}
+    ${tw`border-none h-[56px] w-[520px] text-[15px] sm:h-[45px] sm:w-[334px] text-white rounded-[50px]
+     mt-[100px] bg-blue-1  font-semibold`}
     &.hover {
       ${tw`text-white`}
     }
   }
 `
-const MissionAccomplishedModal = (): ReactElement => {
+const MissionAccomplishedModal: FC<{ price: string }> = ({ price }): ReactElement => {
   const { general } = useNFTDetails()
   const nftName = general?.nft_name.split('#')[0]
   const { publicKey } = useWallet()
@@ -52,12 +61,13 @@ const MissionAccomplishedModal = (): ReactElement => {
   const history = useHistory()
   useEffect(() => {
     setTimeout(() => {
-      setBuyNow(undefined)
-    }, 8000)
+      setBuyNow(false)
+    }, 10000)
   }, [])
 
   return (
     <MISSION_WRAPPER>
+      <Lottie animationData={confettiAnimation} className="confettiAnimation" />
       <div className="missionAccomplished">Mission accomplished!</div>
 
       <div className="proudOwner">You are a proud owner of:</div>
@@ -70,9 +80,18 @@ const MissionAccomplishedModal = (): ReactElement => {
       <div className="nftImage">
         <img src={general?.image_url} />
       </div>
+      <div tw="mt-4 flex items-center">
+        <div className="priceText">Price:</div>
+
+        <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
+          <div>{formatSOLDisplay(price)}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
+        </div>
+      </div>
+
       {/* <div className="shareWithFriends">Share it with your friends!</div> */}
       <div className="shareMediaIcons"></div>
-      <Button tw="absolute bottom-6">
+
+      <Button tw="absolute sm:h-[45px] bottom-6 sm:bottom-4">
         <a onClick={() => history.push(`/nfts/profile/${publicKey?.toString()}`)}>Go to my collection</a>
       </Button>
     </MISSION_WRAPPER>

@@ -2,7 +2,7 @@ import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../../components'
 import { INFTMetadata } from '../../../../types/nft_details'
-import { notify } from '../../../../utils'
+import { checkMobile, notify } from '../../../../utils'
 
 const NETWORK_MSG = 'Changes will reflect after Solana network confirmation. Please try reloading.'
 export const MESSAGE = styled.div`
@@ -117,6 +117,7 @@ export const successfulCancelBidMessage = (signature: string, nftMetadata: strin
   )
 })
 export const successfulListingMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
+  notificationDuration: checkMobile() ? 5000 : 10000,
   message: (
     <SuccessfulListingMsg
       title={`Successfully placed a bid on ${nftMetadata?.name}!`}
@@ -129,6 +130,7 @@ export const successfulListingMessage = (signature: string, nftMetadata: INFTMet
 })
 
 export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
+  notificationDuration: checkMobile() ? 5000 : 10000,
   message: (
     <SuccessfulListingMsg
       title={`NFT purchased Successfully!`}

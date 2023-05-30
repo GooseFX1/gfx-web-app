@@ -239,7 +239,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               <UnderLine width={checkMobile() ? '100%' : 200} />
               <PublicURLText />
             </div>
-            <div className="titleHeader" tw="ml-3 sm:ml-0">
+            <div className="titleHeader" tw="ml-4 sm:ml-0">
               Discord
               <div>
                 <InputContainer setVariableState={setDiscordLink} stateVariable={discordLink} />
@@ -257,7 +257,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
               <UnderLine width={checkMobile() ? '100%' : 200} />
               <PublicURLText />
             </div>
-            <div className="titleHeader" tw="ml-4 sm: ml-0">
+            <div className="titleHeader" tw="ml-4 sm:ml-0">
               Website
               <div>
                 <InputContainer setVariableState={setWebsiteLink} stateVariable={websiteLink} />

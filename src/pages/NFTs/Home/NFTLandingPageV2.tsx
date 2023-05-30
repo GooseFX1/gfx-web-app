@@ -163,7 +163,8 @@ const FILTERS_CONTAINER = styled.div`
 `
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
-    ${tw`h-[44px] w-[44px] sm:h-10 sm:w-10 rounded-full cursor-pointer mr-5 sm:mr-0`}
+    ${tw`h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0`}
+    border: 1.5px solid ${({ theme }) => theme.text33};
   }
   .avatarNFTMedium {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
@@ -178,7 +179,7 @@ const AVATAR_NFT = styled(Image)`
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1 ml-2 sm:ml-0`}
   .slider-animation-timeline {
-    ${tw`absolute w-[60px] h-[44px] rounded-[36px]  z-[-1]`}
+    ${tw`absolute w-[60px] h-[44px] sm:h-10 rounded-[36px]  z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 50}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
@@ -365,47 +366,41 @@ const FiltersContainer = () => {
     return (
       <div>
         {searchModal}
-        {/* <MenuNFTPopup menuPopup={menuPopup} setMenuPopup={setMenuPopup} /> */}
         <FILTERS_CONTAINER>
           <div className="flexContainer">
             <div className="iconImg">
               <img
-                style={{ height: '20px', width: '20px' }}
+                tw="h-10 w-10"
                 onClick={() => setSearchPopup(true)}
-                src={`/img/assets/search_${mode}.svg`}
+                src={`/img/assets/Aggregator/search-${mode}.svg`}
               />
             </div>
-            {/* <div className="iconImg" onClick={() => setMenuPopup(true)}>
-              <img src={`/img/assets/Aggregator/menu.svg`} />
-            </div> */}
-            {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
           </div>
-          {/* <ButtonContainer $poolIndex={poolIndex} style={{ marginLeft: 'auto' }}>
-            <div ref={sliderRef} className="slider-animation"></div>
-            {poolTypeButtons}
-          </ButtonContainer> */}
 
           {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
+          <div className="flexContainer" tw="!ml-0">
+            <ButtonContainer $poolIndex={timelineIndex}>
+              <div className="slider-animation-timeline"></div>
+              {timelineVolume.map((timeline, index) => (
+                <STYLED_BUTTON
+                  style={{ width: 60 }}
+                  key={timeline.name}
+                  onClick={() => handleClickTimeline(timeline.name, index)}
+                  className={timeline.name === timelineName ? 'selectedBackground' : ''}
+                >
+                  {timeline.name}
+                </STYLED_BUTTON>
+              ))}
+            </ButtonContainer>
+          </div>
+          <div tw="ml-auto">
+            <div tw="sm:mt-0 mt-2.5 mr-2.5 flex">
+              <TokenToggleNFT toggleToken={setCurrency} />
+              {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
+            </div>
+          </div>
           {/* mobile */}
         </FILTERS_CONTAINER>
-        <div className="flexContainer" style={{ marginBottom: 20 }}>
-          <ButtonContainer $poolIndex={timelineIndex}>
-            <div className="slider-animation-timeline"></div>
-            {timelineVolume.map((timeline, index) => (
-              <STYLED_BUTTON
-                style={{ width: 60 }}
-                key={timeline.name}
-                onClick={() => handleClickTimeline(timeline.name, index)}
-                className={timeline.name === timelineName ? 'selectedBackground' : ''}
-              >
-                {timeline.name}
-              </STYLED_BUTTON>
-            ))}
-          </ButtonContainer>
-          <div tw="ml-auto sm:mt-0 mt-2.5 mr-2.5">
-            <TokenToggleNFT toggleToken={setCurrency} />
-          </div>
-        </div>
       </div>
     )
   else
@@ -737,7 +732,7 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
 }
 
 const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
-  const { setTimelineDisplay, timelineDisplay } = useNFTAggregatorFilters()
+  const { setTimelineDisplay, timelineDisplay, setPageNumber } = useNFTAggregatorFilters()
   useEffect(() => {
     setArrow(true)
     return () => {
@@ -745,13 +740,18 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
     }
   }, [])
 
+  const handleClick = useCallback((timeLine) => {
+    setPageNumber(0)
+    setTimelineDisplay(timeLine)
+  }, [])
+
   return (
     <DROPDOWN_CONTAINER tw="w-[104px] h-20">
-      <div className="option" onClick={() => setTimelineDisplay(TIMELINE.TWENTY_FOUR_H)}>
+      <div className="option" onClick={() => handleClick(TIMELINE.TWENTY_FOUR_H)}>
         {TIMELINE.TWENTY_FOUR_H}{' '}
         <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.TWENTY_FOUR_H} value="asc" />
       </div>
-      <div className="option" onClick={() => setTimelineDisplay(TIMELINE.SEVEN_D)}>
+      <div className="option" onClick={() => handleClick(TIMELINE.SEVEN_D)}>
         {TIMELINE.SEVEN_D}{' '}
         <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.SEVEN_D} value="desc" />
       </div>

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, FC, useMemo, useEffect } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect, useCallback } from 'react'
 import {
   useAccounts,
   useConnectionConfig,
@@ -48,7 +48,8 @@ import {
   TOKEN_PROGRAM_ID,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TREASURY_PREFIX,
-  createExecuteSaleInstruction
+  createExecuteSaleInstruction,
+  AH_NAME
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
@@ -63,11 +64,11 @@ import {
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
-import { BorderBottom } from './SellNFTModal'
+import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
+// import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
-import { getTensorBuyInstruction, NFT_MARKETS } from '../../../api/NFTs'
+import { getTensorBuyInstruction, NFT_MARKETS, saveNftTx } from '../../../api/NFTs'
 // const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -359,14 +360,20 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
 
-  const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const publicKey: PublicKey = useMemo(
+    () => wallet?.adapter?.publicKey,
+    [wallet?.adapter, wallet?.adapter?.publicKey]
+  )
   const isBuyingNow: boolean = useMemo(
     () =>
       parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid ||
       ask.marketplace_name === NFT_MARKETS.TENSOR,
     [curBid]
   )
-
+  const marketplaceName = useMemo(
+    () => (ask.marketplace_name ? handleMarketplaceFormat(ask.marketplace_name) : AH_NAME(ask.auction_house_key)),
+    [ask]
+  )
   const servicePriceCalc: number = useMemo(
     () => (curBid ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * curBid).toFixed(3)) : 0),
     [curBid]
@@ -396,6 +403,22 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const appraisalValueLabel = useMemo(
     () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'),
     [appraisalValueAsFloat]
+  )
+
+  const sendNftTransactionLog = useCallback(
+    (txType, signature) => {
+      saveNftTx(
+        marketplaceName,
+        parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
+        publicKey.toString(),
+        ask?.wallet_key,
+        general?.mint_address,
+        general?.collection_name,
+        txType,
+        signature
+      )
+    },
+    [marketplaceName, general, ask]
   )
 
   useEffect(() => {
@@ -498,15 +521,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       setIsLoading(false)
       if (confirm.value.err === null) {
+        sendNftTransactionLog(isBuyingNow ? 'BUY' : 'BID', signature)
+
         if (isBuyingNow) {
           setMissionAccomplished(true)
-          notify(
-            successBidMatchedMessage(
-              signature,
-              nftMetadata,
-              (parseFloat(buyerPrice) / LAMPORTS_PER_SOL_NUMBER).toString()
-            )
-          )
+          notify(successBidMatchedMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
         } else {
           setBidNow(null)
           notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
@@ -661,7 +680,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     await handleNotifications(transaction, buyerPrice, isBuyingNow)
   }
 
-  if (missionAccomplished) return <MissionAccomplishedModal />
+  if (missionAccomplished) return <MissionAccomplishedModal price={ask?.buyer_price} />
   else if (isLoading && isBuyingNow && pendingTxSig) return <HoldTight />
   else
     return (
@@ -754,7 +773,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             {notEnoughSol ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
           </Button>
         </div>
-        <div tw="absolute left-[calc(50% - 180px)] w-auto sm:left-[calc(50% - 165px)] bottom-0 sm:bottom-[75px]">
+        <div tw="absolute left-[calc(50% - 180px)] w-auto sm:left-[calc(50% - 165px)] bottom-0 sm:bottom-[-25px]">
           <TermsTextNFT string="Buy Now" />
         </div>
       </div>
@@ -771,3 +790,6 @@ export const PendingTransaction: FC<{ pendingTxSig: string }> = ({ pendingTxSig 
     </GFX_LINK>
   </div>
 )
+
+const BorderBottom = () =>
+  checkMobile() && <div tw="h-[1px] w-[100%] absolute left-0 dark:bg-black-4 bg-grey-4 bottom-20"></div>

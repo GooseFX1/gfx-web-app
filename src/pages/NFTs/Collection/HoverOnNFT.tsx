@@ -153,7 +153,7 @@ export const HoverOnNFT: FC<{
         {ask && (
           <Button
             className="pinkGradient"
-            cssStyle={tw`text-[13px] font-semibold h-[35px] w-[80px] sm:w-[70px]  sm:ml-1 sm:text-[13px] `}
+            cssStyle={tw`text-[13px] font-semibold h-[35px] sm:h-[30px] w-[80px] sm:w-[75px]  sm:ml-1 sm:text-[13px] `}
             onClick={(e) => goToDetailsForModal(e, 'buy')}
           >
             Buy now

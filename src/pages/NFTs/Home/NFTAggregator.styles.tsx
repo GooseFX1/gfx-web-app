@@ -25,7 +25,6 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   ${({ theme }) => theme.customScrollBar('0px')}
 
   @media(max-width: 500px) {
-    height: calc(100vh - 220px);
     padding: 0;
     margin-top: 0px;
   }
@@ -37,7 +36,6 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
 
     @media (max-width: 500px) {
       width: 100vw;
-      height: calc(100vh - 220px);
       ${tw`sticky mt-[0px]`}
     }
   }
@@ -78,15 +76,15 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
     overflow-x: hidden;
 
     @media (max-width: 500px) {
-      height: calc(100vh - 220px);
+      height: calc(100vh - 160px);
     }
 
     tr {
-      ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid dark:border-black-2 border-white
-      sm:mb-0 rounded-[15px] sm:rounded-[0px] cursor-pointer h-[60px] sm:h-auto sm:rounded-[10px]`}
+      ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
+      sm:mb-0 rounded-[15px] cursor-pointer h-[60px] sm:h-auto sm:rounded-[10px]`}
 
       &:hover {
-        ${tw`border-grey-2`}
+        ${tw`border-grey-2 rounded-[13px] sm:rounded-[8px] `}
       }
 
       &:after {

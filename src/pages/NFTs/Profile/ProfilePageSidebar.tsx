@@ -386,7 +386,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
       </div>
       <div className="profileContent">
         {params && params.userAddress && (
-          <div tw="flex flex-wrap justify-between items-center px-6 pt-6">
+          <div tw="flex flex-wrap justify-between items-center pl-6 pr-3 pt-6">
             <div>
               <span tw="font-semibold text-[30px] dark:text-white text-black-4">
                 {currentUserProfile?.nickname ?? truncateAddress(params.userAddress)}

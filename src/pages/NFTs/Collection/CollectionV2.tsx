@@ -50,44 +50,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
 
-const CollectionV2 = (): ReactElement => {
-  const params = useParams<IAppParams>()
-  const { isCollapsed } = useNavCollapse()
-
-  const { fetchSingleCollection, setSingleCollection, setFixedPriceWithinCollection, setOpenBidWithinCollection } =
-    useNFTCollections()
-  const [err, setErr] = useState(false)
-  const { refreshClicked } = useNFTAggregator()
-  useEffect(
-    () => () => {
-      setSingleCollection(undefined)
-      setFixedPriceWithinCollection(undefined)
-      setOpenBidWithinCollection(undefined)
-    },
-    []
-  )
-
-  useEffect(() => {
-    const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
-    fetchSingleCollection(curColNameParam).then((res) => {
-      setErr(res && res.status === 400 ? true : false)
-    })
-
-    return null
-  }, [fetchSingleCollection, params.collectionName, refreshClicked])
-
-  //had to remove singleCollection useState trigger as it leads to
-  // infinite loop as setSingleCollection is called in fecthSingleCollection
-  return err ? (
-    <GenericNotFound redirectLink="/nfts" redirectString="Go to NFT Aggerator " />
-  ) : (
-    <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
-      <NFTStatsContainer />
-      <NFTGridContainer />
-    </COLLECTION_VIEW_WRAPPER>
-  )
-}
-
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
@@ -449,6 +411,43 @@ const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
         </div>
       )}
     </DROPDOWN_CONTAINER>
+  )
+}
+const CollectionV2 = (): ReactElement => {
+  const params = useParams<IAppParams>()
+  const { isCollapsed } = useNavCollapse()
+
+  const { fetchSingleCollection, setSingleCollection, setFixedPriceWithinCollection, setOpenBidWithinCollection } =
+    useNFTCollections()
+  const [err, setErr] = useState(false)
+  const { refreshClicked } = useNFTAggregator()
+  useEffect(
+    () => () => {
+      setSingleCollection(undefined)
+      setFixedPriceWithinCollection(undefined)
+      setOpenBidWithinCollection(undefined)
+    },
+    []
+  )
+
+  useEffect(() => {
+    const curColNameParam = decodeURIComponent(params.collectionName.replaceAll('_', '%20'))
+    fetchSingleCollection(curColNameParam).then((res) => {
+      setErr(res && res.status === 400 ? true : false)
+    })
+
+    return null
+  }, [fetchSingleCollection, params.collectionName, refreshClicked])
+
+  //had to remove singleCollection useState trigger as it leads to
+  // infinite loop as setSingleCollection is called in fecthSingleCollection
+  return err ? (
+    <GenericNotFound redirectLink="/nfts" redirectString="Go to NFT Aggerator " />
+  ) : (
+    <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
+      <NFTStatsContainer />
+      <NFTGridContainer />
+    </COLLECTION_VIEW_WRAPPER>
   )
 }
 export default CollectionV2

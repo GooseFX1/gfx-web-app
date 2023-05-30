@@ -178,7 +178,7 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const { mode } = useDarkMode()
 
-  const showNextButton = useMemo(() => (currentSlide === 2 ? 'Start' : 'Next'), [currentSlide])
+  const showNextButton = useMemo(() => (currentSlide === 1 ? 'Start' : 'Next'), [currentSlide])
   const settings = {
     dots: checkMobile() ? true : false,
     infinite: false,
@@ -187,7 +187,7 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
     slidesToScroll: 1,
     beforeChange: (current, next) => {
       setCurrentSlide(next)
-      if (next === 3) setShowPopup(false)
+      if (next === 2) setShowPopup(false)
     },
     nextArrow: <div> {showNextButton}</div>,
     prevArrow: <div> {currentSlide !== 0 && `Previous`}</div>
@@ -207,34 +207,29 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
           <Slider {...settings}>
             <div className="slide">
               <h2>
-                Welcome to our <br /> NFT Aggregator!
+                Your One-Stop <br /> NFT Aggregator!
               </h2>
-              <img src={'/img/assets/welcomeGraphic.png'} alt="" />
+              <img src={'/img/assets/Aggregator/welcomeGraphic.svg'} alt="" />
               <div className="subText">
-                Explore, Buy and Compare thousands of NFTs in a single platform or Mint from our exclusive
-                launches.
+                Easily explore, purchase, trade, and track <br /> your NFTs across any marketplace. Earn <br />
+                rewards on every sale!
               </div>
             </div>
             <div className="slide">
               <h2>
-                Track NFT collections
+                Unleash the Power of GFX
                 <br />
-                like never before!
+                Appraisal value!
               </h2>
               <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`} alt="" />
               <h3 tw="!text-[15px] font-semibold">*For individual assets in a collection</h3>
               <div className="subText">
-                Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data,
-                not listing prices.
+                Using the GFX Appraisal Engine, navigate the NFT Market with confidence. Our unique appraisal
+                engine focuses on actual sales data, ensuring you receive precise, data-driven valuations for your
+                NFTs.
               </div>
             </div>
 
-            <div className="slide">
-              <h2>GFX Platform Token</h2>
-              <img src={'/img/assets/GOFXrewardsGraphic.png'} alt="" />
-              <h3>Get Rewarded!</h3>
-              <div className="subText">For every sale through our marketplace, you can earn $GOFX</div>
-            </div>
             {<div className="slide"></div>}
           </Slider>
         </div>

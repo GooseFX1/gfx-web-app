@@ -269,3 +269,42 @@ export const getTensorBuyInstruction = async (
     return error
   }
 }
+
+export const saveNftTx = async (
+  marketPlace: string,
+  price: number,
+  buyer: string,
+  owner: string,
+  mintAddress: string,
+  collectionName: string,
+  txType: string,
+  signature: string
+): Promise<any> => {
+  try {
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 10,
+        iat: Math.floor(Date.now() / 1000),
+        price: price,
+        buyer: buyer,
+        owner: owner,
+        mint: mintAddress,
+        collectionName: collectionName,
+        marketPlace: marketPlace,
+        txType: txType,
+        signature: signature
+      },
+      process.env.REACT_APP_JWT_SECRET_KEY
+    )
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SAVE_TX}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    )
+    return res
+  } catch (error) {
+    return error
+  }
+}

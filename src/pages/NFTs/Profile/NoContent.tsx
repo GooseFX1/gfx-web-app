@@ -6,17 +6,18 @@ import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts'
+import { checkMobile } from '../../../utils'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
   ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 100px)]
-  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)] sm:mt-[-140px] `}
+  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)] sm:mt-[-100px] `}
 
   ${({ $cssStyle }) => $cssStyle};
   text-align: center;
   padding: 10px 0;
 
   .no-data-image {
-    ${tw`max-w-[143px] max-h-[123px] sm:max-h-[80px] sm:max-w-[80px]`}
+    ${tw`max-w-[123px] max-h-[103px] sm:max-h-[80px] sm:max-w-[80px]`}
     margin-bottom: 20px;
   }
   .main-text {
@@ -58,13 +59,15 @@ const options = {
   },
   noItems: {
     mainText: 'No Items',
-    subText: 'Start buying or bidding for items in this collection \n to see your items here.',
+    subText: `Start buying or bidding ${
+      checkMobile() && '\n'
+    } for items in this collection \n to see your items here.`,
     textButton: 'See Listed Items',
     bgButton: '#5855ff'
   },
   favorited: {
     mainText: 'No Items Liked',
-    subText: 'Explore and like your most favorite ones. Coming soon',
+    subText: 'Explore and like your most favorite ones.\n Coming soon',
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },
@@ -101,16 +104,24 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
     }
   }
 
+  const subText = obj.subText
   return (
     <NO_CONTENT $cssStyle={cssStyle}>
       <div className="spacing">
         <img
           className="no-data-image"
-          src={`/img/assets/${type}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.png`}
+          src={`/img/assets/${type}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.svg`}
           alt={`no-${type}-found`}
         />
         <div className="main-text">{obj.mainText}</div>
-        <div className="sub-text">{obj.subText}</div>
+        <div className="sub-text">
+          {subText.split('\n').map((item, i) => (
+            <div className="sub-text" key={i}>
+              {item}
+            </div>
+          ))}
+        </div>
+
         {!publicKey && type === 'noItems' ? (
           <div tw="ml-[200px] mt-8">
             <Connect width="150px" />

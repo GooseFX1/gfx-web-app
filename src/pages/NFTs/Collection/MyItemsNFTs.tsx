@@ -10,7 +10,6 @@ import { SingleNFTCard } from './SingleNFTCard'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import NoContent from '../Profile/NoContent'
-import CancelBidModal from './CancelBidModal'
 
 const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = ({ setDisplayIndex }) => {
   const { myNFTsByCollection } = useNFTCollections()
@@ -50,7 +49,7 @@ const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = (
       {modal}
       {displayNFTs === null && <NFTLoading />}
       {displayNFTs?.length === 0 && !searchInsideCollection && (
-        <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />
+        <NoContent setDisplayIndex={setDisplayIndex} type="noItems" cssStyle={tw`bg-grey-5`} />
       )}
       {!publicKey && <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />}
 

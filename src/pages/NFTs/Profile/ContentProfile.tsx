@@ -73,8 +73,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       },
       {
         order: 2,
-        name: `Liked (${favoritedItems ? favoritedItems.length : 0})`,
-        component: <NFTDisplay singleNFTs={favoritedItems ? favoritedItems : []} type={'favorited'} />
+        name: `Liked (0)`,
+        component: <NFTDisplay singleNFTs={[]} type={'favorited'} />
       },
       {
         order: 3,

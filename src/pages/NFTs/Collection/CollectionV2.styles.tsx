@@ -141,7 +141,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
     height: calc(100vh - 180px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
-      height: auto;
+      /* height: auto; */
     }
     .flexContainer {
       ${tw`flex h-screen px-[12px] sm:px-0`}
@@ -183,6 +183,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+    white-space: nowrap;
   }
 
   .gridItemRegular {
@@ -342,22 +343,22 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`mt-10 text-[15px] font-medium`}
     }
     .selected {
-      ${tw`w-[140px] sm:pl-2  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
-       font-semibold dark:text-grey-5 text-black-4 flex justify-between flex-col sm:pr-4 cursor-pointer`}
+      ${tw`w-[140px] sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
+       font-semibold dark:text-grey-5 text-black-4 flex justify-between flex-col cursor-pointer`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
     .flexItemProfile {
-      ${tw`w-[130px] sm:w-[33%] mb-4 sm:mt-1 dark:text-grey-1  text-[#9c9c9c]
+      ${tw`w-[130px] sm:w-[33%] mb-4 sm:mt-1 text-grey-1
       items-center flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
-      ${tw`w-[130px] sm:w-[33%] mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
+      ${tw`w-[130px] sm:w-[33%] sm:pl-2 mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
        font-semibold  flex justify-between flex-col cursor-pointer`}
     }
     }
     
     .flexItem {
-      ${tw` w-[140px]  sm:pr-4 mb-4 font-medium text-[15px] dark:text-grey-1 text-grey-2
+      ${tw` w-[140px] sm:pl-4 sm:pr-6 mb-4 font-medium text-[15px] text-grey-1
        sm:mt-1 items-center flex justify-between flex-col cursor-pointer sm:w-[125px]`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
@@ -379,7 +380,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .activeItemProfile {
       ${tw`h-2  block mt-3 sm:mt-2 rounded-b-circle font-semibold sm:absolute
-       duration-500 bg-[#5855ff] w-[65%] sm:w-[20%] sm:mt-[32px]`}
+       duration-500 bg-[#5855ff] w-[65%] sm:w-[20%] sm:mt-[34px]`}
       content: '';
       transform: rotate(180deg);
       margin-left: ${index * 260 + `px`};

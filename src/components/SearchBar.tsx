@@ -41,6 +41,10 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
 
     &:focus {
       outline: 1.5px solid ${({ theme }) => theme.text11};
+      @media(max-width: 500px){
+        outline: none;
+    }
+
     }
     ::placeholder {
       color: ${({ theme }) => theme.text18};

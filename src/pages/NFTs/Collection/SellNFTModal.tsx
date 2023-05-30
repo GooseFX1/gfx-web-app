@@ -692,4 +692,4 @@ export const SellNFTModal: FC<{
 }
 
 export const BorderBottom = (): ReactElement =>
-  checkMobile() && <div className="borderBottom" tw="h-0.5 sm:absolute bottom-[80px] w-[100vw] ml-[-24px]"></div>
+  checkMobile() && <div className="borderBottom" tw="h-[1px] sm:absolute bottom-[80px] w-[100vw] ml-[-24px]"></div>

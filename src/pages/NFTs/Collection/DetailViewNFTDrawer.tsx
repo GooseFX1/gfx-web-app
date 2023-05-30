@@ -25,6 +25,11 @@ import { ParsedAccount } from '../../../web3/nfts/types'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `
 const RIGHT_SECTION_TABS = styled.div<{ activeTab: string }>`
   ${tw`h-[380px]`}
@@ -225,7 +230,7 @@ const ImageViewer = (): ReactElement => {
       tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4
     border-r-0 border-t-0 dark:text-white text-black px-[29px] sm:px-[14px]  border-l-grey-4 sm:border-l-0"
     >
-      <DETAIL_VIEW tw="h-[calc(100vh - 0px)] overflow-y-scroll">
+      <DETAIL_VIEW>
         <ImageShowcase
           setShowSingleNFT={() => {
             setGeneral(null)

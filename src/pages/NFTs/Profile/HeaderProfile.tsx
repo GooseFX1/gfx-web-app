@@ -356,6 +356,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
               <Image
                 width={70}
                 height={70}
+                className="avatar-profile"
                 fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
                 src={profilePic ? profilePic : `/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
                 preview={false}
@@ -450,7 +451,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-5 w-6 ml-2" src={`/img/assets/twitterNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/twitterNew.svg`} alt="" />
                 </a>
               )}
 
@@ -460,7 +461,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-6 w-6 ml-2" src={`/img/assets/telegramNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/telegramNew.svg`} alt="" />
                 </a>
               )}
               {currentUserProfile.discord_profile && (
@@ -469,12 +470,12 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-6 w-6 ml-2" src={`/img/assets/discordNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/discordNew.svg`} alt="" />
                 </a>
               )}
               {currentUserProfile.website_link && (
                 <a href={validExternalLink(currentUserProfile.website_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-6 w-6 ml-2" src={`/img/assets/website.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/website.svg`} alt="" />
                 </a>
               )}
             </div>

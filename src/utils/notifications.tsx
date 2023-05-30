@@ -69,7 +69,7 @@ interface INotifyParams {
   network?: string
   notificationDuration?: number
 }
-const NOTIFICATION_TIMER = 12 * 1000
+const NOTIFICATION_TIMER = 8 * 1000
 
 export const notify = async (
   { description: desc, icon, message, txid, type = 'info', styles, network, notificationDuration }: INotifyParams,
