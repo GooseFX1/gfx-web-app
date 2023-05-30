@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
-import { Farm, Swap } from './pages'
+import { Farm, Swap, ComingSoon } from './pages'
 import {
   NavCollapseProvider,
   OrderProvider,
@@ -86,6 +86,9 @@ export const Router: FC = () => (
                         </NFTProfileProvider>
                       </Route>
                       <Route exact path="/farm">
+                        <ComingSoon />
+                      </Route>
+                      <Route exact path="/withdraw">
                         <Farm />
                       </Route>
                       <Route exact path="/analytics">
