@@ -164,7 +164,6 @@ const FILTERS_CONTAINER = styled.div`
 const PROFILE_PIC_WRAPPER = styled.div`
   .avatarNFT {
     ${tw`h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0`}
-    border: 1.5px solid ${({ theme }) => theme.text33};
   }
   .avatarNFTMedium {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
