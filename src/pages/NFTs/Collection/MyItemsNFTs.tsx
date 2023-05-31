@@ -49,9 +49,9 @@ const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = (
       {modal}
       {displayNFTs === null && <NFTLoading />}
       {displayNFTs?.length === 0 && !searchInsideCollection && (
-        <NoContent setDisplayIndex={setDisplayIndex} type="noItems" cssStyle={tw`bg-grey-5`} />
+        <NoContent setDisplayIndex={setDisplayIndex} type="collected" cssStyle={tw`bg-grey-5`} />
       )}
-      {!publicKey && <NoContent setDisplayIndex={setDisplayIndex} type="noItems" />}
+      {!publicKey && <NoContent setDisplayIndex={setDisplayIndex} type="collected" />}
 
       {displayNFTs && displayNFTs.length > 0 && (
         <div className="gridContainer">
