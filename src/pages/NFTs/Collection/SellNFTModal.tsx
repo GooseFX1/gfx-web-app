@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, FC, useMemo, useEffect, useRef } from 'react'
+import React, { ReactElement, useState, FC, useMemo, useEffect, useRef, useCallback } from 'react'
 import {
   // useAccounts,
   useConnectionConfig,
@@ -68,6 +68,7 @@ import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { web3 } from '@project-serum/anchor'
 import DelistNFTModal from './DelistNFTModal'
 import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
+import { saveNftTx } from '../../../api/NFTs/actions'
 
 export const SellNFTModal: FC<{
   visible: boolean
@@ -173,6 +174,23 @@ export const SellNFTModal: FC<{
     if (inputRef.current) inputRef.current.focus()
   }, [inputRef.current])
 
+  const sendNftTransactionLog = useCallback(
+    (txType, signature, isModified) => {
+      saveNftTx(
+        'GooseFX',
+        askPrice,
+        null,
+        wallet?.adapter?.publicKey?.toString(),
+        general?.mint_address,
+        general?.collection_name,
+        txType,
+        signature,
+        isModified
+      )
+    },
+    [general, ask, askPrice]
+  )
+
   useEffect(
     () => () => {
       setSellNFT(false)
@@ -180,7 +198,11 @@ export const SellNFTModal: FC<{
     []
   )
 
-  const attemptConfirmTransaction = async (signature: any, notifyStr?: string): Promise<void> => {
+  const attemptConfirmTransaction = async (
+    signature: any,
+    notifyStr?: string,
+    isModified?: boolean
+  ): Promise<void> => {
     try {
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       console.log(confirm)
@@ -197,6 +219,8 @@ export const SellNFTModal: FC<{
             successfulListingMsg(notifyStr ? notifyStr : 'Listed', signature, nftMetadata, askPrice.toFixed(2))
           )
         setIsLoading(false)
+        sendNftTransactionLog(notifyStr, signature, isModified)
+
         setTimeout(() => handleClose(false), 1000)
       } else {
         handleTxError(nftMetadata.name, '')
@@ -465,7 +489,7 @@ export const SellNFTModal: FC<{
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(signature)
+      attemptConfirmTransaction(signature, 'Listed', removeAskIX ? true : false)
         .then((res) => console.log('TX Confirmed', res))
         .catch((err) => console.error(err))
     } catch (error) {

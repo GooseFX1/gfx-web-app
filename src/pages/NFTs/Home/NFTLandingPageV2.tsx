@@ -206,72 +206,6 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 const timelineVolume = [{ name: TIMELINE.TWENTY_FOUR_H }, { name: TIMELINE.SEVEN_D }]
 
-const NFTLandingPageV2 = (): ReactElement => {
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
-  const { isCollapsed } = useNavCollapse()
-  const [showBanner, setShowBanner] = useState<boolean>(false)
-  const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
-  const [showTerms, setShowTerms] = useState<boolean>(true)
-  const { setGeneral } = useNFTDetails()
-  const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
-
-  useEffect(() => {
-    setFirstPageLoad(false)
-    setGeneral(null)
-  }, [])
-
-  useEffect(() => {
-    if (refreshClass === '' && !firstLoad) {
-      setLastRefreshedClass('lastRefreshed')
-    }
-  }, [refreshClass])
-
-  useEffect(() => {
-    if (lastRefreshedClass !== ' ' && !firstLoad) {
-      setTimeout(() => setLastRefreshedClass(' '), 3000)
-    }
-  }, [lastRefreshedClass])
-
-  const handleHasOnboarded = (res: boolean) => {
-    setHasOnboarded(false)
-
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        hasAggOnboarded: true
-      })
-    )
-  }
-
-  const handleWelcomeModal = useCallback(() => {
-    if (hasOnboarded)
-      return <NFTAggWelcome setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />
-  }, [hasOnboarded])
-
-  return (
-    <NFT_AGG_WRAP $navCollapsed={isCollapsed} $currency={currencyView}>
-      {handleWelcomeModal()}
-      {!checkMobile() && (
-        <>
-          <BannerContainer showBanner={showBanner}>
-            {
-              <div tw="flex justify-center">
-                <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
-              </div>
-            }
-            <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
-            <NFTBanners showBanner={showBanner} />
-          </BannerContainer>
-        </>
-      )}
-      <FiltersContainer />
-      <BorderBottom />
-      <NFTCollectionsTable showBanner={showBanner} />
-    </NFT_AGG_WRAP>
-  )
-}
 const BorderBottom = () => checkMobile() && <div tw="h-[1px] dark:bg-black-4 bg-grey-4 mx-[15px]"></div>
 
 const FiltersContainer = () => {
@@ -763,4 +697,70 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
   )
 }
 
+const NFTLandingPageV2 = (): ReactElement => {
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
+  const { isCollapsed } = useNavCollapse()
+  const [showBanner, setShowBanner] = useState<boolean>(false)
+  const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
+  const [showTerms, setShowTerms] = useState<boolean>(true)
+  const { setGeneral } = useNFTDetails()
+  const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
+
+  useEffect(() => {
+    setFirstPageLoad(false)
+    setGeneral(null)
+  }, [])
+
+  useEffect(() => {
+    if (refreshClass === '' && !firstLoad) {
+      setLastRefreshedClass('lastRefreshed')
+    }
+  }, [refreshClass])
+
+  useEffect(() => {
+    if (lastRefreshedClass !== ' ' && !firstLoad) {
+      setTimeout(() => setLastRefreshedClass(' '), 3000)
+    }
+  }, [lastRefreshedClass])
+
+  const handleHasOnboarded = (res: boolean) => {
+    setHasOnboarded(false)
+
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        hasAggOnboarded: true
+      })
+    )
+  }
+
+  const handleWelcomeModal = useCallback(() => {
+    if (hasOnboarded)
+      return <NFTAggWelcome setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />
+  }, [hasOnboarded])
+
+  return (
+    <NFT_AGG_WRAP $navCollapsed={isCollapsed} $currency={currencyView}>
+      {handleWelcomeModal()}
+      {!checkMobile() && (
+        <>
+          <BannerContainer showBanner={showBanner}>
+            {
+              <div tw="flex justify-center">
+                <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+              </div>
+            }
+            <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
+            <NFTBanners showBanner={showBanner} />
+          </BannerContainer>
+        </>
+      )}
+      <FiltersContainer />
+      <BorderBottom />
+      <NFTCollectionsTable showBanner={showBanner} />
+    </NFT_AGG_WRAP>
+  )
+}
 export default NFTLandingPageV2

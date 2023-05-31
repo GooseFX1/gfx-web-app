@@ -161,8 +161,6 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   }
 
   const newImageLink = useMemo(() => (profileImage ? URL.createObjectURL(profileImage) : null), [profileImage])
-  console.log(newImageLink)
-
   return (
     <>
       <STYLED_PROFILE_POPUP

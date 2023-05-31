@@ -526,7 +526,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       setIsLoading(false)
       if (confirm.value.err === null) {
-        sendNftTransactionLog(isBuyingNow ? 'BUY' : 'BID', signature)
+        sendNftTransactionLog(isBuyingNow ? 'SALE' : 'BID', signature)
 
         if (isBuyingNow) {
           setMissionAccomplished(true)
@@ -616,7 +616,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     try {
       const escrowBalance = await connection.getBalance(escrowPaymentAccount[0])
 
-      if (escrowBalance > 0.01 * LAMPORTS_PER_SOL_NUMBER) {
+      if (escrowBalance > 0.01 * LAMPORTS_PER_SOL_NUMBER && !isBuyingNow) {
         const initialIX = SystemProgram.transfer({
           fromPubkey: wallet?.adapter?.publicKey,
           toPubkey: escrowPaymentAccount[0],

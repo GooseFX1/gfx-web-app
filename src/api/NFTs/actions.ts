@@ -4,6 +4,7 @@ import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
+import { ANALYTICS_SUBDOMAIN } from '../analytics'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -278,7 +279,8 @@ export const saveNftTx = async (
   mintAddress: string,
   collectionName: string,
   txType: string,
-  signature: string
+  signature: string,
+  isModified?: boolean
 ): Promise<any> => {
   try {
     const token = jwt.sign(
@@ -292,11 +294,12 @@ export const saveNftTx = async (
         collectionName: collectionName,
         marketPlace: marketPlace,
         txType: txType,
-        signature: signature
+        signature: signature,
+        isModified: isModified
       },
       process.env.REACT_APP_JWT_SECRET_KEY
     )
-    const res = await httpClient(NFT_API_BASE).post(
+    const res = await httpClient(ANALYTICS_SUBDOMAIN).post(
       `${NFT_API_ENDPOINTS.SAVE_TX}`,
       {},
       {
