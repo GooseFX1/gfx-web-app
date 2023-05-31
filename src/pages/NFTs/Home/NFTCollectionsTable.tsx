@@ -15,7 +15,6 @@ import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { NFTCollection } from '../../../types/nft_collections'
 import { Image } from 'antd'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Arrow } from '../../../components/common/Arrow'
@@ -24,10 +23,18 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { ArrowIcon } from '../Collection/CollectionV2.styles'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 const STYLE = styled.div``
+
+const stopPropagationClassList = [
+  'subText',
+  'ant-modal-wrap',
+  'trackNFTImg',
+  'mainText',
+  'ant-modal-body',
+  'slide'
+]
 
 const volumeDict = {
   '24H': 'daily_volume',
@@ -79,23 +86,22 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
 
   const handleRelocate = useCallback(
     (e: any) => {
-      if (e.target.classList.contains('ant-modal-wrap')) {
-        return
-      }
+      const stopProp = stopPropagationClassList.filter((className) => e.target.classList.contains(className))
+      if (stopProp.length) return
+
       history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
     },
     [item]
   )
-  const handleGfxAppraisal = useCallback((e) => {
+  const handleGfxAppraisal = (e) => {
     e.stopPropagation()
     e.preventDefault()
     setAppraisalPopup(true)
-  }, [])
+  }
 
-  const showAppraisalPopup = useMemo(
-    () => <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />,
-    [appraisalPopup]
-  )
+  const showAppraisalPopup = useMemo(() => {
+    if (appraisalPopup) return <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />
+  }, [appraisalPopup])
 
   return (
     <>
@@ -226,9 +232,8 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
 
   const handleRelocate = useCallback(
     (e: any) => {
-      if (e.target.classList.contains('ant-modal-wrap')) {
-        return
-      }
+      const stopProp = stopPropagationClassList.filter((className) => e.target.classList.contains(className))
+      if (stopProp.length) return
       history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
     },
     [item]
@@ -236,14 +241,12 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
 
   const handleGfxAppraisal = useCallback((e) => {
     e.stopPropagation()
-    console.log(e.target.classList)
     setAppraisalPopup(true)
   }, [])
 
-  const showAppraisalPopup = useMemo(
-    () => <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />,
-    [appraisalPopup]
-  )
+  const showAppraisalPopup = useMemo(() => {
+    if (appraisalPopup) return <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />
+  }, [appraisalPopup])
 
   return (
     <tr ref={lastRowElementRef} className="tableRow" key={index} onClick={handleRelocate}>

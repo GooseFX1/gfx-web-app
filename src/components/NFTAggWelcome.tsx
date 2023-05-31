@@ -15,7 +15,7 @@ const WRAPPER = styled.div`
   ${tw`flex items-center justify-center`}
   color: ${({ theme }) => theme.text7};
 `
-const STYLED_POPUP = styled(PopupCustom)`
+const STYLED_POPUP = styled(PopupCustom)<{ $hideClose?: boolean }>`
   .title {
     ${tw`flex text-[20px] mt-1 font-semibold items-center justify-center `}
     color: ${({ theme }) => theme.text11};
@@ -25,7 +25,8 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .ant-modal-close {
     opacity: 0.6;
-    ${tw`sm:h-[16px] sm:w-[16px]`}
+    visibility: ${({ $hideClose }) => ($hideClose ? 'hidden' : 'visible')};
+    ${tw`sm:h-[16px] sm:w-[16px]`};
   }
   &.ant-modal {
     background: ${({ theme }) => theme.bg25};
@@ -150,6 +151,7 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
       height={checkMobile() ? '553px' : '630px'}
       width={checkMobile() ? '354px' : '500px'}
       title={null}
+      $hideClose={true}
       centered={true}
       visible={showTerms ? true : false}
       onCancel={() => setShowTerms(false)}
@@ -158,14 +160,16 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
       <WRAPPER>
         <div className="slide">
           <h3>
-            <div>
+            <div className="mainText">
               Unleash the Power of GFX
               <br />
               Appraisal value!
             </div>
           </h3>
           <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`} alt="" />
-          <h3 tw="mt-1 sm:mt-0">For individual assets in a collection</h3>
+          <h3 className="mainText" tw="mt-1 sm:mt-0">
+            For individual assets in a collection
+          </h3>
           <div className="subText">
             Using the GFX Appraisal Engine, navigate the NFT Market with confidence. Our unique appraisal engine
             focuses on actual sales data, ensuring you receive precise, data-driven valuations for your NFTs.

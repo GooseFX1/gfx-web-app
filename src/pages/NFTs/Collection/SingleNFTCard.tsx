@@ -83,8 +83,8 @@ export const SingleNFTCard: FC<{
   const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
   const appraisalPriceNative: number = useMemo(
     () =>
-      item?.gfx_appraisal_value && parseInt(item?.gfx_appraisal_value) > 0
-        ? parseInt(item?.gfx_appraisal_value)
+      item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
+        ? parseFloat(item?.gfx_appraisal_value)
         : 0,
     [item?.gfx_appraisal_value]
   )
