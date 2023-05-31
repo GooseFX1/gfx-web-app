@@ -117,7 +117,7 @@ export const successfulCancelBidMessage = (signature: string, nftMetadata: strin
   )
 })
 export const successfulListingMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
-  notificationDuration: checkMobile() ? 5000 : 10000,
+  notificationDuration: checkMobile() ? 3000 : 10000,
   message: (
     <SuccessfulListingMsg
       title={`Successfully placed a bid on ${nftMetadata?.name}!`}
@@ -130,7 +130,7 @@ export const successfulListingMessage = (signature: string, nftMetadata: INFTMet
 })
 
 export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
-  notificationDuration: checkMobile() ? 5000 : 10000,
+  notificationDuration: checkMobile() ? 3000 : 10000,
   message: (
     <SuccessfulListingMsg
       title={`NFT purchased Successfully!`}

@@ -21,7 +21,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { getNFTMetadata, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
-import { notify, capitalizeFirstLetter, commafy } from '../../../utils'
+import { notify, capitalizeFirstLetter, commafy, checkMobile } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -141,7 +141,7 @@ export const SingleNFTCard: FC<{
   const nftId = item?.nft_name
     ? item?.nft_name.includes('#')
       ? '#' + item?.nft_name.split('#')[1]
-      : minimizeTheString(item?.nft_name)
+      : minimizeTheString(item?.nft_name, checkMobile() ? 10 : 12)
     : null
 
   const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item?.uuid) : false), [item])
