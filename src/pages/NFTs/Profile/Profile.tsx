@@ -10,6 +10,7 @@ import { isValidSolanaAddress } from '../../../web3'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { logData } from '../../../api/analytics'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
@@ -82,6 +83,10 @@ export const Profile: FC = (): JSX.Element => {
       setPrevWallet(publicKey ? publicKey?.toString() : null)
     }
   }, [prevWallet, publicKey, sessionUser])
+
+  useEffect(() => {
+    logData('profile_page_' + sessionUser ? 'session_user' : 'non_session_user')
+  }, [])
 
   useEffect(() => {
     if (params.userAddress === undefined || !isValidSolanaAddress(params.userAddress)) history.push(`/nfts`)

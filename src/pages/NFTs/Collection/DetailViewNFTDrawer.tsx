@@ -22,6 +22,7 @@ import { copyToClipboard, minimizeTheString, redirectBasedOnMarketplace } from '
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
 import { ParsedAccount } from '../../../web3/nfts/types'
+import { logData } from '../../../api/analytics'
 
 const DETAIL_VIEW = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
@@ -154,12 +155,12 @@ export const DetailViewNFT: FC = (): JSX.Element => {
     })
   }
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    logData('detail_view ' + general?.collection_name)
+    return () => {
       goBackToNFTCollections()
-    },
-    []
-  )
+    }
+  }, [])
   useEffect(() => general === null && goBackToNFTCollections(), [general])
 
   const closeTheDrawer = () => {

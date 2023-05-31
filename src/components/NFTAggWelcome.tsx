@@ -215,7 +215,7 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
               <h2>
                 Your One-Stop <br /> NFT Aggregator!
               </h2>
-              <img src={'/img/assets/Aggregator/welcomeGraphic.svg'} alt="" />
+              <img src={'/img/assets/Aggregator/welcomeGraphic.png'} alt="" />
               <div className="subText">
                 Easily explore, purchase, trade, and track <br /> your NFTs across any marketplace. Earn <br />
                 rewards on every sale!

@@ -49,6 +49,7 @@ import { GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
+import { logData } from '../../../api/analytics'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
@@ -417,10 +418,20 @@ const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
 
-  const { fetchSingleCollection, setSingleCollection, setFixedPriceWithinCollection, setOpenBidWithinCollection } =
-    useNFTCollections()
+  const {
+    fetchSingleCollection,
+    setSingleCollection,
+    setFixedPriceWithinCollection,
+    setOpenBidWithinCollection,
+    singleCollection
+  } = useNFTCollections()
   const [err, setErr] = useState(false)
   const { refreshClicked } = useNFTAggregator()
+
+  useEffect(() => {
+    if (singleCollection) logData('collection_page ' + singleCollection[0].collection_name)
+  }, [singleCollection])
+
   useEffect(
     () => () => {
       setSingleCollection(undefined)

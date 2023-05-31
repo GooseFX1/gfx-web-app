@@ -13,6 +13,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ButtonContainer } from '../Collection/DetailViewNFTDrawer'
+import { logData } from '../../../api/analytics'
 
 export const ProfileItemDetails: FC<{
   visible: boolean
@@ -42,13 +43,13 @@ export const ProfileItemDetails: FC<{
   }, [sessionUser, sessionUserParsedAccounts])
   const bgForBtn = ask ? tw`bg-blue-1 ml-2 sm:!ml-0 sm:mr-0` : tw`bg-red-2 ml-2 sm:mr-0 sm:!ml-0`
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    logData('profile_detail_view' + general?.collection_name + '_' + general?.nft_name)
+    return () => {
       setGeneral(null)
       setNftMetadata(null)
-    },
-    []
-  )
+    }
+  }, [])
 
   return (
     <Drawer
