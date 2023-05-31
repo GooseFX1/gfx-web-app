@@ -160,6 +160,9 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     }
   }
 
+  const newImageLink = useMemo(() => (profileImage ? URL.createObjectURL(profileImage) : null), [profileImage])
+  console.log(newImageLink)
+
   return (
     <>
       <STYLED_PROFILE_POPUP
@@ -178,7 +181,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
         <div className="scrollContainer">
           <div tw="flex mt-5 sm:mt-2">
             <CenteredDiv>
-              <CurrentUserProfilePic mediumSize={true} />
+              <CurrentUserProfilePic mediumSize={true} profileImg={newImageLink} />
 
               <Upload
                 beforeUpload={beforeChange}

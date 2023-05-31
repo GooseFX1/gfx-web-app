@@ -24,7 +24,7 @@ import {
 } from '@solana/web3.js'
 import { tradeStatePDA, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
 
-import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
+import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BN from 'bn.js'
 import {
@@ -374,16 +374,21 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     () => (ask.marketplace_name ? handleMarketplaceFormat(ask.marketplace_name) : AH_NAME(ask.auction_house_key)),
     [ask]
   )
+
+  const serviceFee = useMemo(
+    () => (ask.marketplace_name ? NFT_MARKET_PLACE_FEES[ask.marketplace_name] : NFT_MARKET_TRANSACTION_FEE),
+    [ask]
+  )
   const servicePriceCalc: number = useMemo(
-    () => (curBid ? parseFloat(((NFT_MARKET_TRANSACTION_FEE / 100) * curBid).toFixed(3)) : 0),
-    [curBid]
+    () => (curBid ? parseFloat((((serviceFee ? serviceFee : 1) / 100) * curBid).toFixed(3)) : 0),
+    [curBid, ask]
   )
   const royalty = useMemo(
     () => (onChainMetadata ? onChainMetadata.data.sellerFeeBasisPoints / 100 : 0),
     [onChainMetadata]
   )
 
-  const orderTotal: number = useMemo(() => curBid + servicePriceCalc + (curBid * royalty) / 100, [curBid])
+  const orderTotal: number = useMemo(() => curBid, [curBid])
 
   const notEnoughSol: boolean = useMemo(
     () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
@@ -725,7 +730,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           {!checkMobile() && <img className="nftImg" src={general?.image_url} alt="" />}
         </div>
 
-        <div className="vContainer" tw="flex items-center !mt-2 sm:!mt-8 justify-center">
+        <div className="vContainer" tw="flex items-center !mt-2 sm:!mt-[70px] justify-center">
           <div className="priceText">Price:</div>
 
           <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
@@ -754,12 +759,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             <div className="rightAlign"> {((royalty * curBid) / 100).toFixed(2)} SOL</div>
           </div>
           <div className="rowContainer">
-            <div className="leftAlign">Service Fee</div>
-            <div className="rightAlign"> {servicePriceCalc} SOL</div>
+            <div className="leftAlign">Taker Fee {formatSOLDisplay(serviceFee, true)}%</div>
+            <div className="rightAlign"> {formatSOLDisplay(servicePriceCalc, true)} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total Price</div>
-            <div className="rightAlignFinal">{formatSOLDisplay(orderTotal)} SOL</div>
+            <div className="rightAlignFinal">
+              {formatSOLDisplay(orderTotal + (royalty * curBid) / 100 + servicePriceCalc)} SOL
+            </div>
           </div>
         </div>
         <BorderBottom />

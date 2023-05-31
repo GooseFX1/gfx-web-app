@@ -137,7 +137,7 @@ const STYLED_POPUP = styled(PopupCustom)`
       ${tw`text-[18px] `}
     }
     .subText {
-      ${tw`font-medium text-[15px] sm:w-[292px]`}
+      ${tw`font-medium text-[15px] sm:w-[292px] sm:text-[13px]`}
       color: ${({ theme }) => theme.text20};
     }
   }
@@ -159,14 +159,16 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
         <div className="slide">
           <h3>
             <div>
-              Track NFT collections <br /> like never before!
+              Unleash the Power of GFX
+              <br />
+              Appraisal value!
             </div>
           </h3>
           <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`} alt="" />
-          <h3 tw="mt-8 sm:mt-4">For individual assets in a collection</h3>
+          <h3 tw="mt-1 sm:mt-0">For individual assets in a collection</h3>
           <div className="subText">
-            Make the best decisions using the GFX Appraisal Value. Our model emphasizes executed sales data, not
-            listing prices.
+            Using the GFX Appraisal Engine, navigate the NFT Market with confidence. Our unique appraisal engine
+            focuses on actual sales data, ensuring you receive precise, data-driven valuations for your NFTs.
           </div>
         </div>
       </WRAPPER>

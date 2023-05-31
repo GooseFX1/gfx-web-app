@@ -471,7 +471,10 @@ const PROFILE_PIC = styled.div`
 `
 
 // TODO: Mini mise the code using tailwind
-export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize }): ReactElement => {
+export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: string }> = ({
+  mediumSize,
+  profileImg
+}): ReactElement => {
   const { sessionUser } = useNFTProfile()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
@@ -481,7 +484,9 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean }> = ({ mediumSize
     [wallet?.adapter?.publicKey]
   )
   let userPic = sessionUser?.profile_pic_link
+
   if (userPic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') userPic = null
+  if (profileImg) userPic = profileImg
 
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
   const goProfile = () => history.push(`/nfts/profile/${pubKey}`)

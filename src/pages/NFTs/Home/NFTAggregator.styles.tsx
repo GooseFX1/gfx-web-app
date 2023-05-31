@@ -127,6 +127,9 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   .nftNameImg {
     ${tw`w-10 h-10 sm:mt-0 sm:h-[42px] sm:w-[42px] ml-4 rounded-full  sm:ml-1`}
   }
+  .gfxTooltip {
+    ${tw`w-5 h-5 absolute left-2 top-[-5px] sm:left-0 z-10`}
+  }
   .nftNameColumn {
     text-align: left;
     ${tw`w-[25%] sm:w-[65%] flex items-center justify-start `}

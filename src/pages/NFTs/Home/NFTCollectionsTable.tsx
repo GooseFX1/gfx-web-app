@@ -25,6 +25,7 @@ import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { ArrowIcon } from '../Collection/CollectionV2.styles'
+import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 
 const STYLE = styled.div``
 
@@ -33,75 +34,6 @@ const volumeDict = {
   '7D': 'weekly_volume',
   '30d': 'monthly_volume',
   All: 'total_volume'
-}
-
-const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
-  const { isCollapsed } = useNavCollapse()
-  const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
-    useNFTCollections()
-  const { refreshClicked, setRefreshClass } = useNFTAggregator()
-  const { sortFilter, sortType, pageNumber, setPageNumber, timelineDisplay } = useNFTAggregatorFilters()
-  const paginationNumber = 20
-  const [firstLoad, setFirstLoad] = useState<boolean>(true)
-  const observer = useRef<any>()
-  const lastRowElementRef = useCallback(
-    (node) => {
-      if (allCollectionLoading) return
-      if (observer.current) observer?.current.disconnect()
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          setPageNumber((prev) => prev + 1)
-        }
-      })
-      if (node) observer.current.observe(node)
-    },
-    [allCollectionLoading]
-  )
-  useEffect(() => {
-    setFirstLoad(false)
-  }, [])
-
-  useEffect(() => {
-    if (sortFilter && !firstLoad) {
-      setTimeout(() => {
-        fetchAllCollectionsByPages(0, paginationNumber, sortFilter, sortType)
-      }, 500)
-    }
-  }, [refreshClicked])
-
-  useEffect(() => {
-    if (sortFilter && !firstLoad) {
-      setAllCollections(LOADING_ARR)
-      fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
-    }
-  }, [sortFilter, sortType, timelineDisplay])
-
-  useEffect(() => {
-    ;(async () => {
-      if (sortFilter)
-        await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
-      else await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber)
-    })()
-  }, [pageNumber])
-
-  return (
-    <WRAPPER_TABLE $navCollapsed={isCollapsed} showBanner={showBanner}>
-      <table>
-        {!checkMobile() && (
-          <thead>
-            <NFTColumnsTitleWeb />
-          </thead>
-        )}
-        <tbody>
-          {checkMobile() ? (
-            <NFTTableRowMobile allItems={allCollections} lastRowElementRef={lastRowElementRef} />
-          ) : (
-            <NFTTableRow allItems={allCollections} lastRowElementRef={lastRowElementRef} />
-          )}
-        </tbody>
-      </table>
-    </WRAPPER_TABLE>
-  )
 }
 
 const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement => (
@@ -123,6 +55,7 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
   const { prices } = usePriceFeedFarm()
   // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+  const [appraisalPopup, setAppraisalPopup] = useState(null)
 
   const floorPrice = useMemo(() => {
     const price = item?.floor_price / LAMPORTS_PER_SOL_NUMBER
@@ -144,30 +77,55 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
     return marketcap
   }, [item, solPrice, currencyView])
 
+  const handleRelocate = useCallback(
+    (e: any) => {
+      if (e.target.classList.contains('ant-modal-wrap')) {
+        return
+      }
+      history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
+    },
+    [item]
+  )
+  const handleGfxAppraisal = useCallback((e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setAppraisalPopup(true)
+  }, [])
+
+  const showAppraisalPopup = useMemo(
+    () => <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />,
+    [appraisalPopup]
+  )
+
   return (
     <>
-      <tr
-        ref={lastRowElementRef}
-        key={index}
-        onClick={() =>
-          history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
-        }
-      >
+      <tr ref={lastRowElementRef} key={index} onClick={(e) => handleRelocate(e)}>
+        {showAppraisalPopup}
         <td className="nftNameColumn">
           {item?.collection_name !== undefined ? (
             <>
               <div className="index">{index + 1} </div>
-              <Image
-                preview={false}
-                className="nftNameImg"
-                fallback={'/img/assets/Aggregator/Unknown.svg'}
-                src={`${
-                  item?.profile_pic_link.length === 0
-                    ? '/img/assets/Aggregator/Unknown.svg'
-                    : item.profile_pic_link
-                }`}
-                alt=""
-              />
+              <div tw="relative">
+                {item?.gfx_appraisal_supported && (
+                  <img
+                    src="/img/assets/Aggregator/Tooltip.svg"
+                    onClick={(e) => handleGfxAppraisal(e)}
+                    className="gfxTooltip"
+                  />
+                )}
+                <Image
+                  preview={false}
+                  className="nftNameImg"
+                  fallback={'/img/assets/Aggregator/Unknown.svg'}
+                  src={`${
+                    item?.profile_pic_link.length === 0
+                      ? '/img/assets/Aggregator/Unknown.svg'
+                      : item.profile_pic_link
+                  }`}
+                  alt=""
+                />
+              </div>
+
               <div className="nftCollectionName">
                 <div tw="flex items-center">
                   {minimizeTheString(item?.collection_name)}
@@ -224,6 +182,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   const { timelineDisplay } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
   const [gfxAppraisal, setGfxAppraisal] = useState(null)
+  const [appraisalPopup, setAppraisalPopup] = useState(null)
 
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
   // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
@@ -266,31 +225,57 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   }, [item, solPrice, currencyView])
 
   const handleRelocate = useCallback(
-    (e: any) =>
-      history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`),
+    (e: any) => {
+      if (e.target.classList.contains('ant-modal-wrap')) {
+        return
+      }
+      history.push(`/nfts/collection/${encodeURIComponent(item.collection_name).replaceAll('%20', '_')}`)
+    },
     [item]
+  )
+
+  const handleGfxAppraisal = useCallback((e) => {
+    e.stopPropagation()
+    console.log(e.target.classList)
+    setAppraisalPopup(true)
+  }, [])
+
+  const showAppraisalPopup = useMemo(
+    () => <GFXApprisalPopup setShowTerms={setAppraisalPopup} showTerms={appraisalPopup} />,
+    [appraisalPopup]
   )
 
   return (
     <tr ref={lastRowElementRef} className="tableRow" key={index} onClick={handleRelocate}>
+      {showAppraisalPopup}
       <td className="nftNameColumn">
-        {item.profile_pic_link ? (
-          <Image
-            preview={false}
-            className="nftNameImg"
-            fallback={'/img/assets/Aggregator/Unknown.svg'}
-            src={`${
-              item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
-            }`}
-            alt="collection-icon"
-          />
-        ) : (
-          <div className="nftCollectionName">
-            <div tw="flex items-center ">
-              <LoaderForImg />
+        <div tw="relative">
+          {item?.gfx_appraisal_supported && (
+            <img
+              src="/img/assets/Aggregator/Tooltip.svg"
+              className="gfxTooltip"
+              onClick={(e) => handleGfxAppraisal(e)}
+            />
+          )}
+          {item.profile_pic_link ? (
+            <Image
+              preview={false}
+              className="nftNameImg"
+              fallback={'/img/assets/Aggregator/Unknown.svg'}
+              src={`${
+                item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
+              }`}
+              alt="collection-icon"
+            />
+          ) : (
+            <div className="nftCollectionName">
+              <div tw="flex items-center ">
+                <LoaderForImg />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
         {item?.collection_name ? (
           <div className="nftCollectionName">{item?.collection_name.replaceAll('"', '')}</div>
         ) : (
@@ -374,4 +359,72 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => (
   </>
 )
 
+const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
+  const { isCollapsed } = useNavCollapse()
+  const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
+    useNFTCollections()
+  const { refreshClicked, setRefreshClass } = useNFTAggregator()
+  const { sortFilter, sortType, pageNumber, setPageNumber, timelineDisplay } = useNFTAggregatorFilters()
+  const paginationNumber = 20
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const observer = useRef<any>()
+  const lastRowElementRef = useCallback(
+    (node) => {
+      if (allCollectionLoading) return
+      if (observer.current) observer?.current.disconnect()
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPageNumber((prev) => prev + 1)
+        }
+      })
+      if (node) observer.current.observe(node)
+    },
+    [allCollectionLoading]
+  )
+  useEffect(() => {
+    setFirstLoad(false)
+  }, [])
+
+  useEffect(() => {
+    if (sortFilter && !firstLoad) {
+      setTimeout(() => {
+        fetchAllCollectionsByPages(0, paginationNumber, sortFilter, sortType)
+      }, 500)
+    }
+  }, [refreshClicked])
+
+  useEffect(() => {
+    if (sortFilter && !firstLoad) {
+      setAllCollections(LOADING_ARR)
+      fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
+    }
+  }, [sortFilter, sortType, timelineDisplay])
+
+  useEffect(() => {
+    ;(async () => {
+      if (sortFilter)
+        await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber, sortFilter, sortType)
+      else await fetchAllCollectionsByPages(pageNumber * paginationNumber, paginationNumber)
+    })()
+  }, [pageNumber])
+
+  return (
+    <WRAPPER_TABLE $navCollapsed={isCollapsed} showBanner={showBanner}>
+      <table>
+        {!checkMobile() && (
+          <thead>
+            <NFTColumnsTitleWeb />
+          </thead>
+        )}
+        <tbody>
+          {checkMobile() ? (
+            <NFTTableRowMobile allItems={allCollections} lastRowElementRef={lastRowElementRef} />
+          ) : (
+            <NFTTableRow allItems={allCollections} lastRowElementRef={lastRowElementRef} />
+          )}
+        </tbody>
+      </table>
+    </WRAPPER_TABLE>
+  )
+}
 export default NFTCollectionsTable

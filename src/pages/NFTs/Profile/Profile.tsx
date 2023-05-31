@@ -14,6 +14,9 @@ import 'styled-components/macro'
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
   ${tw`-mt-20 pt-20 flex flex-col`}
+  .ant-drawer-content-wrapper {
+    ${tw`sm:!rounded-[30px]`}
+  }
   .ant-drawer-content {
     ${tw`sm:rounded-[20px]`}
   }

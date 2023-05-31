@@ -9,6 +9,9 @@ export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
   ${({ navCollapsed }) => css`
     color: ${({ theme }) => theme.text30};
     ${({ theme }) => theme.customScrollBar(0)};
+    .ant-drawer-content-wrapper {
+      ${tw`sm:rounded-[30px]`}
+    }
     .ant-drawer-content {
       ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] sm:border-solid sm:border-1 sm:dark:border-black-4 
       sm:border-grey-2 `}

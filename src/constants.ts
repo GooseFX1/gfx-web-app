@@ -149,6 +149,10 @@ export const SUPPORTED_TOKEN_LIST = new Set([
 ])
 
 export const NFT_MARKET_TRANSACTION_FEE = 1
+export const NFT_MARKET_PLACE_FEES = {
+  TENSOR: 1.4,
+  MAGIC_EDEN: 1.5
+}
 
 export const stakeTokens: IFarmData[] = [
   {
