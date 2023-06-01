@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { useRewardToggle } from '../context/reward_toggle'
+// import { useRewardToggle } from '../context/reward_toggle'
 import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
 import tw from 'twin.macro'
 
@@ -37,10 +37,11 @@ const REWARD_BTN_TITLE = styled.span`
 `
 
 export const RewardsButton: FC = () => {
-  const { rewardToggle } = useRewardToggle()
+  // const { rewardToggle } = useRewardToggle()
 
   const handleModalClick = () => {
-    rewardToggle(true)
+    // rewardToggle(true)
+    window.location.href = 'https://docs.goosefx.io/tokenomics/staking-rewards-program'
   }
 
   return (
