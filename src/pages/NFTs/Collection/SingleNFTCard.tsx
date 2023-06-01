@@ -56,26 +56,27 @@ export const SingleNFTCard: FC<{
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-  const { currencyView } = useNFTAggregator()
+  const { currencyView, operatingNFT, setOperatingNFT } = useNFTAggregator()
   const refreshCard = useRef(null)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
 
   const isOwner: boolean = useMemo(() => {
-    if (sessionUser === null) return false
-    const findAccount: undefined | ParsedAccount =
-      item && sessionUser !== null && sessionUserParsedAccounts.length > 0
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === item?.mint_address)
-        : undefined
-    return findAccount === undefined ? false : true
-  }, [sessionUser, sessionUserParsedAccounts])
+    if (sessionUser === null || sessionUserParsedAccounts.length === 0) return false
+
+    const userAccountMints = new Set(sessionUserParsedAccounts.map((acct) => acct.mint))
+    const userHasAccount = userAccountMints.has(item?.mint_address)
+
+    // this states while the nft is in operating state we shall not consider it as owner for loading reason
+    return userHasAccount && !operatingNFT.has(item?.mint_address)
+  }, [sessionUser, sessionUserParsedAccounts, item, operatingNFT])
 
   const hideThisNFT: boolean = useMemo(() => {
     if (myNFTsByCollection === null) return false
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item.mint_address)
-    return currentNFT.length && currentNFT[0].asks.length === 0 && !myItems
-  }, [myNFTsByCollection])
+    return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
+  }, [myNFTsByCollection, operatingNFT])
 
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -103,6 +104,20 @@ export const SingleNFTCard: FC<{
       setIsFavorited(sessionUser.user_likes.includes(item.uuid))
     }
   }, [sessionUser])
+
+  useEffect(() => {
+    if (hideThisNFT && operatingNFT.size > 0) {
+      if (operatingNFT.has(item?.mint_address)) {
+        setOperatingNFT((prevSet) => {
+          const newSet = new Set(prevSet)
+          newSet.delete(item?.mint_address)
+          return newSet
+        })
+        // this needs to be looked more
+        setNFTDetails()
+      }
+    }
+  }, [hideThisNFT, operatingNFT])
 
   useEffect(() => {
     if (item?.mint_address) {
@@ -256,7 +271,6 @@ export const SingleNFTCard: FC<{
             {hover && (
               <HoverOnNFT
                 setHover={setHover}
-                mintAddress={item?.mint_address}
                 collectionName={item?.collection_name}
                 item={item}
                 myBidToNFT={localUserBidToNFT}

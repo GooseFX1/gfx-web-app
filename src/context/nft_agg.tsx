@@ -1,17 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useWallet } from '@solana/wallet-adapter-react'
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  FC,
-  useEffect,
-  SetStateAction,
-  Dispatch,
-  useCallback
-} from 'react'
-import { ICreatorData } from '../types/nft_launchpad'
+import { createContext, ReactNode, useContext, useState, FC, SetStateAction, Dispatch, useCallback } from 'react'
 
 interface INFTAggConfig {
   setBuyNow: Dispatch<SetStateAction<any>>
@@ -25,9 +12,9 @@ interface INFTAggConfig {
   setCurrency?: any
   currencyView: string
   sellNFTClicked?: any
-  setSellNFT?: any
+  setSellNFT?: Dispatch<SetStateAction<any>>
   refreshClass?: string
-  setRefreshClass?: any
+  setRefreshClass?: Dispatch<SetStateAction<string>>
   refreshClicked?: number
   setRefreshClicked?: any
   lastRefreshedClass?: string
@@ -38,6 +25,8 @@ interface INFTAggConfig {
   setDelistNFT?: Dispatch<SetStateAction<boolean>>
   showAcceptBid?: boolean
   setShowAcceptBidModal?: Dispatch<SetStateAction<boolean>>
+  operatingNFT?: Set<string>
+  setOperatingNFT: (value: Set<string> | ((prevSet: Set<string>) => Set<string>)) => void
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
@@ -54,6 +43,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
   const [openJustModal, setOpenJustModal] = useState<boolean>(false)
   const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
+  const [operatingNFT, setOperatingNFT] = useState<Set<string>>(new Set())
 
   const setCurrency = useCallback(() => {
     setCurrencyView((prev) => (prev === 'USDC' ? 'SOL' : 'USDC'))
@@ -85,7 +75,9 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         delistNFT: delistNFT,
         setDelistNFT: setDelistNFT,
         showAcceptBid: showAcceptBid,
-        setShowAcceptBidModal: setShowAcceptBidModal
+        setShowAcceptBidModal: setShowAcceptBidModal,
+        operatingNFT: operatingNFT,
+        setOperatingNFT: setOperatingNFT
       }}
     >
       {children}
@@ -123,7 +115,9 @@ export const useNFTAggregator = (): INFTAggConfig => {
     delistNFT,
     setDelistNFT,
     showAcceptBid,
-    setShowAcceptBidModal
+    setShowAcceptBidModal,
+    operatingNFT,
+    setOperatingNFT
   } = useContext(NFTAggContext)
 
   return {
@@ -150,6 +144,8 @@ export const useNFTAggregator = (): INFTAggConfig => {
     delistNFT,
     setDelistNFT,
     showAcceptBid,
-    setShowAcceptBidModal
+    setShowAcceptBidModal,
+    operatingNFT,
+    setOperatingNFT
   }
 }

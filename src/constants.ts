@@ -15,6 +15,12 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
 
 export const SOLSCAN_BASE = 'https://api.solscan.io'
 
+export const SOL_TX_STATUS = {
+  FINALIZED: 'finalized',
+  PROCESSED: 'processed',
+  CONFIRMED: 'confirmed'
+}
+
 export const CURRENT_SUPPORTED_TOKEN_LIST = new Set(['SOL', 'USDC', 'SRM', 'ETH', 'GMT', 'mSOL', 'APT'])
 export const FARM_SUPPORTED_TOKEN_LIST = new Set(['GOFX'])
 export const MODAL_TYPES = {

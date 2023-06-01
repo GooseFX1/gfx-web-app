@@ -8,12 +8,12 @@ import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 
 const TEXT_AREA = styled.div`
-  ${tw`h-[62vh] w-full p-[1.2px] mt-4 sm:h-[64vh] rounded-[8px] dark:text-grey-2 text-grey-1`}
+  ${tw`h-[452px] w-full p-[1.2px] mt-4 sm:h-[422px] rounded-[8px] dark:text-grey-2 text-grey-1`}
   background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
   flex-grow: 0;
 
   .text-area-inner {
-    ${tw`h-full w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
+    ${tw`h-[450px] sm:h-[420px] w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
     ${({ theme }) => theme.customScrollBar('4px')}
   }
 
@@ -44,8 +44,8 @@ const TOS_MODAL = styled(Modal)`
   }
 
   .ant-modal-body {
-    ${tw`sm:px-3!`}
-    max-height: 80vh !important;
+    ${tw`sm:px-3! `}
+    max-height: 600px !important;
   }
 `
 
