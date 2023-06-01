@@ -78,7 +78,7 @@ const AcceptBidModal: FC<{
           )}
         </div>
         {/* // TODO: Seller fees */}
-        <div className="feesContainer" tw="!bottom-[260px]">
+        <div className="feesContainer" tw="!bottom-[180px]">
           <div className="rowContainer">
             <div className="leftAlign">Hightest Bid</div>
             <div className="rightAlign">{bidPrice} SOL</div>

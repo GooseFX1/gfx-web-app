@@ -41,7 +41,8 @@ export const SingleNFTCard: FC<{
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
-  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata } = useNFTDetails()
+  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata, general } =
+    useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -114,7 +115,7 @@ export const SingleNFTCard: FC<{
           return newSet
         })
         // this needs to be looked more
-        setNFTDetails()
+        if (general) setNFTDetails()
       }
     }
   }, [hideThisNFT, operatingNFT])

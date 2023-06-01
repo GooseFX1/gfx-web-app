@@ -190,7 +190,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItemRegular {
-    ${tw`w-full h-full p-[1px] sm:flex
+    ${tw`w-full h-full p-[1px] sm:flex max-h-[400px] max-w-[300px]
      sm:w-[175px] sm:h-[270px] sm:mt-1 rounded-[15px] mx-auto sm:ml-0.5 z-[0]`}
     background: ${({ theme }) => theme.borderForNFTCard};
   }
