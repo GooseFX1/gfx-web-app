@@ -241,7 +241,6 @@ export const NFTHomeSlider: FC = () => {
               </TERTIERY_BTN>
             </div>
           </SLIDER_ITEM>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/upcoming_features.webp`}></SLIDER_ITEM>
         </Slider>
         <div className="fade"></div>
       </CAROUSEL_WRAPPER>
