@@ -14,6 +14,9 @@ const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: stri
     border: 10px solid;
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
+  &:disabled {
+    opacity: 0.6;
+  }
 `
 
 const LOADER = () => (

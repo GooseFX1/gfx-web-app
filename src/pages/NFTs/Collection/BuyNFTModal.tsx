@@ -350,7 +350,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   isLoading,
   setIsLoading
 }): ReactElement => {
-  const { setBidNow } = useNFTAggregator()
+  const { setBidNow, setOperatingNFT } = useNFTAggregator()
   const { singleCollection } = useNFTCollections()
   const { getUIAmount } = useAccounts()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
@@ -519,8 +519,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
   const handleNotifications = async (tx: Transaction | VersionedTransaction, buyerPrice: string, isBuyingNow) => {
     try {
+      // setting this as operating nft , for loading buttons
+      if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
       const signature = await sendTransaction(tx, connection)
-
       console.log(signature)
       setPendingTxSig(signature)
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
@@ -537,6 +538,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         }
       }
     } catch (error) {
+      // deleting this from list of operating nft, for loading buttons
+      setOperatingNFT((prevSet) => {
+        const newSet = new Set(prevSet)
+        newSet.delete(general?.mint_address)
+        return newSet
+      })
       setIsLoading(false)
       console.log(error)
       pleaseTryAgain(isBuyingNow, error?.message)

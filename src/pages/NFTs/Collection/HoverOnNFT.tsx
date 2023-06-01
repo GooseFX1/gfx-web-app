@@ -35,7 +35,7 @@ export const HoverOnNFT: FC<{
   setIsLoadingBeforeRelocate
 }): ReactElement => {
   const { sessionUser } = useNFTProfile()
-  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT } =
+  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT, operatingNFT } =
     useNFTAggregator()
   const { setVisible } = useWalletModal()
 
@@ -47,6 +47,8 @@ export const HoverOnNFT: FC<{
       (showBid || (ask && !ask.marketplace_name)),
     [ask, buttonType, myBidToNFT, showBid]
   )
+
+  const isLoading: boolean = useMemo(() => operatingNFT.has(item?.mint_address), [operatingNFT])
 
   const goToDetailsForModal = useCallback(
     async (e, type) => {
@@ -110,6 +112,8 @@ export const HoverOnNFT: FC<{
       <span className="hoverButtons">
         {buttonType === 'Sell' && (
           <Button
+            loading={isLoading}
+            disabled={isLoading}
             cssStyle={tw`bg-red-2 h-[35px] w-[80px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
             onClick={(e) => goToDetailsForModal(e, 'sell')}
           >
@@ -119,12 +123,16 @@ export const HoverOnNFT: FC<{
         {buttonType === 'Modify' && (
           <>
             <Button
+              loading={isLoading}
+              disabled={isLoading}
               cssStyle={tw`bg-red-2 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 `}
               onClick={(e) => goToDetailsForModal(e, 'delist')}
             >
               Delist
             </Button>
             <Button
+              loading={isLoading}
+              disabled={isLoading}
               cssStyle={tw`bg-blue-1 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
               onClick={(e) => goToDetailsForModal(e, 'sell')}
             >
@@ -134,6 +142,8 @@ export const HoverOnNFT: FC<{
         )}
         {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length > 0 && (
           <Button
+            loading={isLoading}
+            disabled={isLoading}
             cssStyle={tw`bg-red-2  h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
             onClick={(e) => goToDetailsForModal(e, 'cancel')}
           >
@@ -143,6 +153,8 @@ export const HoverOnNFT: FC<{
 
         {showBidBtn && (
           <Button
+            loading={isLoading}
+            disabled={isLoading}
             cssStyle={tw`bg-[#5855ff]   h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
             onClick={(e) => goToDetailsForModal(e, 'bid')}
           >
@@ -153,6 +165,8 @@ export const HoverOnNFT: FC<{
         {ask && (
           <Button
             className="pinkGradient"
+            loading={isLoading}
+            disabled={isLoading}
             cssStyle={tw`text-[13px] font-semibold h-[35px] sm:h-[30px] w-[80px] sm:w-[75px]  sm:ml-1 sm:text-[13px] `}
             onClick={(e) => goToDetailsForModal(e, 'buy')}
           >

@@ -303,25 +303,23 @@ const ImageViewer = (): ReactElement => {
 
 export const ButtonContainer = (): ReactElement => {
   const { wallet } = useWallet()
-  const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked, setDelistNFT } = useNFTAggregator()
+  const { setSellNFT, setBidNow, setBuyNow, setCancelBidClicked, setDelistNFT, operatingNFT } = useNFTAggregator()
   const { general, bids, ask } = useNFTDetails()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
 
   const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const isOwner: boolean = useMemo(() => {
-    const findAccount: undefined | ParsedAccount =
-      general && sessionUser !== null && sessionUserParsedAccounts.length > 0
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === general.mint_address)
-        : undefined
-    return findAccount === undefined ? false : true
-  }, [sessionUser, sessionUserParsedAccounts, ask, general, wallet?.adapter?.publicKey])
+    if (!sessionUser || sessionUserParsedAccounts.length === 0 || !general) return false
 
-  const openInNewTab = useCallback((url) => {
-    const win = window.open(url, '_blank')
-    win.focus()
-  }, [])
+    const userAccountMints = new Set(sessionUserParsedAccounts.map((acct) => acct.mint))
+    const userHasAccount = userAccountMints.has(general.mint_address)
+
+    // this states while the nft is in operating state we shall not consider it as owner for loading reason
+    return userHasAccount && !operatingNFT.has(general.mint_address)
+  }, [sessionUser, sessionUserParsedAccounts, general, operatingNFT])
 
   const showBid = !ask || (ask && ask.marketplace_name === null)
+  const isLoading: boolean = useMemo(() => operatingNFT.has(general?.mint_address), [operatingNFT])
 
   const handleBuynowClicked = () => {
     if (redirectBasedOnMarketplace(ask, 'buy', general?.mint_address)) return
@@ -346,6 +344,8 @@ export const ButtonContainer = (): ReactElement => {
           {ask && (
             <Button
               height="44px"
+              loading={isLoading}
+              disabled={isLoading}
               width={ask ? (checkMobile() ? '170px' : '190px') : '100%'}
               cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
               onClick={() => {
@@ -357,6 +357,8 @@ export const ButtonContainer = (): ReactElement => {
           )}
           <Button
             height="44px"
+            loading={isLoading}
+            disabled={isLoading}
             width={ask ? (checkMobile() ? '170px' : '190px') : '100%'}
             cssStyle={bgForBtn}
             onClick={() => {
@@ -372,6 +374,8 @@ export const ButtonContainer = (): ReactElement => {
           {myBid?.length > 0 && (
             <Button
               height="44px"
+              loading={isLoading}
+              disabled={isLoading}
               width={ask ? '180px' : '100%'}
               cssStyle={tw`bg-red-2 mr-2`}
               onClick={() => setCancelBidClicked(general)}
@@ -384,6 +388,8 @@ export const ButtonContainer = (): ReactElement => {
           {showBid && (
             <Button
               height="44px"
+              loading={isLoading}
+              disabled={isLoading}
               width={ask ? (showBid ? '180px' : '180px') : '100%'}
               cssStyle={tw`bg-blue-1 mr-2`}
               onClick={() => setBidNow(general)}
@@ -395,6 +401,8 @@ export const ButtonContainer = (): ReactElement => {
             <Button
               height="44px"
               width={showBid ? '180px' : '100%'}
+              loading={isLoading}
+              disabled={isLoading}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`}
               onClick={() => handleBuynowClicked()}
             >
