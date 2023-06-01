@@ -476,49 +476,7 @@ export function theme(mode: string): DefaultTheme {
   }
 }
 const GlobalStyle = createGlobalStyle`
-      scrollbar-width: thin;
-      scrollbar-color: ${({ theme }) => theme.scrollBarColor} transparent;
-
-      *::-webkit-scrollbar {
-        width: 4px;
-      }
-
-      *::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      *::-webkit-scrollbar-thumb {
-        background-color: ${({ theme }) => theme.scrollBarColor};
-        border-radius: 20px;
-      }
-
-      *::-moz-scrollbar {
-        width: 4px;
-      }
-
-      *::-moz-scrollbar-track {
-        background: transparent;
-      }
-
-      *::-moz-scrollbar-thumb {
-        background-color: ${({ theme }) => theme.scrollBarColor};
-        border-radius: 20px;
-      }
-
-      *::-ms-scrollbar {
-        width: 4px;
-      }
-
-      *::-ms-scrollbar-track {
-        background: transparent;
-      }
-
-      *::-ms-scrollbar-thumb {
-        background-color: ${({ theme }) => theme.scrollBarColor};
-        border-radius: 20px;
-      }
-
-      -ms-overflow-style: none !important;
+      
 `
 //eslint-disable-next-line
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
