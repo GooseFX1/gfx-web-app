@@ -6,8 +6,10 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button } from '../../components/Button'
 import {
+  convertToFractional,
   displayFractional,
   getClosePositionPrice,
+  getExitQuantityInNumber,
   getExitQuntity,
   getPerpsPrice,
   mulFractionals
@@ -19,8 +21,20 @@ import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`
   .percentage {
-    ${tw`w-full h-12.5 rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 sm:h-[45px]`}
-  }
+    ${tw`w-full h-[45px] rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 mb-3.75`}
+    >input{
+      ${tw`w-full h-[45px] rounded-circle flex pl-6 font-semibold text-regular text-grey-1 
+        flex-row dark:bg-black-1 bg-grey-4 border-none`}
+      outline: none;
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type='number'] {
+      -moz-appearance: textfield;
+    }
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
         text-[16px] text-grey-1 sm:text-regular`}
@@ -32,7 +46,7 @@ const WRAPPER = styled.div`
 `
 
 const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-5 sm:mb-2.5`}
+  ${tw`flex flex-row justify-between items-start mb-4 sm:mb-2.5`}
 
   > span {
     ${tw`text-average font-semibold text-grey-1 sm:text-regular`}
@@ -83,6 +97,8 @@ export const ClosePosition: FC<{
   const price = getPerpsPrice(orderBook)
   const [percentageIndex, setPercentageindex] = useState<number>(3)
   const [loading, setLoading] = useState<boolean>(false)
+  const [customAmount, setCustomAmount] = useState<string>(null)
+  const [inputValue, setInputValue] = useState<number>(null)
 
   const { closePosition } = useTraderConfig()
   const symbol = useMemo(
@@ -106,10 +122,18 @@ export const ClosePosition: FC<{
     return getExitQuntity(traderInfo.balances, activeProduct)
   }, [traderInfo, activeProduct])
 
+  const totalExitQtyNumber = useMemo(() => {
+    return getExitQuantityInNumber(traderInfo.balances, activeProduct)
+  }, [traderInfo, activeProduct])
+
   const selectedExitQty = useMemo(() => {
-    const multiplier = percentDetails[percentageIndex].value
-    return mulFractionals(multiplier, totalExitQty)
-  }, [totalExitQty, percentageIndex])
+    if (!percentageIndex && customAmount) {
+      return convertToFractional(customAmount)
+    } else {
+      const multiplier = percentDetails[percentageIndex]?.value
+      return mulFractionals(multiplier, totalExitQty)
+    }
+  }, [totalExitQty, percentageIndex, customAmount])
 
   const exitPrice = useMemo(() => {
     return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
@@ -167,6 +191,20 @@ export const ClosePosition: FC<{
     setLoading(false)
   }
 
+  const handleInputChange = (e) => {
+    const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
+    if (!isNaN(+inputAmt)) setInputValue(+inputAmt)
+    if (!isNaN(+inputAmt) && +inputAmt) {
+      if (+inputAmt <= totalExitQtyNumber) {
+        setPercentageindex(null)
+        setCustomAmount(inputAmt)
+      }
+    } else {
+      setPercentageindex(3)
+      setCustomAmount(null)
+    }
+  }
+
   const displayExitQty = useMemo(() => {
     const qt = Number(displayFractional(selectedExitQty))
     if (qt) {
@@ -194,7 +232,7 @@ export const ClosePosition: FC<{
 
   return (
     <WRAPPER>
-      <div tw="flex items-center mt-8 mb-7 sm:mt-[22px] sm:mb-5">
+      <div tw="flex items-center my-4 sm:my-3">
         <span tw="text-lg font-semibold text-grey-1 dark:text-grey-5 sm:text-regular">
           {displayExitQty} {symbol}
         </span>
@@ -221,7 +259,21 @@ export const ClosePosition: FC<{
           </div>
         ))}
       </div>
-      <div tw="mb-9 mt-8 sm:my-[25px] ">
+      <div tw="flex flex-row justify-between">
+        <span tw="text-regular font-semibold dark:text-grey-4 text-grey-1 mb-2.5 sm:text-tiny">Custom</span>
+        {inputValue > totalExitQtyNumber ? (
+          <span tw="text-red-1 font-semibold text-regular">Maximum quantity exceeded!</span>
+        ) : null}
+      </div>
+      <div className="percentage">
+        <input
+          type="number"
+          placeholder="Enter custom quantity"
+          onChange={handleInputChange}
+          value={customAmount}
+        />
+      </div>
+      <div tw="mb-4.5">
         <ROW>
           <span>Est. Exit Price</span>
           <span className="value">${exitPrice}</span>
@@ -250,8 +302,10 @@ export const ClosePosition: FC<{
         <span>
           {loading ? (
             <RotatingLoader text="" textSize={12} iconSize={30} iconColor="white" />
-          ) : (
+          ) : percentDetails[percentageIndex]?.display ? (
             `Close ${percentDetails[percentageIndex].display}% of the position`
+          ) : (
+            'Close Position'
           )}
         </span>
       </Button>

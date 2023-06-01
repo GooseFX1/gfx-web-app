@@ -24,7 +24,7 @@ const WRAPPER = styled.div`
 `
 
 const SETTING_MODAL = styled(PopupCustom)`
-  ${tw`!h-[402px] !w-11/12 rounded-half dark:bg-black-2 bg-grey-5`}
+  ${tw`!h-[415px] !w-11/12 rounded-half dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
     ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
@@ -34,7 +34,7 @@ const SETTING_MODAL = styled(PopupCustom)`
     ${tw`shadow-none`}
 
     .ant-modal-close {
-      ${tw`top-[30px]`}
+      ${tw`top-[20px]`}
     }
   }
   .ant-modal-body {

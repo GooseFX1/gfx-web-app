@@ -29,6 +29,7 @@ import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
+import { DepositWithdraw } from './perps/DepositWithdraw'
 
 enum ButtonState {
   Connect = 0,
@@ -164,6 +165,26 @@ const INPUT_GRID_WRAPPER = styled.div`
   }
 `
 
+const SETTING_MODAL_DEPOSIT = styled(PopupCustom)`
+  ${tw`!h-[356px] !w-[628px] rounded-half`}
+  background-color: ${({ theme }) => theme.bg25};
+
+  .ant-modal-header {
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    background-color: ${({ theme }) => theme.bg25};
+  }
+  .ant-modal-content {
+    ${tw`shadow-none`}
+
+    .ant-modal-close {
+      ${tw`top-[30px]`}
+    }
+  }
+  .ant-modal-body {
+    ${tw`py-0 px-[25px]`}
+  }
+`
+
 const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   ${tw`flex justify-center items-start flex-col h-full px-3`}
   width: ${({ $halfWidth }) => ($halfWidth ? '50%' : '100%')};
@@ -232,6 +253,45 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   }
   .disable {
     ${tw`cursor-not-allowed`}
+  }
+`
+
+const MODALHEADER = styled.div`
+  ${tw`flex items-center`}
+
+  .cta {
+    ${tw`rounded-bigger w-[120px] h-[40px] mr-[13px] cursor-pointer`}
+
+    .btn {
+      ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
+      color: ${({ theme }) => theme.text37};
+    }
+
+    .gradient-bg {
+      ${tw`h-full w-full rounded-bigger `}
+      background-image: linear-gradient(to right, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+    }
+  }
+
+  .background-container {
+    ${tw`h-full w-full rounded-bigger`}
+  }
+
+  .active {
+    ${tw`p-0.5 cursor-auto`}
+    background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+    .btn {
+      color: ${({ theme }) => theme.text32};
+    }
+
+    .white-background {
+      background-color: ${({ theme }) => theme.white};
+    }
+  }
+
+  img {
+    ${tw`ml-auto h-10 w-10 cursor-pointer mr-[50px]`}
   }
 `
 
@@ -310,13 +370,18 @@ const ORDER_CATEGORY = styled.div`
   }
 `
 
-const PLACE_ORDER_BUTTON = styled.button<{ $action: boolean; $orderSide: string; $isSpot: boolean }>`
+const PLACE_ORDER_BUTTON = styled.button<{
+  $action: boolean
+  $orderSide: string
+  $isSpot: boolean
+  $isDeposit?: boolean
+}>`
   ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
   width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
-  cursor: ${({ $action }) => ($action ? 'pointer' : 'not-allowed')};
+  cursor: ${({ $action, $isDeposit }) => ($action || $isDeposit ? 'pointer' : 'not-allowed')};
 `
 
 const FEES = styled.div`
@@ -397,6 +462,28 @@ const ORDER_CATEGORY_TYPE = [
   }
 ]
 
+const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
+  setTradeType,
+  tradeType
+}) => {
+  const { mode } = useDarkMode()
+  return (
+    <MODALHEADER>
+      <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
+        </div>
+      </div>
+      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
+        </div>
+      </div>
+      {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
+    </MODALHEADER>
+  )
+}
+
 export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
@@ -420,6 +507,8 @@ export const PlaceOrder: FC = () => {
   const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
+  const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
+  const [tradeType, setTradeType] = useState<string>('deposit')
 
   const TAKE_PROFIT_ARRAY = [
     {
@@ -522,7 +611,7 @@ export const PlaceOrder: FC = () => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
     else if (buttonState === ButtonState.Connect) return 'Connect Wallet'
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
-    else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
+    else if (buttonState === ButtonState.CreateAccount) return 'Deposit!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
     if (selectedCrypto.type === 'crypto') {
       if (order.side === 'buy') return 'BUY ' + symbol
@@ -779,6 +868,24 @@ export const PlaceOrder: FC = () => {
 
   return (
     <WRAPPER>
+      {depositWithdrawModal && (
+        <SETTING_MODAL_DEPOSIT
+          visible={true}
+          centered={true}
+          footer={null}
+          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
+          closeIcon={
+            <img
+              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+              height="20px"
+              width="20px"
+              onClick={() => setDepositWithdrawModal(false)}
+            />
+          }
+        >
+          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
+        </SETTING_MODAL_DEPOSIT>
+      )}
       <HEADER>
         {confirmationModal && (
           <>
@@ -813,7 +920,7 @@ export const PlaceOrder: FC = () => {
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
             {displayPair}
           </div>
-          {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">10x</div> : null}
+          {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">{sliderValue}</div> : null}
         </div>
         <div className="orderSide">
           <div
@@ -937,7 +1044,7 @@ export const PlaceOrder: FC = () => {
                 <Slider
                   max={10}
                   onChange={(e) => handleSliderChange(e)}
-                  step={0.01}
+                  step={0.0001}
                   value={sliderValue}
                   trackStyle={{
                     height: '6px'
@@ -1048,9 +1155,16 @@ export const PlaceOrder: FC = () => {
               </ORDER_CATEGORY>
               <PLACE_ORDER_BUTTON
                 $action={buttonState === ButtonState.CanPlaceOrder}
-                onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : handlePlaceOrder())}
+                onClick={() =>
+                  buttonState === ButtonState.CreateAccount
+                    ? setDepositWithdrawModal(true)
+                    : buttonState !== ButtonState.CanPlaceOrder
+                    ? null
+                    : handlePlaceOrder()
+                }
                 $orderSide={order.side}
                 $isSpot={isSpot}
+                $isDeposit={buttonState === ButtonState.CreateAccount}
               >
                 {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
               </PLACE_ORDER_BUTTON>
@@ -1072,7 +1186,7 @@ export const PlaceOrder: FC = () => {
 
 const SELECTOR = styled.div`
   ${tw`w-[150px] h-16 rounded-tiny pt-2 pb-3 pl-2.5 relative`}
-  background: ${({ theme }) => theme.bg26};
+  background: ${({ theme }) => theme.bg27};
   .selectorDropdown {
     ${tw`cursor-pointer`}
   }

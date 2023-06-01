@@ -231,14 +231,14 @@ const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[478px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
-    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0`}
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
     background-color: ${({ theme }) => theme.bg25};
   }
   .ant-modal-content {
     ${tw`shadow-none`}
 
     .ant-modal-close {
-      ${tw`top-[30px]`}
+      ${tw`top-[20px]`}
     }
   }
   .ant-modal-body {
@@ -546,7 +546,9 @@ export const HistoryPanel: FC = () => {
                   <span>${perpsPrice}</span>
                   <span>${notionalSize}</span>
                   <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
-                  <span className={pnl <= 0 ? 'short' : 'long'}>$ {pnl.toFixed(4)}</span>
+                  <span className={pnl <= 0 ? 'short' : 'long'}>
+                    $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
+                  </span>
                   <button onClick={handleClosePosition}>Close</button>
                 </div>
               ) : (

@@ -539,6 +539,16 @@ export const getExitQuntity = (traderBalances, activeProduct) => {
   return qtyToExit
 }
 
+export const getExitQuantityInNumber = (traderBalances, activeProduct) => {
+  let qtyToExit: Number | null = null
+  traderBalances.map((item) => {
+    if (item.productKey.toBase58() === activeProduct.id) {
+      qtyToExit = +item.balance
+    }
+  })
+  return qtyToExit
+}
+
 export const truncateBigNumber = (bigNumber: number) => {
   if (!bigNumber || bigNumber === null) return 0
 

@@ -1075,7 +1075,7 @@ export const PlaceOrderMobi = () => {
           </Tooltip>
         )}
       </PLACE_ORDER_BUTTON>
-      <div tw="flex flex-row justify-between my-5 mx-5">
+      {/* <div tw="flex flex-row justify-between my-5 mx-5">
         {isSpot ? (
           <>
             {' '}
@@ -1093,7 +1093,7 @@ export const PlaceOrderMobi = () => {
             </span>
           </>
         )}
-      </div>
+      </div> */}
     </WRAPPER>
   )
 }
