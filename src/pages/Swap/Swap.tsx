@@ -26,7 +26,7 @@ import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ILocationState } from '../../types/app_params.d'
 import { notify, moneyFormatter, nFormatter, checkMobile, clamp, aborter } from '../../utils'
-import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
+// import { CURRENT_SUPPORTED_TOKEN_LIST } from '../../constants'
 import { useParams } from 'react-router-dom'
 import { logData } from '../../api/analytics'
 import JSBI from 'jsbi'
@@ -94,7 +94,7 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navColl
 const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
   ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
 
-  margin-top: ${({ $navCollapsed }) => ($navCollapsed ? '35px' : '142px')};
+  margin-top: ${({ $navCollapsed, $desktop }) => ($navCollapsed ? '35px' : $desktop ? '142px' : '87px')};
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
@@ -225,9 +225,6 @@ const SWAP_ROUTES = styled.div<{ less: boolean }>`
     sm:mt-8 sm:mb-12 sm:mx-0 sm:p-0 sm:pt-[12px]`}
     overflow-x: auto;
 
-    @media (max-width: 1515px) {
-      justify-content: ${({ less }) => (less ? 'center' : 'start')};
-    }
     ${({ theme }) => theme.customScrollBar('4px')};
   }
 
@@ -299,7 +296,7 @@ const SMALL_CLICKER_ICON = styled(Image)`
 const PRICE_WRAPPER = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   ${tw`items-center h-full w-81.5 p-6 rounded-tl-bigger 
-  h-[575px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-12`}
+  h-[575px] rounded-bl-bigger sm:h-[400px] sm:w-full sm:rounded-bigger sm:mb-5`}
 
   background: ${({ theme }) => theme.swapSides2};
 `
@@ -377,7 +374,7 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
 const SWAP_CONTENT = styled.div`
   ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger 
   dark:bg-black-2 bg-white flex flex-col flex-nowrap shadow-[0 7px 15px 5px rgba(0, 0, 0, 0.15)] 
-  sm:w-full sm:mb-12 sm:p-5 sm:text-sm sm:leading-normal`}
+  sm:w-full sm:mb-5 sm:p-5 sm:text-sm sm:leading-normal`}
 
   wrapped-sol
 `
@@ -967,15 +964,13 @@ const PriceContent: FC = () => {
 }
 
 const AlternativesContent: FC = () => {
-  const [less, setLess] = useState(false)
+  const [less, setLess] = useState(() => window.innerWidth <= 1280)
   const { mode } = useDarkMode()
   const { tokenMap } = useTokenRegistry()
   const { tokenA, tokenB, outTokenAmount, chosenRoutes: routes, clickNo, setClickNo } = useSwap()
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1200 && window.innerWidth < 1300 && !less) {
-        setLess(true)
-      }
+      setLess(window.innerWidth <= 1280)
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -1024,6 +1019,7 @@ const AlternativesContent: FC = () => {
       } else {
         newDetails[0].bestPrice = true
       }
+      newDetails[0].bestPrice = true
     }
     const renderDetails = newDetails.map((detail, k) => (
       <SWAP_ROUTE_ITEM
@@ -1117,9 +1113,10 @@ export const SwapMain: FC = () => {
     const roundedTotal = Math.round(inAmountTotal)
     setInAmountTotal(roundedTotal)
     const newRoutes = []
-    const supported =
-      (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenA?.symbol)) ||
-      (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenB?.symbol))
+    // TODO: gofx route dependant
+    // const supported =
+    //   (tokenB?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenA?.symbol)) ||
+    //   (tokenA?.symbol === 'USDC' && CURRENT_SUPPORTED_TOKEN_LIST.has(tokenB?.symbol))
     if (network !== 'devnet') {
       if (tokenA && tokenB) {
         setallowed(true)
@@ -1134,40 +1131,40 @@ export const SwapMain: FC = () => {
         }
         newRoutes.push(route)
       }
-
-      if (tokenB && newRoutes.length > 0 && supported) {
-        newRoutes.unshift({
-          marketInfos: [
-            {
-              outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
-              lpFee: { amount: 0.001 * inAmountTotal },
-
-              amm: {
-                label: 'GooseFX'
-              }
-            }
-          ],
-          outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
-          outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-          priceImpactPct: priceImpact || 0
-        })
-      }
-    } else if (tokenA && tokenB && inAmountTotal > 0) {
-      newRoutes.push({
-        marketInfos: [
-          {
-            outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
-            lpFee: { amount: 0.001 * inAmountTotal },
-
-            amm: {
-              label: 'GooseFX'
-            }
-          }
-        ],
-        outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
-        outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
-        priceImpactPct: priceImpact || 0
-      })
+      //TODO: gofx route
+      //   if (tokenB && newRoutes.length > 0 && supported) {
+      //     newRoutes.unshift({
+      //       marketInfos: [
+      //         {
+      //           outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+      //           lpFee: { amount: 0.001 * inAmountTotal },
+      //
+      //           amm: {
+      //             label: 'GooseFX'
+      //           }
+      //         }
+      //       ],
+      //       outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+      //       outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+      //       priceImpactPct: priceImpact || 0
+      //     })
+      //   }
+      // } else if (tokenA && tokenB && inAmountTotal > 0) {
+      //   newRoutes.push({
+      //     marketInfos: [
+      //       {
+      //         outputMint: new PublicKey(tokenB.address || 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+      //         lpFee: { amount: 0.001 * inAmountTotal },
+      //
+      //         amm: {
+      //           label: 'GooseFX'
+      //         }
+      //       }
+      //     ],
+      //     outAmount: +((gofxOutAmount || 0) * 10 ** tokenB.decimals).toFixed(7),
+      //     outAmountWithSlippage: +((gofxOutAmount || 0) * 10 ** tokenB.decimals * (1 - slippage)).toFixed(7),
+      //     priceImpactPct: priceImpact || 0
+      //   })
     }
     if (newRoutes.length > 0) {
       // truncates routes to 2 or 3
