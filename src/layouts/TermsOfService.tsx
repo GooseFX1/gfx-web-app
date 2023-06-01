@@ -6,14 +6,15 @@ import { Modal } from '../components'
 import useBlacklisted from '../utils/useBlacklisted'
 import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
+import 'styled-components/macro'
 
 const TEXT_AREA = styled.div`
-  ${tw`h-[452px] w-full p-[1.2px] mt-4 sm:h-[422px] rounded-[8px] dark:text-grey-2 text-grey-1`}
+  ${tw`h-[452px] w-full p-[1.2px] mt-4 sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
   background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
   flex-grow: 0;
 
   .text-area-inner {
-    ${tw`h-[450px] sm:h-[420px] w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
+    ${tw`h-[450px] sm:h-[372px] w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
     ${({ theme }) => theme.customScrollBar('4px')}
   }
 
@@ -44,13 +45,12 @@ const TOS_MODAL = styled(Modal)`
   }
 
   .ant-modal-body {
-    ${tw`sm:px-3! `}
-    max-height: 600px !important;
+    ${tw`sm:px-3! sm:h-[520px]`}
   }
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-0 sm:pb-0`}
+  ${tw`flex p-2 mt-2.5 sm:pb-0`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
@@ -129,7 +129,7 @@ export const TermsOfService: FC<{
 
   return (
     <TOS_MODAL
-      title="GooseFX Terms of Service"
+      title={<span tw="text-average font-semibold">GooseFX Terms of Service</span>}
       centerTitle
       setVisible={changeTOSState}
       visible={toShow}

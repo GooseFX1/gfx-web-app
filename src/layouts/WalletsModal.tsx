@@ -108,7 +108,7 @@ export const WalletsModal: FC = () => {
       onCancel={() => setVisible(false)}
     >
       <div>
-        <div className="titleContainer">Choose a wallet</div>
+        <div className="titleContainer">Select a wallet</div>
         <div className="wallets-container">
           <div className="wallets-holder wallet-border">
             {detectedWallets.length ? (

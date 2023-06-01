@@ -35,7 +35,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 const INFO_WRAPPER = styled.div`
   ${tw`py-0 px-[30px] flex flex-row sm:justify-center`}
   .spot-toggle .perps {
-    ${tw`cursor-pointer mr-[35px]`}
+    ${tw`cursor-pointer mr-5`}
   }
   .spot-toggle .spot {
     ${tw`cursor-pointer`}
@@ -54,7 +54,7 @@ const INFO_WRAPPER = styled.div`
   }
 `
 const INFO_STATS = styled.div`
-  ${tw`ml-[30px] leading-5`}
+  ${tw`ml-5 leading-5`}
   .barContainer {
     display: inline-flex;
     align-items: center;
