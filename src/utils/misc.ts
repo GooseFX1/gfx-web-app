@@ -134,15 +134,15 @@ export function debounce(callback: any, wait: number): (x: any) => void {
   }
 }
 
-export const formatSOLDisplay = (solValue: string | number, dontDivide?: boolean): string => {
+export const formatSOLDisplay = (solValue: string | number, dontDivide?: boolean, decimals?: number): string => {
   if (!solValue) return '0'
   if (typeof solValue === 'string' && dontDivide) {
-    return parseFloat(solValue).toFixed(2)
+    return parseFloat(solValue).toFixed(decimals ? decimals : 2)
   }
   if (typeof solValue === 'string') {
-    return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
-  } else if (solValue < 10000000) return solValue.toFixed(2)
-  else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(2)
+    return (parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER).toFixed(decimals ? decimals : 2)
+  } else if (solValue < 10000000) return solValue.toFixed(decimals ? decimals : 2)
+  else return (solValue / LAMPORTS_PER_SOL_NUMBER).toFixed(decimals ? decimals : 2)
 }
 export const formatSOLNumber = (solValue: string | number): number => {
   if (typeof solValue === 'string') return parseFloat(solValue) / LAMPORTS_PER_SOL_NUMBER
