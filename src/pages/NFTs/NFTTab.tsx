@@ -140,7 +140,7 @@ const ProfileNFTOptionsList: FC<{ setArrow: any }> = ({ setArrow }) => {
     }
   }, [])
 
-  const handleClick = (option: string) => {
+  const handleClick = (option: NFT_PROFILE_OPTIONS) => {
     setProfileNFTOptions(option)
   }
   return (

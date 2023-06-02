@@ -3,29 +3,29 @@ import { createContext, ReactNode, useContext, useState, FC, useEffect, SetState
 import { NFT_COL_FILTER_OPTIONS, NFT_PROFILE_OPTIONS, TIMELINE } from '../api/NFTs'
 
 interface INFTAggConfig {
-  sortFilter: string
-  setSortFilter: any
-  sortType: string
-  setSortType: any
+  sortFilter: NFT_COL_FILTER_OPTIONS
+  setSortFilter: Dispatch<SetStateAction<NFT_COL_FILTER_OPTIONS>>
+  sortType: 'ASC' | 'DESC' | null
+  setSortType: Dispatch<SetStateAction<'ASC' | 'DESC'>>
   pageNumber: number
-  setPageNumber: any
-  timelineDisplay: string
-  setTimelineDisplay: any
+  setPageNumber: Dispatch<SetStateAction<number>>
+  timelineDisplay: TIMELINE
+  setTimelineDisplay: Dispatch<SetStateAction<TIMELINE>>
   searchInsideCollection?: string | undefined
   setSearchInsideCollection?: Dispatch<SetStateAction<string | undefined>>
   searchInsideProfile?: string | undefined
   setSearchInsideProfile?: Dispatch<SetStateAction<string | undefined>>
-  profileNFTOptions?: string
-  setProfileNFTOptions?: Dispatch<SetStateAction<string>>
+  profileNFTOptions?: NFT_PROFILE_OPTIONS
+  setProfileNFTOptions?: Dispatch<SetStateAction<NFT_PROFILE_OPTIONS>>
 }
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)
 export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [sortFilter, setSortFilter] = useState<string | null>(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
+  const [sortFilter, setSortFilter] = useState<NFT_COL_FILTER_OPTIONS | null>(NFT_COL_FILTER_OPTIONS.DAILY_VOLUME)
   const [sortType, setSortType] = useState<'ASC' | 'DESC' | null>('DESC')
-  const [profileNFTOptions, setProfileNFTOptions] = useState<string>(NFT_PROFILE_OPTIONS.ALL)
+  const [profileNFTOptions, setProfileNFTOptions] = useState<NFT_PROFILE_OPTIONS>(NFT_PROFILE_OPTIONS.ALL)
   const [pageNumber, setPageNumber] = useState<number>(0)
-  const [timelineDisplay, setTimelineDisplay] = useState(TIMELINE.TWENTY_FOUR_H)
+  const [timelineDisplay, setTimelineDisplay] = useState<TIMELINE>(TIMELINE.TWENTY_FOUR_H)
   const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)
   const [searchInsideProfile, setSearchInsideProfile] = useState<string | undefined>(undefined)
 

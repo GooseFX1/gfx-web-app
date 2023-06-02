@@ -148,7 +148,7 @@ export const SellNFTModal: FC<{
     }
   }, [highestBid])
   const serviceFee = useMemo(
-    () => (askPrice ? NFT_MARKET_TRANSACTION_FEE / 100 : 0),
+    () => (askPrice ? (askPrice * NFT_MARKET_TRANSACTION_FEE) / 100 : 0),
     [sellerFeeBasisPoints, askPrice]
   )
   const creatorFee = useMemo(
@@ -674,14 +674,14 @@ export const SellNFTModal: FC<{
           </div>
           <div className="rowContainer">
             <div className="leftAlign" tw="flex">
-              Service Fee
+              Service Fee ({NFT_MARKET_TRANSACTION_FEE}%)
               {/* {TableHeaderTitle('', `Creator Fee (${sellerFeeBasisPoints / 100}%) `, false)}{' '} */}
             </div>
             <div className="rightAlign"> {serviceFee.toFixed(3)} SOL</div>
           </div>
           <div className="rowContainer">
-            <div className="leftAlign">Creators Fee</div>
-            <div className="rightAlign"> {creatorFee.toFixed(2)} SOL</div>
+            <div className="leftAlign">Royalty ({sellerFeeBasisPoints / 100}%)</div>
+            <div className="rightAlign"> {creatorFee.toFixed(3)} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Total amount to receive</div>

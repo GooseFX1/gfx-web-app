@@ -8,28 +8,21 @@ import {
   useNavCollapse,
   useNFTAggregator,
   useNFTCollections,
-  useNFTDetails,
   useNFTAggregatorFilters
 } from '../../../context'
-import { ICON } from '../../../layouts'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { GenericNotFound } from '../../InvalidUrl'
-import { GradientText } from '../../../components/GradientText'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
-import AdditionalFilters from './AdditionalFilters'
 
 import {
   COLLECTION_VIEW_WRAPPER,
   GRID_CONTAINER,
   NFT_FILTERS_CONTAINER,
-  NFT_COLLECTIONS_GRID,
   DROPDOWN_CONTAINER
 } from './CollectionV2.styles'
-import { DetailViewNFT } from './DetailViewNFTDrawer'
-import SweepCollectionDrawer from './SweepCollectionDrawer'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
@@ -40,7 +33,7 @@ import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
 import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
-import { ArrowClicker, ArrowDropdown, SearchBar, TokenToggleNFT } from '../../../components'
+import { SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
@@ -58,8 +51,6 @@ const NFTStatsContainer = () => {
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const [shareModal, setShareModal] = useState<boolean>(false)
-  const { sessionUser } = useNFTProfile()
-  const { mode } = useDarkMode()
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
@@ -429,7 +420,7 @@ const CollectionV2 = (): ReactElement => {
   const { refreshClicked } = useNFTAggregator()
 
   useEffect(() => {
-    if (singleCollection) logData('collection_page ' + singleCollection[0].collection_name)
+    if (singleCollection) logData('collection_page_' + singleCollection[0].collection_name.replace(' ', '_'))
   }, [singleCollection])
 
   useEffect(

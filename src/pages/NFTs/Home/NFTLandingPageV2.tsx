@@ -206,6 +206,10 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
 const timelineVolume = [{ name: TIMELINE.TWENTY_FOUR_H }, { name: TIMELINE.SEVEN_D }]
+const SORT_FILTER_OPTIONS = {
+  0: NFT_COL_FILTER_OPTIONS.DAILY_VOLUME,
+  1: NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME
+}
 
 const BorderBottom = () => checkMobile() && <div tw="h-[1px] dark:bg-black-4 bg-grey-4 mx-[15px]"></div>
 
@@ -218,7 +222,7 @@ const FiltersContainer = () => {
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
   const history = useHistory()
   const { setCurrency } = useNFTAggregator()
-  const { setPageNumber } = useNFTAggregatorFilters()
+  const { setPageNumber, pageNumber } = useNFTAggregatorFilters()
   const { wallet } = useWallet()
   const pubKey = wallet?.adapter ? wallet?.adapter?.publicKey?.toString() : null
   const { mode } = useDarkMode()
@@ -246,7 +250,7 @@ const FiltersContainer = () => {
     setPoolIndex(index)
     setPoolFilter(poolName)
     handleSlide(index)
-    setPageNumber(0)
+    if (pageNumber > 0) setPageNumber(0)
 
     if (poolName === 'Trending') {
       setSortFilter(NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME)
@@ -260,12 +264,16 @@ const FiltersContainer = () => {
     }
   }
 
-  const handleClickTimeline = (poolName, index) => {
-    setPageNumber(0)
-    setTimelineIndex(index)
-    setTimelineName(poolName)
-    setTimelineDisplay(poolName)
-  }
+  const handleClickTimeline = useCallback(
+    (poolName, index) => {
+      if (pageNumber > 0) setPageNumber(0)
+      setSortFilter(SORT_FILTER_OPTIONS[index])
+      setTimelineIndex(index)
+      setTimelineName(poolName)
+      setTimelineDisplay(poolName)
+    },
+    [setPageNumber, setSortFilter, setTimelineIndex, setTimelineName, setTimelineDisplay, pageNumber]
+  )
 
   useEffect(() => {
     console.log(sessionUser ? 'LANDING - Session user - ' + sessionUser.pubkey : ' LANDING NO SESSION USER')
@@ -274,27 +282,6 @@ const FiltersContainer = () => {
   const searchModal = useMemo(() => {
     if (searchPopup) return <SearchNFTMobile searchPopup={searchPopup} setSearchPopup={setSearchPopup} />
   }, [searchPopup])
-
-  const poolTypeButtons = useMemo(
-    () =>
-      poolTypes.map((pool, index) => (
-        <STYLED_BUTTON
-          ref={(el) => {
-            buttonRefs.current[index] = el
-            if (index == poolIndex) {
-              handleSlide(poolIndex)
-            }
-          }}
-          key={pool.name}
-          style={{ width: 85, marginRight: 10 }}
-          onClick={() => handleClick(pool.name, index)}
-          className={pool.name === poolFilter ? 'selectedBackground' : ''}
-        >
-          {pool.name}
-        </STYLED_BUTTON>
-      )),
-    [poolIndex]
-  )
 
   const openSearchModal = useMemo(() => {
     if (searchFilter) return <SearchResultContainer searchFilter={searchFilter} />
@@ -675,7 +662,7 @@ const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
 }
 
 const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
-  const { setTimelineDisplay, timelineDisplay, setPageNumber } = useNFTAggregatorFilters()
+  const { setTimelineDisplay, timelineDisplay, setPageNumber, setSortFilter } = useNFTAggregatorFilters()
   useEffect(() => {
     setArrow(true)
     return () => {
@@ -683,20 +670,21 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
     }
   }, [])
 
-  const handleClick = useCallback((timeLine) => {
+  const handleClick = useCallback((timeLine, index) => {
     setPageNumber(0)
     setTimelineDisplay(timeLine)
+    setSortFilter(SORT_FILTER_OPTIONS[index])
   }, [])
 
   return (
     <DROPDOWN_CONTAINER tw="w-[104px] h-20">
-      <div className="option" onClick={() => handleClick(TIMELINE.TWENTY_FOUR_H)}>
+      <div className="option" onClick={() => handleClick(TIMELINE.TWENTY_FOUR_H, 0)}>
         {TIMELINE.TWENTY_FOUR_H}{' '}
-        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.TWENTY_FOUR_H} value="asc" />
+        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.TWENTY_FOUR_H} value={0} />
       </div>
-      <div className="option" onClick={() => handleClick(TIMELINE.SEVEN_D)}>
+      <div className="option" onClick={() => handleClick(TIMELINE.SEVEN_D, 1)}>
         {TIMELINE.SEVEN_D}{' '}
-        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.SEVEN_D} value="desc" />
+        <input type={'radio'} name="sort" checked={timelineDisplay === TIMELINE.SEVEN_D} value={1} />
       </div>
     </DROPDOWN_CONTAINER>
   )
