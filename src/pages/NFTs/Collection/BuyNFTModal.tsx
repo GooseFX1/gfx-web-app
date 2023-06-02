@@ -53,6 +53,7 @@ import {
 } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
+import { logData } from '../../../api/analytics'
 import { web3 } from '@project-serum/anchor'
 import { HoldTight } from './AggModals/HoldTight'
 import MissionAccomplishedModal from './AggModals/MissionAcomplishedModal'
@@ -574,6 +575,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleBuyFlow = async (e: any) => {
     e.preventDefault()
     setIsLoading(true)
+    logData(`attempt_buy_now_${ask.marketplace_name.toLowerCase()}`)
     if (ask.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return

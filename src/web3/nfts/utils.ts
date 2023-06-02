@@ -92,6 +92,7 @@ export const redirectBasedOnMarketplace = (ask: INFTAsk, type: string, mintAddre
   if (ask && ask.marketplace_name && type === 'buy') {
     switch (ask.marketplace_name) {
       case NFT_MARKETS.MAGIC_EDEN:
+        logData(`attempt_buy_now_magic_eden`)
         window.open(`https://magiceden.io/item-details/${mintAddress}`, '_blank')
         return true
     }
