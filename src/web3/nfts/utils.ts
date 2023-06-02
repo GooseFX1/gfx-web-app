@@ -7,6 +7,7 @@ import { NFT_MARKETS } from '../../api/NFTs'
 import { capitalizeFirstLetter } from '../../utils/misc'
 import { notify } from '../../utils'
 import { USER_SOCIALS } from '../../constants'
+import { logData } from './../../api/analytics'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
