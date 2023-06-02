@@ -763,7 +763,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           )} */}
           <div className="rowContainer">
             <div className="leftAlign">Royalty ({royalty}%)</div>
-            <div className="rightAlign"> {((royalty * curBid) / 100).toFixed(2)} SOL</div>
+            <div className="rightAlign"> {((royalty * curBid) / 100).toFixed(curBid > 9 ? 2 : 3)} SOL</div>
           </div>
           <div className="rowContainer">
             <div className="leftAlign">Taker Fee ({serviceFee}%)</div>
