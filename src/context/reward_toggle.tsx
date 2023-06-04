@@ -32,6 +32,5 @@ export const useRewardToggle = (): IRewardToggleConfig => {
   if (!context) {
     throw new Error('Missing nav collapse context')
   }
-  const { rewardModal, rewardToggle } = context
-  return { rewardModal, rewardToggle }
+  return context
 }
