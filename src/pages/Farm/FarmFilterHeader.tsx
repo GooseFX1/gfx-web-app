@@ -187,8 +187,6 @@ export const useAnimateButtonSlide = (
   return handleSlide
 }
 
-  return handleSlide
-}
 export const FarmFilter: FC = () => {
   const {
     poolFilter,
