@@ -534,7 +534,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           setMissionAccomplished(true)
           notify(successBidMatchedMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
         } else {
-          setBidNow(null)
+          setBidNow(false)
           notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
         }
       }

@@ -7,20 +7,20 @@ interface INFTAggConfig {
   openJustModal: boolean
   nftInBag: any
   setNftInBag: any
-  buyNowClicked: any
-  bidNowClicked: any
-  setCurrency?: any
+  buyNowClicked: boolean
+  bidNowClicked: boolean
+  setCurrency?: () => void
   currencyView: string
   sellNFTClicked?: any
   setSellNFT?: Dispatch<SetStateAction<any>>
   refreshClass?: string
   setRefreshClass?: Dispatch<SetStateAction<string>>
   refreshClicked?: number
-  setRefreshClicked?: any
+  setRefreshClicked?: Dispatch<SetStateAction<number>>
   lastRefreshedClass?: string
-  setLastRefreshedClass?: any
-  cancelBidClicked?: any
-  setCancelBidClicked?: Dispatch<SetStateAction<any>>
+  setLastRefreshedClass?: Dispatch<SetStateAction<string>>
+  cancelBidClicked?: boolean
+  setCancelBidClicked?: Dispatch<SetStateAction<boolean>>
   delistNFT?: boolean
   setDelistNFT?: Dispatch<SetStateAction<boolean>>
   showAcceptBid?: boolean
@@ -32,15 +32,15 @@ interface INFTAggConfig {
 const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [nftInBag, setNftInBag] = useState<any[]>([])
-  const [buyNowClicked, setBuyNow] = useState<boolean | any>(undefined)
-  const [bidNowClicked, setBidNow] = useState<boolean | any>(undefined)
+  const [buyNowClicked, setBuyNow] = useState<boolean>(false)
+  const [bidNowClicked, setBidNow] = useState<boolean>(false)
   const [delistNFT, setDelistNFT] = useState<boolean>(false)
-  const [cancelBidClicked, setCancelBidClicked] = useState<boolean | any>(undefined)
+  const [cancelBidClicked, setCancelBidClicked] = useState<boolean>(false)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
   const [refreshClass, setRefreshClass] = useState<string>('')
   const [refreshClicked, setRefreshClicked] = useState<number>(0)
-  const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
+  const [lastRefreshedClass, setLastRefreshedClass] = useState<string>()
   const [openJustModal, setOpenJustModal] = useState<boolean>(false)
   const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
   const [operatingNFT, setOperatingNFT] = useState<Set<string>>(new Set())
@@ -67,7 +67,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         refreshClicked: refreshClicked,
         setRefreshClass: setRefreshClass,
         lastRefreshedClass: lastRefreshedClass,
-        setLastRefreshedClass: setLastRefreshClass,
+        setLastRefreshedClass: setLastRefreshedClass,
         openJustModal: openJustModal,
         setOpenJustModal: setOpenJustModal,
         setCancelBidClicked: setCancelBidClicked,

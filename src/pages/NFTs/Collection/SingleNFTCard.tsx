@@ -30,6 +30,7 @@ import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Tag } from '../../../components/Tag'
 import { Image } from 'antd'
 import { HoverOnNFT } from './HoverOnNFT'
+import { InProcessNFT } from '../../../components/InProcessNFT'
 
 export const SingleNFTCard: FC<{
   item: BaseNFT
@@ -83,6 +84,9 @@ export const SingleNFTCard: FC<{
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
 
   const nftNativePrice: number = localAsk ? parseFloat(localAsk.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0
+  // operation is going on
+  const isActive: boolean = useMemo(() => operatingNFT.has(item?.mint_address), [operatingNFT])
+
   const appraisalPriceNative: number = useMemo(
     () =>
       item?.gfx_appraisal_value && parseFloat(item?.gfx_appraisal_value) > 0
@@ -242,6 +246,27 @@ export const SingleNFTCard: FC<{
     return capString.join(' ')
   }, [])
 
+  const handleLoading = useMemo(() => {
+    if (isLoadingBeforeRelocate || isActive) return <InProcessNFT text={isActive ? 'In Process' : ''} />
+  }, [isActive, isLoadingBeforeRelocate])
+
+  const handleHover = useMemo(() => {
+    if (hover)
+      return (
+        <HoverOnNFT
+          setHover={setHover}
+          collectionName={item?.collection_name}
+          item={item}
+          myBidToNFT={localUserBidToNFT}
+          buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
+          setNFTDetails={setNFTDetails}
+          addNftToBag={addNftToBag}
+          ask={isOwner ? null : localAsk ? localAsk : null}
+          setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
+        />
+      )
+  }, [hover, isLoadingBeforeRelocate])
+
   if (hideThisNFT) return null
 
   return (
@@ -254,34 +279,13 @@ export const SingleNFTCard: FC<{
         ref={lastCardRef}
       >
         <div className={'gridItem'}>
-          {isLoadingBeforeRelocate && (
-            <div
-              tw="h-full absolute opacity-100 z-[1000] dark:bg-black-1 bg-white
-                  duration-300 w-full rounded-[15px] opacity-50"
-            >
-              <div tw="h-[50%] w-full">
-                <RotatingLoader textSize={50} iconSize={50} iconColor={'#5855FF'} />
-              </div>
-            </div>
-          )}
+          {handleLoading}
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
           >
-            {hover && (
-              <HoverOnNFT
-                setHover={setHover}
-                collectionName={item?.collection_name}
-                item={item}
-                myBidToNFT={localUserBidToNFT}
-                buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
-                setNFTDetails={setNFTDetails}
-                addNftToBag={addNftToBag}
-                ask={isOwner ? null : localAsk ? localAsk : null}
-                setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
-              />
-            )}
+            {handleHover}
             {item ? (
               <div className="nftImg">
                 <Image

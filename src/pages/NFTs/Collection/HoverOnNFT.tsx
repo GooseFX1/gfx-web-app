@@ -21,7 +21,7 @@ export const HoverOnNFT: FC<{
   ask: INFTAsk
   showBid?: boolean
   buttonType: string
-  setNFTDetails: any
+  setNFTDetails: () => void
   setHover?: Dispatch<SetStateAction<boolean>>
   setIsLoadingBeforeRelocate: Dispatch<SetStateAction<boolean>>
 }> = ({
@@ -70,16 +70,16 @@ export const HoverOnNFT: FC<{
           setDelistNFT(true)
           break
         case 'bid':
-          setBidNow(item)
+          setBidNow(true)
           break
         case 'sell':
-          setSellNFT(item)
+          setSellNFT(true)
           break
         case 'buy':
-          setBuyNow(item)
+          setBuyNow(true)
           break
         case 'cancel':
-          setCancelBidClicked(item)
+          setCancelBidClicked(true)
           break
       }
     },
