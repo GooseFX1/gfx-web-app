@@ -4,6 +4,7 @@ import { DarkModeProvider, SettingsProvider, WalletProvider } from './context'
 import ThemeProvider from './theme'
 import './App.less'
 import { USER_CONFIG_CACHE } from './types/app_params'
+import queryString from 'query-string'
 
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
@@ -23,6 +24,11 @@ export default function AppInner(): JSX.Element {
           jwtToken: null
         })
       )
+    }
+
+    const values = queryString.parse(window.location?.search)
+    if (values.r && !localStorage.getItem('referrer')) {
+      localStorage.setItem('referrer', values.r)
     }
   }, [])
 

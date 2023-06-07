@@ -10,7 +10,6 @@ import { useAnimateButtonSlide } from '../pages/Farm/FarmFilterHeader'
 import { Input, InputRef } from 'antd'
 import { Tooltip } from './Tooltip'
 import useRewards from '../hooks/useRewards'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { ADDRESSES } from '../web3'
 import { TokenAmount, PublicKey } from '@solana/web3.js'
 import { clamp, nFormatter } from '../utils'
@@ -23,6 +22,10 @@ import { BN } from '@project-serum/anchor'
 import { Loader } from './Loader'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk'
+import useReferrals from '../hooks/useReferrals'
+import { Treasury } from '@ladderlabs/buddy-sdk'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { Transaction } from '@solana/web3.js'
 
 const FLEX_COL_CONTAINER = styled.div`
   ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger`}
@@ -676,13 +679,24 @@ const BuddyLinkReferral: FC = () => {
   const [inputValue, setInputValue] = useState('')
   const [isCopied, setIsCopied] = useState(false)
   const copyTimeoutRef = useRef<NodeJS.Timeout>(null)
-  const referLink = '' // from buddy link
+  const copyRef = useRef<HTMLParagraphElement>(null)
+  const [name, setName] = useState('')
+  const { getName, isReady } = useReferrals()
+  const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
   const onSave = useCallback(() => {
     //TODO: connect buddly link - get result from buddy link
 
     setIsReferralNameTaken(true)
     setTimeout(() => setIsReferralNameTaken(false), 2000)
   }, [])
+
+  const handleName = useCallback(async () => {
+    if (isReady) setName(await getName())
+  }, [isReady])
+
+  useEffect(() => {
+    if (isReady) handleName()
+  }, [isReady])
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(referLink)
     if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
@@ -690,7 +704,7 @@ const BuddyLinkReferral: FC = () => {
     copyTimeoutRef.current = setTimeout(() => {
       setIsCopied(false)
     }, 5000)
-  }, [referLink])
+  }, [referLink, copyRef])
   const handleChange = useCallback((e: BaseSyntheticEvent) => {
     setInputValue(e.target.value)
   }, [])
@@ -987,9 +1001,36 @@ const EarnRewardsRedirect: FC = () => {
 
 const ReferAndEarnRedirect: FC = () => {
   const breakpoints = useBreakPoint()
-  const totalEarned = 22.22
   const tokenEarned = 'USDC'
   const totalInProgress = 0.0
+  const { claim, getTreasury, isReady, getReferred } = useReferrals()
+  const { sendTransaction } = useWallet()
+  const [treasury, setTreasury] = useState<Treasury | null>(null)
+  const [totalEarned, setTotalEarned] = useState(0.0)
+  const [totalFriends, setTotalFriends] = useState(0)
+  const { connection } = useConnection()
+
+  const handleClaim = useCallback(async () => {
+    if (treasury) {
+      const transaction = new Transaction()
+      transaction.add(...(await claim()))
+
+      await sendTransaction(transaction, connection)
+
+      // TODO: handle ui success state
+    }
+  }, [treasury])
+
+  useEffect(() => {
+    if (isReady)
+      getTreasury().then(async (newTreasury) => {
+        setTreasury(newTreasury)
+        setTotalEarned(await newTreasury.getClaimableBalance())
+        const referredMembers = await getReferred() // Use this list to show members
+        setTotalFriends(referredMembers.length)
+      })
+  }, [isReady])
+
   return (
     <div css={tw`flex flex-col h-full pt-[26px] w-full items-center`}>
       {!breakpoints.isMobile && <ReferFriendSegment />}
@@ -1006,6 +1047,7 @@ const ReferAndEarnRedirect: FC = () => {
         mb-[43px] min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
           totalInProgress > 0.0 ? tw`opacity-100` : tw``
         ]}
+        onClick={() => handleClaim()}
         disabled={totalInProgress <= 0.0}
       >
         {totalInProgress > 0.0 ? `Claim ${totalInProgress.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
