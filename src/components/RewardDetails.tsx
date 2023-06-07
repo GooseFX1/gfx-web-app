@@ -11,6 +11,10 @@ import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { useAnimateButtonSlide } from '../pages/Farm/FarmFilterHeader'
 import { Input } from 'antd'
+import useReferrals from '../hooks/useReferrals'
+import { Treasury } from '@ladderlabs/buddy-sdk'
+import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { Transaction } from '@solana/web3.js'
 
 // const REWARD_INFO_TEXT = styled.div`
 //   ${tw`py-8 px-10`}
@@ -222,7 +226,9 @@ const EarnRewards: FC = () => {
 }
 const ReferAndEarn: FC = () => {
   const copyRef = useRef<HTMLParagraphElement>(null)
-  const referLink = 'app.goosefx.io/0x7r2ere1'
+  const [name, setName] = useState('')
+  const { getName, isReady } = useReferrals()
+  const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(referLink)
     if (!copyRef.current) {
@@ -236,6 +242,15 @@ const ReferAndEarn: FC = () => {
       copyRef.current.innerText = 'Copy'
     }, 5000)
   }, [referLink, copyRef])
+
+  const handleName = useCallback(async () => {
+    if (isReady) setName(await getName())
+  }, [isReady])
+
+  useEffect(() => {
+    if (isReady) handleName()
+  }, [isReady])
+
   const handleQuestions = useCallback(() => {
     console.log('DO SOMETHING HERE')
   }, [])
@@ -428,10 +443,36 @@ const ReferFriend: FC<ReferFriendProps> = ({ address }) => {
 }
 const ReferAndEarnRedirect: FC = () => {
   console.log('BLAH BLAG')
-  const totalFriends = 5
-  const totalEarned = 22.22
   const tokenEarned = 'USDC'
   const totalInProgress = 0.0
+  const { claim, getTreasury, isReady, getReferred } = useReferrals()
+  const { sendTransaction } = useWallet()
+  const [treasury, setTreasury] = useState<Treasury | null>(null)
+  const [totalEarned, setTotalEarned] = useState(0.0)
+  const [totalFriends, setTotalFriends] = useState(0)
+  const { connection } = useConnection()
+
+  const handleClaim = useCallback(async () => {
+    if (treasury) {
+      const transaction = new Transaction()
+      transaction.add(...(await claim()))
+
+      await sendTransaction(transaction, connection)
+
+      // TODO: handle ui success state
+    }
+  }, [treasury])
+
+  useEffect(() => {
+    if (isReady)
+      getTreasury().then(async (newTreasury) => {
+        setTreasury(newTreasury)
+        setTotalEarned(await newTreasury.getClaimableBalance())
+        const referredMembers = await getReferred() // Use this list to show members
+        setTotalFriends(referredMembers.length)
+      })
+  }, [isReady])
+
   return (
     <div css={tw`flex flex-col h-full pt-4 w-full items-center`}>
       <div css={tw`flex flex-row justify-around items-center px-8`}>
@@ -453,6 +494,7 @@ const ReferAndEarnRedirect: FC = () => {
       </div>
       <button
         css={tw`max-w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0  mt-11`}
+        onClick={() => handleClaim()}
       >
         {totalInProgress > 0.0 ? `Claim ${totalInProgress.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
       </button>

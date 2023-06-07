@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import {
   INewOrderAccounts,
   IDepositFundsAccounts,
@@ -11,7 +11,11 @@ import {
   IConsumeOB,
   ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
-import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
+import {
+  buildTransaction,
+  sendPerpsTransaction,
+  sendPerpsTransactions
+} from '../../NFTs/launchpad/candyMachine/connection'
 import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
 import { DEX_ID, FEES_ID, MPG_ID, RISK_ID, VAULT_MINT } from './perpsConstants'
@@ -19,6 +23,7 @@ import { findAssociatedTokenAddress } from '../../../web3'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
+import { createRandom, getRemainingAccountsForTransfer } from '../../../hooks/useReferrals'
 
 export const newOrderIx = async (
   newOrderAccounts: INewOrderAccounts,
@@ -305,7 +310,8 @@ export const initTrgDepositIx = async (
   connection: Connection,
   trg?: Keypair
 ) => {
-  const [instructions, signers] = await initTrgIx(connection, wallet, trg)
+  const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg)
+  const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
   const dexProgram = await getDexProgram(connection, wallet)
   instructions.push(
     await dexProgram.instruction.depositFunds(depositFundsParams, {
@@ -319,7 +325,10 @@ export const initTrgDepositIx = async (
       }
     })
   )
-  const response = await sendPerpsTransaction(connection, wallet, instructions, signers)
+
+  const transaction = await buildTransaction(connection, wallet, instructions, signers)
+  const response = await sendPerpsTransactions(connection, wallet, [transaction, buddyTransaction])
+
   return response
 }
 
@@ -331,6 +340,16 @@ export const withdrawFundsIx = async (
 ) => {
   const instructions = []
   const dexProgram = await getDexProgram(connection, wallet)
+  const riskGroup = await dexProgram.account.traderRiskGroup.fetch(withdrawFundsAccounts.traderRiskGroup)
+
+  const remainingAccounts = await getRemainingAccountsForTransfer(
+    connection,
+    wallet.publicKey,
+    riskGroup.referralKey
+  )
+
+  // TODO: return default if not valid memberPDA
+
   instructions.push(
     await dexProgram.instruction.withdrawFunds(withdrawFundsParams, {
       accounts: {
@@ -345,7 +364,8 @@ export const withdrawFundsIx = async (
         riskOutputRegister: withdrawFundsAccounts.riskOutputRegister,
         traderRiskStateAcct: withdrawFundsAccounts.traderRiskStateAcct,
         riskSigner: withdrawFundsAccounts.riskSigner
-      }
+      },
+      remainingAccounts: remainingAccounts
     })
   )
   try {
@@ -444,7 +464,7 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
   const traderRiskGroup = trgKey ?? anchor.web3.Keypair.generate()
   const traderFeeAcct = getTraderFeeAcct(traderRiskGroup.publicKey)
   const riskSigner = getRiskSigner()
-
+  const referrer = localStorage.getItem('referrer') || ''
   const mint = new PublicKey(VAULT_MINT)
   const associatedTokenAddress = await findAssociatedTokenAddress(wallet.publicKey, mint)
   const res = await connection.getAccountInfo(associatedTokenAddress)
@@ -481,6 +501,16 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
   )
 
   const dexProgram = await getDexProgram(connection, wallet)
+
+  const buddyInstructions = []
+  let referralKey = PublicKey.default
+  // TODO: check if buddy exists
+  // if (referrer) {
+  const createBuddy = await createRandom(connection, wallet.publicKey, '')
+  referralKey = createBuddy.memberPDA
+  buddyInstructions.push(...createBuddy.instructions)
+  // }
+
   const ix = await dexProgram.instruction.initializeTraderRiskGroup({
     accounts: {
       owner: wallet.publicKey,
@@ -490,17 +520,21 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
       traderRiskStateAcct: riskStateAccount.publicKey,
       traderFeeStateAcct: traderFeeAcct,
       riskEngineProgram: new PublicKey(RISK_ID),
-      systemProgram: SystemProgram.programId
+      systemProgram: SystemProgram.programId,
+      referralKey: referralKey
     }
   })
   instructions.push(ix)
-  return [instructions, [riskStateAccount, traderRiskGroup]]
+
+  return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
 }
 
 export const initializeTRG = async (wallet: any, connection: Connection) => {
-  const [instructions, signers] = await initTrgIx(connection, wallet)
-  const res = await sendPerpsTransaction(connection, wallet, instructions, signers)
-  //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
+  const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet)
+  const transaction = await buildTransaction(connection, wallet, instructions, signers)
+  const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
+
+  const res = await sendPerpsTransactions(connection, wallet, [transaction, buddyTransaction])
   console.log(res)
   return res
 }
