@@ -252,7 +252,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { isSpot } = useCrypto()
 
   const wallet = useWallet()
-  const { devnetConnection: connection } = useConnectionConfig()
+  const { perpsConnection: connection } = useConnectionConfig()
 
   const refreshTraderRiskGroup = async () => {
     if (wallet.connected) {

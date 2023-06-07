@@ -26,7 +26,7 @@ type IRPC_CACHE = null | USER_CONFIG_CACHE
 interface ISettingsConfig {
   chainId: ENV
   connection: Connection
-  devnetConnection: Connection
+  perpsConnection: Connection
   endpoint: string
   endpointName: string
   network: WalletAdapterNetwork
@@ -56,13 +56,12 @@ export function useConnectionConfig(): ISettingsConfig {
     throw new Error('Missing settings context')
   }
 
-  const { chainId, connection, endpoint, network, endpointName, setEndpointName, devnetConnection } = context
-  return { chainId, connection, endpoint, network, endpointName, setEndpointName, devnetConnection }
+  const { chainId, connection, endpoint, network, endpointName, setEndpointName, perpsConnection } = context
+  return { chainId, connection, endpoint, network, endpointName, setEndpointName, perpsConnection }
 }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
-  const devnetConnection = new Connection(`${process.env.REACT_APP_PERPS_RPC_URL}`, 'processed')
 
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
@@ -84,6 +83,25 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     }
   }, [endpointName])
+
+  const perpsConnection = useMemo(() => {
+    // sets rpc info to cache
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        endpointName: endpointName,
+        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+      })
+    )
+
+    // creates connection - temp ws url
+    return new Connection(endpoint, {
+      commitment: 'processed',
+      httpAgent: false,
+      disableRetryOnRateLimit: true
+    })
+  }, [endpointName, endpoint])
 
   const connection = useMemo(() => {
     // sets rpc info to cache
@@ -124,7 +142,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setEndpointName,
         setSlippage: (val: number) => setSlippage(val),
         slippage: slippage,
-        devnetConnection
+        perpsConnection
       }}
     >
       {children}
