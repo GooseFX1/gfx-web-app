@@ -319,7 +319,24 @@ export const initTrgDepositIx = async (
       }
     })
   )
-  const response = await sendPerpsTransaction(connection, wallet, instructions, signers)
+  const response = await sendPerpsTransaction(connection, wallet, instructions, signers, {
+    startMessage: {
+      header: 'Deposit funds',
+      description: 'Sign the transaction to deposit funds!'
+    },
+    progressMessage: {
+      header: 'Deposit funds',
+      description: 'Depositing funds to your account..'
+    },
+    endMessage: {
+      header: 'Deposit funds',
+      description: 'Funds successfully deposited'
+    },
+    errorMessage: {
+      header: 'Deposit funds',
+      description: 'There was an error in depositing the funds'
+    }
+  })
   return response
 }
 
