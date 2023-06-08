@@ -25,6 +25,8 @@ export interface TraderRiskGroupFields {
   tradeHistory: Array<types.TradeHistoryFields>
   avgPosition: Array<types.AveragePositionFields>
   totalTradedVolume: types.FractionalFields
+  referral: PublicKey
+  pendingRewardBalance: types.FractionalFields
 }
 
 export interface TraderRiskGroupJSON {
@@ -48,6 +50,8 @@ export interface TraderRiskGroupJSON {
   tradeHistory: Array<types.TradeHistoryJSON>
   avgPosition: Array<types.AveragePositionJSON>
   totalTradedVolume: types.FractionalJSON
+  referral: string
+  pendingRewardBalance: types.FractionalJSON
 }
 
 export class TraderRiskGroup {
@@ -71,6 +75,9 @@ export class TraderRiskGroup {
   readonly tradeHistory: Array<types.TradeHistory>
   readonly avgPosition: Array<types.AveragePosition>
   readonly totalTradedVolume: types.Fractional
+  readonly referral: PublicKey
+  readonly pendingRewardBalance: types.Fractional
+  
 
   static readonly discriminator = Buffer.from([121, 228, 110, 56, 254, 207, 245, 168])
 
@@ -94,7 +101,9 @@ export class TraderRiskGroup {
     types.OpenOrders.layout('openOrders'),
     borsh.array(types.TradeHistory.layout(), 16, 'tradeHistory'),
     borsh.array(types.AveragePosition.layout(), 16, 'avgPosition'),
-    types.Fractional.layout('totalTradedVolume')
+    types.Fractional.layout('totalTradedVolume'),
+    borsh.publicKey('referral'),
+    types.Fractional.layout('pendingRewardBalance'),
   ])
 
   constructor(fields: TraderRiskGroupFields) {
@@ -122,6 +131,8 @@ export class TraderRiskGroup {
     this.totalTradedVolume = new types.Fractional({
       ...fields.totalTradedVolume
     })
+    this.referral = fields.referral
+    this.pendingRewardBalance = new types.Fractional({ ...fields.pendingRewardBalance })
   }
 
   static async fetch(c: Connection, address: PublicKey): Promise<[TraderRiskGroup, any] | null> {
@@ -187,7 +198,9 @@ export class TraderRiskGroup {
       avgPosition: dec.avgPosition.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
         types.AveragePosition.fromDecoded(item)
       ),
-      totalTradedVolume: types.Fractional.fromDecoded(dec.totalTradedVolume)
+      totalTradedVolume: types.Fractional.fromDecoded(dec.totalTradedVolume),
+      referral: dec.referral,
+      pendingRewardBalance: types.Fractional.fromDecoded(dec.pendingRewardBalance)
     })
   }
 
@@ -212,7 +225,9 @@ export class TraderRiskGroup {
       openOrders: this.openOrders.toJSON(),
       tradeHistory: this.tradeHistory.map((item) => item.toJSON()),
       avgPosition: this.avgPosition.map((item) => item.toJSON()),
-      totalTradedVolume: this.totalTradedVolume.toJSON()
+      totalTradedVolume: this.totalTradedVolume.toJSON(),
+      referral: this.referral.toString(),
+      pendingRewardBalance: this.pendingRewardBalance.toJSON()
     }
   }
 
@@ -237,7 +252,9 @@ export class TraderRiskGroup {
       openOrders: types.OpenOrders.fromJSON(obj.openOrders),
       tradeHistory: obj.tradeHistory.map((item) => types.TradeHistory.fromJSON(item)),
       avgPosition: obj.avgPosition.map((item) => types.AveragePosition.fromJSON(item)),
-      totalTradedVolume: types.Fractional.fromJSON(obj.totalTradedVolume)
+      totalTradedVolume: types.Fractional.fromJSON(obj.totalTradedVolume),
+      referral: new PublicKey(obj.referral),
+      pendingRewardBalance: types.Fractional.fromJSON(obj.pendingRewardBalance)
     })
   }
 }

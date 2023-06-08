@@ -346,6 +346,11 @@
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "referralKey",
+          "isMut": false,
+          "isSigner": false      
         }
       ],
       "args": []

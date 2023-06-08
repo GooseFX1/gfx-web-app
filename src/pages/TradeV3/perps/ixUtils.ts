@@ -311,7 +311,7 @@ export const initTrgDepositIx = async (
   trg?: Keypair
 ) => {
   const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg)
-  const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
+  //const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
   const dexProgram = await getDexProgram(connection, wallet)
   instructions.push(
     await dexProgram.instruction.depositFunds(depositFundsParams, {
@@ -327,7 +327,7 @@ export const initTrgDepositIx = async (
   )
 
   const transaction = await buildTransaction(connection, wallet, instructions, signers)
-  const response = await sendPerpsTransactions(connection, wallet, [transaction, buddyTransaction])
+  const response = await sendPerpsTransactions(connection, wallet, [transaction])
 
   return response
 }
@@ -494,8 +494,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: traderRiskGroup.publicKey,
-      lamports: await connection.getMinimumBalanceForRentExemption(13744), //Need to change
-      space: 13744, //Need to change
+      lamports: await connection.getMinimumBalanceForRentExemption(13744+48), //Need to change
+      space: 13744+48, //Need to change
       programId: new PublicKey(DEX_ID)
     })
   )
@@ -503,12 +503,13 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
   const dexProgram = await getDexProgram(connection, wallet)
 
   const buddyInstructions = []
+  // eslint-disable-next-line prefer-const
   let referralKey = PublicKey.default
   // TODO: check if buddy exists
   // if (referrer) {
-  const createBuddy = await createRandom(connection, wallet.publicKey, '')
-  referralKey = createBuddy.memberPDA
-  buddyInstructions.push(...createBuddy.instructions)
+  //const createBuddy = await createRandom(connection, wallet.publicKey, '')
+  //referralKey = createBuddy.memberPDA
+  //buddyInstructions.push(...createBuddy.instructions)
   // }
 
   const ix = await dexProgram.instruction.initializeTraderRiskGroup({

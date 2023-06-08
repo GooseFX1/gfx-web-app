@@ -465,7 +465,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setLiquidationPrice('0')
     setLeverage('0')
     setAvailLeverage('0')
-    setMaxQty('0.1')
+    setMaxQty('1')
     setOnChainPrice('0')
     setOpenInterests('0')
     setAccountHealth('100')
@@ -805,7 +805,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketProductGroup, wallet])
 
   useEffect(() => {
-    perpsWasm()
+    //perpsWasm()
   }, [rawData])
 
   useEffect(() => {
