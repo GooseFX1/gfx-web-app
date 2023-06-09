@@ -18,10 +18,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
-import { copyToClipboard, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
+import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
-import { ParsedAccount } from '../../../web3/nfts/types'
 import { logData } from '../../../api/analytics'
 
 const DETAIL_VIEW = styled.div`
@@ -228,7 +227,7 @@ const ImageViewer = (): ReactElement => {
 
   return (
     <div
-      tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4
+      tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4 h-full
     border-r-0 border-t-0 dark:text-white text-black px-[29px] sm:px-[14px]  border-l-grey-4 sm:border-l-0"
     >
       <DETAIL_VIEW>
@@ -322,7 +321,6 @@ export const ButtonContainer = (): ReactElement => {
   const isLoading: boolean = useMemo(() => operatingNFT.has(general?.mint_address), [operatingNFT])
 
   const handleBuynowClicked = () => {
-    if (redirectBasedOnMarketplace(ask, 'buy', general?.mint_address)) return
     setBuyNow(general)
   }
   const myBid = useMemo(() => {
@@ -376,9 +374,9 @@ export const ButtonContainer = (): ReactElement => {
               height="44px"
               loading={isLoading}
               disabled={isLoading}
-              width={ask ? '180px' : '100%'}
+              width={'100%'}
               cssStyle={tw`bg-red-2 mr-2`}
-              onClick={() => setCancelBidClicked(general)}
+              onClick={() => setCancelBidClicked(true)}
             >
               <span tw="text-regular font-semibold text-white">Cancel Bid</span>
             </Button>
@@ -392,7 +390,7 @@ export const ButtonContainer = (): ReactElement => {
               disabled={isLoading}
               width={ask ? (showBid ? '180px' : '180px') : '100%'}
               cssStyle={tw`bg-blue-1 mr-2`}
-              onClick={() => setBidNow(general)}
+              onClick={() => setBidNow(true)}
             >
               <span tw="text-regular font-semibold text-white">Bid</span>
             </Button>

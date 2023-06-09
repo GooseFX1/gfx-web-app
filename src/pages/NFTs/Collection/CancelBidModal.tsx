@@ -60,7 +60,7 @@ const CancelBidModal = (): ReactElement => {
   const myBidPrice = useMemo(() => (myBid.length > 0 ? formatSOLNumber(myBid[0].buyer_price) : 0), [myBid])
   const askPrice = useMemo(() => (ask ? formatSOLNumber(ask?.buyer_price) : 0), [ask])
   const closeTheModal = () => {
-    if (!isLoading) setCancelBidClicked(undefined)
+    if (!isLoading) setCancelBidClicked(false)
   }
   useEffect(() => {
     fetchEscrowPayment().then((escrowBalance: number | undefined) => setUserEscrowBalance(escrowBalance))
@@ -168,10 +168,10 @@ const CancelBidModal = (): ReactElement => {
           // refresh so that sync with database
           setRefreshClicked((prev) => prev + 1)
         }, 3000)
-        setCancelBidClicked(undefined)
+        setCancelBidClicked(false)
       }
     } catch (err) {
-      setCancelBidClicked(undefined)
+      setCancelBidClicked(false)
       setIsLoading(false)
       console.log(err)
       notify({
@@ -208,7 +208,7 @@ const CancelBidModal = (): ReactElement => {
           )}
         </div>
 
-        <div className="feesContainer" tw="!bottom-[250px]">
+        <div className="feesContainer" tw="!bottom-[200px] sm:bottom-[250px]">
           <div className="rowContainer">
             <div className="leftAlign">Buy Now Price</div>
             <div className="rightAlign"> {askPrice} SOL</div>

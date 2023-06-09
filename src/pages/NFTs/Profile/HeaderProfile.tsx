@@ -32,7 +32,7 @@ import 'styled-components/macro'
 import { LAMPORTS_PER_SOL_NUMBER, USER_SOCIALS } from '../../../constants'
 import { WalletProfilePicture } from './ProfilePageSidebar'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
-import { copyToClipboard, validateSocialLinks } from '../../../web3/nfts/utils'
+import { copyToClipboard, signAndUpdateDetails, validateSocialLinks } from '../../../web3/nfts/utils'
 
 // const DROPDOWN = styled(Dropdown)`
 //   width: auto;
@@ -317,6 +317,10 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     return false
   }, [currentUserProfile])
 
+  const completeButtonClicked = useCallback(async () => {
+    await signAndUpdateDetails(wallet, isSessionUser, publicKey, setProfileModal)
+  }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
+
   // const isProfileComplete = useMemo(() => {
   //   if (
   //     currentUserProfile?.nickname &&
@@ -372,7 +376,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                 src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
                 alt=""
                 tw="sm:h-[30px] sm:w-[30px]"
-                onClick={() => setProfileModal(true)}
+                onClick={completeButtonClicked}
               />
             )}
           </div>
@@ -481,7 +485,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </div>
           ) : (
             sessionUser && (
-              <div className="complete-profile" onClick={() => setProfileModal(true)}>
+              <div className="complete-profile" onClick={completeButtonClicked}>
                 Complete Profile
               </div>
             )
@@ -509,7 +513,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             <Button
               height={'44px'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}
-              onClick={() => setProfileModal(true)}
+              onClick={completeButtonClicked}
             >
               <span tw="font-semibold text-regular text-white">Complete Profile</span>
             </Button>

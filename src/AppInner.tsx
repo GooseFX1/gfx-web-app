@@ -8,9 +8,10 @@ import { USER_CONFIG_CACHE } from './types/app_params'
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [init, setInit] = useState<boolean | null>(null)
+  console.log(existingUserCache.jwtToken)
 
   useEffect(() => {
-    if (existingUserCache === null) {
+    if (existingUserCache === null || existingUserCache.jwtToken === undefined) {
       setInit(true)
       window.localStorage.setItem(
         'gfx-user-cache',
@@ -19,7 +20,8 @@ export default function AppInner(): JSX.Element {
           hasAggOnboarded: false,
           hasSignedTC: false,
           endpointName: null,
-          endpoint: null
+          endpoint: null,
+          jwtToken: null
         })
       )
     }

@@ -6,7 +6,6 @@ import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, useNFTProfile, useWalletModal } from '../../../context'
 import { BaseNFT, INFTAsk, INFTBid } from '../../../types/nft_details'
 import { formatSOLDisplay } from '../../../utils'
-import { redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -21,7 +20,7 @@ export const HoverOnNFT: FC<{
   ask: INFTAsk
   showBid?: boolean
   buttonType: string
-  setNFTDetails: any
+  setNFTDetails: () => void
   setHover?: Dispatch<SetStateAction<boolean>>
   setIsLoadingBeforeRelocate: Dispatch<SetStateAction<boolean>>
 }> = ({
@@ -58,7 +57,6 @@ export const HoverOnNFT: FC<{
         return
       }
 
-      if (redirectBasedOnMarketplace(ask as INFTAsk, type, item?.mint_address)) return
       setOpenJustModal(true)
       setIsLoadingBeforeRelocate(true)
       await setNFTDetails()
@@ -70,16 +68,16 @@ export const HoverOnNFT: FC<{
           setDelistNFT(true)
           break
         case 'bid':
-          setBidNow(item)
+          setBidNow(true)
           break
         case 'sell':
-          setSellNFT(item)
+          setSellNFT(true)
           break
         case 'buy':
-          setBuyNow(item)
+          setBuyNow(true)
           break
         case 'cancel':
-          setCancelBidClicked(item)
+          setCancelBidClicked(true)
           break
       }
     },

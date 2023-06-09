@@ -5,6 +5,7 @@ import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN } from '../analytics'
+import { MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -34,22 +35,31 @@ export const completeNFTUserProfile = async (address: string): Promise<any> => {
   }
 }
 
-export const updateNFTUser = async (updatedUser: INFTProfile): Promise<any> => {
+export const updateNFTUser = async (updatedUser: INFTProfile, token: string): Promise<any> => {
   try {
-    const res = await httpClient(NFT_API_BASE).patch(`${NFT_API_ENDPOINTS.SESSION_USER}`, {
-      user_id: updatedUser.uuid,
-      new_user_data: {
-        nickname: updatedUser.nickname,
-        bio: updatedUser.bio,
-        instagram_link: updatedUser.instagram_link,
-        twitter_link: updatedUser.twitter_link,
-        youtube_link: updatedUser.youtube_link,
-        telegram_link: updatedUser.telegram_link,
-        profile_pic_link: updatedUser.profile_pic_link,
-        website_link: updatedUser.website_link,
-        discord_profile: updatedUser.discord_profile
+    const res = await httpClient(NFT_API_BASE).patch(
+      `${NFT_API_ENDPOINTS.SESSION_USER}`,
+      {
+        user_id: updatedUser.uuid,
+        new_user_data: {
+          nickname: updatedUser.nickname,
+          bio: updatedUser.bio,
+          instagram_link: updatedUser.instagram_link,
+          twitter_link: updatedUser.twitter_link,
+          youtube_link: updatedUser.youtube_link,
+          telegram_link: updatedUser.telegram_link,
+          profile_pic_link: updatedUser.profile_pic_link,
+          website_link: updatedUser.website_link,
+          discord_profile: updatedUser.discord_profile
+        }
+      },
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }
-    })
+    )
     return await res
   } catch (err) {
     return err
@@ -268,6 +278,60 @@ export const getTensorBuyInstruction = async (
     return res
   } catch (error) {
     return error
+  }
+}
+export const getMagicEdenBuyInstruction = async (
+  buyerPrice: number,
+  buyerKey: string,
+  ownerKey: string,
+  mintAddress: string,
+  tokenAta: string,
+  secretKey: string
+): Promise<any> => {
+  try {
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 10,
+        iat: Math.floor(Date.now() / 1000),
+        buyer: buyerKey,
+        auction_house: MAGIC_EDEN_AUCTION_HOUSE,
+        token_ata: tokenAta,
+        owner: ownerKey,
+        mint: mintAddress,
+        price: buyerPrice
+      },
+      secretKey
+    )
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.MAGIC_EDEN_BUY}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res
+  } catch (error) {
+    return error
+  }
+}
+
+export const fetchUpdatedJwtToken = async (
+  wallet: string,
+  signature: string,
+  message: string
+): Promise<string> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.TOKEN}`, {
+      wallet: wallet,
+      signature: signature,
+      message: message
+    })
+    return res.data.token
+  } catch (err) {
+    console.error(err)
+    throw err
   }
 }
 

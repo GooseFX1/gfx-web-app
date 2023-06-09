@@ -7,6 +7,7 @@ const LOADER = styled.div<{ $color }>`
   top: 0;
   height: 8px;
   width: 8px;
+  z-index: 2000;
   border-radius: 50%;
   font-size: 12px;
   color: ${({ $color }) => `${$color}`};

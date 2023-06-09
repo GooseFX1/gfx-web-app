@@ -238,7 +238,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
       console.log(confirm, 'confirming')
       setIsLoading(false)
       if (confirm.value.err === null) {
-        setBidNow(null)
+        setBidNow(false)
         notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
       }
     } catch (error) {

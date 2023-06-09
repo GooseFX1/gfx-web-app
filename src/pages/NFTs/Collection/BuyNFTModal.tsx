@@ -69,7 +69,7 @@ import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../.
 // import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
-import { getTensorBuyInstruction, NFT_MARKETS, saveNftTx } from '../../../api/NFTs'
+import { getMagicEdenBuyInstruction, getTensorBuyInstruction, NFT_MARKETS, saveNftTx } from '../../../api/NFTs'
 // const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -534,7 +534,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           setMissionAccomplished(true)
           notify(successBidMatchedMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
         } else {
-          setBidNow(null)
+          setBidNow(false)
           notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(buyerPrice)))
         }
       }
@@ -548,6 +548,32 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       setIsLoading(false)
       console.log(error)
       pleaseTryAgain(isBuyingNow, error?.message)
+    }
+  }
+  const callMagicEdenAPIs = async (): Promise<void> => {
+    const buyerReceiptTokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [
+        toPublicKey(ask.wallet_key).toBuffer(),
+        TOKEN_PROGRAM_ID.toBuffer(),
+        toPublicKey(general.mint_address).toBuffer()
+      ],
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    )
+    try {
+      const res = await getMagicEdenBuyInstruction(
+        parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
+        publicKey.toBase58(),
+        ask.wallet_key,
+        ask.token_account_mint_key,
+        buyerReceiptTokenAccount[0].toString(),
+        process.env.REACT_APP_JWT_SECRET_KEY
+      )
+
+      const tx = VersionedTransaction.deserialize(Buffer.from(res.data.txSigned.data))
+      await handleNotifications(tx, ask.buyer_price, true)
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
     }
   }
   const callTensorAPIs = async (): Promise<void> => {
@@ -575,9 +601,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleBuyFlow = async (e: any) => {
     e.preventDefault()
     setIsLoading(true)
-    logData(`attempt_buy_now_${ask.marketplace_name.toLowerCase()}`)
+    logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
     if (ask.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
+      return
+    }
+    if (ask.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
+      callMagicEdenAPIs()
       return
     } else callBuyInstruction()
   }

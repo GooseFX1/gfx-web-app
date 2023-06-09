@@ -17,4 +17,5 @@ export interface USER_CONFIG_CACHE {
   hasSignedTC: boolean
   hasDexOnboarded: boolean
   hasAggOnboarded: boolean
+  jwtToken: string | null
 }

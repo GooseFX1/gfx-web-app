@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, memo, ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, memo, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -12,7 +11,8 @@ import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { copyToClipboard } from '../../../web3/nfts/utils'
+import { copyToClipboard, signAndUpdateDetails } from '../../../web3/nfts/utils'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const PROFILE = styled.div<{ navCollapsed: boolean }>`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
@@ -172,6 +172,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const [shareModal, setShareModal] = useState(false)
   const handleCancel = () => setProfileModal(false)
   const { getUIAmount } = useAccounts()
+  const { wallet } = useWallet()
   const solAmount = getUIAmount(WRAPPED_SOL_MINT.toBase58())
   const userSol = formatNumber.format(solAmount)
   const [twitterHover, setTwitterHover] = useState<boolean>(false)
@@ -181,6 +182,11 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const params = useParams<IAppParams>()
   const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
+
+  const publicKey = useMemo(
+    () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey, wallet?.adapter]
+  )
 
   const handleModal = useCallback(() => {
     if (profileModal) {
@@ -250,6 +256,10 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') profilePic = null
 
+  const editButtonClicked = useCallback(async () => {
+    await signAndUpdateDetails(wallet, isSessionUser, publicKey, setProfileModal)
+  }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
+
   return (
     <PROFILE navCollapsed={isCollapsed}>
       {handleModal()}
@@ -272,7 +282,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 className="icon"
                 src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
                 alt="edit-image"
-                onClick={() => setProfileModal(true)}
+                onClick={editButtonClicked}
               />
             )}
           </div>
