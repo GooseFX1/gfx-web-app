@@ -15,6 +15,7 @@ import { checkMobile } from '../../../utils'
 import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
 import { BorderBottom } from '../Collection/SellNFTModal'
 import { USER_SOCIALS } from '../../../constants'
+import { USER_CONFIG_CACHE } from '../../../types/app_params'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -44,6 +45,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   const [discordLink, setDiscordLink] = useState<string>()
   const [telegramLink, setTelegramLink] = useState<string>()
   const [websiteLink, setWebsiteLink] = useState<string>()
+  const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   useEffect(() => {
     form.setFieldsValue(sessionUser)
@@ -128,7 +130,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
   }
 
   const updateProfile = async (updatedProfile: INFTProfile) => {
-    updateNFTUser(updatedProfile).then((res) => {
+    updateNFTUser(updatedProfile, userCache?.jwtToken).then((res) => {
       if (res && res.status === 200 && res.data === true) {
         setSessionUser(updatedProfile)
         setVisible(false)

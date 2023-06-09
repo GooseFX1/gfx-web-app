@@ -62,5 +62,6 @@ export enum NFT_API_ENDPOINTS {
   ACTIVITY = '/activity',
   STATS = '/banner_stats',
   TENSOR_BUY = '/tensor/buy_tx',
-  SAVE_TX = '/nft-aggregator/saveNftTx'
+  SAVE_TX = '/nft-aggregator/saveNftTx',
+  TOKEN = '/user/token'
 }

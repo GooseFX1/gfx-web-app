@@ -83,7 +83,7 @@ interface Props {
 }
 
 interface INFTDisplay {
-  type: 'collected' | 'created' | 'favorited'
+  type: 'collected' | 'created' | 'favorited' | 'bids'
   parsedAccounts?: ParsedAccount[]
   singleNFTs?: ISingleNFT[]
   setNumberOfNFTs?: Dispatch<SetStateAction<number>>

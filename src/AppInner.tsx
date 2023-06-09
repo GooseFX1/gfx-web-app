@@ -19,7 +19,8 @@ export default function AppInner(): JSX.Element {
           hasAggOnboarded: false,
           hasSignedTC: false,
           endpointName: null,
-          endpoint: null
+          endpoint: null,
+          jwtToken: null
         })
       )
     }
