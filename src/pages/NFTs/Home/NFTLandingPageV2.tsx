@@ -162,10 +162,10 @@ const FILTERS_CONTAINER = styled.div`
   }
 `
 const PROFILE_PIC_WRAPPER = styled.div`
-  .avatarNFT {
-    ${tw`h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0`}
+  .customProfileImg {
     border: 1px solid ${({ theme }) => theme.text33};
   }
+
   .avatarNFTMedium {
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer mr-5`}
   }
@@ -421,20 +421,15 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
   return (
     <PROFILE_PIC_WRAPPER onClick={goProfile}>
       {userPic ? (
-        <img src={userPic} className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'} onClick={goProfile} />
-      ) : (
-        // <PROFILE_PIC
-        //   css={[
-        //     mediumSize
-        //       ? tw`h-[100px] w-[100px] !border-none text-[30px]`
-        //       : tw`h-11 w-11 rounded-full cursor-pointer text-grey-1 bg-white text-[14px] font-semibold
-        // justify-center dark:bg-black-2 dark:text-grey-4 flex items-center p-0.5`
-        //   ]}
-        // >
-        //   {getFirstAndLast}
-        // </PROFILE_PIC>
         <img
-          className={mediumSize ? 'userPopupProfilePic' : 'avatarNFT'}
+          src={userPic}
+          tw="h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0"
+          className={mediumSize ? 'userPopupProfilePic' : 'customProfileImg'}
+          onClick={goProfile}
+        />
+      ) : (
+        <img
+          className={mediumSize ? 'userPopupProfilePic' : ''}
           src={`/img/assets/Aggregator/avatar-${mode}.svg`}
           alt="profile picture"
         />
