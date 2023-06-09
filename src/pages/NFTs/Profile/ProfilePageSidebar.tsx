@@ -1,4 +1,4 @@
-import { FC, memo, ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, memo, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
@@ -256,9 +256,9 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') profilePic = null
 
-  const editButtonClicked = async () => {
+  const editButtonClicked = useCallback(async () => {
     await signAndUpdateDetails(wallet, isSessionUser, publicKey, setProfileModal)
-  }
+  }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
 
   return (
     <PROFILE navCollapsed={isCollapsed}>

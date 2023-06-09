@@ -6,7 +6,6 @@ import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, useNFTProfile, useWalletModal } from '../../../context'
 import { BaseNFT, INFTAsk, INFTBid } from '../../../types/nft_details'
 import { formatSOLDisplay } from '../../../utils'
-import { redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -58,7 +57,6 @@ export const HoverOnNFT: FC<{
         return
       }
 
-      if (redirectBasedOnMarketplace(ask as INFTAsk, type, item?.mint_address)) return
       setOpenJustModal(true)
       setIsLoadingBeforeRelocate(true)
       await setNFTDetails()

@@ -19,7 +19,7 @@ import { getParsedAccountByMint, StringPublicKey, AH_NAME, ParsedAccount, getMet
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { getNFTMetadata, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
+import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
 import { notify, capitalizeFirstLetter, commafy, checkMobile } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'

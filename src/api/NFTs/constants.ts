@@ -63,5 +63,6 @@ export enum NFT_API_ENDPOINTS {
   STATS = '/banner_stats',
   TENSOR_BUY = '/tensor/buy_tx',
   SAVE_TX = '/nft-aggregator/saveNftTx',
-  TOKEN = '/user/token'
+  TOKEN = '/user/token',
+  MAGIC_EDEN_BUY = '/magiceden/buy_tx'
 }

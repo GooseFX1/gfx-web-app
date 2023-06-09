@@ -5,6 +5,7 @@ import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN } from '../analytics'
+import { MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -279,6 +280,42 @@ export const getTensorBuyInstruction = async (
     return error
   }
 }
+export const getMagicEdenBuyInstruction = async (
+  buyerPrice: number,
+  buyerKey: string,
+  ownerKey: string,
+  mintAddress: string,
+  tokenAta: string,
+  secretKey: string
+): Promise<any> => {
+  try {
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 10,
+        iat: Math.floor(Date.now() / 1000),
+        buyer: buyerKey,
+        auction_house: MAGIC_EDEN_AUCTION_HOUSE,
+        token_ata: tokenAta,
+        owner: ownerKey,
+        mint: mintAddress,
+        price: buyerPrice
+      },
+      secretKey
+    )
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.MAGIC_EDEN_BUY}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res
+  } catch (error) {
+    return error
+  }
+}
 
 export const fetchUpdatedJwtToken = async (
   wallet: string,
@@ -286,7 +323,7 @@ export const fetchUpdatedJwtToken = async (
   message: string
 ): Promise<string> => {
   try {
-    const res = await await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.TOKEN}`, {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.TOKEN}`, {
       wallet: wallet,
       signature: signature,
       message: message

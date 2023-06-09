@@ -464,6 +464,8 @@ export const AUCTION_HOUSE_PREFIX = 'auction_house'
 export const TREASURY_PREFIX = 'treasury'
 export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 
+export const MAGIC_EDEN_AUCTION_HOUSE = 'E8cU1WiRWjanGxmn96ewBgk9vPTcL6AEZ1t6F6fkgUWe'
+
 export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
 
 export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'

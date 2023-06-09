@@ -18,10 +18,9 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ImageShowcase } from '../NFTDetails/ImageShowcase'
-import { copyToClipboard, minimizeTheString, redirectBasedOnMarketplace } from '../../../web3/nfts/utils'
+import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { Share } from '../Share'
-import { ParsedAccount } from '../../../web3/nfts/types'
 import { logData } from '../../../api/analytics'
 
 const DETAIL_VIEW = styled.div`
@@ -322,7 +321,6 @@ export const ButtonContainer = (): ReactElement => {
   const isLoading: boolean = useMemo(() => operatingNFT.has(general?.mint_address), [operatingNFT])
 
   const handleBuynowClicked = () => {
-    if (redirectBasedOnMarketplace(ask, 'buy', general?.mint_address)) return
     setBuyNow(general)
   }
   const myBid = useMemo(() => {

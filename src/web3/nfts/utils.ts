@@ -2,12 +2,14 @@ import { deserializeUnchecked } from 'borsh'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
 import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
-import { INFTAsk } from '../../types/nft_details'
-import { NFT_MARKETS } from '../../api/NFTs'
+import { fetchUpdatedJwtToken } from '../../api/NFTs'
 import { capitalizeFirstLetter } from '../../utils/misc'
 import { notify } from '../../utils'
 import { USER_SOCIALS } from '../../constants'
-import { logData } from './../../api/analytics'
+import { encode } from 'bs58'
+import { Dispatch, SetStateAction } from 'react'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
+import { Wallet } from '@solana/wallet-adapter-react'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -87,20 +89,6 @@ export const getNFTMetadata = async (metadataAccountPublicKey: string, connectio
   }
 }
 
-// type MarketplaceNames = 'MAGIC_EDEN' | 'OTHER_MARKETPLACE'
-
-export const redirectBasedOnMarketplace = (ask: INFTAsk, type: string, mintAddress: string): boolean => {
-  if (ask && ask.marketplace_name && type === 'buy') {
-    switch (ask.marketplace_name) {
-      case NFT_MARKETS.MAGIC_EDEN:
-        logData(`attempt_buy_now_magic_eden`)
-        window.open(`https://magiceden.io/item-details/${mintAddress}`, '_blank')
-        return true
-    }
-  }
-  return false
-}
-
 export const handleMarketplaceFormat = (name: string): string => {
   const splitString = name.split('_')
   const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
@@ -126,5 +114,54 @@ export const validateSocialLinks = (url: string, social: string): string => {
       return validExternalLink(url.includes(USER_SOCIALS.TELEGRAM) ? url : `t.me/${url}`)
     case USER_SOCIALS.DISCORD:
       return validExternalLink(url.includes(USER_SOCIALS.DISCORD) ? url : `discordapp.com/users/${url}`)
+  }
+}
+
+export const signAndUpdateDetails = async (
+  wallet: Wallet,
+  isSessionUser: boolean,
+  publicKey: PublicKey,
+  setModal: Dispatch<SetStateAction<boolean>>
+): Promise<void> => {
+  const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const createSignMessage = () =>
+    'Please sign a Solana transaction in order to verify your identity.' +
+    'Please note that NO SOL will be deducted from your wallet during this process. ' +
+    new Date().getTime()
+
+  const storedToken = userCache?.jwtToken ? userCache?.jwtToken.split('.') : null
+
+  const payload = storedToken ? JSON.parse(atob(storedToken[1])) : null
+  // Check if token is missing, if wallet doesn't match, or if token is expired
+  if (
+    (storedToken === null || payload.wallet !== publicKey.toString() || Date.now() > payload?.exp * 1000) &&
+    isSessionUser
+  ) {
+    // Convert the message into bytes
+    const messageForSign = createSignMessage()
+    const messageBytes = new TextEncoder().encode(messageForSign)
+
+    try {
+      /* eslint-disable @typescript-eslint/ban-ts-comment */
+      //@ts-ignore
+      const signedMessage = await wallet?.adapter?.signMessage(messageBytes)
+      /* eslint-enable @typescript-eslint/ban-ts-comment */
+
+      const signatureBase58 = encode(signedMessage)
+      const updatedJwtToken = await fetchUpdatedJwtToken(publicKey.toString(), signatureBase58, messageForSign)
+      console.log(updatedJwtToken)
+      window.localStorage.setItem(
+        'gfx-user-cache',
+        JSON.stringify({
+          ...userCache,
+          jwtToken: updatedJwtToken
+        })
+      )
+      setModal(true)
+    } catch (err) {
+      console.error(err)
+    }
+  } else {
+    setModal(true)
   }
 }
