@@ -1,4 +1,5 @@
 export const NFT_API_BASE = 'nest-api'
+export const MAGIC_EDEN_API_BASE = 'https://api-mainnet.magiceden.dev/v2'
 
 export enum NFT_PROFILE_OPTIONS {
   ALL = 'All',
