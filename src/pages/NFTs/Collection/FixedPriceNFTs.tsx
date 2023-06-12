@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import {
@@ -23,7 +23,9 @@ import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import debounce from 'lodash.debounce'
 
-export const FixedPriceNFTs = (): ReactElement => {
+export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
+  firstCardRef
+}): ReactElement => {
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -232,6 +234,7 @@ export const FixedPriceNFTs = (): ReactElement => {
                   lastCardRef={index + 1 === filteredFixedPrice.length ? lastCardRef : null}
                   index={index}
                   addNftToBag={addNftToBag}
+                  firstCardRef={index === 0 ? firstCardRef : null}
                 />
               ))}
               {/* TODO add a Loading Div here <div>Loading div comming</div> */}

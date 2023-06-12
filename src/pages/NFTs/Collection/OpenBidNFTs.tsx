@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
 import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
@@ -13,7 +13,9 @@ import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 
-export const OpenBidNFTs = (): ReactElement => {
+export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
+  firstCardRef
+}): ReactElement => {
   const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT, openJustModal } =
     useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
@@ -126,6 +128,7 @@ export const OpenBidNFTs = (): ReactElement => {
               lastCardRef={index + 1 === filteredOpenBid.length ? lastCardRef : null}
               index={index}
               addNftToBag={addNftToBag}
+              firstCardRef={index === 0 ? firstCardRef : null}
             />
           ))
         ) : (

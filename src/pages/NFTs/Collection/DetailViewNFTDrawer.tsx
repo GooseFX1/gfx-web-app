@@ -227,7 +227,7 @@ const ImageViewer = (): ReactElement => {
 
   return (
     <div
-      tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4 h-full
+      tw="flex flex-col justify-between relative dark:bg-black-1 border-solid border-1 dark:border-l-black-4 
     border-r-0 border-t-0 dark:text-white text-black px-[29px] sm:px-[14px]  border-l-grey-4 sm:border-l-0"
     >
       <DETAIL_VIEW>

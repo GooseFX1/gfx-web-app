@@ -144,7 +144,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
     height: calc(100vh - 180px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
-      /* height: auto; */
+      height: auto;
     }
     .flexContainer {
       ${tw`flex h-screen px-[12px] sm:px-0`}

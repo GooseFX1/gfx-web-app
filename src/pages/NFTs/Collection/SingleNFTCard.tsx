@@ -38,7 +38,8 @@ export const SingleNFTCard: FC<{
   myItems?: boolean
   addNftToBag?: any
   lastCardRef?: any
-}> = ({ item, index, myItems = false, addNftToBag, lastCardRef }) => {
+  firstCardRef?: React.RefObject<HTMLElement | null> | null
+}> = ({ item, index, myItems = false, addNftToBag, lastCardRef, firstCardRef }) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
@@ -276,7 +277,7 @@ export const SingleNFTCard: FC<{
         className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}
         key={index}
         onClick={() => goToDetails(item)}
-        ref={lastCardRef}
+        ref={firstCardRef ? firstCardRef : lastCardRef}
       >
         <div className={'gridItem'}>
           {handleLoading}

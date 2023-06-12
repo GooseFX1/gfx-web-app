@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, useEffect, useMemo, FC } from 'react'
+import React, { ReactElement, useState, useEffect, useMemo, FC, useRef } from 'react'
 import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -240,6 +240,13 @@ export const NFTGridContainer = (): ReactElement => {
   const [open, setOpen] = useState<boolean>(true)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
+  const firstCardRef = useRef<HTMLElement | null>()
+  const { mode } = useDarkMode()
+
+  const handleTopScroll = useCallback(() => {
+    firstCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+  }, [firstCardRef])
+
   const activityAddress = singleCollection
     ? singleCollection[0]?.verified_collection_address
       ? singleCollection[0]?.verified_collection_address
@@ -247,9 +254,9 @@ export const NFTGridContainer = (): ReactElement => {
     : null
 
   const NFTDisplayComponent = useMemo(() => {
-    if (displayIndex === 0) return <FixedPriceNFTs />
-    if (displayIndex === 1) return <MyItemsNFTs setDisplayIndex={setDisplayIndex} />
-    if (displayIndex === 2) return <OpenBidNFTs />
+    if (displayIndex === 0) return <FixedPriceNFTs firstCardRef={firstCardRef} />
+    if (displayIndex === 1) return <MyItemsNFTs setDisplayIndex={setDisplayIndex} firstCardRef={firstCardRef} />
+    if (displayIndex === 2) return <OpenBidNFTs firstCardRef={firstCardRef} />
     if (displayIndex === 3)
       return (
         <ActivityNFTSection
@@ -261,6 +268,11 @@ export const NFTGridContainer = (): ReactElement => {
   }, [displayIndex, activityAddress])
   return (
     <GRID_CONTAINER navCollapsed={isCollapsed}>
+      <img
+        src={`/img/assets/Aggregator/go-to-top-${mode}.svg`}
+        tw="fixed right-4 bottom-4 sm:right-2.5 sm:bottom-2.5 z-[100] cursor-pointer"
+        onClick={handleTopScroll}
+      />
       <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
       <div className="flexContainer">
         {/* <AdditionalFilters open={open} setOpen={setOpen} /> */}

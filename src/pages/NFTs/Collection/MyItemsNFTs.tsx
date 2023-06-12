@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { Dispatch, FC, memo, SetStateAction, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, FC, memo, RefObject, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDetails } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import NFTLoading from '../Home/NFTLoading'
@@ -11,7 +11,10 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import NoContent from '../Profile/NoContent'
 
-const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = ({ setDisplayIndex }) => {
+const MyItemsNFTs: FC<{
+  setDisplayIndex: Dispatch<SetStateAction<number>>
+  firstCardRef: RefObject<HTMLElement | null>
+}> = ({ setDisplayIndex, firstCardRef }) => {
   const { myNFTsByCollection } = useNFTCollections()
   const [displayNFTs, setDisplayNFTs] = useState<any[]>(null)
   const { openJustModal, sellNFTClicked, setSellNFT, setDelistNFT, delistNFT } = useNFTAggregator()
@@ -56,7 +59,13 @@ const MyItemsNFTs: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = (
       {displayNFTs && displayNFTs.length > 0 && (
         <div className="gridContainer">
           {displayNFTs.map((myNFT, index) => (
-            <SingleNFTCard key={index} item={myNFT.data[0]} myItems={true} index={index} />
+            <SingleNFTCard
+              key={index}
+              item={myNFT.data[0]}
+              myItems={true}
+              index={index}
+              firstCardRef={index === 0 ? firstCardRef : null}
+            />
           ))}
         </div>
       )}
