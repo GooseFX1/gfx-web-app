@@ -1,5 +1,4 @@
 export const NFT_API_BASE = 'nest-api'
-export const MAGIC_EDEN_API_BASE = 'https://api-mainnet.magiceden.dev/v2'
 
 export enum NFT_PROFILE_OPTIONS {
   ALL = 'All',
@@ -65,5 +64,6 @@ export enum NFT_API_ENDPOINTS {
   TENSOR_BUY = '/tensor/buy_tx',
   SAVE_TX = '/nft-aggregator/saveNftTx',
   TOKEN = '/user/token',
-  MAGIC_EDEN_BUY = '/magiceden/buy_tx'
+  MAGIC_EDEN_BUY = '/magiceden/buy_tx',
+  MAGIC_EDEN_LISTING = '/magiceden/listing'
 }
