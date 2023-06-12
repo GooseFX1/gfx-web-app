@@ -566,15 +566,15 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
     )
     try {
-      const listing_res = await getMagicEdenListing(general?.mint_address)
+      const listing_res = await getMagicEdenListing(general?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
       const res = await getMagicEdenBuyInstruction(
         parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
         publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
-        listing_res.data[0].tokenAddress ? listing_res.data[0].tokenAddress : tokenAccount[0].toString(),
+        listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
         process.env.REACT_APP_JWT_SECRET_KEY,
-        listing_res.data[0].expiry ? listing_res.data[0].expiry.toString() : '-1'
+        listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
       )
 
       const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
