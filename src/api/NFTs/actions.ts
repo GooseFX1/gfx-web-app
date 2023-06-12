@@ -1,11 +1,12 @@
 import { httpClient } from '../../api'
-import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
+import { NFT_API_ENDPOINTS, NFT_API_BASE, MAGIC_EDEN_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN } from '../analytics'
 import { MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
+import axios from 'axios'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -286,7 +287,8 @@ export const getMagicEdenBuyInstruction = async (
   ownerKey: string,
   mintAddress: string,
   tokenAta: string,
-  secretKey: string
+  secretKey: string,
+  sellerExpiry: string
 ): Promise<any> => {
   try {
     const token = jwt.sign(
@@ -298,7 +300,8 @@ export const getMagicEdenBuyInstruction = async (
         token_ata: tokenAta,
         owner: ownerKey,
         mint: mintAddress,
-        price: buyerPrice
+        price: buyerPrice,
+        seller_expiry: sellerExpiry
       },
       secretKey
     )
@@ -311,6 +314,15 @@ export const getMagicEdenBuyInstruction = async (
         }
       }
     )
+    return res
+  } catch (error) {
+    return error
+  }
+}
+
+export const getMagicEdenListing = async (mintAddress: string): Promise<any> => {
+  try {
+    const res = await axios.get(`${MAGIC_EDEN_API_BASE}/tokens/${mintAddress}/listings`)
     return res
   } catch (error) {
     return error

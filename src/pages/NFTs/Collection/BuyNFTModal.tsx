@@ -69,7 +69,13 @@ import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../.
 // import { BorderBottom } from './SellNFTModal'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
-import { getMagicEdenBuyInstruction, getTensorBuyInstruction, NFT_MARKETS, saveNftTx } from '../../../api/NFTs'
+import {
+  getMagicEdenBuyInstruction,
+  getMagicEdenListing,
+  getTensorBuyInstruction,
+  NFT_MARKETS,
+  saveNftTx
+} from '../../../api/NFTs'
 // const TEN_MILLION = 10000000
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
@@ -551,7 +557,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
   }
   const callMagicEdenAPIs = async (): Promise<void> => {
-    const buyerReceiptTokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+    const tokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         toPublicKey(ask.wallet_key).toBuffer(),
         TOKEN_PROGRAM_ID.toBuffer(),
@@ -560,16 +566,18 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
     )
     try {
+      const listing_res = await getMagicEdenListing(general?.mint_address)
       const res = await getMagicEdenBuyInstruction(
         parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
         publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
-        buyerReceiptTokenAccount[0].toString(),
-        process.env.REACT_APP_JWT_SECRET_KEY
+        listing_res.data[0].tokenAddress ? listing_res.data[0].tokenAddress : tokenAccount[0].toString(),
+        process.env.REACT_APP_JWT_SECRET_KEY,
+        listing_res.data[0].expiry ? listing_res.data[0].expiry.toString() : '-1'
       )
 
-      const tx = VersionedTransaction.deserialize(Buffer.from(res.data.txSigned.data))
+      const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
       await handleNotifications(tx, ask.buyer_price, true)
     } catch (err) {
       console.log(err)
