@@ -1104,7 +1104,15 @@ export const SwapMain: FC = () => {
     slippage: slippage, // 1% slippage
     debounceTime: 2000 // debounce ms time before refresh
   })
-
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search)
+    const from = queryParams.get('from')
+    const to = queryParams.get('to')
+    if (from && to) {
+      setTokenA(tokenMap.get(from))
+      setTokenB(tokenMap.get(to))
+    }
+  }, [location, tokenMap])
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     const roundedTotal = Math.round(inAmountTotal)

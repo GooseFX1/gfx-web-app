@@ -155,7 +155,7 @@ export function colors(mode: string): Colors {
 
     modalBackground: mode === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(96, 96, 96, 0.5)',
     bgEarn: 'linear-gradient(90deg, #35BB7B 0%, #194A5E 100%)',
-    bgRefer: 'linear-gradient(90deg, rgba(254, 231, 149, 0.4) 0%, #F7931B 100%)',
+    bgRefer: 'linear-gradient(96.79deg, #DA831A 4.25%, #AC1CC7 97.61%)',
     grey1: '#434343',
     grey2: '#4e4e4e',
     grey3: '#2a2a2a',

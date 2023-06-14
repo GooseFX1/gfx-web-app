@@ -48,6 +48,21 @@ const Wrapper = styled.div`
 //   }
 // `
 
+  return (
+    <div css={tw`relative h-[30px] w-[30px]`}>
+      <RiveComponent
+        style={{
+          width: '30px',
+          height: '30px'
+        }}
+      />
+      {rewards.user.staking.claimable ||
+        (rewards.user.staking.unstakeableTickets.length > 0 && (
+          <img css={tw`absolute top-[5px] right-0`} src={'img/assets/red-notification-circle.svg'} />
+        ))}
+    </div>
+  )
+}
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
   const { rewardToggle } = useRewardToggle()
@@ -109,6 +124,7 @@ export const RewardsButton: FC = () => {
 
 export const RewardsPopup: FC = () => {
   const [panelIndex, setPanelIndex] = useState(0)
+
   return (
     <Wrapper>
       <REWARD_INFO>

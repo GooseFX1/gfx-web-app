@@ -1,6 +1,7 @@
 import { ADDRESSES } from './web3'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { IFarmData } from './pages/Farm/CustomTableList'
+import tw from 'twin.macro'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
