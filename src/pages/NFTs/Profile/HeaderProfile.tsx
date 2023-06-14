@@ -104,9 +104,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
       params.userAddress &&
       (nonSessionProfile === undefined || nonSessionProfile.pubkey !== params.userAddress)
     ) {
-      fetchNonSessionProfile('address', params.userAddress, connection).then((res) =>
-        console.log('Non Session User', res)
-      )
+      fetchNonSessionProfile('address', params.userAddress, connection).then(() => console.log('Non Session User'))
     }
 
     return null

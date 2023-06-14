@@ -57,6 +57,10 @@ const options = {
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },
+  bids: {
+    mainText: 'No Bids',
+    subText: 'Bids you make or receive \n will be shown here'
+  },
   noItems: {
     mainText: 'No Items',
     subText: `Start buying or bidding ${

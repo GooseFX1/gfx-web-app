@@ -14,6 +14,7 @@ import ActivityNFTSection from '../Collection/ActivityNFTSection'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
+import NFTDisplayV2 from './NFTDisplayV2'
 
 type Props = {
   isSessionUser: boolean
@@ -64,7 +65,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         order: 1,
         name: `Collection (${noOfNFTs})`,
         component: (
-          <NFTDisplay
+          <NFTDisplayV2
             parsedAccounts={currentUserParsedAccounts}
             type={'collected'}
             setNumberOfNFTs={setNumberOfNFTs}
@@ -73,8 +74,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       },
       {
         order: 2,
-        name: `Liked (0)`,
-        component: <NFTDisplay singleNFTs={[]} type={'favorited'} />
+        name: `Bids`,
+        component: <NFTDisplayV2 singleNFTs={[]} type={'bids'} />
       },
       {
         order: 3,
@@ -108,16 +109,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
 
     return null
   }, [currentUserProfile])
-
-  // useEffect(() => {
-  //   if (currentUserProfile && currentUserProfile.uuid) {
-  //     fetchUserActivity(currentUserProfile.uuid)
-  //   } else {
-  //     setUserActivity([])
-  //   }
-
-  //   return null
-  // }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
   const fetchFavorites = async (userLikes: string[]) => {
     const favorites: ISingleNFT[] = await Promise.all(userLikes.map((nftUUID: string) => fetchNFTById(nftUUID)))
