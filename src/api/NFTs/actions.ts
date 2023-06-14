@@ -135,7 +135,7 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
   }
 }
 export const fetchUserNftsFromDb = async (mintAddresses: string[], collectionId?: string): Promise<any> => {
-  if (!mintAddresses.length) return
+  if (!mintAddresses.length) return null
   try {
     const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.NFTS_COLLECTION}`, {
       mint_addresses: mintAddresses,
@@ -144,6 +144,17 @@ export const fetchUserNftsFromDb = async (mintAddresses: string[], collectionId?
     return await res
   } catch (err) {
     return err
+  }
+}
+
+export const fetchBidsPlacedByUser = async (wallet: string): Promise<any> => {
+  if (!wallet.length) return
+  try {
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_BIDS}?user_wallet=${wallet}`)
+    return res.data
+  } catch (err) {
+    console.log(err)
+    throw err // Throw the error, let the calling function handle it
   }
 }
 

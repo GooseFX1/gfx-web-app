@@ -13,10 +13,13 @@ import NFTLoading from '../Home/NFTLoading'
 import { SellNFTModal } from '../Collection/SellNFTModal'
 import { BuyNFTModal } from '../Collection/BuyNFTModal'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
-import { fetchUserNftsFromDb, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
+import { fetchBidsPlacedByUser, fetchUserNftsFromDb, NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import CancelBidModal from '../Collection/CancelBidModal'
 import { BidNFTModal } from '../Collection/AggModals/BidNFTModal'
 import CardV2 from '../Collection/CardV2'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useParams } from 'react-router-dom'
+import { IAppParams } from '../../../types/app_params'
 
 const DROPDOWN_WRAPPER = styled.div``
 
@@ -28,7 +31,6 @@ interface INFTDisplayV2 {
 }
 
 const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
-  const { sessionUser, nonSessionProfile } = useNFTProfile()
   const { searchInsideProfile, profileNFTOptions, setProfileNFTOptions } = useNFTAggregatorFilters()
   const { cancelBidClicked } = useNFTAggregator()
   const [collectedItems, setCollectedItems] = useState<INFTGeneralData[]>()
@@ -37,6 +39,7 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
   const [gfxAppraisalPopup, setGfxAppraisal] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { general, nftMetadata } = useNFTDetails()
+  const { sessionUser, nonSessionProfile } = useNFTProfile()
   const {
     buyNowClicked,
     bidNowClicked,
@@ -49,8 +52,29 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
     setSellNFT
   } = useNFTAggregator()
 
+  const { wallet } = useWallet()
+  const pubKey = useMemo(
+    () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter, wallet?.adapter?.publicKey]
+  )
+
   const activePointRef = useRef(collectedItems)
   const activePointLoader = useRef(loading)
+  const params = useParams<IAppParams>()
+
+  const isSessionUser = useMemo(
+    () => (pubKey !== null ? params.userAddress === pubKey?.toBase58() : false),
+    [pubKey]
+  )
+  const currentUserProfile = useMemo(() => {
+    if (nonSessionProfile !== undefined && !isSessionUser) {
+      return nonSessionProfile
+    } else if (sessionUser !== null && isSessionUser) {
+      return sessionUser
+    } else {
+      return undefined
+    }
+  }, [isSessionUser, sessionUser, nonSessionProfile])
 
   useEffect(() => {
     if (collectedItems) {
@@ -77,19 +101,33 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
     if (filteredCollectedItems.length === 0)
       setTimeout(() => {
         setIsLoading(false)
-      }, 7000)
+      }, 3000)
   }, [])
 
   useEffect(() => {
+    const { parsedAccounts, type, setNumberOfNFTs } = props
     const fetchNfts = async () => {
-      const mintAddresses = props.parsedAccounts.map((account) => account.mint)
+      const mintAddresses = parsedAccounts.map((account) => account.mint)
       const userNfts = await fetchUserNftsFromDb(mintAddresses)
-      setCollectedItemsPag(userNfts?.data)
+
+      let filteredData = userNfts ? userNfts?.data : []
+      setNumberOfNFTs(userNfts?.data.length ?? 0)
+      if (type === 'bids') {
+        filteredData = userNfts?.data?.filter((nftData) => nftData?.bids?.length > 0)
+
+        if (pubKey) {
+          const userBids = await fetchBidsPlacedByUser(currentUserProfile?.pubkey)
+          filteredData = filteredData ? [...filteredData, ...userBids] : [...userBids]
+        }
+      }
+
+      setCollectedItemsPag(filteredData)
     }
-    if (props.parsedAccounts.length) fetchNfts()
+
+    fetchNfts()
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.parsedAccounts, refreshClicked])
+  }, [props.parsedAccounts, refreshClicked, props.type])
 
   const getCollectionName = useCallback((value) => {
     if (value?.data?.collection?.name) {
@@ -104,22 +142,8 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
     return null
   }, [])
 
-  // useEffect(() => {
-  //   if (nftApiResponses && props.type === 'collected') props.setNumberOfNFTs(nftApiResponses.length)
-  // }, [nftApiResponses, refreshClicked])
-
   const gridType = useMemo(
-    () =>
-      // if (nftApiResponses) {
-      //   if (profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS) {
-      //     return nftApiResponses.filter((res) => res.bids.length > 0).length > 7 ? '1fr' : '210px'
-      //   }
-      //   if (profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE) {
-      //     return nftApiResponses.filter((res) => res.asks.length > 0).length > 7 ? '1fr' : '210px'
-      //   }
-      // }
-
-      filteredCollectedItems?.length > 7 ? '1fr' : '210px',
+    () => (filteredCollectedItems?.length > 7 ? '1fr' : '210px'),
     [filteredCollectedItems, profileNFTOptions]
   )
 

@@ -204,7 +204,7 @@ export const SellNFTModal: FC<{
     isModified?: boolean
   ): Promise<void> => {
     try {
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
       console.log(confirm)
       // successfully list nft
       if (confirm.value.err === null) {

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { fetchActivityOfAddress, fetchSingleNFT, NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
-import { Loader } from '../../../components'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { useNavCollapse, useNFTAggregator, usePriceFeedFarm } from '../../../context'
@@ -264,11 +263,7 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
             </div>
             <div className="secondaryText">
               <div>
-                {activity && activity.clock ? (
-                  <>{parseUnixTimestamp(activity?.clock).split(',')[1]}</>
-                ) : (
-                  <Loader />
-                )}
+                {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock).split(',')[1]}</> : <> </>}
               </div>
             </div>
           </div>
@@ -349,12 +344,12 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           </div>
         ) : (
           <div>
-            <Loader />
+            <> </>
           </div>
         )}
       </td>
       <td tw="align-top w-[10%] text-center pt-[28px] dark:text-white text-grey-1">
-        {activity?.kind ? <>{ACTIVITY_KIND[activity?.kind]} </> : <Loader />}
+        {activity?.kind ? <>{ACTIVITY_KIND[activity?.kind]} </> : <> </>}
       </td>
       <td tw="align-top text-center pt-[28px] flex items-center justify-center w-[13%]">
         {activity?.price ? (
@@ -362,7 +357,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
             <PriceWithToken token={currencyView} price={displayPrice} cssStyle={tw`w-5 h-5 ml-1`} />
           </div>
         ) : (
-          <Loader />
+          <> </>
         )}
       </td>
       <td tw="align-top text-center pt-[28px] w-[13%]">
@@ -377,7 +372,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
             />
           </div>
         ) : (
-          <Loader />
+          <> </>
         )}
       </td>
       <td tw="align-top text-center pt-[28px] w-[13%]">
@@ -393,7 +388,7 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
             </a>
           </>
         ) : (
-          <Loader />
+          <> </>
         )}
       </td>
       <td tw="align-top text-center pt-[28px] w-[13%]">
@@ -409,11 +404,11 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
             </a>
           </>
         ) : (
-          <Loader />
+          <> </>
         )}
       </td>
       <td tw="align-top text-center pt-[28px] w-[15%]">
-        {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <Loader />}
+        {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock)}</> : <> </>}
       </td>
     </tr>
   )

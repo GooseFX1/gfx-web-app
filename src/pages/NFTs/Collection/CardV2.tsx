@@ -11,7 +11,7 @@ import React, {
 } from 'react'
 import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { moneyFormatter, commafy, checkMobile } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
@@ -42,6 +42,7 @@ import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
+import { IAppParams } from '../../../types/app_params'
 //#region styles
 const DIVV = styled.div``
 type ICardV2 = {
@@ -56,7 +57,7 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connection } = useConnectionConfig()
-  const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts, likeDislike, nonSessionProfile } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const {
@@ -83,6 +84,21 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { profileNFTOptions } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
+  const params = useParams<IAppParams>()
+
+  const isSessionUser = useMemo(
+    () => (publicKey !== null ? params.userAddress === publicKey?.toBase58() : false),
+    [publicKey]
+  )
+  const currentUserProfile = useMemo(() => {
+    if (nonSessionProfile !== undefined && !isSessionUser) {
+      return nonSessionProfile
+    } else if (sessionUser !== null && isSessionUser) {
+      return sessionUser
+    } else {
+      return undefined
+    }
+  }, [isSessionUser, sessionUser, nonSessionProfile])
 
   enum MODAL_TARGET {
     DRAWER = 'drawer',
@@ -96,12 +112,14 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   )
 
   const isOwner: boolean = useMemo(() => {
-    const findAccount: undefined | ParsedAccount =
-      singleNFT && sessionUser !== null && sessionUserParsedAccounts.length > 0
-        ? sessionUserParsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
-        : undefined
-    return findAccount === undefined ? false : true
-  }, [sessionUser, sessionUserParsedAccounts])
+    if (!sessionUser || sessionUserParsedAccounts.length === 0 || !singleNFT) return false
+
+    const userAccountMints = new Set(sessionUserParsedAccounts.map((acct) => acct.mint))
+    const userHasAccount = userAccountMints.has(singleNFT.mint_address)
+
+    // this states while the nft is in operating state we shall not consider it as owner for loading reason
+    return userHasAccount
+  }, [sessionUser, sessionUserParsedAccounts, publicKey, localBids])
 
   useEffect(() => {
     if (nftDetails) {
@@ -141,6 +159,12 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
 
   const filterAndShow = useMemo(() => {
     if (profileNFTOptions === NFT_PROFILE_OPTIONS.ALL) return true
+    if (profileNFTOptions === NFT_PROFILE_OPTIONS.BID_PLACED) {
+      return localBids?.length ? (localBids[0].wallet_key === currentUserProfile.pubkey ? true : false) : false
+    }
+    if (profileNFTOptions === NFT_PROFILE_OPTIONS.BID_RECEIVED) {
+      return localBids?.length ? (localBids[0].wallet_key !== currentUserProfile.pubkey ? true : false) : false
+    }
     if (profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS) {
       return localBids?.length ? true : false
     }

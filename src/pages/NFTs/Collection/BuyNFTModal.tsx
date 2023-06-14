@@ -531,7 +531,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       const signature = await sendTransaction(tx, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
       setIsLoading(false)
       if (confirm.value.err === null) {
         sendNftTransactionLog(isBuyingNow ? 'SALE' : 'BID', signature)

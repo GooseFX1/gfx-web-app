@@ -132,7 +132,7 @@ const NFTStatsContainer = () => {
             <div tw="sm:text-[22px] font-bold flex items-center text-[25px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="sm:text-[22px] ml-3 font-bold max-w-[280px]">
+                  <div tw="sm:text-[22px] ml-3 font-bold max-w-[325px]">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
                     {collection && collection.is_verified ? (
                       <img

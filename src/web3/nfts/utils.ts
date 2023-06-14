@@ -125,8 +125,9 @@ export const signAndUpdateDetails = async (
 ): Promise<void> => {
   const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const createSignMessage = () =>
-    'Please sign a Solana transaction in order to verify your identity.' +
-    'Please note that NO SOL will be deducted from your wallet during this process. ' +
+    'Signing into GooseFX with your wallet \n\n' +
+    "Clicking 'Sign' or 'Approve' proves us that wallet is you \n\n" +
+    'Please note that NO SOL will be deducted from your wallet during this process. \n' +
     new Date().getTime()
 
   const storedToken = userCache?.jwtToken ? userCache?.jwtToken.split('.') : null
