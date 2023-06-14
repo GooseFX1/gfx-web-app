@@ -1,6 +1,7 @@
 import { ADDRESSES } from './web3'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { IFarmData } from './pages/Farm/CustomTableList'
+import tw from 'twin.macro'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -185,3 +186,96 @@ export const NQ_SOL_PRICE = 1
 export const LAMPORTS_PER_SOL = BigInt(1000000000)
 export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)
+
+export const TWIN_MACRO_ANIMATIONS = {
+  slideInBottom: tw`animate-slideInBottom`
+}
+interface StateMachine {
+  stateMachineName: string
+  inputs: {
+    theme: string
+    [key: string]: string
+  }
+}
+interface StateMachines {
+  [key: string]: StateMachine
+}
+export interface RiveAnimation {
+  src: string
+  stateMachines: StateMachines
+}
+export interface RiveAnimations {
+  [key: string]: RiveAnimation
+}
+export const RIVE_ANIMATION: RiveAnimations = {
+  aggregator: {
+    src: 'https://media.goosefx.io/webapp/nfts.riv',
+    stateMachines: {
+      'Aggregator Interactions': {
+        stateMachineName: 'Aggregator Interactions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  swap: {
+    src: 'https://media.goosefx.io/webapp/swap.riv',
+    stateMachines: {
+      'Swap Interactions': {
+        stateMachineName: 'Swap Interactions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  dex: {
+    src: 'https://media.goosefx.io/webapp/trade.riv',
+    stateMachines: {
+      'DEX Interactions': {
+        stateMachineName: 'DEX Interactions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  farm: {
+    src: 'https://media.goosefx.io/webapp/farm.riv',
+    stateMachines: {
+      'Farm Interactions': {
+        stateMachineName: 'Farm Interactions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  referrals: {
+    src: 'https://media.goosefx.io/webapp/referrals.riv',
+    stateMachines: {
+      Referrals: {
+        stateMachineName: 'Referrals',
+        inputs: {
+          theme: 'Theme'
+        }
+      }
+    }
+  },
+  rewards: {
+    src: 'https://media.goosefx.io/webapp/rewards.riv',
+    stateMachines: {
+      Rewards: {
+        stateMachineName: 'Rewards',
+        inputs: {
+          theme: 'Theme'
+        }
+      }
+    }
+  }
+}

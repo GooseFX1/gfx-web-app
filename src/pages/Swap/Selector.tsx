@@ -315,7 +315,7 @@ export const Selector: FC<{
             <TOKEN
               key={address}
               onClick={async () => {
-                if (tokenB.address === address) {
+                if (tokenB?.address === address) {
                   setTokenB(tokenA)
                 }
                 setTokenA({ address, decimals, symbol, name, logoURI })
@@ -367,7 +367,7 @@ export const Selector: FC<{
         <POPULAR_TK
           key={index}
           onClick={async () => {
-            if (tokenB.address === address) {
+            if (tokenB?.address === address) {
               setTokenB(tokenA)
             }
             setTokenA({ address, decimals, symbol, name, logoURI })

@@ -154,6 +154,14 @@ export const useAnimateButtonSlide = (
   index?: number,
   customCallback?: (index: number) => void
 ): ((index: number) => void) => {
+  useEffect(() => {
+    if (!slideRef.current || !buttonRefs.current.length) return
+    if (index !== undefined) {
+      handleSlide(index)
+    } else {
+      handleSlide(0)
+    }
+  }, [slideRef, buttonRefs, index])
   const handleSlide = useCallback(
     (index) => {
       if (!slideRef.current || !buttonRefs.current.length) {

@@ -16,6 +16,7 @@ import { checkMobile } from '../utils'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 import tw from 'twin.macro'
+import { useRive } from '@rive-app/react-canvas'
 
 const BRAND = styled.a`
   ${tw`absolute flex justify-center items-center text-lg 
@@ -150,6 +151,7 @@ export const MainNav: FC = () => {
         <BRAND href="/">
           <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
         </BRAND>
+        <RewardsButton />
         <AlignCenterDiv>
           <Connect />
           <ResponsiveDropdown logoAnimationTime={2} />

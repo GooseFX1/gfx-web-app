@@ -62,7 +62,7 @@ export function useConnectionConfig(): ISettingsConfig {
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
-  const devnetConnection = new Connection(`${process.env.REACT_APP_PERPS_RPC_URL}`, 'processed')
+  const devnetConnection = new Connection(`https://api.devnet.solana.com`, 'processed')
 
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
