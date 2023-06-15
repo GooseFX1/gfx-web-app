@@ -144,7 +144,7 @@ export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
     height: calc(100vh - 180px - ${navCollapsed ? '0px' : '80px'});
     ${tw`duration-500`}
     @media(max-width: 500px) {
-      /* height: auto; */
+      height: auto;
     }
     .flexContainer {
       ${tw`flex h-screen px-[12px] sm:px-0`}
@@ -190,7 +190,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItemRegular {
-    ${tw`w-full h-full p-[1px] sm:flex max-h-[400px] max-w-[300px]
+    ${tw`w-full h-full p-[1px] sm:flex max-h-[305px] max-w-[300px]
      sm:w-[175px] sm:h-[270px] sm:mt-1 rounded-[15px] mx-auto sm:ml-0.5 z-[0]`}
     background: ${({ theme }) => theme.borderForNFTCard};
   }
@@ -225,7 +225,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
     }
     .hoverButtons {
-      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[100%] py-[15px]`}
+      ${tw`h-[30px] absolute bottom-4 text-white flex items-center justify-center w-[100%] py-[15px]`}
     }
 
     .hoverNFT {

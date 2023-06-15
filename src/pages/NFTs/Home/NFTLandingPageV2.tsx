@@ -430,6 +430,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
       ) : (
         <img
           className={mediumSize ? 'userPopupProfilePic' : ''}
+          tw="h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0"
           src={`/img/assets/Aggregator/avatar-${mode}.svg`}
           alt="profile picture"
         />

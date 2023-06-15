@@ -81,7 +81,9 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
         <th>
           {TableHeaderTitle(
             'GFX Appraisal',
-            'The GFX Appraisal Value emphasizes executed sales data, not floor prices.',
+            'The appraisal engine uses machine learning and non-linear statistical models to generate' +
+              'real-time fair market  value prices for individual NFTs.' +
+              'These can help you determine what prices to buy or sell your NFTs.',
             false
           )}
         </th>

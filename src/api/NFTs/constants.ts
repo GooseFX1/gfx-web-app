@@ -3,7 +3,9 @@ export const NFT_API_BASE = 'nest-api'
 export enum NFT_PROFILE_OPTIONS {
   ALL = 'All',
   OFFERS = 'Offers',
-  ON_SALE = 'Listed'
+  ON_SALE = 'Listed',
+  BID_PLACED = 'Placed',
+  BID_RECEIVED = 'Received'
 }
 export enum TIMELINE {
   TWENTY_FOUR_H = '24H',
@@ -49,6 +51,7 @@ export enum NFT_API_ENDPOINTS {
   FIXED_PRICE = '/fixed-price',
   SINGLE_NFT = '/nft',
   NFTS_COLLECTION = '/nfts',
+  USER_BIDS = '/user/bids',
   SINGLE_ITEM = '/single-item',
   ALL_SINGLE_ITEM = '/all-single-items',
   BID = '/bid',
@@ -64,5 +67,6 @@ export enum NFT_API_ENDPOINTS {
   TENSOR_BUY = '/tensor/buy_tx',
   SAVE_TX = '/nft-aggregator/saveNftTx',
   TOKEN = '/user/token',
-  MAGIC_EDEN_BUY = '/magiceden/buy_tx'
+  MAGIC_EDEN_BUY = '/magiceden/buy_tx',
+  MAGIC_EDEN_LISTING = '/magiceden/listing'
 }

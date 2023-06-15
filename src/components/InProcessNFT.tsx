@@ -22,7 +22,7 @@ export const InProcessNFT: FC<{ text?: string }> = ({ text = '' }) => {
     <WRAPPER>
       <div
         className="backGround"
-        tw="  h-[calc(100% - 120px)] sm:h-[calc(100% - 100px)] w-full opacity-100  z-[1001] rounded-[15px]  absolute"
+        tw="  h-[calc(100% - 110px)] sm:h-[calc(100% - 100px)] w-full opacity-100  z-[1001] rounded-[15px]  absolute"
       ></div>
       <div tw="absolute z-[1004]  justify-center flex flex-col items-center  h-full w-full">
         <div tw=" absolute mt-[-80px] ml-[-15px] w-auto h-auto">

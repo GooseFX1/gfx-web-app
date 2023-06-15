@@ -134,16 +134,27 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
     return err
   }
 }
-export const fetchMyNFTByCollection = async (collectionId: string, mintAddresses: string[]): Promise<any> => {
-  if (!mintAddresses.length) return
+export const fetchUserNftsFromDb = async (mintAddresses: string[], collectionId?: string): Promise<any> => {
+  if (!mintAddresses.length) return null
   try {
     const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.NFTS_COLLECTION}`, {
-      collection_id: collectionId,
-      mint_addresses: mintAddresses
+      mint_addresses: mintAddresses,
+      collection_id: collectionId
     })
     return await res
   } catch (err) {
     return err
+  }
+}
+
+export const fetchBidsPlacedByUser = async (wallet: string): Promise<any> => {
+  if (!wallet.length) return
+  try {
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_BIDS}?user_wallet=${wallet}`)
+    return res.data
+  } catch (err) {
+    console.log(err)
+    throw err // Throw the error, let the calling function handle it
   }
 }
 
@@ -286,7 +297,8 @@ export const getMagicEdenBuyInstruction = async (
   ownerKey: string,
   mintAddress: string,
   tokenAta: string,
-  secretKey: string
+  secretKey: string,
+  sellerExpiry: string
 ): Promise<any> => {
   try {
     const token = jwt.sign(
@@ -298,12 +310,38 @@ export const getMagicEdenBuyInstruction = async (
         token_ata: tokenAta,
         owner: ownerKey,
         mint: mintAddress,
-        price: buyerPrice
+        price: buyerPrice,
+        seller_expiry: sellerExpiry
       },
       secretKey
     )
     const res = await httpClient(NFT_API_BASE).post(
       `${NFT_API_ENDPOINTS.MAGIC_EDEN_BUY}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res
+  } catch (error) {
+    return error
+  }
+}
+
+export const getMagicEdenListing = async (mintAddress: string, secretKey: string): Promise<any> => {
+  try {
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 5,
+        iat: Math.floor(Date.now() / 1000),
+        mint: mintAddress
+      },
+      secretKey
+    )
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.MAGIC_EDEN_LISTING}`,
       {},
       {
         headers: {

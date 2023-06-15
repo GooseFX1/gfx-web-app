@@ -14,6 +14,8 @@ import ActivityNFTSection from '../Collection/ActivityNFTSection'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
+import NFTDisplayV2 from './NFTDisplayV2'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 type Props = {
   isSessionUser: boolean
@@ -37,6 +39,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
   const { refreshClicked } = useNFTAggregator()
   const params = useParams<IAppParams>()
+  const { wallet } = useWallet()
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [noOfNFTs, setNumberOfNFTs] = useState<number>(0)
   const currentUserProfile = useMemo(() => {
     if (nonSessionProfile !== undefined && !isSessionUser) {
@@ -64,18 +68,28 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         order: 1,
         name: `Collection (${noOfNFTs})`,
         component: (
-          <NFTDisplay
+          <NFTDisplayV2
             parsedAccounts={currentUserParsedAccounts}
             type={'collected'}
             setNumberOfNFTs={setNumberOfNFTs}
           />
         )
       },
-      {
-        order: 2,
-        name: `Liked (0)`,
-        component: <NFTDisplay singleNFTs={[]} type={'favorited'} />
-      },
+      ...(pubKey
+        ? [
+            {
+              order: 2,
+              name: `Bids `,
+              component: (
+                <NFTDisplayV2
+                  parsedAccounts={currentUserParsedAccounts}
+                  setNumberOfNFTs={setNumberOfNFTs}
+                  type={'bids'}
+                />
+              )
+            }
+          ]
+        : []),
       {
         order: 3,
         name: 'Activity',
@@ -84,7 +98,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         )
       }
     ],
-    [currentUserParsedAccounts, favoritedItems, noOfNFTs, refreshClicked]
+    [currentUserParsedAccounts, favoritedItems, noOfNFTs, refreshClicked, pubKey]
   )
 
   useEffect(() => {
@@ -108,16 +122,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
 
     return null
   }, [currentUserProfile])
-
-  // useEffect(() => {
-  //   if (currentUserProfile && currentUserProfile.uuid) {
-  //     fetchUserActivity(currentUserProfile.uuid)
-  //   } else {
-  //     setUserActivity([])
-  //   }
-
-  //   return null
-  // }, [currentUserProfile, fetchUserActivity, setUserActivity])
 
   const fetchFavorites = async (userLikes: string[]) => {
     const favorites: ISingleNFT[] = await Promise.all(userLikes.map((nftUUID: string) => fetchNFTById(nftUUID)))

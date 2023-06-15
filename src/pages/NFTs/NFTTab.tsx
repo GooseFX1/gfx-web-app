@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactNode, FC, ReactElement, useState, useEffect } from 'react'
+import React, { ReactNode, FC, ReactElement, useState, useEffect, Dispatch, SetStateAction, useMemo } from 'react'
 import { Dropdown } from 'antd'
 import {
   DROPDOWN_CONTAINER,
@@ -16,6 +16,7 @@ import { SearchBar, TokenToggle, TokenToggleNFT } from '../../components'
 import { NFT_PROFILE_OPTIONS } from '../../api/NFTs'
 import { Arrow } from '../../components/common/Arrow'
 import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const NFT_TAB = styled.div``
 
@@ -35,6 +36,14 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
   const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
   const [displayIndex, setDisplayIndex] = useState<number>(0)
+  const { wallet } = useWallet()
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+
+  useEffect(() => {
+    ;(async () => {
+      await setDisplayIndex(0)
+    })()
+  }, [pubKey])
 
   return (
     <GRID_CONTAINER
@@ -54,8 +63,10 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
 
 const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayIndex }: any): ReactElement => {
   const { setCurrency } = useNFTAggregator()
-  const { setSearchInsideProfile } = useNFTAggregatorFilters()
+  const { setSearchInsideProfile, setProfileNFTOptions } = useNFTAggregatorFilters()
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
+  useEffect(() => setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL), [displayIndex])
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6">
@@ -68,10 +79,11 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
           />
 
-          {!checkMobile() && <ProfileNFTFiltersDropdown />}
+          {!checkMobile() && <ProfileNFTFiltersDropdown displayIndex={displayIndex} />}
           {checkMobile() && (
             <div tw="ml-2 items-center flex">
-              <TokenToggleNFT toggleToken={setCurrency} /> <ProfileNFTFiltersDropdown />
+              <TokenToggleNFT toggleToken={setCurrency} />{' '}
+              <ProfileNFTFiltersDropdown displayIndex={displayIndex} />
             </div>
           )}
         </>
@@ -87,15 +99,17 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           {collections}
           {!checkMobile() && <div className="activeItemProfile" />}
         </div>
-        <div
-          className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
-          onClick={() => setDisplayIndex(1)}
-        >
-          {favourited}
-        </div>
+        {wallet?.adapter?.publicKey && (
+          <div
+            className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
+            onClick={() => setDisplayIndex(1)}
+          >
+            {favourited}
+          </div>
+        )}
         <div
           className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}
-          onClick={() => setDisplayIndex(2)}
+          onClick={() => setDisplayIndex(wallet?.adapter?.publicKey ? 2 : 1)}
         >
           Activity
         </div>
@@ -106,7 +120,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   )
 }
 
-const ProfileNFTFiltersDropdown = () => {
+const ProfileNFTFiltersDropdown: FC<{ displayIndex: number }> = ({ displayIndex }) => {
   const { profileNFTOptions } = useNFTAggregatorFilters()
   const [arrow, setArrow] = useState<boolean>(false)
   return (
@@ -114,7 +128,7 @@ const ProfileNFTFiltersDropdown = () => {
       <Dropdown
         align={{ offset: [0, 16] }}
         destroyPopupOnHide
-        overlay={<ProfileNFTOptionsList setArrow={setArrow} />}
+        overlay={<ProfileNFTOptionsList setArrow={setArrow} displayIndex={displayIndex} />}
         placement="bottomRight"
         trigger={checkMobile() ? ['click'] : ['hover']}
       >
@@ -130,7 +144,10 @@ const ProfileNFTFiltersDropdown = () => {
     </div>
   )
 }
-const ProfileNFTOptionsList: FC<{ setArrow: any }> = ({ setArrow }) => {
+const ProfileNFTOptionsList: FC<{ setArrow: Dispatch<SetStateAction<boolean>>; displayIndex: number }> = ({
+  setArrow,
+  displayIndex
+}) => {
   const { profileNFTOptions, setProfileNFTOptions } = useNFTAggregatorFilters()
 
   useEffect(() => {
@@ -147,26 +164,59 @@ const ProfileNFTOptionsList: FC<{ setArrow: any }> = ({ setArrow }) => {
     <DROPDOWN_CONTAINER>
       <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.ALL)}>
         All
-        <input type={'radio'} checked={profileNFTOptions === NFT_PROFILE_OPTIONS.ALL} name="sort" value="asc" />
-      </div>
-      <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.OFFERS)}>
-        Offer
-        <input
-          checked={profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS}
-          type={'radio'}
-          name="sort"
-          value="desc"
-        />
-      </div>
-      <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.ON_SALE)}>
-        {NFT_PROFILE_OPTIONS.ON_SALE}
         <input
           type={'radio'}
-          checked={profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE}
+          onChange={() => handleClick(NFT_PROFILE_OPTIONS.ALL)}
+          checked={profileNFTOptions === NFT_PROFILE_OPTIONS.ALL}
           name="sort"
-          value="desc"
+          value="asc"
         />
       </div>
+      {displayIndex === 1 ? (
+        <>
+          <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.BID_PLACED)}>
+            Placed
+            <input
+              checked={profileNFTOptions === NFT_PROFILE_OPTIONS.BID_PLACED}
+              type={'radio'}
+              name="sort"
+              onChange={() => handleClick(NFT_PROFILE_OPTIONS.BID_PLACED)}
+              value="desc"
+            />
+          </div>
+          <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.BID_RECEIVED)}>
+            Received
+            <input
+              type={'radio'}
+              onChange={() => handleClick(NFT_PROFILE_OPTIONS.BID_RECEIVED)}
+              checked={profileNFTOptions === NFT_PROFILE_OPTIONS.BID_RECEIVED}
+              name="sort"
+              value="desc"
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.OFFERS)}>
+            Offer
+            <input
+              checked={profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS}
+              type={'radio'}
+              name="sort"
+              value="desc"
+            />
+          </div>
+          <div className="option" onClick={() => handleClick(NFT_PROFILE_OPTIONS.ON_SALE)}>
+            {NFT_PROFILE_OPTIONS.ON_SALE}
+            <input
+              type={'radio'}
+              checked={profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE}
+              name="sort"
+              value="desc"
+            />
+          </div>
+        </>
+      )}
     </DROPDOWN_CONTAINER>
   )
 }

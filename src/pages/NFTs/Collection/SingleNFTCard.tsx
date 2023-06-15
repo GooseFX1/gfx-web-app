@@ -38,7 +38,8 @@ export const SingleNFTCard: FC<{
   myItems?: boolean
   addNftToBag?: any
   lastCardRef?: any
-}> = ({ item, index, myItems = false, addNftToBag, lastCardRef }) => {
+  firstCardRef?: React.RefObject<HTMLElement | null> | null
+}> = ({ item, index, myItems = false, addNftToBag, lastCardRef, firstCardRef }) => {
   const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
@@ -75,10 +76,10 @@ export const SingleNFTCard: FC<{
   }, [sessionUser, sessionUserParsedAccounts, item, operatingNFT])
 
   const hideThisNFT: boolean = useMemo(() => {
-    if (myNFTsByCollection === null) return false
-    const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item.mint_address)
+    if (myNFTsByCollection === null || !item) return false
+    const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item?.mint_address)
     return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
-  }, [myNFTsByCollection, operatingNFT])
+  }, [myNFTsByCollection, operatingNFT, item])
 
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -276,7 +277,7 @@ export const SingleNFTCard: FC<{
         className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}
         key={index}
         onClick={() => goToDetails(item)}
-        ref={lastCardRef}
+        ref={firstCardRef ? firstCardRef : lastCardRef}
       >
         <div className={'gridItem'}>
           {handleLoading}
@@ -292,7 +293,7 @@ export const SingleNFTCard: FC<{
                   src={item?.image_url}
                   width={'100%'}
                   preview={false}
-                  fallback={`/img/assets/nft-preview-${mode}.svg`}
+                  onError={(e) => console.error(e)}
                   alt="NFT Preview"
                 />
                 {isOwner && localAsk !== null && (

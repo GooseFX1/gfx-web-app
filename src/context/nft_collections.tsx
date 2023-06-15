@@ -16,7 +16,7 @@ import {
   NFT_API_ENDPOINTS,
   fetchSingleCollectionBySalesType,
   fetchSingleCollectionAction,
-  fetchMyNFTByCollection
+  fetchUserNftsFromDb
 } from '../api/NFTs'
 import { LOADING_ARR } from '../utils'
 import { BaseNFT } from '../types/nft_details'
@@ -45,7 +45,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
     if (sessionUserParsedAccounts.length && singleCollection && publicKey) {
       ;(async () => {
         const mintAddresses: string[] = sessionUserParsedAccounts.map((acc) => acc.mint)
-        const myNFTs = await fetchMyNFTByCollection(singleCollection[0].uuid, mintAddresses)
+        const myNFTs = await fetchUserNftsFromDb(mintAddresses, singleCollection[0].uuid)
         setMyNFTsCollection(myNFTs.data)
       })()
     }
