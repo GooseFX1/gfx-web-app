@@ -182,14 +182,15 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
           Once the cooldown starts, the process cannot be undone, and you will need to re-stake your GOFX
         </p>
         <button
-          css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center font-semibold`}
+          css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
+          font-semibold`}
           onClick={onClose}
         >
           Cancel
         </button>
         <button
-          css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline dark:text-grey-5
-        text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px]
+          css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline
+          dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px]
         `}
           onClick={handleStakeConfirmation}
           disabled={!canUnstake}
