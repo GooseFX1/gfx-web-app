@@ -225,7 +225,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
     }
     .hoverButtons {
-      ${tw`h-[30px] absolute bottom-1 text-white flex items-center justify-center w-[100%] py-[15px]`}
+      ${tw`h-[30px] absolute bottom-4 text-white flex items-center justify-center w-[100%] py-[15px]`}
     }
 
     .hoverNFT {
