@@ -285,7 +285,7 @@ const SELECTOR = styled.div`
   }
 `
 const TAKEPROFITSELECTOR = styled.div`
-  ${tw`mb-5`}
+  ${tw`mb-5 `}
   > .active {
     ${tw`dark:bg-black-1 bg-grey-5 border-[1.5px] border-solid border-grey-2 dark:border-black-4 rounded-tiny`}
     > span {
