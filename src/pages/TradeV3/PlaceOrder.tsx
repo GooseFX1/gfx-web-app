@@ -52,7 +52,9 @@ const DROPDOWN_ITEMS = styled.div`
     ${tw`dark:bg-black-1 bg-grey-5`}
   }
   .span-selected {
-    ${tw`dark:text-white text-black`}
+    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 `
 
@@ -787,13 +789,13 @@ export const PlaceOrder: FC = () => {
           className={takeProfitIndex === index ? 'selected' : ''}
         >
           <span
-            tw="mr-2 font-semibold text-tiny dark:text-grey-2 text-grey-1"
+            tw="mr-2 font-semibold text-regular dark:text-grey-2 text-grey-1"
             className={takeProfitIndex === index ? 'span-selected' : ''}
           >
             {item.display}
           </span>
           <span
-            tw="font-semibold text-tiny mr-auto dark:text-grey-2 text-grey-1"
+            tw="font-semibold text-regular mr-auto dark:text-grey-2 text-grey-1"
             className={takeProfitIndex === index ? 'span-selected' : ''}
           >
             {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
@@ -1197,7 +1199,9 @@ const SELECTOR = styled.div`
     ${tw`dark:bg-black-1 bg-grey-5`}
     border: 1px solid ${({ theme }) => theme.borderForNFTCard};
     > span {
-      ${tw`dark:text-white text-black`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
   > div {

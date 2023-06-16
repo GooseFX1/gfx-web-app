@@ -280,7 +280,9 @@ const SELECTOR = styled.div`
     ${tw`dark:bg-black-1 bg-grey-5 border-[1.5px] border-solid border-grey-2 dark:border-black-4 rounded-tiny`}
 
     > span {
-      ${tw`dark:text-white text-black`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
 `
@@ -289,7 +291,9 @@ const TAKEPROFITSELECTOR = styled.div`
   > .active {
     ${tw`dark:bg-black-1 bg-grey-5 border-[1.5px] border-solid border-grey-2 dark:border-black-4 rounded-tiny`}
     > span {
-      ${tw`dark:text-white text-black`}
+      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
   > .selectorDropdown {

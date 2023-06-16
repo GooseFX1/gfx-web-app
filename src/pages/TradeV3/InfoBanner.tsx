@@ -12,6 +12,7 @@ import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { checkMobile } from '../../utils'
+import { Tooltip } from '../../components'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -30,32 +31,6 @@ const SETTING_MODAL = styled(PopupCustom)`
   }
   .ant-modal-body {
     ${tw`py-0 px-[25px]`}
-  }
-`
-const STYLED_POPUP = styled(PopupCustom)`
-  .ant-modal-header {
-    ${tw`dark:bg-black-2 bg-grey-5 rounded-t-bigger text-center`}
-    border-bottom: none;
-  }
-  .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-grey-5 rounded-bigger`}
-  }
-  .ant-modal-close-x {
-    > img {
-      ${tw`sm:!h-4 sm:!w-4 absolute bottom-2 opacity-60`}
-    }
-  }
-  .ant-modal-body {
-    ${tw`sm:p-[15px]`}
-  }
-  .wrapper {
-    .subText {
-      ${tw`font-semibold text-center text-regular dark:text-grey-2 mb-6 text-grey-1 sm:w-[292px] sm:text-[13px]`}
-    }
-    .learn-more {
-      ${tw`dark:text-grey-5 text-blue-1 font-semibold text-regular cursor-pointer text-center block mx-auto`}
-      text-decoration: underline;
-    }
   }
 `
 
@@ -111,6 +86,9 @@ const INFO_STATS = styled.div`
   }
   img {
     ${tw`m-1`}
+  }
+  .tooltipIcon {
+    ${tw`!m-0 !h-4 !w-4`}
   }
 `
 
@@ -201,19 +179,6 @@ const WRAPPER = styled.div`
   color: ${({ theme }) => theme.text7};
 `
 
-const Title = () => {
-  const { traderInfo } = useTraderConfig()
-  return (
-    <div>
-      <div tw="text-lg font-semibold dark:text-grey-5 text-black-4 my-3.75">Current Funding Rate</div>
-      {!traderInfo.fundingRate ? (
-        <Loader />
-      ) : (
-        <div tw="text-lg font-semibold text-red-2">{Number(traderInfo.fundingRate).toFixed(4)}%</div>
-      )}
-    </div>
-  )
-}
 const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
 const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
@@ -251,7 +216,6 @@ export const InfoBanner: FC<{
   const isGeoBlocked = useBlacklisted()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
-  const [showFundingRate, setShowFundingRate] = useState<boolean>(false)
   const { height, width } = useWindowSize()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
@@ -349,44 +313,6 @@ export const InfoBanner: FC<{
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      {showFundingRate && (
-        <STYLED_POPUP
-          height={checkMobile() ? '553px' : '530px'}
-          width={checkMobile() ? '354px' : '500px'}
-          title={<Title />}
-          $hideClose={true}
-          centered={true}
-          visible={showFundingRate}
-          onCancel={() => setShowFundingRate(false)}
-          footer={null}
-        >
-          <WRAPPER>
-            <div className="wrapper">
-              <img
-                src="/img/assets/FundingRateGraphic.svg"
-                alt="graphic"
-                height="171px"
-                width="250px"
-                tw="mx-auto block"
-              />
-              <div className="subText">
-                Funding rate is 1/24th the average hourly premium calculated every hour. If is positive, longs pay
-                shorts, If is negative, shorts pay longs.
-              </div>
-              <div className="subText">
-                At this rate, longs would receive 0.00107% and shorts would pay 0.00107% at the end of the hour.
-              </div>
-              <a
-                href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
-                className="learn-more"
-                target="_blank"
-              >
-                Learn More
-              </a>
-            </div>
-          </WRAPPER>
-        </STYLED_POPUP>
-      )}
       {
         <div className="spot-toggle">
           <span
@@ -475,16 +401,26 @@ export const InfoBanner: FC<{
           <>
             <div tw="flex flex-row">
               <div>1H Funding</div>
-              <img
-                src={`/img/assets/tooltip_${mode}_mode_icon.svg`}
-                alt="tooltip"
-                tw="!m-1 cursor-pointer !h-4 !w-4"
-                onClick={() => {
-                  setShowFundingRate(true)
-                }}
-              />
+              <Tooltip
+                placement="leftTop"
+                notInherit={true}
+                color={mode === 'dark' ? '#1c1c1c' : '#ffffff'}
+                overlayClassName={`funding-tooltip ${mode}`}
+              >
+                <div tw="font-medium text-tiny dark:text-grey-5 text-grey-1 mb-2">
+                  Funding rate is determined every hour. If funding is <span tw="text-green-1">positive</span>,
+                  longs pay shorts. If it's
+                  <span tw="text-red-2"> negative</span>, short positions pay longs.
+                </div>
+                <a
+                  href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
+                  tw="font-semibold text-regular dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
+                  target="_blank"
+                >
+                  Learn More
+                </a>
+              </Tooltip>
             </div>
-            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
       )}

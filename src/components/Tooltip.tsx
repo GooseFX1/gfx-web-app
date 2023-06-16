@@ -6,7 +6,7 @@ import { useDarkMode } from '../context'
 import { CenteredImg } from '../styles'
 import tw from 'twin.macro'
 
-const ICON = styled(CenteredImg)<{ notDoxxed?: boolean }>`
+const ICON = styled(CenteredImg)<{ notDoxxed?: boolean; className?: string }>`
   ${tw`sm:h-[20px] sm:w-[20px] sm:ml-1.5 ml-2 cursor-pointer`}
   ${({ theme, notDoxxed }) => !notDoxxed && theme.measurements(theme.margin(1.5))}
   .tooltipIcon {
@@ -30,7 +30,19 @@ export const Tooltip: FC<{
   notInherit?: boolean
   title?: string
   overlayClassName?: string
-}> = ({ dark, lite, placement = 'topLeft', color = '#4b4b4b', children, notInherit, infoIcon = true, title }) => {
+  className?: string
+}> = ({
+  dark,
+  lite,
+  placement = 'topLeft',
+  color = '#4b4b4b',
+  children,
+  notInherit,
+  infoIcon = true,
+  title,
+  overlayClassName,
+  className
+}) => {
   const { mode } = useDarkMode()
 
   const icon = `/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
@@ -47,9 +59,10 @@ export const Tooltip: FC<{
       }}
       placement={placement}
       title={<TEXT> {title ? title : children}</TEXT>}
+      overlayClassName={overlayClassName}
     >
       {infoIcon ? (
-        <ICON notDoxxed={!!notInherit}>
+        <ICON notDoxxed={!!notInherit} className={className}>
           <img className="tooltipIcon" src={icon} alt="tooltip" />
         </ICON>
       ) : (
