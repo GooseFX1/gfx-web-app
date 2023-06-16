@@ -133,7 +133,7 @@ const MODAL_TITLE = styled.div`
   }
 `
 
-const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
+const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
   const { getAskSymbolFromPair } = useCrypto()
 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
@@ -141,7 +141,7 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType }> = ({ pair, type 
   return (
     <div className="popular-tokens">
       <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
-      <div className="pair">{pair}</div>
+      <div className="pair">{display}</div>
     </div>
   )
 }
@@ -189,7 +189,7 @@ const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setSh
   )
 }
 
-const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) => {
+const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
   const { tokenInfo } = usePriceFeed()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
   const [hoverBorder, setHoverBorder] = useState<boolean>(false)
@@ -209,7 +209,7 @@ const PairComponents: FC<{ pair: string; type: MarketType }> = ({ pair, type }) 
         $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}
       >
         <img className="asset-icon" src={assetIcon} alt="" />
-        <div className="spacing">{pair}</div>
+        <div className="spacing">{display}</div>
         {changeValue !== ' ' ? <div className={classNameChange}>{changeValue}%</div> : <div />}
       </DROPDOWN_PAIR_DIV>
     </GRADIENT_BORDER>

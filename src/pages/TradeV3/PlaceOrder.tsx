@@ -48,17 +48,11 @@ const WRAPPER = styled.div`
 `
 
 const DROPDOWN_ITEMS = styled.div`
-  .item {
-    color: ${({ theme }) => theme.text11};
+  &.selected {
+    ${tw`dark:bg-black-1 bg-grey-5`}
   }
-  > input[type='radio'] {
-    ${tw`appearance-none absolute right-3 h-[15px] w-[15px] rounded-small cursor-pointer`}
-    background: ${({ theme }) => theme.bg22};
-  }
-  > input[type='radio']:checked:after {
-    ${tw`rounded-small w-[9px] h-[9px] relative top-[-2px] left-[3px] inline-block`}
-    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-    content: '';
+  .span-selected {
+    ${tw`dark:text-white text-black`}
   }
 `
 
@@ -87,14 +81,14 @@ const DROPDOWN_INPUT = styled.div`
 
 const DROPDOWN_SAVE = styled.div`
   &.save-disable {
-    ${tw`text-tiny text-grey-1 font-semibold cursor-not-allowed absolute bottom-[10px] right-[10px] z-[100]`}
+    ${tw`text-tiny text-grey-1 font-semibold cursor-not-allowed absolute bottom-[10px] right-[15px] z-[100]`}
     pointer-events: none;
   }
   &.save-enable.dark {
-    ${tw`text-tiny text-white font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
+    ${tw`text-tiny text-white font-semibold cursor-pointer absolute bottom-[10px] right-[15px] z-[100]`}
   }
   &.save-enable.lite {
-    ${tw`text-tiny text-blue-1 font-semibold cursor-pointer absolute bottom-[10px] right-[10px] z-[100]`}
+    ${tw`text-tiny text-blue-1 font-semibold cursor-pointer absolute bottom-[10px] right-[15px] z-[100]`}
   }
 `
 
@@ -128,8 +122,8 @@ const HEADER = styled.div`
       color: #636363;
       background-color: #3c3c3c;
       &.selected {
-        background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-        padding: 2px;
+        //background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+        //padding: 2px;
         color: ${({ theme }) => theme.text1};
       }
       .holder {
@@ -143,8 +137,13 @@ const HEADER = styled.div`
         background: ${({ theme }) => theme.bg2};
         ${tw`flex justify-center items-center`}
       }
-      .active {
-        background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+      .active.buy {
+        background: rgba(128, 206, 0, 0.35);
+        border: 1px solid #80ce00;
+      }
+      .active.sell {
+        background: rgba(243, 83, 85, 0.35);
+        border: 1px solid #f35355;
       }
       .inactive {
         border: 1px solid ${({ theme }) => theme.tokenBorder};
@@ -782,20 +781,23 @@ export const PlaceOrder: FC = () => {
     let items = []
     items = TAKE_PROFIT_ARRAY.map((item, index) => {
       const html = (
-        <DROPDOWN_ITEMS tw="mb-2 flex flex-row px-[5px]" onClick={() => calcTakeProfit(item.value, index)}>
-          <span className="item" tw="mr-2 font-semibold text-tiny text-grey-5">
+        <DROPDOWN_ITEMS
+          tw="mb-1 flex flex-row p-[5px] w-[90%] mx-auto rounded-[3px]"
+          onClick={() => calcTakeProfit(item.value, index)}
+          className={takeProfitIndex === index ? 'selected' : ''}
+        >
+          <span
+            tw="mr-2 font-semibold text-tiny dark:text-grey-2 text-grey-1"
+            className={takeProfitIndex === index ? 'span-selected' : ''}
+          >
             {item.display}
           </span>
-          <span tw="font-semibold text-tiny mr-auto text-green-3">
+          <span
+            tw="font-semibold text-tiny mr-auto dark:text-grey-2 text-grey-1"
+            className={takeProfitIndex === index ? 'span-selected' : ''}
+          >
             {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
           </span>
-          <input
-            type="radio"
-            name="take-profit"
-            value={item.value}
-            checked={takeProfitIndex === index}
-            onChange={() => calcTakeProfit(item.value, index)}
-          />
         </DROPDOWN_ITEMS>
       )
       return {
@@ -954,7 +956,7 @@ export const PlaceOrder: FC = () => {
                 <div>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
-                  offset={[-120, 15]}
+                  offset={[-115, 10]}
                   onVisibleChange={() => {
                     setDropdownVisible(true)
                   }}
@@ -968,6 +970,7 @@ export const PlaceOrder: FC = () => {
                   }
                   visible={dropdownVisible}
                   measurements="13px !important"
+                  overlayClassName={mode}
                 />
               </div>
             </INPUT_WRAPPER>
@@ -1185,25 +1188,23 @@ export const PlaceOrder: FC = () => {
 }
 
 const SELECTOR = styled.div`
-  ${tw`w-[150px] h-16 rounded-tiny pt-2 pb-3 pl-2.5 relative`}
-  background: ${({ theme }) => theme.bg27};
+  ${tw`w-[150px] h-[60px] rounded-tiny py-1 dark:bg-black-2 bg-white`}
+  border: 1px solid ${({ theme }) => theme.text4};
   .selectorDropdown {
     ${tw`cursor-pointer`}
   }
-  > div {
-    ${tw`flex items-center mb-2`}
+  .selected {
+    ${tw`dark:bg-black-1 bg-grey-5`}
+    border: 1px solid ${({ theme }) => theme.borderForNFTCard};
     > span {
-      ${tw`text-regular font-semibold`}
-      color: ${({ theme }) => theme.text4};
+      ${tw`dark:text-white text-black`}
     }
-    > input[type='radio'] {
-      ${tw`appearance-none absolute right-3 h-[15px] w-[15px] rounded-small cursor-pointer`}
-      background: ${({ theme }) => theme.bg23};
-    }
-    > input[type='radio']:checked:after {
-      ${tw`rounded-small w-[9px] h-[9px] relative top-[-4px] left-[3px] inline-block`}
-      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-      content: '';
+  }
+  > div {
+    ${tw`flex items-center mb-1 w-11/12 mx-auto h-[22px] p-[5px]`}
+    border: 1px solid ${({ theme }) => theme.bg20};
+    > span {
+      ${tw`text-regular font-semibold text-grey-1`}
     }
   }
 `
@@ -1224,15 +1225,12 @@ const Overlay: FC<{
   return (
     <SELECTOR>
       {AVAILABLE_ORDERS.filter(({ side: x }) => x === side).map((item, index) => (
-        <div key={index} onClick={() => handleChange(item.display)} className="selectorDropdown">
+        <div
+          key={index}
+          onClick={() => handleChange(item.display)}
+          className={order.display === item.display ? 'selected selectorDropdown' : 'selectorDropdown'}
+        >
           <span>{item.text}</span>
-          <input
-            type="radio"
-            name="market"
-            value={item.display}
-            checked={order.display === item.display}
-            onChange={() => handleChange(item.display)}
-          />
         </div>
       ))}
     </SELECTOR>

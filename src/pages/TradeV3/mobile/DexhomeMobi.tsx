@@ -10,13 +10,13 @@ const WRAPPER = styled.div<{ isSpot: boolean }>`
   height: calc(100vh - 100px);
 
   .ant-drawer-body {
-    ${tw`pt-[18px] pb-0`}
+    ${tw`pt-[18px] pb-0 px-[5px]`}
   }
   .ant-drawer-content-wrapper {
     ${tw`rounded-tl-half rounded-tr-half`}
   }
   .ant-drawer-content {
-    ${tw`rounded-tl-half rounded-tr-half dark:bg-black-2 bg-grey-5`}
+    ${tw`rounded-tl-half rounded-tr-half dark:bg-black-2 bg-white`}
   }
   .user-profile-drawer {
     .ant-drawer-body {

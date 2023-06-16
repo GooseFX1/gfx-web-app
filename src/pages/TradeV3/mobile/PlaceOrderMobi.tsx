@@ -48,8 +48,8 @@ const WRAPPER = styled.div`
       border-radius: 32px;
       margin-right: 5px;
       &.selected {
-        background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-        padding: 2px;
+        // background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+        // padding: 2px;
         color: ${({ theme }) => theme.text1};
       }
       .holder {
@@ -65,8 +65,13 @@ const WRAPPER = styled.div`
         border-radius: 32px;
         ${tw`flex justify-center items-center`}
       }
-      .active {
-        background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+      .active.buy {
+        background: rgba(128, 206, 0, 0.35);
+        border: 1px solid #80ce00;
+      }
+      .active.sell {
+        background: rgba(243, 83, 85, 0.35);
+        border: 1px solid #f35355;
       }
       .inactive {
         border: 1px solid ${({ theme }) => theme.tokenBorder};
@@ -266,40 +271,29 @@ const PLACE_ORDER_BUTTON = styled.button<{
 
 const SELECTOR = styled.div`
   > .selectorDropdown {
-    ${tw`mb-7 ml-[75px]`}
+    ${tw`mb-4 text-center py-[5px]`}
     > span {
-      ${tw`dark:text-white text-grey-1 text-average font-semibold`}
+      ${tw`text-grey-1 text-average font-semibold`}
     }
-    > input[type='radio'] {
-      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] dark:bg-black-1 
-        bg-grey-4 rounded-circle cursor-pointer`}
-    }
-    > input[type='radio']:checked:after {
-      ${tw`rounded-circle w-[18px] h-[18px] relative top-1.5 left-1.5 inline-block`}
-      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-      content: '';
+  }
+  > .active {
+    ${tw`dark:bg-black-1 bg-grey-5 border-[1.5px] border-solid border-grey-2 dark:border-black-4 rounded-tiny`}
+
+    > span {
+      ${tw`dark:text-white text-black`}
     }
   }
 `
 const TAKEPROFITSELECTOR = styled.div`
-  ${tw`flex flex-row mb-6 mx-10`}
+  ${tw`mb-5`}
   > .active {
-    ${tw`rounded-half`}
-    background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
+    ${tw`dark:bg-black-1 bg-grey-5 border-[1.5px] border-solid border-grey-2 dark:border-black-4 rounded-tiny`}
     > span {
-      ${tw`text-white`}
+      ${tw`dark:text-white text-black`}
     }
   }
   > .selectorDropdown {
-    ${tw`w-1/4 text-center flex flex-row justify-center items-center h-10`}
-    > input[type='radio'] {
-      ${tw`appearance-none absolute right-[80px] h-[30px] w-[30px] bg-black-1 rounded-circle`}
-    }
-    > input[type='radio']:checked:after {
-      ${tw`rounded-circle w-[24px] h-[24px] relative top-[3px] left-[3px] inline-block`}
-      background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
-      content: '';
-    }
+    ${tw`w-[90%] text-center flex flex-row justify-center items-center h-10 mx-auto font-semibold text-average text-grey-1`}
   }
   .green {
     ${tw`text-green-3`}
@@ -354,7 +348,7 @@ const TAKEPROFITWRAPPER = styled.div`
     border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   }
   .selected-val {
-    ${tw`text-center mb-7`}
+    ${tw`text-center mb-3`}
     > span {
       ${tw`dark:text-grey-5 text-black-4 text-average font-semibold`}
     }
@@ -784,15 +778,12 @@ export const PlaceOrderMobi = () => {
           />
           <SELECTOR>
             {AVAILABLE_ORDERS.filter(({ side: x }) => x === order.side).map((item, index) => (
-              <div key={index} onClick={() => handleChange(item.display)} className="selectorDropdown">
+              <div
+                key={index}
+                className={item.display === order.display ? 'active selectorDropdown' : 'selectorDropdown'}
+                onClick={() => handleChange(item.display)}
+              >
                 <span>{item.text}</span>
-                <input
-                  type="radio"
-                  name="market"
-                  value={item.display}
-                  checked={order.display === item.display}
-                  onChange={() => handleChange(item.display)}
-                />
               </div>
             ))}
           </SELECTOR>
@@ -806,7 +797,7 @@ export const PlaceOrderMobi = () => {
           key="bottom"
           open={true}
           getContainer={elem}
-          height="276px"
+          height="371px"
           className="takep-stopl-container"
         >
           <HEADER>
