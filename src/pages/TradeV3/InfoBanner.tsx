@@ -402,7 +402,7 @@ export const InfoBanner: FC<{
             <div tw="flex flex-row">
               <div>1H Funding</div>
               <Tooltip
-                placement="leftTop"
+                placement="rightTop"
                 notInherit={true}
                 color={mode === 'dark' ? '#1c1c1c' : '#ffffff'}
                 overlayClassName={`funding-tooltip ${mode}`}
@@ -421,6 +421,7 @@ export const InfoBanner: FC<{
                 </a>
               </Tooltip>
             </div>
+            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
       )}
