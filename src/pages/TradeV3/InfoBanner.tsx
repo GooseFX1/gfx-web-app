@@ -11,6 +11,8 @@ import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
+import { checkMobile } from '../../utils'
+import { Tooltip } from '../../components'
 
 const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -84,6 +86,9 @@ const INFO_STATS = styled.div`
   }
   img {
     ${tw`m-1`}
+  }
+  .tooltipIcon {
+    ${tw`!m-0 !h-4 !w-4`}
   }
 `
 
@@ -167,6 +172,11 @@ const HEADER = styled.div`
   img {
     ${tw`ml-auto h-10 w-10 cursor-pointer mr-[50px]`}
   }
+`
+
+const WRAPPER = styled.div`
+  ${tw`flex items-center justify-center`}
+  color: ${({ theme }) => theme.text7};
 `
 
 const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
@@ -333,12 +343,12 @@ export const InfoBanner: FC<{
               </div>
             </>
           </INFO_STATS>
-          <INFO_STATS>
+          {/* <INFO_STATS>
             <>
               <div>24H Volume</div>
               {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
             </>
-          </INFO_STATS>
+          </INFO_STATS> */}
         </>
       }
 
@@ -389,7 +399,28 @@ export const InfoBanner: FC<{
       {!isSpot && (
         <INFO_STATS>
           <>
-            <div>1H Funding</div>
+            <div tw="flex flex-row">
+              <div>1H Funding</div>
+              <Tooltip
+                placement="rightTop"
+                notInherit={true}
+                color={mode === 'dark' ? '#1c1c1c' : '#ffffff'}
+                overlayClassName={`funding-tooltip ${mode}`}
+              >
+                <div tw="font-medium text-tiny dark:text-grey-5 text-grey-1 mb-2">
+                  Funding rate is determined every hour. If funding is <span tw="text-green-1">positive</span>,
+                  longs pay shorts. If it's
+                  <span tw="text-red-2"> negative</span>, short positions pay longs.
+                </div>
+                <a
+                  href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
+                  tw="font-semibold text-regular dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
+                  target="_blank"
+                >
+                  Learn More
+                </a>
+              </Tooltip>
+            </div>
             {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
