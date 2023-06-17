@@ -346,6 +346,11 @@
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "referralKey",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -672,6 +677,11 @@
       "accounts": [
         {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bubdyLinkProgram",
           "isMut": false,
           "isSigner": false
         },
@@ -1278,6 +1288,22 @@
                 },
                 64
               ]
+            }
+          },
+          {
+            "name": "totalTradedVolume",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "referral",
+            "type": "publicKey"
+          },
+          {
+            "name": "pendingRewardBalance",
+            "type": {
+              "defined": "Fractional"
             }
           }
         ]

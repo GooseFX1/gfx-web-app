@@ -1,8 +1,8 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 import { GfxStakeRewards, GOFXVault, StakePool, UnstakeableTicket, UserMetadata } from 'goosefx-stake-rewards-sdk'
 import { useConnectionConfig } from '../context'
-import { Connection, Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { notify } from '../utils'
 import styled from 'styled-components'
 import { Col, Row } from 'antd'
@@ -61,7 +61,7 @@ const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicK
 export default function useRewards(): IUseRewards {
   const [rewards, dispatch] = useReducer(reducer, initialState)
   const walletContext = useWallet()
-  const { network, connection, devnetConnection } = useConnectionConfig()
+  const { network, connection } = useConnectionConfig()
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards | null>(null)
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function useRewards(): IUseRewards {
       .catch((err) => {
         console.warn('fetch-all-reward-data-failed', err)
       })
-  }, [walletContext, connection, network, devnetConnection])
+  }, [walletContext, connection, network])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       const userMetadata: UserMetadata | null = await stakeRewards

@@ -434,6 +434,7 @@ export const buildTransaction = async (
   instructions: TransactionInstruction[],
   signers: Keypair[]
 ): Promise<Transaction> => {
+  if (!instructions.length) return null
   const commitment: Commitment = 'processed'
   const transaction = new Transaction().add(...instructions)
   transaction.recentBlockhash = (await connection.getLatestBlockhash(commitment)).blockhash
@@ -473,7 +474,7 @@ export const sendPerpsTransactions = async (
       description: string
     }
   }
-): Promise<{ txIds: string[]; slots: number[] }> => {
+): Promise<{ txid: string; slot: number }[]> => {
   const commitment: Commitment = 'processed',
     awaitConfirmation = true
   if (!wallet.publicKey) throw new WalletNotConnectedError()
@@ -507,10 +508,12 @@ export const sendPerpsTransactions = async (
     sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
   }
 
-  const txIds = await Promise.all(sentTxs)
-  const slots: number[] = new Array(txIds.length).fill(0)
+  const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
+    txid: id,
+    slot: 0
+  }))
 
-  for (const [key, txid] of txIds.entries()) {
+  for (const [key, response] of ixResponse.entries()) {
     if (awaitConfirmation) {
       if (messages && messages.progressMessage) {
         perpsNotify({
@@ -524,7 +527,7 @@ export const sendPerpsTransactions = async (
       let confirmation = null
       if (messages && messages.errorMessage) {
         confirmation = await awaitTransactionSignatureConfirmation(
-          txid,
+          response.txid,
           DEFAULT_TIMEOUT,
           connection,
           commitment,
@@ -532,7 +535,12 @@ export const sendPerpsTransactions = async (
           { ...messages.errorMessage, key }
         )
       } else {
-        confirmation = await awaitTransactionSignatureConfirmation(txid, DEFAULT_TIMEOUT, connection, commitment)
+        confirmation = await awaitTransactionSignatureConfirmation(
+          response.txid,
+          DEFAULT_TIMEOUT,
+          connection,
+          commitment
+        )
       }
 
       if (!confirmation) {
@@ -546,10 +554,13 @@ export const sendPerpsTransactions = async (
         })
         throw new Error('Timed out awaiting confirmation on transaction')
       }
-      slots[key] = confirmation?.slot || 0
+      ixResponse[key] = {
+        ...ixResponse[key],
+        slot: confirmation?.slot || 0
+      }
 
       if (confirmation?.err) {
-        const errors = await getErrorForTransaction(connection, txid)
+        const errors = await getErrorForTransaction(connection, response.txid)
 
         console.log(errors)
         if (messages && messages.errorMessage) {
@@ -561,7 +572,7 @@ export const sendPerpsTransactions = async (
             styles: {}
           })
         }
-        throw new Error(`Raw transaction ${txid} failed`)
+        throw new Error(`Raw transaction ${response.txid} failed`)
       }
     }
   }
@@ -575,7 +586,8 @@ export const sendPerpsTransactions = async (
       styles: {}
     })
   }
-  return { txIds, slots }
+
+  return ixResponse
 }
 
 export const sendTransactionWithRetry = async (

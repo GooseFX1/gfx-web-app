@@ -14,7 +14,7 @@ import { Input, InputRef } from 'antd'
 import { Tooltip } from './Tooltip'
 import useRewards from '../hooks/useRewards'
 import { ADDRESSES } from '../web3'
-import { Connection, PublicKey, TokenAmount } from '@solana/web3.js'
+import { TokenAmount } from '@solana/web3.js'
 import { clamp, nFormatter } from '../utils'
 import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
@@ -27,8 +27,9 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk'
 import useReferrals from '../hooks/useReferrals'
 import { Treasury } from '@ladderlabs/buddy-sdk'
-import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { Transaction } from '@solana/web3.js'
+import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 
 // const REWARD_INFO_TEXT = styled.div`
 //   ${tw`py-8 px-10`}
@@ -745,10 +746,11 @@ const BuddyLinkReferral: FC = () => {
   const [isReferralNameTaken, setIsReferralNameTaken] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [isCopied, setIsCopied] = useState(false)
-  const copyTimeoutRef = useRef<NodeJS.Timeout>(null)
-  const copyRef = useRef<HTMLParagraphElement>(null)
   const [name, setName] = useState('')
-  const { getName, isReady } = useReferrals()
+  const [riskGroup, setRiskGroup] = useState(null)
+  const { createRandomBuddy, getName, isReady } = useReferrals()
+  const wallet = useWallet()
+  const { connection } = useConnectionConfig()
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
   const onSave = useCallback(() => {
     //TODO: connect buddly link - get result from buddy link
@@ -757,25 +759,60 @@ const BuddyLinkReferral: FC = () => {
     setTimeout(() => setIsReferralNameTaken(false), 2000)
   }, [])
 
+  useMemo(() => {
+    if (connection && wallet.publicKey)
+      getTraderRiskGroupAccount(wallet, connection).then((result) => {
+        setRiskGroup(result)
+      })
+  }, [connection, wallet])
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(referLink)
+    // if (!copyRef.current) {
+    //   return
+    // }
+    // copyRef.current.innerText = 'Copied!'
+    setIsCopied(true)
+    setTimeout(() => {
+      // if (!copyRef.current) {
+      //   return
+      // }
+
+      setIsCopied(false)
+      // copyRef.current.innerText = 'Copy'
+    }, 5000)
+  }, [referLink])
+
+  const handleCreateBuddy = useCallback(async () => {
+    if (isReady) {
+      try {
+        const transaction = new Transaction()
+
+        // No referrer here because we can't attach it to the TraderRiskGroup
+        transaction.add(...(await createRandomBuddy('')))
+
+        await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection))
+        setName((await getName()) || '')
+      } catch (e) {
+        console.log(e)
+        //TODO: handle error state
+      }
+
+      // TODO: handle ui success state
+    }
+  }, [isReady, connection])
+
   const handleName = useCallback(async () => {
-    if (isReady) setName(await getName())
+    if (isReady) setName((await getName()) || '')
   }, [isReady])
 
   useEffect(() => {
     if (isReady) handleName()
   }, [isReady])
-  const copyToClipboard = useCallback(() => {
-    navigator.clipboard.writeText(referLink)
-    if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
-    setIsCopied(true)
-    copyTimeoutRef.current = setTimeout(() => {
-      setIsCopied(false)
-    }, 5000)
-  }, [referLink, copyRef])
   const handleChange = useCallback((e: BaseSyntheticEvent) => {
     setInputValue(e.target.value)
   }, [])
   console.log(isReferralNameTaken)
+
   return (
     <div
       onClick={copyToClipboard}
@@ -804,8 +841,8 @@ const BuddyLinkReferral: FC = () => {
         type={'text'}
         placeholder={'choose your link'}
         onChange={handleChange}
-        value={inputValue}
-        disabled={Boolean(referLink)}
+        value={name || inputValue}
+        disabled={Boolean(name)}
       />
       <button
         css={[
@@ -821,6 +858,15 @@ const BuddyLinkReferral: FC = () => {
       >
         {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
       </button>
+      {/* TODO: style according to design */}
+      {!name && riskGroup ? (
+        <button
+          css={tw`max-w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0  mt-11`}
+          onClick={() => handleCreateBuddy()}
+        >
+          Generate a referral link
+        </button>
+      ) : null}
     </div>
   )
 }
@@ -828,13 +874,14 @@ const ReferAndEarn: FC = () => {
   const handleQuestions = useCallback(() => {
     console.log('DO SOMETHING HERE')
   }, [])
+
   return (
     <div css={tw`flex flex-col gap-4 font-semibold mb-[25px]`}>
       <BuddyLinkReferral />
       <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1`}>
         <p css={tw`mb-0 text-sm text-grey-1 font-semibold `}>Still have questions?</p>
         <p css={tw`mb-0 text-sm text-grey-1 font-semibold`}>
-          Goto our
+          Go to our
           <span
             onClick={handleQuestions}
             css={tw`ml-1 underline text-sm text-blue-1 dark:text-grey-5 cursor-pointer font-semibold
@@ -1068,31 +1115,39 @@ const ReferAndEarnRedirect: FC = () => {
   const breakpoints = useBreakPoint()
   const tokenEarned = 'USDC'
   const totalInProgress = 0.0
-  const { claim, getTreasury, isReady, getReferred } = useReferrals()
+  const { claim, getTreasury, isReady } = useReferrals()
   const { sendTransaction } = useWallet()
   const [treasury, setTreasury] = useState<Treasury | null>(null)
   const [totalEarned, setTotalEarned] = useState(0.0)
-  const [totalFriends, setTotalFriends] = useState(0)
-  const { connection } = useConnection()
+  const { connection } = useConnectionConfig()
 
   const handleClaim = useCallback(async () => {
-    if (treasury) {
-      const transaction = new Transaction()
-      transaction.add(...(await claim()))
+    if (treasury && isReady && totalEarned) {
+      try {
+        const transaction = new Transaction()
+        transaction.add(...(await claim()))
 
-      await sendTransaction(transaction, connection)
+        await sendTransaction(transaction, connection)
+        setTreasury(await treasury.refresh())
+      } catch (e) {
+        //TODO: handle error state
+      }
 
       // TODO: handle ui success state
     }
-  }, [treasury])
+  }, [treasury, isReady, totalEarned, connection])
 
   useEffect(() => {
+    const USDC_DECIMALS = 6 //TODO: change once we allow more spl rewards
     if (isReady)
       getTreasury().then(async (newTreasury) => {
-        setTreasury(newTreasury)
-        setTotalEarned(await newTreasury.getClaimableBalance())
-        const referredMembers = await getReferred() // Use this list to show members
-        setTotalFriends(referredMembers.length)
+        if (newTreasury) {
+          setTreasury(newTreasury)
+          setTotalEarned((await newTreasury.getClaimableBalance()) / Math.pow(10, USDC_DECIMALS))
+        } else {
+          setTreasury(null)
+          setTotalEarned(0)
+        }
       })
   }, [isReady])
 
@@ -1115,13 +1170,27 @@ const ReferAndEarnRedirect: FC = () => {
         onClick={() => handleClaim()}
         disabled={totalInProgress <= 0.0}
       >
-        {totalInProgress > 0.0 ? `Claim ${totalInProgress.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
+        {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
       </button>
     </div>
   )
 }
 const ReferFriendSegment = () => {
-  const totalFriends = 5
+  const [totalFriends, setTotalFriends] = useState(0)
+  const { getTreasury, isReady, getReferred } = useReferrals()
+
+  useEffect(() => {
+    if (isReady)
+      getTreasury().then(async (newTreasury) => {
+        if (newTreasury) {
+          const referredMembers = await getReferred() // Use this list to show members
+          setTotalFriends(referredMembers.length)
+        } else {
+          setTotalFriends(0)
+        }
+      })
+  }, [isReady])
+
   return (
     <div css={tw`flex flex-col items-center justify-center w-full`}>
       <p css={tw`mb-0 text-lg font-semibold font-semibold `}>Total Referred: {totalFriends} Friends</p>
@@ -1132,7 +1201,7 @@ const ReferFriendSegment = () => {
         css={[
           tw`mb-[30px] min-md:mb-0 text-[20px] leading-[30px] underline font-semibold min-md:dark:text-grey-5
         min-md:text-grey-5 dark:text-grey-1 text-grey-2 mt-[30px] min-md:mt-0 cursor-not-allowed`,
-          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw``
+          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw`opacity-50`
         ]}
       >
         {totalFriends > 0 ? 'See All Referrals' : 'No Referrals'}
