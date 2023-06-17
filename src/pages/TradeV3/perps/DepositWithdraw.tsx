@@ -189,6 +189,7 @@ export const DepositWithdraw: FC<{
     try {
       const answer = convertToFractional(amount)
       const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
+
       if (response && response.txid) setDepositWithdrawModal(false)
     } catch (e) {
       console.log(e)
