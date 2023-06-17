@@ -1,30 +1,35 @@
-import { useConnection, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Client, Member, Treasury } from '@ladderlabs/buddy-sdk'
 import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { useConnectionConfig } from '../context'
 
 // TODO: move to proper constant file?
 const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
-
 const CLIENT_NOT_SET = 'Client is not initialized'
-
 const ORGANIZATION_NAME = 'goose'
 
 export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
   const { publicKey } = useWallet()
-  const { connection } = useConnection()
+  const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    if (connection && publicKey) setClient(new Client(connection, publicKey))
+    if (connection && publicKey) {
+      const client = new Client(connection, publicKey)
+
+      setClient(client)
+    }
   }, [connection, publicKey])
 
   const getMember = useCallback(async () => {
-    if (client) throw CLIENT_NOT_SET
+    if (!client) throw CLIENT_NOT_SET
 
     if (member) return member
-    const treasuryPDA = client.pda.getTreasuryPDA([publicKey], [10_000], USDC_MINT)
+    const buddyProfile = await client.buddy.getProfile(publicKey)
+    if (!buddyProfile) return null
+    const treasuryPDA = client.pda.getTreasuryPDA([buddyProfile.account.pda], [10_000], USDC_MINT)
 
     // Assumes always only 1 members
     const account = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
@@ -35,36 +40,47 @@ export default function useReferrals(): IReferrals {
   }, [client])
 
   const getName = useCallback(async () => {
-    if (client) throw CLIENT_NOT_SET
+    if (!client) throw CLIENT_NOT_SET
+    const member = await getMember()
 
-    return (await getMember()).account.name
+    return member?.account?.name
   }, [client])
 
   const isNameAvailable = useCallback(
     async (name: string) => {
-      if (client) throw CLIENT_NOT_SET
+      if (!client) throw CLIENT_NOT_SET
       return client.member.isMemberAvailable(ORGANIZATION_NAME, name)
     },
     [client]
   )
 
   const getTreasury = useCallback(async () => {
-    if (client) throw CLIENT_NOT_SET
+    if (!client) throw CLIENT_NOT_SET
 
-    return await (await getMember()).getOwner()
+    return (await (await getMember())?.getOwner()) || null
   }, [client])
 
   const claim = useCallback(async () => {
-    if (client) throw CLIENT_NOT_SET
+    if (!client) throw CLIENT_NOT_SET
 
     const treasury = await getTreasury()
+
     return treasury.claim()
-  }, [])
+  }, [client])
+
+  const createRandomBuddy = useCallback(
+    async (referrer: string) => {
+      if (!client) throw CLIENT_NOT_SET
+
+      return (await createRandom(connection, publicKey, referrer)).instructions
+    },
+    [client]
+  )
 
   const getReferred = useCallback(async () => {
     const treasury = await getTreasury()
 
-    return await client.member.getByTreasuryReferrer(treasury.account.pda)
+    return treasury ? await client.member.getByTreasuryReferrer(treasury.account.pda) : null
   }, [])
 
   return {
@@ -75,6 +91,7 @@ export default function useReferrals(): IReferrals {
     isNameAvailable,
     getTreasury,
     claim,
+    createRandomBuddy,
     referrer: localStorage.getItem('referrer')
   }
 }
@@ -87,6 +104,7 @@ interface IReferrals {
   isNameAvailable: (name: string) => Promise<boolean>
   getTreasury: () => Promise<Treasury>
   claim: () => Promise<TransactionInstruction[]>
+  createRandomBuddy: (referrer: string) => Promise<TransactionInstruction[]>
   referrer: string
 }
 
@@ -107,29 +125,62 @@ export async function createRandom(
   referrer: string
 ): Promise<{ instructions: TransactionInstruction[]; memberPDA: PublicKey }> {
   const client = new Client(connection, wallet)
-  const name = client.initialize.generateMemberName()
+  const name = Client.generateMemberName()
   const memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name)
 
-  //TODO: remove referrer localStorage here?
+  const buddyProfile = await client.buddy.getProfile(wallet)
 
-  return { instructions: await create(connection, wallet, name, referrer), memberPDA: memberPDA }
+  if (buddyProfile) {
+    const treasuryPDA = client.pda.getTreasuryPDA([buddyProfile.account.pda], [10_000], USDC_MINT)
+
+    // Assumes always only 1 members
+    const member = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
+
+    // Skips create member if a member already exists
+    if (member) return { instructions: [], memberPDA: PublicKey.default }
+  }
+
+  const isReferrerValid = await client.initialize.isReferrerValid(referrer, ORGANIZATION_NAME)
+
+  return {
+    instructions: await create(connection, wallet, name, referrer),
+    memberPDA: isReferrerValid ? memberPDA : PublicKey.default
+  }
 }
 
 export async function getRemainingAccountsForTransfer(
   connection: Connection,
   wallet: PublicKey,
-  memberPDA: PublicKey
+  memberPDA?: PublicKey
 ): Promise<AccountMeta[]> {
   const client = new Client(connection, wallet)
   const remainingAccounts = await client.transfer.transferRewardsAccount(memberPDA, USDC_MINT)
 
-  return [
-    { pubkey: remainingAccounts.referrerAccount, isWritable: true, isSigner: false },
-    { pubkey: remainingAccounts.referrerAccountRewards, isWritable: true, isSigner: false },
-    { pubkey: remainingAccounts.referreeAccount, isWritable: true, isSigner: false },
-    { pubkey: remainingAccounts.globalReferrerTreasury, isWritable: true, isSigner: false },
-    { pubkey: remainingAccounts.globalReferrerTokenAccount, isWritable: true, isSigner: false },
-    { pubkey: remainingAccounts.mint, isWritable: false, isSigner: false },
-    { pubkey: remainingAccounts.referrerTokenAccount, isWritable: true, isSigner: false }
-  ]
+  if (remainingAccounts.referrerAccount.toString() === PublicKey.default.toString()) {
+    return [
+      { pubkey: remainingAccounts.referrerAccount, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.referrerAccountRewards, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.referreeAccount, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.globalReferrerTreasury, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.globalReferrerTokenAccount, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.mint, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.referrerTokenAccount, isWritable: false, isSigner: false }
+    ]
+  } else {
+    return [
+      { pubkey: remainingAccounts.referrerAccount, isWritable: true, isSigner: false },
+      { pubkey: remainingAccounts.referrerAccountRewards, isWritable: true, isSigner: false },
+      { pubkey: remainingAccounts.referreeAccount, isWritable: true, isSigner: false },
+      { pubkey: remainingAccounts.globalReferrerTreasury, isWritable: true, isSigner: false },
+      { pubkey: remainingAccounts.globalReferrerTokenAccount, isWritable: true, isSigner: false },
+      { pubkey: remainingAccounts.mint, isWritable: false, isSigner: false },
+      { pubkey: remainingAccounts.referrerTokenAccount, isWritable: true, isSigner: false }
+    ]
+  }
+}
+
+export function getProgramId(connection: Connection, wallet: PublicKey): PublicKey {
+  const client = new Client(connection, wallet)
+
+  return client.getProgramId()
 }
