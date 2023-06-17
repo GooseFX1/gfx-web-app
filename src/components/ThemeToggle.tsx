@@ -5,7 +5,7 @@ import { CenteredImg, CenteredDiv, SpaceBetweenDiv } from '../styles'
 import tw from 'twin.macro'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
-  ${tw`pb-0.5`}
+  ${tw`pb-0.5 w-max`}
 `
 
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`

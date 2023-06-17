@@ -37,7 +37,7 @@ const WRAPPED_LOADER = styled.div`
 `
 
 const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
-  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
+  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-7.5 rounded-circle cursor-pointer`}
   ${({ $connected }) => $connected && `padding-left: 4px;`}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;

@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, FC, useState } from 'react'
+import { BaseSyntheticEvent, FC, useCallback, useMemo, useState } from 'react'
 import { Dropdown } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -11,9 +11,11 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { Button } from '../components'
+import useBreakPoint from '../hooks/useBreakPoint'
+import { useLocation } from 'react-router-dom'
 
 export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
-  ${tw`h-[36px] w-[36px] cursor-pointer ml-2`}
+  ${tw`h-6 w-6 cursor-pointer`}
 
   img {
     filter: opacity(${({ $mode }) => ($mode ? 1 : 0.7)});
@@ -142,8 +144,14 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
-  const checkIfNFT = window.location.href.toLowerCase().includes('nfts')
-
+  const { pathname } = useLocation()
+  const breakpoint = useBreakPoint()
+  const checkIfNFT = useMemo(() => pathname.includes('nft'), [pathname])
+  const [isActive, setIsActive] = useState<string>('inactive')
+  const onVisibleChange = useCallback((visible: boolean) => {
+    setIsActive(visible ? 'active' : 'inactive')
+  }, [])
+  if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
     <Dropdown
       align={{ offset: [0, 16] }}
@@ -151,9 +159,10 @@ export const More: FC = () => {
       overlay={<Overlay />}
       placement="bottomRight"
       trigger={['hover']}
+      onVisibleChange={onVisibleChange}
     >
       <ICON $mode={mode === 'dark'} style={{ paddingLeft: checkIfNFT ? '28px' : 0 }}>
-        <img src={`/img/assets/more_icon.svg`} alt="more" />
+        <img src={`/img/assets/more-${mode}-${isActive}.svg`} alt="more" />
       </ICON>
     </Dropdown>
   )
