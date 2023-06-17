@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 import { GfxStakeRewards, GOFXVault, StakePool, UnstakeableTicket, UserMetadata } from 'goosefx-stake-rewards-sdk'
 import { useConnectionConfig } from '../context'
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'

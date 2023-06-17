@@ -1289,6 +1289,22 @@
                 64
               ]
             }
+          },
+          {
+            "name": "totalTradedVolume",
+            "type": {
+              "defined": "Fractional"
+            }
+          },
+          {
+            "name": "referral",
+            "type": "publicKey"
+          },
+          {
+            "name": "pendingRewardBalance",
+            "type": {
+              "defined": "Fractional"
+            }
           }
         ]
       }
