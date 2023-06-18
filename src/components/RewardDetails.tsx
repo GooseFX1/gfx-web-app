@@ -23,7 +23,7 @@ import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment'
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { BN } from '@project-serum/anchor'
-import { Button } from './Button'
+import { Loader } from './Loader'
 
 // const REWARD_INFO_TEXT = styled.div`
 //   ${tw`py-8 px-10`}
@@ -156,6 +156,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
   const { unstake, rewards } = useRewards()
   const handleStakeConfirmation = useCallback(() => {
     unstake(amount)
+    onClose()
   }, [amount])
   const canUnstake = useMemo(
     () => rewards.user.staking.userMetadata.totalStaked.gte(new BN(amount)),
@@ -183,14 +184,14 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
         </p>
         <button
           css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
-          font-semibold`}
+          font-semibold border-0 mt-5`}
           onClick={onClose}
         >
           Cancel
         </button>
         <button
           css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline
-          dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px]
+          dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px] border-0
         `}
           onClick={handleStakeConfirmation}
           disabled={!canUnstake}
@@ -292,7 +293,7 @@ const EarnRewards: FC = () => {
       setIsUnstakeConfirmationModalOpen(true)
     }
     setLoading(false)
-  }, [stake, inputRef, network])
+  }, [stake, inputRef, network, isStakeSelected])
   const handleInputChange = useCallback((e) => {
     const value = parseFloat(e.target.value)
     setInputValue(isNaN(value) ? 0.0 : value)
@@ -350,7 +351,7 @@ const EarnRewards: FC = () => {
           <p
             css={[
               tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-1`,
-              userGoFxBalance.uiAmount > 0 && tw`text-black-4 dark:text-grey-2`
+              userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
             ]}
           >
             {nFormatter(userGoFxBalance.uiAmount)} GOFX
@@ -392,7 +393,7 @@ const EarnRewards: FC = () => {
               onClick={handleHalf}
               css={[
                 tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1`,
-                userGoFxBalance.uiAmount > 0.0 && tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5`
+                userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
               ]}
             >
               Half
@@ -401,7 +402,7 @@ const EarnRewards: FC = () => {
               onClick={handleMax}
               css={[
                 tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1`,
-                userGoFxBalance.uiAmount > 0.0 && tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5`
+                userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
               ]}
             >
               Max
@@ -431,26 +432,26 @@ const EarnRewards: FC = () => {
         </div>
       </div>
 
-      <Button
+      <button
         onClick={handleStakeUnstake}
-        css={tw`w-full mt-[15px] bg-grey-4 dark:bg-black-1 border-0 relative
+        css={[
+          tw`w-full mt-[15px] bg-grey-4 dark:bg-black-1 border-0 relative
            rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-2
            h-[50px]
-           `}
-        cssStyle={
-          canStakeOrUnstake
-            ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer`
-            : isLoading
-            ? tw`cursor-not-allowed flex justify-center items-center `
-            : tw``
-        }
+           `,
+          canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
+          isLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
+        ]}
         disabled={!canStakeOrUnstake}
-        loading={isLoading}
       >
-        {userGoFxBalance.uiAmount > 0.0
-          ? `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
-          : 'Insufficient GOFX'}
-      </Button>
+        {isLoading ? (
+          <Loader />
+        ) : userGoFxBalance.uiAmount > 0.0 ? (
+          `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
+        ) : (
+          'Insufficient GOFX'
+        )}
+      </button>
 
       {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}
     </div>
@@ -631,8 +632,8 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
         css={[
           tw`py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 text-[15px] leading-[18px]
       font-semibold h-[34px] w-[207px] border-0 cursor-not-allowed`,
-          oneDayLeft && !canClaim && tw`text-red-2`,
-          canClaim && tw` text-white cursor-pointer`
+          oneDayLeft && !canClaim ? tw`text-red-2` : tw``,
+          canClaim ? tw` text-white cursor-pointer` : tw``
         ]}
         disabled={!canClaim}
         style={{
@@ -660,7 +661,7 @@ const UnstakeBottomBar: FC = () => {
   cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent
   font-semibold border-0
   `,
-          rewards.user.staking.unstakeableTickets.length == 0 && 'text-grey-1'
+          rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
         disabled={rewards.user.staking.unstakeableTickets.length == 0}
         onClick={showUnstakingModal}
@@ -681,7 +682,7 @@ const StakeBottomBar: FC = () => {
         <p
           css={[
             tw`mb-0 text-[15px] leading-[18px] text-grey-1`,
-            approxRewardAmount > 0.0 && tw`text-black-4 dark:text-grey-5`
+            approxRewardAmount > 0.0 ? tw`text-black-4 dark:text-grey-5` : tw``
           ]}
         >
           {approxRewardAmount.toFixed(2)} USDC
@@ -762,7 +763,7 @@ const BuddyLinkReferral: FC = () => {
       css={[
         tw`border-[1.5px] dark:border-grey-1 border-grey-2  border-dashed cursor-pointer
   flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] mt-6 relative`,
-        isReferralNameTaken && tw`border-red-2 dark:border-red-2`
+        isReferralNameTaken ? tw`border-red-2 dark:border-red-2` : tw``
       ]}
     >
       <p
@@ -779,20 +780,25 @@ const BuddyLinkReferral: FC = () => {
       text-left w-max border-none pl-[1px] active:shadow-none focus:shadow-none active:border-none focus:border-none
       font-semibold
       `,
-          isReferralNameTaken && tw`text-red-2 dark:text-red-2`
+          isReferralNameTaken ? tw`text-red-2 dark:text-red-2` : tw``
         ]}
         type={'text'}
         placeholder={'choose your link'}
         onChange={handleChange}
+        value={inputValue}
+        disabled={Boolean(referLink)}
       />
       <button
         css={[
-          tw`bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
-          (inputValue || referLink) && tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`,
-          isCopied && tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+          tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
+          inputValue || referLink
+            ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+            : isCopied
+            ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+            : tw``
         ]}
         onClick={referLink ? copyToClipboard : onSave}
-        disabled={!inputValue}
+        disabled={!(inputValue || referLink)}
       >
         {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
       </button>
@@ -1004,7 +1010,7 @@ const EarnRewardsRedirect: FC = () => {
       <div
         css={[
           tw`flex flex-col opacity-[0.65] text-center text-[15px] min-md:text-lg gap-4 mt-[16px] min-md:mt-[61px]`,
-          totalEarned > 0 && tw`opacity-100`
+          totalEarned > 0 ? tw`opacity-100` : tw``
         ]}
       >
         <span tw={'text-[55px] min-md:text-[80px] leading-[40px] text-grey-5'}>{totalEarned.toFixed(2)}</span>
@@ -1014,7 +1020,7 @@ const EarnRewardsRedirect: FC = () => {
         css={[
           tw`mb-0 mt-[15px] text-lg font-semibold opacity-[0.6]
          leading-[22px] text-grey-5`,
-          gofxStaked > 0.0 && tw`opacity-100`
+          gofxStaked > 0.0 ? tw`opacity-100` : tw``
         ]}
       >
         Total Staked: {nFormatter(gofxStaked)} GOFX
@@ -1023,7 +1029,7 @@ const EarnRewardsRedirect: FC = () => {
         css={[
           tw`px-4 mt-[15px] min-md:mt-[32px] max-w-[320px] items-center h-[50px]  bg-white text-black-4 border-0
        font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0`,
-          !usdcClaimable.isZero() && tw`opacity-100`
+          !usdcClaimable.isZero() ? tw`opacity-100` : tw``
         ]}
         disabled={usdcClaimable.isZero()}
         onClick={claimFees}
@@ -1058,7 +1064,7 @@ const ReferAndEarnRedirect: FC = () => {
         css={[
           tw`h-[50px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
         mb-[43px] min-md:mb-0 mt-11`,
-          totalInProgress > 0.0 && tw`opacity-100`
+          totalInProgress > 0.0 ? tw`opacity-100` : tw``
         ]}
         disabled={totalInProgress <= 0.0}
       >
@@ -1081,7 +1087,7 @@ const ReferFriendSegment = () => {
         css={[
           tw`mb-[30px] min-md:mb-0 text-[20px] leading-[30px] underline font-semibold min-md:dark:text-grey-5
         min-md:text-grey-5 dark:text-grey-1 text-grey-2 mt-[30px] min-md:mt-0 cursor-not-allowed`,
-          totalFriends > 0 && tw`text-white dark:text-white hover:text-white cursor-pointer`
+          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw``
         ]}
       >
         {totalFriends > 0 ? 'See All Referrals' : 'No Referrals'}

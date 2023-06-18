@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { useDarkMode } from '../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'twin.macro'
-import 'styled-components/macro'
 import { SkeletonCommon } from '../pages/NFTs/Skeleton/SkeletonCommon'
 import tw, { TwStyle, styled } from 'twin.macro'
 
