@@ -20,6 +20,7 @@ import { truncateAddress } from '../utils'
 import tw from 'twin.macro'
 import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
+import useBlacklisted from '../utils/useBlacklisted'
 
 const WALLET_ICON = styled(CenteredImg)`
   ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
@@ -68,9 +69,20 @@ const SVGModeAdjust = styled.img`
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
-
+  const isGeoBlocked = useBlacklisted()
   const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
 
+  if (isGeoBlocked) {
+    return (
+      <Menu
+        css={tw`
+      dark:bg-black-1 bg-grey-4 text-grey-1 dark:text-grey-1
+    `}
+      >
+        <MenuItem>Georestricted</MenuItem>
+      </Menu>
+    )
+  }
   return (
     <Menu>
       {base58 && (

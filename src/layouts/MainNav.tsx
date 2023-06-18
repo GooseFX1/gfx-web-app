@@ -6,7 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 // import { Tabs } from './Tabs'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { RewardsButton } from '../components/RewardsPopup'
-import { useDarkMode } from '../context'
+import { useCrypto, useDarkMode } from '../context'
 import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../styles'
 import { useNavCollapse } from '../context'
 import { ModalSlide } from '../components/ModalSlide'
@@ -113,6 +113,8 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
 
 export const MainNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const history = useHistory()
+  const navigateHome = useCallback(() => history.push('/swap'), [history])
   return (
     <div
       css={[
@@ -122,7 +124,11 @@ export const MainNav: FC = () => {
       ]}
     >
       {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-        <img css={tw`w-15.75 h-5.25 absolute `} src={'img/assets/gofx-logo-new.svg'} />
+        <img
+          css={tw`w-15.75 h-5.25 absolute cursor-pointer`}
+          src={'img/assets/gofx-logo-new.svg'}
+          onClick={navigateHome}
+        />
       )}
       <DesktopNav />
       <MobileNav />
@@ -293,8 +299,10 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
   const breakpoint = useBreakPoint()
-  const isMobile = useMemo(() => breakpoint.isMobile || breakpoint.isTablet, [breakpoint])
-  //TODO: perp hook for is active
+  const { isSpot, setIsSpot } = useCrypto()
+  const setSpot = useCallback(() => setIsSpot(true), [setIsSpot])
+  const setPerps = useCallback(() => setIsSpot(false), [setIsSpot])
+
   //TODO: leaderboard hook for is active
   //TODO: aggregator hook for is active
 
@@ -336,17 +344,13 @@ const MobileNavControls: FC = () => {
           options={[
             {
               text: 'Perps',
-              onClick: () => {
-                console.log('help')
-              },
-              isActive: false
+              onClick: setPerps,
+              isActive: !isSpot
             },
             {
               text: 'Spot',
-              onClick: () => {
-                console.log('help')
-              },
-              isActive: false
+              onClick: setSpot,
+              isActive: isSpot
             }
           ]}
         />
@@ -546,6 +550,9 @@ const MobileNavItem: FC<MobileNavItemProps> = ({ animation, stateMachine, text, 
 }
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
+  const { isSpot, setIsSpot } = useCrypto()
+  const setSpot = useCallback(() => setIsSpot(true), [setIsSpot])
+  const setPerps = useCallback(() => setIsSpot(false), [setIsSpot])
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
     <div css={tw`flex items-center gap-3 mx-auto`}>
@@ -564,13 +571,13 @@ const DesktopNav: FC = () => {
         options={[
           {
             text: 'Perps',
-            onClick: () => console.log('something here'),
-            isActive: true
+            onClick: setPerps,
+            isActive: !isSpot
           },
           {
             text: 'Spot',
-            onClick: () => console.log('something here'),
-            isActive: false
+            onClick: setSpot,
+            isActive: isSpot
           }
         ]}
       />
