@@ -37,7 +37,7 @@ function useRiveAnimations({
       if (!rive || !canvas) return
       canvas.width = canvasWidth
       canvas.height = canvasHeight
-      rive.resizeToCanvas()
+      rive.resizeDrawingSurfaceToCanvas()
       if (onLoadCallback) onLoadCallback()
     },
     [rive, canvas, canvasWidth, canvasHeight]

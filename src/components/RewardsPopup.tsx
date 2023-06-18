@@ -1,13 +1,13 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 // import { useRewardToggle } from '../context/reward_toggle'
 import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
-import { useDarkMode, useRewardToggle } from '../context'
-import { useStateMachineInput } from '@rive-app/react-canvas'
+import { useRewardToggle } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
+import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 
 const REWARD_INFO = styled.div`
   ${tw`w-[68%] h-[75vh] rounded-bigger`}
@@ -50,13 +50,8 @@ export const RewardsButton: FC = () => {
     canvasWidth: 20,
     canvasHeight: 22.32
   })
-  const { mode } = useDarkMode()
-  const rewardsThemeInput = useStateMachineInput(rewardsAnimation.rive, 'Rewards', 'Theme')
-  useEffect(() => {
-    if (!rewardsThemeInput) return
-    const isDark = mode === 'dark'
-    if (isDark != rewardsThemeInput.value) rewardsThemeInput.value = !isDark
-  }, [mode, rewardsThemeInput])
+  useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
+
   const hasRewards = false // TODO: hook into useRewards hook
   const riveComponent = useMemo(() => {
     const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 30.1 : 20
@@ -80,7 +75,9 @@ export const RewardsButton: FC = () => {
     )
   }, [rewardsAnimation, breakpoint, hasRewards])
   const handleClick = useCallback(() => rewardToggle(true), [])
-  if (breakpoint.isMobile || breakpoint.isTablet) return <div css={[tw`cursor-pointer`]}>{riveComponent}</div>
+  if (breakpoint.isMobile || breakpoint.isTablet) {
+    return <div css={[tw`cursor-pointer`]}>{riveComponent}</div>
+  }
   return (
     <div
       css={[

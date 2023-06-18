@@ -29,5 +29,8 @@ const colors = {
   'gray-2': '#636363',
   'gray-3': '#969696'
 }
+const backgroundImage = {
+  'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)'
+}
 
-module.exports = { colors }
+module.exports = { colors, backgroundImage }

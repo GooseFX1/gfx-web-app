@@ -41,7 +41,8 @@ const keyframes = {
 
 const animation = {
   slideInBottom: 'slideInBottom 0.5s',
-  slideInTop: 'slideInTop 0.5s'
+  slideInTop: 'slideInTop 0.5s',
+  slideOutTop: 'slideInTop 0.5s reverse'
 }
 
 module.exports = { keyframes, animation }

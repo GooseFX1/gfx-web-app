@@ -205,6 +205,7 @@ interface StateMachine {
   stateMachineName: string
   inputs: {
     theme: string
+    state?: string
     [key: string]: string
   }
 }
@@ -216,6 +217,13 @@ export interface RiveAnimation {
   stateMachines: StateMachines
 }
 export interface RiveAnimations {
+  aggregator: RiveAnimation
+  swap: RiveAnimation
+  dex: RiveAnimation
+  farm: RiveAnimation
+  referrals: RiveAnimation
+  rewards: RiveAnimation
+  stats: RiveAnimation
   [key: string]: RiveAnimation
 }
 export const RIVE_ANIMATION: RiveAnimations = {

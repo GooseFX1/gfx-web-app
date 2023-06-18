@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo } from 'react'
+import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 // import styled from 'styled-components'
 // import { Connect } from './Connect'
@@ -19,13 +19,12 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
-import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { Connect } from './Connect'
 import { More } from './More'
-import { Dropdown } from 'antd'
 import useClickOutside from '../hooks/useClickOutside'
 import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 import useRiveStateToggle from '../hooks/useRiveStateToggle'
+import { Menu, Transition } from '@headlessui/react'
 //
 // const BRAND = styled.a`
 //   ${tw`absolute flex justify-center items-center text-lg
@@ -144,7 +143,8 @@ const MobileNav: FC = () => {
   const [currentPage, setCurrentPage] = useState({
     animation: 'swap',
     stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-    text: 'Swap'
+    text: 'Swap',
+    path: '/swap'
   })
   useEffect(() => {
     switch (true) {
@@ -152,28 +152,32 @@ const MobileNav: FC = () => {
         setCurrentPage({
           animation: 'dex',
           stateMachine: RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName,
-          text: 'DEX'
+          text: 'DEX',
+          path: '/trade'
         })
         break
       case pathname.includes('nfts'):
         setCurrentPage({
           animation: 'aggregator',
           stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
-          text: 'NFTs'
+          text: 'NFTs',
+          path: '/nfts'
         })
         break
       case pathname.includes('farm'):
         setCurrentPage({
           animation: 'farm',
           stateMachine: RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName,
-          text: 'Farm'
+          text: 'Farm',
+          path: '/farm'
         })
         break
       case pathname.includes('stats'):
         setCurrentPage({
           animation: 'stats',
           stateMachine: RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName,
-          text: 'Stats'
+          text: 'Stats',
+          path: '/stats'
         })
         break
       case pathname.includes('swap'):
@@ -181,7 +185,8 @@ const MobileNav: FC = () => {
         setCurrentPage({
           animation: 'swap',
           stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'Swap'
+          text: 'Swap',
+          path: '/swap'
         })
         break
     }
@@ -192,27 +197,16 @@ const MobileNav: FC = () => {
     canvasWidth: 26,
     canvasHeight: 26
   })
-  const themeInput = useStateMachineInput(
-    riveAnimation.rive,
-    RIVE_ANIMATION[currentPage.animation].stateMachines[currentPage.stateMachine].stateMachineName,
-    RIVE_ANIMATION[currentPage.animation].stateMachines[currentPage.stateMachine].inputs.theme
-  )
-  const stateInput = useStateMachineInput(
-    riveAnimation.rive,
-    RIVE_ANIMATION[currentPage.animation].stateMachines[currentPage.stateMachine].stateMachineName,
-    RIVE_ANIMATION[currentPage.animation].stateMachines[currentPage.stateMachine].inputs.state
-  )
+  useRiveThemeToggle(riveAnimation.rive, currentPage.animation, currentPage.stateMachine)
+  useRiveStateToggle(riveAnimation.rive, currentPage.animation, currentPage.stateMachine, currentPage.path)
 
-  useEffect(() => {
-    if (!themeInput) return
-    themeInput.value = mode === 'dark'
-  }, [mode, themeInput])
-  useEffect(() => {
-    if (!stateInput) return
-    stateInput.value = pathname.startsWith(`/${currentPage.animation}`)
-  }, [pathname, stateInput])
   const onClose = useCallback(() => setIsOpen(false), [])
   const toggleSettingsDrawer = useCallback(() => setIsOpen((prev) => !prev), [])
+  const isOnPage = useMemo(() => pathname.includes(currentPage.path), [pathname, currentPage.path])
+  const active = useMemo(
+    () => (isOnPage && !isOpen ? 'active' : isOpen ? 'selected' : 'inactive'),
+    [isOpen, isOnPage]
+  )
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
@@ -220,7 +214,7 @@ const MobileNav: FC = () => {
         <riveAnimation.RiveComponent />
       </RiveAnimationWrapper>
       <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-grey-5 ml-2.75`]}>{currentPage.text}</p>
-      <img css={[tw`ml-1.5`]} src={`img/assets/chevron-${mode}-active.svg`} />
+      <img css={[tw`ml-1.5`]} src={`img/assets/chevron-${mode}-${active}.svg`} />
       <MobileSettingsDrawer isOpen={isOpen} onClose={onClose} />
     </div>
   )
@@ -248,7 +242,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }
         tw`absolute top-[62px] right-0 w-screen dark:bg-black-1 bg-grey-5 dark:text-grey-5 rounded-b-bigger
     items-center flex flex-col block justify-center z-50
    `,
-        isOpen ? tw`flex animate-slideInTop` : tw`hidden `
+        isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
+        playCloseAnimation ? tw`animate-slideOutTop` : tw``
       ]}
       ref={outsideRef}
     >
@@ -284,8 +279,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }
           path={'/stats'}
         />
       </div>
-      <div css={[]}>
-        <CurrentNavControls />
+      <div>
+        <MobileNavControls />
       </div>
 
       <span tw={'w-full flex justify-center items-center mb-3.75'}>
@@ -295,11 +290,14 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }
   )
 }
 
-const CurrentNavControls: FC = () => {
+const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
+  const breakpoint = useBreakPoint()
+  const isMobile = useMemo(() => breakpoint.isMobile || breakpoint.isTablet, [breakpoint])
   //TODO: perp hook for is active
   //TODO: leaderboard hook for is active
   //TODO: aggregator hook for is active
+
   switch (true) {
     case pathname.includes('nfts'):
       return (
@@ -355,10 +353,125 @@ const CurrentNavControls: FC = () => {
       )
   }
 }
+interface DesktopControlsProps {
+  children: ReactNode
+  options: Controls[]
+  isOpen: boolean
+  onHover: (e: BaseSyntheticEvent) => void
+  onClose: () => void
+}
+
+const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover, isOpen, onClose }) => {
+  const selfRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef(null)
+  const localOnHover = useCallback(
+    (e: BaseSyntheticEvent) => {
+      if (!isOpen) {
+        e.currentTarget.click()
+        onHover(e)
+      }
+    },
+    [onHover, isOpen]
+  )
+
+  const handleMove = useCallback(
+    (e: MouseEvent) => {
+      if (isOpen) {
+        if (!selfRef.current.contains(e.target as HTMLElement)) {
+          buttonRef.current.click()
+          onClose()
+        }
+      }
+    },
+    [onClose, isOpen]
+  )
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMove)
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+    }
+  }, [handleMove])
+  return (
+    <div css={tw`relative inline-block text-left z-20`} ref={selfRef}>
+      <span
+        css={tw`
+    absolute top-[44px] right-0 h-4 z-10
+    `}
+        style={{ width: '-webkit-fill-available' }}
+      />
+      <Menu>
+        {({ open }) => (
+          <>
+            <Menu.Button
+              tw={'bg-transparent border-0 active:border-0 focus:border-0'}
+              onMouseEnter={localOnHover}
+              ref={buttonRef}
+            >
+              {children}
+            </Menu.Button>
+            <Transition
+              as={'div'}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+              beforeLeave={onClose}
+            >
+              <Menu.Items
+                static
+                css={[
+                  tw`absolute left-0 w-56 mt-2 origin-top
+        border-1 border-solid border-black-1 dark:border-white rounded-tiny
+        z-50
+        `
+                ]}
+              >
+                {options.map((option, i) => (
+                  <Menu.Item
+                    key={option?.key ?? option.text}
+                    as={'div'}
+                    css={[
+                      tw`flex items-center w-full bg-white dark:bg-black-2  px-2.5 py-0.5`,
+                      option.isActive ? tw`bg-grey-5 dark:bg-black-1` : tw``,
+                      i === 0 ? tw`rounded-tiny` : tw``,
+                      i === options.length - 1 ? tw`rounded-b-tiny` : tw``
+                    ]}
+                  >
+                    <p
+                      css={[
+                        tw`mb-0 text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
+                        option.isActive
+                          ? tw`
+            bg-clip-text bg-gradient-1
+            `
+                          : tw``
+                      ]}
+                      style={{
+                        WebkitBackgroundClip: option.isActive ? 'text' : 'unset',
+                        WebkitTextFillColor: option.isActive ? 'transparent' : 'unset'
+                      }}
+                      onClick={option.onClick}
+                    >
+                      {option.text}
+                    </p>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </>
+        )}
+      </Menu>
+    </div>
+  )
+}
+
 interface MobileControlsProps {
   options: Controls[]
 }
 interface Controls {
+  key?: string
   text: string
   onClick: () => void
   isActive: boolean
@@ -368,11 +481,11 @@ const MobileControls: FC<MobileControlsProps> = ({ options }) => (
     {options.map((option) => (
       <p
         css={[
-          tw`text-average font-semibold text-grey-1 dark:text-grey-1`,
+          tw`text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
           option.isActive ? tw`text-blue-1 dark:text-white` : tw``
         ]}
         onClick={option.onClick}
-        key={option.text}
+        key={option?.key ?? option.text}
       >
         {option.text}
       </p>
@@ -411,7 +524,7 @@ const MobileNavItem: FC<MobileNavItemProps> = ({ animation, stateMachine, text, 
         tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
     h-12.5 w-max bg-transparent dark:bg-transparent
     `,
-        isActive ? tw`bg-grey-4 dark:bg-black-2` : tw``
+        isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
       ]}
       onMouseEnter={onHover}
       onMouseLeave={onHover}
@@ -422,7 +535,7 @@ const MobileNavItem: FC<MobileNavItemProps> = ({ animation, stateMachine, text, 
       </RiveAnimationWrapper>
       <p
         css={[
-          tw`mb-0 text-tiny font-semibold text-grey-1 dark:text-grey-5`,
+          tw`mb-0 text-tiny font-semibold text-grey-1 dark:text-grey-1`,
           isActive ? tw`text-black-4 dark:text-grey-5` : tw``
         ]}
       >
@@ -437,47 +550,93 @@ const DesktopNav: FC = () => {
   return (
     <div css={tw`flex items-center gap-3 mx-auto`}>
       <HeaderMainNav
-        Text={'Swap'}
+        text={'Swap'}
         riveAnimation={'swap'}
         stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
         path={'/swap'}
       />
       <HeaderMainNav
-        Text={'Trade'}
+        text={'Trade'}
         riveAnimation={'dex'}
         stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
         path={'/trade'}
+        hasDropdown={true}
+        options={[
+          {
+            text: 'Perps',
+            onClick: () => console.log('something here'),
+            isActive: true
+          },
+          {
+            text: 'Spot',
+            onClick: () => console.log('something here'),
+            isActive: false
+          }
+        ]}
       />
       <HeaderMainNav
-        Text={"NFT's"}
+        text={"NFT's"}
         riveAnimation={'aggregator'}
         stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
         path={'/nfts'}
+        hasDropdown={true}
+        options={[
+          {
+            text: 'NFTs',
+            onClick: () => console.log('something here'),
+            isActive: true
+          },
+          {
+            text: 'Marketplace',
+            onClick: () => console.log('something here'),
+            isActive: false
+          }
+        ]}
       />
       <HeaderMainNav
-        Text={'Farm'}
+        text={'Farm'}
         riveAnimation={'farm'}
         stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
         path={'/farm'}
       />
       <HeaderMainNav
-        Text={'Stats'}
+        text={'Stats'}
         riveAnimation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-        hasDropdown={true}
         path={'/stats'}
+        hasDropdown={true}
+        options={[
+          {
+            text: 'Stats',
+            onClick: () => console.log('something here'),
+            isActive: true
+          },
+          {
+            text: 'Leaderboard',
+            onClick: () => console.log('something here'),
+            isActive: false
+          }
+        ]}
       />
     </div>
   )
 }
 interface HeaderMainNavProps {
-  Text: string
+  text: string
   riveAnimation: string
   stateMachine: string
   path: string
   hasDropdown?: boolean
+  options?: Controls[]
 }
-const HeaderMainNav: FC<HeaderMainNavProps> = ({ riveAnimation, Text, stateMachine, path }) => {
+const HeaderMainNav: FC<HeaderMainNavProps> = ({
+  riveAnimation,
+  text,
+  stateMachine,
+  path,
+  hasDropdown,
+  options
+}) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   const history = useHistory()
@@ -488,18 +647,10 @@ const HeaderMainNav: FC<HeaderMainNavProps> = ({ riveAnimation, Text, stateMachi
     canvasWidth: 24,
     canvasHeight: 24
   })
-  const themeInput = useStateMachineInput(rive.rive, stateMachine, 'Theme')
-  const stateInput = useStateMachineInput(rive.rive, stateMachine, 'State')
-  useEffect(() => {
-    if (stateInput) {
-      stateInput.value = pathname.startsWith(path)
-    }
-  }, [stateInput, pathname])
-  useEffect(() => {
-    if (themeInput) {
-      themeInput.value = mode === 'dark'
-    }
-  }, [mode, themeInput])
+  useRiveThemeToggle(rive.rive, riveAnimation, stateMachine)
+  const { stateInput } = useRiveStateToggle(rive.rive, riveAnimation, stateMachine, path)
+  const [isOpen, setIsOpen] = useState(false)
+
   const navigateToPath = useCallback(() => {
     history.push(path)
   }, [history, path])
@@ -508,32 +659,38 @@ const HeaderMainNav: FC<HeaderMainNavProps> = ({ riveAnimation, Text, stateMachi
       if (stateInput && !pathname.startsWith(path)) {
         stateInput.value = !stateInput.value
       }
+      setIsOpen(true)
     },
     [stateInput, pathname, path]
   )
-  return (
-    <div css={tw`flex flex-col items-center justify-center h-full cursor-pointer`} onClick={navigateToPath}>
-      <div css={[tw`flex gap-0.25 items-center justify-center`]}>
-        <RiveAnimationWrapper
-          setContainerRef={rive.setContainerRef}
-          width={24}
-          height={24}
-          onMouseEnter={onHover}
-          onMouseLeave={onHover}
+  const onClose = useCallback(() => setIsOpen(false), [])
+  const component = useMemo(() => {
+    const active = isOpen ? 'selected' : 'inactive'
+    return (
+      <div css={tw`flex flex-col items-center justify-center h-full cursor-pointer`} onClick={navigateToPath}>
+        <div css={[tw`flex gap-0.25 items-center justify-center`]}>
+          <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={24} height={24}>
+            <rive.RiveComponent />
+          </RiveAnimationWrapper>
+          {hasDropdown && <img src={`img/assets/chevron-${mode}-${active}.svg`} />}
+        </div>
+        <p
+          css={[tw`mb-0 text-tiny font-medium text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`]}
+          style={{
+            opacity: pathname.startsWith(path) ? 1 : 0.5
+          }}
         >
-          <rive.RiveComponent />
-        </RiveAnimationWrapper>
-        <img src={`img/assets/chevron-${mode}-active.svg`} />
+          {text}
+        </p>
       </div>
-      <p
-        css={[tw`mb-0 text-tiny font-medium text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`]}
-        style={{
-          opacity: pathname.startsWith(path) ? 1 : 0.5
-        }}
-      >
-        {Text}
-      </p>
-    </div>
+    )
+  }, [pathname, navigateToPath, text, mode, riveAnimation, isOpen, hasDropdown])
+  return hasDropdown ? (
+    <DesktopControls options={options} isOpen={isOpen} onHover={onHover} onClose={onClose}>
+      {component}
+    </DesktopControls>
+  ) : (
+    component
   )
 }
 
