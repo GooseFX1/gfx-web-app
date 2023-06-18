@@ -194,7 +194,8 @@ export default function useRewards(): IUseRewards {
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
 
       await confirmTransaction(txnSig)
-        .then(() =>
+        .then(() => {
+          updateStakeDetails()
           notify({
             message: Notification(
               'Stake successful!',
@@ -206,7 +207,7 @@ export default function useRewards(): IUseRewards {
             ),
             type: 'success'
           })
-        )
+        })
         .catch((err) => {
           console.log('stake-failed', err)
           notify({
@@ -223,6 +224,15 @@ export default function useRewards(): IUseRewards {
     },
     [stakeRewards, walletContext]
   )
+  const updateStakeDetails = useCallback(async () => {
+    const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
+    const payload: RewardState = rewards
+    payload.user.staking.userMetadata = data.userMetadata
+    payload.user.staking.unstakeableTickets = data.unstakeableTickets
+    payload.stakePool = data.stakePool
+    payload.gofxVault = data.gofxVault
+    dispatch({ type: 'setAll', payload })
+  }, [stakeRewards])
   const unstake = useCallback(
     async (amount: number) => {
       const txn: Transaction = await checkForUserAccount(() =>
@@ -231,7 +241,8 @@ export default function useRewards(): IUseRewards {
       const proposedEndDate = moment().add(7, 'days').calendar()
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
       await confirmTransaction(txnSig)
-        .then(() =>
+        .then(() => {
+          updateStakeDetails()
           notify({
             message: Notification(
               'Cooldown started!',
@@ -242,7 +253,7 @@ export default function useRewards(): IUseRewards {
               </>
             )
           })
-        )
+        })
         .catch((err) => {
           console.log('unstake-failed', err)
           notify({
@@ -287,44 +298,46 @@ export default function useRewards(): IUseRewards {
         })
       })
   }, [stakeRewards, walletContext])
-  const redeemUnstakingTickets = useCallback(async () => {
-    const txn: Transaction = await checkForUserAccount(async () => {
-      const unstakingTickets = await stakeRewards.getUnstakingTickets(walletContext.publicKey)
-      const unstakeableTickets = stakeRewards.getUnstakeableTickets(unstakingTickets)
-      return stakeRewards.resolveUnstakingTicket(
-        unstakeableTickets.map((t) => t.index),
-        walletContext.publicKey
+  const redeemUnstakingTickets = useCallback(
+    async (toUnstake: UnstakeableTicket[]) => {
+      const txn: Transaction = await checkForUserAccount(
+        async () =>
+          await stakeRewards.resolveUnstakingTicket(
+            toUnstake.map((ticket) => ticket.index),
+            walletContext.publicKey
+          )
       )
-    })
 
-    const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
-    await confirmTransaction(txnSig)
-      .then(() =>
-        notify({
-          message: Notification(
-            'Unstake successful!',
-            false,
-            <div>
-              <p>Amount: {rewards.earned.claimable.toFixed(2)} GOFX</p>
-            </div>
-          ),
-          type: 'success'
+      const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
+      await confirmTransaction(txnSig)
+        .then(() =>
+          notify({
+            message: Notification(
+              'Unstake successful!',
+              false,
+              <div>
+                <p>Amount: {rewards.earned.claimable.toFixed(2)} GOFX</p>
+              </div>
+            ),
+            type: 'success'
+          })
+        )
+        .catch((err) => {
+          console.log('unstake-failed', err)
+          notify({
+            message: Notification(
+              'Unstake failed!',
+              true,
+              <div>
+                <p>{err.msg}</p>
+              </div>
+            ),
+            type: 'error'
+          })
         })
-      )
-      .catch((err) => {
-        console.log('unstake-failed', err)
-        notify({
-          message: Notification(
-            'Unstake failed!',
-            true,
-            <div>
-              <p>{err.msg}</p>
-            </div>
-          ),
-          type: 'error'
-        })
-      })
-  }, [stakeRewards, walletContext])
+    },
+    [stakeRewards, walletContext]
+  )
   const enterGiveaway = useCallback(
     (giveawayContract: string) => {
       //TODO: handle entering giveaway
