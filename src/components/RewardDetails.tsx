@@ -1076,11 +1076,9 @@ const ReferAndEarnRedirect: FC = () => {
 const ReferFriendSegment = () => {
   const totalFriends = 5
   return (
-    <div css={tw`flex flex-col items-center justify-center `}>
-      <div css={tw`w-full flex flex-row justify-between items-center min-md:px-8`}>
-        <p css={tw`mb-0 text-lg font-semibold font-semibold`}>Total Referred</p>
-        <p css={tw`mb-0 text-lg font-semibold font-semibold`}>{totalFriends} Friends</p>
-      </div>
+    <div css={tw`flex flex-col items-center justify-center w-full`}>
+      <p css={tw`mb-0 text-lg font-semibold font-semibold `}>Total Referred: {totalFriends} Friends</p>
+
       <a
         href={''}
         target={'_blank'}
