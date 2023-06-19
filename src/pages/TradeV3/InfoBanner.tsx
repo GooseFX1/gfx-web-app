@@ -410,15 +410,15 @@ export const InfoBanner: FC<{
                 <div tw="font-medium text-tiny dark:text-grey-5 text-grey-1 mb-2">
                   Funding rate is determined every hour. If funding is <span tw="text-green-1">positive</span>,
                   longs pay shorts. If it's
-                  <span tw="text-red-2"> negative</span>, short positions pay longs.
+                  <span tw="text-red-2"> negative</span>, short positions pay longs.{' '}
+                  <a
+                    href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
+                    tw="font-medium text-tiny dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
+                    target="_blank"
+                  >
+                    Learn More
+                  </a>
                 </div>
-                <a
-                  href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
-                  tw="font-semibold text-regular dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
-                  target="_blank"
-                >
-                  Learn More
-                </a>
               </Tooltip>
             </div>
             {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
