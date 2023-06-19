@@ -160,7 +160,7 @@ const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $
     font-family: Montserrat;
   }
   .layout {
-    ${tw`w-[99%] mt-5 mr-auto mb-0 relative`}
+    ${tw`w-[99%] mt-5 mx-auto mb-0 relative`}
     .react-grid-item.react-draggable:nth-child(4) {
       //max-width: 350px;
     }

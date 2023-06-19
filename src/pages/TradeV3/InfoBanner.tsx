@@ -313,24 +313,24 @@ export const InfoBanner: FC<{
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      {
-        <div className="spot-toggle">
-          <span
-            className={'spot toggle ' + (isSpot ? 'selected' : '')}
-            key="spot"
-            onClick={() => handleToggle('spot')}
-          >
-            Spot
-          </span>
-          <span
-            className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
-            key="perps"
-            onClick={isGeoBlocked ? null : () => handleToggle('perps')}
-          >
-            Perps
-          </span>
-        </div>
-      }
+
+      {/* <div className="spot-toggle">
+        <span
+          className={'spot toggle ' + (isSpot ? 'selected' : '')}
+          key="spot"
+          onClick={() => handleToggle('spot')}
+        >
+          Spot
+        </span>
+        <span
+          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
+          key="perps"
+          onClick={isGeoBlocked ? null : () => handleToggle('perps')}
+        >
+          Perps
+        </span>
+      </div> */}
+
       <DropdownPairs />
       {
         <>
