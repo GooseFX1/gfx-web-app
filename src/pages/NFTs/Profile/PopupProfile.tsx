@@ -190,7 +190,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
                 name=""
                 className={'profile-pic-upload-zone'}
                 onPreview={() => false}
-                accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
+                accept="image/png, image/jpeg, image/jpg"
               >
                 <img
                   tw="mt-[15px] z-10 ml-[-30px] sm:mt-12 sm:ml-[-25px] sm:relative absolute cursor-pointer"

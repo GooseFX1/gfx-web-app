@@ -273,7 +273,7 @@ export const UploadCustom: FC<Props> = ({
       case MetadataCategory.Audio:
         return '.mp3,.flac,.wav'
       case MetadataCategory.Image:
-        return '.png,.jpg,.gif'
+        return 'image/png, image/jpeg, image/jpg'
       case MetadataCategory.Video:
         return '.mp4,.mov,.webm'
       case MetadataCategory.VR:
