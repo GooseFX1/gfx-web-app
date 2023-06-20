@@ -116,6 +116,7 @@ const PreviewImage: FC<Props> = ({ file, status, image_url }) => {
           maxCount={1}
           fileList={[file]}
           onPreview={() => false}
+          accept="image/png, image/jpeg, image/jpg, image/svg+xml, gif"
         />
       ) : (
         <IMAGE_CONTAINER>
