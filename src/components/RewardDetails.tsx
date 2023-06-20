@@ -24,7 +24,8 @@ import moment from 'moment'
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { BN } from '@project-serum/anchor'
 import { Loader } from './Loader'
-
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk'
 // const REWARD_INFO_TEXT = styled.div`
 //   ${tw`py-8 px-10`}
 //   color: ${({theme}) => theme.text1} !important;
@@ -218,7 +219,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
   const inputRef = useRef<InputRef>(null)
-  const { wallet, connected } = useWallet()
+  const { wallet, connected, publicKey } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { stake, rewards, getUiAmount } = useRewards()
   const history = useHistory()
@@ -239,12 +240,15 @@ const EarnRewards: FC = () => {
     }
     //const gofxMint = ADDRESSES[network]?.mints?.GOFX_MINT?.address
     //TODO: change back
-    const devNet = new Connection('https://api.devnet.solana.com', 'confirmed')
-    const gofx = new PublicKey('GFXMaFQyhNSfjLcjyT1p1iHyJUT8kWbGkH3WXudynuYU')
-    const account = await devNet.getTokenAccountsByOwner(wallet.adapter.publicKey, { mint: gofx })
-    const balance = await devNet.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-    setUserGoFxBalance(() => balance.value)
-  }, [wallet, connection, network])
+    const currentNetwork =
+      network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+    const gofx = rewardAddresses[currentNetwork].GOFX_MINT
+    const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofx })
+    if (account.value[0]) {
+      const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+      setUserGoFxBalance(() => balance.value)
+    }
+  }, [publicKey, connection, network])
 
   useEffect(() => {
     if (!wallet || !connection || !connected) {
