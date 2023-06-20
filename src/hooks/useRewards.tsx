@@ -68,11 +68,10 @@ export default function useRewards(): IUseRewards {
     if (!walletContext.connected || !walletContext.wallet) {
       return
     }
-    //const rewardNetwork = network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'
+    const rewardNetwork = network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'
     // anchor wallet not used
     const wallet = new Wallet(Keypair.generate())
-    const devNet = new Connection('https://api.devnet.solana.com', 'confirmed')
-    const stakeRewards = new GfxStakeRewards(devNet, 'DEVNET', wallet)
+    const stakeRewards = new GfxStakeRewards(connection, rewardNetwork, wallet)
     setStakeRewards(stakeRewards)
     fetchAllRewardData(stakeRewards, walletContext.publicKey)
       .then((data) => {
