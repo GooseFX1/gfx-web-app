@@ -23,7 +23,7 @@ import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapt
 import useBlacklisted from '../utils/useBlacklisted'
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
+  ${tw`bg-black h-[28px] w-[28px] mr-[12px] rounded-circle`}
 
   img {
     ${tw`h-[16px] w-[16px]`}

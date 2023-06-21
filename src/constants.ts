@@ -228,7 +228,7 @@ export interface RiveAnimations {
 }
 export const RIVE_ANIMATION: RiveAnimations = {
   aggregator: {
-    src: 'https://media.goosefx.io/webapp/nfts.riv',
+    src: '/rive/aggregator.riv', //'https://media.goosefx.io/webapp/nfts.riv'
     stateMachines: {
       AggregatorInteractions: {
         stateMachineName: 'AggregatorInteractions',
@@ -240,7 +240,7 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   swap: {
-    src: 'https://media.goosefx.io/webapp/swap.riv',
+    src: '/rive/swap.riv', //'https://media.goosefx.io/webapp/swap.riv'
     stateMachines: {
       SwapInteractions: {
         stateMachineName: 'SwapInteractions',
@@ -252,7 +252,7 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   dex: {
-    src: 'https://media.goosefx.io/webapp/trade.riv',
+    src: '/rive/dex.riv', //'https://media.goosefx.io/webapp/trade.riv'
     stateMachines: {
       DEXInteractions: {
         stateMachineName: 'DEXInteractions',
@@ -264,7 +264,7 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   farm: {
-    src: 'https://media.goosefx.io/webapp/farm.riv',
+    src: '/rive/farm.riv', //'https://media.goosefx.io/webapp/farm.riv'
     stateMachines: {
       FarmInteractions: {
         stateMachineName: 'FarmInteractions',
@@ -298,7 +298,7 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   stats: {
-    src: 'https://media.goosefx.io/webapp/stats.riv',
+    src: '/rive/stats.riv', //'https://media.goosefx.io/webapp/stats.riv'
     stateMachines: {
       StatsInteractions: {
         stateMachineName: 'StatsInteractions',

@@ -1,11 +1,11 @@
 import { Ref, useEffect, useRef } from 'react'
 type Handler = any
-function useClickOutside(handler: Handler, isOpen?: boolean): Ref<any> {
+function useClickOutside(handler: Handler): Ref<any> {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isOpen && ref.current && !ref.current.contains(event.target)) {
+      if (open && ref.current && !ref.current.contains(event.target)) {
         handler()
       }
     }
@@ -16,7 +16,7 @@ function useClickOutside(handler: Handler, isOpen?: boolean): Ref<any> {
       document.removeEventListener('mousedown', handleClickOutside)
       // document.removeEventListener('touchstart', handleClickOutside);
     }
-  }, [handler, isOpen])
+  }, [handler])
 
   return ref
 }

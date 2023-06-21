@@ -29,6 +29,5 @@ export const useDarkMode = (): IDarkModeConfig => {
     throw new Error('Missing dark mode context')
   }
 
-  const { mode, toggleMode } = context
-  return { mode, toggleMode }
+  return context
 }

@@ -1,16 +1,10 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-// import styled from 'styled-components'
-// import { Connect } from './Connect'
-// import { More } from './More'
-// import { Tabs } from './Tabs'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { RewardsButton } from '../components/RewardsPopup'
 import { useCrypto, useDarkMode } from '../context'
-import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../styles'
-import { useNavCollapse } from '../context'
-import { ModalSlide } from '../components/ModalSlide'
-import { useRewardToggle } from '../context/reward_toggle'
+import { SVGToWhite } from '../styles'
+
 import { MODAL_TYPES, RIVE_ANIMATION } from '../constants'
 import { checkMobile } from '../utils'
 import { ThemeToggle } from '../components/ThemeToggle'
@@ -25,6 +19,7 @@ import useClickOutside from '../hooks/useClickOutside'
 import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 import useRiveStateToggle from '../hooks/useRiveStateToggle'
 import { Menu, Transition } from '@headlessui/react'
+import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 //
 // const BRAND = styled.a`
 //   ${tw`absolute flex justify-center items-center text-lg
@@ -119,7 +114,7 @@ export const MainNav: FC = () => {
     <div
       css={[
         tw`w-screen h-14 px-5 items-center flex py-3 justify-between bg-grey-5 dark:bg-black-1
-        relative
+        relative border-b-1 border-solid border-grey-2  dark:border-black-4
        `
       ]}
     >
@@ -132,7 +127,7 @@ export const MainNav: FC = () => {
       )}
       <DesktopNav />
       <MobileNav />
-      <div css={tw`flex items-center gap-3.75 absolute right-0`}>
+      <div css={tw`flex items-center gap-3.75 absolute right-0 mr-2.5 min-md:mr-0`}>
         <RewardsButton />
         <Connect />
         <CartButton />
@@ -152,15 +147,16 @@ const MobileNav: FC = () => {
     text: 'Swap',
     path: '/swap'
   })
+  useEffect(() => setIsOpen(false), [pathname])
   useEffect(() => {
     switch (true) {
-      case pathname.includes('dex'):
-        setCurrentPage({
+      case pathname.includes('trade'):
+        setCurrentPage((prev) => ({
           animation: 'dex',
           stateMachine: RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName,
           text: 'DEX',
           path: '/trade'
-        })
+        }))
         break
       case pathname.includes('nfts'):
         setCurrentPage({
@@ -187,7 +183,6 @@ const MobileNav: FC = () => {
         })
         break
       case pathname.includes('swap'):
-      default:
         setCurrentPage({
           animation: 'swap',
           stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
@@ -195,17 +190,19 @@ const MobileNav: FC = () => {
           path: '/swap'
         })
         break
+      default:
+        break
     }
   }, [pathname])
-  const riveAnimation = useRiveAnimations({
+  const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
     animation: currentPage.animation,
     autoplay: true,
-    canvasWidth: 26,
-    canvasHeight: 26
+    canvasWidth: 40,
+    canvasHeight: 40
   })
-  useRiveThemeToggle(riveAnimation.rive, currentPage.animation, currentPage.stateMachine)
-  useRiveStateToggle(riveAnimation.rive, currentPage.animation, currentPage.stateMachine, currentPage.path)
 
+  useRiveThemeToggle(rive, currentPage.animation, currentPage.stateMachine)
+  useRiveStateToggle(rive, currentPage.animation, currentPage.stateMachine, currentPage.path)
   const onClose = useCallback(() => setIsOpen(false), [])
   const toggleSettingsDrawer = useCallback(() => setIsOpen((prev) => !prev), [])
   const isOnPage = useMemo(() => pathname.includes(currentPage.path), [pathname, currentPage.path])
@@ -213,23 +210,6 @@ const MobileNav: FC = () => {
     () => (isOnPage && !isOpen ? 'active' : isOpen ? 'selected' : 'inactive'),
     [isOpen, isOnPage]
   )
-  if (breakpoint.isLaptop || breakpoint.isDesktop) return null
-  return (
-    <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-      <RiveAnimationWrapper setContainerRef={riveAnimation.setContainerRef} width={26} height={26}>
-        <riveAnimation.RiveComponent />
-      </RiveAnimationWrapper>
-      <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-grey-5 ml-2.75`]}>{currentPage.text}</p>
-      <img css={[tw`ml-1.5`]} src={`img/assets/chevron-${mode}-${active}.svg`} />
-      <MobileSettingsDrawer isOpen={isOpen} onClose={onClose} />
-    </div>
-  )
-}
-interface MobileSettingsDrawerProps {
-  isOpen: boolean
-  onClose: () => void
-}
-const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }) => {
   const localOnClose = useCallback(() => {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
     setPlayCloseAnimation(true)
@@ -238,123 +218,132 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, onClose }
       setPlayCloseAnimation(false)
     }, 100)
   }, [onClose])
-  const outsideRef = useClickOutside(localOnClose)
   const closeTimerRef = useRef<NodeJS.Timer>(null)
   const [playCloseAnimation, setPlayCloseAnimation] = useState(false)
 
+  const outsideRef = useClickOutside(localOnClose)
+  if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
-    <div
-      css={[
-        tw`absolute top-[62px] right-0 w-screen dark:bg-black-1 bg-grey-5 dark:text-grey-5 rounded-b-bigger
-    items-center flex flex-col block justify-center z-50
-   `,
-        isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
-        playCloseAnimation ? tw`animate-slideOutTop` : tw``
-      ]}
-      ref={outsideRef}
-    >
-      <div css={[tw`flex items-center justify-between w-full px-7 py-2.5 overflow-scroll gap-2`]}>
-        <MobileNavItem
-          animation={'swap'}
-          stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-          text={'Swap'}
-          path={'/swap'}
-        />
-        <MobileNavItem
-          animation={'dex'}
-          stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
-          text={'DEX'}
-          path={'/trade'}
-        />
-        <MobileNavItem
-          animation={'aggregator'}
-          stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-          text={"NFT's"}
-          path={'/nfts'}
-        />
-        <MobileNavItem
-          animation={'farm'}
-          stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-          text={'Farm'}
-          path={'/farm'}
-        />
-        <MobileNavItem
-          animation={'stats'}
-          stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-          text={'Stats'}
-          path={'/stats'}
-        />
+    <span ref={outsideRef}>
+      <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
+        <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
+          <RiveComponent />
+        </RiveAnimationWrapper>
+        <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-grey-5 ml-2.75`]}>{currentPage.text}</p>
+        <img css={[tw`ml-1.5`]} src={`img/assets/chevron-${mode}-${active}.svg`} />
       </div>
-      <div>
-        <MobileNavControls />
-      </div>
-
-      <span tw={'w-full flex justify-center items-center mb-3.75'}>
-        <ThemeToggle />
-      </span>
-    </div>
+      <MobileSettingsDrawer isOpen={isOpen} playCloseAnimation={playCloseAnimation} />
+    </span>
   )
 }
+interface MobileSettingsDrawerProps {
+  isOpen: boolean
+  playCloseAnimation: boolean
+}
+const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playCloseAnimation }) => (
+  <div
+    css={[
+      tw`absolute top-[62px] right-0 w-screen dark:bg-black-1 bg-grey-5 dark:text-grey-5 rounded-b-bigger
+    items-center flex flex-col block justify-center z-50
+   `,
+      isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
+      playCloseAnimation ? tw`animate-slideOutTop` : tw``
+    ]}
+  >
+    <div css={[tw`flex items-center justify-between w-full px-7 py-2.5 overflow-scroll gap-2`]}>
+      <MobileNavItem
+        animation={'swap'}
+        stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        text={'Swap'}
+        path={'/swap'}
+      />
+      <MobileNavItem
+        animation={'dex'}
+        stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
+        text={'DEX'}
+        path={'/trade'}
+      />
+      <MobileNavItem
+        animation={'aggregator'}
+        stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+        text={"NFT's"}
+        path={'/nfts'}
+      />
+      <MobileNavItem
+        animation={'farm'}
+        stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
+        text={'Farm'}
+        path={'/farm'}
+      />
+      <MobileNavItem
+        animation={'stats'}
+        stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
+        text={'Stats'}
+        path={'/stats'}
+      />
+    </div>
+    <div>
+      <MobileNavControls />
+    </div>
+
+    <span tw={'w-full flex justify-center items-center mb-3.75'}>
+      <ThemeToggle />
+    </span>
+  </div>
+)
 
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
-  const breakpoint = useBreakPoint()
+  const history = useHistory()
   const { isSpot, setIsSpot } = useCrypto()
-  const setSpot = useCallback(() => setIsSpot(true), [setIsSpot])
-  const setPerps = useCallback(() => setIsSpot(false), [setIsSpot])
 
   //TODO: leaderboard hook for is active
   //TODO: aggregator hook for is active
-
+  const handlePerpsSpotToggle = useCallback(
+    (isSpotToggle: boolean) => () => {
+      setIsSpot(isSpotToggle)
+      history.push(`/trade`)
+    },
+    [setIsSpot, history]
+  )
+  //TODO: replace below in the NFT/Stats segment for mobile
+  // return (
+  //   <MobileControls
+  //     options={[
+  //       {
+  //         text: 'NFTs',
+  //         onClick: () => {
+  //           console.log('help')
+  //         },
+  //         isActive: false
+  //       }
+  //     ]}
+  //   />
+  // )
   switch (true) {
-    case pathname.includes('nfts'):
-      return (
-        <MobileControls
-          options={[
-            {
-              text: 'NFTs',
-              onClick: () => {
-                console.log('help')
-              },
-              isActive: false
-            }
-          ]}
-        />
-      )
-    case pathname.includes('stats'):
-      return (
-        <MobileControls
-          options={[
-            {
-              text: 'Leaderboard',
-              onClick: () => {
-                console.log('help')
-              },
-              isActive: false
-            }
-          ]}
-        />
-      )
-    case pathname.includes('swap'):
     case pathname.includes('trade'):
-    case pathname.includes('farm'):
-    default:
       return (
         <MobileControls
           options={[
             {
               text: 'Perps',
-              onClick: setPerps,
+              onClick: handlePerpsSpotToggle(false),
               isActive: !isSpot
             },
             {
               text: 'Spot',
-              onClick: setSpot,
+              onClick: handlePerpsSpotToggle(true),
               isActive: isSpot
             }
           ]}
         />
       )
+    case pathname.includes('nfts'):
+    case pathname.includes('stats'):
+    case pathname.includes('swap'):
+    case pathname.includes('farm'):
+    default:
+      return <></>
   }
 }
 interface DesktopControlsProps {
@@ -506,15 +495,15 @@ interface MobileNavItemProps {
 const MobileNavItem: FC<MobileNavItemProps> = ({ animation, stateMachine, text, path }) => {
   const { pathname } = useLocation()
   const history = useHistory()
-  const riveAnimation = useRiveAnimations({
+  const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
     animation,
     autoplay: true,
     canvasWidth: 40,
     canvasHeight: 40
   })
 
-  useRiveThemeToggle(riveAnimation.rive, animation, stateMachine)
-  const { stateInput } = useRiveStateToggle(riveAnimation.rive, animation, stateMachine, path)
+  useRiveThemeToggle(rive, animation, stateMachine)
+  const { stateInput } = useRiveStateToggle(rive, animation, stateMachine, path)
   const onHover = useCallback(() => {
     if (!stateInput) return
     if (pathname.includes(path)) return
@@ -534,8 +523,8 @@ const MobileNavItem: FC<MobileNavItemProps> = ({ animation, stateMachine, text, 
       onMouseLeave={onHover}
       onClick={navigateToPath}
     >
-      <RiveAnimationWrapper setContainerRef={riveAnimation.setContainerRef} width={40} height={40}>
-        <riveAnimation.RiveComponent />
+      <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
+        <RiveComponent />
       </RiveAnimationWrapper>
       <p
         css={[
@@ -586,7 +575,7 @@ const DesktopNav: FC = () => {
         riveAnimation={'aggregator'}
         stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
         path={'/nfts'}
-        hasDropdown={true}
+        hasDropdown={false} // TODO: add when it is added
         options={[
           {
             text: 'NFTs',
@@ -611,7 +600,7 @@ const DesktopNav: FC = () => {
         riveAnimation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
         path={'/stats'}
-        hasDropdown={true}
+        hasDropdown={false} // Renable when added
         options={[
           {
             text: 'Stats',
@@ -670,7 +659,12 @@ const HeaderMainNav: FC<HeaderMainNavProps> = ({
     },
     [stateInput, pathname, path]
   )
-  const onClose = useCallback(() => setIsOpen(false), [])
+  const onClose = useCallback(() => {
+    setIsOpen(false)
+    if (stateInput && !pathname.startsWith(path)) {
+      stateInput.value = false
+    }
+  }, [stateInput, pathname, path])
   const component = useMemo(() => {
     const active = isOpen ? 'selected' : 'inactive'
     return (

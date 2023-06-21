@@ -47,15 +47,15 @@ export const RewardsButton: FC = () => {
   const rewardsAnimation = useRiveAnimations({
     animation: 'rewards',
     autoplay: true,
-    canvasWidth: 20,
-    canvasHeight: 22.32
+    canvasWidth: breakpoint.isMobile || breakpoint.isTablet ? 31 : 20,
+    canvasHeight: breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
   })
   useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
 
   const hasRewards = false // TODO: hook into useRewards hook
   const riveComponent = useMemo(() => {
-    const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 30.1 : 20
-    const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 34.09 : 22.32
+    const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 31 : 20
+    const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
     return (
       <div css={[tw`relative`]}>
         <RiveAnimationWrapper
