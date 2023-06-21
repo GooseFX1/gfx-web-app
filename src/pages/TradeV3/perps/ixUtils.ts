@@ -353,6 +353,7 @@ export const withdrawFundsIx = async (
       accounts: {
         tokenProgram: TOKEN_PROGRAM_ID,
         user: wallet.publicKey,
+        bubdyLinkProgram: new PublicKey('BUDDYtQp7Di1xfojiCSVDksiYLQx511DPdj2nbtG9Yu5'),
         userTokenAccount: withdrawFundsAccounts.userTokenAccount,
         traderRiskGroup: withdrawFundsAccounts.traderRiskGroup,
         marketProductGroup: withdrawFundsAccounts.marketProductGroup,
@@ -486,7 +487,6 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
       feeModelConfigAcct: getFeeModelConfigAcct()
     })
   )
-
   instructions.push(
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
@@ -507,7 +507,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
       traderRiskStateAcct: riskStateAccount.publicKey,
       traderFeeStateAcct: traderFeeAcct,
       riskEngineProgram: new PublicKey(RISK_ID),
-      systemProgram: SystemProgram.programId
+      systemProgram: SystemProgram.programId,
+      referralKey: PublicKey.default
     }
   })
   instructions.push(ix)
