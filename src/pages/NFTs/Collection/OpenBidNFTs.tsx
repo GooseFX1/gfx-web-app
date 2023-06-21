@@ -146,24 +146,22 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
-      <FilterTags />
-      {openBidLoading ? (
-        <NFTLoading />
-      ) : (
-        <div className="gridContainer">
-          {filteredOpenBid &&
-            filteredOpenBid.map((item, index) => (
-              <SingleNFTCard
-                item={item}
-                key={index}
-                lastCardRef={index + 1 === filteredOpenBid?.length ? lastCardRef : null}
-                index={index}
-                addNftToBag={null}
-                firstCardRef={index === 0 ? firstCardRef : null}
-              />
-            ))}
-        </div>
-      )}
+      <div className="gridContainer">
+        {filteredOpenBid ? (
+          filteredOpenBid.map((item, index) => (
+            <SingleNFTCard
+              item={item}
+              key={index}
+              lastCardRef={index + 1 === filteredOpenBid.length ? lastCardRef : null}
+              index={index}
+              addNftToBag={null}
+              firstCardRef={index === 0 ? firstCardRef : null}
+            />
+          ))
+        ) : (
+          <NFTLoading />
+        )}
+      </div>
     </NFT_COLLECTIONS_GRID>
   )
 }
