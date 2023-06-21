@@ -35,6 +35,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     bidNowClicked,
     setNftInBag,
     setSellNFT,
+    nftInBag,
     sellNFTClicked,
     openJustModal,
     refreshClicked,
@@ -193,13 +194,15 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     return () => resetLocalState()
   }, [singleCollection])
 
-  const addNftToBag = (e, nftItem, ask) => {
-    setNftInBag((prev) => {
-      const id = prev.filter((item) => item.uuid === nftItem.uuid)
-      if (!id.length) return [...prev, { ...nftItem, ...ask }]
-      return prev
-    })
+  const addNftToBag = async (e, item, ask) => {
     e.stopPropagation()
+    await setNftInBag((prev) => ({
+      ...prev,
+      [item.mint_address]: {
+        ...ask,
+        ...item
+      }
+    }))
   }
 
   const handleDrawerOpen = useCallback(() => {

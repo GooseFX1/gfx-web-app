@@ -195,7 +195,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     background: ${({ theme }) => theme.borderForNFTCard};
   }
   .gridGradient {
-    ${tw`p-[2px] sm:p-[1.5px]`}
+    ${tw`p-[1.2px] sm:p-[1.5px]`}
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
 
@@ -222,7 +222,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
       }
     }
     .hoverAddToBag {
-      ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
+      ${tw`h-[35px] w-[35px] right-[15px] top-[15px] absolute`}
     }
     .hoverButtons {
       ${tw`h-[30px] absolute bottom-4 text-white flex items-center justify-center w-[100%] py-[15px]`}
@@ -231,10 +231,6 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     .hoverNFT {
       ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px]`}
       background: ${({ theme }) => theme.hoverGradient};
-    }
-
-    .hoverAddToBag {
-      ${tw`h-[35px] w-[35px] right-3 top-1.5 absolute`}
     }
   }
   .nftTextContainer {

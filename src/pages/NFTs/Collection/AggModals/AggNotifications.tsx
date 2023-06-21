@@ -135,7 +135,19 @@ export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMet
     <SuccessfulListingMsg
       title={`NFT purchased Successfully!`}
       itemName={nftMetadata.name}
-      supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+      supportText={`You have just acquired ${nftMetadata?.name} for ${price} SOL!`}
+      additionalText={NETWORK_MSG}
+      tx_url={`https://solscan.io/tx/${signature} `}
+    />
+  )
+})
+export const successfulNFTPurchaseMsg = (signature: string, nftMetadata: string, price: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsg
+      title={`NFT purchased Successfully!`}
+      itemName={nftMetadata}
+      supportText={`You have just acquired ${nftMetadata} for ${price} SOL!`}
       additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature} `}
     />

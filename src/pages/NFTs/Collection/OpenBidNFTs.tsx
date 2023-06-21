@@ -16,8 +16,7 @@ import { BidNFTModal } from './AggModals/BidNFTModal'
 export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
   firstCardRef
 }): ReactElement => {
-  const { buyNowClicked, bidNowClicked, setNftInBag, sellNFTClicked, setSellNFT, openJustModal } =
-    useNFTAggregator()
+  const { buyNowClicked, bidNowClicked, sellNFTClicked, setSellNFT, openJustModal } = useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked, cancelBidClicked } = useNFTAggregator()
@@ -93,15 +92,6 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
     setOpenBidArr([])
   }, [refreshClicked, window.location])
 
-  const addNftToBag = (e, nftItem) => {
-    setNftInBag((prev) => {
-      const id = prev.filter((item) => item.uuid === nftItem.uuid)
-      if (!id.length) return [...prev, nftItem]
-      return prev
-    })
-    e.stopPropagation()
-  }
-
   const handleDrawerOpen = useCallback(() => {
     if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
   }, [nftMetadata, general, openJustModal])
@@ -127,7 +117,7 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
               key={index}
               lastCardRef={index + 1 === filteredOpenBid.length ? lastCardRef : null}
               index={index}
-              addNftToBag={addNftToBag}
+              addNftToBag={null}
               firstCardRef={index === 0 ? firstCardRef : null}
             />
           ))

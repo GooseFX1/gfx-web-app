@@ -169,7 +169,7 @@ export const MainNav: FC = () => {
             <BUTTONS>
               <RewardsButton />
               <Connect />
-              {/* {pathname.split('/')[1] === 'nfts' && <MyNFTBag />} */}
+              {pathname.split('/')[1] === 'nfts' && <MyNFTBag />}
               <More />
             </BUTTONS>
           </>

@@ -10,6 +10,7 @@ import { encode } from 'bs58'
 import { Dispatch, SetStateAction } from 'react'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import { Wallet } from '@solana/wallet-adapter-react'
+import { INFTInBag } from '../../types/nft_details'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -165,4 +166,19 @@ export const signAndUpdateDetails = async (
   } else {
     setModal(true)
   }
+}
+
+export const removeNFTFromBag = (
+  mintAddress: string,
+  setNftInBag: Dispatch<SetStateAction<INFTInBag>>,
+  e?: Event | any
+): void => {
+  if (e) {
+    e.stopPropagation()
+  }
+  setNftInBag((previousNftBag) => {
+    const updatedNftBag = { ...previousNftBag }
+    delete updatedNftBag[mintAddress]
+    return updatedNftBag
+  })
 }

@@ -59,7 +59,7 @@ export const SingleNFTCard: FC<{
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-  const { currencyView, operatingNFT, setOperatingNFT } = useNFTAggregator()
+  const { currencyView, operatingNFT, setOperatingNFT, nftInBag } = useNFTAggregator()
   const refreshCard = useRef(null)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -237,7 +237,10 @@ export const SingleNFTCard: FC<{
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
-  const gradientBg: boolean = useMemo(() => isOwner && localAsk !== null, [localAsk, isOwner])
+  const gradientBg: boolean = useMemo(
+    () => (isOwner && localAsk !== null) || nftInBag[item?.mint_address] !== undefined,
+    [localAsk, isOwner, nftInBag]
+  )
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
     if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
@@ -261,7 +264,7 @@ export const SingleNFTCard: FC<{
           myBidToNFT={localUserBidToNFT}
           buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
           setNFTDetails={setNFTDetails}
-          addNftToBag={addNftToBag}
+          addNftToBag={!isOwner ? addNftToBag : null}
           ask={isOwner ? null : localAsk ? localAsk : null}
           setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
         />
