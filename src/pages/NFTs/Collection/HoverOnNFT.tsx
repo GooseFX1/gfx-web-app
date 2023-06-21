@@ -10,7 +10,6 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { removeNFTFromBag } from '../../../web3/nfts/utils'
-import { NFT_MARKETS } from '../../../api/NFTs'
 const DIV = styled.div``
 
 export const HoverOnNFT: FC<{
@@ -95,17 +94,10 @@ export const HoverOnNFT: FC<{
     },
     [sessionUser, ask, setNFTDetails, setHover, item]
   )
-  const shouldShowImage = false //
-  //useMemo(
-  //   () =>
-  //     addNftToBag &&
-  //     ask &&
-  //     !nftInBag[item?.mint_address] &&
-  //     (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN ||
-  //       ask.marketplace_name === NFT_MARKETS.TENSOR ||
-  //       !ask.marketplace_name),
-  //   [ask, nftInBag, item, addNftToBag]
-  // )
+  const shouldShowImage = useMemo(
+    () => addNftToBag && ask && !nftInBag[item?.mint_address],
+    [ask, nftInBag, item, addNftToBag]
+  )
 
   const addedToBagImg = useMemo(
     () => addNftToBag && ask && nftInBag[item?.mint_address] !== undefined,
