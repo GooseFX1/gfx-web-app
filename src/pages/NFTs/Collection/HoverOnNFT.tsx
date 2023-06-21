@@ -9,6 +9,7 @@ import { formatSOLDisplay } from '../../../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { removeNFTFromBag } from '../../../web3/nfts/utils'
 const DIV = styled.div``
 
 export const HoverOnNFT: FC<{
@@ -31,11 +32,21 @@ export const HoverOnNFT: FC<{
   myBidToNFT,
   showBid,
   setHover,
+  addNftToBag,
   setIsLoadingBeforeRelocate
 }): ReactElement => {
   const { sessionUser } = useNFTProfile()
-  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT, operatingNFT } =
-    useNFTAggregator()
+  const {
+    setBidNow,
+    setBuyNow,
+    setSellNFT,
+    setOpenJustModal,
+    setCancelBidClicked,
+    setDelistNFT,
+    operatingNFT,
+    nftInBag,
+    setNftInBag
+  } = useNFTAggregator()
   const { setVisible } = useWalletModal()
 
   const showBidBtn = useMemo(
@@ -83,17 +94,34 @@ export const HoverOnNFT: FC<{
     },
     [sessionUser, ask, setNFTDetails, setHover, item]
   )
+  const shouldShowImage = useMemo(
+    () => addNftToBag && ask && !nftInBag[item?.mint_address],
+    [ask, nftInBag, item, addNftToBag]
+  )
+
+  const addedToBagImg = useMemo(
+    () => addNftToBag && ask && nftInBag[item?.mint_address] !== undefined,
+    [ask, nftInBag, item, addNftToBag]
+  )
 
   return (
     <div className="hoverNFT">
-      {/* {addNftToBag && ask && (
-          <img
-            className="hoverAddToBag"
-            src={`/img/assets/Aggregator/addToBag.svg`}
-            alt=""
-            onClick={(e) => addNftToBag(e, item, ask)}
-          />
-        )} */}
+      {shouldShowImage && (
+        <img
+          className="hoverAddToBag"
+          src={`/img/assets/Aggregator/addToBag.svg`}
+          alt=""
+          onClick={(e) => addNftToBag(e, item, ask)}
+        />
+      )}
+      {addedToBagImg && (
+        <img
+          className="hoverAddToBag"
+          src={`/img/assets/Aggregator/addedToBag.svg`}
+          alt=""
+          onClick={(e) => removeNFTFromBag(item?.mint_address, setNftInBag, e)}
+        />
+      )}
       {myBidToNFT.length > 0 && (
         <div
           tw="flex absolute dark:text-grey-5 bottom-10  text-black-4 left-[30px] font-semibold
