@@ -52,6 +52,23 @@ export const pleaseTryAgain = (isBuyingNow = false, message: string): any => {
     )
   })
 }
+export const didNotModifyPrice = (message: string): void => {
+  notify({
+    type: 'error',
+    message: (
+      <MESSAGE>
+        <Row justify="space-between" align="middle">
+          <Col>Did not modify price!</Col>
+          <Col>
+            <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{message}</div>
+        <div>Please try again, if the error persists please contact support.</div>
+      </MESSAGE>
+    )
+  })
+}
 
 export const couldNotFetchNFTMetaData = (): any =>
   notify({

@@ -38,7 +38,7 @@ const gfxConfirmTransaction = async (
   if (currentTime - startTime >= SECONDS_30) {
     throw new Error('Transaction timeout error!')
   }
-  if (res.value[0]?.confirmationStatus === statusType) {
+  if (res.value[0]?.confirmationStatus === statusType || res.value[0]?.confirmationStatus === 'finalized') {
     const confirm = { value: { err: null } }
     return confirm
   } else {
