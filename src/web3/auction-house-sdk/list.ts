@@ -42,7 +42,6 @@ export const currency: SplTokenCurrency = {
 }
 
 export const tokenSizeSDK = token(1, 0)
-
 export const constructListInstruction = async (
   connection: Connection,
   wallet: WalletContextState,

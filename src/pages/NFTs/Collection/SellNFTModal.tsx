@@ -365,7 +365,6 @@ export const SellNFTModal: FC<{
     const transaction = new Transaction()
     let removeAskIX: TransactionInstruction[] | undefined = undefined
     // if ask exists
-
     try {
       if (ask !== null) {
         // make web3 cancel
