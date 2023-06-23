@@ -107,21 +107,22 @@ const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
 }
 
 export const MainNav: FC = () => {
+  const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
   const navigateHome = useCallback(() => history.push('/swap'), [history])
   return (
     <div
       css={[
-        tw`w-screen h-14 px-5 items-center flex py-3 justify-between bg-grey-5 dark:bg-black-1
-        relative border-b-1 border-solid border-grey-2  dark:border-black-4
+        tw`w-screen h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
+        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
        `
       ]}
     >
       {(breakpoint.isDesktop || breakpoint.isLaptop) && (
         <img
           css={tw`w-15.75 h-5.25 absolute cursor-pointer`}
-          src={'img/assets/gofx-logo-new.svg'}
+          src={`/img/assets/gofx-logo-${mode}.svg`}
           onClick={navigateHome}
         />
       )}
@@ -266,7 +267,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playClose
       <MobileNavItem
         animation={'aggregator'}
         stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        text={"NFT's"}
+        text={'NFTs'}
         path={'/nfts'}
       />
       <MobileNavItem
@@ -275,12 +276,12 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playClose
         text={'Farm'}
         path={'/farm'}
       />
-      <MobileNavItem
+      {/* <MobileNavItem
         animation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
         text={'Stats'}
         path={'/stats'}
-      />
+      /> */}
     </div>
     <div>
       <MobileNavControls />
@@ -320,24 +321,24 @@ const MobileNavControls: FC = () => {
   //     ]}
   //   />
   // )
+  // return (
+  //   <MobileControls
+  //     options={[
+  //       {
+  //         text: 'Perps',
+  //         onClick: handlePerpsSpotToggle(false),
+  //         isActive: !isSpot
+  //       },
+  //       {
+  //         text: 'Spot',
+  //         onClick: handlePerpsSpotToggle(true),
+  //         isActive: isSpot
+  //       }
+  //     ]}
+  //   />
+  // )
   switch (true) {
     case pathname.includes('trade'):
-      return (
-        <MobileControls
-          options={[
-            {
-              text: 'Perps',
-              onClick: handlePerpsSpotToggle(false),
-              isActive: !isSpot
-            },
-            {
-              text: 'Spot',
-              onClick: handlePerpsSpotToggle(true),
-              isActive: isSpot
-            }
-          ]}
-        />
-      )
     case pathname.includes('nfts'):
     case pathname.includes('stats'):
     case pathname.includes('swap'):
@@ -544,7 +545,7 @@ const DesktopNav: FC = () => {
   const setPerps = useCallback(() => setIsSpot(false), [setIsSpot])
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
-    <div css={tw`flex items-center gap-3 mx-auto`}>
+    <div css={tw`flex items-center gap-5 mx-auto`}>
       <HeaderMainNav
         text={'Swap'}
         riveAnimation={'swap'}
@@ -556,22 +557,10 @@ const DesktopNav: FC = () => {
         riveAnimation={'dex'}
         stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
         path={'/trade'}
-        hasDropdown={true}
-        options={[
-          {
-            text: 'Perps',
-            onClick: setPerps,
-            isActive: !isSpot
-          },
-          {
-            text: 'Spot',
-            onClick: setSpot,
-            isActive: isSpot
-          }
-        ]}
+        hasDropdown={false}
       />
       <HeaderMainNav
-        text={"NFT's"}
+        text={'NFTs'}
         riveAnimation={'aggregator'}
         stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
         path={'/nfts'}
@@ -595,7 +584,8 @@ const DesktopNav: FC = () => {
         stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
         path={'/farm'}
       />
-      <HeaderMainNav
+
+      {/* <HeaderMainNav
         text={'Stats'}
         riveAnimation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
@@ -613,7 +603,7 @@ const DesktopNav: FC = () => {
             isActive: false
           }
         ]}
-      />
+      /> */}
     </div>
   )
 }
@@ -665,18 +655,22 @@ const HeaderMainNav: FC<HeaderMainNavProps> = ({
       stateInput.value = false
     }
   }, [stateInput, pathname, path])
+
   const component = useMemo(() => {
     const active = isOpen ? 'selected' : 'inactive'
     return (
       <div css={tw`flex flex-col items-center justify-center h-full cursor-pointer`} onClick={navigateToPath}>
         <div css={[tw`flex gap-0.25 items-center justify-center`]}>
-          <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={24} height={24}>
+          <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
             <rive.RiveComponent />
           </RiveAnimationWrapper>
           {hasDropdown && <img src={`img/assets/chevron-${mode}-${active}.svg`} />}
         </div>
         <p
-          css={[tw`mb-0 text-tiny font-medium text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`]}
+          css={[
+            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`
+          ]}
           style={{
             opacity: pathname.startsWith(path) ? 1 : 0.5
           }}
@@ -685,7 +679,7 @@ const HeaderMainNav: FC<HeaderMainNavProps> = ({
         </p>
       </div>
     )
-  }, [pathname, navigateToPath, text, mode, riveAnimation, isOpen, hasDropdown])
+  }, [mode, pathname, navigateToPath, riveAnimation, isOpen])
   return hasDropdown ? (
     <DesktopControls options={options} isOpen={isOpen} onHover={onHover} onClose={onClose}>
       {component}
@@ -743,7 +737,7 @@ const CartButton: FC = () => {
       {/*>*/}
       {/*  <rive.RiveComponent />*/}
       {/*</RiveAnimationWrapper>*/}
-      <img src={`img/assets/shopping-bag-${mode}-active.svg`} />
+      <img src={`img/assets/shopping-bag-${mode}-inactive.svg`} />
       <p
         css={[
           tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
