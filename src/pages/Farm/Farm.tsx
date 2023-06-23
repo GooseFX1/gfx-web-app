@@ -2,16 +2,16 @@ import React, { FC, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { FarmHeader } from './FarmHeader'
-import { useNavCollapse, FarmProvider, useConnectionConfig, APP_RPC, PriceFeedFarmProvider } from '../../context'
+import { FarmProvider, useConnectionConfig, APP_RPC, PriceFeedFarmProvider } from '../../context'
 import { notify } from '../../utils' //checkMobile
 import { logData } from '../../api/analytics'
 import CustomTableList from './CustomTableList'
 // import { Banner } from '../../components/Banner'
 // import { GFX_LINK } from '../../styles'
 
-const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+const WRAPPER = styled.div`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
-  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  padding-top: calc(80px);
   * {
     font-family: Montserrat;
   }
@@ -22,7 +22,7 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
   }
 `
 
-const BODY = styled.div<{ $navCollapsed: boolean }>`
+const BODY = styled.div`
   ${tw`sm:h-full px-16 py-0 sm:px-0 sm:pt-[16px]`}
 
   @media (max-width: 500px) {
@@ -40,7 +40,6 @@ const BODY = styled.div<{ $navCollapsed: boolean }>`
 export const Farm: FC = () => {
   //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
-  const { isCollapsed } = useNavCollapse()
   const { setEndpointName, network } = useConnectionConfig()
   // const [betaBanner, setBetaBanner] = useState<boolean>(true)
 
@@ -63,10 +62,10 @@ export const Farm: FC = () => {
   }
 
   return (
-    <WRAPPER $navCollapsed={isCollapsed}>
+    <WRAPPER>
       <FarmProvider>
         <PriceFeedFarmProvider>
-          <BODY $navCollapsed={isCollapsed}>
+          <BODY>
             <FarmHeader onFilter={onFilter} />
             <CustomTableList />
             {/* {betaBanner && !checkMobile() && (

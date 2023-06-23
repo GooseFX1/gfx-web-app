@@ -1,6 +1,6 @@
 import { FC, memo, ReactElement, useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAccounts, useDarkMode, useNavCollapse, useNFTProfile } from '../../../context'
+import { useAccounts, useDarkMode, useNFTProfile } from '../../../context'
 import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
@@ -14,16 +14,16 @@ import 'styled-components/macro'
 import { copyToClipboard, signAndUpdateDetails } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-const PROFILE = styled.div<{ navCollapsed: boolean }>`
+const PROFILE = styled.div`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
   border-top-right-radius: 20px;
   border: 1px solid ${({ theme }) => theme.tokenBorder};
   ${({ theme }) => theme.customScrollBar(0)}
-  height: ${({ navCollapsed }) => (navCollapsed ? '88vh' : '88vh')};
+  height: 88vh;
   .profileContent {
     ${tw`overflow-y-auto overflow-x-hidden mt-[-20px]`}
     ${({ theme }) => theme.customScrollBar('0px')}
-    height: ${({ navCollapsed }) => (navCollapsed ? '720px' : '640px')};
+    height: 640px;
   }
 
   .profile-pic {
@@ -180,7 +180,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const [discordHover, setDiscordHover] = useState<boolean>(false)
   const [websiteHover, setWebsiteHover] = useState<boolean>(false)
   const params = useParams<IAppParams>()
-  const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
 
   const publicKey = useMemo(
@@ -261,7 +260,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
 
   return (
-    <PROFILE navCollapsed={isCollapsed}>
+    <PROFILE>
       {handleModal()}
       <div className="profile-pic">
         {!checkMobile() && (

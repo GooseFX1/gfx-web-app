@@ -7,15 +7,15 @@ import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { DarkDiv, NFTBanner, TokenSwitch } from './LaunchpadComponents'
 import { useNFTLaunchpad } from '../../../../context/nft_launchpad'
 import { useUSDCToggle } from '../../../../context/nft_launchpad'
-import { useDarkMode, useNavCollapse } from '../../../../context'
+import { useDarkMode } from '../../../../context'
 import { SpaceBetweenDiv } from '../../../../styles'
 import { checkMobile } from '../../../../utils'
 
 //#region styles
-const NFT_DETAILS = styled.div<{ $navCollapsed: boolean }>`
+const NFT_DETAILS = styled.div`
   height: 100%;
   margin: 0 auto;
-  margin-top: calc(150px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  margin-top: 150px;
 
   .nd-content {
     height: 100%;
@@ -262,7 +262,6 @@ export const FeaturedLaunch: FC<{
     setFeaturedDisplay(featuredList.length > 0 ? [featuredList[featuredIndex]] : [])
   }, [featuredIndex, liveNFTProjects, featuredList])
   const { mode } = useDarkMode()
-  const { isCollapsed } = useNavCollapse()
 
   return checkMobile() ? (
     featuredDisplay && featuredDisplay.length > 0 ? (
@@ -294,7 +293,7 @@ export const FeaturedLaunch: FC<{
     )
   ) : (
     <>
-      <NFT_DETAILS {...rest} $navCollapsed={isCollapsed}>
+      <NFT_DETAILS {...rest}>
         {!featuredDisplay ? (
           <></>
         ) : (

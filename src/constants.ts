@@ -200,3 +200,113 @@ export const NQ_SOL_PRICE = 1
 export const LAMPORTS_PER_SOL = BigInt(1000000000)
 export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)
+
+interface StateMachine {
+  stateMachineName: string
+  inputs: {
+    theme: string
+    state?: string
+    [key: string]: string
+  }
+}
+interface StateMachines {
+  [key: string]: StateMachine
+}
+export interface RiveAnimation {
+  src: string
+  stateMachines: StateMachines
+}
+export interface RiveAnimations {
+  aggregator: RiveAnimation
+  swap: RiveAnimation
+  dex: RiveAnimation
+  farm: RiveAnimation
+  referrals: RiveAnimation
+  rewards: RiveAnimation
+  stats: RiveAnimation
+  [key: string]: RiveAnimation
+}
+export const RIVE_ANIMATION: RiveAnimations = {
+  aggregator: {
+    src: '/rive/aggregator.riv', //'https://media.goosefx.io/webapp/nfts.riv'
+    stateMachines: {
+      AggregatorInteractions: {
+        stateMachineName: 'AggregatorInteractions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  swap: {
+    src: '/rive/swap.riv', //'https://media.goosefx.io/webapp/swap.riv'
+    stateMachines: {
+      SwapInteractions: {
+        stateMachineName: 'SwapInteractions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  dex: {
+    src: '/rive/dex.riv', //'https://media.goosefx.io/webapp/trade.riv'
+    stateMachines: {
+      DEXInteractions: {
+        stateMachineName: 'DEXInteractions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  farm: {
+    src: '/rive/farm.riv', //'https://media.goosefx.io/webapp/farm.riv'
+    stateMachines: {
+      FarmInteractions: {
+        stateMachineName: 'FarmInteractions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  },
+  referrals: {
+    src: 'https://media.goosefx.io/webapp/referrals.riv',
+    stateMachines: {
+      Referrals: {
+        stateMachineName: 'Referrals',
+        inputs: {
+          theme: 'Theme'
+        }
+      }
+    }
+  },
+  rewards: {
+    src: 'https://media.goosefx.io/webapp/rewards.riv',
+    stateMachines: {
+      Rewards: {
+        stateMachineName: 'Rewards',
+        inputs: {
+          theme: 'Theme'
+        }
+      }
+    }
+  },
+  stats: {
+    src: '/rive/stats.riv', //'https://media.goosefx.io/webapp/stats.riv'
+    stateMachines: {
+      StatsInteractions: {
+        stateMachineName: 'StatsInteractions',
+        inputs: {
+          theme: 'Theme',
+          state: 'State'
+        }
+      }
+    }
+  }
+}

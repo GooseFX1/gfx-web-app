@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Progress, Switch } from 'antd'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { useUSDCToggle, useNFTLPSelected } from '../../../../context/nft_launchpad'
-import { useNavCollapse } from '../../../../context'
 import { Row, Col } from 'antd'
 import { SVGBlackToGrey } from '../../../../styles'
 import { checkMobile } from '../../../../utils'
@@ -562,11 +561,11 @@ export const MintProgressBar = ({ minted, totalNFTs }: { minted: number; totalNF
     </>
   )
 }
-export const SWITCH_HOLDER = styled.div<{ $navCollapsed: boolean }>`
+export const SWITCH_HOLDER = styled.div`
   position: absolute;
   top: 0;
   right: 30px;
-  margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  margin-top: 100px;
 `
 
 export const InfoDivLightTheme = ({
@@ -726,7 +725,6 @@ const TimerCircle = ({ data }: { data: any }) => <div className="timer-circle">{
 
 export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currency: string }): JSX.Element => {
   const { isUSDC, setIsUSDC } = useUSDCToggle()
-  const { isCollapsed } = useNavCollapse()
 
   useEffect(() => {
     if (currency === 'SOL') setIsUSDC(false)
@@ -738,7 +736,7 @@ export const TokenSwitch = ({ disabled, currency }: { disabled: boolean; currenc
   }
   return (
     <>
-      <SWITCH_HOLDER $navCollapsed={isCollapsed}>
+      <SWITCH_HOLDER>
         <ToggleBG>
           <span className="toggle-text">SOL</span>
           <Switch disabled={disabled} className="switch" checked={isUSDC} onChange={onChange} />

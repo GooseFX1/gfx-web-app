@@ -20,9 +20,10 @@ import { truncateAddress } from '../utils'
 import tw from 'twin.macro'
 import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
+import useBlacklisted from '../utils/useBlacklisted'
 
 const WALLET_ICON = styled(CenteredImg)`
-  ${tw`bg-black h-[30px] w-[30px] mr-[12px] rounded-circle`}
+  ${tw`bg-black h-[24px] w-[24px] mr-[12px] rounded-circle`}
 
   img {
     ${tw`h-[16px] w-[16px]`}
@@ -37,7 +38,7 @@ const WRAPPED_LOADER = styled.div`
 `
 
 const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
-  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-9 rounded-circle cursor-pointer`}
+  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-7.5 rounded-circle cursor-pointer`}
   ${({ $connected }) => $connected && `padding-left: 4px;`}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -68,9 +69,20 @@ const SVGModeAdjust = styled.img`
 const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({ setArrowRotation }) => {
   const { disconnect, wallet } = useWallet()
   const { setVisible: setWalletModalVisible } = useWalletModal()
-
+  const isGeoBlocked = useBlacklisted()
   const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
 
+  if (isGeoBlocked) {
+    return (
+      <Menu
+        css={tw`
+      dark:bg-black-1 bg-grey-4 text-grey-1 dark:text-grey-1
+    `}
+      >
+        <MenuItem>Georestricted</MenuItem>
+      </Menu>
+    )
+  }
   return (
     <Menu>
       {base58 && (

@@ -1,19 +1,19 @@
 import React, { useEffect, useState, FC } from 'react'
 import styled from 'styled-components'
 import { fetchAllNFTLaunchpadData } from '../../../../api/NFTLaunchpad'
-import { useNavCollapse, useNFTAdmin } from '../../../../context'
+import { useNFTAdmin } from '../../../../context'
 import { GradientImageBorder } from './ReviewTable'
 import { INFTProjectConfig } from '../../../../types/nft_launchpad'
 import { formatTommddyyyy, getDateInArray } from '../../../../web3/nfts/utils'
 import Slider from 'react-slick'
 import { GradientText } from '../../../../components/GradientText'
 
-const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+const WRAPPER = styled.div`
   min-height: 800px;
   background: #1f1f1f;
   width: 25vw;
   position: absolute;
-  margin-top: calc(${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')});
+  margin-top: 80px;
   height: 92vh;
   right: 0;
   top: 0;
@@ -141,7 +141,6 @@ const settings = {
   slidesToScroll: 6
 }
 const UpcomingMints: FC = () => {
-  const { isCollapsed } = useNavCollapse()
   const [upcomingMints, setUpcomingMints] = useState([])
   const [showMints, setShowMints] = useState([])
   const { update } = useNFTAdmin()
@@ -185,14 +184,14 @@ const UpcomingMints: FC = () => {
 
   if (upcomingMints.length < 1)
     return (
-      <WRAPPER $navCollapsed={isCollapsed}>
+      <WRAPPER>
         <div className="upcomingTitle">
           <GradientText text={'No upcoming Mints'} fontSize={36} fontWeight={600} />
         </div>
       </WRAPPER>
     )
   return (
-    <WRAPPER $navCollapsed={isCollapsed}>
+    <WRAPPER>
       <div className="upcomingTitle">
         <span>
           <GradientText text={upcomingMints?.length + ''} fontSize={60} fontWeight={700} />{' '}

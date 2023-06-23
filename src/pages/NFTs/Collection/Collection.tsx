@@ -2,20 +2,19 @@ import { useEffect, useState, FC } from 'react'
 import { CollectionHeader } from './CollectionHeader'
 import { CollectionTabs } from './CollectionTabs'
 import styled from 'styled-components'
-import { useNFTCollections, useNavCollapse } from '../../../context'
+import { useNFTCollections } from '../../../context'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../constants'
 import { GenericNotFound } from '../../InvalidUrl'
 
-const COLLECTION_CONTAINER = styled.div<{ collapsed: boolean }>`
-  height: calc(100vh - ${({ collapsed }) => (collapsed ? '0px' : '88px')});
+const COLLECTION_CONTAINER = styled.div`
+  height: calc(100vh - 88px);
 `
 
 export const Collection: FC = (): JSX.Element => {
   const params = useParams<IAppParams>()
-  const { isCollapsed } = useNavCollapse()
   const {
     singleCollection,
     fetchSingleCollection,
@@ -55,7 +54,7 @@ export const Collection: FC = (): JSX.Element => {
   return err ? (
     <GenericNotFound />
   ) : (
-    <COLLECTION_CONTAINER collapsed={isCollapsed}>
+    <COLLECTION_CONTAINER>
       {nftMenuPopup && <ModalSlide modalType={MODAL_TYPES.NFT_MENU} rewardToggle={setNFTMenuPopup} />}
       <CollectionHeader collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />
       <CollectionTabs collapse={collapse} setCollapse={setCollapse} setFilter={setFilter} filter={filter} />

@@ -7,7 +7,7 @@ import { InfoDivLightTheme, Vesting, RoadMap, Socials } from './LaunchpadCompone
 import { SkeletonCommon } from '../../Skeleton/SkeletonCommon'
 import { MintButton } from '../launchpadComp/MintButton'
 import { TeamMembers } from './LaunchpadComponents'
-import { useDarkMode, useNavCollapse } from '../../../../context'
+import { useDarkMode } from '../../../../context'
 import { useHistory } from 'react-router-dom'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -115,9 +115,10 @@ const BACK_IMG = styled.div`
 
 const { TabPane } = Tabs
 
-const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+const WRAPPER = styled.div`
   ${tw`flex flex-row items-center justify-between`}
-  margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  margin-top: calc(100px - 0px);
+
   .leftPart {
     ${tw`sm:w-full sm:ml-0 w-[45%] ml-[5%]`}
   }
@@ -254,7 +255,6 @@ const getRemaningTime = (time): string => {
 
 export const SingleCollection: FC = () => {
   const { selectedProject, cndyValues } = useNFTLPSelected()
-  const { isCollapsed } = useNavCollapse()
   const { mode } = useDarkMode()
   const history = useHistory()
   const [, setTime] = useState(Date.now())
@@ -312,8 +312,8 @@ export const SingleCollection: FC = () => {
   if (selectedProject?.ended) ProgressBar = <></>
 
   return (
-    <HEIGHT style={{ height: checkMobile() ? '100%' : isCollapsed ? '90vh' : '82vh' }}>
-      <WRAPPER $navCollapsed={isCollapsed}>
+    <HEIGHT style={{ height: checkMobile() ? '100%' : '82vh' }}>
+      <WRAPPER>
         <div className="leftPart">
           <div>
             <ROW>

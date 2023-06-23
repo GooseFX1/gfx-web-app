@@ -3,7 +3,7 @@ import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
 import { fetchActivityOfAddress, fetchSingleNFT, NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { useNavCollapse, useNFTAggregator, usePriceFeedFarm } from '../../../context'
+import { useNFTAggregator, usePriceFeedFarm } from '../../../context'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, truncateAddress } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { NFTActivitySectionWeb } from '../Home/NFTTableColumns'
@@ -45,7 +45,7 @@ const ACTIVITY_KIND = {
   CANCEL: 'Delist'
 }
 
-export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`
+export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   overflow-x: hidden;
   width: 100%;
   ${tw`dark:bg-black-1 bg-grey-6`}
@@ -79,7 +79,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; $cssStyle }>`
     text-align: center;
   }
   tbody {
-    height: calc(100vh - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
+    height: calc(100vh - 80px);
     overflow-y: auto;
     transition: 0.5s ease;
     ${tw`sm:h-[100%]`}
@@ -178,9 +178,8 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string; cssStyl
     })()
   }, [])
 
-  const { isCollapsed } = useNavCollapse()
   return (
-    <WRAPPER_TABLE $navCollapsed={isCollapsed} $cssStyle={cssStyle}>
+    <WRAPPER_TABLE $cssStyle={cssStyle}>
       {isLoading && <NFTRowLoading />}
       {activityData.length ? (
         <table>

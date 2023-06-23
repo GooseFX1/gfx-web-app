@@ -5,7 +5,6 @@ import { Pill, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFTAggWelcome } from '../../../components/NFTAggWelcome'
 import {
   useDarkMode,
-  useNavCollapse,
   useNFTAggregator,
   useNFTAggregatorFilters,
   useNFTCollections,
@@ -49,8 +48,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import debounce from 'lodash.debounce'
 import { successfulListingMsg } from '../Collection/AggModals/AggNotifications'
 
-const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
-  /* padding-top: ${({ $navCollapsed }) => ($navCollapsed ? '0px' : '80px')}; */
+const NFT_AGG_WRAP = styled.div<{ $currency }>`
+  height: 100%;
   transition: 0.5s ease;
   font-family: 'Montserrat';
   font-style: normal;
@@ -107,7 +106,7 @@ const NFT_AGG_WRAP = styled.div<{ $navCollapsed; $currency }>`
 const BannerContainer = styled.div<{ showBanner: boolean }>`
   ${({ showBanner }) => css`
     height: 'fit-content';
-    ${tw`mt-[15px] duration-500`}
+    ${tw`duration-500`}
   `}
   .lastRefreshed {
     ${tw`flex flex-col h-[0px] mt-[-10px] justify-end items-center w-full sm:text-sm`}
@@ -689,7 +688,6 @@ const TimelineDropdownContents = ({ setArrow }: any): ReactElement => {
 const NFTLandingPageV2 = (): ReactElement => {
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
-  const { isCollapsed } = useNavCollapse()
   const [showBanner, setShowBanner] = useState<boolean>(false)
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(true)
@@ -731,7 +729,7 @@ const NFTLandingPageV2 = (): ReactElement => {
   }, [hasOnboarded])
 
   return (
-    <NFT_AGG_WRAP $navCollapsed={isCollapsed} $currency={currencyView}>
+    <NFT_AGG_WRAP $currency={currencyView}>
       {handleWelcomeModal()}
       {!checkMobile() && (
         <>

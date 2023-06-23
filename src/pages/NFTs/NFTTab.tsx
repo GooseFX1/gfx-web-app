@@ -7,7 +7,7 @@ import {
   NFT_COLLECTIONS_GRID,
   NFT_FILTERS_CONTAINER
 } from './Collection/CollectionV2.styles'
-import { useDarkMode, useNavCollapse, useNFTAggregator, useNFTAggregatorFilters } from '../../context'
+import { useDarkMode, useNFTAggregator, useNFTAggregatorFilters } from '../../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -33,7 +33,6 @@ type Props = {
 }
 
 export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactElement => {
-  const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
   const [displayIndex, setDisplayIndex] = useState<number>(0)
   const { wallet } = useWallet()
@@ -46,10 +45,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
   }, [pubKey])
 
   return (
-    <GRID_CONTAINER
-      tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]"
-      navCollapsed={isCollapsed}
-    >
+    <GRID_CONTAINER tw="h-[calc(90vh - 32px)] sm:h-[calc(90vh- 50px)]  w-[77vw] sm:w-[100vw] sm:mt-16 mt-[32px]">
       <FiltersContainer
         collections={tabPanes[0].name}
         favourited={tabPanes[1].name}
