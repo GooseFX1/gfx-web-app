@@ -5,7 +5,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
   useNFTProfile,
-  useNavCollapse,
   useNFTAggregator,
   useNFTCollections,
   useNFTAggregatorFilters
@@ -236,7 +235,6 @@ const NFTStatsContainer = () => {
   )
 }
 export const NFTGridContainer = (): ReactElement => {
-  const { isCollapsed } = useNavCollapse()
   const [open, setOpen] = useState<boolean>(true)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
@@ -267,7 +265,7 @@ export const NFTGridContainer = (): ReactElement => {
       )
   }, [displayIndex, activityAddress])
   return (
-    <GRID_CONTAINER navCollapsed={isCollapsed}>
+    <GRID_CONTAINER>
       <img
         src={`/img/assets/Aggregator/go-to-top-${mode}.svg`}
         tw="fixed right-4 bottom-4 sm:right-2.5 sm:bottom-2.5 z-[100] cursor-pointer"
@@ -419,7 +417,6 @@ const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
 }
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
-  const { isCollapsed } = useNavCollapse()
 
   const {
     fetchSingleCollection,
@@ -458,7 +455,7 @@ const CollectionV2 = (): ReactElement => {
   return err ? (
     <GenericNotFound redirectLink="/nfts" redirectString="Go to NFT Aggerator " />
   ) : (
-    <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container" navCollapsed={isCollapsed}>
+    <COLLECTION_VIEW_WRAPPER id="nft-aggerator-container">
       <NFTStatsContainer />
       <NFTGridContainer />
     </COLLECTION_VIEW_WRAPPER>

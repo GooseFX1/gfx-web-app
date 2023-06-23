@@ -18,7 +18,7 @@ export const STATS_BTN = styled.div`
     }
   }
 `
-export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
+export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   margin-top: 10px;
   overflow-x: hidden;
   padding: 0px 20px;
@@ -69,8 +69,7 @@ export const WRAPPER_TABLE = styled.div<{ $navCollapsed; showBanner }>`
   tbody {
     ${tw`dark:bg-black-1 bg-grey-5 sm:px-[15px]`}
     height: calc(
-      100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')} -
-        ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')}
+      100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')}
     );
     ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;

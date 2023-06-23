@@ -6,7 +6,7 @@ import { OrderBookMobi } from './OrderBookMobi'
 import { PlaceOrderMobi } from './PlaceOrderMobi'
 
 const WRAPPER = styled.div<{ isSpot: boolean }>`
-  ${tw`mt-[100px] overflow-hidden`}
+  ${tw` overflow-hidden`}
   height: calc(100vh - 100px);
 
   .ant-drawer-body {

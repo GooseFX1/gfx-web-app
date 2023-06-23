@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable */
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavCollapse, useCrypto, useDarkMode } from '../../context'
+import { useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
@@ -152,9 +152,8 @@ const componentDimensionsMd = [
 //   }
 // ]
 
-const DEX_CONTAINER = styled.div<{ $navCollapsed: boolean; $isLocked: boolean; $mode: string }>`
-  ${tw`relative flex w-screen h-screen flex-col overflow-y-scroll overflow-x-hidden`}
-  padding-top: calc(112px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
+  ${tw`relative flex w-full h-full flex-col pt-[24px] overflow-y-scroll overflow-x-hidden`}
 
   * {
     font-family: Montserrat;
@@ -292,7 +291,6 @@ function getInitLayout() {
 }
 
 export const CryptoContent: FC = () => {
-  const { isCollapsed } = useNavCollapse()
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
   const isGeoBlocked = useBlacklisted()
@@ -449,7 +447,7 @@ export const CryptoContent: FC = () => {
     setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
   return !checkMobile() ? (
-    <DEX_CONTAINER $navCollapsed={isCollapsed} $isLocked={isLocked} $mode={mode}>
+    <DEX_CONTAINER $isLocked={isLocked} $mode={mode}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
       <ReactGridLayout
         compactType="vertical"

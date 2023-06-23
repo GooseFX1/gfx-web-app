@@ -4,31 +4,24 @@ import CollectionV2 from './Collection/CollectionV2'
 import NFTLandingPageV2 from './Home/NFTLandingPageV2'
 import { Profile } from './Profile'
 import { useWallet } from '@solana/wallet-adapter-react'
-import {
-  useNFTProfile,
-  useNavCollapse,
-  useConnectionConfig,
-  usePriceFeedFarm,
-  NFTAggFiltersProvider
-} from '../../context'
+import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
 import { logData } from '../../api/analytics'
 import styled from 'styled-components'
 import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 import { checkMobile } from '../../utils'
 
-const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
+const BODY_NFT = styled.div`
   position: relative;
   width: 100vw;
-  min-height: 100vh;
+  height: calc(100vh - 56px);
   overflow-y: hidden;
   overflow-x: hidden;
-  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+
   * {
     font-family: Montserrat;
   }
 `
 const NFTAgg: FC = (): ReactElement => {
-  const { isCollapsed } = useNavCollapse()
   const { path } = useRouteMatch()
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
@@ -75,7 +68,7 @@ const NFTAgg: FC = (): ReactElement => {
   }, [publicKey])
 
   return Object.keys(prices) ? (
-    <BODY_NFT $navCollapsed={isCollapsed}>
+    <BODY_NFT>
       <NFTAggFiltersProvider>
         <Switch>
           <Route exact path={path}>

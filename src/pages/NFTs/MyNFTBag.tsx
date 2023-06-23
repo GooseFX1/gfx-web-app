@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
-import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
+import { useConnectionConfig, useDarkMode, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { GradientText } from '../../components/GradientText'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
@@ -107,9 +107,7 @@ const MY_BAG = styled(Menu)`
 
 export const MyNFTBag = (): ReactElement => {
   const { nftInBag } = useNFTAggregator()
-  const { isCollapsed } = useNavCollapse()
   const itemsPresentInBag = nftInBag.length // no items in the bag
-  if (isCollapsed) return <></>
 
   return (
     <BAG_WRAPPER>

@@ -4,16 +4,16 @@ import tw from 'twin.macro'
 import { fetchCreatorProjects } from '../../../../api/NFTLaunchpad'
 import { ModalSlide } from '../../../../components/ModalSlide'
 import { MODAL_TYPES } from '../../../../constants'
-import { useNavCollapse, useNFTAdmin } from '../../../../context'
+import { useNFTAdmin } from '../../../../context'
 import { Connect } from '../../../../layouts'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import ReviewTable from './ReviewTable'
 import UpcomingMints from './UpcomingMints'
 import { GradientText } from '../../../../components/GradientText'
 
-const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
+const WRAPPER = styled.div`
   ${tw`flex`}
-  margin-top: calc(100px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+  margin-top: 100px;
   min-height: 850px;
   height: 90vh;
   .connectWallet {
@@ -39,7 +39,6 @@ const WRAPPER = styled.div<{ $navCollapsed: boolean }>`
 `
 
 const AdminDashboard: FC = () => {
-  const { isCollapsed, toggleCollapse } = useNavCollapse()
   const [reviewProjects, setReviewProjects] = useState<ICreatorData[]>()
   const [approvePopup, setApprovePopup] = useState<boolean>(false)
   const [rejectPopup, setRejectPopup] = useState<boolean>(false)
@@ -48,7 +47,6 @@ const AdminDashboard: FC = () => {
   useEffect(() => {
     // fetch Review projects this is temp
     try {
-      toggleCollapse(true)
       ;(async () => {
         const { data } = await fetchCreatorProjects()
         setReviewProjects(data)
@@ -65,7 +63,7 @@ const AdminDashboard: FC = () => {
   }
 
   return (
-    <WRAPPER $navCollapsed={isCollapsed}>
+    <WRAPPER>
       {approvePopup && <ModalSlide modalType={MODAL_TYPES.APPROVE_PROJECT} rewardToggle={setApprovePopup} />}
       {rejectPopup && <ModalSlide modalType={MODAL_TYPES.REJECT_PROJECT} rewardToggle={setRejectPopup} />}
 
@@ -87,5 +85,4 @@ const AdminDashboard: FC = () => {
     </WRAPPER>
   )
 }
-
 export default AdminDashboard

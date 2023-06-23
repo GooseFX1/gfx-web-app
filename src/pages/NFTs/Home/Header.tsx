@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, MouseEventHandler } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useDarkMode, useWalletModal, useNavCollapse } from '../../../context'
+import { useDarkMode, useWalletModal } from '../../../context'
 import { useHistory } from 'react-router-dom'
 import { Image, Menu, Dropdown } from 'antd'
 import { ButtonWrapper } from '../NFTButton'
@@ -155,7 +155,6 @@ export const Header = ({
 }) => {
   const history = useHistory()
   const { sessionUser, setUserCurrency } = useNFTProfile()
-  const { isCollapsed } = useNavCollapse()
   const { connected, connect, wallet } = useWallet()
   const [visibleCompletePopup, setVisibleCompletePopup] = useState<boolean>(false)
   const { setVisible: setModalVisible } = useWalletModal()
@@ -303,7 +302,7 @@ export const Header = ({
             </div>
           ) : (
             <div style={{ display: 'flex' }}>
-              {isCollapsed && !connected && (
+              {!connected && (
                 <CONNECT onClick={handleWalletModal}>
                   <span>Connect Wallet</span>
                 </CONNECT>

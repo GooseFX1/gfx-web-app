@@ -17,7 +17,6 @@ import {
   useSlippageConfig,
   APP_RPC,
   useConnectionConfig,
-  useNavCollapse,
   useTokenRegistry
 } from '../../context'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../../styles'
@@ -35,7 +34,9 @@ import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div`
-  ${tw`w-screen not-italic`}
+  ${tw`w-screen flex items-center not-italic`}
+  height: calc(100vh - 56px);
+  min-height: 777px;
   color: ${({ theme }) => theme.text1};
   font-family: Montserrat;
   background-color: ${({ theme }) => theme.bg2};
@@ -63,7 +64,7 @@ const WRAPPER = styled.div`
   }
 `
 
-const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navCollapsed: boolean }>`
+const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
   ${tw`flex w-full absolute left-0 top-0 justify-center p-2 items-center 
     font-medium text-center text-base sm:text-sm`}
   color: ${({ theme }) => theme.tabNameColor};
@@ -77,11 +78,11 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navColl
       opacity: 0;
     }
     20% {
-      top: ${({ $isMobile, $navCollapsed }) => ($isMobile ? '88px' : $navCollapsed ? '45px' : '125px')};
+      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
       opacity: 1;
     }
     80% {
-      top: ${({ $isMobile, $navCollapsed }) => ($isMobile ? '88px' : $navCollapsed ? '45px' : '125px')};
+      top: ${({ $isMobile }) => ($isMobile ? '88px' : '125px')};
       opacity: 1;
     }
     100% {
@@ -91,10 +92,8 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean; $navColl
   }
 `
 
-const INNERWRAPPER = styled.div<{ $desktop: boolean; $navCollapsed: boolean }>`
+const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
   ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
-
-  margin-top: ${({ $navCollapsed, $desktop }) => ($navCollapsed ? '35px' : $desktop ? '142px' : '87px')};
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
@@ -1090,8 +1089,6 @@ const AlternativesContent: FC = () => {
 }
 
 export const SwapMain: FC = () => {
-  const { isCollapsed } = useNavCollapse()
-
   const { tokenA, tokenB, inTokenAmount, outTokenAmount, gofxOutAmount, priceImpact, setRoutes, revertRoute } =
     useSwap()
   const { network } = useConnectionConfig()
@@ -1173,9 +1170,9 @@ export const SwapMain: FC = () => {
     }
   }, [tokenA, tokenB, routes, slippage, inTokenAmount, outTokenAmount, gofxOutAmount, network, priceImpact])
 
-  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean; navCollapsed: boolean }> = useCallback(
-    ({ active, isMobile, navCollapsed }) => (
-      <RefreshAlert $active={active} $isMobile={isMobile} $navCollapsed={navCollapsed}>
+  const RefreshedAnimation: FC<{ active: boolean; isMobile: boolean }> = useCallback(
+    ({ active, isMobile }) => (
+      <RefreshAlert $active={active} $isMobile={isMobile}>
         <div>
           Last updated: {checkMobile() && <br />} {new Date().toUTCString()}
         </div>
@@ -1187,8 +1184,8 @@ export const SwapMain: FC = () => {
   if (checkMobile()) {
     return (
       <WRAPPER>
-        <RefreshedAnimation active={refreshed} isMobile={true} navCollapsed={isCollapsed} />
-        <INNERWRAPPER $desktop={false} $navCollapsed={false}>
+        <RefreshedAnimation active={refreshed} isMobile={true} />
+        <INNERWRAPPER $desktop={false}>
           <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
           {allowed && <PriceContent />}
           {allowed && <TokenContent />}
@@ -1198,13 +1195,15 @@ export const SwapMain: FC = () => {
   } else {
     return (
       <WRAPPER>
-        <RefreshedAnimation active={refreshed} isMobile={false} navCollapsed={isCollapsed} />
-        <INNERWRAPPER $desktop={breakpoint.isDesktop && allowed} $navCollapsed={isCollapsed}>
-          {breakpoint.isDesktop && allowed && <TokenContent />}
-          <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
-          {breakpoint.isDesktop && allowed && <PriceContent />}
-        </INNERWRAPPER>
-        {allowed && inTokenAmount > 0 && <AlternativesContent />}
+        <div>
+          <RefreshedAnimation active={refreshed} isMobile={false} />
+          <INNERWRAPPER $desktop={breakpoint.isDesktop && allowed}>
+            {breakpoint.isDesktop && allowed && <TokenContent />}
+            <SwapContent exchange={exchange} setRefreshed={setRefreshed} refreshed={refreshed} />
+            {breakpoint.isDesktop && allowed && <PriceContent />}
+          </INNERWRAPPER>
+          {allowed && inTokenAmount > 0 && <AlternativesContent />}
+        </div>
       </WRAPPER>
     )
   }

@@ -16,7 +16,7 @@ import {
   getNetworkConnectionText
 } from '../../web3'
 import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
-import { useConnectionConfig, usePriceFeedFarm, useFarmContext, useNavCollapse } from '../../context'
+import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
 //import { NATIVE_MINT } from '@solana/spl-token-v2'
@@ -43,10 +43,10 @@ export interface IFarmData {
   volume: ConditionalData<number>
 }
 
-const WRAPPER = styled.div<{ $navCollapsed; $lastRefreshedClass }>`
+const WRAPPER = styled.div<{ $lastRefreshedClass }>`
   margin-top: 5px; // ${({ $lastRefreshedClass }) => (!$lastRefreshedClass ? '45px' : '0px')}
   // window height - banner height - nav height
-  height: calc(100vh - 216px - ${({ $navCollapsed }) => (!$navCollapsed ? '80px' : '0px')});
+  height: calc(100vh - 216px);
 
   transition: 0.5s ease;
   overflow-y: auto;
@@ -347,12 +347,9 @@ const CustomTableList: FC = () => {
       console.log(err)
     }
   }
-  const { isCollapsed } = useNavCollapse()
+
   return (
-    <WRAPPER
-      $navCollapsed={isCollapsed}
-      $lastRefreshedClass={lastRefreshedClass === 'hide' || lastRefreshedClass === undefined}
-    >
+    <WRAPPER $lastRefreshedClass={lastRefreshedClass === 'hide' || lastRefreshedClass === undefined}>
       <table ref={tableRef}>
         <thead className="tableHeader">
           <tr>

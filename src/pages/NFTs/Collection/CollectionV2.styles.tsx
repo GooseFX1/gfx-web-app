@@ -5,8 +5,8 @@ import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { useDarkMode } from '../../../context'
 
-export const COLLECTION_VIEW_WRAPPER = styled.div<{ navCollapsed }>`
-  ${({ navCollapsed }) => css`
+export const COLLECTION_VIEW_WRAPPER = styled.div`
+  ${() => css`
     color: ${({ theme }) => theme.text30};
     ${({ theme }) => theme.customScrollBar(0)};
     .ant-drawer-content-wrapper {
@@ -139,9 +139,9 @@ export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, set
     </ICON_WRAPPER_TD>
   )
 }
-export const GRID_CONTAINER = styled.div<{ navCollapsed?: boolean }>`
-  ${({ navCollapsed }) => css`
-    height: calc(100vh - 180px - ${navCollapsed ? '0px' : '80px'});
+export const GRID_CONTAINER = styled.div`
+  ${() => css`
+    height: calc(100vh - 180px);
     ${tw`duration-500`}
     @media(max-width: 500px) {
       height: auto;

@@ -18,26 +18,24 @@ import {
   PriceFeedProvider,
   NFTCollectionProvider,
   NFTDetailsProvider,
-  useNavCollapse,
   useConnectionConfig
 } from '../../context'
 import { GenericNotFound } from '../InvalidUrl'
 import { logData } from '../../api/analytics'
 
-const BODY_NFT = styled.div<{ $navCollapsed: boolean }>`
+const BODY_NFT = styled.div`
   position: relative;
   width: 100vw;
   min-height: 100vh;
   overflow-y: hidden;
   overflow-x: hidden;
-  padding-top: calc(80px - ${({ $navCollapsed }) => ($navCollapsed ? '80px' : '0px')});
+
   * {
     font-family: Montserrat;
   }
 `
 
 export const NFTs: FC = () => {
-  const { isCollapsed } = useNavCollapse()
   const location = useLocation<ILocationState>()
   const { path } = useRouteMatch()
   const { connection } = useConnectionConfig()
@@ -81,7 +79,7 @@ export const NFTs: FC = () => {
       <PriceFeedProvider>
         <NFTCollectionProvider>
           <NFTDetailsProvider>
-            <BODY_NFT $navCollapsed={isCollapsed}>
+            <BODY_NFT>
               <Switch>
                 <Route exact path={path}>
                   <NFTLandingPage />

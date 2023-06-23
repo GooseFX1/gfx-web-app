@@ -3,7 +3,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { isAdminAllowed } from '../../../api/NFTLaunchpad'
-import { useNavCollapse } from '../../../context'
 import { Connect } from '../../../layouts'
 import { GradientText } from '../../../components'
 import { httpClient } from '../../../api'
@@ -50,7 +49,6 @@ const DATA_WRAPPER = styled.div`
 
 export const TradeAnalyticsWrapper: FC = () => {
   const { wallet, connected } = useWallet()
-  const { toggleCollapse } = useNavCollapse()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tableData, setTableData] = useState<any[]>(null)
@@ -182,7 +180,6 @@ export const TradeAnalyticsWrapper: FC = () => {
   }, [tableData, volumeData])
 
   useEffect(() => {
-    toggleCollapse(true)
     ;(async () => {
       if (wallet?.adapter?.publicKey) {
         const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())

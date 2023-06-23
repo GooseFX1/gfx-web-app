@@ -3,7 +3,6 @@ import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { isAdminAllowed } from '../../api/NFTLaunchpad'
-import { useNavCollapse } from '../../context'
 import { Connect } from '../../layouts'
 import { GradientText } from '../../components/GradientText'
 import AnalyticsDashboard from './AnalyticsDashboard'
@@ -40,11 +39,9 @@ const WRAPPER = styled.div`
 
 export const AnalyticsWrapper: FC = () => {
   const { wallet, connected } = useWallet()
-  const { toggleCollapse } = useNavCollapse()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
 
   useEffect(() => {
-    toggleCollapse(true)
     ;(async () => {
       if (wallet?.adapter?.publicKey) {
         const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())

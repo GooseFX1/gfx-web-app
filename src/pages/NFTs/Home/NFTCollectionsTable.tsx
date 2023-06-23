@@ -1,14 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import React, { useEffect, useState, FC, ReactElement, useRef, useCallback, useMemo } from 'react'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
-import {
-  useNavCollapse,
-  useNFTAggregator,
-  useNFTAggregatorFilters,
-  useNFTCollections,
-  usePriceFeedFarm
-} from '../../../context'
+import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, usePriceFeedFarm } from '../../../context'
 import { checkMobile, formatSOLDisplay, LOADING_ARR } from '../../../utils'
 import { Loader, LoaderForImg } from '../../Farm/Columns'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
@@ -18,14 +10,11 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Image } from 'antd'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { Arrow } from '../../../components/common/Arrow'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
-
-const STYLE = styled.div``
 
 const stopPropagationClassList = [
   'subText',
@@ -76,13 +65,13 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
     return truncateBigNumber(v)
   }, [item, solPrice, currencyView])
 
-  const marketcap = useMemo(() => {
-    if (item.marketcap === null) return 0
+  // const marketcap = useMemo(() => {
+  //   if (item.marketcap === null) return 0
 
-    const marketcap = currencyView === 'USDC' ? item.marketcap * solPrice : item.marketcap
+  //   const marketcap = currencyView === 'USDC' ? item.marketcap * solPrice : item.marketcap
 
-    return marketcap
-  }, [item, solPrice, currencyView])
+  //   return marketcap
+  // }, [item, solPrice, currencyView])
 
   const handleRelocate = useCallback(
     (e: any) => {
@@ -363,10 +352,9 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => (
 )
 
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
-  const { isCollapsed } = useNavCollapse()
   const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
     useNFTCollections()
-  const { refreshClicked, setRefreshClass } = useNFTAggregator()
+  const { refreshClicked } = useNFTAggregator()
   const { sortFilter, sortType, pageNumber, setPageNumber, timelineDisplay } = useNFTAggregatorFilters()
   const paginationNumber = 20
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
@@ -412,7 +400,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   }, [pageNumber])
 
   return (
-    <WRAPPER_TABLE $navCollapsed={isCollapsed} showBanner={showBanner}>
+    <WRAPPER_TABLE showBanner={showBanner}>
       <table>
         {!checkMobile() && (
           <thead>
