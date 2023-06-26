@@ -228,7 +228,7 @@ export const TeamMembers: FC<{ teamMembers: any[] }> = ({ teamMembers }) => (
           </div>
         ) : (
           <div className="avatar">
-            <img src={`/img/assets/avatar.svg`} alt="" />
+            <img src={`/img/assets/avatar.png`} alt="" />
           </div>
         )}
         <div className="userNameText">{team?.name}</div>

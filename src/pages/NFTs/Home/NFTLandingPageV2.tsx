@@ -410,7 +410,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
   )
   let userPic = sessionUser?.profile_pic_link
 
-  if (userPic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.svg') userPic = null
+  if (userPic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.png') userPic = null
   if (profileImg) userPic = profileImg
 
   const getFirstAndLast = useMemo(() => (pubKey ? pubKey[0] + pubKey[pubKey.length - 1] : null), [sessionUser])
