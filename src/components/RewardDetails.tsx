@@ -1,9 +1,6 @@
 import React, { BaseSyntheticEvent, FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-//import {useHistory} from 'react-router-dom'
-//import {Row} from 'antd'
 import { useRewardToggle, useConnectionConfig, useDarkMode } from '../context'
-//import {SpaceEvenlyDiv} from '../styles'
 import { LAMPORTS_PER_SOL, RIVE_ANIMATION } from '../constants'
 import { ADDRESSES as SDK_ADDRESS, CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
 import tw from 'twin.macro'
@@ -15,7 +12,7 @@ import { Tooltip } from './Tooltip'
 import useRewards from '../hooks/useRewards'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ADDRESSES } from '../web3'
-import { Connection, PublicKey, TokenAmount } from '@solana/web3.js'
+import { TokenAmount } from '@solana/web3.js'
 import { clamp, nFormatter } from '../utils'
 import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
@@ -26,92 +23,14 @@ import { BN } from '@project-serum/anchor'
 import { Loader } from './Loader'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk'
-// const REWARD_INFO_TEXT = styled.div`
-//   ${tw`py-8 px-10`}
-//   color: ${({theme}) => theme.text1} !important;
-// `
-//
-// const TEXT_20 = styled.div`
-//   ${tw`text-xl font-bold xl:text-tiny`}
-//   line-height: inherit;
-//   color: ${({theme}) => theme.text1} !important;
-// `
-// const TEXT_50 = styled.span`
-//   ${tw`text-[50px] font-bold xl:text-[40px]`}
-// `
-//
-// const TEXT_60 = styled.span`
-//   ${tw`text-6xl font-bold xl:text-[40px]`}
-//   font-family: Montserrat;
-//   line-height: normal;
-//   -webkit-background-clip: text;
-//   background-clip: text;
-//   -webkit-text-fill-color: transparent;
-// `
-
-// const PURPLE60 = styled(TEXT_60)`
-//   background-image: linear-gradient(56deg, #716fff 20%, #e95aff 55%);
-// `
-//
-// const TEXT_25 = styled.span`
-//   ${tw`text-[25px] font-semibold xl:text-[20px]`}
-// `
-//
-// const TEXT_22 = styled.div`
-//   ${tw`text-average mt-[3vh] font-medium xl:text-regular`}
-// `
-//
-// const TEXT_15 = styled.div`
-//   ${tw`text-tiny xl:text-[12px]`}
-//   color: ${({theme}) => theme.text16};
-// `
-
-// const GREEN60 = styled(TEXT_60)`
-//   background-image: linear-gradient(264deg, #9cc034 56%, #49821c 99%);
-// `
-
-// const REWARD_DETAILS_CONTAINER = styled.div`
-//   ${tw`mt-[1%]`}
-// `
-
-// const LINE = styled.div`
-//   ${tw`w-full h-[2px] mt-4 rotate-0`}
-//   background-color: ${({theme}) => theme.text1};
-// `
-//
-// const REWARD_ICON = styled.img`
-//   ${tw`h-[38px] w-[38px] ml-3`}
-//   filter: ${({theme}) => theme.substractImg};
-// `
 
 const FLEX_COL_CONTAINER = styled.div`
   ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger`}
 `
 
-// const STAKE_BTN = styled.button`
-//   ${tw`block w-[263px] h-[60px] rounded-[45px] bg-white border-none
-//   border-0 text-regular font-bold cursor-pointer text-[#7d289d]`}
-// `
-//
-// const BUY_GOFX = styled.button`
-//   ${tw`block w-[263px] h-[60px] rounded-[45px] text-center border-none
-//   border-0 text-[17px] font-bold cursor-pointer bg-transparent`}
-// `
-
-// const STAKE_TEXT = styled.div`
-//   ${tw`text-[28px] font-semibold text-center xl:text-[22px]`}
-// `
-// const APR_TEXT = styled.div`
-//   ${tw`text-[58px] text-center font-bold xl:text-[50px]`}
-// `
-
 const CLOSE_ICON = styled.button`
   ${tw`absolute top-[15px] right-[15px] w-[30px] h-[30px] bg-transparent border-0 border-none cursor-pointer`}
 `
-
-// const BOLD_TEXT = styled.span`
-//   ${tw`font-extrabold`}
-// `
 
 interface RewardInfoProps {
   title: string
@@ -238,12 +157,10 @@ const EarnRewards: FC = () => {
     if (!wallet || !connection || !connected) {
       return
     }
-    //const gofxMint = ADDRESSES[network]?.mints?.GOFX_MINT?.address
-    //TODO: change back
     const currentNetwork =
       network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-    const gofx = rewardAddresses[currentNetwork].GOFX_MINT
-    const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofx })
+    const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
+    const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
     if (account.value[0]) {
       const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
       setUserGoFxBalance(() => balance.value)
