@@ -46,6 +46,7 @@ import { TermsTextNFT } from '../AcceptBidModal'
 import { STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
 import { BorderBottom } from '../SellNFTModal'
 import { couldNotDeriveValueForBuyInstruction, pleaseTryAgain, successfulListingMessage } from './AggNotifications'
+import { constructBidInstruction } from '../../../../web3/auction-house-sdk/bid'
 
 const BID_MODAL = styled.div``
 export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
@@ -53,6 +54,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const { connected, sendTransaction, wallet } = useWallet()
+  const wal = useWallet()
   const { setGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
@@ -173,6 +175,26 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
   const callBuyInstruction = async (e: any) => {
     e.preventDefault()
     setIsLoading(true)
+    const bidIx = await constructBidInstruction(connection, wal, curBid, general)
+    const tx = new Transaction()
+    tx.add(bidIx)
+    try {
+      const signature = await sendTransaction(tx, connection, { skipPreflight: true })
+
+      console.log(signature)
+      setPendingTxSig(signature)
+      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      console.log(confirm, 'confirming')
+      setIsLoading(false)
+      if (confirm.value.err === null) {
+        setBidNow(false)
+        notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(curBid)))
+      }
+    } catch (error) {
+      setIsLoading(false)
+      pleaseTryAgain(false, error?.message)
+    }
+    return
 
     const {
       metaDataAccount,
