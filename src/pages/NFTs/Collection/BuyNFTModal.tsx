@@ -610,11 +610,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     e.preventDefault()
     setIsLoading(true)
     logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
-    if (ask.marketplace_name === NFT_MARKETS.TENSOR) {
+    if (ask?.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return
     }
-    if (ask.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
+    if (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
       callMagicEdenAPIs()
       return
     } else callBuyInstruction()
@@ -819,7 +819,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <Button
             className="buyButton"
             disabled={notEnoughSol || isLoading}
-            onClick={handleBuyFlow}
+            onClick={(e) => handleBuyFlow(e)}
             loading={isLoading}
           >
             {notEnoughSol ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}

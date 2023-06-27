@@ -34,10 +34,12 @@ import { callWithdrawInstruction, tokenSize, tradeStatePDA } from '../actions'
 import BN from 'bn.js'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { successBidRemovedMsg } from './AggModals/AggNotifications'
+import { constructCancelBidInstruction } from '../../../web3/auction-house-sdk/bid'
 
 const CancelBidModal = (): ReactElement => {
   const { general, ask, bids, nftMetadata } = useNFTDetails()
   const { wallet, sendTransaction } = useWallet()
+  const wal = useWallet()
   const { connection } = useConnectionConfig()
   const [userEscrowBalance, setUserEscrowBalance] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -131,35 +133,38 @@ const CancelBidModal = (): ReactElement => {
   const callCancelInstruction = async () => {
     try {
       setIsLoading(true)
-      const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
+      const cancelBidIx = await constructCancelBidInstruction(connection, wal, general)
+      return
+      // const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
-      const cancelInstructionArgs: CancelInstructionArgs = {
-        buyerPrice: buyerPrice,
-        tokenSize: tokenSize
-      }
+      // const cancelInstructionArgs: CancelInstructionArgs = {
+      //   buyerPrice: buyerPrice,
+      //   tokenSize: tokenSize
+      // }
 
-      const cancelInstructionAccounts: CancelInstructionAccounts = {
-        wallet: publicKey,
-        tokenAccount: new PublicKey(general.token_account),
-        tokenMint: new PublicKey(general.mint_address),
-        authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-        auctionHouse: new PublicKey(AUCTION_HOUSE),
-        auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-        tradeState: buyerTradeState[0]
-      }
+      // const cancelInstructionAccounts: CancelInstructionAccounts = {
+      //   wallet: publicKey,
+      //   tokenAccount: new PublicKey(general.token_account),
+      //   tokenMint: new PublicKey(general.mint_address),
+      //   authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      //   auctionHouse: new PublicKey(AUCTION_HOUSE),
+      //   auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+      //   tradeState: buyerTradeState[0]
+      // }
 
-      const cancelIX: TransactionInstruction = await createCancelInstruction(
-        cancelInstructionAccounts,
-        cancelInstructionArgs
-      )
+      // const cancelIX: TransactionInstruction = await createCancelInstruction(
+      //   cancelInstructionAccounts,
+      //   cancelInstructionArgs
+      // )
 
-      const transaction = new Transaction().add(cancelIX)
-      if (userEscrowBalance >= formatSOLNumber(myBid[0].buyer_price)) {
-        transaction.add(await callAuctionHouseWithdraw(new BN(parseFloat(myBid[0].buyer_price))))
-      }
+      const transaction = new Transaction()
+      // cancelBidIx.map((ix) => transaction.add(ix))
+      // if (userEscrowBalance >= formatSOLNumber(myBid[0].buyer_price)) {
+      //   transaction.add(await callAuctionHouseWithdraw(new BN(parseFloat(myBid[0].buyer_price))))
+      // }
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
-      const confirm = await await confirmTransaction(connection, signature, 'finalized')
+      const confirm = await await confirmTransaction(connection, signature, 'processed')
       if (confirm.value.err === null) {
         notify(successBidRemovedMsg(signature, nftMetadata, myBidPrice.toFixed(2)))
         setUserEscrowBalance(userEscrowBalance - myBidPrice)
