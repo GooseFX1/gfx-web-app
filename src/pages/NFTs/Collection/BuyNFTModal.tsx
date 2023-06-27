@@ -815,7 +815,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <Button
             className="buyButton"
             disabled={notEnoughSol || isLoading}
-            onClick={handleBuyFlow}
+            onClick={(e) => handleBuyFlow(e)}
             loading={isLoading}
           >
             {notEnoughSol ? 'Insufficient SOL' : isBuyingNow ? 'Buy Now' : 'Place Bid'}
