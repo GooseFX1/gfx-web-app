@@ -93,7 +93,7 @@ const RefreshAlert = styled.div<{ $active: boolean; $isMobile: boolean }>`
 `
 
 const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-  ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full`}
+  ${tw`flex items-center w-screen mb-[42px] sm:justify-start sm:flex-col sm:items-center sm:h-full sm:mt-8`}
   color: ${({ theme }) => theme.text1};
   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 
@@ -344,7 +344,7 @@ const SETTING_WRAPPER = styled(CenteredImg)`
 `
 
 const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
-  ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[100]`}
+  ${tw`absolute h-[64px] w-[64px] cursor-pointer rounded-circle z-[49]`}
   top: calc(50% - ${({ measurements }) => measurements}px / 2 + 18px);
   left: calc(50% - ${({ measurements }) => measurements}px / 2);
   background-color: rgb(88 85 255);
@@ -357,7 +357,7 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
   }
 
   .swap-switch {
-    ${tw`h-[90px] w-auto sm:h-[84px] z-[100]`}
+    ${tw`h-[90px] w-auto sm:h-[84px]`}
   }
 
   @keyframes fadein {
@@ -373,7 +373,7 @@ const SWITCH = styled(CenteredDiv)<{ measurements: number }>`
 const SWAP_CONTENT = styled.div`
   ${tw`items-center p-8 w-628 max-h-90p min-h-400 rounded-bigger 
   dark:bg-black-2 bg-white flex flex-col flex-nowrap shadow-[0 7px 15px 5px rgba(0, 0, 0, 0.15)] 
-  sm:w-full sm:mb-5 sm:p-5 sm:text-sm sm:leading-normal`}
+  sm:min-h-[500px] sm:w-full sm:mb-5 sm:p-5 sm:text-sm sm:leading-normal`}
 
   wrapped-sol
 `

@@ -52,7 +52,7 @@ export const AnalyticsWrapper: FC = () => {
 
   return !connected ? (
     <CONNECT_WALLET_WRAPPER>
-      <img className="gooseLogo" src="/img/assets/GOFX-icon.svg" alt="Goose" />
+      <img className="gooseLogo" src="/img/crypto/GOFX.svg" alt="Goose" />
       <div className="first-line">Welcome to NFT Analytics page!</div>
       <div className="connectWallet">
         <Connect />
@@ -60,7 +60,7 @@ export const AnalyticsWrapper: FC = () => {
     </CONNECT_WALLET_WRAPPER>
   ) : !adminAllowed ? (
     <WRAPPER>
-      <img className="gfxLogo" src="/img/assets/GOFX-icon.svg" alt="Launchpad Logo" />
+      <img className="gfxLogo" src="/img/crypto/GOFX.svg" alt="Launchpad Logo" />
       <div className="first-line">Ups, wallet not supported!</div>
       <div className="second-line">
         Please contact <GradientText text={'contact@goosefx.io'} fontSize={18} fontWeight={500} /> or try again.

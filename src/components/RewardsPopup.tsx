@@ -1,13 +1,13 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-// import { useRewardToggle } from '../context/reward_toggle'
 import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
+import { useDarkMode, useRewardToggle } from '../context'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
-import { useRewardToggle } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
-import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
+// import { useRewardToggle } from '../context/reward_toggle'
+// import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
+// import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 
 const REWARD_INFO = styled.div`
   ${tw`w-[68%] h-[75vh] rounded-bigger`}
@@ -42,29 +42,34 @@ const Wrapper = styled.div`
 // `
 
 export const RewardsButton: FC = () => {
+  const { mode } = useDarkMode()
   const { rewardToggle } = useRewardToggle()
   const breakpoint = useBreakPoint()
-  const rewardsAnimation = useRiveAnimations({
-    animation: 'rewards',
-    autoplay: true,
-    canvasWidth: breakpoint.isMobile || breakpoint.isTablet ? 31 : 20,
-    canvasHeight: breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
-  })
-  useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
+  // const rewardsAnimation = useRiveAnimations({
+  //   animation: 'rewards',
+  //   autoplay: true,
+  //   canvasWidth: breakpoint.isMobile || breakpoint.isTablet ? 31 : 20,
+  //   canvasHeight: breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
+  // })
+  // useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
 
   const hasRewards = false // TODO: hook into useRewards hook
-  const riveComponent = useMemo(() => {
-    const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 31 : 20
-    const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
-    return (
+
+  // const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 31 : 20
+  // const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
+  const riveComponent = useMemo(
+    () => (
       <div css={[tw`relative`]}>
-        <RiveAnimationWrapper
+        {/* <RiveAnimationWrapper
           setContainerRef={rewardsAnimation.setContainerRef}
           width={breakpointWidth}
           height={breakpointHeight}
         >
           <rewardsAnimation.RiveComponent />
-        </RiveAnimationWrapper>
+        </RiveAnimationWrapper> */}
+
+        <img css={breakpoint.isMobile ? [tw`h-[30px]`] : [tw`h-[24px]`]} src={`img/mainnav/rewards-${mode}.svg`} />
+
         {hasRewards && (
           <img
             css={tw`absolute top-[5px] min-md:top-[1px] right-0`}
@@ -72,8 +77,9 @@ export const RewardsButton: FC = () => {
           />
         )}
       </div>
-    )
-  }, [rewardsAnimation, breakpoint, hasRewards])
+    ),
+    [mode, breakpoint, hasRewards]
+  )
   const handleClick = useCallback(() => rewardToggle(true), [])
   if (breakpoint.isMobile || breakpoint.isTablet) {
     return <div css={[tw`cursor-pointer`]}>{riveComponent}</div>
@@ -82,7 +88,7 @@ export const RewardsButton: FC = () => {
     <div
       css={[
         tw`h-7.5 w-27.5 border-1 border-solid border-grey-1 dark:border-white rounded-full
-       bg-grey-5 dark:bg-black-1 px-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
+       bg-grey-5 dark:bg-black-1 pl-1 pr-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
        text-tiny font-semibold text-black-4 dark:text-white
        `
       ]}

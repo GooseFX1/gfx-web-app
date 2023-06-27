@@ -1,0 +1,18 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="State=Active, Feature=Farm, Theme=Darkmode">
+<g id="Group 27347">
+<path id="Vector 20" d="M24.2549 17.2297L20.1157 20.7258C20.0489 20.7823 19.9511 20.7823 19.8843 20.7258L15.7451 17.2297C14.0567 15.8036 13.8448 13.2785 15.2719 11.591L19.8631 6.16193C19.9347 6.07721 20.0653 6.07722 20.1369 6.16193L24.7281 11.591C26.1552 13.2785 25.9433 15.8036 24.2549 17.2297Z" fill="url(#paint0_linear_15815_5865)" stroke="#EEEEEE" stroke-width="1.8"/>
+<path id="Vector 21" d="M33 21.0001V19.7421C33 19.4573 32.7323 19.2515 32.4595 19.3337C31.1031 19.7427 27.4773 20.9252 24.875 22.5973C21.9407 24.4828 20.6159 27.1584 20 27.1584C19.3841 27.1584 18.0593 24.4828 15.125 22.5973C12.5227 20.9252 8.89693 19.7427 7.54047 19.3337C7.26772 19.2515 7 19.4573 7 19.7421V21.0001C7 28.1798 12.8203 34.0001 20 34.0001C27.1797 34.0001 33 28.1798 33 21.0001Z" fill="url(#paint1_linear_15815_5865)" stroke="#EEEEEE" stroke-width="1.8"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_15815_5865" x1="12.6875" y1="11.9294" x2="27.7575" y2="13.6991" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F7931A"/>
+<stop offset="1" stop-color="#7A227A"/>
+</linearGradient>
+<linearGradient id="paint1_linear_15815_5865" x1="7" y1="25.1059" x2="33.0262" y2="30.5393" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F7931A"/>
+<stop offset="1" stop-color="#7A227A"/>
+</linearGradient>
+</defs>
+</svg>

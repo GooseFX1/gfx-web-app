@@ -1,0 +1,24 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="State=Active, Feature=DEX, Theme=Lightmode" clip-path="url(#clip0_15815_5811)">
+<g id="Group 27528">
+<rect id="Rectangle 358" x="9.44163" y="7.9" width="8.45" height="23.2" rx="1.1" fill="url(#paint0_linear_15815_5811)" stroke="#3C3C3C" stroke-width="1.8"/>
+<rect id="Rectangle 359" x="23.1084" y="13.9" width="8.45" height="12.2" rx="1.1" fill="url(#paint1_linear_15815_5811)" stroke="#3C3C3C" stroke-width="1.8"/>
+<path id="Vector" d="M8.49988 20H3.33337" stroke="#3C3C3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M22 20H18" stroke="#3C3C3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M36.6667 20H32" stroke="#3C3C3C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_15815_5811" x1="14" y1="8" x2="25.3003" y2="21.6339" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F7931A"/>
+<stop offset="1" stop-color="#7A227A"/>
+</linearGradient>
+<linearGradient id="paint1_linear_15815_5811" x1="27" y1="14" x2="31.3637" y2="24.7245" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F7931A"/>
+<stop offset="1" stop-color="#7A227A"/>
+</linearGradient>
+<clipPath id="clip0_15815_5811">
+<rect width="40" height="40" fill="white"/>
+</clipPath>
+</defs>
+</svg>

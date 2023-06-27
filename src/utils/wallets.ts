@@ -27,7 +27,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     appIdentity: {
       name: 'GooseFX',
       uri: 'https://app.goosefx.io/',
-      icon: '/img/assets/GOFX-icon.svg'
+      icon: '/img/crypto/GOFX.svg'
     },
     authorizationResultCache: createDefaultAuthorizationResultCache(),
     cluster: network,
