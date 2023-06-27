@@ -499,7 +499,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
     setIsLoading(true)
     logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
-
     if (ask?.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return

@@ -9,8 +9,10 @@ import { USER_SOCIALS } from '../../constants'
 import { encode } from 'bs58'
 import { Dispatch, SetStateAction } from 'react'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
-import { Wallet } from '@solana/wallet-adapter-react'
+import { Wallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { INFTInBag } from '../../types/nft_details'
+import { Metaplex, toPublicKey, walletAdapterIdentity } from '@metaplex-foundation/js'
+import { AUCTION_HOUSE } from '../ids'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -182,3 +184,9 @@ export const removeNFTFromBag = (
     return updatedNftBag
   })
 }
+
+export const getMetaplexInstance = async (connection: Connection, wallet: WalletContextState): Promise<Metaplex> =>
+  new Metaplex(connection).use(walletAdapterIdentity(wallet))
+
+export const findOurAuctionHouse = async (metaplex: Metaplex): Promise<any> =>
+  metaplex.auctionHouse().findByAddress({ address: toPublicKey(AUCTION_HOUSE) })
