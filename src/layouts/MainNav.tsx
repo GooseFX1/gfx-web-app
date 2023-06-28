@@ -1,132 +1,57 @@
-import React, { FC, useEffect, useState, useCallback } from 'react'
-import { useLocation } from 'react-router-dom'
-import styled from 'styled-components'
+import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
+import { RewardsButton } from '../components/RewardsPopup'
+import { useDarkMode, useRewardToggle } from '../context'
+import { ThemeToggle } from '../components/ThemeToggle'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 import { More } from './More'
-import { Tabs } from './Tabs'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { RewardsButton } from '../components/RewardsPopup'
-import { useDarkMode } from '../context'
-import { SVGToGrey2, CenteredDiv, SVGToWhite, CenteredImg, AlignCenterDiv } from '../styles'
-import { useNavCollapse } from '../context'
+import useClickOutside from '../hooks/useClickOutside'
+import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
-import { useRewardToggle } from '../context/reward_toggle'
 import { MODAL_TYPES } from '../constants'
-import { checkMobile } from '../utils'
-import { ThemeToggle } from '../components/ThemeToggle'
-import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
-import tw from 'twin.macro'
-import { useRive } from '@rive-app/react-canvas'
 
-const BRAND = styled.a`
-  ${tw`absolute flex justify-center items-center text-lg 
-  leading-5 font-bold w-21 md:relative md:top-2 md:left-2 md:mb-6 md:h-11.75 min-md:h-12.5 min-md:left-[58px]`}
+// import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
-  img {
-    ${tw`h-inherit w-inherit object-contain`}
-  }
-`
+// import { RIVE_ANIMATION } from '../constants'
+// import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
+// import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
+// import useRiveStateToggle from '../hooks/useRiveStateToggle'
+// import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
+//
 
-const BUTTONS = styled(CenteredDiv)`
-  ${tw`absolute md:relative min-md:right-[58px] min-md:h-12.5`}
+// const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
+//   const { mode } = useDarkMode()
+//   const [opacity, setOpacity] = useState(0)
 
-  > *:not(:last-child) {
-    ${tw`mr-[12px]`}
-  }
+//   const toggleOpacity = useCallback(() => setOpacity(1 - opacity), [opacity])
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    > *:not(:last-child) {
-      ${tw`mr-4`}
-    }
-  `}
-`
+//   const computeDropdownIcon = useCallback(
+//     () =>
+//       mode === 'dark' ? (
+//         <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} />
+//       ) : (
+//         <img src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} alt="" />
+//       ),
+//     [mode, toggleOpacity]
+//   )
+//   const [dropdownIcon, setDropdownIcon] = useState(computeDropdownIcon())
 
-const WRAPPER = styled.nav`
-  ${tw`fixed w-full rounded-b-circle z-[300] md:flex-nowrap sm:w-[100vw]
-  md:flex md:h-auto md:p-2 min-md:flex min-md:items-center min-md:justify-center`}
-  background-color: ${({ theme }) => theme.bg20};
-  ${({ theme }) => theme.smallShadow}
-`
+//   useEffect(() => {
+//     setDropdownIcon(computeDropdownIcon())
+//   }, [computeDropdownIcon, mode])
 
-const MobileWrapper = styled(WRAPPER)`
-  ${tw`flex !flex-row justify-between items-center rounded-none rounded-b-[30px]`}
-  background-color: ${({ theme }) => theme.bg20};
-`
-
-const CollapsibleWrapper = styled.div<{ $collapse: boolean }>`
-  ${tw`absolute rounded-bl-bigger rounded-br-bigger justify-center cursor-pointer flex w-10 h-5 bottom-[-20px]`}
-  background: ${({ $collapse, theme }) =>
-    $collapse ? 'linear-gradient(158.4deg, #5855FF 14.18%, #DC1FFF 82.14%);' : theme.bg20};
-
-  img {
-    ${tw`h-2.5 w-[14px]`}
-  }
-`
-const RESPONSIVE_MENU = styled.ul`
-  ${tw`absolute items-center flex flex-col left-0 top-0 h-screen w-screen pb-4 pt-[10vh] px-0`}
-  background-color: ${({ theme }) => theme.bg1};
-`
-
-const CLOSE = styled.img`
-  ${tw`absolute object-contain h-6 w-6 top-[30px] right-[18px]`}
-`
-
-const RESPONSIVE_DROPDOWN_WRAPPER = styled.div`
-  ${tw`mr-2 ml-[22px] min-sm:hidden`}
-`
-
-const DROPDOWN_ICON_WRAPPER = styled(CenteredImg)`
-  ${tw`w-7 h-[21px]`}
-`
-
-const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
-  const { mode } = useDarkMode()
-  const [opacity, setOpacity] = useState(0)
-
-  const toggleOpacity = useCallback(() => setOpacity(1 - opacity), [opacity])
-
-  const computeDropdownIcon = useCallback(
-    () =>
-      mode === 'dark' ? (
-        <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} />
-      ) : (
-        <img src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} alt="" />
-      ),
-    [mode, toggleOpacity]
-  )
-  const [dropdownIcon, setDropdownIcon] = useState(computeDropdownIcon())
-
-  useEffect(() => {
-    setDropdownIcon(computeDropdownIcon())
-  }, [computeDropdownIcon, mode])
-
-  return (
-    <RESPONSIVE_DROPDOWN_WRAPPER>
-      <DROPDOWN_ICON_WRAPPER>{dropdownIcon}</DROPDOWN_ICON_WRAPPER>
-      <RESPONSIVE_MENU style={{ display: opacity ? 'flex' : 'none', opacity }}>
-        <CLOSE
-          as={mode === 'dark' ? SVGToWhite : 'img'}
-          src={`${process.env.PUBLIC_URL}/img/assets/cross.svg`}
-          onClick={toggleOpacity}
-        />
-        <ThemeToggle />
-        <Tabs mobileToggle={toggleOpacity} />
-        {/* <RewardsButton /> */}
-      </RESPONSIVE_MENU>
-    </RESPONSIVE_DROPDOWN_WRAPPER>
-  )
-}
+//   return <></>
+// }
 
 export const MainNav: FC = () => {
-  const { pathname } = useLocation()
-  const { isCollapsed, toggleCollapse } = useNavCollapse()
-  const { rewardModal, rewardToggle } = useRewardToggle()
   const { mode } = useDarkMode()
-  const [, setMobile] = useState(true) //initial mobile
-
-  const handleCollapse = (val) => {
-    toggleCollapse(val)
-  }
+  const breakpoint = useBreakPoint()
+  const history = useHistory()
+  const navigateHome = useCallback(() => history.push('/swap'), [history])
+  const { rewardModal, rewardToggle } = useRewardToggle()
 
   const slideModal = () => {
     if (rewardModal) {
@@ -134,83 +59,650 @@ export const MainNav: FC = () => {
         <ModalSlide
           rewardModal={rewardModal}
           modalType={MODAL_TYPES.REWARDS}
-          rewardToggle={!checkMobile() && rewardToggle}
+          rewardToggle={!breakpoint.isMobile && rewardToggle}
         />
       )
     }
   }
 
-  useEffect(() => {
-    const mobile = window?.innerWidth < 500
-    setMobile(mobile)
-  }, [])
-
-  if (checkMobile()) {
-    return (
-      <MobileWrapper id="menu">
-        <BRAND href="/">
-          <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
-        </BRAND>
-        <RewardsButton />
-        <AlignCenterDiv>
-          <Connect />
-          <ResponsiveDropdown logoAnimationTime={2} />
-        </AlignCenterDiv>
-      </MobileWrapper>
-    )
-  } else {
-    return (
-      <WRAPPER id="menu">
-        {!isCollapsed && (
-          <>
-            {slideModal()}
-            <BRAND href="/">
-              <img id="logo" src={`/img/assets/gfx_logo_gradient_${mode}.svg`} alt="GFX Logo" />
-            </BRAND>
-            <Tabs />
-            <BUTTONS>
-              <RewardsButton />
-              <Connect />
-              {/* {pathname.split('/')[1] === 'nfts' && <MyNFTBag />} */}
-              <More />
-            </BUTTONS>
-          </>
+  return (
+    <div
+      css={[
+        tw`w-screen h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
+        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
+       `
+      ]}
+    >
+      {slideModal()}
+      <div css={tw`w-15.75 h-5.25 flex items-center gap-2 absolute cursor-pointer`} onClick={navigateHome}>
+        <img src={`/img/mainnav/g-logo.svg`} />
+        {(breakpoint.isDesktop || breakpoint.isLaptop) && (
+          <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
         )}
+      </div>
 
-        <Collapsible collapse={isCollapsed} onCollapse={handleCollapse} />
-      </WRAPPER>
-    )
+      <DesktopNav />
+      <div css={tw`flex items-center gap-3 absolute right-0 mr-2.5 min-md:mr-0`}>
+        <RewardsButton />
+        <Connect />
+        <CartButton />
+        <More />
+        <MobileNav />
+      </div>
+    </div>
+  )
+}
+const MobileNav: FC = () => {
+  const breakpoint = useBreakPoint()
+  const { mode } = useDarkMode()
+  const { pathname } = useLocation()
+  const [isOpen, setIsOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState({
+    // animation: 'swap',
+    // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
+    text: 'Swap',
+    path: '/swap'
+  })
+  useEffect(() => setIsOpen(false), [pathname])
+  useEffect(() => {
+    switch (true) {
+      case pathname.includes('trade'):
+        setCurrentPage(() => ({
+          // animation: 'dex',
+          // stateMachine: RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName,
+          text: 'trade',
+          path: '/trade'
+        }))
+        break
+      case pathname.includes('nfts'):
+        setCurrentPage({
+          // animation: 'aggregator',
+          // stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
+          text: 'NFTs',
+          path: '/nfts'
+        })
+        break
+      case pathname.includes('farm'):
+        setCurrentPage({
+          // animation: 'farm',
+          // stateMachine: RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName,
+          text: 'Farm',
+          path: '/farm'
+        })
+        break
+      case pathname.includes('stats'):
+        setCurrentPage({
+          // animation: 'stats',
+          // stateMachine: RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName,
+          text: 'Stats',
+          path: '/stats'
+        })
+        break
+      case pathname.includes('swap'):
+        setCurrentPage({
+          // animation: 'swap',
+          // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
+          text: 'Swap',
+          path: '/swap'
+        })
+        break
+      default:
+        break
+    }
+  }, [pathname])
+  // const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
+  //   animation: currentPage.animation,
+  //   autoplay: true,
+  //   canvasWidth: 40,
+  //   canvasHeight: 40
+  // })
+
+  // useRiveThemeToggle(rive, currentPage.animation, currentPage.stateMachine)
+  // useRiveStateToggle(rive, currentPage.animation, currentPage.stateMachine, currentPage.path)
+  const onClose = useCallback(() => setIsOpen(false), [])
+  const toggleSettingsDrawer = useCallback(() => setIsOpen((prev) => !prev), [])
+  const isOnPage = useMemo(() => pathname.includes(currentPage.path), [pathname, currentPage.path])
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const active = useMemo(
+    () => (isOnPage && !isOpen ? 'active' : isOpen ? 'selected' : 'inactive'),
+    [isOpen, isOnPage]
+  )
+
+  const localOnClose = useCallback(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    setPlayCloseAnimation(true)
+    closeTimerRef.current = setTimeout(() => {
+      onClose()
+      setPlayCloseAnimation(false)
+    }, 100)
+  }, [onClose])
+  const closeTimerRef = useRef<NodeJS.Timer>(null)
+  const [playCloseAnimation, setPlayCloseAnimation] = useState(false)
+
+  const outsideRef = useClickOutside(localOnClose)
+  if (breakpoint.isLaptop || breakpoint.isDesktop) return null
+  return (
+    <span ref={outsideRef}>
+      <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
+        <img css={tw`h-[30px]`} src={`img/mainnav/menu-${mode}.svg`} />
+      </div>
+      <MobileSettingsDrawer isOpen={isOpen} playCloseAnimation={playCloseAnimation} />
+    </span>
+  )
+}
+interface MobileSettingsDrawerProps {
+  isOpen: boolean
+  playCloseAnimation: boolean
+}
+const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playCloseAnimation }) => (
+  <div
+    css={[
+      tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
+        dark:text-grey-5 rounded-b-bigger block justify-center z-50`,
+      isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
+      playCloseAnimation ? tw`animate-slideOutTop` : tw``
+    ]}
+  >
+    <div tw={'absolute top-12 left-0 w-full flex justify-center items-center'}>
+      <ThemeToggle />
+    </div>
+    <div css={[tw`gap-12`]}>
+      <MobileNavItem
+        // animation={'swap'}
+        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        text={'Swap'}
+        path={'/swap'}
+      />
+      <MobileNavItem
+        // animation={'dex'}
+        // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
+        text={'trade'}
+        path={'/trade'}
+      />
+      <MobileNavItem
+        // animation={'aggregator'}
+        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+        text={'NFTs'}
+        path={'/nfts'}
+      />
+      <MobileNavItem
+        // animation={'farm'}
+        // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
+        text={'Farm'}
+        path={'/farm'}
+      />
+      {/* <MobileNavItem
+        animation={'stats'}
+        stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
+        text={'Stats'}
+        path={'/stats'}
+      /> */}
+    </div>
+    <div>
+      <MobileNavControls />
+    </div>
+  </div>
+)
+
+const MobileNavControls: FC = () => {
+  const { pathname } = useLocation()
+  // const history = useHistory()
+  // const { setIsSpot } = useCrypto()
+
+  //TODO: leaderboard hook for is active
+  //TODO: aggregator hook for is active
+  // const handlePerpsSpotToggle = useCallback(
+  //   (isSpotToggle: boolean) => () => {
+  //     setIsSpot(isSpotToggle)
+  //     history.push(`/trade`)
+  //   },
+  //   [setIsSpot, history]
+  // )
+  //TODO: replace below in the NFT/Stats segment for mobile
+  // return (
+  //   <MobileControls
+  //     options={[
+  //       {
+  //         text: 'NFTs',
+  //         onClick: () => {
+  //           console.log('help')
+  //         },
+  //         isActive: false
+  //       }
+  //     ]}
+  //   />
+  // )
+  // return (
+  //   <MobileControls
+  //     options={[
+  //       {
+  //         text: 'Perps',
+  //         onClick: handlePerpsSpotToggle(false),
+  //         isActive: !isSpot
+  //       },
+  //       {
+  //         text: 'Spot',
+  //         onClick: handlePerpsSpotToggle(true),
+  //         isActive: isSpot
+  //       }
+  //     ]}
+  //   />
+  // )
+  switch (true) {
+    case pathname.includes('trade'):
+    case pathname.includes('nfts'):
+    case pathname.includes('stats'):
+    case pathname.includes('swap'):
+    case pathname.includes('farm'):
+    default:
+      return <></>
   }
 }
+interface DesktopControlsProps {
+  children: ReactNode
+  options: Controls[]
+  isOpen: boolean
+  onHover: (e: BaseSyntheticEvent) => void
+  onClose: () => void
+}
 
-const Collapsible: React.FC<{ collapse: boolean; onCollapse: (val: boolean) => void }> = ({
-  collapse,
-  onCollapse
+const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover, isOpen, onClose }) => {
+  const selfRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef(null)
+  const localOnHover = useCallback(
+    (e: BaseSyntheticEvent) => {
+      if (!isOpen) {
+        e.currentTarget.click()
+        onHover(e)
+      }
+    },
+    [onHover, isOpen]
+  )
+
+  const handleMove = useCallback(
+    (e: MouseEvent) => {
+      if (isOpen) {
+        if (!selfRef.current.contains(e.target as HTMLElement)) {
+          buttonRef.current.click()
+          onClose()
+        }
+      }
+    },
+    [onClose, isOpen]
+  )
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMove)
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+    }
+  }, [handleMove])
+  return (
+    <div css={tw`relative inline-block text-left z-20`} ref={selfRef}>
+      <span css={tw`absolute top-[44px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
+      <Menu>
+        {() => (
+          <>
+            <Menu.Button
+              tw={'bg-transparent border-0 active:border-0 focus:border-0'}
+              onMouseEnter={localOnHover}
+              ref={buttonRef}
+            >
+              {children}
+            </Menu.Button>
+            <Transition
+              as={'div'}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+              beforeLeave={onClose}
+            >
+              <Menu.Items
+                static
+                css={[
+                  tw`absolute left-0 w-56 mt-2 origin-top
+        border-1 border-solid border-black-1 dark:border-white rounded-tiny
+        z-50
+        `
+                ]}
+              >
+                {options.map((option, i) => (
+                  <Menu.Item
+                    key={option?.key ?? option.text}
+                    as={'div'}
+                    css={[
+                      tw`flex items-center w-full bg-white dark:bg-black-2  px-2.5 py-0.5`,
+                      option.isActive ? tw`bg-grey-5 dark:bg-black-1` : tw``,
+                      i === 0 ? tw`rounded-tiny` : tw``,
+                      i === options.length - 1 ? tw`rounded-b-tiny` : tw``
+                    ]}
+                  >
+                    <p
+                      css={[
+                        tw`mb-0 text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
+                        option.isActive ? tw`bg-clip-text bg-gradient-1` : tw``
+                      ]}
+                      style={{
+                        WebkitBackgroundClip: option.isActive ? 'text' : 'unset',
+                        WebkitTextFillColor: option.isActive ? 'transparent' : 'unset'
+                      }}
+                      onClick={option.onClick}
+                    >
+                      {option.text}
+                    </p>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </>
+        )}
+      </Menu>
+    </div>
+  )
+}
+
+// interface MobileControlsProps {
+//   options: Controls[]
+// }
+interface Controls {
+  key?: string
+  text: string
+  onClick: () => void
+  isActive: boolean
+}
+// const MobileControls: FC<MobileControlsProps> = ({ options }) => (
+//   <div css={[tw`flex items-center justify-center w-full gap-5.75`]}>
+//     {options.map((option) => (
+//       <p
+//         css={[
+//           tw`text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
+//           option.isActive ? tw`text-blue-1 dark:text-white` : tw``
+//         ]}
+//         onClick={option.onClick}
+//         key={option?.key ?? option.text}
+//       >
+//         {option.text}
+//       </p>
+//     ))}
+//   </div>
+// )
+
+interface MobileNavItemProps {
+  text: string
+  path: string
+  animation?: string
+  stateMachine?: string
+}
+const MobileNavItem: FC<MobileNavItemProps> = ({ text, path }) => {
+  const { mode } = useDarkMode()
+  const { pathname } = useLocation()
+  const history = useHistory()
+  // const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
+  //   animation,
+  //   autoplay: true,
+  //   canvasWidth: 40,
+  //   canvasHeight: 40
+  // })
+
+  // useRiveThemeToggle(rive, animation, stateMachine)
+  // const { stateInput } = useRiveStateToggle(rive, animation, stateMachine, path)
+  const onHover = useCallback(() => {
+    // if (!stateInput) return
+    if (pathname.includes(path)) return
+    // stateInput.value = !stateInput.value
+  }, [pathname, path])
+  const isActive = useMemo(() => pathname.includes(path), [pathname, path])
+  const navigateToPath = useCallback(() => history.push(path), [path, history])
+  return (
+    <button
+      css={[
+        tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
+    h-12.5 w-max bg-transparent dark:bg-transparent
+    `,
+        isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
+      ]}
+      onMouseEnter={onHover}
+      onMouseLeave={onHover}
+      onClick={navigateToPath}
+    >
+      {/* <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
+        <RiveComponent />
+      </RiveAnimationWrapper> */}
+      <img
+        css={[tw`h-[40px] w-[40px]`]}
+        src={`/img/mainnav/${text}-${mode}${isActive ? '-active' : ''}.svg`}
+        alt={text}
+      />
+      <p
+        css={[
+          tw`mb-0 text-average font-semibold uppercase text-grey-1 dark:text-grey-1`,
+          isActive ? tw`text-black-4 dark:text-grey-5` : tw``
+        ]}
+      >
+        {text}
+      </p>
+    </button>
+  )
+}
+const DesktopNav: FC = () => {
+  const breakpoint = useBreakPoint()
+
+  if (breakpoint.isMobile || breakpoint.isTablet) return null
+  return (
+    <div css={tw`flex items-center gap-6 mx-auto`}>
+      <MainNavIcon
+        text={'swap'}
+        // riveAnimation={'swap'}
+        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        path={'/swap'}
+      />
+      <MainNavIcon
+        text={'trade'}
+        // riveAnimation={'dex'}
+        // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
+        path={'/trade'}
+        hasDropdown={false}
+      />
+      <MainNavIcon
+        text={'nfts'}
+        // riveAnimation={'aggregator'}
+        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+        path={'/nfts'}
+        hasDropdown={false} // TODO: add when it is added
+        options={[
+          {
+            text: 'NFTs',
+            onClick: () => console.log('something here'),
+            isActive: true
+          },
+          {
+            text: 'Marketplace',
+            onClick: () => console.log('something here'),
+            isActive: false
+          }
+        ]}
+      />
+      <MainNavIcon
+        text={'farm'}
+        // riveAnimation={'farm'}
+        // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
+        path={'/farm'}
+      />
+
+      {/* <MainNavIcon
+        text={'Stats'}
+        riveAnimation={'stats'}
+        stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
+        path={'/stats'}
+        hasDropdown={false} // Renable when added
+        options={[
+          {
+            text: 'Stats',
+            onClick: () => console.log('something here'),
+            isActive: true
+          },
+          {
+            text: 'Leaderboard',
+            onClick: () => console.log('something here'),
+            isActive: false
+          }
+        ]}
+      /> */}
+    </div>
+  )
+}
+interface MainNavIconProps {
+  text: string
+  path: string
+  hasDropdown?: boolean
+  options?: Controls[]
+  riveAnimation?: string
+  stateMachine?: string
+}
+const MainNavIcon: FC<MainNavIconProps> = ({
+  // riveAnimation,
+  text,
+  // stateMachine,
+  path,
+  hasDropdown,
+  options
 }) => {
   const { mode } = useDarkMode()
-  const icon = `/img/assets/arrow-down.svg`
-  const handleCollapse = () => onCollapse(!collapse)
+  const { pathname } = useLocation()
+  const history = useHistory()
+  //const breakpoint = useBreakPoint()
+  // const rive = useRiveAnimations({
+  //   animation: riveAnimation,
+  //   autoplay: true,
+  //   canvasWidth: 24,
+  //   canvasHeight: 24
+  // })
+  // useRiveThemeToggle(rive.rive, riveAnimation, stateMachine)
+  // const { stateInput } = useRiveStateToggle(rive.rive, riveAnimation, stateMachine, path)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
+  const navigateToPath = useCallback(() => {
+    history.push(path)
+  }, [history, path])
+
+  const onHover = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    (e: BaseSyntheticEvent) => {
+      // if (stateInput && !pathname.startsWith(path)) {
+      //   stateInput.value = !stateInput.value
+      // }
+      setIsOpen(true)
+    },
+    [pathname, path]
+  )
+
+  const onClose = useCallback(() => {
+    setIsOpen(false)
+    // if (stateInput && !pathname.startsWith(path)) {
+    //   stateInput.value = false
+    // }
+  }, [pathname, path])
+
+  const component = useMemo(() => {
+    const activeDropdown: string = isOpen ? 'selected' : 'inactive'
+    const curRoute: boolean = pathname.startsWith(path)
+
+    return (
+      <div css={tw`flex flex-col items-center justify-center h-full cursor-pointer`} onClick={navigateToPath}>
+        <div css={[tw`flex gap-0.25 items-center justify-center`]}>
+          {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
+            <rive.RiveComponent />
+          </RiveAnimationWrapper> */}
+          <img
+            css={[tw`h-[26px] w-[26px]`]}
+            src={`/img/mainnav/${text}-${mode}${curRoute ? '-active' : ''}.svg`}
+            alt={text}
+          />
+          {hasDropdown && <img src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />}
+        </div>
+        <p
+          css={[
+            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`
+          ]}
+          style={{
+            opacity: curRoute ? 1 : 0.5
+          }}
+        >
+          {text}
+        </p>
+      </div>
+    )
+  }, [mode, pathname, navigateToPath, isOpen])
+  return hasDropdown ? (
+    <DesktopControls options={options} isOpen={isOpen} onHover={onHover} onClose={onClose}>
+      {component}
+    </DesktopControls>
+  ) : (
+    component
+  )
+}
+
+const CartButton: FC = () => {
+  // // TODO: fill me in - clamp to 9+
+  const cartSize = 0
+  const { mode } = useDarkMode()
+  const { pathname } = useLocation()
+  // Below is rive code for when the animation is added - some thigns might need to changed
+
+  // const rive = useRiveAnimations({
+  //   animation:'swap',
+  //   autoplay: true,
+  //   canvasWidth: 35,
+  //   canvasHeight: 35
+  // })
+  // const themeInput = useStateMachineInput(rive.rive,
+  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
+  // const stateInput = useStateMachineInput(rive.rive,
+  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
+
+  // useEffect(()=>{
+  //   if(!stateInput) return
+  //   stateInput.value=pathname.startsWith('/cart')
+  // },[pathname,stateInput])
+  // useEffect(()=>{
+  //   if(!themeInput) return
+  //   themeInput.value = mode === 'dark'
+  // },[themeInput,mode])
+  // const onHover = useCallback((e: BaseSyntheticEvent)=>{
+  //   if(pathname.startsWith('/cart'))return
+  //   stateInput.value=!stateInput.value
+  // },[stateInput,pathname])
+
+  const openCart = useCallback(() => {
+    // TODO: fill me in
+    console.log('FILL ME IN')
+  }, [])
+  if (!pathname.startsWith('/nfts')) return null
   return (
-    <CollapsibleWrapper
-      $collapse={collapse}
-      onClick={() => {
-        handleCollapse()
-      }}
-    >
-      {mode === 'dark' ? (
-        <img
-          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
-          src={icon}
-          alt=""
-        />
-      ) : (
-        <SVGToGrey2
-          style={{ transform: `rotate(${collapse ? 0 : 180}deg)`, marginTop: `${collapse ? '5px' : '2px'}` }}
-          src={icon}
-          alt=""
-        />
-      )}
-    </CollapsibleWrapper>
+    <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
+      {/*<RiveAnimationWrapper setContainerRef={rive.setContainerRef}*/}
+      {/*                      width={35}*/}
+      {/*                      height={35}*/}
+      {/*                      // onMouseEnter={onHover}*/}
+      {/*                      // onMouseLeave={onHover}*/}
+      {/*>*/}
+      {/*  <rive.RiveComponent />*/}
+      {/*</RiveAnimationWrapper>*/}
+      <img src={`img/assets/shopping-bag-${mode}-inactive.svg`} />
+      <p
+        css={[
+          tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
+        text-grey-1 dark:text-white mt-0.5 h-4`
+        ]}
+      >
+        {cartSize}
+      </p>
+    </div>
   )
 }

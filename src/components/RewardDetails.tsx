@@ -342,6 +342,7 @@ const EarnRewards: FC = () => {
             placeholder={'0'}
             onChange={handleInputChange}
             type={'number'}
+            value={inputValue}
           />
           <p
             css={tw`mb-0 text-lg absolute top-[20%] bottom-[15px] right-[15px] z-[1] text-black-4

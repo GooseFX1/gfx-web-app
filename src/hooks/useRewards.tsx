@@ -86,6 +86,7 @@ export default function useRewards(): IUseRewards {
         console.warn('fetch-all-reward-data-failed', err)
       })
   }, [walletContext, connection, network])
+
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       const userMetadata: UserMetadata | null = await stakeRewards
@@ -95,8 +96,10 @@ export default function useRewards(): IUseRewards {
           return null
         })
       const txn = new Transaction()
-      if (userMetadata == null) {
-        txn.add(await stakeRewards.initializeUserAccount(null, walletContext.publicKey))
+      if (userMetadata === null) {
+        const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
+        console.log('init user account', ix)
+        txn.add(ix)
       }
       console.log('check-for-user-account', userMetadata, txn)
       txn.add(await callback())
@@ -104,6 +107,7 @@ export default function useRewards(): IUseRewards {
     },
     [stakeRewards, walletContext]
   )
+
   const initializeUserAccount = useCallback(async () => {
     const txn: TransactionInstruction = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
 
