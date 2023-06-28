@@ -23,6 +23,7 @@ package-lock.json
 .env.test.local
 .env.production.local
 .devcert
+*:Zone.Identifier
 
 npm-debug.log*
 yarn-debug.log*
