@@ -125,7 +125,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
           <a
             href={'https://docs.goosefx.io/'}
             target={'_blank'}
-            rel="noreferrer"
+            rel="noopener noreferrer"
             css={tw`underline dark:text-white text-blue-1`}
           >
             Terms of Service
@@ -1003,6 +1003,7 @@ const ReferFriendSegment = () => {
       <a
         href={''}
         target={'_blank'}
+        rel="noreferrer"
         css={[
           tw`mb-[30px] min-md:mb-0 text-[20px] leading-[30px] underline font-semibold min-md:dark:text-grey-5
         min-md:text-grey-5 dark:text-grey-1 text-grey-2 mt-[30px] min-md:mt-0 cursor-not-allowed`,

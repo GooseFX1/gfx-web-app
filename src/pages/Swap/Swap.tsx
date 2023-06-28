@@ -1089,8 +1089,19 @@ const AlternativesContent: FC = () => {
 }
 
 export const SwapMain: FC = () => {
-  const { tokenA, tokenB, inTokenAmount, outTokenAmount, gofxOutAmount, priceImpact, setRoutes, revertRoute } =
-    useSwap()
+  const {
+    setTokenA,
+    setTokenB,
+    tokenA,
+    tokenB,
+    inTokenAmount,
+    outTokenAmount,
+    gofxOutAmount,
+    priceImpact,
+    setRoutes,
+    revertRoute
+  } = useSwap()
+  const { tokenMap } = useTokenRegistry()
   const { network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState<boolean>(false)
