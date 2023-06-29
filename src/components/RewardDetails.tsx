@@ -12,7 +12,7 @@ import { Tooltip } from './Tooltip'
 import useRewards from '../hooks/useRewards'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ADDRESSES } from '../web3'
-import { TokenAmount } from '@solana/web3.js'
+import { TokenAmount, PublicKey } from '@solana/web3.js'
 import { clamp, nFormatter } from '../utils'
 import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
@@ -138,20 +138,22 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
   const inputRef = useRef<InputRef>(null)
-  const { wallet, connected, publicKey } = useWallet()
+  const { wallet } = useWallet()
+  const connected: boolean = useMemo(() => wallet?.adapter?.connected, [wallet])
+  const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
   const { connection, network } = useConnectionConfig()
   const { stake, rewards, getUiAmount } = useRewards()
   const history = useHistory()
-  const [isStakeSelected, setIsStakeSelected] = useState(true)
-  const [isLoading, setLoading] = useState(false)
+  const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
+  const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
     amount: '0.0',
     decimals: 0,
     uiAmount: 0.0,
     uiAmountString: '0.0'
   }))
-  const [inputValue, setInputValue] = useState(0.0)
-  const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState(false)
+  const [inputValue, setInputValue] = useState<number>(0.0)
+  const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   const { rewardToggle } = useRewardToggle()
   const getUserGoFXBalance = useCallback(async () => {
     if (!wallet || !connection || !connected) {
@@ -201,20 +203,27 @@ const EarnRewards: FC = () => {
     if (!wallet || !connection || !connected || !inputRef.current) {
       return
     }
-    console.log(network)
     const amount = parseFloat(inputRef.current?.input.value) * 10 ** ADDRESSES[network].mints.GOFX.decimals
     if (!amount || isNaN(amount)) {
       return
     }
-    setLoading(true)
 
+    setStakeLoading(true)
     if (isStakeSelected) {
-      await stake(amount)
+      try {
+        await stake(amount)
+        console.log(`Successful Stake: ${publicKey.toBase58()} - ${amount}`)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setStakeLoading(false)
+      }
     } else {
       setIsUnstakeConfirmationModalOpen(true)
+      setStakeLoading(false)
     }
-    setLoading(false)
   }, [stake, inputRef, network, isStakeSelected])
+
   const handleInputChange = useCallback((e) => {
     const value = parseFloat(e.target.value)
     setInputValue(isNaN(value) ? 0.0 : value)
@@ -362,11 +371,11 @@ const EarnRewards: FC = () => {
            h-[50px]
            `,
           canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
-          isLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
+          isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
         ]}
         disabled={!canStakeOrUnstake}
       >
-        {isLoading ? (
+        {isStakeLoading ? (
           <Loader />
         ) : userGoFxBalance.uiAmount > 0.0 ? (
           `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
@@ -471,7 +480,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
         <div
           css={tw`rounded-t-[22px] mt-[50%] min-md:mt-0 w-full h-[79px] flex flex-col justify-center items-center
       text-white text-lg font-semibold`}
-          style={{ background: 'linear-gradient(181.08deg, #22A668 0%, #194A5E 100%)' }}
+          style={{ background: 'linear-gradient(67deg, #22A668 0%, #194A5E 100%)' }}
         >
           <div css={tw`flex w-full h-full justify-between px-[25px] mt-[20px] `}>
             <p css={tw`mb-0 text-[20px] leading-[24px] font-semibold`}>All Active Cooldowns</p>
@@ -879,13 +888,14 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
       </button>
       <button
         css={[
-          tw` min-w-max  cursor-pointer w-[120px] text-center border-none border-0
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
+          tw`min-w-max cursor-pointer w-[120px] text-center border-none border-0
+              font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
           panelIndex == 1 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-2 min-md:text-grey-1`
         ]}
         ref={setRef}
         data-index={1}
-        onClick={onChangePanel}
+        // onClick={onChangePanel}
+        disabled={true}
       >
         Refer
       </button>
@@ -949,8 +959,9 @@ const EarnRewardsRedirect: FC = () => {
       </p>
       <button
         css={[
-          tw`px-4 mt-[15px] min-md:mt-[32px] max-w-[320px] items-center h-[50px]  bg-white text-black-4 border-0
-       font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0`,
+          tw`px-4 mt-[15px] min-md:mt-[32px] max-w-[320px] items-center h-[50px] bg-white text-black-4 border-0 
+            font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0
+            overflow-hidden whitespace-nowrap`,
           !usdcClaimable.isZero() ? tw`opacity-100` : tw``
         ]}
         disabled={usdcClaimable.isZero()}
@@ -985,7 +996,7 @@ const ReferAndEarnRedirect: FC = () => {
       <button
         css={[
           tw`h-[50px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
-        mb-[43px] min-md:mb-0 mt-11`,
+        mb-[43px] min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
           totalInProgress > 0.0 ? tw`opacity-100` : tw``
         ]}
         disabled={totalInProgress <= 0.0}

@@ -9717,10 +9717,10 @@ goosefx-ssl-sdk@^1.2.24, goosefx-ssl-sdk@latest:
     "@solana/spl-token" "^0.2.0"
     "@solana/web3.js" "^1.41.1"
 
-goosefx-stake-rewards-sdk@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/goosefx-stake-rewards-sdk/-/goosefx-stake-rewards-sdk-1.0.1.tgz#4e8941d4e363114946de5d19f5d6cbe65007b547"
-  integrity sha512-L3yUN9fo66MTVsZLKijYgeUYFqGVLg6a5FK+QVlLctwBsSFUdnf/qek5/tvbFCi38ThraO+znhWn/dg7vxyjpw==
+goosefx-stake-rewards-sdk@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/goosefx-stake-rewards-sdk/-/goosefx-stake-rewards-sdk-1.0.2.tgz#29437fa6d71b3488d0c4fbcae1725c3890b62001"
+  integrity sha512-p3waCckZ5YJPOKXcoCTPfVwnCXqGkaMQ8fEKLrGhBs1xMY5xzkSHD0Zt0KkrJYJHBFDKxb+Z/fHQ4uT9VU8wRw==
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     "@pythnetwork/client" "^2.8.0"
