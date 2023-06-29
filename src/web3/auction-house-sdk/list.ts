@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
-  AuctionHouseClient,
   Metaplex,
   SplTokenAmount,
   SplTokenCurrency,
@@ -13,7 +10,7 @@ import {
 } from '@metaplex-foundation/js'
 import { Connection, PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, TransactionInstruction } from '@solana/web3.js'
 import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY } from '../ids'
-import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { WalletContextState } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import {
   createSellInstruction,
@@ -50,10 +47,6 @@ export const constructListInstruction = async (
     mint: mintAccount
   })
 
-  // const tokenAccount = metaplex.tokens().pdas().associatedTokenAccount({
-  //   mint: mintAccount,
-  //   owner: wallet?.wallet?.adapter?.publicKey
-  // })
   const auctionHouse = await findOurAuctionHouse()
   const sellerTradeState = metaplex.auctionHouse().pdas().tradeState({
     auctionHouse: auctionHouse.address,
@@ -130,49 +123,3 @@ export const constructListInstruction = async (
 
   return instructions
 }
-// export const listNFT = async (
-//   amount: number,
-//   tokenAccount: string,
-//   mintAccount: string,
-//   connection: Connection,
-//   wallet: WalletContextState
-// ): Promise<void> => {
-//   const auctionHouseClient: AuctionHouseClient = new Metaplex(connection)
-//     .use(walletAdapterIdentity(wallet))
-//     .auctionHouse()
-//   // const metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet))
-
-//   const auctionHouse = await auctionHouseClient.findByAddress({
-//     address: new PublicKey(AUCTION_HOUSE)
-//   })
-//   const currency: SplTokenCurrency = {
-//     symbol: 'SOL',
-//     decimals: 9,
-//     namespace: 'spl-token'
-//   }
-
-//   const price: SplTokenAmount = {
-//     basisPoints: toBigNumber(amount * LAMPORTS_PER_SOL_NUMBER),
-//     currency
-//   }
-
-//   // const {listing} = await auctionHouseClient.list({
-//   //   auctionHouse,
-//   //   seller: sellerWallet,
-//   //   mintAccount: nftAddress,
-//   //   price: price,
-//   // });
-
-//   try {
-//     const { listing, sellerTradeState } = await auctionHouseClient.list({
-//       auctionHouse: auctionHouse, //auctionHouse
-//       tokenAccount: toPublicKey(tokenAccount),
-//       mintAccount: toPublicKey(mintAccount),
-//       price: price
-//     })
-//     console.log('listing', listing)
-//     console.log('sellerTradeState', sellerTradeState)
-//   } catch (err) {
-//     console.log(err)
-//   }
-// }

@@ -108,7 +108,6 @@ const CancelBidModal = (): ReactElement => {
       }
     }
 
-    console.log(buyerTradeState)
     return {
       buyerTradeState,
       buyerPrice
@@ -133,35 +132,15 @@ const CancelBidModal = (): ReactElement => {
   const callCancelInstruction = async () => {
     try {
       setIsLoading(true)
-      const cancelBidIx = await constructCancelBidInstruction(connection, wal, general)
-      return
-      // const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
+      const { buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
-      // const cancelInstructionArgs: CancelInstructionArgs = {
-      //   buyerPrice: buyerPrice,
-      //   tokenSize: tokenSize
-      // }
-
-      // const cancelInstructionAccounts: CancelInstructionAccounts = {
-      //   wallet: publicKey,
-      //   tokenAccount: new PublicKey(general.token_account),
-      //   tokenMint: new PublicKey(general.mint_address),
-      //   authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-      //   auctionHouse: new PublicKey(AUCTION_HOUSE),
-      //   auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-      //   tradeState: buyerTradeState[0]
-      // }
-
-      // const cancelIX: TransactionInstruction = await createCancelInstruction(
-      //   cancelInstructionAccounts,
-      //   cancelInstructionArgs
-      // )
+      const cancelBidIx = await constructCancelBidInstruction(connection, wal, general, buyerTradeState)
 
       const transaction = new Transaction()
-      // cancelBidIx.map((ix) => transaction.add(ix))
-      // if (userEscrowBalance >= formatSOLNumber(myBid[0].buyer_price)) {
-      //   transaction.add(await callAuctionHouseWithdraw(new BN(parseFloat(myBid[0].buyer_price))))
-      // }
+      cancelBidIx.map((ix) => transaction.add(ix))
+      if (userEscrowBalance >= formatSOLNumber(myBid[0].buyer_price)) {
+        transaction.add(await callAuctionHouseWithdraw(new BN(parseFloat(myBid[0].buyer_price))))
+      }
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
       const confirm = await await confirmTransaction(connection, signature, 'processed')

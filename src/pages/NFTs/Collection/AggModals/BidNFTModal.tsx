@@ -176,10 +176,8 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
     e.preventDefault()
     setIsLoading(true)
     const bidIx = await constructBidInstruction(connection, wal, curBid, general)
-    const tx = new Transaction()
-    tx.add(bidIx)
     try {
-      const signature = await sendTransaction(tx, connection, { skipPreflight: true })
+      const signature = await sendTransaction(bidIx, connection)
 
       console.log(signature)
       setPendingTxSig(signature)
