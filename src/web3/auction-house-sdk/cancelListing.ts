@@ -1,14 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import {
-  Metaplex,
-  Pda,
-  SplTokenAmount,
-  SplTokenCurrency,
-  toBigNumber,
-  toPublicKey,
-  walletAdapterIdentity
-} from '@metaplex-foundation/js'
+import { Metaplex, Pda, SplTokenCurrency, toPublicKey, walletAdapterIdentity } from '@metaplex-foundation/js'
 import { Connection, PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, TransactionInstruction } from '@solana/web3.js'
 import { AUCTION_HOUSE } from '../ids'
 import { WalletContextState } from '@solana/wallet-adapter-react'

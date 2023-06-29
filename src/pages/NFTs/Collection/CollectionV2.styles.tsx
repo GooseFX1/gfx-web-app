@@ -248,7 +248,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .nftPrice {
-    ${tw`font-semibold text-[15px] flex items-center pt-3 sm:pt-1.5`}
+    ${tw`font-semibold text-[15px] flex items-center pt-2 sm:pt-1.5`}
     img {
       ${tw`w-5 h-5 ml-2.5`}
     }

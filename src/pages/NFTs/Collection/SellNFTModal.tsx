@@ -88,7 +88,7 @@ export const SellNFTModal: FC<{
   acceptBid?: boolean
 }> = ({ visible, handleClose, delistNFT, acceptBid }): ReactElement => {
   const { connection, network } = useConnectionConfig()
-  const { general, setGeneral, ask, nftMetadata, bids } = useNFTDetails()
+  const { general, ask, nftMetadata, bids } = useNFTDetails()
   const highestBid = useMemo(() => {
     if (bids.length > 0) {
       return bids.reduce((maxBid, currentBid) => {
@@ -107,9 +107,7 @@ export const SellNFTModal: FC<{
   const { setSellNFT, setOpenJustModal, setRefreshClicked } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
-  const [askPrice, setAskPrice] = useState<number | null>(
-    ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null
-  )
+  const [askPrice, setAskPrice] = useState<number | null>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
@@ -155,7 +153,7 @@ export const SellNFTModal: FC<{
 
   useEffect(() => {
     if (highestBid) {
-      setAskPrice(formatSOLNumber(highestBid.buyer_price))
+      setAskPrice((prev) => (prev ? prev : formatSOLNumber(highestBid.buyer_price)))
     }
   }, [highestBid])
   const serviceFee = useMemo(
@@ -367,15 +365,16 @@ export const SellNFTModal: FC<{
     const transaction = new Transaction()
     let removeAskIX: TransactionInstruction[] | undefined = undefined
     // if ask exists
-    if (ask !== null) {
-      // make web3 cancel
-      removeAskIX = await cancelListing(connection, wal, ask)
-    }
-    // adds ixs to tx
-    if (ask && removeAskIX) {
-      removeAskIX.map((removeIx) => transaction.add(removeIx))
-    }
+
     try {
+      if (ask !== null) {
+        // make web3 cancel
+        removeAskIX = await cancelListing(connection, wal, ask)
+      }
+      // adds ixs to tx
+      if (ask && removeAskIX) {
+        removeAskIX.map((removeIx) => transaction.add(removeIx))
+      }
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
@@ -397,11 +396,11 @@ export const SellNFTModal: FC<{
       return
     }
     setIsLoading(true)
+    let transaction: Transaction
+    let removeAskIX: TransactionInstruction[] | undefined = undefined
 
     try {
-      const transaction = new Transaction()
-
-      let removeAskIX: TransactionInstruction[] | undefined = undefined
+      transaction = new Transaction()
 
       if (ask !== null) {
         // make web3 cancel
@@ -420,54 +419,14 @@ export const SellNFTModal: FC<{
         true
       )
       for (const ix of instructions) transaction.add(ix)
-      const signature = await wal.sendTransaction(transaction, connection, { skipPreflight: true })
-
-      console.log(signature)
-      setPendingTxSig(signature)
-      attemptConfirmTransaction(signature, 'Listed', true)
-        .then((res) => console.log('TX Confirmed', res))
-        .catch((err) => console.error(err))
     } catch (error) {
       console.log('User exited signing transaction to list fixed price')
       TransactionSignatureErrorNotify(nftMetadata.name)
       setIsLoading(false)
     }
 
-    return
-    // sell
-
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
-
-    const sellInstructionArgs: SellInstructionArgs = {
-      tradeStateBump: tradeState[1],
-      freeTradeStateBump: freeTradeState[1],
-      programAsSignerBump: programAsSignerPDA[1],
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const sellInstructionAccounts: SellInstructionAccounts = getSellInstructionAccounts(
-      wallet?.adapter?.publicKey,
-      general,
-      metaDataAccount,
-      tradeState[0],
-      freeTradeState[0],
-      programAsSignerPDA[0]
-    )
-
-    const sellIX: TransactionInstruction = createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
-
-    const transaction = new Transaction()
-
-    // if ask exists
-    const removeAskIX: TransactionInstruction | undefined = undefined
-    // if ask exists
-
-    // adds ixs to tx
-    console.log(`Updating ask: ${removeAskIX !== undefined}`)
-    if (ask && removeAskIX) transaction.add(removeAskIX)
-    transaction.add(sellIX)
 
     if (isSellingNow) {
       const { programAsSignerPDA } = await derivePDAForExecuteSale()
@@ -644,18 +603,6 @@ export const SellNFTModal: FC<{
           <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
         </div>
 
-        {/* <div className="vContainer">
-          <input
-            className="enterBid"
-            placeholder="0.0"
-            type="number"
-            ref={inputRef}
-            value={askPrice}
-            onChange={(e) => updateAskPrice(e)}
-          />
-          <img src="/img/crypto/SOL.svg" tw="absolute right-[12px] top-[17px]" />
-        </div> */}
-
         {pendingTxSig && (
           <div tw="mt-3 text-center">
             <span>
@@ -683,7 +630,6 @@ export const SellNFTModal: FC<{
           <div className="rowContainer">
             <div className="leftAlign" tw="flex">
               Service Fee ({NFT_MARKET_TRANSACTION_FEE}%)
-              {/* {TableHeaderTitle('', `Creator Fee (${sellerFeeBasisPoints / 100}%) `, false)}{' '} */}
             </div>
             <div className="rightAlign"> {serviceFee.toFixed(totalToReceive > 9 ? 2 : 3)} SOL</div>
           </div>
@@ -712,11 +658,8 @@ export const SellNFTModal: FC<{
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
           </Button>
         </div>
-        <div
-          tw="bottom-0 left-[calc(50% - 160px)] sm:left-[calc(50% - 150px)] 
-        sm:w-[auto] sm:mb-[75px] absolute sm:right-auto"
-        >
-          <TermsTextNFT string={ask ? 'List' : 'Modify '} />
+        <div tw="bottom-0 left-[calc(50% - 160px)] sm:absolute sm:w-[auto] absolute sm:right-auto">
+          <TermsTextNFT string={ask ? 'List' : 'Modify '} bottom={true} />
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

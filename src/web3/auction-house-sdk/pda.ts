@@ -1,8 +1,9 @@
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey, PublicKeyInitData, Transaction } from '@solana/web3.js'
-import { AUCTION_HOUSE, AUCTION_HOUSE_PROGRAM_ID, toPublicKey } from '../ids'
+import { AUCTION_HOUSE_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, toPublicKey } from '../ids'
 import { BigNumber } from '@metaplex-foundation/js'
 import { programIds } from '../programIds'
+import { INFTInBag } from '../../types/nft_details'
 
 export class Pda extends PublicKey {
   /** The bump used to generate the PDA. */
@@ -72,11 +73,25 @@ export type IdentitySigner = {
 export const isSigner = (input: Signer | any): input is Signer =>
   typeof input === 'object' && 'publicKey' in input && ('secretKey' in input || 'signTransaction' in input)
 
-export const findBidReceiptPda = (tradeState: PublicKey, programId: PublicKey = toPublicKey(AUCTION_HOUSE)): Pda =>
-  Pda.find(programId, [Buffer.from('bid_receipt', 'utf8'), tradeState.toBuffer()])
+export const findBidReceiptPda = (
+  tradeState: PublicKey,
+  programId: PublicKey = toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
+): Pda => Pda.find(programId, [Buffer.from('bid_receipt', 'utf8'), tradeState.toBuffer()])
 
 export const findMetadataPda = (mint: PublicKey): Pda => {
   const PROGRAM_IDS = programIds()
   const programId = toPublicKey(PROGRAM_IDS.metadata)
   return Pda.find(programId, [Buffer.from('metadata', 'utf8'), programId.toBuffer(), mint.toBuffer()])
+}
+
+export const getMagicEdenTokenAccount = async (item: INFTInBag | any): Promise<[PublicKey, number]> => {
+  const tokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
+    [
+      toPublicKey(item.wallet_key).toBuffer(),
+      TOKEN_PROGRAM_ID.toBuffer(),
+      toPublicKey(item.mint_address).toBuffer()
+    ],
+    SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+  )
+  return tokenAccount
 }

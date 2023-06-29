@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { removeNFTFromBag } from '../../../web3/nfts/utils'
+import { NFT_MARKETS } from '../../../api/NFTs'
 const DIV = styled.div``
 
 export const HoverOnNFT: FC<{
@@ -95,7 +96,13 @@ export const HoverOnNFT: FC<{
     [sessionUser, ask, setNFTDetails, setHover, item]
   )
   const shouldShowImage = useMemo(
-    () => addNftToBag && ask && !nftInBag[item?.mint_address],
+    () =>
+      addNftToBag &&
+      ask &&
+      !nftInBag[item?.mint_address] &&
+      (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN ||
+        ask.marketplace_name === NFT_MARKETS.TENSOR ||
+        !ask.marketplace_name),
     [ask, nftInBag, item, addNftToBag]
   )
 
@@ -124,7 +131,7 @@ export const HoverOnNFT: FC<{
       )}
       {myBidToNFT.length > 0 && (
         <div
-          tw="flex absolute dark:text-grey-5 bottom-10  text-black-4 left-[30px] font-semibold
+          tw="flex absolute dark:text-grey-5 bottom-[50px] text-black-4 left-[30px] font-semibold
            !text-[15px] items-center"
         >
           {`My Bid: `}
