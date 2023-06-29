@@ -15,7 +15,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 // import { useLocation } from 'react-router-dom'
 
 export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
-  ${tw`h-6 w-6 mr-[8px] cursor-pointer`}
+  ${tw`h-7 w-7 mr-[8px] cursor-pointer`}
 
   img {
     filter: opacity(${({ $mode }) => ($mode ? 1 : 0.7)});

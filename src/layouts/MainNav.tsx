@@ -53,7 +53,7 @@ export const MainNav: FC = () => {
   const navigateHome = useCallback(() => history.push('/swap'), [history])
   const { rewardModal, rewardToggle } = useRewardToggle()
 
-  const slideModal = () => {
+  const slideModal = useCallback(() => {
     if (rewardModal) {
       return (
         <ModalSlide
@@ -63,7 +63,7 @@ export const MainNav: FC = () => {
         />
       )
     }
-  }
+  }, [rewardModal])
 
   return (
     <div
@@ -82,7 +82,7 @@ export const MainNav: FC = () => {
       </div>
 
       <DesktopNav />
-      <div css={tw`flex items-center gap-3 absolute right-0 mr-2.5 min-md:mr-0`}>
+      <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
         <RewardsButton />
         <Connect />
         <CartButton />
@@ -92,6 +92,7 @@ export const MainNav: FC = () => {
     </div>
   )
 }
+
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
@@ -181,21 +182,33 @@ const MobileNav: FC = () => {
   const [playCloseAnimation, setPlayCloseAnimation] = useState(false)
 
   const outsideRef = useClickOutside(localOnClose)
+
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[30px]`} src={`img/mainnav/menu-${mode}.svg`} />
+        <img css={tw`h-[35px]`} src={`img/mainnav/menu-${mode}.svg`} />
       </div>
-      <MobileSettingsDrawer isOpen={isOpen} playCloseAnimation={playCloseAnimation} />
+      <MobileSettingsDrawer
+        isOpen={isOpen}
+        playCloseAnimation={playCloseAnimation}
+        toggleSettingsDrawer={toggleSettingsDrawer}
+      />
     </span>
   )
 }
+
 interface MobileSettingsDrawerProps {
   isOpen: boolean
   playCloseAnimation: boolean
+  toggleSettingsDrawer: () => void
 }
-const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playCloseAnimation }) => (
+
+const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
+  isOpen,
+  playCloseAnimation,
+  toggleSettingsDrawer
+}) => (
   <div
     css={[
       tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
@@ -204,10 +217,13 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playClose
       playCloseAnimation ? tw`animate-slideOutTop` : tw``
     ]}
   >
-    <div tw={'absolute top-12 left-0 w-full flex justify-center items-center'}>
+    <div tw={'absolute top-3 left-0 w-full flex justify-center items-center'}>
       <ThemeToggle />
     </div>
-    <div css={[tw`gap-12`]}>
+    <button onClick={toggleSettingsDrawer} css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}>
+      <img src="/img/assets/cross-white.svg" alt="close-icon" />
+    </button>
+    <div css={[tw`h-[70vh] flex flex-col gap-8`]}>
       <MobileNavItem
         // animation={'swap'}
         // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}

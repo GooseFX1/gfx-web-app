@@ -4,10 +4,10 @@ import { useRewardToggle } from '../context/reward_toggle'
 import { PanelSelector, RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-// import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import useBreakPoint from '../hooks/useBreakPoint'
-// import { RIVE_ANIMATION } from '../constants'
 import { useDarkMode } from '../context'
+// import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
+// import { RIVE_ANIMATION } from '../constants'
 // import useRewards from '../hooks/useRewards'
 
 // const REWARDS_BTN = styled.button`
@@ -55,7 +55,10 @@ export const RewardsButton: FC = () => {
           <rewardsAnimation.RiveComponent />
         </RiveAnimationWrapper> */}
 
-        <img css={breakpoint.isMobile ? [tw`h-[30px]`] : [tw`h-[24px]`]} src={`img/mainnav/rewards-${mode}.svg`} />
+        <img
+          css={breakpoint.isMobile ? [tw`h-[35px] mt-1`] : [tw`h-[24px]`]}
+          src={`img/mainnav/rewards-${mode}.svg`}
+        />
 
         {hasRewards && (
           <img
@@ -70,16 +73,21 @@ export const RewardsButton: FC = () => {
   const handleClick = useCallback(() => rewardToggle(true), [])
 
   if (breakpoint.isMobile || breakpoint.isTablet) {
-    return <div css={[tw`cursor-pointer`]}>{riveComponent}</div>
+    return (
+      <div onClick={handleClick} css={[tw`cursor-pointer`]}>
+        {riveComponent}
+      </div>
+    )
   }
   return (
     <div
       onClick={handleClick}
       css={[
-        tw`h-7.5 w-27.5 border-1 border-solid border-grey-1 dark:border-white rounded-full
+        tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
             bg-grey-5 dark:bg-black-1 pl-1 pr-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
             text-tiny font-semibold text-black-4 dark:text-white
-       `
+       `,
+        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`
       ]}
     >
       {riveComponent}
