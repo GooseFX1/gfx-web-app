@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, FC, useMemo, useEffect, useCallback } from 'react'
+
 import {
   useAccounts,
   useConnectionConfig,
@@ -15,58 +16,23 @@ import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import {
-  PublicKey,
-  TransactionInstruction,
-  Transaction,
-  SystemProgram,
-  VersionedTransaction
-} from '@solana/web3.js'
-import { tradeStatePDA, tokenSize, freeSellerTradeStatePDAAgg } from '../actions'
+import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import BN from 'bn.js'
-import {
-  AUCTION_HOUSE_PREFIX,
-  AUCTION_HOUSE_PROGRAM_ID,
-  TREASURY_MINT,
-  AUCTION_HOUSE_AUTHORITY,
-  AUCTION_HOUSE,
-  AH_FEE_ACCT,
-  WRAPPED_SOL_MINT,
-  BuyInstructionArgs,
-  getMetadata,
-  BuyInstructionAccounts,
-  createBuyInstruction,
-  StringPublicKey,
-  toPublicKey,
-  bnTo8,
-  ExecuteSaleInstructionArgs,
-  confirmTransaction,
-  ExecuteSaleInstructionAccounts,
-  TOKEN_PROGRAM_ID,
-  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  TREASURY_PREFIX,
-  createExecuteSaleInstruction,
-  AH_NAME
-} from '../../../web3'
+import { WRAPPED_SOL_MINT, confirmTransaction, AH_NAME } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
 import { logData } from '../../../api/analytics'
-import { web3 } from '@project-serum/anchor'
 import { HoldTight } from './AggModals/HoldTight'
 import MissionAccomplishedModal from './AggModals/MissionAcomplishedModal'
 import {
-  couldNotDeriveValueForBuyInstruction,
-  couldNotFetchNFTMetaData,
   couldNotFetchUserData,
   pleaseTryAgain,
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
-// import { BorderBottom } from './SellNFTModal'
+import { handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
 import {
@@ -76,7 +42,8 @@ import {
   NFT_MARKETS,
   saveNftTx
 } from '../../../api/NFTs'
-// const TEN_MILLION = 10000000
+import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/executeSale'
+import { getMagicEdenTokenAccount } from '../../../web3/auction-house-sdk/pda'
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col mt-[-30px] sm:mt-0  `}
@@ -450,76 +417,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     })
   }
 
-  const derivePDAForExecuteSale = async () => {
-    const programAsSignerPDA: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(AUCTION_HOUSE_PREFIX), Buffer.from('signer')],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-    const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
-      new PublicKey(ask?.wallet_key),
-      isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
-      general.token_account,
-      general.mint_address
-    )
-    return {
-      freeTradeStateAgg,
-      programAsSignerPDA
-    }
-  }
-  const derivePDAsForInstruction = async () => {
-    const buyerPriceInLamports = orderTotal * LAMPORTS_PER_SOL_NUMBER
-    const buyerPrice: BN = new BN(buyerPriceInLamports)
-    const buyerReceiptTokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), toPublicKey(general.mint_address).toBuffer()],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    )
-    const auctionHouseTreasuryAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE).toBuffer(),
-        Buffer.from(TREASURY_PREFIX)
-      ],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-
-    const metaDataAccount: StringPublicKey = await getMetadata(general.mint_address)
-    const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE).toBuffer(),
-        publicKey.toBuffer()
-      ],
-      toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
-    )
-
-    const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
-      publicKey,
-      isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE,
-      general.token_account,
-      general.mint_address,
-      isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT,
-      bnTo8(buyerPrice)
-    )
-
-    if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
-      return {
-        metaDataAccount: undefined,
-        escrowPaymentAccount: undefined,
-        buyerTradeState: undefined,
-        buyerPrice: undefined
-      }
-    }
-
-    return {
-      metaDataAccount,
-      escrowPaymentAccount,
-      buyerTradeState,
-      buyerPrice,
-      buyerReceiptTokenAccount,
-      auctionHouseTreasuryAddress
-    }
-  }
-
   const handleNotifications = async (tx: Transaction | VersionedTransaction, buyerPrice: string, isBuyingNow) => {
     try {
       // setting this as operating nft , for loading buttons
@@ -553,14 +450,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     }
   }
   const callMagicEdenAPIs = async (): Promise<void> => {
-    const tokenAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [
-        toPublicKey(ask.wallet_key).toBuffer(),
-        TOKEN_PROGRAM_ID.toBuffer(),
-        toPublicKey(general.mint_address).toBuffer()
-      ],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    )
+    const tokenAccount = getMagicEdenTokenAccount(general)
     try {
       const listing_res = await getMagicEdenListing(general?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
       const res = await getMagicEdenBuyInstruction(
@@ -598,7 +488,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     } catch (err) {
       console.log(err)
       setIsLoading(false)
-      // notify()
     }
   }
 
@@ -613,119 +502,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     if (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
       callMagicEdenAPIs()
       return
-    } else callBuyInstruction()
+    } else handleOtherBuyOptions()
   }
-  const callBuyInstruction = async (): Promise<void> => {
-    const {
-      metaDataAccount,
-      escrowPaymentAccount,
-      buyerTradeState,
-      buyerPrice,
-      buyerReceiptTokenAccount,
-      auctionHouseTreasuryAddress
-    } = await derivePDAsForInstruction()
-
-    if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
-      couldNotDeriveValueForBuyInstruction()
-      return
-    }
-
-    const buyInstructionArgs: BuyInstructionArgs = {
-      tradeStateBump: buyerTradeState[1],
-      escrowPaymentBump: escrowPaymentAccount[1],
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    // All bids will be placed on GFX AH Instance - Buys will be built with "ask" payload
-    const buyInstructionAccounts: BuyInstructionAccounts = {
-      wallet: publicKey,
-      paymentAccount: publicKey,
-      transferAuthority: publicKey,
-      treasuryMint: new PublicKey(isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT),
-      tokenAccount: new PublicKey(general.token_account),
-      metadata: new PublicKey(metaDataAccount),
-      escrowPaymentAccount: escrowPaymentAccount[0],
-      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
-      buyerTradeState: buyerTradeState[0]
-    }
-
-    const buyIX: TransactionInstruction = await createBuyInstruction(buyInstructionAccounts, buyInstructionArgs)
-
-    const transaction = new Transaction()
-    transaction.add(buyIX)
+  const handleOtherBuyOptions = async () => {
     try {
-      const escrowBalance = await connection.getBalance(escrowPaymentAccount[0])
-
-      if (escrowBalance > 0.01 * LAMPORTS_PER_SOL_NUMBER && !isBuyingNow) {
-        const initialIX = SystemProgram.transfer({
-          fromPubkey: wallet?.adapter?.publicKey,
-          toPubkey: escrowPaymentAccount[0],
-          lamports: escrowBalance >= curBid * LAMPORTS_PER_SOL_NUMBER ? buyerPrice : buyerPrice - escrowBalance
-        })
-        transaction.add(initialIX)
-      }
+      const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection)
+      await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow)
     } catch (err) {
-      console.log(err)
+      setIsLoading(false)
+      pleaseTryAgain(isBuyingNow, 'Failed to load data needed')
     }
-
-    if (isBuyingNow) {
-      const { freeTradeStateAgg, programAsSignerPDA } = await derivePDAForExecuteSale()
-
-      const onChainNFTMetadata = await getNFTMetadata(metaDataAccount, connection)
-      if (!onChainNFTMetadata) {
-        couldNotFetchNFTMetaData()
-        setIsLoading(false)
-        return
-      }
-
-      const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
-        pubkey: new PublicKey(creator.address),
-        isWritable: true,
-        isSigner: false
-      }))
-
-      const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
-        escrowPaymentBump: escrowPaymentAccount[1],
-        freeTradeStateBump: freeTradeStateAgg[1],
-        programAsSignerBump: programAsSignerPDA[1],
-        buyerPrice: buyerPrice,
-        tokenSize: tokenSize
-      }
-      const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = {
-        buyer: wallet?.adapter?.publicKey,
-        seller: new PublicKey(ask?.wallet_key),
-        tokenAccount: new PublicKey(ask?.token_account_key),
-        tokenMint: new PublicKey(ask?.token_account_mint_key),
-        metadata: new PublicKey(metaDataAccount),
-        treasuryMint: new PublicKey(isBuyingNow ? ask?.auction_house_treasury_mint_key : TREASURY_MINT),
-        escrowPaymentAccount: escrowPaymentAccount[0],
-        sellerPaymentReceiptAccount: new PublicKey(ask?.wallet_key),
-        buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-        authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-        auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
-        auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
-        auctionHouseTreasury: auctionHouseTreasuryAddress[0],
-        buyerTradeState: buyerTradeState[0],
-        sellerTradeState: new PublicKey(ask?.seller_trade_state),
-        freeTradeState: freeTradeStateAgg[0],
-        systemProgram: SystemProgram.programId,
-        programAsSigner: programAsSignerPDA[0],
-        rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
-        ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-        anchorRemainingAccounts: creatorAccounts
-      }
-
-      const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
-        executeSaleInstructionAccounts,
-        executeSaleInstructionArgs
-      )
-
-      transaction.add(executeSaleIX)
-    }
-    await handleNotifications(transaction, buyerPrice, isBuyingNow)
   }
 
   if (missionAccomplished) return <MissionAccomplishedModal price={ask?.buyer_price} />
@@ -791,12 +577,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             <div className="leftAlign">Price per item</div>
             <div className="rightAlign">{curBid} SOL</div>
           </div>
-          {/* {!checkMobile() && (
-            <div className="rowContainer">
-              <div className="leftAlign">Quantity</div>
-              <div className="rightAlign">1 NFT</div>
-            </div>
-          )} */}
+
           <div className="rowContainer">
             <div className="leftAlign">Royalty ({royalty}%)</div>
             <div className="rightAlign"> {((royalty * curBid) / 100).toFixed(curBid > 9 ? 2 : 3)} SOL</div>
