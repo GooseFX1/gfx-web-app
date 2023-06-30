@@ -8,14 +8,25 @@ import {
   token,
   walletAdapterIdentity
 } from '@metaplex-foundation/js'
-import { Connection, PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY, TransactionInstruction } from '@solana/web3.js'
-import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY } from '../ids'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { Metadata, PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
+import {
+  Connection,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_INSTRUCTIONS_PUBKEY,
+  TransactionInstruction,
+  SYSVAR_CLOCK_PUBKEY
+} from '@solana/web3.js'
+import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY, AUTH_PROGRAM_ID } from '../ids'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import {
   createSellInstruction,
   createPrintListingReceiptInstruction
 } from '@metaplex-foundation/mpl-auction-house'
+import { getAtaForMint, findTokenRecordPda, getEditionDataAccount } from './pda'
+import { getMetadata } from '../nfts/metadata'
 
 export const currency: SplTokenCurrency = {
   symbol: 'SOL',
@@ -47,6 +58,12 @@ export const constructListInstruction = async (
     mint: mintAccount
   })
 
+  const metadataAccount = await getMetadata(mintAccount.toBase58())
+
+  const metadataObj = await connection.getAccountInfo(toPublicKey(metadataAccount))
+
+  const metadataParsed = Metadata.deserialize(metadataObj.data)[0]
+
   const auctionHouse = await findOurAuctionHouse()
   const sellerTradeState = metaplex.auctionHouse().pdas().tradeState({
     auctionHouse: auctionHouse.address,
@@ -71,6 +88,10 @@ export const constructListInstruction = async (
       tokenAccount
     })
 
+  const tokenAccountKey: PublicKey = (await getAtaForMint(mintAccount, seller))[0]
+  const tokenRecord = findTokenRecordPda(mintAccount, tokenAccountKey)
+  const editionAccount: PublicKey = (await getEditionDataAccount(mintAccount))[0]
+
   const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
   const accounts = {
@@ -82,7 +103,18 @@ export const constructListInstruction = async (
     auctionHouseFeeAccount: auctionHouse.feeAccountAddress,
     sellerTradeState,
     freeSellerTradeState,
-    programAsSigner
+    programAsSigner,
+    tokenProgram: TOKEN_PROGRAM_ID,
+    systemProgram: SystemProgram.programId,
+    metadataProgram: TOKEN_METADATA_PROGRAM_ID,
+    instructions: SYSVAR_INSTRUCTIONS_PUBKEY,
+    tokenRecord: tokenRecord,
+    editionAccount: editionAccount,
+    authorizationRules: metadataParsed.programmableConfig?.ruleSet
+      ? metadataParsed.programmableConfig.ruleSet
+      : TOKEN_METADATA_PROGRAM_ID,
+    mplTokenAuthRulesProgram: AUTH_PROGRAM_ID,
+    clock: SYSVAR_CLOCK_PUBKEY
   }
 
   const args = {

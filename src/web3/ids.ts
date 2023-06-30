@@ -5,6 +5,8 @@ import { StringPublicKey } from './metaplex'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
+export const AUTH_PROGRAM_ID = new PublicKey('auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg')
+
 export type Mint = {
   address: PublicKey
   decimals: number
