@@ -2,6 +2,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token
 import { PublicKey, PublicKeyInitData, Transaction } from '@solana/web3.js'
 import { AUCTION_HOUSE_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, toPublicKey } from '../ids'
 import { BigNumber } from '@metaplex-foundation/js'
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
 import { programIds } from '../programIds'
 import { INFTInBag } from '../../types/nft_details'
 
@@ -95,3 +96,27 @@ export const getMagicEdenTokenAccount = async (item: INFTInBag | any): Promise<[
   )
   return tokenAccount
 }
+
+export const findTokenRecordPda = (mint: PublicKey, token: PublicKey): PublicKey =>
+  PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('metadata'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+      Buffer.from('token_record'),
+      token.toBuffer()
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  )[0]
+
+export const getAtaForMint = async (mint: PublicKey, buyer: PublicKey): Promise<[PublicKey, number]> =>
+  await PublicKey.findProgramAddress(
+    [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+    SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+  )
+
+export const getEditionDataAccount = async (mint: PublicKey): Promise<[PublicKey, number]> =>
+  await PublicKey.findProgramAddress(
+    [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
+    TOKEN_METADATA_PROGRAM_ID
+  )
