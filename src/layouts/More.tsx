@@ -162,7 +162,7 @@ export const More: FC = () => {
       onVisibleChange={onVisibleChange}
     >
       <ICON $mode={mode === 'dark'}>
-        <img src={`/img/assets/more-${mode}-${isActive}.svg`} alt="more" />
+        <img key={`${mode}-more-button`} src={`/img/assets/more-${mode}-${isActive}.svg`} alt="more" />
       </ICON>
     </Dropdown>
   )
