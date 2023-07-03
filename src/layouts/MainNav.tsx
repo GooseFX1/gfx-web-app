@@ -193,7 +193,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playClose
       <MobileNavItem
         // animation={'swap'}
         // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        text={'Swap'}
+        text={'swap'}
         path={'/swap'}
       />
       <MobileNavItem
@@ -205,13 +205,13 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playClose
       <MobileNavItem
         // animation={'aggregator'}
         // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        text={'NFTs'}
+        text={'nfts'}
         path={'/nfts'}
       />
       <MobileNavItem
         // animation={'farm'}
         // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-        text={'Farm'}
+        text={'farm'}
         path={'/farm'}
       />
       {/* <MobileNavItem
