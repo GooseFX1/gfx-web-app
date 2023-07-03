@@ -283,7 +283,7 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   rewards: {
-    src: 'https://media.goosefx.io/webapp/rewards.riv',
+    src: '/rive/rewards.riv',
     stateMachines: {
       Rewards: {
         stateMachineName: 'Rewards',
