@@ -136,7 +136,7 @@ export const SingleNFTCard: FC<{
 
   useEffect(() => {
     if (activeCard) {
-      refreshCard.current = setInterval(() => updateLocalStates(item), 3000)
+      refreshCard.current = setInterval(() => updateLocalStates(item), 5000)
     } else {
       if (refreshCard.current) clearInterval(refreshCard.current)
     }
@@ -206,6 +206,7 @@ export const SingleNFTCard: FC<{
       setIsLoadingBeforeRelocate(false)
       return true
     } catch (err) {
+      console.log(err)
       setIsLoadingBeforeRelocate(false)
       notify(genericErrMsg('Error fetching NFT Metadata'))
       return false
@@ -240,8 +241,8 @@ export const SingleNFTCard: FC<{
   const gradientBg: boolean = useMemo(() => isOwner && localAsk !== null, [localAsk, isOwner])
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
-    if (ask.marketplace_name === null) return AH_NAME(ask.auction_house_key)
-    const name = ask.marketplace_name
+    if (ask?.marketplace_name === null) return AH_NAME(ask?.auction_house_key)
+    const name = ask?.marketplace_name
     const splitString = name.split('_')
     const capString = splitString.map((c) => capitalizeFirstLetter(c.toLowerCase()))
     return capString.join(' ')

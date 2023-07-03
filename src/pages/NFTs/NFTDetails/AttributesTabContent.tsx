@@ -65,6 +65,11 @@ export const AttributesTabContent: FC<{ data: IAttributesTabItemData[] }> = ({ d
 
 export const AsksAndBidsForNFT = (): ReactElement => {
   const { ask, bids } = useNFTDetails()
+  const { prices } = usePriceFeedFarm()
+  const solPrice = prices['SOL/USDC']?.current
+  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
+  const profileLink = hostURL + `/nfts/profile/`
+
   if (!ask && !bids.length)
     return (
       <div className="generalItemValue">
@@ -72,10 +77,6 @@ export const AsksAndBidsForNFT = (): ReactElement => {
         No bids so far, be the first to bid for this amazing piece.
       </div>
     )
-  const { prices } = usePriceFeedFarm()
-  const solPrice = prices['SOL/USDC']?.current
-  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
-  const profileLink = hostURL + `/nfts/profile/`
 
   return (
     <div tw="flex-col">
