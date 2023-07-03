@@ -100,7 +100,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'aggregator',
           // stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
-          text: 'NFTs',
+          text: 'nfts',
           path: '/nfts'
         })
         break
@@ -108,7 +108,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'farm',
           // stateMachine: RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName,
-          text: 'Farm',
+          text: 'farm',
           path: '/farm'
         })
         break
@@ -116,7 +116,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'stats',
           // stateMachine: RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName,
-          text: 'Stats',
+          text: 'stats',
           path: '/stats'
         })
         break
@@ -124,7 +124,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'swap',
           // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'Swap',
+          text: 'swap',
           path: '/swap'
         })
         break
