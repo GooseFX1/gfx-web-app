@@ -9,7 +9,7 @@ import {
   useWalletModal
 } from '../../../context'
 
-import { checkMobile, formatSOLDisplay, notify } from '../../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
@@ -371,19 +371,15 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     () => wallet?.adapter?.publicKey,
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
-  const isBuyingNow: boolean = useMemo(
-    () =>
-      parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === curBid ||
-      ask.marketplace_name === NFT_MARKETS.TENSOR,
-    [curBid]
-  )
+  const isBuyingNow: boolean = useMemo(() => formatSOLNumber(ask?.buyer_price) === curBid, [curBid])
   const marketplaceName = useMemo(
-    () => (ask.marketplace_name ? handleMarketplaceFormat(ask.marketplace_name) : AH_NAME(ask.auction_house_key)),
+    () =>
+      ask?.marketplace_name ? handleMarketplaceFormat(ask?.marketplace_name) : AH_NAME(ask?.auction_house_key),
     [ask]
   )
 
   const serviceFee = useMemo(
-    () => (ask.marketplace_name ? NFT_MARKET_PLACE_FEES[ask.marketplace_name] : NFT_MARKET_TRANSACTION_FEE),
+    () => (ask?.marketplace_name ? NFT_MARKET_PLACE_FEES[ask?.marketplace_name] : NFT_MARKET_TRANSACTION_FEE),
     [ask]
   )
   const servicePriceCalc: number = useMemo(
@@ -531,10 +527,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       const signature = await sendTransaction(tx, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
-      setIsLoading(false)
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
         sendNftTransactionLog(isBuyingNow ? 'SALE' : 'BID', signature)
+        setIsLoading(false)
 
         if (isBuyingNow) {
           setMissionAccomplished(true)
@@ -610,11 +606,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     e.preventDefault()
     setIsLoading(true)
     logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
-    if (ask.marketplace_name === NFT_MARKETS.TENSOR) {
+    if (ask?.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return
     }
-    if (ask.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
+    if (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
       callMagicEdenAPIs()
       return
     } else callBuyInstruction()
