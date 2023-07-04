@@ -121,7 +121,7 @@ const SecondaryNavNFTs: FC = () => {
 
   return (
     <div css={[tw`h-12 w-full flex items-center px-2.5 py-2.25 bg-grey-5 dark:bg-black-1`]}>
-      <NFTProfileButton />
+      {/* <NFTProfileButton /> */}
       <div css={[tw`flex ml-auto gap-4.75 items-center`]}>
         <Switch
           checked={enabled}
@@ -150,24 +150,26 @@ const SecondaryNavNFTs: FC = () => {
     </div>
   )
 }
-const NFTProfileButton: FC = () => {
-  console.log('NFTProfileButton')
-  return (
-    <button
-      css={[
-        tw`border-1 border-solid border-grey-1 dark:border-grey-2 p-1.25 rounded-full
-     bg-white dark:bg-black-2 flex items-center
-     `
-      ]}
-    >
-      <img
-        css={[tw`h-6 w-6 rounded-full object-cover border-1 border-solid border-grey-1 dark:border-grey-2`]}
-        src={`/img/mainnav/nft-profile.svg`}
-      />
-      <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-white ml-1.25`]}>My Profile</p>
-    </button>
-  )
-}
+
+// const NFTProfileButton: FC = () => {
+//   console.log('NFTProfileButton')
+//   return (
+//     <button
+//       css={[
+//         tw`border-1 border-solid border-grey-1 dark:border-grey-2 p-1.25 rounded-full
+//      bg-white dark:bg-black-2 flex items-center
+//      `
+//       ]}
+//     >
+//       <img
+//         css={[tw`h-6 w-6 rounded-full object-cover border-1 border-solid border-grey-1 dark:border-grey-2`]}
+//         src={`/img/mainnav/nft-profile.svg`}
+//       />
+//       <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-white ml-1.25`]}>My Profile</p>
+//     </button>
+//   )
+// }
+
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
