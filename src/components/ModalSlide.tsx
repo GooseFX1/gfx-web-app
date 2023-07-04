@@ -47,13 +47,16 @@ interface IModalSlide {
 }
 
 const closeRewardModal = (e, rewardToggle) => {
-  if (e.target.id === 'wrapper-background') {
+  if (e.target.id === 'wrapper-background' && rewardToggle) {
     rewardToggle(false)
   }
 }
 
 export const ModalSlide: FC<IModalSlide> = (props: IModalSlide) => (
-  <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
+  <WRAPPER
+    id="wrapper-background"
+    onClick={(e) => (props.rewardToggle ? closeRewardModal(e, props.rewardToggle) : null)}
+  >
     <MODAL id="modal">
       {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
       {props.modalType === MODAL_TYPES.SUBMIT && <SubmitPopup rewardToggle={props.rewardToggle} />}

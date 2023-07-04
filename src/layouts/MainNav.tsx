@@ -12,7 +12,7 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
-
+import { SVGBlackToGrey } from '../styles'
 // import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
@@ -208,58 +208,69 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
   isOpen,
   playCloseAnimation,
   toggleSettingsDrawer
-}) => (
-  <div
-    css={[
-      tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
+}) => {
+  const { mode } = useDarkMode()
+
+  return (
+    <div
+      css={[
+        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
         dark:text-grey-5 rounded-b-bigger block justify-center z-50`,
-      isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
-      playCloseAnimation ? tw`animate-slideOutTop` : tw``
-    ]}
-  >
-    <div tw={'absolute top-3 left-0 w-full flex justify-center items-center'}>
-      <ThemeToggle />
-    </div>
-    <button onClick={toggleSettingsDrawer} css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}>
-      <img src="/img/assets/cross-white.svg" alt="close-icon" />
-    </button>
-    <div css={[tw`h-[70vh] flex flex-col gap-8`]}>
-      <MobileNavItem
-        // animation={'swap'}
-        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        text={'Swap'}
-        path={'/swap'}
-      />
-      <MobileNavItem
-        // animation={'dex'}
-        // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
-        text={'trade'}
-        path={'/trade'}
-      />
-      <MobileNavItem
-        // animation={'aggregator'}
-        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        text={'NFTs'}
-        path={'/nfts'}
-      />
-      <MobileNavItem
-        // animation={'farm'}
-        // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-        text={'Farm'}
-        path={'/farm'}
-      />
-      {/* <MobileNavItem
+        isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
+        playCloseAnimation ? tw`animate-slideOutTop` : tw``
+      ]}
+    >
+      <div tw={'absolute top-3 left-0 w-full flex justify-center items-center'}>
+        <ThemeToggle />
+      </div>
+      <button
+        onClick={toggleSettingsDrawer}
+        css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}
+      >
+        {mode === 'dark' ? (
+          <img src={`/img/assets/cross-white.svg`} alt="close-icon" />
+        ) : (
+          <SVGBlackToGrey src={`/img/assets/cross-white.svg`} alt="close-icon" />
+        )}
+      </button>
+      <div css={[tw`h-[70vh] flex flex-col gap-8`]}>
+        <MobileNavItem
+          // animation={'swap'}
+          // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+          text={'swap'}
+          path={'/swap'}
+        />
+        <MobileNavItem
+          // animation={'dex'}
+          // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
+          text={'trade'}
+          path={'/trade'}
+        />
+        <MobileNavItem
+          // animation={'aggregator'}
+          // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+          text={'nfts'}
+          path={'/nfts'}
+        />
+        <MobileNavItem
+          // animation={'farm'}
+          // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
+          text={'farm'}
+          path={'/farm'}
+        />
+        {/* <MobileNavItem
         animation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
         text={'Stats'}
         path={'/stats'}
       /> */}
+      </div>
+      <div>
+        <MobileNavControls />
+      </div>
     </div>
-    <div>
-      <MobileNavControls />
-    </div>
-  </div>
-)
+  )
+}
 
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
