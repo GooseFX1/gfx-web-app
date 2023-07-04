@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC, ReactElement, MutableRefObject, useCallback } from 'react'
+import React, { useEffect, useState, FC, ReactElement, MutableRefObject, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -85,15 +85,15 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 sm:mt-2`}
   .slider-animation {
     ${tw`absolute w-1/4 h-[44px] rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 33 + 4.5}%;
+    //left: ${({ $poolIndex }) => $poolIndex * 33 + 4.5}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    transition: left 500ms ease-in-out;
+    transition: all 500ms ease-in-out;
   }
   .slider-animation-web {
     ${tw`absolute w-[30%] h-[44px] rounded-[36px] z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 33 + 2}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    transition: left 500ms ease-in-out;
+    transition: all 500ms ease-in-out;
   }
 `
 
@@ -154,6 +154,14 @@ export const useAnimateButtonSlide = (
   index?: number,
   customCallback?: (index: number) => void
 ): ((index: number) => void) => {
+  useEffect(() => {
+    if (!slideRef.current || !buttonRefs.current.length) return
+    if (index !== undefined) {
+      handleSlide(index)
+    } else {
+      handleSlide(0)
+    }
+  }, [slideRef, buttonRefs, index])
   const handleSlide = useCallback(
     (index) => {
       if (!slideRef.current || !buttonRefs.current.length) {
@@ -203,10 +211,13 @@ export const FarmFilter: FC = () => {
   const [poolIndex, setPoolIndex] = useState(0)
   const { wallet } = useWallet()
   const [firstPageLoad, setFirstPageLoad] = useState<boolean>(true)
-
+  const buttonRefs = useRef<HTMLButtonElement[]>([])
+  const sliderRef = useRef<HTMLDivElement>(null)
+  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs)
   const handleClick = (name, index) => {
     setPoolFilter(name)
     setPoolIndex(index)
+    handleSlide(index)
   }
   useEffect(() => {
     setFirstPageLoad(false)
@@ -223,6 +234,23 @@ export const FarmFilter: FC = () => {
       setTimeout(() => setLastRefreshedClass(' '), 3000)
     }
   }, [lastRefreshedClass])
+  // TODO: memoize this file and optimize the recalculations
+  const buttons = poolTypes.map((pool, index) => (
+    <STYLED_BUTTON
+      ref={(el) => {
+        buttonRefs.current[index] = el
+        if (index == poolIndex) {
+          handleSlide(poolIndex)
+        }
+      }}
+      disabled={operationPending}
+      key={pool.name}
+      onClick={() => handleClick(pool.name, index)}
+      className={pool.name === poolFilter ? 'selectedBackground' : ''}
+    >
+      {pool.name}
+    </STYLED_BUTTON>
+  ))
 
   if (checkMobile()) {
     return (
@@ -236,16 +264,7 @@ export const FarmFilter: FC = () => {
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
             <div className="slider-animation"></div>
-            {poolTypes.map((pool, index) => (
-              <STYLED_BUTTON
-                disabled={operationPending}
-                key={pool.name}
-                onClick={() => handleClick(pool.name, index)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
-            ))}
+            {buttons}
           </ButtonContainer>
           <MobileWrapper>
             <SearchBar className="search-bar" placeholder="Search by token" setSearchFilter={setSearchFilter} />
@@ -301,18 +320,8 @@ export const FarmFilter: FC = () => {
         </div>
         <STYLED_FARM_HEADER>
           <ButtonContainer $poolIndex={poolIndex}>
-            <div className="slider-animation-web"></div>
-            {poolTypes.map((pool, index) => (
-              <STYLED_BUTTON
-                disabled={operationPending}
-                key={pool.name}
-                title={pool.name === 'SSL' ? 'Single Sided Liquidity' : ''}
-                onClick={() => handleClick(pool.name, index)}
-                className={pool.name === poolFilter ? 'selectedBackground' : ''}
-              >
-                {pool.name}
-              </STYLED_BUTTON>
-            ))}
+            <div ref={sliderRef} className="slider-animation-web"></div>
+            {buttons}
           </ButtonContainer>
           <SearchBar
             className="search-bar"

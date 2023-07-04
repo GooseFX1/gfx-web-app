@@ -1,28 +1,15 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
-import { useDarkMode, useRewardToggle } from '../context'
+import { useRewardToggle } from '../context/reward_toggle'
+import { PanelSelector, RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
-// import { useRewardToggle } from '../context/reward_toggle'
-// import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
-// import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
+import { useDarkMode } from '../context'
+// import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
+// import { RIVE_ANIMATION } from '../constants'
+// import useRewards from '../hooks/useRewards'
 
-const REWARD_INFO = styled.div`
-  ${tw`w-[68%] h-[75vh] rounded-bigger`}
-`
-
-const REWARD_REDIRECT = styled.div`
-  ${tw`flex flex-col justify-center w-[32%] rounded-tr-bigger`}
-  background-image: ${({ theme }) => theme.bgReward};
-`
-
-const Wrapper = styled.div`
-  ${tw`h-full w-full flex rounded-t-bigger`}
-  font-family: Montserrat !important;
-  background-color: ${({ theme }) => theme.bg9};
-`
 // const REWARDS_BTN = styled.button`
 //   ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white
 //   border-none border-0 sm:h-[70px] sm:w-full sm:text-regular  sm:rounded-none sm:rounded-t-bigger sm:p-4 sm:mb-32`}
@@ -68,7 +55,10 @@ export const RewardsButton: FC = () => {
           <rewardsAnimation.RiveComponent />
         </RiveAnimationWrapper> */}
 
-        <img css={breakpoint.isMobile ? [tw`h-[30px]`] : [tw`h-[24px]`]} src={`img/mainnav/rewards-${mode}.svg`} />
+        <img
+          css={breakpoint.isMobile ? [tw`h-[35px] mt-1`] : [tw`h-[24px]`]}
+          src={`img/mainnav/rewards-${mode}.svg`}
+        />
 
         {hasRewards && (
           <img
@@ -81,18 +71,24 @@ export const RewardsButton: FC = () => {
     [mode, breakpoint, hasRewards]
   )
   const handleClick = useCallback(() => rewardToggle(true), [])
+
   if (breakpoint.isMobile || breakpoint.isTablet) {
-    return <div css={[tw`cursor-pointer`]}>{riveComponent}</div>
+    return (
+      <div onClick={handleClick} css={[tw`cursor-pointer`]}>
+        {riveComponent}
+      </div>
+    )
   }
   return (
     <div
-      css={[
-        tw`h-7.5 w-27.5 border-1 border-solid border-grey-1 dark:border-white rounded-full
-       bg-grey-5 dark:bg-black-1 pl-1 pr-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
-       text-tiny font-semibold text-black-4 dark:text-white
-       `
-      ]}
       onClick={handleClick}
+      css={[
+        tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
+            bg-grey-5 dark:bg-black-1 pl-1 pr-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
+            text-tiny font-semibold text-black-4 dark:text-white
+       `,
+        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`
+      ]}
     >
       {riveComponent}
       <span>Rewards</span>
@@ -100,15 +96,45 @@ export const RewardsButton: FC = () => {
   )
 }
 
-export const RewardsPopup: FC = () => (
-  <Wrapper>
-    <REWARD_INFO>
-      <RewardInfoComponent />
-    </REWARD_INFO>
-    <REWARD_REDIRECT>
-      <RewardRedirectComponent />
-    </REWARD_REDIRECT>
-  </Wrapper>
-)
+const REWARD_REDIRECT = styled.div<{ $index: number }>`
+  ${tw`flex flex-col min-w-max w-[35%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
+  background-image: ${({ theme, $index }) => {
+    switch ($index) {
+      case 0:
+        return theme.bgEarn
+      case 1:
+        return theme.bgRefer
+    }
+  }};
+`
+
+const Wrapper = styled.div`
+  ${tw`h-full min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
+  font-family: Montserrat !important;
+  background-color: ${({ theme }) => theme.bg9};
+`
+
+const REWARD_INFO = styled.div`
+  ${tw`w-full min-w-[65%]  rounded-bigger`}
+`
+
+export const RewardsPopup: FC = () => {
+  const [panelIndex, setPanelIndex] = useState<number>(0)
+
+  return (
+    <Wrapper>
+      <REWARD_INFO>
+        <RewardInfoComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardInfoComponent>
+      </REWARD_INFO>
+      <REWARD_REDIRECT $index={panelIndex}>
+        <RewardRedirectComponent panelIndex={panelIndex}>
+          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+        </RewardRedirectComponent>
+      </REWARD_REDIRECT>
+    </Wrapper>
+  )
+}
 
 export default RewardsPopup

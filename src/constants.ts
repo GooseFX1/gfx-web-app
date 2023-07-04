@@ -1,6 +1,7 @@
 import { ADDRESSES } from './web3'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { IFarmData } from './pages/Farm/CustomTableList'
+import tw from 'twin.macro'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
@@ -201,11 +202,13 @@ export const LAMPORTS_PER_SOL = BigInt(1000000000)
 export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)
 
+export const TWIN_MACRO_ANIMATIONS = {
+  slideInBottom: tw`animate-slideInBottom`
+}
 interface StateMachine {
   stateMachineName: string
   inputs: {
     theme: string
-    state?: string
     [key: string]: string
   }
 }
@@ -217,21 +220,14 @@ export interface RiveAnimation {
   stateMachines: StateMachines
 }
 export interface RiveAnimations {
-  aggregator: RiveAnimation
-  swap: RiveAnimation
-  dex: RiveAnimation
-  farm: RiveAnimation
-  referrals: RiveAnimation
-  rewards: RiveAnimation
-  stats: RiveAnimation
   [key: string]: RiveAnimation
 }
 export const RIVE_ANIMATION: RiveAnimations = {
   aggregator: {
-    src: '/rive/aggregator.riv', //'https://media.goosefx.io/webapp/nfts.riv'
+    src: 'https://media.goosefx.io/webapp/nfts.riv',
     stateMachines: {
-      AggregatorInteractions: {
-        stateMachineName: 'AggregatorInteractions',
+      'Aggregator Interactions': {
+        stateMachineName: 'Aggregator Interactions',
         inputs: {
           theme: 'Theme',
           state: 'State'
@@ -240,10 +236,10 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   swap: {
-    src: '/rive/swap.riv', //'https://media.goosefx.io/webapp/swap.riv'
+    src: 'https://media.goosefx.io/webapp/swap.riv',
     stateMachines: {
-      SwapInteractions: {
-        stateMachineName: 'SwapInteractions',
+      'Swap Interactions': {
+        stateMachineName: 'Swap Interactions',
         inputs: {
           theme: 'Theme',
           state: 'State'
@@ -252,10 +248,10 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   dex: {
-    src: '/rive/dex.riv', //'https://media.goosefx.io/webapp/trade.riv'
+    src: 'https://media.goosefx.io/webapp/trade.riv',
     stateMachines: {
-      DEXInteractions: {
-        stateMachineName: 'DEXInteractions',
+      'DEX Interactions': {
+        stateMachineName: 'DEX Interactions',
         inputs: {
           theme: 'Theme',
           state: 'State'
@@ -264,10 +260,10 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   farm: {
-    src: '/rive/farm.riv', //'https://media.goosefx.io/webapp/farm.riv'
+    src: 'https://media.goosefx.io/webapp/farm.riv',
     stateMachines: {
-      FarmInteractions: {
-        stateMachineName: 'FarmInteractions',
+      'Farm Interactions': {
+        stateMachineName: 'Farm Interactions',
         inputs: {
           theme: 'Theme',
           state: 'State'
@@ -287,24 +283,12 @@ export const RIVE_ANIMATION: RiveAnimations = {
     }
   },
   rewards: {
-    src: 'https://media.goosefx.io/webapp/rewards.riv',
+    src: '/rive/rewards.riv',
     stateMachines: {
       Rewards: {
         stateMachineName: 'Rewards',
         inputs: {
           theme: 'Theme'
-        }
-      }
-    }
-  },
-  stats: {
-    src: '/rive/stats.riv', //'https://media.goosefx.io/webapp/stats.riv'
-    stateMachines: {
-      StatsInteractions: {
-        stateMachineName: 'StatsInteractions',
-        inputs: {
-          theme: 'Theme',
-          state: 'State'
         }
       }
     }

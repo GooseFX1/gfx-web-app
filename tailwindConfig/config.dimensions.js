@@ -14,6 +14,7 @@ const padding = {
 }
 const margin = {
   0.5: '2px',
+  1.25: '5px',
   1.5: '6px',
   2.75: '11px',
   3.75: '15px',
@@ -24,9 +25,12 @@ const height = {
   5.25: '21px',
   5.5: '22px',
   6: '24px',
+  6.5: '26px',
   7.5: '30px',
   8.75: '35px',
+  9.75: '39px',
   11.75: '47px',
+  12: '48px',
   12.5: '50px',
   14: '56px',
   16.25: '65px',
@@ -37,12 +41,15 @@ const height = {
 }
 const width = {
   6: '24px',
+  6.5: '26px',
   7.5: '30px',
   8.75: '35px',
   12.5: '50px',
   15.75: '63px',
+  19: '76px',
   21: '84px',
   27.5: '110px',
+  42: '168px',
   81.5: '326px',
   628: '628px',
   '30p': '30%',
@@ -74,9 +81,31 @@ const maxHeight = {
 const gap = {
   0.25: '1px',
   1.75: '7px',
+  2: '8px',
   2.5: '10px',
   3: '12px',
+  3.25: '13px',
   3.75: '15px',
+  4.75: '19px',
   5.75: '23px'
 }
-module.exports = { padding, margin, height, width, rotate, minWidth, maxWidth, minHeight, maxHeight, gap }
+const translate = {
+  1.5: '6px'
+}
+const spacing = {
+  1.5: '6px'
+}
+module.exports = {
+  padding,
+  margin,
+  height,
+  width,
+  rotate,
+  minWidth,
+  maxWidth,
+  minHeight,
+  maxHeight,
+  gap,
+  translate,
+  spacing
+}

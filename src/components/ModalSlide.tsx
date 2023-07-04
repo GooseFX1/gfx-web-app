@@ -16,8 +16,9 @@ const WRAPPER = styled.div`
   background: ${({ theme }) => theme.modalBackground};
 `
 const MODAL = styled.div`
-  ${tw`fixed left-0 right-0 bottom-[-35px] w-screen rounded-t-bigger z-[1000]`}
-  height: calc(72vh + 35px);
+  ${tw`fixed left-0 right-0 bottom-0 w-screen rounded-t-bigger z-[1000] min-h-[500px] max-h-[100vh]
+  overflow-y-auto overflow-x-hidden`}
+  
   animation: slideIn .625s linear;
 }
 @keyframes slideIn {
@@ -46,13 +47,16 @@ interface IModalSlide {
 }
 
 const closeRewardModal = (e, rewardToggle) => {
-  if (e.target.id === 'wrapper-background') {
+  if (e.target.id === 'wrapper-background' && rewardToggle) {
     rewardToggle(false)
   }
 }
 
 export const ModalSlide: FC<IModalSlide> = (props: IModalSlide) => (
-  <WRAPPER id="wrapper-background" onClick={(e) => closeRewardModal(e, props.rewardToggle)}>
+  <WRAPPER
+    id="wrapper-background"
+    onClick={(e) => (props.rewardToggle ? closeRewardModal(e, props.rewardToggle) : null)}
+  >
     <MODAL id="modal">
       {props.modalType === MODAL_TYPES.REWARDS && <RewardsPopup />}
       {props.modalType === MODAL_TYPES.SUBMIT && <SubmitPopup rewardToggle={props.rewardToggle} />}

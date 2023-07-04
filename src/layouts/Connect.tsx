@@ -8,26 +8,23 @@ import React, {
   useState,
   useEffect
 } from 'react'
-import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import useBreakPoint from '../hooks/useBreakPoint'
 import { Menu, MenuItem } from './shared'
 import { ArrowDropdown } from '../components'
 import { useWalletModal } from '../context'
-import { CenteredImg } from '../styles'
 import { Loader } from '../components'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { truncateAddress } from '../utils'
 import tw from 'twin.macro'
+import styled from 'styled-components'
+import 'styled-components/macro'
 import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 import useBlacklisted from '../utils/useBlacklisted'
 
-const WALLET_ICON = styled(CenteredImg)`
-  ${tw`bg-black h-[24px] w-[24px] mr-[12px] rounded-circle`}
-
-  img {
-    ${tw`h-[16px] w-[16px]`}
-  }
+const WALLET_ICON = styled.div`
+  ${tw`flex items-center justify-center bg-black mr-[12px] rounded-circle`}
 `
 const WRAPPED_LOADER = styled.div`
   ${tw`w-10 relative my-0 mr-[-12px] ml-3`}
@@ -38,7 +35,7 @@ const WRAPPED_LOADER = styled.div`
 `
 
 const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
-  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 h-7.5 rounded-circle cursor-pointer`}
+  ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 rounded-circle cursor-pointer`}
   ${({ $connected }) => $connected && `padding-left: 4px;`}
   background-color: ${({ theme }) => theme.secondary3};
   transition: background-color ${({ theme }) => theme.mainTransitionTime} ease-in-out;
@@ -50,7 +47,7 @@ const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
   ${({ theme, $connected }) =>
     $connected &&
     `
-    background-image: linear-gradient(to left, ${theme.primary3}, ${theme.secondary6});
+    background-image: linear-gradient(to right, ${theme.primary3}, ${theme.secondary6});
 
     > span {
       cursor: initial !important;
@@ -127,6 +124,7 @@ export const Connect: FC<{ width?: string }> = ({ width }) => {
   const { setVisible: setModalVisible } = useWalletModal()
   const [arrowRotation, setArrowRotation] = useState(false)
   const [visible, setVisible] = useState(false)
+  const breakpoint = useBreakPoint()
 
   const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
 
@@ -189,10 +187,21 @@ export const Connect: FC<{ width?: string }> = ({ width }) => {
   }, [])
 
   return (
-    <WRAPPER $connected={!!base58} $width={width} onClick={onSpanClick}>
+    <WRAPPER
+      $connected={!!base58}
+      $width={width}
+      onClick={onSpanClick}
+      css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`]}
+    >
       {wallet && base58 && (
-        <WALLET_ICON>
-          <img src={wallet.adapter.icon} alt={`${wallet.adapter.name}_icon`} />
+        <WALLET_ICON
+          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[28px] w-[28px]` : tw`h-[24px] w-[24px]`]}
+        >
+          <img
+            css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[16px] w-[16px]` : tw`h-[14px] w-[14px]`]}
+            src={wallet.adapter.icon}
+            alt={`${wallet.adapter.name}_icon`}
+          />
         </WALLET_ICON>
       )}
       <span>{content}</span>

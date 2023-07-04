@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/RewardsPopup'
-import { useDarkMode } from '../context'
+import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -9,7 +9,11 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 import { More } from './More'
 import useClickOutside from '../hooks/useClickOutside'
-import { Menu, Transition } from '@headlessui/react'
+import { Menu, Switch, Transition } from '@headlessui/react'
+import { ModalSlide } from '../components/ModalSlide'
+import { MODAL_TYPES } from '../constants'
+import { SVGBlackToGrey } from '../styles'
+import { clamp } from '../utils'
 // import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
@@ -48,32 +52,124 @@ export const MainNav: FC = () => {
   const breakpoint = useBreakPoint()
   const history = useHistory()
   const navigateHome = useCallback(() => history.push('/swap'), [history])
+  const { rewardModal, rewardToggle } = useRewardToggle()
+
   return (
     <div
       css={[
-        tw`w-screen h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
-        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
+        tw`w-screen flex flex-col border-b-1 border-solid border-grey-2 dark:border-black-4
        `
       ]}
     >
-      <div css={tw`w-15.75 h-5.25 flex items-center gap-2 absolute cursor-pointer`} onClick={navigateHome}>
-        <img src={`/img/mainnav/g-logo.svg`} />
-        {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-          <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
-        )}
-      </div>
+      {rewardModal && (
+        <ModalSlide
+          rewardModal={rewardModal}
+          modalType={MODAL_TYPES.REWARDS}
+          rewardToggle={!breakpoint.isMobile && rewardToggle}
+        />
+      )}
+      <div
+        css={[
+          tw`h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
+        relative
+        `
+        ]}
+      >
+        <div css={tw`w-15.75 h-5.25 flex items-center gap-2 absolute cursor-pointer`} onClick={navigateHome}>
+          <img src={`/img/mainnav/g-logo.svg`} />
+          {(breakpoint.isDesktop || breakpoint.isLaptop) && (
+            <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+          )}
+        </div>
 
-      <DesktopNav />
-      <div css={tw`flex items-center gap-3 absolute right-0 mr-2.5 min-md:mr-0`}>
-        <RewardsButton />
-        <Connect />
+        <DesktopNav />
+        <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
+          <RewardsButton />
+          <Connect />
+          <NotificationButton />
+          <More />
+          <MobileNav />
+        </div>
+      </div>
+      <SecondaryNavRoot />
+    </div>
+  )
+}
+const SecondaryNavRoot: FC = () => {
+  const { pathname } = useLocation()
+
+  switch (true) {
+    case pathname.includes('nfts'):
+      return <SecondaryNavNFTs />
+    case pathname.includes('farm'):
+    case pathname.includes('stats'):
+    case pathname.includes('swap'):
+    default:
+      return <></>
+  }
+}
+const NotificationButton: FC = () => {
+  const { mode } = useDarkMode()
+  return (
+    <div css={[tw` cursor-pointer`]}>
+      <img css={[tw`h-7.5 w-7.5`]} src={`/img/mainnav/notification-${mode}.svg`} />
+    </div>
+  )
+}
+const SecondaryNavNFTs: FC = () => {
+  const [enabled, setEnabled] = useState(false)
+
+  return (
+    <div css={[tw`h-12 w-full flex items-center px-2.5 py-2.25 bg-grey-5 dark:bg-black-1`]}>
+      {/* <NFTProfileButton /> */}
+      <div css={[tw`flex ml-auto gap-4.75 items-center`]}>
+        <Switch
+          checked={enabled}
+          onChange={setEnabled}
+          style={{ flexShrink: 0 }}
+          css={[
+            tw`bg-gradient-1 border-0
+          relative inline-flex h-8.75 w-19 min-md:h-6.5 min-md:w-12.5 cursor-pointer rounded-full
+          transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white
+           focus-visible:ring-opacity-75`
+          ]}
+        >
+          <span className="sr-only">Use setting</span>
+          <img
+            aria-hidden="true"
+            css={[
+              tw`pointer-events-none absolute h-8.75 w-8.75 min-md:h-6.5 min-md:w-6.5  rounded-full bg-white shadow-lg
+             ring-0 transition-all duration-200 ease-in-out object-cover top-0`,
+              enabled ? tw`right-0` : tw`left-0`
+            ]}
+            src={enabled ? '/img/crypto/SOL.svg' : '/img/crypto/USDC.svg'}
+          />
+        </Switch>
         <CartButton />
-        <More />
-        <MobileNav />
       </div>
     </div>
   )
 }
+
+// const NFTProfileButton: FC = () => {
+//   console.log('NFTProfileButton')
+//   return (
+//     <button
+//       css={[
+//         tw`border-1 border-solid border-grey-1 dark:border-grey-2 p-1.25 rounded-full
+//      bg-white dark:bg-black-2 flex items-center
+//      `
+//       ]}
+//     >
+//       <img
+//         css={[tw`h-6 w-6 rounded-full object-cover border-1 border-solid border-grey-1 dark:border-grey-2`]}
+//         src={`/img/mainnav/nft-profile.svg`}
+//       />
+//       <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-white ml-1.25`]}>My Profile</p>
+//     </button>
+//   )
+// }
+
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
@@ -100,7 +196,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'aggregator',
           // stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
-          text: 'nfts',
+          text: 'NFTs',
           path: '/nfts'
         })
         break
@@ -108,7 +204,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'farm',
           // stateMachine: RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName,
-          text: 'farm',
+          text: 'Farm',
           path: '/farm'
         })
         break
@@ -116,7 +212,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'stats',
           // stateMachine: RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName,
-          text: 'stats',
+          text: 'Stats',
           path: '/stats'
         })
         break
@@ -124,7 +220,7 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'swap',
           // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'swap',
+          text: 'Swap',
           path: '/swap'
         })
         break
@@ -163,69 +259,99 @@ const MobileNav: FC = () => {
   const [playCloseAnimation, setPlayCloseAnimation] = useState(false)
 
   const outsideRef = useClickOutside(localOnClose)
+
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[30px]`} src={`img/mainnav/menu-${mode}.svg`} />
+        <img css={tw`h-[35px]`} src={`img/mainnav/menu-${mode}.svg`} />
       </div>
-      <MobileSettingsDrawer isOpen={isOpen} playCloseAnimation={playCloseAnimation} />
+      <MobileSettingsDrawer
+        isOpen={isOpen}
+        playCloseAnimation={playCloseAnimation}
+        toggleSettingsDrawer={toggleSettingsDrawer}
+      />
     </span>
   )
 }
+
 interface MobileSettingsDrawerProps {
   isOpen: boolean
   playCloseAnimation: boolean
+  toggleSettingsDrawer: () => void
 }
-const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({ isOpen, playCloseAnimation }) => (
-  <div
-    css={[
-      tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
+
+const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
+  isOpen,
+  playCloseAnimation,
+  toggleSettingsDrawer
+}) => {
+  const { mode } = useDarkMode()
+
+  return (
+    <div
+      css={[
+        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
         dark:text-grey-5 rounded-b-bigger block justify-center z-50`,
-      isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
-      playCloseAnimation ? tw`animate-slideOutTop` : tw``
-    ]}
-  >
-    <div tw={'absolute top-12 left-0 w-full flex justify-center items-center'}>
-      <ThemeToggle />
-    </div>
-    <div css={[tw`gap-12`]}>
-      <MobileNavItem
-        // animation={'swap'}
-        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        text={'swap'}
-        path={'/swap'}
-      />
-      <MobileNavItem
-        // animation={'dex'}
-        // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
-        text={'trade'}
-        path={'/trade'}
-      />
-      <MobileNavItem
-        // animation={'aggregator'}
-        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        text={'nfts'}
-        path={'/nfts'}
-      />
-      <MobileNavItem
-        // animation={'farm'}
-        // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-        text={'farm'}
-        path={'/farm'}
-      />
-      {/* <MobileNavItem
+        isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
+        playCloseAnimation ? tw`animate-slideOutTop` : tw``
+      ]}
+    >
+      <div tw={'absolute top-3 left-0 w-full flex justify-center items-center'}>
+        <ThemeToggle />
+      </div>
+      <button
+        onClick={toggleSettingsDrawer}
+        css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}
+      >
+        {mode === 'dark' ? (
+          <img src={`/img/assets/cross-white.svg`} alt="close-icon" />
+        ) : (
+          <SVGBlackToGrey src={`/img/assets/cross-white.svg`} alt="close-icon" />
+        )}
+      </button>
+      <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
+        <MobileNavItem
+          // animation={'swap'}
+          // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+          text={'swap'}
+          path={'/swap'}
+        />
+        <MobileNavItem
+          // animation={'dex'}
+          // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
+          text={'trade'}
+          path={'/trade'}
+        />
+        <MobileNavItem
+          // animation={'aggregator'}
+          // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+          text={'nfts'}
+          path={'/nfts'}
+        />
+        <MobileNavItem
+          // animation={'farm'}
+          // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
+          text={'farm'}
+          path={'/farm'}
+        />
+        {/* <MobileNavItem
         animation={'stats'}
         stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
         text={'Stats'}
         path={'/stats'}
       /> */}
+      </div>
+      <div>
+        <MobileNavControls />
+      </div>
+      <div css={[tw`flex items-center gap-3.25`]}>
+        <NotificationButton />
+        <p css={[tw`mb-0 text-average font-semibold text-grey-1 dark:text-white`]}>Notifications</p>
+      </div>
     </div>
-    <div>
-      <MobileNavControls />
-    </div>
-  </div>
-)
+  )
+}
 
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
@@ -442,7 +568,7 @@ const MobileNavItem: FC<MobileNavItemProps> = ({ text, path }) => {
     <button
       css={[
         tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
-    h-12.5 w-max bg-transparent dark:bg-transparent
+    h-12.5 w-max bg-transparent dark:bg-transparent w-42 justify-center
     `,
         isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
       ]}
@@ -629,8 +755,11 @@ const MainNavIcon: FC<MainNavIconProps> = ({
 }
 
 const CartButton: FC = () => {
-  // // TODO: fill me in - clamp to 9+
-  const cartSize = 0
+  const { nftInBag } = useNFTAggregator()
+  const cartSize = useMemo(() => {
+    const val = clamp(nftInBag.length, 0, 9)
+    return val >= 9 ? '9+' : val
+  }, [nftInBag])
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
   // Below is rive code for when the animation is added - some thigns might need to changed
