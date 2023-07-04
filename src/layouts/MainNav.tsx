@@ -86,7 +86,7 @@ export const MainNav: FC = () => {
         <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
           <RewardsButton />
           <Connect />
-          <NotificationButton />
+          {/* <NotificationButton /> */}
           <More />
           <MobileNav />
         </div>
@@ -108,14 +108,16 @@ const SecondaryNavRoot: FC = () => {
       return <></>
   }
 }
-const NotificationButton: FC = () => {
-  const { mode } = useDarkMode()
-  return (
-    <div css={[tw` cursor-pointer`]}>
-      <img css={[tw`h-7.5 w-7.5`]} src={`/img/mainnav/notification-${mode}.svg`} />
-    </div>
-  )
-}
+// TODO: Add notification back in
+// const NotificationButton: FC = () => {
+//   const { mode } = useDarkMode()
+//   return (
+//     <div css={[tw` cursor-pointer`]}>
+//       <img css={[tw`h-7.5 w-7.5`]} src={`/img/mainnav/notification-${mode}.svg`} />
+//     </div>
+//   )
+// }
+
 const SecondaryNavNFTs: FC = () => {
   const [enabled, setEnabled] = useState(false)
 
@@ -145,7 +147,10 @@ const SecondaryNavNFTs: FC = () => {
             src={enabled ? '/img/crypto/SOL.svg' : '/img/crypto/USDC.svg'}
           />
         </Switch>
-        <CartButton />
+        {/* TODO: remove div wrapper */}
+        <div style={{ display: 'none' }}>
+          <CartButton />
+        </div>
       </div>
     </div>
   )
@@ -345,10 +350,11 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
       <div>
         <MobileNavControls />
       </div>
-      <div css={[tw`flex items-center gap-3.25`]}>
+      {/* TODO: add notifications */}
+      {/* <div css={[tw`flex items-center gap-3.25`]}>
         <NotificationButton />
         <p css={[tw`mb-0 text-average font-semibold text-grey-1 dark:text-white`]}>Notifications</p>
-      </div>
+      </div> */}
     </div>
   )
 }
