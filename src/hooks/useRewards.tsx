@@ -64,13 +64,7 @@ export default function useRewards(): IUseRewards {
   const walletContext = useWallet()
   const { network, connection } = useConnectionConfig()
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards | null>(null)
-  console.log(
-    'REWARDS',
-    rewards.user.staking.userMetadata.unstakingTickets.map((x) => ({
-      createdAt: x.createdAt.toString(),
-      totalUnstaked: x.totalUnstaked.toString()
-    }))
-  )
+
   useEffect(() => {
     if (!walletContext.connected || !walletContext.wallet) {
       return
