@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-//import { RewardsButton } from '../components/RewardsPopup'
+import { RewardsButton } from '../components/RewardsPopup'
 import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
@@ -84,7 +84,7 @@ export const MainNav: FC = () => {
 
         <DesktopNav />
         <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
-          {/*<RewardsButton/>*/}
+          <RewardsButton />
           <Connect />
           {/* <NotificationButton /> */}
           <More />

@@ -198,11 +198,13 @@ const EarnRewards: FC = () => {
     }
   }, [userGoFxBalance, inputRef, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
-    setInputValue(parseFloat(userGoFxBalance.uiAmount.toFixed(2)))
+    let max = userGoFxBalance.uiAmount.toFixed(2)
+    if (!isStakeSelected) max = totalStaked.toFixed(2)
+    setInputValue(parseFloat(max))
     if (inputRef.current) {
-      inputRef.current.input.value = userGoFxBalance.uiAmount.toFixed(2)
+      inputRef.current.input.value = max
     }
-  }, [userGoFxBalance, inputRef])
+  }, [userGoFxBalance, inputRef, isStakeSelected, totalStaked])
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
