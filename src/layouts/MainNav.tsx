@@ -97,13 +97,14 @@ export const MainNav: FC = () => {
 }
 const SecondaryNavRoot: FC = () => {
   const { pathname } = useLocation()
+  const breakpoint = useBreakPoint()
 
   switch (true) {
-    case pathname.includes('nfts'):
+    case pathname.includes('nfts') && breakpoint.isMobile:
       return <SecondaryNavNFTs />
-    case pathname.includes('farm'):
-    case pathname.includes('stats'):
-    case pathname.includes('swap'):
+    case pathname.includes('farm') && breakpoint.isMobile:
+    case pathname.includes('stats') && breakpoint.isMobile:
+    case pathname.includes('swap') && breakpoint.isMobile:
     default:
       return <></>
   }
