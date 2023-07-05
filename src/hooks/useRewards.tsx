@@ -10,6 +10,7 @@ import moment from 'moment'
 import * as anchor from '@project-serum/anchor'
 import { signAndSendRawTransaction } from '../web3'
 import { Wallet } from '@project-serum/anchor'
+import { confirmTransaction } from '../web3'
 
 const MESSAGE = styled.div`
   margin: -12px 0;
@@ -63,7 +64,13 @@ export default function useRewards(): IUseRewards {
   const walletContext = useWallet()
   const { network, connection } = useConnectionConfig()
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards | null>(null)
-
+  console.log(
+    'REWARDS',
+    rewards.user.staking.userMetadata.unstakingTickets.map((x) => ({
+      createdAt: x.createdAt.toString(),
+      totalUnstaked: x.totalUnstaked.toString()
+    }))
+  )
   useEffect(() => {
     if (!walletContext.connected || !walletContext.wallet) {
       return
@@ -117,7 +124,7 @@ export default function useRewards(): IUseRewards {
       walletContext
     )
 
-    await confirmTransaction(txnSig)
+    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
       .then(() =>
         notify({
           message: Notification(
@@ -143,14 +150,14 @@ export default function useRewards(): IUseRewards {
           type: 'error'
         })
       })
-  }, [stakeRewards, walletContext])
+  }, [stakeRewards, walletContext, confirmTransaction])
   const closeUserAccount = useCallback(async () => {
     const txn: Transaction = await checkForUserAccount(() =>
       stakeRewards.closeUserAccount(null, walletContext.publicKey)
     )
 
     const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
-    await confirmTransaction(txnSig)
+    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
       .then(() =>
         notify({
           message: Notification(
@@ -177,26 +184,13 @@ export default function useRewards(): IUseRewards {
         })
       })
   }, [stakeRewards])
-  const confirmTransaction = useCallback(
-    async (txnSig: string) => {
-      const latestBlockHash = await stakeRewards.connection.getLatestBlockhash()
-      await stakeRewards.connection.confirmTransaction(
-        {
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: txnSig
-        },
-        'confirmed'
-      )
-    },
-    [stakeRewards]
-  )
+
   const stake = useCallback(
     async (amount: number) => {
       const txn: Transaction = await checkForUserAccount(() => stakeRewards.stake(amount, walletContext.publicKey))
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
 
-      await confirmTransaction(txnSig)
+      await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
           updateStakeDetails()
           notify({
@@ -225,7 +219,7 @@ export default function useRewards(): IUseRewards {
           })
         })
     },
-    [stakeRewards, walletContext]
+    [stakeRewards, walletContext, confirmTransaction]
   )
   const updateStakeDetails = useCallback(async () => {
     const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
@@ -243,7 +237,7 @@ export default function useRewards(): IUseRewards {
       )
       const proposedEndDate = moment().add(7, 'days').calendar()
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
-      await confirmTransaction(txnSig)
+      await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
           updateStakeDetails()
           notify({
@@ -276,7 +270,7 @@ export default function useRewards(): IUseRewards {
     const txn: Transaction = await checkForUserAccount(() => stakeRewards.claimFees(walletContext.publicKey))
     const amount = getClaimableFees()
     const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
-    await confirmTransaction(txnSig)
+    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
       .then(() =>
         notify({
           message: Notification(
@@ -312,7 +306,7 @@ export default function useRewards(): IUseRewards {
       )
 
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
-      await confirmTransaction(txnSig)
+      await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() =>
           notify({
             message: Notification(
