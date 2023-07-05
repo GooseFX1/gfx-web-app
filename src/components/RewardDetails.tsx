@@ -85,7 +85,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div
-        css={tw`px-[33px] py-[20px] min-md:px-[54px] flex flex-col w-screen min-md:w-[628px] h-[338px] rounded-t-[22px]
+        css={tw`px-[33px] py-[20px] min-md:px-[54px] flex flex-col w-screen min-md:w-[628px] h-[338px] rounded-[22px]
       bg-white dark:bg-black-2 relative`}
       >
         <p
@@ -180,15 +180,23 @@ const EarnRewards: FC = () => {
     }, 10000)
     return () => clearInterval(interval)
   }, [wallet, getUserGoFXBalance])
-
+  const totalStaked = useMemo(
+    () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
+    [rewards.user.staking.userMetadata.totalStaked]
+  )
   const handleHalf = useCallback(async () => {
-    const half = userGoFxBalance.uiAmount / 2
-
-    setInputValue(parseFloat(half.toFixed(2)))
-    if (inputRef.current) {
-      inputRef.current.input.value = half.toFixed(2)
+    let half = '0'
+    if (isStakeSelected) {
+      half = (userGoFxBalance.uiAmount / 2).toFixed(2)
+    } else {
+      half = (totalStaked / 2).toFixed(2)
     }
-  }, [userGoFxBalance, inputRef])
+
+    setInputValue(parseFloat(half))
+    if (inputRef.current) {
+      inputRef.current.input.value = half
+    }
+  }, [userGoFxBalance, inputRef, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
     setInputValue(parseFloat(userGoFxBalance.uiAmount.toFixed(2)))
     if (inputRef.current) {
@@ -242,10 +250,7 @@ const EarnRewards: FC = () => {
   const handleUnstakeConfirmationModalClose = useCallback(() => {
     setIsUnstakeConfirmationModalOpen(false)
   }, [])
-  const totalStaked = useMemo(
-    () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
-    [rewards.user.staking.userMetadata.totalStaked]
-  )
+
   const canStakeOrUnstake = useMemo(() => {
     if (inputValue == 0) return false
     if (isStakeSelected) {
@@ -549,7 +554,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
     redeemUnstakingTickets([{ index, ticket }])
   }, [redeemUnstakingTickets, ticket, rewards])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked).toString(), [ticket.totalUnstaked])
-  if (ticket.createdAt.toNumber() === 0) {
+  if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null
   }
   return (
@@ -931,7 +936,7 @@ const EarnRewardsRedirect: FC = () => {
       gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
     }),
-    [rewards, getClaimableFees]
+    [rewards.user.staking.userMetadata, getClaimableFees]
   )
   return (
     <div css={tw`flex pt-[18px] min-md:pt-[45px] flex-col items-center h-full`}>
