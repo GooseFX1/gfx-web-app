@@ -346,6 +346,11 @@
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "referralKey",
+          "isMut": false,
+          "isSigner": false
         }
       ],
       "args": []
@@ -679,6 +684,11 @@
           "name": "user",
           "isMut": false,
           "isSigner": true
+        },
+        {
+          "name": "bubdyLinkProgram",
+          "isMut": false,
+          "isSigner": false
         },
         {
           "name": "userTokenAccount",
