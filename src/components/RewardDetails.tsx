@@ -952,7 +952,7 @@ const EarnRewardsRedirect: FC = () => {
           totalEarned > 0 ? tw`opacity-100` : tw``
         ]}
       >
-        <span tw={'text-[55px] min-md:text-[80px] leading-[40px] text-grey-5'}>{totalEarned.toFixed(2)}</span>
+        <span tw={'text-[55px] min-md:text-[80px] leading-[40px] text-grey-5'}>{nFormatter(totalEarned)}</span>
         <p tw={'mb-0 text-[15px] leading-[18px] min-md:text-lg font-semibold'}>USDC Total Earned</p>
       </div>
       <p

@@ -181,7 +181,10 @@ export default function useRewards(): IUseRewards {
 
   const stake = useCallback(
     async (amount: number) => {
-      const txn: Transaction = await checkForUserAccount(() => stakeRewards.stake(amount, walletContext.publicKey))
+      const stakeAmount = new anchor.BN(amount).mul(new anchor.BN(1e9))
+      const txn: Transaction = await checkForUserAccount(() =>
+        stakeRewards.stake(stakeAmount, walletContext.publicKey)
+      )
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
 
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
@@ -193,7 +196,7 @@ export default function useRewards(): IUseRewards {
               false,
               <Row>
                 <Col>Amount:</Col>
-                <Col style={{ marginLeft: '4px' }}>{(amount / 1e9).toFixed(2)} GOFX</Col>
+                <Col style={{ marginLeft: '4px' }}>{amount.toFixed(2)} GOFX</Col>
               </Row>
             ),
             type: 'success'
@@ -226,8 +229,9 @@ export default function useRewards(): IUseRewards {
   }, [stakeRewards])
   const unstake = useCallback(
     async (amount: number) => {
+      const unstakeAmount = new anchor.BN(amount).mul(new anchor.BN(1e9))
       const txn: Transaction = await checkForUserAccount(() =>
-        stakeRewards.unstake(amount, walletContext.publicKey)
+        stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
       const proposedEndDate = moment().add(7, 'days').calendar()
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
@@ -239,7 +243,7 @@ export default function useRewards(): IUseRewards {
               'Cooldown started!',
               false,
               <>
-                <div>Amount: {amount.toFixed(2)} GOFX</div>
+                <div>Amount: {amount} GOFX</div>
                 <div>End Date: {proposedEndDate}</div>
               </>
             )
