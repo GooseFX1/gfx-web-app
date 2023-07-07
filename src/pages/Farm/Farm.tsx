@@ -30,7 +30,12 @@ const BODY = styled.div`
   }
 `
 
-export const Farm: FC = () => {
+// const BETA_BANNER = styled.div`
+//   ${tw`fixed left-[42px] bottom-[42px]`}
+//   z-index: 10;
+// `
+
+export const FarmV2: FC = () => {
   //eslint-disable-next-line
   const [filter, setFilter] = useState<string>('')
   const { setEndpointName, network } = useConnectionConfig()

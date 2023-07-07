@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
-import { Farm, Swap, ComingSoon } from './pages'
+import { Farm, Swap, FarmV2 } from './pages'
 import {
   NavCollapseProvider,
   PriceFeedProvider,
@@ -44,19 +44,22 @@ export const Router: FC = () => (
                       <Swap />
                     </Route>
                     <Route path="/trade">
-                      <CryptoProvider>
-                        <PriceFeedProvider>
-                          <OrderProvider>
-                            <TraderProvider>
-                              <OrderBookProvider>
-                                <CryptoContent />
-                              </OrderBookProvider>
-                            </TraderProvider>
-                          </OrderProvider>
-                        </PriceFeedProvider>
-                      </CryptoProvider>
+                      <PriceFeedProvider>
+                        <OrderProvider>
+                          <TraderProvider>
+                            <OrderBookProvider>
+                              <CryptoContent />
+                            </OrderBookProvider>
+                          </TraderProvider>
+                        </OrderProvider>
+                      </PriceFeedProvider>
                     </Route>
-                    <Route path="/NFTs/creator">
+                    <Route exact path="/leaderboard">
+                      <StatsProvider>
+                        <LeaderBoard />
+                      </StatsProvider>
+                    </Route>
+                    <Route path="/NFTs/Creator">
                       <Creator />
                     </Route>
                     <Route path="/NFTs/admin">
@@ -64,6 +67,11 @@ export const Router: FC = () => (
                         <AdminWrapper />
                       </NFTAdminProvider>
                     </Route>
+                    {/* <Route path="/nfts-v1">
+                        <NFTProfileProvider>
+                          <NFTs />
+                        </NFTProfileProvider>
+                      </Route> */}
                     <Route path="/nfts">
                       <NFTProfileProvider>
                         <NFTCollectionProvider>
@@ -74,21 +82,16 @@ export const Router: FC = () => (
                       </NFTProfileProvider>
                     </Route>
                     <Route exact path="/farm">
-                      <ComingSoon />
+                      <Farm />
                     </Route>
                     <Route exact path="/withdraw">
-                      <Farm />
+                      <FarmV2 />
                     </Route>
                     <Route exact path="/analytics">
                       <AnalyticsWrapper />
                     </Route>
                     <Route exact path="/analytics/trade">
                       <TradeAnalyticsWrapper />
-                    </Route>
-                    <Route exact path="/leaderboard">
-                      <StatsProvider>
-                        <LeaderBoard />
-                      </StatsProvider>
                     </Route>
                     <Route>
                       <GenericNotFound />
