@@ -2,3 +2,4 @@
 export * from './ComingSoon'
 export * from './Farm'
 export * from './Swap'
+export * from './FarmV3'
