@@ -144,7 +144,7 @@ export const SellNFTModal: FC<{
   )
   const orderTotal: number = useMemo(() => bidPrice, [bidPrice])
 
-  const isSellingNow = useMemo(() => bidPrice === askPrice, [askPrice])
+  const isAcceptingBid = useMemo(() => bidPrice === askPrice, [askPrice])
 
   const closeTheModal = () => {
     setOpenJustModal(false)
@@ -230,7 +230,7 @@ export const SellNFTModal: FC<{
           console.log('refreshing after 15 sec')
           setRefreshClicked((prev) => prev + 1)
         }, 15000)
-        if (isSellingNow)
+        if (isAcceptingBid)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
         else
           notify(
@@ -254,7 +254,7 @@ export const SellNFTModal: FC<{
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
     const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
-      isSellingNow ? new PublicKey(highestBid.wallet_key) : wallet?.adapter?.publicKey,
+      isAcceptingBid ? new PublicKey(highestBid.wallet_key) : wallet?.adapter?.publicKey,
       AUCTION_HOUSE,
       general.token_account,
       general.mint_address
@@ -274,7 +274,7 @@ export const SellNFTModal: FC<{
     const auctionHouseTreasuryAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        toPublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
         Buffer.from(TREASURY_PREFIX)
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -284,7 +284,7 @@ export const SellNFTModal: FC<{
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        toPublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
         buyerPublicKey.toBuffer()
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -292,18 +292,18 @@ export const SellNFTModal: FC<{
 
     const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
       buyerPublicKey,
-      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE,
+      isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE,
       general.token_account,
       general.mint_address,
-      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
       bnTo8(bidPrice)
     )
     const sellerTradeState: [PublicKey, number] = await tradeStatePDA(
       wallet?.adapter?.publicKey,
-      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE, // try changing this
+      isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE, // try changing this
       general.token_account,
       general.mint_address,
-      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
       bnTo8(bidPrice)
     )
 
@@ -428,7 +428,7 @@ export const SellNFTModal: FC<{
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
 
-    if (isSellingNow) {
+    if (isAcceptingBid) {
       const { programAsSignerPDA } = await derivePDAForExecuteSale()
       const {
         metaDataAccount,
@@ -465,13 +465,15 @@ export const SellNFTModal: FC<{
         tokenAccount: new PublicKey(highestBid?.token_account_key),
         tokenMint: new PublicKey(highestBid?.token_account_mint_key),
         metadata: new PublicKey(metaDataAccount),
-        treasuryMint: new PublicKey(isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
+        treasuryMint: new PublicKey(isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
         escrowPaymentAccount: escrowPaymentAccount[0],
         sellerPaymentReceiptAccount: wallet?.adapter?.publicKey,
         buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-        authority: new PublicKey(isSellingNow ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-        auctionHouse: new PublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE),
-        auctionHouseFeeAccount: new PublicKey(isSellingNow ? highestBid?.auction_house_fee_account : AH_FEE_ACCT),
+        authority: new PublicKey(isAcceptingBid ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+        auctionHouse: new PublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE),
+        auctionHouseFeeAccount: new PublicKey(
+          isAcceptingBid ? highestBid?.auction_house_fee_account : AH_FEE_ACCT
+        ),
         auctionHouseTreasury: auctionHouseTreasuryAddress[0],
         buyerTradeState: buyerTradeState[0],
         sellerTradeState: sellerTradeState[0],
@@ -491,9 +493,16 @@ export const SellNFTModal: FC<{
       transaction.add(executeSaleIX)
     }
 
+    // preflight attempt
+    // const stx = await wal.signTransaction(transaction)
+    // console.log(stx)
+    // const signature = await connection.sendRawTransaction(stx?.serialize(), {
+    //   skipPreflight: true
+    // })
+    // console.log(signature)
+
     try {
       const signature = await wal.sendTransaction(transaction, connection)
-      console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(signature, 'Listed', removeAskIX ? true : false)
         .then((res) => console.log('TX Confirmed', res))

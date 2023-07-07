@@ -47,24 +47,22 @@ export const constructListInstruction = async (
     basisPoints: toBigNumber(amount * LAMPORTS_PER_SOL_NUMBER),
     currency
   }
-
   const seller = wallet?.wallet?.adapter?.publicKey
+  const tokenAccountKey: PublicKey = (await getAtaForMint(mintAccount, seller))[0]
+
   const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet))
+  const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
-  const findOurAuctionHouse = async (): Promise<any> =>
-    metaplex.auctionHouse().findByAddress({ address: toPublicKey(AUCTION_HOUSE) })
-
-  const metadata = metaplex.nfts().pdas().metadata({
-    mint: mintAccount
-  })
+  // const metadata = metaplex.nfts().pdas().metadata({
+  //   mint: mintAccount
+  // })
 
   const metadataAccount = await getMetadata(mintAccount.toBase58())
-
   const metadataObj = await connection.getAccountInfo(toPublicKey(metadataAccount))
-
   const metadataParsed = Metadata.deserialize(metadataObj.data)[0]
 
-  const auctionHouse = await findOurAuctionHouse()
+  const auctionHouse = await metaplex.auctionHouse().findByAddress({ address: toPublicKey(AUCTION_HOUSE) })
+
   const sellerTradeState = metaplex.auctionHouse().pdas().tradeState({
     auctionHouse: auctionHouse.address,
     wallet: wallet?.wallet?.adapter?.publicKey,
@@ -88,25 +86,24 @@ export const constructListInstruction = async (
       tokenAccount
     })
 
-  const tokenAccountKey: PublicKey = (await getAtaForMint(mintAccount, seller))[0]
   const tokenRecord = findTokenRecordPda(mintAccount, tokenAccountKey)
   const editionAccount: PublicKey = (await getEditionDataAccount(mintAccount))[0]
 
-  const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
-
   const accounts = {
     wallet: seller,
-    tokenAccount,
-    metadata,
+    sellerBrokerWallet: SystemProgram.programId,
+    tokenMint: mintAccount,
+    tokenAccount: tokenAccountKey,
+    metadata: toPublicKey(metadataAccount),
     authority: toPublicKey(AUCTION_HOUSE_AUTHORITY),
     auctionHouse: auctionHouse.address,
     auctionHouseFeeAccount: auctionHouse.feeAccountAddress,
     sellerTradeState,
     freeSellerTradeState,
-    programAsSigner,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: SystemProgram.programId,
     metadataProgram: TOKEN_METADATA_PROGRAM_ID,
+    programAsSigner: programAsSigner,
     instructions: SYSVAR_INSTRUCTIONS_PUBKEY,
     tokenRecord: tokenRecord,
     editionAccount: editionAccount,
