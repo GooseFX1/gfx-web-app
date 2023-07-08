@@ -40,6 +40,8 @@ const height = {
   inherit: 'inherit'
 }
 const width = {
+  2.25: '9px',
+  3.5: '14px',
   6: '24px',
   6.5: '26px',
   7.5: '30px',

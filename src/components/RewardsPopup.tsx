@@ -56,7 +56,7 @@ export const RewardsButton: FC = () => {
         </RiveAnimationWrapper> */}
 
         <img
-          css={breakpoint.isMobile ? [tw`h-[35px] mt-1`] : [tw`h-[24px]`]}
+          css={[tw`h-[35px] w-[31px] min-md:h-[22px] min-md:w-[20px]`]}
           src={`img/mainnav/rewards-${mode}.svg`}
         />
 
@@ -84,7 +84,7 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       css={[
         tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
-            bg-grey-5 dark:bg-black-1 pl-1 pr-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
+            bg-grey-5 dark:bg-black-1 px-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
             text-tiny font-semibold text-black-4 dark:text-white
        `,
         breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`
