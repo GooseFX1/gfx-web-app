@@ -3,13 +3,13 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/RewardsPopup'
 import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
-import tw from 'twin.macro'
+import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 import { More } from './More'
 import useClickOutside from '../hooks/useClickOutside'
-import { Menu, Switch, Transition } from '@headlessui/react'
+import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
 import { SVGBlackToGrey } from '../styles'
@@ -57,7 +57,7 @@ export const MainNav: FC = () => {
   return (
     <div
       css={[
-        tw`w-screen flex flex-col border-b-1 border-solid border-grey-2 dark:border-black-4
+        tw`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
        `
       ]}
     >
@@ -86,28 +86,14 @@ export const MainNav: FC = () => {
         <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
           <RewardsButton />
           <Connect />
+          <CartButton />
           {/* <NotificationButton /> */}
           <More />
           <MobileNav />
         </div>
       </div>
-      <SecondaryNavRoot />
     </div>
   )
-}
-const SecondaryNavRoot: FC = () => {
-  const { pathname } = useLocation()
-  const breakpoint = useBreakPoint()
-
-  switch (true) {
-    case pathname.includes('nfts') && breakpoint.isMobile:
-      return <SecondaryNavNFTs />
-    case pathname.includes('farm') && breakpoint.isMobile:
-    case pathname.includes('stats') && breakpoint.isMobile:
-    case pathname.includes('swap') && breakpoint.isMobile:
-    default:
-      return <></>
-  }
 }
 // TODO: Add notification back in
 // const NotificationButton: FC = () => {
@@ -118,44 +104,6 @@ const SecondaryNavRoot: FC = () => {
 //     </div>
 //   )
 // }
-
-const SecondaryNavNFTs: FC = () => {
-  const [enabled, setEnabled] = useState(false)
-
-  return (
-    <div css={[tw`h-12 w-full flex items-center px-2.5 py-2.25 bg-grey-5 dark:bg-black-1`]}>
-      {/* <NFTProfileButton /> */}
-      <div css={[tw`flex ml-auto gap-4.75 items-center`]}>
-        <Switch
-          checked={enabled}
-          onChange={setEnabled}
-          style={{ flexShrink: 0 }}
-          css={[
-            tw`bg-gradient-1 border-0
-          relative inline-flex h-8.75 w-19 min-md:h-6.5 min-md:w-12.5 cursor-pointer rounded-full
-          transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white
-           focus-visible:ring-opacity-75`
-          ]}
-        >
-          <span className="sr-only">Use setting</span>
-          <img
-            aria-hidden="true"
-            css={[
-              tw`pointer-events-none absolute h-8.75 w-8.75 min-md:h-6.5 min-md:w-6.5  rounded-full bg-white shadow-lg
-             ring-0 transition-all duration-200 ease-in-out object-cover top-0`,
-              enabled ? tw`right-0` : tw`left-0`
-            ]}
-            src={enabled ? '/img/crypto/SOL.svg' : '/img/crypto/USDC.svg'}
-          />
-        </Switch>
-        {/* TODO: remove div wrapper */}
-        <div style={{ display: 'none' }}>
-          <CartButton />
-        </div>
-      </div>
-    </div>
-  )
-}
 
 // const NFTProfileButton: FC = () => {
 //   console.log('NFTProfileButton')
@@ -218,8 +166,8 @@ const MobileNav: FC = () => {
         setCurrentPage({
           // animation: 'stats',
           // stateMachine: RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName,
-          text: 'Stats',
-          path: '/stats'
+          text: 'More',
+          path: '/leaderboard'
         })
         break
       case pathname.includes('swap'):
@@ -293,7 +241,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
   toggleSettingsDrawer
 }) => {
   const { mode } = useDarkMode()
-
+  const { pathname } = useLocation()
+  const history = useHistory()
   return (
     <div
       css={[
@@ -317,36 +266,49 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
         )}
       </button>
       <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
-        <MobileNavItem
+        <NavItem
           // animation={'swap'}
           // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
           text={'swap'}
           path={'/swap'}
         />
-        <MobileNavItem
+        <NavItem
           // animation={'dex'}
           // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
           text={'trade'}
           path={'/trade'}
         />
-        <MobileNavItem
+        <NavItem
           // animation={'aggregator'}
           // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
           text={'nfts'}
           path={'/nfts'}
         />
-        <MobileNavItem
+        <NavItem
           // animation={'farm'}
           // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
           text={'farm'}
           path={'/farm'}
         />
-        {/* <MobileNavItem
-        animation={'stats'}
-        stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-        text={'Stats'}
-        path={'/stats'}
-      /> */}
+        <NavItem
+          // animation={'stats'}
+          // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
+          text={'more'}
+          path={'/leaderboard'}
+          iconBase={'stats'}
+          hasDropdown={true}
+          menuPosition={'center'}
+          customMenuStyle={{
+            menuItems: [tw`w-42`]
+          }}
+          options={[
+            {
+              text: 'Leaderboard',
+              onClick: () => history.push('/leaderboard'),
+              isActive: pathname.includes('leaderboard')
+            }
+          ]}
+        />
       </div>
       <div>
         <MobileNavControls />
@@ -420,13 +382,26 @@ interface DesktopControlsProps {
   isOpen: boolean
   onHover: (e: BaseSyntheticEvent) => void
   onClose: () => void
+  onOpen?: () => void
+  menuPosition?: string
+  customMenuStyle?: CustomMenuStyle
 }
 
-const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover, isOpen, onClose }) => {
+const DropDownControls: FC<DesktopControlsProps> = ({
+  children,
+  options,
+  onHover,
+  isOpen,
+  onClose,
+  menuPosition = 'right',
+  onOpen,
+  customMenuStyle
+}) => {
   const selfRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef(null)
   const localOnHover = useCallback(
     (e: BaseSyntheticEvent) => {
+      console.log(isOpen, 'click')
       if (!isOpen) {
         e.currentTarget.click()
         onHover(e)
@@ -452,15 +427,47 @@ const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover,
       window.removeEventListener('mousemove', handleMove)
     }
   }, [handleMove])
+  const menuPositionStyle = useMemo(() => {
+    switch (menuPosition) {
+      case 'center':
+        return {
+          left: '50%',
+          transform: 'translateX(-50%)'
+        }
+      default:
+        return {
+          left: 0
+        }
+    }
+  }, [menuPosition])
+  const breakpoints = useBreakPoint()
+  const handleMenuButtonClick = useCallback(() => (isOpen ? onClose() : onOpen()), [isOpen, onOpen, onClose])
+  const handleOptionClick = useCallback(
+    (callback: (...args: any[]) => any) => () => {
+      onClose()
+      buttonRef?.current?.click()
+      callback()
+    },
+    [onClose]
+  )
   return (
-    <div css={tw`relative inline-block text-left z-20`} ref={selfRef}>
+    <div css={tw`relative inline-block text-left z-20 `} ref={selfRef}>
       <span css={tw`absolute top-[44px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
       <Menu>
         {() => (
           <>
             <Menu.Button
-              tw={'bg-transparent border-0 active:border-0 focus:border-0'}
-              onMouseEnter={localOnHover}
+              css={[tw`bg-transparent border-0 focus-visible:outline-none active:border-0 focus:border-0 `].concat(
+                customMenuStyle?.button ?? []
+              )}
+              onMouseEnter={
+                breakpoints.isMobile
+                  ? () => {
+                      false
+                    }
+                  : localOnHover
+              }
+              onClick={handleMenuButtonClick}
               ref={buttonRef}
             >
               {children}
@@ -478,11 +485,12 @@ const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover,
               <Menu.Items
                 static
                 css={[
-                  tw`absolute left-0 w-56 mt-2 origin-top
+                  tw`absolute w-56 mt-2 origin-top
         border-1 border-solid border-black-1 dark:border-white rounded-tiny
         z-50
         `
-                ]}
+                ].concat(customMenuStyle?.menuItems ?? [])}
+                style={menuPositionStyle}
               >
                 {options.map((option, i) => (
                   <Menu.Item
@@ -493,18 +501,19 @@ const DesktopControls: FC<DesktopControlsProps> = ({ children, options, onHover,
                       option.isActive ? tw`bg-grey-5 dark:bg-black-1` : tw``,
                       i === 0 ? tw`rounded-tiny` : tw``,
                       i === options.length - 1 ? tw`rounded-b-tiny` : tw``
-                    ]}
+                    ].concat(customMenuStyle?.menuItem ?? [])}
                   >
                     <p
                       css={[
-                        tw`mb-0 text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
+                        tw`mb-0 text-average min-md:text-regular font-semibold min-md:font-medium text-grey-1
+                         dark:text-grey-1 cursor-pointer`,
                         option.isActive ? tw`bg-clip-text bg-gradient-1` : tw``
-                      ]}
+                      ].concat(customMenuStyle?.menuItemText ?? [])}
                       style={{
                         WebkitBackgroundClip: option.isActive ? 'text' : 'unset',
                         WebkitTextFillColor: option.isActive ? 'transparent' : 'unset'
                       }}
-                      onClick={option.onClick}
+                      onClick={handleOptionClick(option.onClick)}
                     >
                       {option.text}
                     </p>
@@ -545,145 +554,160 @@ interface Controls {
 //   </div>
 // )
 
-interface MobileNavItemProps {
-  text: string
-  path: string
-  animation?: string
-  stateMachine?: string
-}
-const MobileNavItem: FC<MobileNavItemProps> = ({ text, path }) => {
-  const { mode } = useDarkMode()
-  const { pathname } = useLocation()
-  const history = useHistory()
-  // const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
-  //   animation,
-  //   autoplay: true,
-  //   canvasWidth: 40,
-  //   canvasHeight: 40
-  // })
+// interface MobileNavItemProps {
+//   text: string
+//   path: string
+//   animation?: string
+//   stateMachine?: string
+//   hasDropDown?:boolean
+//   options?:Controls[]
+// }
+// const MobileNavItem: FC<MobileNavItemProps> = ({ text, path,hasDropDown,options }) => {
+//   const { mode } = useDarkMode()
+//   const { pathname } = useLocation()
+//   const history = useHistory()
+//   const [isOpen, setIsOpen] = useState<boolean>(false)
+//
+//   // const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
+//   //   animation,
+//   //   autoplay: true,
+//   //   canvasWidth: 40,
+//   //   canvasHeight: 40
+//   // })
+//   const isActive = useMemo(() => pathname.includes(path), [pathname, path])
+//   // useRiveThemeToggle(rive, animation, stateMachine)
+//   // const { stateInput } = useRiveStateToggle(rive, animation, stateMachine, path)
+//   const onHover = useCallback(() => {
+//     // if (!stateInput) return
+//     if (isActive) return
+//     setIsOpen(true)
+//     // stateInput.value = !stateInput.value
+//   }, [isActive])
+//   const navigateToPath = useCallback(() => history.push(path), [path, history])
+//   const onClose = useCallback(()=>setIsOpen(false),[])
+//   const component = useMemo(()=>
+//      <button
+//       css={[
+//         tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
+//     h-12.5 w-max bg-transparent dark:bg-transparent w-42 justify-center
+//     `,
+//         isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
+//       ]}
+//       onMouseEnter={onHover}
+//       onMouseLeave={onHover}
+//       onClick={navigateToPath}
+//     >
+//       {/* <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
+//         <RiveComponent />
+//       </RiveAnimationWrapper> */}
+//       <img
+//         css={[tw`h-[40px] w-[40px]`]}
+//         src={`/img/mainnav/${text}-${mode}${isActive ? '-active' : ''}.svg`}
+//         alt={text}
+//       />
+//       <p
+//         css={[
+//           tw`mb-0 text-average font-semibold uppercase text-grey-1 dark:text-grey-2`,
+//           isActive ? tw`text-black-4 dark:text-grey-5` : tw``
+//         ]}
+//       >
+//         {text}
+//       </p>
+//     </button>
+//   ,[text,mode,isActive,onHover,navigateToPath])
+//   return (
+//     hasDropDown?
+//       <DropDownControls menuPosition={"center"} options={options} isOpen={isOpen} onHover={onHover}
+//       onClose={onClose}>
+//         {component}
+//       </DropDownControls>
+//       :
+//       component
+//   )
+// }
 
-  // useRiveThemeToggle(rive, animation, stateMachine)
-  // const { stateInput } = useRiveStateToggle(rive, animation, stateMachine, path)
-  const onHover = useCallback(() => {
-    // if (!stateInput) return
-    if (pathname.includes(path)) return
-    // stateInput.value = !stateInput.value
-  }, [pathname, path])
-  const isActive = useMemo(() => pathname.includes(path), [pathname, path])
-  const navigateToPath = useCallback(() => history.push(path), [path, history])
-  return (
-    <button
-      css={[
-        tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
-    h-12.5 w-max bg-transparent dark:bg-transparent w-42 justify-center
-    `,
-        isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
-      ]}
-      onMouseEnter={onHover}
-      onMouseLeave={onHover}
-      onClick={navigateToPath}
-    >
-      {/* <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
-        <RiveComponent />
-      </RiveAnimationWrapper> */}
-      <img
-        css={[tw`h-[40px] w-[40px]`]}
-        src={`/img/mainnav/${text}-${mode}${isActive ? '-active' : ''}.svg`}
-        alt={text}
-      />
-      <p
-        css={[
-          tw`mb-0 text-average font-semibold uppercase text-grey-1 dark:text-grey-1`,
-          isActive ? tw`text-black-4 dark:text-grey-5` : tw``
-        ]}
-      >
-        {text}
-      </p>
-    </button>
-  )
-}
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
-
+  const history = useHistory()
+  const { pathname } = useLocation()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
     <div css={tw`flex items-center gap-6 mx-auto`}>
-      <MainNavIcon
+      <NavItem
         text={'swap'}
         // riveAnimation={'swap'}
         // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
         path={'/swap'}
       />
-      <MainNavIcon
+      <NavItem
         text={'trade'}
         // riveAnimation={'dex'}
         // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
         path={'/trade'}
         hasDropdown={false}
       />
-      <MainNavIcon
+      <NavItem
         text={'nfts'}
         // riveAnimation={'aggregator'}
         // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
         path={'/nfts'}
-        hasDropdown={false} // TODO: add when it is added
-        options={[
-          {
-            text: 'NFTs',
-            onClick: () => console.log('something here'),
-            isActive: true
-          },
-          {
-            text: 'Marketplace',
-            onClick: () => console.log('something here'),
-            isActive: false
-          }
-        ]}
       />
-      <MainNavIcon
+      <NavItem
         text={'farm'}
         // riveAnimation={'farm'}
         // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
         path={'/farm'}
       />
-
-      {/* <MainNavIcon
-        text={'Stats'}
-        riveAnimation={'stats'}
-        stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
+      <NavItem
+        text={'More'}
+        // riveAnimation={'stats'}
+        // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
         path={'/stats'}
-        hasDropdown={false} // Renable when added
+        hasDropdown={true} // Renable when added
+        iconBase={'stats'}
         options={[
           {
-            text: 'Stats',
-            onClick: () => console.log('something here'),
-            isActive: true
-          },
-          {
             text: 'Leaderboard',
-            onClick: () => console.log('something here'),
-            isActive: false
+            onClick: () => history.push('/leaderboard'),
+            isActive: pathname.includes('leaderboard')
           }
+          // {
+          //   text: 'Leaderboard',
+          //   onClick: () => console.log('something here'),
+          //   isActive: false
+          // }
         ]}
-      /> */}
+      />
     </div>
   )
 }
 interface MainNavIconProps {
   text: string
+  iconBase?: string
   path: string
   hasDropdown?: boolean
   options?: Controls[]
   riveAnimation?: string
   stateMachine?: string
+  menuPosition?: string
+  customMenuStyle?: CustomMenuStyle
 }
-const MainNavIcon: FC<MainNavIconProps> = ({
+type CustomMenuStyle = {
+  button?: TwStyle[]
+  menuItems?: TwStyle[]
+  menuItem?: TwStyle[]
+  menuItemText?: TwStyle[]
+}
+const NavItem: FC<MainNavIconProps> = ({
   // riveAnimation,
   text,
+  iconBase,
   // stateMachine,
   path,
   hasDropdown,
-  options
+  options,
+  menuPosition,
+  customMenuStyle
 }) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
@@ -698,7 +722,6 @@ const MainNavIcon: FC<MainNavIconProps> = ({
   // useRiveThemeToggle(rive.rive, riveAnimation, stateMachine)
   // const { stateInput } = useRiveStateToggle(rive.rive, riveAnimation, stateMachine, path)
   const [isOpen, setIsOpen] = useState<boolean>(false)
-
   const navigateToPath = useCallback(() => {
     history.push(path)
   }, [history, path])
@@ -720,42 +743,85 @@ const MainNavIcon: FC<MainNavIconProps> = ({
     //   stateInput.value = false
     // }
   }, [pathname, path])
-
+  const onOpen = useCallback(() => setIsOpen(true), [])
   const component = useMemo(() => {
-    const activeDropdown: string = isOpen ? 'selected' : 'inactive'
-    const curRoute: boolean = pathname.startsWith(path)
-
+    // isOpened or on page
+    const hasActiveItems = options && options.filter((option) => option.isActive).length > 0
+    const activeDropdown: string = isOpen ? 'selected' : hasDropdown && hasActiveItems ? 'active' : 'inactive'
+    const curRoute: boolean = pathname.startsWith(path) || hasActiveItems
     return (
-      <div css={tw`flex flex-col items-center justify-center h-full cursor-pointer`} onClick={navigateToPath}>
-        <div css={[tw`flex gap-0.25 items-center justify-center`]}>
+      <div
+        className={'group'}
+        css={[
+          tw`flex min-md:flex-col items-center justify-center h-full cursor-pointer
+        px-4.5 py-1.25 min-md:p-0 rounded-full min-md:rounded-none h-12.5 min-md:h-auto
+        w-42 min-md:w-auto bg-transparent dark:bg-transparent
+        gap-2.5 min-md:gap-0.25
+        `,
+          curRoute || isOpen
+            ? tw` bg-grey-4 dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent`
+            : tw``
+        ]}
+        onClick={() => {
+          if (!hasDropdown) {
+            navigateToPath()
+          }
+        }}
+      >
+        <div css={[tw`flex gap-2.5 min-md:gap-0.25 items-center justify-center`]}>
           {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
             <rive.RiveComponent />
           </RiveAnimationWrapper> */}
           <img
-            css={[tw`h-[26px] w-[26px]`]}
-            src={`/img/mainnav/${text}-${mode}${curRoute ? '-active' : ''}.svg`}
+            css={[tw`h-[40px] w-[40px] min-md:h-[26px] min-md:w-[26px]`]}
+            src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute || isOpen ? '-active' : ''}.svg`}
             alt={text}
           />
-          {hasDropdown && <img src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />}
+          <p
+            css={[
+              tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden`,
+              curRoute || isOpen ? tw`text-black dark:text-grey-5` : tw``
+            ]}
+            // style={{
+            //   opacity: curRoute ? 1 : 0.5
+            // }}
+          >
+            {text}
+          </p>
+          {hasDropdown && (
+            <img css={[tw`w-3.5 min-md:w-2.25`]} src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />
+          )}
         </div>
         <p
           css={[
-            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
-            text-grey-1 dark:text-grey-2 dark:text-white mt-0.5 h-4`
+            tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
+            curRoute || isOpen
+              ? tw`text-black dark:text-grey-5 min-md:opacity-100`
+              : tw`min-md:opacity-0 group-hover:min-md:opacity-50`
           ]}
-          style={{
-            opacity: curRoute ? 1 : 0.5
-          }}
+          // style={{
+          //   opacity: curRoute ? 1 : 0.5
+          // }}
         >
           {text}
         </p>
       </div>
     )
-  }, [mode, pathname, navigateToPath, isOpen])
+  }, [mode, pathname, navigateToPath, isOpen, hasDropdown])
   return hasDropdown ? (
-    <DesktopControls options={options} isOpen={isOpen} onHover={onHover} onClose={onClose}>
+    <DropDownControls
+      customMenuStyle={customMenuStyle}
+      onOpen={onOpen}
+      menuPosition={menuPosition}
+      options={options}
+      isOpen={isOpen}
+      onHover={onHover}
+      onClose={onClose}
+    >
       {component}
-    </DesktopControls>
+    </DropDownControls>
   ) : (
     component
   )
