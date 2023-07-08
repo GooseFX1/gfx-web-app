@@ -13,6 +13,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
 import { clamp } from '../utils'
+import { RewardsProvider } from '../context/rewardsContext'
 // import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
@@ -84,7 +85,9 @@ export const MainNav: FC = () => {
 
         <DesktopNav />
         <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
-          <RewardsButton />
+          <RewardsProvider>
+            <RewardsButton />
+          </RewardsProvider>
           <Connect />
           <CartButton />
           {/* <NotificationButton /> */}

@@ -1089,19 +1089,8 @@ const AlternativesContent: FC = () => {
 }
 
 export const SwapMain: FC = () => {
-  const {
-    setTokenA,
-    setTokenB,
-    tokenA,
-    tokenB,
-    inTokenAmount,
-    outTokenAmount,
-    gofxOutAmount,
-    priceImpact,
-    setRoutes,
-    revertRoute
-  } = useSwap()
-  const { tokenMap } = useTokenRegistry()
+  const { tokenA, tokenB, inTokenAmount, outTokenAmount, gofxOutAmount, priceImpact, setRoutes, revertRoute } =
+    useSwap()
   const { network } = useConnectionConfig()
   const { slippage } = useSlippageConfig()
   const [allowed, setallowed] = useState<boolean>(false)
@@ -1115,15 +1104,7 @@ export const SwapMain: FC = () => {
     slippage: slippage, // 1% slippage
     debounceTime: 2000 // debounce ms time before refresh
   })
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search)
-    const from = queryParams.get('from')
-    const to = queryParams.get('to')
-    if (from && to) {
-      setTokenA(tokenMap.get(from))
-      setTokenB(tokenMap.get(to))
-    }
-  }, [location, tokenMap])
+
   useEffect(() => {
     const inAmountTotal = inTokenAmount * 10 ** (tokenA?.decimals || 0)
     const roundedTotal = Math.round(inAmountTotal)
@@ -1246,7 +1227,14 @@ const SwapMainProvider: FC = () => {
     const token2 = tokenMap.get(tradePairB)
     const usd = tokenMap.get('USDC')
     const sol = tokenMap.get('SOL')
-
+    const queryParams = new URLSearchParams(location.search)
+    const from = queryParams.get('from')
+    const to = queryParams.get('to')
+    if (from && to) {
+      setTokenA(tokenMap.get(from))
+      setTokenB(tokenMap.get(to))
+      return
+    }
     if (token1) {
       setTokenA({ address: token1.address, decimals: token1.decimals, symbol: token1.symbol, name: token1.name })
     } else if (sol) {
@@ -1258,7 +1246,7 @@ const SwapMainProvider: FC = () => {
     } else if (usd) {
       setTokenB({ address: usd.address, decimals: usd.decimals, symbol: usd.symbol, name: usd.name })
     }
-  }, [setTokenA, setTokenB, tokenMap, tradePair])
+  }, [setTokenA, setTokenB, tokenMap, tradePair, location])
   return (
     <JupiterProvider connection={connection} cluster={network} userPublicKey={wallet?.adapter?.publicKey}>
       <SwapMain />

@@ -9,9 +9,8 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { useAnimateButtonSlide } from '../pages/Farm/FarmFilterHeader'
 import { Input, InputRef } from 'antd'
 import { Tooltip } from './Tooltip'
-import useRewards from '../hooks/useRewards'
-import { ADDRESSES } from '../web3'
-import { TokenAmount, PublicKey } from '@solana/web3.js'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { TokenAmount, PublicKey, Connection } from '@solana/web3.js'
 import { clamp, nFormatter } from '../utils'
 import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
@@ -24,9 +23,9 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk'
 import useReferrals from '../hooks/useReferrals'
 import { Treasury } from '@ladderlabs/buddy-sdk'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { Transaction } from '@solana/web3.js'
 import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
+import useRewards from '../context/rewardsContext'
 
 const FLEX_COL_CONTAINER = styled.div`
   ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger`}
@@ -142,9 +141,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
   const inputRef = useRef<InputRef>(null)
-  const { wallet } = useWallet()
-  const connected: boolean = useMemo(() => wallet?.adapter?.connected, [wallet])
-  const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
+  const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { stake, rewards, getUiAmount } = useRewards()
   const history = useHistory()
@@ -159,31 +156,32 @@ const EarnRewards: FC = () => {
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   const { rewardToggle } = useRewardToggle()
-  const getUserGoFXBalance = useCallback(async () => {
-    if (!wallet || !connection || !connected) {
-      return
-    }
-    const currentNetwork =
-      network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-    const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
-    const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
-    if (account.value[0]) {
-      const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-      setUserGoFxBalance(() => balance.value)
-    }
-  }, [publicKey, connection, network])
+  const getUserGoFXBalance = useCallback(
+    async (publicKey: PublicKey, connection: Connection, network: WalletAdapterNetwork) => {
+      if (!publicKey) {
+        return
+      }
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+      const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
+      const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
+      console.log(account)
+      if (account.value[0]) {
+        const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+        setUserGoFxBalance(() => balance.value)
+      }
+    },
+    []
+  )
 
   useEffect(() => {
-    if (!wallet || !connection || !connected) {
-      return
-    }
-    getUserGoFXBalance()
+    getUserGoFXBalance(publicKey, connection, network)
     // poll user balance
     const interval = setInterval(async () => {
-      await getUserGoFXBalance()
+      await getUserGoFXBalance(publicKey, connection, network)
     }, 10000)
     return () => clearInterval(interval)
-  }, [wallet, getUserGoFXBalance])
+  }, [publicKey, connection, network])
   const totalStaked = useMemo(
     () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
     [rewards.user.staking.userMetadata.totalStaked]
@@ -217,7 +215,7 @@ const EarnRewards: FC = () => {
     if (!wallet || !connection || !connected || !inputRef.current) {
       return
     }
-    const amount = parseFloat(inputRef.current?.input.value) * 10 ** ADDRESSES[network].mints.GOFX.decimals
+    const amount = parseFloat(inputRef.current?.input.value)
     if (!amount || isNaN(amount)) {
       return
     }
@@ -265,6 +263,7 @@ const EarnRewards: FC = () => {
       return inputValue <= totalStaked
     }
   }, [inputValue, userGoFxBalance.uiAmount, totalStaked])
+
   // twin.macro crashing on obj.property nested access
   return (
     <div css={tw`flex flex-col overflow-y-scroll min-md:overflow-auto items-center h-full`}>
@@ -362,7 +361,7 @@ const EarnRewards: FC = () => {
             placeholder={'0'}
             onChange={handleInputChange}
             type={'number'}
-            value={inputValue}
+            value={inputValue > 0.0 ? inputValue : ''}
           />
           <p
             css={tw`mb-0 text-lg absolute top-[20%] bottom-[15px] right-[15px] z-[1] text-black-4
@@ -992,8 +991,10 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
 const EarnRewardsRedirect: FC = () => {
   const [apr, setApr] = useState(0)
   const { connection } = useConnectionConfig()
+  const { publicKey } = useWallet()
   const { rewards, getClaimableFees, getUiAmount, claimFees } = useRewards()
   const breakpoints = useBreakPoint()
+  const [isClaiming, setIsClaiming] = useState(false)
   const fetchGOFXData = async () => {
     try {
       const { data: controllerData } = await connection.getAccountInfo(SDK_ADDRESS.MAINNET.GFX_CONTROLLER)
@@ -1017,8 +1018,12 @@ const EarnRewardsRedirect: FC = () => {
       gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
     }),
-    [rewards.user.staking.userMetadata, getClaimableFees]
+    [rewards.user.staking.userMetadata, getClaimableFees, publicKey, connection]
   )
+  const handleClaimFees = useCallback(() => {
+    setIsClaiming(true)
+    claimFees().finally(() => setIsClaiming(false))
+  }, [])
   return (
     <div css={tw`flex pt-[18px] min-md:pt-[45px] flex-col items-center h-full`}>
       <div tw={'flex flex-row min-md:flex-col items-center'}>
@@ -1045,15 +1050,22 @@ const EarnRewardsRedirect: FC = () => {
       </p>
       <button
         css={[
-          tw`px-4 mt-[15px] min-md:mt-[32px] max-w-[320px] items-center h-[50px] bg-white text-black-4 border-0 
-            font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0
-            overflow-hidden whitespace-nowrap`,
-          !usdcClaimable.isZero() ? tw`opacity-100` : tw``
+          tw`px-4 mt-[15px] min-md:mt-[32px] w-[212px] min-md:w-[320px] items-center h-[50px] bg-white text-black-4
+          border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0
+            overflow-hidden whitespace-nowrap relative`,
+          !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
+          isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
         ]}
         disabled={usdcClaimable.isZero()}
-        onClick={claimFees}
+        onClick={handleClaimFees}
       >
-        {!usdcClaimable.isZero() ? `Claim ${usdcClaimable.toString(10)} USDC` : 'No USDC Claimable'}
+        {isClaiming ? (
+          <Loader color={'#5855FF'} />
+        ) : !usdcClaimable.isZero() ? (
+          `Claim ${usdcClaimable.toString(10)} USDC`
+        ) : (
+          'No USDC Claimable'
+        )}
       </button>
       {!breakpoints.isMobile && (
         <p css={tw`mt-auto mb-[15px] text-white text-[13px] font-semibold leading-[16px] text-center`}>

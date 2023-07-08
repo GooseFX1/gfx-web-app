@@ -6,6 +6,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { useDarkMode } from '../context'
+import useRewards, { RewardsProvider } from '../context/rewardsContext'
 // import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 // import { RIVE_ANIMATION } from '../constants'
 // import useRewards from '../hooks/useRewards'
@@ -39,9 +40,7 @@ export const RewardsButton: FC = () => {
   //   canvasHeight: breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
   // })
   // useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
-
-  const hasRewards = false // TODO: hook into useRewards hook
-
+  const { hasRewards } = useRewards()
   // const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 31 : 20
   // const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
   const riveComponent = useMemo(
@@ -122,18 +121,20 @@ export const RewardsPopup: FC = () => {
   const [panelIndex, setPanelIndex] = useState<number>(0)
 
   return (
-    <Wrapper>
-      <REWARD_INFO>
-        <RewardInfoComponent panelIndex={panelIndex}>
-          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-        </RewardInfoComponent>
-      </REWARD_INFO>
-      <REWARD_REDIRECT $index={panelIndex}>
-        <RewardRedirectComponent panelIndex={panelIndex}>
-          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-        </RewardRedirectComponent>
-      </REWARD_REDIRECT>
-    </Wrapper>
+    <RewardsProvider>
+      <Wrapper>
+        <REWARD_INFO>
+          <RewardInfoComponent panelIndex={panelIndex}>
+            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+          </RewardInfoComponent>
+        </REWARD_INFO>
+        <REWARD_REDIRECT $index={panelIndex}>
+          <RewardRedirectComponent panelIndex={panelIndex}>
+            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+          </RewardRedirectComponent>
+        </REWARD_REDIRECT>
+      </Wrapper>
+    </RewardsProvider>
   )
 }
 
