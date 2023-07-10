@@ -146,6 +146,22 @@ export const GRID_CONTAINER = styled.div`
     @media(max-width: 500px) {
       height: auto;
     }
+    .ant-checkbox-wrapper {
+      :hover {
+        border: none;
+      }
+      .ant-checkbox-inner {
+        ${tw`rounded-[2px]`}
+        border: 1px solid ${({ theme }) => theme.text34};
+      }
+      .ant-checkbox-checked {
+        ${tw`rounded-[2px]  `}
+      }
+    }
+    .searchInsideTrait {
+      ${tw`bg-none`}
+    }
+
     .flexContainer {
       ${tw`flex h-screen px-[14px] sm:px-0`}
     }
@@ -292,7 +308,7 @@ export const DROPDOWN_CONTAINER = styled.div`
   .option {
     ${tw`flex cursor-pointer items-center justify-between p-1`}
     input {
-      color: ${({ theme }) => theme.bg26};
+      color: ${({ theme }) => theme.bg20};
     }
   }
   > div {

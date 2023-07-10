@@ -9,7 +9,7 @@ import { useDarkMode } from '../../../context'
 
 export const DROPDOWN_CONTAINER = styled.div`
   ${tw`rounded-md p-1 -mt-1 sm:w-[158px] text-[15px] font-semibold`}
-  background-color: ${({ theme }) => theme.bg26};
+  background-color: ${({ theme }) => theme.bg20};
   color: ${({ theme }) => theme.text1};
   border: 1px solid ${({ theme }) => theme.tokenBorder};
   .option {

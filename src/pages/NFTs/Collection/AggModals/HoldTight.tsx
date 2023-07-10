@@ -22,7 +22,7 @@ export const HOLD_TIGHT = styled.div`
   }
   &.ant-modal {
     ${tw`max-w-full sm:bottom-[-10px] sm:mt-auto sm:absolute sm:h-[600px]`}
-    background-color: ${({ theme }) => theme.bg26};
+    background-color: ${({ theme }) => theme.bg20};
   }
   color: ${({ theme }) => theme.text20};
   .holdTightText {

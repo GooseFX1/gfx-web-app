@@ -76,7 +76,7 @@ export const SingleNFTCard: FC<{
   }, [sessionUser, sessionUserParsedAccounts, item, operatingNFT])
 
   const hideThisNFT: boolean = useMemo(() => {
-    if (myNFTsByCollection === null || !item) return false
+    if (myNFTsByCollection === null || myNFTsByCollection === undefined || !item) return false
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item?.mint_address)
     return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
   }, [myNFTsByCollection, operatingNFT, item])

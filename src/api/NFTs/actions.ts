@@ -73,7 +73,7 @@ export const fetchSingleCollectionAction = async (endpoint: string, paramValue: 
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await httpClient(NFT_API_BASE).get(
+    const res = await apiClient(NFT_API_BASE).get(
       `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
@@ -115,7 +115,9 @@ export const fetchFixedPriceByPages = async (
   offset: number,
   limit: number,
   sort: 'ASC' | 'DESC',
-  additionalFilters?: IAdditionalFilters
+  additionalFilters?: IAdditionalFilters,
+  currencyView?: string,
+  solPrice?: number
 ): Promise<any> => {
   const isUUID: boolean = true // validateUUID(paramValue)
   const uuid = '976dd9c2-2668-471c-a5f6-c1b3d326e2bc'
@@ -126,11 +128,29 @@ export const fetchFixedPriceByPages = async (
   //add sort later
 
   if (additionalFilters.minValueFilter) {
-    url += `&min_price=${additionalFilters.minValueFilter * LAMPORTS_PER_SOL_NUMBER}`
+    url += `&min_price=${Math.floor(
+      (additionalFilters.minValueFilter * LAMPORTS_PER_SOL_NUMBER) / (currencyView === 'SOL' ? 1 : solPrice)
+    )}`
   }
 
   if (additionalFilters.maxValueFilter) {
-    url += `&max_price=${additionalFilters.maxValueFilter * LAMPORTS_PER_SOL_NUMBER}`
+    url += `&max_price=${Math.floor(
+      (additionalFilters.maxValueFilter * LAMPORTS_PER_SOL_NUMBER) / (currencyView === 'SOL' ? 1 : solPrice)
+    )}`
+  }
+  if (additionalFilters.attributes && additionalFilters.attributes.length) {
+    const attributeCount = []
+    const attributes = additionalFilters.attributes.reduce((acc, attr) => {
+      if (!attr.isAnnotation) {
+        acc.push(`{"trait_type" :"${attr.trait_type}", "value": "${attr.value}"}`)
+      } else {
+        attributeCount.push(attr.value)
+      }
+      return acc
+    }, [])
+
+    url += attributes.length ? `&attributes=[${attributes.join(',')}]` : ''
+    url += attributeCount.length ? `&attributes_count=[${attributeCount.join(',')}]` : ''
   }
   if (additionalFilters.marketsFilter && additionalFilters.marketsFilter.length > 0) {
     const encodedMarketplaces = additionalFilters.marketsFilter.map(

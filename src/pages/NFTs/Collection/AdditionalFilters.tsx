@@ -4,27 +4,30 @@ import React, { ReactElement, FC, useState, useMemo, useCallback, useEffect } fr
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
 import 'styled-components/macro'
-import { TokenToggleNFT } from '../../../components'
-import { useNFTAggregator, useNFTAggregatorFilters } from '../../../context'
-import { checkMobile } from '../../../utils'
+import { Button, TokenToggle, TokenToggleNFT } from '../../../components'
+import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, usePriceFeedFarm } from '../../../context'
+import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { ArrowIcon } from './CollectionV2.styles'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { number } from 'ts-pattern/dist/patterns'
 import debounce from 'lodash.debounce'
-import { AH_PROGRAM_IDS } from '../../../web3'
+import { AH_NAME, AH_PROGRAM_IDS } from '../../../web3'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
+import { minimizeTheString } from '../../../web3/nfts/utils'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
-    ${tw`duration-500 flex h-full flex-col dark:text-grey-5 text-black-4`}
+    ${tw`duration-500 flex h-full flex-col dark:text-grey-5 text-black-4 overflow-y-auto`}
     width: ${open ? '16%' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
     border-left: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
+    height: calc(100vh - 275px);
+
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
       opacity: ${open ? 1 : 0};
@@ -43,7 +46,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   `}
 `
 const STYLED_INPUT = styled.input`
-  ${tw`rounded-[5px] h-[35px] w-[95px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  border-none`};
+  ${tw`rounded-[5px] h-[35px] w-[95px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  `};
   border: 1px solid ${({ theme }) => theme.tokenBorder};
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
@@ -67,17 +70,51 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
     }
+    .ant-switch {
+      ${tw`h-[40px] sm:h-[35px] w-[50px] h-[26px] sm:w-[65px] sm:w-[75px] ml-auto`}
+    }
+    .ant-switch-handle {
+      ${tw`left-[0px] top-[0px] sm:left-[1px] sm:top-[1px]`}
+      ::before {
+        ${tw`sm:w-[38px] sm:h-[38px] h-[26px] w-[26px] rounded-[40px] duration-500`}
+      }
+    }
+    .ant-switch-checked {
+      .ant-switch-handle {
+        left: calc(100% - 26px);
+        @media (max-width: 500px) {
+          left: calc(100% - 35px);
+        }
+      }
+      background: linear-gradient(101deg, #f7931a 4%, #ac1cc7 98%);
+    }
+    .attributeTitle {
+      ${tw`!duration-500  text-[15px] w-[100%]
+        font-semibold flex px-3 pt-2 pb-0.5 rounded-[10px] mb-2.5`};
+      height: ${isOpen ? '44px' : 0};
+      color: ${({ theme }) => theme.text20};
+      opacity: ${isOpen ? 1 : 0};
+      border: 1px solid;
+    }
     .marketTitle {
-      ${tw`!duration-500 items-center text-[15px] flex justify-between font-semibold flex pl-3 pr-3`};
-      height: ${isOpen ? '30px' : 0};
+      ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3`};
+      height: ${isOpen ? '40px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
     }
+    .genericButtonHeight {
+      ${tw`!duration-500`};
+      height: ${isOpen ? '40px' : 0};
+      opacity: ${isOpen ? 1 : 0};
+      margin-top: ${isOpen ? '20px' : 0};
+      visibility: ${isOpen ? 'visible' : 'hidden'};
+    }
     .showMoreAnimation {
-      ${tw`!duration-500 `};
-      height: ${showMore ? '30px' : 0};
+      ${tw`!duration-500`};
+      height: ${showMore && isOpen ? '40px' : 0};
       color: ${({ theme }) => theme.text20};
-      opacity: ${showMore ? 1 : 0};
+      opacity: ${showMore && isOpen ? 1 : 0};
+      visibility: ${showMore && isOpen ? 'visible' : 'hidden'};
     }
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
@@ -90,24 +127,6 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
-      .ant-switch {
-        ${tw`h-[40px] sm:h-[35px] w-[37px] h-[18px] sm:w-[65px] sm:w-[75px] ml-auto mr-3`}
-      }
-      .ant-switch-handle {
-        ${tw`w-[40px] h-[40px] left-[0px] top-[0px] sm:left-[1px] sm:top-[1px]`}
-        ::before {
-          ${tw`sm:w-[38px] sm:h-[38px] h-[18px] w-[18px] rounded-[40px] duration-500`}
-        }
-      }
-      .ant-switch-checked {
-        .ant-switch-handle {
-          left: calc(100% - 18px);
-          @media (max-width: 500px) {
-            left: calc(100% - 35px);
-          }
-        }
-        background: linear-gradient(101deg, #f7931a 4%, #ac1cc7 98%);
-      }
     }
 
     .inputContainer {
@@ -129,8 +148,9 @@ const STYLED_POPUP = styled(PopupCustom)`
   color: ${({ theme }) => theme.text30};
 
   &.ant-modal {
-    ${tw`max-w-full bottom-[-10px] mt-auto absolute`}
-    background-color: ${({ theme }) => theme.bg26};
+    ${tw`max-w-full sm:bottom-[-8px] left-0 sm:mt-auto sm:absolute sm:h-[600px]`}
+
+    background-color: ${({ theme }) => theme.bg20};
   }
   .ant-modal-body {
     ${tw`p-0`}
@@ -153,7 +173,7 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
   if (checkMobile())
     return (
       <STYLED_POPUP
-        height={'480px'}
+        height={'460px'}
         width={'100vw'}
         title={null}
         visible={open ? true : false}
@@ -163,9 +183,8 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
         <div className="wrapper">
           {/* title */}
           <div className="filtersTitle">Filters</div>
-
           <PriceRange isOpen={open} />
-          <Attributes />
+          <Attributes isOpen={open} />
         </div>
       </STYLED_POPUP>
     )
@@ -176,7 +195,7 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
         <div className="filtersTitle">Filters</div>
         <MarketPlacesFilter isOpen={open} />
         <PriceRange isOpen={open} />
-        <Attributes />
+        <Attributes isOpen={open} />
       </ADDITIONAL_FILTERS>
     )
 }
@@ -186,13 +205,11 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
   const [allMarketsToggle, setAllMarketsToggle] = useState<boolean>(true)
   const [showMore, setShowMore] = useState<boolean>(false)
   const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+  const marketplaces = useMemo(() => {
+    const values = Object.keys(AH_PROGRAM_IDS).map((programId) => AH_PROGRAM_IDS[programId])
+    return new Set(values)
+  }, [])
 
-  useEffect(() => {
-    const marketPlaces = []
-    if (allMarketsToggle) {
-      Object.keys(AH_PROGRAM_IDS).map((programId) => AH_PROGRAM_IDS[programId])
-    }
-  }, [allMarketsToggle])
   const handleShowMoreClicked = useCallback(() => {
     setShowMore((prev) => !prev)
   }, [])
@@ -207,24 +224,31 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
     (market: string) => {
       if (allMarketsToggle) return true
       const marketplaceArr = additionalFilters.marketsFilter ? [...additionalFilters.marketsFilter] : []
-      return marketplaceArr.indexOf(AH_PROGRAM_IDS[market].toUpperCase().replaceAll(' ', '_')) >= 0
+      return marketplaceArr.indexOf(market.toUpperCase().replaceAll(' ', '_')) >= 0
     },
     [allMarketsToggle, additionalFilters]
   )
 
   const handleMarketplaceCheck = useCallback(
     (e: CheckboxChangeEvent, market: string) => {
-      const marketplace = AH_PROGRAM_IDS[market].toUpperCase().replaceAll(' ', '_')
+      const marketplaceName = market.toUpperCase().replaceAll(' ', '_')
 
       setAdditionalFilters((prev) => {
-        const marketplaceArr = prev.marketsFilter ? [...prev.marketsFilter] : []
+        let marketplaceArr = prev.marketsFilter ? [...prev.marketsFilter] : []
 
         if (e.target.checked) {
-          marketplaceArr.push(marketplace)
+          marketplaceArr.push(marketplaceName)
+          if (marketplaceArr.length === marketplaces.size) setAllMarketsToggle(true)
         } else {
-          const index = marketplaceArr.indexOf(marketplace)
-          if (index >= 0) {
-            marketplaceArr.splice(index, 1)
+          setAllMarketsToggle(false)
+          if (marketplaceArr.length) {
+            const index = marketplaceArr.indexOf(marketplaceName)
+            if (index >= 0) {
+              marketplaceArr.splice(index, 1)
+            }
+          } else {
+            const filteredMarketPlaces = Array.from(marketplaces).filter((place) => place !== market)
+            marketplaceArr = filteredMarketPlaces.map((market) => market.toUpperCase().replaceAll(' ', '_'))
           }
         }
         return {
@@ -242,81 +266,71 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
         Marketplaces
         <ArrowIcon isOpen={isMarketFilterOpen} setIsOpen={setIsMarketFilterOpen} />
       </div>
-      <div className="marketTitle" tw="flex mt-1">
-        <div>All markets</div>
-        <div>
+      <div className="marketTitle">
+        <div> All markets</div>
+        <div tw="ml-auto">
           <Switch onChange={handleAllMarketToggle} checked={allMarketsToggle} />
         </div>
       </div>
-      <div tw="duration-500">
-        {Object.keys(AH_PROGRAM_IDS).map((market, index) => (
-          <div key={index} className={index > 2 ? 'marketTitle showMoreAnimation' : 'marketTitle'}>
-            <div>{AH_PROGRAM_IDS[market]}</div>
-            <div>
-              <Checkbox
-                checked={checkIfMarketChecked(market)}
-                onChange={(e) => handleMarketplaceCheck(e, market)}
+      {isOpen && (
+        <div tw="duration-500">
+          {Array.from(marketplaces).map((market, index) => (
+            <div key={index} className={index > 2 ? 'marketTitle showMoreAnimation' : 'marketTitle'}>
+              <img
+                tw="h-[30px] w-[30px]"
+                src={`/img/assets/Aggregator/${market.toLocaleUpperCase().replaceAll(' ', '_')}.svg`}
               />
+              <div tw="ml-2">{market}</div>
+              <div tw="ml-auto" className={index > 2 && 'showMoreAnimation'}>
+                <Checkbox
+                  checked={checkIfMarketChecked(market)}
+                  onChange={(e) => handleMarketplaceCheck(e, market)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div
-        className="marketTitle"
-        onClick={handleShowMoreClicked}
-        tw="font-bold cursor-pointer ml-[70px] duration-1000 "
-      >
-        <u tw="text-grey-5"> Show {showMore ? 'less' : 'more'} </u>
-      </div>
+      {isOpen && (
+        <div
+          className="marketTitle"
+          onClick={handleShowMoreClicked}
+          tw="font-bold cursor-pointer ml-[72px] duration-1000"
+        >
+          <u tw="dark:text-grey-5 text-blue-1"> Show {showMore ? 'less' : 'more'} </u>
+        </div>
+      )}
     </LISTING_TYPE>
   )
 }
 
-// const ListingType = (): ReactElement => {
-//   const [isOpen, setIsOpen] = useState<boolean>()
-
-//   return (
-//     <LISTING_TYPE isOpen={isOpen}>
-//       <div className="filtersTitleItem">
-//         Listing Type
-//         <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
-//       </div>
-//       <div className="listItem">
-//         GooseFX Listing
-//         <Switch />
-//       </div>
-
-//       <div className="listItem">
-//         Hide Pool Listing {HeaderTooltip('Hide listings from pools (Hadeswap, Solvent, etc)')}
-//         <Switch />
-//       </div>
-//     </LISTING_TYPE>
-//   )
-// }
 const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
   const [isPriceOpen, setIsPriceOpen] = useState<boolean>(true)
-  const { setCurrency } = useNFTAggregator()
+  const { setCurrency, currencyView } = useNFTAggregator()
+  const { solPrice } = usePriceFeedFarm()
   const { setAdditionalFilters } = useNFTAggregatorFilters()
+  const [minValue, setMinValue] = useState<number>()
+  const [maxValue, setMaxValue] = useState<number>()
+  const applyDisabled = useMemo(() => minValue > maxValue || !minValue || !maxValue, [minValue, maxValue])
 
-  const updateAdditionalFilters = useCallback(
-    debounce((func: (value: number) => void, value: number) => func(value), 500),
-    []
-  )
-  const updateMaxValue = useCallback((maxValue: number) => {
+  const updateAdditionalFilters = useCallback(() => {
     setAdditionalFilters((prev) => ({
       ...prev,
-      minValueFilter: prev.minValueFilter ?? 0,
-      maxValueFilter: isNaN(maxValue) ? 9999 : maxValue
-    }))
-  }, [])
-
-  const updateMinValue = useCallback((minValue: number) => {
-    setAdditionalFilters((prev) => ({
-      ...prev,
+      maxValueFilter: isNaN(maxValue) ? 999999 : maxValue,
       minValueFilter: isNaN(minValue) ? 0.0001 : minValue
     }))
-  }, [])
+  }, [minValue, maxValue])
+
+  useEffect(() => {
+    if (currencyView === 'USDC') {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+    } else {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+    }
+  }, [currencyView])
 
   return (
     <LISTING_TYPE isOpen={isPriceOpen} isParentOpen={isOpen}>
@@ -330,34 +344,139 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
       </div>
       <div className="listItem">
         <div className="inputContainer">
-          Min
-          <STYLED_INPUT
-            className="styledInput"
-            type="number"
-            placeholder={`0.00`}
-            onChange={(e) => updateAdditionalFilters(updateMinValue, parseFloat(e.target.value))}
-          />
+          <div>Min</div>
+          <div tw="flex">
+            <STYLED_INPUT
+              value={minValue}
+              className="styledInput"
+              type="number"
+              placeholder={`0.00`}
+              onChange={(e) => setMinValue(parseFloat(e.target.value))}
+            />
+            <img tw="h-5 w-5 items-center  ml-[-25px] mt-3 z-[1000] " src={`/img/crypto/${currencyView}.svg`} />
+          </div>
         </div>
         <div className="inputContainer">
-          Max
-          <STYLED_INPUT
-            className="styledInput"
-            type="number"
-            placeholder={`0.00 `}
-            onChange={(e) => updateAdditionalFilters(updateMaxValue, parseFloat(e.target.value))}
-          />
+          <div>Max</div>
+          <div tw="flex">
+            <STYLED_INPUT
+              value={maxValue}
+              className="styledInput"
+              type="number"
+              placeholder={`0.00 `}
+              onChange={(e) => setMaxValue(parseFloat(e.target.value))}
+            />
+            <img tw="h-5 w-5 items-center  ml-[-25px] mt-3 z-[1000] " src={`/img/crypto/${currencyView}.svg`} />
+          </div>
         </div>
+      </div>
+      <div tw="flex justify-center w-full">
+        <Button
+          disabled={applyDisabled}
+          className="genericButtonHeight"
+          onClick={updateAdditionalFilters}
+          disabledColor={tw`bg-black-2 opacity-70`}
+          cssStyle={tw`bg-blue-1 !text-white h-[35px] w-[217px] cursor-pointer font-semibold text-[15px]`}
+        >
+          Apply
+        </Button>
       </div>
     </LISTING_TYPE>
   )
 }
 
-const Attributes = (): ReactElement => {
-  const [isOpen, setIsOpen] = useState<boolean>()
+const Attributes: FC<{ isOpen }> = ({ isOpen }): ReactElement => {
+  const [isAttributeOpen, setIsAttributeOpen] = useState<boolean>(true)
+  const { availableAttributes } = useNFTCollections()
   return (
-    <div className="filtersTitleItem">
-      Attribute
-      <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
+    <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen}>
+      <div className="filtersTitleItem">
+        Attribute
+        <ArrowIcon isOpen={isAttributeOpen} setIsOpen={setIsAttributeOpen} />
+      </div>
+      <div tw="p-3">
+        {availableAttributes &&
+          Object.keys(availableAttributes).map((attributeTrait, index) => (
+            <AttributeDetails key={index} trait={attributeTrait} />
+          ))}
+      </div>
+    </LISTING_TYPE>
+  )
+}
+
+const AttributeDetails: FC<{ trait: string }> = ({ trait }): ReactElement => {
+  const { availableAttributes } = useNFTCollections()
+  const { setAdditionalFilters } = useNFTAggregatorFilters()
+  const [isTraitOpen, setTraitOpen] = useState<boolean>(false)
+  const [searchInsideTrait, setSearchInsideTrait] = useState<string>()
+
+  const filteredAvailableTrait: any[] = useMemo(
+    () =>
+      searchInsideTrait
+        ? availableAttributes[trait].filter(
+            (subTrait) =>
+              subTrait.traitValue !== undefined &&
+              subTrait.traitValue.toString().toLocaleLowerCase().includes(searchInsideTrait.toLocaleLowerCase())
+          )
+        : availableAttributes[trait],
+    [availableAttributes, searchInsideTrait]
+  )
+
+  const handleAttributeCheckbox = (e: CheckboxChangeEvent, trait: string, subTrait: string | any) => {
+    setAdditionalFilters((prev) => {
+      const attributes = prev.attributes ? [...prev.attributes] : []
+
+      if (e.target.checked) {
+        attributes.push({ trait_type: trait, value: subTrait.traitValue, isAnnotation: subTrait.isAnnotation })
+      } else {
+        const updateAttributes = attributes.filter(
+          (attr) => attr.value !== subTrait.traitValue && attr.trait_type === trait
+        )
+        return {
+          ...prev,
+          attributes: updateAttributes
+        }
+      }
+      return {
+        ...prev,
+        attributes: attributes
+      }
+    })
+  }
+
+  const formatDisplay = (str: string): string => str[0].toLocaleUpperCase() + str.substring(1).replaceAll('_', ' ')
+  return (
+    <div className="attributeTitle" css={[isTraitOpen && tw`!h-[180px]`]}>
+      <div tw="flex flex-col w-[100%]">
+        <div tw="flex justify-between">
+          {!isTraitOpen ? (
+            <div>{formatDisplay(trait)}</div>
+          ) : (
+            <input
+              className="searchInsideTrait"
+              type="text"
+              tw="bg-none border-none bg-black-1 outline-none text-[15px] font-semibold w-[85%]"
+              placeholder={`Search ${formatDisplay(trait)}`}
+              onChange={(e) => setSearchInsideTrait(e.target.value)}
+            />
+          )}
+          <div>
+            <ArrowIcon isOpen={isTraitOpen} setIsOpen={setTraitOpen} />
+          </div>
+        </div>
+        <div css={[isTraitOpen && tw`!h-[160px] overflow-y-auto`]}>
+          {isTraitOpen &&
+            filteredAvailableTrait.map((subTrait) => (
+              <div key={subTrait.traitValue} tw="flex justify-between h-[30px]   items-center">
+                <div tw="flex text-[15px] text-grey-5">
+                  <Checkbox onChange={(e) => handleAttributeCheckbox(e, trait, subTrait)} />
+                  <div tw="ml-2">{minimizeTheString(subTrait.traitValue, 12)}</div>
+                </div>
+                <div tw="text-grey-1">({subTrait?.count}) </div>
+              </div>
+            ))}
+        </div>
+      </div>
     </div>
   )
 }

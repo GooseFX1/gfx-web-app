@@ -6,6 +6,7 @@ export enum COLLECTION_TYPES {
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
 
+export type IAvailableAttributes = {}
 export type NFTCollection = {
   uuid: string
   collection_id: number
@@ -87,6 +88,7 @@ export interface INFTCollectionConfig {
   allCollectionLoading: boolean
   detailedCollections: NFTCollection[]
   collectionOwners: CollectionOwner[]
+  availableAttributes: any[]
   fetchAllCollectionsByPages: any
   fetchCollectionOwners: (collectionId: string) => Promise<any>
   featuredCollections: NFTFeaturedCollection[]
