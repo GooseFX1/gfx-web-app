@@ -283,6 +283,7 @@ export const DepositWithdraw: FC<{
           ))}
         </div>
       </div>
+      {/* todo: add loading animation here */}
       <button
         className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}

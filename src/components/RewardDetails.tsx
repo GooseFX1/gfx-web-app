@@ -676,21 +676,15 @@ const StakeBottomBar: FC = () => {
   )
 }
 const BuddyLinkReferral: FC = () => {
-  const [isReferralNameTaken, setIsReferralNameTaken] = useState(false)
-  const [inputValue, setInputValue] = useState('')
   const [isCopied, setIsCopied] = useState(false)
   const [name, setName] = useState('')
+  const [initialFetch, setInitialFetch] = useState(true)
   const [riskGroup, setRiskGroup] = useState(null)
+  const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
-  const onSave = useCallback(() => {
-    //TODO: connect buddly link - get result from buddy link
-
-    setIsReferralNameTaken(true)
-    setTimeout(() => setIsReferralNameTaken(false), 2000)
-  }, [])
 
   useMemo(() => {
     if (connection && wallet.publicKey)
@@ -698,26 +692,19 @@ const BuddyLinkReferral: FC = () => {
         setRiskGroup(result)
       })
   }, [connection, wallet])
+
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(referLink)
-    // if (!copyRef.current) {
-    //   return
-    // }
-    // copyRef.current.innerText = 'Copied!'
     setIsCopied(true)
     setTimeout(() => {
-      // if (!copyRef.current) {
-      //   return
-      // }
-
       setIsCopied(false)
-      // copyRef.current.innerText = 'Copy'
     }, 5000)
   }, [referLink])
 
   const handleCreateBuddy = useCallback(async () => {
     if (isReady) {
       try {
+        setLoading(true)
         const transaction = new Transaction()
 
         // No referrer here because we can't attach it to the TraderRiskGroup
@@ -728,6 +715,8 @@ const BuddyLinkReferral: FC = () => {
       } catch (e) {
         console.log(e)
         //TODO: handle error state
+      } finally {
+        setLoading(false)
       }
 
       // TODO: handle ui success state
@@ -735,70 +724,99 @@ const BuddyLinkReferral: FC = () => {
   }, [isReady, connection])
 
   const handleName = useCallback(async () => {
-    if (isReady) setName((await getName()) || '')
+    if (isReady) {
+      setName((await getName()) || '')
+      setInitialFetch(false)
+    }
   }, [isReady])
 
   useEffect(() => {
     if (isReady) handleName()
   }, [isReady])
-  const handleChange = useCallback((e: BaseSyntheticEvent) => {
-    setInputValue(e.target.value)
-  }, [])
-  console.log(isReferralNameTaken)
+
+  const generateLink = useMemo(
+    () => (
+      <>
+        <p
+          css={[
+            tw`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
+     dark:text-grey-5`
+          ]}
+        >
+          Generate your referral link
+        </p>
+        <button
+          css={[
+            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
+            riskGroup
+              ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+              : tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+          ]}
+          onClick={handleCreateBuddy}
+          disabled={!riskGroup}
+        >
+          {loading ? 'Loading...' : 'Generate'}
+        </button>
+      </>
+    ),
+    [riskGroup]
+  )
+
+  const copyLink = useMemo(
+    () => (
+      <>
+        <p
+          css={[
+            tw`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
+     dark:text-grey-5`
+          ]}
+        >
+          app.goosefx.io/?r={name}
+        </p>
+
+        <button
+          css={[
+            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
+            referLink
+              ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+              : isCopied
+              ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+              : tw``
+          ]}
+          onClick={() => {
+            if (referLink) copyToClipboard()
+          }}
+          disabled={!referLink}
+        >
+          {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
+        </button>
+      </>
+    ),
+    [isCopied, referLink, name]
+  )
 
   return (
-    <div
-      onClick={copyToClipboard}
-      css={[
-        tw`border-[1.5px] dark:border-grey-1 border-grey-2  border-dashed cursor-pointer
-  flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] mt-6 relative`,
-        isReferralNameTaken ? tw`border-red-2 dark:border-red-2` : tw``
-      ]}
-    >
-      <p
-        css={[
-          tw`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
-       dark:text-grey-5`
-        ]}
-      >
-        app.goosefx.io/
-      </p>
-      <Input
-        css={[
-          tw`dark:text-grey-5 text-black-4 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] p-0
-      text-left w-max border-none pl-[1px] active:shadow-none focus:shadow-none active:border-none focus:border-none
-      font-semibold
-      `,
-          isReferralNameTaken ? tw`text-red-2 dark:text-red-2` : tw``
-        ]}
-        type={'text'}
-        placeholder={'choose your link'}
-        onChange={handleChange}
-        value={name || inputValue}
-        disabled={Boolean(name)}
-      />
-      <button
-        css={[
-          tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
-          inputValue || referLink
-            ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
-            : isCopied
-            ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
-            : tw``
-        ]}
-        onClick={referLink ? copyToClipboard : onSave}
-        disabled={!(inputValue || referLink)}
-      >
-        {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
-      </button>
-      {/* TODO: style according to design */}
-      {!name && riskGroup ? (
-        <button
-          css={tw`max-w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0  mt-11`}
-          onClick={() => handleCreateBuddy()}
-        >
-          Generate a referral link
-        </button>
+    <div css={tw` mt-6 min-h-[40px]`}>
+      {!initialFetch ? (
+        <>
+          <div
+            onClick={copyToClipboard}
+            css={[
+              tw`border-[1.5px] dark:border-grey-1 border-grey-2  border-dashed cursor-pointer
+  flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] relative `
+            ]}
+          >
+            {!name ? generateLink : copyLink}
+          </div>
+
+          {!riskGroup ? (
+            <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1 mt-1`}>
+              <p css={tw`mb-0 text-sm text-grey-2 font-semibold `}>
+                Please make your first PERP deposit in order to generate your referral link
+              </p>
+            </div>
+          ) : null}
+        </>
       ) : null}
     </div>
   )
@@ -962,8 +980,8 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
         ]}
         ref={setRef}
         data-index={1}
-        // onClick={onChangePanel}
-        disabled={true}
+        onClick={onChangePanel}
+        // disabled={true}
       >
         Refer
       </button>
@@ -1100,10 +1118,10 @@ const ReferAndEarnRedirect: FC = () => {
         css={[
           tw`h-[50px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
         mb-[43px] min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
-          totalInProgress > 0.0 ? tw`opacity-100` : tw``
+          totalEarned > 0.0 ? tw`opacity-100` : tw``
         ]}
         onClick={() => handleClaim()}
-        disabled={totalInProgress <= 0.0}
+        disabled={totalEarned <= 0.0}
       >
         {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
       </button>

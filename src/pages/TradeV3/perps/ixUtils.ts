@@ -369,15 +369,10 @@ export const withdrawFundsIx = async (
 
   const buddyProgramId = getProgramId(connection, wallet.publicKey)
 
-  const riskGroup = await TraderRiskGroup.fetch(connection, withdrawFundsAccounts.traderRiskGroup)
+  const [riskGroup] = await TraderRiskGroup.fetch(connection, withdrawFundsAccounts.traderRiskGroup)
 
-  const remainingAccounts = await getRemainingAccountsForTransfer(
-    connection,
-    wallet.publicKey,
-    PublicKey.default
-    //TODO: uncomment once smart contract is accepting referrals
-    // riskGroup[0].referral!
-  )
+  const referral = riskGroup.referral
+  const remainingAccounts = await getRemainingAccountsForTransfer(connection, wallet.publicKey, referral)
 
   instructions.push(
     await dexProgram.instruction.withdrawFunds(withdrawFundsParams, {
