@@ -24,12 +24,19 @@ export interface IAdditionalFilters {
   minValueFilter: number | null
   maxValueFilter: number | null
   marketsFilter: string[] | null
+  attributes: Traits[] | null
+}
+interface Traits {
+  trait_type: string
+  value: string
+  isAnnotation: boolean
 }
 
 const initialFilters: IAdditionalFilters = {
   minValueFilter: null,
   maxValueFilter: null,
-  marketsFilter: null
+  marketsFilter: null,
+  attributes: null
 }
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)

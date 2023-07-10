@@ -6,7 +6,8 @@ import {
   useNFTAggregator,
   useNFTAggregatorFilters,
   useNFTCollections,
-  useNFTDetails
+  useNFTDetails,
+  usePriceFeedFarm
 } from '../../../context'
 import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
@@ -57,6 +58,8 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
   const [filteredFixedPrice, setFilteredFixPrice] = useState<BaseNFT[] | null>(null)
+  const { currencyView } = useNFTAggregator()
+  const { solPrice } = usePriceFeedFarm()
   const observer = useRef<any>()
   const paginationNum = 30
   const collectionId = useMemo(
@@ -107,7 +110,9 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
           curPage * paginationNum,
           (curPage + 1) * paginationNum,
           sort,
-          additionalFilters
+          additionalFilters,
+          currencyView,
+          solPrice
         )
 
         const baseNFTs: BaseNFT[] = fpData?.data?.nft_data
@@ -238,8 +243,11 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
+
+  const showFilterTags = useMemo(() => <FilterTags />, [])
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
+      {/* {showFilterTags} */}
       {handleDrawerOpen()}
       {handleModalClick()}
       {fixedPriceLoading && pageNumber === 0 && <NFTLoading />}
@@ -268,4 +276,9 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
       )}
     </NFT_COLLECTIONS_GRID>
   )
+}
+
+const FilterTags = () => {
+  console.log('object')
+  return <div> Filters</div>
 }
