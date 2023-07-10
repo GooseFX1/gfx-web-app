@@ -23,6 +23,10 @@ export interface TraderRiskGroupFields {
   clientOrderId: BN
   openOrders: types.OpenOrdersFields
   tradeHistory: Array<types.TradeHistoryFields>
+  fundingBalance: types.FractionalFields
+  referral: PublicKey
+  pendingRewardBalance: types.FractionalFields
+  padding: Array<number>
   avgPosition: Array<types.AveragePositionFields>
   totalTradedVolume: types.FractionalFields
 }
@@ -46,6 +50,10 @@ export interface TraderRiskGroupJSON {
   clientOrderId: string
   openOrders: types.OpenOrdersJSON
   tradeHistory: Array<types.TradeHistoryJSON>
+  fundingBalance: types.FractionalJSON
+  referral: string
+  pendingRewardBalance: types.FractionalJSON
+  padding: Array<number>
   avgPosition: Array<types.AveragePositionJSON>
   totalTradedVolume: types.FractionalJSON
 }
@@ -69,6 +77,10 @@ export class TraderRiskGroup {
   readonly clientOrderId: BN
   readonly openOrders: types.OpenOrders
   readonly tradeHistory: Array<types.TradeHistory>
+  readonly fundingBalance: types.Fractional
+  readonly referral: PublicKey
+  readonly pendingRewardBalance: types.Fractional
+  readonly padding: Array<number>
   readonly avgPosition: Array<types.AveragePosition>
   readonly totalTradedVolume: types.Fractional
 
@@ -92,7 +104,11 @@ export class TraderRiskGroup {
     borsh.publicKey('feeStateAccount'),
     borsh.u128('clientOrderId'),
     types.OpenOrders.layout('openOrders'),
-    borsh.array(types.TradeHistory.layout(), 16, 'tradeHistory'),
+    borsh.array(types.TradeHistory.layout(), 14, 'tradeHistory'),
+    types.Fractional.layout('fundingBalance'),
+    borsh.publicKey('referral'),
+    types.Fractional.layout('pendingRewardBalance'),
+    borsh.array(borsh.u8(), 464, 'padding'),
     borsh.array(types.AveragePosition.layout(), 16, 'avgPosition'),
     types.Fractional.layout('totalTradedVolume')
   ])
@@ -118,6 +134,10 @@ export class TraderRiskGroup {
     this.clientOrderId = fields.clientOrderId
     this.openOrders = new types.OpenOrders({ ...fields.openOrders })
     this.tradeHistory = fields.tradeHistory.map((item) => new types.TradeHistory({ ...item }))
+    this.fundingBalance = new types.Fractional({ ...fields.fundingBalance })
+    this.referral = fields.referral
+    this.pendingRewardBalance = new types.Fractional({ ...fields.pendingRewardBalance })
+    this.padding = fields.padding
     this.avgPosition = fields.avgPosition.map((item) => new types.AveragePosition({ ...item }))
     this.totalTradedVolume = new types.Fractional({
       ...fields.totalTradedVolume
@@ -184,6 +204,10 @@ export class TraderRiskGroup {
         (item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
           types.TradeHistory.fromDecoded(item)
       ),
+      fundingBalance: types.Fractional.fromDecoded(dec.fundingBalance),
+      referral: dec.referral,
+      pendingRewardBalance: types.Fractional.fromDecoded(dec.pendingRewardBalance),
+      padding: dec.padding,
       avgPosition: dec.avgPosition.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
         types.AveragePosition.fromDecoded(item)
       ),
@@ -211,6 +235,10 @@ export class TraderRiskGroup {
       clientOrderId: this.clientOrderId.toString(),
       openOrders: this.openOrders.toJSON(),
       tradeHistory: this.tradeHistory.map((item) => item.toJSON()),
+      fundingBalance: this.fundingBalance.toJSON(),
+      referral: this.referral.toString(),
+      pendingRewardBalance: this.pendingRewardBalance.toJSON(),
+      padding: this.padding,
       avgPosition: this.avgPosition.map((item) => item.toJSON()),
       totalTradedVolume: this.totalTradedVolume.toJSON()
     }
@@ -236,6 +264,10 @@ export class TraderRiskGroup {
       clientOrderId: new BN(obj.clientOrderId),
       openOrders: types.OpenOrders.fromJSON(obj.openOrders),
       tradeHistory: obj.tradeHistory.map((item) => types.TradeHistory.fromJSON(item)),
+      fundingBalance: types.Fractional.fromJSON(obj.fundingBalance),
+      referral: new PublicKey(obj.referral),
+      pendingRewardBalance: types.Fractional.fromJSON(obj.pendingRewardBalance),
+      padding: obj.padding,
       avgPosition: obj.avgPosition.map((item) => types.AveragePosition.fromJSON(item)),
       totalTradedVolume: types.Fractional.fromJSON(obj.totalTradedVolume)
     })

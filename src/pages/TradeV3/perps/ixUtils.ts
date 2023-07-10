@@ -385,7 +385,6 @@ export const withdrawFundsIx = async (
         tokenProgram: TOKEN_PROGRAM_ID,
         bubdyLinkProgram: buddyProgramId,
         user: wallet.publicKey,
-        bubdyLinkProgram: new PublicKey('BUDDYtQp7Di1xfojiCSVDksiYLQx511DPdj2nbtG9Yu5'),
         userTokenAccount: withdrawFundsAccounts.userTokenAccount,
         traderRiskGroup: withdrawFundsAccounts.traderRiskGroup,
         marketProductGroup: withdrawFundsAccounts.marketProductGroup,
