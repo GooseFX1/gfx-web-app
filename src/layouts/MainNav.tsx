@@ -58,6 +58,7 @@ export const MainNav: FC = () => {
     <div
       css={[
         tw`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
+        fixed top-0 z-[998]
        `
       ]}
     >
@@ -247,7 +248,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
     <div
       css={[
         tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
-        dark:text-grey-5 rounded-b-bigger block justify-center z-50`,
+        dark:text-grey-5 rounded-b-bigger block justify-center z-[999]`,
         isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
         playCloseAnimation ? tw`animate-slideOutTop` : tw``
       ]}
@@ -768,7 +769,7 @@ const NavItem: FC<MainNavIconProps> = ({
           }
         }}
       >
-        <div css={[tw`flex gap-2.5 min-md:gap-0.25 items-center justify-center`]}>
+        <div css={[tw`flex gap-2.5 min-md:gap-0.25 items-center justify-start`]}>
           {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
             <rive.RiveComponent />
           </RiveAnimationWrapper> */}
@@ -777,21 +778,23 @@ const NavItem: FC<MainNavIconProps> = ({
             src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute ? '-active' : ''}.svg`}
             alt={text}
           />
-          <p
-            css={[
-              tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
-            text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden`,
-              curRoute ? tw`text-black dark:text-grey-5` : tw``
-            ]}
-            // style={{
-            //   opacity: curRoute ? 1 : 0.5
-            // }}
-          >
-            {text}
-          </p>
-          {hasDropdown && (
-            <img css={[tw`w-3.5 min-md:w-2.25`]} src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />
-          )}
+          <div css={[tw`flex gap-2.5`]}>
+            <p
+              css={[
+                tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
+                curRoute ? tw`text-black dark:text-grey-5` : tw``
+              ]}
+              // style={{
+              //   opacity: curRoute ? 1 : 0.5
+              // }}
+            >
+              {text}
+            </p>
+            {hasDropdown && (
+              <img css={[tw`w-3.5 min-md:w-2.25`]} src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />
+            )}
+          </div>
         </div>
         <p
           css={[
