@@ -774,14 +774,14 @@ const NavItem: FC<MainNavIconProps> = ({
           </RiveAnimationWrapper> */}
           <img
             css={[tw`h-[40px] w-[40px] min-md:h-[26px] min-md:w-[26px]`]}
-            src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute || isOpen ? '-active' : ''}.svg`}
+            src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute ? '-active' : ''}.svg`}
             alt={text}
           />
           <p
             css={[
               tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden`,
-              curRoute || isOpen ? tw`text-black dark:text-grey-5` : tw``
+              curRoute ? tw`text-black dark:text-grey-5` : tw``
             ]}
             // style={{
             //   opacity: curRoute ? 1 : 0.5
@@ -797,7 +797,7 @@ const NavItem: FC<MainNavIconProps> = ({
           css={[
             tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
-            curRoute || isOpen
+            curRoute
               ? tw`text-black dark:text-grey-5 min-md:opacity-100`
               : tw`min-md:opacity-0 group-hover:min-md:opacity-50`
           ]}
