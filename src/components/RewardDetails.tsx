@@ -1,7 +1,7 @@
 import React, { BaseSyntheticEvent, FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useRewardToggle, useConnectionConfig, useDarkMode } from '../context'
-import { LAMPORTS_PER_SOL, RIVE_ANIMATION } from '../constants'
+import { LAMPORTS_PER_SOL } from '../constants'
 import { ADDRESSES as SDK_ADDRESS, CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -16,7 +16,6 @@ import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment'
-import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 import { BN } from '@project-serum/anchor'
 import { Loader } from './Loader'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -51,7 +50,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
       <div id={'title'} css={tw`flex flex-col min-md:flex-row`}>
         {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
         {breakpoint.isMobile && !isEarnSelected && <ReferFriendSegment />}
-        <div css={tw`flex flex-col gap-2 h-full `}>
+        <div css={tw`flex flex-col gap-3.75 h-full min-md:ml-5`}>
           <p
             css={tw`text-[18px] text-center min-md:text-left leading-[22px] min-md:text-3xl dark:text-white
             text-black-4 mb-0 `}
@@ -266,7 +265,7 @@ const EarnRewards: FC = () => {
 
   // twin.macro crashing on obj.property nested access
   return (
-    <div css={tw`flex flex-col overflow-y-scroll min-md:overflow-auto items-center h-full`}>
+    <div css={tw`flex flex-col overflow-y-scroll min-md:overflow-auto items-center h-full min-md:w-[580px]`}>
       <UnstakeConfirmationModal
         amount={inputValue}
         isOpen={isUnstakeConfirmationModalOpen}
@@ -308,7 +307,7 @@ const EarnRewards: FC = () => {
         </button>
       </div>
 
-      <div css={tw`flex flex-row w-full gap-4 mt-[15px] min-md:mt-[30px]`}>
+      <div css={tw`flex flex-row w-full gap-2.5 mt-[15px] min-md:mt-[30px]`}>
         {!breakpoints.isMobile && (
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
@@ -447,15 +446,13 @@ const StakeUnstakeToggle = ({
     [inputRef, rewards, userGoFxBalance]
   )
   return (
-    <div
-      css={tw`w-full min-md:w-max flex flex-row gap-4 relative justify-center items-center min-md:justify-start`}
-    >
+    <div css={tw`w-full min-md:w-max flex flex-row relative justify-center items-center min-md:justify-start`}>
       <div ref={sliderRef} css={tw`w-full bg-blue-1 h-[44px] rounded-[36px] z-[0] absolute transition-all`} />
       <button
         ref={setSliderRef}
         data-index={0}
         css={[
-          tw`min-w-max px-4 sm:w-1/3 cursor-pointer w-[94px] z-[0] text-center border-none
+          tw` px-4 w-1/3 cursor-pointer min-md:w-[94px] z-[0] text-center border-none
                 border-0 font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
           isStakeSelected ? tw`text-white` : tw`text-grey-1`
         ]}
@@ -467,7 +464,7 @@ const StakeUnstakeToggle = ({
         data-index={1}
         ref={setSliderRef}
         css={[
-          tw` min-w-max px-4 sm:w-1/3 cursor-pointer w-[94px] z-[0] text-center border-none
+          tw`  px-4 w-1/3 cursor-pointer min-md:w-[94px] z-[0] text-center border-none
                  border-0 font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
           !isStakeSelected ? tw`text-white` : tw`text-grey-1`
         ]}
@@ -598,7 +595,7 @@ const UnstakeBottomBar: FC = () => {
       <AllUnstakingTicketsModal isOpen={isModalOpen} onClose={hideUnstakingModal} />
       <button
         css={[
-          tw`mb-[25px] text-[18px] leading-[22px] text-primary-gradient-1 underline dark:text-grey-5 mt-auto
+          tw`mt-[43px] mb-[46px] text-[18px] leading-[22px] text-primary-gradient-1 underline dark:text-grey-5 mt-auto
   cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent
   font-semibold border-0
   `,
@@ -852,64 +849,50 @@ interface RewardSegmentProps {
 export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, children }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
-  const { rive: rewardsRive, RiveComponent: RewardsComponent } = useRive({
-    src: RIVE_ANIMATION.rewards.src,
-    autoplay: true,
-    stateMachines: Object.keys(RIVE_ANIMATION.rewards.stateMachines)
-  })
-  const { rive: referralRive, RiveComponent: ReferralComponent } = useRive({
-    src: RIVE_ANIMATION.referrals.src,
-    autoplay: true,
-    stateMachines: Object.keys(RIVE_ANIMATION.referrals.stateMachines)
-  })
-  const animationColorRewards = useStateMachineInput(
-    rewardsRive,
-    RIVE_ANIMATION.rewards.stateMachines.Rewards.stateMachineName,
-    RIVE_ANIMATION.rewards.stateMachines.Rewards.inputs.theme
-  )
-  const animationColorReferral = useStateMachineInput(
-    referralRive,
-    RIVE_ANIMATION.referrals.stateMachines.Referrals.stateMachineName,
-    RIVE_ANIMATION.referrals.stateMachines.Referrals.inputs.theme
-  )
-  useEffect(() => {
-    if (animationColorRewards) {
-      animationColorRewards.value = mode === 'dark'
-    }
-    if (animationColorReferral) {
-      animationColorReferral.value = mode === 'dark'
-    }
-  }, [mode, animationColorRewards, animationColorReferral])
+  // const { rive: rewardsRive, RiveComponent: RewardsComponent } = useRive({
+  //   src: RIVE_ANIMATION.rewards.src,
+  //   autoplay: true,
+  //   stateMachines: Object.keys(RIVE_ANIMATION.rewards.stateMachines)
+  // })
+  // const { rive: referralRive, RiveComponent: ReferralComponent } = useRive({
+  //   src: RIVE_ANIMATION.referrals.src,
+  //   autoplay: true,
+  //   stateMachines: Object.keys(RIVE_ANIMATION.referrals.stateMachines)
+  // })
+  // const animationColorRewards = useStateMachineInput(
+  //   rewardsRive,
+  //   RIVE_ANIMATION.rewards.stateMachines.Rewards.stateMachineName,
+  //   RIVE_ANIMATION.rewards.stateMachines.Rewards.inputs.theme
+  // )
+  // const animationColorReferral = useStateMachineInput(
+  //   referralRive,
+  //   RIVE_ANIMATION.referrals.stateMachines.Referrals.stateMachineName,
+  //   RIVE_ANIMATION.referrals.stateMachines.Referrals.inputs.theme
+  // )
+  // useEffect(() => {
+  //   if (animationColorRewards) {
+  //     animationColorRewards.value = mode === 'dark'
+  //   }
+  //   if (animationColorReferral) {
+  //     animationColorReferral.value = mode === 'dark'
+  //   }
+  // }, [mode, animationColorRewards, animationColorReferral])
   const panels = useMemo(
     () => [
       {
         title: 'Earn USDC daily by staking your GOFX',
         subtitle: 'How much would you like to stake?',
-        icon: (
-          <RewardsComponent
-            style={{
-              width: '90px',
-              height: '97px'
-            }}
-          />
-        ),
+        icon: <img src={`/img/mainnav/rewards-${mode}.svg`} />,
         children: <EarnRewards />
       },
       {
         title: 'Refer and get 20% of all the fees!',
         subtitle: 'Earn the 20% of taker fees form each of your referrals',
-        icon: (
-          <ReferralComponent
-            style={{
-              width: '90px',
-              height: '97px'
-            }}
-          />
-        ),
+        icon: <img src={`/img/mainnav/refer-${mode}.svg`} />,
         children: <ReferAndEarn />
       }
     ],
-    [ReferralComponent, RewardsComponent]
+    [mode]
   )
   const panel = useMemo(() => {
     if (panelIndex < 0 || panelIndex > panels.length - 1) {
