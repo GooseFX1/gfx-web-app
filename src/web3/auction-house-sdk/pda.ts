@@ -2,9 +2,13 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token
 import { PublicKey, PublicKeyInitData, Transaction } from '@solana/web3.js'
 import { AUCTION_HOUSE_PROGRAM_ID, SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, toPublicKey } from '../ids'
 import { BigNumber } from '@metaplex-foundation/js'
-import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
+import {
+  PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
+  TokenDelegateRole
+} from '@metaplex-foundation/mpl-token-metadata'
 import { programIds } from '../programIds'
 import { INFTInBag } from '../../types/nft_details'
+import * as anchor from '@project-serum/anchor'
 
 export class Pda extends PublicKey {
   /** The bump used to generate the PDA. */
@@ -120,3 +124,21 @@ export const getEditionDataAccount = async (mint: PublicKey): Promise<[PublicKey
     [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
     TOKEN_METADATA_PROGRAM_ID
   )
+
+export const findDelegateRecordPda = (
+  mint: PublicKey,
+  role: TokenDelegateRole,
+  authority: PublicKey,
+  delegate: PublicKey
+): PublicKey =>
+  PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('metadata'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+      new anchor.BN(role).toArrayLike(Buffer, 'le', 4),
+      authority.toBuffer(),
+      delegate.toBuffer()
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  )[0]

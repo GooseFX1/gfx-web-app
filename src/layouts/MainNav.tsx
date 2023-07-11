@@ -525,8 +525,8 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                     </p>
                   </Menu.Item>
                 ))}
-                {/* pathname.split('/')[1] === 'nfts' && <MyNFTBag /> */}
               </Menu.Items>
+              {/* pathname.split('/')[1] === 'nfts' && <MyNFTBag /> */}
             </Transition>
           </>
         )}

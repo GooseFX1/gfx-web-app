@@ -493,14 +493,6 @@ export const SellNFTModal: FC<{
       transaction.add(executeSaleIX)
     }
 
-    // preflight attempt
-    // const stx = await wal.signTransaction(transaction)
-    // console.log(stx)
-    // const signature = await connection.sendRawTransaction(stx?.serialize(), {
-    //   skipPreflight: true
-    // })
-    // console.log(signature)
-
     try {
       const signature = await wal.sendTransaction(transaction, connection)
       setPendingTxSig(signature)

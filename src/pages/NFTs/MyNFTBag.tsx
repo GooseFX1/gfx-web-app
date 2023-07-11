@@ -15,8 +15,8 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
-import { useConnectionConfig, useDarkMode, useNFTAggregator } from '../../context'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator, useNFTProfile } from '../../context'
+import { LAMPORTS_PER_SOL, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { GradientText } from '../../components/GradientText'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
 import { minimizeTheString, removeNFTFromBag } from '../../web3/nfts/utils'
@@ -137,7 +137,10 @@ const MY_BAG = styled.div`
 
 export const MyNFTBag = (): ReactElement => {
   const { nftInBag } = useNFTAggregator()
-  const itemsPresentInBag = nftInBag.length // no items in the bag
+  const { isCollapsed } = useNavCollapse()
+  const itemsPresentInBag = Object.keys(nftInBag ? nftInBag : {}).length // no items in the bag
+  const [visible, setVisible] = useState<boolean>(false)
+  const history = useHistory()
 
   useEffect(() => {
     if (Object.keys(nftInBag).length && !visible) setVisible(true)
