@@ -12,6 +12,7 @@ export type Mint = {
   decimals: number
   sslPool?: boolean
   name?: string
+  controller?: PublicKey
 }
 
 export type Pool = {
@@ -26,6 +27,12 @@ export const ADDRESSES: {
       [token: string]: Mint
     }
     sslPool: {
+      [token: string]: Mint
+    }
+    stable: {
+      [token: string]: Mint
+    }
+    hyper: {
       [token: string]: Mint
     }
     pools: {
@@ -75,6 +82,40 @@ export const ADDRESSES: {
         decimals: 6,
         name: 'USDC Coin'
       },
+      USDT: {
+        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        decimals: 6,
+        name: 'USDT'
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    },
+    stable: {
+      SOL: {
+        address: SYNTH_DEFAULT_MINT,
+        decimals: 9,
+        name: 'Solana'
+      },
+      USDC: {
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 6,
+        name: 'USDC Coin'
+      },
+      USDT: {
+        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        decimals: 6,
+        name: 'USDT'
+      },
+      ETH: {
+        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+        decimals: 8,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    },
+    hyper: {
       USDT: {
         address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
         decimals: 6,
@@ -187,6 +228,8 @@ export const ADDRESSES: {
     }
   },
   devnet: {
+    stable: {},
+    hyper: {},
     sslPool: {
       USDC: {
         address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
@@ -350,6 +393,8 @@ export const ADDRESSES: {
     mints: {},
     pools: {},
     sslPool: {},
+    stable: {},
+    hyper: {},
     programs: {
       pool: {
         address: PublicKey.default,

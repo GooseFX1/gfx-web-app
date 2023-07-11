@@ -43,7 +43,7 @@ const WRAPPER = styled.div<{ $width; $mode }>`
 export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
   ${tw`flex flex-row items-center justify-center cursor-pointer`}
   .textTitle {
-    ${tw`font-semibold text-base dark:text-white text-grey-1`}
+    ${tw`font-semibold `}
   }
   .info-icon {
     ${tw`!w-[20px] !h-[20px] block ml-2`}
