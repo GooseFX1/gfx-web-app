@@ -8,7 +8,7 @@ import {
   token,
   walletAdapterIdentity
 } from '@metaplex-foundation/js'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TOKEN_PROGRAM_ID, getAccount } from '@solana/spl-token-v2'
 import {
   Metadata,
   PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID,
@@ -32,7 +32,7 @@ import {
   SellRemainingAccountsInstructionAccounts,
   createPrintListingReceiptInstruction
 } from '@metaplex-foundation/mpl-auction-house'
-import { getAtaForMint, findTokenRecordPda, getEditionDataAccount, findDelegateRecordPda } from './pda'
+import { findTokenRecordPda, getEditionDataAccount, findDelegateRecordPda } from './pda'
 import { getMetadata } from '../nfts/metadata'
 
 export const currency: SplTokenCurrency = {
@@ -56,7 +56,6 @@ export const constructListInstruction = async (
     currency
   }
   const seller = wallet?.wallet?.adapter?.publicKey
-  const tokenAccountKey: PublicKey = (await getAtaForMint(mintAccount, seller))[0]
 
   const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet))
   const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
@@ -94,20 +93,22 @@ export const constructListInstruction = async (
       tokenAccount
     })
 
-  const tokenRecord: PublicKey = findTokenRecordPda(mintAccount, tokenAccountKey)
+  const tokenRecord: PublicKey = findTokenRecordPda(mintAccount, tokenAccount)
   const editionAccount: PublicKey = (await getEditionDataAccount(mintAccount))[0]
 
-  const delegate = tokenRecord
+  const tokenAccountInfo = await getAccount(connection, tokenAccount)
+  console.log('Delegate Value', tokenAccountInfo.delegate)
+
   const delegateRecord = findDelegateRecordPda(
     mintAccount,
-    TokenDelegateRole.Sale,
+    TokenDelegateRole.Transfer,
     metadataParsed.updateAuthority,
-    delegate
+    tokenAccountInfo.delegate
   )
 
   const accounts: SellInstructionAccounts = {
     wallet: seller,
-    tokenAccount: tokenAccountKey,
+    tokenAccount: tokenAccount,
     metadata: toPublicKey(metadataAccount),
     authority: toPublicKey(AUCTION_HOUSE_AUTHORITY),
     auctionHouse: auctionHouse.address,
@@ -152,6 +153,8 @@ export const constructListInstruction = async (
   const signerKeyIndex = sellInstruction.keys.findIndex((key) => key.pubkey.equals(seller))
   sellInstruction.keys[signerKeyIndex].isSigner = true
   sellInstruction.keys[signerKeyIndex].isWritable = true
+
+  console.log(sellInstruction, remainingInstructions)
 
   instructions.push(sellInstruction)
   instructions.push(remainingInstructions)
