@@ -375,8 +375,8 @@ const EarnRewards: FC = () => {
       <button
         onClick={handleStakeUnstake}
         css={[
-          tw`w-full mt-[15px] bg-grey-4 dark:bg-black-1 border-0 relative
-           rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-2
+          tw`w-full mt-[15px] bg-grey-5 dark:bg-black-1 border-0 relative
+           rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-1
            h-[50px]
            `,
           canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
@@ -616,7 +616,7 @@ const StakeBottomBar: FC = () => {
   return breakpoints.isMobile ? (
     <div css={tw`mt-auto w-full flex flex-col mb-[25px] mt-[15px]`}>
       <div css={tw`flex flex-row justify-between`}>
-        <p css={tw`mb-0 text-[15px] leading-[18px]`}>Approx. Daily Rewards</p>
+        <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Approx. Daily Rewards</p>
         <p
           css={[
             tw`mb-0 text-[15px] leading-[18px] text-grey-1`,
@@ -628,7 +628,7 @@ const StakeBottomBar: FC = () => {
       </div>
       <div css={tw`flex flex-row justify-between`}>
         <div css={tw`flex gap-2`}>
-          <p css={tw`mb-0 text-[15px] leading-[18px]`}>Cooldown Period</p>
+          <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Cooldown Period</p>
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
