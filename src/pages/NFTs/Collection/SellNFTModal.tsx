@@ -384,7 +384,7 @@ export const SellNFTModal: FC<{
       setDelistLoading(false)
     } catch (error) {
       console.log('User exited signing transaction to list fixed price')
-      TransactionSignatureErrorNotify(nftMetadata.name)
+      TransactionSignatureErrorNotify(nftMetadata.name, 'User exited signing transaction to list fixed price')
       setDelistLoading(false)
     }
   }
@@ -420,9 +420,10 @@ export const SellNFTModal: FC<{
       )
       for (const ix of instructions) transaction.add(ix)
     } catch (error) {
-      console.log('User exited signing transaction to list fixed price')
-      TransactionSignatureErrorNotify(nftMetadata.name)
+      console.log(error)
+      TransactionSignatureErrorNotify(nftMetadata.name, 'Failed to build instructions for Listing NFT')
       setIsLoading(false)
+      return
     }
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
@@ -500,7 +501,7 @@ export const SellNFTModal: FC<{
         .then((res) => console.log('TX Confirmed', res))
         .catch((err) => console.error(err))
     } catch (error) {
-      console.log('User exited signing transaction to list fixed price')
+      console.error('User exited signing transaction to list fixed price')
       TransactionSignatureErrorNotify(nftMetadata.name)
       setIsLoading(false)
     }
