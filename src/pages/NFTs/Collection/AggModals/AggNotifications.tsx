@@ -101,14 +101,14 @@ export const couldNotDeriveValueForBuyInstruction = (): any =>
     )
   })
 
-export const TransactionSignatureErrorNotify = (nftName: string): any => {
+export const TransactionSignatureErrorNotify = (nftName: string, customMsg?: string): void => {
   notify({
     type: 'error',
     message: (
       <TransactionErrorMsg
-        title={`Transaction Signature Error`}
+        title={`Transaction Error`}
         itemName={nftName}
-        supportText={`User exited signing transaction to list or modify price`}
+        supportText={customMsg ? customMsg : `Instruction or transaction has thrown and error`}
       />
     )
   })
