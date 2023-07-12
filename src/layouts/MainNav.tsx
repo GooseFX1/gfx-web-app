@@ -12,7 +12,6 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
-import { SVGBlackToGrey } from '../styles'
 import { clamp } from '../utils'
 // import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
@@ -247,24 +246,20 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
   return (
     <div
       css={[
-        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
+        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-white items-center flex flex-col
         dark:text-grey-5 rounded-b-bigger block justify-center z-[999]`,
         isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
         playCloseAnimation ? tw`animate-slideOutTop` : tw``
       ]}
     >
-      <div tw={'absolute top-3 left-0 w-full flex justify-center items-center'}>
+      <div tw={'absolute top-3.75 left-0 w-full flex justify-center items-center'}>
         <ThemeToggle />
       </div>
       <button
         onClick={toggleSettingsDrawer}
         css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}
       >
-        {mode === 'dark' ? (
-          <img src={`/img/assets/cross-white.svg`} alt="close-icon" />
-        ) : (
-          <SVGBlackToGrey src={`/img/assets/cross-white.svg`} alt="close-icon" />
-        )}
+        <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
       </button>
       <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
         <NavItem
@@ -486,7 +481,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
               <Menu.Items
                 static
                 css={[
-                  tw`absolute w-56 mt-2 origin-top
+                  tw`absolute w-56 min-md:w-max mt-2 origin-top
         border-1 border-solid border-black-1 dark:border-white rounded-tiny
         z-50
         `
@@ -752,7 +747,6 @@ const NavItem: FC<MainNavIconProps> = ({
     const curRoute: boolean = pathname.startsWith(path) || hasActiveItems
     return (
       <div
-        className={'group'}
         css={[
           tw`flex min-md:flex-col items-center justify-center h-full cursor-pointer
         px-4.5 py-1.25 min-md:p-0 rounded-full min-md:rounded-none h-12.5 min-md:h-auto
@@ -775,7 +769,7 @@ const NavItem: FC<MainNavIconProps> = ({
           </RiveAnimationWrapper> */}
           <img
             css={[tw`h-[40px] w-[40px] min-md:h-[26px] min-md:w-[26px]`]}
-            src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute ? '-active' : ''}.svg`}
+            src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute || isOpen ? '-active' : ''}.svg`}
             alt={text}
           />
           <div css={[tw`flex gap-2.5`]}>
@@ -783,7 +777,7 @@ const NavItem: FC<MainNavIconProps> = ({
               css={[
                 tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
-                curRoute ? tw`text-black dark:text-grey-5` : tw``
+                curRoute || isOpen ? tw`text-black dark:text-grey-5` : tw``
               ]}
               // style={{
               //   opacity: curRoute ? 1 : 0.5
@@ -800,9 +794,7 @@ const NavItem: FC<MainNavIconProps> = ({
           css={[
             tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
-            curRoute
-              ? tw`text-black dark:text-grey-5 min-md:opacity-100`
-              : tw`min-md:opacity-0 group-hover:min-md:opacity-50`
+            curRoute || isOpen ? tw`text-black dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
           // style={{
           //   opacity: curRoute ? 1 : 0.5

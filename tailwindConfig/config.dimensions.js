@@ -97,6 +97,9 @@ const translate = {
 const spacing = {
   1.5: '6px'
 }
+const inset = {
+  3.75: '15px'
+}
 module.exports = {
   padding,
   margin,
@@ -109,5 +112,6 @@ module.exports = {
   maxHeight,
   gap,
   translate,
-  spacing
+  spacing,
+  inset
 }

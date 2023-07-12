@@ -21,9 +21,9 @@ function useBreakPoint(): IUseBreakPoint {
   const handleResize = useCallback(() => {
     setBreakpoints({
       isMobile: window.innerWidth <= MOBILE_BREAKPOINT,
-      isTablet: window.innerWidth > MOBILE_BREAKPOINT && window.innerWidth < TABLET_BREAKPOINT,
-      isLaptop: window.innerWidth >= TABLET_BREAKPOINT && window.innerWidth < DESKTOP_BREAKPOINT,
-      isDesktop: window.innerWidth >= DESKTOP_BREAKPOINT
+      isTablet: window.innerWidth > MOBILE_BREAKPOINT && window.innerWidth <= TABLET_BREAKPOINT,
+      isLaptop: window.innerWidth > TABLET_BREAKPOINT && window.innerWidth <= DESKTOP_BREAKPOINT,
+      isDesktop: window.innerWidth > DESKTOP_BREAKPOINT
     })
   }, [])
   useEffect(() => {

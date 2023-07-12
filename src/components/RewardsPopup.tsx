@@ -56,7 +56,7 @@ export const RewardsButton: FC = () => {
         </RiveAnimationWrapper> */}
 
         <img
-          css={[tw`h-[35px] w-[31px] min-md:h-[22px] min-md:w-[20px]`]}
+          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px] w-[31px]` : tw`h-[22px] w-[20px]`]}
           src={`img/mainnav/rewards-${mode}.svg`}
         />
 
