@@ -57,7 +57,7 @@ export const RewardsButton: FC = () => {
 
         <img
           css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px] w-[31px]` : tw`h-[22px] w-[20px]`]}
-          src={`img/mainnav/rewards-${mode}.svg`}
+          src={`img/mainnav/rewards-${mode}.${breakpoint.isMobile || breakpoint.isTablet ? 'png' : 'svg'}`}
         />
 
         {hasRewards && (
