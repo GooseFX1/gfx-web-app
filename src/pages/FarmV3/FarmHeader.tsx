@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
+import { ChoosePool } from './ChoosePool'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[56px] w-[180px] p-0.5 mr-6 rounded-small`}
@@ -30,9 +31,11 @@ const topPoolCards = [
 ]
 
 export const FarmHeader: FC<{}> = () => {
+  const [poolSelection, setPoolSelection] = useState<boolean>(false)
   return (
     <>
       <div tw="flex flex-row justify-start relative mb-5 sm:block sm:px-[15px] sm:mb-0">
+        {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         {infoCards?.map((card, index) => (
           <>
             <CARD_GRADIENT>
@@ -48,7 +51,7 @@ export const FarmHeader: FC<{}> = () => {
               <span
                 tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
                 onClick={() => {
-                  //setHowToEarn(true)
+                  setPoolSelection(true)
                 }}
               >
                 Can’t Choose A Pool
