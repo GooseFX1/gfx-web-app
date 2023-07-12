@@ -9,7 +9,7 @@ const fontSize = {
   tiny: ['13px', '16px'],
   regular: '15px',
   average: ['18px', '22px'],
-  lg: '20px',
+  lg: ['20px', '30px'],
   xl: '40px'
 }
 

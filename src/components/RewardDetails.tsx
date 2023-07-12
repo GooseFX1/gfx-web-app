@@ -47,13 +47,13 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
 
   return (
     <>
-      <div id={'title'} css={tw`flex flex-col min-md:flex-row`}>
+      <div id={'title'} css={tw`flex flex-col w-full  min-md:flex-row`}>
         {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
         {breakpoint.isMobile && !isEarnSelected && <ReferFriendSegment />}
         <div css={tw`flex flex-col gap-3.75 h-full min-md:ml-5`}>
           <p
-            css={tw`text-[18px] text-center min-md:text-left leading-[22px] min-md:text-3xl dark:text-white
-            text-black-4 mb-0 `}
+            css={tw`text-[18px] text-center min-md:text-left leading-[22px] min-md:text-lg
+              dark:text-white text-black-4 mb-0  font-semibold`}
           >
             {title}
           </p>
@@ -595,9 +595,9 @@ const UnstakeBottomBar: FC = () => {
       <AllUnstakingTicketsModal isOpen={isModalOpen} onClose={hideUnstakingModal} />
       <button
         css={[
-          tw`mt-[43px] mb-[46px] text-[18px] leading-[22px] text-primary-gradient-1 underline dark:text-grey-5 mt-auto
-  cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent active:bg-transparent
-  font-semibold border-0
+          tw`min-md:mt-[43px] min-md:mb-[46px] text-[18px] leading-[22px] text-primary-gradient-1
+          underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
+           active:bg-transparent font-semibold border-0 mt-[35px] mb-[31px]
   `,
           rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
@@ -882,13 +882,13 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
       {
         title: 'Earn USDC daily by staking your GOFX',
         subtitle: 'How much would you like to stake?',
-        icon: <img src={`/img/mainnav/rewards-${mode}.svg`} />,
+        icon: <img src={`/img/assets/rewards-${mode}.svg`} />,
         children: <EarnRewards />
       },
       {
         title: 'Refer and get 20% of all the fees!',
         subtitle: 'Earn the 20% of taker fees form each of your referrals',
-        icon: <img src={`/img/mainnav/refer-${mode}.svg`} />,
+        icon: <img src={`/img/assets/refer-${mode}.svg`} />,
         children: <ReferAndEarn />
       }
     ],
@@ -902,7 +902,8 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
   }, [panels, panelIndex])
   return (
     <div
-      css={tw`flex flex-col px-[30px] min-md:px-[93px] pt-3 h-full items-center font-semibold bg-white dark:bg-black-2`}
+      css={tw`flex flex-col px-[30px] min-md:px-[145px] pt-3 h-full items-center font-semibold bg-white
+        dark:bg-black-2`}
     >
       {!breakpoint.isMobile && children}
       <div css={tw`flex flex-col max-w-full min-md:pt-6 h-full items-center`}>

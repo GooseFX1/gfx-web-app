@@ -108,7 +108,7 @@ const REWARD_REDIRECT = styled.div<{ $index: number }>`
 `
 
 const Wrapper = styled.div`
-  ${tw`h-full max-h-screen min-md:min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
+  ${tw`h-full min-md:min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
   font-family: Montserrat !important;
   background-color: ${({ theme }) => theme.bg9};
 `
