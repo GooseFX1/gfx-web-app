@@ -138,7 +138,7 @@ export const Connect: FC<{ width?: string }> = ({ width }) => {
     } else if (!base58) {
       return (
         <WRAPPED_LOADER>
-          <Loader />
+          <Loader zIndex={1} />
         </WRAPPED_LOADER>
       )
     } else {

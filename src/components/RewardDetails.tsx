@@ -27,11 +27,13 @@ import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 import useRewards from '../context/rewardsContext'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger`}
+  ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger z-[2001]`}
 `
 
 const CLOSE_ICON = styled.button`
-  ${tw`absolute top-[15px] right-[15px] w-[30px] h-[30px] bg-transparent border-0 border-none cursor-pointer`}
+  ${tw`absolute top-[15px] right-[9px] w-[30px] h-[30px] bg-transparent border-0 border-none cursor-pointer
+    flex items-center justify-center
+  `}
 `
 
 interface RewardInfoProps {
