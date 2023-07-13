@@ -27,7 +27,7 @@ import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 import useRewards from '../context/rewardsContext'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col sm:pt-0 px-7.5 min-md:px-0 h-full items-center rounded-t-bigger z-[2001]`}
+  ${tw`flex flex-col sm:pt-0 px-7.5 min-md:px-0 h-full items-center rounded-t-bigger `}
 `
 
 const CLOSE_ICON = styled.button`
@@ -393,7 +393,7 @@ const EarnRewards: FC = () => {
         disabled={!canStakeOrUnstake}
       >
         {isStakeLoading ? (
-          <Loader />
+          <Loader zIndex={2} />
         ) : userGoFxBalance.uiAmount > 0.0 ? (
           `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
         ) : (
@@ -1063,7 +1063,7 @@ const EarnRewardsRedirect: FC = () => {
           onClick={handleClaimFees}
         >
           {isClaiming ? (
-            <Loader color={'#5855FF'} />
+            <Loader color={'#5855FF'} zIndex={2} />
           ) : !usdcClaimable.isZero() ? (
             `Claim ${usdcClaimable.toString(10)} USDC`
           ) : (
