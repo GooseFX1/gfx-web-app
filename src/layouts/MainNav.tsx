@@ -506,12 +506,12 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                     <p
                       css={[
                         tw`mb-0 text-average min-md:text-regular font-semibold min-md:font-medium text-grey-1
-                         dark:text-grey-1 cursor-pointer`,
+                         dark:text-grey-1 cursor-pointer hover:text-transparent hover:bg-gradient-1 hover:bg-clip-text`,
                         option.isActive ? tw`bg-clip-text bg-gradient-1` : tw``
                       ].concat(customMenuStyle?.menuItemText ?? [])}
                       style={{
-                        WebkitBackgroundClip: option.isActive ? 'text' : 'unset',
-                        WebkitTextFillColor: option.isActive ? 'transparent' : 'unset'
+                        WebkitBackgroundClip: option.isActive ? 'text' : '',
+                        WebkitTextFillColor: option.isActive ? 'transparent' : ''
                       }}
                       onClick={handleOptionClick(option.onClick)}
                     >
