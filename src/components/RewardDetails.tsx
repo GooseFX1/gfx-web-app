@@ -27,7 +27,7 @@ import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 import useRewards from '../context/rewardsContext'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col sm:pt-0 px-7.5 min-md:px-0 h-full items-center rounded-t-bigger `}
+  ${tw`flex flex-col sm:pt-0 px-7.5  h-full items-center rounded-t-bigger `}
 `
 
 const CLOSE_ICON = styled.button`
@@ -60,7 +60,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
             {title}
           </p>
           <p
-            css={tw`min-md:text-lg text-grey-1 dark:text-grey-2 mb-0 text-center
+            css={tw`min-md:text-lg text-regular text-grey-1 dark:text-grey-2 mb-0 text-center
             min-md:text-left`}
           >
             {subtitle}
@@ -1022,30 +1022,31 @@ const EarnRewardsRedirect: FC = () => {
   }, [])
   return (
     <div css={tw`flex pt-[18px] min-md:pt-[45px] flex-col items-center h-full`}>
-      <div tw={'flex flex-row min-md:flex-col items-center'}>
-        <p tw={'text-[20px] font-semibold text-grey-5 mb-0'}>Rewards</p>
-        <p tw={'ml-1 text-[20px] min-md:ml-0 min-md:text-[40px] font-semibold text-white mb-0'}>{apr}% APY</p>
+      <div tw={'flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5'}>
+        <p tw={'mb-0'}>Rewards</p>
+        <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0'}>{apr}% APY</p>
       </div>
       <div
         css={[
-          tw`flex flex-col opacity-[0.65] text-center text-[15px] min-md:text-lg gap-4 mt-[16px] min-md:mt-[61px]`
+          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-4 mt-3.75 min-md:mt-[61px]
+           text-grey-5`
         ]}
       >
         <span
           css={[
-            tw`text-[55px] min-md:text-[80px] leading-[40px] text-grey-5`,
-            totalEarned > 0 ? tw`opacity-100` : tw``
+            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-[40px]`,
+            totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
           {nFormatter(totalEarned)}
         </span>
-        <p tw={'mb-0 text-[15px] leading-[18px] min-md:text-lg font-semibold'}>USDC Total Earned</p>
+        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold'}>USDC Total Earned</p>
       </div>
-      <div css={[tw`flex flex-col w-max`]}>
+      <div css={[tw`flex flex-col w-max mt-3.75`]}>
         <p
           css={[
-            tw`mb-0 mt-[15px] text-lg font-semibold opacity-[0.6]
-         leading-[22px] text-grey-5 text-center`,
+            tw`mb-0 text-regular text-average font-semibold opacity-[0.6]
+         text-grey-5 text-center`,
             gofxStaked > 0.0 ? tw`opacity-100` : tw``
           ]}
         >
@@ -1053,9 +1054,9 @@ const EarnRewardsRedirect: FC = () => {
         </p>
         <button
           css={[
-            tw`px-4 mt-[15px] min-md:mt-[32px] w-full min-md:w-[320px] items-center h-[50px] bg-white text-black-4
-          border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0
-            overflow-hidden whitespace-nowrap relative`,
+            tw` mt-3.75 min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
+            text-black-4 border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px]
+            min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75`,
             !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
