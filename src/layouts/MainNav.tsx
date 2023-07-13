@@ -455,7 +455,8 @@ const DropDownControls: FC<DesktopControlsProps> = ({
             <Menu.Button
               css={[
                 tw`bg-transparent border-0 outline-none focus-visible:outline-none active:outline-none
-                focus:outline-none p-0`
+                focus:outline-none focus-visible:border-0 active:border-0
+                focus:border-0 p-0`
               ].concat(customMenuStyle?.button ?? [])}
               onMouseEnter={
                 breakpoints.isMobile
@@ -484,6 +485,8 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                 css={[
                   tw`absolute w-56 min-md:w-max mt-1.75 origin-top
         border-1 border-solid border-black-1 dark:border-white rounded-tiny
+        outline-none focus-visible:outline-none active:outline-none
+        focus:outline-none
         z-50
         `
                 ].concat(customMenuStyle?.menuItems ?? [])}
