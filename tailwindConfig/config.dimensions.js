@@ -10,6 +10,7 @@ const padding = {
   4.5: '18px',
   5: '20px',
   7: '28px',
+  7.5: '30px',
   '10p': '10%'
 }
 const margin = {

@@ -27,7 +27,7 @@ import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 import useRewards from '../context/rewardsContext'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col sm:pt-0  h-full items-center rounded-t-bigger z-[2001]`}
+  ${tw`flex flex-col sm:pt-0 px-7.5 min-md:px-0 h-full items-center rounded-t-bigger z-[2001]`}
 `
 
 const CLOSE_ICON = styled.button`
@@ -60,7 +60,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
             {title}
           </p>
           <p
-            css={tw`min-md:text-lg text-grey-2 mb-0 text-center
+            css={tw`min-md:text-lg text-grey-1 dark:text-grey-2 mb-0 text-center
             min-md:text-left`}
           >
             {subtitle}
@@ -267,13 +267,16 @@ const EarnRewards: FC = () => {
 
   // twin.macro crashing on obj.property nested access
   return (
-    <div css={tw`flex flex-col overflow-y-scroll min-md:overflow-auto items-center h-full min-md:w-[580px]`}>
+    <div
+      css={tw`flex mt-3.75 gap-3.75 flex-col overflow-y-scroll min-md:overflow-auto items-center h-full
+    min-md:w-[580px]`}
+    >
       <UnstakeConfirmationModal
         amount={inputValue}
         isOpen={isUnstakeConfirmationModalOpen}
         onClose={handleUnstakeConfirmationModalClose}
       />
-      <div css={tw`flex mt-6 flex-row w-full justify-between items-center flex-wrap `}>
+      <div css={tw`flex flex-row w-full justify-between items-center flex-wrap `}>
         {breakpoints.isMobile && (
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
@@ -299,7 +302,10 @@ const EarnRewards: FC = () => {
           </p>
         </div>
         <button
-          css={tw`mt-auto min-md:mt-0 border-0 rounded-full w-max py-2 px-4 font-semibold`}
+          css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 px-8 font-semibold flex
+          items-center justify-center min-md:w-[158px] w-[139px] whitespace-nowrap
+            text-tiny min-md:text-regular
+          `}
           style={{
             background: `linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)`
           }}
@@ -309,7 +315,7 @@ const EarnRewards: FC = () => {
         </button>
       </div>
 
-      <div css={tw`flex flex-row w-full gap-2.5 mt-[15px] min-md:mt-[30px]`}>
+      <div css={tw`flex flex-row w-full gap-2.5 min-md:mt-[30px]`}>
         {!breakpoints.isMobile && (
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
@@ -377,7 +383,7 @@ const EarnRewards: FC = () => {
       <button
         onClick={handleStakeUnstake}
         css={[
-          tw`w-full mt-[15px] bg-grey-5 dark:bg-black-1 border-0 relative
+          tw`w-full bg-grey-5 dark:bg-black-1 border-0 relative
            rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-1
            h-[50px]
            `,
@@ -449,13 +455,15 @@ const StakeUnstakeToggle = ({
   )
   return (
     <div css={tw`w-full min-md:w-max flex flex-row relative justify-center items-center min-md:justify-start`}>
-      <div ref={sliderRef} css={tw`w-full bg-blue-1 h-[44px] rounded-[36px] z-[0] absolute transition-all`} />
+      <div ref={sliderRef} css={tw`w-full bg-blue-1 h-[40px] rounded-[36px] z-[0] absolute transition-all`} />
       <button
         ref={setSliderRef}
         data-index={0}
         css={[
-          tw` px-4 w-1/3 cursor-pointer min-md:w-[94px] z-[0] text-center border-none
-                border-0 font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
+          tw` px-8 py-2.25 w-[165px] cursor-pointer min-md:w-[94px] z-[0] text-center border-none
+                border-0 font-semibold text-regular h-[40px] rounded-[36px] duration-700 bg-transparent
+                flex items-center justify-center
+                `,
           isStakeSelected ? tw`text-white` : tw`text-grey-1`
         ]}
         onClick={handleStakeUnstakeToggle}
@@ -466,8 +474,10 @@ const StakeUnstakeToggle = ({
         data-index={1}
         ref={setSliderRef}
         css={[
-          tw`  px-4 w-1/3 cursor-pointer min-md:w-[94px] z-[0] text-center border-none
-                 border-0 font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
+          tw` px-8 py-2.25 w-[165px] cursor-pointer min-md:w-[94px] z-[0] text-center border-none
+                border-0 font-semibold text-regular h-[40px] rounded-[36px] duration-700 bg-transparent
+                flex items-center justify-center
+                `,
           !isStakeSelected ? tw`text-white` : tw`text-grey-1`
         ]}
         onClick={handleStakeUnstakeToggle}
@@ -904,7 +914,7 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
   }, [panels, panelIndex])
   return (
     <div
-      css={tw`flex flex-col px-[30px] min-md:px-[145px] pt-3 h-full items-center font-semibold bg-white
+      css={tw`flex flex-col px-[30px] min-md:px-[145px] pt-2.5 h-full items-center font-semibold bg-white
         dark:bg-black-2`}
     >
       {!breakpoint.isMobile && children}
@@ -1018,41 +1028,49 @@ const EarnRewardsRedirect: FC = () => {
       </div>
       <div
         css={[
-          tw`flex flex-col opacity-[0.65] text-center text-[15px] min-md:text-lg gap-4 mt-[16px] min-md:mt-[61px]`,
-          totalEarned > 0 ? tw`opacity-100` : tw``
+          tw`flex flex-col opacity-[0.65] text-center text-[15px] min-md:text-lg gap-4 mt-[16px] min-md:mt-[61px]`
         ]}
       >
-        <span tw={'text-[55px] min-md:text-[80px] leading-[40px] text-grey-5'}>{nFormatter(totalEarned)}</span>
+        <span
+          css={[
+            tw`text-[55px] min-md:text-[80px] leading-[40px] text-grey-5`,
+            totalEarned > 0 ? tw`opacity-100` : tw``
+          ]}
+        >
+          {nFormatter(totalEarned)}
+        </span>
         <p tw={'mb-0 text-[15px] leading-[18px] min-md:text-lg font-semibold'}>USDC Total Earned</p>
       </div>
-      <p
-        css={[
-          tw`mb-0 mt-[15px] text-lg font-semibold opacity-[0.6]
-         leading-[22px] text-grey-5`,
-          gofxStaked > 0.0 ? tw`opacity-100` : tw``
-        ]}
-      >
-        Total Staked: {nFormatter(gofxStaked)} GOFX
-      </p>
-      <button
-        css={[
-          tw`px-4 mt-[15px] min-md:mt-[32px] w-[212px] min-md:w-[320px] items-center h-[50px] bg-white text-black-4
+      <div css={[tw`flex flex-col w-max`]}>
+        <p
+          css={[
+            tw`mb-0 mt-[15px] text-lg font-semibold opacity-[0.6]
+         leading-[22px] text-grey-5 text-center`,
+            gofxStaked > 0.0 ? tw`opacity-100` : tw``
+          ]}
+        >
+          Total Staked: {nFormatter(gofxStaked)} GOFX
+        </p>
+        <button
+          css={[
+            tw`px-4 mt-[15px] min-md:mt-[32px] w-full min-md:w-[320px] items-center h-[50px] bg-white text-black-4
           border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px] min-md:mb-0
             overflow-hidden whitespace-nowrap relative`,
-          !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
-          isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
-        ]}
-        disabled={usdcClaimable.isZero()}
-        onClick={handleClaimFees}
-      >
-        {isClaiming ? (
-          <Loader color={'#5855FF'} />
-        ) : !usdcClaimable.isZero() ? (
-          `Claim ${usdcClaimable.toString(10)} USDC`
-        ) : (
-          'No USDC Claimable'
-        )}
-      </button>
+            !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
+            isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
+          ]}
+          disabled={usdcClaimable.isZero()}
+          onClick={handleClaimFees}
+        >
+          {isClaiming ? (
+            <Loader color={'#5855FF'} />
+          ) : !usdcClaimable.isZero() ? (
+            `Claim ${usdcClaimable.toString(10)} USDC`
+          ) : (
+            'No USDC Claimable'
+          )}
+        </button>
+      </div>
       {!breakpoints.isMobile && (
         <p css={tw`mt-auto mb-[15px] text-white text-[13px] font-semibold leading-[16px] text-center`}>
           During cooldown no rewards will be earned
