@@ -54,7 +54,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
         {breakpoint.isMobile && !isEarnSelected && <ReferFriendSegment />}
         <div css={tw`flex flex-col gap-3.75 h-full min-md:ml-5`}>
           <p
-            css={tw`text-[18px] text-center min-md:text-left leading-[22px] min-md:text-lg
+            css={tw`text-[18px] text-center min-md:text-left  min-md:text-lg
               dark:text-white text-black-4 mb-0  font-semibold`}
           >
             {title}
@@ -357,10 +357,10 @@ const EarnRewards: FC = () => {
           </div>
 
           <Input
-            css={tw`text-lg h-[50px] min-md:w-[381px] w-full rounded-[100px] bg-grey-5 text-black-4
-            placeholder-grey-1 border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
-            dark:bg-black-1 dark:text-grey-5 focus:dark:border-grey-2 active:dark:border-grey-2
-            hover:dark:border-grey-2 pr-[80px]
+            css={tw`text-lg h-10 min-md:w-[381px] w-full rounded-[100px] bg-grey-5 text-grey-1
+            placeholder-grey-1  border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
+            dark:bg-black-1 dark:text-grey-2 focus:dark:border-grey-2 active:dark:border-grey-2
+            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2
             `}
             ref={inputRef}
             maxLength={12}
@@ -371,8 +371,8 @@ const EarnRewards: FC = () => {
             value={inputValue > 0.0 ? inputValue : ''}
           />
           <p
-            css={tw`mb-0 text-lg absolute top-[20%] bottom-[15px] right-[15px] z-[1] text-black-4
-            dark:text-grey-5 font-semibold
+            css={tw`mb-0 text-lg absolute top-[20%] bottom-[15px] right-[15px] z-[1] text-grey-1
+            dark:text-grey-2 font-semibold
             `}
           >
             GOFX
@@ -384,8 +384,8 @@ const EarnRewards: FC = () => {
         onClick={handleStakeUnstake}
         css={[
           tw`w-full bg-grey-5 dark:bg-black-1 border-0 relative
-           rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-1
-           h-[50px]
+           rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-1 dark:text-grey-2
+           h-10 flex items-center justify-center
            `,
           canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
           isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
@@ -454,7 +454,7 @@ const StakeUnstakeToggle = ({
     [inputRef, rewards, userGoFxBalance]
   )
   return (
-    <div css={tw`w-full min-md:w-max flex flex-row relative justify-center items-center min-md:justify-start`}>
+    <div css={tw`w-full min-md:w-max flex flex-row relative justify-between min-md:justify-start items-center `}>
       <div ref={sliderRef} css={tw`w-full bg-blue-1 h-[40px] rounded-[36px] z-[0] absolute transition-all`} />
       <button
         ref={setSliderRef}
@@ -626,7 +626,7 @@ const StakeBottomBar: FC = () => {
   const { mode } = useDarkMode()
   const approxRewardAmount = 0.0
   return breakpoints.isMobile ? (
-    <div css={tw`mt-auto w-full flex flex-col mb-[25px] mt-[15px]`}>
+    <div css={tw`mt-auto w-full flex flex-col mb-[28.5px] `}>
       <div css={tw`flex flex-row justify-between`}>
         <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Approx. Daily Rewards</p>
         <p
@@ -1021,14 +1021,14 @@ const EarnRewardsRedirect: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [])
   return (
-    <div css={tw`flex pt-[18px] min-md:pt-[45px] flex-col items-center h-full`}>
+    <div css={tw`flex pt-[18px] w-full min-md:pt-[45px] flex-col items-center h-full`}>
       <div tw={'flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5'}>
         <p tw={'mb-0'}>Rewards</p>
         <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0'}>{apr}% APY</p>
       </div>
       <div
         css={[
-          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-4 mt-3.75 min-md:mt-[61px]
+          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-[15px] mt-3.75 min-md:mt-[61px]
            text-grey-5`
         ]}
       >
@@ -1040,9 +1040,11 @@ const EarnRewardsRedirect: FC = () => {
         >
           {nFormatter(totalEarned)}
         </span>
-        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold'}>USDC Total Earned</p>
+        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold'}>
+          {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
+        </p>
       </div>
-      <div css={[tw`flex flex-col w-max mt-3.75`]}>
+      <div css={[tw`flex flex-col w-full min-md:w-max mt-3.75`]}>
         <p
           css={[
             tw`mb-0 text-regular text-average font-semibold opacity-[0.6]
