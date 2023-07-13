@@ -429,7 +429,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
                       onFocus={() => !zeroFunds && setDepositClass(' active')}
                       value={!isSSL ? stakeAmt : null}
                       onChange={(e) => (!isSSL ? setStakeAmt(parseFloat(e.target.value)) : null)}
-                      disabled={isSSL}
+                      disabled={true}
                     />
                     <div className="halfMaxText">
                       <div onClick={() => onClickHalf('stake')}>HALF</div>{' '}
@@ -455,7 +455,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
                   <OPERATIONS_BTN
                     className={depositBtnClass}
                     loading={isStakeLoading}
-                    disabled={isSSL}
+                    disabled={true}
                     onClick={() => (isSSL ? onClickDeposit() : onClickStake())}
                   >
                     {zeroFunds ? `Insufficient ${name}` : notEnoughFunds ? 'Not enough funds' : 'Stake'}

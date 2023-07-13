@@ -8706,7 +8706,7 @@ eslint-webpack-plugin@^2.5.2:
     normalize-path "^3.0.0"
     schema-utils "^3.1.1"
 
-eslint@^7.11.0:
+eslint@^7.1.1, eslint@^7.11.0:
   version "7.32.0"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-7.32.0.tgz#c6d328a14be3fb08c8d1d21e12c02fdb7a2a812d"
   integrity sha512-VHZ8gX+EDfz+97jGcgyGCyRia/dPOd6Xh9yPv8Bl1+SoaIwD+a/vlrOmGRUyOYu7MwUhc7CxqeaDZU13S4+EpA==
@@ -9717,10 +9717,10 @@ goosefx-ssl-sdk@^1.2.24, goosefx-ssl-sdk@latest:
     "@solana/spl-token" "^0.2.0"
     "@solana/web3.js" "^1.41.1"
 
-goosefx-stake-rewards-sdk@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/goosefx-stake-rewards-sdk/-/goosefx-stake-rewards-sdk-1.0.2.tgz#29437fa6d71b3488d0c4fbcae1725c3890b62001"
-  integrity sha512-p3waCckZ5YJPOKXcoCTPfVwnCXqGkaMQ8fEKLrGhBs1xMY5xzkSHD0Zt0KkrJYJHBFDKxb+Z/fHQ4uT9VU8wRw==
+goosefx-stake-rewards-sdk@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/goosefx-stake-rewards-sdk/-/goosefx-stake-rewards-sdk-1.0.3.tgz#f4ac96b88c7b9f190dea9d68cacd953ae2201645"
+  integrity sha512-z0yI5HB7zmtPWaeg6OvpV/COBJ0fST9VpWs3xpm3hltu+vT6iXZUh6xeUwZ3UHkFtuBnE/UP00uefosAshUF1w==
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     "@pythnetwork/client" "^2.8.0"
