@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { MainNav } from './MainNav'
 import { useRewardToggle, useDarkMode } from '../context'
 import { TermsOfService } from './TermsOfService'
+import 'styled-components/macro'
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
   ${tw`overflow-x-hidden min-w-vw min-h-vh sm:max-h-vh`}
@@ -19,7 +20,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       {/*To enable dark mode using tailwind - using dark:classname*/}
       <MainNav />
       <TermsOfService />
-      {children}
+      <div css={[tw`mt-14`]}>{children}</div>
     </Wrapper>
   )
 }

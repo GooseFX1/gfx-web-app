@@ -147,6 +147,7 @@ const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
  * @param slideRef - the ref of the absolute button component that is to be animated
  * @param buttonRefs - the ref[] of the buttons that the slideRef is to be animated to
  * @param index - the index of the buttonRefs that the slideRef is to be animated to on mount
+ * @param customCallback - function takes an index and performs custom animation placement instead of center
  */
 export const useAnimateButtonSlide = (
   slideRef: MutableRefObject<HTMLDivElement | null>,
@@ -191,7 +192,11 @@ export const useAnimateButtonSlide = (
     },
     [slideRef.current, buttonRefs.current, customCallback, index]
   )
-
+  useEffect(() => {
+    // weird behaviour where resizing has buttons too big or too small
+    window.addEventListener('resize', () => handleSlide(index ?? 0))
+    return () => window.removeEventListener('resize', () => handleSlide(index ?? 0))
+  }, [index])
   return handleSlide
 }
 

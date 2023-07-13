@@ -160,6 +160,7 @@ export const More: FC = () => {
       placement="bottomRight"
       trigger={['hover']}
       onVisibleChange={onVisibleChange}
+      key={'dropdown'}
     >
       <ICON $mode={mode === 'dark'}>
         <img key={`${mode}-more-button`} src={`/img/assets/more-${mode}-${isActive}.svg`} alt="more" />

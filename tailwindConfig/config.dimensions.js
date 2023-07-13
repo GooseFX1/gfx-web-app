@@ -16,6 +16,7 @@ const margin = {
   0.5: '2px',
   1.25: '5px',
   1.5: '6px',
+  1.75: '7px',
   2.75: '11px',
   3.75: '15px',
   4.5: '18px'
@@ -40,6 +41,8 @@ const height = {
   inherit: 'inherit'
 }
 const width = {
+  2.25: '9px',
+  3.5: '14px',
   6: '24px',
   6.5: '26px',
   7.5: '30px',
@@ -95,6 +98,9 @@ const translate = {
 const spacing = {
   1.5: '6px'
 }
+const inset = {
+  3.75: '15px'
+}
 module.exports = {
   padding,
   margin,
@@ -107,5 +113,6 @@ module.exports = {
   maxHeight,
   gap,
   translate,
-  spacing
+  spacing,
+  inset
 }
