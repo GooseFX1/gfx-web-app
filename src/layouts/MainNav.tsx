@@ -751,7 +751,7 @@ const NavItem: FC<MainNavIconProps> = ({
         css={[
           tw`flex min-md:flex-col items-center justify-center h-full cursor-pointer
         px-4.5 py-1.25 min-md:p-0 rounded-full min-md:rounded-none h-12.5 min-md:h-auto
-        w-42 min-md:w-auto bg-grey-4 dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent
+        w-42 min-md:w-auto bg-grey-5 dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent
         gap-2.5 min-md:gap-0.25
         `
         ]}
