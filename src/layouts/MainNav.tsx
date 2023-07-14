@@ -242,6 +242,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 }) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   return (
     <div
@@ -300,7 +301,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           options={[
             {
               text: 'Leaderboard',
-              onClick: () => history.push('/leaderboard'),
+              //onClick: () => history.push('/leaderboard'),
+              onClick: () => null,
               isActive: pathname.includes('leaderboard')
             }
           ]}
@@ -628,6 +630,7 @@ interface Controls {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
@@ -668,7 +671,8 @@ const DesktopNav: FC = () => {
         options={[
           {
             text: 'Leaderboard',
-            onClick: () => history.push('/leaderboard'),
+            //onClick: () => history.push('/leaderboard'),
+            onClick: () => null,
             isActive: pathname.includes('leaderboard')
           }
           // {
