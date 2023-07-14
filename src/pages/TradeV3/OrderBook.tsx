@@ -70,6 +70,14 @@ const ORDERS = styled.div<{ $visible: boolean }>`
   padding-right: 2px;
   overflow-y: scroll;
   ${({ theme }) => theme.customScrollBar('4px')};
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  & {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
   transition: max-height ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
 
