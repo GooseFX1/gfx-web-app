@@ -684,7 +684,7 @@ const BuddyLinkReferral: FC = () => {
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
-  const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
+  const referLink = useMemo(() => `app.goosefx.io/trade?r=${name}`, [name])
 
   useMemo(() => {
     if (connection && wallet.publicKey)
