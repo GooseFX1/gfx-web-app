@@ -71,3 +71,8 @@ export const faqs = [
     )
   }
 ]
+
+export const ModeOfOperation = {
+  DEPOSIT: 'Deposit',
+  WITHDRAW: 'Withdraw'
+}
