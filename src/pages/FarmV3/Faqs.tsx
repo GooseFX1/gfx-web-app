@@ -7,7 +7,8 @@ import { useDarkMode } from '../../context'
 
 const FAQ_WRAPPER = styled.div`
   .faqs {
-    ${tw`flex flex-row cursor-pointer items-center h-16 w-full border border-solid dark:border-black-4 border-grey-4 py-5 px-6 border-r-0 border-t-0 border-l-0`}
+    ${tw`flex flex-row cursor-pointer items-center h-16
+     w-full border border-solid dark:border-black-4 border-grey-4 py-5 px-6 border-r-0 border-t-0 border-l-0`}
   }
   .faqs:last-child {
     ${tw`!border-0`}
@@ -43,7 +44,7 @@ const FAQ_WRAPPER = styled.div`
 export const Faqs: FC = () => {
   return (
     <FAQ_WRAPPER>
-      <div tw="flex flex-row items-center">
+      <div tw="flex flex-row items-center mt-[55px]">
         <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4">Frequently Asked Questions</h2>
         <a
           tw="w-[140px] h-10 bg-blue-1 mb-5 cursor-pointer text-white font-semibold text-average flex flex-row justify-center items-center rounded-circle"
@@ -80,7 +81,18 @@ export const FaqRow: FC<{ item }> = ({ item }) => {
           className={isFaqOpen ? 'invertArrow' : 'dontInvert'}
         />
       </div>
-      {isFaqOpen && <div className="faq-answer">{item.answer}</div>}
+
+      <div
+        css={[
+          tw`duration-300`,
+          isFaqOpen
+            ? tw`h-[fit] text-tiny px-6 pb-3 mt-[-10px] font-medium dark:text-grey-2 text-grey-1 border 
+            border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`
+            : tw`h-0 text-[0px] invisible opacity-0 `
+        ]}
+      >
+        {item.answer}
+      </div>
     </>
   )
 }

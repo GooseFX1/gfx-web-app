@@ -10,7 +10,7 @@ const CARD_GRADIENT = styled.div`
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-small h-full w-full flex flex-col justify-center px-2.5`}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-[9px] h-full w-full flex flex-col justify-center px-2.5`}
 `
 
 const POOL_CARD = styled.div`
@@ -44,22 +44,22 @@ export const FarmHeader: FC<{}> = () => {
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5">{card?.value}</div>
               </INFO_CARD>
             </CARD_GRADIENT>
-            <div
-              tw="absolute right-0 border border-solid border-grey-1 w-[220px] h-12 rounded-[100px] cursor-pointer
-              py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
-            >
-              <span
-                tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
-                onClick={() => {
-                  setPoolSelection(true)
-                }}
-              >
-                Can’t Choose A Pool
-              </span>
-              <img src="/img/assets/questionMark.svg" alt="question-icon" />
-            </div>
           </>
         ))}
+        <div
+          tw="absolute right-0 border border-solid border-grey-1 w-[220px] h-12 rounded-[100px] cursor-pointer
+              py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
+        >
+          <span
+            tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
+            onClick={() => {
+              setPoolSelection(true)
+            }}
+          >
+            Can’t Choose A Pool
+          </span>
+          <img src="/img/assets/questionMark.svg" alt="question-icon" />
+        </div>
       </div>
       <div tw="dark:text-grey-2 text-regular font-semibold text-grey-1">Today</div>
       <div tw="dark:text-grey-5 text-lg font-semibold text-black-4 mb-2.5">Top Pools</div>
