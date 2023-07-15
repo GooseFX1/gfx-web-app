@@ -82,7 +82,9 @@ export const Router: FC = () => (
                       </NFTProfileProvider>
                     </Route>
                     <Route exact path="/farm">
-                      <Farm />
+                      <PriceFeedFarmProvider>
+                        <Farm />
+                      </PriceFeedFarmProvider>
                     </Route>
                     <Route exact path="/withdraw">
                       <FarmV2 />
