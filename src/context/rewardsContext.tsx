@@ -1,4 +1,4 @@
-import  {
+import {
   createContext,
   FC,
   ReactNode,
@@ -535,25 +535,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
       return ANCHOR_BN.ZERO
     }
-    //TODO: flip
-    // (global.total_accumulated_profit - user.last_observied_tac) *
-    // (user.staked_gofx / global.gofx_vault.amount)
-    const userPortion = rewards.user.staking.userMetadata.totalStaked.div(gofxValutBN)
-    const div1 = rewards.user.staking.userMetadata.totalStaked.divmod(gofxValutBN)
-    const res = userLastObservedDifference
-      .muln(parseFloat(`${div1.div.toString()}.${div1.mod.toString()}`))
-      .divmod(ANCHOR_BN.BASE_9)
-    const portion = new anchor.BN(parseFloat(`${res.div.toString()}.${res.mod.toString()}`))
-    console.log({
-      lastDif: userLastObservedDifference.toString(),
-      gofxVault: gofxValutBN.toString(),
-      userV: userPortion.toString(),
-      div1: `${div1.div.toString()}.${div1.mod.toString()}`,
-      res: `${res.div.toString()}.${res.mod.toString()}`,
-      portion: portion
-    })
 
-    return portion
+    const userPortion = rewards.user.staking.userMetadata.totalStaked.div(gofxValutBN)
+
+    return userLastObservedDifference.mul(userPortion).div(ANCHOR_BN.BASE_6)
   }, [rewards])
   const getUiAmount = useCallback((value: anchor.BN, isUsdc?: boolean) => {
     const uiAmount = value.div(new anchor.BN(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)).toNumber()

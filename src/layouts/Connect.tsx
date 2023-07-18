@@ -138,7 +138,11 @@ export const Connect: FC<{ width?: string }> = () => {
     if (!wallet || (!base58PublicKey && wallet?.adapter?.name === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
-      return <Loader zIndex={1} />
+      return (
+        <div css={[tw`absolute top-[-6px]`]}>
+          <Loader zIndex={1} />
+        </div>
+      )
     }
     return truncateAddress(base58PublicKey)
   }, [base58PublicKey, isGeoBlocked, wallet?.adapter?.name])
@@ -160,25 +164,34 @@ export const Connect: FC<{ width?: string }> = () => {
   //but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
   useEffect(() => {
     const walletName = sessionStorage.getItem('connectedGFXWallet')
+    if (!walletName) return
     if (!base58PublicKey && !connected && walletName) {
       select(walletName as WalletName<string>)
     }
   }, [base58PublicKey, connected])
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
   const onClose = useCallback(() => setIsOpen(false), [])
-  const handleDisconnect = useCallback(() => {
-    disconnect().finally(() => {
+  const handleDisconnect = useCallback(
+    (e) => {
+      e.preventDefault()
       sessionStorage.removeItem('connectedGFXWallet')
-      onClose()
-    })
-  }, [disconnect])
+      disconnect().finally(() => {
+        onClose()
+      })
+    },
+    [disconnect]
+  )
   const handleWalletChange = useCallback(() => {
     setWalletModalVisible(true)
     onClose()
   }, [setWalletModalVisible])
   const copyAddress = useCallback(() => {
     navigator.clipboard.writeText(base58PublicKey)
+    onClose()
   }, [base58PublicKey])
+  const handleConnect = useCallback(() => {
+    setWalletModalVisible(true)
+  }, [])
   //as="div" css={[tw`relative inline-block`]}
   return (
     <div css={tw`relative inline-block text-left z-20 `} ref={selfRef}>
@@ -188,6 +201,7 @@ export const Connect: FC<{ width?: string }> = () => {
           as={'button'}
           css={[
             tw`border-0 flex  cursor-pointer relative bg-purple-1 text-white items-center
+            justify-center
       text-tiny font-semibold h-[35px] w-[124px] px-1.75 py-2.25 rounded-circle gap-1.75
       `,
             isGeoBlocked
@@ -197,7 +211,7 @@ export const Connect: FC<{ width?: string }> = () => {
               : tw``
           ]}
           disabled={isGeoBlocked}
-          onClick={toggleOpen}
+          onClick={connected ? toggleOpen : handleConnect}
         >
           {connected && (
             <div
@@ -212,7 +226,7 @@ export const Connect: FC<{ width?: string }> = () => {
               />
             </div>
           )}
-          <div css={[tw`flex w-full relative items-center justify-center`]}>{connectLabel}</div>
+          {connectLabel}
           {connected && (
             <div
               css={tw`

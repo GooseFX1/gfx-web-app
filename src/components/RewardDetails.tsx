@@ -49,18 +49,19 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
 
   return (
     <>
-      <div id={'title'} css={tw`flex flex-col w-full  min-md:flex-row`}>
+      <div id={'title'} css={tw`flex items-center flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
         {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
-        {breakpoint.isMobile && !isEarnSelected && <ReferFriendSegment />}
-        <div css={tw`flex flex-col gap-3.75 h-full min-md:ml-5`}>
+        {(breakpoint.isMobile || breakpoint.isTablet) && !isEarnSelected && <ReferFriendSegment />}
+        <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5`, !subtitle && tw`justify-center gap-0`]}>
           <p
-            css={tw`text-[18px] text-center min-md:text-left  min-md:text-lg
-              dark:text-white text-black-4 mb-0  font-semibold`}
+            css={tw`text-lg leading-5.5 text-center min-md:text-left  min-md:text-lg
+              dark:text-white text-black-4 mb-0  font-semibold leading-normal`}
           >
             {title}
           </p>
           <p
             css={tw`min-md:text-lg text-regular text-grey-1 dark:text-grey-2 mb-0 text-center
+              leading-normal
             min-md:text-left`}
           >
             {subtitle}
@@ -276,7 +277,7 @@ const EarnRewards: FC = () => {
         isOpen={isUnstakeConfirmationModalOpen}
         onClose={handleUnstakeConfirmationModalClose}
       />
-      <div css={tw`flex flex-row w-full justify-between items-center flex-wrap `}>
+      <div css={tw`flex flex-row w-full justify-between items-center flex-wrap gap-3.75`}>
         {breakpoints.isMobile && (
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
@@ -286,7 +287,7 @@ const EarnRewards: FC = () => {
             setInputValue={setInputValue}
           />
         )}
-        <div tw={'flex flex-col min-md:flex-row gap-1 mt-[20px] min-md:mt-0'}>
+        <div tw={'flex flex-col min-md:flex-row gap-1 '}>
           <p
             css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
           >
@@ -814,7 +815,7 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div css={tw` mt-6 min-h-[40px]`}>
+    <div css={tw`flex flex-col gap-5 min-h-[40px] mt-4`}>
       {!initialFetch ? (
         <>
           <div
@@ -828,9 +829,18 @@ const BuddyLinkReferral: FC = () => {
           </div>
 
           {!riskGroup ? (
-            <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1 mt-1`}>
-              <p css={tw`mb-0 text-sm text-grey-2 font-semibold `}>
-                Please make your first PERP deposit in order to generate your referral link
+            <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1 `}>
+              <p css={tw`mb-0 text-regular text-grey-3 dark:text-grey-2 font-semibold `}>
+                To generate a referral link, first connect your wallet and create a trader account at
+                <a
+                  href={'app.goosefx.io/trade'}
+                  target={'_blank'}
+                  rel={'noreferrer'}
+                  css={[tw` underline text-blue-1 dark:text-white mx-1`]}
+                >
+                  app.goosefx.io/trade
+                </a>
+                by depositing funds. Afterwards you will be able to generate a referral URL to share,
               </p>
             </div>
           ) : null}
@@ -839,30 +849,18 @@ const BuddyLinkReferral: FC = () => {
     </div>
   )
 }
-const ReferAndEarn: FC = () => {
-  const handleQuestions = useCallback(() => {
-    console.log('DO SOMETHING HERE')
-  }, [])
+const ReferAndEarn: FC = () => (
+  <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full`}>
+    <BuddyLinkReferral />
 
-  return (
-    <div css={tw`flex flex-col gap-4 font-semibold mb-[25px]`}>
-      <BuddyLinkReferral />
-      <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1`}>
-        <p css={tw`mb-0 text-sm text-grey-1 font-semibold `}>Still have questions?</p>
-        <p css={tw`mb-0 text-sm text-grey-1 font-semibold`}>
-          Go to our
-          <span
-            onClick={handleQuestions}
-            css={tw`ml-1 underline text-sm text-blue-1 dark:text-grey-5 cursor-pointer font-semibold
-      `}
-          >
-            referral program documentation
-          </span>
-        </p>
-      </div>
-    </div>
-  )
-}
+    <p css={[tw`mb-0 mt-auto text-regular text-grey-3 dark:text-grey-2 font-semibold `]}>
+      Still have questions? Go to our
+      <a css={[tw`underline text-blue-1 dark:text-white ml-1`]} href={''} target={'_blank'} rel={'noreferrer'}>
+        Referral Program Documentation
+      </a>
+    </p>
+  </div>
+)
 
 interface RewardSegmentProps {
   panelIndex: number
@@ -909,8 +907,8 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
       },
       {
         title: 'Refer and get 20% of all the fees!',
-        subtitle: 'Earn the 20% of taker fees form each of your referrals',
-        icon: <img src={`/img/assets/refer-${mode}.svg`} />,
+        subtitle: '',
+        icon: <img src={`/img/assets/referral-${mode}.svg`} />,
         children: <ReferAndEarn />
       }
     ],
@@ -1031,34 +1029,39 @@ const EarnRewardsRedirect: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [])
   return (
-    <div css={tw`flex pt-[18px] w-full min-md:pt-[45px] flex-col items-center h-full`}>
-      <div tw={'flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5'}>
+    <div css={tw`flex py-2.5 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center h-full`}>
+      <div
+        css={[
+          tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5
+      leading-normal`
+        ]}
+      >
         <p tw={'mb-0'}>Rewards</p>
         <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0'}>{apr}% APY</p>
       </div>
       <div
         css={[
-          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-[15px] mt-3.75 min-md:mt-[61px]
+          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-[15px] min-md:mt-[61px]
            text-grey-5`
         ]}
       >
         <span
           css={[
-            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-[40px]`,
+            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-10`,
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
           {nFormatter(totalEarned)}
         </span>
-        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold'}>
+        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>
           {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
         </p>
       </div>
-      <div css={[tw`flex flex-col w-full min-md:w-max mt-3.75`]}>
+      <div css={[tw`flex flex-col w-full min-md:w-max gap-3.75 min-md:gap-0`]}>
         <p
           css={[
             tw`mb-0 text-regular text-average font-semibold opacity-[0.6]
-         text-grey-5 text-center`,
+         text-grey-5 text-center leading-normal`,
             gofxStaked > 0.0 ? tw`opacity-100` : tw``
           ]}
         >
@@ -1066,8 +1069,8 @@ const EarnRewardsRedirect: FC = () => {
         </p>
         <button
           css={[
-            tw` mt-3.75 min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
-            text-black-4 border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px] mb-[15px]
+            tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
+            text-black-4 border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px]
             min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75`,
             !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
@@ -1095,9 +1098,8 @@ const EarnRewardsRedirect: FC = () => {
 
 const ReferAndEarnRedirect: FC = () => {
   const breakpoints = useBreakPoint()
-  const tokenEarned = 'USDC'
-  const totalInProgress = 0.0
-  const { claim, getTreasury, isReady } = useReferrals()
+  const [totalFriends, setTotalFriends] = useState(0)
+  const { claim, getTreasury, isReady, getReferred } = useReferrals()
   const { sendTransaction } = useWallet()
   const [treasury, setTreasury] = useState<Treasury | null>(null)
   const [totalEarned, setTotalEarned] = useState(0.0)
@@ -1133,26 +1135,40 @@ const ReferAndEarnRedirect: FC = () => {
       })
   }, [isReady])
 
+  useEffect(() => {
+    if (isReady)
+      getTreasury().then(async (newTreasury) => {
+        if (newTreasury) {
+          const referredMembers = await getReferred() // Use this list to show members
+          setTotalFriends(referredMembers.length)
+        } else {
+          setTotalFriends(0)
+        }
+      })
+  }, [isReady])
   return (
-    <div css={tw`flex flex-col h-full pt-[26px] w-full items-center`}>
-      {!breakpoints.isMobile && <ReferFriendSegment />}
-      <div css={tw`flex flex-col justify-center items-center mt-[52px] min-md:mt-[96px]`}>
-        <p css={tw`text-6xl mb-0 font-semibold`}>{totalEarned.toFixed(2)}</p>
-        <p css={tw`text-lg mb-0 font-semibold`}>{tokenEarned} Total Earned</p>
-        <p css={tw`mb-0 text-sm font-semibold`}>
-          Bonus in progress: {totalInProgress.toFixed(2)} {tokenEarned}
-        </p>
+    <div css={tw`flex flex-col h-full pt-3.75 pb-2.5 min-md:pb-0 min-md:pt-[26px] w-full items-center `}>
+      <p css={tw`mb-0 text-lg font-semibold font-semibold `}>Total Referred: {totalFriends} Friends</p>
+      {!(breakpoints.isMobile || breakpoints.isTablet) && <ReferFriendSegment />}
+      <div
+        css={[
+          tw`flex flex-col justify-center items-center mt-3.75 min-md:mt-[96px] gap-3.75 min-md:gap-4`,
+          totalEarned <= 0.0 ? tw`opacity-60` : tw`opacity-100`
+        ]}
+      >
+        <p css={tw`text-2xl min-md:text-4xl mb-0 font-semibold leading-10`}>{totalEarned.toFixed(2)}</p>
+        <p css={tw`text-regular min-md:text-lg mb-0 font-semibold`}>USDC Total Earned</p>
       </div>
       <button
         css={[
           tw`h-[50px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
-        mb-[43px] min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
+        min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
           totalEarned > 0.0 ? tw`opacity-100` : tw``
         ]}
-        onClick={() => handleClaim()}
+        onClick={handleClaim}
         disabled={totalEarned <= 0.0}
       >
-        {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} ${tokenEarned}` : 'No USDC Claimable'}
+        {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} USDC` : 'No USDC Claimable'}
       </button>
     </div>
   )
@@ -1175,16 +1191,15 @@ const ReferFriendSegment = () => {
 
   return (
     <div css={tw`flex flex-col items-center justify-center w-full`}>
-      <p css={tw`mb-0 text-lg font-semibold font-semibold `}>Total Referred: {totalFriends} Friends</p>
-
       <a
         href={''}
         target={'_blank'}
         rel="noreferrer"
         css={[
-          tw`mb-[30px] min-md:mb-0 text-lg underline font-semibold min-md:dark:text-grey-5
-        min-md:text-grey-5 dark:text-grey-1 text-grey-2 mt-[30px] min-md:mt-0 cursor-not-allowed`,
-          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw`opacity-50`
+          tw` min-md:mb-0 text-lg underline font-semibold
+          text-grey-1 dark:text-grey-2
+          min-md:mt-0 cursor-not-allowed`,
+          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw``
         ]}
       >
         {totalFriends > 0 ? 'See All Referrals' : 'No Referrals'}

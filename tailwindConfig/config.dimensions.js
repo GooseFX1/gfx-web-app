@@ -94,6 +94,7 @@ const gap = {
   3.25: '13px',
   3.75: '15px',
   4.75: '19px',
+  5: '20px',
   5.75: '23px'
 }
 const translate = {
