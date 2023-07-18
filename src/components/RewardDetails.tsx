@@ -89,53 +89,55 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, o
   )
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
-      <div
-        css={tw`px-[33px] py-[20px] min-md:px-[54px] flex flex-col w-screen min-md:w-[628px] h-[338px] rounded-[22px]
+      <div css={[tw`sm:absolute bottom-0 left-0`]}>
+        <div
+          css={tw`px-[33px] py-[20px] min-md:px-[54px] flex flex-col w-screen min-md:w-[628px] h-[338px] rounded-[22px]
       bg-white dark:bg-black-2 relative`}
-      >
-        <p
-          css={tw`mb-0 text-black-4 dark:text-grey-2 text-[18px] leading-[22px] font-semibold text-center w-full`}
         >
-          Are you sure you want to unstake {amount} GOFX?
-        </p>
-        <img
-          css={tw`absolute top-[20px] right-[20px] w-[18px] h-[18px] cursor-pointer`}
-          onClick={onClose}
-          src={`${window.origin}/img/assets/close-lite.svg`}
-          alt="copy_address"
-        />
-        <p css={tw`mb-0 text-grey-1 dark:text-grey-5 mt-[20px] text-[15px] leading-[18px] text-center w-full`}>
-          Once the cooldown starts, the process cannot be undone, and you will need to re-stake your GOFX
-        </p>
-        <button
-          css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
+          <p
+            css={tw`mb-0 text-black-4 dark:text-grey-2 text-[18px] leading-[22px] font-semibold text-center w-full`}
+          >
+            Are you sure you want to unstake {amount} GOFX?
+          </p>
+          <img
+            css={tw`absolute top-[20px] right-[20px] w-[18px] h-[18px] cursor-pointer`}
+            onClick={onClose}
+            src={`${window.origin}/img/assets/close-lite.svg`}
+            alt="copy_address"
+          />
+          <p css={tw`mb-0 text-grey-1 dark:text-grey-5 mt-[20px] text-[15px] leading-[18px] text-center w-full`}>
+            Once the cooldown starts, the process cannot be undone, and you will need to re-stake your GOFX
+          </p>
+          <button
+            css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
           font-semibold border-0 mt-5`}
-          onClick={onClose}
-        >
-          Cancel
-        </button>
-        <button
-          css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline
           dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px] border-0
         `}
-          onClick={handleStakeConfirmation}
-          disabled={!canUnstake}
-        >
-          Yes, Continue With Cooldown
-        </button>
-        <p
-          css={tw`mt-[28.5px] mb-[20px] text-[13px] leading-[16px] text-center w-full text-grey-1 dark:text-grey-2`}
-        >
-          By selecting “Yes” you agree to{' '}
-          <a
-            href={'https://docs.goosefx.io/'}
-            target={'_blank'}
-            rel="noopener noreferrer"
-            css={tw`underline dark:text-white text-blue-1`}
+            onClick={handleStakeConfirmation}
+            disabled={!canUnstake}
           >
-            Terms of Service
-          </a>
-        </p>
+            Yes, Continue With Cooldown
+          </button>
+          <p
+            css={tw`mt-[28.5px] mb-[20px] text-[13px] leading-[16px] text-center w-full text-grey-1 dark:text-grey-2`}
+          >
+            By selecting “Yes” you agree to{' '}
+            <a
+              href={'https://docs.goosefx.io/'}
+              target={'_blank'}
+              rel="noopener noreferrer"
+              css={tw`underline dark:text-white text-blue-1`}
+            >
+              Terms of Service
+            </a>
+          </p>
+        </div>
       </div>
     </Modal>
   )
@@ -496,9 +498,13 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   const { rewards } = useRewards()
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
-      <div css={tw`flex flex-col items-center justify-center w-screen min-md:w-[628px] h-screen min-md:h-auto`}>
+      <div
+        css={tw`flex flex-col items-center justify-center w-screen min-md:w-[628px] h-[300px] min-md:h-auto
+        absolute min-md:static bottom-0 left-0
+      `}
+      >
         <div
-          css={tw`rounded-t-[22px] mt-[50%] min-md:mt-0 w-full h-[79px] flex flex-col justify-center items-center
+          css={tw`rounded-t-[22px] min-md:mt-[50%] min-md:mt-0 w-full h-[79px] flex flex-col justify-center items-center
       text-white text-lg font-semibold`}
           style={{ background: 'linear-gradient(67deg, #22A668 0%, #194A5E 100%)' }}
         >
@@ -517,8 +523,8 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
           </div>
         </div>
         <div
-          css={tw`flex flex-col w-full h-full  py-[20px]  px-[25px] mb-[20px] rounded-b-[22px]
-        bg-white dark:bg-black-2 flex-auto
+          css={tw`flex flex-col w-full h-[210px] min-md:h-full p-3.75 min-md:py-[20px]  min-md:px-[25px]
+            min-md:mb-[20px] min-md:rounded-b-[22px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
       `}
         >
           {rewards.user.staking.unstakeableTickets.length > 0 ? (
@@ -583,7 +589,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
     return null
   }
   return (
-    <div css={tw`flex w-full h-[34px] justify-between px-[15px] min-md:px-[25px] mt-[15px] mb-[10px]`}>
+    <div css={tw`flex w-full h-[34px] justify-between px-[15px] min-md:px-[25px] `}>
       <p css={tw`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
         {uiUnstakeAmount} GOFX
       </p>
@@ -967,7 +973,7 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
         css={[
           tw` min-w-max  cursor-pointer w-[120px] text-center border-none border-0
   font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
-          panelIndex == 0 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-2 min-md:text-grey-1`
+          panelIndex == 0 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-5 min-md:text-grey-5`
         ]}
         ref={setRef}
         data-index={0}
