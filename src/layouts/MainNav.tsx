@@ -476,6 +476,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
               {children}
             </Menu.Button>
             <Transition
+              show={isOpen}
               as={'div'}
               enter="transition ease-out duration-100"
               enterFrom="transform opacity-0 scale-95"

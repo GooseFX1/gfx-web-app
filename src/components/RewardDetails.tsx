@@ -520,11 +520,21 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
         bg-white dark:bg-black-2 flex-auto
       `}
         >
-          {rewards.user.staking.userMetadata.unstakingTickets
-            .sort((a, b) => a.createdAt.toNumber() - b.createdAt.toNumber())
-            .map((ticket) => (
-              <UnstakingTicketLineItem key={ticket.createdAt.toString()} ticket={ticket} />
-            ))}
+          {rewards.user.staking.unstakeableTickets.length > 0 ? (
+            rewards.user.staking.userMetadata.unstakingTickets
+              .sort((a, b) => a.createdAt.toNumber() - b.createdAt.toNumber())
+              .map((ticket) => <UnstakingTicketLineItem key={ticket.createdAt.toString()} ticket={ticket} />)
+          ) : (
+            <p
+              css={[
+                tw`
+              font-semibold text-lg dark:bg-black-1 text-grey-1
+            `
+              ]}
+            >
+              No Tickets To Claim
+            </p>
+          )}
         </div>
       </div>
     </Modal>
@@ -1172,7 +1182,7 @@ const ReferFriendSegment = () => {
         target={'_blank'}
         rel="noreferrer"
         css={[
-          tw`mb-[30px] min-md:mb-0 text-[20px] leading-[30px] underline font-semibold min-md:dark:text-grey-5
+          tw`mb-[30px] min-md:mb-0 text-lg underline font-semibold min-md:dark:text-grey-5
         min-md:text-grey-5 dark:text-grey-1 text-grey-2 mt-[30px] min-md:mt-0 cursor-not-allowed`,
           totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw`opacity-50`
         ]}

@@ -75,6 +75,7 @@ const initialState: RewardState = {
   user: {
     staking: {
       userMetadata: {
+        owner: PublicKey.default,
         accountOpenedAt: ANCHOR_BN.ZERO,
         totalStaked: ANCHOR_BN.ZERO,
         lastObservedTap: ANCHOR_BN.ZERO,
@@ -210,6 +211,21 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => (network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'),
     [network]
   )
+  console.log(
+    {
+      TAP: rewards.stakePool.totalAccumulatedProfit.toString(),
+      lTAP: rewards.user.staking.userMetadata.lastObservedTap.toString(),
+      totalStaked: rewards.user.staking.userMetadata.totalStaked.toString(),
+      lastClaimed: rewards.user.staking.userMetadata.lastClaimed.toString(),
+      totalEarned: rewards.user.staking.userMetadata.totalEarned.toString(),
+      unstakingTickets: rewards.user.staking.userMetadata.unstakingTickets,
+      unstakeableTickets: rewards.user.staking.unstakeableTickets.map((t) => ({
+        totalStaked: t.ticket.totalUnstaked.toString(),
+        createdAt: t.ticket.createdAt.toString()
+      }))
+    },
+    walletContext?.publicKey?.toBase58()
+  )
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
@@ -223,7 +239,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (!walletContext?.publicKey) {
       return
     }
-
+    console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
     fetchAllRewardData(stakeRewards, walletContext?.publicKey)
       .then((data) => {
         const payload: RewardState = structuredClone(rewards)
@@ -512,18 +528,32 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [stakeRewards, walletContext]
   )
   const getClaimableFees = useCallback((): anchor.BN => {
-    const userLastObservedDifference = rewards.user.staking.userMetadata.lastObservedTap.sub(
-      rewards.stakePool.totalAccumulatedProfit
+    const userLastObservedDifference = rewards.stakePool.totalAccumulatedProfit.sub(
+      rewards.user.staking.userMetadata.lastObservedTap
     )
     const gofxValutBN = new anchor.BN(rewards.gofxVault.amount)
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
       return ANCHOR_BN.ZERO
     }
     //TODO: flip
+    // (global.total_accumulated_profit - user.last_observied_tac) *
+    // (user.staked_gofx / global.gofx_vault.amount)
     const userPortion = rewards.user.staking.userMetadata.totalStaked.div(gofxValutBN)
-    // const amountDiv = gofxValutBN.divmod(rewards.user.staking.userMetadata.totalStaked)
+    const div1 = rewards.user.staking.userMetadata.totalStaked.divmod(gofxValutBN)
+    const res = userLastObservedDifference
+      .muln(parseFloat(`${div1.div.toString()}.${div1.mod.toString()}`))
+      .divmod(ANCHOR_BN.BASE_9)
+    const portion = new anchor.BN(parseFloat(`${res.div.toString()}.${res.mod.toString()}`))
+    console.log({
+      lastDif: userLastObservedDifference.toString(),
+      gofxVault: gofxValutBN.toString(),
+      userV: userPortion.toString(),
+      div1: `${div1.div.toString()}.${div1.mod.toString()}`,
+      res: `${res.div.toString()}.${res.mod.toString()}`,
+      portion: portion
+    })
 
-    return userLastObservedDifference.mul(userPortion)
+    return portion
   }, [rewards])
   const getUiAmount = useCallback((value: anchor.BN, isUsdc?: boolean) => {
     const uiAmount = value.div(new anchor.BN(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)).toNumber()

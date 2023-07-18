@@ -186,7 +186,7 @@ export const getDateInISOFormat = (): string => {
 }
 export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
-export const truncateAddress = (address: string): string => `${address.substr(0, 4)}..${address.substr(-4, 4)}`
+export const truncateAddress = (address: string): string => `${address.substr(0, 3)}..${address.substr(-3, 3)}`
 
 export const parseUnixTimestamp = (unixTime: string): string => {
   const date = new Date(0)
