@@ -112,11 +112,13 @@ import useMoveOutside from '../hooks/useMoveOutside'
 //   )
 // }
 interface MenuItemProps {
+  containerStyle?: TwStyle[]
   customMenuListItemStyle?: TwStyle[]
   customMenuListItemsContainerStyle?: TwStyle[]
   customButtonStyle?: TwStyle[]
 }
 export const Connect: FC<MenuItemProps> = ({
+  containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
   customMenuListItemStyle
@@ -203,7 +205,7 @@ export const Connect: FC<MenuItemProps> = ({
   }, [])
   //as="div" css={[tw`relative inline-block`]}
   return (
-    <div css={tw`relative inline-block text-left z-20 `} ref={selfRef}>
+    <div css={[tw`relative inline-block text-left z-20 `].concat(containerStyle ?? [])} ref={selfRef}>
       <span css={tw`absolute top-[34px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
       <Menu>
         <Menu.Button

@@ -388,26 +388,30 @@ const EarnRewards: FC = () => {
         </div>
       </div>
 
-      <button
-        onClick={handleStakeUnstake}
-        css={[
-          tw`w-full bg-grey-5 dark:bg-black-1 border-0 relative
+      {connected ? (
+        <button
+          onClick={handleStakeUnstake}
+          css={[
+            tw`w-full bg-grey-5 dark:bg-black-1 border-0 relative
            rounded-full py-[14px] px-2 text-[18px] leading-[22px] font-semibold text-grey-1 dark:text-grey-2
            h-10 flex items-center justify-center
            `,
-          canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
-          isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
-        ]}
-        disabled={!canStakeOrUnstake}
-      >
-        {isStakeLoading ? (
-          <Loader zIndex={2} />
-        ) : userGoFxBalance.uiAmount > 0.0 ? (
-          `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
-        ) : (
-          'Insufficient GOFX'
-        )}
-      </button>
+            canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
+            isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
+          ]}
+          disabled={!canStakeOrUnstake}
+        >
+          {isStakeLoading ? (
+            <Loader zIndex={2} />
+          ) : userGoFxBalance.uiAmount > 0.0 ? (
+            `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
+          ) : (
+            'Insufficient GOFX'
+          )}
+        </button>
+      ) : (
+        <Connect containerStyle={[tw`w-full min-md:w-full`]} customButtonStyle={[tw`w-full min-md:w-full`]} />
+      )}
 
       {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}
     </div>
