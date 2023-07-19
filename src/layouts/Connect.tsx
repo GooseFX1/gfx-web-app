@@ -15,6 +15,7 @@ import { Menu, Transition } from '@headlessui/react'
 import 'styled-components/macro'
 import { useDarkMode, useWalletModal } from '../context'
 import useMoveOutside from '../hooks/useMoveOutside'
+import { useLocation } from 'react-router-dom'
 
 // const WALLET_ICON = styled.div`
 //   ${tw`flex items-center justify-center bg-black mr-[12px] rounded-circle`}
@@ -131,6 +132,8 @@ export const Connect: FC<MenuItemProps> = ({
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
+  const { pathname } = useLocation()
+  const canConnect = useMemo(() => !isGeoBlocked && !pathname.includes('trade'), [isGeoBlocked, pathname])
   const handleMoveOutside = useCallback(() => {
     if (isOpen) {
       onClose()
@@ -142,7 +145,7 @@ export const Connect: FC<MenuItemProps> = ({
     if (connected) logData('wallet_connected')
   }, [connected])
   const connectLabel = useMemo(() => {
-    if (isGeoBlocked) {
+    if (!canConnect) {
       return 'Georestricted'
     }
     if (!wallet || (!base58PublicKey && wallet?.adapter?.name === SolanaMobileWalletAdapterWalletName)) {
@@ -156,11 +159,11 @@ export const Connect: FC<MenuItemProps> = ({
     }
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, isGeoBlocked, wallet?.adapter?.name, breakpoint])
+  }, [base58PublicKey, canConnect, wallet?.adapter?.name, breakpoint])
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
-    if (wallet && wallet.adapter.name !== SolanaMobileWalletAdapterWalletName && !connected) {
+    if (wallet && wallet.adapter.name !== SolanaMobileWalletAdapterWalletName && !connected && canConnect) {
       connect()
         .then(() => {
           sessionStorage.setItem('connectedGFXWallet', wallet.adapter.name)
@@ -168,8 +171,10 @@ export const Connect: FC<MenuItemProps> = ({
         .catch((e) => {
           console.log({ e })
         })
+    } else {
+      disconnect()
     }
-  }, [wallet, connect, connected])
+  }, [wallet, connect, connected, canConnect])
 
   //using session storage so that a new open tab will not try to login to wallet
   //but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
@@ -203,7 +208,7 @@ export const Connect: FC<MenuItemProps> = ({
   const handleConnect = useCallback(() => {
     setWalletModalVisible(true)
   }, [])
-  //as="div" css={[tw`relative inline-block`]}
+
   return (
     <div css={[tw`relative inline-block text-left z-20 `].concat(containerStyle ?? [])} ref={selfRef}>
       <span css={tw`absolute top-[34px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
@@ -215,13 +220,13 @@ export const Connect: FC<MenuItemProps> = ({
             justify-center
       text-tiny font-semibold h-[35px] w-[124px] px-1.75 py-2.25 rounded-circle gap-1.75
       `,
-            isGeoBlocked
+            canConnect
               ? tw`dark:bg-black-4 bg-grey-4 text-grey-1 dark:text-grey-2`
               : connected
               ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2`
               : tw``
           ].concat(customButtonStyle ?? [])}
-          disabled={isGeoBlocked}
+          disabled={canConnect}
           onClick={connected ? toggleOpen : handleConnect}
         >
           {connected && (
