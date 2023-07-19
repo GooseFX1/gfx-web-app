@@ -186,7 +186,7 @@ export const fetchFixedPriceByPages = async (
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   if (!address) return
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
     return await res
   } catch (err) {
     return err
