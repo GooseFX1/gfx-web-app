@@ -66,7 +66,7 @@ interface IRewardsContext {
   claimFees: () => Promise<void>
   redeemUnstakingTickets: (ticketContracts: UnstakeableTicket[]) => Promise<void>
   enterGiveaway: (giveawayContract: string) => void
-  getClaimableFees: () => anchor.BN
+  getClaimableFees: () => number
   getUiAmount: (value: anchor.BN) => number
 }
 
@@ -198,9 +198,6 @@ const Notification = (title: string, isError: boolean, description: ReactNode) =
       </Col>
     </Row>
     {description}
-    <div>
-      <p>Rewards Program</p>
-    </div>
   </MESSAGE>
 )
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -211,21 +208,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => (network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'),
     [network]
   )
-  console.log(
-    {
-      TAP: rewards.stakePool.totalAccumulatedProfit.toString(),
-      lTAP: rewards.user.staking.userMetadata.lastObservedTap.toString(),
-      totalStaked: rewards.user.staking.userMetadata.totalStaked.toString(),
-      lastClaimed: rewards.user.staking.userMetadata.lastClaimed.toString(),
-      totalEarned: rewards.user.staking.userMetadata.totalEarned.toString(),
-      unstakingTickets: rewards.user.staking.userMetadata.unstakingTickets,
-      unstakeableTickets: rewards.user.staking.unstakeableTickets.map((t) => ({
-        totalStaked: t.ticket.totalUnstaked.toString(),
-        createdAt: t.ticket.createdAt.toString()
-      }))
-    },
-    walletContext?.publicKey?.toBase58()
-  )
+
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
@@ -527,22 +510,21 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [stakeRewards, walletContext]
   )
-  const getClaimableFees = useCallback((): anchor.BN => {
-    const userLastObservedDifference = rewards.stakePool.totalAccumulatedProfit.sub(
-      rewards.user.staking.userMetadata.lastObservedTap
-    )
-    const gofxValutBN = new anchor.BN(rewards.gofxVault.amount)
+  const getClaimableFees = useCallback((): number => {
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
-      return ANCHOR_BN.ZERO
+      return 0.0
     }
 
-    const userPortion = rewards.user.staking.userMetadata.totalStaked.div(gofxValutBN)
-
-    return userLastObservedDifference.mul(userPortion).div(ANCHOR_BN.BASE_6)
+    return (
+      ((rewards.stakePool.totalAccumulatedProfit.toString() -
+        rewards.user.staking.userMetadata.lastObservedTap.toString()) *
+        (rewards.user.staking.userMetadata.totalStaked.toString() / rewards.gofxVault.amount.toString())) /
+      1e6
+    )
   }, [rewards])
   const getUiAmount = useCallback((value: anchor.BN, isUsdc?: boolean) => {
-    const uiAmount = value.div(new anchor.BN(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)).toNumber()
-    return uiAmount
+    const uiAmount = value.divmod(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)
+    return parseFloat(`${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
   }, [])
 
   return (

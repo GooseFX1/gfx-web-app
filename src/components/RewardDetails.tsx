@@ -11,7 +11,7 @@ import { Input, InputRef } from 'antd'
 import { Tooltip } from './Tooltip'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { TokenAmount, PublicKey, Connection } from '@solana/web3.js'
-import { clamp, nFormatter } from '../utils'
+import { clamp, nFormatter, notify } from '../utils'
 import { useHistory } from 'react-router-dom'
 import Modal from './common/Modal'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
@@ -25,9 +25,11 @@ import { Treasury } from '@ladderlabs/buddy-sdk'
 import { Transaction } from '@solana/web3.js'
 import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
 import useRewards from '../context/rewardsContext'
+import { Connect } from '../layouts'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col sm:pt-0 px-7.5  h-full items-center rounded-t-bigger `}
+  ${tw`flex flex-col py-2.5 min-md:pt-5 px-7.5 min-md:px-[125px] h-[275px] min-md:h-full items-center rounded-t-bigger
+  `}
 `
 
 const CLOSE_ICON = styled.button`
@@ -54,8 +56,11 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
         {(breakpoint.isMobile || breakpoint.isTablet) && !isEarnSelected && <ReferFriendSegment />}
         <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5`, !subtitle && tw`justify-center gap-0`]}>
           <p
-            css={tw`text-lg leading-5.5 text-center min-md:text-left  min-md:text-lg
-              dark:text-white text-black-4 mb-0  font-semibold leading-normal`}
+            css={[
+              tw`text-lg leading-5.5 text-center min-md:text-left  min-md:text-lg
+              dark:text-white text-black-4 mb-0  font-semibold leading-normal`,
+              !subtitle && tw`text-left`
+            ]}
           >
             {title}
           </p>
@@ -193,9 +198,9 @@ const EarnRewards: FC = () => {
   const handleHalf = useCallback(async () => {
     let half = '0'
     if (isStakeSelected) {
-      half = (userGoFxBalance.uiAmount / 2).toFixed(2)
+      half = Math.floor(userGoFxBalance.uiAmount / 2).toFixed(2)
     } else {
-      half = (totalStaked / 2).toFixed(2)
+      half = Math.floor(totalStaked / 2).toFixed(2)
     }
 
     setInputValue(parseFloat(half))
@@ -204,8 +209,8 @@ const EarnRewards: FC = () => {
     }
   }, [userGoFxBalance, inputRef, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
-    let max = userGoFxBalance.uiAmount.toFixed(2)
-    if (!isStakeSelected) max = totalStaked.toFixed(2)
+    let max = Math.floor(userGoFxBalance.uiAmount).toFixed(2)
+    if (!isStakeSelected) max = totalStaked.toString()
     setInputValue(parseFloat(max))
     if (inputRef.current) {
       inputRef.current.input.value = max
@@ -626,7 +631,7 @@ const UnstakeBottomBar: FC = () => {
         css={[
           tw`min-md:mt-[43px] min-md:mb-[46px] text-[18px] leading-[22px] text-primary-gradient-1
           underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
-           active:bg-transparent font-semibold border-0 mt-[35px] mb-[31px]
+           active:bg-transparent font-semibold border-0 mt-[15px] mb-[28px]
   `,
           rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
@@ -709,6 +714,7 @@ const BuddyLinkReferral: FC = () => {
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
   const { connection } = useConnectionConfig()
+
   const referLink = useMemo(() => `app.goosefx.io/trade?r=${name}`, [name])
 
   useMemo(() => {
@@ -721,6 +727,12 @@ const BuddyLinkReferral: FC = () => {
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(referLink)
     setIsCopied(true)
+    notify({
+      description: 'Success!',
+      type: 'success',
+      message: 'Link successfully copied to the clipboard. Share away!',
+      icon: '/img/assets/notify-success.svg'
+    })
     setTimeout(() => {
       setIsCopied(false)
     }, 5000)
@@ -735,10 +747,34 @@ const BuddyLinkReferral: FC = () => {
         // No referrer here because we can't attach it to the TraderRiskGroup
         transaction.add(...(await createRandomBuddy('')))
 
-        await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection))
+        await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
+          notify({
+            description: 'Huzzah!',
+            message: 'Your personal link has been generated. Share this magic link with others to start earning!',
+            type: 'success',
+            icon: '/img/assets/notify-success.svg'
+          })
+        })
         setName((await getName()) || '')
       } catch (e) {
         console.log(e)
+        notify({
+          description: 'Uh oh!',
+          message: (
+            <div>
+              Please bear with us and try again, or if the error continues
+              <a
+                css={[tw`mx-1 underline`]}
+                href={'https://docs.goosefx.io/'}
+                target={'_blank'}
+                referrerPolicy={'no-referrer'}
+              >
+                go to docs
+              </a>
+            </div>
+          ),
+          icon: '/img/assets/notify-fail.svg'
+        })
         //TODO: handle error state
       } finally {
         setLoading(false)
@@ -821,7 +857,7 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div css={tw`flex flex-col gap-5 min-h-[40px] mt-4`}>
+    <div css={tw`flex flex-col gap-5 min-h-[40px] mt-3.75 min-md:mt-2.5 items-center `}>
       {!initialFetch ? (
         <>
           <div
@@ -833,32 +869,32 @@ const BuddyLinkReferral: FC = () => {
           >
             {!name ? generateLink : copyLink}
           </div>
-
-          {!riskGroup ? (
-            <div css={tw`flex flex-col min-md:flex-row gap-0 min-md:gap-1 `}>
-              <p css={tw`mb-0 text-regular text-grey-3 dark:text-grey-2 font-semibold `}>
-                To generate a referral link, first connect your wallet and create a trader account at
-                <a
-                  href={'app.goosefx.io/trade'}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                  css={[tw` underline text-blue-1 dark:text-white mx-1`]}
-                >
-                  app.goosefx.io/trade
-                </a>
-                by depositing funds. Afterwards you will be able to generate a referral URL to share,
-              </p>
-            </div>
-          ) : null}
         </>
-      ) : null}
+      ) : (
+        <Connect
+          customButtonStyle={[
+            tw`px-7.5 min-md:px-8 text-regular leading-normal text-white font-semibold w-[330px] min-md:w-[265px]`
+          ]}
+        />
+      )}
     </div>
   )
 }
 const ReferAndEarn: FC = () => (
   <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full`}>
     <BuddyLinkReferral />
-
+    <p css={tw`mb-0 text-regular text-grey-3 dark:text-grey-2 font-semibold `}>
+      To generate a referral link, first connect your wallet and create a trader account at
+      <a
+        href={'app.goosefx.io/trade'}
+        target={'_blank'}
+        rel={'noreferrer'}
+        css={[tw` underline text-blue-1 dark:text-white mx-1`]}
+      >
+        app.goosefx.io/trade
+      </a>
+      by depositing funds. Afterwards you will be able to generate a referral URL to share,
+    </p>
     <p css={[tw`mb-0 mt-auto text-regular text-grey-3 dark:text-grey-2 font-semibold `]}>
       Still have questions? Go to our
       <a css={[tw`underline text-blue-1 dark:text-white ml-1`]} href={''} target={'_blank'} rel={'noreferrer'}>
@@ -912,7 +948,7 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
         children: <EarnRewards />
       },
       {
-        title: 'Refer and get 20% of all the fees!',
+        title: 'Refer friends and earn 20% of their taker fees!',
         subtitle: '',
         icon: <img src={`/img/assets/referral-${mode}.svg`} />,
         children: <ReferAndEarn />
@@ -928,8 +964,11 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
   }, [panels, panelIndex])
   return (
     <div
-      css={tw`flex flex-col px-[30px] min-md:px-[145px] pt-2.5 h-full items-center font-semibold bg-white
-        dark:bg-black-2`}
+      css={[
+        tw`flex flex-col px-[30px] min-md:px-[145px] py-2.5 min-md:pt-5
+      h-full items-center font-semibold bg-white dark:bg-black-2`,
+        panelIndex == 1 ? tw`min-md:pb-[41px]` : tw`min-md:pb-0`
+      ]}
     >
       {!breakpoint.isMobile && children}
       <div css={tw`flex flex-col max-w-full min-md:pt-6 h-full items-center`}>
@@ -964,15 +1003,15 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
     [panelIndex]
   )
   return (
-    <div css={tw`flex flex-row justify-center w-full items-center relative text-lg z-[0] mt-[10px] min-md:mt-0`}>
+    <div css={tw`flex flex-row justify-center w-full items-center relative text-lg z-[0] min-md:mt-0`}>
       <div
         ref={sliderRef}
-        css={tw`bg-white w-full min-md:bg-blue-1 h-[44px]  rounded-[36px] z-[-1] absolute transition-all`}
+        css={tw`bg-white w-full min-md:bg-blue-1 h-[40px]  rounded-[36px] z-[-1] absolute transition-all`}
       />
       <button
         css={[
           tw` min-w-max  cursor-pointer w-[120px] text-center border-none border-0
-  font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
+  font-semibold text-base h-[40px] rounded-[36px] duration-700 bg-transparent`,
           panelIndex == 0 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-5 min-md:text-grey-5`
         ]}
         ref={setRef}
@@ -984,7 +1023,7 @@ export const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelInde
       <button
         css={[
           tw`min-w-max cursor-pointer w-[120px] text-center border-none border-0
-              font-semibold text-base h-[44px] rounded-[36px] duration-700 bg-transparent`,
+              font-semibold text-base h-[40px] rounded-[36px] duration-700 bg-transparent`,
           panelIndex == 1 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-2 min-md:text-grey-1`
         ]}
         ref={setRef}
@@ -1028,7 +1067,7 @@ const EarnRewardsRedirect: FC = () => {
       gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
     }),
-    [rewards.user.staking.userMetadata, getClaimableFees, publicKey, connection]
+    [rewards, getClaimableFees, publicKey, connection]
   )
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
@@ -1078,16 +1117,16 @@ const EarnRewardsRedirect: FC = () => {
             tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
             text-black-4 border-0 font-semibold text-[18px] leading-[22px] opacity-[0.5] rounded-[50px]
             min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75`,
-            !usdcClaimable.isZero() ? tw`opacity-100` : tw``,
+            usdcClaimable > 0.0 ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
-          disabled={usdcClaimable.isZero()}
+          disabled={usdcClaimable <= 0.0}
           onClick={handleClaimFees}
         >
           {isClaiming ? (
             <Loader color={'#5855FF'} zIndex={2} />
-          ) : !usdcClaimable.isZero() ? (
-            `Claim ${usdcClaimable.toString(10)} USDC`
+          ) : usdcClaimable > 0.0 ? (
+            `Claim ${nFormatter(usdcClaimable)} USDC`
           ) : (
             'No USDC Claimable'
           )}
@@ -1119,8 +1158,32 @@ const ReferAndEarnRedirect: FC = () => {
 
         await sendTransaction(transaction, connection)
         setTreasury(await treasury.refresh())
+        notify({
+          description: 'Congratulations!',
+          message: `You, successfully claim your reward, amount ${totalEarned} USDC. Here’s to many more victories on
+          your journey with us!`,
+          type: 'success',
+          icon: '/img/assets/notify-success.svg'
+        })
       } catch (e) {
         //TODO: handle error state
+        notify({
+          description: "We didn't catch that!",
+          message: (
+            <div>
+              Please bear with us and try again, or if the error continues
+              <a
+                css={[tw`mx-1 underline`]}
+                href={'https://docs.goosefx.io/'}
+                target={'_blank'}
+                referrerPolicy={'no-referrer'}
+              >
+                go to docs
+              </a>
+            </div>
+          ),
+          icon: '/img/assets/notify-fail.svg'
+        })
       }
 
       // TODO: handle ui success state
@@ -1154,7 +1217,9 @@ const ReferAndEarnRedirect: FC = () => {
   }, [isReady])
   return (
     <div css={tw`flex flex-col h-full pt-3.75 pb-2.5 min-md:pb-0 min-md:pt-[26px] w-full items-center `}>
-      <p css={tw`mb-0 text-lg font-semibold font-semibold `}>Total Referred: {totalFriends} Friends</p>
+      <p css={tw`mb-0 text-lg font-semibold font-semibold leading-normal`}>
+        Total Referred: {totalFriends} Friends
+      </p>
       {!(breakpoints.isMobile || breakpoints.isTablet) && <ReferFriendSegment />}
       <div
         css={[
@@ -1167,8 +1232,8 @@ const ReferAndEarnRedirect: FC = () => {
       </div>
       <button
         css={[
-          tw`h-[50px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
-        min-md:mb-0 mt-11 whitespace-nowrap overflow-hidden`,
+          tw`h-[40px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
+        min-md:mb-0 mt-3.75 min-md:mt-5 whitespace-nowrap overflow-hidden flex items-center justify-center`,
           totalEarned > 0.0 ? tw`opacity-100` : tw``
         ]}
         onClick={handleClaim}
@@ -1204,8 +1269,11 @@ const ReferFriendSegment = () => {
         css={[
           tw` min-md:mb-0 text-lg underline font-semibold
           text-grey-1 dark:text-grey-2
+          min-md:text-grey-5 min-md:dark:text-grey-5
           min-md:mt-0 cursor-not-allowed`,
-          totalFriends > 0 ? tw`text-white dark:text-white hover:text-white cursor-pointer` : tw``
+          totalFriends > 0
+            ? tw`text-white dark:text-white hover:text-white cursor-pointer min-md:opacity-100`
+            : tw`min-md:opacity-60`
         ]}
       >
         {totalFriends > 0 ? 'See All Referrals' : 'No Referrals'}

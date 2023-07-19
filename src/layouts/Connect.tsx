@@ -5,7 +5,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
 import { WalletName } from '@solana/wallet-adapter-base'
 import { truncateAddress } from '../utils'
-import tw from 'twin.macro'
+import tw, { TwStyle } from 'twin.macro'
 // import styled from 'styled-components'
 import 'styled-components/macro'
 import { logData } from '../api/analytics'
@@ -111,8 +111,16 @@ import useMoveOutside from '../hooks/useMoveOutside'
 //     </Menu>
 //   )
 // }
-
-export const Connect: FC<{ width?: string }> = () => {
+interface MenuItemProps {
+  customMenuListItemStyle?: TwStyle[]
+  customMenuListItemsContainerStyle?: TwStyle[]
+  customButtonStyle?: TwStyle[]
+}
+export const Connect: FC<MenuItemProps> = ({
+  customButtonStyle,
+  customMenuListItemsContainerStyle,
+  customMenuListItemStyle
+}) => {
   const { connect, select, wallet, connected, publicKey, disconnect } = useWallet()
   const isGeoBlocked = useBlacklisted()
   const [isOpen, setIsOpen] = useState(false)
@@ -144,8 +152,9 @@ export const Connect: FC<{ width?: string }> = () => {
         </div>
       )
     }
-    return truncateAddress(base58PublicKey)
-  }, [base58PublicKey, isGeoBlocked, wallet?.adapter?.name])
+    const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
+    return truncateAddress(base58PublicKey, leftRightSize)
+  }, [base58PublicKey, isGeoBlocked, wallet?.adapter?.name, breakpoint])
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
@@ -200,7 +209,7 @@ export const Connect: FC<{ width?: string }> = () => {
         <Menu.Button
           as={'button'}
           css={[
-            tw`border-0 flex  cursor-pointer relative bg-purple-1 text-white items-center
+            tw`border-0 flex min-md:w-[140px] cursor-pointer relative bg-purple-1 text-white items-center
             justify-center
       text-tiny font-semibold h-[35px] w-[124px] px-1.75 py-2.25 rounded-circle gap-1.75
       `,
@@ -209,7 +218,7 @@ export const Connect: FC<{ width?: string }> = () => {
               : connected
               ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2`
               : tw``
-          ]}
+          ].concat(customButtonStyle ?? [])}
           disabled={isGeoBlocked}
           onClick={connected ? toggleOpen : handleConnect}
         >
@@ -228,17 +237,14 @@ export const Connect: FC<{ width?: string }> = () => {
           )}
           {connectLabel}
           {connected && (
-            <div
-              css={tw`
-                  rounded-full flex items-center justify-center border-1 border-white
-          w-4 h-4 border-solid p-[2px]
-          `}
-            >
-              <img
-                src={`/img/assets/chevron-dark-${isOpen ? 'selected' : 'active'}.svg`}
-                alt={'connect-chevron'}
-              />
-            </div>
+            <img
+              style={{
+                transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                transition: 'transform 0.2s ease-in-out'
+              }}
+              src={`/img/mainnav/connect-chevron.svg`}
+              alt={'connect-chevron'}
+            />
           )}
         </Menu.Button>
         <Transition
@@ -255,63 +261,69 @@ export const Connect: FC<{ width?: string }> = () => {
           <Menu.Items
             static
             css={[
-              tw`w-[124px] p-2 rounded-small border-1 border-solid border-grey-2 dark:border-grey-1
+              tw`w-full rounded-small border-1 border-solid border-grey-2 dark:border-grey-1
          bg-white dark:bg-black-1 text-grey-1 dark:text-grey-2 text-tiny font-semibold origin-top
-         absolute mt-[4px] gap-2 flex flex-col
+         absolute mt-[4px] gap-2 flex flex-col px-2 py-2 min-md:px-1.25
          `
-            ]}
+            ].concat(customMenuListItemsContainerStyle ?? [])}
           >
             <Menu.Item
               as={'div'}
-              css={[tw`flex gap-1.25 cursor-pointer items-center`]}
+              css={[tw`flex justify-between cursor-pointer items-center`].concat(customMenuListItemStyle ?? [])}
               onClick={copyAddress}
               className={'group'}
             >
-              <p css={[tw`mb-0 w-[79px] break-words`]}>Copy Address</p>
+              <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
+                Copy Address
+              </p>
               <img
-                css={[tw`block group-hover:hidden h-6 w-6`]}
-                src={`img/mainnav/copy-${mode}.svg`}
+                css={[tw`block group-hover:hidden h-6 w-6 `]}
+                src={`/img/mainnav/copy-${mode}.svg`}
                 alt={'copy'}
               />
               <img
                 css={[tw`hidden group-hover:block h-6 w-6`]}
-                src={`img/mainnav/copy-${mode}-active.svg`}
+                src={`/img/mainnav/copy-${mode}-active.svg`}
                 alt={'copy'}
               />
             </Menu.Item>
             <Menu.Item
               as={'div'}
               className={'group'}
-              css={[tw`flex gap-1.25 cursor-pointer items-center`]}
+              css={[tw`flex justify-between cursor-pointer items-center `].concat(customMenuListItemStyle ?? [])}
               onClick={handleWalletChange}
             >
-              <p css={[tw`mb-0 w-[79px] break-words`]}>Change Wallet</p>
+              <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
+                Change Wallet
+              </p>
               <img
                 css={[tw`block group-hover:hidden h-6 w-6`]}
-                src={`img/mainnav/changeWallet-${mode}.svg`}
+                src={`/img/mainnav/changeWallet-${mode}.svg`}
                 alt={'change address'}
               />
               <img
                 css={[tw`hidden group-hover:block h-6 w-6`]}
-                src={`img/mainnav/changeWallet-${mode}-active.svg`}
+                src={`/img/mainnav/changeWallet-${mode}-active.svg`}
                 alt={'change address'}
               />
             </Menu.Item>
             <Menu.Item
               as={'div'}
               className={'group'}
-              css={[tw`flex gap-1.25 cursor-pointer items-center`]}
+              css={[tw`flex justify-between cursor-pointer items-center`].concat(customMenuListItemStyle ?? [])}
               onClick={handleDisconnect}
             >
-              <p css={[tw`mb-0 w-[79px] break-words`]}>Disconnect</p>
+              <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
+                Disconnect
+              </p>
               <img
                 css={[tw`block group-hover:hidden h-6 w-6`]}
-                src={`img/mainnav/disconnect-${mode}.svg`}
+                src={`/img/mainnav/disconnect-${mode}.svg`}
                 alt={'disconnect'}
               />
               <img
                 css={[tw`hidden group-hover:block h-6 w-6`]}
-                src={`img/mainnav/disconnect-${mode}-active.svg`}
+                src={`/img/mainnav/disconnect-${mode}-active.svg`}
                 alt={'disconnect'}
               />
             </Menu.Item>

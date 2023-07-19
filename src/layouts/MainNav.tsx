@@ -221,7 +221,7 @@ const MobileNav: FC = () => {
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[35px]`} src={`img/mainnav/menu-${mode}.svg`} />
+        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} />
       </div>
       <MobileSettingsDrawer
         isOpen={isOpen}
@@ -795,7 +795,11 @@ const NavItem: FC<MainNavIconProps> = ({
               {text}
             </p>
             {hasDropdown && (
-              <img css={[tw`w-3.5 min-md:w-2.25`]} src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />
+              <img
+                css={[tw`w-3.5 min-md:w-2.25`]}
+                src={`/img/assets/chevron-${mode}-${activeDropdown}.svg`}
+                loading={'eager'}
+              />
             )}
           </div>
         </div>
@@ -882,7 +886,7 @@ const CartButton: FC = () => {
       {/*>*/}
       {/*  <rive.RiveComponent />*/}
       {/*</RiveAnimationWrapper>*/}
-      <img src={`img/assets/shopping-bag-${mode}-inactive.svg`} />
+      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
       <p
         css={[
           tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium

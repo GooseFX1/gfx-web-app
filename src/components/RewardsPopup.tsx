@@ -55,14 +55,14 @@ export const RewardsButton: FC = () => {
         </RiveAnimationWrapper> */}
 
         <img
-          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px] w-[31px]` : tw`h-[22px] w-[20px]`]}
-          src={`img/mainnav/rewards-${mode}.${breakpoint.isMobile || breakpoint.isTablet ? 'png' : 'svg'}`}
+          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px] w-[32px]` : tw`h-[22px] w-[20px]`]}
+          src={`/img/mainnav/rewards-${mode}.svg`}
         />
 
         {hasRewards && (
           <img
             css={tw`absolute top-[5px] min-md:top-[1px] right-0`}
-            src={'img/assets/red-notification-circle.svg'}
+            src={'/img/assets/red-notification-circle.svg'}
           />
         )}
       </div>
@@ -83,10 +83,10 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       css={[
         tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
-            bg-grey-5 dark:bg-black-1 px-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
-            text-tiny font-semibold text-black-4 dark:text-white
+            bg-grey-5 dark:bg-black-1 px-2.25 py-1 flex flex-row items-center gap-1.75 cursor-pointer
+            text-tiny font-semibold text-black-4 dark:text-white leading-normal
        `,
-        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`
+        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-auto`
       ]}
     >
       {riveComponent}

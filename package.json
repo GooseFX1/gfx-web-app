@@ -64,7 +64,7 @@
     "eventemitter3": "^4.0.7",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "latest",
-    "goosefx-stake-rewards-sdk": "^1.0.3",
+    "goosefx-stake-rewards-sdk": "^1.0.4",
     "highcharts": "^10.2.1",
     "highcharts-react-official": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
