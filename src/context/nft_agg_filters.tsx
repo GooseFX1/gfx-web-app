@@ -30,9 +30,10 @@ interface Traits {
   trait_type: string
   value: string
   isAnnotation: boolean
+  trait?: string
 }
 
-const initialFilters: IAdditionalFilters = {
+export const initialFilters: IAdditionalFilters = {
   minValueFilter: null,
   maxValueFilter: null,
   marketsFilter: null,

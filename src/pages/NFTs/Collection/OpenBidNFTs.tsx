@@ -12,17 +12,20 @@ import { debounce } from '../../../utils'
 import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
+import { FilterTags } from './FixedPriceNFTs'
 
 export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
   firstCardRef
 }): ReactElement => {
   const { buyNowClicked, bidNowClicked, sellNFTClicked, setSellNFT, openJustModal } = useNFTAggregator()
   const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
+
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked, cancelBidClicked } = useNFTAggregator()
   const paginationNum = 30
   const { general, nftMetadata } = useNFTDetails()
-  const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const [filteredOpenBid, setFilteredOpenBid] = useState<BaseNFT[]>(null)
   const collectionId = useMemo(
     () => (singleCollection ? singleCollection[0].collection_id : null),
@@ -31,16 +34,16 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
 
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
-  const [openBidLoading, setOpenBidLoading] = useState<boolean>(false)
+  const [openBidLoading, setOpenBidLoading] = useState<boolean>(true)
   const observer = useRef<any>()
 
   useEffect(() => {
     const fetchFilteredOpenBid = async () => {
-      if (!searchInsideCollection || !searchInsideCollection.length || searchInsideCollection === '') {
+      if (!searchInsideCollection || !searchInsideCollection?.length || searchInsideCollection === '') {
         setFilteredOpenBid(openBidArr)
       }
 
-      if (searchInsideCollection && searchInsideCollection.length > 1) {
+      if (searchInsideCollection && searchInsideCollection?.length > 1) {
         try {
           const resultArr = await fetchSearchNFTbyCollection(collectionId, searchInsideCollection)
           setFilteredOpenBid(resultArr.nfts)
@@ -71,25 +74,59 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
   )
 
   useEffect(() => {
-    const UUID = singleCollection ? singleCollection[0].uuid : undefined
-    if (UUID) {
-      ;(async () => {
-        setOpenBidLoading(true)
-        const obData = await fetchOpenBidByPages(
-          UUID,
-          pageNumber * paginationNum,
-          (pageNumber + 1) * paginationNum
-        )
-        setOpenBidWithinCollection(obData.data)
-        if (obData.data.open_bid && obData.data.open_bid.length < paginationNum) setStopCalling(true)
-        setOpenBidLoading(false)
-        setOpenBidArr((prev) => [...prev, ...obData.data.open_bid])
-      })()
+    // handle filters change
+    if (
+      (additionalFilters.minValueFilter < additionalFilters.maxValueFilter &&
+        (additionalFilters.maxValueFilter > 0 || additionalFilters.minValueFilter > 0)) ||
+      additionalFilters.marketsFilter !== null ||
+      additionalFilters.marketsFilter?.length !== 0
+    ) {
+      setOpenBidArr([])
+      setPageNumber(0)
+      setFilteredOpenBid(null)
+      setStopCalling(false)
+      setSearchInsideCollection(undefined)
+      !firstLoad && fetchOpenBidNFTs()
     }
+  }, [additionalFilters])
+
+  const fetchOpenBidNFTs = useCallback(async (): Promise<void> => {
+    // needs single collection for uuid else it exits
+
+    if (singleCollection === undefined) return
+    const UUID = singleCollection ? singleCollection[0].uuid : undefined
+
+    try {
+      if (UUID) {
+        ;(async () => {
+          const obData = await fetchOpenBidByPages(
+            UUID,
+            pageNumber * paginationNum,
+            (pageNumber + 1) * paginationNum,
+            additionalFilters
+          )
+          setOpenBidWithinCollection(obData.data)
+          if (obData.data.open_bid && obData.data.open_bid?.length < paginationNum) setStopCalling(true)
+          setOpenBidLoading(false)
+          setFirstLoad(false)
+          if (obData.data.open_bid) setOpenBidArr((prev) => [...prev, ...obData.data.open_bid])
+        })()
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setOpenBidLoading(false)
+    }
+  }, [singleCollection, pageNumber, refreshClicked, additionalFilters])
+
+  useEffect(() => {
+    fetchOpenBidNFTs()
   }, [pageNumber, singleCollection])
 
   useEffect(() => {
     setOpenBidArr([])
+    setPageNumber(0)
+    setOpenBidLoading(true)
   }, [refreshClicked, window.location])
 
   const handleDrawerOpen = useCallback(() => {
@@ -104,27 +141,29 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
   }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked, cancelBidClicked])
 
   const gridType = useMemo(() => (filteredOpenBid?.length > 10 ? '1fr' : '210px'), [filteredOpenBid])
-
+  console.log(openBidLoading)
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
       {handleModalClick()}
-      <div className="gridContainer">
-        {filteredOpenBid ? (
-          filteredOpenBid.map((item, index) => (
-            <SingleNFTCard
-              item={item}
-              key={index}
-              lastCardRef={index + 1 === filteredOpenBid.length ? lastCardRef : null}
-              index={index}
-              addNftToBag={null}
-              firstCardRef={index === 0 ? firstCardRef : null}
-            />
-          ))
-        ) : (
-          <NFTLoading />
-        )}
-      </div>
+      <FilterTags />
+      {openBidLoading ? (
+        <NFTLoading />
+      ) : (
+        <div className="gridContainer">
+          {filteredOpenBid &&
+            filteredOpenBid.map((item, index) => (
+              <SingleNFTCard
+                item={item}
+                key={index}
+                lastCardRef={index + 1 === filteredOpenBid?.length ? lastCardRef : null}
+                index={index}
+                addNftToBag={null}
+                firstCardRef={index === 0 ? firstCardRef : null}
+              />
+            ))}
+        </div>
+      )}
     </NFT_COLLECTIONS_GRID>
   )
 }

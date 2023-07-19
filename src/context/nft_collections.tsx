@@ -109,6 +109,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchSingleCollection = useCallback(async (paramValue: string): Promise<any> => {
     try {
+      setAvailableAttributes(undefined)
       const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
       const collectionData = await res.data
       if (collectionData.collection === null) return null
@@ -118,11 +119,20 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
         const traitType = attribute.attribute.trait_type
         const traitValue = attribute.attribute.value
         const count = attribute?.listed_count ?? attribute?.count
+        const totalCount = attribute?.count
         const isAnnotation = attribute.is_annotation
         if (map[traitType]) {
-          map[traitType].push({ traitValue: traitValue, count: count, isAnnotation })
+          map[traitType].push({
+            traitValue: traitValue,
+            count: count,
+            isAnnotation,
+            trait: traitType,
+            totalCount: totalCount
+          })
         } else {
-          map[traitType] = [{ traitValue: traitValue, count: count, isAnnotation }]
+          map[traitType] = [
+            { traitValue: traitValue, count: count, isAnnotation, trait: traitType, totalCount: totalCount }
+          ]
         }
         return map
       }, {})
