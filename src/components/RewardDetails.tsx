@@ -902,11 +902,16 @@ const ReferAndEarn: FC = () => (
       >
         app.goosefx.io/trade
       </a>
-      by depositing funds. Afterwards you will be able to generate a referral URL to share,
+      by depositing funds. Afterwards you will be able to generate a referral URL to share.
     </p>
     <p css={[tw`mb-0 mt-auto text-regular text-grey-3 dark:text-grey-2 font-semibold `]}>
       Still have questions? Go to our
-      <a css={[tw`underline text-blue-1 dark:text-white ml-1`]} href={''} target={'_blank'} rel={'noreferrer'}>
+      <a
+        css={[tw`underline text-blue-1 dark:text-white ml-1`]}
+        href={'https://docs.goosefx.io/'}
+        target={'_blank'}
+        rel={'noreferrer'}
+      >
         Referral Program Documentation
       </a>
     </p>
