@@ -185,16 +185,12 @@ const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicK
     unstakeableTickets
   }
 }
-const Notification = (title: string, isError: boolean, description: ReactNode) => (
+const Notification = (title: string, isError: boolean, description: ReactNode): JSX.Element => (
   <MESSAGE>
     <Row className="m-title" justify="space-between" align="middle">
       <Col>{title}</Col>
       <Col>
-        <img
-          className="m-icon"
-          src={`/img/assets/${isError ? 'error-border-icon' : 'reward-notification-success'}.svg`}
-          alt=""
-        />
+        <img className="m-icon" src={`/img/assets/${isError ? 'notify_error' : 'notify-success'}.svg`} alt="" />
       </Col>
     </Row>
     {description}
@@ -550,3 +546,4 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 export default function useRewards(): IRewardsContext {
   return useContext(RewardsContext)
 }
+export { Notification }

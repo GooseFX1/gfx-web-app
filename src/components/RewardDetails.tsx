@@ -24,7 +24,7 @@ import useReferrals from '../hooks/useReferrals'
 import { Treasury } from '@ladderlabs/buddy-sdk'
 import { Transaction } from '@solana/web3.js'
 import { getTraderRiskGroupAccount } from '../pages/TradeV3/perps/utils'
-import useRewards from '../context/rewardsContext'
+import useRewards, { Notification } from '../context/rewardsContext'
 import { Connect } from '../layouts'
 
 const FLEX_COL_CONTAINER = styled.div`
@@ -732,10 +732,8 @@ const BuddyLinkReferral: FC = () => {
     navigator.clipboard.writeText(referLink)
     setIsCopied(true)
     notify({
-      description: 'Success!',
       type: 'success',
-      message: 'Link successfully copied to the clipboard. Share away!',
-      icon: '/img/assets/notify-success.svg'
+      message: Notification('Success!', false, 'Link successfully copied to the clipboard. Share away!')
     })
     setTimeout(() => {
       setIsCopied(false)
@@ -753,18 +751,21 @@ const BuddyLinkReferral: FC = () => {
 
         await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
           notify({
-            description: 'Huzzah!',
-            message: 'Your personal link has been generated. Share this magic link with others to start earning!',
-            type: 'success',
-            icon: '/img/assets/notify-success.svg'
+            message: Notification(
+              'Success!',
+              false,
+              'Your personal link has been generated. Share this magic link with others to start earning!'
+            ),
+            type: 'success'
           })
         })
         setName((await getName()) || '')
       } catch (e) {
         console.log(e)
         notify({
-          description: 'Uh oh!',
-          message: (
+          message: Notification(
+            "We can't do that!",
+            true,
             <div>
               Please bear with us and try again, or if the error continues
               <a
@@ -777,7 +778,7 @@ const BuddyLinkReferral: FC = () => {
               </a>
             </div>
           ),
-          icon: '/img/assets/notify-fail.svg'
+          type: 'error'
         })
         //TODO: handle error state
       } finally {
