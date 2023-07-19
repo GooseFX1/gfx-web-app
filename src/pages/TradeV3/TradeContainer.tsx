@@ -401,16 +401,7 @@ export const CryptoContent: FC = () => {
       if (i === 4)
         return (
           <div key={i} className={`space-cont ${isGeoBlocked ? ' filtering' : ''}`}>
-            {selectedCrypto.type === 'perps' ? (
-              <CollateralPanel />
-            ) : (
-              <PERPS_INFO $wallet={wallet} $isLocked={isLocked}>
-                <img src="/img/assets/perpsInfo.svg" alt="perps-info" />
-                <div>
-                  See your account details <br /> exclusively on Perps.
-                </div>
-              </PERPS_INFO>
-            )}
+            {<CollateralPanel />}
             {isGeoBlocked ? (
               <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
                 <button className="georestricted">Georestricted</button>

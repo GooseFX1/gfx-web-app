@@ -48,29 +48,16 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const { activeProduct, marketProductGroup, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
 
   useEffect(() => {
-    if (selectedCrypto.type === 'crypto') {
-      const { address, programId } = serum.getMarketFromAddress(new PublicKey(selectedCrypto.marketAddress))
-
-      const refreshSpotOrderbook = async () => {
-        if (selectedCrypto.type === 'crypto') {
-          const market = await Market.load(connection, address, undefined, programId)
-          await fetchOrderBook(market)
-        }
+    const refreshOrderbook = async () => {
+      await fetchPerpsOrderBook()
+      if (wallet.connected && traderInfo.traderRiskGroupKey) {
+        await fetchPerpsOpenOrders()
+      } else {
+        setPerpsOpenOrders([])
       }
-      const int = setInterval(refreshSpotOrderbook, 500)
-      return () => clearInterval(int)
-    } else if (selectedCrypto.type === 'perps') {
-      const refreshOrderbook = async () => {
-        await fetchPerpsOrderBook()
-        if (wallet.connected && traderInfo.traderRiskGroupKey) {
-          await fetchPerpsOpenOrders()
-        } else {
-          setPerpsOpenOrders([])
-        }
-      }
-      const t2 = setInterval(refreshOrderbook, 500)
-      return () => clearInterval(t2) // clear
     }
+    const t2 = setInterval(refreshOrderbook, 500)
+    return () => clearInterval(t2) // clear
   }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo, wallet.connected])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
@@ -162,16 +149,6 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
     setPerpsOpenOrders(perpsOrders)
     //console.log('orders', perpsOrders, traderInfo.traderRiskGroupKey.toBase58())
-  }
-
-  const fetchOrderBook = async (market: Market) => {
-    try {
-      const asks = await market.loadAsks(connection)
-      const bids = await market.loadBids(connection)
-      setOrderBook((prevState) => ({ ...prevState, asks: asks.getL2(20), bids: bids.getL2(20) }))
-    } catch (e: any) {
-      await notify({ type: 'error', message: 'Error fetching serum order book', icon: 'rate_error' }, e)
-    }
   }
 
   return (

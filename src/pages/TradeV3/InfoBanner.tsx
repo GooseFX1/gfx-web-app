@@ -314,7 +314,7 @@ export const InfoBanner: FC<{
         </SETTING_MODAL>
       )}
 
-      {/* <div className="spot-toggle">
+      <div className="spot-toggle">
         <span
           className={'spot toggle ' + (isSpot ? 'selected' : '')}
           key="spot"
@@ -329,7 +329,7 @@ export const InfoBanner: FC<{
         >
           Perps
         </span>
-      </div> */}
+      </div>
 
       <DropdownPairs />
       {

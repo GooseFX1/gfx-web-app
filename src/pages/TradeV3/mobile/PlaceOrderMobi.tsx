@@ -492,7 +492,7 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
 }
 
 export const PlaceOrderMobi = () => {
-  const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
+  const { order, setOrder, focused, setFocused } = useOrder()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
   const { connected, wallet, publicKey } = useWallet()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
@@ -1052,7 +1052,7 @@ export const PlaceOrderMobi = () => {
             : buttonState !== ButtonState.CanPlaceOrder
             ? null
             : isSpot
-            ? placeOrder()
+            ? handlePlaceOrder()
             : handlePlaceOrder()
         }}
         $orderSide={order.side}

@@ -1,18 +1,9 @@
 /* eslint-disable */
 import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
-import {
-  useAccounts,
-  useCrypto,
-  useTokenRegistry,
-  useTradeHistory,
-  useOrderBook,
-  useDarkMode,
-  usePriceFeed
-} from '../../context'
+import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
 import { ITraderHistory, useTraderConfig } from '../../context/trader_risk_group'
-import { SettlePanel } from '../TradeV3/SettlePanel'
 import { getPerpsPrice } from './perps/utils'
 import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
@@ -248,14 +239,13 @@ const SETTING_MODAL = styled(PopupCustom)`
 
 const OpenOrdersComponent: FC = () => {
   const { formatPair, isSpot } = useCrypto()
-  const { cancelOrder, orders } = useTradeHistory()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const openOrderUI = isSpot ? orders : perpsOpenOrders
+  const openOrderUI = isSpot ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -294,7 +284,7 @@ const OpenOrdersComponent: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, orders, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isSpot]
   )
   return (
     <>
@@ -311,7 +301,6 @@ const OpenOrdersComponent: FC = () => {
 }
 
 const TradeHistoryComponent: FC = () => {
-  const { tradeHistoryNew } = useTradeHistory()
   const { selectedCrypto } = useCrypto()
   const wallet = useWallet()
   const { mode } = useDarkMode()
@@ -336,8 +325,8 @@ const TradeHistoryComponent: FC = () => {
   }, [traderInfo.tradeHistory, wallet.connected, wallet.publicKey])
 
   const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
-    [selectedCrypto, tradeHistoryNew, perpsHistory]
+    () => (selectedCrypto.type === 'crypto' ? perpsHistory : perpsHistory),
+    [selectedCrypto, perpsHistory]
   )
 
   return (
@@ -385,7 +374,6 @@ export const HistoryPanel: FC = () => {
     percentageChange: ''
   })
   const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
-  const { openOrders } = useTradeHistory()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
@@ -427,13 +415,6 @@ export const HistoryPanel: FC = () => {
 
   const { market } = selectedCrypto
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
-  if (openOrders.length > 0) {
-    openOrder = openOrders[0]
-    baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
-    baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
-    quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-    quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
-  }
 
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
@@ -564,7 +545,7 @@ export const HistoryPanel: FC = () => {
         ) : activeTab === 2 ? (
           <TradeHistoryComponent />
         ) : activeTab === 3 ? (
-          <SettlePanel />
+          <></>
         ) : null}
       </WRAPPER>
     </>
