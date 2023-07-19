@@ -323,7 +323,7 @@ const EarnRewards: FC = () => {
         </button>
       </div>
 
-      <div css={tw`flex flex-row w-full gap-2.5 min-md:mt-[30px]`}>
+      <div css={tw`flex flex-row w-full gap-2.5 min-md:mt-[15px]`}>
         {!breakpoints.isMobile && (
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
