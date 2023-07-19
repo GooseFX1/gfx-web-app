@@ -133,7 +133,10 @@ export const Connect: FC<MenuItemProps> = ({
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
-  const canConnect = useMemo(() => !isGeoBlocked && !pathname.includes('trade'), [isGeoBlocked, pathname])
+  const canConnect = useMemo(
+    () => !isGeoBlocked || (isGeoBlocked && !pathname.includes('trade')),
+    [isGeoBlocked, pathname]
+  )
   const handleMoveOutside = useCallback(() => {
     if (isOpen) {
       onClose()
@@ -172,8 +175,8 @@ export const Connect: FC<MenuItemProps> = ({
           console.log({ e })
         })
     } else if (!canConnect) {
-      disconnect()
       sessionStorage.removeItem('connectedGFXWallet')
+      disconnect()
     }
   }, [wallet, connect, connected, canConnect])
 
