@@ -171,8 +171,9 @@ export const Connect: FC<MenuItemProps> = ({
         .catch((e) => {
           console.log({ e })
         })
-    } else {
+    } else if (!canConnect) {
       disconnect()
+      sessionStorage.removeItem('connectedGFXWallet')
     }
   }, [wallet, connect, connected, canConnect])
 
@@ -220,13 +221,13 @@ export const Connect: FC<MenuItemProps> = ({
             justify-center
       text-tiny font-semibold h-[35px] w-[124px] px-1.75 py-2.25 rounded-circle gap-1.75
       `,
-            canConnect
+            !canConnect
               ? tw`dark:bg-black-4 bg-grey-4 text-grey-1 dark:text-grey-2`
               : connected
               ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2`
               : tw``
           ].concat(customButtonStyle ?? [])}
-          disabled={canConnect}
+          disabled={!canConnect}
           onClick={connected ? toggleOpen : handleConnect}
         >
           {connected && (
