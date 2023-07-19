@@ -43,7 +43,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     delistNFT,
     setDelistNFT
   } = useNFTAggregator()
-  const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const {
     singleCollection,
     fixedPriceWithinCollection,
@@ -106,11 +106,12 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
           singleCollection[0].uuid,
           curPage * paginationNum,
           (curPage + 1) * paginationNum,
-          sort
+          sort,
+          additionalFilters
         )
 
-        const baseNFTs: BaseNFT[] = fpData.data.nft_data
-        if (baseNFTs.length < paginationNum) setStopCalling(true)
+        const baseNFTs: BaseNFT[] = fpData?.data?.nft_data
+        if (baseNFTs?.length < paginationNum) setStopCalling(true)
 
         //  if (fixedPriceWithinCollection === undefined)
         setFixedPriceWithinCollection(fpData.data)
@@ -129,7 +130,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         setFixedPriceLoading(false)
       }
     },
-    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, refreshClicked]
+    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, refreshClicked, additionalFilters]
   )
 
   useEffect(() => {
@@ -140,6 +141,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [params.address])
 
   useEffect(() => {
+    // on change the sort type
     setFixedPriceArr([])
     setPageNumber(0)
     setFilteredFixPrice(null)
@@ -147,6 +149,23 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     setSearchInsideCollection(undefined)
     !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
   }, [collectionSort])
+
+  useEffect(() => {
+    // handle filters change
+    if (
+      (additionalFilters.minValueFilter < additionalFilters.maxValueFilter &&
+        (additionalFilters.maxValueFilter > 0 || additionalFilters.minValueFilter > 0)) ||
+      additionalFilters.marketsFilter !== null ||
+      additionalFilters.marketsFilter?.length !== 0
+    ) {
+      setFixedPriceArr([])
+      setPageNumber(0)
+      setFilteredFixPrice(null)
+      setStopCalling(false)
+      setSearchInsideCollection(undefined)
+      !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
+    }
+  }, [additionalFilters])
 
   const debouncer = useCallback(
     debounce((searchQuery, collectionId) => {

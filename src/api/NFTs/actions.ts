@@ -1,4 +1,4 @@
-import { httpClient } from '../../api'
+import apiClient, { httpClient } from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
@@ -6,6 +6,9 @@ import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN } from '../analytics'
 import { MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
+import { IAdditionalFilters } from '../../context'
+import axios from 'axios'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -111,15 +114,35 @@ export const fetchFixedPriceByPages = async (
   paramValue: string,
   offset: number,
   limit: number,
-  sort: 'ASC' | 'DESC'
+  sort: 'ASC' | 'DESC',
+  additionalFilters?: IAdditionalFilters
 ): Promise<any> => {
-  const isUUID: boolean = validateUUID(paramValue)
-  try {
-    const res = await httpClient(NFT_API_BASE).get(
-      `${NFT_API_ENDPOINTS.FIXED_PRICE}?${
-        isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
-      }&offset=${offset}&limit=${limit}&filter=ListingPrice&sort=${sort}`
+  const isUUID: boolean = true // validateUUID(paramValue)
+  const uuid = '976dd9c2-2668-471c-a5f6-c1b3d326e2bc'
+
+  let url = `https://nest-api.staging.goosefx.io${NFT_API_ENDPOINTS.FIXED_PRICE}?${
+    isUUID ? `collection_id=${uuid}` : `collection_name=${encodeURIComponent(paramValue)}`
+  }&offset=${offset}&limit=${limit}&filter=ListingPrice`
+  //add sort later
+
+  if (additionalFilters.minValueFilter) {
+    url += `&min_price=${additionalFilters.minValueFilter * LAMPORTS_PER_SOL_NUMBER}`
+  }
+
+  if (additionalFilters.maxValueFilter) {
+    url += `&max_price=${additionalFilters.maxValueFilter * LAMPORTS_PER_SOL_NUMBER}`
+  }
+  if (additionalFilters.marketsFilter && additionalFilters.marketsFilter.length > 0) {
+    const encodedMarketplaces = additionalFilters.marketsFilter.map(
+      (market) => `%22${encodeURIComponent(market)}%22`
     )
+    const marketplaces = `[${encodedMarketplaces.join(',')}]`
+    url += `&marketplaces=${marketplaces}`
+  }
+
+  try {
+    // change this back to original
+    const res = await axios.get(url)
     return await res
   } catch (err) {
     return err
@@ -128,7 +151,7 @@ export const fetchFixedPriceByPages = async (
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   if (!address) return
   try {
-    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
     return await res
   } catch (err) {
     return err

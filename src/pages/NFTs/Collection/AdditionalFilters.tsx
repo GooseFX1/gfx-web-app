@@ -1,25 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button, Switch, Tooltip } from 'antd'
-import React, { ReactElement, FC, useState, useMemo } from 'react'
+import { Checkbox, Switch } from 'antd'
+import React, { ReactElement, FC, useState, useMemo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
+import 'styled-components/macro'
 import { TokenToggleNFT } from '../../../components'
-import { useNFTAggregator } from '../../../context'
+import { useNFTAggregator, useNFTAggregatorFilters } from '../../../context'
 import { checkMobile } from '../../../utils'
 import { HeaderTooltip } from '../../../utils/GenericDegsin'
-import { FiltersNFTPopupMobile } from '../Home/MenuNFTPopup'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { ArrowIcon } from './CollectionV2.styles'
+import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import { number } from 'ts-pattern/dist/patterns'
+import debounce from 'lodash.debounce'
+import { AH_PROGRAM_IDS } from '../../../web3'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
-    ${tw`duration-500 flex h-full flex-col`}
+    ${tw`duration-500 flex h-full flex-col dark:text-grey-5 text-black-4`}
     width: ${open ? '16%' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
-    background: ${({ theme }) => theme.bg23};
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
-    border-right: ${!open && 'none'};
-    color: ${({ theme }) => theme.text30};
+    border-left: 1px solid ${({ theme }) => theme.borderBottom};
+    border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
@@ -39,8 +43,8 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   `}
 `
 const STYLED_INPUT = styled.input`
-  ${tw`rounded-[60px] h-[35px] w-[95px] m-0 p-[10%] border-0 border-none outline-none`}
-  background-color: ${({ theme }) => theme.avatarBackground};
+  ${tw`rounded-[5px] h-[35px] w-[95px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  border-none`};
+  border: 1px solid ${({ theme }) => theme.tokenBorder};
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -55,13 +59,31 @@ const STYLED_INPUT = styled.input`
   }
 `
 
-export const LISTING_TYPE = styled.div<{ isOpen }>`
-  ${({ isOpen }) => css`
+export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean; showMore?: boolean }>`
+  ${({ isOpen, isParentOpen, showMore }) => css`
     .listItemCurreny {
       ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3 pr-3`}
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
+    }
+    .marketTitle {
+      ${tw`!duration-500 items-center text-[15px] flex justify-between font-semibold flex pl-3 pr-3`};
+      height: ${isOpen ? '30px' : 0};
+      color: ${({ theme }) => theme.text20};
+      opacity: ${isOpen ? 1 : 0};
+    }
+    .showMoreAnimation {
+      ${tw`!duration-500 `};
+      height: ${showMore ? '30px' : 0};
+      color: ${({ theme }) => theme.text20};
+      opacity: ${showMore ? 1 : 0};
+    }
+    .filtersTitle {
+      ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
+      opacity: ${isParentOpen ? 1 : 0};
+      visibility: ${isParentOpen ? 'visible' : 'hidden'};
+      font-size: ${isParentOpen ? '20px' : '10px'};
     }
     .listItem {
       ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3`}
@@ -88,14 +110,8 @@ export const LISTING_TYPE = styled.div<{ isOpen }>`
       }
     }
 
-    .filtersTitleItem {
-      ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
-      border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
-      visibility: ${open ? 'visible' : 'hidden'};
-      font-size: ${open ? '20px' : '10px'};
-    }
     .inputContainer {
-      ${tw`flex flex-col`}
+      ${tw`flex flex-col mr-6`}
       height: ${isOpen ? 'fit-content' : 0};
     }
     .button {
@@ -145,9 +161,10 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
         footer={null}
       >
         <div className="wrapper">
+          {/* title */}
           <div className="filtersTitle">Filters</div>
-          <ListingType />
-          <PriceRange />
+
+          <PriceRange isOpen={open} />
           <Attributes />
         </div>
       </STYLED_POPUP>
@@ -155,46 +172,157 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any }> = ({ open, setOpen 
   else
     return (
       <ADDITIONAL_FILTERS open={open}>
+        {/* title web */}
         <div className="filtersTitle">Filters</div>
-        <ListingType />
-        <PriceRange />
+        <MarketPlacesFilter isOpen={open} />
+        <PriceRange isOpen={open} />
         <Attributes />
       </ADDITIONAL_FILTERS>
     )
 }
 
-const ListingType = (): ReactElement => {
-  const [isOpen, setIsOpen] = useState<boolean>()
+const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
+  const [isMarketFilterOpen, setIsMarketFilterOpen] = useState<boolean>(true)
+  const [allMarketsToggle, setAllMarketsToggle] = useState<boolean>(true)
+  const [showMore, setShowMore] = useState<boolean>(false)
+  const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+
+  useEffect(() => {
+    const marketPlaces = []
+    if (allMarketsToggle) {
+      Object.keys(AH_PROGRAM_IDS).map((programId) => AH_PROGRAM_IDS[programId])
+    }
+  }, [allMarketsToggle])
+  const handleShowMoreClicked = useCallback(() => {
+    setShowMore((prev) => !prev)
+  }, [])
+
+  const handleAllMarketToggle = useCallback(() => {
+    setAllMarketsToggle((prev) => !prev)
+    if (additionalFilters.marketsFilter !== null)
+      setAdditionalFilters((prev) => ({ ...prev, marketsFilter: null }))
+  }, [])
+
+  const checkIfMarketChecked = useCallback(
+    (market: string) => {
+      if (allMarketsToggle) return true
+      const marketplaceArr = additionalFilters.marketsFilter ? [...additionalFilters.marketsFilter] : []
+      return marketplaceArr.indexOf(AH_PROGRAM_IDS[market].toUpperCase().replaceAll(' ', '_')) >= 0
+    },
+    [allMarketsToggle, additionalFilters]
+  )
+
+  const handleMarketplaceCheck = useCallback(
+    (e: CheckboxChangeEvent, market: string) => {
+      const marketplace = AH_PROGRAM_IDS[market].toUpperCase().replaceAll(' ', '_')
+
+      setAdditionalFilters((prev) => {
+        const marketplaceArr = prev.marketsFilter ? [...prev.marketsFilter] : []
+
+        if (e.target.checked) {
+          marketplaceArr.push(marketplace)
+        } else {
+          const index = marketplaceArr.indexOf(marketplace)
+          if (index >= 0) {
+            marketplaceArr.splice(index, 1)
+          }
+        }
+        return {
+          ...prev,
+          marketsFilter: marketplaceArr
+        }
+      })
+    },
+    [additionalFilters]
+  )
 
   return (
-    <LISTING_TYPE isOpen={isOpen}>
+    <LISTING_TYPE isOpen={isMarketFilterOpen} isParentOpen={isOpen} showMore={showMore}>
       <div className="filtersTitleItem">
-        Listing Type
-        <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
+        Marketplaces
+        <ArrowIcon isOpen={isMarketFilterOpen} setIsOpen={setIsMarketFilterOpen} />
       </div>
-      <div className="listItem">
-        GooseFX Listing
-        <Switch />
+      <div className="marketTitle" tw="flex mt-1">
+        <div>All markets</div>
+        <div>
+          <Switch onChange={handleAllMarketToggle} checked={allMarketsToggle} />
+        </div>
+      </div>
+      <div tw="duration-500">
+        {Object.keys(AH_PROGRAM_IDS).map((market, index) => (
+          <div key={index} className={index > 2 ? 'marketTitle showMoreAnimation' : 'marketTitle'}>
+            <div>{AH_PROGRAM_IDS[market]}</div>
+            <div>
+              <Checkbox
+                checked={checkIfMarketChecked(market)}
+                onChange={(e) => handleMarketplaceCheck(e, market)}
+              />
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div className="listItem">
-        Hide Pool Listing {HeaderTooltip('Hide listings from pools (Hadeswap, Solvent, etc)')}
-        <Switch />
+      <div
+        className="marketTitle"
+        onClick={handleShowMoreClicked}
+        tw="font-bold cursor-pointer ml-[70px] duration-1000 "
+      >
+        <u tw="text-grey-5"> Show {showMore ? 'less' : 'more'} </u>
       </div>
     </LISTING_TYPE>
   )
 }
-const PriceRange = (): ReactElement => {
-  const [isOpen, setIsOpen] = useState<boolean>(true)
-  const [minValue, setMinValue] = useState<number>(0)
-  const [maxValue, setMaxValue] = useState<number>(0)
-  const { currencyView, setCurrency } = useNFTAggregator()
+
+// const ListingType = (): ReactElement => {
+//   const [isOpen, setIsOpen] = useState<boolean>()
+
+//   return (
+//     <LISTING_TYPE isOpen={isOpen}>
+//       <div className="filtersTitleItem">
+//         Listing Type
+//         <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
+//       </div>
+//       <div className="listItem">
+//         GooseFX Listing
+//         <Switch />
+//       </div>
+
+//       <div className="listItem">
+//         Hide Pool Listing {HeaderTooltip('Hide listings from pools (Hadeswap, Solvent, etc)')}
+//         <Switch />
+//       </div>
+//     </LISTING_TYPE>
+//   )
+// }
+const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
+  const [isPriceOpen, setIsPriceOpen] = useState<boolean>(true)
+  const { setCurrency } = useNFTAggregator()
+  const { setAdditionalFilters } = useNFTAggregatorFilters()
+
+  const updateAdditionalFilters = useCallback(
+    debounce((func: (value: number) => void, value: number) => func(value), 500),
+    []
+  )
+  const updateMaxValue = useCallback((maxValue: number) => {
+    setAdditionalFilters((prev) => ({
+      ...prev,
+      minValueFilter: prev.minValueFilter ?? 0,
+      maxValueFilter: isNaN(maxValue) ? 9999 : maxValue
+    }))
+  }, [])
+
+  const updateMinValue = useCallback((minValue: number) => {
+    setAdditionalFilters((prev) => ({
+      ...prev,
+      minValueFilter: isNaN(minValue) ? 0.0001 : minValue
+    }))
+  }, [])
 
   return (
-    <LISTING_TYPE isOpen={isOpen}>
+    <LISTING_TYPE isOpen={isPriceOpen} isParentOpen={isOpen}>
       <div className="filtersTitleItem">
         Price Range
-        <ArrowIcon isOpen={isOpen} setIsOpen={setIsOpen} />
+        <ArrowIcon isOpen={isPriceOpen} setIsOpen={setIsPriceOpen} />
       </div>
       <div className="listItemCurreny">
         Currency
@@ -206,9 +334,8 @@ const PriceRange = (): ReactElement => {
           <STYLED_INPUT
             className="styledInput"
             type="number"
-            placeholder={`0.00 `}
-            value={minValue}
-            onChange={(e) => setMinValue(parseFloat(e.target.value))}
+            placeholder={`0.00`}
+            onChange={(e) => updateAdditionalFilters(updateMinValue, parseFloat(e.target.value))}
           />
         </div>
         <div className="inputContainer">
@@ -217,13 +344,9 @@ const PriceRange = (): ReactElement => {
             className="styledInput"
             type="number"
             placeholder={`0.00 `}
-            value={maxValue}
-            onChange={(e) => setMaxValue(parseFloat(e.target.value))}
+            onChange={(e) => updateAdditionalFilters(updateMaxValue, parseFloat(e.target.value))}
           />
         </div>
-      </div>
-      <div className="listItem">
-        <div className="button">Apply</div>
       </div>
     </LISTING_TYPE>
   )

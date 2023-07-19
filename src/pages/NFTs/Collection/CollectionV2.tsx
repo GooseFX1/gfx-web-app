@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, useEffect, useMemo, FC, useRef } from 'react'
+import React, { ReactElement, useState, useEffect, useMemo, FC, useRef, Dispatch, SetStateAction } from 'react'
 import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  useDarkMode,
-  useNFTProfile,
-  useNFTAggregator,
-  useNFTCollections,
-  useNFTAggregatorFilters
-} from '../../../context'
+import { useDarkMode, useNFTAggregator, useNFTCollections, useNFTAggregatorFilters } from '../../../context'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
@@ -42,6 +36,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
 import { logData } from '../../../api/analytics'
+import AdditionalFilters from './AdditionalFilters'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
@@ -271,9 +266,14 @@ export const NFTGridContainer = (): ReactElement => {
         tw="fixed right-4 bottom-4 sm:right-2.5 sm:bottom-2.5 z-[100] cursor-pointer"
         onClick={handleTopScroll}
       />
-      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
+      <FiltersContainer
+        setOpen={setOpen}
+        open={open}
+        displayIndex={displayIndex}
+        setDisplayIndex={setDisplayIndex}
+      />
       <div className="flexContainer">
-        {/* <AdditionalFilters open={open} setOpen={setOpen} /> */}
+        <AdditionalFilters open={open} setOpen={setOpen} />
         {NFTDisplayComponent}
       </div>
     </GRID_CONTAINER>
@@ -301,8 +301,9 @@ const FilterCategory: FC<{ displayIndex: number; currentIndex: number; onClick: 
 const FiltersContainer: FC<{
   setOpen: (open: boolean) => void
   displayIndex: number
+  open: boolean
   setDisplayIndex: (index: number) => void
-}> = ({ setOpen, displayIndex, setDisplayIndex }) => {
+}> = ({ setOpen, open, displayIndex, setDisplayIndex }) => {
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection, searchInsideCollection } = useNFTAggregatorFilters()
   const { myNFTsByCollection } = useNFTCollections()
@@ -331,6 +332,7 @@ const FiltersContainer: FC<{
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
+      <FiltersIcon open={open} setOpen={setOpen} />
       <div className="flitersFlexContainer">
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
@@ -358,12 +360,23 @@ const FiltersContainer: FC<{
             {category.label}
           </FilterCategory>
         ))}
-        <div tw="mr-4">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
+        <div>{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
       </div>
     </NFT_FILTERS_CONTAINER>
   )
 }
 
+const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }> = ({ open, setOpen }) => {
+  const { mode } = useDarkMode()
+  const handleButtonClick = useCallback(() => {
+    setOpen((prev) => !prev)
+  }, [])
+  return (
+    <div tw="h-11 w-11 duration-1000 cursor-pointer z-[100] mt-1" onClick={handleButtonClick}>
+      <img src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
+    </div>
+  )
+}
 const SortDropdown = () => {
   const { collectionSort } = useNFTCollections()
   const [arrow, setArrow] = useState<boolean>(false)
