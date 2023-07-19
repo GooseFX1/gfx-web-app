@@ -874,12 +874,16 @@ const BuddyLinkReferral: FC = () => {
             {!name ? generateLink : copyLink}
           </div>
         </>
-      ) : (
+      ) : !wallet.connected ? (
         <Connect
           customButtonStyle={[
             tw`px-7.5 min-md:px-8 text-regular leading-normal text-white font-semibold w-[330px] min-md:w-[265px]`
           ]}
         />
+      ) : (
+        <div css={[tw`relative`]}>
+          <Loader zIndex={1} />
+        </div>
       )}
     </div>
   )
