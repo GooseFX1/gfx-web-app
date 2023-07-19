@@ -147,7 +147,7 @@ export const GRID_CONTAINER = styled.div`
       height: auto;
     }
     .flexContainer {
-      ${tw`flex h-screen px-[12px] sm:px-0`}
+      ${tw`flex h-screen px-[14px] sm:px-0`}
     }
 
     .filtersContainer {
@@ -313,7 +313,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex h-[70px] sm:h-[105px] sm:flex-col `}
+    ${tw`duration-500 items-center flex h-[70px] sm:h-[105px] sm:flex-col mx-3.5`}
    
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
