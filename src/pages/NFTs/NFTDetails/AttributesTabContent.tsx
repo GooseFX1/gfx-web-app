@@ -143,8 +143,8 @@ export const AsksAndBidsForNFT = (): ReactElement => {
   )
 }
 
-const PILL_SECONDARY = styled.div<{ $mode: string }>`
-  ${tw`rounded-[5.5px] h-[48px] p-[1.5px] flex items-center justify-center text-[#fff] w-full`}
+export const PILL_SECONDARY = styled.div<{ $mode: string }>`
+  ${tw`rounded-[5.5px] h-[48px] p-[1.5px] flex items-center justify-center text-[#fff] w-[fit]`}
   background: ${({ $mode }) =>
     $mode === 'dark'
       ? 'linear-gradient(96.79deg, rgba(247, 147, 26, 0.92) 4.25%, rgba(172, 28, 199, 0.8) 97.61%)'

@@ -1,11 +1,11 @@
-import apiClient, { httpClient } from '../../api'
+import { gooseFxProd, httpClient } from '../../api'
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
 import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN } from '../analytics'
-import { MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
+import { AH_PROGRAM_IDS, MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
 import { IAdditionalFilters } from '../../context'
 import axios from 'axios'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
@@ -73,7 +73,7 @@ export const fetchSingleCollectionAction = async (endpoint: string, paramValue: 
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await apiClient(NFT_API_BASE).get(
+    const res = await httpClient(NFT_API_BASE).get(
       `${endpoint}?${isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`}`
     )
     return await res
@@ -95,15 +95,39 @@ export const fetchSingleCollectionBySalesType = async (endpoint: string, paramVa
   }
 }
 
-export const fetchOpenBidByPages = async (paramValue: string, offset: number, limit: number): Promise<any> => {
+const handleAdditionalFilters = (receivedUrl: string, additionalFilters: IAdditionalFilters): string => {
+  let url = receivedUrl
+  if (additionalFilters.attributes && additionalFilters.attributes.length) {
+    const attributeCount = []
+    const attributes = additionalFilters.attributes.reduce((acc, attr) => {
+      if (!attr.isAnnotation) {
+        acc.push(`{"trait_type" :"${attr.trait_type}", "value": "${attr.value}"}`)
+      } else {
+        attributeCount.push(attr.value)
+      }
+      return acc
+    }, [])
+
+    url += attributes.length ? `&attributes=[${attributes.join(',')}]` : ''
+    url += attributeCount.length ? `&attributes_count=[${attributeCount.join(',')}]` : ''
+  }
+  return url
+}
+export const fetchOpenBidByPages = async (
+  paramValue: string,
+  offset: number,
+  limit: number,
+  additionalFilters: IAdditionalFilters
+): Promise<any> => {
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    const res = await httpClient(NFT_API_BASE).get(
-      `${NFT_API_ENDPOINTS.OPEN_BID}?${
-        isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
-      }&offset=${offset}&limit=${limit}`
-    )
+    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?${
+      isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
+    }&offset=${offset}&limit=${limit}`
+    url = handleAdditionalFilters(url, additionalFilters)
+
+    const res = await axios.get(url)
     return await res
   } catch (err) {
     return err
@@ -119,13 +143,11 @@ export const fetchFixedPriceByPages = async (
   currencyView?: string,
   solPrice?: number
 ): Promise<any> => {
-  const isUUID: boolean = true // validateUUID(paramValue)
-  const uuid = '976dd9c2-2668-471c-a5f6-c1b3d326e2bc'
+  const isUUID: boolean = validateUUID(paramValue)
 
-  let url = `https://nest-api.staging.goosefx.io${NFT_API_ENDPOINTS.FIXED_PRICE}?${
-    isUUID ? `collection_id=${uuid}` : `collection_name=${encodeURIComponent(paramValue)}`
-  }&offset=${offset}&limit=${limit}&filter=ListingPrice`
-  //add sort later
+  let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.FIXED_PRICE}?${
+    isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
+  }&offset=${offset}&limit=${limit}&sort=${sort}`
 
   if (additionalFilters.minValueFilter) {
     url += `&min_price=${Math.floor(
@@ -138,21 +160,14 @@ export const fetchFixedPriceByPages = async (
       (additionalFilters.maxValueFilter * LAMPORTS_PER_SOL_NUMBER) / (currencyView === 'SOL' ? 1 : solPrice)
     )}`
   }
-  if (additionalFilters.attributes && additionalFilters.attributes.length) {
-    const attributeCount = []
-    const attributes = additionalFilters.attributes.reduce((acc, attr) => {
-      if (!attr.isAnnotation) {
-        acc.push(`{"trait_type" :"${attr.trait_type}", "value": "${attr.value}"}`)
-      } else {
-        attributeCount.push(attr.value)
-      }
-      return acc
-    }, [])
+  url = handleAdditionalFilters(url, additionalFilters)
+  const noOfMarketPlaces = Object.keys(AH_PROGRAM_IDS).length - 1
 
-    url += attributes.length ? `&attributes=[${attributes.join(',')}]` : ''
-    url += attributeCount.length ? `&attributes_count=[${attributeCount.join(',')}]` : ''
-  }
-  if (additionalFilters.marketsFilter && additionalFilters.marketsFilter.length > 0) {
+  if (
+    additionalFilters.marketsFilter &&
+    additionalFilters.marketsFilter.length > 0 &&
+    additionalFilters.marketsFilter.length !== noOfMarketPlaces
+  ) {
     const encodedMarketplaces = additionalFilters.marketsFilter.map(
       (market) => `%22${encodeURIComponent(market)}%22`
     )
@@ -171,7 +186,7 @@ export const fetchFixedPriceByPages = async (
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   if (!address) return
   try {
-    const res = await apiClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
+    const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.SINGLE_NFT}?mint_address=${address}`)
     return await res
   } catch (err) {
     return err
