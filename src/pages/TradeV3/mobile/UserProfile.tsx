@@ -2,9 +2,8 @@
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { FC, useMemo, useState } from 'react'
-import { useCrypto, useDarkMode, useOrderBook, usePriceFeed, useTradeHistory } from '../../../context'
+import { useCrypto, useDarkMode, useOrderBook, usePriceFeed } from '../../../context'
 import { useTraderConfig } from '../../../context/trader_risk_group'
-import { SettlePanel } from '../SettlePanel'
 import { getPerpsPrice } from '../perps/utils'
 import { CollateralPanelMobi } from './CollateralPanelMobi'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
@@ -218,13 +217,12 @@ const FIXED_BOTTOM = styled.div`
 
 const OpenOrders: FC = () => {
   const { formatPair, isSpot } = useCrypto()
-  const { cancelOrder, orders } = useTradeHistory()
   const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const openOrderUI = isSpot ? orders : perpsOpenOrders
+  const openOrderUI = isSpot ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -284,7 +282,7 @@ const OpenOrders: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, orders, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isSpot]
   )
 
   return (
@@ -302,7 +300,6 @@ const OpenOrders: FC = () => {
 }
 
 const TradeHistoryComponent: FC = () => {
-  const { tradeHistoryNew } = useTradeHistory()
   const { selectedCrypto } = useCrypto()
   const { mode } = useDarkMode()
   const { prices } = usePriceFeed()
@@ -321,8 +318,8 @@ const TradeHistoryComponent: FC = () => {
   }, [traderInfo.tradeHistory])
 
   const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
-    [selectedCrypto, tradeHistoryNew]
+    () => (selectedCrypto.type === 'crypto' ? perpsHistory : perpsHistory),
+    [selectedCrypto]
   )
 
   return (
@@ -623,7 +620,7 @@ export const UserProfile = ({ setUserProfile }) => {
       ) : activeTab === 2 ? (
         <TradeHistoryComponent />
       ) : activeTab === 3 ? (
-        <SettlePanel />
+        <></>
       ) : null}
       {!isSpot && (
         <FIXED_BOTTOM>

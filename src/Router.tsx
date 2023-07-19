@@ -4,9 +4,7 @@ import { AppLayout } from './layouts'
 import { Farm, Swap, ComingSoon } from './pages'
 import {
   NavCollapseProvider,
-  OrderProvider,
   PriceFeedProvider,
-  TradeHistoryProvider,
   NFTAdminProvider,
   OrderBookProvider,
   NFTDetailsProvider,
@@ -17,7 +15,8 @@ import {
   AccountsProvider,
   TokenRegistryProvider,
   RewardToggleProvider,
-  CryptoProvider
+  CryptoProvider,
+  OrderProvider
 } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
 import { CryptoContent } from './pages/TradeV3/TradeContainer'
@@ -49,15 +48,13 @@ export const Router: FC = () => (
                       </Route>
                       <Route path="/trade">
                         <PriceFeedProvider>
-                          <TradeHistoryProvider>
-                            <OrderProvider>
-                              <TraderProvider>
-                                <OrderBookProvider>
-                                  <CryptoContent />
-                                </OrderBookProvider>
-                              </TraderProvider>
-                            </OrderProvider>
-                          </TradeHistoryProvider>
+                          <OrderProvider>
+                            <TraderProvider>
+                              <OrderBookProvider>
+                                <CryptoContent />
+                              </OrderBookProvider>
+                            </TraderProvider>
+                          </OrderProvider>
                         </PriceFeedProvider>
                       </Route>
                       <Route path="/NFTs/launchpad">

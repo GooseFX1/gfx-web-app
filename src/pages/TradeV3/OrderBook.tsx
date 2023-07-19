@@ -2,7 +2,7 @@
 import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
 import { Dropdown, Menu, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
-import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook, useTradeHistory } from '../../context'
+import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
 
@@ -258,17 +258,12 @@ export const OrderBook: FC = () => {
   const [asks] = useState<MarketSide>('asks')
   const bid = useMemo(() => getBidSymbolFromPair(selectedCrypto.pair), [getBidSymbolFromPair, selectedCrypto.pair])
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
-  const { tradeHistory } = useTradeHistory()
   const [spreadIndex, setSpreadIndex] = useState<number>(0)
   const prevOrderBook: any = usePrevious(orderBook)
   const [neworders, setNewOrders] = useState<{ bids: number[]; asks: number[] }>({
     bids: [],
     asks: []
   })
-  const lastTradedPrice = {
-    price: tradeHistory[0] && tradeHistory[0].price,
-    side: tradeHistory[0] && tradeHistory[0].side
-  }
 
   const [bidOrderBookDisplay, setBidOrderBookDisplay] = useState([])
   const [askOrderBookDisplay, setAskOrderBookDisplay] = useState([])
