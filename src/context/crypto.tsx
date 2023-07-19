@@ -35,8 +35,8 @@ interface ICryptoConfig {
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
   filteredSearchPairs: any
   setFilteredSearchPairs: Dispatch<SetStateAction<any>>
-  isSpot: boolean
-  setIsSpot: Dispatch<SetStateAction<boolean>>
+  isDevnet: boolean
+  setIsDevnet: Dispatch<SetStateAction<boolean>>
 }
 
 export type MarketType = 'crypto' | 'synth' | 'perps'
@@ -72,28 +72,28 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
           if (item.type === 'crypto') isSpotCheck = true
         }
       })
-      return { set: pairSet, isSpot: isSpotCheck }
+      return { set: pairSet, isDevnet: isSpotCheck }
     } catch (e) {
-      return { set: pairSet, isSpot: isSpotCheck }
+      return { set: pairSet, isDevnet: isSpotCheck }
     }
   }
-  const [isSpot, setIsSpot] = useState<boolean>(getPairWithMarketAddress().isSpot)
+  const [isDevnet, setIsDevnet] = useState<boolean>(getPairWithMarketAddress().isDevnet)
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress().set)
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    const pairsToset = isSpot
+    const pairsToset = isDevnet
       ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
       : MARKET_PAIRS.filter((item) => item.type === 'perps')
     setPairs(pairsToset)
   }, [])
 
   useEffect(() => {
-    const pairsToset = isSpot
+    const pairsToset = isDevnet
       ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
       : MARKET_PAIRS.filter((item) => item.type === 'perps')
     setPairs(pairsToset)
-  }, [isSpot])
+  }, [isDevnet])
 
   useEffect(() => {
     if (pairs.length > 0) {
@@ -138,8 +138,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCrypto,
         filteredSearchPairs,
         setFilteredSearchPairs,
-        isSpot,
-        setIsSpot
+        isDevnet,
+        setIsDevnet
       }}
     >
       {children}
@@ -163,7 +163,7 @@ export const useCrypto = (): ICryptoConfig => {
     setSelectedCrypto: context.setSelectedCrypto,
     filteredSearchPairs: context.filteredSearchPairs,
     setFilteredSearchPairs: context.setFilteredSearchPairs,
-    isSpot: context.isSpot,
-    setIsSpot: context.setIsSpot
+    isDevnet: context.isDevnet,
+    setIsDevnet: context.setIsDevnet
   }
 }

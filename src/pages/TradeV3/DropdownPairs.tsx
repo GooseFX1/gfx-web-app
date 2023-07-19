@@ -227,23 +227,23 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 }
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
-  const { isSpot, setIsSpot } = useCrypto()
+  const { isDevnet, setIsDevnet } = useCrypto()
   const isGeoBlocked = useBlacklisted()
 
   const handleToggle = (e: string) => {
-    if (e === 'spot') setIsSpot(true)
-    else setIsSpot(false)
+    if (e === 'spot') setIsDevnet(true)
+    else setIsDevnet(false)
   }
 
   return (
     <div className="header-wrapper">
       <MODAL_TITLE>
-        <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
+        <div onClick={() => handleToggle('spot')} className={isDevnet ? 'active btn' : 'btn'}>
           Spot
         </div>
         <div
           onClick={isGeoBlocked ? null : () => handleToggle('perps')}
-          className={!isSpot ? 'active btn' : 'btn'}
+          className={!isDevnet ? 'active btn' : 'btn'}
         >
           Perps
         </div>
@@ -259,7 +259,7 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isSpot } = useCrypto()
+  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isDevnet } = useCrypto()
   //const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
   const displayPair = useMemo(() => {
     return selectedCrypto.display

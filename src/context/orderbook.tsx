@@ -39,7 +39,7 @@ export const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
 const OrderBookContext = createContext<IOrderBookConfig | null>(null)
 
 export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { connection } = useConnectionConfig()
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
@@ -58,7 +58,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
     const t2 = setInterval(refreshOrderbook, 500)
     return () => clearInterval(t2) // clear
-  }, [selectedCrypto.pair, isSpot, selectedCrypto.type, traderInfo, wallet.connected])
+  }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo, wallet.connected])
 
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {

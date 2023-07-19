@@ -238,14 +238,14 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const OpenOrdersComponent: FC = () => {
-  const { formatPair, isSpot } = useCrypto()
+  const { formatPair, isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const openOrderUI = isSpot ? perpsOpenOrders : perpsOpenOrders
+  const openOrderUI = isDevnet ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -284,7 +284,7 @@ const OpenOrdersComponent: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [formatPair, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isDevnet]
   )
   return (
     <>
@@ -373,7 +373,7 @@ export const HistoryPanel: FC = () => {
     pnl: '',
     percentageChange: ''
   })
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
+  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isDevnet } = useCrypto()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
@@ -495,7 +495,7 @@ export const HistoryPanel: FC = () => {
                     {index === 1 ? (
                       <div className="open-order-header">
                         <div>{item}</div>
-                        {!isSpot && (
+                        {!isDevnet && (
                           <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
                         )}
                       </div>

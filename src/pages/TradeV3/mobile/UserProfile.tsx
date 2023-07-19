@@ -216,13 +216,13 @@ const FIXED_BOTTOM = styled.div`
 `
 
 const OpenOrders: FC = () => {
-  const { formatPair, isSpot } = useCrypto()
+  const { formatPair, isDevnet } = useCrypto()
   const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const openOrderUI = isSpot ? perpsOpenOrders : perpsOpenOrders
+  const openOrderUI = isDevnet ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -282,7 +282,7 @@ const OpenOrders: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [formatPair, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isDevnet]
   )
 
   return (
@@ -540,7 +540,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 
 export const UserProfile = ({ setUserProfile }) => {
   const tabs = ['Positions', 'Open Orders', 'Trade History', 'Sol Unsettled']
-  const { isSpot } = useCrypto()
+  const { isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const [activeTab, setActiveTab] = useState(0)
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -567,7 +567,7 @@ export const UserProfile = ({ setUserProfile }) => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      {!isSpot ? (
+      {!isDevnet ? (
         <CollateralPanelMobi setUserProfile={setUserProfile} />
       ) : (
         <div>
@@ -600,7 +600,7 @@ export const UserProfile = ({ setUserProfile }) => {
                   {index === 1 ? (
                     <div className="open-order-header">
                       <div>{item}</div>
-                      {!isSpot && (
+                      {!isDevnet && (
                         <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
                       )}
                     </div>
@@ -622,7 +622,7 @@ export const UserProfile = ({ setUserProfile }) => {
       ) : activeTab === 3 ? (
         <></>
       ) : null}
-      {!isSpot && (
+      {!isDevnet && (
         <FIXED_BOTTOM>
           <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
             <div className="white-background">
