@@ -317,10 +317,7 @@ const TradeHistoryComponent: FC = () => {
     })
   }, [traderInfo.tradeHistory])
 
-  const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? perpsHistory : perpsHistory),
-    [selectedCrypto]
-  )
+  const historyData = useMemo(() => perpsHistory, [selectedCrypto])
 
   return (
     <>
@@ -338,7 +335,7 @@ const TradeHistoryComponent: FC = () => {
                 <div tw="mb-3.5">
                   <span tw="text-regular font-semibold dark:text-grey-5 text-black-4 mr-2.5">SOL/PERP</span>
                   <span tw="text-regular font-semibold " className={order.side}>
-                    {selectedCrypto.type === 'perps' ? order.side : null}
+                    {order.side}
                   </span>
                 </div>
                 <div tw="flex flex-row justify-between">

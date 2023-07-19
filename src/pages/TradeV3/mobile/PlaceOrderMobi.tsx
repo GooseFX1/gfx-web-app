@@ -645,13 +645,8 @@ export const PlaceOrderMobi = () => {
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
-    if (selectedCrypto.type === 'crypto') {
-      if (order.side === 'buy') return 'BUY ' + symbol
-      else return 'SELL ' + symbol
-    } else {
-      if (order.side === 'buy') return 'LONG ' + symbol
-      else return 'SHORT ' + symbol
-    }
+    if (order.side === 'buy') return 'LONG ' + symbol
+    else return 'SHORT ' + symbol
   }, [connected, wallet, buttonState, order.side, selectedCrypto.type])
 
   const handleSliderChange = async (e) => {

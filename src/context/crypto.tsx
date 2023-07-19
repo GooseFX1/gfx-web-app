@@ -10,7 +10,6 @@ import React, {
 } from 'react'
 import { Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
-import { serum } from '../web3'
 import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'
 import useBlacklisted from '../utils/useBlacklisted'
 
@@ -39,7 +38,7 @@ interface ICryptoConfig {
   setIsDevnet: Dispatch<SetStateAction<boolean>>
 }
 
-export type MarketType = 'crypto' | 'synth' | 'perps'
+export type MarketType = 'mainnet' | 'devnet'
 
 export const FEATURED_PAIRS_LIST = [
   { pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
@@ -105,12 +104,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     ;(async () => {
       try {
-        if (selectedCrypto.type === 'crypto') {
-          const market = await serum.getMarket(connection, selectedCrypto.pair)
-          setSelectedCrypto((prevState) => ({ ...prevState, market }))
-        } else {
-          setSelectedCrypto((prevState) => ({ ...prevState, market: null }))
-        }
+        setSelectedCrypto((prevState) => ({ ...prevState, market: null }))
       } catch (e) {
         console.log(e)
       }

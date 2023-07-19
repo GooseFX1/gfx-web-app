@@ -324,10 +324,7 @@ const TradeHistoryComponent: FC = () => {
     })
   }, [traderInfo.tradeHistory, wallet.connected, wallet.publicKey])
 
-  const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? perpsHistory : perpsHistory),
-    [selectedCrypto, perpsHistory]
-  )
+  const historyData = useMemo(() => perpsHistory, [selectedCrypto, perpsHistory])
 
   return (
     <>
@@ -342,7 +339,7 @@ const TradeHistoryComponent: FC = () => {
             historyData.length > 0 &&
             historyData.map((order, index) => (
               <div key={index}>
-                <span className={order.side}>{selectedCrypto.type === 'perps' ? order.side : null}</span>
+                <span className={order.side}>{order.side}</span>
                 <span>{order.size}</span>
                 <span>${order.price}</span>
                 <span>{(order.size * order.price).toFixed(2)}</span>

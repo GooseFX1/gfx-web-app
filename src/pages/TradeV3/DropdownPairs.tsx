@@ -137,7 +137,7 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }>
   const { getAskSymbolFromPair } = useCrypto()
 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const assetIcon = useMemo(() => `/img/crypto/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
   return (
     <div className="popular-tokens">
       <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
@@ -269,10 +269,7 @@ export const DropdownPairs: FC = () => {
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
-  const assetIcon = useMemo(
-    () => `/img/crypto/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, selectedCrypto.type]
-  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
   const handleDropdownSearch = (searchString: string) => {
     const filteredResult = pairs.filter((item) =>
       getAskSymbolFromPair(item.pair).includes(searchString.toUpperCase())
