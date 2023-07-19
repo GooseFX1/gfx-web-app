@@ -146,10 +146,7 @@ export const DepositWithdraw: FC<{
   const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
   const symbol = perpToken.token
   const tokenAmount = balances[perpToken.marketAddress]
-  const assetIcon = useMemo(
-    () => `/img/crypto/${perpToken.type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, perpToken.type]
-  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
@@ -302,7 +299,7 @@ const Tokens: FC<{ token: string; type: MarketType; marketAddress: string }> = (
 }) => {
   const { balances } = useAccounts()
   const symbol = token
-  const assetIcon = useMemo(() => `/img/crypto/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
   const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
   const truncMarketAddress = truncateAddress(marketAddress)
   const tokenAmount = balances[marketAddress]
