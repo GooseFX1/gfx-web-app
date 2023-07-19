@@ -296,7 +296,7 @@ export const CryptoContent: FC = () => {
   const isGeoBlocked = useBlacklisted()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const { selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
 
@@ -310,7 +310,7 @@ export const CryptoContent: FC = () => {
       setChartContainer(<></>)
       setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
     }, 300)
-  }, [isSpot, selectedCrypto, mode])
+  }, [isDevnet, selectedCrypto, mode])
 
   useEffect(() => {
     resetLayout()

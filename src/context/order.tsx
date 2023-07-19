@@ -101,7 +101,7 @@ interface IOrderConfig {
 const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { prices } = usePriceFeed()
   const [focused, setFocused] = useState<OrderInput>(undefined)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,7 +166,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const marketPrice = useMemo(() => prices[selectedCrypto.pair]?.current, [prices, selectedCrypto.pair])
   useEffect(() => {
     !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
-  }, [marketPrice, order.price, isSpot])
+  }, [marketPrice, order.price, isDevnet])
 
   return (
     <OrderContext.Provider

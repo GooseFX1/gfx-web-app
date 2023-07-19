@@ -5,7 +5,7 @@ import { Header } from './Header'
 import { OrderBookMobi } from './OrderBookMobi'
 import { PlaceOrderMobi } from './PlaceOrderMobi'
 
-const WRAPPER = styled.div<{ isSpot: boolean }>`
+const WRAPPER = styled.div<{ isDevnet: boolean }>`
   ${tw` overflow-hidden`}
   height: calc(100vh - 100px);
 
@@ -23,7 +23,7 @@ const WRAPPER = styled.div<{ isSpot: boolean }>`
       ${tw`p-0`}
     }
     .ant-drawer-content {
-      height: ${({ $isSpot }) => ($isSpot ? '100%' : 'calc(100% - 75px)')};
+      height: ${({ $isDevnet }) => ($isDevnet ? '100%' : 'calc(100% - 75px)')};
       ${tw`dark:bg-black-2 bg-white`}
     }
   }
@@ -35,9 +35,9 @@ const WRAPPER = styled.div<{ isSpot: boolean }>`
 `
 
 export const DexhomeMobi: FC = () => {
-  const { isSpot } = useCrypto()
+  const { isDevnet } = useCrypto()
   return (
-    <WRAPPER $isSpot={isSpot} id="dex-mobi-home">
+    <WRAPPER $isDevnet={isDevnet} id="dex-mobi-home">
       <Header />
       <PlaceOrderMobi />
       <OrderBookMobi />

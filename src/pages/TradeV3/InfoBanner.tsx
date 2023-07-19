@@ -92,13 +92,13 @@ const INFO_STATS = styled.div`
   }
 `
 
-const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isSpot: boolean }>`
+const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isDevnet: boolean }>`
   ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer p-0.5`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  margin-left: ${({ $isSpot, $isLocked }) =>
-    $isSpot && $isLocked ? 'auto' : $isSpot && !$isLocked ? '10px' : '15px'};
+  margin-left: ${({ $isDevnet, $isLocked }) =>
+    $isDevnet && $isLocked ? 'auto' : $isDevnet && !$isLocked ? '10px' : '15px'};
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}
@@ -208,7 +208,7 @@ export const InfoBanner: FC<{
   setIsLocked: (a: boolean) => void
   resetLayout: () => void
 }> = ({ isLocked, setIsLocked, resetLayout }) => {
-  const { selectedCrypto, isSpot, setIsSpot } = useCrypto()
+  const { selectedCrypto, isDevnet, setIsDevnet } = useCrypto()
   const { prices, tokenInfo } = usePriceFeed()
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
@@ -237,26 +237,26 @@ export const InfoBanner: FC<{
   }
 
   const openInterestFormatted = useMemo(() => {
-    if (!isSpot) {
+    if (!isDevnet) {
       const num = Number(traderInfo.openInterests)
       if (!num) return '0.00'
       else return truncateBigNumber(num)
     } else return '0.00'
-  }, [traderInfo.openInterests, isSpot])
+  }, [traderInfo.openInterests, isDevnet])
 
   const calculateRangeValue = (range, marketData) => {
-    const priceO = isSpot ? marketData : getPerpsPrice(orderBook)
+    const priceO = isDevnet ? marketData : getPerpsPrice(orderBook)
     if (
       !range ||
       !range.min ||
       !range.max ||
-      (isSpot && (!marketData || !marketData.current)) ||
-      (!isSpot && !priceO)
+      (isDevnet && (!marketData || !marketData.current)) ||
+      (!isDevnet && !priceO)
     )
       return { bars: 0 }
     const difference = +range.max - +range.min,
       size = difference / 6,
-      price = isSpot ? marketData.current : priceO
+      price = isDevnet ? marketData.current : priceO
     let bars = 0
 
     for (let i = 0; i < 6; i++) {
@@ -272,7 +272,7 @@ export const InfoBanner: FC<{
   const displayVolume = useMemo(() => formatDisplayVolume(volume), [selectedCrypto.pair, volume])
 
   const range = tokenInfos && tokenInfos.range,
-    bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range, isSpot, orderBook])
+    bars = useMemo(() => calculateRangeValue(range, marketData), [selectedCrypto.pair, range, isDevnet, orderBook])
 
   const changeValue = tokenInfos ? tokenInfos.change : ' '
   let classNameChange = ''
@@ -280,17 +280,17 @@ export const InfoBanner: FC<{
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   const tokenPrice = useMemo(() => {
-    if (isSpot) {
+    if (isDevnet) {
       return !marketData || !marketData.current ? <Loader /> : <span>$ {marketData.current}</span>
     } else {
       const oPrice = getPerpsPrice(orderBook)
       return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
     }
-  }, [isSpot, selectedCrypto, orderBook])
+  }, [isDevnet, selectedCrypto, orderBook])
 
   const handleToggle = (e) => {
-    if (e === 'spot') setIsSpot(true)
-    else setIsSpot(false)
+    if (e === 'spot') setIsDevnet(true)
+    else setIsDevnet(false)
   }
 
   return (
@@ -316,14 +316,14 @@ export const InfoBanner: FC<{
 
       <div className="spot-toggle">
         <span
-          className={'spot toggle ' + (isSpot ? 'selected' : '')}
+          className={'spot toggle ' + (isDevnet ? 'selected' : '')}
           key="spot"
           onClick={() => handleToggle('spot')}
         >
           Spot
         </span>
         <span
-          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isSpot ? 'selected' : '')}
+          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isDevnet ? 'selected' : '')}
           key="perps"
           onClick={isGeoBlocked ? null : () => handleToggle('perps')}
         >
@@ -388,7 +388,7 @@ export const InfoBanner: FC<{
           )}
         </INFO_STATS>
       )}
-      {!isSpot && (
+      {!isDevnet && (
         <INFO_STATS>
           <>
             <div>Open Interest</div>
@@ -396,7 +396,7 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {!isSpot && (
+      {!isDevnet && (
         <INFO_STATS>
           <>
             <div tw="flex flex-row">
@@ -425,7 +425,7 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       )}
-      {isSpot && isGeoBlocked && (
+      {isDevnet && isGeoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
           <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
@@ -434,7 +434,7 @@ export const InfoBanner: FC<{
         </div>
       )}
       {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
-      {!isSpot && (
+      {!isDevnet && (
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
             <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
@@ -442,7 +442,7 @@ export const InfoBanner: FC<{
         </DEPOSIT_WRAPPER>
       )}
       {
-        <LOCK_LAYOUT_CTN $isLocked={isLocked} $isSpot={isSpot} onClick={() => setIsLocked(!isLocked)}>
+        <LOCK_LAYOUT_CTN $isLocked={isLocked} $isDevnet={isDevnet} onClick={() => setIsLocked(!isLocked)}>
           <div className="white-background">
             <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
               <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />

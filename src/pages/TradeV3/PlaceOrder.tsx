@@ -374,7 +374,7 @@ const ORDER_CATEGORY = styled.div`
 const PLACE_ORDER_BUTTON = styled.button<{
   $action: boolean
   $orderSide: string
-  $isSpot: boolean
+  $isDevnet: boolean
   $isDeposit?: boolean
 }>`
   ${tw`mt-3 w-1/2 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
@@ -486,7 +486,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 
 export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
-  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
+  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { order, setOrder, focused, setFocused } = useOrder()
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
@@ -593,7 +593,7 @@ export const PlaceOrder: FC = () => {
     if (order.size < 0.01) return ButtonState.OrderTooSmall
     //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
     return ButtonState.CanPlaceOrder
-  }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
+  }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
 
   const buttonText = useMemo(() => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
@@ -995,7 +995,7 @@ export const PlaceOrder: FC = () => {
           </div>
         </INPUT_GRID_WRAPPER>
         {
-          //isSpot ? (
+          //isDevnet ? (
           //  <TOTAL_SELECTOR>
           //    {TOTAL_VALUES.map((item) => (
           //      <div
@@ -1035,7 +1035,7 @@ export const PlaceOrder: FC = () => {
           </LEVERAGE_WRAPPER>
         }
         {
-          //isSpot ? (
+          //isDevnet ? (
           //  <>
           //    <ORDER_CATEGORY>
           //      {ORDER_CATEGORY_TYPE.map((item) => (
@@ -1056,7 +1056,7 @@ export const PlaceOrder: FC = () => {
           //      $action={buttonState === ButtonState.CanPlaceOrder}
           //      //onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
           //      $orderSide={order.side}
-          //      $isSpot={isSpot}
+          //      $isDevnet={isDevnet}
           //    >
           //      {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
           //    </PLACE_ORDER_BUTTON>
@@ -1135,7 +1135,7 @@ export const PlaceOrder: FC = () => {
                     : handlePlaceOrder()
                 }
                 $orderSide={order.side}
-                $isSpot={isSpot}
+                $isDevnet={isDevnet}
                 $isDeposit={buttonState === ButtonState.CreateAccount}
               >
                 {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
@@ -1144,7 +1144,7 @@ export const PlaceOrder: FC = () => {
           </>
         }
         {/*{
-        isSpot && (
+        isDevnet && (
           <FEES>
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
               Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.

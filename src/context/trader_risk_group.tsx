@@ -249,7 +249,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [initTesting, setInitTesting] = useState<boolean>(false)
 
   const { order, setOrder } = useOrder()
-  const { isSpot } = useCrypto()
+  const { isDevnet } = useCrypto()
 
   const wallet = useWallet()
   const { perpsConnection: connection } = useConnectionConfig()
@@ -279,7 +279,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const setMPGDetails = async () => {
-    if (!isSpot) {
+    if (!isDevnet) {
       MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
         mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
         mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
@@ -475,7 +475,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    if (!isSpot) {
+    if (!isDevnet) {
       const refreshData = async () => {
         await setMPGDetails()
       }
@@ -484,7 +484,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       setTraderRiskGroup(null)
     }
-  }, [isSpot, wallet.connected, wallet.publicKey])
+  }, [isDevnet, wallet.connected, wallet.publicKey])
 
   const testing = async () => {
     // const res1 = await adminInitialiseMPG(connection, wallet)
