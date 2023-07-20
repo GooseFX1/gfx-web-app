@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { RewardsButton } from '../components/RewardsPopup'
+import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw, { TwStyle } from 'twin.macro'

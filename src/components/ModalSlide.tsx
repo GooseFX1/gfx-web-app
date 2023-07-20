@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
-import { RewardsPopup } from './RewardsPopup'
+import { RewardsPopup } from './rewards/RewardsPopup'
 import { FeesPopup } from './FeesPopup'
 //import { GoldenTicketPopup } from '../pages/NFTs/launchpad/pages/LaunchpadComponents'
 import MenuPopup from './popups/MenuPopup'
