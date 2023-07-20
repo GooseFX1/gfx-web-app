@@ -101,7 +101,7 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       border: 1px solid;
     }
     .marketTitle {
-      ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3`};
+      ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3 sm:max-h-20`};
       height: ${isOpen ? '40px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
@@ -185,21 +185,23 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
   if (!showPriceAndMarket && !availableAttributes) return null
   if (checkMobile())
     return (
-      <STYLED_POPUP
-        height={'460px'}
-        width={'100vw'}
-        title={null}
-        visible={open ? true : false}
-        onCancel={() => setOpen(false)}
-        footer={null}
-      >
-        <div className="wrapper">
-          {/* title */}
-          <div className="filtersTitle">Filters</div>
-          <PriceRange isOpen={open} />
-          {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
-        </div>
-      </STYLED_POPUP>
+      <></>
+      // <STYLED_POPUP
+      //   height={'460px'}
+      //   width={'100vw'}
+      //   title={null}
+      //   visible={open ? true : false}
+      //   onCancel={() => setOpen(false)}
+      //   footer={null}
+      // >
+      //   <div className="wrapper">
+      //     {/* title */}
+      //     <div className="filtersTitle">Filters</div>
+      //     {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
+      //     {showPriceAndMarket && <PriceRange isOpen={open} />}
+      //     {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+      //   </div>
+      // </STYLED_POPUP>
     )
   else
     return (
@@ -292,7 +294,7 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
         )}
       </div>
       {singleCollection && (
-        <>
+        <div tw="sm:max-h-[200px] sm:overflow-y-auto">
           <div className="marketTitle">
             <div> All markets</div>
             <div tw="ml-auto">
@@ -323,12 +325,12 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
             <div
               className="marketTitle"
               onClick={handleShowMoreClicked}
-              tw="font-bold cursor-pointer ml-[72px] duration-1000"
+              tw="font-bold cursor-pointer ml-[72px] sm:ml-[calc(50% - 45px)] duration-1000"
             >
               <u tw="dark:text-grey-5 text-blue-1 leading-7"> Show {showMore ? 'less' : 'more'} </u>
             </div>
           )}
-        </>
+        </div>
       )}
     </LISTING_TYPE>
   )
@@ -426,7 +428,7 @@ const Attributes: FC<{ isOpen: boolean; displayIndex: number }> = ({ isOpen, dis
   const [isAttributeOpen, setIsAttributeOpen] = useState<boolean>(true)
   const { availableAttributes } = useNFTCollections()
   return (
-    <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen}>
+    <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen} tw="sm:max-h-[200px] overflow-y-auto">
       <div className="filtersTitleItem">
         Attribute
         <ArrowIcon isOpen={isAttributeOpen} setIsOpen={setIsAttributeOpen} />
