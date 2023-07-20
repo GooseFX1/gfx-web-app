@@ -52,8 +52,8 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
   return (
     <>
       <div id={'title'} css={tw`flex items-center flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
-        {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
         {(breakpoint.isMobile || breakpoint.isTablet) && !isEarnSelected && <ReferFriendSegment />}
+        {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
         <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5`, !subtitle && tw`justify-center gap-0`]}>
           <p
             css={[
@@ -73,7 +73,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
           </p>
         </div>
       </div>
-      {children}
+      <div css={[tw`min-md:max-w-[580px]`]}>{children}</div>
     </>
   )
 }
@@ -198,9 +198,9 @@ const EarnRewards: FC = () => {
   const handleHalf = useCallback(async () => {
     let half = '0'
     if (isStakeSelected) {
-      half = Math.floor(userGoFxBalance.uiAmount / 2).toFixed(2)
+      half = (userGoFxBalance.uiAmount / 2).toString()
     } else {
-      half = Math.floor(totalStaked / 2).toFixed(2)
+      half = (totalStaked / 2).toString()
     }
 
     setInputValue(parseFloat(half))
@@ -209,7 +209,7 @@ const EarnRewards: FC = () => {
     }
   }, [userGoFxBalance, inputRef, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
-    let max = Math.floor(userGoFxBalance.uiAmount).toFixed(2)
+    let max = userGoFxBalance.uiAmount.toString()
     if (!isStakeSelected) max = totalStaked.toString()
     setInputValue(parseFloat(max))
     if (inputRef.current) {
@@ -336,12 +336,12 @@ const EarnRewards: FC = () => {
         <div
           onClick={focusInput}
           css={tw`
-        relative rounded-[100px] h-[50px] w-full min-md:w-[381px] bg-grey-5 dark:bg-black-1
+        relative rounded-[100px] h-[40px] w-full min-md:w-[381px] bg-grey-5 dark:bg-black-1
           dark:border-black-1 items-center flex justify-center
         `}
         >
           <div
-            css={tw`text-lg absolute top-[20%] bottom-[15px] left-[15px] z-[1] flex flex-row gap-[15px]
+            css={tw`text-lg absolute  left-[15px] z-[1] flex flex-row gap-[15px]
             `}
           >
             <p
@@ -368,7 +368,7 @@ const EarnRewards: FC = () => {
             css={tw`text-lg h-10 min-md:w-[381px] w-full rounded-[100px] bg-grey-5 text-grey-1
             placeholder-grey-1  border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
             dark:bg-black-1 dark:text-grey-2 focus:dark:border-grey-2 active:dark:border-grey-2
-            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2
+            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2 h-10
             `}
             ref={inputRef}
             maxLength={12}
@@ -379,7 +379,7 @@ const EarnRewards: FC = () => {
             value={inputValue > 0.0 ? inputValue : ''}
           />
           <p
-            css={tw`mb-0 text-lg absolute top-[20%] bottom-[15px] right-[15px] z-[1] text-grey-1
+            css={tw`mb-0 text-lg absolute right-[15px] z-[1] text-grey-1
             dark:text-grey-2 font-semibold
             `}
           >
@@ -410,7 +410,7 @@ const EarnRewards: FC = () => {
           )}
         </button>
       ) : (
-        <Connect containerStyle={[tw`w-full min-md:w-full`]} customButtonStyle={[tw`w-full min-md:w-full`]} />
+        <Connect containerStyle={[tw`w-full min-md:w-full`]} customButtonStyle={[tw`w-full min-md:w-full h-10`]} />
       )}
 
       {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}
@@ -729,6 +729,7 @@ const BuddyLinkReferral: FC = () => {
   }, [connection, wallet])
 
   const copyToClipboard = useCallback(() => {
+    if (!name || !name.trim()) return
     navigator.clipboard.writeText(referLink)
     setIsCopied(true)
     notify({
@@ -813,7 +814,7 @@ const BuddyLinkReferral: FC = () => {
         </p>
         <button
           css={[
-            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
+            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
             riskGroup
               ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
               : tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
@@ -825,7 +826,7 @@ const BuddyLinkReferral: FC = () => {
         </button>
       </>
     ),
-    [riskGroup]
+    [riskGroup, name]
   )
 
   const copyLink = useMemo(
@@ -842,7 +843,7 @@ const BuddyLinkReferral: FC = () => {
 
         <button
           css={[
-            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[40px] w-[94px] text-grey-2 font-semibold`,
+            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
             referLink
               ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
               : isCopied
@@ -869,7 +870,8 @@ const BuddyLinkReferral: FC = () => {
             onClick={copyToClipboard}
             css={[
               tw`border-[1.5px] dark:border-grey-1 border-grey-2  border-dashed cursor-pointer
-  flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] relative `
+  flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] relative h-10`,
+              !name.trim() ? tw`cursor-default` : tw`cursor-pointer`
             ]}
           >
             {!name ? generateLink : copyLink}
@@ -878,7 +880,7 @@ const BuddyLinkReferral: FC = () => {
       ) : !wallet.connected ? (
         <Connect
           customButtonStyle={[
-            tw`px-7.5 min-md:px-8 text-regular leading-normal text-white font-semibold w-[330px] min-md:w-[265px]`
+            tw`px-7.5 min-md:px-8 text-regular leading-normal text-white font-semibold w-[330px] min-md:w-[265px] h-10`
           ]}
         />
       ) : (
@@ -890,9 +892,9 @@ const BuddyLinkReferral: FC = () => {
   )
 }
 const ReferAndEarn: FC = () => (
-  <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full`}>
+  <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full leading-normal`}>
     <BuddyLinkReferral />
-    <p css={tw`mb-0 text-regular text-grey-3 dark:text-grey-2 font-semibold `}>
+    <p css={tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold text-justify `}>
       To generate a referral link, first connect your wallet and create a trader account at
       <a
         href={'app.goosefx.io/trade'}
@@ -904,17 +906,32 @@ const ReferAndEarn: FC = () => (
       </a>
       by depositing funds. Afterwards you will be able to generate a referral URL to share.
     </p>
-    <p css={[tw`mb-0 mt-auto text-regular text-grey-3 dark:text-grey-2 font-semibold `]}>
-      Still have questions? Go to our
-      <a
-        css={[tw`underline text-blue-1 dark:text-white ml-1`]}
-        href={'https://docs.goosefx.io/'}
-        target={'_blank'}
-        rel={'noreferrer'}
+    <div css={[tw`flex flex-col min-md:flex-row min-md:gap-1`]}>
+      <p
+        css={[
+          tw`mb-0 mt-auto text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold
+    min-md:text-center min-w-max `
+        ]}
       >
-        Referral Program Documentation
-      </a>
-    </p>
+        Still have questions?
+      </p>
+      <p
+        css={[
+          tw`mb-0 mt-auto text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold
+    min-md:text-center min-w-max`
+        ]}
+      >
+        Go to our
+        <a
+          css={[tw`underline text-blue-1 dark:text-white ml-1`]}
+          href={'https://docs.goosefx.io/features/rewards-programs/referral-program'}
+          target={'_blank'}
+          rel={'noreferrer'}
+        >
+          Referral Program Documentation
+        </a>
+      </p>
+    </div>
   </div>
 )
 
@@ -979,8 +996,8 @@ export const RewardInfoComponent: FC<RewardSegmentProps> = ({ panelIndex, childr
   return (
     <div
       css={[
-        tw`flex flex-col px-[30px] min-md:px-[145px] py-2.5 min-md:pt-5
-      h-full items-center font-semibold bg-white dark:bg-black-2`,
+        tw`flex flex-col px-[30px] min-md:px-[145px] py-3.75 min-md:pt-5
+      h-full items-center font-semibold bg-white dark:bg-black-2 min-h-[461px] min-md:min-h-0`,
         panelIndex == 1 ? tw`min-md:pb-[41px]` : tw`min-md:pb-0`
       ]}
     >
@@ -1088,7 +1105,9 @@ const EarnRewardsRedirect: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [])
   return (
-    <div css={tw`flex py-2.5 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center h-full`}>
+    <div
+      css={tw`flex py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center h-full`}
+    >
       <div
         css={[
           tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5
@@ -1096,7 +1115,7 @@ const EarnRewardsRedirect: FC = () => {
         ]}
       >
         <p tw={'mb-0'}>Rewards</p>
-        <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0'}>{apr}% APY</p>
+        <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 hidden'}>{apr}% APY</p>
       </div>
       <div
         css={[
@@ -1246,7 +1265,7 @@ const ReferAndEarnRedirect: FC = () => {
       </div>
       <button
         css={[
-          tw`h-[40px] opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
+          tw`h-10 opacity-50 w-[320px] rounded-[100px] bg-white py-3 px-8 text-black-4 font-semibold border-0
         min-md:mb-0 mt-3.75 min-md:mt-5 whitespace-nowrap overflow-hidden flex items-center justify-center`,
           totalEarned > 0.0 ? tw`opacity-100` : tw``
         ]}

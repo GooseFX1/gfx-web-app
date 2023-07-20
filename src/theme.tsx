@@ -100,6 +100,8 @@ export function colors(mode: string): Colors {
 
     text1h: '#7d7d7d',
     comingSoon: mode === 'dark' ? '#262626' : '#b5b5b5',
+    themeToggleButton: mode === 'dark' ? '#1c1c1c' : '#eee',
+    themeToggleContainer: mode === 'dark' ? '#131313' : 'white',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',

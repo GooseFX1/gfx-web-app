@@ -96,7 +96,7 @@ export const RewardsButton: FC = () => {
 }
 
 const REWARD_REDIRECT = styled.div<{ $index: number }>`
-  ${tw`flex flex-col min-w-max w-[35%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
+  ${tw`flex flex-col min-w-max w-[40%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
   background-image: ${({ theme, $index }) => {
     switch ($index) {
       case 0:
@@ -114,7 +114,7 @@ const Wrapper = styled.div`
 `
 
 const REWARD_INFO = styled.div`
-  ${tw`w-full min-w-[65%]  rounded-bigger`}
+  ${tw`w-full min-w-[60%]  rounded-bigger`}
 `
 
 export const RewardsPopup: FC = () => {

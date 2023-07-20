@@ -166,17 +166,17 @@ export const Connect: FC<MenuItemProps> = ({
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
-    if (wallet && wallet.adapter.name !== SolanaMobileWalletAdapterWalletName && !connected && canConnect) {
+    if (wallet && wallet?.adapter?.name !== SolanaMobileWalletAdapterWalletName && !connected && canConnect) {
       connect()
         .then(() => {
-          sessionStorage.setItem('connectedGFXWallet', wallet.adapter.name)
+          sessionStorage.setItem('connectedGFXWallet', wallet?.adapter?.name)
         })
         .catch((e) => {
           console.log({ e })
         })
     } else if (!canConnect) {
       sessionStorage.removeItem('connectedGFXWallet')
-      disconnect()
+      disconnect().catch((err) => console.log('disconnect failed', err))
     }
   }, [wallet, connect, connected, canConnect])
 
@@ -195,9 +195,13 @@ export const Connect: FC<MenuItemProps> = ({
     (e) => {
       e.preventDefault()
       sessionStorage.removeItem('connectedGFXWallet')
-      disconnect().finally(() => {
-        onClose()
-      })
+      disconnect()
+        .catch((err) => {
+          console.warn('disconnect failed', err)
+        })
+        .finally(() => {
+          onClose()
+        })
     },
     [disconnect]
   )
@@ -241,8 +245,8 @@ export const Connect: FC<MenuItemProps> = ({
             >
               <img
                 css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[16px] w-[16px]` : tw`h-[14px] w-[14px]`]}
-                src={wallet.adapter.icon}
-                alt={`${wallet.adapter.name}_icon`}
+                src={wallet?.adapter?.icon}
+                alt={`${wallet?.adapter?.name}_icon`}
               />
             </div>
           )}

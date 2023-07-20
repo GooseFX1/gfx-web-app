@@ -11,7 +11,7 @@ const WRAPPER = styled(SpaceBetweenDiv)`
 const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
   ${tw`h-[25px] w-12.5 sm:h-[35px] sm:w-[70px] mx-[12px] rounded-[40px] cursor-pointer`}
   border-radius: 30px;
-  background-color: ${({ theme }) => theme.appLayoutFooterToggle};
+  background-color: ${({ theme }) => theme.themeToggleButton};
 
   > div {
     ${tw`h-[20px] w-[20px] sm:h-[25px] sm:w-[25px]`}

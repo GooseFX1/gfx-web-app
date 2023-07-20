@@ -28,7 +28,7 @@ export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
 
 const NewMenu = styled(Menu)`
   ${tw`w-[278px] mt-[16px]`}
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme }) => theme.bg2};
 
   small {
     ${tw`font-semibold`}
