@@ -29,6 +29,7 @@ import { BidNFTModal } from './AggModals/BidNFTModal'
 import debounce from 'lodash.debounce'
 import { PILL_SECONDARY } from '../NFTDetails/AttributesTabContent'
 import { Button } from '../../../components'
+import { AH_PROGRAM_IDS } from '../../../web3'
 
 const WRAPPER = styled.div`
   -ms-overflow-style: none; /* IE and Edge */
@@ -363,26 +364,30 @@ export const FilterTags = (): ReactElement => {
       )}
       {additionalFilters?.marketsFilter &&
         additionalFilters.marketsFilter?.length > 0 &&
-        additionalFilters.marketsFilter?.map((market, index) => (
-          <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2" key={index}>
-            <div className="layer" tw="!w-[fit] flex p-1">
-              <div tw="flex items-center">
-                <div>
-                  <div>Marketplace</div>
-                  <div tw="whitespace-nowrap">{displayMarketplaceName(market)}</div>
-                </div>
+        additionalFilters?.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1 &&
+        additionalFilters.marketsFilter?.map(
+          (market, index) =>
+            index < 4 && (
+              <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2" key={index}>
+                <div className="layer" tw="!w-[fit] flex p-1">
+                  <div tw="flex items-center">
+                    <div>
+                      <div>Marketplace</div>
+                      <div tw="whitespace-nowrap">{displayMarketplaceName(market)}</div>
+                    </div>
 
-                <div>
-                  <img
-                    src={`/img/assets/Aggregator/closeFilter${mode}.svg`}
-                    onClick={() => removeMarketplace(market)}
-                    tw="h-5 w-5 ml-1 cursor-pointer"
-                  />
+                    <div>
+                      <img
+                        src={`/img/assets/Aggregator/closeFilter${mode}.svg`}
+                        onClick={() => removeMarketplace(market)}
+                        tw="h-5 w-5 ml-1 cursor-pointer"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </PILL_SECONDARY>
-        ))}
+              </PILL_SECONDARY>
+            )
+        )}
 
       {additionalFilters.attributes?.length > 0 &&
         additionalFilters.attributes?.map((appliedAttr, index) => (
@@ -405,7 +410,8 @@ export const FilterTags = (): ReactElement => {
             </div>
           </PILL_SECONDARY>
         ))}
-      {(additionalFilters.marketsFilter?.length ||
+      {((additionalFilters.marketsFilter?.length > 0 &&
+        additionalFilters.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1) ||
         additionalFilters.minValueFilter ||
         additionalFilters.attributes?.length > 0) && (
         <Button

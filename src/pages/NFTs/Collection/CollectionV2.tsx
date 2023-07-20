@@ -350,13 +350,14 @@ const FiltersContainer: FC<{
 
   const DisplayFilterIcon = useMemo(() => {
     const displayFilterIcon = displayIndex === 0 || displayIndex === 2
-    return <>{displayFilterIcon && <FiltersIcon open={open} setOpen={setOpen} />}</>
+    return <>{displayFilterIcon && !checkMobile() && <FiltersIcon open={open} setOpen={setOpen} />}</>
   }, [displayIndex, showPriceAndMarket, availableAttributes, open])
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
-      {DisplayFilterIcon}
       <div className="flitersFlexContainer">
+        {DisplayFilterIcon}
+
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
           style={{ width: 332 }}
@@ -395,7 +396,10 @@ const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>
     setOpen((prev) => !prev)
   }, [])
   return (
-    <div tw="h-11 w-11 duration-1000 cursor-pointer z-[100] mt-1" onClick={handleButtonClick}>
+    <div
+      tw="h-11 w-11 duration-1000 cursor-pointer z-[100] mt-1 sm:ml-0 sm:mr-0 ml-3 mr-[-12px]"
+      onClick={handleButtonClick}
+    >
       <img src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
     </div>
   )
