@@ -3,6 +3,7 @@ import { faqs } from './constants'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { useDarkMode } from '../../context'
+import { checkMobile } from '../../utils'
 
 const FAQ_WRAPPER = styled.div`
   .faqs {
@@ -44,7 +45,9 @@ const FAQ_WRAPPER = styled.div`
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
     <div tw="flex flex-row items-center mt-[55px]">
-      <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4">Frequently Asked Questions</h2>
+      <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4">
+        {checkMobile() ? 'FAQs' : 'Frequently Asked Questions'}
+      </h2>
       <a
         tw="w-[140px] h-10 bg-blue-1 mb-5 cursor-pointer text-white font-semibold
          text-average flex flex-row justify-center items-center rounded-circle"

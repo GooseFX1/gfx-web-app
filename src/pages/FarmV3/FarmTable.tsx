@@ -10,6 +10,7 @@ import { useAnimateButtonSlide } from '../Farm/FarmFilterHeader'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import { ModeOfOperation } from './constants'
+import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
   .pinkGradient {
@@ -73,10 +74,6 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     // if height need add here
     ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;
-
-    @media (max-width: 500px) {
-      height: calc(100vh - 160px);
-    }
 
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
@@ -143,12 +140,9 @@ export const FarmTable: FC = () => {
     // handleSlide(index)
   }, [])
 
-  const capitalizeFirstLetter = (input: string): string => {
-    return input.charAt(0).toUpperCase() + input.slice(1)
-  }
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-end mb-5">
+      <div tw="flex flex-row items-end mb-5 sm:items-stretch">
         <img
           src={`/img/assets/${selectedPool}_pools.svg`}
           alt="pool-icon"
@@ -157,19 +151,20 @@ export const FarmTable: FC = () => {
           tw="mr-3 duration-500 "
         />
         <div tw="flex flex-col">
-          <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4">
-            {capitalizeFirstLetter(selectedPool)} Pools
+          <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
+            {selectedPool} Pools
           </div>
 
-          <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px]">
+          <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny">
             {poolIndex === 0 ? (
               <>
-                If you're looking for stable returns with balanced risk, <br /> Stable pools are the way to go.
+                If you're looking for stable returns with balanced risk, {!checkMobile() && <br />} Stable pools
+                are the way to go.
               </>
             ) : (
               <>
                 If you're looking for high returns with a bit more risk,
-                <br /> Hyper pools are the way to go.
+                {!checkMobile() && <br />} Hyper pools are the way to go.
               </>
             )}
           </div>
@@ -186,7 +181,7 @@ export const FarmTable: FC = () => {
             tw="h-11 flex items-center justify-center z-10 font-semibold w-[100px]"
             onClick={() => handleClick(poolTypes[0], 0)}
           >
-            Sable
+            Stable
           </div>
           <div
             css={[poolIndex === 1 && tw`!text-white `]}
@@ -196,7 +191,17 @@ export const FarmTable: FC = () => {
             Hyper
           </div>
         </div>
-
+        {!checkMobile() && (
+          <SearchBar
+            setSearchFilter={setSearchTokens}
+            width={400}
+            placeholder="Search by token symbol"
+            bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+            set
+          />
+        )}
+      </div>
+      {checkMobile() && (
         <SearchBar
           setSearchFilter={setSearchTokens}
           width={400}
@@ -204,7 +209,7 @@ export const FarmTable: FC = () => {
           bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
           set
         />
-      </div>
+      )}
       <div>
         <table tw="mt-4">
           <FarmTableHeaders />
@@ -225,10 +230,10 @@ const FarmTableHeaders = () => {
       <tr>
         <th tw="!text-left !justify-start pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
         <th>{TableHeaderTitle('APY', null, true)} </th>
-        <th>{TableHeaderTitle('Liquidity', null, true)} </th>
-        <th>{TableHeaderTitle('24H Volume', null, true)} </th>
-        <th>{TableHeaderTitle('24H Fees', null, true)}</th>
-        <th>{TableHeaderTitle('Balance', null, true)}</th>
+        {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
+        {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
+        {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
+        {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
         <th tw="!text-right !justify-end !flex !w-[10%]">{TableHeaderTitle(`Pools: 3`, null, false)}</th>
       </tr>
     </thead>
@@ -245,10 +250,10 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
           <div tw="ml-2.5">{coin}</div>
         </td>
         <td>4.56 %</td>
-        <td>$550,111.22</td>
-        <td>$80,596</td>
-        <td>$30,596</td>
-        <td>0.0</td>
+        {!checkMobile() && <td>$550,111.22</td>}
+        {!checkMobile() && <td>$80,596</td>}
+        {!checkMobile() && <td>$30,596</td>}
+        {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%]">
           <Button className="pinkGradient" cssStyle={tw` font-semibold text-regular `}>
             Stats
