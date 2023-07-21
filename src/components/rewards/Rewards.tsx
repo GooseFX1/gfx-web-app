@@ -331,7 +331,9 @@ const RewardsRightPanel: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [])
   return (
-    <div css={tw`flex py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}>
+    <div
+      css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
+    >
       <div
         css={[
           tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5

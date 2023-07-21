@@ -25,7 +25,7 @@ const ReferAndEarn: FC = () => (
       </a>
       by depositing funds. Afterwards you will be able to generate a referral URL to share.
     </p>
-    <div css={[tw`flex flex-col min-md:flex-row min-md:gap-1`]}>
+    <div css={[tw`flex flex-col min-md:flex-row min-md:gap-1 min-md:mt-auto`]}>
       <p
         css={[
           tw`mb-0 mt-auto text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold
