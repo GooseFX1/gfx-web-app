@@ -70,12 +70,7 @@ const BuddyLinkReferral: FC = () => {
             true,
             <div>
               Please bear with us and try again, or if the error continues
-              <a
-                css={[tw`mx-1 underline`]}
-                href={'https://docs.goosefx.io/'}
-                target={'_blank'}
-                referrerPolicy={'no-referrer'}
-              >
+              <a css={[tw`mx-1 underline`]} href={'https://docs.goosefx.io/'} target={'_blank'} rel={'noreferrer'}>
                 go to docs
               </a>
             </div>

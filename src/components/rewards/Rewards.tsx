@@ -311,6 +311,7 @@ const RewardsRightPanel: FC = () => {
     } catch (err) {
       return err
     }
+    console.log(apr)
   }
   useEffect(() => {
     fetchGOFXData()
@@ -339,8 +340,8 @@ const RewardsRightPanel: FC = () => {
       leading-normal`
         ]}
       >
-        <p tw={'mb-0'}>Rewards</p>
-        <p tw={'ml-1 min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 hidden'}>{apr}% APY</p>
+        <p tw={'mb-0 hidden'}>Rewards</p>
+        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>APY Coming Soon</p>
       </div>
       <div
         css={[
