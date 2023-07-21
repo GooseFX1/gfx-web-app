@@ -155,7 +155,7 @@ export const Connect: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
       return (
-        <div css={[tw`absolute top-[-6px]`]}>
+        <div css={[tw`absolute top-[-10px]`]}>
           <Loader zIndex={1} />
         </div>
       )
@@ -225,13 +225,12 @@ export const Connect: FC<MenuItemProps> = ({
           as={'button'}
           css={[
             tw`border-0 flex min-md:w-[140px] cursor-pointer relative bg-purple-1 text-white items-center
-            justify-center
-      text-tiny font-semibold h-[35px] w-[124px] px-1.75 py-2.25 rounded-circle gap-1.75
-      `,
+            justify-center text-tiny font-semibold h-[30px] w-[124px] px-[5px] rounded-circle gap-1.75
+            `,
             !canConnect
               ? tw`dark:bg-black-4 bg-grey-4 text-grey-1 dark:text-grey-2`
               : connected
-              ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2`
+              ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2 justify-between`
               : tw``
           ].concat(customButtonStyle ?? [])}
           disabled={!canConnect}
@@ -278,7 +277,7 @@ export const Connect: FC<MenuItemProps> = ({
             css={[
               tw`w-full rounded-small border-1 border-solid border-grey-2 dark:border-grey-1
          bg-white dark:bg-black-1 text-grey-1 dark:text-grey-2 text-tiny font-semibold origin-top
-         absolute mt-[4px] gap-2 flex flex-col px-2 py-2 min-md:px-1.25
+         absolute gap-2 flex flex-col px-2 py-2 min-md:px-1.25
          `
             ].concat(customMenuListItemsContainerStyle ?? [])}
           >

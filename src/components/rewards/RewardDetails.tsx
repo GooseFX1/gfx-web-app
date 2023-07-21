@@ -31,10 +31,10 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
 
   return (
     <>
-      <div id={'title'} css={tw`flex items-center flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
+      <div id={'title'} css={tw`h-[150px] flex flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
         {(breakpoint.isMobile || breakpoint.isTablet) && !isEarnSelected && <ReferFriendSegment />}
-        {!breakpoint.isMobile && <div css={tw``}>{icon}</div>}
-        <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5`, !subtitle && tw`justify-center gap-0`]}>
+        {!breakpoint.isMobile && <div css={tw`flex`}>{icon}</div>}
+        <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5 justify-center`, !subtitle && tw`gap-0`]}>
           <p
             css={[
               tw`text-lg leading-5.5 text-center min-md:text-left  min-md:text-lg
@@ -53,7 +53,7 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
           </p>
         </div>
       </div>
-      <div css={[tw`min-md:max-w-[580px]`]}>{children}</div>
+      <div css={[tw`h-full min-md:max-w-[580px]`]}>{children}</div>
     </>
   )
 }
@@ -119,13 +119,13 @@ export const EarnLeftSidePanel: FC<RewardSegmentProps> = ({ panelIndex, children
   return (
     <div
       css={[
-        tw`flex flex-col px-[30px] min-md:px-[145px] py-3.75 min-md:pt-5
-      h-full items-center font-semibold bg-white dark:bg-black-2 min-h-[461px] min-md:min-h-0`,
+        tw`flex flex-col px-[30px] min-md:px-[145px] py-3.75 min-md:pt-5 h-full items-center 
+        font-semibold bg-white dark:bg-black-2 min-h-[461px] min-md:min-h-0`,
         panelIndex == 1 ? tw`min-md:pb-[41px]` : tw`min-md:pb-0`
       ]}
     >
       {!breakpoint.isMobile && children}
-      <div css={tw`flex flex-col max-w-full min-md:pt-6 h-full items-center`}>
+      <div css={tw`flex flex-col max-w-full h-full items-center`}>
         <RewardInfo isEarnSelected={panelIndex == 0} {...panel} />
       </div>
     </div>

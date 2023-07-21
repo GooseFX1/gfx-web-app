@@ -149,7 +149,7 @@ const EarnRewards: FC = () => {
   // twin.macro crashing on obj.property nested access
   return (
     <div
-      css={tw`flex mt-3.75 gap-3.75 flex-col overflow-y-scroll min-md:overflow-auto items-center h-full
+      css={tw`h-full flex gap-3.75 flex-col overflow-y-scroll min-md:overflow-auto items-center
     min-md:w-[580px]`}
     >
       <UnstakeConfirmationModal
@@ -167,7 +167,7 @@ const EarnRewards: FC = () => {
             setInputValue={setInputValue}
           />
         )}
-        <div tw={'flex flex-col min-md:flex-row gap-1 '}>
+        <div tw={' flex flex-col min-md:flex-row gap-1 '}>
           <p
             css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
           >
@@ -331,9 +331,7 @@ const RewardsRightPanel: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [])
   return (
-    <div
-      css={tw`flex py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center h-full`}
-    >
+    <div css={tw`flex py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}>
       <div
         css={[
           tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5

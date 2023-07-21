@@ -16,11 +16,11 @@ const UnstakeBottomBar: FC = () => {
   }, [rewards.user.staking.unstakeableTickets])
   const hideUnstakingModal = useCallback(() => setIsModalOpen(false), [])
   return (
-    <>
+    <div css={[tw`min-md:h-[91px]`]}>
       <AllUnstakingTicketsModal isOpen={isModalOpen} onClose={hideUnstakingModal} />
       <button
         css={[
-          tw`min-md:mt-[43px] min-md:mb-[46px] text-[18px] leading-[22px] text-primary-gradient-1
+          tw`min-md:mt-0 min-md:mb-0 min-md:h-[91px] text-[18px] leading-[22px] text-primary-gradient-1
           underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
            active:bg-transparent font-semibold border-0 mt-[15px] mb-[28px]
   `,
@@ -31,7 +31,7 @@ const UnstakeBottomBar: FC = () => {
       >
         {rewards.user.staking.unstakeableTickets.length == 0 ? 'No Active Cooldowns' : 'See All Active Cooldowns'}
       </button>
-    </>
+    </div>
   )
 }
 const StakeBottomBar: FC = () => {
