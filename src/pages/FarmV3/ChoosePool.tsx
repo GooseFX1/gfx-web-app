@@ -62,7 +62,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
       ${tw`font-semibold text-center`}
     }
     h2 {
-      ${tw`text-lg font-semibold dark:text-grey-5 text-black-4 mb-5 sm:mt-10`}
+      ${tw`text-lg font-semibold dark:text-grey-5 text-black-4 mb-5 sm:text-average`}
     }
     .subText {
       ${tw`font-medium text-regular dark:text-grey-2 text-grey-1 sm:w-[292px] sm:text-[13px]`}
@@ -187,8 +187,8 @@ export const ChoosePool: FC<{ poolSelection: boolean; setPoolSelection: Dispatch
 
   return (
     <STYLED_POPUP
-      height={checkMobile() ? '520px' : '398px'}
-      width={checkMobile() ? '355px' : '500px'}
+      height={checkMobile() ? '363px' : '398px'}
+      width={checkMobile() ? '378px' : '500px'}
       title={null}
       centered={true}
       visible={poolSelection ? true : false}
@@ -202,16 +202,10 @@ export const ChoosePool: FC<{ poolSelection: boolean; setPoolSelection: Dispatch
       <Slider {...settings} ref={sliderRef}>
         <div className="slide">
           <h2>Can’t Choose A Pool?</h2>
-          <img
-            src={'/img/assets/choosePool.svg'}
-            alt="choose-pool"
-            height={checkMobile() ? '150px' : '159px'}
-            width={checkMobile() ? '205px' : '170px'}
-            tw="mx-auto"
-          />
+          <img src={'/img/assets/choosePool.svg'} alt="choose-pool" height={159} width={170} tw="mx-auto" />
           <div className="subText">
-            Let's review your risk tolerance together! Take a short time to answer few questions to better
-            understand your risk preferences.
+            Let us help you understand your risk profile. Take a few moments to answer the questions and get a
+            better understanding.
           </div>
         </div>
         <div className="slide">
