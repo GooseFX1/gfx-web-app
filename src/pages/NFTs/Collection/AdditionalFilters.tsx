@@ -27,7 +27,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
     border-left: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
-    height: calc(100vh - 275px);
+    height: calc(100vh - 250px);
 
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
@@ -39,10 +39,10 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
       ${tw`w-[20px] h-[20px] block ml-2`}
     }
     .filtersTitleItem {
-      ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+      ${tw`text-[18px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
       border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
       visibility: ${open ? 'visible' : 'hidden'};
-      font-size: ${open ? '20px' : '1px'};
+      font-size: ${open ? '18px' : '1px'};
     }
     .ant-checkbox {
       ${tw`bg-grey-6 dark:bg-black-2`}
@@ -166,10 +166,10 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`font-semibold h-[50px] text-[22px] sm:mt-3 flex items-center pl-3 sm:pl-4 duration-1000`}
   }
   .filtersTitleItem {
-    ${tw`text-[20px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+    ${tw` font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
     border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
     visibility: ${open ? 'visible' : 'hidden'};
-    font-size: ${open ? '20px' : '10px'};
+    font-size: ${open ? '18px' : '10px'};
   }
 `
 
@@ -196,7 +196,6 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
       // >
       //   <div className="wrapper">
       //     {/* title */}
-      //     <div className="filtersTitle">Filters</div>
       //     {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
       //     {showPriceAndMarket && <PriceRange isOpen={open} />}
       //     {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
@@ -207,7 +206,6 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
     return (
       <ADDITIONAL_FILTERS open={open}>
         {/* title web */}
-        <div className="filtersTitle">Filters</div>
         {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
         {showPriceAndMarket && <PriceRange isOpen={open} />}
         {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
@@ -230,16 +228,18 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
     setShowMore((prev) => !prev)
   }, [])
 
-  const handleAllMarketToggle = useCallback(async (check) => {
-    setAllMarketsToggle(check)
-    if (check && additionalFilters.marketsFilter !== null) {
-      const filteredMarketPlaces = Array.from(marketplaces)
-      console.log(filteredMarketPlaces)
-      const marketplaceArr = filteredMarketPlaces.map((market) => market.toUpperCase().replaceAll(' ', '_'))
-      setAdditionalFilters((prev) => ({ ...prev, marketsFilter: marketplaceArr }))
-    }
-    if (!check) setAdditionalFilters((prev) => ({ ...prev, marketsFilter: null }))
-  }, [])
+  const handleAllMarketToggle = useCallback(
+    async (check) => {
+      setAllMarketsToggle(check)
+      if (check && additionalFilters.marketsFilter) {
+        const filteredMarketPlaces = Array.from(marketplaces)
+        const marketplaceArr = filteredMarketPlaces.map((market) => market.toUpperCase().replaceAll(' ', '_'))
+        setAdditionalFilters((prev) => ({ ...prev, marketsFilter: marketplaceArr }))
+      }
+      if (!check) setAdditionalFilters((prev) => ({ ...prev, marketsFilter: null }))
+    },
+    [marketplaces, additionalFilters]
+  )
 
   const checkIfMarketChecked = useCallback(
     (market: string) => {

@@ -115,27 +115,29 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       if (collectionData.collection === null) return null
       setSingleCollection(collectionData)
 
-      const attributeMap = collectionData[0]?.available_attributes?.reduce((map, attribute) => {
-        const traitType = attribute.attribute.trait_type
-        const traitValue = attribute.attribute.value
-        const count = attribute?.listed_count ?? attribute?.count
-        const totalCount = attribute?.count
-        const isAnnotation = attribute.is_annotation
-        if (map[traitType]) {
-          map[traitType].push({
-            traitValue: traitValue,
-            count: count,
-            isAnnotation,
-            trait: traitType,
-            totalCount: totalCount
-          })
-        } else {
-          map[traitType] = [
-            { traitValue: traitValue, count: count, isAnnotation, trait: traitType, totalCount: totalCount }
-          ]
-        }
-        return map
-      }, {})
+      const attributeMap = collectionData[0]?.attributes_filters_enabled
+        ? collectionData[0]?.available_attributes?.reduce((map, attribute) => {
+            const traitType = attribute.attribute.trait_type
+            const traitValue = attribute.attribute.value
+            const count = attribute?.listed_count ?? attribute?.count
+            const totalCount = attribute?.count
+            const isAnnotation = attribute.is_annotation
+            if (map[traitType]) {
+              map[traitType].push({
+                traitValue: traitValue,
+                count: count,
+                isAnnotation,
+                trait: traitType,
+                totalCount: totalCount
+              })
+            } else {
+              map[traitType] = [
+                { traitValue: traitValue, count: count, isAnnotation, trait: traitType, totalCount: totalCount }
+              ]
+            }
+            return map
+          }, {})
+        : null
 
       setAvailableAttributes(attributeMap)
       // const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)

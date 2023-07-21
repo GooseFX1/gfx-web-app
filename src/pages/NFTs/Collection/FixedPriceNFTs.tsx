@@ -299,7 +299,9 @@ export const FilterTags = (): ReactElement => {
   const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
   const { currencyView } = useNFTAggregator()
   const { solPrice } = usePriceFeedFarm()
-  const multiplier = useMemo(() => (currencyView === 'USDC' ? solPrice : 1), [currencyView])
+  const [minValue, setMinValue] = useState<number>(additionalFilters?.minValueFilter)
+  const [maxValue, setMaxValue] = useState<number>(additionalFilters?.maxValueFilter)
+
   const clearPriceFilters = useCallback(() => {
     setAdditionalFilters((prev) => ({
       ...prev,
@@ -307,6 +309,21 @@ export const FilterTags = (): ReactElement => {
       maxValueFilter: null
     }))
   }, [])
+
+  useEffect(() => {
+    if (currencyView === 'USDC') {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+    } else {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+    }
+  }, [currencyView])
+
+  useEffect(() => {
+    setMinValue(additionalFilters?.minValueFilter)
+    setMaxValue(additionalFilters?.maxValueFilter)
+  }, [additionalFilters])
 
   const clearSpecificAttribute = useCallback((appliedAttr) => {
     setAdditionalFilters((prev) => {
@@ -336,18 +353,16 @@ export const FilterTags = (): ReactElement => {
     (market: string) => market[0].toUpperCase() + market.slice(1).replaceAll('_', ' ').toLowerCase(),
     []
   )
-
   return (
     <WRAPPER tw="flex overflow-x-auto">
       {additionalFilters.maxValueFilter && additionalFilters.minValueFilter && (
-        <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2">
-          <div className="layer" tw="!w-[fit] flex p-1">
+        <PILL_SECONDARY $mode={mode} tw="!w-[fit] h-[45px] mt-2 mx-2">
+          <div className="layer" tw="!w-[fit] flex p-0.5 pr-2">
             <div tw="flex items-center">
               <div>
-                <div>Price Range</div>
-                <div>
-                  {formatSOLDisplay(additionalFilters.minValueFilter * multiplier, true, 1)} -
-                  {formatSOLDisplay(additionalFilters.maxValueFilter * multiplier, true, 1)} {currencyView}
+                <div tw="text-grey-1 dark:text-grey-2 text-[13px]">Price Range</div>
+                <div tw="dark:text-grey-5 text-black-4">
+                  {formatSOLDisplay(minValue, true, 1)} -{formatSOLDisplay(maxValue, true, 1)} {currencyView}
                 </div>
               </div>
 
@@ -418,7 +433,7 @@ export const FilterTags = (): ReactElement => {
           onClick={clearAllFilters}
           height="30px"
           width="94px"
-          cssStyle={tw`dark:bg-black-2 bg-white font-semibold text-grey-1 dark:text-grey-5 mt-4`}
+          cssStyle={tw`dark:bg-black-2 bg-white font-semibold text-black-4 dark:text-grey-5 mt-4`}
         >
           Clear All
         </Button>

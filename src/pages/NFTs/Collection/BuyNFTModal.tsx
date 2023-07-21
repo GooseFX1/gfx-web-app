@@ -20,7 +20,7 @@ import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WRAPPED_SOL_MINT, confirmTransaction, AH_NAME } from '../../../web3'
+import { WRAPPED_SOL_MINT, confirmTransaction, AH_NAME, handleRedirect } from '../../../web3'
 import { Button } from '../../../components/Button'
 import { GFX_LINK } from '../../../styles'
 import { logData } from '../../../api/analytics'
@@ -493,8 +493,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
   const handleBuyFlow = async (e: any) => {
     e.preventDefault()
+    if (ask?.marketplace_name === NFT_MARKETS.HYPERSPACE) {
+      handleRedirect(ask?.marketplace_name, ask?.token_account_mint_key)
+      return
+    }
     setIsLoading(true)
     logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
+
     if (ask?.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
       return
