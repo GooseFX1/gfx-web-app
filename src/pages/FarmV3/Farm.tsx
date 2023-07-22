@@ -9,7 +9,7 @@ import { FarmTable } from './FarmTable'
 import { Faqs } from './Faqs'
 
 const WRAPPER = styled.div`
-  ${tw`py-5 px-[30px] dark:bg-black-1 bg-grey-5 sm:pt-4 sm:pb-[30px] sm:pl-3.75 sm:pr-0`}
+  ${tw`py-5 px-[30px] dark:bg-black-1 bg-grey-5 sm:pt-4 sm:pb-[30px] sm:pl-[15px] sm:pr-0`}
   * {
     font-family: Montserrat;
   }
