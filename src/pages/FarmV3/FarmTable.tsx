@@ -2,15 +2,15 @@
 import { FC, useCallback, useMemo, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { ArrowClicker, ArrowClickerWhite, Button, SearchBar } from '../../components'
+import { ArrowClicker, Button, SearchBar } from '../../components'
 import { useAccounts, useDarkMode, usePriceFeed, usePriceFeedFarm } from '../../context'
 import { ADDRESSES, getPriceObject } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { useAnimateButtonSlide } from '../Farm/FarmFilterHeader'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import { ModeOfOperation } from './constants'
-import { checkMobile } from '../../utils'
+import { checkMobile, formatSOLDisplay, formatSOLNumber } from '../../utils'
+import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
   .pinkGradient {
@@ -38,8 +38,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     overflow-x: hidden;
 
     @media (max-width: 500px) {
-      width: 100vw;
-      ${tw`sticky mt-[0px]`}
+      ${tw`sticky mt-[0px] w-[calc(100vw - 30px)]`}
     }
   }
 
@@ -52,7 +51,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   }
 
   thead {
-    ${tw`sm:dark:bg-black-5 sm:bg-black-4 text-base font-semibold  
+    ${tw`text-base font-semibold bg-grey-5 dark:bg-black-1 
     sm:h-[52px] rounded-[20px 20px 5px 5px]`}
 
     tr {
@@ -70,14 +69,14 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   }
 
   tbody {
-    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[15px]`}
+    ${tw`dark:bg-black-1 bg-grey-5`}
     // if height need add here
     ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;
 
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
-      sm:mb-0 rounded-[15px] cursor-pointer h-[70px] sm:h-auto sm:rounded-[10px]`}
+      sm:mb-0 rounded-[15px] cursor-pointer h-[70px] sm:h-20 sm:rounded-[10px]`}
 
       /* &:hover {
         ${tw`border-grey-2 rounded-[13px] sm:rounded-[8px] `}
@@ -115,6 +114,7 @@ export const FarmTable: FC = () => {
   const poolTypes = ['stable', 'hyper']
   const [selectedPool, setSelectedPool] = useState<string>(poolTypes[0])
   const [searchTokens, setSearchTokens] = useState<string>()
+  const breakpoint = useBreakPoint()
 
   const arr = useMemo(() => Object.keys(ADDRESSES['mainnet-beta'][selectedPool]).map((coin) => coin), [poolTypes])
 
@@ -122,17 +122,6 @@ export const FarmTable: FC = () => {
     () => (searchTokens ? arr.filter((ar) => ar.toLocaleLowerCase().includes(searchTokens)) : [...arr]),
     [searchTokens, arr]
   )
-
-  const buttons = poolTypes.map((pool, index) => (
-    <Button
-      cssStyle={tw`h-11 font-semibold  w-[100px] bg-black-1`}
-      key={pool}
-      onClick={() => handleClick(pool, index)}
-      className={pool === selectedPool ? 'selectedBackground' : ''}
-    >
-      {pool}
-    </Button>
-  ))
 
   const handleClick = useCallback((pool, index) => {
     setPoolIndex(index)
@@ -142,7 +131,7 @@ export const FarmTable: FC = () => {
 
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-end mb-5 sm:items-stretch">
+      <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4">
         <img
           src={`/img/assets/${selectedPool}_pools.svg`}
           alt="pool-icon"
@@ -171,44 +160,46 @@ export const FarmTable: FC = () => {
         </div>
       </div>
       <div tw="flex items-center">
-        <div tw="flex cursor-pointer">
+        <div tw="flex cursor-pointer relative">
           <div
             css={[tw`duration-500`, poolIndex === 1 ? tw`ml-[100px] ` : tw`ml-0`]}
             tw="h-11 bg-blue-1 w-[100px] absolute rounded-[50px]"
           ></div>
           <div
-            css={[poolIndex === 0 && tw`!text-white `]}
-            tw="h-11 flex items-center justify-center z-10 font-semibold w-[100px]"
+            css={[poolIndex === 0 && tw`!text-white  `]}
+            tw="h-11 flex items-center z-[100] justify-center  font-semibold w-[100px]  "
             onClick={() => handleClick(poolTypes[0], 0)}
           >
             Stable
           </div>
           <div
             css={[poolIndex === 1 && tw`!text-white `]}
-            tw="h-11 flex items-center justify-center z-10 font-semibold w-[100px]"
+            tw="h-11 flex items-center justify-center z-[100] font-semibold w-[100px] "
             onClick={() => handleClick(poolTypes[1], 1)}
           >
             Hyper
           </div>
         </div>
-        {!checkMobile() && (
+        {breakpoint.isDesktop && (
           <SearchBar
+            width={`425px`}
             setSearchFilter={setSearchTokens}
-            width={400}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             set
           />
         )}
       </div>
-      {checkMobile() && (
-        <SearchBar
-          setSearchFilter={setSearchTokens}
-          width={400}
-          placeholder="Search by token symbol"
-          bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-          set
-        />
+      {breakpoint.isMobile && (
+        <div tw="sm:mt-4">
+          <SearchBar
+            width={`95%`}
+            setSearchFilter={setSearchTokens}
+            placeholder="Search by token symbol"
+            bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+            set
+          />
+        </div>
       )}
       <div>
         <table tw="mt-4">
@@ -234,7 +225,9 @@ const FarmTableHeaders = () => {
         {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
         {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
         {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
-        <th tw="!text-right !justify-end !flex !w-[10%]">{TableHeaderTitle(`Pools: 3`, null, false)}</th>
+        <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">
+          {TableHeaderTitle(`Pools: 3`, null, false)}
+        </th>
       </tr>
     </thead>
   )
@@ -246,7 +239,7 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
     <>
       <tr className={isExpanded ? 'tableRowGradient' : ''} onClick={() => setIsExpanded((prev) => !prev)}>
         <td tw="!justify-start">
-          <img tw="h-10 w-10 ml-4" src={`/img/crypto/${coin}.svg`} />
+          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin}.svg`} />
           <div tw="ml-2.5">{coin}</div>
         </td>
         <td>4.56 %</td>
@@ -254,7 +247,7 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
         {!checkMobile() && <td>$80,596</td>}
         {!checkMobile() && <td>$30,596</td>}
         {!checkMobile() && <td>0.0</td>}
-        <td tw="!w-[10%]">
+        <td tw="!w-[10%] sm:!w-[33%]">
           <Button className="pinkGradient" cssStyle={tw` font-semibold text-regular `}>
             Stats
           </Button>
@@ -268,6 +261,8 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
 
 const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, coin }) => {
   const { wallet } = useWallet()
+  const breakpoint = useBreakPoint()
+
   const { getUIAmount } = useAccounts()
   const { prices } = usePriceFeedFarm()
   const [poolIndex, setPoolIndex] = useState<number>(0)
@@ -293,23 +288,40 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
   return (
     <div
       css={[
-        tw`dark:bg-black-2 bg-white mx-10 rounded-[0 0 15px 15px] duration-300 flex justify-between `,
-        isExpanded ? tw`h-[135px] visible text-regular p-5` : tw`h-0 invisible text-[0px] p-0`
+        tw`dark:bg-black-2 bg-white mx-10 sm:mx-5 rounded-[0 0 15px 15px] duration-300 flex justify-between sm:flex-col`,
+        isExpanded ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4` : tw`h-0 invisible text-[0px] p-0`
       ]}
     >
       <div tw="flex flex-col">
+        {isExpanded && breakpoint.isMobile && (
+          <div tw="flex flex-col">
+            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${coin}`} />
+            <FarmStats
+              isExpanded={isExpanded}
+              keyStr="Wallet Balance"
+              value={`${userTokenBalance.toFixed(2)} ${coin}`}
+            />
+            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Daily Earnings" value={`2.5 ${coin}`} />
+          </div>
+        )}
         {isExpanded && (
           <>
-            <div tw="flex font-semibold duration-500">
+            <div tw="flex font-semibold duration-500 sm:relative sm:mt-2">
               <div
                 css={[
-                  tw`bg-blue-1 h-8 w-[100px] rounded-full`,
-                  poolIndex === 1 ? tw`absolute ml-[100px] duration-500` : tw`absolute ml-0 duration-500`
+                  tw`bg-blue-1 h-8 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
+                  poolIndex === 1
+                    ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
+                    : tw`absolute ml-0 duration-500`
                 ]}
               ></div>
               <div
                 css={[
-                  tw`h-8 w-[100px] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-8 w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   poolIndex === 0 && tw`!text-white`
                 ]}
                 onClick={() => handleModeOfOperation(0)}
@@ -318,7 +330,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
               </div>
               <div
                 css={[
-                  tw`h-8 w-[100px] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-8 w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   poolIndex === 1 && tw`!text-white`
                 ]}
                 onClick={() => handleModeOfOperation(1)}
@@ -328,21 +340,25 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
             </div>
           </>
         )}
-        <div tw="mt-5">
-          <FarmStats
-            isExpanded={isExpanded}
-            keyStr="Wallet Balance"
-            value={`${userTokenBalance.toFixed(2)} ${coin} ($ ${userTokenBalanceInDollars.toFixed(2)} USD)`}
-          />
-        </div>
+        {breakpoint.isDesktop && (
+          <div tw="mt-5">
+            <FarmStats
+              isExpanded={isExpanded}
+              keyStr="Wallet Balance"
+              value={`${userTokenBalance.toFixed(2)} ${coin} ($ ${userTokenBalanceInDollars.toFixed(2)} USD)`}
+            />
+          </div>
+        )}
       </div>
 
       <div>
-        <div tw="flex">
-          <div tw="absolute flex">
+        <div tw="flex relative">
+          <div tw="absolute flex z-[100]">
             {/* // handle cases for withdraw operation */}
             <div
-              onClick={() => setUserInputVariable(parseFloat((userTokenBalance / 2).toFixed(2)))}
+              onClick={() =>
+                setUserInputVariable(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : undefined)
+              }
               tw="font-semibold text-grey-1 dark:text-grey-2 mt-2 ml-4 cursor-pointer"
             >
               Min
@@ -358,17 +374,17 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
           </div>
 
           <input
-            onChange={(e) => setUserInputVariable(parseFloat(e.target.value))}
+            onChange={(e) => setUserInputVariable(e.target.value && parseFloat(e.target.value))}
             placeholder={isExpanded ? `0.00 ${coin}` : ``}
             value={userInputVariable ?? null}
             css={[
-              tw`duration-500 rounded-[50px]  text-regular font-semibold outline-none dark:bg-black-1 bg-grey-5 border-none`,
-              isExpanded ? tw`w-[400px] h-10 p-4 pl-[300px]` : tw`h-0 w-0 pl-0`
+              tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 bg-grey-5 border-none`,
+              isExpanded ? tw`w-[400px] h-10 sm:w-[100%] p-4 pl-[300px] sm:pl-[72%]` : tw`h-0 w-0 pl-0 invisible`
             ]}
             type="text"
           />
           {userInputVariable >= 0.000001 && (
-            <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] mt-2">{coin}</div>
+            <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-2">{coin}</div>
           )}
         </div>
 
@@ -377,7 +393,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
             {wallet?.adapter?.publicKey ? (
               <div>
                 <Button
-                  cssStyle={tw`duration-500 w-[400px] h-10 bg-blue-1 text-regular !text-white font-semibold
+                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-10 bg-blue-1 text-regular !text-white font-semibold
                    rounded-[50px] flex items-center justify-center outline-none border-none`}
                 >
                   {modeOfOperation}
@@ -390,12 +406,14 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
         )}
       </div>
 
-      <div>
-        <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin} ($12 USD)`} />
-        <div tw="mt-2">
-          <FarmStats isExpanded={isExpanded} keyStr="Daily Earnings" value={`2.5 ${coin} ($12 USD)`} />
+      {breakpoint.isDesktop && (
+        <div>
+          <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin} ($12 USD)`} />
+          <div tw="mt-2">
+            <FarmStats isExpanded={isExpanded} keyStr="Daily Earnings" value={`2.5 ${coin} ($12 USD)`} />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -404,7 +422,7 @@ const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean }> = ({
   return (
     <div
       css={[
-        tw`font-semibold duration-500`,
+        tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
         isExpanded ? tw`text-regular opacity-100` : tw`text-[0px] invisible opacity-0`
       ]}
     >

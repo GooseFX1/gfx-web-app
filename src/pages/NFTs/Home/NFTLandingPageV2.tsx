@@ -85,7 +85,7 @@ const NFT_AGG_WRAP = styled.div<{ $currency }>`
   }
   .search-bar {
     transition: 0.5s ease;
-    ${tw`sm:w-0 !w-[100%]`}
+    ${tw`sm:w-0 !w-[100%] !w-[425px]`}
   }
   .comingSoon {
     ${tw`text-grey-2`}
