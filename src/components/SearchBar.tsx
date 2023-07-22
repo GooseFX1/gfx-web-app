@@ -11,7 +11,7 @@ ${tw`relative sm:w-3/4`}
   margin: 0 0 0 ${({ theme }) => theme.margin(3)};
   background: transparent;
   @media(max-width: 500px){
-    margin: 0 0 0 10px;
+    margin: 0 0 0 0;
   }
   
   .ant-image {

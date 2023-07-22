@@ -6,8 +6,9 @@ import { useDarkMode } from '../../context'
 import { checkMobile } from '../../utils'
 
 const FAQ_WRAPPER = styled.div`
+  ${tw`sm:w-[calc(100% - 15px)]`}
   .faqs {
-    ${tw`flex flex-row cursor-pointer items-center h-16
+    ${tw`flex flex-row cursor-pointer items-center h-16  
      w-full border border-solid dark:border-black-4 border-grey-4 py-5 px-6 border-r-0 border-t-0 border-l-0`}
   }
   .last-faq {
@@ -50,7 +51,7 @@ export const Faqs: FC = () => (
       </h2>
       <a
         tw="w-[140px] h-10 bg-blue-1 mb-5 cursor-pointer text-white font-semibold
-         text-average flex flex-row justify-center items-center rounded-circle"
+         text-average flex flex-row justify-center items-center rounded-circle "
         href="https://docs.goosefx.io/features/farm/single-sided-liquidity-pools"
         target="_blank"
         rel="noreferrer"
@@ -58,7 +59,7 @@ export const Faqs: FC = () => (
         Go To Docs
       </a>
     </div>
-    <div tw="rounded-[18px] dark:bg-black-2 bg-white">
+    <div tw="rounded-[18px] dark:bg-black-2 bg-white ">
       {faqs.map((item, index) => (
         <FaqRow item={item} key={index} index={index} />
       ))}
