@@ -43,8 +43,8 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
             min-md:mb-[20px] min-md:rounded-b-[22px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
       `}
         >
-          {rewards.user.staking.unstakeableTickets.length > 0 ? (
-            rewards.user.staking.userMetadata.unstakingTickets
+          {rewards.user.staking.activeUnstakingTickets.length > 0 ? (
+            rewards.user.staking.activeUnstakingTickets
               .sort((a, b) => a.createdAt.toNumber() - b.createdAt.toNumber())
               .map((ticket) => <UnstakingTicketLineItem key={ticket.createdAt.toString()} ticket={ticket} />)
           ) : (

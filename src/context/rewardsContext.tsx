@@ -9,7 +9,14 @@ import {
   useReducer,
   useState
 } from 'react'
-import { GfxStakeRewards, GOFXVault, StakePool, UnstakeableTicket, UserMetadata } from 'goosefx-stake-rewards-sdk'
+import {
+  GfxStakeRewards,
+  GOFXVault,
+  StakePool,
+  UnstakeableTicket,
+  UnstakeTicket,
+  UserMetadata
+} from 'goosefx-stake-rewards-sdk'
 import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
@@ -33,6 +40,7 @@ interface BaseClaim {
 
 interface Rewards extends BaseClaim {
   userMetadata: UserMetadata
+  activeUnstakingTickets: UnstakeTicket[]
   unstakeableTickets: UnstakeableTicket[]
 }
 
@@ -85,7 +93,8 @@ const initialState: RewardState = {
       },
       totalClaimed: 0,
       claimable: 0,
-      unstakeableTickets: []
+      unstakeableTickets: [],
+      activeUnstakingTickets: []
     },
     referred: {
       symbol: '',
@@ -208,7 +217,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
-  const hasRewards = useMemo(() => rewards?.staking?.unstakeableTickets.length > 0, [rewards])
+
   useEffect(() => {
     const s = stakeRewards
     s.setConnection(connection, getNetwork())
@@ -224,6 +233,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const payload: RewardState = structuredClone(rewards)
         payload.user.staking.userMetadata = data.userMetadata
         payload.user.staking.unstakeableTickets = data.unstakeableTickets
+        payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
+          (ticket) => ticket.createdAt.toString() !== '0'
+        )
         payload.stakePool = data.stakePool
         payload.gofxVault = data.gofxVault
         dispatch({ type: 'setAll', payload })
@@ -377,6 +389,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const payload: RewardState = structuredClone(rewards)
     payload.user.staking.userMetadata = data.userMetadata
     payload.user.staking.unstakeableTickets = data.unstakeableTickets
+    payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
+      (ticket) => ticket.createdAt.toString() !== '0'
+    )
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
     dispatch({ type: 'setAll', payload })
@@ -391,7 +406,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const txnSig = await signAndSendRawTransaction(stakeRewards.connection, txn, walletContext)
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
-          updateStakeDetails()
           notify({
             message: Notification(
               'Great News!',
@@ -417,6 +431,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             )
           })
         })
+        .finally(() => updateStakeDetails())
     },
     [stakeRewards, walletContext]
   )
@@ -522,7 +537,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const uiAmount = value.divmod(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)
     return parseFloat(`${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
   }, [])
-
+  const hasRewards = useMemo(
+    () => rewards?.staking?.unstakeableTickets.length > 0 || getClaimableFees() > 0.0,
+    [rewards]
+  )
   return (
     <RewardsContext.Provider
       value={{

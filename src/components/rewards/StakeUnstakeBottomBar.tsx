@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import useRewards from '../../context/rewardsContext'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -11,7 +11,7 @@ const UnstakeBottomBar: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { rewards } = useRewards()
   const showUnstakingModal = useCallback(() => {
-    if (rewards.user.staking.unstakeableTickets.length == 0) return
+    if (rewards.user.staking.activeUnstakingTickets.length == 0) return
     setIsModalOpen(true)
   }, [rewards.user.staking.unstakeableTickets])
   const hideUnstakingModal = useCallback(() => setIsModalOpen(false), [])
@@ -26,10 +26,12 @@ const UnstakeBottomBar: FC = () => {
   `,
           rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
-        disabled={rewards.user.staking.unstakeableTickets.length == 0}
+        disabled={rewards.user.staking.activeUnstakingTickets.length == 0}
         onClick={showUnstakingModal}
       >
-        {rewards.user.staking.unstakeableTickets.length == 0 ? 'No Active Cooldowns' : 'See All Active Cooldowns'}
+        {rewards.user.staking.activeUnstakingTickets.length == 0
+          ? 'No Active Cooldowns'
+          : 'See All Active Cooldowns'}
       </button>
     </div>
   )
