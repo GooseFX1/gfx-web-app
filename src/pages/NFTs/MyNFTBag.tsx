@@ -24,7 +24,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import Lottie from 'lottie-react'
 import EmptyBagDark from '../../animations/emptyBag-dark.json'
 import EmptyBagLite from '../../animations/EmptyBag-lite.json'
-import { formatSOLDisplay, formatSOLNumber, notify } from '../../utils'
+import { formatSOLDisplay, formatSOLNumber, notify, clamp } from '../../utils'
 import { Button } from '../../components'
 import { NFT_MARKETS } from '../../api/NFTs/constants'
 import { logData } from '../../api/analytics'
@@ -41,10 +41,11 @@ import { getMagicEdenBuyInstruction, getMagicEdenListing, getTensorBuyInstructio
 import { pleaseTryAgain, successfulNFTPurchaseMsg } from './Collection/AggModals/AggNotifications'
 import { getMagicEdenTokenAccount } from '../../web3/auction-house-sdk/pda'
 import { callExecuteSaleInstruction } from '../../web3/auction-house-sdk/executeSale'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 const BAG_WRAPPER = styled.div`
-  ${tw`mt-8 duration-500`}
+  ${tw` duration-500`}
+
   .ant-dropdown {
     ${tw`pl-20`}
   }
@@ -66,11 +67,14 @@ const BAG_WRAPPER = styled.div`
   }
 `
 const MY_BAG = styled.div`
+  ${tw`w-[245px] h-[394px] rounded-[10px] border-grey-2
+    sm:w-[100vw] sm:h-[auto] sm:fixed sm:left-0 sm:border-none sm:bottom-0`}
+
   border: 1px solid;
-  ${tw`w-[245px] h-[394px] rounded-[10px] sm:w-[100vw] sm:h-[auto] sm:fixed sm:left-0 sm:border-none sm:bottom-0 `}
   background-color: ${({ theme }) => theme.bg20};
+
   .bagContainer {
-    ${tw`flex flex-col pt-1 px-[10px]`}
+    ${tw`flex flex-col pt-1 pl-[10px]`}
   }
   .emptyBag {
     transform: scale(3.2);
@@ -136,6 +140,7 @@ const MY_BAG = styled.div`
 `
 
 export const MyNFTBag = (): ReactElement => {
+  const { mode } = useDarkMode()
   const { nftInBag } = useNFTAggregator()
   const { isCollapsed } = useNavCollapse()
   const itemsPresentInBag = Object.keys(nftInBag ? nftInBag : {}).length // no items in the bag
@@ -164,15 +169,19 @@ export const MyNFTBag = (): ReactElement => {
         trigger={['hover']}
         open={visible}
       >
-        <div onClick={handleDropdownClick}>
-          {itemsPresentInBag ? (
-            <div className="zeroItemBag">
-              <div className="noOfItemsInBag">{itemsPresentInBag}</div>
-              <img className="itemsPresentBag" src="/img/assets/Aggregator/itemsInBag.svg" alt="bag" />
-            </div>
-          ) : (
-            <img className="zeroItemBag" src="/img/assets/Aggregator/zeroItemsInBag.svg" alt="bag" />
-          )}
+        <div
+          css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`}
+          onClick={handleDropdownClick}
+        >
+          <p
+            css={[
+              tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
+                      text-grey-1 dark:text-white mt-0.5 h-4`
+            ]}
+          >
+            {itemsPresentInBag}
+          </p>
+          <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
         </div>
       </Dropdown>
     </BAG_WRAPPER>
@@ -192,7 +201,7 @@ const MyBagContent: FC<{ handleDropdownClick: () => void }> = ({ handleDropdownC
           <div className={itemsPresentInBag ? 'clearTextActive' : 'clearText'} onClick={() => setNftInBag({})}>
             Clear
           </div>
-          <div tw="ml-auto" onClick={handleDropdownClick}>
+          <div tw="ml-auto mr-[10px]" onClick={handleDropdownClick}>
             <img
               tw="h-4 w-4  z-[100] cursor-pointer"
               src={mode === 'dark' ? `/img/assets/close-white-icon.svg` : `/img/assets/close-gray-icon.svg`}
@@ -235,12 +244,8 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
           />
           <div tw="flex flex-col text-[15px] font-semibold">
             <div className="nftNumber">#{nftInBag[key]?.nft_name?.split('#')[1]}</div>
-            <div>
-              <GradientText
-                text={minimizeTheString(nftInBag[key]?.nft_name?.split('#')[0], 8)}
-                fontSize={16}
-                fontWeight={600}
-              />
+            <div tw="w-[78px] truncate">
+              <GradientText text={nftInBag[key]?.nft_name?.split('#')[0]} fontSize={16} fontWeight={600} />
             </div>
           </div>
           <div>
@@ -444,3 +449,67 @@ const ButtonContainerForBag = (): ReactElement => {
   )
 }
 export default React.memo(MyNFTBag)
+
+const CartButton: FC = () => {
+  const { nftInBag } = useNFTAggregator()
+  const cartSize = useMemo(() => {
+    const val = clamp(2, 0, 9)
+    return val >= 9 ? '9+' : val
+  }, [nftInBag])
+  const { mode } = useDarkMode()
+  const { pathname } = useLocation()
+  // Below is rive code for when the animation is added - some thigns might need to changed
+
+  // const rive = useRiveAnimations({
+  //   animation:'swap',
+  //   autoplay: true,
+  //   canvasWidth: 35,
+  //   canvasHeight: 35
+  // })
+  // const themeInput = useStateMachineInput(rive.rive,
+  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
+  // const stateInput = useStateMachineInput(rive.rive,
+  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
+
+  // useEffect(()=>{
+  //   if(!stateInput) return
+  //   stateInput.value=pathname.startsWith('/cart')
+  // },[pathname,stateInput])
+  // useEffect(()=>{
+  //   if(!themeInput) return
+  //   themeInput.value = mode === 'dark'
+  // },[themeInput,mode])
+  // const onHover = useCallback((e: BaseSyntheticEvent)=>{
+  //   if(pathname.startsWith('/cart'))return
+  //   stateInput.value=!stateInput.value
+  // },[stateInput,pathname])
+
+  const openCart = useCallback(() => {
+    // TODO: fill me in
+    console.log('FILL ME IN')
+  }, [])
+  if (!pathname.startsWith('/nfts')) return null
+  return (
+    <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
+      {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef}
+                           width={35}
+                           height={35}
+                           // onMouseEnter={onHover}
+                           // onMouseLeave={onHover}
+      > */}
+      {/* <rive.RiveComponent /> */}
+      {/* </RiveAnimationWrapper> */}
+      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+      <p
+        css={[
+          tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
+        text-grey-1 dark:text-white mt-0.5 h-4`
+        ]}
+      >
+        {cartSize}
+      </p>
+    </div>
+  )
+}

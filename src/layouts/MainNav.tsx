@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
+import { useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
@@ -12,9 +12,9 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
-import { clamp } from '../utils'
+// import { clamp } from '../utils'
 import { RewardsProvider } from '../context/rewardsContext'
-// import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
+import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
@@ -89,7 +89,7 @@ export const MainNav: FC = () => {
             <RewardsButton />
           </RewardsProvider>
           <Connect />
-          <CartButton />
+          <MyNFTBag />
           {/* <NotificationButton /> */}
           <More />
           <MobileNav />
@@ -526,7 +526,6 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                   </Menu.Item>
                 ))}
               </Menu.Items>
-              {/* pathname.split('/')[1] === 'nfts' && <MyNFTBag /> */}
             </Transition>
           </>
         )}
@@ -833,69 +832,5 @@ const NavItem: FC<MainNavIconProps> = ({
     </DropDownControls>
   ) : (
     component
-  )
-}
-
-const CartButton: FC = () => {
-  const { nftInBag } = useNFTAggregator()
-  const cartSize = useMemo(() => {
-    const val = clamp(nftInBag.length, 0, 9)
-    return val >= 9 ? '9+' : val
-  }, [nftInBag])
-  const { mode } = useDarkMode()
-  const { pathname } = useLocation()
-  // Below is rive code for when the animation is added - some thigns might need to changed
-
-  // const rive = useRiveAnimations({
-  //   animation:'swap',
-  //   autoplay: true,
-  //   canvasWidth: 35,
-  //   canvasHeight: 35
-  // })
-  // const themeInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
-  // const stateInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
-
-  // useEffect(()=>{
-  //   if(!stateInput) return
-  //   stateInput.value=pathname.startsWith('/cart')
-  // },[pathname,stateInput])
-  // useEffect(()=>{
-  //   if(!themeInput) return
-  //   themeInput.value = mode === 'dark'
-  // },[themeInput,mode])
-  // const onHover = useCallback((e: BaseSyntheticEvent)=>{
-  //   if(pathname.startsWith('/cart'))return
-  //   stateInput.value=!stateInput.value
-  // },[stateInput,pathname])
-
-  const openCart = useCallback(() => {
-    // TODO: fill me in
-    console.log('FILL ME IN')
-  }, [])
-  if (!pathname.startsWith('/nfts')) return null
-  return (
-    <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
-      {/*<RiveAnimationWrapper setContainerRef={rive.setContainerRef}*/}
-      {/*                      width={35}*/}
-      {/*                      height={35}*/}
-      {/*                      // onMouseEnter={onHover}*/}
-      {/*                      // onMouseLeave={onHover}*/}
-      {/*>*/}
-      {/*  <rive.RiveComponent />*/}
-      {/*</RiveAnimationWrapper>*/}
-      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
-      <p
-        css={[
-          tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
-        text-grey-1 dark:text-white mt-0.5 h-4`
-        ]}
-      >
-        {cartSize}
-      </p>
-    </div>
   )
 }

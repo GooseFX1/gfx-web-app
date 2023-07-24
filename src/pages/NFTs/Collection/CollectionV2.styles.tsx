@@ -112,12 +112,16 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
 const ICON_WRAPPER_TD = styled.div`
   cursor: pointer;
   z-index: 1000;
+
   .invertArrow {
     transform: rotate(180deg);
     transition: transform 500ms ease-out;
   }
   .dontInvert {
     transition: transform 500ms ease-out;
+  }
+  img {
+    width: 14px;
   }
   @media (max-width: 500px) {
     img {

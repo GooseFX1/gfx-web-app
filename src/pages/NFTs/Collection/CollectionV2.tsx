@@ -355,7 +355,6 @@ const FiltersContainer: FC<{
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
-      {DisplayFilterIcon}
       <div className="flitersFlexContainer">
         {DisplayFilterIcon}
 

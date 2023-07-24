@@ -28,7 +28,7 @@ export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
 
 const NewMenu = styled(Menu)`
   ${tw`w-[278px] mt-[16px]`}
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg20};
 
   small {
     ${tw`font-semibold`}
@@ -45,6 +45,10 @@ const ITEM = styled(MenuItem)`
   &:hover span {
     color: ${({ theme }) => theme.text1};
   }
+`
+
+const SMALL_TEXT = styled.small`
+  color: ${({ theme }) => theme.text6};
 `
 
 const INPUT = styled.input`
@@ -123,7 +127,7 @@ const Overlay = () => {
         </Button>
       ) : (
         <form onSubmit={(e) => saveHandler(e, 'custom')}>
-          <small>Custom RPC URL</small>
+          <SMALL_TEXT>Custom RPC URL</SMALL_TEXT>
           <ITEM>
             <INPUT
               id="nodeURL"
