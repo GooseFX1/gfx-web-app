@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { RewardsButton } from '../components/RewardsPopup'
+import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw, { TwStyle } from 'twin.macro'
@@ -13,6 +13,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
 import { clamp } from '../utils'
+import { RewardsProvider } from '../context/rewardsContext'
 // import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
@@ -84,7 +85,9 @@ export const MainNav: FC = () => {
 
         <DesktopNav />
         <div css={tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
-          <RewardsButton />
+          <RewardsProvider>
+            <RewardsButton />
+          </RewardsProvider>
           <Connect />
           <CartButton />
           {/* <NotificationButton /> */}
@@ -218,7 +221,7 @@ const MobileNav: FC = () => {
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[35px]`} src={`img/mainnav/menu-${mode}.svg`} />
+        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} />
       </div>
       <MobileSettingsDrawer
         isOpen={isOpen}
@@ -473,6 +476,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
               {children}
             </Menu.Button>
             <Transition
+              show={isOpen}
               as={'div'}
               enter="transition ease-out duration-100"
               enterFrom="transform opacity-0 scale-95"
@@ -791,7 +795,11 @@ const NavItem: FC<MainNavIconProps> = ({
               {text}
             </p>
             {hasDropdown && (
-              <img css={[tw`w-3.5 min-md:w-2.25`]} src={`img/assets/chevron-${mode}-${activeDropdown}.svg`} />
+              <img
+                css={[tw`w-3.5 min-md:w-2.25`]}
+                src={`/img/assets/chevron-${mode}-${activeDropdown}.svg`}
+                loading={'eager'}
+              />
             )}
           </div>
         </div>
@@ -878,7 +886,7 @@ const CartButton: FC = () => {
       {/*>*/}
       {/*  <rive.RiveComponent />*/}
       {/*</RiveAnimationWrapper>*/}
-      <img src={`img/assets/shopping-bag-${mode}-inactive.svg`} />
+      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
       <p
         css={[
           tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium

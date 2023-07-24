@@ -179,16 +179,16 @@ export const useAnimateButtonSlide = (
       }
       const left = `${buttonRefs.current[index].offsetLeft}px`
       const width = `${buttonRefs.current[index].offsetWidth}px`
-      const top = `${buttonRefs.current[index].offsetTop}px`
+      // const top = `${buttonRefs.current[index].offsetTop}px`
       if (slideRef.current.style.left !== left) {
         slideRef.current.style.left = left
       }
       if (slideRef.current.style.width !== width) {
         slideRef.current.style.width = width
       }
-      if (slideRef.current.style.top !== top) {
-        slideRef.current.style.top = top
-      }
+      // if (slideRef.current.style.top !== top) {
+      //   slideRef.current.style.top = top
+      // }
     },
     [slideRef.current, buttonRefs.current, customCallback, index]
   )

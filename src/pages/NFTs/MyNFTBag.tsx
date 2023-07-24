@@ -256,7 +256,7 @@ const ButtonContainerForBag = (): ReactElement => {
         <>
           <BagTokenBalanceRow title="Your Balance:" amount={0} />
           <div className="connectWallet">
-            <Connect width="225px" />
+            <Connect customButtonStyle={[tw`w-[225px] min-md:w-[225px]`]} />
           </div>
         </>
       )}

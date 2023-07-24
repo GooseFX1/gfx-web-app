@@ -128,7 +128,7 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
 
         {!publicKey && type === 'noItems' ? (
           <div tw="ml-[200px] mt-8">
-            <Connect width="150px" />
+            <Connect customButtonStyle={[tw`w-[150px] min-md:w-[150px]`]} />
           </div>
         ) : (
           obj.textButton && (

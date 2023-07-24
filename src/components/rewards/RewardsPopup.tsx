@@ -1,11 +1,13 @@
 import React, { FC, useCallback, useState, useMemo } from 'react'
 import styled from 'styled-components'
-import { useRewardToggle } from '../context/reward_toggle'
-import { PanelSelector, RewardInfoComponent, RewardRedirectComponent } from './RewardDetails'
+import { useRewardToggle } from '../../context/reward_toggle'
+import { EarnLeftSidePanel, EarnRightSidePanel } from './RewardDetails'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import useBreakPoint from '../hooks/useBreakPoint'
-import { useDarkMode } from '../context'
+import useBreakPoint from '../../hooks/useBreakPoint'
+import { useDarkMode } from '../../context'
+import useRewards, { RewardsProvider } from '../../context/rewardsContext'
+import PanelSelector from './RewardPanelSelector'
 // import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
 // import { RIVE_ANIMATION } from '../constants'
 // import useRewards from '../hooks/useRewards'
@@ -39,9 +41,7 @@ export const RewardsButton: FC = () => {
   //   canvasHeight: breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
   // })
   // useRiveThemeToggle(rewardsAnimation.rive, 'rewards', 'Rewards')
-
-  const hasRewards = false // TODO: hook into useRewards hook
-
+  const { hasRewards } = useRewards()
   // const breakpointWidth = breakpoint.isMobile || breakpoint.isTablet ? 31 : 20
   // const breakpointHeight = breakpoint.isMobile || breakpoint.isTablet ? 35 : 22.32
   const riveComponent = useMemo(
@@ -56,14 +56,14 @@ export const RewardsButton: FC = () => {
         </RiveAnimationWrapper> */}
 
         <img
-          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px] w-[31px]` : tw`h-[22px] w-[20px]`]}
-          src={`img/mainnav/rewards-${mode}.${breakpoint.isMobile || breakpoint.isTablet ? 'png' : 'svg'}`}
+          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
+          src={`/img/mainnav/rewards-${mode}.svg`}
         />
 
         {hasRewards && (
           <img
             css={tw`absolute top-[5px] min-md:top-[1px] right-0`}
-            src={'img/assets/red-notification-circle.svg'}
+            src={'/img/assets/red-notification-circle.svg'}
           />
         )}
       </div>
@@ -84,10 +84,10 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       css={[
         tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
-            bg-grey-5 dark:bg-black-1 px-2.25 py-0.5 flex flex-row items-center gap-1.75 cursor-pointer
-            text-tiny font-semibold text-black-4 dark:text-white
+            bg-grey-5 dark:bg-black-1 px-2.25 flex flex-row items-center gap-1.75 cursor-pointer
+            text-tiny font-semibold text-black-4 dark:text-white leading-normal
        `,
-        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`
+        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px]` : tw`h-[30px]`
       ]}
     >
       {riveComponent}
@@ -97,7 +97,7 @@ export const RewardsButton: FC = () => {
 }
 
 const REWARD_REDIRECT = styled.div<{ $index: number }>`
-  ${tw`flex flex-col min-w-max w-[35%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
+  ${tw`flex flex-col min-w-max w-[40%] justify-center w-full sm:rounded-t-bigger rounded-tr-bigger`}
   background-image: ${({ theme, $index }) => {
     switch ($index) {
       case 0:
@@ -109,31 +109,33 @@ const REWARD_REDIRECT = styled.div<{ $index: number }>`
 `
 
 const Wrapper = styled.div`
-  ${tw`h-full min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
+  ${tw`h-full min-md:min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
   font-family: Montserrat !important;
   background-color: ${({ theme }) => theme.bg9};
 `
 
 const REWARD_INFO = styled.div`
-  ${tw`w-full min-w-[65%]  rounded-bigger`}
+  ${tw`w-full min-w-[60%]  rounded-bigger`}
 `
 
 export const RewardsPopup: FC = () => {
   const [panelIndex, setPanelIndex] = useState<number>(0)
 
   return (
-    <Wrapper>
-      <REWARD_INFO>
-        <RewardInfoComponent panelIndex={panelIndex}>
-          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-        </RewardInfoComponent>
-      </REWARD_INFO>
-      <REWARD_REDIRECT $index={panelIndex}>
-        <RewardRedirectComponent panelIndex={panelIndex}>
-          <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-        </RewardRedirectComponent>
-      </REWARD_REDIRECT>
-    </Wrapper>
+    <RewardsProvider>
+      <Wrapper>
+        <REWARD_INFO>
+          <EarnLeftSidePanel panelIndex={panelIndex}>
+            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+          </EarnLeftSidePanel>
+        </REWARD_INFO>
+        <REWARD_REDIRECT $index={panelIndex}>
+          <EarnRightSidePanel panelIndex={panelIndex}>
+            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+          </EarnRightSidePanel>
+        </REWARD_REDIRECT>
+      </Wrapper>
+    </RewardsProvider>
   )
 }
 

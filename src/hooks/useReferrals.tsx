@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Client, Member, Treasury } from '@ladderlabs/buddy-sdk'
 import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useConnectionConfig } from '../context'
+import { BN } from '@project-serum/anchor'
 
 // TODO: move to proper constant file?
 const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
@@ -14,7 +15,6 @@ export default function useReferrals(): IReferrals {
   const [member, setMember] = useState<Member | null>(null)
   const { publicKey } = useWallet()
   const { connection } = useConnectionConfig()
-
   useEffect(() => {
     if (connection && publicKey) {
       const client = new Client(connection, publicKey)
@@ -35,9 +35,8 @@ export default function useReferrals(): IReferrals {
     const account = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
 
     setMember(account)
-
     return account
-  }, [client])
+  }, [client, publicKey])
 
   const getName = useCallback(async () => {
     if (!client) throw CLIENT_NOT_SET
@@ -82,7 +81,15 @@ export default function useReferrals(): IReferrals {
 
     return treasury ? await client.member.getByTreasuryReferrer(treasury.account.pda) : null
   }, [])
-
+  const getTotalClaimed = useCallback(async () => {
+    const treasury = await getTreasury()
+    const buddy = await client.buddy.getProfile(publicKey)
+    const zeroBN = new BN(0.0)
+    if (!buddy || !treasury) return zeroBN
+    const owners = treasury.account.owners.filter((owner) => owner.ownerPda.equals(buddy.account.pda))
+    if (owners.length === 0) return zeroBN
+    return owners[0].withMultiLevel.claimed
+  }, [publicKey])
   return {
     isReady: !!client,
     getMember,
@@ -92,7 +99,8 @@ export default function useReferrals(): IReferrals {
     getTreasury,
     claim,
     createRandomBuddy,
-    referrer: localStorage.getItem('referrer')
+    referrer: localStorage.getItem('referrer'),
+    getTotalClaimed
   }
 }
 
@@ -106,6 +114,7 @@ interface IReferrals {
   claim: () => Promise<TransactionInstruction[]>
   createRandomBuddy: (referrer: string) => Promise<TransactionInstruction[]>
   referrer: string
+  getTotalClaimed: () => Promise<BN>
 }
 
 export async function create(

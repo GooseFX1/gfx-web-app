@@ -2,12 +2,12 @@
 import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
 
-const LOADER = styled.div<{ $color }>`
+const LOADER = styled.div<{ $color; $zIndex }>`
   position: absolute;
   top: 0;
   height: 8px;
   width: 8px;
-  z-index: 2000;
+  z-index: ${({ $zIndex }) => $zIndex ?? 2000};
   border-radius: 50%;
   font-size: 12px;
   color: ${({ $color }) => `${$color}`};
@@ -46,7 +46,7 @@ const LOADER = styled.div<{ $color }>`
   }
 `
 
-export const Loader: FC<{ color?: string }> = ({ color }) => {
+export const Loader: FC<{ color?: string; zIndex?: number }> = ({ color, zIndex }) => {
   const localCSS = css`
     @-webkit-keyframes loader {
       0%,
@@ -74,7 +74,7 @@ export const Loader: FC<{ color?: string }> = ({ color }) => {
   return (
     <>
       <style>{localCSS}</style>
-      <LOADER $color={color ? color : 'white'} />
+      <LOADER $color={color ? color : 'white'} $zIndex={zIndex} />
     </>
   )
 }

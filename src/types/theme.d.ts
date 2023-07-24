@@ -60,6 +60,8 @@ export interface Colors {
   multiplierBorder: Color
   bgForNFTCollection: Color
   dropdownBackground: Color
+  themeToggleButton: Color
+  themeToggleContainer: Color
   // backgrounds / greys
   bg0: Color
   bg1: Color

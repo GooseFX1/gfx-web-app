@@ -8,9 +8,14 @@ const fontSize = {
   12: '12px',
   tiny: ['13px', '16px'],
   regular: '15px',
-  average: ['18px', '22px'],
-  lg: '20px',
-  xl: '40px'
+  average: '18px',
+  lg: ['20px', '30px'],
+  xl: '40px',
+  '2xl': '50px',
+  '4xl': '80px'
 }
-
-module.exports = { fontFamily, fontSize }
+const lineHeight = {
+  5.5: '22px',
+  normal: 'normal'
+}
+module.exports = { fontFamily, fontSize, lineHeight }
