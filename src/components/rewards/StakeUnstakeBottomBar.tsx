@@ -60,7 +60,9 @@ const StakeBottomBar: FC = () => {
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GO FX.'}
-          ></Tooltip>
+          >
+            <img src="/img/assets/info-icon-transparent.svg" css={tw`w-[18px] h-[18px] ml-2`} />
+          </Tooltip>
         </div>
         <p css={[tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`]}>7 days</p>
       </div>
@@ -90,7 +92,9 @@ const StakeBottomBar: FC = () => {
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
             overrideIcon={'/img/assets/info-icon-transparent.svg'}
             dark={false}
-          ></Tooltip>
+          >
+            <img src="/img/assets/info-icon-transparent.svg" css={tw`w-[18px] h-[18px] ml-2`} />
+          </Tooltip>
         </div>
         <p css={tw`mb-0`}>7 days</p>
       </div>
