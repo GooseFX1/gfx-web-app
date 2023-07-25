@@ -11,22 +11,30 @@ import React, {
   useState,
   FC,
   useCallback,
-  useMemo
+  useMemo,
+  useRef
 } from 'react'
 import {
   DEX_ID,
   FEES_ID,
-  FEE_OUTPUT_REGISTER,
+  FEE_OUTPUT_REGISTER as MAINNET_FEE_OUTPUT_REGISTER,
   GET_FUNDING_RATE,
-  MPG_ID,
+  MPG_ID as MAINNET_MPG_ID,
   MPs,
   ORDERBOOK_P_ID,
   RISK_ID,
-  RISK_MODEL_CONFIG_ACCT,
-  RISK_OUTPUT_REGISTER,
-  VAULT_MINT,
+  RISK_MODEL_CONFIG_ACCT as MAINNET_RISK_MODEL_CONFIG_ACCT,
+  RISK_OUTPUT_REGISTER as MAINNET_RISK_OUTPUT_REGISTER,
+  VAULT_MINT as MAINNET_VAULT_MINT,
   VAULT_SEED
 } from '../pages/TradeV3/perps/perpsConstants'
+import {
+  MPG_ID as DEVNET_MPG_ID,
+  FEE_OUTPUT_REGISTER as DEVNET_FEE_OUTPUT_REGISTER,
+  RISK_OUTPUT_REGISTER as DEVNET_RISK_OUTPUT_REGISTER,
+  RISK_MODEL_CONFIG_ACCT as DEVNET_RISK_MODEL_CONFIG_ACCT,
+  VAULT_MINT as DEVNET_VAULT_MINT
+} from '../pages/TradeV3/perps/perpsConstantsDevnet'
 import { MarketProductGroup, TraderRiskGroup } from '../pages/TradeV3/perps/dexterity/accounts'
 import { Fractional } from '../pages/TradeV3/perps/dexterity/types'
 import {
@@ -140,7 +148,7 @@ interface IPerpsInfo {
   cancelOrder: (orderId: string) => Promise<DepositIx | void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<DepositIx | void>
-  activeProduct: any
+  activeProduct: IActiveProduct
   order: IOrder
   setOrder: Dispatch<SetStateAction<IOrder>>
   setFocused: Dispatch<SetStateAction<OrderInput>>
@@ -157,6 +165,7 @@ export interface IActiveProduct {
   event_queue: string
   tick_size: number
   decimals: number
+  pairName: string
 }
 export interface ITraderHistory {
   price: string
@@ -209,7 +218,7 @@ export function useTraderConfig() {
 }
 
 export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentMPG, setMPG] = useState<PublicKey>(new PublicKey(MPG_ID))
+  const [currentMPG, setMPG] = useState<PublicKey>(new PublicKey(DEVNET_MPG_ID))
   const [currentTRG, setTRG] = useState<PublicKey | null>(null)
   const [traderRiskGroup, setTraderRiskGroup] = useState<TraderRiskGroup | null>(null)
   const [marketProductGroup, setMarketProductGroup] = useState<MarketProductGroup | null>(null)
@@ -247,27 +256,33 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [traderVolume, setTraderVolume] = useState<string>('0')
 
   const [initTesting, setInitTesting] = useState<boolean>(false)
+  const [devnetToggle, setDevnetToggle] = useState<number>(0)
 
   const { order, setOrder } = useOrder()
   const { isDevnet } = useCrypto()
+  const prevCountRef = useRef<boolean>()
 
   const wallet = useWallet()
-  const { perpsConnection: connection } = useConnectionConfig()
+  const { perpsConnection: mainnetConnection, perpsDevnetConnection: devnetConnection } = useConnectionConfig()
+  const MPG_ID = useMemo(() => (isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID), [isDevnet])
+  const FEE_OUTPUT_REGISTER = useMemo(
+    () => (isDevnet ? DEVNET_FEE_OUTPUT_REGISTER : MAINNET_FEE_OUTPUT_REGISTER),
+    [isDevnet]
+  )
+  const RISK_OUTPUT_REGISTER = useMemo(
+    () => (isDevnet ? DEVNET_RISK_OUTPUT_REGISTER : MAINNET_RISK_OUTPUT_REGISTER),
+    [isDevnet]
+  )
+  const RISK_MODEL_CONFIG_ACCT = useMemo(
+    () => (isDevnet ? DEVNET_RISK_MODEL_CONFIG_ACCT : MAINNET_RISK_MODEL_CONFIG_ACCT),
+    [isDevnet]
+  )
 
+  const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
+  const connection = useMemo(() => (isDevnet ? devnetConnection : mainnetConnection), [isDevnet])
   const refreshTraderRiskGroup = async () => {
     if (wallet.connected) {
-      let trgAccount = null,
-        trgFetch = null
-      if (!currentTRG) {
-        trgAccount = await getTraderRiskGroupAccount(wallet, connection)
-        if (trgAccount) {
-          setTRG(trgAccount.pubkey)
-          trgFetch = trgAccount.pubkey
-        }
-      } else {
-        trgFetch = currentTRG
-      }
-
+      const trgFetch = currentTRG
       trgFetch &&
         TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
           trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
@@ -279,14 +294,18 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const setMPGDetails = async () => {
-    if (!isDevnet) {
-      MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
-        mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
-        mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
-      })
+    MarketProductGroup.fetch(connection, currentMPG).then((mpgRes) => {
+      mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
+      mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
+    })
+  }
 
-      refreshTraderRiskGroup()
-    }
+  const setTRGDetails = async () => {
+    currentTRG &&
+      TraderRiskGroup.fetch(connection, currentTRG).then((trg) => {
+        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+      })
   }
 
   const setCollateralPrice = async () => {
@@ -422,6 +441,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return setAvailLeverage((10 - current).toString())
   }, [currentLeverage])
 
+  useEffect(() => {
+    setDevnetToggle(devnetToggle + 1)
+  }, [isDevnet])
+
   const parseTraderInfo = async () => {
     const res = computeHealth(traderRiskGroup, marketProductGroup)
     setTraderBalances(res.balancesArray)
@@ -446,6 +469,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const setDefaults = async () => {
+    console.log('setting default...')
     setTRG(null)
     setTraderRiskGroup(null)
     setRawData((prevState) => ({
@@ -474,17 +498,56 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTraderVolume('0')
   }
 
+  const refreshTrg = useCallback(async () => {
+    await setTRGDetails()
+  }, [setTRGDetails, rawData.trg])
+
+  const refreshMpg = useCallback(async () => {
+    await setMPGDetails()
+  }, [setMPGDetails, rawData.mpg])
+
+  const refreshWasm = useCallback(async () => {
+    await perpsWasm()
+  }, [perpsWasm, rawData.mpg, rawData.trg])
+
   useEffect(() => {
-    if (!isDevnet) {
-      const refreshData = async () => {
-        await setMPGDetails()
-      }
-      const t2 = setInterval(refreshData, 1000)
+    if (wallet.connected) {
+      const t2 = setInterval(refreshMpg, 1000)
+      return () => clearInterval(t2)
+    }
+  }, [currentMPG, wallet.connected, wallet.publicKey, rawData])
+
+  useEffect(() => {
+    if (wallet.connected) {
+      const t2 = setInterval(refreshTrg, 1000)
       return () => clearInterval(t2)
     } else {
-      setTraderRiskGroup(null)
+      setDefaults()
     }
-  }, [isDevnet, wallet.connected, wallet.publicKey])
+  }, [currentTRG, wallet.connected])
+
+  useEffect(() => {
+    let t2 = null
+    if (wallet.connected && (rawData.mpg || rawData.trg)) {
+      t2 = setInterval(refreshWasm, 1000)
+    }
+    return () => clearInterval(t2)
+  }, [currentTRG, wallet.connected, wallet.publicKey, rawData.mpg, rawData.trg])
+
+  useEffect(() => {
+    if (prevCountRef.current === undefined) prevCountRef.current = isDevnet
+    if (wallet.connected) {
+      setDefaults()
+      const fetchTrgAcc = async () => {
+        const trgAccount = await getTraderRiskGroupAccount(wallet, connection, MPG_ID)
+        console.log(trgAccount.pubkey.toBase58())
+        if (trgAccount) {
+          setTRG(trgAccount.pubkey)
+        }
+      }
+      fetchTrgAcc()
+    }
+  }, [MPG_ID, wallet.connected, wallet.publicKey])
 
   const testing = async () => {
     // const res1 = await adminInitialiseMPG(connection, wallet)
@@ -510,7 +573,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setActiveProduct(MPs[0])
     setCollateralPrice()
     getFundingRate()
-  }, [])
+  }, [isDevnet])
 
   useEffect(() => {
     switch (focused) {
@@ -754,7 +817,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //  }
       const response = traderRiskGroup
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
-        : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg)
+        : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg, isDevnet)
       refreshTraderRiskGroup()
       return response
     },
@@ -775,9 +838,15 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
         riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
         traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-        riskSigner: getRiskSigner()
+        riskSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
       }
-      const response = await withdrawFundsIx(withdrawFundsAccounts, { quantity: amount }, wallet, connection)
+      const response = await withdrawFundsIx(
+        withdrawFundsAccounts,
+        { quantity: amount },
+        wallet,
+        connection,
+        traderRiskGroup.referral
+      )
       refreshTraderRiskGroup()
       return response
     },
@@ -805,7 +874,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketProductGroup, wallet])
 
   useEffect(() => {
-    perpsWasm()
+    //perpsWasm()
   }, [rawData])
 
   useEffect(() => {

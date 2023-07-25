@@ -326,7 +326,6 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
   // const history = useHistory()
-  // const { setIsSpot } = useCrypto()
 
   //TODO: leaderboard hook for is active
   //TODO: aggregator hook for is active

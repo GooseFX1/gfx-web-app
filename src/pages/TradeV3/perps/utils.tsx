@@ -113,7 +113,11 @@ export const getAllMP = async (wallet: any, connection: Connection): Promise<any
   return accounts
 }
 
-export const getTraderRiskGroupAccount = async (wallet: any, connection: Connection): Promise<any> => {
+export const getTraderRiskGroupAccount = async (
+  wallet: any,
+  connection: Connection,
+  MPG_ID_OPT?: string
+): Promise<any> => {
   const response = await connection.getParsedProgramAccounts(new PublicKey(DEX_ID), {
     filters: [
       //  {
@@ -130,7 +134,7 @@ export const getTraderRiskGroupAccount = async (wallet: any, connection: Connect
         memcmp: {
           offset: 16,
           /** data to match, a base-58 encoded string and limited to less than 129 bytes */
-          bytes: MPG_ID
+          bytes: MPG_ID_OPT ? MPG_ID_OPT : MPG_ID
         }
       }
     ],

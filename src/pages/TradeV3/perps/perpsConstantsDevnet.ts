@@ -39,8 +39,7 @@ export const FIND_FEES_DISCRIMINANT = 0
 export const FIND_FEES_DISCRIMINANT_LEN = 1
 export const MINT_DECIMALS = 6
 
-//export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
-export const VAULT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+export const VAULT_MINT = '3Q6dz8cLd4BW1kyuGyUaS7qhTtFP7tGS55Y7fybCUfNy'
 export const FEE_COLLECTOR = '6YxEQCvytma1a5w9FdeLtUE8gcsRheJsfcLeiBkkjBZ8'
 
 //export const MPG_ID = '7EUw8KH3KHoNNtMrKGswab3gWwM5tBqBbHKZ8eUiSQWP'
@@ -54,11 +53,11 @@ export const FEE_COLLECTOR = '6YxEQCvytma1a5w9FdeLtUE8gcsRheJsfcLeiBkkjBZ8'
 // export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
 // export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 
-export const MPG_ID = 'E9xDgYChJ6QP5xGRwoU6FtjWDXsnmoYu3DWECUU2fXAp'
+export const MPG_ID = 'BFqj3JFXV92vrBLhmXnLM2Dkkg9VJN6k8NbGoTxxeiUv'
 
-export const RISK_OUTPUT_REGISTER = 'Dkf3R6Q1LDLdxBrn6hvpafuX9xUcRnuYDjX75SYVxmmc'
-export const FEE_OUTPUT_REGISTER = 'HaGFeaU28JkhBR1hJkwtqr5NuraPCiy6AwADVqnMgM2p'
-export const RISK_MODEL_CONFIG_ACCT = 'GgbsFnvJJYvrEMde6vFkj2txxpEkPmFyo3iHVFPjsPDc'
+export const RISK_OUTPUT_REGISTER = 'F33aNUpBfFQsqmHJV5g6dHg2wyLRWm3Ew5dX3pgkSTrG'
+export const FEE_OUTPUT_REGISTER = 'jBsyGKxkVVw8h9BtJQzBhB9HMSMmmhb87XdN6EVVLwv'
+export const RISK_MODEL_CONFIG_ACCT = '5QpLKJqN58kKBVZ93hqPQdCba3Lr1dnZ3tMAgAqbvz11'
 
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
@@ -71,7 +70,7 @@ export const PERPS_COLLATERAL = [
   {
     token: 'USDC',
     type: 'perps' as MarketType,
-    marketAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    marketAddress: '3Q6dz8cLd4BW1kyuGyUaS7qhTtFP7tGS55Y7fybCUfNy',
     pythProduct: 'Crypto.USDT/USD'
   }
   // {
@@ -105,11 +104,11 @@ export const PERPS_COLLATERAL = [
 
 export const MPs = [
   {
-    id: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
-    orderbook_id: 'Ggw9mU8vfP3NucANaPJBZSZMRSiMPrsvFmxj5wM3qvn3',
-    bids: 'DmB2CBjeLAh6awvWvySuygSom1JHdT95ZVEQmZF4TBXD',
-    asks: 'FPTSdA4vPQRz4KyjKi5YYdNNq9EbKDSgKMNyadrbVhG8',
-    event_queue: '2Kv94KZTX8yePkdNZT1zXpzDaTpLYLpeiv7Gp8vLA6kL',
+    id: 'n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u',
+    orderbook_id: '3RPexPyzUBQ2iamwr4CfTc37we4dgYNn2CkP4Bn8WbZT',
+    bids: '7HAA7GWvhZCeXe2pheowgMox66Mh2fQQ6S2ZB9yha7cU',
+    asks: '9PeKnBnyBZRK5Ys6PyR4upP2861bU55VGB59wfSUAczS',
+    event_queue: 'HJRax1uuCxs1hDzSyZveZ6eYx5h5UEbypTMrQ1AoWpjo',
     tick_size: 100,
     decimals: 5,
     pairName: 'SOL-PERP'
