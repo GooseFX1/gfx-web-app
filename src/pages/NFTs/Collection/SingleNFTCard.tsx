@@ -331,11 +331,7 @@ export const SingleNFTCard: FC<{
                     <img
                       className="ah-name"
                       alt="marketplace"
-                      src={`/img/assets/Aggregator/${
-                        localAsk?.marketplace_name === null
-                          ? AH_NAME(localAsk?.auction_house_key)
-                          : localAsk?.marketplace_name
-                      }.svg`}
+                      src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
                     />
                   </div>
                 </GenericTooltip>

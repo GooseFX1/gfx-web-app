@@ -13,7 +13,9 @@ export const AH_PROGRAM_IDS = {
   '6T4f5bdrd9ffTtehqAj9BGyxahysRGcaUZeDzA1XN52N': 'Solsea',
   '5SKmrbAxnHV2sgqyDXkGrLrokZYtWWVEEk5Soed7VLVN': 'YAWW',
   HYPERfwdTjyJ2SCaKHmpF2MtrXqWxrsotYDsTrshHWq8: 'Hyperspace',
-  A7p8451ktDCHq5yYaHczeLMYsjRsAkzc3hCXcSrwYHU7: 'Digital Eyes'
+  A7p8451ktDCHq5yYaHczeLMYsjRsAkzc3hCXcSrwYHU7: 'Digital Eyes',
+  TENSOR: 'Tensor',
+  MAGIC_EDEN: 'Magic Eden'
 }
 
 export const AH_NAME = (prop: string): string =>

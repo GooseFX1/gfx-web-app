@@ -305,10 +305,7 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
             <div tw="duration-500">
               {Array.from(marketplaces).map((market, index) => (
                 <div key={index} className={index > 2 ? 'marketTitle showMoreAnimation' : 'marketTitle'}>
-                  <img
-                    tw="h-[30px] w-[30px]"
-                    src={`/img/assets/Aggregator/${market.toLocaleUpperCase().replaceAll(' ', '_')}.svg`}
-                  />
+                  <img tw="h-[30px] w-[30px]" src={`/img/assets/Aggregator/${market}.svg`} />
                   <div tw="ml-2">{market}</div>
                   <div tw="ml-auto" className={index > 2 && 'showMoreAnimation'}>
                     <Checkbox

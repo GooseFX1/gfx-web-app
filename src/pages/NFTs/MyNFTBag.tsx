@@ -140,6 +140,9 @@ const MY_BAG = styled.div`
 `
 
 export const MyNFTBag = (): ReactElement => {
+  const { pathname } = useLocation()
+  if (!pathname.startsWith('/nfts')) return null
+
   const { mode } = useDarkMode()
   const { nftInBag } = useNFTAggregator()
   const { isCollapsed } = useNavCollapse()

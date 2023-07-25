@@ -128,7 +128,7 @@ export const NFTActivitySectionWeb = (): ReactElement => (
     <th className={'table-col-header'} style={{ width: '13%' }}>
       Price
     </th>
-    <th className={'table-col-header'} style={{ width: '13%' }}>
+    <th className={'table-col-header'} style={{ width: '13%', justifyContent: 'start' }}>
       Market
     </th>
     <th className={'table-col-header'} style={{ width: '13%' }}>
