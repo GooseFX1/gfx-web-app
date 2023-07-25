@@ -155,7 +155,7 @@ export const Connect: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
       return (
-        <div css={[tw`absolute top-[-10px]`]}>
+        <div css={[tw`absolute top-[-5px]`]}>
           <Loader zIndex={1} />
         </div>
       )

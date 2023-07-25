@@ -275,7 +275,9 @@ const EarnRewards: FC = () => {
           disabled={!canStakeOrUnstake}
         >
           {isStakeLoading ? (
-            <Loader zIndex={2} />
+            <div css={[tw`absolute top-[-5px]`]}>
+              <Loader zIndex={2} />
+            </div>
           ) : userGoFxBalance.uiAmount > 0.0 ? (
             `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
           ) : (
@@ -361,7 +363,7 @@ const RewardsRightPanel: FC = () => {
           {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
         </p>
       </div>
-      <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0`]}>
+      <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
         <p
           css={[
             tw`mb-0 text-regular min-md:text-average font-semibold
@@ -385,7 +387,9 @@ const RewardsRightPanel: FC = () => {
           onClick={handleClaimFees}
         >
           {isClaiming ? (
-            <Loader color={'#5855FF'} zIndex={2} />
+            <div css={[tw`absolute top-[-5px]`]}>
+              <Loader color={'#5855FF'} zIndex={2} />
+            </div>
           ) : usdcClaimable > 0.0 ? (
             `Claim ${nFormatter(usdcClaimable)} USDC`
           ) : (
