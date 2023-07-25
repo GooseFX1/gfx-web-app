@@ -333,7 +333,7 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex h-[70px] sm:h-[105px] sm:flex-col mx-3.5`}
+    ${tw`duration-500 items-center flex h-[70px] sm:h-[105px] sm:flex-col px-3.5`}
    
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
     .sortingBtn {
