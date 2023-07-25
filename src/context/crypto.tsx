@@ -11,6 +11,7 @@ import React, {
 import { Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
 import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'
+import MARKET_PAIRS_DEVNET from '../pages/TradeV3/constants/MARKET_PAIRS_DEVNET.json'
 import useBlacklisted from '../utils/useBlacklisted'
 
 interface ICrypto {
@@ -81,16 +82,12 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    const pairsToset = isDevnet
-      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
-      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    const pairsToset = isDevnet ? MARKET_PAIRS_DEVNET : MARKET_PAIRS
     setPairs(pairsToset)
   }, [])
 
   useEffect(() => {
-    const pairsToset = isDevnet
-      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
-      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    const pairsToset = isDevnet ? MARKET_PAIRS_DEVNET : MARKET_PAIRS
     setPairs(pairsToset)
   }, [isDevnet])
 

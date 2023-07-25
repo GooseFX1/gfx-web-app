@@ -20,7 +20,7 @@ import {
   FEE_OUTPUT_REGISTER as MAINNET_FEE_OUTPUT_REGISTER,
   GET_FUNDING_RATE,
   MPG_ID as MAINNET_MPG_ID,
-  MPs,
+  MPs as MAINNET_MPs,
   ORDERBOOK_P_ID,
   RISK_ID,
   RISK_MODEL_CONFIG_ACCT as MAINNET_RISK_MODEL_CONFIG_ACCT,
@@ -33,7 +33,8 @@ import {
   FEE_OUTPUT_REGISTER as DEVNET_FEE_OUTPUT_REGISTER,
   RISK_OUTPUT_REGISTER as DEVNET_RISK_OUTPUT_REGISTER,
   RISK_MODEL_CONFIG_ACCT as DEVNET_RISK_MODEL_CONFIG_ACCT,
-  VAULT_MINT as DEVNET_VAULT_MINT
+  VAULT_MINT as DEVNET_VAULT_MINT,
+  MPs as DEVNET_MPs
 } from '../pages/TradeV3/perps/perpsConstantsDevnet'
 import { MarketProductGroup, TraderRiskGroup } from '../pages/TradeV3/perps/dexterity/accounts'
 import { Fractional } from '../pages/TradeV3/perps/dexterity/types'
@@ -228,7 +229,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }>({ mpg: null, trg: null })
   const [marginAvail, setMarginAvail] = useState<string>('0')
   const [pnl, setPnl] = useState<string>('0')
-  const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MPs[0])
+  const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MAINNET_MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState<boolean>(false)
@@ -278,26 +279,27 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [isDevnet]
   )
 
+  const MPs = useMemo(() => (isDevnet ? DEVNET_MPs : MAINNET_MPs), [isDevnet])
+
   const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
   const connection = useMemo(() => (isDevnet ? devnetConnection : mainnetConnection), [isDevnet])
   const refreshTraderRiskGroup = async () => {
     if (wallet.connected) {
       const trgFetch = currentTRG
-      trgFetch &&
-        TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
-          trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-          trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-        })
+      if (trgFetch) {
+        const trg = await TraderRiskGroup.fetch(connection, trgFetch)
+        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
+        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+      }
     } else {
       setDefaults()
     }
   }
 
   const setMPGDetails = async () => {
-    MarketProductGroup.fetch(connection, currentMPG).then((mpgRes) => {
-      mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
-      mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
-    })
+    const mpgRes = await MarketProductGroup.fetch(connection, currentMPG)
+    mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
+    mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
   }
 
   const setTRGDetails = async () => {
@@ -508,7 +510,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const refreshWasm = useCallback(async () => {
     await perpsWasm()
-  }, [perpsWasm, rawData.mpg, rawData.trg])
+  }, [rawData.mpg, rawData.trg, currentTRG])
 
   useEffect(() => {
     if (wallet.connected) {
@@ -532,7 +534,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       t2 = setInterval(refreshWasm, 1000)
     }
     return () => clearInterval(t2)
-  }, [currentTRG, wallet.connected, wallet.publicKey, rawData.mpg, rawData.trg])
+  }, [refreshWasm, wallet.connected, wallet.publicKey, rawData.mpg, rawData.trg])
 
   useEffect(() => {
     if (prevCountRef.current === undefined) prevCountRef.current = isDevnet
@@ -540,7 +542,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setDefaults()
       const fetchTrgAcc = async () => {
         const trgAccount = await getTraderRiskGroupAccount(wallet, connection, MPG_ID)
-        console.log(trgAccount.pubkey.toBase58())
         if (trgAccount) {
           setTRG(trgAccount.pubkey)
         }
