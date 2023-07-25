@@ -146,9 +146,6 @@ const BuddyLinkReferral: FC = () => {
               ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
               : tw``
           ]}
-          onClick={() => {
-            if (referLink) copyToClipboard()
-          }}
           disabled={!referLink}
         >
           {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
