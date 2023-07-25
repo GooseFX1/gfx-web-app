@@ -16,7 +16,7 @@ const ReferAndEarn: FC = () => (
     <p css={tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold text-justify `}>
       To generate a referral link, first connect your wallet and create a trader account at
       <a
-        href={'app.goosefx.io/trade'}
+        href={'https://app.goosefx.io/trade'}
         target={'_blank'}
         rel={'noreferrer'}
         css={[tw` underline text-blue-1 dark:text-white mx-1`]}
