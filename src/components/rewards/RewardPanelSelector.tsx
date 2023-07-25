@@ -38,7 +38,7 @@ const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelIndex }) =>
         css={[
           tw` min-w-max  cursor-pointer w-[120px] text-center border-none border-0
   font-semibold text-base h-[40px] rounded-[36px] duration-700 bg-transparent`,
-          panelIndex == 0 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-5 min-md:text-grey-5`
+          panelIndex == 0 ? tw`text-blue-1 min-md:text-white` : tw`text-grey-5 min-md:text-grey-1`
         ]}
         ref={setRef}
         data-index={0}

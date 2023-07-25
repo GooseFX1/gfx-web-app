@@ -54,14 +54,13 @@ const StakeBottomBar: FC = () => {
         </p>
       </div>
       <div css={tw`flex flex-row justify-between`}>
-        <div css={tw`flex gap-2`}>
+        <div css={tw`flex`}>
           <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Cooldown Period</p>
+
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
-            title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
-          >
-            <img css={tw`h-[20px] w-[20px]`} src={'/img/assets/info-icon.svg'} alt={'tooltip'} />
-          </Tooltip>
+            title={'You must wait 7 days after unstaking to reclaim your GO FX.'}
+          ></Tooltip>
         </div>
         <p css={[tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`]}>7 days</p>
       </div>
@@ -84,14 +83,14 @@ const StakeBottomBar: FC = () => {
         }}
       />
       <div css={tw`flex flex-col `}>
-        <div css={tw`flex gap-2`}>
+        <div css={tw`flex`}>
           <p css={tw`mb-0 text-[13px] leading-[16px]`}>Cooldown period</p>
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
-          >
-            <img css={tw`h-[20px] w-[20px]`} src={'/img/assets/info-icon.svg'} alt={'tooltip'} />
-          </Tooltip>
+            overrideIcon={'/img/assets/info-icon-transparent.svg'}
+            dark={false}
+          ></Tooltip>
         </div>
         <p css={tw`mb-0`}>7 days</p>
       </div>

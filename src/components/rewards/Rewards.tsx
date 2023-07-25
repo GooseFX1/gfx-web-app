@@ -183,9 +183,9 @@ const EarnRewards: FC = () => {
           </p>
         </div>
         <button
-          css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 px-8 font-semibold flex
-          items-center justify-center min-md:w-[158px] w-[139px] whitespace-nowrap
-            text-regular
+          css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 min-md:px-8 font-semibold flex
+          items-center justify-center min-md:w-[158px] w-[146px] whitespace-nowrap
+            text-regular px-2.5
           `}
           style={{
             background: `linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)`
@@ -361,7 +361,7 @@ const RewardsRightPanel: FC = () => {
           {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
         </p>
       </div>
-      <div css={[tw`flex flex-col w-full min-md:w-max gap-3.75 min-md:gap-0`]}>
+      <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0`]}>
         <p
           css={[
             tw`mb-0 text-regular min-md:text-average font-semibold

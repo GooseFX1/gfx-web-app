@@ -13,7 +13,11 @@ import { notify } from '../../utils'
 const ReferAndEarn: FC = () => (
   <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full leading-normal`}>
     <BuddyLinkReferral />
-    <p css={tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-semibold text-justify `}>
+    <p
+      css={tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-medium text-justify
+    max-w-[579px]
+    `}
+    >
       To generate a referral link, first connect your wallet and create a trader account at
       <a
         href={'https://app.goosefx.io/trade'}
