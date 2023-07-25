@@ -185,7 +185,7 @@ const EarnRewards: FC = () => {
         <button
           css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 px-8 font-semibold flex
           items-center justify-center min-md:w-[158px] w-[139px] whitespace-nowrap
-            text-tiny min-md:text-regular
+            text-regular
           `}
           style={{
             background: `linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)`
@@ -346,12 +346,12 @@ const RewardsRightPanel: FC = () => {
       <div
         css={[
           tw`flex flex-col text-center text-[15px] min-md:text-lg gap-[15px] min-md:mt-[61px]
-           text-grey-5`
+           text-grey-5 `
         ]}
       >
         <span
           css={[
-            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-10`,
+            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-10  h-[42px] min-md:h-auto`,
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
@@ -364,9 +364,9 @@ const RewardsRightPanel: FC = () => {
       <div css={[tw`flex flex-col w-full min-md:w-max gap-3.75 min-md:gap-0`]}>
         <p
           css={[
-            tw`mb-0 text-regular text-average font-semibold opacity-[0.6]
+            tw`mb-0 text-regular min-md:text-average font-semibold
          text-grey-5 text-center leading-normal`,
-            gofxStaked > 0.0 ? tw`opacity-100` : tw``
+            gofxStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
           ]}
         >
           Total Staked: {nFormatter(gofxStaked)} GOFX

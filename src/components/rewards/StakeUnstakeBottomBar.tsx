@@ -22,7 +22,7 @@ const UnstakeBottomBar: FC = () => {
         css={[
           tw`min-md:mt-0 min-md:mb-0 min-md:h-[91px] text-[18px] leading-[22px] text-primary-gradient-1
           underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
-           active:bg-transparent font-semibold border-0 mt-[15px] mb-[28px]
+           active:bg-transparent font-semibold border-0 min-md:mb-[28px]
   `,
           rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}

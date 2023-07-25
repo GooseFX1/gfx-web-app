@@ -31,13 +31,14 @@ const RewardInfo: FC<RewardInfoProps> = ({ title, subtitle, icon, children, isEa
 
   return (
     <>
-      <div id={'title'} css={tw`h-[150px] flex flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
+      <div id={'title'} css={tw`min-md:h-[150px] flex flex-col w-full gap-3.75 min-md:gap-0 min-md:flex-row`}>
         {(breakpoint.isMobile || breakpoint.isTablet) && !isEarnSelected && <ReferFriendSegment />}
         {!breakpoint.isMobile && <div css={tw`flex`}>{icon}</div>}
-        <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5 justify-center`, !subtitle && tw`gap-0`]}>
+        <div css={[tw`flex flex-col gap-3.75 h-full min-md:ml-5 min-md:justify-center`, !subtitle && tw`gap-0`]}>
           <p
             css={[
-              tw`text-lg leading-5.5 text-center min-md:text-left  min-md:text-lg
+              tw`text-average leading-normal min-md:text-lg min-md:leading-5.5 text-center min-md:text-left
+              min-md:text-lg
               dark:text-white text-black-4 mb-0  font-semibold leading-normal`,
               !subtitle && tw`text-left`
             ]}
@@ -125,7 +126,7 @@ export const EarnLeftSidePanel: FC<RewardSegmentProps> = ({ panelIndex, children
       ]}
     >
       {!breakpoint.isMobile && children}
-      <div css={tw`flex flex-col max-w-full h-full items-center`}>
+      <div css={tw`flex flex-col max-w-full gap-3.75 min-md:gap-0 h-full items-center`}>
         <RewardInfo isEarnSelected={panelIndex == 0} {...panel} />
       </div>
     </div>
