@@ -418,7 +418,7 @@ export const HistoryPanel: FC = () => {
     if (size) {
       return size.toFixed(3)
     } else return 0
-  }, [traderInfo, wallet.connected])
+  }, [traderInfo.averagePosition, traderInfo.averagePosition.quantity, wallet.connected])
 
   return (
     <>

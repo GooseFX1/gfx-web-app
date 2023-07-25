@@ -92,13 +92,12 @@ const INFO_STATS = styled.div`
   }
 `
 
-const LOCK_LAYOUT_CTN = styled.div<{ $isLocked: boolean; isDevnet: boolean }>`
+const LOCK_LAYOUT_CTN = styled.div`
   ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer p-0.5`}
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  margin-left: ${({ $isDevnet, $isLocked }) =>
-    $isDevnet && $isLocked ? 'auto' : $isDevnet && !$isLocked ? '10px' : '15px'};
+  margin-left: '15px';
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}
@@ -237,26 +236,17 @@ export const InfoBanner: FC<{
   }
 
   const openInterestFormatted = useMemo(() => {
-    if (!isDevnet) {
-      const num = Number(traderInfo.openInterests)
-      if (!num) return '0.00'
-      else return truncateBigNumber(num)
-    } else return '0.00'
+    const num = Number(traderInfo.openInterests)
+    if (!num) return '0.00'
+    else return truncateBigNumber(num)
   }, [traderInfo.openInterests, isDevnet])
 
   const calculateRangeValue = (range, marketData) => {
-    const priceO = isDevnet ? marketData : getPerpsPrice(orderBook)
-    if (
-      !range ||
-      !range.min ||
-      !range.max ||
-      (isDevnet && (!marketData || !marketData.current)) ||
-      (!isDevnet && !priceO)
-    )
-      return { bars: 0 }
+    const priceO = getPerpsPrice(orderBook)
+    if (!range || !range.min || !range.max || !priceO) return { bars: 0 }
     const difference = +range.max - +range.min,
       size = difference / 6,
-      price = isDevnet ? marketData.current : priceO
+      price = priceO
     let bars = 0
 
     for (let i = 0; i < 6; i++) {
@@ -280,12 +270,8 @@ export const InfoBanner: FC<{
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   const tokenPrice = useMemo(() => {
-    if (isDevnet) {
-      return !marketData || !marketData.current ? <Loader /> : <span>$ {marketData.current}</span>
-    } else {
-      const oPrice = getPerpsPrice(orderBook)
-      return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
-    }
+    const oPrice = getPerpsPrice(orderBook)
+    return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
   }, [isDevnet, selectedCrypto, orderBook])
 
   const handleToggle = (e) => {
@@ -316,18 +302,18 @@ export const InfoBanner: FC<{
 
       <div className="spot-toggle">
         <span
-          className={'spot toggle ' + (isDevnet ? 'selected' : '')}
+          className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
           key="spot"
-          onClick={() => handleToggle('spot')}
+          onClick={() => handleToggle('perps')}
         >
-          Spot
+          MAINNET
         </span>
         <span
-          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : !isDevnet ? 'selected' : '')}
+          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : isDevnet ? 'selected' : '')}
           key="perps"
-          onClick={isGeoBlocked ? null : () => handleToggle('perps')}
+          onClick={isGeoBlocked ? null : () => handleToggle('spot')}
         >
-          Perps
+          DEVNET
         </span>
       </div>
 
@@ -388,15 +374,15 @@ export const InfoBanner: FC<{
           )}
         </INFO_STATS>
       )}
-      {!isDevnet && (
+      {
         <INFO_STATS>
           <>
             <div>Open Interest</div>
             {!traderInfo.openInterests ? <Loader /> : <div> {openInterestFormatted} SOL</div>}
           </>
         </INFO_STATS>
-      )}
-      {!isDevnet && (
+      }
+      {
         <INFO_STATS>
           <>
             <div tw="flex flex-row">
@@ -424,7 +410,7 @@ export const InfoBanner: FC<{
             {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
           </>
         </INFO_STATS>
-      )}
+      }
       {isDevnet && isGeoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
@@ -442,7 +428,7 @@ export const InfoBanner: FC<{
         </DEPOSIT_WRAPPER>
       }
       {
-        <LOCK_LAYOUT_CTN $isLocked={isLocked} $isDevnet={isDevnet} onClick={() => setIsLocked(!isLocked)}>
+        <LOCK_LAYOUT_CTN onClick={() => setIsLocked(!isLocked)}>
           <div className="white-background">
             <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
               <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
