@@ -309,7 +309,8 @@ export const initTrgDepositIx = async (
   depositFundsParams: IDepositFundsParams,
   wallet: any,
   connection: Connection,
-  trg?: Keypair
+  trg?: Keypair,
+  isDevnet?: boolean
 ) => {
   const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg)
   const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
@@ -331,7 +332,7 @@ export const initTrgDepositIx = async (
   const response = await sendPerpsTransactions(
     connection,
     wallet,
-    buddyTransaction ? [transaction, buddyTransaction] : [transaction],
+    buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction],
     {
       startMessage: {
         header: 'Deposit funds',
@@ -362,16 +363,14 @@ export const withdrawFundsIx = async (
   withdrawFundsAccounts: IWithdrawFundsAccounts,
   withdrawFundsParams: IWithdrawFundsParams,
   wallet: any,
-  connection: Connection
+  connection: Connection,
+  referral: PublicKey
 ) => {
   const instructions = []
   const dexProgram = await getDexProgram(connection, wallet)
 
   const buddyProgramId = getProgramId(connection, wallet.publicKey)
 
-  const [riskGroup] = await TraderRiskGroup.fetch(connection, withdrawFundsAccounts.traderRiskGroup)
-
-  const referral = riskGroup.referral
   const remainingAccounts = await getRemainingAccountsForTransfer(connection, wallet.publicKey, referral)
 
   instructions.push(

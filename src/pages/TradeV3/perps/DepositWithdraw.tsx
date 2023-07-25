@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Dropdown, Menu } from 'antd'
-import { MarketType, useAccounts, useDarkMode } from '../../../context'
+import { MarketType, useAccounts, useCrypto, useDarkMode } from '../../../context'
 import { useMemo, FC, useState } from 'react'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
+import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDevnet'
 import 'styled-components/macro'
 import { checkMobile } from '../../../utils'
 
@@ -131,11 +132,12 @@ export const DepositWithdraw: FC<{
   tradeType: string
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
-  const { devnetBalances: balances } = useAccounts()
+  const { devnetBalances: devnetbalances, balances: mainnetBalances } = useAccounts()
+  const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   const [amount, setAmount] = useState('')
-  const perpTokenList = PERPS_COLLATERAL
+  const perpTokenList = isDevnet ? PERPS_COLLATERAL_DEVNET : PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
   const [percentageIndex, setPercentageindex] = useState(null)
@@ -145,6 +147,7 @@ export const DepositWithdraw: FC<{
     `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
   const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
   const symbol = perpToken.token
+  const balances = useMemo(() => (isDevnet ? devnetbalances : mainnetBalances), [isDevnet])
   const tokenAmount = balances[perpToken.marketAddress]
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
 

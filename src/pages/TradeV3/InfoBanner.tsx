@@ -434,13 +434,13 @@ export const InfoBanner: FC<{
         </div>
       )}
       {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
-      {!isDevnet && (
+      {
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           <div className="white-background">
             <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
           </div>
         </DEPOSIT_WRAPPER>
-      )}
+      }
       {
         <LOCK_LAYOUT_CTN $isLocked={isLocked} $isDevnet={isDevnet} onClick={() => setIsLocked(!isLocked)}>
           <div className="white-background">
