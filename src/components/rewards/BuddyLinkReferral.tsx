@@ -43,7 +43,7 @@ const BuddyLinkReferral: FC = () => {
   }, [referLink])
 
   const handleCreateBuddy = useCallback(async () => {
-    if (isReady) {
+    if (isReady && riskGroup) {
       try {
         setLoading(true)
         const transaction = new Transaction()
@@ -77,14 +77,11 @@ const BuddyLinkReferral: FC = () => {
           ),
           type: 'error'
         })
-        //TODO: handle error state
       } finally {
         setLoading(false)
       }
-
-      // TODO: handle ui success state
     }
-  }, [isReady, connection])
+  }, [isReady, connection, riskGroup])
 
   const handleName = useCallback(async () => {
     if (isReady) {
