@@ -17,8 +17,7 @@ const WRAPPER = styled.div`
 `
 
 export const Farm: FC = () => {
-  const [filter, setFilter] = useState<string>('')
-  const { setEndpointName, network } = useConnectionConfig()
+  const [poolIndex, setPoolIndex] = useState<0 | 1>(0)
   const { refreshTokenData } = usePriceFeedFarm()
 
   // initial load of all the prices
@@ -27,8 +26,8 @@ export const Farm: FC = () => {
   }, [])
   return (
     <WRAPPER>
-      <FarmHeader />
-      <FarmTable />
+      <FarmHeader setPoolIndex={setPoolIndex} />
+      <FarmTable poolIndex={poolIndex} setPoolIndex={setPoolIndex} />
       <Faqs />
     </WRAPPER>
   )

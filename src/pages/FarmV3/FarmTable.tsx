@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { FC, useCallback, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useMemo, Dispatch, SetStateAction, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ArrowClicker, Button, SearchBar } from '../../components'
@@ -17,7 +17,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
   .slider-animation-web {
-    ${tw`absolute w-[40%] h-[44px] rounded-[36px] z-[-1]`}
+    ${tw`absolute w-2/5 h-[44px] rounded-[36px] z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 50 + 4.5}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
@@ -108,9 +108,11 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   }
 `
 
-export const FarmTable: FC = () => {
+export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateAction<number>> }> = ({
+  poolIndex,
+  setPoolIndex
+}) => {
   const { mode } = useDarkMode()
-  const [poolIndex, setPoolIndex] = useState<0 | 1>(0)
   const poolTypes = ['stable', 'hyper']
   const [selectedPool, setSelectedPool] = useState<string>(poolTypes[0])
   const [searchTokens, setSearchTokens] = useState<string>()
@@ -126,7 +128,6 @@ export const FarmTable: FC = () => {
   const handleClick = useCallback((pool, index) => {
     setPoolIndex(index)
     setSelectedPool(pool)
-    // handleSlide(index)
   }, [])
 
   return (
@@ -137,18 +138,18 @@ export const FarmTable: FC = () => {
           alt="pool-icon"
           height={77}
           width={70}
-          tw="mr-3 duration-500 "
+          tw="mr-3 duration-500"
         />
         <div tw="flex flex-col">
           <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
             {selectedPool} Pools
           </div>
 
-          <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny">
+          <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
             {poolIndex === 0 ? (
               <>
-                If you're looking for stable returns with balanced risk, {!checkMobile() && <br />} Stable pools
-                are the way to go.
+                If you're looking for stable returns with balanced risk,
+                {!checkMobile() && <br />} Stable pools are the way to go.
               </>
             ) : (
               <>
@@ -205,9 +206,15 @@ export const FarmTable: FC = () => {
         <table tw="mt-4">
           <FarmTableHeaders />
           <tbody>
-            {filteredTokens.map((coin, index) => (
-              <FarmTableCoin key={index} coin={coin} />
-            ))}
+            {filteredTokens && filteredTokens.length ? (
+              filteredTokens.map((coin, index) => <FarmTableCoin key={index} coin={coin} />)
+            ) : (
+              <tr>
+                <div tw="h-full flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
+                  No results found!
+                </div>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

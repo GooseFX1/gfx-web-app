@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { FC, useState } from 'react'
+import { FC, useState, Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
@@ -54,18 +53,24 @@ const topPoolCards = [
   { name: 'XRP', value: '7.45%', type: 'Stable' }
 ]
 
-export const FarmHeader: FC<{}> = () => {
+export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> = ({ setPoolIndex }) => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   return (
     <>
       <HEADER_WRAPPER>
-        {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
+        {poolSelection && (
+          <ChoosePool
+            poolSelection={poolSelection}
+            setPoolSelection={setPoolSelection}
+            setPoolIndex={setPoolIndex}
+          />
+        )}
         {infoCards?.map((card, index) => (
           <>
             <CARD_GRADIENT>
               <INFO_CARD key={index}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5">{card?.value}</div>
+                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-average">{card?.value}</div>
               </INFO_CARD>
             </CARD_GRADIENT>
           </>
@@ -95,10 +100,11 @@ export const FarmHeader: FC<{}> = () => {
         {checkMobile() && (
           <div
             tw="border border-solid border-grey-1 w-[220px] h-12 rounded-[100px] cursor-pointer
-                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:w-[40%] sm:mr-3.75"
+                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 
+                sm:w-2/5 sm:mr-3.75"
           >
             <span
-              tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4 sm:text-tiny"
+              tw="font-semibold text-regular dark:text-grey-5 text-black-4 sm:text-tiny"
               onClick={() => {
                 setPoolSelection(true)
               }}
@@ -124,7 +130,10 @@ export const FarmHeader: FC<{}> = () => {
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
                   {card?.name}
                 </div>
-                <div tw="flex flex-row h-[30px] w-[100px] flex flex-row justify-center items-center rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]">
+                <div
+                  tw="flex flex-row h-[30px] w-[100px] flex flex-row justify-center items-center 
+                  rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
+                >
                   <img
                     src={`/img/assets/${card.type}_pools.svg`}
                     alt="pool-type"
@@ -132,7 +141,10 @@ export const FarmHeader: FC<{}> = () => {
                     height={21}
                     tw="mr-1.25"
                   />
-                  <div tw="text-lg font-semibold text-black-4 dark:text-white text-regular font-semibold sm:text-average">
+                  <div
+                    tw="text-lg font-semibold text-black-4 dark:text-white 
+                        text-regular font-semibold sm:text-average"
+                  >
                     {card?.type}
                   </div>
                 </div>
