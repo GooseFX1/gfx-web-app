@@ -1,6 +1,5 @@
 export * from './AppLayout'
 export * from './Connect'
-export * from './DropDownButton'
 export * from './GoFX'
 export * from './MainNav'
 export * from './More'
