@@ -242,31 +242,5 @@ export const useNFTDetails = (): INFTDetailsConfig => {
     throw new Error('Missing NFT details context')
   }
 
-  return {
-    general: context.general,
-    setGeneral: context.setGeneral,
-    nftMetadata: context.nftMetadata,
-    setNftMetadata: context.setNftMetadata,
-    bids: context.bids,
-    setBids: context.setBids,
-    bidOnSingleNFT: context.bidOnSingleNFT,
-    curHighestBid: context.curHighestBid,
-    removeBidOnSingleNFT: context.removeBidOnSingleNFT,
-    patchNFTAsk: context.patchNFTAsk,
-    ask: context.ask,
-    setAsk: context.setAsk,
-    fetchGeneral: context.fetchGeneral,
-    nftMintingData: context.nftMintingData,
-    setNftMintingData: context.setNftMintingData,
-    updateUserInput: context.updateUserInput,
-    fetchUserInput: context.fetchUserInput,
-    sellNFT: context.sellNFT,
-    removeNFTListing: context.removeNFTListing,
-    totalLikes: context.totalLikes,
-    setTotalLikes: context.setTotalLikes,
-    myBidToNFT: context.myBidToNFT,
-    setMyBidToNFT: context.setMyBidToNFT,
-    onChainMetadata: context.onChainMetadata,
-    setOnChainMetadata: context.setOnChainMetadata
-  }
+  return context
 }

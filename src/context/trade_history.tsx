@@ -236,17 +236,5 @@ export const useTradeHistory = (): ITradeHistoryConfig => {
     throw new Error('Missing trade history context')
   }
 
-  return {
-    cancelOrder: context.cancelOrder,
-    fetchOpenOrders: context.fetchOpenOrders,
-    loading: context.loading,
-    getPairFromMarketAddress: context.getPairFromMarketAddress,
-    openOrders: context.openOrders,
-    orders: context.orders,
-    panel: context.panel,
-    setPanel: context.setPanel,
-    settleFunds: context.settleFunds,
-    tradeHistory: context.tradeHistory,
-    tradeHistoryNew: context.tradeHistoryNew
-  }
+  return context
 }

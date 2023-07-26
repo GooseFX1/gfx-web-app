@@ -138,15 +138,5 @@ export const usePriceFeedFarm = (): IPriceFeedConfig => {
     throw new Error('Missing crypto context')
   }
 
-  return {
-    prices: context.prices,
-    refreshTokenData: context.refreshTokenData,
-    priceFetched: context.priceFetched,
-    statsData: context.statsData,
-    setStatsData: context.setStatsData,
-    stakeProgram: context.stakeProgram,
-    SSLProgram: context.SSLProgram,
-    stakeAccountKey: context.stakeAccountKey,
-    solPrice: context.solPrice
-  }
+  return context
 }

@@ -61,36 +61,6 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
-  const {
-    sortFilter,
-    setSortFilter,
-    sortType,
-    setSortType,
-    pageNumber,
-    setPageNumber,
-    timelineDisplay,
-    setTimelineDisplay,
-    searchInsideCollection,
-    setSearchInsideCollection,
-    searchInsideProfile,
-    setSearchInsideProfile,
-    profileNFTOptions,
-    setProfileNFTOptions
-  } = context
-  return {
-    sortFilter,
-    setSortFilter,
-    sortType,
-    setSortType,
-    pageNumber,
-    setPageNumber,
-    timelineDisplay,
-    setTimelineDisplay,
-    searchInsideCollection,
-    setSearchInsideCollection,
-    searchInsideProfile,
-    setSearchInsideProfile,
-    profileNFTOptions,
-    setProfileNFTOptions
-  }
+
+  return context
 }

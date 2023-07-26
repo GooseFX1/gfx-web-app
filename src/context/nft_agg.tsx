@@ -91,61 +91,6 @@ export const useNFTAggregator = (): INFTAggConfig => {
   if (!context) {
     throw new Error('Missing NFT Aggregator context')
   }
-  const {
-    buyNowClicked,
-    setBidNow,
-    bidNowClicked,
-    setBuyNow,
-    nftInBag,
-    setNftInBag,
-    currencyView,
-    setCurrency,
-    setSellNFT,
-    sellNFTClicked,
-    refreshClass,
-    refreshClicked,
-    setRefreshClicked,
-    setRefreshClass,
-    lastRefreshedClass,
-    setLastRefreshedClass,
-    openJustModal,
-    setOpenJustModal,
-    setCancelBidClicked,
-    cancelBidClicked,
-    delistNFT,
-    setDelistNFT,
-    showAcceptBid,
-    setShowAcceptBidModal,
-    operatingNFT,
-    setOperatingNFT
-  } = useContext(NFTAggContext)
 
-  return {
-    buyNowClicked,
-    setBidNow,
-    bidNowClicked,
-    setBuyNow,
-    nftInBag,
-    setNftInBag,
-    currencyView,
-    setCurrency,
-    setSellNFT,
-    sellNFTClicked,
-    refreshClass,
-    refreshClicked,
-    setRefreshClicked,
-    setRefreshClass,
-    lastRefreshedClass,
-    setLastRefreshedClass,
-    openJustModal,
-    setOpenJustModal,
-    setCancelBidClicked,
-    cancelBidClicked,
-    delistNFT,
-    setDelistNFT,
-    showAcceptBid,
-    setShowAcceptBidModal,
-    operatingNFT,
-    setOperatingNFT
-  }
+  return context
 }

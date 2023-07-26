@@ -187,10 +187,5 @@ export const useOrderBook = (): IOrderBookConfig => {
     throw new Error('Missing order book context')
   }
 
-  return {
-    orderBook: context.orderBook,
-    openOrders: context.openOrders,
-    perpsOpenOrders: context.perpsOpenOrders,
-    setPerpsOpenOrders: context.setPerpsOpenOrders
-  }
+  return context
 }

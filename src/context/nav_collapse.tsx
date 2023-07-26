@@ -51,6 +51,5 @@ export const useNavCollapse = (): INavCollapseConfig => {
     throw new Error('Missing nav collapse context')
   }
 
-  const { isCollapsed, toggleCollapse, relaxPopup, setRelaxPopup } = context
-  return { isCollapsed, toggleCollapse, relaxPopup, setRelaxPopup }
+  return context
 }

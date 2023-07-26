@@ -235,7 +235,5 @@ export const useOrder = (): IOrderConfig => {
   if (!context) {
     throw new Error('Missing order context')
   }
-
-  const { loading, order, focused, placeOrder, setFocused, setOrder } = context
-  return { loading, order, focused, placeOrder, setFocused, setOrder }
+  return context
 }

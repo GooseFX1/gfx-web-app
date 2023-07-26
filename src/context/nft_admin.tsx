@@ -59,6 +59,5 @@ export const useNFTAdmin = (): NFTAdmin => {
   if (!context) {
     throw new Error('Missing NFT Creator context')
   }
-  const { adminAllowed, adminSelected, setAdminSelected, update, setUpdate } = context
-  return { adminAllowed, adminSelected, setAdminSelected, update, setUpdate }
+  return context
 }
