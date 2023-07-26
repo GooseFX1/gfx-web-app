@@ -1,7 +1,6 @@
 import { ANALYTICS_BASE } from '../analytics'
 import { getDateInISOFormat } from '../../utils/misc'
-import { httpClient } from '../../api'
-import { SSL_API_BASE, SSL_API_ENDPOINTS } from '../SSL/constants'
+import { SSL_API_ENDPOINTS } from '../SSL/constants'
 import axios from 'axios'
 import { PublicKey } from '@solana/web3.js'
 
@@ -17,35 +16,9 @@ export type SSLRes = {
   apy7d: number
 }
 
-export const fetchSSLAPR = async (tokenAddress: string, controller: string): Promise<number> => {
-  try {
-    const res = await httpClient(SSL_API_BASE).get(
-      `${SSL_API_ENDPOINTS.APR}?controller=${controller}&mint=${tokenAddress}`
-    )
-
-    const body: SSLRes = res.data
-    return body.apr7d
-  } catch (err) {
-    return err
-  }
-}
-
 export type VolumeRes = {
   volume: number
 }
-
-export const fetchSSLVolumeData = async (tokenAddress: string, controller: string): Promise<number> => {
-  try {
-    const res = await httpClient(SSL_API_BASE).get(
-      `${SSL_API_ENDPOINTS.Volume}?controller=${controller}&mint=${tokenAddress}&interval=${SSL_API_ENDPOINTS.d7}`
-    )
-    const body: VolumeRes = res.data
-    return body.volume
-  } catch (err) {
-    return err
-  }
-}
-
 export type TotalVolumeRes = {
   totalVolumeTrade: number
   totalVolumeTradeDay: number
