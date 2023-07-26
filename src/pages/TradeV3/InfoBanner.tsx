@@ -185,6 +185,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
   tradeType
 }) => {
   const { mode } = useDarkMode()
+  const { isDevnet } = useCrypto()
   return (
     <HEADER>
       <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
@@ -192,7 +193,12 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
         </div>
       </div>
-      <div className={tradeType === 'withdraw' ? 'active cta' : 'cta'} onClick={() => setTradeType('withdraw')}>
+      <div
+        className={tradeType === 'withdraw' ? 'active cta' : 'cta'}
+        onClick={() => {
+          if (!isDevnet) setTradeType('withdraw')
+        }}
+      >
         <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>

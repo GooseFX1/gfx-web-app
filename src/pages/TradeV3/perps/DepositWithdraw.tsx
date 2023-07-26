@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Dropdown, Menu } from 'antd'
 import { MarketType, useAccounts, useCrypto, useDarkMode } from '../../../context'
@@ -178,11 +178,20 @@ export const DepositWithdraw: FC<{
       setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
+
+  useEffect(() => {
+    if (isDevnet) setAmount('500')
+  }, [isDevnet])
+
   const handleInputChange = (e) => {
-    const t = e.target.value
-    if (!isNaN(+t)) {
-      e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
-      setAmount(e.target.value)
+    if (isDevnet) {
+      setAmount('500')
+    } else {
+      const t = e.target.value
+      if (!isNaN(+t)) {
+        e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
+        setAmount(e.target.value)
+      }
     }
   }
   const handleSubmit = async () => {
