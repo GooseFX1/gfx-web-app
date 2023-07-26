@@ -1,6 +1,6 @@
 import { ANALYTICS_BASE } from '../analytics'
-import { getDateInISOFormat } from '../../utils/misc'
-import { SSL_API_ENDPOINTS } from '../SSL/constants'
+import { getDateInISOFormat } from '../../utils'
+import { SSL_API_ENDPOINTS } from './constants'
 import axios from 'axios'
 import { PublicKey } from '@solana/web3.js'
 
