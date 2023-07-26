@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -13,6 +14,13 @@ import {
 import { User, useStats } from '../../context/stats'
 import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
+
+const TIMER = styled.div`
+  ${tw`w-full flex flex-col justify-center items-center`}
+  height: calc(100vh - 56px);
+  width: 100%;
+  background: url('/img/assets/Leaderboard/live_banner.svg');
+`
 
 const WRAPPER = styled.div<{ $index: number }>`
   ${tw`dark:bg-black-1 bg-grey-5`}
@@ -30,7 +38,8 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   .slider {
     ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px]`}
-    left: ${({ $index }) => (!checkMobile() ? ($index === 0 ? '44%' : '50%') : $index === 0 ? '0' : '90px')};
+    left: ${({ $index }) =>
+      !checkMobile() ? ($index === 0 ? '41%' : $index === 1 ? '47%' : '53%') : $index === 0 ? '0' : '90px'};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -83,6 +92,17 @@ export const TABLE_ROW = styled.tr`
     ${tw`text-green-1`}
   }
 `
+const BANNER_TEXT = styled.div`
+  ${tw`absolute top-7 font-semibold text-lg text-grey-5`}
+  left: calc(50% - 159px);
+`
+
+const BANNER_BTN = styled.div`
+  ${tw`absolute bottom-10 font-semibold text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
+    text-white flex flex-row items-center justify-center cursor-pointer`}
+  left: calc(50% - 100px);
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+`
 
 const CARD = styled.div`
   ${tw`h-[90px] w-[370px] dark:bg-black-1 bg-white border border-solid dark:border-grey-2 border-grey-1
@@ -92,11 +112,12 @@ const CARD = styled.div`
 export const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
+  const [isLive, setIslive] = useState<boolean>(true)
   const { users } = useStats()
   const { mode } = useDarkMode()
-  const leaderboardScreens = ['Perps', 'NFTs']
+  const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
 
-  return (
+  return isLive ? (
     <WRAPPER $isCollapsed={true} $index={screenType}>
       {howToEarn && <HowToEarn howToEarn={howToEarn} setHowToEarn={setHowToEarn} screenType={screenType} />}
       <HEADER $mode={mode} $isMobile={checkMobile()}>
@@ -128,10 +149,17 @@ export const LeaderBoard: FC = () => {
             <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
           </div>
         </div>
-        <div tw="text-grey-5 font-semibold text-[30px] text-center mt-3 mb-3.75 sm:text-lg">Leaderboard</div>
-        <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-6">
-          Get to the top of the leaderboard to boost your points, the top 10 of {!checkMobile() && <br />}
-          the leaderboard in the 7D receive a price.{' '}
+        <div tw="text-grey-5 font-semibold text-[30px] text-center mt-3 mb-3.75 sm:text-lg">
+          {screenType === 1 ? 'Paper Trade Season 1' : 'Season 1'}
+        </div>
+        <div tw="relative">
+          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-6">
+            Trade smart, climb the leaderboard, and be among {!checkMobile() && <br />}
+            the top 20 to win exciting rewards!{' '}
+          </div>
+          <div tw="absolute right-5 dark:text-grey-5 font-semibold text-regular text-black-4">
+            Updates At 12am UTC
+          </div>
         </div>
       </HEADER>
       <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
@@ -157,18 +185,36 @@ export const LeaderBoard: FC = () => {
           </CARD>
         ))}
       </div>
+      {screenType === 2 && !checkMobile() && (
+        <div tw="relative">
+          <img
+            src="/img/assets/Leaderboard/nft_banner.svg"
+            alt="nft-banner"
+            width={'100%'}
+            height={134}
+            tw="mb-5 px-5"
+          />
+          <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT>
+          <BANNER_BTN>Trade</BANNER_BTN>
+        </div>
+      )}
       <table>
         <thead className="tableHeader">
-          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
+          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
         </thead>
         <tbody>
           {users.map((user: User, index) => (
             <TABLE_ROW key={index}>
-              {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
+              {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} screenType={screenType} />}
             </TABLE_ROW>
           ))}
         </tbody>
       </table>
     </WRAPPER>
+  ) : (
+    <TIMER>
+      <div tw="text-lg font-semibold text-grey-5">Get Ready For Our Leaderboard!</div>
+      <div tw="text-[40px] font-semibold text-grey-5">10D: 24H :32MIN</div>
+    </TIMER>
   )
 }
