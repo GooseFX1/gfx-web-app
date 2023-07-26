@@ -46,12 +46,12 @@ const FAQ_WRAPPER = styled.div`
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
     <div tw="flex flex-row items-center mt-[55px]">
-      <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4">
+      <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4 sm:text-lg sm:pl-2">
         {checkMobile() ? 'FAQs' : 'Frequently Asked Questions'}
       </h2>
       <a
         tw="w-[140px] h-10 bg-blue-1 mb-5 cursor-pointer text-white font-semibold
-         text-average flex flex-row justify-center items-center rounded-circle "
+         text-average flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
         href="https://docs.goosefx.io/features/farm/single-sided-liquidity-pools"
         target="_blank"
         rel="noreferrer"
@@ -80,7 +80,9 @@ export const FaqRow: FC<{ item; index }> = ({ item, index }) => {
           setIsFaqOpen((prev) => !prev)
         }}
       >
-        <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4">{item.question}</div>
+        <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:text-regular">
+          {item.question}
+        </div>
         <img
           src={`/img/assets/arrow-down-${mode}.svg`}
           alt="arrow-icon"
