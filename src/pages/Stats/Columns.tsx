@@ -74,7 +74,7 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 `
 
-export const ColumnWeb: FC<{ user: User }> = ({ user }) => {
+export const ColumnWeb: FC<{ user: User; screenType: number }> = ({ user, screenType }) => {
   const getClassNameForLoyalty = (loyalty: number): string => {
     if (loyalty <= 50) return 'red'
     else if (loyalty > 50 && loyalty <= 85) return 'yellow'
@@ -96,9 +96,11 @@ export const ColumnWeb: FC<{ user: User }> = ({ user }) => {
           {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddressForSixChar(user?.address)}
         </div>
       </td>
-      <td>
-        <div className={getClassNameForPnl(user?.pnl)}>{user?.pnl && user?.pnl.toFixed(2)}%</div>
-      </td>
+      {screenType !== 2 && (
+        <td>
+          <div className={getClassNameForPnl(user?.pnl)}>{user?.pnl && user?.pnl.toFixed(2)}%</div>
+        </td>
+      )}
       <td>
         <div className={getClassNameForBoost(user?.boost)}>{user?.boost}x</div>
       </td>
@@ -118,29 +120,30 @@ export const ColumnWeb: FC<{ user: User }> = ({ user }) => {
   )
 }
 
-export const ColumnHeadersWeb: FC = () => {
+export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => {
   const { mode } = useDarkMode()
-
   return (
     <>
       <th tw="text-left">Rank</th>
       <th tw="w-1/5">Wallet</th>
-      <th tw="w-[10%]">
-        <Tooltip
-          color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
-          title={
-            <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-              Your PnL% reflects your return on investment, calculated using the current market price of your
-              assets and your net deposits.
-            </span>
-          }
-          overlayClassName={mode === 'dark' ? 'dark' : ''}
-          placement="topLeft"
-          overlayInnerStyle={{ borderRadius: '8px' }}
-        >
-          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5">PnL</span>
-        </Tooltip>
-      </th>
+      {screenType !== 2 && (
+        <th tw="w-[10%]">
+          <Tooltip
+            color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+            title={
+              <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                Your PnL% reflects your return on investment, calculated using the current market price of your
+                assets and your net deposits.
+              </span>
+            }
+            overlayClassName={mode === 'dark' ? 'dark' : ''}
+            placement="topLeft"
+            overlayInnerStyle={{ borderRadius: '8px' }}
+          >
+            <span tw="font-semibold text-regular text-black-4 dark:text-grey-5">PnL</span>
+          </Tooltip>
+        </th>
+      )}
       <th tw="w-[10%]">
         <Tooltip
           color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
@@ -242,9 +245,9 @@ export const HowToEarn: FC<{
               <div tw="absolute top-[-5px] !text-grey-1 text-regular">
                 <span tw="dark:text-grey-5 text-black-4">Step 1</span> of 4
               </div>
-              <h2>{screenType === 0 ? 'Profit and Loss Calculation' : 'List NFTs'} </h2>
+              <h2>{screenType !== 2 ? 'Profit and Loss Calculation' : 'List NFTs'} </h2>
               <img
-                src={`/img/assets/Leaderboard/step1_${screenType === 0 ? 'perps' : 'nfts'}_${mode}.svg`}
+                src={`/img/assets/Leaderboard/step1_${screenType !== 2 ? 'perps' : 'nfts'}_${mode}.svg`}
                 alt="step-1-icon"
                 height={checkMobile() ? '150px' : '218px'}
                 width={checkMobile() ? '205px' : '250px'}
@@ -271,9 +274,9 @@ export const HowToEarn: FC<{
               <div tw="absolute top-[-5px] !text-grey-1 text-regular">
                 <span tw="dark:text-grey-5 text-black-4">Step 2</span> of 4
               </div>
-              <h2>{screenType === 0 ? 'Loyalty System' : 'Bid and Accept Bids'} </h2>
+              <h2>{screenType !== 2 ? 'Loyalty System' : 'Bid and Accept Bids'} </h2>
               <img
-                src={`/img/assets/Leaderboard/step2_${screenType === 0 ? 'perps' : 'nfts'}_${mode}.svg`}
+                src={`/img/assets/Leaderboard/step2_${screenType !== 2 ? 'perps' : 'nfts'}_${mode}.svg`}
                 alt="step-2-icon"
                 height={checkMobile() && '150px'}
                 width={checkMobile() && '205px'}
@@ -295,9 +298,9 @@ export const HowToEarn: FC<{
               <div tw="absolute top-[-5px] !text-grey-1 text-regular">
                 <span tw="dark:text-grey-5 text-black-4">Step 3</span> of 4
               </div>
-              <h2>{screenType === 0 ? 'Point System' : 'Buy NFT’s'} </h2>
+              <h2>{screenType !== 2 ? 'Point System' : 'Buy NFT’s'} </h2>
               <img
-                src={`/img/assets/Leaderboard/step3_${screenType === 0 ? 'perps' : 'nfts'}_${mode}.svg`}
+                src={`/img/assets/Leaderboard/step3_${screenType !== 2 ? 'perps' : 'nfts'}_${mode}.svg`}
                 alt="step-3-icon"
                 height={checkMobile() && '150px'}
                 width={checkMobile() && '205px'}
@@ -324,16 +327,16 @@ export const HowToEarn: FC<{
               <div tw="absolute top-[-5px] !text-grey-1 text-regular">
                 <span tw="dark:text-grey-5 text-black-4">Step 4</span> of 4
               </div>
-              <h2>{screenType === 0 ? 'Rewards and Eligibility' : 'Loyalty and Boost'} </h2>
+              <h2>{screenType !== 2 ? 'Rewards and Eligibility' : 'Loyalty and Boost'} </h2>
               <img
-                src={`/img/assets/Leaderboard/step4_${screenType === 0 ? 'perps' : 'nfts'}_${mode}.svg`}
+                src={`/img/assets/Leaderboard/step4_${screenType !== 2 ? 'perps' : 'nfts'}_${mode}.svg`}
                 alt="step-4-icon"
                 height={checkMobile() && '150px'}
                 width={checkMobile() && '205px'}
               />
-              {screenType === 0 && !checkMobile() && (
+              {screenType !== 2 && !checkMobile() && (
                 <img
-                  src={`/img/assets/Leaderboard/step5_${screenType === 0 ? 'perps' : 'nfts'}_${mode}.svg`}
+                  src={`/img/assets/Leaderboard/step5_${screenType !== 2 ? 'perps' : 'nfts'}_${mode}.svg`}
                   alt="step-4-icon"
                   tw="!my-10"
                   height={checkMobile() && '150px'}
@@ -348,7 +351,7 @@ export const HowToEarn: FC<{
                     'way to the top for the main reward.'}
               </div>
               <LearnMore />
-              {screenType === 0 ? (
+              {screenType !== 2 ? (
                 <Link to="/trade/" target="_blank" rel="noreferrer">
                   <div className="explore">Trade Now</div>
                 </Link>
