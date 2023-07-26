@@ -30,6 +30,8 @@ import { TraderProvider } from './context/trader_risk_group'
 import NFTAgg from './pages/NFTs/NFTAgg'
 // import { NFTs } from './pages/NFTs/NFTs'
 import { TradeAnalyticsWrapper } from './pages/Analytics/trade/TradeAnalyticsWrapper'
+import { LeaderBoard } from './pages/Stats/LeaderBoard'
+import { StatsProvider } from './context/stats'
 
 export const Router: FC = () => (
   <BrowserRouter>
@@ -94,6 +96,11 @@ export const Router: FC = () => (
                     </Route>
                     <Route exact path="/analytics/trade">
                       <TradeAnalyticsWrapper />
+                    </Route>
+                    <Route exact path="/leaderboard">
+                      <StatsProvider>
+                        <LeaderBoard />
+                      </StatsProvider>
                     </Route>
                     <Route>
                       <GenericNotFound />
