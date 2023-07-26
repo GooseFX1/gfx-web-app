@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@ant-design/plots": "^1.2.5",
+    "@bonfida/spl-name-service": "^1.0.4",
     "@civic/solana-gateway-react": "^0.7.5",
     "@craco/craco": "^6.2.0",
     "@headlessui/react": "^1.7.15",
