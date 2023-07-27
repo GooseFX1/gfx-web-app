@@ -22,7 +22,7 @@ const UnstakeBottomBar: FC = () => {
         css={[
           tw`min-md:mt-0 min-md:mb-0 min-md:h-[91px] text-[18px] leading-[22px] text-primary-gradient-1
           underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
-           active:bg-transparent font-semibold border-0 mt-[15px] mb-[28px]
+           active:bg-transparent font-semibold border-0 min-md:mb-[28px]
   `,
           rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
@@ -54,13 +54,14 @@ const StakeBottomBar: FC = () => {
         </p>
       </div>
       <div css={tw`flex flex-row justify-between`}>
-        <div css={tw`flex gap-2`}>
+        <div css={tw`flex`}>
           <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Cooldown Period</p>
+
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
-            title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
+            title={'You must wait 7 days after unstaking to reclaim your GO FX.'}
           >
-            <img css={tw`h-[20px] w-[20px]`} src={'/img/assets/info-icon.svg'} alt={'tooltip'} />
+            <img src="/img/assets/info-icon-transparent.svg" css={tw`w-[18px] h-[18px] ml-2`} />
           </Tooltip>
         </div>
         <p css={[tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`]}>7 days</p>
@@ -84,13 +85,15 @@ const StakeBottomBar: FC = () => {
         }}
       />
       <div css={tw`flex flex-col `}>
-        <div css={tw`flex gap-2`}>
+        <div css={tw`flex`}>
           <p css={tw`mb-0 text-[13px] leading-[16px]`}>Cooldown period</p>
           <Tooltip
             color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
+            overrideIcon={'/img/assets/info-icon-transparent.svg'}
+            dark={false}
           >
-            <img css={tw`h-[20px] w-[20px]`} src={'/img/assets/info-icon.svg'} alt={'tooltip'} />
+            <img src="/img/assets/info-icon-transparent.svg" css={tw`w-[18px] h-[18px] ml-2`} />
           </Tooltip>
         </div>
         <p css={tw`mb-0`}>7 days</p>

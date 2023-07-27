@@ -146,9 +146,6 @@ const BuddyLinkReferral: FC = () => {
               ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
               : tw``
           ]}
-          onClick={() => {
-            if (referLink) copyToClipboard()
-          }}
           disabled={!referLink}
         >
           {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
@@ -159,7 +156,7 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div css={tw`flex flex-col gap-5 min-h-[40px] mt-3.75 min-md:mt-2.5 items-center `}>
+    <div css={tw`flex flex-col gap-5 min-h-[40px] min-md:mt-2.5 items-center `}>
       {!initialFetch ? (
         <>
           <div

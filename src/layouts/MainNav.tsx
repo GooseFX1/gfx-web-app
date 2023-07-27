@@ -786,7 +786,7 @@ const NavItem: FC<MainNavIconProps> = ({
               css={[
                 tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
-                curRoute || isOpen ? tw`text-black dark:text-grey-5` : tw``
+                curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
               ]}
               // style={{
               //   opacity: curRoute ? 1 : 0.5
@@ -807,7 +807,7 @@ const NavItem: FC<MainNavIconProps> = ({
           css={[
             tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
-            curRoute || isOpen ? tw`text-black dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
+            curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
           // style={{
           //   opacity: curRoute ? 1 : 0.5
