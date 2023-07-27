@@ -42,7 +42,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
     }
 
     .nftStatsContainer {
-      ${tw`flex items-center mt-[38px] sm:mt-5 mb-[20px] sm:mb-1 mx-4 sm:ml-2.5 sm:mr-2`}
+      ${tw`flex items-center mt-[38px] sm:mt-5 mb-[20px] sm:mb-1 mx-3 sm:ml-2.5 sm:mr-2`}
       .backBtn {
         ${tw`h-[40px] w-[40px] rounded-full flex items-center justify-center cursor-pointer`}
         background: ${({ theme }) => theme.backBtnBg};
@@ -167,7 +167,7 @@ export const GRID_CONTAINER = styled.div`
     }
 
     .flexContainer {
-      ${tw`flex h-screen px-[14px] sm:px-0`}
+      ${tw`flex h-screen pr-[14px] sm:px-0`}
     }
 
     .filtersContainer {
@@ -197,7 +197,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid sm:pl-1 sm:grid-cols-2 rounded-xl pb-[300px]`}
+    ${tw`grid pl-2 sm:pl-1 sm:grid-cols-2 rounded-xl pb-[300px]`}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));

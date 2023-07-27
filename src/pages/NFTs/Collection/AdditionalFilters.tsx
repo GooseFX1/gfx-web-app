@@ -24,7 +24,6 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
     width: ${open ? '16%' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
-    border-left: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
     height: calc(100vh - 250px);

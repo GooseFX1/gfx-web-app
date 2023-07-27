@@ -397,7 +397,7 @@ const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>
   }, [])
   return (
     <div
-      tw="h-11 w-11 duration-1000 cursor-pointer z-[100] mt-1 sm:ml-0 sm:mr-0 ml-3 mr-[-12px]"
+      tw="h-11 w-11 duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px]"
       onClick={handleButtonClick}
     >
       <img src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />

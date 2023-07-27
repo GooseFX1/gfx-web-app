@@ -28,7 +28,8 @@ export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
 
 const NewMenu = styled(Menu)`
   ${tw`w-[278px] mt-[16px]`}
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme }) => theme.themeToggleContainer};
+  border: 1px solid ${({ theme }) => theme.bg0};
 
   small {
     ${tw`font-semibold`}
@@ -55,7 +56,7 @@ const INPUT = styled.input`
   ${tw`h-[40px] w-full text-[14px] py-0 px-[16px] text-left`}
   font-weight: 500;
   border-radius: 50px 0 0 50px;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.themeToggleButton};
   border: none;
   color: ${({ theme }) => theme.text4};
 

@@ -385,10 +385,12 @@ export const FilterTags = (): ReactElement => {
             index < 4 && (
               <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2" key={index}>
                 <div className="layer" tw="!w-[fit] flex p-1">
-                  <div tw="flex items-center">
+                  <div tw="flex items-center ">
                     <div>
-                      <div>Marketplace</div>
-                      <div tw="whitespace-nowrap">{displayMarketplaceName(market)}</div>
+                      <div tw="text-grey-1 dark:text-grey-2">Marketplace</div>
+                      <div tw="whitespace-nowrap text-black-4 dark:text-grey-5">
+                        {displayMarketplaceName(market)}
+                      </div>
                     </div>
 
                     <div>
@@ -433,7 +435,7 @@ export const FilterTags = (): ReactElement => {
           onClick={clearAllFilters}
           height="30px"
           width="94px"
-          cssStyle={tw`dark:bg-black-2 bg-white font-semibold text-black-4 dark:text-grey-5 mt-4`}
+          cssStyle={tw`bg-blue-1 font-semibold text-white mt-4`}
         >
           Clear All
         </Button>
