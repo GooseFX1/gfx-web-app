@@ -6,7 +6,7 @@ export enum COLLECTION_TYPES {
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
 
-export type IAvailableAttributes = {}
+export type IAvailableAttributes = object
 export type NFTCollection = {
   uuid: string
   collection_id: number
