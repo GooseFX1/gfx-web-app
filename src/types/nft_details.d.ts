@@ -138,6 +138,10 @@ export type INFTBid = {
   event?: string
 }
 
+export type INFTInBag = {
+  [mintAddress: string]: INFTAsk & ISingleNFT
+}
+
 export type INFTAsk = {
   ask_id: number
   uuid: string
@@ -161,10 +165,10 @@ export type INFTAsk = {
 
 export interface INFTGeneralData {
   data: ISingleNFT[]
-  bids: INFTBid[]
+  bids?: INFTBid[]
   asks: INFTAsk[]
-  bids_user_placed: INFTBid[]
-  total_likes: number
+  bids_user_placed?: INFTBid[]
+  total_likes?: number
 }
 
 export type MintItemViewStatus = '' | 'placed' | 'successful' | 'unsuccessful'

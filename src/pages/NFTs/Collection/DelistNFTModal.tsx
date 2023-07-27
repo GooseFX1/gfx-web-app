@@ -36,7 +36,7 @@ const DelistNFTModal: FC<{
       title={null}
       centered={checkMobile() ? false : true}
       visible={visible}
-      onCancel={!isDelistLoading && closeTheModal}
+      onCancel={closeTheModal}
       footer={null}
     >
       <div tw="flex flex-col items-center">

@@ -38,7 +38,7 @@ const gfxConfirmTransaction = async (
   if (currentTime - startTime >= SECONDS_30) {
     throw new Error('Transaction timeout error!')
   }
-  if (res.value[0]?.confirmationStatus === statusType) {
+  if (res.value[0]?.confirmationStatus === statusType || res.value[0]?.confirmationStatus === 'finalized') {
     const confirm = { value: { err: null } }
     return confirm
   } else {
@@ -220,3 +220,17 @@ export const bnTo8 = (bn: BN): Uint8Array => Buffer.from([...bn.toArray('le', 8)
 
 export const getNetworkConnectionText = (network: string): string =>
   network === NETWORK_CONSTANTS.DEVNET ? NETWORK_CONSTANTS.DEVNET_SDK : NETWORK_CONSTANTS.MAINNET_SDK
+
+const openLinkInNewTab = (url: string): void => {
+  const newTab = window.open(url, '_blank')
+  if (newTab) {
+    newTab.focus()
+  }
+}
+export const handleRedirect = (marketplace: string, mintAddress: string): void => {
+  switch (marketplace) {
+    case 'HYPERSPACE':
+      openLinkInNewTab(`https://hyperspace.xyz/token/${mintAddress}`)
+      break
+  }
+}

@@ -6,6 +6,7 @@ import { findProgramAddress } from '../utils'
 import { extendBorsh } from '../../utils'
 import { StringPublicKey, METADATA_PREFIX, MetaplexMetadata, MetadataKey, Creator, Data } from '../metaplex'
 import BN from 'bn.js'
+import { PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
 
 extendBorsh()
 
@@ -1114,16 +1115,10 @@ export async function getEdition(tokenMint: StringPublicKey): Promise<StringPubl
 }
 
 export async function getMetadata(tokenMint: StringPublicKey): Promise<StringPublicKey> {
-  const PROGRAM_IDS = programIds()
-
   return (
     await findProgramAddress(
-      [
-        Buffer.from(METADATA_PREFIX),
-        toPublicKey(PROGRAM_IDS.metadata).toBuffer(),
-        toPublicKey(tokenMint).toBuffer()
-      ],
-      toPublicKey(PROGRAM_IDS.metadata)
+      [Buffer.from(METADATA_PREFIX), TOKEN_METADATA_PROGRAM_ID.toBuffer(), toPublicKey(tokenMint).toBuffer()],
+      TOKEN_METADATA_PROGRAM_ID
     )
   )[0]
 }

@@ -17,6 +17,27 @@ interface INFTAggConfig {
   setSearchInsideProfile?: Dispatch<SetStateAction<string | undefined>>
   profileNFTOptions?: NFT_PROFILE_OPTIONS
   setProfileNFTOptions?: Dispatch<SetStateAction<NFT_PROFILE_OPTIONS>>
+  additionalFilters: IAdditionalFilters
+  setAdditionalFilters: Dispatch<SetStateAction<IAdditionalFilters>>
+}
+export interface IAdditionalFilters {
+  minValueFilter: number | null
+  maxValueFilter: number | null
+  marketsFilter: string[] | null
+  attributes: Traits[] | null
+}
+interface Traits {
+  trait_type: string
+  value: string
+  isAnnotation: boolean
+  trait?: string
+}
+
+export const initialFilters: IAdditionalFilters = {
+  minValueFilter: null,
+  maxValueFilter: null,
+  marketsFilter: null,
+  attributes: null
 }
 
 const NFTAggFiltersContext = createContext<INFTAggConfig>(null)
@@ -28,6 +49,7 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
   const [timelineDisplay, setTimelineDisplay] = useState<TIMELINE>(TIMELINE.TWENTY_FOUR_H)
   const [searchInsideCollection, setSearchInsideCollection] = useState<string | undefined>(undefined)
   const [searchInsideProfile, setSearchInsideProfile] = useState<string | undefined>(undefined)
+  const [additionalFilters, setAdditionalFilters] = useState<IAdditionalFilters>(initialFilters)
 
   // this is for advace filters only
 
@@ -47,7 +69,9 @@ export const NFTAggFiltersProvider: FC<{ children: ReactNode }> = ({ children })
         searchInsideProfile: searchInsideProfile,
         setSearchInsideProfile: setSearchInsideProfile,
         profileNFTOptions: profileNFTOptions,
-        setProfileNFTOptions: setProfileNFTOptions
+        setProfileNFTOptions: setProfileNFTOptions,
+        additionalFilters: additionalFilters,
+        setAdditionalFilters: setAdditionalFilters
       }}
     >
       {children}
@@ -75,7 +99,9 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     searchInsideProfile,
     setSearchInsideProfile,
     profileNFTOptions,
-    setProfileNFTOptions
+    setProfileNFTOptions,
+    additionalFilters,
+    setAdditionalFilters
   } = context
   return {
     sortFilter,
@@ -91,6 +117,8 @@ export const useNFTAggregatorFilters = (): INFTAggConfig => {
     searchInsideProfile,
     setSearchInsideProfile,
     profileNFTOptions,
-    setProfileNFTOptions
+    setProfileNFTOptions,
+    additionalFilters,
+    setAdditionalFilters
   }
 }

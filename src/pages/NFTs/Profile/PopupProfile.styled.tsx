@@ -276,7 +276,7 @@ export const STYLED_PROFILE_POPUP = styled(PopupCustom)`
   } */
   &.ant-modal {
     ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute`}
-    background-color: ${({ theme }) => theme.bg26};
+    background-color: ${({ theme }) => theme.bg20};
     border-radius: 20px;
 
     @media (max-width: 500px) {

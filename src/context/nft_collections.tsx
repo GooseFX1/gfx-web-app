@@ -25,6 +25,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 
 export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [singleCollection, setSingleCollection] = useState<NFTCollection>()
+  const [availableAttributes, setAvailableAttributes] = useState<any>()
   const [collectionOwners, setCollectionOwners] = useState<CollectionOwner[]>([])
   const [fixedPriceWithinCollection, setFixedPriceWithinCollection] = useState<IFixedPriceWithinCollection>()
   const [openBidWithinCollection, setOpenBidWithinCollection] = useState<IOpenBidWithinCollection>()
@@ -108,10 +109,37 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   const fetchSingleCollection = useCallback(async (paramValue: string): Promise<any> => {
     try {
+      setAvailableAttributes(undefined)
       const res = await fetchSingleCollectionAction(NFT_API_ENDPOINTS.SINGLE_COLLECTION, paramValue)
       const collectionData = await res.data
       if (collectionData.collection === null) return null
       setSingleCollection(collectionData)
+
+      const attributeMap = collectionData[0]?.attributes_filters_enabled
+        ? collectionData[0]?.available_attributes?.reduce((map, attribute) => {
+            const traitType = attribute.attribute.trait_type
+            const traitValue = attribute.attribute.value
+            const count = attribute?.listed_count ?? attribute?.count
+            const totalCount = attribute?.count
+            const isAnnotation = attribute.is_annotation
+            if (map[traitType]) {
+              map[traitType].push({
+                traitValue: traitValue,
+                count: count,
+                isAnnotation,
+                trait: traitType,
+                totalCount: totalCount
+              })
+            } else {
+              map[traitType] = [
+                { traitValue: traitValue, count: count, isAnnotation, trait: traitType, totalCount: totalCount }
+              ]
+            }
+            return map
+          }, {})
+        : null
+
+      setAvailableAttributes(attributeMap)
       // const fpData = await fetchFixedPriceWithinCollection(collectionData.collection[0].uuid)
       // setFixedPriceWithinCollection(fpData)
       // const obData = await fetchOpenBidsWithinCollection(collectionData.collection[0].uuid)
@@ -162,6 +190,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
       value={{
         allCollectionLoading,
         allCollections,
+        availableAttributes,
         myNFTsByCollection,
         detailedCollections,
         featuredCollections,
