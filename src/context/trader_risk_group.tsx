@@ -48,7 +48,6 @@ import {
   getPerpsMarketOrderPrice,
   getPythPrice,
   getRiskAndFeeSigner,
-  getRiskSigner,
   getTraderRiskGroupAccount,
   mulFractionals,
   tradeHistoryInfo

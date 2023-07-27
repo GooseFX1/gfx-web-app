@@ -18,7 +18,14 @@ import {
 } from '../../NFTs/launchpad/candyMachine/connection'
 import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
-import { DEX_ID, FEES_ID, MPG_ID, RISK_ID, VAULT_MINT } from './perpsConstants'
+import {
+  DEX_ID,
+  FEES_ID,
+  MPG_ID as MAINNET_MPG_ID,
+  RISK_ID,
+  VAULT_MINT as MAINNET_VAULT_MINT
+} from './perpsConstants'
+import { VAULT_MINT as DEVNET_VAULT_MINT, MPG_ID as DEVNET_MPG_ID } from './perpsConstantsDevnet'
 import { findAssociatedTokenAddress } from '../../../web3'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { struct, u8 } from '@solana/buffer-layout'
@@ -312,8 +319,8 @@ export const initTrgDepositIx = async (
   trg?: Keypair,
   isDevnet?: boolean
 ) => {
-  const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg)
-  const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
+  const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg, isDevnet)
+  const buddyTransaction = isDevnet ? null : await buildTransaction(connection, wallet, buddyInstructions, [])
   const dexProgram = await getDexProgram(connection, wallet)
   instructions.push(
     await dexProgram.instruction.depositFunds(depositFundsParams, {
@@ -460,7 +467,7 @@ export const initializeTraderFeeAcctIx = (args) => {
       isWritable: true
     },
     {
-      pubkey: new PublicKey(MPG_ID),
+      pubkey: new PublicKey(args.MPG_ID),
       isSigner: false,
       isWritable: false
     },
@@ -482,14 +489,14 @@ export const initializeTraderFeeAcctIx = (args) => {
   })
 }
 
-export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Keypair) => {
+export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Keypair, isDevnet?: boolean) => {
   const instructions = []
   const riskStateAccount = anchor.web3.Keypair.generate()
   const traderRiskGroup = trgKey ?? anchor.web3.Keypair.generate()
-  const traderFeeAcct = getTraderFeeAcct(traderRiskGroup.publicKey)
-  const riskSigner = getRiskSigner()
+  const traderFeeAcct = getTraderFeeAcct(traderRiskGroup.publicKey, isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID)
+  const riskSigner = getRiskSigner(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID)
   const referrer = localStorage.getItem('referrer') || ''
-  const mint = new PublicKey(VAULT_MINT)
+  const mint = new PublicKey(isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT)
   const associatedTokenAddress = await findAssociatedTokenAddress(wallet.publicKey, mint)
   const res = await connection.getAccountInfo(associatedTokenAddress)
   if (!res) {
@@ -498,7 +505,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
         wallet.publicKey, // payer
         associatedTokenAddress, // ata
         wallet.publicKey, // owner
-        mint // mint
+        mint,
+        TOKEN_PROGRAM_ID // mint
       )
     )
     //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
@@ -510,7 +518,8 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
       payer: wallet.publicKey,
       traderFeeAcct: traderFeeAcct,
       traderRiskGroup: traderRiskGroup,
-      feeModelConfigAcct: getFeeModelConfigAcct()
+      feeModelConfigAcct: getFeeModelConfigAcct(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
+      MPG_ID: isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID
     })
   )
 
@@ -525,26 +534,45 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
   )
 
   const dexProgram = await getDexProgram(connection, wallet)
-  const createBuddy = await createRandom(connection, wallet.publicKey, referrer)
-  const referralKey = createBuddy.memberPDA
-  const buddyInstructions = [...createBuddy.instructions]
+  if (!isDevnet) {
+    const createBuddy = await createRandom(connection, wallet.publicKey, referrer)
+    const referralKey = createBuddy.memberPDA
+    const buddyInstructions = [...createBuddy.instructions]
 
-  const ix = await dexProgram.instruction.initializeTraderRiskGroup({
-    accounts: {
-      owner: wallet.publicKey,
-      traderRiskGroup: traderRiskGroup.publicKey,
-      marketProductGroup: new PublicKey(MPG_ID),
-      riskSigner: riskSigner,
-      traderRiskStateAcct: riskStateAccount.publicKey,
-      traderFeeStateAcct: traderFeeAcct,
-      riskEngineProgram: new PublicKey(RISK_ID),
-      systemProgram: SystemProgram.programId,
-      referralKey: referralKey
-    }
-  })
-  instructions.push(ix)
+    const ix = await dexProgram.instruction.initializeTraderRiskGroup({
+      accounts: {
+        owner: wallet.publicKey,
+        traderRiskGroup: traderRiskGroup.publicKey,
+        marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
+        riskSigner: riskSigner,
+        traderRiskStateAcct: riskStateAccount.publicKey,
+        traderFeeStateAcct: traderFeeAcct,
+        riskEngineProgram: new PublicKey(RISK_ID),
+        systemProgram: SystemProgram.programId,
+        referralKey: referralKey
+      }
+    })
+    instructions.push(ix)
 
-  return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
+    return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
+  } else {
+    const ix = await dexProgram.instruction.initializeTraderRiskGroup({
+      accounts: {
+        owner: wallet.publicKey,
+        traderRiskGroup: traderRiskGroup.publicKey,
+        marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
+        riskSigner: riskSigner,
+        traderRiskStateAcct: riskStateAccount.publicKey,
+        traderFeeStateAcct: traderFeeAcct,
+        riskEngineProgram: new PublicKey(RISK_ID),
+        systemProgram: SystemProgram.programId,
+        referralKey: PublicKey.default
+      }
+    })
+    instructions.push(ix)
+
+    return [instructions, null, [riskStateAccount, traderRiskGroup]]
+  }
 }
 
 export const initializeTRG = async (wallet: any, connection: Connection) => {

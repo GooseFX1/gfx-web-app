@@ -152,30 +152,32 @@ export const DepositWithdraw: FC<{
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
-    setPercentageindex(index)
-    if (tradeType === 'deposit') {
-      if (!tokenAmount || !tokenAmount.uiAmountString) {
-        setAmount('0.00')
-        return
+    if (!isDevnet) {
+      setPercentageindex(index)
+      if (tradeType === 'deposit') {
+        if (!tokenAmount || !tokenAmount.uiAmountString) {
+          setAmount('0.00')
+          return
+        }
+        let result = 0
+        if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
+        else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
+        else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
+        else result = +tokenAmount.uiAmountString
+        setAmount(String(result))
+      } else {
+        const avail = traderInfo.maxWithdrawable
+        if (!avail || Number.isNaN(+avail)) {
+          setAmount('0.00')
+          return
+        }
+        let result = 0
+        if (index === 0) result = (+avail * 25) / 100
+        else if (index === 1) result = (+avail * 50) / 100
+        else if (index === 2) result = (+avail * 75) / 100
+        else result = +avail
+        setAmount((Math.floor(result * 1000) / 1000).toString())
       }
-      let result = 0
-      if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
-      else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
-      else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
-      else result = +tokenAmount.uiAmountString
-      setAmount(String(result))
-    } else {
-      const avail = traderInfo.maxWithdrawable
-      if (!avail || Number.isNaN(+avail)) {
-        setAmount('0.00')
-        return
-      }
-      let result = 0
-      if (index === 0) result = (+avail * 25) / 100
-      else if (index === 1) result = (+avail * 50) / 100
-      else if (index === 2) result = (+avail * 75) / 100
-      else result = +avail
-      setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
 
@@ -205,6 +207,11 @@ export const DepositWithdraw: FC<{
     }
   }
   const checkDisabled = () => {
+    if (isDevnet) {
+      if (!traderInfo.traderRiskGroup) return true
+      if (traderInfo.traderRiskGroup.totalDeposited.toJSON().m !== '0') return true
+      return false
+    }
     if (tradeType !== 'deposit') {
       if (!traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount || !+amount) return true
     } else {
