@@ -304,8 +304,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           options={[
             {
               text: 'Leaderboard',
-              //onClick: () => history.push('/leaderboard'),
-              onClick: () => null,
+              onClick: () => history.push('/leaderboard'),
+              //onClick: () => null,
               isActive: pathname.includes('leaderboard')
             }
           ]}
@@ -674,8 +674,8 @@ const DesktopNav: FC = () => {
         options={[
           {
             text: 'Leaderboard',
-            //onClick: () => history.push('/leaderboard'),
-            onClick: () => null,
+            onClick: () => history.push('/leaderboard'),
+            //onClick: () => null,
             isActive: pathname.includes('leaderboard')
           }
           // {
