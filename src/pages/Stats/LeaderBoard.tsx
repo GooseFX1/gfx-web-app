@@ -20,7 +20,6 @@ const TIMER = styled.div<{ mode: string }>`
   height: calc(100vh - 56px);
   background: ${({ $mode }) => `url('/img/assets/Leaderboard/live_banner_${$mode}.svg')`};
   background-repeat: no-repeat;
-  background-size: 100% 100%;
 `
 
 const WRAPPER = styled.div<{ $index: number }>`
