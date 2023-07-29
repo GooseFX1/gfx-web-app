@@ -3,6 +3,7 @@ import { FC, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../utils'
+import { useWallet } from '@solana/wallet-adapter-react'
 import {
   ColumnHeadersMobile,
   ColumnHeadersWeb,
@@ -20,6 +21,7 @@ const TIMER = styled.div<{ mode: string }>`
   height: calc(100vh - 56px);
   background: ${({ $mode }) => `url('/img/assets/Leaderboard/live_banner_${$mode}.svg')`};
   background-repeat: no-repeat;
+  background-size: 100%;
 `
 
 const WRAPPER = styled.div<{ $index: number }>`
@@ -38,8 +40,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   .slider {
     ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px]`}
-    left: ${({ $index }) =>
-      !checkMobile() ? ($index === 0 ? '41%' : $index === 1 ? '47%' : '53%') : $index === 0 ? '0' : '90px'};
+    left: ${({ $index }) => (!checkMobile() ? $index * 80 + 'px' : $index === 0 ? '0' : '90px')};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -71,6 +72,9 @@ const WRAPPER = styled.div<{ $index: number }>`
     ${tw`text-green-3`}
     filter: drop-shadow(0px 0px 5px #80ce00);
   }
+  .disable {
+    ${tw`cursor-not-allowed`}
+  }
 `
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-60 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
@@ -98,10 +102,17 @@ const BANNER_TEXT = styled.div`
 `
 
 const BANNER_BTN = styled.div`
-  ${tw`absolute bottom-10 font-semibold text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
+  ${tw`absolute bottom-[60px] font-semibold text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
     text-white flex flex-row items-center justify-center cursor-pointer`}
   left: calc(50% - 100px);
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+
+  > a {
+    ${tw`text-white`}
+  }
+  > a:hover {
+    ${tw`text-white`}
+  }
 `
 
 const CARD = styled.div`
@@ -116,11 +127,12 @@ interface Timer {
 }
 
 export const LeaderBoard: FC = () => {
-  const [screenType, setScreenType] = useState<number>(0)
+  const [screenType, setScreenType] = useState<number>(1)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const [isLive, setIslive] = useState<boolean>(false)
   const { users } = useStats()
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
   const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
   const [countdownTimer, setCountdownTimer] = useState<Timer>({
     days: 0,
@@ -163,19 +175,26 @@ export const LeaderBoard: FC = () => {
     <WRAPPER $isCollapsed={true} $index={screenType}>
       {howToEarn && <HowToEarn howToEarn={howToEarn} setHowToEarn={setHowToEarn} screenType={screenType} />}
       <HEADER $mode={mode} $isMobile={checkMobile()}>
-        <div tw="flex flex-row justify-center relative sm:justify-start relative z-0">
-          <div className="slider"></div>
-          {leaderboardScreens.map((pool, index) => (
-            <div
-              tw="w-20 h-10 flex justify-center items-center cursor-pointer mr-2.5 
-              font-semibold text-regular text-grey-2"
-              key={index}
-              onClick={() => setScreenType(index)}
-              className={index === screenType ? 'active' : ''}
-            >
-              {pool}
-            </div>
-          ))}
+        <div tw="relative sm:justify-start relative z-0">
+          <div tw="w-[240px] mx-auto flex flex-row justify-center relative">
+            <div className="slider"></div>
+            {leaderboardScreens.map((pool, index) => (
+              <div
+                tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
+                key={index}
+                onClick={
+                  screenType === 1
+                    ? () => {
+                        setScreenType(1)
+                      }
+                    : null
+                }
+                className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
+              >
+                {pool}
+              </div>
+            ))}
+          </div>
           <div
             tw="absolute right-5 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
             py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
@@ -197,7 +216,7 @@ export const LeaderBoard: FC = () => {
         <div tw="relative">
           <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-6">
             Trade smart, climb the leaderboard, and be among {!checkMobile() && <br />}
-            the top 20 to win exciting rewards!{' '}
+            the top to win exciting rewards!{' '}
           </div>
           <div tw="absolute right-5 dark:text-grey-5 font-semibold text-regular text-black-4">
             Updates At 12am UTC
@@ -213,20 +232,24 @@ export const LeaderBoard: FC = () => {
             height={134}
             tw="mb-5 px-5"
           />
-          <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT>
-          <BANNER_BTN>Trade</BANNER_BTN>
+          {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
+          <BANNER_BTN>
+            <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/" target="_blank">
+              Trade
+            </a>
+          </BANNER_BTN>
         </div>
       )}
       <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
         {users?.slice(0, 3).map((user: User, index) => (
           <CARD key={index}>
-            <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
+            <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id + 1}</div>
             <img
               src={`/img/assets/Leaderboard/${user?.id}User_${mode}.svg`}
               alt="badge"
               height="56"
               width="50"
-              tw="mr-3.75"
+              tw="mr-[4%]"
             />
             <div tw="flex flex-col mr-auto">
               <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
@@ -245,11 +268,24 @@ export const LeaderBoard: FC = () => {
           <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
         </thead>
         <tbody>
-          {users.map((user: User, index) => (
-            <TABLE_ROW key={index}>
-              {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} screenType={screenType} />}
-            </TABLE_ROW>
-          ))}
+          {users
+            .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
+            .map((user, index) => (
+              <TABLE_ROW key={index}>
+                {checkMobile() ? (
+                  <ColumnMobile user={user} />
+                ) : (
+                  <ColumnWeb user={user} screenType={screenType} connectedUser={true} />
+                )}
+              </TABLE_ROW>
+            ))}
+          {users
+            .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
+            .map((user, index) => (
+              <TABLE_ROW key={index}>
+                {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} screenType={screenType} />}
+              </TABLE_ROW>
+            ))}
         </tbody>
       </table>
     </WRAPPER>
