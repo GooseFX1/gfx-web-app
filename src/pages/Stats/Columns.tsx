@@ -89,7 +89,7 @@ export const ColumnWeb: FC<{ user: User; screenType: number }> = ({ user, screen
   return (
     <>
       <td>
-        <div tw="text-left pl-2.5"># {user?.id}</div>
+        <div tw="text-left pl-2.5"># {user?.id + 1}</div>
       </td>
       <td>
         <div>
@@ -108,7 +108,7 @@ export const ColumnWeb: FC<{ user: User; screenType: number }> = ({ user, screen
         <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty.toFixed(1)}%</div>
       </td>
       <td>
-        <div>{user?.dailyPoints}</div>
+        <div>{user?.dailyPoints && '0'}</div>
       </td>
       <td>
         <div>{user?.weeklyPoints && '0'}</div>
@@ -184,7 +184,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
 export const ColumnMobile: FC<{ user: User }> = ({ user }) => (
   <>
     <td>
-      <div># {user?.id}</div>
+      <div># {user?.id + 1}</div>
     </td>
     <td>{<div>{truncateAddressForSixChar(user?.address)}</div>}</td>
     <td>

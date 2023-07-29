@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { FC, useState } from 'react'
+import { FC, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../utils'
@@ -15,11 +15,12 @@ import { User, useStats } from '../../context/stats'
 import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
 
-const TIMER = styled.div`
-  ${tw`w-full flex flex-col justify-center items-center`}
+const TIMER = styled.div<{ mode: string }>`
+  ${tw`w-full flex flex-col justify-center items-center w-full`}
   height: calc(100vh - 56px);
-  width: 100%;
-  background: url('/img/assets/Leaderboard/live_banner.svg');
+  background: ${({ $mode }) => `url('/img/assets/Leaderboard/live_banner_${$mode}.svg')`};
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 `
 
 const WRAPPER = styled.div<{ $index: number }>`
@@ -105,17 +106,59 @@ const BANNER_BTN = styled.div`
 `
 
 const CARD = styled.div`
-  ${tw`h-[90px] w-[370px] dark:bg-black-1 bg-white border border-solid dark:border-grey-2 border-grey-1
+  ${tw`h-[90px] w-[32%] dark:bg-black-1 bg-white border border-solid dark:border-grey-2 border-grey-1
       rounded-small flex flex-row items-center px-3.75 sm:mb-[15px] sm:w-full`}
 `
+interface Timer {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
 
 export const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
-  const [isLive, setIslive] = useState<boolean>(true)
+  const [isLive, setIslive] = useState<boolean>(false)
   const { users } = useStats()
   const { mode } = useDarkMode()
   const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
+  const [countdownTimer, setCountdownTimer] = useState<Timer>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  })
+
+  useEffect(() => {
+    {
+      const timer = setInterval(() => {
+        const flag = setCountdown()
+        if (flag) {
+          clearInterval(timer)
+          setIslive(true)
+        }
+      }, 1000)
+    }
+  }, [])
+
+  const setCountdown = () => {
+    const startTime = new Date('August 1, 2023 21:30:00')
+    const currentTime = new Date()
+    const remainingTimeinMs = startTime.getTime() - currentTime.getTime()
+    var days = Math.floor(remainingTimeinMs / (1000 * 60 * 60 * 24))
+    var hours = Math.floor((remainingTimeinMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    var minutes = Math.floor((remainingTimeinMs % (1000 * 60 * 60)) / (1000 * 60))
+    var seconds = Math.floor((remainingTimeinMs % (1000 * 60)) / 1000)
+    setCountdownTimer({
+      days,
+      hours,
+      minutes,
+      seconds
+    })
+    if (remainingTimeinMs <= 0) return true
+    else return false
+  }
 
   return isLive ? (
     <WRAPPER $isCollapsed={true} $index={screenType}>
@@ -162,6 +205,19 @@ export const LeaderBoard: FC = () => {
           </div>
         </div>
       </HEADER>
+      {!checkMobile() && (
+        <div tw="relative">
+          <img
+            src="/img/assets/Leaderboard/nft_banner.svg"
+            alt="nft-banner"
+            width={'100%'}
+            height={134}
+            tw="mb-5 px-5"
+          />
+          <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT>
+          <BANNER_BTN>Trade</BANNER_BTN>
+        </div>
+      )}
       <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
         {users?.slice(0, 3).map((user: User, index) => (
           <CARD key={index}>
@@ -185,19 +241,6 @@ export const LeaderBoard: FC = () => {
           </CARD>
         ))}
       </div>
-      {screenType === 2 && !checkMobile() && (
-        <div tw="relative">
-          <img
-            src="/img/assets/Leaderboard/nft_banner.svg"
-            alt="nft-banner"
-            width={'100%'}
-            height={134}
-            tw="mb-5 px-5"
-          />
-          <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT>
-          <BANNER_BTN>Trade</BANNER_BTN>
-        </div>
-      )}
       <table>
         <thead className="tableHeader">
           <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
@@ -212,9 +255,9 @@ export const LeaderBoard: FC = () => {
       </table>
     </WRAPPER>
   ) : (
-    <TIMER>
-      <div tw="text-lg font-semibold text-grey-5">Get Ready For Our Leaderboard!</div>
-      <div tw="text-[40px] font-semibold text-grey-5">10D: 24H :32MIN</div>
+    <TIMER $mode={mode}>
+      <div tw="text-lg font-semibold text-grey-5 sm:text-average">Get Ready For Our Leaderboard!</div>
+      <div tw="text-[40px] font-semibold text-grey-5 sm:text-[30px]">{`${countdownTimer.days}D: ${countdownTimer.hours}H: ${countdownTimer.minutes}M: ${countdownTimer.seconds}S`}</div>
     </TIMER>
   )
 }
