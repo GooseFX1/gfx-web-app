@@ -74,7 +74,11 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 `
 
-export const ColumnWeb: FC<{ user: User; screenType: number }> = ({ user, screenType }) => {
+export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boolean }> = ({
+  user,
+  screenType,
+  connectedUser
+}) => {
   const getClassNameForLoyalty = (loyalty: number): string => {
     if (loyalty <= 50) return 'red'
     else if (loyalty > 50 && loyalty <= 85) return 'yellow'
@@ -93,7 +97,13 @@ export const ColumnWeb: FC<{ user: User; screenType: number }> = ({ user, screen
       </td>
       <td>
         <div>
-          {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddressForSixChar(user?.address)}
+          {connectedUser ? (
+            <span className="gradient-3">You</span>
+          ) : user?.domainName ? (
+            getFormattedDomainName(user.domainName)
+          ) : (
+            truncateAddressForSixChar(user?.address)
+          )}
         </div>
       </td>
       {screenType !== 2 && (
@@ -201,8 +211,17 @@ export const ColumnHeadersMobile: FC = () => (
   </>
 )
 
-const LearnMore: FC = (): JSX.Element => (
-  <a href="https://docs.goosefx.io/" className="learn-more" target="_blank" rel="noreferrer">
+const LearnMore: FC<{ screenType: number }> = ({ screenType }): JSX.Element => (
+  <a
+    href={
+      screenType === 1
+        ? 'https://docs.goosefx.io/features/earn-with-goosefx/leaderboard-rewards/perpetuals-leaderboard-devnet'
+        : 'https://docs.goosefx.io/features/earn-with-goosefx/leaderboard-rewards/nft-leaderboard'
+    }
+    className="learn-more"
+    target="_blank"
+    rel="noreferrer"
+  >
     Learn More
   </a>
 )
@@ -254,13 +273,13 @@ export const HowToEarn: FC<{
                 tw="mb-4"
               />
               <div className="subText">
-                {screenType === 1
+                {screenType === 2
                   ? 'List your NFT’s exclusively on GooseFX, the more you list the more points you will earn.'
                   : 'Your PnL% reflects your return on investment, calculated using the current market' +
                     'price of your assets and your net deposits.'}
               </div>
-              <LearnMore />
-              {screenType === 1 && (
+              <LearnMore screenType={screenType} />
+              {screenType === 2 && (
                 <Link
                   to={`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`}
                   target="_blank"
@@ -282,13 +301,13 @@ export const HowToEarn: FC<{
                 width={checkMobile() && '205px'}
               />
               <div className="subText">
-                {screenType === 1
+                {screenType === 2
                   ? 'Bid for NFT’s exclusively on GooseFX, the more you bid or accept bids the more points you earn.'
                   : 'Earn loyalty points based on your trading volume and frequency.' +
                     'If you dont make at least 2 trades within a week, your loyalty score will decay by 10%'}
               </div>
-              <LearnMore />
-              {screenType === 1 && (
+              <LearnMore screenType={screenType} />
+              {screenType === 2 && (
                 <Link to="/nfts/" target="_blank" rel="noreferrer">
                   <div className="explore">Explore</div>
                 </Link>
@@ -306,7 +325,7 @@ export const HowToEarn: FC<{
                 width={checkMobile() && '205px'}
               />
               <div className="subText">
-                {screenType === 1 ? (
+                {screenType === 2 ? (
                   <div className={mode === 'lite' ? 'space' : ''}>
                     Purchase NFTs directly on GooseFX to earn points, more closer to the floor, more points you
                     earn.
@@ -316,8 +335,8 @@ export const HowToEarn: FC<{
                   'the more points you earn.'
                 )}
               </div>
-              <LearnMore />
-              {screenType === 1 && (
+              <LearnMore screenType={screenType} />
+              {screenType === 2 && (
                 <Link to="/nfts/" target="_blank" rel="noreferrer">
                   <div className="explore">Explore</div>
                 </Link>
@@ -344,22 +363,20 @@ export const HowToEarn: FC<{
                 />
               )}
               <div className="subText">
-                {screenType === 1
+                {screenType === 2
                   ? 'Maintain consistent activity on GooseFX to improve your loyalty score and stay within the top 50' +
                     'users in 24H awards a daily boost.'
                   : 'Top 20 traders are eligible to claim rewards every 14 days. Trade your' +
                     'way to the top for the main reward.'}
               </div>
-              <LearnMore />
-              {screenType !== 2 ? (
-                <Link to="/trade/" target="_blank" rel="noreferrer">
-                  <div className="explore">Trade Now</div>
-                </Link>
-              ) : (
-                <Link to="/nfts/" target="_blank" rel="noreferrer">
-                  <div className="explore">Explore</div>
-                </Link>
-              )}
+              <LearnMore screenType={screenType} />
+              <Link
+                to={screenType !== 2 ? '/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/' : '/nfts'}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="explore">Trade Now</div>
+              </Link>
             </div>
           </Slider>
         </div>
