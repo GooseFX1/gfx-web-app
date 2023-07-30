@@ -1461,6 +1461,23 @@
     eip1193-provider "^1.0.1"
     js-sha3 "^0.8.0"
 
+"@bonfida/spl-name-service@^1.0.4":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@bonfida/spl-name-service/-/spl-name-service-1.0.7.tgz#94e5e79451f7dd87f410e6c28f9d82c0d2f0b211"
+  integrity sha512-awghF0UiBT7SHwE0EGpouoCakQa0EdNEC/87EgkmcaIT/xdDhOifPI2hs+4BDQsyjqxNyWi94qIzp5C+v4/roA==
+  dependencies:
+    "@ethersproject/sha2" "^5.7.0"
+    "@pythnetwork/client" "^2.19.0"
+    "@solana/buffer-layout" "^4.0.1"
+    "@solana/spl-token" "0.3.7 "
+    bech32-buffer "^0.2.1"
+    bn.js "^5.2.1"
+    borsh "^0.7.0"
+    buffer "^6.0.3"
+    ipaddr.js "^2.1.0"
+    punycode "^2.3.0"
+    tweetnacl "^1.0.3"
+
 "@bundlr-network/client@^0.8.8":
   version "0.8.9"
   resolved "https://registry.yarnpkg.com/@bundlr-network/client/-/client-0.8.9.tgz#58e969a5d80f8d25d212d46bb7a060730a3c1736"
@@ -6718,6 +6735,11 @@ batch@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==
+
+bech32-buffer@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/bech32-buffer/-/bech32-buffer-0.2.1.tgz#8106f2f51bcb2ba1d9fb7718905c3042c5be2fcd"
+  integrity sha512-fCG1TyZuCN48Sdw97p/IR39fvqpFlWDVpG7qnuU1Uc3+Xtc/0uqAp8U7bMW/bGuVF5CcNVIXwxQsWwUr6un6FQ==
 
 bech32@1.1.4:
   version "1.1.4"
