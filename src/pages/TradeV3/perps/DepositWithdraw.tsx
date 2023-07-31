@@ -208,7 +208,7 @@ export const DepositWithdraw: FC<{
   }
   const checkDisabled = () => {
     if (isDevnet) {
-      if (!traderInfo.traderRiskGroup) return true
+      if (!traderInfo.traderRiskGroup) return false
       if (traderInfo.traderRiskGroup.totalDeposited.toJSON().m !== '0') return true
       return false
     }
