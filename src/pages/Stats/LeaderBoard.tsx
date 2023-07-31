@@ -40,7 +40,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   .slider {
     ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px]`}
-    left: ${({ $index }) => (!checkMobile() ? $index * 80 + 'px' : $index === 0 ? '0' : '90px')};
+    left: ${({ $index }) => $index * 80 + 'px'};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -103,7 +103,7 @@ const BANNER_TEXT = styled.div`
 
 const BANNER_BTN = styled.div`
   ${tw`absolute bottom-[60px] font-semibold text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
-    text-white flex flex-row items-center justify-center cursor-pointer`}
+    text-white flex flex-row items-center justify-center cursor-pointer sm:bottom-[120px] sm:w-1/2`}
   left: calc(50% - 100px);
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 
@@ -127,9 +127,10 @@ interface Timer {
 }
 
 export const LeaderBoard: FC = () => {
-  const [screenType, setScreenType] = useState<number>(1)
+  //Tochange:
+  const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
-  const [isLive, setIslive] = useState<boolean>(false)
+  const [isLive, setIslive] = useState<boolean>(true)
   const { users } = useStats()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
@@ -175,6 +176,9 @@ export const LeaderBoard: FC = () => {
     <WRAPPER $isCollapsed={true} $index={screenType}>
       {howToEarn && <HowToEarn howToEarn={howToEarn} setHowToEarn={setHowToEarn} screenType={screenType} />}
       <HEADER $mode={mode} $isMobile={checkMobile()}>
+        {checkMobile() && (
+          <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
+        )}
         <div tw="relative sm:justify-start relative z-0">
           <div tw="w-[240px] mx-auto flex flex-row justify-center relative">
             <div className="slider"></div>
@@ -182,66 +186,124 @@ export const LeaderBoard: FC = () => {
               <div
                 tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
                 key={index}
-                onClick={
-                  screenType === 1
-                    ? () => {
-                        setScreenType(1)
-                      }
-                    : null
-                }
-                className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
+                //Tochange:
+                // onClick={
+                //   screenType === 1
+                //     ? () => {
+                //         setScreenType(1)
+                //       }
+                //     : null
+                // }
+                onClick={() => {
+                  setScreenType(index)
+                }}
+                //Tochange:
+                //className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
+                className={index === screenType ? 'active' : ''}
               >
                 {pool}
               </div>
             ))}
           </div>
-          <div
-            tw="absolute right-5 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
-            py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
-          >
-            <span
-              tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
-              onClick={() => {
-                setHowToEarn(true)
-              }}
+          {!checkMobile() && (
+            <div
+              tw="absolute right-5 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
+                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
             >
-              How to earn
-            </span>
-            <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
-          </div>
+              <span
+                tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4 sm:text-tiny"
+                onClick={() => {
+                  setHowToEarn(true)
+                }}
+              >
+                How to earn
+              </span>
+              <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+            </div>
+          )}
         </div>
-        <div tw="text-grey-5 font-semibold text-[30px] text-center mt-3 mb-3.75 sm:text-lg">
-          {screenType === 1 ? 'Paper Trade Season 1' : 'Season 1'}
+        <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
+          <div tw="text-grey-5 font-semibold text-[30px] text-center mt-3 mb-3.75 sm:text-lg">
+            {screenType === 1 ? (
+              <div tw="sm:text-left">Paper Trade {checkMobile() && <br />}Season 1</div>
+            ) : (
+              'Season 1'
+            )}
+          </div>
+          {checkMobile() && (
+            <div
+              tw="border border-solid border-grey-1 w-2/5 h-10 rounded-[100px]
+                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1"
+            >
+              <span
+                tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
+                onClick={() => {
+                  setHowToEarn(true)
+                }}
+              >
+                How to earn
+              </span>
+              <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+            </div>
+          )}
         </div>
         <div tw="relative">
-          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-6">
+          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-0">
             Trade smart, climb the leaderboard, and be among {!checkMobile() && <br />}
             the top to win exciting rewards!{' '}
           </div>
-          <div tw="absolute right-5 dark:text-grey-5 font-semibold text-regular text-black-4">
-            Updates At 12am UTC
-          </div>
+          {!checkMobile() && (
+            <div tw="absolute right-5 dark:text-grey-5 font-semibold text-regular text-black-4">
+              Updates At 12am UTC
+            </div>
+          )}
         </div>
       </HEADER>
-      {!checkMobile() && (
-        <div tw="relative">
-          <img
-            src="/img/assets/Leaderboard/nft_banner.svg"
-            alt="nft-banner"
-            width={'100%'}
-            height={134}
-            tw="mb-5 px-5"
-          />
-          {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
-          <BANNER_BTN>
-            <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/" target="_blank">
-              Trade
-            </a>
-          </BANNER_BTN>
-        </div>
-      )}
+      <div tw="relative">
+        <img
+          src={
+            checkMobile()
+              ? '/img/assets/Leaderboard/nft_banner_mobile.svg'
+              : '/img/assets/Leaderboard/nft_banner.svg'
+          }
+          alt="nft-banner"
+          width={!checkMobile() ? '100%' : '90%'}
+          height={!checkMobile() ? 134 : 240}
+          tw="mb-5 px-5 sm:!mx-auto sm:px-3.75"
+        />
+        {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
+        <BANNER_BTN>
+          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/" target="_blank">
+            Trade
+          </a>
+        </BANNER_BTN>
+      </div>
       <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
-        {users?.slice(0, 3).map((user: User, index) => (
+        {checkMobile() &&
+          users
+            ?.filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
+            .map((user: User, index: number) => (
+              <CARD key={index}>
+                <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id + 1}</div>
+                <img
+                  src={`/img/assets/Leaderboard/${user?.id}User_${mode}.svg`}
+                  alt="badge"
+                  height="56"
+                  width="50"
+                  tw="mr-[4%]"
+                />
+                <div tw="flex flex-col mr-auto">
+                  <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
+                    {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
+                  </div>
+                  <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}p</div>
+                </div>
+                <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
+                  {user?.boost}x Boost
+                </div>
+              </CARD>
+            ))}
+        {users?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id + 1}</div>
             <img
@@ -270,7 +332,7 @@ export const LeaderBoard: FC = () => {
         <tbody>
           {users
             .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
-            .map((user, index) => (
+            .map((user, index: number) => (
               <TABLE_ROW key={index}>
                 {checkMobile() ? (
                   <ColumnMobile user={user} />
@@ -281,7 +343,7 @@ export const LeaderBoard: FC = () => {
             ))}
           {users
             .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-            .map((user, index) => (
+            .map((user, index: number) => (
               <TABLE_ROW key={index}>
                 {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} screenType={screenType} />}
               </TABLE_ROW>
