@@ -5,7 +5,7 @@ import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@sol
 import { useConnectionConfig } from '../context'
 import { BN } from '@project-serum/anchor'
 
-// TODO: move to proper constant file?
+const DEVNET_PROGRAM_ID = '9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA'
 const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
 const CLIENT_NOT_SET = 'Client is not initialized'
 const ORGANIZATION_NAME = 'goose'
@@ -17,7 +17,7 @@ export default function useReferrals(): IReferrals {
   const { connection } = useConnectionConfig()
   useEffect(() => {
     if (connection && publicKey) {
-      const client = new Client(connection, publicKey)
+      const client = new Client(connection, publicKey, DEVNET_PROGRAM_ID)
 
       setClient(client)
     }
@@ -123,7 +123,7 @@ export async function create(
   name: string,
   referrer: string
 ): Promise<TransactionInstruction[]> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, wallet, DEVNET_PROGRAM_ID)
 
   return await client.initialize.createMember(ORGANIZATION_NAME, name, referrer)
 }
@@ -133,7 +133,7 @@ export async function createRandom(
   wallet: PublicKey,
   referrer: string
 ): Promise<{ instructions: TransactionInstruction[]; memberPDA: PublicKey }> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, wallet, DEVNET_PROGRAM_ID)
   const name = Client.generateMemberName()
   const memberPDA = client.pda.getMemberPDA(ORGANIZATION_NAME, name)
 
@@ -162,7 +162,7 @@ export async function getRemainingAccountsForTransfer(
   wallet: PublicKey,
   memberPDA?: PublicKey
 ): Promise<AccountMeta[]> {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, wallet, DEVNET_PROGRAM_ID)
   const remainingAccounts = await client.accounts.transferRewardsAccount(memberPDA, USDC_MINT)
 
   if (remainingAccounts.referrerAccount.toString() === PublicKey.default.toString()) {
@@ -195,7 +195,7 @@ export async function getRemainingAccountsForTransfer(
 }
 
 export function getProgramId(connection: Connection, wallet: PublicKey): PublicKey {
-  const client = new Client(connection, wallet)
+  const client = new Client(connection, wallet, DEVNET_PROGRAM_ID)
 
   return client.getProgramId()
 }
