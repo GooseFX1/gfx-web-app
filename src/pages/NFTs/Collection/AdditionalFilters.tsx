@@ -20,7 +20,7 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
-    ${tw`duration-500 flex h-full flex-col dark:text-grey-5 text-black-4 overflow-y-auto`}
+    ${tw`duration-500 h-full dark:text-grey-5 text-black-4 overflow-y-scroll`}
     width: ${open ? '16%' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
