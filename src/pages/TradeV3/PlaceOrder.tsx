@@ -508,7 +508,7 @@ export const PlaceOrder: FC = () => {
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
-  const [tradeType, setTradeType] = useState<string>('deposit')
+  const [tradeType, setTradeType] = useState<string>('withdraw')
 
   const TAKE_PROFIT_ARRAY = [
     {

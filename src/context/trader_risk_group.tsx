@@ -495,7 +495,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setOpenInterests('0')
     setAccountHealth('100')
     //setFundingRate('0')
-    setMaxWithdrawable('0')
+    setMaxWithdrawable('400')
     setTraderVolume('0')
   }
 
@@ -826,6 +826,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const withdrawFunds = useCallback(
     async (amount: Fractional) => {
+      console.log(connection, wallet.publicKey.toString())
       const withdrawFundsAccounts: IWithdrawFundsAccounts = {
         userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
         traderRiskGroup: await (await getTraderRiskGroupAccount(wallet, connection)).pubkey,

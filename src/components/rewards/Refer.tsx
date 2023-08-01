@@ -66,7 +66,7 @@ export const ReferRightPanel: FC = () => {
   const { sendTransaction } = useWallet()
   const [treasury, setTreasury] = useState<Treasury | null>(null)
   const [totalEarned, setTotalEarned] = useState(0.0)
-  const { connection } = useConnectionConfig()
+  const { perpsDevnetConnection: connection } = useConnectionConfig()
 
   const handleClaim = useCallback(async () => {
     if (treasury && isReady && totalEarned) {
@@ -74,7 +74,7 @@ export const ReferRightPanel: FC = () => {
         const transaction = new Transaction()
         transaction.add(...(await claim()))
 
-        await sendTransaction(transaction, connection)
+        await sendTransaction(transaction, connection, { skipPreflight: true })
         setTreasury(await treasury.refresh())
         notify({
           description: 'Congratulations!',

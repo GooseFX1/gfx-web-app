@@ -182,12 +182,12 @@ export const DepositWithdraw: FC<{
   }
 
   useEffect(() => {
-    if (isDevnet) setAmount('500')
+    if (isDevnet) setAmount('400')
   }, [isDevnet])
 
   const handleInputChange = (e) => {
     if (isDevnet) {
-      setAmount('500')
+      setAmount('400')
     } else {
       const t = e.target.value
       if (!isNaN(+t)) {
@@ -303,7 +303,7 @@ export const DepositWithdraw: FC<{
       <button
         className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}
-        disabled={checkDisabled()}
+        // disabled={checkDisabled()}
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
       </button>

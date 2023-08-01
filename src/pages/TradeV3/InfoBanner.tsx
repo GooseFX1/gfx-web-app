@@ -219,7 +219,7 @@ export const InfoBanner: FC<{
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
   const isGeoBlocked = useBlacklisted()
-  const [tradeType, setTradeType] = useState<string>('deposit')
+  const [tradeType, setTradeType] = useState<string>('withdraw')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const { height, width } = useWindowSize()
   const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])

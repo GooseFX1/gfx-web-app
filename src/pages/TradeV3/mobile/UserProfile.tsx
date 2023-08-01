@@ -541,7 +541,7 @@ export const UserProfile = ({ setUserProfile }) => {
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const [activeTab, setActiveTab] = useState(0)
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
-  const [tradeType, setTradeType] = useState<string>('deposit')
+  const [tradeType, setTradeType] = useState<string>('withdraw')
   const { mode } = useDarkMode()
 
   return (

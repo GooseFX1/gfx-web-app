@@ -6,7 +6,7 @@ import { useConnectionConfig } from '../context'
 import { BN } from '@project-serum/anchor'
 
 const DEVNET_PROGRAM_ID = '9zE4EQ5tJbEeMYwtS2w8KrSHTtTW4UPqwfbBSEkUrNCA'
-const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+const USDC_MINT = new PublicKey('3Q6dz8cLd4BW1kyuGyUaS7qhTtFP7tGS55Y7fybCUfNy')
 const CLIENT_NOT_SET = 'Client is not initialized'
 const ORGANIZATION_NAME = 'goose'
 
@@ -14,8 +14,9 @@ export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
   const { publicKey } = useWallet()
-  const { connection } = useConnectionConfig()
+  const { perpsDevnetConnection: connection } = useConnectionConfig()
   useEffect(() => {
+    console.log(connection, publicKey)
     if (connection && publicKey) {
       const client = new Client(connection, publicKey, DEVNET_PROGRAM_ID)
 
@@ -27,13 +28,18 @@ export default function useReferrals(): IReferrals {
     if (!client) throw CLIENT_NOT_SET
 
     if (member) return member
+
     const buddyProfile = await client.buddy.getProfile(publicKey)
+
     if (!buddyProfile) return null
     const treasuryPDA = client.pda.getTreasuryPDA([buddyProfile.account.pda], [10_000], USDC_MINT)
 
+    console.log('treasuryPDA', treasuryPDA.toString())
+    console.log('fetched')
     // Assumes always only 1 members
     const account = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
 
+    console.log('account', account)
     setMember(account)
     return account
   }, [client, publicKey])
@@ -41,6 +47,8 @@ export default function useReferrals(): IReferrals {
   const getName = useCallback(async () => {
     if (!client) throw CLIENT_NOT_SET
     const member = await getMember()
+
+    console.log('got naem', member)
 
     return member?.account?.name
   }, [client])
@@ -64,6 +72,7 @@ export default function useReferrals(): IReferrals {
 
     const treasury = await getTreasury()
 
+    console.log(treasury)
     return treasury.claim()
   }, [client])
 
