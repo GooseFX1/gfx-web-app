@@ -299,6 +299,7 @@ export const CryptoContent: FC = () => {
   const { selectedCrypto, isDevnet } = useCrypto()
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
+  const isInitialRender = useRef(true)
 
   useEffect(() => {
     logData('trade_page')
@@ -313,7 +314,11 @@ export const CryptoContent: FC = () => {
   }, [isDevnet, selectedCrypto, mode])
 
   useEffect(() => {
-    resetLayout()
+    if (!isInitialRender.current) {
+      resetLayout()
+    } else if (width !== undefined) {
+      isInitialRender.current = false
+    }
   }, [width])
 
   const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
