@@ -78,7 +78,7 @@ const BUTTON_CONTAINER = styled(CenteredDiv)`
 const SETTING_INPUT = styled(Input)`
   height: 50px;
   font-size: 20px;
-  margin: 20px 0rem 30px 0rem;
+  margin: 20px 0 30px 0;
   padding: 0 20px;
   background-color: ${({ theme }) => theme.bg22 + ' !important'};
   box-shadow: 0 0 0 0 !important;

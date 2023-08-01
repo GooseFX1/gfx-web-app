@@ -80,8 +80,8 @@ const CircularDiv = styled.div`
   }
   .semiCircle {
     position: absolute;
-    margin-left: 0px;
-    top: 0px;
+    margin-left: 0;
+    top: 0;
     z-index: 100;
   }
   .leftArrow {

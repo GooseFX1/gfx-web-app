@@ -77,9 +77,9 @@ export const MainNav: FC = () => {
         ]}
       >
         <div css={tw`w-15.75 h-5.25 flex items-center gap-2 absolute cursor-pointer`} onClick={navigateHome}>
-          <img src={`/img/mainnav/g-logo.svg`} />
+          <img src={`/img/mainnav/g-logo.svg`} alt={'g logo'} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+            <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} alt={'goosefx logo'} />
           )}
         </div>
 
@@ -197,7 +197,7 @@ const MobileNav: FC = () => {
   const onClose = useCallback(() => setIsOpen(false), [])
   const toggleSettingsDrawer = useCallback(() => setIsOpen((prev) => !prev), [])
   const isOnPage = useMemo(() => pathname.includes(currentPage.path), [pathname, currentPage.path])
-
+  // left in for when RIVE actually works
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const active = useMemo(
     () => (isOnPage && !isOpen ? 'active' : isOpen ? 'selected' : 'inactive'),
@@ -221,7 +221,7 @@ const MobileNav: FC = () => {
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} />
+        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'menu icon'} />
       </div>
       <MobileSettingsDrawer
         isOpen={isOpen}
@@ -245,8 +245,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 }) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const history = useHistory()
+
   return (
     <div
       css={[
@@ -628,8 +627,6 @@ interface Controls {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const history = useHistory()
   const { pathname } = useLocation()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
@@ -793,6 +790,7 @@ const NavItem: FC<MainNavIconProps> = ({
                 css={[tw`w-3.5 min-md:w-2.25`]}
                 src={`/img/assets/chevron-${mode}-${activeDropdown}.svg`}
                 loading={'eager'}
+                alt={'chevron'}
               />
             )}
           </div>
@@ -880,7 +878,7 @@ const CartButton: FC = () => {
       {/*>*/}
       {/*  <rive.RiveComponent />*/}
       {/*</RiveAnimationWrapper>*/}
-      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} alt={'shopping bag'} />
       <p
         css={[
           tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium

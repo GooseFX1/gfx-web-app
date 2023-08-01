@@ -69,35 +69,34 @@ import { OrderInput, useOrder, IOrder, OrderSide } from './order'
 import { notify, removeFloatingPointError } from '../utils'
 import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
-import { adminCreateMarket, adminInitialiseMPG, updateFeesIx } from '../pages/TradeV3/perps/adminUtils'
 import { httpClient } from '../api'
 
-export const AVAILABLE_ORDERS_PERPS = [
-  {
-    display: 'market',
-    side: 'bid',
-    text: 'Market',
-    tooltip: 'Market order is executed immediately at the best price available in the market.'
-  },
-  {
-    display: 'limit',
-    side: 'bid',
-    text: 'Limit',
-    tooltip: 'Limit order is executed only when the market reaches the price you specify.'
-  },
-  {
-    display: 'market',
-    side: 'ask',
-    text: 'Market',
-    tooltip: 'Market order is executed immediately at the best price available in the market.'
-  },
-  {
-    display: 'limit',
-    side: 'ask',
-    text: 'Limit',
-    tooltip: 'Limit order is executed only when the market reaches the price you specify.'
-  }
-]
+// export const AVAILABLE_ORDERS_PERPS = [
+//   {
+//     display: 'market',
+//     side: 'bid',
+//     text: 'Market',
+//     tooltip: 'Market order is executed immediately at the best price available in the market.'
+//   },
+//   {
+//     display: 'limit',
+//     side: 'bid',
+//     text: 'Limit',
+//     tooltip: 'Limit order is executed only when the market reaches the price you specify.'
+//   },
+//   {
+//     display: 'market',
+//     side: 'ask',
+//     text: 'Market',
+//     tooltip: 'Market order is executed immediately at the best price available in the market.'
+//   },
+//   {
+//     display: 'limit',
+//     side: 'ask',
+//     text: 'Limit',
+//     tooltip: 'Limit order is executed only when the market reaches the price you specify.'
+//   }
+// ]
 
 interface ITraderRiskGroup {
   traderRiskGroup: TraderRiskGroup

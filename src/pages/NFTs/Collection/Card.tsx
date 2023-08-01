@@ -34,7 +34,6 @@ import { GradientText } from '../../../components'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tag } from '../../../components/Tag'
@@ -56,7 +55,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
   const { connection } = useConnectionConfig()
-  const { sessionUser, sessionUserParsedAccounts, likeDislike, userCurrency } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const [localSingleNFT, setlocalSingleNFT] = useState(undefined)
   /** setters are only for populating context before location change to details page */
   const { setGeneral, setNftMetadata, setBids, setAsk, setTotalLikes, setMyBidToNFT, setOnChainMetadata } =
@@ -138,26 +137,26 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
     }
   }, [sessionUser, localSingleNFT])
 
-  const handleToggleLike = async () => {
-    if (sessionUser && sessionUser.uuid) {
-      try {
-        const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
-        console.log(res)
-        setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-        setIsFavorited(res.data.action === 'liked')
-      } catch (err) {
-        console.log(err)
-      }
-    }
-  }
+  // const handleToggleLike = async () => {
+  //   if (sessionUser && sessionUser.uuid) {
+  //     try {
+  //       const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
+  //       console.log(res)
+  //       setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
+  //       setIsFavorited(res.data.action === 'liked')
+  //     } catch (err) {
+  //       console.log(err)
+  //     }
+  //   }
+  // }
 
   const filterAndShow = useMemo(() => {
     if (profileNFTOptions === NFT_PROFILE_OPTIONS.ALL) return true
     if (profileNFTOptions === NFT_PROFILE_OPTIONS.OFFERS) {
-      return localBids.length ? true : false
+      return Boolean(localBids.length)
     }
     if (profileNFTOptions === NFT_PROFILE_OPTIONS.ON_SALE) {
-      return localAsk ? true : false
+      return Boolean(localAsk)
     }
   }, [localAsk, localBids, profileNFTOptions])
 
@@ -291,7 +290,11 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                     <div tw="flex items-center">
                       {localSingleNFT && minimizeTheString(localSingleNFT.nft_name, 14)}
                       {localSingleNFT && localSingleNFT.is_verified && (
-                        <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                        <img
+                          className="isVerified"
+                          src="/img/assets/Aggregator/verifiedNFT.svg"
+                          alt={'is verified'}
+                        />
                       )}
                     </div>
                   </div>
@@ -307,7 +310,7 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                   )}
                   fontSize={15}
                   fontWeight={600}
-                  onClick={(e) =>
+                  onClick={() =>
                     localSingleNFT?.collection_name !== null
                       ? history.push(`/nfts/collection/${localSingleNFT?.collection_name}`)
                       : null

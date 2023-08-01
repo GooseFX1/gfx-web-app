@@ -241,7 +241,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
       height={isMobile ? '610px' : '780px'}
       width={isMobile ? '100%' : '580px'}
       title={null}
-      centered={isMobile}
+      centered={!isMobile}
       visible={bidNowClicked}
       onCancel={() => !isLoading && handleModalClose()}
       footer={null}
@@ -292,7 +292,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
                 <div className="currentBid">Listed Price</div>
                 <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
                   {listingPrice}
-                  <img src={`/img/crypto/SOL.svg`} />
+                  <img src={`/img/crypto/SOL.svg`} alt={'sol token'} />
                 </div>
               </div>
             ) : (

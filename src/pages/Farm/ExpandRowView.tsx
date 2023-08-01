@@ -122,7 +122,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
 
   const getSuccessUnstakeMsg = (): string => `Successfully Unstaked amount of ${unstakeAmt} ${name}!`
   const getSuccessStakeMsg = (): string => `Successfully staked amount of ${stakeAmt} ${name}!`
-  const getErrStakeMsg = (): string => `Staking ${name} error!`
+  // const getErrStakeMsg = (): string => `Staking ${name} error!`
   const getErrUntakeMsg = (): string => `Unstaking ${name} error!`
   const zeroFunds =
     name === TOKEN_NAMES.SOL

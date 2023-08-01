@@ -51,7 +51,7 @@ import {
   createExecuteSaleInstruction,
   AH_NAME
 } from '../../../web3'
-import { Button } from '../../../components/Button'
+import { Button } from '../../../components'
 import { GFX_LINK } from '../../../styles'
 import { logData } from '../../../api/analytics'
 import { web3 } from '@project-serum/anchor'
@@ -337,15 +337,15 @@ export const BuyNFTModal = (): ReactElement => {
       handleCloseModal(setGeneral, setBuyNow, false)
     }
   }, [sessionUser, buyNowClicked])
-
+  const isMobile = checkMobile()
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '603px' : '780px'}
-      width={checkMobile() ? '100%' : '580px'}
+      height={isMobile ? '603px' : '780px'}
+      width={isMobile ? '100%' : '580px'}
       title={null}
-      centered={checkMobile() ? false : true}
-      visible={buyNowClicked ? true : false}
+      centered={!isMobile}
+      visible={buyNowClicked}
       onCancel={() => handleCloseModal(setGeneral, setBuyNow, isLoading)}
       footer={null}
     >
@@ -395,10 +395,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
   const orderTotal: number = useMemo(() => curBid, [curBid])
 
-  const notEnoughSol: boolean = useMemo(
-    () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
-    [curBid]
-  )
+  const notEnoughSol: boolean = useMemo(() => orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()), [curBid])
 
   const appraisalValueAsFloat = useMemo(
     () => (general?.gfx_appraisal_value ? parseFloat(general?.gfx_appraisal_value) : null),
@@ -779,7 +776,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           <div className="priceText">Price:</div>
 
           <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
-            <div>{curBid}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
+            <div>{curBid}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} alt={'sol token'} />
           </div>
         </div>
 

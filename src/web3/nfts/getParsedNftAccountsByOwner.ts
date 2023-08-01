@@ -112,9 +112,7 @@ export const getParsedNftAccountsByOwner = async ({
 
   // sort accounts if sort is true & updateAuthority stringified
   if (stringifyPubKeys && sort) {
-    const accountsSorted = orderBy(accountsFiltered, [sortKeys.updateAuthority], ['asc'])
-
-    return accountsSorted
+    return orderBy(accountsFiltered, [sortKeys.updateAuthority], ['asc'])
   }
   // otherwise return unsorted
   return accountsFiltered
