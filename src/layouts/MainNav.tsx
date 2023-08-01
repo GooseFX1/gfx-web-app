@@ -463,13 +463,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                 focus:outline-none focus-visible:border-0 active:border-0
                 focus:border-0 p-0`
               ].concat(customMenuStyle?.button ?? [])}
-              onMouseEnter={
-                breakpoints.isMobile
-                  ? () => {
-                      false
-                    }
-                  : localOnHover
-              }
+              onMouseEnter={breakpoints.isMobile ? () => null : localOnHover}
               onClick={handleMenuButtonClick}
               ref={buttonRef}
             >

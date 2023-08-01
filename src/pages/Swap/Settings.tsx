@@ -96,7 +96,9 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
   const [value, setValue] = useState<number>(slippage)
 
   const handleSlippageChange = (x: BaseSyntheticEvent) => {
-    !isNaN(x.target.value) && setValue(parseFloat(x.target.value) / 100)
+    if (!isNaN(x.target.value)) {
+      setValue(parseFloat(x.target.value) / 100)
+    }
   }
 
   const BODY = styled(CenteredDiv)`

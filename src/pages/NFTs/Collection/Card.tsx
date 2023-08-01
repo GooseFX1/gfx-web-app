@@ -13,8 +13,8 @@ import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { moneyFormatter, commafy, checkMobile } from '../../../utils'
-import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
+import { commafy, checkMobile } from '../../../utils'
+import { ISingleNFT, INFTBid, INFTAsk } from '../../../types/nft_details'
 import {
   useNFTProfile,
   useNFTDetails,
@@ -29,7 +29,7 @@ import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } f
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
 // import styled, { css } from 'styled-components'
-import { GradientText } from '../../../components/GradientText'
+import { GradientText } from '../../../components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { RotatingLoader } from '../../../components/RotatingLoader'
@@ -43,7 +43,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
 //#region styles
-const DIVV = styled.div``
+
 type ICard = {
   singleNFT: ISingleNFT
   nftDetails?: any
@@ -92,12 +92,17 @@ const Card: FC<ICard> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
       singleNFT && sessionUser !== null && sessionUserParsedAccounts.length > 0
         ? sessionUserParsedAccounts.find((acct) => acct.mint === singleNFT.mint_address)
         : undefined
-    return findAccount === undefined ? false : true
+    return Boolean(findAccount)
   }, [sessionUser, sessionUserParsedAccounts])
 
   useEffect(() => {
     if (nftDetails) {
-      nftDetails.data.length > 0 ? setlocalSingleNFT(nftDetails.data[0]) : setlocalSingleNFT(singleNFT)
+      if (nftDetails.data.length > 0) {
+        setlocalSingleNFT(nftDetails.data[0])
+      } else {
+        setlocalSingleNFT(singleNFT)
+      }
+
       setLocalBids(nftDetails.bids)
       if (publicKey) {
         const myBid = nftDetails.bids.filter((bid) => bid.wallet_key === publicKey.toString())

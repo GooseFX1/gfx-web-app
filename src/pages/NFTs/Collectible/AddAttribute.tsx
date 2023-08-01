@@ -214,7 +214,9 @@ const AddAttribute: FC<Props> = ({ visible, handleCancel, handleOk, attributeLis
   }, [realData])
 
   useEffect(() => {
-    inputType && inputType.current.focus()
+    if (inputType.current) {
+      inputType.current.focus()
+    }
   }, [])
 
   const onAdd = () => {

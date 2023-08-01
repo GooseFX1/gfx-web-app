@@ -139,7 +139,9 @@ const burn = async (
 
   tx.add(await instruction.burn(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  value && (await track(tracker, trackerAccount, connection))
+  if (value) {
+    await track(tracker, trackerAccount, connection)
+  }
   return s
 }
 
@@ -225,7 +227,9 @@ const deposit = async (
 
   tx.add(await instruction.depositCollateral(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  value && (await track(tracker, trackerAccount, connection))
+  if (value) {
+    await track(tracker, trackerAccount, connection)
+  }
   return s
 }
 
@@ -338,7 +342,9 @@ const mint = async (
 
   tx.add(await instruction.mint(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  value && (await track(tracker, trackerAccount, connection))
+  if (value) {
+    await track(tracker, trackerAccount, connection)
+  }
   return [s, fetchAccounts]
 }
 
@@ -415,7 +421,9 @@ const swap = async (
   const { instruction } = getPoolProgram(wallet, connection, network)
   tx.add(await instruction.swap(new BN(inTokenAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  value && (await track(tracker, trackerAccount, connection))
+  if (value) {
+    await track(tracker, trackerAccount, connection)
+  }
   return [s, fetchAccounts]
 }
 
@@ -470,7 +478,9 @@ const withdraw = async (
 
   tx.add(await instruction.withdrawCollateral(new BN(fullAmount), { accounts }))
   const s = await signAndSendRawTransaction(connection, tx, wallet)
-  value && (await track(tracker, trackerAccount, connection))
+  if (value) {
+    await track(tracker, trackerAccount, connection)
+  }
   return s
 }
 

@@ -59,7 +59,7 @@ export const Modal: FC<{
 }) => {
   const { mode } = useDarkMode()
   const handleCancel = () => {
-    onCancel && onCancel()
+    onCancel?.()
     setVisible(false)
   }
 

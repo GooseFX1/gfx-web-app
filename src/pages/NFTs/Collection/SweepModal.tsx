@@ -1009,7 +1009,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
           }
 
           await timeout(1000)
-          if (index < tempNftBatch.length - 1) sliderRef && sliderRef.current && sliderRef.current.slickNext()
+          if (index < tempNftBatch.length - 1 && sliderRef?.current) sliderRef.current.slickNext()
         }
         setSweepSuccess(sweepSuccess)
         if (!sweepSuccess) {

@@ -149,7 +149,9 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const throttleDelay = 300
   const sizeThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorSize = useCallback(async () => {
-    sizeThrottle.current && clearTimeout(sizeThrottle.current)
+    if (sizeThrottle.current) {
+      clearTimeout(sizeThrottle.current)
+    }
     sizeThrottle.current = setTimeout(async () => {
       setOrder((prevState) => ({
         ...prevState
@@ -163,7 +165,9 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const priceThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorPrice = useCallback(async () => {
-    priceThrottle.current && clearTimeout(priceThrottle.current)
+    if (priceThrottle.current) {
+      clearTimeout(priceThrottle.current)
+    }
     priceThrottle.current = setTimeout(async () => {
       //setOrder((prevState) => ({ ...prevState, price: floorValue(+order.price, selectedCrypto.market?.tickSize) }))
     }, throttleDelay)
@@ -174,7 +178,9 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const marketPrice = useMemo(() => prices[selectedCrypto.pair]?.current, [prices, selectedCrypto.pair])
   useEffect(() => {
-    !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
+    if (!order.price && marketPrice) {
+      setOrder((prevState) => ({ ...prevState, price: marketPrice }))
+    }
   }, [marketPrice, order.price, isSpot])
 
   const placeOrder = useCallback(async () => {

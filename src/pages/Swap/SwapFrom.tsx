@@ -93,7 +93,9 @@ export const SwapFrom: FC<{ height: string }> = ({ height }) => {
   }, [inTokenAmount])
   const handleOnChange = useCallback(
     (e: BaseSyntheticEvent) => {
-      tokenA && !isNaN(e.target.value) && setInTokenAmount(e.target.value)
+      if (tokenA && !isNaN(e.target.value)) {
+        setInTokenAmount(e.target.value)
+      }
     },
     [tokenA, setInTokenAmount]
   )

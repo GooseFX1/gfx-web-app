@@ -1,8 +1,8 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import React, { useEffect, useState, FC } from 'react'
-import { fetchTotalVolumeTrade, fetchTotalVolumeTradeChart } from '../../../api/SSL/index'
+import { fetchTotalVolumeTrade, fetchTotalVolumeTradeChart } from '../../../api/SSL'
 import { moneyFormatterWithComma } from '../../../utils'
-import { GradientText } from '../../../components/GradientText'
+import { GradientText } from '../../../components'
 import { CARD } from './GofxHolders'
 import { SwapVolumeChart } from './SwapVolumeChart'
 import SwapVolumeDailyChart from './SwapVolumeDailyChart'
@@ -28,15 +28,17 @@ const SwapVolume: FC = () => {
       setPieChartData(data)
       const arr = []
       const dailyArr = []
-      data && data.map((day) => arr.push([day.date.substring(5), parseFloat(day.totalVolumeTrade.toFixed(0))]))
-      data &&
-        data.map((day) =>
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          arr.push([data[i].date.substring(5), parseFloat(data[i].totalVolumeTrade.toFixed(0))])
           dailyArr.push({
-            date: day.date.substring(5),
-            value: parseFloat(day.totalVolumeTradeDay.toFixed(0)),
-            totalVolume: parseFloat(day.totalVolumeTrade.toFixed(0))
+            date: data[i].date.substring(5),
+            value: parseFloat(data[i].totalVolumeTradeDay.toFixed(0)),
+            totalVolume: parseFloat(data[i].totalVolumeTrade.toFixed(0))
           })
-        )
+        }
+      }
+
       arr.sort(function (a, b) {
         const date1 = new Date(a[0])
         const date2 = new Date(b[0])

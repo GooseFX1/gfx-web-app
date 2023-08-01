@@ -376,7 +376,7 @@ export const tradeHistoryInfo = (
   marketProductGroup: MarketProductGroup
 ) => {
   let productIndex = null
-  marketProductGroup.marketProducts.array[0].value.outright
+  //marketProductGroup.marketProducts.array[0].value.outright
   marketProductGroup.marketProducts.array.map((item, index) => {
     if (item.value.outright.metadata.productKey.toBase58() === activeProduct.id) productIndex = index
   })

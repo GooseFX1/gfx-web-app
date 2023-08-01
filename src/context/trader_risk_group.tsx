@@ -268,11 +268,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         trgFetch = currentTRG
       }
 
-      trgFetch &&
+      if (trgFetch) {
         TraderRiskGroup.fetch(connection, trgFetch).then((trg) => {
-          trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-          trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+          if (trg) {
+            setTraderRiskGroup(trg[0])
+            setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
+          } else {
+            setTraderRiskGroup(null)
+          }
         })
+      }
     } else {
       setDefaults()
     }
@@ -281,8 +286,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const setMPGDetails = async () => {
     if (!isSpot) {
       MarketProductGroup.fetch(connection, new PublicKey(MPG_ID)).then((mpgRes) => {
-        mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
-        mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
+        if (mpgRes) {
+          setMarketProductGroup(mpgRes[0])
+          setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
+        } else {
+          setMarketProductGroup(null)
+        }
       })
 
       refreshTraderRiskGroup()

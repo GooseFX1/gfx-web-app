@@ -144,7 +144,9 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     setFilteredFixPrice(null)
     setStopCalling(false)
     setSearchInsideCollection(undefined)
-    !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
+    if (!firstLoad) {
+      fetchFixedPriceNFTs(0, collectionSort)
+    }
   }, [collectionSort])
 
   const debouncer = useCallback(
@@ -189,7 +191,9 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   useEffect(() => refreshClicked && resetLocalState(), [refreshClicked])
 
   useEffect(() => {
-    firstLoad && fetchFixedPriceNFTs(0, collectionSort)
+    if (firstLoad) {
+      fetchFixedPriceNFTs(0, collectionSort)
+    }
     return () => resetLocalState()
   }, [singleCollection])
 

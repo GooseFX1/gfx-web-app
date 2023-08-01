@@ -1,7 +1,7 @@
 import React, { useEffect, useState, FC } from 'react'
 import { getTotalLiquidityVolume } from '../../../api/analytics'
 import { moneyFormatterWithComma } from '../../../utils'
-import { GradientText } from '../../../components/GradientText'
+import { GradientText } from '../../../components'
 import { TVLChart } from './TVLChart'
 
 export const TotalLiquidityVolume: FC = () => {
@@ -11,7 +11,9 @@ export const TotalLiquidityVolume: FC = () => {
     ;(async () => {
       const { data, arr } = await getTotalLiquidityVolume()
       const chartArr = []
-      arr && arr.map((ar) => chartArr.push([ar.date, parseFloat(ar.aggregatedVolume.totalVolume.toFixed(0))]))
+      if (arr) {
+        arr.map((ar) => chartArr.push([ar.date, parseFloat(ar.aggregatedVolume.totalVolume.toFixed(0))]))
+      }
       setChartData(chartArr)
       setFarmData(data)
     })()

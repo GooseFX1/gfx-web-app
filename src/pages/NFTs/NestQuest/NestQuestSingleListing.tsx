@@ -563,7 +563,11 @@ export const NestQuestSingleListing: FC<{
               <TokenToggle
                 toggleToken={(curToken) => {
                   setToken(curToken)
-                  curToken === 'SOL' ? setMintPrice(NQ_SOL_PRICE) : setMintPrice(NQ_GOFX_PRICE)
+                  if (curToken === 'SOL') {
+                    setMintPrice(NQ_SOL_PRICE)
+                  } else {
+                    setMintPrice(NQ_GOFX_PRICE)
+                  }
                 }}
                 tokenA={'SOL'}
                 tokenB={'GOFX'}

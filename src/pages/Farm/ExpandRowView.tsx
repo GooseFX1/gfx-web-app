@@ -157,10 +157,14 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   const onClickHalf = (buttonId: string): void => {
     if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'stake') {
-      !isMobile && depositRef.current.focus()
+      if (!isMobile) {
+        depositRef.current.focus()
+      }
       setStakeAmt(parseFloat((userTokenBalance / 2).toFixed(DISPLAY_DECIMAL)))
     } else {
-      !isMobile && withdrawRef.current.focus()
+      if (!isMobile) {
+        withdrawRef.current.focus()
+      }
       setUnstakeAmt(parseFloat(((tokenStaked + tokenEarned) / 2).toFixed(DISPLAY_DECIMAL)))
     }
   }
@@ -171,10 +175,14 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
     //add focus element
     if (name === TOKEN_NAMES.SOL) userTokenBalance = userSOLBalance
     if (buttonId === 'stake') {
-      !isMobile && depositRef.current.focus()
+      if (!isMobile) {
+        depositRef.current.focus()
+      }
       setStakeAmt(parseFloat(userTokenBalance.toFixed(DISPLAY_DECIMAL)))
     } else {
-      !isMobile && withdrawRef.current.focus()
+      if (!isMobile) {
+        withdrawRef.current.focus()
+      }
       setUnstakeAmt(parseFloat((tokenEarned + tokenStaked).toFixed(DISPLAY_DECIMAL)))
     }
   }

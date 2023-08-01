@@ -35,7 +35,6 @@ export interface AccountsFiltered {
   masterEdition?: string
   edition?: string
 }
-;[]
 
 enum sortKeys { //eslint-disable-line
   updateAuthority = 'updateAuthority' //eslint-disable-line

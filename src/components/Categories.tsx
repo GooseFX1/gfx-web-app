@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../layouts/shared'
+import { Menu, MenuItem } from '../layouts'
 import { ArrowDropdown } from '../components'
 import { SVGDynamicReverseMode } from '../styles'
 
@@ -76,7 +76,7 @@ const Overlay: FC<{
       setArrowRotation(false)
       setCurrentTitle(name)
       setDropdownVisible(false)
-      onChange && onChange(name)
+      onChange?.(name)
     },
     [onChange, setArrowRotation, setCurrentTitle, setDropdownVisible]
   )

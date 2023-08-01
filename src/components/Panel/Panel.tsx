@@ -64,11 +64,13 @@ export const Panel: FC<{
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        !wallet
-          ? setVisible(true)
-          : connect().catch((e: Error) => {
-              console.log(e)
-            })
+        if (!wallet) {
+          setVisible(true)
+        } else {
+          connect().catch((e: Error) => {
+            console.log(e)
+          })
+        }
       }
     },
     [connect, setVisible, wallet]

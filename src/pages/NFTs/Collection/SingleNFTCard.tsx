@@ -171,7 +171,11 @@ export const SingleNFTCard: FC<{
     async (item: BaseNFT) =>
       fetchSingleNFT(item?.mint_address).then(async (res) => {
         if (res && res.status === 200) {
-          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
+          if (res.data.data.length > 0) {
+            setlocalSingleNFT(res.data.data[0])
+          } else {
+            setlocalSingleNFT(item)
+          }
           const nft: INFTGeneralData = res.data
           await setLocalBids(nft.bids)
           await setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)

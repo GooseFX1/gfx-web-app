@@ -3,7 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import BN from 'bn.js'
 import { FC, ReactElement, useEffect, useMemo, useRef, useState } from 'react'
-import { Button } from '../../../../components/Button'
+import { Button } from '../../../../components'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 import {
   useAccounts,
@@ -16,7 +16,6 @@ import {
 import { GFX_LINK } from '../../../../styles'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../../utils'
 import { AppraisalValueSmall } from '../../../../utils/GenericDegsin'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import {
@@ -47,12 +46,9 @@ import { STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
 import { BorderBottom } from '../SellNFTModal'
 import { couldNotDeriveValueForBuyInstruction, pleaseTryAgain, successfulListingMessage } from './AggNotifications'
 
-const BID_MODAL = styled.div``
 export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
   const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
-  const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
-  const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
-  const { connected, sendTransaction, wallet } = useWallet()
+  const { sendTransaction, wallet } = useWallet()
   const { setGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
@@ -102,10 +98,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
   }
   const publicKey: PublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet])
 
-  const notEnoughSol: boolean = useMemo(
-    () => (orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false),
-    [curBid]
-  )
+  const notEnoughSol: boolean = useMemo(() => orderTotal >= getUIAmount(WRAPPED_SOL_MINT.toBase58()), [curBid])
 
   useEffect(() => {
     if (bidNowClicked) {
@@ -122,7 +115,9 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
   const handleModalClose = () => {
     setCurBid(0)
     setBidNow(false)
-    openJustModal && setGeneral(null)
+    if (openJustModal) {
+      setGeneral(null)
+    }
     setOpenJustModal(false)
   }
   const derivePDAsForInstruction = async () => {
@@ -174,14 +169,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
     e.preventDefault()
     setIsLoading(true)
 
-    const {
-      metaDataAccount,
-      escrowPaymentAccount,
-      buyerTradeState,
-      buyerPrice,
-      buyerReceiptTokenAccount,
-      auctionHouseTreasuryAddress
-    } = await derivePDAsForInstruction()
+    const { metaDataAccount, escrowPaymentAccount, buyerTradeState, buyerPrice } = await derivePDAsForInstruction()
 
     if (!metaDataAccount || !escrowPaymentAccount || !buyerTradeState) {
       couldNotDeriveValueForBuyInstruction()
@@ -246,20 +234,20 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
       pleaseTryAgain(false, error?.message)
     }
   }
-
+  const isMobile = checkMobile()
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '610px' : '780px'}
-      width={checkMobile() ? '100%' : '580px'}
+      height={isMobile ? '610px' : '780px'}
+      width={isMobile ? '100%' : '580px'}
       title={null}
-      centered={checkMobile() ? false : true}
-      visible={bidNowClicked ? true : false}
+      centered={isMobile}
+      visible={bidNowClicked}
       onCancel={() => !isLoading && handleModalClose()}
       footer={null}
     >
       <div>
-        {checkMobile() && <img className="nftImgBid" src={general.image_url} alt="" />}
+        {checkMobile() && <img className="nftImgBid" src={general.image_url} alt={'nft-bid-image'} />}
         <div tw="flex flex-col sm:mt-[-135px] sm:items-start items-center">
           <div className="buyTitle">
             You are about to bid for:
@@ -312,7 +300,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
                 <div className="currentBid">Existing {!checkMobile() && <br />} Hightest Bid</div>
                 <div className="priceNumber" tw=" ml-4 mt-2 flex items-center">
                   {highestBid}
-                  <img src={`/img/crypto/SOL.svg`} />
+                  <img src={`/img/crypto/SOL.svg`} alt={'sol-token'} />
                 </div>
               </div>
             )}
@@ -336,6 +324,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           <img
             src="/img/crypto/SOL.svg"
             tw="absolute h-[35px]  ml-[300px] top-[10px] sm:ml-0 sm:top-2.5 sm:!h-[30px] sm:right-2"
+            alt={'sol-token'}
           />
         </div>
         <div
@@ -410,7 +399,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           <Button
             loading={isLoading}
             className="buyButton"
-            disabled={curBid <= 0 || (displayErrorMsg ? true : false) || notEnoughSol}
+            disabled={curBid <= 0 || Boolean(displayErrorMsg) || notEnoughSol}
             onClick={callBuyInstruction}
           >
             <div>{notEnoughSol ? 'Insufficient SOL' : `Place Bid`}</div>

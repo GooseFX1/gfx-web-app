@@ -109,7 +109,7 @@ interface IMenuPopup {
 const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const { wallet } = useWallet()
+  const { wallet, publicKey } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [rotateClicked, setRotateClicked] = useState<'left' | 'right'>()
   const [clickCounter, setClickCounter] = useState<number>(0)
@@ -143,7 +143,11 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   }
   const redirectToPage = (isSell: boolean) => {
     if (isSell) {
-      wallet?.adapter?.publicKey ? locateToSell(wallet.adapter.publicKey.toBase58()) : handleWalletModal()
+      if (publicKey) {
+        locateToSell(publicKey.toBase58())
+      } else {
+        handleWalletModal()
+      }
     } else if (carousel[0].redirect && !isSell) {
       rewardToggle(false)
       history.push(carousel[0].redirect)

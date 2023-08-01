@@ -322,7 +322,9 @@ export const BuyNFTModal = (): ReactElement => {
       setBuyNow(false)
       setModal(false)
     }
-    openJustModal && setGeneral(null)
+    if (openJustModal) {
+      setGeneral(null)
+    }
     setOpenJustModal(false)
   }
 
