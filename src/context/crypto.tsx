@@ -144,17 +144,5 @@ export const useCrypto = (): ICryptoConfig => {
     throw new Error('Missing crypto context')
   }
 
-  return {
-    pairs: context.pairs,
-    formatPair: context.formatPair,
-    getAskSymbolFromPair: context.getAskSymbolFromPair,
-    getBidSymbolFromPair: context.getBidSymbolFromPair,
-    getSymbolFromPair: context.getSymbolFromPair,
-    selectedCrypto: context.selectedCrypto,
-    setSelectedCrypto: context.setSelectedCrypto,
-    filteredSearchPairs: context.filteredSearchPairs,
-    setFilteredSearchPairs: context.setFilteredSearchPairs,
-    isDevnet: context.isDevnet,
-    setIsDevnet: context.setIsDevnet
-  }
+  return context
 }
