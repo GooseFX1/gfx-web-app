@@ -127,8 +127,7 @@ interface Timer {
 }
 
 export const LeaderBoard: FC = () => {
-  //Tochange:
-  const [screenType, setScreenType] = useState<number>(0)
+  const [screenType, setScreenType] = useState<number>(1)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const [isLive, setIslive] = useState<boolean>(true)
   const { users } = useStats()
@@ -186,20 +185,18 @@ export const LeaderBoard: FC = () => {
               <div
                 tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
                 key={index}
-                //Tochange:
-                // onClick={
-                //   screenType === 1
-                //     ? () => {
-                //         setScreenType(1)
-                //       }
-                //     : null
-                // }
-                onClick={() => {
-                  setScreenType(index)
-                }}
-                //Tochange:
-                //className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
-                className={index === screenType ? 'active' : ''}
+                onClick={
+                  screenType === 1
+                    ? () => {
+                        setScreenType(1)
+                      }
+                    : null
+                }
+                // onClick={() => {
+                //   setScreenType(index)
+                // }}
+                className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
+                //className={index === screenType ? 'active' : ''}
               >
                 {pool}
               </div>
@@ -207,7 +204,7 @@ export const LeaderBoard: FC = () => {
           </div>
           {!checkMobile() && (
             <div
-              tw="absolute right-5 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
+              tw="absolute right-5 top-0 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
             >
               <span
@@ -248,12 +245,12 @@ export const LeaderBoard: FC = () => {
           )}
         </div>
         <div tw="relative">
-          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center mb-[30px] sm:text-tiny sm:mb-0">
+          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center sm:text-tiny sm:mb-0">
             Trade smart, climb the leaderboard, and be among {!checkMobile() && <br />}
             the top to win exciting rewards!{' '}
           </div>
           {!checkMobile() && (
-            <div tw="absolute right-5 dark:text-grey-5 font-semibold text-regular text-black-4">
+            <div tw="absolute right-5 top-5 dark:text-grey-5 font-semibold text-regular text-black-4">
               Updates At 12am UTC
             </div>
           )}
