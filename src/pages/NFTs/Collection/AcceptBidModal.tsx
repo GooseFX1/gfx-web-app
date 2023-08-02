@@ -1,5 +1,4 @@
 import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 // import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -110,8 +109,12 @@ const AcceptBidModal: FC<{
   )
 }
 
-export const TermsTextNFT: FC<{ string }> = ({ string }): ReactElement => (
-  <div className="termsText" tw="absolute bottom-4 sm:bottom-[120px]">
+export const TermsTextNFT: FC<{ string: string; bottom?: boolean }> = ({ string, bottom }): ReactElement => (
+  <div
+    className="termsText"
+    css={[bottom ? tw`sm:bottom-[100px]` : tw`sm:bottom-[120px]`]}
+    tw="absolute bottom-4  "
+  >
     By clicking ¨{string}¨, you agree to{' '}
     <a target="_blank" rel="noopener noreferrer" href="https://docs.goosefx.io/risks">
       {' '}

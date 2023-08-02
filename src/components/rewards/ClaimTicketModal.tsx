@@ -41,6 +41,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
         <div
           css={tw`flex flex-col w-full h-[210px] min-md:h-full p-3.75 min-md:py-[20px]  min-md:px-[25px]
             min-md:mb-[20px] min-md:rounded-b-[22px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
+            min-md:gap-5
       `}
         >
           {rewards.user.staking.activeUnstakingTickets.length > 0 ? (
@@ -84,7 +85,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
         return
       }
 
-      countDownRef.current.innerText = `${momentTime.days()}d ${momentTime.hours()}h ${momentTime.minutes()}min`
+      countDownRef.current.innerText = `${momentTime.days()}d: ${momentTime.hours()}h: ${momentTime.minutes()}min`
     },
     [ticket.createdAt, countDownRef.current]
   )
@@ -105,7 +106,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
     return null
   }
   return (
-    <div css={tw`flex w-full h-[34px] justify-between px-[15px] min-md:px-[25px] `}>
+    <div css={tw`flex w-full justify-between items-center`}>
       <p css={tw`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
         {uiUnstakeAmount} GOFX
       </p>
@@ -113,8 +114,8 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
       <button
         ref={countDownRef}
         css={[
-          tw`py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 text-[15px] leading-[18px]
-      font-semibold h-[34px] w-[207px] border-0 cursor-not-allowed`,
+          tw`py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 text-[15px] leading-normal
+      font-semibold h-[40px] w-[160px] min-md:w-[207px] border-0 cursor-not-allowed whitespace-nowrap`,
           oneDayLeft && !canClaim ? tw`text-red-2` : tw``,
           canClaim ? tw` text-white cursor-pointer` : tw``
         ]}

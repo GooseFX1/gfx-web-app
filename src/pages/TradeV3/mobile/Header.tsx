@@ -32,7 +32,7 @@ const HEADER = styled.div`
 
 export const Header: FC = () => {
   const { connected, wallet } = useWallet()
-  const { selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { prices, tokenInfo } = usePriceFeed()
   const [userProfile, setUserProfile] = useState<boolean>(false)
@@ -47,13 +47,13 @@ export const Header: FC = () => {
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   const tokenPrice = useMemo(() => {
-    if (isSpot) {
+    if (isDevnet) {
       return !marketData || !marketData.current ? null : marketData.current
     } else {
       const oPrice = getPerpsPrice(orderBook)
       return !oPrice ? null : oPrice
     }
-  }, [isSpot, selectedCrypto, orderBook])
+  }, [isDevnet, selectedCrypto, orderBook])
 
   return (
     <HEADER>
@@ -87,7 +87,7 @@ export const Header: FC = () => {
                 border-solid border-grey-4 dark:text-grey-2 text-black-4 mr-2.5 font-semibold relative"
               >
                 {publicKeyUi}{' '}
-                {!isSpot && (
+                {!isDevnet && (
                   <span className="open-orders">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</span>
                 )}
               </div>

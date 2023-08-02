@@ -1,18 +1,9 @@
 /* eslint-disable */
 import { Button } from 'antd'
 import React, { useState, FC, useMemo } from 'react'
-import {
-  useAccounts,
-  useCrypto,
-  useTokenRegistry,
-  useTradeHistory,
-  useOrderBook,
-  useDarkMode,
-  usePriceFeed
-} from '../../context'
+import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
 import { ITraderHistory, useTraderConfig } from '../../context/trader_risk_group'
-import { SettlePanel } from '../TradeV3/SettlePanel'
 import { getPerpsPrice } from './perps/utils'
 import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
@@ -247,15 +238,14 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const OpenOrdersComponent: FC = () => {
-  const { formatPair, isSpot } = useCrypto()
-  const { cancelOrder, orders } = useTradeHistory()
+  const { formatPair, isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const openOrderUI = isSpot ? orders : perpsOpenOrders
+  const openOrderUI = isDevnet ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -294,7 +284,7 @@ const OpenOrdersComponent: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, orders, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isDevnet]
   )
   return (
     <>
@@ -311,7 +301,6 @@ const OpenOrdersComponent: FC = () => {
 }
 
 const TradeHistoryComponent: FC = () => {
-  const { tradeHistoryNew } = useTradeHistory()
   const { selectedCrypto } = useCrypto()
   const wallet = useWallet()
   const { mode } = useDarkMode()
@@ -335,10 +324,7 @@ const TradeHistoryComponent: FC = () => {
     })
   }, [traderInfo.tradeHistory, wallet.connected, wallet.publicKey])
 
-  const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
-    [selectedCrypto, tradeHistoryNew, perpsHistory]
-  )
+  const historyData = useMemo(() => perpsHistory, [selectedCrypto, perpsHistory])
 
   return (
     <>
@@ -353,7 +339,7 @@ const TradeHistoryComponent: FC = () => {
             historyData.length > 0 &&
             historyData.map((order, index) => (
               <div key={index}>
-                <span className={order.side}>{selectedCrypto.type === 'perps' ? order.side : null}</span>
+                <span className={order.side}>{order.side}</span>
                 <span>{order.size}</span>
                 <span>${order.price}</span>
                 <span>{(order.size * order.price).toFixed(2)}</span>
@@ -384,8 +370,7 @@ export const HistoryPanel: FC = () => {
     pnl: '',
     percentageChange: ''
   })
-  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
-  const { openOrders } = useTradeHistory()
+  const { getAskSymbolFromPair, getBidSymbolFromPair, selectedCrypto, isDevnet } = useCrypto()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { getUIAmount } = useAccounts()
   const { perpsOpenOrders, orderBook } = useOrderBook()
@@ -427,20 +412,13 @@ export const HistoryPanel: FC = () => {
 
   const { market } = selectedCrypto
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
-  if (openOrders.length > 0) {
-    openOrder = openOrders[0]
-    baseAvailable = market?.baseSplSizeToNumber(openOrder.baseTokenFree)
-    baseBalance = market?.baseSplSizeToNumber(openOrder.baseTokenTotal.sub(openOrder.baseTokenFree))
-    quoteAvailable = market?.quoteSplSizeToNumber(openOrder.quoteTokenFree)
-    quoteBalance = market?.quoteSplSizeToNumber(openOrder.quoteTokenTotal.sub(openOrder.quoteTokenFree))
-  }
 
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
     if (size) {
       return size.toFixed(3)
     } else return 0
-  }, [traderInfo, wallet.connected])
+  }, [traderInfo.averagePosition, traderInfo.averagePosition.quantity, wallet.connected])
 
   return (
     <>
@@ -514,7 +492,7 @@ export const HistoryPanel: FC = () => {
                     {index === 1 ? (
                       <div className="open-order-header">
                         <div>{item}</div>
-                        {!isSpot && (
+                        {!isDevnet && (
                           <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
                         )}
                       </div>
@@ -564,7 +542,7 @@ export const HistoryPanel: FC = () => {
         ) : activeTab === 2 ? (
           <TradeHistoryComponent />
         ) : activeTab === 3 ? (
-          <SettlePanel />
+          <></>
         ) : null}
       </WRAPPER>
     </>

@@ -45,7 +45,7 @@ const AccountsContext = createContext<IAccountsConfig | null>(null)
 
 export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { pathname } = useLocation()
-  const { connection, perpsConnection: devnetConnection } = useConnectionConfig()
+  const { connection, perpsDevnetConnection: devnetConnection } = useConnectionConfig()
   const { tokens: tokenRegistry } = useTokenRegistry()
   const { wallet } = useWallet()
   const [balances, setBalances] = useState<IAccounts>({})

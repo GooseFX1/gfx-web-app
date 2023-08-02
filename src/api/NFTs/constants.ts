@@ -35,7 +35,8 @@ export const NFT_VOLUME_OPTIONS = {
 
 export enum NFT_MARKETS {
   TENSOR = 'TENSOR',
-  MAGIC_EDEN = 'MAGIC_EDEN'
+  MAGIC_EDEN = 'MAGIC_EDEN',
+  HYPERSPACE = 'HYPERSPACE'
 }
 export enum NFT_API_ENDPOINTS {
   SESSION_USER = '/user',

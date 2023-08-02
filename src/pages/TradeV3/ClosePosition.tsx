@@ -22,7 +22,7 @@ import { checkMobile } from '../../utils'
 const WRAPPER = styled.div`
   .percentage {
     ${tw`w-full h-[45px] rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 mb-3.75`}
-    >input{
+    >input {
       ${tw`w-full h-[45px] rounded-circle flex pl-6 font-semibold text-regular text-grey-1 
         flex-row dark:bg-black-1 bg-grey-4 border-none`}
       outline: none;
@@ -35,13 +35,14 @@ const WRAPPER = styled.div`
     input[type='number'] {
       -moz-appearance: textfield;
     }
-  .percentage-num {
-    ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
+    .percentage-num {
+      ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
         text-[16px] text-grey-1 sm:text-regular`}
-  }
-  .selected {
-    ${tw`rounded-half text-white dark:text-grey-5`}
-    background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
+    }
+    .selected {
+      ${tw`rounded-half text-white dark:text-grey-5`}
+      background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
+    }
   }
 `
 
@@ -105,10 +106,7 @@ export const ClosePosition: FC<{
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
-  const assetIcon = useMemo(
-    () => `/img/crypto/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, selectedCrypto.type]
-  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)

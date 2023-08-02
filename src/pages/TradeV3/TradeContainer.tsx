@@ -296,9 +296,10 @@ export const CryptoContent: FC = () => {
   const isGeoBlocked = useBlacklisted()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const { selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
+  const isInitialRender = useRef(true)
 
   useEffect(() => {
     logData('trade_page')
@@ -310,10 +311,14 @@ export const CryptoContent: FC = () => {
       setChartContainer(<></>)
       setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
     }, 300)
-  }, [isSpot, selectedCrypto, mode])
+  }, [isDevnet, selectedCrypto, mode])
 
   useEffect(() => {
-    resetLayout()
+    if (!isInitialRender.current) {
+      resetLayout()
+    } else if (width !== undefined) {
+      isInitialRender.current = false
+    }
   }, [width])
 
   const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
@@ -401,16 +406,7 @@ export const CryptoContent: FC = () => {
       if (i === 4)
         return (
           <div key={i} className={`space-cont ${isGeoBlocked ? ' filtering' : ''}`}>
-            {selectedCrypto.type === 'perps' ? (
-              <CollateralPanel />
-            ) : (
-              <PERPS_INFO $wallet={wallet} $isLocked={isLocked}>
-                <img src="/img/assets/perpsInfo.svg" alt="perps-info" />
-                <div>
-                  See your account details <br /> exclusively on Perps.
-                </div>
-              </PERPS_INFO>
-            )}
+            {<CollateralPanel />}
             {isGeoBlocked ? (
               <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
                 <button className="georestricted">Georestricted</button>

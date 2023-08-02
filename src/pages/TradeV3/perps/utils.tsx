@@ -9,7 +9,7 @@ import {
   FEES_SEED,
   GAMMA,
   INSTRUMENTS_ID,
-  MPG_ID,
+  MPG_ID as MAINNET_MPG_ID,
   PYTH_DEVNET,
   PYTH_MAINNET,
   RISK_ID,
@@ -80,7 +80,7 @@ export const getMarketSigner = (product_publicKey: PublicKey): anchor.web3.Publi
   return address[0]
 }
 
-export const getTraderFeeAcct = (traderRiskGroup: PublicKey): anchor.web3.PublicKey => {
+export const getTraderFeeAcct = (traderRiskGroup: PublicKey, MPG_ID: string): anchor.web3.PublicKey => {
   const address = findProgramAddressSync(
     [Buffer.from(TRADER_FEE_ACCT_SEED), traderRiskGroup.toBuffer(), new PublicKey(MPG_ID).toBuffer()],
     new PublicKey(FEES_ID)
@@ -88,12 +88,12 @@ export const getTraderFeeAcct = (traderRiskGroup: PublicKey): anchor.web3.Public
   return address
 }
 
-export const getRiskSigner = (): anchor.web3.PublicKey => {
+export const getRiskSigner = (MPG_ID: string): anchor.web3.PublicKey => {
   const address = findProgramAddressSync([new PublicKey(MPG_ID).toBuffer()], new PublicKey(DEX_ID))[0]
   return address
 }
 
-export const getFeeModelConfigAcct = (): anchor.web3.PublicKey => {
+export const getFeeModelConfigAcct = (MPG_ID: string): anchor.web3.PublicKey => {
   const address = findProgramAddressSync(
     [Buffer.from(FEES_SEED), new PublicKey(MPG_ID).toBuffer()],
     new PublicKey(FEES_ID)
@@ -113,7 +113,11 @@ export const getAllMP = async (wallet: any, connection: Connection): Promise<any
   return accounts
 }
 
-export const getTraderRiskGroupAccount = async (wallet: any, connection: Connection): Promise<any> => {
+export const getTraderRiskGroupAccount = async (
+  wallet: any,
+  connection: Connection,
+  MPG_ID_OPT?: string
+): Promise<any> => {
   const response = await connection.getParsedProgramAccounts(new PublicKey(DEX_ID), {
     filters: [
       //  {
@@ -130,7 +134,7 @@ export const getTraderRiskGroupAccount = async (wallet: any, connection: Connect
         memcmp: {
           offset: 16,
           /** data to match, a base-58 encoded string and limited to less than 129 bytes */
-          bytes: MPG_ID
+          bytes: MPG_ID_OPT ? MPG_ID_OPT : MAINNET_MPG_ID
         }
       }
     ],

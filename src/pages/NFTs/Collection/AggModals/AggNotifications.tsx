@@ -52,6 +52,23 @@ export const pleaseTryAgain = (isBuyingNow = false, message: string): any => {
     )
   })
 }
+export const didNotModifyPrice = (message: string): void => {
+  notify({
+    type: 'error',
+    message: (
+      <MESSAGE>
+        <Row justify="space-between" align="middle">
+          <Col>Did not modify price!</Col>
+          <Col>
+            <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{message}</div>
+        <div>Please try again, if the error persists please contact support.</div>
+      </MESSAGE>
+    )
+  })
+}
 
 export const couldNotFetchNFTMetaData = (): any =>
   notify({
@@ -84,14 +101,14 @@ export const couldNotDeriveValueForBuyInstruction = (): any =>
     )
   })
 
-export const TransactionSignatureErrorNotify = (nftName: string): any => {
+export const TransactionSignatureErrorNotify = (nftName: string, customMsg?: string): void => {
   notify({
     type: 'error',
     message: (
       <TransactionErrorMsg
-        title={`Transaction Signature Error`}
+        title={`Transaction Error`}
         itemName={nftName}
-        supportText={`User exited signing transaction to list or modify price`}
+        supportText={customMsg ? customMsg : `Instruction or transaction has thrown and error`}
       />
     )
   })
@@ -135,7 +152,19 @@ export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMet
     <SuccessfulListingMsg
       title={`NFT purchased Successfully!`}
       itemName={nftMetadata.name}
-      supportText={`You have just acquired ${nftMetadata.name} for ${price} SOL!`}
+      supportText={`You have just acquired ${nftMetadata?.name} for ${price} SOL!`}
+      additionalText={NETWORK_MSG}
+      tx_url={`https://solscan.io/tx/${signature} `}
+    />
+  )
+})
+export const successfulNFTPurchaseMsg = (signature: string, nftMetadata: string, price: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsg
+      title={`NFT purchased Successfully!`}
+      itemName={nftMetadata}
+      supportText={`You have just acquired ${nftMetadata} for ${price} SOL!`}
       additionalText={NETWORK_MSG}
       tx_url={`https://solscan.io/tx/${signature} `}
     />

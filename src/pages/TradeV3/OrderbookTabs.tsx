@@ -1,12 +1,9 @@
-/* eslint-disable max-len */
 /* eslint-disable arrow-body-style */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useMemo, useState } from 'react'
-import type { RadioChangeEvent } from 'antd'
-import { Radio, Tabs } from 'antd'
+import { Radio } from 'antd'
 import { OrderBook } from './OrderBook'
 import { useCrypto, useOrder, useOrderBook, usePriceFeed } from '../../context'
-import { Loader } from '../../components'
 import { getPerpsPrice } from './perps/utils'
 import tw, { styled } from 'twin.macro'
 

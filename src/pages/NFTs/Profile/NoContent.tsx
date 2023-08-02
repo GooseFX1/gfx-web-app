@@ -9,8 +9,8 @@ import { Connect } from '../../../layouts'
 import { checkMobile } from '../../../utils'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
-  ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px]  sm:h-[calc(100vh - 100px)]
-  dark:bg-black-1 bg-grey-6 h-[calc(90vh - 32px)] sm:mt-[-100px] `}
+  ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px] sm:h-[calc(100vh - 100px)]
+  dark:bg-black-1 bg-grey-5 h-[calc(90vh - 32px)] sm:mt-[-100px] `}
 
   ${({ $cssStyle }) => $cssStyle};
   text-align: center;

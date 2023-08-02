@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, useEffect, useMemo, FC, useRef } from 'react'
+import React, { ReactElement, useState, useEffect, useMemo, FC, useRef, Dispatch, SetStateAction } from 'react'
 import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
-  useNFTProfile,
+  useNavCollapse,
   useNFTAggregator,
   useNFTCollections,
-  useNFTAggregatorFilters
+  useNFTAggregatorFilters,
+  initialFilters
 } from '../../../context'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
@@ -42,6 +43,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
 import { logData } from '../../../api/analytics'
+import AdditionalFilters from './AdditionalFilters'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
@@ -240,6 +242,14 @@ export const NFTGridContainer = (): ReactElement => {
   const [displayIndex, setDisplayIndex] = useState<number>(0)
   const firstCardRef = useRef<HTMLElement | null>()
   const { mode } = useDarkMode()
+  const AdditionalFiltersComponent = useMemo(
+    () =>
+      displayIndex === 0 || displayIndex === 2 ? (
+        <AdditionalFilters displayIndex={displayIndex} open={open} setOpen={setOpen} />
+      ) : null,
+
+    [displayIndex, open]
+  )
 
   const handleTopScroll = useCallback(() => {
     firstCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
@@ -271,9 +281,15 @@ export const NFTGridContainer = (): ReactElement => {
         tw="fixed right-4 bottom-4 sm:right-2.5 sm:bottom-2.5 z-[100] cursor-pointer"
         onClick={handleTopScroll}
       />
-      <FiltersContainer setOpen={setOpen} displayIndex={displayIndex} setDisplayIndex={setDisplayIndex} />
+      <FiltersContainer
+        setOpen={setOpen}
+        open={open}
+        displayIndex={displayIndex}
+        setDisplayIndex={setDisplayIndex}
+        showPriceAndMarket={displayIndex === 0}
+      />
       <div className="flexContainer">
-        {/* <AdditionalFilters open={open} setOpen={setOpen} /> */}
+        {AdditionalFiltersComponent}
         {NFTDisplayComponent}
       </div>
     </GRID_CONTAINER>
@@ -301,13 +317,16 @@ const FilterCategory: FC<{ displayIndex: number; currentIndex: number; onClick: 
 const FiltersContainer: FC<{
   setOpen: (open: boolean) => void
   displayIndex: number
+  open: boolean
+  showPriceAndMarket: boolean
   setDisplayIndex: (index: number) => void
-}> = ({ setOpen, displayIndex, setDisplayIndex }) => {
+}> = ({ setOpen, open, displayIndex, setDisplayIndex, showPriceAndMarket }) => {
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection, searchInsideCollection } = useNFTAggregatorFilters()
   const { myNFTsByCollection } = useNFTCollections()
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
+  const { availableAttributes } = useNFTCollections()
 
   // TODO add this inside use memo
   const filterCategories = [
@@ -316,7 +335,7 @@ const FiltersContainer: FC<{
       index: 0
     },
     {
-      label: `My Items (${myNFTsByCollection?.length})`,
+      label: `My Items (${myNFTsByCollection?.length ?? 0})`,
       index: 1
     },
     {
@@ -329,9 +348,16 @@ const FiltersContainer: FC<{
     }
   ]
 
+  const DisplayFilterIcon = useMemo(() => {
+    const displayFilterIcon = displayIndex === 0 || displayIndex === 2
+    return <>{displayFilterIcon && !checkMobile() && <FiltersIcon open={open} setOpen={setOpen} />}</>
+  }, [displayIndex, showPriceAndMarket, availableAttributes, open])
+
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
+        {DisplayFilterIcon}
+
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
           style={{ width: 332 }}
@@ -358,12 +384,26 @@ const FiltersContainer: FC<{
             {category.label}
           </FilterCategory>
         ))}
-        <div tw="mr-4">{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
+        <div>{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
       </div>
     </NFT_FILTERS_CONTAINER>
   )
 }
 
+const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }> = ({ open, setOpen }) => {
+  const { mode } = useDarkMode()
+  const handleButtonClick = useCallback(() => {
+    setOpen((prev) => !prev)
+  }, [])
+  return (
+    <div
+      tw="h-11 w-11 duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px]"
+      onClick={handleButtonClick}
+    >
+      <img src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
+    </div>
+  )
+}
 const SortDropdown = () => {
   const { collectionSort } = useNFTCollections()
   const [arrow, setArrow] = useState<boolean>(false)
@@ -427,6 +467,9 @@ const CollectionV2 = (): ReactElement => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const { refreshClicked } = useNFTAggregator()
+  const { setAdditionalFilters } = useNFTAggregatorFilters()
+
+  useEffect(() => () => setAdditionalFilters(initialFilters), [])
 
   useEffect(() => {
     if (singleCollection) logData('collection_page_' + singleCollection[0].collection_name.replace(' ', '_'))
