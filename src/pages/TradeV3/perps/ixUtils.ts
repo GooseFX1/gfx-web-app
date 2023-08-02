@@ -320,8 +320,9 @@ export const initTrgDepositIx = async (
   isDevnet?: boolean
 ) => {
   const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg, isDevnet)
-  const buddyTransaction = isDevnet ? null : await buildTransaction(connection, wallet, buddyInstructions, [])
+  const buddyTransaction = await buildTransaction(connection, wallet, buddyInstructions, [])
   const dexProgram = await getDexProgram(connection, wallet)
+  console.log(depositFundsAccounts)
   instructions.push(
     await dexProgram.instruction.depositFunds(depositFundsParams, {
       accounts: {
@@ -334,12 +335,12 @@ export const initTrgDepositIx = async (
       }
     })
   )
-
+  console.log('buddyTransaction?', buddyTransaction)
   const transaction = await buildTransaction(connection, wallet, instructions, signers)
   const response = await sendPerpsTransactions(
     connection,
     wallet,
-    buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction],
+    buddyTransaction ? [transaction, buddyTransaction] : [transaction],
     {
       startMessage: {
         header: 'Deposit funds',
@@ -534,45 +535,47 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
   )
 
   const dexProgram = await getDexProgram(connection, wallet)
-  if (!isDevnet) {
-    const createBuddy = await createRandom(connection, wallet.publicKey, referrer)
-    const referralKey = createBuddy.memberPDA
-    const buddyInstructions = [...createBuddy.instructions]
+  // if (!isDevnet) {
+  const createBuddy = await createRandom(connection, wallet.publicKey, referrer)
+  const referralKey = createBuddy.memberPDA
+  const buddyInstructions = [...createBuddy.instructions]
 
-    const ix = await dexProgram.instruction.initializeTraderRiskGroup({
-      accounts: {
-        owner: wallet.publicKey,
-        traderRiskGroup: traderRiskGroup.publicKey,
-        marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
-        riskSigner: riskSigner,
-        traderRiskStateAcct: riskStateAccount.publicKey,
-        traderFeeStateAcct: traderFeeAcct,
-        riskEngineProgram: new PublicKey(RISK_ID),
-        systemProgram: SystemProgram.programId,
-        referralKey: referralKey
-      }
-    })
-    instructions.push(ix)
+  console.log('fdsfdfgsadgfhdsg', createBuddy.memberPDA.toString())
 
-    return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
-  } else {
-    const ix = await dexProgram.instruction.initializeTraderRiskGroup({
-      accounts: {
-        owner: wallet.publicKey,
-        traderRiskGroup: traderRiskGroup.publicKey,
-        marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
-        riskSigner: riskSigner,
-        traderRiskStateAcct: riskStateAccount.publicKey,
-        traderFeeStateAcct: traderFeeAcct,
-        riskEngineProgram: new PublicKey(RISK_ID),
-        systemProgram: SystemProgram.programId,
-        referralKey: PublicKey.default
-      }
-    })
-    instructions.push(ix)
+  const ix = await dexProgram.instruction.initializeTraderRiskGroup({
+    accounts: {
+      owner: wallet.publicKey,
+      traderRiskGroup: traderRiskGroup.publicKey,
+      marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
+      riskSigner: riskSigner,
+      traderRiskStateAcct: riskStateAccount.publicKey,
+      traderFeeStateAcct: traderFeeAcct,
+      riskEngineProgram: new PublicKey(RISK_ID),
+      systemProgram: SystemProgram.programId,
+      referralKey: referralKey
+    }
+  })
+  instructions.push(ix)
 
-    return [instructions, null, [riskStateAccount, traderRiskGroup]]
-  }
+  return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
+  // } else {
+  //   const ix = await dexProgram.instruction.initializeTraderRiskGroup({
+  //     accounts: {
+  //       owner: wallet.publicKey,
+  //       traderRiskGroup: traderRiskGroup.publicKey,
+  //       marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
+  //       riskSigner: riskSigner,
+  //       traderRiskStateAcct: riskStateAccount.publicKey,
+  //       traderFeeStateAcct: traderFeeAcct,
+  //       riskEngineProgram: new PublicKey(RISK_ID),
+  //       systemProgram: SystemProgram.programId,
+  //       referralKey: PublicKey.default
+  //     }
+  //   })
+  //   instructions.push(ix)
+
+  //   return [instructions, null, [riskStateAccount, traderRiskGroup]]
+  // }
 }
 
 export const initializeTRG = async (wallet: any, connection: Connection) => {

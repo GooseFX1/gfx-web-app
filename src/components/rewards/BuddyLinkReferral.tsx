@@ -18,15 +18,16 @@ const BuddyLinkReferral: FC = () => {
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  const { perpsDevnetConnection: connection } = useConnectionConfig()
 
   const referLink = useMemo(() => `app.goosefx.io/trade?r=${name}`, [name])
 
   useMemo(() => {
-    if (connection && wallet.publicKey)
-      getTraderRiskGroupAccount(wallet, connection).then((result) => {
-        setRiskGroup(result)
-      })
+    if (connection && wallet.publicKey) console.log('in?')
+    getTraderRiskGroupAccount(wallet, connection).then((result) => {
+      console.log('yeeee', result)
+      setRiskGroup(result)
+    })
   }, [connection, wallet])
 
   const copyToClipboard = useCallback(() => {

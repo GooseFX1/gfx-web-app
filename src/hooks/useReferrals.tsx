@@ -14,6 +14,7 @@ export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
   const { publicKey } = useWallet()
+  // const {isDevnet} = useCrypto()
   const { perpsDevnetConnection: connection } = useConnectionConfig()
   useEffect(() => {
     console.log(connection, publicKey)
@@ -155,7 +156,11 @@ export async function createRandom(
     const member = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
 
     // Skips create member if a member already exists
-    if (member) return { instructions: [], memberPDA: PublicKey.default }
+    if (member) {
+      if (member.account.referrer.toString() === PublicKey.default.toString())
+        return { instructions: [], memberPDA: PublicKey.default }
+      else return { instructions: [], memberPDA: memberPDA }
+    }
   }
 
   const isReferrerValid = await client.initialize.isReferrerValid(referrer, ORGANIZATION_NAME)

@@ -815,6 +815,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //      }
       //    }
       //  }
+
+      console.log('traderRiskGroup', traderRiskGroup)
       const response = traderRiskGroup
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
         : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg, isDevnet)
@@ -826,10 +828,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const withdrawFunds = useCallback(
     async (amount: Fractional) => {
-      console.log(connection, wallet.publicKey.toString())
+      const riskGroup = await getTraderRiskGroupAccount(wallet, connection, DEVNET_MPG_ID)
       const withdrawFundsAccounts: IWithdrawFundsAccounts = {
         userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
-        traderRiskGroup: await (await getTraderRiskGroupAccount(wallet, connection)).pubkey,
+        traderRiskGroup: await riskGroup.pubkey,
         marketProductGroup: new PublicKey(MPG_ID),
         marketProductGroupVault: anchor.web3.PublicKey.findProgramAddressSync(
           [Buffer.from(VAULT_SEED), new PublicKey(MPG_ID).toBuffer()],
