@@ -1,8 +1,8 @@
-import { TransactionInstruction, PublicKey, AccountMeta } from "@solana/web3.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import BN from "bn.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as borsh from "@project-serum/borsh" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
-import { PROGRAM_ID } from "../programId"
+import { TransactionInstruction, PublicKey, AccountMeta } from '@solana/web3.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as borsh from '@project-serum/borsh' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as types from '../types' // eslint-disable-line @typescript-eslint/no-unused-vars
+import { PROGRAM_ID } from '../programId'
 
 export interface TransferFullPositionAccounts {
   liquidator: PublicKey
@@ -27,20 +27,20 @@ export function transferFullPosition(accounts: TransferFullPositionAccounts) {
     {
       pubkey: accounts.riskModelConfigurationAcct,
       isSigner: false,
-      isWritable: false,
+      isWritable: false
     },
     { pubkey: accounts.riskOutputRegister, isSigner: false, isWritable: true },
     {
       pubkey: accounts.liquidatorRiskStateAccountInfo,
       isSigner: false,
-      isWritable: true,
+      isWritable: true
     },
     {
       pubkey: accounts.liquidateeRiskStateAccountInfo,
       isSigner: false,
-      isWritable: true,
+      isWritable: true
     },
-    { pubkey: accounts.riskSigner, isSigner: false, isWritable: false },
+    { pubkey: accounts.riskSigner, isSigner: false, isWritable: false }
   ]
   const identifier = Buffer.from([51, 40, 183, 130, 57, 159, 227, 11])
   const data = identifier

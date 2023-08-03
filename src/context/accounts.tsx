@@ -230,15 +230,5 @@ export const useAccounts = (): IAccountsConfig => {
     throw new Error('Missing accounts context')
   }
 
-  return {
-    balances: context.balances,
-    devnetBalances: context.devnetBalances,
-    fetching: context.fetching,
-    fetchAccounts: context.fetchAccounts,
-    getAmount: context.getAmount,
-    getUIAmount: context.getUIAmount,
-    getUIAmountString: context.getUIAmountString,
-    setBalances: context.setBalances,
-    setFetching: context.setFetching
-  }
+  return context
 }

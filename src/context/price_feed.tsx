@@ -130,10 +130,5 @@ export const usePriceFeed = (): IPriceFeedConfig => {
     throw new Error('Missing crypto context')
   }
 
-  return {
-    prices: context.prices,
-    tokenInfo: context.tokenInfo,
-    refreshTokenData: context.refreshTokenData,
-    priceFetched: context.priceFetched
-  }
+  return context
 }

@@ -76,44 +76,5 @@ export const useFarmContext = (): IShowDeposited => {
     throw new Error('Missing Farm Context')
   }
 
-  const {
-    showDeposited,
-    toggleDeposited,
-    counter,
-    setCounter,
-    poolFilter,
-    setPoolFilter,
-    operationPending,
-    setOperationPending,
-    searchFilter,
-    setSearchFilter,
-    farmDataContext,
-    farmDataSSLContext,
-    setFarmDataContext,
-    setFarmDataSSLContext,
-    refreshClass,
-    setRefreshClass,
-    lastRefreshedClass,
-    setLastRefreshedClass
-  } = context
-  return {
-    showDeposited,
-    toggleDeposited,
-    operationPending,
-    setOperationPending,
-    poolFilter,
-    counter,
-    setCounter,
-    setPoolFilter,
-    searchFilter,
-    setSearchFilter,
-    farmDataContext,
-    farmDataSSLContext,
-    setFarmDataContext,
-    setFarmDataSSLContext,
-    refreshClass,
-    setRefreshClass,
-    lastRefreshedClass,
-    setLastRefreshedClass
-  }
+  return context
 }

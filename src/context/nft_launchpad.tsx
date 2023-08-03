@@ -508,6 +508,5 @@ export const useUSDCToggle = (): IUSDCToggle => {
     throw new Error('Missing NFTLP context')
   }
 
-  const { isUSDC, setIsUSDC } = context
-  return { isUSDC, setIsUSDC }
+  return context
 }

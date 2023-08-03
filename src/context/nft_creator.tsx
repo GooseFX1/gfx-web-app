@@ -102,6 +102,5 @@ export const useNFTCreator = (): NFTCreator => {
   if (!context) {
     throw new Error('Missing NFT Creator context')
   }
-  const { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit } = context
-  return { isAllowed, currentStep, saveDataForStep, creatorData, previousStep, nextStep, submit }
+  return context
 }

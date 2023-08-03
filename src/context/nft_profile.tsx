@@ -222,22 +222,5 @@ export const useNFTProfile = (): INFTProfileConfig => {
     throw new Error('Missing NFT collection context')
   }
 
-  return {
-    sessionUser: context.sessionUser,
-    setSessionUser: context.setSessionUser,
-    fetchSessionUser: context.fetchSessionUser,
-    sessionUserParsedAccounts: context.sessionUserParsedAccounts,
-    setParsedAccounts: context.setParsedAccounts,
-    userActivity: context.userActivity,
-    setUserActivity: context.setUserActivity,
-    fetchUserActivity: context.fetchUserActivity,
-    likeDislike: context.likeDislike,
-    nonSessionProfile: context.nonSessionProfile,
-    fetchNonSessionProfile: context.fetchNonSessionProfile,
-    nonSessionUserParsedAccounts: context.nonSessionUserParsedAccounts,
-    setNonSessionProfile: context.setNonSessionProfile,
-    setNonSessionUserParsedAccounts: context.setNonSessionUserParsedAccounts,
-    userCurrency: context.userCurrency,
-    setUserCurrency: context.setUserCurrency
-  }
+  return context
 }

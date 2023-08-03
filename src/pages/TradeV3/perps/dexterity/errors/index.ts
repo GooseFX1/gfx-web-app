@@ -1,29 +1,18 @@
-import { PROGRAM_ID } from "../programId"
-import * as anchor from "./anchor"
+import { PROGRAM_ID } from '../programId'
+import * as anchor from './anchor'
 
-export function fromCode(
-  code: number,
-  logs?: string[]
-): anchor.AnchorError | null {
+export function fromCode(code: number, logs?: string[]): anchor.AnchorError | null {
   return anchor.fromCode(code, logs)
 }
 
-function hasOwnProperty<X extends object, Y extends PropertyKey>(
-  obj: X,
-  prop: Y
-): obj is X & Record<Y, unknown> {
+function hasOwnProperty<X extends object, Y extends PropertyKey>(obj: X, prop: Y): obj is X & Record<Y, unknown> {
   return Object.hasOwnProperty.call(obj, prop)
 }
 
 const errorRe = /Program (\w+) failed: custom program error: (\w+)/
 
 export function fromTxError(err: unknown): anchor.AnchorError | null {
-  if (
-    typeof err !== "object" ||
-    err === null ||
-    !hasOwnProperty(err, "logs") ||
-    !Array.isArray(err.logs)
-  ) {
+  if (typeof err !== 'object' || err === null || !hasOwnProperty(err, 'logs') || !Array.isArray(err.logs)) {
     return null
   }
 

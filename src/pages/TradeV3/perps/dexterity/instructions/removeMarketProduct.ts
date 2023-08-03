@@ -1,8 +1,8 @@
-import { TransactionInstruction, PublicKey, AccountMeta } from "@solana/web3.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import BN from "bn.js" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as borsh from "@project-serum/borsh" // eslint-disable-line @typescript-eslint/no-unused-vars
-import * as types from "../types" // eslint-disable-line @typescript-eslint/no-unused-vars
-import { PROGRAM_ID } from "../programId"
+import { TransactionInstruction, PublicKey, AccountMeta } from '@solana/web3.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import BN from 'bn.js' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as borsh from '@project-serum/borsh' // eslint-disable-line @typescript-eslint/no-unused-vars
+import * as types from '../types' // eslint-disable-line @typescript-eslint/no-unused-vars
+import { PROGRAM_ID } from '../programId'
 
 export interface RemoveMarketProductAccounts {
   authority: PublicKey
@@ -26,7 +26,7 @@ export function removeMarketProduct(accounts: RemoveMarketProductAccounts) {
     { pubkey: accounts.marketSigner, isSigner: false, isWritable: false },
     { pubkey: accounts.eventQueue, isSigner: false, isWritable: true },
     { pubkey: accounts.bids, isSigner: false, isWritable: true },
-    { pubkey: accounts.asks, isSigner: false, isWritable: true },
+    { pubkey: accounts.asks, isSigner: false, isWritable: true }
   ]
   const identifier = Buffer.from([81, 42, 176, 121, 47, 126, 150, 219])
   const data = identifier
