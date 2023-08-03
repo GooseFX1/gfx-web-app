@@ -23,7 +23,7 @@
     "@craco/craco": "^6.2.0",
     "@headlessui/react": "^1.7.15",
     "@jup-ag/react-hook": "^2.0.0-beta.8",
-    "@ladderlabs/buddy-sdk": "0.1.18",
+    "@ladderlabs/buddy-sdk": "0.2.1",
     "@metaplex-foundation/beet": "0.0.7",
     "@metaplex-foundation/beet-solana": "0.0.6",
     "@metaplex-foundation/js": "^0.19.4",

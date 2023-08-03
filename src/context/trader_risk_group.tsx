@@ -828,7 +828,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     async (amount: Fractional) => {
       const withdrawFundsAccounts: IWithdrawFundsAccounts = {
         userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
-        traderRiskGroup: await (await getTraderRiskGroupAccount(wallet, connection)).pubkey,
+        traderRiskGroup: currentTRG,
         marketProductGroup: new PublicKey(MPG_ID),
         marketProductGroupVault: anchor.web3.PublicKey.findProgramAddressSync(
           [Buffer.from(VAULT_SEED), new PublicKey(MPG_ID).toBuffer()],
@@ -850,7 +850,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       refreshTraderRiskGroup()
       return response
     },
-    [traderRiskGroup, marketProductGroup]
+    [traderRiskGroup, marketProductGroup, currentTRG]
   )
 
   useEffect(() => {
