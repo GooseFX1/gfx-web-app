@@ -11,8 +11,8 @@ export interface User {
   boost: number
   loyalty: number
   pnl: number
-  dailyPoints: string
-  weeklyPoints: string
+  dailyPoints: number
+  weeklyPoints: number
   domainName?: string
 }
 

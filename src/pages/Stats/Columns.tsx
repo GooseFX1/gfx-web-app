@@ -116,13 +116,13 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
         <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty.toFixed(1)}%</div>
       </td>
       <td>
-        <div>{user?.dailyPoints && '0'}</div>
+        <div>{user?.dailyPoints === null ? '0' : user?.dailyPoints}</div>
       </td>
       <td>
-        <div>{user?.weeklyPoints && '0'}</div>
+        <div>{user?.weeklyPoints === null ? '0' : user?.weeklyPoints}</div>
       </td>
       <td>
-        <div tw="text-right pr-2.5">{user?.weeklyPoints && '0'}</div>
+        <div tw="text-right pr-2.5">{user?.weeklyPoints === null ? '0' : user?.weeklyPoints}</div>
       </td>
     </>
   )
