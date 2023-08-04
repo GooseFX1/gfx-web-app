@@ -109,10 +109,12 @@ interface IMenuPopup {
 const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
-  const { wallet, publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { setVisible: setModalVisible } = useWalletModal()
   const [rotateClicked, setRotateClicked] = useState<'left' | 'right'>()
   const [clickCounter, setClickCounter] = useState<number>(0)
+
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter])
 
   const [carousel, setCarousel] = useState([...CAROUSEL])
   const next = () => {
@@ -187,9 +189,7 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
           <div className="inner-bg">
             {carousel[0].redirect ? (
               <div className="go-btn" onClick={() => redirectToPage(carousel[0].name === 'Sell')}>
-                <div className="go-text">
-                  {carousel[0].name === 'Sell' && !wallet?.adapter?.publicKey ? 'Connect' : 'Go!'}
-                </div>
+                <div className="go-text">{carousel[0].name === 'Sell' && !publicKey ? 'Connect' : 'Go!'}</div>
               </div>
             ) : (
               <div className="cmg-soon">
