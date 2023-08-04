@@ -3,7 +3,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 // import {useWalletModal} from '../context'
 import { Loader } from '../components'
-import { WalletName } from '@solana/wallet-adapter-base'
 import { truncateAddress } from '../utils'
 import tw, { TwStyle } from 'twin.macro'
 // import styled from 'styled-components'
@@ -124,7 +123,7 @@ export const Connect: FC<MenuItemProps> = ({
   customMenuListItemsContainerStyle,
   customMenuListItemStyle
 }) => {
-  const { connect, select, wallet, connected, publicKey, disconnect } = useWallet()
+  const { connect, wallet, connected, publicKey, disconnect } = useWallet()
   const isGeoBlocked = useBlacklisted()
   const [isOpen, setIsOpen] = useState(false)
   const breakpoint = useBreakPoint()
@@ -155,7 +154,7 @@ export const Connect: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
       return (
-        <div css={[tw`absolute top-[-5px]`]}>
+        <div css={[tw`absolute`]}>
           <Loader zIndex={1} />
         </div>
       )
@@ -182,13 +181,14 @@ export const Connect: FC<MenuItemProps> = ({
 
   //using session storage so that a new open tab will not try to login to wallet
   //but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
-  useEffect(() => {
-    const walletName = sessionStorage.getItem('connectedGFXWallet')
-    if (!walletName) return
-    if (!base58PublicKey && !connected && walletName) {
-      select(walletName as WalletName<string>)
-    }
-  }, [base58PublicKey, connected])
+  // useEffect(() => {
+  //   const walletName = sessionStorage.getItem('connectedGFXWallet')
+  //   if (!walletName) return
+  //   if (!base58PublicKey && !connected && walletName) {
+  //     console.log(walletName)
+  //     select(walletName as WalletName<string>)
+  //   }
+  // }, [base58PublicKey, connected])
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
   const onClose = useCallback(() => setIsOpen(false), [])
   const handleDisconnect = useCallback(
@@ -219,13 +219,14 @@ export const Connect: FC<MenuItemProps> = ({
 
   return (
     <div css={[tw`relative inline-block text-left z-20 `].concat(containerStyle ?? [])} ref={selfRef}>
-      <span css={tw`absolute top-[34px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
+      <span css={tw`absolute -bottom-4 right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
       <Menu>
         <Menu.Button
           as={'button'}
           css={[
-            tw`border-0 flex min-md:w-[140px] cursor-pointer relative bg-purple-1 text-white items-center
-            justify-center text-tiny font-semibold h-[30px] w-[124px] px-[5px] rounded-circle gap-1.75
+            tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-3 text-white items-center
+            justify-center text-tiny font-semibold h-[35px] min-md:h-[30px] min-w-[122px] rounded-circle gap-1.75
+            max-w-[138px] min-md:max-w-[154px] px-[5px] py-[3.5px] min-md:py-[4px]
             `,
             !canConnect
               ? tw`dark:bg-black-4 bg-grey-4 text-grey-1 dark:text-grey-2`
@@ -239,13 +240,14 @@ export const Connect: FC<MenuItemProps> = ({
           {connected && (
             <div
               css={[
-                tw`flex items-center justify-center border-2 border-black border-solid rounded-circle bg-black p-[2px]`
+                tw`flex items-center justify-center border-2 dark:border-black-1 border-solid
+                 border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`
               ]}
             >
               <img
                 css={[
                   breakpoint.isMobile || breakpoint.isTablet
-                    ? tw`h-[16px] w-[16px] rounded-lg`
+                    ? tw`h-[20px] w-[20px] rounded-lg`
                     : tw`h-[14px] w-[14px] rounded-lg`
                 ]}
                 src={wallet?.adapter?.icon}
@@ -278,6 +280,9 @@ export const Connect: FC<MenuItemProps> = ({
         >
           <Menu.Items
             static
+            style={{
+              transform: 'translateY(5px)'
+            }}
             css={[
               tw`w-full rounded-small border-1 border-solid border-grey-2 dark:border-grey-1
          bg-white dark:bg-black-1 text-grey-1 dark:text-grey-2 text-tiny font-semibold origin-top

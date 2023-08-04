@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC } from 'react'
 import styled, { css } from 'styled-components'
-
+import tw from 'twin.macro'
+import 'styled-components/macro'
 const LOADER = styled.div<{ $color; $zIndex }>`
   position: absolute;
   top: 0;
@@ -19,8 +20,8 @@ const LOADER = styled.div<{ $color; $zIndex }>`
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   -webkit-animation-delay: -0.16s;
-  transform: translateY(-8px);
-
+  // box shadow 8px + half of size = 8px + 4px = 12px
+  transform: translateY(-12px);
   &:before,
   &:after {
     content: '';
@@ -52,9 +53,12 @@ export const Loader: FC<{ color?: string; zIndex?: number }> = ({ color, zIndex 
       0%,
       80%,
       100% {
+        transform: scale(0%);
         box-shadow: 0 2.5em 0 -1.3em;
       }
       40% {
+        transform: scale(100%);
+
         box-shadow: 0 2.5em 0 0;
       }
     }
@@ -63,18 +67,18 @@ export const Loader: FC<{ color?: string; zIndex?: number }> = ({ color, zIndex 
       0%,
       80%,
       100% {
-        box-shadow: 0 2.5em 0 -1.3em;
+        box-shadow: 0 8px 0 -1.3em;
       }
       40% {
-        box-shadow: 0 2.5em 0 0;
+        box-shadow: 0 8px 0 0;
       }
     }
   `
 
   return (
-    <>
+    <div css={[tw`relative`]}>
       <style>{localCSS}</style>
       <LOADER $color={color ? color : 'white'} $zIndex={zIndex} />
-    </>
+    </div>
   )
 }
