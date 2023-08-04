@@ -1,23 +1,9 @@
 [
   {
     "pair": "SOL/USDC",
-    "type": "perps",
+    "type": "mainnet",
     "coinGecko": "solana",
     "marketAddress": "ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW",
     "display": "SOL-PERP"
-  },
-  {
-    "pair": "SOL/USDC",
-    "type": "crypto",
-    "coinGecko": "solana",
-    "marketAddress": "8BnEgHoWFysVcuFFX7QztDmzuH8r5ZFvyP3sYwn1XTh6",
-    "display": "SOL/USDC"
-  },
-  {
-    "pair": "ETH/USDC",
-    "type": "crypto",
-    "coinGecko": "ethereum",
-    "marketAddress": "BbJgE7HZMaDp5NTYvRh5jZSkQPVDTU8ubPFtpogUkEj4",
-    "display": "ETH/USDC"
   }
 ]

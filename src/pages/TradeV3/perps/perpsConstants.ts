@@ -111,7 +111,8 @@ export const MPs = [
     asks: 'FPTSdA4vPQRz4KyjKi5YYdNNq9EbKDSgKMNyadrbVhG8',
     event_queue: '2Kv94KZTX8yePkdNZT1zXpzDaTpLYLpeiv7Gp8vLA6kL',
     tick_size: 100,
-    decimals: 5
+    decimals: 5,
+    pairName: 'SOL-PERP'
   }
 ]
 
@@ -163,3 +164,4 @@ export const GET_ORDERBOOK = '/perps-apis/getOrderBook'
 export const GET_OPEN_ORDERS = '/perps-apis/getAllOpenOrders'
 export const GET_ANALYTICS_DATA = '/perps-apis/getUserAnalytics'
 export const GET_FUNDING_RATE = '/perps-apis/getFundingRate'
+export const GET_LEADERBOARD_DATA = '/perps-apis/getLeaderboardData'

@@ -492,8 +492,8 @@ const TakeProfitStopLoss = ({ isTakeProfit, index, setIndex, input, setInput, se
 }
 
 export const PlaceOrderMobi = () => {
-  const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
-  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
+  const { order, setOrder, focused, setFocused } = useOrder()
+  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { connected, wallet, publicKey } = useWallet()
   const { getTokenInfoFromSymbol } = useTokenRegistry()
   const { setVisible: setModalVisible } = useWalletModal()
@@ -617,7 +617,7 @@ export const PlaceOrderMobi = () => {
   ]
 
   const buttonState = useMemo(() => {
-    if (isSpot) {
+    if (isDevnet) {
       if (isGeoBlocked) return ButtonState.isGeoBlocked
       if (!connected) return ButtonState.Connect
       if (
@@ -637,7 +637,7 @@ export const PlaceOrderMobi = () => {
       //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
       return ButtonState.CanPlaceOrder
     }
-  }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
+  }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
 
   const buttonText = useMemo(() => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
@@ -645,13 +645,8 @@ export const PlaceOrderMobi = () => {
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Create Account!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
-    if (selectedCrypto.type === 'crypto') {
-      if (order.side === 'buy') return 'BUY ' + symbol
-      else return 'SELL ' + symbol
-    } else {
-      if (order.side === 'buy') return 'LONG ' + symbol
-      else return 'SHORT ' + symbol
-    }
+    if (order.side === 'buy') return 'LONG ' + symbol
+    else return 'SHORT ' + symbol
   }, [connected, wallet, buttonState, order.side, selectedCrypto.type])
 
   const handleSliderChange = async (e) => {
@@ -711,7 +706,7 @@ export const PlaceOrderMobi = () => {
   }, [traderInfo])
 
   const handleClick = (value: number) => {
-    if (isSpot) {
+    if (isDevnet) {
       const finalValue = removeFloatingPointError(value * userBalance)
       if (finalValue) {
         setSelectedTotal(value)
@@ -945,7 +940,7 @@ export const PlaceOrderMobi = () => {
             />
           </div>
         </INPUT_WRAPPER>
-        {!isSpot && (
+        {!isDevnet && (
           <INPUT_WRAPPER $rotateArrow={showProfitLossDrawer}>
             {/*<div className="label width">*/}
             <div className="label2 width2">
@@ -1051,8 +1046,8 @@ export const PlaceOrderMobi = () => {
             ? handleWalletModal()
             : buttonState !== ButtonState.CanPlaceOrder
             ? null
-            : isSpot
-            ? placeOrder()
+            : isDevnet
+            ? handlePlaceOrder()
             : handlePlaceOrder()
         }}
         $orderSide={order.side}
@@ -1071,7 +1066,7 @@ export const PlaceOrderMobi = () => {
         )}
       </PLACE_ORDER_BUTTON>
       {/* <div tw="flex flex-row justify-between my-5 mx-5">
-        {isSpot ? (
+        {isDevnet ? (
           <>
             {' '}
             <span tw="text-regular font-semibold dark:text-grey-2 text-grey-1">Available balance:</span>

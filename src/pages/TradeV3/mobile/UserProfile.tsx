@@ -2,9 +2,8 @@
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { FC, useMemo, useState } from 'react'
-import { useCrypto, useDarkMode, useOrderBook, usePriceFeed, useTradeHistory } from '../../../context'
+import { useCrypto, useDarkMode, useOrderBook, usePriceFeed } from '../../../context'
 import { useTraderConfig } from '../../../context/trader_risk_group'
-import { SettlePanel } from '../SettlePanel'
 import { getPerpsPrice } from '../perps/utils'
 import { CollateralPanelMobi } from './CollateralPanelMobi'
 import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
@@ -217,14 +216,13 @@ const FIXED_BOTTOM = styled.div`
 `
 
 const OpenOrders: FC = () => {
-  const { formatPair, isSpot } = useCrypto()
-  const { cancelOrder, orders } = useTradeHistory()
+  const { formatPair, isDevnet } = useCrypto()
   const { perpsOpenOrders } = useOrderBook()
   const { cancelOrder: perpsCancelOrder } = useTraderConfig()
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const openOrderUI = isSpot ? orders : perpsOpenOrders
+  const openOrderUI = isDevnet ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
@@ -284,7 +282,7 @@ const OpenOrders: FC = () => {
           )}
       </OPEN_ORDER>
     ),
-    [cancelOrder, formatPair, orders, perpsOpenOrders, isSpot]
+    [formatPair, perpsOpenOrders, isDevnet]
   )
 
   return (
@@ -302,7 +300,6 @@ const OpenOrders: FC = () => {
 }
 
 const TradeHistoryComponent: FC = () => {
-  const { tradeHistoryNew } = useTradeHistory()
   const { selectedCrypto } = useCrypto()
   const { mode } = useDarkMode()
   const { prices } = usePriceFeed()
@@ -320,10 +317,7 @@ const TradeHistoryComponent: FC = () => {
     })
   }, [traderInfo.tradeHistory])
 
-  const historyData = useMemo(
-    () => (selectedCrypto.type === 'crypto' ? tradeHistoryNew : perpsHistory),
-    [selectedCrypto, tradeHistoryNew]
-  )
+  const historyData = useMemo(() => perpsHistory, [selectedCrypto])
 
   return (
     <>
@@ -341,7 +335,7 @@ const TradeHistoryComponent: FC = () => {
                 <div tw="mb-3.5">
                   <span tw="text-regular font-semibold dark:text-grey-5 text-black-4 mr-2.5">SOL/PERP</span>
                   <span tw="text-regular font-semibold " className={order.side}>
-                    {selectedCrypto.type === 'perps' ? order.side : null}
+                    {order.side}
                   </span>
                 </div>
                 <div tw="flex flex-row justify-between">
@@ -543,7 +537,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 
 export const UserProfile = ({ setUserProfile }) => {
   const tabs = ['Positions', 'Open Orders', 'Trade History', 'Sol Unsettled']
-  const { isSpot } = useCrypto()
+  const { isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const [activeTab, setActiveTab] = useState(0)
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -570,7 +564,7 @@ export const UserProfile = ({ setUserProfile }) => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      {!isSpot ? (
+      {!isDevnet ? (
         <CollateralPanelMobi setUserProfile={setUserProfile} />
       ) : (
         <div>
@@ -603,7 +597,7 @@ export const UserProfile = ({ setUserProfile }) => {
                   {index === 1 ? (
                     <div className="open-order-header">
                       <div>{item}</div>
-                      {!isSpot && (
+                      {!isDevnet && (
                         <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
                       )}
                     </div>
@@ -623,9 +617,9 @@ export const UserProfile = ({ setUserProfile }) => {
       ) : activeTab === 2 ? (
         <TradeHistoryComponent />
       ) : activeTab === 3 ? (
-        <SettlePanel />
+        <></>
       ) : null}
-      {!isSpot && (
+      {!isDevnet && (
         <FIXED_BOTTOM>
           <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
             <div className="white-background">

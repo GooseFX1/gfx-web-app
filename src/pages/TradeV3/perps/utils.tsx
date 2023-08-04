@@ -1,20 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import {
+  ALPHA,
+  BETA,
   DERIVATIVE_SEED,
   DEX_ID,
   FEES_ID,
   FEES_SEED,
+  GAMMA,
   INSTRUMENTS_ID,
-  MPG_ID,
+  MPG_ID as MAINNET_MPG_ID,
   PYTH_DEVNET,
   PYTH_MAINNET,
+  RISK_ID,
+  RISK_OUTPUT_REGISTER,
   TRADER_FEE_ACCT_SEED,
   ZERO_FRACTIONAL
 } from './perpsConstants'
 import * as anchor from '@project-serum/anchor'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
+import riskIdl from './idl/alpha_risk_engine.json'
 import dexIdl from './idl/dex.json'
 import { Fractional } from './dexterity/types'
 import { ITraderBalances } from '../../../types/dexterity_instructions'
@@ -30,11 +36,11 @@ export const getDexProgram = async (connection: Connection, wallet: any): Promis
   return new anchor.Program(idl_o, DEX_ID, provider)
 }
 
-// export const getRiskProgram = (connection: Connection, wallet: any): anchor.Program => {
-//   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
-//   const idl_o: any = riskIdl
-//   return new anchor.Program(idl_o, RISK_ID, provider)
-// }
+export const getRiskProgram = (connection: Connection, wallet: any): anchor.Program => {
+  const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
+  const idl_o: any = riskIdl
+  return new anchor.Program(idl_o, RISK_ID, provider)
+}
 
 export const int64to8 = (n: number): Uint8Array => {
   const arr = BigUint64Array.of(BigInt(n))
@@ -53,7 +59,8 @@ export const getDerivativeKey = (args): anchor.web3.PublicKey => {
     int64to8(args.fullFundingPeriod),
     int64to8(args.minimumFundingPeriod)
   ]
-  return anchor.web3.PublicKey.findProgramAddressSync(seeds, new PublicKey(INSTRUMENTS_ID))[0]
+  const address = anchor.web3.PublicKey.findProgramAddressSync(seeds, new PublicKey(INSTRUMENTS_ID))[0]
+  return address
 }
 
 export const getPythOracleAndClock = (connection: Connection): [anchor.web3.PublicKey, anchor.web3.PublicKey] => {
@@ -73,29 +80,44 @@ export const getMarketSigner = (product_publicKey: PublicKey): anchor.web3.Publi
   return address[0]
 }
 
-export const getTraderFeeAcct = (traderRiskGroup: PublicKey): anchor.web3.PublicKey =>
-  findProgramAddressSync(
+export const getTraderFeeAcct = (traderRiskGroup: PublicKey, MPG_ID: string): anchor.web3.PublicKey => {
+  const address = findProgramAddressSync(
     [Buffer.from(TRADER_FEE_ACCT_SEED), traderRiskGroup.toBuffer(), new PublicKey(MPG_ID).toBuffer()],
     new PublicKey(FEES_ID)
   )[0]
+  return address
+}
 
-export const getRiskSigner = (): anchor.web3.PublicKey =>
-  findProgramAddressSync([new PublicKey(MPG_ID).toBuffer()], new PublicKey(DEX_ID))[0]
+export const getRiskSigner = (MPG_ID: string): anchor.web3.PublicKey => {
+  const address = findProgramAddressSync([new PublicKey(MPG_ID).toBuffer()], new PublicKey(DEX_ID))[0]
+  return address
+}
 
-export const getFeeModelConfigAcct = (): anchor.web3.PublicKey =>
-  findProgramAddressSync([Buffer.from(FEES_SEED), new PublicKey(MPG_ID).toBuffer()], new PublicKey(FEES_ID))[0]
+export const getFeeModelConfigAcct = (MPG_ID: string): anchor.web3.PublicKey => {
+  const address = findProgramAddressSync(
+    [Buffer.from(FEES_SEED), new PublicKey(MPG_ID).toBuffer()],
+    new PublicKey(FEES_ID)
+  )[0]
+  return address
+}
 
-// export const getAllMPG = async (wallet: any, connection: Connection): Promise<any> => {
-//   const dexProgram = await getDexProgram(connection, wallet)
-//   return await dexProgram.account.marketProductGroup.all()
-// }
+export const getAllMPG = async (wallet: any, connection: Connection): Promise<any> => {
+  const dexProgram = await getDexProgram(connection, wallet)
+  const accounts = await dexProgram.account.marketProductGroup.all()
+  return accounts
+}
 
-// export const getAllMP = async (wallet: any, connection: Connection): Promise<any> => {
-//   const dexProgram = await getDexProgram(connection, wallet)
-//   return await dexProgram.account.marketProductGroup.all()
-// }
+export const getAllMP = async (wallet: any, connection: Connection): Promise<any> => {
+  const dexProgram = await getDexProgram(connection, wallet)
+  const accounts = await dexProgram.account.marketProductGroup.all()
+  return accounts
+}
 
-export const getTraderRiskGroupAccount = async (wallet: any, connection: Connection): Promise<any> => {
+export const getTraderRiskGroupAccount = async (
+  wallet: any,
+  connection: Connection,
+  MPG_ID_OPT?: string
+): Promise<any> => {
   const response = await connection.getParsedProgramAccounts(new PublicKey(DEX_ID), {
     filters: [
       //  {
@@ -112,7 +134,7 @@ export const getTraderRiskGroupAccount = async (wallet: any, connection: Connect
         memcmp: {
           offset: 16,
           /** data to match, a base-58 encoded string and limited to less than 129 bytes */
-          bytes: MPG_ID
+          bytes: MPG_ID_OPT ? MPG_ID_OPT : MAINNET_MPG_ID
         }
       }
     ],
@@ -134,14 +156,14 @@ export const getRiskAndFeeSigner = (marketProductGroup: PublicKey): anchor.web3.
     new anchor.web3.PublicKey(DEX_ID)
   )[0]
 
-// export const getRiskOutputRegister = async (
-//   wallet: any,
-//   connection: Connection
-// ): Promise<anchor.web3.AccountInfo<Buffer>> => {
-//   const res2 = await connection.getAccountInfo(new PublicKey(RISK_OUTPUT_REGISTER))
-//   console.log(res2)
-//   return res2
-// }
+export const getRiskOutputRegister = async (
+  wallet: any,
+  connection: Connection
+): Promise<anchor.web3.AccountInfo<Buffer>> => {
+  const res2 = await connection.getAccountInfo(new PublicKey(RISK_OUTPUT_REGISTER))
+  console.log(res2)
+  return res2
+}
 
 export const displayFractional = (val: Fractional): string => {
   const base = val.m.toString()
@@ -173,22 +195,22 @@ export const addFractionals = (a: Fractional, b: Fractional): Fractional => {
   })
 }
 
-// export const subFractionals = (a: Fractional, b: Fractional): Fractional => {
-//   let num1 = BigInt(a.m.toString())
-//   let num2 = BigInt(b.m.toString())
-//   const diff = BigInt(a.exp.toString()) - BigInt(b.exp.toString())
-//   const finalExp = a.exp.gt(b.exp) ? a.exp : b.exp
-//   if (diff < 0) {
-//     num1 = num1 * BigInt(10 ** Number(-diff))
-//   } else {
-//     num2 = num2 * BigInt(10 ** Number(diff))
-//   }
-//   const finalM = new anchor.BN(Number(num1 - num2))
-//   return new Fractional({
-//     m: finalM,
-//     exp: finalExp
-//   })
-// }
+export const subFractionals = (a: Fractional, b: Fractional): Fractional => {
+  let num1 = BigInt(a.m.toString())
+  let num2 = BigInt(b.m.toString())
+  const diff = BigInt(a.exp.toString()) - BigInt(b.exp.toString())
+  const finalExp = a.exp.gt(b.exp) ? a.exp : b.exp
+  if (diff < 0) {
+    num1 = num1 * BigInt(10 ** Number(-diff))
+  } else {
+    num2 = num2 * BigInt(10 ** Number(diff))
+  }
+  const finalM = new anchor.BN(Number(num1 - num2))
+  return new Fractional({
+    m: finalM,
+    exp: finalExp
+  })
+}
 
 export const mulFractionals = (a: Fractional, b: Fractional): Fractional => {
   const num1 = BigInt(a.m.toString())
@@ -214,61 +236,62 @@ export const maxFractional = (a: Fractional, b: Fractional): Fractional => {
   else return b
 }
 
-// export const divFractional = (a: Fractional, b: Fractional): Fractional => {
-//   const sign = Number(a.m.toString()) < 0 || Number(b.m.toString()) < 0 ? -1 : 1
-//   let dividend = BigInt(a.m.toString())
-//   const divisor = BigInt(b.m.toString())
-//   let exp = Number(a.exp.toString()) - Number(b.exp.toString())
-//   dividend = dividend * BigInt(10 ** (10 - (exp > 0 ? exp : 0)))
-//   const quotient = dividend / divisor
-//   exp = exp - (exp > 0 ? exp : 0) + 10
-//   if (sign > -1) {
-//     return new Fractional({ m: new anchor.BN(quotient.toString()), exp: new anchor.BN(exp) })
-//   } else {
-//     return new Fractional({ m: new anchor.BN('-1' + quotient.toString()), exp: new anchor.BN(exp) })
-//   }
-// }
+export const divFractional = (a: Fractional, b: Fractional): Fractional => {
+  const sign = Number(a.m.toString()) < 0 || Number(b.m.toString()) < 0 ? -1 : 1
+  let dividend = BigInt(a.m.toString())
+  const divisor = BigInt(b.m.toString())
+  let exp = Number(a.exp.toString()) - Number(b.exp.toString())
+  dividend = dividend * BigInt(10 ** (10 - (exp > 0 ? exp : 0)))
+  const quotient = dividend / divisor
+  exp = exp - (exp > 0 ? exp : 0) + 10
+  if (sign > -1) {
+    return new Fractional({ m: new anchor.BN(quotient.toString()), exp: new anchor.BN(exp) })
+  } else {
+    return new Fractional({ m: new anchor.BN('-1' + quotient.toString()), exp: new anchor.BN(exp) })
+  }
+}
 
-// export const reduceFractional = (a: Fractional): Fractional => {
-//   const m = a.m.toString()
-//   const exp = a.exp.toString()
-//   let trailingZeroes = 0
-//   for (let i = 0; i < m.length; i++) {
-//     if (m[i] === '0') {
-//       trailingZeroes++
-//     } else {
-//       trailingZeroes = 0
-//     }
-//   }
-//   if (trailingZeroes > 0 && exp !== '0') {
-//     const zeroToShift = trailingZeroes > Number(exp) ? Number(exp) : trailingZeroes
-//     return new Fractional({
-//       m: new anchor.BN(m.substring(0, m.length - zeroToShift)),
-//       exp: new anchor.BN(Number(exp) - zeroToShift)
-//     })
-//   }
-//   return a
-// }
-//
-// export const roundFractional = (a: Fractional, digits: string): Fractional => {
-//   if (BigInt(digits) >= BigInt(a.exp.toString())) return a
-//   else {
-//     const m = BigInt(a.m.toString()) / BigInt(10 ** (Number(a.exp.toString()) - Number(digits)))
-//     return new Fractional({ m: new anchor.BN(m.toString()), exp: new anchor.BN(digits) })
-//   }
-// }
+export const reduceFractional = (a: Fractional): Fractional => {
+  const m = a.m.toString()
+  const exp = a.exp.toString()
+  let trailingZeroes = 0
+  for (let i = 0; i < m.length; i++) {
+    if (m[i] === '0') {
+      trailingZeroes++
+    } else {
+      trailingZeroes = 0
+    }
+  }
+  if (trailingZeroes > 0 && exp !== '0') {
+    const zeroToShift = trailingZeroes > Number(exp) ? Number(exp) : trailingZeroes
+    return new Fractional({
+      m: new anchor.BN(m.substring(0, m.length - zeroToShift)),
+      exp: new anchor.BN(Number(exp) - zeroToShift)
+    })
+  }
+  return a
+}
 
-// export const greaterThanFractional = (a: Fractional, b: Fractional): boolean => {
-//   let num1 = BigInt(a.m.toString())
-//   let num2 = BigInt(b.m.toString())
-//   const diff = BigInt(a.exp.toString()) - BigInt(b.exp.toString())
-//   if (diff < 0) {
-//     num1 = num1 * BigInt(10 ** Number(-diff))
-//   } else {
-//     num2 = num2 * BigInt(10 ** Number(diff))
-//   }
-//   return num1 > num2
-// }
+export const roundFractional = (a: Fractional, digits: string): Fractional => {
+  if (BigInt(digits) >= BigInt(a.exp.toString())) return a
+  else {
+    const m = BigInt(a.m.toString()) / BigInt(10 ** (Number(a.exp.toString()) - Number(digits)))
+    return new Fractional({ m: new anchor.BN(m.toString()), exp: new anchor.BN(digits) })
+  }
+}
+
+export const greaterThanFractional = (a: Fractional, b: Fractional): boolean => {
+  let num1 = BigInt(a.m.toString())
+  let num2 = BigInt(b.m.toString())
+  const diff = BigInt(a.exp.toString()) - BigInt(b.exp.toString())
+  if (diff < 0) {
+    num1 = num1 * BigInt(10 ** Number(-diff))
+  } else {
+    num2 = num2 * BigInt(10 ** Number(diff))
+  }
+  if (num1 > num2) return true
+  else return false
+}
 
 export const fetchPrice = (marketProductGroup: MarketProductGroup, idx: number) => {
   const prevAsk = marketProductGroup.marketProducts.array[idx].value.outright.metadata.prices.prevAsk
@@ -336,16 +359,20 @@ export const computeHealth = (traderRiskGroup: TraderRiskGroup, marketProductGro
     )
     marginReq = addFractionals(marginReq, mulFractionals(outrightQty, price))
   }
-  return {
+  const retObj = {
     marginReq,
     totalAbsDollarPosition,
     absDollarPosition,
     traderPortfolioValue,
     balancesArray
   }
+  return retObj
 }
 
-const handleDecimalPrice = (price: number) => price.toFixed(2)
+const handleDecimalPrice = (price: number) => {
+  const decimalPrice = price.toFixed(2)
+  return decimalPrice
+}
 
 export const tradeHistoryInfo = (
   traderRiskGroup: TraderRiskGroup,
@@ -353,7 +380,7 @@ export const tradeHistoryInfo = (
   marketProductGroup: MarketProductGroup
 ) => {
   let productIndex = null
-  //marketProductGroup.marketProducts.array[0].value.outright
+  marketProductGroup.marketProducts.array[0].value.outright
   marketProductGroup.marketProducts.array.map((item, index) => {
     if (item.value.outright.metadata.productKey.toBase58() === activeProduct.id) productIndex = index
   })
@@ -416,21 +443,21 @@ export const tradeHistoryInfo = (
   }
 }
 
-// export const getLiquidationPrice = (portfolioValue: Fractional): Fractional => {
-//   if (portfolioValue.m.gte(new anchor.BN(0))) {
-//     return mulFractionals(portfolioValue, subFractionals(ALPHA, BETA))
-//   } else {
-//     return mulFractionals(
-//       portfolioValue,
-//       subFractionals(new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(0) }), BETA)
-//     )
-//   }
-// }
+export const getLiquidationPrice = (portfolioValue: Fractional): Fractional => {
+  if (portfolioValue.m.gte(new anchor.BN(0))) {
+    return mulFractionals(portfolioValue, subFractionals(ALPHA, BETA))
+  } else {
+    return mulFractionals(
+      portfolioValue,
+      subFractionals(new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(0) }), BETA)
+    )
+  }
+}
 
-// export const getSocialLoss = (liquidationPrice: Fractional): Fractional => {
-//   if (liquidationPrice.m.gte(new anchor.BN(0))) return mulFractionals(liquidationPrice, GAMMA)
-//   return liquidationPrice
-// }
+export const getSocialLoss = (liquidationPrice: Fractional): Fractional => {
+  if (liquidationPrice.m.gte(new anchor.BN(0))) return mulFractionals(liquidationPrice, GAMMA)
+  return liquidationPrice
+}
 
 export const convertToFractional = (amount: string): Fractional => {
   const numberOfDecimals = (amount.match(/\./g) || []).length
@@ -527,7 +554,7 @@ export const getExitQuantityInNumber = (traderBalances, activeProduct) => {
 }
 
 export const truncateBigNumber = (bigNumber: number) => {
-  if (!bigNumber) return 0
+  if (!bigNumber || bigNumber === null) return 0
 
   try {
     if (bigNumber > 1000000) {

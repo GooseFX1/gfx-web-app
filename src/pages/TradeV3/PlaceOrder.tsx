@@ -374,14 +374,13 @@ const ORDER_CATEGORY = styled.div`
 const PLACE_ORDER_BUTTON = styled.button<{
   $action: boolean
   $orderSide: string
-  $isSpot: boolean
+  $isDevnet: boolean
   $isDeposit?: boolean
 }>`
-  ${tw`mt-3 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
+  ${tw`mt-3 w-1/2 rounded-[30px] h-[30px] text-tiny font-semibold border-0 border-none mr-[5px]`}
   background: ${({ $action, $orderSide, theme }) =>
     $action ? ($orderSide === 'buy' ? '#71C25D' : '#F06565') : theme.bg23};
   color: ${({ $action }) => ($action ? 'white' : '#636363')};
-  width: ${({ $isSpot }) => ($isSpot ? '95%' : '50%')};
   cursor: ${({ $action, $isDeposit }) => ($action || $isDeposit ? 'pointer' : 'not-allowed')};
 `
 
@@ -487,8 +486,8 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 
 export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
-  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isSpot } = useCrypto()
-  const { order, setOrder, focused, setFocused, placeOrder } = useOrder()
+  const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
+  const { order, setOrder, focused, setFocused } = useOrder()
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
@@ -586,27 +585,15 @@ export const PlaceOrder: FC = () => {
   //  }, [traderInfo])
 
   const buttonState = useMemo(() => {
-    if (isSpot) {
-      if (geoBlocked) return ButtonState.isGeoBlocked
-      if (!connected) return ButtonState.Connect
-      if (
-        (order.side === 'buy' && order.total > userBalance) ||
-        (order.side === 'sell' && order.size > userBalance)
-      )
-        return ButtonState.BalanceExceeded
-      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      return ButtonState.CanPlaceOrder
-    } else {
-      if (geoBlocked) return ButtonState.isGeoBlocked
-      if (!connected) return ButtonState.Connect
-      if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
-      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
-      if (order.size < 0.01) return ButtonState.OrderTooSmall
-      //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
-      return ButtonState.CanPlaceOrder
-    }
-  }, [connected, selectedCrypto.pair, order, isSpot, traderInfo])
+    if (geoBlocked) return ButtonState.isGeoBlocked
+    if (!connected) return ButtonState.Connect
+    if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
+    if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
+    if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
+    if (order.size < 0.01) return ButtonState.OrderTooSmall
+    //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
+    return ButtonState.CanPlaceOrder
+  }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
 
   const buttonText = useMemo(() => {
     if (buttonState === ButtonState.BalanceExceeded) return 'Insufficient Balance'
@@ -614,13 +601,9 @@ export const PlaceOrder: FC = () => {
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Deposit!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
-    if (selectedCrypto.type === 'crypto') {
-      if (order.side === 'buy') return 'BUY ' + symbol
-      else return 'SELL ' + symbol
-    } else {
-      if (order.side === 'buy') return 'LONG ' + symbol
-      else return 'SHORT ' + symbol
-    }
+
+    if (order.side === 'buy') return 'LONG ' + symbol
+    else return 'SHORT ' + symbol
   }, [buttonState, order.side, selectedCrypto.type])
 
   const displayedOrder = useMemo(
@@ -653,36 +636,18 @@ export const PlaceOrder: FC = () => {
   }
 
   const handleClick = (value: number) => {
-    if (isSpot) {
-      const finalValue = removeFloatingPointError(value * userBalance)
-      if (finalValue) {
-        setSelectedTotal(value)
-        if (order.side === 'buy') {
-          setFocused('total')
-          setOrder((prev) => ({ ...prev, total: finalValue }))
-        } else {
-          setFocused('size')
-          setOrder((prev) => ({ ...prev, size: finalValue }))
-        }
-      } else if (!finalValue && value === 0) {
-        setSelectedTotal(value)
-        setFocused('total')
-        setOrder((prev) => ({ ...prev, total: 0 }))
-      }
-    } else {
-      const price = order.price ?? getPerpsPrice(orderBook)
+    const price = order.price ?? getPerpsPrice(orderBook)
 
-      const finalValue = removeFloatingPointError(value * +perpsBidBalance)
-      if (finalValue) {
-        setSelectedTotal(value)
+    const finalValue = removeFloatingPointError(value * +perpsBidBalance)
+    if (finalValue) {
+      setSelectedTotal(value)
 
-        setFocused('total')
-        setOrder((prev) => ({ ...prev, price, total: finalValue }))
-      } else if (!finalValue && value === 0) {
-        setSelectedTotal(value)
-        setFocused('total')
-        setOrder((prev) => ({ ...prev, price, total: 0 }))
-      }
+      setFocused('total')
+      setOrder((prev) => ({ ...prev, price, total: finalValue }))
+    } else if (!finalValue && value === 0) {
+      setSelectedTotal(value)
+      setFocused('total')
+      setOrder((prev) => ({ ...prev, price, total: 0 }))
     }
   }
 
@@ -924,7 +889,7 @@ export const PlaceOrder: FC = () => {
             <img src={`/img/crypto/${symbol}.svg`} alt="" />
             {displayPair}
           </div>
-          {selectedCrypto.type !== 'crypto' ? <div className="pairLeverage">{sliderValue}</div> : null}
+          {<div className="pairLeverage">{sliderValue}</div>}
         </div>
         <div className="orderSide">
           <div
@@ -1029,19 +994,20 @@ export const PlaceOrder: FC = () => {
             </INPUT_WRAPPER>
           </div>
         </INPUT_GRID_WRAPPER>
-        {isSpot ? (
-          <TOTAL_SELECTOR>
-            {TOTAL_VALUES.map((item) => (
-              <div
-                key={item.key}
-                className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
-                onClick={() => handleClick(item.value)}
-              >
-                {item.display}
-              </div>
-            ))}
-          </TOTAL_SELECTOR>
-        ) : (
+        {
+          //isDevnet ? (
+          //  <TOTAL_SELECTOR>
+          //    {TOTAL_VALUES.map((item) => (
+          //      <div
+          //        key={item.key}
+          //        className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
+          //        onClick={() => handleClick(item.value)}
+          //      >
+          //        {item.display}
+          //      </div>
+          //    ))}
+          //  </TOTAL_SELECTOR>
+          //) :
           <LEVERAGE_WRAPPER>
             <div className={height > 790 ? 'leverageText' : 'smallScreenLeverageText'}>Leverage</div>
             <div className={height > 790 ? 'leverageBar' : 'smallScreenLeverageBar'}>
@@ -1067,34 +1033,35 @@ export const PlaceOrder: FC = () => {
               </Picker>
             </div>
           </LEVERAGE_WRAPPER>
-        )}
-        {isSpot ? (
-          <>
-            <ORDER_CATEGORY>
-              {ORDER_CATEGORY_TYPE.map((item) => (
-                <div key={item.id} className="orderCategoryCheckboxWrapper">
-                  <Checkbox
-                    checked={order.type === item.id}
-                    onChange={(e) =>
-                      e.target.checked
-                        ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-                        : setOrder((prev) => ({ ...prev, type: 'limit' }))
-                    }
-                  />
-                  <div className="orderCategoryName">{item.display}</div>
-                </div>
-              ))}
-            </ORDER_CATEGORY>
-            <PLACE_ORDER_BUTTON
-              $action={buttonState === ButtonState.CanPlaceOrder}
-              onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
-              $orderSide={order.side}
-              $isSpot={isSpot}
-            >
-              {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-            </PLACE_ORDER_BUTTON>
-          </>
-        ) : (
+        }
+        {
+          //isDevnet ? (
+          //  <>
+          //    <ORDER_CATEGORY>
+          //      {ORDER_CATEGORY_TYPE.map((item) => (
+          //        <div key={item.id} className="orderCategoryCheckboxWrapper">
+          //          <Checkbox
+          //            checked={order.type === item.id}
+          //            onChange={(e) =>
+          //              e.target.checked
+          //                ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+          //                : setOrder((prev) => ({ ...prev, type: 'limit' }))
+          //            }
+          //          />
+          //          <div className="orderCategoryName">{item.display}</div>
+          //        </div>
+          //      ))}
+          //    </ORDER_CATEGORY>
+          //    <PLACE_ORDER_BUTTON
+          //      $action={buttonState === ButtonState.CanPlaceOrder}
+          //      //onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
+          //      $orderSide={order.side}
+          //      $isDevnet={isDevnet}
+          //    >
+          //      {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+          //    </PLACE_ORDER_BUTTON>
+          //  </>
+          //) :
           <>
             <div tw="flex flex-row">
               <INPUT_WRAPPER $halfWidth={true}>
@@ -1168,22 +1135,23 @@ export const PlaceOrder: FC = () => {
                     : handlePlaceOrder()
                 }
                 $orderSide={order.side}
-                $isSpot={isSpot}
+                $isDevnet={isDevnet}
                 $isDeposit={buttonState === ButtonState.CreateAccount}
               >
                 {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
               </PLACE_ORDER_BUTTON>
             </div>
           </>
-        )}
-        {isSpot && (
+        }
+        {/*{
+        isDevnet && (
           <FEES>
             <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
               Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
             </Tooltip>
             <span>SOL network fee: ~ 0.03</span>
           </FEES>
-        )}
+        )}*/}
       </BODY>
     </WRAPPER>
   )

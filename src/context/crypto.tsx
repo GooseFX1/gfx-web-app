@@ -10,8 +10,8 @@ import React, {
 } from 'react'
 import { Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
-import { serum } from '../web3'
 import MARKET_PAIRS from '../pages/TradeV3/constants/MARKET_PAIRS.json'
+import MARKET_PAIRS_DEVNET from '../pages/TradeV3/constants/MARKET_PAIRS_DEVNET.json'
 import useBlacklisted from '../utils/useBlacklisted'
 
 interface ICrypto {
@@ -35,11 +35,11 @@ interface ICryptoConfig {
   setSelectedCrypto: Dispatch<SetStateAction<ICrypto>>
   filteredSearchPairs: any
   setFilteredSearchPairs: Dispatch<SetStateAction<any>>
-  isSpot: boolean
-  setIsSpot: Dispatch<SetStateAction<boolean>>
+  isDevnet: boolean
+  setIsDevnet: Dispatch<SetStateAction<boolean>>
 }
 
-export type MarketType = 'crypto' | 'synth' | 'perps'
+export type MarketType = 'mainnet' | 'devnet'
 
 export const FEATURED_PAIRS_LIST = [
   { pair: 'GOFX/USDC', type: 'crypto' as MarketType, coinGecko: 'goosefx' },
@@ -72,28 +72,24 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
           if (item.type === 'crypto') isSpotCheck = true
         }
       })
-      return { set: pairSet, isSpot: isSpotCheck }
+      return { set: pairSet, isDevnet: isSpotCheck }
     } catch (e) {
-      return { set: pairSet, isSpot: isSpotCheck }
+      return { set: pairSet, isDevnet: isSpotCheck }
     }
   }
-  const [isSpot, setIsSpot] = useState<boolean>(getPairWithMarketAddress().isSpot)
+  const [isDevnet, setIsDevnet] = useState<boolean>(getPairWithMarketAddress().isDevnet)
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress().set)
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
-    const pairsToset = isSpot
-      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
-      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    const pairsToset = isDevnet ? MARKET_PAIRS_DEVNET : MARKET_PAIRS
     setPairs(pairsToset)
   }, [])
 
   useEffect(() => {
-    const pairsToset = isSpot
-      ? MARKET_PAIRS.filter((item) => item.type === 'crypto')
-      : MARKET_PAIRS.filter((item) => item.type === 'perps')
+    const pairsToset = isDevnet ? MARKET_PAIRS_DEVNET : MARKET_PAIRS
     setPairs(pairsToset)
-  }, [isSpot])
+  }, [isDevnet])
 
   useEffect(() => {
     if (pairs.length > 0) {
@@ -105,12 +101,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     ;(async () => {
       try {
-        if (selectedCrypto.type === 'crypto') {
-          const market = await serum.getMarket(connection, selectedCrypto.pair)
-          setSelectedCrypto((prevState) => ({ ...prevState, market }))
-        } else {
-          setSelectedCrypto((prevState) => ({ ...prevState, market: null }))
-        }
+        setSelectedCrypto((prevState) => ({ ...prevState, market: null }))
       } catch (e) {
         console.log(e)
       }
@@ -138,8 +129,8 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCrypto,
         filteredSearchPairs,
         setFilteredSearchPairs,
-        isSpot,
-        setIsSpot
+        isDevnet,
+        setIsDevnet
       }}
     >
       {children}
@@ -153,5 +144,17 @@ export const useCrypto = (): ICryptoConfig => {
     throw new Error('Missing crypto context')
   }
 
-  return context
+  return {
+    pairs: context.pairs,
+    formatPair: context.formatPair,
+    getAskSymbolFromPair: context.getAskSymbolFromPair,
+    getBidSymbolFromPair: context.getBidSymbolFromPair,
+    getSymbolFromPair: context.getSymbolFromPair,
+    selectedCrypto: context.selectedCrypto,
+    setSelectedCrypto: context.setSelectedCrypto,
+    filteredSearchPairs: context.filteredSearchPairs,
+    setFilteredSearchPairs: context.setFilteredSearchPairs,
+    isDevnet: context.isDevnet,
+    setIsDevnet: context.setIsDevnet
+  }
 }

@@ -16,7 +16,7 @@ export const HeaderTooltip = (text: string): ReactElement =>
 const WRAPPER = styled.div<{ $width; $mode }>`
   ${tw`flex items-center justify-center relative`}
   .innerCover {
-    background: ${({ theme }) => theme.bg26};
+    background: ${({ theme }) => theme.bg20};
     text: ${({ theme }) => theme.text20};
     ${tw`relative p-1 sm:p-2 
       rounded-[8.5px] sm:w-[98.5%] w-[98.8%] h-[64px] sm:h-[54px] flex items-center justify-center`}

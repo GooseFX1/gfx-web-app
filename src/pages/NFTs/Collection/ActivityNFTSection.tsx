@@ -230,6 +230,11 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
   //     : localAsk?.marketplace_name
   // }.svg`}
 
+  const marketName = useMemo(
+    () => (activity?.marketplace_name ? activity.marketplace_name : activity?.auction_house),
+    [activity]
+  )
+
   return (
     <>
       <tr className="tableRow" key={index}>
@@ -244,10 +249,8 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
                 <GradientText text={ACTIVITY_KIND[activity?.kind]} fontSize={15} fontWeight={600} />
                 <img
                   tw="h-5 w-5 ml-2"
-                  src={`/img/assets/Aggregator/${
-                    activity?.marketplace_name ? activity?.marketplace_name : AH_NAME(activity?.auction_house)
-                  }.svg`}
-                  alt={`${AH_NAME(activity?.auction_house)}-icon`}
+                  src={`/img/assets/Aggregator/${AH_NAME(marketName)}.svg`}
+                  alt={`${AH_NAME(marketName)}-icon`}
                   style={{ height: 30 }}
                 />
               </div>
@@ -304,15 +307,11 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
   const hostURL = useMemo(() => window.location.origin, [window.location.origin])
   const profileLink = hostURL + `/nfts/profile/`
 
-  const marketImage = useMemo(
-    () =>
-      activity?.marketplace_name
-        ? activity?.marketplace_name
-        : activity?.auction_house
-        ? AH_NAME(activity?.auction_house)
-        : null,
+  const marketName = useMemo(
+    () => (activity?.marketplace_name ? activity.marketplace_name : activity?.auction_house),
     [activity]
   )
+
   return (
     <tr className="tableRow" key={index}>
       <td className="nftNameColumn" tw="!w-[20%]">
@@ -359,20 +358,16 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
           <> </>
         )}
       </td>
-      <td tw="align-top text-center pt-[28px] w-[13%]">
-        {activity?.auction_house || marketImage ? (
-          <div tw="flex items-center justify-center pl-2">
-            {marketImage ? handleMarketplaceFormat(marketImage) : AH_NAME(activity?.auction_house)}
-            <img
-              tw="h-5 w-5 ml-1"
-              src={`/img/assets/Aggregator/${marketImage}.svg`}
-              alt={`${marketImage}-icon`}
-              style={{ height: 30 }}
-            />
-          </div>
-        ) : (
-          <> </>
-        )}
+      <td tw="align-top text-left pt-[28px] w-[13%]">
+        <div tw="flex items-center pl-2">
+          {AH_NAME(marketName)}
+          <img
+            tw="h-5 w-5 ml-1"
+            src={`/img/assets/Aggregator/${AH_NAME(marketName)}.svg`}
+            alt={`${AH_NAME(marketName)}-icon`}
+            style={{ height: 30 }}
+          />
+        </div>
       </td>
       <td tw="align-top text-center pt-[28px] w-[13%]">
         {activity?.buyer_wallet ? (

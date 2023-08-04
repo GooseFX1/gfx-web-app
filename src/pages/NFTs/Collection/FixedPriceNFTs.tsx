@@ -1,12 +1,17 @@
 import { FC, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 import {
+  initialFilters,
   useConnectionConfig,
+  useDarkMode,
   useNFTAggregator,
   useNFTAggregatorFilters,
   useNFTCollections,
-  useNFTDetails
+  useNFTDetails,
+  usePriceFeedFarm
 } from '../../../context'
 import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
@@ -15,14 +20,24 @@ import { BaseNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchFixedPriceByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
-import { debounce as debounce2 } from '../../../utils'
+import { debounce as debounce2, formatSOLDisplay } from '../../../utils'
 import NoContent from '../Profile/NoContent'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { SellNFTModal } from './SellNFTModal'
 import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import debounce from 'lodash.debounce'
+import { PILL_SECONDARY } from '../NFTDetails/AttributesTabContent'
+import { Button } from '../../../components'
+import { AH_PROGRAM_IDS } from '../../../web3'
 
+const WRAPPER = styled.div`
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`
 export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
   firstCardRef
 }): ReactElement => {
@@ -35,6 +50,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     bidNowClicked,
     setNftInBag,
     setSellNFT,
+    nftInBag,
     sellNFTClicked,
     openJustModal,
     refreshClicked,
@@ -42,7 +58,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     delistNFT,
     setDelistNFT
   } = useNFTAggregator()
-  const { searchInsideCollection, setSearchInsideCollection } = useNFTAggregatorFilters()
+  const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const {
     singleCollection,
     fixedPriceWithinCollection,
@@ -54,8 +70,11 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   const [pageNumber, setPageNumber] = useState<number>(0)
   const [stopCalling, setStopCalling] = useState<boolean>(false)
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
-  const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(false)
+  const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(true)
   const [filteredFixedPrice, setFilteredFixPrice] = useState<BaseNFT[] | null>(null)
+  const { currencyView } = useNFTAggregator()
+  const { setAdditionalFilters } = useNFTAggregatorFilters()
+  const { solPrice } = usePriceFeedFarm()
   const observer = useRef<any>()
   const paginationNum = 30
   const collectionId = useMemo(
@@ -87,6 +106,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [pageNumber])
 
   const resetLocalState = useCallback(() => {
+    setFixedPriceLoading(true)
     setFixedPriceArr([])
     setPageNumber(0)
     setCollectionSort('ASC')
@@ -105,11 +125,14 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
           singleCollection[0].uuid,
           curPage * paginationNum,
           (curPage + 1) * paginationNum,
-          sort
+          sort,
+          additionalFilters,
+          currencyView,
+          solPrice
         )
 
-        const baseNFTs: BaseNFT[] = fpData.data.nft_data
-        if (baseNFTs.length < paginationNum) setStopCalling(true)
+        const baseNFTs: BaseNFT[] = fpData?.data?.nft_data
+        if (baseNFTs?.length < paginationNum) setStopCalling(true)
 
         //  if (fixedPriceWithinCollection === undefined)
         setFixedPriceWithinCollection(fpData.data)
@@ -128,7 +151,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         setFixedPriceLoading(false)
       }
     },
-    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, refreshClicked]
+    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, refreshClicked, additionalFilters]
   )
 
   useEffect(() => {
@@ -139,6 +162,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [params.address])
 
   useEffect(() => {
+    // on change the sort type
     setFixedPriceArr([])
     setPageNumber(0)
     setFilteredFixPrice(null)
@@ -148,6 +172,23 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
       fetchFixedPriceNFTs(0, collectionSort)
     }
   }, [collectionSort])
+
+  useEffect(() => {
+    // handle filters change
+    if (
+      (additionalFilters.minValueFilter < additionalFilters.maxValueFilter &&
+        (additionalFilters.maxValueFilter > 0 || additionalFilters.minValueFilter > 0)) ||
+      additionalFilters.marketsFilter !== null ||
+      additionalFilters.marketsFilter?.length !== 0
+    ) {
+      setFixedPriceArr([])
+      setPageNumber(0)
+      setFilteredFixPrice(null)
+      setStopCalling(false)
+      setSearchInsideCollection(undefined)
+      !firstLoad && fetchFixedPriceNFTs(0, collectionSort)
+    }
+  }, [additionalFilters])
 
   const debouncer = useCallback(
     debounce((searchQuery, collectionId) => {
@@ -197,13 +238,15 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     return () => resetLocalState()
   }, [singleCollection])
 
-  const addNftToBag = (e, nftItem, ask) => {
-    setNftInBag((prev) => {
-      const id = prev.filter((item) => item.uuid === nftItem.uuid)
-      if (!id.length) return [...prev, { ...nftItem, ...ask }]
-      return prev
-    })
+  const addNftToBag = async (e, item, ask) => {
     e.stopPropagation()
+    await setNftInBag((prev) => ({
+      ...prev,
+      [item.mint_address]: {
+        ...ask,
+        ...item
+      }
+    }))
   }
 
   const handleDrawerOpen = useCallback(() => {
@@ -220,8 +263,11 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
+
+  const showFilterTags = useMemo(() => <FilterTags />, [])
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
+      {showFilterTags}
       {handleDrawerOpen()}
       {handleModalClick()}
       {fixedPriceLoading && pageNumber === 0 && <NFTLoading />}
@@ -249,5 +295,155 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         </div>
       )}
     </NFT_COLLECTIONS_GRID>
+  )
+}
+
+export const FilterTags = (): ReactElement => {
+  const { mode } = useDarkMode()
+  const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+  const { currencyView } = useNFTAggregator()
+  const { solPrice } = usePriceFeedFarm()
+  const [minValue, setMinValue] = useState<number>(additionalFilters?.minValueFilter)
+  const [maxValue, setMaxValue] = useState<number>(additionalFilters?.maxValueFilter)
+
+  const clearPriceFilters = useCallback(() => {
+    setAdditionalFilters((prev) => ({
+      ...prev,
+      minValueFilter: null,
+      maxValueFilter: null
+    }))
+  }, [])
+
+  useEffect(() => {
+    if (currencyView === 'USDC') {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev * solPrice)))
+    } else {
+      setMaxValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+      setMinValue((prev) => parseFloat(formatSOLDisplay(prev / solPrice)))
+    }
+  }, [currencyView])
+
+  useEffect(() => {
+    setMinValue(additionalFilters?.minValueFilter)
+    setMaxValue(additionalFilters?.maxValueFilter)
+  }, [additionalFilters])
+
+  const clearSpecificAttribute = useCallback((appliedAttr) => {
+    setAdditionalFilters((prev) => {
+      const attributes = prev.attributes ? [...prev.attributes] : []
+      const updateAttributes = attributes.filter(
+        (attr) => attr.value !== appliedAttr.value || attr.trait_type !== appliedAttr.trait_type
+      )
+      return {
+        ...prev,
+        attributes: updateAttributes
+      }
+    })
+  }, [])
+
+  const removeMarketplace = useCallback((market) => {
+    setAdditionalFilters((prev) => ({
+      ...prev,
+      marketsFilter: prev.marketsFilter.filter((mr) => mr !== market)
+    }))
+  }, [])
+
+  const clearAllFilters = useCallback(() => {
+    setAdditionalFilters(initialFilters)
+  }, [])
+
+  const displayMarketplaceName = useCallback(
+    (market: string) => market[0].toUpperCase() + market.slice(1).replaceAll('_', ' ').toLowerCase(),
+    []
+  )
+  return (
+    <WRAPPER tw="flex overflow-x-auto">
+      {additionalFilters.maxValueFilter && additionalFilters.minValueFilter && (
+        <PILL_SECONDARY $mode={mode} tw="!w-[fit] h-[45px] mt-2 mx-2">
+          <div className="layer" tw="!w-[fit] flex p-0.5 pr-2">
+            <div tw="flex items-center">
+              <div>
+                <div tw="text-grey-1 dark:text-grey-2 text-[13px]">Price Range</div>
+                <div tw="dark:text-grey-5 text-black-4">
+                  {formatSOLDisplay(minValue, true, 1)} -{formatSOLDisplay(maxValue, true, 1)} {currencyView}
+                </div>
+              </div>
+
+              <div>
+                <img
+                  src={`/img/assets/Aggregator/closeFilter${mode}.svg`}
+                  tw="h-5 w-5 ml-1 cursor-pointer"
+                  onClick={clearPriceFilters}
+                />
+              </div>
+            </div>
+          </div>
+        </PILL_SECONDARY>
+      )}
+      {additionalFilters?.marketsFilter &&
+        additionalFilters.marketsFilter?.length > 0 &&
+        additionalFilters?.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1 &&
+        additionalFilters.marketsFilter?.map(
+          (market, index) =>
+            index < 4 && (
+              <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2" key={index}>
+                <div className="layer" tw="!w-[fit] flex p-1">
+                  <div tw="flex items-center ">
+                    <div>
+                      <div tw="text-grey-1 dark:text-grey-2">Marketplace</div>
+                      <div tw="whitespace-nowrap text-black-4 dark:text-grey-5">
+                        {displayMarketplaceName(market)}
+                      </div>
+                    </div>
+
+                    <div>
+                      <img
+                        src={`/img/assets/Aggregator/closeFilter${mode}.svg`}
+                        onClick={() => removeMarketplace(market)}
+                        tw="h-5 w-5 ml-1 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </PILL_SECONDARY>
+            )
+        )}
+
+      {additionalFilters.attributes?.length > 0 &&
+        additionalFilters.attributes?.map((appliedAttr, index) => (
+          <PILL_SECONDARY $mode={mode} tw="!w-[fit] mt-2 mx-2" key={index}>
+            <div className="layer" tw="!w-[fit] flex p-1">
+              <div tw="flex items-center">
+                <div>
+                  <div tw="text-grey-1 dark:text-grey-2"> {appliedAttr.trait_type}</div>
+                  <div tw="whitespace-nowrap text-black-4 dark:text-grey-5">{appliedAttr.value}</div>
+                </div>
+
+                <div>
+                  <img
+                    src={`/img/assets/Aggregator/closeFilter${mode}.svg`}
+                    tw="h-5 w-5 ml-1 cursor-pointer"
+                    onClick={() => clearSpecificAttribute(appliedAttr)}
+                  />
+                </div>
+              </div>
+            </div>
+          </PILL_SECONDARY>
+        ))}
+      {((additionalFilters.marketsFilter?.length > 0 &&
+        additionalFilters.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1) ||
+        additionalFilters.minValueFilter ||
+        additionalFilters.attributes?.length > 0) && (
+        <Button
+          onClick={clearAllFilters}
+          height="30px"
+          width="94px"
+          cssStyle={tw`bg-blue-1 font-semibold text-white mt-4`}
+        >
+          Clear All
+        </Button>
+      )}
+    </WRAPPER>
   )
 }

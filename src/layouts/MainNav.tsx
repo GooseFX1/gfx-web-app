@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState, useCallback, BaseSyntheticEvent, useRef, useMemo, ReactNode } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useNFTAggregator, useRewardToggle } from '../context'
+import { useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
@@ -12,9 +12,9 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
-import { clamp } from '../utils'
+// import { clamp } from '../utils'
 import { RewardsProvider } from '../context/rewardsContext'
-// import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
+import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
@@ -77,9 +77,9 @@ export const MainNav: FC = () => {
         ]}
       >
         <div css={tw`w-15.75 h-5.25 flex items-center gap-2 absolute cursor-pointer`} onClick={navigateHome}>
-          <img src={`/img/mainnav/g-logo.svg`} alt={'g logo'} />
+          <img src={`/img/mainnav/g-logo.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} alt={'goosefx logo'} />
+            <img css={tw`h-3`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
         </div>
 
@@ -89,7 +89,7 @@ export const MainNav: FC = () => {
             <RewardsButton />
           </RewardsProvider>
           <Connect />
-          <CartButton />
+          <MyNFTBag />
           {/* <NotificationButton /> */}
           <More />
           <MobileNav />
@@ -197,7 +197,7 @@ const MobileNav: FC = () => {
   const onClose = useCallback(() => setIsOpen(false), [])
   const toggleSettingsDrawer = useCallback(() => setIsOpen((prev) => !prev), [])
   const isOnPage = useMemo(() => pathname.includes(currentPage.path), [pathname, currentPage.path])
-  // left in for when RIVE actually works
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const active = useMemo(
     () => (isOnPage && !isOpen ? 'active' : isOpen ? 'selected' : 'inactive'),
@@ -221,7 +221,7 @@ const MobileNav: FC = () => {
   return (
     <span ref={outsideRef}>
       <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'menu icon'} />
+        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} />
       </div>
       <MobileSettingsDrawer
         isOpen={isOpen}
@@ -245,7 +245,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 }) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const history = useHistory()
   return (
     <div
       css={[
@@ -303,8 +304,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           options={[
             {
               text: 'Leaderboard',
-              //onClick: () => history.push('/leaderboard'),
-              onClick: () => null,
+              onClick: () => history.push('/leaderboard'),
+              //onClick: () => null,
               isActive: pathname.includes('leaderboard')
             }
           ]}
@@ -325,7 +326,6 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 const MobileNavControls: FC = () => {
   const { pathname } = useLocation()
   // const history = useHistory()
-  // const { setIsSpot } = useCrypto()
 
   //TODO: leaderboard hook for is active
   //TODO: aggregator hook for is active
@@ -462,7 +462,13 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                 focus:outline-none focus-visible:border-0 active:border-0
                 focus:border-0 p-0`
               ].concat(customMenuStyle?.button ?? [])}
-              onMouseEnter={breakpoints.isMobile ? () => null : localOnHover}
+              onMouseEnter={
+                breakpoints.isMobile
+                  ? () => {
+                      false
+                    }
+                  : localOnHover
+              }
               onClick={handleMenuButtonClick}
               ref={buttonRef}
             >
@@ -627,6 +633,8 @@ interface Controls {
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const history = useHistory()
   const { pathname } = useLocation()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
@@ -666,8 +674,8 @@ const DesktopNav: FC = () => {
         options={[
           {
             text: 'Leaderboard',
-            //onClick: () => history.push('/leaderboard'),
-            onClick: () => null,
+            onClick: () => history.push('/leaderboard'),
+            //onClick: () => null,
             isActive: pathname.includes('leaderboard')
           }
           // {
@@ -777,7 +785,7 @@ const NavItem: FC<MainNavIconProps> = ({
               css={[
                 tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
-                curRoute || isOpen ? tw`text-black dark:text-grey-5` : tw``
+                curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
               ]}
               // style={{
               //   opacity: curRoute ? 1 : 0.5
@@ -790,7 +798,6 @@ const NavItem: FC<MainNavIconProps> = ({
                 css={[tw`w-3.5 min-md:w-2.25`]}
                 src={`/img/assets/chevron-${mode}-${activeDropdown}.svg`}
                 loading={'eager'}
-                alt={'chevron'}
               />
             )}
           </div>
@@ -799,7 +806,7 @@ const NavItem: FC<MainNavIconProps> = ({
           css={[
             tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
-            curRoute || isOpen ? tw`text-black dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
+            curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
           // style={{
           //   opacity: curRoute ? 1 : 0.5
@@ -824,69 +831,5 @@ const NavItem: FC<MainNavIconProps> = ({
     </DropDownControls>
   ) : (
     component
-  )
-}
-
-const CartButton: FC = () => {
-  const { nftInBag } = useNFTAggregator()
-  const cartSize = useMemo(() => {
-    const val = clamp(nftInBag.length, 0, 9)
-    return val >= 9 ? '9+' : val
-  }, [nftInBag])
-  const { mode } = useDarkMode()
-  const { pathname } = useLocation()
-  // Below is rive code for when the animation is added - some thigns might need to changed
-
-  // const rive = useRiveAnimations({
-  //   animation:'swap',
-  //   autoplay: true,
-  //   canvasWidth: 35,
-  //   canvasHeight: 35
-  // })
-  // const themeInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
-  // const stateInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
-
-  // useEffect(()=>{
-  //   if(!stateInput) return
-  //   stateInput.value=pathname.startsWith('/cart')
-  // },[pathname,stateInput])
-  // useEffect(()=>{
-  //   if(!themeInput) return
-  //   themeInput.value = mode === 'dark'
-  // },[themeInput,mode])
-  // const onHover = useCallback((e: BaseSyntheticEvent)=>{
-  //   if(pathname.startsWith('/cart'))return
-  //   stateInput.value=!stateInput.value
-  // },[stateInput,pathname])
-
-  const openCart = useCallback(() => {
-    // TODO: fill me in
-    console.log('FILL ME IN')
-  }, [])
-  if (!pathname.startsWith('/nfts')) return null
-  return (
-    <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
-      {/*<RiveAnimationWrapper setContainerRef={rive.setContainerRef}*/}
-      {/*                      width={35}*/}
-      {/*                      height={35}*/}
-      {/*                      // onMouseEnter={onHover}*/}
-      {/*                      // onMouseLeave={onHover}*/}
-      {/*>*/}
-      {/*  <rive.RiveComponent />*/}
-      {/*</RiveAnimationWrapper>*/}
-      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} alt={'shopping bag'} />
-      <p
-        css={[
-          tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
-        text-grey-1 dark:text-white mt-0.5 h-4`
-        ]}
-      >
-        {cartSize}
-      </p>
-    </div>
   )
 }

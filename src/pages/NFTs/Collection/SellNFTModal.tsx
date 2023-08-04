@@ -7,9 +7,17 @@ import {
   useNFTCollections,
   useNFTDetails
 } from '../../../context'
+import {
+  amount,
+  Metaplex,
+  SplTokenAmount,
+  SplTokenCurrency,
+  toBigNumber,
+  walletAdapterIdentity
+} from '@metaplex-foundation/js'
 // import { INFTAsk } from '../../../types/nft_details.d'
-import { Button, SuccessfulListingMsg, TransactionErrorMsg } from '../../../components'
-import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
+import { Button, TransactionErrorMsg } from '../../../components'
+import { checkMobile, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
 import {
@@ -61,6 +69,7 @@ const TEN_MILLION = 10000000
 import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
 import {
   couldNotFetchNFTMetaData,
+  didNotModifyPrice,
   successfulListingMsg,
   TransactionSignatureErrorNotify
 } from './AggModals/AggNotifications'
@@ -69,6 +78,8 @@ import { web3 } from '@project-serum/anchor'
 import DelistNFTModal from './DelistNFTModal'
 import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
 import { saveNftTx } from '../../../api/NFTs/actions'
+import { constructListInstruction } from '../../../web3/auction-house-sdk/list'
+import { cancelListing } from '../../../web3/auction-house-sdk/cancelListing'
 
 export const SellNFTModal: FC<{
   visible: boolean
@@ -77,7 +88,7 @@ export const SellNFTModal: FC<{
   acceptBid?: boolean
 }> = ({ visible, handleClose, delistNFT, acceptBid }): ReactElement => {
   const { connection, network } = useConnectionConfig()
-  const { general, setGeneral, ask, nftMetadata, bids } = useNFTDetails()
+  const { general, ask, nftMetadata, bids } = useNFTDetails()
   const highestBid = useMemo(() => {
     if (bids.length > 0) {
       return bids.reduce((maxBid, currentBid) => {
@@ -96,9 +107,7 @@ export const SellNFTModal: FC<{
   const { setSellNFT, setOpenJustModal, setRefreshClicked } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
-  const [askPrice, setAskPrice] = useState<number | null>(
-    ask ? parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER : null
-  )
+  const [askPrice, setAskPrice] = useState<number | null>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<any>(null)
@@ -135,7 +144,7 @@ export const SellNFTModal: FC<{
   )
   const orderTotal: number = useMemo(() => bidPrice, [bidPrice])
 
-  const isSellingNow = useMemo(() => bidPrice === askPrice, [askPrice])
+  const isAcceptingBid = useMemo(() => bidPrice === askPrice, [askPrice])
 
   const closeTheModal = () => {
     setOpenJustModal(false)
@@ -144,7 +153,7 @@ export const SellNFTModal: FC<{
 
   useEffect(() => {
     if (highestBid) {
-      setAskPrice(formatSOLNumber(highestBid.buyer_price))
+      setAskPrice((prev) => (prev ? prev : formatSOLNumber(highestBid ? highestBid?.buyer_price : 0)))
     }
   }, [highestBid])
   const serviceFee = useMemo(
@@ -174,6 +183,11 @@ export const SellNFTModal: FC<{
     if (inputRef.current) inputRef.current.focus()
   }, [inputRef.current])
 
+  const auctionHouseClient = useMemo(
+    () => new Metaplex(connection).use(walletAdapterIdentity(wal)).auctionHouse(),
+    [connection, wallet]
+  )
+
   const sendNftTransactionLog = useCallback(
     (txType, signature, isModified) => {
       saveNftTx(
@@ -201,18 +215,22 @@ export const SellNFTModal: FC<{
   const attemptConfirmTransaction = async (
     signature: any,
     notifyStr?: string,
-    isModified?: boolean
+    isModified?: boolean,
+    signatureStatus?: string
   ): Promise<void> => {
     try {
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
-      console.log(confirm)
+      const confirm = await confirmTransaction(
+        connection,
+        signature,
+        signatureStatus ? signatureStatus : 'confirmed'
+      )
       // successfully list nft
       if (confirm.value.err === null) {
         setTimeout(() => {
           console.log('refreshing after 15 sec')
           setRefreshClicked((prev) => prev + 1)
         }, 15000)
-        if (isSellingNow)
+        if (isAcceptingBid)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
         else
           notify(
@@ -236,7 +254,7 @@ export const SellNFTModal: FC<{
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
     )
     const freeTradeStateAgg: [PublicKey, number] = await freeSellerTradeStatePDAAgg(
-      isSellingNow ? new PublicKey(highestBid.wallet_key) : wallet?.adapter?.publicKey,
+      isAcceptingBid ? new PublicKey(highestBid.wallet_key) : wallet?.adapter?.publicKey,
       AUCTION_HOUSE,
       general.token_account,
       general.mint_address
@@ -256,7 +274,7 @@ export const SellNFTModal: FC<{
     const auctionHouseTreasuryAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        toPublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
         Buffer.from(TREASURY_PREFIX)
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -266,7 +284,7 @@ export const SellNFTModal: FC<{
     const escrowPaymentAccount: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(AUCTION_HOUSE_PREFIX),
-        toPublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
+        toPublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE).toBuffer(),
         buyerPublicKey.toBuffer()
       ],
       toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
@@ -274,18 +292,18 @@ export const SellNFTModal: FC<{
 
     const buyerTradeState: [PublicKey, number] = await tradeStatePDA(
       buyerPublicKey,
-      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE,
+      isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE,
       general.token_account,
       general.mint_address,
-      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
       bnTo8(bidPrice)
     )
     const sellerTradeState: [PublicKey, number] = await tradeStatePDA(
       wallet?.adapter?.publicKey,
-      isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE, // try changing this
+      isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE, // try changing this
       general.token_account,
       general.mint_address,
-      isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
+      isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT,
       bnTo8(bidPrice)
     )
 
@@ -345,84 +363,72 @@ export const SellNFTModal: FC<{
     e.preventDefault()
     setDelistLoading(true)
     const transaction = new Transaction()
-    let removeAskIX: TransactionInstruction | undefined = undefined
+    let removeAskIX: TransactionInstruction[] | undefined = undefined
     // if ask exists
-    if (ask !== null) {
-      // make web3 cancel
-      removeAskIX = await createRemoveAskIX()
-    }
-
-    // adds ixs to tx
-    if (ask && removeAskIX) transaction.add(removeAskIX)
     try {
+      if (ask !== null) {
+        // make web3 cancel
+        removeAskIX = await cancelListing(connection, wal, ask)
+      }
+      // adds ixs to tx
+      if (ask && removeAskIX) {
+        removeAskIX.map((removeIx) => transaction.add(removeIx))
+      }
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
       setPendingTxSig(signature)
-      await attemptConfirmTransaction(signature, 'Delisted')
+      await attemptConfirmTransaction(signature, 'Delisted', removeAskIX !== undefined, 'confirmed')
         .then(() => console.log('TX Confirmed'))
         .catch((err) => console.error(err))
       setDelistLoading(false)
     } catch (error) {
       console.log('User exited signing transaction to list fixed price')
-      TransactionSignatureErrorNotify(nftMetadata.name)
+      TransactionSignatureErrorNotify(nftMetadata.name, 'User exited signing transaction to list fixed price')
       setDelistLoading(false)
     }
   }
+
   const callSellInstruction = async (e: any) => {
     e.preventDefault()
     if (parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER === askPrice) {
-      notify({
-        type: 'error',
-        message: (
-          <TransactionErrorMsg
-            title={`Did not modify price!`}
-            itemName={nftMetadata.name}
-            supportText={`Please make sure the price is changing from current price.`}
-          />
-        )
-      })
+      didNotModifyPrice('Please make sure the price is changing from current price.')
       return
     }
-
     setIsLoading(true)
+    let transaction: Transaction
+    let removeAskIX: TransactionInstruction[] | undefined = undefined
+
+    try {
+      transaction = new Transaction()
+
+      if (ask !== null) {
+        // make web3 cancel
+        removeAskIX = await cancelListing(connection, wal, ask)
+      }
+      // adds ixs to tx
+      if (ask && removeAskIX) {
+        removeAskIX.map((removeIx) => transaction.add(removeIx))
+      }
+      const instructions = await constructListInstruction(
+        connection,
+        wal,
+        toPublicKey(general?.mint_address),
+        toPublicKey(general?.token_account),
+        askPrice,
+        true
+      )
+      for (const ix of instructions) transaction.add(ix)
+    } catch (error) {
+      console.log(error)
+      TransactionSignatureErrorNotify(nftMetadata.name, 'Failed to build instructions for Listing NFT')
+      setIsLoading(false)
+      return
+    }
 
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
 
-    const sellInstructionArgs: SellInstructionArgs = {
-      tradeStateBump: tradeState[1],
-      freeTradeStateBump: freeTradeState[1],
-      programAsSignerBump: programAsSignerPDA[1],
-      buyerPrice: buyerPrice,
-      tokenSize: tokenSize
-    }
-
-    const sellInstructionAccounts: SellInstructionAccounts = getSellInstructionAccounts(
-      wallet?.adapter?.publicKey,
-      general,
-      metaDataAccount,
-      tradeState[0],
-      freeTradeState[0],
-      programAsSignerPDA[0]
-    )
-
-    const sellIX: TransactionInstruction = createSellInstruction(sellInstructionAccounts, sellInstructionArgs)
-
-    const transaction = new Transaction()
-
-    let removeAskIX: TransactionInstruction | undefined = undefined
-    // if ask exists
-    if (ask !== null) {
-      // make web3 cancel
-      removeAskIX = await createRemoveAskIX()
-    }
-
-    // adds ixs to tx
-    console.log(`Updating ask: ${removeAskIX !== undefined}`)
-    if (ask && removeAskIX) transaction.add(removeAskIX)
-    transaction.add(sellIX)
-
-    if (isSellingNow) {
+    if (isAcceptingBid) {
       const { programAsSignerPDA } = await derivePDAForExecuteSale()
       const {
         metaDataAccount,
@@ -459,13 +465,15 @@ export const SellNFTModal: FC<{
         tokenAccount: new PublicKey(highestBid?.token_account_key),
         tokenMint: new PublicKey(highestBid?.token_account_mint_key),
         metadata: new PublicKey(metaDataAccount),
-        treasuryMint: new PublicKey(isSellingNow ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
+        treasuryMint: new PublicKey(isAcceptingBid ? highestBid?.auction_house_treasury_mint_key : TREASURY_MINT),
         escrowPaymentAccount: escrowPaymentAccount[0],
         sellerPaymentReceiptAccount: wallet?.adapter?.publicKey,
         buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-        authority: new PublicKey(isSellingNow ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
-        auctionHouse: new PublicKey(isSellingNow ? highestBid?.auction_house_key : AUCTION_HOUSE),
-        auctionHouseFeeAccount: new PublicKey(isSellingNow ? highestBid?.auction_house_fee_account : AH_FEE_ACCT),
+        authority: new PublicKey(isAcceptingBid ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+        auctionHouse: new PublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE),
+        auctionHouseFeeAccount: new PublicKey(
+          isAcceptingBid ? highestBid?.auction_house_fee_account : AH_FEE_ACCT
+        ),
         auctionHouseTreasury: auctionHouseTreasuryAddress[0],
         buyerTradeState: buyerTradeState[0],
         sellerTradeState: sellerTradeState[0],
@@ -487,55 +495,15 @@ export const SellNFTModal: FC<{
 
     try {
       const signature = await wal.sendTransaction(transaction, connection)
-      console.log(signature)
       setPendingTxSig(signature)
       attemptConfirmTransaction(signature, 'Listed', removeAskIX ? true : false)
         .then((res) => console.log('TX Confirmed', res))
         .catch((err) => console.error(err))
     } catch (error) {
-      console.log('User exited signing transaction to list fixed price')
+      console.error('User exited signing transaction to list fixed price')
       TransactionSignatureErrorNotify(nftMetadata.name)
       setIsLoading(false)
     }
-  }
-
-  const createRemoveAskIX = async (): Promise<TransactionInstruction> => {
-    const usrAddr: PublicKey = wallet?.adapter?.publicKey
-    if (!usrAddr) {
-      console.log('no public key connected')
-      return
-    }
-
-    const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
-    const tradeState: [PublicKey, number] = await tradeStatePDA(
-      usrAddr,
-      AUCTION_HOUSE,
-      general.token_account,
-      general.mint_address,
-      TREASURY_MINT,
-      bnTo8(curAskingPrice)
-    )
-
-    const cancelInstructionArgs: CancelInstructionArgs = {
-      buyerPrice: curAskingPrice,
-      tokenSize: tokenSize
-    }
-
-    const cancelInstructionAccounts: CancelInstructionAccounts = {
-      wallet: wallet?.adapter?.publicKey,
-      tokenAccount: new PublicKey(general.token_account),
-      tokenMint: new PublicKey(general.mint_address),
-      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-      auctionHouse: new PublicKey(AUCTION_HOUSE),
-      auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
-      tradeState: tradeState[0]
-    }
-
-    const cancelIX: TransactionInstruction = await createCancelInstruction(
-      cancelInstructionAccounts,
-      cancelInstructionArgs
-    )
-    return cancelIX
   }
 
   const updateAskPrice = (e) => {
@@ -636,18 +604,6 @@ export const SellNFTModal: FC<{
           <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
         </div>
 
-        {/* <div className="vContainer">
-          <input
-            className="enterBid"
-            placeholder="0.0"
-            type="number"
-            ref={inputRef}
-            value={askPrice}
-            onChange={(e) => updateAskPrice(e)}
-          />
-          <img src="/img/crypto/SOL.svg" tw="absolute right-[12px] top-[17px]" />
-        </div> */}
-
         {pendingTxSig && (
           <div tw="mt-3 text-center">
             <span>
@@ -675,7 +631,6 @@ export const SellNFTModal: FC<{
           <div className="rowContainer">
             <div className="leftAlign" tw="flex">
               Service Fee ({NFT_MARKET_TRANSACTION_FEE}%)
-              {/* {TableHeaderTitle('', `Creator Fee (${sellerFeeBasisPoints / 100}%) `, false)}{' '} */}
             </div>
             <div className="rightAlign"> {serviceFee.toFixed(totalToReceive > 9 ? 2 : 3)} SOL</div>
           </div>
@@ -704,11 +659,8 @@ export const SellNFTModal: FC<{
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
           </Button>
         </div>
-        <div
-          tw="bottom-0 left-[calc(50% - 160px)] sm:left-[calc(50% - 150px)] 
-        sm:w-[auto] sm:mb-[75px] absolute sm:right-auto"
-        >
-          <TermsTextNFT string={ask ? 'List' : 'Modify '} />
+        <div tw="bottom-0 left-[calc(50% - 160px)] sm:absolute sm:w-[auto] absolute sm:right-auto">
+          <TermsTextNFT string={ask ? 'List' : 'Modify '} bottom={true} />
         </div>
       </>
     </STYLED_POPUP_BUY_MODAL>

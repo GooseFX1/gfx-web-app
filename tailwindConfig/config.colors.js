@@ -11,6 +11,7 @@ const colors = {
   'grey-4': '#CACACA',
   'grey-5': '#EEEEEE',
   'grey-6': '#E2E2E2',
+  'grey-6': '#D9D9D9',
   'blue-1': '#5855FF',
   'purple-1': '#8D4CDD',
   'purple-2': '#9625AE',

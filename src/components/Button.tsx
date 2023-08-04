@@ -3,7 +3,13 @@ import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Loader } from './Loader'
 
-const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: string; $disabled: boolean }>`
+const BUTTON = styled.button<{
+  $cssStyle: TwStyle
+  $height: string
+  $width: string
+  $disabled: boolean
+  $disabledColor: TwStyle
+}>`
   ${tw`flex justify-center border-none rounded-full items-center min-w-[80px]`}
   ${({ $cssStyle }) => $cssStyle};
   height: ${({ $height }) => $height};
@@ -16,6 +22,7 @@ const BUTTON = styled.button<{ $cssStyle: TwStyle; $height: string; $width: stri
   }
   &:disabled {
     opacity: 0.6;
+    ${({ $disabledColor }) => $disabledColor};
   }
 `
 
@@ -34,8 +41,9 @@ export const Button: FC<{
   cssStyle?: TwStyle
   loading?: boolean
   disabled?: boolean
+  disabledColor?: TwStyle
   [x: string]: any
-}> = ({ height, width, cssStyle, disabled, children, loading, ...props }) => (
+}> = ({ height, width, cssStyle, disabled, children, loading, disabledColor, ...props }) => (
   <>
     <BUTTON
       $cssStyle={cssStyle}
@@ -43,6 +51,7 @@ export const Button: FC<{
       $width={width}
       $disabled={disabled}
       disabled={disabled}
+      $disabledColor={disabledColor}
       {...props}
     >
       {loading ? <LOADER /> : children}

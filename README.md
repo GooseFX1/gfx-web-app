@@ -1,6 +1,5 @@
 <div align="center">
-  <img height="142" src="https://github.com/GooseFX1/gfx-web-app/blob/dev/public/img/assets/goosefx-logo-lite
-.svg" />
+  <img height="100" src="https://media.goosefx.io/logos/GFX-Monogram.svg" />
 
   <h4>
     <a href="https://goosefx.io">Website</a>

@@ -57,7 +57,7 @@ export const SingleNFTCard: FC<{
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-  const { currencyView, operatingNFT, setOperatingNFT } = useNFTAggregator()
+  const { currencyView, operatingNFT, setOperatingNFT, nftInBag } = useNFTAggregator()
   const refreshCard = useRef(null)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -74,7 +74,7 @@ export const SingleNFTCard: FC<{
   }, [sessionUser, sessionUserParsedAccounts, item, operatingNFT])
 
   const hideThisNFT: boolean = useMemo(() => {
-    if (myNFTsByCollection === null || !item) return false
+    if (myNFTsByCollection === null || myNFTsByCollection === undefined || !item) return false
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item?.mint_address)
     return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
   }, [myNFTsByCollection, operatingNFT, item])
@@ -231,7 +231,10 @@ export const SingleNFTCard: FC<{
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
-  const gradientBg: boolean = useMemo(() => isOwner && localAsk !== null, [localAsk, isOwner])
+  const gradientBg: boolean = useMemo(
+    () => (isOwner && localAsk !== null) || nftInBag[item?.mint_address] !== undefined,
+    [localAsk, isOwner, nftInBag]
+  )
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
     if (ask?.marketplace_name === null) return AH_NAME(ask?.auction_house_key)
@@ -255,7 +258,7 @@ export const SingleNFTCard: FC<{
           myBidToNFT={localUserBidToNFT}
           buttonType={isOwner ? (localAsk ? 'Modify' : 'Sell') : null}
           setNFTDetails={setNFTDetails}
-          addNftToBag={addNftToBag}
+          addNftToBag={!isOwner ? addNftToBag : null}
           ask={isOwner ? null : localAsk ? localAsk : null}
           setIsLoadingBeforeRelocate={setIsLoadingBeforeRelocate}
         />
@@ -323,11 +326,7 @@ export const SingleNFTCard: FC<{
                     <img
                       className="ah-name"
                       alt="marketplace"
-                      src={`/img/assets/Aggregator/${
-                        localAsk?.marketplace_name === null
-                          ? AH_NAME(localAsk?.auction_house_key)
-                          : localAsk?.marketplace_name
-                      }.svg`}
+                      src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
                     />
                   </div>
                 </GenericTooltip>

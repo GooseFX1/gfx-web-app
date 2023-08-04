@@ -1,10 +1,7 @@
 <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="17.5" cy="17.5" r="17.5" fill="#fff"/>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.613 9.332a3.086 3.086 0 0 0-2.987 2.363l-2.2 8.931c-.484 1.967.985 3.873 2.987 3.873h10.175c1.962 0 3.423-1.835 3.008-3.777l-1.906-8.93a3.087 3.087 0 0 0-3.009-2.46h-6.069zm2.825 8.045c2.077 0 3.76-1.705 3.76-3.81v-1.03a.62.62 0 0 0-.615-.623.62.62 0 0 0-.615.623v1.03c0 1.416-1.133 2.563-2.53 2.563-1.398 0-2.53-1.147-2.53-2.563v-1.03a.62.62 0 0 0-.616-.623.62.62 0 0 0-.615.623v1.03c0 2.105 1.684 3.81 3.76 3.81z" fill="url(#azm4sxxeta)"/>
-    <defs>
-        <linearGradient id="azm4sxxeta" x1="9.334" y1="15.399" x2="26.12" y2="17.55" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F7931A"/>
-            <stop offset="1" stop-color="#AC1CC7"/>
-        </linearGradient>
-    </defs>
+<g opacity="0.7">
+<circle cx="17.5" cy="17.5" r="17.5" fill="#1C1C1C"/>
+<path d="M23.9166 17.3496H11.0833" stroke="#EEEEEE" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M17.5 11.0834V23.9167" stroke="#EEEEEE" stroke-width="2.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
 </svg>

@@ -137,7 +137,7 @@ export function colors(mode: string): Colors {
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
     bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
-    bg26: mode === 'dark' ? '#1c1c1c' : '#ffffff',
+    bg26: mode === 'dark' ? '#1c1c1c' : '#d9d9d9',
     bg27: mode === 'dark' ? '#3c3c3c' : '#ffffff',
     bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
     borderForNFTCard: mode === 'dark' ? ' #3c3c3c' : ' #B5B5B5',

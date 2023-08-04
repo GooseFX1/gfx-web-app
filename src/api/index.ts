@@ -21,6 +21,10 @@ const apiClient = (base: string) =>
     }
   })
 
+export const gooseFxProd = () => {
+  return `https://nest-api.goosefx.io`
+}
+
 export const httpClient = (base: string) =>
   axios.create({
     baseURL: `https://${base}.goosefx.io`,

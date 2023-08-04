@@ -12,15 +12,10 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { Market, MARKETS } from 'openbook-ts/serum'
-import { useWallet } from '@solana/wallet-adapter-react'
+import { MARKETS } from 'openbook-ts/serum'
 import { useCrypto } from './crypto'
 import { usePriceFeed } from './price_feed'
-import { useConnectionConfig } from './settings'
-import { useTradeHistory } from './trade_history'
-import { capitalizeFirstLetter, floorValue, notify, removeFloatingPointError } from '../utils'
-import { crypto } from '../web3'
-import { useAccounts } from './accounts'
+import { removeFloatingPointError } from '../utils'
 import { PublicKey } from '@solana/web3.js'
 
 export type OrderInput = undefined | 'price' | 'size' | 'total'
@@ -99,7 +94,6 @@ interface IOrderConfig {
   loading: boolean
   order: IOrder
   focused: string
-  placeOrder: () => void
   setFocused: Dispatch<SetStateAction<OrderInput>>
   setOrder: Dispatch<SetStateAction<IOrder>>
 }
@@ -107,13 +101,10 @@ interface IOrderConfig {
 const OrderContext = createContext<IOrderConfig | null>(null)
 
 export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { fetchAccounts } = useAccounts()
-  const { connection } = useConnectionConfig()
-  const { getAskSymbolFromPair, selectedCrypto, isSpot } = useCrypto()
+  const { selectedCrypto, isDevnet } = useCrypto()
   const { prices } = usePriceFeed()
-  const { fetchOpenOrders } = useTradeHistory()
-  const wallet = useWallet()
   const [focused, setFocused] = useState<OrderInput>(undefined)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(false)
   const [order, setOrder] = useState<IOrder>({
     display: 'limit',
@@ -149,9 +140,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const throttleDelay = 300
   const sizeThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorSize = useCallback(async () => {
-    if (sizeThrottle.current) {
-      clearTimeout(sizeThrottle.current)
-    }
+    sizeThrottle.current && clearTimeout(sizeThrottle.current)
     sizeThrottle.current = setTimeout(async () => {
       setOrder((prevState) => ({
         ...prevState
@@ -165,9 +154,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const priceThrottle: MutableRefObject<NodeJS.Timeout | undefined> = useRef()
   const floorPrice = useCallback(async () => {
-    if (priceThrottle.current) {
-      clearTimeout(priceThrottle.current)
-    }
+    priceThrottle.current && clearTimeout(priceThrottle.current)
     priceThrottle.current = setTimeout(async () => {
       //setOrder((prevState) => ({ ...prevState, price: floorValue(+order.price, selectedCrypto.market?.tickSize) }))
     }, throttleDelay)
@@ -178,47 +165,8 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const marketPrice = useMemo(() => prices[selectedCrypto.pair]?.current, [prices, selectedCrypto.pair])
   useEffect(() => {
-    if (!order.price && marketPrice) {
-      setOrder((prevState) => ({ ...prevState, price: marketPrice }))
-    }
-  }, [marketPrice, order.price, isSpot])
-
-  const placeOrder = useCallback(async () => {
-    setLoading(true)
-
-    try {
-      if (!selectedCrypto.market) {
-        throw new Error(`Market not selected`)
-      }
-
-      await crypto.placeOrder(connection, selectedCrypto.market as Market, order, wallet)
-      const ask = getAskSymbolFromPair(selectedCrypto.pair)
-      const price = floorValue(+order.price, selectedCrypto.market?.tickSize)
-      const size = floorValue(+order.size, selectedCrypto.market?.minOrderSize)
-      await notify({
-        type: 'success',
-        message: `${capitalizeFirstLetter(order.display)} order placed successfully!`,
-        description: `${capitalizeFirstLetter(order.side)}ing ${size} ${ask} at $${price} each`,
-        icon: 'trade_success'
-      })
-      setTimeout(() => {
-        fetchAccounts()
-        fetchOpenOrders()
-      }, 3000)
-    } catch (e: any) {
-      console.log(e)
-      await notify(
-        {
-          type: 'error',
-          message: `${capitalizeFirstLetter(order.display)} order failed`,
-          icon: 'trade_error'
-        },
-        e
-      )
-    }
-
-    setLoading(false)
-  }, [connection, order, selectedCrypto.market, selectedCrypto.pair, wallet])
+    !order.price && marketPrice && setOrder((prevState) => ({ ...prevState, price: marketPrice }))
+  }, [marketPrice, order.price, isDevnet])
 
   return (
     <OrderContext.Provider
@@ -226,7 +174,6 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         loading,
         order,
         focused,
-        placeOrder,
         setFocused,
         setOrder
       }}
@@ -241,5 +188,7 @@ export const useOrder = (): IOrderConfig => {
   if (!context) {
     throw new Error('Missing order context')
   }
-  return context
+
+  const { loading, order, focused, setFocused, setOrder } = context
+  return { loading, order, focused, setFocused, setOrder }
 }

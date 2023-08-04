@@ -137,7 +137,7 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }>
   const { getAskSymbolFromPair } = useCrypto()
 
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const assetIcon = useMemo(() => `/img/crypto/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
   return (
     <div className="popular-tokens">
       <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
@@ -227,23 +227,23 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 }
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
-  const { isSpot, setIsSpot } = useCrypto()
+  const { isDevnet, setIsDevnet } = useCrypto()
   const isGeoBlocked = useBlacklisted()
 
   const handleToggle = (e: string) => {
-    if (e === 'spot') setIsSpot(true)
-    else setIsSpot(false)
+    if (e === 'spot') setIsDevnet(true)
+    else setIsDevnet(false)
   }
 
   return (
     <div className="header-wrapper">
       <MODAL_TITLE>
-        <div onClick={() => handleToggle('spot')} className={isSpot ? 'active btn' : 'btn'}>
+        <div onClick={() => handleToggle('spot')} className={isDevnet ? 'active btn' : 'btn'}>
           Spot
         </div>
         <div
           onClick={isGeoBlocked ? null : () => handleToggle('perps')}
-          className={!isSpot ? 'active btn' : 'btn'}
+          className={!isDevnet ? 'active btn' : 'btn'}
         >
           Perps
         </div>
@@ -259,7 +259,7 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isSpot } = useCrypto()
+  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isDevnet } = useCrypto()
   //const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
   const displayPair = useMemo(() => {
     return selectedCrypto.display
@@ -269,10 +269,7 @@ export const DropdownPairs: FC = () => {
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
-  const assetIcon = useMemo(
-    () => `/img/crypto/${selectedCrypto.type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, selectedCrypto.type]
-  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
   const handleDropdownSearch = (searchString: string) => {
     const filteredResult = pairs.filter((item) =>
       getAskSymbolFromPair(item.pair).includes(searchString.toUpperCase())

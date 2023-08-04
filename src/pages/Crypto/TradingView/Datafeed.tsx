@@ -6,8 +6,8 @@ import { sleep, getUnixTs } from '../../../utils/misc'
 const URL_SERVER = 'https://trading-view.goosefx.io/tradingview/'
 
 export const DataFeedWrapper = (): any => {
-  const { selectedCrypto, isSpot } = useCrypto()
-  const dataFeed = useMemo(() => makeDataFeed(), [selectedCrypto, isSpot])
+  const { selectedCrypto, isDevnet } = useCrypto()
+  const dataFeed = useMemo(() => makeDataFeed(), [selectedCrypto, isDevnet])
   return dataFeed
 }
 

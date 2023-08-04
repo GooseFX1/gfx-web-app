@@ -1,12 +1,22 @@
-import { createContext, ReactNode, useContext, useState, FC, SetStateAction, Dispatch, useCallback } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  FC,
+  SetStateAction,
+  Dispatch,
+  useCallback
+} from 'react'
+import { INFTInBag } from '../types/nft_details'
 
 interface INFTAggConfig {
   setBuyNow: Dispatch<SetStateAction<any>>
   setBidNow: Dispatch<SetStateAction<any>>
   setOpenJustModal: Dispatch<SetStateAction<any>>
   openJustModal: boolean
-  nftInBag: any
-  setNftInBag: any
+  nftInBag: INFTInBag
+  setNftInBag: Dispatch<SetStateAction<INFTInBag>>
   buyNowClicked: boolean
   bidNowClicked: boolean
   setCurrency?: () => void
@@ -31,7 +41,7 @@ interface INFTAggConfig {
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [nftInBag, setNftInBag] = useState<any[]>([])
+  const [nftInBag, setNftInBag] = useState<any>({})
   const [buyNowClicked, setBuyNow] = useState<boolean>(false)
   const [bidNowClicked, setBidNow] = useState<boolean>(false)
   const [delistNFT, setDelistNFT] = useState<boolean>(false)

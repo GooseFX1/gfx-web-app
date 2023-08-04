@@ -1,11 +1,12 @@
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import { Dropdown, Menu } from 'antd'
-import { MarketType, useAccounts, useDarkMode } from '../../../context'
+import { MarketType, useAccounts, useCrypto, useDarkMode } from '../../../context'
 import { useMemo, FC, useState } from 'react'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
+import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDevnet'
 import 'styled-components/macro'
 import { checkMobile } from '../../../utils'
 
@@ -131,11 +132,12 @@ export const DepositWithdraw: FC<{
   tradeType: string
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
-  const { devnetBalances: balances } = useAccounts()
+  const { devnetBalances: devnetbalances, balances: mainnetBalances } = useAccounts()
+  const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
   const [amount, setAmount] = useState('')
-  const perpTokenList = PERPS_COLLATERAL
+  const perpTokenList = isDevnet ? PERPS_COLLATERAL_DEVNET : PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
   const defualtPerpToken = perpTokenList[0]
   const [percentageIndex, setPercentageindex] = useState(null)
@@ -145,44 +147,53 @@ export const DepositWithdraw: FC<{
     `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
   const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
   const symbol = perpToken.token
+  const balances = useMemo(() => (isDevnet ? devnetbalances : mainnetBalances), [isDevnet])
   const tokenAmount = balances[perpToken.marketAddress]
-  const assetIcon = useMemo(
-    () => `/img/crypto/${perpToken.type === 'synth' ? `g${symbol}` : symbol}.svg`,
-    [symbol, perpToken.type]
-  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
-    setPercentageindex(index)
-    if (tradeType === 'deposit') {
-      if (!tokenAmount || !tokenAmount.uiAmountString) {
-        setAmount('0.00')
-        return
+    if (!isDevnet) {
+      setPercentageindex(index)
+      if (tradeType === 'deposit') {
+        if (!tokenAmount || !tokenAmount.uiAmountString) {
+          setAmount('0.00')
+          return
+        }
+        let result = 0
+        if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
+        else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
+        else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
+        else result = +tokenAmount.uiAmountString
+        setAmount(String(result))
+      } else {
+        const avail = traderInfo.maxWithdrawable
+        if (!avail || Number.isNaN(+avail)) {
+          setAmount('0.00')
+          return
+        }
+        let result = 0
+        if (index === 0) result = (+avail * 25) / 100
+        else if (index === 1) result = (+avail * 50) / 100
+        else if (index === 2) result = (+avail * 75) / 100
+        else result = +avail
+        setAmount((Math.floor(result * 1000) / 1000).toString())
       }
-      let result = 0
-      if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
-      else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
-      else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
-      else result = +tokenAmount.uiAmountString
-      setAmount(String(result))
-    } else {
-      const avail = traderInfo.maxWithdrawable
-      if (!avail || Number.isNaN(+avail)) {
-        setAmount('0.00')
-        return
-      }
-      let result = 0
-      if (index === 0) result = (+avail * 25) / 100
-      else if (index === 1) result = (+avail * 50) / 100
-      else if (index === 2) result = (+avail * 75) / 100
-      else result = +avail
-      setAmount((Math.floor(result * 1000) / 1000).toString())
     }
   }
+
+  useEffect(() => {
+    if (isDevnet) setAmount('500')
+  }, [isDevnet])
+
   const handleInputChange = (e) => {
-    const t = e.target.value
-    if (!isNaN(+t)) {
-      e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
-      setAmount(e.target.value)
+    if (isDevnet) {
+      setAmount('500')
+    } else {
+      const t = e.target.value
+      if (!isNaN(+t)) {
+        e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
+        setAmount(e.target.value)
+      }
     }
   }
   const handleSubmit = async () => {
@@ -196,6 +207,11 @@ export const DepositWithdraw: FC<{
     }
   }
   const checkDisabled = () => {
+    if (isDevnet) {
+      if (!traderInfo.traderRiskGroup) return false
+      if (traderInfo.traderRiskGroup.totalDeposited.toJSON().m !== '0') return true
+      return false
+    }
     if (tradeType !== 'deposit') {
       if (!traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount || !+amount) return true
     } else {
@@ -302,7 +318,7 @@ const Tokens: FC<{ token: string; type: MarketType; marketAddress: string }> = (
 }) => {
   const { balances } = useAccounts()
   const symbol = token
-  const assetIcon = useMemo(() => `/img/crypto/${type === 'synth' ? `g${symbol}` : symbol}.svg`, [symbol, type])
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
   const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
   const truncMarketAddress = truncateAddress(marketAddress)
   const tokenAmount = balances[marketAddress]

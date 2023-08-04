@@ -189,6 +189,9 @@ export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 export const truncateAddress = (address: string, leftRightSize?: number): string =>
   `${address.substr(0, leftRightSize ?? 4)}..${address.substr(-(leftRightSize ?? 3), leftRightSize ?? 4)}`
 
+export const truncateAddressForSixChar = (address: string): string =>
+  `${address.substr(0, 6)}..${address.substr(-4, 4)}`
+
 export const parseUnixTimestamp = (unixTime: string): string => {
   const date = new Date(0)
   date.setUTCSeconds(Number(unixTime))
