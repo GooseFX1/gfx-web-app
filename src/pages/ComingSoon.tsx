@@ -20,13 +20,18 @@ export const ComingSoon = (): ReactElement => {
   const handleRelocateToWithdraw = useCallback(() => history.push('/withdraw'), [history])
 
   return (
-    <WRAPPER tw="h-[100vh] w-full flex flex-col items-center justify-center pt-[5vh]">
-      <GradientText text={'Single Sided Liquidity Pools v2'} fontSize={28} fontWeight={600} />
+    <WRAPPER tw="h-[90vh] w-full flex flex-col items-center justify-center pt-[5vh] sm:h-auto">
+      <div tw="mx-3 sm:text-center">
+        <GradientText text={'Single Sided Liquidity Pools v2'} fontSize={28} fontWeight={600} />
+      </div>
       <div tw="dark:text-grey-5 mt-2 text-black-4 text-lg font-semibold">Coming Soon...</div>
 
-      <img tw="mt-4 w-auto h-[32vh]" src={`/img/assets/coming-soon-farm-${mode}.svg`} />
+      <img tw="mt-4 w-auto h-[32vh] sm:w-[90%]" src={`/img/assets/coming-soon-farm-${mode}.svg`} />
 
-      <div tw="w-[726px] dark:text-grey-5 mt-4 text-black-4 text-average font-semibold text-center">
+      <div
+        tw="w-[726px] dark:text-grey-5 mt-4 text-black-4 
+        text-average font-semibold text-center sm:w-[90%]"
+      >
         The SSL v1 Pools have been deprecated, please make sure to withdraw your funds. The v2 pools will be
         released soon.{' '}
         <GFX_LINK tw="text-average" href={SOCIAL_MEDIAS['twitter']} target={'_blank'} rel="noreferrer">
