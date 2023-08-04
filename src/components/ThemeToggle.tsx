@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import styled from 'styled-components'
-import { useDarkMode } from '../context/dark_mode'
+import { useDarkMode } from '../context'
 import { CenteredImg, CenteredDiv, SpaceBetweenDiv } from '../styles'
 import tw from 'twin.macro'
 

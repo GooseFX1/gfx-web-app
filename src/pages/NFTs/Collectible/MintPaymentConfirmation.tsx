@@ -4,7 +4,7 @@ import { Row } from 'antd'
 import { MintLayout } from '@solana/spl-token-v2'
 import { Connection } from '@solana/web3.js'
 import { LAMPORT_MULTIPLIER, MAX_METADATA_LEN, getAssetCostToStore } from '../../../web3'
-import { IMetadataContext } from '../../../types/nft_details.d'
+import { IMetadataContext } from '../../../types/nft_details'
 import { Loader } from '../../../components'
 import { PopupCustom } from '../Popup/PopupCustom'
 

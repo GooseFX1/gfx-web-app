@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { SUPPORTED_TOKEN_LIST } from '../../../constants'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
-import { sleep, getUnixTs } from '../../../utils/misc'
+import { sleep, getUnixTs } from '../../../utils'
 
 const URL_SERVER = 'https://trading-view.goosefx.io/tradingview/'
 

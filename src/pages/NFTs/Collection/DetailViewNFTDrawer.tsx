@@ -1,11 +1,11 @@
 import { FC, ReactElement, useEffect, useMemo, useState, useCallback } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Col, Drawer, Row, Tabs } from 'antd'
-import { INFTAsk, INFTBid } from '../../../types/nft_details'
+import { INFTAsk } from '../../../types/nft_details'
 
 import { Button } from '../../../components/Button'
 import { useNFTProfile, useNFTAggregator, useNFTDetails } from '../../../context'
-import { checkMobile, formatSOLDisplay, truncateAddress, capitalizeFirstLetter } from '../../../utils'
+import { checkMobile, truncateAddress, capitalizeFirstLetter } from '../../../utils'
 import { GradientText } from '../../../components/GradientText'
 import { AppraisalValue } from '../../../utils/GenericDegsin'
 import TabPane from 'antd/lib/tabs/TabPane'

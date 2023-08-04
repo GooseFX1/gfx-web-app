@@ -6,7 +6,6 @@ import NoContent from './NoContent'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTDetails, useNFTProfile } from '../../../context'
 import { INFTGeneralData, ISingleNFT } from '../../../types/nft_details.d'
 import styled from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import { NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
 import NFTLoading from '../Home/NFTLoading'
@@ -20,8 +19,6 @@ import CardV2 from '../Collection/CardV2'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
-
-const DROPDOWN_WRAPPER = styled.div``
 
 interface INFTDisplayV2 {
   type: 'collected' | 'created' | 'favorited' | 'bids'

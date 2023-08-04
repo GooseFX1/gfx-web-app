@@ -1,25 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { Dropdown, Menu } from 'antd'
-import React, {
-  ReactElement,
-  FC,
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  SetStateAction,
-  Dispatch
-} from 'react'
+import React, { ReactElement, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
-import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator, useNFTProfile } from '../../context'
-import { LAMPORTS_PER_SOL, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
+import { LAMPORTS_PER_SOL, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { GradientText } from '../../components/GradientText'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
-import { minimizeTheString, removeNFTFromBag } from '../../web3/nfts/utils'
+import { removeNFTFromBag } from '../../web3/nfts/utils'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import Lottie from 'lottie-react'
 import EmptyBagDark from '../../animations/emptyBag-dark.json'
@@ -27,16 +18,8 @@ import EmptyBagLite from '../../animations/EmptyBag-lite.json'
 import { formatSOLDisplay, formatSOLNumber, notify, clamp } from '../../utils'
 import { Button } from '../../components'
 import { NFT_MARKETS } from '../../api/NFTs/constants'
-import { logData } from '../../api/analytics'
-import { INFTGeneralData, ITensorBuyIX } from '../../types/nft_details'
-import {
-  confirmTransaction,
-  getParsedAccountByMint,
-  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  StringPublicKey,
-  TOKEN_PROGRAM_ID,
-  toPublicKey
-} from '../../web3'
+import { ITensorBuyIX } from '../../types/nft_details'
+import { confirmTransaction, getParsedAccountByMint, StringPublicKey } from '../../web3'
 import { getMagicEdenBuyInstruction, getMagicEdenListing, getTensorBuyInstruction } from '../../api/NFTs'
 import { pleaseTryAgain, successfulNFTPurchaseMsg } from './Collection/AggModals/AggNotifications'
 import { getMagicEdenTokenAccount } from '../../web3/auction-house-sdk/pda'

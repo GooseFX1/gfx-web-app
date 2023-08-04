@@ -34,26 +34,6 @@ import { WalletProfilePicture } from './ProfilePageSidebar'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { copyToClipboard, signAndUpdateDetails, validateSocialLinks } from '../../../web3/nfts/utils'
 
-// const DROPDOWN = styled(Dropdown)`
-//   width: auto;
-//   padding: 0;
-//   border: none;
-//   background: transparent;
-//   margin-left: ${({ theme }) => theme.margin(3)};
-
-//   .collection-more-icon {
-//     @media (max-width: 500px) {
-//       transform: rotate(90deg);
-//     }
-//     width: 43px;
-//     height: 41px;
-//   }
-
-//   &:after {
-//     content: none;
-//   }
-// `
-
 type Props = {
   isSessionUser: boolean
 }

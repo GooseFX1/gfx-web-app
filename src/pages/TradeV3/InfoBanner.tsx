@@ -11,7 +11,6 @@ import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
 import 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
-import { checkMobile } from '../../utils'
 import { Tooltip } from '../../components'
 
 const SETTING_MODAL = styled(PopupCustom)`

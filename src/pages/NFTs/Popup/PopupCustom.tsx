@@ -3,7 +3,7 @@ import { Modal } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { SVGDynamicReverseMode } from '../../../styles/utils'
+import { SVGDynamicReverseMode } from '../../../styles'
 import { useDarkMode } from '../../../context'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`

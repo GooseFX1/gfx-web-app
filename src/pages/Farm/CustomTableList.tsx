@@ -3,7 +3,6 @@ import { PublicKey } from '@solana/web3.js'
 import { saveLiquidityVolume, getVolumeApr, fetchTotalVolumeTrade, VolumeAprRecord } from '../../api/SSL'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled from 'styled-components'
-//import BN from 'bn.js'
 import {
   getStakingAccountKey,
   fetchCurrentAmountStaked,
@@ -12,16 +11,13 @@ import {
   getLiquidityAccountKey,
   getMainVaultKey,
   AccountLayout,
-  // getNetworkConnection,
   getNetworkConnectionText
 } from '../../web3'
 import { SSL_LAYOUT, LIQUIDITY_ACCOUNT_LAYOUT, CONTROLLER_LAYOUT, ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import { useConnectionConfig, usePriceFeedFarm, useFarmContext } from '../../context'
 import { ADDRESSES } from '../../web3'
 import { MorePoolsSoon } from './MorePoolsSoon'
-//import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { ZERO, NETWORK_CONSTANTS, TOKEN_NAMES, LAMPORTS_PER_SOL } from '../../constants'
-//import { checkMobile } from '../../utils'
 import ExpandRowView from './ExpandRowView'
 import tw from 'twin.macro'
 import { checkMobile, ConditionalData } from '../../utils'

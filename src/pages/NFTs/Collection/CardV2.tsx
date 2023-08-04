@@ -13,7 +13,7 @@ import axios from 'axios'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useHistory, useParams } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { moneyFormatter, commafy, checkMobile } from '../../../utils'
+import { commafy, checkMobile } from '../../../utils'
 import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
 import {
   useNFTProfile,
@@ -28,13 +28,11 @@ import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
-// import styled, { css } from 'styled-components'
 import { GradientText } from '../../../components/GradientText'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Tag } from '../../../components/Tag'
@@ -44,7 +42,6 @@ import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
 import { IAppParams } from '../../../types/app_params'
 //#region styles
-const DIVV = styled.div``
 type ICardV2 = {
   singleNFT: ISingleNFT
   nftDetails?: INFTGeneralData

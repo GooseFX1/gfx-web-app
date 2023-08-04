@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useState, useEffect, FC } from 'react'
+import React, { useCallback, useState, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { useNFTCollections } from '../../../context'
-import { fetchAllSingleNFTs } from '../../../api/NFTs'
 import { Header } from './Header'
 import { NFTHomeSlider } from '../Slider/NFTHomeSlider'
 import AnalyticsTabs from './Tab'
 
 import OneOfOnesNFTs from './OneOfOnesNFTs'
-import { COLLECTION_TYPES, NFTCollection } from '../../../types/nft_collections.d'
 import Loading from './Loading'
 import { ModalSlide } from '../../../components/ModalSlide'
 import { Banner } from '../../../components/Banner'

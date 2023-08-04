@@ -6,7 +6,7 @@ import { GradientImageBorder } from './ReviewTable'
 import { INFTProjectConfig } from '../../../../types/nft_launchpad'
 import { formatTommddyyyy, getDateInArray } from '../../../../web3/nfts/utils'
 import Slider from 'react-slick'
-import { GradientText } from '../../../../components/GradientText'
+import { GradientText } from '../../../../components'
 
 const WRAPPER = styled.div`
   min-height: 800px;

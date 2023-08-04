@@ -3,7 +3,6 @@ import React, { FC, useEffect } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 // import styled from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import { PendingTransaction, STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import { checkMobile, formatSOLDisplay } from '../../../utils'

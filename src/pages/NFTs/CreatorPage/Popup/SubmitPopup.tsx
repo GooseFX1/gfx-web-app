@@ -8,7 +8,7 @@ import { Checkbox, Col, Row } from 'antd'
 import { useNFTCreator } from '../../../../context/nft_creator'
 import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
-import { GradientText } from '../../../../components/GradientText'
+import { GradientText } from '../../../../components'
 
 export const CENTER_WRAP = styled.div`
   display: flex;

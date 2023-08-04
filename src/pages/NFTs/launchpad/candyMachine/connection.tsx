@@ -18,7 +18,6 @@ import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { web3 } from '@project-serum/anchor'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { sendNonceTransaction } from '../../../../api/NFTLaunchpad'
-import { notify } from '../../../../utils'
 import { perpsNotify } from '../../../../utils/perpsNotifications'
 import { confirmTransaction } from '../../../../web3'
 

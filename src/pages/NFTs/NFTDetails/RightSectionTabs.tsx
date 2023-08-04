@@ -4,14 +4,12 @@ import { useHistory } from 'react-router-dom'
 import { PublicKey, TransactionInstruction, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import styled, { css } from 'styled-components'
-import { Col, Row, Tabs } from 'antd'
-import { SpaceBetweenDiv } from '../../../styles'
+import { Tabs } from 'antd'
 import { useNFTDetails, useNFTProfile, useConnectionConfig } from '../../../context'
 import { MintItemViewStatus, INFTBid } from '../../../types/nft_details'
 import RemoveModalContent from './RemoveModalContent'
 import { Modal, SuccessfulListingMsg } from '../../../components'
-import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { notify, truncateAddress } from '../../../utils'
+import { notify } from '../../../utils'
 import { tradeStatePDA, callCancelInstruction, callWithdrawInstruction, tokenSize } from '../actions'
 import { removeNonCollectionListing } from '../../../api/NFTs'
 import { BidModal } from './BidModal'
@@ -33,8 +31,6 @@ import {
 import BN from 'bn.js'
 import tw from 'twin.macro'
 import { NFTTabSections } from '../Collection/DetailViewNFTDrawer'
-
-const { TabPane } = Tabs
 
 //#region styles
 

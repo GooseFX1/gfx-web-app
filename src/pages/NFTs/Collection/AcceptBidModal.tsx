@@ -9,8 +9,8 @@ import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
 import { NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
-import { Button } from '../../../components/Button'
-import { getMetadata } from '../../../web3/nfts/metadata'
+import { Button } from '../../../components'
+import { getMetadata } from '../../../web3'
 
 const AcceptBidModal: FC<{
   isLoading: boolean

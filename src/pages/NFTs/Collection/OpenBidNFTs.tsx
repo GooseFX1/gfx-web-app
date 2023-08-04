@@ -4,7 +4,7 @@ import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, useNFTDet
 import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
-import { BaseNFT, ISingleNFT } from '../../../types/nft_details'
+import { BaseNFT } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchOpenBidByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'

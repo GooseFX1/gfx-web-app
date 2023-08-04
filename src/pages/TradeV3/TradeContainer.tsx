@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable */
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { useCrypto, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'

@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { ReactElement, FC, useState, MouseEventHandler, useMemo } from 'react'
+import React, { FC, useState, useMemo } from 'react'
 import Slider from 'react-slick'
 import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
-import { Button, Checkbox } from 'antd'
 import { checkMobile } from '../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'

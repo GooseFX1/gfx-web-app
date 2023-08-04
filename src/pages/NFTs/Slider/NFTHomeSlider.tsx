@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import { MainButton } from '../../../components/MainButton'
+import { MainButton } from '../../../components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'

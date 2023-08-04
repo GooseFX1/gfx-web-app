@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { SpaceBetweenDiv, CenteredDiv } from '../styles'
 import { Image } from 'antd'
 import tw from 'twin.macro'
-import { useSwap } from '../context/swap'
+import { useSwap } from '../context'
 
 const WRAPPER = styled(SpaceBetweenDiv)`
   padding: 0.75rem 1.5rem 0.75rem 0rem;

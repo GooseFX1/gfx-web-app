@@ -28,7 +28,6 @@ import { NFT_PROFILE_OPTIONS } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, ParsedAccount, getMetadata } from '../../../web3'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { ProfileItemDetails } from '../Profile/ProfileItemDetails'
-// import styled, { css } from 'styled-components'
 import { GradientText } from '../../../components'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PriceWithToken } from '../../../components/common/PriceWithToken'

@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { GradientText } from '../../components/GradientText'
+import { GradientText } from '../../components'
 import { AnalyticsStats } from './components/AnalyticsStats'
 import { FinancialsStats } from './components/FinancialsStats'
 

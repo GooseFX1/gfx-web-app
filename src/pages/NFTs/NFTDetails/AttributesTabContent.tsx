@@ -8,7 +8,6 @@ import { useDarkMode, useNFTDetails, usePriceFeedFarm } from '../../../context'
 import { truncateAddress, parseUnixTimestamp, formatSOLNumber } from '../../../utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
-import { Tag } from '../../../components/Tag'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 
 const ATTRIBUTES_TAB_CONTENT = styled.div`

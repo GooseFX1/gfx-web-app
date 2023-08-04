@@ -21,7 +21,7 @@ import { notify, validateUUID } from '../../../utils'
 import { ButtonWrapper } from '../NFTButton'
 import apiClient from '../../../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../../api/NFTs'
-import { MainButton } from '../../../../src/components'
+import { MainButton } from '../../../components'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',

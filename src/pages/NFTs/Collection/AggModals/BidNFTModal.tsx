@@ -3,7 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import BN from 'bn.js'
 import { FC, ReactElement, useEffect, useMemo, useRef, useState } from 'react'
-import { Button } from '../../../../components/Button'
+import { Button } from '../../../../components'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 import {
   useAccounts,
@@ -17,7 +17,6 @@ import { GFX_LINK } from '../../../../styles'
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify, truncateAddress } from '../../../../utils'
 import { AppraisalValueSmall } from '../../../../utils/GenericDegsin'
 import styled from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import {
   AH_FEE_ACCT,
@@ -48,7 +47,6 @@ import { BorderBottom } from '../SellNFTModal'
 import { couldNotDeriveValueForBuyInstruction, pleaseTryAgain, successfulListingMessage } from './AggNotifications'
 import { constructBidInstruction } from '../../../../web3/auction-house-sdk/bid'
 
-const BID_MODAL = styled.div``
 export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
   const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)

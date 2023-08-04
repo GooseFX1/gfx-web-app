@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { MainButton } from '../../../components/MainButton'
+import { MainButton } from '../../../components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'

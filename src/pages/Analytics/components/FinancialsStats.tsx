@@ -6,7 +6,7 @@ import { useConnectionConfig } from '../../../context'
 import { revenueCol } from '../constants'
 import { Table } from 'antd'
 import { moneyFormatterWithComma } from '../../../utils'
-import { ANALYTICS_BASE, ANALYTICS_ENDPOINTS, getSOLPrice, getTokenDetails } from '../../../api/analytics'
+import { ANALYTICS_ENDPOINTS, getSOLPrice, getTokenDetails } from '../../../api/analytics'
 import RevenueGraph from './RevenueGraph'
 
 export interface IAccounts {
@@ -22,7 +22,6 @@ export type IAccount = {
 export const FinancialsStats: FC = () => <SSLRevenue />
 
 export const SSLRevenue: FC = () => {
-  const [tokenPrices, setTokenprices] = useState<any>()
   const [dataSource, setDataSource] = useState<any>()
   const { connection } = useConnectionConfig()
   const [totalSol, setTotalSol] = useState<number>(0)

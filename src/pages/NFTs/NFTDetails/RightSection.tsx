@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useMemo, FC } from 'react'
+import React, { useState, useEffect, FC } from 'react'
 import { useHistory } from 'react-router-dom'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { Col, Row } from 'antd'
 import styled, { css } from 'styled-components'
-// import { moneyFormatter } from '../../../utils'
-import { RightSectionTabs } from './RightSectionTabs'
 import { useNFTDetails, useNFTProfile, usePriceFeedFarm } from '../../../context'
 import { MintItemViewStatus } from '../../../types/nft_details'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
@@ -16,7 +12,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
-import { GradientText } from '../../../components/GradientText'
+import { GradientText } from '../../../components'
 import { NFTTabSections } from '../Collection/DetailViewNFTDrawer'
 
 //#region styles

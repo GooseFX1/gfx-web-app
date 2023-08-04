@@ -2,7 +2,7 @@ import React, { ReactNode, FC } from 'react'
 import { Form, Input, DatePicker, Col } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { StyledFormDoubleItem } from './FormDoubleItem.styled'
-import { Dropdown } from '../Form/Dropdown'
+import { Dropdown } from './Dropdown'
 import isEmpty from 'lodash/isEmpty'
 
 interface DataFormItem {

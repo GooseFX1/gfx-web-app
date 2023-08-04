@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { token } from '@project-serum/anchor/dist/cjs/utils'
 import { ReactElement, FC } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
