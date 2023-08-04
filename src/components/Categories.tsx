@@ -21,8 +21,8 @@ const WRAPPER = styled.button`
     color: white;
   }
 `
-
-const STYLED_POOL_MENU = styled(Menu)`
+//fixes styled-components crash
+const STYLED_POOL_MENU = styled((props) => <Menu {...props} />)`
   &.dot-menu {
     min-width: 251px;
     background-color: #1e1e1e;
