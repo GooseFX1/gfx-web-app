@@ -43,7 +43,8 @@ export const constructListInstruction = async (
   mintAccount: PublicKey,
   tokenAccount: PublicKey,
   amount: number,
-  printReceipt: boolean
+  printReceipt: boolean,
+  isPnft: boolean
 ): Promise<TransactionInstruction[]> => {
   const price: SplTokenAmount = {
     basisPoints: toBigNumber(amount * LAMPORTS_PER_SOL_NUMBER),
@@ -80,18 +81,20 @@ export const constructListInstruction = async (
       tokenSize: tokenSizeSDK.basisPoints,
       tokenAccount
     })
+  let sellRemainingAccounts: ISellAnchorRemainingAccounts
+  if (isPnft) {
+    const pnftAccounts = await derivePNFTAccounts(connection, seller, programAsSigner, mintAccount)
 
-  const pnftAccounts = await derivePNFTAccounts(connection, seller, programAsSigner, mintAccount)
-
-  const sellRemainingAccounts: ISellAnchorRemainingAccounts = {
-    metadataProgram: pnftAccounts.metadataProgram,
-    delegateRecord: pnftAccounts.delegateRecord,
-    tokenRecord: pnftAccounts.tokenRecord,
-    tokenMint: pnftAccounts.tokenMint,
-    edition: pnftAccounts.edition,
-    authRulesProgram: pnftAccounts.authRulesProgram,
-    authRules: pnftAccounts.authRules,
-    sysvarInstructions: pnftAccounts.sysvarInstructions
+    sellRemainingAccounts = {
+      metadataProgram: pnftAccounts.metadataProgram,
+      delegateRecord: pnftAccounts.delegateRecord,
+      tokenRecord: pnftAccounts.tokenRecord,
+      tokenMint: pnftAccounts.tokenMint,
+      edition: pnftAccounts.edition,
+      authRulesProgram: pnftAccounts.authRulesProgram,
+      authRules: pnftAccounts.authRules,
+      sysvarInstructions: pnftAccounts.sysvarInstructions
+    }
   }
 
   const accounts: SellInstructionAccounts = {
@@ -106,7 +109,7 @@ export const constructListInstruction = async (
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: SystemProgram.programId,
     programAsSigner: programAsSigner,
-    anchorRemainingAccounts: Object.values(sellRemainingAccounts)
+    anchorRemainingAccounts: isPnft ? Object.values(sellRemainingAccounts) : null
   }
 
   const args = {
@@ -123,14 +126,14 @@ export const constructListInstruction = async (
 
   /** We should set metadata account as writable for pnfts, when we do createSellInstruction for normal nfts,
    *  the metadata is set to be non writable **/
-  sellInstruction.keys.at(2).isWritable = true
+  if (isPnft) sellInstruction.keys.at(2).isWritable = true
 
   // Make seller as signer since createSellInstruction don't assign a signer
   const signerKeyIndex = sellInstruction.keys.findIndex((key) => key.pubkey.equals(seller))
   sellInstruction.keys[signerKeyIndex].isSigner = true
   sellInstruction.keys[signerKeyIndex].isWritable = true
 
-  instructions.push(additionalComputeBudgetInstruction)
+  if (isPnft) instructions.push(additionalComputeBudgetInstruction)
   instructions.push(sellInstruction)
 
   if (printReceipt) {
@@ -154,12 +157,6 @@ export const constructListInstruction = async (
 }
 
 const TOKEN_AUTH_RULES_ID = new PublicKey('auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg')
-
-export const getMetadataAccount = (mint: PublicKey): PublicKey =>
-  PublicKey.findProgramAddressSync(
-    [Buffer.from('metadata', 'utf8'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-    TOKEN_METADATA_PROGRAM_ID
-  )[0]
 
 export const getMasterEditionAccount = (mint: PublicKey): PublicKey =>
   PublicKey.findProgramAddressSync(
@@ -223,8 +220,8 @@ export const derivePNFTAccounts = async (
   mint: PublicKey,
   seller?: PublicKey
 ): Promise<IPNFTAccounts> => {
-  const metadataAccount = await getMetadataAccount(mint)
-  const metadata = await Metadata.fromAccountAddress(connection, metadataAccount)
+  const metadataAccount = await getMetadata(mint.toBase58())
+  const metadata = await Metadata.fromAccountAddress(connection, toPublicKey(metadataAccount))
   const associatedTokenAccount = getAssociatedTokenAddressSync(mint, wallet)
   const tokenRecord = findTokenRecordPda(mint, associatedTokenAccount)
   const masterEdition = getMasterEditionAccount(mint)
@@ -297,7 +294,7 @@ export const derivePNFTAccounts = async (
     metadataAccount: {
       isSigner: false,
       isWritable: true,
-      pubkey: metadataAccount
+      pubkey: toPublicKey(metadataAccount)
     }
   }
 }

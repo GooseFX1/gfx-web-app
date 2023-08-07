@@ -56,7 +56,7 @@ import DelistNFTModal from './DelistNFTModal'
 import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
 import { saveNftTx } from '../../../api/NFTs'
 import { constructListInstruction } from '../../../web3/auction-house-sdk/list'
-import { cancelListing } from '../../../web3/auction-house-sdk/cancelListing'
+import { createRemoveAskIX } from '../../../web3/auction-house-sdk/cancelListing'
 
 export const SellNFTModal: FC<{
   visible: boolean
@@ -120,6 +120,7 @@ export const SellNFTModal: FC<{
     [onChainNFTMetadata]
   )
   const orderTotal: number = useMemo(() => bidPrice, [bidPrice])
+  const isPnft = useMemo(() => onChainNFTMetadata?.tokenStandard === 4, [onChainNFTMetadata])
 
   const isAcceptingBid = useMemo(() => bidPrice === askPrice, [askPrice])
 
@@ -339,16 +340,16 @@ export const SellNFTModal: FC<{
     e.preventDefault()
     setDelistLoading(true)
     const transaction = new Transaction()
-    let removeAskIX: TransactionInstruction[] | undefined = undefined
+    let removeAskIX: TransactionInstruction | undefined = undefined
     // if ask exists
     try {
       if (ask !== null) {
         // make web3 cancel
-        removeAskIX = await cancelListing(connection, wal, ask)
+        removeAskIX = await createRemoveAskIX(connection, wal, ask, general, isPnft)
       }
       // adds ixs to tx
       if (ask && removeAskIX) {
-        removeAskIX.map((removeIx) => transaction.add(removeIx))
+        transaction.add(removeAskIX)
       }
       const signature = await wal.sendTransaction(transaction, connection)
       console.log(signature)
@@ -372,18 +373,18 @@ export const SellNFTModal: FC<{
     }
     setIsLoading(true)
     let transaction: Transaction
-    let removeAskIX: TransactionInstruction[] | undefined = undefined
+    let removeAskIX: TransactionInstruction | undefined = undefined
 
     try {
       transaction = new Transaction()
 
       if (ask !== null) {
         // make web3 cancel
-        removeAskIX = await cancelListing(connection, wal, ask)
+        removeAskIX = await createRemoveAskIX(connection, wal, ask, general, isPnft)
       }
       // adds ixs to tx
       if (ask && removeAskIX) {
-        removeAskIX.map((removeIx) => transaction.add(removeIx))
+        transaction.add(removeAskIX)
       }
       const instructions = await constructListInstruction(
         connection,
@@ -391,7 +392,8 @@ export const SellNFTModal: FC<{
         toPublicKey(general?.mint_address),
         toPublicKey(general?.token_account),
         askPrice,
-        true
+        true,
+        isPnft
       )
       for (const ix of instructions) transaction.add(ix)
     } catch (error) {
