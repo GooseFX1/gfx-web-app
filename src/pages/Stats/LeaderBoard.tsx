@@ -260,8 +260,8 @@ export const LeaderBoard: FC = () => {
         <img
           src={
             checkMobile()
-              ? '/img/assets/Leaderboard/nft_banner_mobile.svg'
-              : '/img/assets/Leaderboard/nft_banner.svg'
+              ? '/img/assets/Leaderboard/nft_banner_mobile.webp'
+              : '/img/assets/Leaderboard/nft_banner.webp'
           }
           alt="nft-banner"
           width={!checkMobile() ? '100%' : '90%'}
@@ -270,7 +270,7 @@ export const LeaderBoard: FC = () => {
         />
         {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
         <BANNER_BTN>
-          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/" target="_blank">
+          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">
             Trade
           </a>
         </BANNER_BTN>
@@ -281,7 +281,7 @@ export const LeaderBoard: FC = () => {
             ?.filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
             .map((user: User, index: number) => (
               <CARD key={index}>
-                <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id + 1}</div>
+                <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
                 <img
                   src={`/img/assets/Leaderboard/${user?.id}User_${mode}.svg`}
                   alt="badge"
@@ -293,7 +293,7 @@ export const LeaderBoard: FC = () => {
                   <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
                     {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
                   </div>
-                  <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}p</div>
+                  <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}</div>
                 </div>
                 <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
                   {user?.boost}x Boost
@@ -302,7 +302,7 @@ export const LeaderBoard: FC = () => {
             ))}
         {users?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
-            <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id + 1}</div>
+            <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
             <img
               src={`/img/assets/Leaderboard/${user?.id}User_${mode}.svg`}
               alt="badge"
@@ -314,7 +314,7 @@ export const LeaderBoard: FC = () => {
               <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
                 {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
               </div>
-              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}p</div>
+              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}</div>
             </div>
             <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
               {user?.boost}x Boost

@@ -91,7 +91,7 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
   return (
     <>
       <td>
-        <div tw="text-left pl-2.5"># {user?.id + 1}</div>
+        <div tw="text-left pl-2.5"># {user?.id}</div>
       </td>
       <td>
         <div>
@@ -192,7 +192,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
 export const ColumnMobile: FC<{ user: User }> = ({ user }) => (
   <>
     <td>
-      <div># {user?.id + 1}</div>
+      <div># {user?.id}</div>
     </td>
     <td>{<div>{truncateAddressForSixChar(user?.address)}</div>}</td>
     <td>
