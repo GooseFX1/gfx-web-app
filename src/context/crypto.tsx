@@ -58,23 +58,29 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pairs, setPairs] = useState([])
   const [filteredSearchPairs, setFilteredSearchPairs] = useState([])
   const pairsToset = MARKET_PAIRS as any
+  const devnetPairs = MARKET_PAIRS_DEVNET as any
 
   const getPairWithMarketAddress = () => {
     let pairSet = pairsToset[0]
-    let isSpotCheck = useBlacklisted()
+    let isDevnet = useBlacklisted()
     try {
       const paths = window.location.href.split('/')
       const marketAddress = paths[4]
       pairsToset.map((item) => {
         if (marketAddress === item.marketAddress) {
           pairSet = item
-          if (item.type === 'perps') isSpotCheck = false
-          if (item.type === 'crypto') isSpotCheck = true
+          isDevnet = false
         }
       })
-      return { set: pairSet, isDevnet: isSpotCheck }
+      devnetPairs.map((item) => {
+        if (marketAddress === item.marketAddress) {
+          pairSet = item
+          isDevnet = true
+        }
+      })
+      return { set: pairSet, isDevnet: isDevnet }
     } catch (e) {
-      return { set: pairSet, isDevnet: isSpotCheck }
+      return { set: pairSet, isDevnet: isDevnet }
     }
   }
   const [isDevnet, setIsDevnet] = useState<boolean>(getPairWithMarketAddress().isDevnet)
@@ -144,17 +150,5 @@ export const useCrypto = (): ICryptoConfig => {
     throw new Error('Missing crypto context')
   }
 
-  return {
-    pairs: context.pairs,
-    formatPair: context.formatPair,
-    getAskSymbolFromPair: context.getAskSymbolFromPair,
-    getBidSymbolFromPair: context.getBidSymbolFromPair,
-    getSymbolFromPair: context.getSymbolFromPair,
-    selectedCrypto: context.selectedCrypto,
-    setSelectedCrypto: context.setSelectedCrypto,
-    filteredSearchPairs: context.filteredSearchPairs,
-    setFilteredSearchPairs: context.setFilteredSearchPairs,
-    isDevnet: context.isDevnet,
-    setIsDevnet: context.setIsDevnet
-  }
+  return context
 }

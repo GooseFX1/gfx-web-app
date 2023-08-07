@@ -101,7 +101,9 @@ const gap = {
   5.75: '23px'
 }
 const translate = {
-  1.5: '6px'
+  1.25: '5px',
+  1.5: '6px',
+  3.75: '15px'
 }
 const spacing = {
   1.5: '6px'

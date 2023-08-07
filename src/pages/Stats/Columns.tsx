@@ -84,16 +84,14 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
     else if (loyalty > 50 && loyalty <= 85) return 'yellow'
     else return 'gradient-3'
   }
-
   const getClassNameForPnl = (pnl: number): string => {
     if (pnl < 0) return 'red'
     else return 'green'
   }
-
   return (
     <>
       <td>
-        <div tw="text-left pl-2.5"># {user?.id + 1}</div>
+        <div tw="text-left pl-2.5"># {user?.id}</div>
       </td>
       <td>
         <div>
@@ -118,13 +116,13 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
         <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty.toFixed(1)}%</div>
       </td>
       <td>
-        <div>{user?.dailyPoints && '0'}</div>
+        <div>{user?.dailyPoints === null ? '0' : user?.dailyPoints}</div>
       </td>
       <td>
-        <div>{user?.weeklyPoints && '0'}</div>
+        <div>{user?.weeklyPoints === null ? '0' : user?.weeklyPoints}</div>
       </td>
       <td>
-        <div tw="text-right pr-2.5">{user?.weeklyPoints && '0'}</div>
+        <div tw="text-right pr-2.5">{user?.weeklyPoints === null ? '0' : user?.weeklyPoints}</div>
       </td>
     </>
   )
@@ -194,7 +192,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
 export const ColumnMobile: FC<{ user: User }> = ({ user }) => (
   <>
     <td>
-      <div># {user?.id + 1}</div>
+      <div># {user?.id}</div>
     </td>
     <td>{<div>{truncateAddressForSixChar(user?.address)}</div>}</td>
     <td>
@@ -221,6 +219,7 @@ const LearnMore: FC<{ screenType: number }> = ({ screenType }): JSX.Element => (
     className="learn-more"
     target="_blank"
     rel="noreferrer"
+    tw="block my-0 mx-auto w-1/2"
   >
     Learn More
   </a>
@@ -284,6 +283,7 @@ export const HowToEarn: FC<{
                   to={`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`}
                   target="_blank"
                   rel="noreferrer"
+                  tw="block w-1/2 mx-auto my-0 sm:w-full"
                 >
                   <div className="listNow">List now</div>
                 </Link>
@@ -308,7 +308,7 @@ export const HowToEarn: FC<{
               </div>
               <LearnMore screenType={screenType} />
               {screenType === 2 && (
-                <Link to="/nfts/" target="_blank" rel="noreferrer">
+                <Link to="/nfts/" target="_blank" rel="noreferrer" tw="block w-1/2 mx-auto my-0 sm:w-full">
                   <div className="explore">Explore</div>
                 </Link>
               )}
@@ -337,7 +337,7 @@ export const HowToEarn: FC<{
               </div>
               <LearnMore screenType={screenType} />
               {screenType === 2 && (
-                <Link to="/nfts/" target="_blank" rel="noreferrer">
+                <Link to="/nfts/" target="_blank" rel="noreferrer" tw="block w-1/2 mx-auto my-0 sm:w-full">
                   <div className="explore">Explore</div>
                 </Link>
               )}
@@ -374,6 +374,7 @@ export const HowToEarn: FC<{
                 to={screenType !== 2 ? '/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/' : '/nfts'}
                 target="_blank"
                 rel="noreferrer"
+                tw="block w-1/2 mx-auto my-0 sm:w-full"
               >
                 <div className="explore">Trade Now</div>
               </Link>
