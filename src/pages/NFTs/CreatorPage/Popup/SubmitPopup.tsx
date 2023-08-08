@@ -6,7 +6,6 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Checkbox, Col, Row } from 'antd'
 import { useNFTCreator } from '../../../../context/nft_creator'
-import { useHistory } from 'react-router-dom'
 import { useNavCollapse } from '../../../../context'
 import { GradientText } from '../../../../components'
 
@@ -109,7 +108,6 @@ const SubmitPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle 
   const [disclaimer, setDisclaimer] = useState<boolean>(false)
   const [acceptRisk, setRisk] = useState<boolean>(false)
   const { creatorData, submit } = useNFTCreator()
-  const history = useHistory()
   const { setRelaxPopup } = useNavCollapse()
   const handleCheckboxClick = (e) => {
     setRisk(e.target.checked)
@@ -117,7 +115,6 @@ const SubmitPopup: FC<{ rewardToggle: (b: boolean) => void }> = ({ rewardToggle 
   const handleSubmitClicked = async () => {
     submit()
     setRelaxPopup(true)
-    history.push('/NFTs/launchpad')
   }
   return (
     <CENTER_WRAP>

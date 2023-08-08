@@ -20,7 +20,6 @@ import {
 } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
 import { CryptoContent } from './pages/TradeV3/TradeContainer'
-import { Launchpad } from './pages/NFTs/launchpad/Launchpad'
 import { Creator } from './pages/NFTs/CreatorPage/Creator'
 import { AdminWrapper } from './pages/NFTs/adminPage/components/AdminWrapper'
 import { AnalyticsWrapper } from './pages/Analytics/AnalyticsWrapper'
@@ -56,9 +55,6 @@ export const Router: FC = () => (
                           </OrderProvider>
                         </PriceFeedProvider>
                       </CryptoProvider>
-                    </Route>
-                    <Route path="/NFTs/launchpad">
-                      <Launchpad />
                     </Route>
                     <Route path="/NFTs/creator">
                       <Creator />
