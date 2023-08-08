@@ -1,4 +1,3 @@
-// import React, { useState, useEffect } from 'react';
 import { Pie } from '@ant-design/plots'
 import { ReactElement, FC, useEffect, useState } from 'react'
 

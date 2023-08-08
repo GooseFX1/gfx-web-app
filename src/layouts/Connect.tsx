@@ -1,11 +1,9 @@
 import React, { FC, useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
-// import {useWalletModal} from '../context'
 import { Loader } from '../components'
 import { truncateAddress } from '../utils'
 import tw, { TwStyle } from 'twin.macro'
-// import styled from 'styled-components'
 import 'styled-components/macro'
 import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
@@ -16,101 +14,6 @@ import { useDarkMode, useWalletModal } from '../context'
 import useMoveOutside from '../hooks/useMoveOutside'
 import { useLocation } from 'react-router-dom'
 
-// const WALLET_ICON = styled.div`
-//   ${tw`flex items-center justify-center bg-black mr-[12px] rounded-circle`}
-// `
-// const WRAPPED_LOADER = styled.div`
-//   ${tw`w-10 relative my-0 mr-[-12px] ml-3`}
-//   div {
-//     ${tw`top-[-26px]`}
-//   }
-// `
-//
-// const WRAPPER = styled.button<{ $connected: boolean; $width: string }>`
-//   ${tw`py-0 px-[16px] flex items-center justify-center border-none border-0 rounded-circle cursor-pointer`}
-//   ${({$connected}) => $connected && `padding-left: 4px;`}
-//   background-color: ${({theme}) => theme.secondary3};
-//   transition: background-color ${({theme}) => theme.mainTransitionTime} ease-in-out;
-//   width: ${({$width}) => ($width ? $width : 'fit-content')};
-//
-//   &:hover {
-//     background-color: ${({theme}) => theme.secondary2};
-//   }
-//
-//   ${({theme, $connected}) =>
-//           $connected &&
-//           `
-//     background-image: linear-gradient(to right, ${theme.primary3}, ${theme.secondary6});
-//
-//     > span {
-//       cursor: initial !important;
-//     }
-//   `}
-//   span {
-//     ${tw`text-xs font-bold text-white`}
-//     line-height: normal;
-//   }
-// `
-// const SVGModeAdjust = styled.img`
-//   filter: ${({theme}) => theme.filterWhiteIcon};
-// `
-
-// const Overlay: FC<{ setArrowRotation: Dispatch<SetStateAction<boolean>> }> = ({setArrowRotation}) => {
-//   const {disconnect, wallet} = useWallet()
-//   const {setVisible: setWalletModalVisible} = useWalletModal()
-//   const isGeoBlocked = useBlacklisted()
-//   const base58 = useMemo(() => wallet?.adapter?.publicKey?.toBase58(), [wallet?.adapter?.publicKey])
-//
-//   if (isGeoBlocked) {
-//     return (
-//       <Menu
-//         css={tw`
-//           dark: bg-black-1 bg-grey-4 text-grey-1
-//           dark: text-grey-1
-//         `}
-//       >
-//         <MenuItem>Georestricted</MenuItem>
-//       </Menu>
-//     )
-//   }
-//   return (
-//     <Menu>
-//       {base58 && (
-//         <MenuItem
-//           onClick={async () => {
-//             await navigator.clipboard.writeText(base58)
-//           }}
-//         >
-//           <span>Copy Address</span>
-//           <SVGModeAdjust src={`${window.origin}/img/assets/copy_address.svg`} alt="copy_address"/>
-//         </MenuItem>
-//       )}
-//       {wallet && (
-//         <MenuItem
-//           onClick={() => {
-//             setTimeout(() => setWalletModalVisible(true), 100)
-//           }}
-//         >
-//           <span>Change Wallet</span>
-//           <SVGModeAdjust src={`${window.origin}/img/assets/wallet.svg`} alt="change_wallet"/>
-//         </MenuItem>
-//       )}
-//       {wallet && (
-//         <MenuItem
-//           onClick={(e) => {
-//             e.preventDefault()
-//             disconnect().then()
-//             sessionStorage.removeItem('connectedGFXWallet')
-//             setArrowRotation(false)
-//           }}
-//         >
-//           <span>Disconnect</span>
-//           <SVGModeAdjust src={`${window.origin}/img/assets/disconnect.svg`} alt="disconnect"/>
-//         </MenuItem>
-//       )}
-//     </Menu>
-//   )
-// }
 interface MenuItemProps {
   containerStyle?: TwStyle[]
   customMenuListItemStyle?: TwStyle[]
@@ -224,7 +127,7 @@ export const Connect: FC<MenuItemProps> = ({
         <Menu.Button
           as={'button'}
           css={[
-            tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-3 text-white items-center
+            tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-1 text-white items-center
             justify-center text-tiny font-semibold h-[35px] min-md:h-[30px] min-w-[122px] rounded-circle gap-1.75
             max-w-[138px] min-md:max-w-[154px] px-[5px] py-[3.5px] min-md:py-[4px]
             `,
@@ -354,32 +257,5 @@ export const Connect: FC<MenuItemProps> = ({
         </Transition>
       </Menu>
     </div>
-    // <WRAPPER
-    //   $connected={!!base58}
-    //   $width={width}
-    //   onClick={onSpanClick}
-    //   css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[35px]` : tw`h-[30px]`]}
-    // >
-    //   {wallet && base58 && (
-    //     <WALLET_ICON
-    //       css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[28px] w-[28px]` : tw`h-[24px] w-[24px]`]}
-    //     >
-    //       <img
-    //         css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[16px] w-[16px]` : tw`h-[14px] w-[14px]`]}
-    //         src={wallet.adapter.icon}
-    //         alt={`${wallet.adapter.name}_icon`}
-    //       />
-    //     </WALLET_ICON>
-    //   )}
-    //   <span>{content}</span>
-    //   {wallet && base58 && (
-    //     <ArrowDropdown
-    //       arrowRotation={arrowRotation}
-    //       offset={[9, 30]}
-    //       overlay={<Overlay setArrowRotation={setArrowRotation} />}
-    //       onVisibleChange={onArrowDropdownClick}
-    //     />
-    //   )}
-    // </WRAPPER>
   )
 }

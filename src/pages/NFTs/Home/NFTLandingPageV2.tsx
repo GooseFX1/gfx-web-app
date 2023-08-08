@@ -11,7 +11,7 @@ import {
   useNFTDetails,
   useNFTProfile
 } from '../../../context'
-import { checkMobile, commafy, LOADING_ARR, notify } from '../../../utils'
+import { checkMobile, commafy, LOADING_ARR } from '../../../utils'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import {
   LastRefreshedAnimation,
@@ -19,7 +19,7 @@ import {
   STYLED_BUTTON,
   useAnimateButtonSlide
 } from '../../Farm/FarmFilterHeader'
-import { SEARCH_RESULT_CONTAINER, STATS_BTN } from './NFTAggregator.styles'
+import { SEARCH_RESULT_CONTAINER } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
@@ -27,8 +27,8 @@ import { Arrow } from '../../../components/common/Arrow'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
-import { Image, Checkbox, Dropdown, Switch } from 'antd'
-import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3/agg_program_ids'
+import { Image, Dropdown } from 'antd'
+import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import ShowEyeLite from '../../../animations/showEyelite.json'
@@ -46,7 +46,6 @@ import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import debounce from 'lodash.debounce'
-import { successfulListingMsg } from '../Collection/AggModals/AggNotifications'
 
 const NFT_AGG_WRAP = styled.div<{ $currency }>`
   height: 100%;

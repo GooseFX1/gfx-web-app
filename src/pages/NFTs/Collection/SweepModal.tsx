@@ -102,7 +102,7 @@ const SWEEP_MODAL = styled(Modal)`
       width: 180px;
       height: 22px;
       flex-grow: 0;
-      margin: 0px;
+      margin: 0;
       font-family: Montserrat;
       font-size: 18px;
       font-weight: 600;
@@ -115,12 +115,12 @@ const SWEEP_MODAL = styled(Modal)`
       vertical-align: middle;
       line-height: 55px;
       position: relative;
-      right: 0px;
+      right: 0;
       z-index: 2;
     }
     .confettiAnimation {
       position: absolute;
-      top: 0px;
+      top: 0;
       z-index: 3;
       pointer-events: none;
     }
@@ -138,7 +138,7 @@ const SWEEP_MODAL = styled(Modal)`
       color: ${({ theme }) => theme.text15};
       width: 100%;
       padding: 50px;
-      padding-bottom: 0px;
+      padding-bottom: 0;
     }
     .topbar {
       text-align: center;
@@ -438,7 +438,7 @@ const CAROUSEL_WRAPPER = styled.div`
     transform: rotate(180deg);
   }
   .slick-next {
-    right: 0px;
+    right: 0;
   }
   .slick-list {
     background-color: ${({ theme }) => theme.sweepModalCard};
@@ -492,7 +492,7 @@ const CAROUSEL_WRAPPER2 = styled.div`
     transform: rotate(180deg);
   }
   .slick-next {
-    right: 0px;
+    right: 0;
     top: calc(50% + 20px);
   }
   .slick-list {
@@ -533,7 +533,7 @@ const SLIDER_ITEM = styled.div`
     .nft-img {
       border-radius: 20px;
       padding: 5px;
-      padding-bottom: 0px;
+      padding-bottom: 0;
     }
     .ant-card-body {
       text-align: center;
@@ -591,7 +591,7 @@ const SWEEP_CARD = styled.div`
     .nft-img {
       border-radius: 20px;
       padding: 5px;
-      padding-bottom: 0px;
+      padding-bottom: 0;
     }
   }
 
@@ -612,7 +612,7 @@ const SWEEP_CARD = styled.div`
     transform: rotate(180deg);
   }
   .slick-next {
-    right: 0px;
+    right: 0;
   }
   .slick-list {
     height: 100%;
@@ -637,7 +637,7 @@ const SWEEP_CARD = styled.div`
     .ant-card-body {
       text-align: center;
       height: 30px;
-      padding-top: 0px;
+      padding-top: 0;
       .sweep-price {
         margin-right: 20px;
         font-size: 22px;
@@ -656,7 +656,7 @@ const SWEEP_CARD = styled.div`
     width: 200px !important;
     position: relative;
     opacity: 1;
-    top: 0px !important;
+    top: 0 !important;
     .sweep-nft-name {
       font-size: 23px !important;
       margin-top: 10px !important;
@@ -832,7 +832,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
 
   const tradeStatePDA2 = async (token_account, mint_address, price) => {
     try {
-      const pda = await PublicKey.findProgramAddress(
+      return await PublicKey.findProgramAddress(
         [
           Buffer.from(AUCTION_HOUSE_PREFIX),
           wallet?.adapter?.publicKey.toBuffer(),
@@ -845,7 +845,6 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
         ],
         toPublicKey(AUCTION_HOUSE_PROGRAM_ID)
       )
-      return pda
     } catch (e) {
       console.log(e)
       return undefined
@@ -1009,7 +1008,7 @@ export const SweepModal: FC<ISweepModal> = ({ setVisible, visible }: ISweepModal
           }
 
           await timeout(1000)
-          if (index < tempNftBatch.length - 1) sliderRef && sliderRef.current && sliderRef.current.slickNext()
+          if (index < tempNftBatch.length - 1 && sliderRef?.current) sliderRef.current.slickNext()
         }
         setSweepSuccess(sweepSuccess)
         if (!sweepSuccess) {

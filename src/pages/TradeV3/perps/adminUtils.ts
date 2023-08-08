@@ -31,7 +31,7 @@ import {
   IInitializeMarketProductAccounts,
   IInitializeMarketProductParams
 } from '../../../types/dexterity_instructions'
-import { sendPerpsTransaction } from '../../NFTs/launchpad/candyMachine/connection'
+import { sendPerpsTransaction } from '../../../web3/connection'
 import { struct, u8, u32 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { initializeDerivative } from './instructions/derivativeIx'

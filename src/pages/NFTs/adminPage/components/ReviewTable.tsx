@@ -3,7 +3,7 @@ import React, { useState, FC } from 'react'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-import { GradientText } from '../../../../components/GradientText'
+import { GradientText } from '../../../../components'
 import { useNFTAdmin } from '../../../../context'
 import { useHistory } from 'react-router-dom'
 

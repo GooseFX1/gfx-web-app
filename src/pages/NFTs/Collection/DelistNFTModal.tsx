@@ -3,7 +3,6 @@ import React, { FC, useEffect } from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 // import styled from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import { PendingTransaction, STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
@@ -11,7 +10,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { TermsTextNFT } from './AcceptBidModal'
-
+import tw from 'twin.macro'
 const DelistNFTModal: FC<{
   isDelistLoading: boolean
   closeTheModal: any

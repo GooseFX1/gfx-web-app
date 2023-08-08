@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React, { useState } from 'react'
+import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { MainButton } from '../../../components/MainButton'
+import { MainButton } from '../../../components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -9,7 +9,6 @@ import { checkMobile } from '../../../utils'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { CreatorsLanding } from '../launchpad/pages/CreatorsLanding'
 
 //#region styles
 const CAROUSEL_WRAPPER = styled.div<{ showBanner: boolean }>`
@@ -136,17 +135,11 @@ const settings = {
 }
 
 export const NFTBanners = ({ showBanner }: any) => {
-  const [modal, showModal] = useState(false)
-
-  const handleCreatorApply = () => {
-    showModal(true)
-  }
   const history = useHistory()
   const goNestQuestSingleListing = () => history.push(`/nfts/NestQuest`)
   return (
     <>
       <CAROUSEL_WRAPPER showBanner={showBanner}>
-        {modal && <CreatorsLanding showModal={showModal} />}
         <Slider {...settings}>
           <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.png`} />
 
@@ -174,13 +167,7 @@ export const NFTBanners = ({ showBanner }: any) => {
             <div className="home-slider-content">
               <h1 className="home-slider-title">Launch</h1>
               <h1 className="home-slider-title">Your Collection</h1>
-              <TERTIERY_BTN
-                className="home-slider-button"
-                height={'30px'}
-                status="action"
-                width={'140px'}
-                onClick={handleCreatorApply}
-              >
+              <TERTIERY_BTN className="home-slider-button" height={'30px'} status="action" width={'140px'}>
                 <span>More info</span>
               </TERTIERY_BTN>
             </div>

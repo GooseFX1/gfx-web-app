@@ -4,7 +4,6 @@ import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
-  useNavCollapse,
   useNFTAggregator,
   useNFTCollections,
   useNFTAggregatorFilters,

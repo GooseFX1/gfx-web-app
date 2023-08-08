@@ -1,10 +1,10 @@
 /* eslint-disable */
 import { FC, useMemo, useState } from 'react'
-import { useCrypto, useOrderBook, usePriceFeed } from '../../context'
+import { useCrypto, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Button } from '../../components/Button'
+import { Button } from '../../components'
 import {
   convertToFractional,
   displayFractional,

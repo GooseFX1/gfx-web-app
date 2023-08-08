@@ -6,16 +6,14 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
-  usePriceFeedFarm,
-  useDarkMode
+  usePriceFeedFarm
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { GradientText } from '../../../components/GradientText'
-import { RotatingLoader } from '../../../components/RotatingLoader'
+import { GradientText } from '../../../components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, AH_NAME, ParsedAccount, getMetadata } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, AH_NAME, getMetadata } from '../../../web3'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -40,7 +38,7 @@ export const SingleNFTCard: FC<{
   lastCardRef?: any
   firstCardRef?: React.RefObject<HTMLElement | null> | null
 }> = ({ item, index, myItems = false, addNftToBag, lastCardRef, firstCardRef }) => {
-  const { sessionUser, sessionUserParsedAccounts, likeDislike } = useNFTProfile()
+  const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
   const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata, general } =
@@ -104,7 +102,6 @@ export const SingleNFTCard: FC<{
     () => (currencyView === 'USDC' ? solPrice * appraisalPriceNative : appraisalPriceNative),
     [item?.gfx_appraisal_value, currencyView, appraisalPriceNative]
   )
-  const { mode } = useDarkMode()
   useEffect(() => {
     if (item && sessionUser && sessionUser.user_likes) {
       setIsFavorited(sessionUser.user_likes.includes(item.uuid))
@@ -165,13 +162,17 @@ export const SingleNFTCard: FC<{
       : minimizeTheString(item?.nft_name, checkMobile() ? 10 : 12)
     : null
 
-  const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item?.uuid) : false), [item])
+  // const isFavorite = useMemo(() => (sessionUser ? sessionUser.user_likes.includes(item?.uuid) : false), [item])
 
   const updateLocalStates = useCallback(
     async (item: BaseNFT) =>
       fetchSingleNFT(item?.mint_address).then(async (res) => {
         if (res && res.status === 200) {
-          res.data.data.length > 0 ? setlocalSingleNFT(res.data.data[0]) : setlocalSingleNFT(item)
+          if (res.data.data.length > 0) {
+            setlocalSingleNFT(res.data.data[0])
+          } else {
+            setlocalSingleNFT(item)
+          }
           const nft: INFTGeneralData = res.data
           await setLocalBids(nft.bids)
           await setLocalAsk(nft.asks.length > 0 ? nft.asks[0] : null)
@@ -213,14 +214,6 @@ export const SingleNFTCard: FC<{
     }
   }
 
-  const handleToggleLike = async (e) => {
-    if (sessionUser && sessionUser.uuid) {
-      const res = await likeDislike(sessionUser.uuid, localSingleNFT.uuid)
-      setLocalTotalLikes((prev) => (isFavorited ? prev - 1 : prev + 1))
-      setIsFavorited(res.data.action === 'liked')
-      e.stopPropagation()
-    }
-  }
   const goToDetails = async (item): Promise<void> => {
     history.push(`${history.location.pathname}?address=${item?.mint_address}`)
     setIsLoadingBeforeRelocate(true)
@@ -323,7 +316,9 @@ export const SingleNFTCard: FC<{
             <div className="collectionId">
               <div tw="flex items-center">
                 {nftId ? nftId : '# Nft'}
-                {item?.is_verified && <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" />}
+                {item?.is_verified && (
+                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
+                )}
               </div>
               {localAsk !== null && (
                 <GenericTooltip text={handleMarketplaceFormat(localAsk)}>

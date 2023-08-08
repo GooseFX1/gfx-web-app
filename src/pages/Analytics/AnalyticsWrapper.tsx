@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import { isAdminAllowed } from '../../api/NFTLaunchpad'
 import { Connect } from '../../layouts'
-import { GradientText } from '../../components/GradientText'
+import { GradientText } from '../../components'
 import AnalyticsDashboard from './AnalyticsDashboard'
 
 const CONNECT_WALLET_WRAPPER = styled.div`

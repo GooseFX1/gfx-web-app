@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Menu, MenuItem } from '../layouts/shared'
+import { Menu, MenuItem } from '../layouts'
 import { ArrowDropdown } from '../components'
 import { SVGDynamicReverseMode } from '../styles'
 
@@ -21,8 +21,8 @@ const WRAPPER = styled.button`
     color: white;
   }
 `
-
-const STYLED_POOL_MENU = styled(Menu)`
+//fixes styled-components crash
+const STYLED_POOL_MENU = styled((props) => <Menu {...props} />)`
   &.dot-menu {
     min-width: 251px;
     background-color: #1e1e1e;
@@ -76,7 +76,7 @@ const Overlay: FC<{
       setArrowRotation(false)
       setCurrentTitle(name)
       setDropdownVisible(false)
-      onChange && onChange(name)
+      onChange?.(name)
     },
     [onChange, setArrowRotation, setCurrentTitle, setDropdownVisible]
   )

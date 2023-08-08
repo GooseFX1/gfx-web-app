@@ -1,7 +1,7 @@
 import React, { FC, MouseEventHandler, useCallback, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useAccounts, useConnectionConfig, useSwap, useWalletModal, useDarkMode } from '../../context'
-import { Button } from '../../components/Button'
+import { Button } from '../../components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
@@ -60,13 +60,15 @@ export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) 
   const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     (event) => {
       if (!event.defaultPrevented) {
-        state === State.CanSwap
-          ? swapTokens(route, exchange)
-          : !wallet
-          ? setVisible(true)
-          : connect().catch((e: Error) => {
-              console.log(e)
-            })
+        if (state === State.CanSwap) {
+          swapTokens(route, exchange)
+        } else if (!wallet) {
+          setVisible(true)
+        } else {
+          connect().catch((e: Error) => {
+            console.log(e)
+          })
+        }
       }
     },
     [connect, setVisible, state, swapTokens, wallet, route]
@@ -82,7 +84,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) 
         buttonStatus === 'action'
           ? tw`bg-blue-1 rounded-circle border-0 hover:bg-purple-1`
           : buttonStatus === 'connect'
-          ? tw`bg-purple-3 rounded-circle border-0`
+          ? tw`bg-purple-1 rounded-circle border-0`
           : mode === 'dark'
           ? tw`bg-black-1 rounded-circle border-0`
           : tw`bg-grey-4 rounded-circle border-0`
@@ -90,7 +92,7 @@ export const SwapButton: FC<{ exchange?: (any: any) => void }> = ({ exchange }) 
       disabled={buttonStatus !== 'action' && buttonStatus !== 'connect'}
     >
       <span
-        tw="text-regular font-semibold leading-[48px]"
+        tw="text-regular font-semibold "
         style={{ color: buttonStatus !== 'action' && buttonStatus !== 'connect' ? '#636363' : '#fff' }}
       >
         {content}

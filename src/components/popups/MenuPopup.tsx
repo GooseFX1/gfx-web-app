@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FC } from 'react'
+import React, { useState, useCallback, useMemo, FC } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useDarkMode, useWalletModal } from '../../context'
@@ -80,8 +80,8 @@ const CircularDiv = styled.div`
   }
   .semiCircle {
     position: absolute;
-    margin-left: 0px;
-    top: 0px;
+    margin-left: 0;
+    top: 0;
     z-index: 100;
   }
   .leftArrow {
@@ -114,6 +114,8 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   const [rotateClicked, setRotateClicked] = useState<'left' | 'right'>()
   const [clickCounter, setClickCounter] = useState<number>(0)
 
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter])
+
   const [carousel, setCarousel] = useState([...CAROUSEL])
   const next = () => {
     setRotateClicked('right')
@@ -143,7 +145,11 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
   }
   const redirectToPage = (isSell: boolean) => {
     if (isSell) {
-      wallet?.adapter?.publicKey ? locateToSell(wallet.adapter.publicKey.toBase58()) : handleWalletModal()
+      if (publicKey) {
+        locateToSell(publicKey.toBase58())
+      } else {
+        handleWalletModal()
+      }
     } else if (carousel[0].redirect && !isSell) {
       rewardToggle(false)
       history.push(carousel[0].redirect)
@@ -183,9 +189,7 @@ const MenuPopup: FC<IMenuPopup> = ({ rewardToggle }) => {
           <div className="inner-bg">
             {carousel[0].redirect ? (
               <div className="go-btn" onClick={() => redirectToPage(carousel[0].name === 'Sell')}>
-                <div className="go-text">
-                  {carousel[0].name === 'Sell' && !wallet?.adapter?.publicKey ? 'Connect' : 'Go!'}
-                </div>
+                <div className="go-text">{carousel[0].name === 'Sell' && !publicKey ? 'Connect' : 'Go!'}</div>
               </div>
             ) : (
               <div className="cmg-soon">

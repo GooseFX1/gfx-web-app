@@ -3,39 +3,28 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import { Button } from '../../../components/Button'
 import { useConnectionConfig, useNFTAggregator, useNFTDetails } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import styled from 'styled-components'
-import tw from 'twin.macro'
 import 'styled-components/macro'
-import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
+import { checkMobile, formatSOLNumber, notify } from '../../../utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
 import { STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import { LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import {
-  AH_FEE_ACCT,
   AUCTION_HOUSE,
-  AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_PROGRAM_ID,
   bnTo8,
-  CancelInstructionAccounts,
-  CancelInstructionArgs,
   confirmTransaction,
-  createCancelInstruction,
   createWithdrawInstruction,
-  SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
   toPublicKey,
-  TREASURY_MINT,
-  TREASURY_PREFIX
+  TREASURY_MINT
 } from '../../../web3'
-import { callWithdrawInstruction, tokenSize, tradeStatePDA } from '../actions'
+import { callWithdrawInstruction, tradeStatePDA } from '../actions'
 import BN from 'bn.js'
-import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { successBidRemovedMsg } from './AggModals/AggNotifications'
 import { constructCancelBidInstruction } from '../../../web3/auction-house-sdk/bid'
-
+import tw from 'twin.macro'
 const CancelBidModal = (): ReactElement => {
   const { general, ask, bids, nftMetadata } = useNFTDetails()
   const { wallet, sendTransaction } = useWallet()

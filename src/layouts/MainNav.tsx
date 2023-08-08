@@ -12,7 +12,6 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
-// import { clamp } from '../utils'
 import { RewardsProvider } from '../context/rewardsContext'
 import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
@@ -21,31 +20,6 @@ import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 // import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
 // import useRiveStateToggle from '../hooks/useRiveStateToggle'
 // import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
-//
-
-// const ResponsiveDropdown: FC<{ logoAnimationTime?: number }> = () => {
-//   const { mode } = useDarkMode()
-//   const [opacity, setOpacity] = useState(0)
-
-//   const toggleOpacity = useCallback(() => setOpacity(1 - opacity), [opacity])
-
-//   const computeDropdownIcon = useCallback(
-//     () =>
-//       mode === 'dark' ? (
-//         <SVGToWhite src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} />
-//       ) : (
-//         <img src={`${process.env.PUBLIC_URL}/img/assets/dropdown_icon.svg`} onClick={toggleOpacity} alt="" />
-//       ),
-//     [mode, toggleOpacity]
-//   )
-//   const [dropdownIcon, setDropdownIcon] = useState(computeDropdownIcon())
-
-//   useEffect(() => {
-//     setDropdownIcon(computeDropdownIcon())
-//   }, [computeDropdownIcon, mode])
-
-//   return <></>
-// }
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -311,9 +285,6 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           ]}
         />
       </div>
-      <div>
-        <MobileNavControls />
-      </div>
       {/* TODO: add notifications */}
       {/* <div css={[tw`flex items-center gap-3.25`]}>
         <NotificationButton />
@@ -323,59 +294,6 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
   )
 }
 
-const MobileNavControls: FC = () => {
-  const { pathname } = useLocation()
-  // const history = useHistory()
-
-  //TODO: leaderboard hook for is active
-  //TODO: aggregator hook for is active
-  // const handlePerpsSpotToggle = useCallback(
-  //   (isSpotToggle: boolean) => () => {
-  //     setIsSpot(isSpotToggle)
-  //     history.push(`/trade`)
-  //   },
-  //   [setIsSpot, history]
-  // )
-  //TODO: replace below in the NFT/Stats segment for mobile
-  // return (
-  //   <MobileControls
-  //     options={[
-  //       {
-  //         text: 'NFTs',
-  //         onClick: () => {
-  //           console.log('help')
-  //         },
-  //         isActive: false
-  //       }
-  //     ]}
-  //   />
-  // )
-  // return (
-  //   <MobileControls
-  //     options={[
-  //       {
-  //         text: 'Perps',
-  //         onClick: handlePerpsSpotToggle(false),
-  //         isActive: !isSpot
-  //       },
-  //       {
-  //         text: 'Spot',
-  //         onClick: handlePerpsSpotToggle(true),
-  //         isActive: isSpot
-  //       }
-  //     ]}
-  //   />
-  // )
-  switch (true) {
-    case pathname.includes('trade'):
-    case pathname.includes('nfts'):
-    case pathname.includes('stats'):
-    case pathname.includes('swap'):
-    case pathname.includes('farm'):
-    default:
-      return <></>
-  }
-}
 interface DesktopControlsProps {
   children: ReactNode
   options: Controls[]
@@ -462,13 +380,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
                 focus:outline-none focus-visible:border-0 active:border-0
                 focus:border-0 p-0`
               ].concat(customMenuStyle?.button ?? [])}
-              onMouseEnter={
-                breakpoints.isMobile
-                  ? () => {
-                      false
-                    }
-                  : localOnHover
-              }
+              onMouseEnter={breakpoints.isMobile ? () => null : localOnHover}
               onClick={handleMenuButtonClick}
               ref={buttonRef}
             >
@@ -533,103 +445,12 @@ const DropDownControls: FC<DesktopControlsProps> = ({
   )
 }
 
-// interface MobileControlsProps {
-//   options: Controls[]
-// }
 interface Controls {
   key?: string
   text: string
   onClick: () => void
   isActive: boolean
 }
-// const MobileControls: FC<MobileControlsProps> = ({ options }) => (
-//   <div css={[tw`flex items-center justify-center w-full gap-5.75`]}>
-//     {options.map((option) => (
-//       <p
-//         css={[
-//           tw`text-average font-semibold text-grey-1 dark:text-grey-1 cursor-pointer`,
-//           option.isActive ? tw`text-blue-1 dark:text-white` : tw``
-//         ]}
-//         onClick={option.onClick}
-//         key={option?.key ?? option.text}
-//       >
-//         {option.text}
-//       </p>
-//     ))}
-//   </div>
-// )
-
-// interface MobileNavItemProps {
-//   text: string
-//   path: string
-//   animation?: string
-//   stateMachine?: string
-//   hasDropDown?:boolean
-//   options?:Controls[]
-// }
-// const MobileNavItem: FC<MobileNavItemProps> = ({ text, path,hasDropDown,options }) => {
-//   const { mode } = useDarkMode()
-//   const { pathname } = useLocation()
-//   const history = useHistory()
-//   const [isOpen, setIsOpen] = useState<boolean>(false)
-//
-//   // const { rive, RiveComponent, setContainerRef } = useRiveAnimations({
-//   //   animation,
-//   //   autoplay: true,
-//   //   canvasWidth: 40,
-//   //   canvasHeight: 40
-//   // })
-//   const isActive = useMemo(() => pathname.includes(path), [pathname, path])
-//   // useRiveThemeToggle(rive, animation, stateMachine)
-//   // const { stateInput } = useRiveStateToggle(rive, animation, stateMachine, path)
-//   const onHover = useCallback(() => {
-//     // if (!stateInput) return
-//     if (isActive) return
-//     setIsOpen(true)
-//     // stateInput.value = !stateInput.value
-//   }, [isActive])
-//   const navigateToPath = useCallback(() => history.push(path), [path, history])
-//   const onClose = useCallback(()=>setIsOpen(false),[])
-//   const component = useMemo(()=>
-//      <button
-//       css={[
-//         tw`flex items-center gap-2.5 cursor-pointer border-none px-4.5 py-1.25 rounded-full
-//     h-12.5 w-max bg-transparent dark:bg-transparent w-42 justify-center
-//     `,
-//         isActive ? tw` dark:bg-black-2 bg-grey-4` : tw``
-//       ]}
-//       onMouseEnter={onHover}
-//       onMouseLeave={onHover}
-//       onClick={navigateToPath}
-//     >
-//       {/* <RiveAnimationWrapper setContainerRef={setContainerRef} width={40} height={40}>
-//         <RiveComponent />
-//       </RiveAnimationWrapper> */}
-//       <img
-//         css={[tw`h-[40px] w-[40px]`]}
-//         src={`/img/mainnav/${text}-${mode}${isActive ? '-active' : ''}.svg`}
-//         alt={text}
-//       />
-//       <p
-//         css={[
-//           tw`mb-0 text-average font-semibold uppercase text-grey-1 dark:text-grey-2`,
-//           isActive ? tw`text-black-4 dark:text-grey-5` : tw``
-//         ]}
-//       >
-//         {text}
-//       </p>
-//     </button>
-//   ,[text,mode,isActive,onHover,navigateToPath])
-//   return (
-//     hasDropDown?
-//       <DropDownControls menuPosition={"center"} options={options} isOpen={isOpen} onHover={onHover}
-//       onClose={onClose}>
-//         {component}
-//       </DropDownControls>
-//       :
-//       component
-//   )
-// }
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()

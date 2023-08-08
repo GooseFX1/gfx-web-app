@@ -1,4 +1,4 @@
-import { MainButton } from './../../components/MainButton'
+import { MainButton } from '../../components'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 

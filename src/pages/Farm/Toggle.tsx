@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 import { Switch } from 'antd'
-import { useFarmContext } from '../../context/farm'
+import { useFarmContext } from '../../context'
 import tw from 'twin.macro'
 
 const STYLED_TOGGLE = styled.div`

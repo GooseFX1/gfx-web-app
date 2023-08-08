@@ -5,8 +5,6 @@ import { Line, G2 } from '@ant-design/plots'
 
 import { each, findIndex } from '@antv/util'
 
-import { Switch } from 'antd'
-
 const RevenueGraph = ({ today }: any): ReactElement => {
   const { InteractionAction, registerInteraction, registerAction } = G2
   const [data, setGraphData] = useState<any>([])

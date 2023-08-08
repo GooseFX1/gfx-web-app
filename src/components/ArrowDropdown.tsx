@@ -3,7 +3,6 @@ import { Dropdown, Row } from 'antd'
 import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
 import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
-// import { Loader } from './Loader'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{
   $arrowRotation?: boolean

@@ -30,9 +30,8 @@ export const GoFX: FC = () => {
   useEffect(() => {
     let cancelled = false
     const subscriptions: number[] = []
-
-    !cancelled &&
-      (async () => {
+    if (!cancelled) {
+      ;(async () => {
         const market = await serum.getMarket(connection, 'GOFX/USDC')
         const [[latestBid]] = (await market.loadBids(connection)).getL2(1)
         setPrice(latestBid)
@@ -44,6 +43,7 @@ export const GoFX: FC = () => {
           })
         )
       })()
+    }
 
     return () => {
       cancelled = true

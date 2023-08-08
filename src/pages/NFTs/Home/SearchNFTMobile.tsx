@@ -3,7 +3,6 @@ import React, { FC, ReactElement, useCallback, useEffect, useState } from 'react
 import { useHistory } from 'react-router-dom'
 import { fetchGlobalSearchNFT } from '../../../api/NFTs'
 import { SearchBar } from '../../../components'
-import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'

@@ -4,7 +4,7 @@ import * as anchor from '@project-serum/anchor'
 import { Connection, SystemProgram } from '@solana/web3.js'
 import { INSTRUMENTS_ID } from '../perpsConstants'
 import { Program } from '@project-serum/anchor'
-import { sendPerpsTransaction } from '../../../NFTs/launchpad/candyMachine/connection'
+import { sendPerpsTransaction } from '../../../../web3/connection'
 
 const getInstrumentsProgram = async (connection: Connection, wallet: any) => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())

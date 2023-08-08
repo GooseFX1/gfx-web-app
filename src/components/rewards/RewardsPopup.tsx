@@ -12,24 +12,6 @@ import PanelSelector from './RewardPanelSelector'
 // import { RIVE_ANIMATION } from '../constants'
 // import useRewards from '../hooks/useRewards'
 
-// const REWARDS_BTN = styled.button`
-//   ${tw`w-[111px] h-9 text-xs !font-semibold rounded-circle cursor-pointer text-white
-//   border-none border-0 sm:h-[70px] sm:w-full sm:text-regular  sm:rounded-none sm:rounded-t-bigger sm:p-4 sm:mb-32`}
-//   background-image: linear-gradient(90deg, #8ade75 0%, #4b831d 100%);
-//   line-height: inherit;
-// `
-// const REWARDS_WITH_IMG = styled.img`
-//   ${tw`h-4 w-4 ml-2`}
-// `
-
-// const REWARD_BTN_TITLE = styled.span`
-//   ${tw`text-smallest font-semibold sm:text-sm`}
-//
-//   @media (max-width: 500px) {
-//     line-height: inherit;
-//   }
-// `
-
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
   const { rewardToggle } = useRewardToggle()

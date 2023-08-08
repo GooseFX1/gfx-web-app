@@ -12,7 +12,6 @@ import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { Button } from '../components'
 import useBreakPoint from '../hooks/useBreakPoint'
-// import { useLocation } from 'react-router-dom'
 
 export const ICON = styled(CenteredImg)<{ $mode: boolean }>`
   ${tw`h-7 w-7 mr-[8px] cursor-pointer`}
@@ -149,9 +148,7 @@ const Overlay = () => {
 
 export const More: FC = () => {
   const { mode } = useDarkMode()
-  // const { pathname } = useLocation()
   const breakpoint = useBreakPoint()
-  // const checkIfNFT = useMemo(() => pathname.includes('nft'), [pathname])
   const [isActive, setIsActive] = useState<string>('inactive')
   const onVisibleChange = useCallback((visible: boolean) => {
     setIsActive(visible ? 'active' : 'inactive')

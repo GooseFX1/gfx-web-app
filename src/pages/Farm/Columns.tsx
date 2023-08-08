@@ -1,8 +1,8 @@
 import React, { FC, ReactElement } from 'react'
 
 import { match, Pattern } from 'ts-pattern'
-import { Tooltip } from '../../components/Tooltip'
-import { moneyFormatter, moneyFormatterWithComma } from '../../utils/math'
+import { Tooltip } from '../../components'
+import { moneyFormatter, moneyFormatterWithComma } from '../../utils'
 import { Skeleton } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -240,7 +240,9 @@ const DISPLAY_VAR = styled.div`
 `
 const DisplayVariable = ({ data, isOpen }: any) => {
   const preventClose = (event) => {
-    isOpen && event.stopPropagation()
+    if (isOpen) {
+      event.stopPropagation()
+    }
   }
   return (
     <DISPLAY_VAR>
@@ -258,14 +260,16 @@ export const ColumnWeb: FC<{ farm: IFarmData; isOpen: boolean; index: number }> 
   const { mode } = useDarkMode()
 
   const preventClose = (event) => {
-    isOpen && event.stopPropagation()
+    if (isOpen) {
+      event.stopPropagation()
+    }
   }
 
   return (
     <>
       <td className="nameColumn">
         <div onClick={preventClose}>
-          <img src={`/img/crypto/${name.toUpperCase()}.svg`} />
+          <img src={`/img/crypto/${name.toUpperCase()}.svg`} alt={`${name.toUpperCase()}`} />
         </div>
         <div className="columnText" onClick={preventClose}>
           {name}
@@ -386,7 +390,7 @@ export const ColumnMobile: FC<{ farm: IFarmData; isOpen: boolean; index: number 
     <>
       <td className="nameColumn">
         <div>
-          <img src={`/img/crypto/${name.toUpperCase()}.svg`} />
+          <img src={`/img/crypto/${name.toUpperCase()}.svg`} alt={`${name.toUpperCase()}`} />
         </div>
         <div className="columnText">{name}</div>
       </td>

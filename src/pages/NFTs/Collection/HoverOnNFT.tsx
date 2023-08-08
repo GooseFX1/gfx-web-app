@@ -1,17 +1,15 @@
 import { Dispatch, FC, ReactElement, SetStateAction, useCallback, useMemo } from 'react'
-import { Button } from '../../../components/Button'
+import { Button } from '../../../components'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, useNFTProfile, useWalletModal } from '../../../context'
 import { BaseNFT, INFTAsk, INFTBid } from '../../../types/nft_details'
 import { formatSOLDisplay } from '../../../utils'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { removeNFTFromBag } from '../../../web3/nfts/utils'
 import { NFT_MARKETS } from '../../../api/NFTs'
-const DIV = styled.div``
 
 export const HoverOnNFT: FC<{
   mintAddress?: string

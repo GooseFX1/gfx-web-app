@@ -9,7 +9,7 @@ import { Connect } from '../../../../layouts'
 import { ICreatorData } from '../../../../types/nft_launchpad'
 import ReviewTable from './ReviewTable'
 import UpcomingMints from './UpcomingMints'
-import { GradientText } from '../../../../components/GradientText'
+import { GradientText } from '../../../../components'
 
 const WRAPPER = styled.div`
   ${tw`flex`}

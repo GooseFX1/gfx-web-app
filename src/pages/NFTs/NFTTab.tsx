@@ -1,24 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactNode, FC, ReactElement, useState, useEffect, Dispatch, SetStateAction, useMemo } from 'react'
 import { Dropdown } from 'antd'
-import {
-  DROPDOWN_CONTAINER,
-  GRID_CONTAINER,
-  NFT_COLLECTIONS_GRID,
-  NFT_FILTERS_CONTAINER
-} from './Collection/CollectionV2.styles'
+import { DROPDOWN_CONTAINER, GRID_CONTAINER, NFT_FILTERS_CONTAINER } from './Collection/CollectionV2.styles'
 import { useDarkMode, useNFTAggregator, useNFTAggregatorFilters } from '../../context'
-import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile } from '../../utils'
-import { SearchBar, TokenToggle, TokenToggleNFT } from '../../components'
+import { SearchBar, TokenToggleNFT } from '../../components'
 import { NFT_PROFILE_OPTIONS } from '../../api/NFTs'
 import { Arrow } from '../../components/common/Arrow'
 import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-const NFT_TAB = styled.div``
 
 type TabPanesType = {
   name: string

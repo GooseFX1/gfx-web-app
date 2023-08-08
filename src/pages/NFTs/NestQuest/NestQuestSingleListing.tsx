@@ -7,12 +7,10 @@ import ModalMint from './MintNest'
 import { useWalletModal, useAccounts, useConnectionConfig, useDarkMode } from '../../../context'
 import { WRAPPED_SOL_MINT, fetchAvailableNft, ADDRESSES } from '../../../web3'
 import { MintItemViewStatus, INFTMetadata } from '../../../types/nft_details'
-import { MainButton } from '../../../components/MainButton'
+import { MainButton, TokenToggle, FloatingActionButton } from '../../../components'
 import { NQ_GOFX_PRICE, NQ_SOL_PRICE, SOCIAL_MEDIAS } from '../../../constants'
 import { SVGDynamicReverseMode, FLOATING_ACTION_ICON } from '../../../styles'
-import { FloatingActionButton } from '../../../components'
 import { Tabs } from 'antd'
-import { TokenToggle } from '../../../components/TokenToggle'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
 import { notify } from '../../../utils'
@@ -38,7 +36,7 @@ const IMAGE = styled.div`
 
     .ls-video {
       border-radius: 20px;
-      box-shadow: 3px 3px 14px 0px rgb(0 0 0 / 43%);
+      box-shadow: 3px 3px 14px 0 rgb(0 0 0 / 43%);
       z-index: 10;
     }
   `}
@@ -64,8 +62,8 @@ const NFT_DETAILS = styled.div`
     overflow: initial;
     > .ant-tabs-nav {
       margin-bottom: 0;
-      border-bottom: 0px solid #575757;
-      padding-bottom: 0px;
+      border-bottom: 0 solid #575757;
+      padding-bottom: 0;
 
       &::before {
         border: none;
@@ -82,17 +80,17 @@ const NFT_DETAILS = styled.div`
           transition: transform 0.3s;
           width: 100%;
           margin-left: auto;
-          padding-right: 0px;
+          padding-right: 0;
         }
       }
     }
   }
 
   .ant-tabs-nav {
-    padding: 0px !important;
-    border: 0px;
+    padding: 0 !important;
+    border: 0;
     background-color: ${({ theme }) => theme.bg1};
-    border-radius: 20px 20px 0px 0px;
+    border-radius: 20px 20px 0 0;
   }
 
   .ant-tabs-content {
@@ -103,7 +101,7 @@ const NFT_DETAILS = styled.div`
     place-items: center;
     font-size: 20px;
     margin-bottom: 2px;
-    border-radius: 0px 0px 0px 0px;
+    border-radius: 0;
     padding: 1rem;
   }
 
@@ -132,10 +130,10 @@ const NFT_DETAILS = styled.div`
         &:before {
           position: absolute;
           content: '';
-          height: 0px;
-          width: 0px;
+          height: 0;
+          width: 0;
           bottom: -28px;
-          left: 0%;
+          left: 0;
           background: rgba(0, 0, 0);
           z-index: 0;
           display: inline-block;
@@ -262,9 +260,9 @@ const Live = styled.div`
 const ACTION_BELOW = styled.div`
   width: 100%;
   height: 80px;
-  padidng: 1rem;
+  padding: 1rem;
   background-color: ${({ theme }) => theme.bg1};
-  border-radius: 0px 0px 20px 20px;
+  border-radius: 0 0 20px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,7 +379,7 @@ export const NestQuestSingleListing: FC<{
             setMintDisabled(true)
             throw new Error('NFT sold out')
           } else {
-            setMintDisabled(res.length > 0 ? false : true)
+            setMintDisabled(res.length == 0)
           }
         })
         .catch((err) => {
@@ -394,11 +392,9 @@ export const NestQuestSingleListing: FC<{
   useEffect(() => {
     if (publicKey && connected) {
       if (token === 'SOL') {
-        setInsufficientToken(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()) ? true : false)
+        setInsufficientToken(mintPrice >= getUIAmount(WRAPPED_SOL_MINT.toBase58()))
       } else {
-        setInsufficientToken(
-          mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()) ? true : false
-        )
+        setInsufficientToken(mintPrice >= getUIAmount(ADDRESSES[network].mints.GOFX.address.toBase58()))
       }
     }
   }, [connected, publicKey, getUIAmount, mintPrice, network, token])
@@ -563,7 +559,7 @@ export const NestQuestSingleListing: FC<{
               <TokenToggle
                 toggleToken={(curToken) => {
                   setToken(curToken)
-                  curToken === 'SOL' ? setMintPrice(NQ_SOL_PRICE) : setMintPrice(NQ_GOFX_PRICE)
+                  setMintPrice(curToken === 'SOL' ? NQ_SOL_PRICE : NQ_GOFX_PRICE)
                 }}
                 tokenA={'SOL'}
                 tokenB={'GOFX'}

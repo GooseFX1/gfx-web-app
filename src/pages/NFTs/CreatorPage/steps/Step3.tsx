@@ -20,13 +20,16 @@ const WRAPPER = styled.div`
       ${tw`absolute -left-8 bottom-6 cursor-pointer`}
     }
   }
+
   .big-label {
     ${tw`text-2xl font-semibold mb-6 w-full`}
   }
+
   .ant-col-12:first-child {
     padding-left: 55px;
     padding-right: 100px;
   }
+
   .ant-col-12:nth-child(2) {
     padding-right: 60px;
     display: flex;
@@ -34,56 +37,71 @@ const WRAPPER = styled.div`
     flex-direction: column;
     align-items: end;
   }
+
   .vesting-container {
     ${tw`w-full py-10 rounded-[30px] flex flex-col justify-center items-center mb-10`}
     background-color: ${({ theme }) => theme.propertyBg2};
+
     .price-toggle {
       .ant-switch {
         ${tw`h-11 w-20`}
         .ant-switch-handle {
           ${tw`h-10 w-10`}
         }
+
         .ant-switch-handle::before {
           border-radius: 22px;
         }
       }
+
       .ant-switch-checked {
         background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
       }
+
       .ant-switch-checked .ant-switch-handle {
         left: calc(100% - 40px - 2px);
       }
+
       .vesting-options {
         ${tw`px-6 text-[22px] relative top-1`}
       }
     }
+
     .vesting-label {
       ${tw`text-xl mt-5`}
     }
+
     .vesting-options-banner {
       ${tw`w-11/12 h-12 rounded-[44px] mt-5 text-base flex items-center justify-center cursor-pointer`}
       background-color: ${({ theme }) => theme.inputBg};
+
       &.active {
         background-color: ${({ theme }) => theme.primary2};
       }
     }
   }
+
   .next-day-label {
     color: ${({ theme }) => theme.text25};
     ${tw`-mt-4`}
   }
+
   .dateBanner {
     background-color: ${({ theme }) => theme.propertyBg2};
+
     ${tw`flex justify-center items-center h-12 text-lg font-semibold w-4/12 rounded-[66px] cursor-pointer relative`}
     &.active {
       background-color: ${({ theme }) => theme.primary2};
     }
+
     .ant-picker {
       ${tw`h-full w-full opacity-0 absolute cursor-pointer`}
     }
   }
+
   .circle-time {
     background-color: ${({ theme }) => theme.propertyBg2};
+
     ${tw`flex justify-center items-center h-20 text-sm font-semibold w-20 rounded-full cursor-pointer relative`}
     &.active {
       background-color: ${({ theme }) => theme.primary2};
@@ -116,7 +134,11 @@ export const Step3: FC = () => {
     if (creatorData && creatorData[3]) {
       setIsVesting(!!creatorData[3].vesting)
       setSelectedDate(moment(creatorData[3].date, 'DD-MM-YYYY'))
-      creatorData[3].date === dateFrom ? setDateOptionIndex(0) : setDateOptionIndex(1)
+      if (creatorData[3].date === dateFrom) {
+        setDateOptionIndex(0)
+      } else {
+        setDateOptionIndex(1)
+      }
       TIME_OPTIONS.map((item, index) => {
         if (item === creatorData[3].time) setTimeIndex(index)
       })

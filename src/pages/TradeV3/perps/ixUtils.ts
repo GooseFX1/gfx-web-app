@@ -11,11 +11,7 @@ import {
   IConsumeOB,
   ICancelOrderAccounts
 } from '../../../types/dexterity_instructions'
-import {
-  buildTransaction,
-  sendPerpsTransaction,
-  sendPerpsTransactions
-} from '../../NFTs/launchpad/candyMachine/connection'
+import { buildTransaction, sendPerpsTransaction, sendPerpsTransactions } from '../../../web3/connection'
 import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
 import {

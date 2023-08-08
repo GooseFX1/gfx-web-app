@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Button } from '../../components/Button'
+import { Button } from '../../components'
 import { useCrypto, useOrder } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { checkMobile } from '../../utils'
@@ -21,7 +21,10 @@ const ROW = styled.div`
   }
 `
 
-export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = ({ setVisibility, takeProfit }) => {
+export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; takeProfit?: any }> = ({
+  setVisibility,
+  takeProfit
+}) => {
   const { order } = useOrder()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { newOrder, newOrderTakeProfit } = useTraderConfig()
@@ -48,7 +51,11 @@ export const TradeConfirmation: FC<{ setVisibility: any; takeProfit?: any }> = (
   }, [notionalValue, fee])
 
   const handleClick = async () => {
-    !takeProfit ? await newOrder() : await newOrderTakeProfit(takeProfit.toString())
+    if (takeProfit) {
+      await newOrderTakeProfit(takeProfit.toString())
+    } else {
+      await newOrder()
+    }
     setVisibility(false)
   }
 

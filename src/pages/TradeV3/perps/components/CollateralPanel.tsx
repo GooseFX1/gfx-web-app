@@ -2,7 +2,7 @@
 import { FC, useMemo, useState } from 'react'
 import { Row, Col } from 'antd'
 import tw, { styled } from 'twin.macro'
-import { Tooltip } from '../../../../components/Tooltip'
+import { Tooltip } from '../../../../components'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { PERPS_FEES } from '../perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'

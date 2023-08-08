@@ -7,34 +7,17 @@ import {
   useNFTCollections,
   useNFTDetails
 } from '../../../context'
-import {
-  amount,
-  Metaplex,
-  SplTokenAmount,
-  SplTokenCurrency,
-  toBigNumber,
-  walletAdapterIdentity
-} from '@metaplex-foundation/js'
-// import { INFTAsk } from '../../../types/nft_details.d'
+import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
 import { Button, TransactionErrorMsg } from '../../../components'
 import { checkMobile, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
-import {
-  tradeStatePDA,
-  // getBuyInstructionAccounts,
-  tokenSize,
-  // callCancelInstruction,
-  freeSellerTradeStatePDA,
-  getSellInstructionAccounts,
-  freeSellerTradeStatePDAAgg
-} from '../actions'
+import { tradeStatePDA, tokenSize, freeSellerTradeStatePDA, freeSellerTradeStatePDAAgg } from '../actions'
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 // import { useHistory } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
 import BN from 'bn.js'
 import {
-  // signAndSendRawTransaction,
   AH_FEE_ACCT,
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
@@ -42,12 +25,6 @@ import {
   AUCTION_HOUSE_AUTHORITY,
   TREASURY_MINT,
   toPublicKey,
-  createSellInstruction,
-  SellInstructionArgs,
-  SellInstructionAccounts,
-  createCancelInstruction,
-  CancelInstructionArgs,
-  CancelInstructionAccounts,
   getMetadata,
   StringPublicKey,
   bnTo8,
@@ -66,7 +43,7 @@ import 'styled-components/macro'
 
 const TEN_MILLION = 10000000
 
-import { STYLED_POPUP_BUY_MODAL } from '../Collection/BuyNFTModal'
+import { STYLED_POPUP_BUY_MODAL } from './BuyNFTModal'
 import {
   couldNotFetchNFTMetaData,
   didNotModifyPrice,
@@ -77,7 +54,7 @@ import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
 import { web3 } from '@project-serum/anchor'
 import DelistNFTModal from './DelistNFTModal'
 import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
-import { saveNftTx } from '../../../api/NFTs/actions'
+import { saveNftTx } from '../../../api/NFTs'
 import { constructListInstruction } from '../../../web3/auction-house-sdk/list'
 import { cancelListing } from '../../../web3/auction-house-sdk/cancelListing'
 

@@ -6,8 +6,6 @@ import { FarmProvider, useConnectionConfig, APP_RPC, PriceFeedFarmProvider } fro
 import { notify } from '../../utils' //checkMobile
 import { logData } from '../../api/analytics'
 import CustomTableList from './CustomTableList'
-// import { Banner } from '../../components/Banner'
-// import { GFX_LINK } from '../../styles'
 
 const WRAPPER = styled.div`
   ${tw`sm:px-0 relative flex flex-col w-screen px-6 overflow-y-auto overflow-x-hidden`}
@@ -31,11 +29,6 @@ const BODY = styled.div`
     padding-top: 17px !important;
   }
 `
-
-// const BETA_BANNER = styled.div`
-//   ${tw`fixed left-[42px] bottom-[42px]`}
-//   z-index: 10;
-// `
 
 export const Farm: FC = () => {
   //eslint-disable-next-line
