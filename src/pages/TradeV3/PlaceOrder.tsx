@@ -823,7 +823,11 @@ export const PlaceOrder: FC = () => {
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
     const qty = maxQtyNum
-    const orderSize = order.size || 0
+    let orderSize = order.size || 0
+    // we do this so that the displayed leverage doesn't exceed 10x
+    if (Number(orderSize) > qty) {
+      orderSize = qty
+    }
     //const availMargin = Number(traderInfo.marginAvailable)
     let percentage = 0
     percentage = (Number(orderSize) / qty) * availLeverage
