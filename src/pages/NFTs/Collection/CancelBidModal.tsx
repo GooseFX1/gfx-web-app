@@ -24,7 +24,7 @@ import { callWithdrawInstruction, tradeStatePDA } from '../actions'
 import BN from 'bn.js'
 import { successBidRemovedMsg } from './AggModals/AggNotifications'
 import { constructCancelBidInstruction } from '../../../web3/auction-house-sdk/bid'
-
+import tw from 'twin.macro'
 const CancelBidModal = (): ReactElement => {
   const { general, ask, bids, nftMetadata } = useNFTDetails()
   const { wallet, sendTransaction } = useWallet()

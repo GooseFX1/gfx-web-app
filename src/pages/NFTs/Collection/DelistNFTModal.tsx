@@ -10,7 +10,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { useNFTAggregator, useNFTDetails } from '../../../context'
 import { TermsTextNFT } from './AcceptBidModal'
-
+import tw from 'twin.macro'
 const DelistNFTModal: FC<{
   isDelistLoading: boolean
   closeTheModal: any
