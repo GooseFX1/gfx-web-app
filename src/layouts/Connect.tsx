@@ -127,7 +127,7 @@ export const Connect: FC<MenuItemProps> = ({
         <Menu.Button
           as={'button'}
           css={[
-            tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-3 text-white items-center
+            tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-1 text-white items-center
             justify-center text-tiny font-semibold h-[35px] min-md:h-[30px] min-w-[122px] rounded-circle gap-1.75
             max-w-[138px] min-md:max-w-[154px] px-[5px] py-[3.5px] min-md:py-[4px]
             `,
