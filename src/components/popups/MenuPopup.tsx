@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FC } from 'react'
+import React, { useState, useCallback, useMemo, FC } from 'react'
 import styled from 'styled-components'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useDarkMode, useWalletModal } from '../../context'

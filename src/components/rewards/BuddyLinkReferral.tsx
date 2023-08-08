@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useReferrals from '../../hooks/useReferrals'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig } from '../../context'
+import { useConnectionConfig, useCrypto } from '../../context'
 import { getTraderRiskGroupAccount } from '../../pages/TradeV3/perps/utils'
 import { notify } from '../../utils'
 import { Notification } from '../../context/rewardsContext'
@@ -18,7 +18,13 @@ const BuddyLinkReferral: FC = () => {
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
-  const { connection } = useConnectionConfig()
+  const { perpsDevnetConnection, perpsConnection } = useConnectionConfig()
+  const { isDevnet } = useCrypto()
+
+  const connection = useMemo(() => {
+    if (isDevnet) return perpsDevnetConnection
+    return perpsConnection
+  }, [isDevnet])
 
   const referLink = useMemo(() => `app.goosefx.io/trade?r=${name}`, [name])
 
@@ -43,7 +49,7 @@ const BuddyLinkReferral: FC = () => {
   }, [referLink])
 
   const handleCreateBuddy = useCallback(async () => {
-    if (isReady) {
+    if (isReady && riskGroup) {
       try {
         setLoading(true)
         const transaction = new Transaction()
@@ -84,7 +90,7 @@ const BuddyLinkReferral: FC = () => {
 
       // TODO: handle ui success state
     }
-  }, [isReady, connection])
+  }, [isReady, connection, riskGroup])
 
   const handleName = useCallback(async () => {
     if (isReady) {

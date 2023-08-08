@@ -146,7 +146,11 @@ export async function createRandom(
     const member = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
 
     // Skips create member if a member already exists
-    if (member) return { instructions: [], memberPDA: PublicKey.default }
+    if (member) {
+      if (member.account.referrer.toString() === PublicKey.default.toString())
+        return { instructions: [], memberPDA: PublicKey.default }
+      else return { instructions: [], memberPDA: memberPDA }
+    }
   }
 
   const isReferrerValid = await client.initialize.isReferrerValid(referrer, ORGANIZATION_NAME)
@@ -163,10 +167,11 @@ export async function getRemainingAccountsForTransfer(
   memberPDA?: PublicKey
 ): Promise<AccountMeta[]> {
   const client = new Client(connection, wallet)
-  const remainingAccounts = await client.transfer.transferRewardsAccount(memberPDA, USDC_MINT)
+  const remainingAccounts = await client.accounts.transferRewardsAccount(memberPDA, USDC_MINT)
 
   if (remainingAccounts.referrerAccount.toString() === PublicKey.default.toString()) {
     return [
+      { pubkey: remainingAccounts.referrerMemberAccount || PublicKey.default, isWritable: false, isSigner: false },
       { pubkey: remainingAccounts.referrerAccount, isWritable: false, isSigner: false },
       { pubkey: remainingAccounts.referrerAccountRewards, isWritable: false, isSigner: false },
       { pubkey: remainingAccounts.referreeAccount, isWritable: false, isSigner: false },
@@ -177,6 +182,11 @@ export async function getRemainingAccountsForTransfer(
     ]
   } else {
     return [
+      {
+        pubkey: remainingAccounts.referrerMemberAccount || PublicKey.default,
+        isWritable: !!remainingAccounts.referrerMemberAccount,
+        isSigner: false
+      },
       { pubkey: remainingAccounts.referrerAccount, isWritable: true, isSigner: false },
       { pubkey: remainingAccounts.referrerAccountRewards, isWritable: true, isSigner: false },
       { pubkey: remainingAccounts.referreeAccount, isWritable: true, isSigner: false },

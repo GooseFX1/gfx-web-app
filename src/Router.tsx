@@ -60,7 +60,7 @@ export const Router: FC = () => (
                     <Route path="/NFTs/launchpad">
                       <Launchpad />
                     </Route>
-                    <Route path="/NFTs/Creator">
+                    <Route path="/NFTs/creator">
                       <Creator />
                     </Route>
                     <Route path="/NFTs/admin">
@@ -68,11 +68,6 @@ export const Router: FC = () => (
                         <AdminWrapper />
                       </NFTAdminProvider>
                     </Route>
-                    {/* <Route path="/nfts-v1">
-                        <NFTProfileProvider>
-                          <NFTs />
-                        </NFTProfileProvider>
-                      </Route> */}
                     <Route path="/nfts">
                       <NFTProfileProvider>
                         <NFTCollectionProvider>
