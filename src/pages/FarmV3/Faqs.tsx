@@ -8,17 +8,17 @@ import { checkMobile } from '../../utils'
 const FAQ_WRAPPER = styled.div`
   ${tw`sm:w-[calc(100% - 15px)]`}
   .faqs {
-    ${tw`flex flex-row cursor-pointer items-center h-16  
-     w-full border border-solid dark:border-black-4 border-grey-4 py-5 px-6 border-r-0 border-t-0 border-l-0`}
+    ${tw`flex flex-row cursor-pointer items-center h-[52px] sm:h-14 p-3.75 w-full
+     border border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`}
   }
   .last-faq {
     ${tw`!border-0`}
   }
   .faq-open {
-    ${tw`!border-0`}
+    ${tw`!border-0 !pb-0`}
   }
   .faq-answer {
-    ${tw`px-6 pb-3 mt-[-10px] text-tiny font-medium dark:text-grey-2 text-grey-1 border border-solid 
+    ${tw`px-6 pb-3 mt-[10px] text-tiny font-medium dark:text-grey-2 text-grey-1 border border-solid 
     dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`}
     transition: transform 500ms ease-out;
   }
@@ -45,12 +45,12 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row items-center mt-[55px]">
+    <div tw="flex flex-row items-center mt-5">
       <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4 sm:text-lg sm:pl-2">
         {checkMobile() ? 'FAQs' : 'Frequently Asked Questions'}
       </h2>
       <a
-        tw="w-[140px] h-10 bg-blue-1 mb-5 cursor-pointer text-white font-semibold
+        tw="w-[140px] h-[35px] bg-blue-1 mb-5 cursor-pointer text-white font-semibold
          text-average flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
         href="https://docs.goosefx.io/features/farm/single-sided-liquidity-pools"
         target="_blank"
@@ -94,7 +94,7 @@ export const FaqRow: FC<{ item; index }> = ({ item, index }) => {
         css={[
           tw`duration-300`,
           isFaqOpen
-            ? tw`h-[fit] text-tiny px-6 pb-3 mt-[-10px] font-medium dark:text-grey-2 text-grey-1 border 
+            ? tw`h-[fit] text-tiny px-3.75 pb-3.75 font-medium dark:text-grey-2 text-grey-1 border 
             border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`
             : tw`h-0 !text-[0px] invisible opacity-0 `,
           lastElement && tw`!border-0`
