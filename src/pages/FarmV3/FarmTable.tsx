@@ -76,7 +76,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
 
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
-      sm:mb-0 rounded-[15px] cursor-pointer h-[70px] sm:h-20 sm:rounded-[10px]`}
+      sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
 
       /* &:hover {
         ${tw`border-grey-2 rounded-[13px] sm:rounded-[8px] `}
@@ -132,13 +132,13 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
 
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4">
+      <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
         <img
           src={`/img/assets/${selectedPool}_pools.svg`}
           alt="pool-icon"
           height={77}
           width={70}
-          tw="mr-3 duration-500"
+          tw="mr-3.75 duration-500"
         />
         <div tw="flex flex-col">
           <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
@@ -163,19 +163,19 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
       <div tw="flex items-center">
         <div tw="flex cursor-pointer relative">
           <div
-            css={[tw`duration-500`, poolIndex === 1 ? tw`ml-[100px] ` : tw`ml-0`]}
-            tw="h-11 bg-blue-1 w-[100px] absolute rounded-[50px]"
+            css={[tw`duration-500`, poolIndex === 1 ? tw`ml-[95px] ` : tw`ml-0`]}
+            tw="h-[35px] bg-blue-1 w-[95px] absolute rounded-[50px]"
           ></div>
           <div
             css={[poolIndex === 0 && tw`!text-white  `]}
-            tw="h-11 flex items-center z-[100] justify-center  font-semibold w-[100px]  "
+            tw="h-[35px] flex items-center z-[100] justify-center font-semibold w-[95px]  "
             onClick={() => handleClick(poolTypes[0], 0)}
           >
             Stable
           </div>
           <div
             css={[poolIndex === 1 && tw`!text-white `]}
-            tw="h-11 flex items-center justify-center z-[100] font-semibold w-[100px] "
+            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] "
             onClick={() => handleClick(poolTypes[1], 1)}
           >
             Hyper
@@ -255,7 +255,7 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
         {!checkMobile() && <td>$30,596</td>}
         {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%] sm:!w-[33%]">
-          <Button className="pinkGradient" cssStyle={tw` font-semibold text-regular `}>
+          <Button className="pinkGradient" cssStyle={tw`h-[35px] font-semibold text-regular `}>
             Stats
           </Button>
           <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
@@ -295,7 +295,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
   return (
     <div
       css={[
-        tw`dark:bg-black-2 bg-white mx-10 sm:mx-5 rounded-[0 0 15px 15px] duration-300 flex justify-between sm:flex-col`,
+        tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-5 rounded-[0 0 15px 15px] duration-300 flex justify-between sm:flex-col`,
         isExpanded ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4` : tw`h-0 invisible text-[0px] p-0`
       ]}
     >
@@ -328,7 +328,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
               ></div>
               <div
                 css={[
-                  tw`h-8 w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   poolIndex === 0 && tw`!text-white`
                 ]}
                 onClick={() => handleModeOfOperation(0)}
@@ -337,7 +337,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
               </div>
               <div
                 css={[
-                  tw`h-8 w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   poolIndex === 1 && tw`!text-white`
                 ]}
                 onClick={() => handleModeOfOperation(1)}
