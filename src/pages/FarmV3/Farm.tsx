@@ -1,15 +1,14 @@
-/* eslint-disable */
 import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { FarmHeader } from './FarmHeader'
-import { useConnectionConfig, usePriceFeedFarm } from '../../context'
+import { usePriceFeedFarm } from '../../context'
 import 'styled-components/macro'
 import { FarmTable } from './FarmTable'
 import { Faqs } from './Faqs'
 
 const WRAPPER = styled.div`
-  ${tw`py-5 px-[30px] dark:bg-black-1 bg-grey-5 sm:pt-4 sm:pb-[30px] sm:pl-[15px] sm:pr-0`}
+  ${tw`p-5 dark:bg-black-1 bg-grey-5 sm:pt-3.75 sm:pb-3.75 sm:pl-2.5 sm:pr-0`}
   * {
     font-family: Montserrat;
   }
@@ -24,6 +23,7 @@ export const Farm: FC = () => {
   useEffect(() => {
     refreshTokenData()
   }, [])
+
   return (
     <WRAPPER>
       <FarmHeader setPoolIndex={setPoolIndex} />

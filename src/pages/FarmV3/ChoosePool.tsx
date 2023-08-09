@@ -132,7 +132,7 @@ const PrevArrow: FC<{
         setIsError(false)
       }}
     >
-      Back
+      Go Back
     </div>
   )
 
