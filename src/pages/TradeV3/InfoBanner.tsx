@@ -416,6 +416,18 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       }
+      {
+        <INFO_STATS>
+          <>
+            <div>1YR Funding</div>
+            {!traderInfo.fundingRate ? (
+              <Loader />
+            ) : (
+              <div> {(Number(traderInfo.fundingRate) * 24 * 365).toFixed(4)}%</div>
+            )}
+          </>
+        </INFO_STATS>
+      }
       {isDevnet && isGeoBlocked && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
