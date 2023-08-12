@@ -149,7 +149,7 @@ export const CollectionTabs: FC<{
         <SearchBar
           className="collection-search-bar"
           placeholder="Search by nft name"
-          setFilter={setFilter}
+          setSearchFilter={setFilter}
           filter={filter}
         />
       </STYLED_SEARCH_BAR>

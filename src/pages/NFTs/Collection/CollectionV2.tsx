@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState, useEffect, useMemo, FC, useRef, Dispatch, SetStateAction } from 'react'
+import React, {
+  ReactElement,
+  useState,
+  useEffect,
+  useMemo,
+  FC,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  MutableRefObject
+} from 'react'
 import { Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -30,19 +40,20 @@ import { FixedPriceNFTs } from './FixedPriceNFTs'
 import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
-import { LastRefreshedAnimation } from '../../Farm/FarmFilterHeader'
+import { LastRefreshedAnimation, useAnimateButtonSlide } from '../../Farm/FarmFilterHeader'
 import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
 import { SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
-import { Arrow } from '../../../components/common/Arrow'
+import { Arrow, CircularArrow } from '../../../components/common/Arrow'
 import { GenericTooltip, TableHeaderTitle } from '../../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
 import { logData } from '../../../api/analytics'
 import AdditionalFilters from './AdditionalFilters'
+import useBreakPoint from '../../../hooks/useBreakPoint'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
@@ -101,7 +112,7 @@ const NFTStatsContainer = () => {
   return (
     <div tw="flex flex-col">
       <div tw="flex justify-center">
-        <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
+        {/* <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} /> */}
       </div>
       {handlePopup()}
       <div className="nftStatsContainer">
@@ -127,16 +138,16 @@ const NFTStatsContainer = () => {
                 alt="collection-image"
               />
             ) : (
-              <SkeletonCommon style={{ marginLeft: 20 }} width="65px" height="65px" borderRadius="50%" />
+              <SkeletonCommon style={{ marginLeft: 20 }} width="35px" height="35px" borderRadius="50%" />
             )}
-            <div tw="sm:text-[22px] font-bold flex items-center text-[25px]">
+            <div tw="sm:text-[13px] font-bold flex items-center text-[15px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="sm:text-[22px] ml-3 font-bold max-w-[325px]">
+                  <div tw="text-[18px] ml-3 font-bold max-w-[325px]">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
                     {collection && collection.is_verified ? (
                       <img
-                        style={{ height: 25, width: 25, margin: '0 8px' }}
+                        tw="sm:h-[15px] sm:w-[15px] h-[18px] w-[18px] ml-2"
                         src="/img/assets/Aggregator/verifiedNFT.svg"
                       />
                     ) : (
@@ -151,7 +162,7 @@ const NFTStatsContainer = () => {
                   </div>
                 </GenericTooltip>
               ) : (
-                <SkeletonCommon width="200px" height="30px" style={{ marginTop: '20px', marginLeft: 10 }} />
+                <SkeletonCommon width="200px" height="22px" style={{ marginLeft: 10 }} />
               )}
             </div>
             {checkMobile() && (
@@ -213,7 +224,7 @@ const NFTStatsContainer = () => {
               </div>
               <div>
                 <img
-                  tw="h-11 w-11 !mr-0"
+                  tw="h-8.75 w-8.75 !mr-0"
                   src="/img/assets/shareBlue.svg"
                   alt=""
                   onClick={() => copyToClipboard()}
@@ -235,8 +246,10 @@ const NFTStatsContainer = () => {
     </div>
   )
 }
+
 export const NFTGridContainer = (): ReactElement => {
-  const [open, setOpen] = useState<boolean>(true)
+  const breakpoint = useBreakPoint()
+  const [open, setOpen] = useState<boolean>(!breakpoint.isMobile)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
   const firstCardRef = useRef<HTMLElement | null>()
@@ -249,7 +262,6 @@ export const NFTGridContainer = (): ReactElement => {
 
     [displayIndex, open]
   )
-
   const handleTopScroll = useCallback(() => {
     firstCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
   }, [firstCardRef])
@@ -295,20 +307,20 @@ export const NFTGridContainer = (): ReactElement => {
   )
 }
 
-const FilterCategory: FC<{ displayIndex: number; currentIndex: number; onClick: () => void }> = ({
-  displayIndex,
-  currentIndex,
-  onClick,
-  children
-}) => {
+const FilterCategory: FC<{
+  setRef: (ref: HTMLDivElement) => void
+  displayIndex: number
+  currentIndex: number
+  onClick: () => void
+}> = ({ setRef, displayIndex, currentIndex, onClick, children }) => {
   const isSelected = displayIndex === currentIndex
   const className = isSelected ? 'selected' : 'flexItem'
 
   return (
-    <div className={className} onClick={onClick}>
-      <div>{children}</div>
-      {!checkMobile() && currentIndex === 0 && <div className="activeItem" />}
-      {checkMobile() && isSelected && <div className="activeItemMobile"></div>}
+    <div className={className} onClick={onClick} tw="z-[15]">
+      <div tw="px-4 sm:px-2 mt-[5px] sm:mt-[1px]" ref={setRef}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -326,11 +338,15 @@ const FiltersContainer: FC<{
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
   const { availableAttributes } = useNFTCollections()
+  const breakpoint = useBreakPoint()
+  const sliderRef = useRef(null)
+  const buttonRefs = useRef<HTMLDivElement[]>([])
+  const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, 0)
 
   // TODO add this inside use memo
   const filterCategories = [
     {
-      label: `Listed (${fixedPriceWithinCollection?.total_count ?? 0})`,
+      label: `Listed (${fixedPriceWithinCollection?.total_count ?? `000`})`,
       index: 0
     },
     {
@@ -349,7 +365,7 @@ const FiltersContainer: FC<{
 
   const DisplayFilterIcon = useMemo(() => {
     const displayFilterIcon = displayIndex === 0 || displayIndex === 2
-    return <>{displayFilterIcon && !checkMobile() && <FiltersIcon open={open} setOpen={setOpen} />}</>
+    return <>{displayFilterIcon && <FiltersIcon open={open} setOpen={setOpen} />}</>
   }, [displayIndex, showPriceAndMarket, availableAttributes, open])
 
   return (
@@ -359,7 +375,7 @@ const FiltersContainer: FC<{
 
         <SearchBar
           setSearchFilter={setSearchInsideCollection}
-          style={{ width: 332 }}
+          cssStyle={tw`w-[332px] h-8.75`}
           filter={searchInsideCollection}
           bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
@@ -372,19 +388,35 @@ const FiltersContainer: FC<{
         {!checkMobile() && displayIndex === 0 && <SortDropdown />}
       </div>
 
-      <div className="filtersViewCategory">
-        {filterCategories.map((category) => (
+      <div
+        className="filtersViewCategory"
+        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[540px]`]}
+      >
+        <div
+          ref={sliderRef}
+          className="pinkGradient"
+          tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
+          style={{
+            transition: 'all 0.8s cubic-bezier(.23,2,.14,.52)'
+          }}
+        ></div>
+
+        {filterCategories.map((category, index) => (
           <FilterCategory
+            setRef={setButtonRef}
             key={category.index}
             displayIndex={displayIndex}
             currentIndex={category.index}
-            onClick={() => setDisplayIndex(category.index)}
+            onClick={() => {
+              setDisplayIndex(category.index)
+              handleSlide(index)
+            }}
           >
             {category.label}
           </FilterCategory>
         ))}
-        <div>{!checkMobile() && <TokenToggleNFT toggleToken={setCurrency} />}</div>
       </div>
+      <div tw="ml-auto">{breakpoint.isDesktop && <TokenToggleNFT toggleToken={setCurrency} />}</div>
     </NFT_FILTERS_CONTAINER>
   )
 }
@@ -395,11 +427,8 @@ const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>
     setOpen((prev) => !prev)
   }, [])
   return (
-    <div
-      tw="h-11 w-11 duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px]"
-      onClick={handleButtonClick}
-    >
-      <img src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
+    <div tw="duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px]" onClick={handleButtonClick}>
+      <img tw="h-8.75 w-8.75" src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
     </div>
   )
 }
@@ -424,7 +453,7 @@ const SortDropdown = () => {
           <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
             Price:
             <>{collectionSort === 'ASC' ? ' Ascending' : ' Descending'}</>
-            <Arrow height="9px" width="18px" cssStyle={tw`ml-2`} invert={arrow} />
+            <CircularArrow cssStyle={tw`ml-2 h-5 w-5`} invert={arrow} />
           </div>
         )}
       </Dropdown>

@@ -10,7 +10,7 @@ interface PanelSelectorProps {
 const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelIndex }) => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const buttonRefs = useRef<HTMLButtonElement[]>([])
-  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs, panelIndex)
+  const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonRefs, panelIndex)
   const onChangePanel = useCallback((el: BaseSyntheticEvent) => {
     const index = parseInt(el.currentTarget.dataset.index)
     setPanelIndex(index)

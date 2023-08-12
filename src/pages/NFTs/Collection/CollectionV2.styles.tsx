@@ -3,6 +3,7 @@ import { ReactElement, FC } from 'react'
 import styled, { css } from 'styled-components'
 import tw from 'twin.macro'
 import { useDarkMode } from '../../../context'
+import { CircularArrow } from '../../../components/common/Arrow'
 
 export const COLLECTION_VIEW_WRAPPER = styled.div`
   ${() => css`
@@ -43,7 +44,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
     .nftStatsContainer {
       ${tw`flex items-center mt-[38px] sm:mt-5 mb-[20px] sm:mb-1 mx-3 sm:ml-2.5 sm:mr-2`}
       .backBtn {
-        ${tw`h-[40px] w-[40px] rounded-full flex items-center justify-center cursor-pointer`}
+        ${tw`h-8.75 w-8.75 rounded-full flex items-center justify-center cursor-pointer`}
         background: ${({ theme }) => theme.backBtnBg};
         img {
           ${tw`h-[18px] `}
@@ -59,7 +60,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
           }
         }
         .collectionNameImage {
-          ${tw`sm:ml-0 ml-4 h-[65px] w-[65px] sm:h-[55px] sm:w-[55px] rounded-full`}
+          ${tw`sm:ml-0 ml-4 h-8.75 w-8.75 rounded-full`}
         }
 
         .shareMobile {
@@ -86,13 +87,13 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
             ${tw`flex flex-col ml-4 mr-4 sm:mr-1 sm:ml-1`}
           }
           .titleText {
-            ${tw`text-[20px] sm:text-[18px] text-center font-semibold leading-none dark:text-grey-5 text-black-4`}
+            ${tw`text-[18px] sm:text-[18px] text-center font-semibold leading-none dark:text-grey-5 text-black-4`}
             img {
               ${tw`h-[20px] w-[20px] mr-1 mb-1`}
             }
           }
           .titleTextNoSupport {
-            ${tw`text-[20px] sm:text-[18px] text-center font-semibold text-grey-1 leading-none`}
+            ${tw`text-[18px] sm:text-[18px] text-center font-semibold text-grey-1 leading-none`}
             img {
               ${tw`h-[20px] w-[20px] mr-1 mb-1`}
             }
@@ -130,18 +131,12 @@ const ICON_WRAPPER_TD = styled.div`
   }
 `
 
-export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, setIsOpen }): ReactElement => {
-  const { mode } = useDarkMode()
-  return (
-    <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
-      <img
-        className={isOpen ? 'invertArrow' : 'dontInvert'}
-        src={`/img/assets/arrow-down-${mode}.svg`}
-        alt="arrow"
-      />
-    </ICON_WRAPPER_TD>
-  )
-}
+export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, setIsOpen }): ReactElement => (
+  <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
+    <CircularArrow cssStyle={tw`!h-5 !w-5`} invert={isOpen} />
+  </ICON_WRAPPER_TD>
+)
+
 export const GRID_CONTAINER = styled.div`
   ${() => css`
     height: calc(100vh - 180px);
@@ -225,8 +220,8 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
   .gridItemCollections {
     ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white
-      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`}
-    border:1px solid ${({ theme }) => theme.borderForNFTCard} // change lite mode
+      duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`};
+    border: 1px solid ${({ theme }) => theme.borderForNFTCard}; // change lite mode
   }
 
   .gridItemContainer {
@@ -332,11 +327,18 @@ export const DROPDOWN_CONTAINER = styled.div`
 `
 export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
   ${({ index }) => css`
-    ${tw`duration-500 items-center flex h-[70px] sm:h-[105px] sm:flex-col px-3.5`}
-   
+    ${tw`duration-500 items-center flex h-[70px] sm:h-[98px] sm:flex-col px-3.5`}
+    // this border bottom only for web and not for mobile
     border-bottom: 1px solid ${({ theme }) => theme.borderBottom};
+    @media (max-width: 500px) {
+      border-bottom: none;
+    }
+    .pinkGradient {
+      background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+      white-space: nowrap;
+    }
     .sortingBtn {
-      ${tw`w-[189px] text-black-4 dark:text-white h-[44px] dark:bg-black-2 bg-white rounded-3xl ml-[15px]	
+      ${tw`w-[180px] text-black-4 dark:text-white h-8.75 dark:bg-black-2 bg-white rounded-3xl ml-[15px]	
       font-semibold text-[15px] flex items-center justify-center cursor-pointer`}
     }
     .offerBtn {
@@ -344,9 +346,9 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       	font-semibold text-[15px]
        flex items-center pl-3 cursor-pointer`}
     }
-
+   
     .filtersViewCategory {
-       ${tw`text-[15px] flex font-semibold ml-auto sm:ml-0 overflow-x-auto sm:mt-2 mt-10 sm:w-[100%]`};
+       ${tw`text-[15px] ml-auto flex font-semibold sm:ml-0 overflow-x-auto sm:mt-2 sm:w-[100%]`};
        ::-webkit-scrollbar {
       display: none;
     }
@@ -362,7 +364,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     .selected {
       ${tw`w-[140px] sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
-       font-semibold dark:text-grey-5 text-black-4 flex justify-between flex-col cursor-pointer`}
+       font-semibold text-white flex justify-between flex-col cursor-pointer`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
     .flexItemProfile {
@@ -384,12 +386,6 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     .activeItem {
       ${tw`h-2  block mt-3 sm:mt-8 rounded-b-circle sm:absolute font-semibold duration-500 
       bg-[#5855ff] w-[70%] sm:w-[20%]`}
-      content: '';
-       transform: rotate(180deg);
-      margin-left: ${index * 280 + `px`};
-      @media (max-width: 500px) {
-        margin-left: calc( ${index * 33.2 + `%`} + 6.5%);
-      }
     }
     .activeItemMobile {
       ${tw`!h-[7px]  sm:mt-[0px] rounded-b-circle  font-semibold duration-500 

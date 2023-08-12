@@ -53,7 +53,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
     sm:h-[52px] rounded-[20px 20px 5px 5px]`}
 
     tr {
-      ${tw`h-[60px] sm:h-full`}
+      ${tw`h-[47px] sm:h-full`}
       border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
 
       th {
@@ -75,7 +75,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
     overflow-x: hidden;
 
     @media (max-width: 500px) {
-      height: calc(100vh - 160px);
+      height: calc(100vh - 120px);
     }
 
     tr {
@@ -94,7 +94,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
       }
     }
     td {
-      ${tw`h-[100%] sm:h-[78px]  text-[15px] font-semibold text-center dark:text-grey-5 text-black-4`}
+      ${tw`h-[100%] sm:h-[57px]  text-[15px] font-semibold text-center dark:text-grey-5 text-black-4`}
       text-align: center;
     }
   }
@@ -124,14 +124,14 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
     ${tw` flex items-center ml-[6px]`}
   }
   .nftNameImg {
-    ${tw`w-10 h-10 sm:mt-0 sm:h-[42px] sm:w-[42px] ml-4 rounded-full  sm:ml-1`}
+    ${tw`w-10 h-10 sm:mt-0 sm:h-8.75 sm:w-8.75 ml-4 rounded-full  sm:ml-1`}
   }
   .gfxTooltip {
-    ${tw`w-5 h-5 absolute left-2 top-[-5px] sm:left-0 z-10`}
+    ${tw`w-5 sm:w-[15px] sm:h-[15px] h-5 absolute left-2 top-[-5px] sm:left-0 z-10`}
   }
   .nftNameColumn {
     text-align: left;
-    ${tw`w-[25%] sm:w-[65%] flex items-center justify-start `}
+    ${tw`w-[25%] sm:w-[62%] flex items-center justify-start `}
     span {
       ${tw` ml-[6px] font-semibold text-[15px]`}
     }
@@ -154,7 +154,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   }
 
   .borderRow2 {
-    ${tw`w-[5%] dark:text-black-2 text-grey-1 !flex !justify-end pt-4 !items-center`}
+    ${tw`w-[5%] dark:text-black-2 text-grey-1 !flex !justify-end pt-2 !items-center`}
 
     @media (max-width: 500px) {
       ${tw`w-[26%] h-[52px]`}
