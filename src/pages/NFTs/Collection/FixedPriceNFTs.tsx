@@ -30,6 +30,8 @@ import debounce from 'lodash.debounce'
 import { PILL_SECONDARY } from '../NFTDetails/AttributesTabContent'
 import { Button } from '../../../components'
 import { AH_PROGRAM_IDS } from '../../../web3'
+import useBreakPoint from '../../../hooks/useBreakPoint'
+import { ClearAllFiltersButton } from './AdditionalFilters'
 
 const WRAPPER = styled.div`
   -ms-overflow-style: none; /* IE and Edge */
@@ -305,6 +307,7 @@ export const FilterTags = (): ReactElement => {
   const { solPrice } = usePriceFeedFarm()
   const [minValue, setMinValue] = useState<number>(additionalFilters?.minValueFilter)
   const [maxValue, setMaxValue] = useState<number>(additionalFilters?.maxValueFilter)
+  const breakpoint = useBreakPoint()
 
   const clearPriceFilters = useCallback(() => {
     setAdditionalFilters((prev) => ({
@@ -431,19 +434,8 @@ export const FilterTags = (): ReactElement => {
             </div>
           </PILL_SECONDARY>
         ))}
-      {((additionalFilters.marketsFilter?.length > 0 &&
-        additionalFilters.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1) ||
-        additionalFilters.minValueFilter ||
-        additionalFilters.attributes?.length > 0) && (
-        <Button
-          onClick={clearAllFilters}
-          height="30px"
-          width="94px"
-          cssStyle={tw`bg-blue-1 font-semibold text-white mt-4`}
-        >
-          Clear All
-        </Button>
-      )}
+
+      <ClearAllFiltersButton />
     </WRAPPER>
   )
 }

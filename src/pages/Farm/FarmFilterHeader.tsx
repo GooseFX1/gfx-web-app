@@ -72,8 +72,8 @@ const STYLED_FARM_HEADER = styled.div`
   }
 `
 export const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto cursor-pointer w-[120px] sm:w-[100px] text-center border-none border-0 sm:font-medium
-  font-semibold text-base h-[44px] sm:h-10 rounded-[36px] duration-700 text-[15px] text-grey-1`}
+  ${tw`sm:m-auto cursor-pointer w-[100px] sm:w-[100px] text-center border-none border-0 sm:font-medium
+  font-semibold text-base h-8.75 rounded-[36px] duration-700 pl-3 text-[15px] sm:text-[13px] text-grey-1`}
   background: none;
 
   :disabled {
@@ -140,8 +140,12 @@ const TEMP_BANNER = styled.h2`
     border-radius: 10px;
   `}
 `
-
+type AnimateButtonRefType = HTMLButtonElement | HTMLDivElement
 const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
+interface useAnimateButtonSlideReturnType {
+  handleSlide: (index: number) => void
+  setButtonRef: (ref: AnimateButtonRefType) => void
+}
 /**
  * Animates a absolute button components left, top and width to always match the button it is animating to
  * @param slideRef - the ref of the absolute button component that is to be animated
@@ -151,10 +155,10 @@ const poolTypes = [{ name: 'All pools' }, { name: 'SSL' }, { name: 'Staking' }]
  */
 export const useAnimateButtonSlide = (
   slideRef: MutableRefObject<HTMLDivElement | null>,
-  buttonRefs: MutableRefObject<HTMLButtonElement[]>,
+  buttonRefs: MutableRefObject<AnimateButtonRefType[]>,
   index?: number,
-  customCallback?: (index: number) => void
-): ((index: number) => void) => {
+  customCallback?: (index: number, buttonRef: AnimateButtonRefType, sliderRef: HTMLDivElement) => void
+): useAnimateButtonSlideReturnType => {
   useEffect(() => {
     if (!slideRef.current || !buttonRefs.current.length) return
     if (index !== undefined) {
@@ -174,7 +178,7 @@ export const useAnimateButtonSlide = (
         return
       }
       if (customCallback) {
-        customCallback(index)
+        customCallback(index, buttonRefs.current[index], slideRef.current)
         return
       }
       const left = `${buttonRefs.current[index].offsetLeft}px`
@@ -197,7 +201,19 @@ export const useAnimateButtonSlide = (
     window.addEventListener('resize', () => handleSlide(index ?? 0))
     return () => window.removeEventListener('resize', () => handleSlide(index ?? 0))
   }, [index])
-  return handleSlide
+
+  const setButtonRef = useCallback(
+    (ref: AnimateButtonRefType) => {
+      if (!buttonRefs.current.includes(ref)) {
+        buttonRefs.current.push(ref)
+      }
+    },
+    [buttonRefs.current]
+  )
+  return {
+    handleSlide,
+    setButtonRef
+  }
 }
 
 export const FarmFilter: FC = () => {
@@ -218,7 +234,7 @@ export const FarmFilter: FC = () => {
   const [firstPageLoad, setFirstPageLoad] = useState<boolean>(true)
   const buttonRefs = useRef<HTMLButtonElement[]>([])
   const sliderRef = useRef<HTMLDivElement>(null)
-  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs)
+  const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonRefs)
   const handleClick = (name, index) => {
     setPoolFilter(name)
     setPoolIndex(index)

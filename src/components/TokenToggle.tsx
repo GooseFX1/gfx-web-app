@@ -7,15 +7,15 @@ import { useNFTAggregator } from '../context'
 
 const TOGGLE_WRAPPER = styled.div<{ position: number }>`
   .background {
-    ${tw`w-[50px] h-[26px] sm:h-[40px] sm:mr-3 mr-2 sm:w-[75px] rounded-[33px] duration-500 flex 
+    ${tw`w-[50px] h-[26px] sm:h-[35px] sm:mr-3 mr-2 sm:w-[65px] rounded-[33px] duration-500 flex 
     cursor-pointer items-center`}
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%);
   }
   .tokenImg {
-    ${tw`h-[26px] sm:w-[40px] sm:h-[40px] w-[26px] rounded-[50%] duration-500`}
+    ${tw`h-[26px] sm:w-[35px] sm:h-[35px] w-[26px] rounded-[50%] duration-500`}
     margin-left: ${({ position }) => (position ? '24px' : '-1px')};
     @media (max-width: 500px) {
-      margin-left: ${({ position }) => (position ? '36px' : '-1px')};
+      margin-left: ${({ position }) => (position ? '35px' : '-1px')};
     }
   }
 `
