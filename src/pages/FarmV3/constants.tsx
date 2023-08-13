@@ -1,4 +1,11 @@
 /* eslint-disable */
+import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+interface Message {
+  type?: string
+  message: string | JSX.Element
+}
+
 export const faqs = [
   {
     question: 'How does single sided liquidity work?',
@@ -75,4 +82,62 @@ export const faqs = [
 export const ModeOfOperation = {
   DEPOSIT: 'Deposit',
   WITHDRAW: 'Withdraw'
+}
+
+export const insufficientSOLMsg = (): Message => ({
+  type: 'error',
+  message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
+})
+
+export const invalidInputErrMsg = (userTokenBalance: number, name: string): Message => ({
+  type: 'error',
+  message: `Please give valid input from 0.00001 to ${userTokenBalance?.toFixed(3)} ${name}`
+})
+
+export const genericErrMsg = (error: string): Message => ({
+  type: 'error',
+  message: error
+})
+
+export const sslSuccessfulMessage = (
+  signature: string,
+  price: string | number,
+  name: string,
+  network: WalletAdapterNetwork,
+  operation: string
+): Message => ({
+  message: (
+    <SuccessfulListingMsg
+      title={`${name} ${operation} sucessfull!`}
+      itemName={`You ${operation} ${price} ${name}`}
+      supportText={`Farm ${name}`}
+      tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
+    />
+  )
+})
+
+export const sslErrorMessage = (
+  name: string,
+  supportTxt: string,
+  signature: string,
+  network: WalletAdapterNetwork,
+  operation: string
+): Message => ({
+  type: 'error',
+  message: (
+    <TransactionErrorMsg
+      title={`${operation} error!`}
+      itemName={`${operation} ${name} Error`}
+      supportText={supportTxt}
+      tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
+    />
+  )
+})
+
+export const TOKEN_NAMES = {
+  SOL: 'SOL',
+  GOFX: 'GOFX',
+  GMT: 'GMT',
+  USDT: 'USDT',
+  USDC: 'USDC'
 }

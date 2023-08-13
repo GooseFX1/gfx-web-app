@@ -1,15 +1,31 @@
 /* eslint-disable */
-import { FC, useCallback, useMemo, Dispatch, SetStateAction, useState } from 'react'
+import { FC, useMemo, Dispatch, SetStateAction, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ArrowClicker, Button, SearchBar } from '../../components'
-import { useAccounts, useDarkMode, usePriceFeed, usePriceFeedFarm } from '../../context'
-import { ADDRESSES, getPriceObject } from '../../web3'
+import {
+  useAccounts,
+  useConnectionConfig,
+  useDarkMode,
+  useFarmContext,
+  usePriceFeed,
+  usePriceFeedFarm
+} from '../../context'
+import { ADDRESSES, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
-import { ModeOfOperation } from './constants'
-import { checkMobile, formatSOLDisplay, formatSOLNumber } from '../../utils'
+import {
+  ModeOfOperation,
+  insufficientSOLMsg,
+  TOKEN_NAMES,
+  invalidInputErrMsg,
+  genericErrMsg,
+  sslSuccessfulMessage,
+  sslErrorMessage
+} from './constants'
+import { checkMobile, notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
@@ -117,18 +133,15 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
   const [selectedPool, setSelectedPool] = useState<string>(poolTypes[0])
   const [searchTokens, setSearchTokens] = useState<string>()
   const breakpoint = useBreakPoint()
-
   const arr = useMemo(() => Object.keys(ADDRESSES['mainnet-beta'][selectedPool]).map((coin) => coin), [poolTypes])
-
   const filteredTokens = useMemo(
     () => (searchTokens ? arr.filter((ar) => ar.toLocaleLowerCase().includes(searchTokens)) : [...arr]),
     [searchTokens, arr]
   )
-
-  const handleClick = useCallback((pool, index) => {
+  const handlePoolSelection = (pool, index) => {
     setPoolIndex(index)
     setSelectedPool(pool)
-  }, [])
+  }
 
   return (
     <WRAPPER>
@@ -169,14 +182,14 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
           <div
             css={[poolIndex === 0 && tw`!text-white  `]}
             tw="h-[35px] flex items-center z-[100] justify-center font-semibold w-[95px]  "
-            onClick={() => handleClick(poolTypes[0], 0)}
+            onClick={() => handlePoolSelection(poolTypes[0], 0)}
           >
             Stable
           </div>
           <div
             css={[poolIndex === 1 && tw`!text-white `]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] "
-            onClick={() => handleClick(poolTypes[1], 1)}
+            onClick={() => handlePoolSelection(poolTypes[1], 1)}
           >
             Hyper
           </div>
@@ -255,7 +268,7 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
         {!checkMobile() && <td>$30,596</td>}
         {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%] sm:!w-[33%]">
-          <Button className="pinkGradient" cssStyle={tw`h-[35px] font-semibold text-regular `}>
+          <Button className="pinkGradient" cssStyle={tw`h-[35px] font-semibold text-regular`}>
             Stats
           </Button>
           <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
@@ -268,14 +281,20 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
 
 const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, coin }) => {
   const { wallet } = useWallet()
+  const wal = useWallet()
+  const { network, connection } = useConnectionConfig()
   const breakpoint = useBreakPoint()
-
   const { getUIAmount } = useAccounts()
-  const { prices } = usePriceFeedFarm()
+  const { prices, SSLProgram } = usePriceFeedFarm()
+  const { setCounter, setOperationPending, farmDataContext, farmDataSSLContext } = useFarmContext()
   const [poolIndex, setPoolIndex] = useState<number>(0)
-  const [userInputVariable, setUserInputVariable] = useState<number>()
   const tokenAddress = ADDRESSES['mainnet-beta']?.sslPool[coin].address // change this later
   const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const [solBalance, setSOLBalance] = useState<number>()
+  const [depositAmount, setDepositAmount] = useState<number>()
+  const [withdrawAmount, setWithdrawAmount] = useState<number>()
+  const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
+  const tokenData = [...farmDataContext, ...farmDataSSLContext].find((farmData) => farmData.name === coin)
   let userTokenBalance = useMemo(
     () => (pubKey && tokenAddress ? getUIAmount(tokenAddress.toString()) : 0),
     [tokenAddress, getUIAmount, pubKey]
@@ -284,8 +303,101 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
     () => prices[getPriceObject(coin)]?.current * userTokenBalance,
     [prices, coin, prices[getPriceObject(coin)], userTokenBalance]
   )
+  const enoughSOLInWallet = (): boolean => {
+    if (solBalance < 0.000001) {
+      notify(insufficientSOLMsg())
+      return false
+    }
+    return true
+  }
+  const checkConditions = () => {
+    console.log('depositAmount', depositAmount, isButtonLoading, isNaN(depositAmount))
+    if (!enoughSOLInWallet()) return true
+    if (coin === TOKEN_NAMES.SOL) userTokenBalance = solBalance
+    if (
+      isNaN(depositAmount) ||
+      depositAmount < 0.000001 ||
+      depositAmount > parseFloat(userTokenBalance.toFixed(3))
+    ) {
+      //setDepositAmount(0)
+      notify(invalidInputErrMsg(userTokenBalance, coin))
+      return true
+    }
+    return false
+  }
 
+  const handleDeposit = () => {
+    if (checkConditions()) return
+    let amount = depositAmount
+    if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
+    try {
+      setIsButtonLoading(true)
+      setOperationPending(true)
+      const confirm = executeDeposit(SSLProgram, wal, connection, network, amount, coin)
+      confirm.then((con) => {
+        setOperationPending(false)
+        setIsButtonLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, amount, coin, network, 'Deposit'))
+          setTimeout(() => setDepositAmount(0), 500)
+          setCounter((prev) => prev + 1)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(coin, error?.message, signature, network, 'Deposit'))
+          return
+        }
+      })
+    } catch (error) {
+      setOperationPending(false)
+      setIsButtonLoading(false)
+      notify(genericErrMsg(error))
+    }
+  }
+  const onClickWithdraw = (amount: number): void => {
+    setIsButtonLoading(true)
+    try {
+      executeWithdraw(SSLProgram, wal, connection, network, coin, amount).then((con) => {
+        setIsButtonLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, withdrawAmount, coin, network, 'Withdraw'))
+          setCounter((prev) => prev + 1)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(coin, error?.message, signature, network, 'Withdraw'))
+          return
+        }
+      })
+    } catch (err) {
+      setIsButtonLoading(false)
+      notify(genericErrMsg(err))
+    }
+  }
+  const checkbasicConditionsForWithdraw = () => {
+    const userAmount = withdrawAmount
+    if (isNaN(userAmount) || userAmount < 0.000001) {
+      notify(invalidInputErrMsg(undefined, coin))
+      return true
+    }
+    return false
+  }
+
+  const handleWithdraw = () => {
+    if (checkbasicConditionsForWithdraw()) return
+    // const decimals = ADDRESSES[network]?.sslPool[coin]?.decimals
+    // const multiplier = 10 * Math.pow(10, decimals - 6) // decimals === 9 ? 10000 : decimals === 8 ? 1000 : 10
+    // let amountInNative = (withdrawAmount / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
+    onClickWithdraw(withdrawAmount)
+  }
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
+  const handleUserOperation = () => {
+    if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      handleDeposit()
+    } else {
+      handleWithdraw()
+    }
+  }
   const handleModeOfOperation = (pool: number) => {
     setPoolIndex(pool)
     if (pool) setModeOfOperation(ModeOfOperation.WITHDRAW)
@@ -317,7 +429,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
         )}
         {isExpanded && (
           <>
-            <div tw="flex font-semibold duration-500 sm:relative sm:mt-2">
+            <div tw="flex font-semibold duration-500 relative sm:mt-2">
               <div
                 css={[
                   tw`bg-blue-1 h-8 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
@@ -361,19 +473,22 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
       <div>
         <div tw="flex relative">
           <div tw="absolute flex z-[100]">
-            {/* // handle cases for withdraw operation */}
             <div
               onClick={() =>
-                setUserInputVariable(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : undefined)
+                modeOfOperation === ModeOfOperation.DEPOSIT
+                  ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
+                  : setWithdrawAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
               }
               tw="font-semibold text-grey-1 dark:text-grey-2 mt-2 ml-4 cursor-pointer"
             >
               Min
             </div>
-            {/* // handle cases for withdraw mode of operation */}
-
             <div
-              onClick={() => setUserInputVariable(parseFloat(userTokenBalance.toFixed(2)))}
+              onClick={() =>
+                modeOfOperation === ModeOfOperation.DEPOSIT
+                  ? setDepositAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
+                  : setWithdrawAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
+              }
               tw="font-semibold text-grey-1 dark:text-grey-2 mt-2 ml-2 cursor-pointer"
             >
               Max
@@ -381,18 +496,20 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
           </div>
 
           <input
-            onChange={(e) => setUserInputVariable(e.target.value && parseFloat(e.target.value))}
-            placeholder={isExpanded ? `0.00 ${coin}` : ``}
-            value={userInputVariable ?? null}
+            onChange={(e) =>
+              modeOfOperation === ModeOfOperation.DEPOSIT
+                ? setDepositAmount(parseFloat(e.target.value))
+                : setWithdrawAmount(parseFloat(e.target.value))
+            }
+            placeholder={isExpanded ? `0.00` : ``}
+            value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
             css={[
               tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 bg-grey-5 border-none`,
               isExpanded ? tw`w-[400px] h-10 sm:w-[100%] p-4 pl-[300px] sm:pl-[72%]` : tw`h-0 w-0 pl-0 invisible`
             ]}
             type="text"
           />
-          {userInputVariable >= 0.000001 && (
-            <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-2">{coin}</div>
-          )}
+          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-2">{coin}</div>
         </div>
 
         {isExpanded && (
@@ -402,6 +519,8 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
                 <Button
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-10 bg-blue-1 text-regular !text-white font-semibold
                    rounded-[50px] flex items-center justify-center outline-none border-none`}
+                  onClick={handleUserOperation}
+                  loading={isButtonLoading}
                 >
                   {modeOfOperation}
                 </Button>
