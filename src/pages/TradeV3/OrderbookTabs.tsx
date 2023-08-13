@@ -6,6 +6,7 @@ import { OrderBook } from './OrderBook'
 import { useCrypto, useOrder, useOrderBook, usePriceFeed } from '../../context'
 import { getPerpsPrice } from './perps/utils'
 import tw, { styled } from 'twin.macro'
+import { RecentTrades } from './RecentTrades'
 
 const TAB_NAMES = [
   { display: 'Orderbook', key: 'orderbook' },
@@ -111,7 +112,7 @@ export const OrderbookTabs: React.FC = () => {
           ))}
         </Radio.Group>
       </HEADER_WRAPPER>
-      <BODY_WRAPPER>{selectedTab === 'orderbook' ? <OrderBook /> : null}</BODY_WRAPPER>
+      <BODY_WRAPPER>{selectedTab === 'orderbook' ? <OrderBook /> : <RecentTrades />}</BODY_WRAPPER>
       {/*<FOOTER_WRAPPER>Hello</FOOTER_WRAPPER>*/}
     </WRAPPER>
   )
