@@ -1,5 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import tw, { styled } from 'twin.macro'
+import { httpClient } from '../../api/'
+import { useCrypto } from '../../context'
 
 const HEADER = styled.div`
   ${tw`h-[31px] w-full p-0 text-xs h-7`}
@@ -50,54 +52,41 @@ const TRADES = styled.div`
         ${tw`text-red-500`}
     }
 `
+
+const GET_TRADE_HISTORY = '/perps-apis/getTradeHistory'
+
+export interface ITradesHistory {
+  _id: string
+  order_id: string
+  market: string
+  name: string
+  side: string
+  taker: string
+  maker: string
+  qty: number
+  time: number
+  price: number
+  is_mainnet: boolean
+}
+
 export const RecentTrades: FC = () => {
-  const data = [
-    {
-      _id: 'a',
-      order_id: 'a',
-      market: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
-      name: 'SOL-PERP',
-      side: 'Bid',
-      taker: 'xyz',
-      maker: 'yzjs',
-      qty: 1,
-      time: 1691559253,
-      price: 24.53,
-      is_mainnet: false
-    },
-    {
-      _id: 'b',
-      order_id: 'b',
-      market: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
-      name: 'SOL-PERP',
-      side: 'Ask',
-      taker: 'xyz',
-      maker: 'yzjs',
-      qty: 1,
-      time: 1691774672737,
-      price: 24.53,
-      is_mainnet: false
-    }
-  ]
+  const { isDevnet } = useCrypto()
+  const [tradeHistory, setTradeHistory] = useState<ITradesHistory[]>([])
 
-  for (let i = 0; i < 20; i++) {
-    const newItem = {
-      _id: `id_${i}`,
-      order_id: `order_${i}`,
-      market: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
-      name: 'SOL-PERP',
-      side: i % 2 === 0 ? 'Bid' : 'Ask', // Alternating between 'Bid' and 'Ask'
-      taker: 'xyz',
-      maker: 'yzjs',
-      qty: 1,
-      time: Date.now(),
-      price: 24.53,
-      is_mainnet: false
-    }
-
-    data.push(newItem)
+  const getTradeHistory = async (isDevnet: boolean) => {
+    const res = await httpClient('api-services').post(`${GET_TRADE_HISTORY}`, {
+      devnet: isDevnet,
+      pairName: 'SOL-PERP'
+    })
+    setTradeHistory(res.data)
   }
 
+  useEffect(() => {
+    getTradeHistory(isDevnet)
+  }, [isDevnet])
+
+  // time in the array of trades returned is a unix timestamp
+  // this converts it into the hh:mm::ss format for display
   function unixTimestampToHHMMSS(unixTimestamp: number) {
     const date = new Date(unixTimestamp * 1000) // Convert to milliseconds
     const hours = String(date.getUTCHours()).padStart(2, '0')
@@ -110,16 +99,16 @@ export const RecentTrades: FC = () => {
     <WRAPPER>
       <HEADER>
         <div>
-          <span>Size (SOL)</span>
           <span> Price (USDC)</span>
+          <span>Size (SOL)</span>
           <span>Time</span>
         </div>
       </HEADER>
       <TRADES>
-        {data.map((trade) => (
+        {tradeHistory.map((trade) => (
           <div key={trade._id}>
-            <span className={trade.side === 'Bid' ? 'bid' : 'ask'}>{trade.price}</span>
-            <span>{trade.qty}</span>
+            <span className={trade.side === 'Bid' ? 'bid' : 'ask'}>{trade.price.toFixed(2)}</span>
+            <span>{trade.qty.toFixed(3)}</span>
             <span>{unixTimestampToHHMMSS(trade.time)}</span>
           </div>
         ))}
