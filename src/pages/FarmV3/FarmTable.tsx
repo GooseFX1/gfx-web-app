@@ -311,7 +311,6 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
     return true
   }
   const checkConditions = () => {
-    console.log('depositAmount', depositAmount, isButtonLoading, isNaN(depositAmount))
     if (!enoughSOLInWallet()) return true
     if (coin === TOKEN_NAMES.SOL) userTokenBalance = solBalance
     if (
@@ -329,7 +328,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
   const handleDeposit = () => {
     if (checkConditions()) return
     let amount = depositAmount
-    if (amount === parseFloat(userTokenBalance.toFixed(3))) amount = userTokenBalance
+    if (amount === parseFloat(userTokenBalance && userTokenBalance.toFixed(3))) amount = userTokenBalance
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
