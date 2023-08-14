@@ -124,6 +124,9 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
         <div>{user?.weeklyPoints ?? '0'}</div>
       </td>
       <td>
+        <div>{user?.prevWeekPoints ?? '0'}</div>
+      </td>
+      <td>
         <div tw="text-right pr-2.5">{user?.totalPoints ?? '0'}</div>
       </td>
     </>
@@ -186,6 +189,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
       </th>
       {screenType !== 2 && <th tw="w-1/6">24H points</th>}
       <th>14D points</th>
+      {screenType === 2 && <th>Prev Raffle points</th>}
       <th tw="text-right">Total</th>
     </>
   )

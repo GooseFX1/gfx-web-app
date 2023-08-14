@@ -17,6 +17,7 @@ export interface User {
   weeklyPoints: string
   totalPoints?: string
   domainName?: string
+  prevWeekPoints?: string
 }
 
 const StatsContext = createContext<any | null>(null)

@@ -128,13 +128,14 @@ interface Timer {
 
 const transformObject = (original, index) => {
   return {
-    id: index,
+    id: index + 1,
     address: original.walletAddress,
     boost: original.boost,
     loyalty: original.loyalty,
     pnl: undefined, // You may need to provide logic to set this value
     dailyPoints: undefined, // You may need to provide logic to set this value
     weeklyPoints: original.rafflePoints, // You may need to provide logic to set this value
+    prevWeekPoints: original.prevRafflePoints[original.prevRafflePoints.length - 1], // You may need to provide logic to set this value
     totalPoints: original.totalPoints ? original.totalPoints.toString() : undefined
   }
 }
