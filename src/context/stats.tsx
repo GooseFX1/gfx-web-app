@@ -5,14 +5,17 @@ import { reverseLookup, getAllDomains, getFavoriteDomain } from '@bonfida/spl-na
 import { useEffect } from 'react'
 import { httpClient } from '../api'
 import { GET_LEADERBOARD_DATA } from '../pages/TradeV3/perps/perpsConstants'
+import { NFT_API_ENDPOINTS } from '../api/NFTs'
+
 export interface User {
   id: number
   address: string
   boost: number
   loyalty: number
   pnl: number
-  dailyPoints: number
-  weeklyPoints: number
+  dailyPoints: string
+  weeklyPoints: string
+  totalPoints?: string
   domainName?: string
 }
 
@@ -21,8 +24,21 @@ const StatsContext = createContext<any | null>(null)
 export const StatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const [users, setUsers] = useState<User[]>([])
+  const [nftUsers, setNFTUsers] = useState([])
+  // call the nft leaderboard api rank api make
+  // set the index and call the leaderboard rank api and finally saveNFTAPi thats all done
   const [toShowFlag, setToShowFlag] = useState<boolean>(false)
 
+  async function getNFTUsers(): Promise<User[]> {
+    try {
+      const res: {
+        data: User[]
+      } = await httpClient('api-services').get(`${NFT_API_ENDPOINTS.NFT_LEADERBOARD_USERS}`)
+      return res.data
+    } catch (e) {
+      return []
+    }
+  }
   async function getUsers(): Promise<User[]> {
     try {
       const res: {
@@ -42,6 +58,8 @@ export const StatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       const users = await getUsers()
       setUsers(users)
+      const nftUsers = await getNFTUsers()
+      setNFTUsers(nftUsers)
     })()
   }, [])
 
@@ -85,7 +103,8 @@ export const StatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <StatsContext.Provider
       value={{
-        users
+        users,
+        nftUsers
       }}
     >
       {children}
@@ -100,6 +119,7 @@ export const useStats = (): any => {
   }
 
   return {
-    users: context.users
+    users: context.users,
+    nftUsers: context.nftUsers
   }
 }

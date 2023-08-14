@@ -385,12 +385,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       saveNftTx(
         marketplaceName,
         parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
-        publicKey.toString(),
-        ask?.wallet_key,
         general?.mint_address,
         general?.collection_name,
         txType,
-        signature
+        signature,
+        general?.uuid,
+        publicKey.toString()
       )
     },
     [marketplaceName, general, ask]
@@ -408,7 +408,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
     return null
   }, [publicKey, wallet?.adapter?.connected])
-
   const fetchUser = (curPubKey: string) => {
     fetchSessionUser('address', curPubKey, connection).then((res) => {
       if (!res || (res.response && res.response.status !== 200) || res.isAxiosError) {
@@ -422,11 +421,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       // setting this as operating nft , for loading buttons
       if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
       const signature = await sendTransaction(tx, connection)
-      console.log(signature)
       setPendingTxSig(signature)
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
-        sendNftTransactionLog(isBuyingNow ? 'SALE' : 'BID', signature)
+        sendNftTransactionLog(isBuyingNow ? 'BUY' : 'BID', signature)
         setIsLoading(false)
 
         if (isBuyingNow) {

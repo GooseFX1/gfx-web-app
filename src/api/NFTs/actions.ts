@@ -1,10 +1,12 @@
 import { gooseFxProd, httpClient } from '../../api'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
-import { IRegisterNFT, ITensorBuyIX } from '../../types/nft_details.d'
+import { IActivityName, IRegisterNFT, ITensorBuyIX, ITypeOfActivity } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
-import { ANALYTICS_SUBDOMAIN } from '../analytics'
+import { ANALYTICS_SUBDOMAIN, localhost } from '../analytics'
 import { AH_PROGRAM_IDS, MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
 import { IAdditionalFilters } from '../../context'
 import axios from 'axios'
@@ -431,31 +433,43 @@ export const fetchUpdatedJwtToken = async (
   }
 }
 
+export const dailyVisitData = async (walletAddress: string): Promise<any> => {
+  try {
+    const res = await httpClient(ANALYTICS_SUBDOMAIN).get(
+      `${NFT_API_ENDPOINTS.DAILY_VISIT}?walletAddress=${walletAddress}`
+    )
+    return res.data
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 export const saveNftTx = async (
   marketPlace: string,
   price: number,
-  buyer: string,
-  owner: string,
   mintAddress: string,
   collectionName: string,
-  txType: string,
+  txType: IActivityName,
   signature: string,
-  isModified?: boolean
+  collectionUuid: string,
+  walletAddress: string
 ): Promise<any> => {
   try {
+    const typeOfActivity: ITypeOfActivity = {
+      walletAddress: walletAddress,
+      mintAddress: mintAddress,
+      collectionName: collectionName,
+      price: price,
+      typeOfActivity: txType,
+      marketPlace: marketPlace,
+      signature: signature,
+      collectionUuid: collectionUuid
+    }
     const token = jwt.sign(
       {
         exp: Math.floor(Date.now() / 1000) + 10,
         iat: Math.floor(Date.now() / 1000),
-        price: price,
-        buyer: buyer,
-        owner: owner,
-        mint: mintAddress,
-        collectionName: collectionName,
-        marketPlace: marketPlace,
-        txType: txType,
-        signature: signature,
-        isModified: isModified
+        ...typeOfActivity
       },
       process.env.REACT_APP_JWT_SECRET_KEY
     )

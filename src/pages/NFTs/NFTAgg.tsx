@@ -9,6 +9,7 @@ import { logData } from '../../api/analytics'
 import styled from 'styled-components'
 import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 import { checkMobile } from '../../utils'
+import { dailyVisitData } from '../../api/NFTs'
 
 const BODY_NFT = styled.div`
   position: relative;
@@ -37,6 +38,12 @@ const NFTAgg: FC = (): ReactElement => {
     if (checkMobile()) logData('NFT_agg_mobile')
     else logData('NFT_agg_web')
   }, [])
+
+  useEffect(() => {
+    if (publicKey) {
+      dailyVisitData(publicKey.toString())
+    }
+  }, [publicKey])
 
   useEffect(() => {
     if (publicKey !== null && publicKey !== undefined) {
