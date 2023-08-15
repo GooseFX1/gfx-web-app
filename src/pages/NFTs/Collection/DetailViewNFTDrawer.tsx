@@ -247,9 +247,7 @@ const ImageViewer = (): ReactElement => {
                 <GenericTooltip text={handleMarketplaceFormat(ask)}>
                   <img
                     tw="h-[22px] w-[22px] ml-2.5"
-                    src={`/img/assets/Aggregator/${
-                      ask?.marketplace_name === null ? AH_NAME(ask?.auction_house_key) : ask?.marketplace_name
-                    }.svg`}
+                    src={`/img/assets/Aggregator/${handleMarketplaceFormat(ask)}.svg`}
                     alt="marketplace icon"
                     style={{ height: 30 }}
                   />

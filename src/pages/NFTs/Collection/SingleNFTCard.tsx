@@ -29,6 +29,7 @@ import { Tag } from '../../../components/Tag'
 import { Image } from 'antd'
 import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
+import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 
 export const SingleNFTCard: FC<{
   item: BaseNFT
@@ -284,10 +285,16 @@ export const SingleNFTCard: FC<{
             onMouseLeave={() => setHover(false)}
           >
             {handleHover}
-            {item ? (
+            {localSingleNFT ? (
               <div className="nftImg">
                 <Image
-                  src={item?.image_url}
+                  src={gfxImageService(
+                    IMAGE_SIZES.SM_WIDTH,
+                    localSingleNFT.verified_collection_address
+                      ? localSingleNFT.verified_collection_address
+                      : localSingleNFT.first_verified_creator_address,
+                    localSingleNFT.image_url
+                  )}
                   width={'100%'}
                   preview={false}
                   onError={(e) => console.error(e)}

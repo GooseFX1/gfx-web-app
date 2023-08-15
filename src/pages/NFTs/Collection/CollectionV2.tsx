@@ -42,6 +42,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Share } from '../Share'
 import MyItemsNFTs from './MyItemsNFTs'
 import { logData } from '../../../api/analytics'
+import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import AdditionalFilters from './AdditionalFilters'
 
 const NFTStatsContainer = () => {
@@ -119,11 +120,7 @@ const NFTStatsContainer = () => {
                 preview={false}
                 className="collectionNameImage"
                 fallback={'/img/assets/Aggregator/Unknown.svg'}
-                src={`${
-                  collection.profile_pic_link === undefined
-                    ? '/img/assets/Aggregator/Unknown.svg'
-                    : collection.profile_pic_link
-                }`}
+                src={gfxImageService(IMAGE_SIZES.SM_SQUARE, collection.uuid, collection.profile_pic_link)}
                 alt="collection-image"
               />
             ) : (
