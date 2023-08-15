@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {
   createContext,
   Dispatch,
@@ -13,10 +14,11 @@ import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
-import { getNetworkConnection, getStakingAccountKey } from '../web3'
+import { getNetworkConnection, getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
+import sslJson from '../pages/FarmV3/idl/sslv2.json'
 
 // const minMaxSuffix = '/ohlc?vs_currency=usd&days=7'
 interface IPrices {
@@ -67,8 +69,8 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     () =>
       wallet?.adapter?.publicKey
         ? new Program(
-            CONTROLLER_IDL as any,
-            SDK_ADDRESS[getNetworkConnection(network)].CONTROLLER_PROGRAM_ID,
+            sslJson as any, //sslchange: change to sslJson
+            SSL_PROGRAM_ID, //sslchange to SSL_PROGRAM_ID
             new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,
@@ -90,8 +92,8 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     () =>
       wallet?.adapter?.publicKey
         ? new Program(
-            SSL_IDL as any,
-            SDK_ADDRESS[getNetworkConnection(network)].SSL_PROGRAM_ID,
+            sslJson as any, //sslchange: change to sslJson
+            SSL_PROGRAM_ID,
             new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,

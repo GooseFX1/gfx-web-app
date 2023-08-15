@@ -494,13 +494,21 @@ export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4C
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 
-// STAKE CONSTANTS
+// SSL-V2 CONSTANTS
 
 export const STAKE_PREFIX = 'GFX-STAKINGACCOUNT'
 
 export const SSL_PREFIX = 'GFX-SSL'
 
-export const LIQUIDITY_ACCOUNT_PREFIX = 'GFX-LIQUIDITYACCOUNT'
+export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
+
+export const POOL_REGISTRY_PREFIX = 'pool_registry'
+
+export const SSL_V2_ADMIN = new PublicKey('11111111111111111111111111111111') //sslchange: ERIC WILL GIVE CHANGE IT
+
+export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
+
+export const SSL_PROGRAM_ID = 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS' //sslchange: ERIC WILL GIVE CHANGE IT
 
 export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 

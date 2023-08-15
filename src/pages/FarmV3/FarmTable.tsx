@@ -1,17 +1,9 @@
-/* eslint-disable */
-import { FC, useMemo, Dispatch, SetStateAction, useState } from 'react'
+import { FC, useMemo, Dispatch, SetStateAction, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ArrowClicker, Button, SearchBar } from '../../components'
-import {
-  useAccounts,
-  useConnectionConfig,
-  useDarkMode,
-  useFarmContext,
-  usePriceFeed,
-  usePriceFeedFarm
-} from '../../context'
+import { useAccounts, useConnectionConfig, useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
 import { ADDRESSES, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -19,8 +11,8 @@ import { Connect } from '../../layouts'
 import {
   ModeOfOperation,
   insufficientSOLMsg,
-  TOKEN_NAMES,
-  invalidInputErrMsg,
+  invalidDepositErrMsg,
+  invalidWithdrawErrMsg,
   genericErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage
@@ -29,6 +21,14 @@ import { checkMobile, notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
@@ -142,7 +142,6 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
     setPoolIndex(index)
     setSelectedPool(pool)
   }
-
   return (
     <WRAPPER>
       <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
@@ -223,7 +222,10 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
               filteredTokens.map((coin, index) => <FarmTableCoin key={index} coin={coin} />)
             ) : (
               <tr>
-                <div tw="h-full flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
+                <div
+                  tw="h-full flex flex-row justify-center items-center text-regular 
+                  font-semibold dark:text-white text-black"
+                >
                   No results found!
                 </div>
               </tr>
@@ -235,23 +237,19 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
   )
 }
 
-const FarmTableHeaders = () => {
-  return (
-    <thead>
-      <tr>
-        <th tw="!text-left !justify-start pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
-        <th>{TableHeaderTitle('APY', null, true)} </th>
-        {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
-        {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
-        {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
-        {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
-        <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">
-          {TableHeaderTitle(`Pools: 3`, null, false)}
-        </th>
-      </tr>
-    </thead>
-  )
-}
+const FarmTableHeaders: FC = () => (
+  <thead>
+    <tr>
+      <th tw="!text-left !justify-start pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
+      <th>{TableHeaderTitle('APY', null, true)} </th>
+      {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
+      <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">{TableHeaderTitle(`Pools: 3`, null, false)}</th>
+    </tr>
+  </thead>
+)
 
 const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -282,63 +280,83 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
 const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, coin }) => {
   const { wallet } = useWallet()
   const wal = useWallet()
-  const { network, connection } = useConnectionConfig()
+  const { network } = useConnectionConfig()
+  const connection = new Connection('http://localhost:8899')
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
-  const { prices, SSLProgram } = usePriceFeedFarm()
-  const { setCounter, setOperationPending, farmDataContext, farmDataSSLContext } = useFarmContext()
-  const [poolIndex, setPoolIndex] = useState<number>(0)
-  const tokenAddress = ADDRESSES['mainnet-beta']?.sslPool[coin].address // change this later
+  const { prices, SSLProgram } = usePriceFeedFarm() //sslchange ssl program
+  const { setCounter, setOperationPending } = useFarmContext()
+  const tokenAddress = ADDRESSES['mainnet-beta']?.sslPool[coin].address // sslchange this later
   const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const [solBalance, setSOLBalance] = useState<number>()
+  const [userSolBalance, setUserSOLBalance] = useState<number>()
   const [depositAmount, setDepositAmount] = useState<number>()
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
+  const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
-  const tokenData = [...farmDataContext, ...farmDataSSLContext].find((farmData) => farmData.name === coin)
-  let userTokenBalance = useMemo(
+  //sslchange: to use when ssl program is ready
+  useEffect(() => {
+    ;async () => {
+      if (SSLProgram) {
+        const sslPool = await SSLProgram.account.sslPool.all()
+        return sslPool
+      }
+    }
+  }, [SSLProgram])
+  useEffect(() => {
+    if (wallet?.adapter?.publicKey) {
+      const SOL = connection.getAccountInfo(wallet?.adapter?.publicKey)
+      SOL.then((res) => setUserSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
+    }
+  }, [wallet?.adapter?.publicKey, userSolBalance])
+  const userTokenBalance = useMemo(
     () => (pubKey && tokenAddress ? getUIAmount(tokenAddress.toString()) : 0),
     [tokenAddress, getUIAmount, pubKey]
   )
-  const userTokenBalanceInDollars = useMemo(
+  const userTokenBalanceInUSD = useMemo(
     () => prices[getPriceObject(coin)]?.current * userTokenBalance,
     [prices, coin, prices[getPriceObject(coin)], userTokenBalance]
   )
   const enoughSOLInWallet = (): boolean => {
-    if (solBalance < 0.000001) {
+    if (userSolBalance < 0.000001) {
       notify(insufficientSOLMsg())
       return false
     }
     return true
   }
-  const checkConditions = () => {
+  const checkConditionsForDepositWithdraw = (isDeposit: boolean) => {
     if (!enoughSOLInWallet()) return true
-    if (coin === TOKEN_NAMES.SOL) userTokenBalance = solBalance
-    if (
-      isNaN(depositAmount) ||
-      depositAmount < 0.000001 ||
-      depositAmount > parseFloat(userTokenBalance.toFixed(3))
-    ) {
-      //setDepositAmount(0)
-      notify(invalidInputErrMsg(userTokenBalance, coin))
-      return true
+    if (isDeposit) {
+      if (
+        isNaN(depositAmount) ||
+        depositAmount < 0.000001 ||
+        depositAmount > parseFloat(userTokenBalance && userTokenBalance.toFixed(3))
+      ) {
+        setDepositAmount(0)
+        notify(invalidDepositErrMsg(userTokenBalance, coin))
+        return true
+      }
+      return false
+    } else {
+      if (isNaN(withdrawAmount) || withdrawAmount < 0.000001) {
+        setWithdrawAmount(0)
+        notify(invalidWithdrawErrMsg(coin))
+        return true
+      }
+      return false
     }
-    return false
   }
-
-  const handleDeposit = () => {
-    if (checkConditions()) return
-    let amount = depositAmount
-    if (amount === parseFloat(userTokenBalance && userTokenBalance.toFixed(3))) amount = userTokenBalance
+  const handleDeposit = (): void => {
+    if (checkConditionsForDepositWithdraw(true)) return
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      const confirm = executeDeposit(SSLProgram, wal, connection, network, amount, coin)
+      const confirm = executeDeposit(SSLProgram, wal, connection, network, depositAmount, coin)
       confirm.then((con) => {
         setOperationPending(false)
         setIsButtonLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, amount, coin, network, 'Deposit'))
+          notify(sslSuccessfulMessage(signature, depositAmount, coin, network, 'Deposit'))
           setTimeout(() => setDepositAmount(0), 500)
           setCounter((prev) => prev + 1)
         } else {
@@ -353,10 +371,12 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
       notify(genericErrMsg(error))
     }
   }
-  const onClickWithdraw = (amount: number): void => {
-    setIsButtonLoading(true)
+  const handleWithdraw = (): void => {
+    if (checkConditionsForDepositWithdraw(false)) return
     try {
-      executeWithdraw(SSLProgram, wal, connection, network, coin, amount).then((con) => {
+      setIsButtonLoading(true)
+      setOperationPending(true)
+      executeWithdraw(SSLProgram, wal, connection, network, coin, withdrawAmount).then((con) => {
         setIsButtonLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -373,40 +393,19 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
       notify(genericErrMsg(err))
     }
   }
-  const checkbasicConditionsForWithdraw = () => {
-    const userAmount = withdrawAmount
-    if (isNaN(userAmount) || userAmount < 0.000001) {
-      notify(invalidInputErrMsg(undefined, coin))
-      return true
+  const handleInputChange = (input: string) => {
+    const inputValue = +input
+    if (!isNaN(inputValue)) {
+      if (modeOfOperation === ModeOfOperation.DEPOSIT) setDepositAmount(inputValue)
+      else setWithdrawAmount(inputValue)
     }
-    return false
-  }
-
-  const handleWithdraw = () => {
-    if (checkbasicConditionsForWithdraw()) return
-    // const decimals = ADDRESSES[network]?.sslPool[coin]?.decimals
-    // const multiplier = 10 * Math.pow(10, decimals - 6) // decimals === 9 ? 10000 : decimals === 8 ? 1000 : 10
-    // let amountInNative = (withdrawAmount / tokenData?.userLiablity) * LAMPORTS_PER_SOL * multiplier
-    onClickWithdraw(withdrawAmount)
-  }
-  const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
-  const handleUserOperation = () => {
-    if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      handleDeposit()
-    } else {
-      handleWithdraw()
-    }
-  }
-  const handleModeOfOperation = (pool: number) => {
-    setPoolIndex(pool)
-    if (pool) setModeOfOperation(ModeOfOperation.WITHDRAW)
-    else setModeOfOperation(ModeOfOperation.DEPOSIT)
   }
 
   return (
     <div
       css={[
-        tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-5 rounded-[0 0 15px 15px] duration-300 flex justify-between sm:flex-col`,
+        tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-5 rounded-[0 0 15px 15px] duration-300 
+          flex justify-between sm:flex-col`,
         isExpanded ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4` : tw`h-0 invisible text-[0px] p-0`
       ]}
     >
@@ -432,7 +431,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
               <div
                 css={[
                   tw`bg-blue-1 h-8 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
-                  poolIndex === 1
+                  modeOfOperation === ModeOfOperation.WITHDRAW
                     ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
                 ]}
@@ -440,18 +439,18 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
               <div
                 css={[
                   tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
-                  poolIndex === 0 && tw`!text-white`
+                  modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
-                onClick={() => handleModeOfOperation(0)}
+                onClick={() => setModeOfOperation(ModeOfOperation.DEPOSIT)}
               >
                 Deposit
               </div>
               <div
                 css={[
                   tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
-                  poolIndex === 1 && tw`!text-white`
+                  modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
-                onClick={() => handleModeOfOperation(1)}
+                onClick={() => setModeOfOperation(ModeOfOperation.WITHDRAW)}
               >
                 Withdraw
               </div>
@@ -463,7 +462,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${coin} ($ ${userTokenBalanceInDollars.toFixed(2)} USD)`}
+              value={`${userTokenBalance.toFixed(2)} ${coin} ($ ${userTokenBalanceInUSD.toFixed(2)} USD)`}
             />
           </div>
         )}
@@ -495,18 +494,17 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
           </div>
 
           <input
-            onChange={(e) =>
-              modeOfOperation === ModeOfOperation.DEPOSIT
-                ? setDepositAmount(parseFloat(e.target.value))
-                : setWithdrawAmount(parseFloat(e.target.value))
-            }
+            onChange={(e) => handleInputChange(e.target.value)}
             placeholder={isExpanded ? `0.00` : ``}
             value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
             css={[
-              tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 bg-grey-5 border-none`,
-              isExpanded ? tw`w-[400px] h-10 sm:w-[100%] p-4 pl-[300px] sm:pl-[72%]` : tw`h-0 w-0 pl-0 invisible`
+              tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 
+              bg-grey-5 border-none`,
+              isExpanded
+                ? tw`w-[400px] h-10 sm:w-[100%] p-4 pl-[100px] pr-[60px] text-right sm:pl-[72%]`
+                : tw`h-0 w-0 pl-0 invisible`
             ]}
-            type="text"
+            type="number"
           />
           <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-2">{coin}</div>
         </div>
@@ -518,7 +516,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
                 <Button
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-10 bg-blue-1 text-regular !text-white font-semibold
                    rounded-[50px] flex items-center justify-center outline-none border-none`}
-                  onClick={handleUserOperation}
+                  onClick={modeOfOperation === ModeOfOperation.DEPOSIT ? handleDeposit : handleWithdraw}
                   loading={isButtonLoading}
                 >
                   {modeOfOperation}
@@ -543,16 +541,14 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
   )
 }
 
-const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean }> = ({ keyStr, value, isExpanded }) => {
-  return (
-    <div
-      css={[
-        tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
-        isExpanded ? tw`text-regular opacity-100` : tw`text-[0px] invisible opacity-0`
-      ]}
-    >
-      <div tw="text-grey-1">{keyStr}</div>
-      <div tw="text-grey-2">{value}</div>
-    </div>
-  )
-}
+const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean }> = ({ keyStr, value, isExpanded }) => (
+  <div
+    css={[
+      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
+      isExpanded ? tw`text-regular opacity-100` : tw`text-[0px] invisible opacity-0`
+    ]}
+  >
+    <div tw="text-grey-1">{keyStr}</div>
+    <div tw="text-grey-2">{value}</div>
+  </div>
+)
