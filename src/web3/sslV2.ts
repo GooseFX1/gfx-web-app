@@ -29,7 +29,16 @@ import {
   getNetworkConnectionText,
   confirmTransaction
 } from './utils'
-import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
+import {
+  SSL_PREFIX,
+  LIQUIDITY_ACCOUNT_PREFIX,
+  toPublicKey,
+  ADDRESSES,
+  PT_MINT_PREFIX,
+  POOL_REGISTRY_PREFIX,
+  SSL_V2_ADMIN,
+  SSL_POOL_SIGNER_PREFIX
+} from '../web3'
 import { TOKEN_NAMES } from '../constants'
 import { TxnReturn } from './stake'
 export interface Account {
@@ -93,26 +102,6 @@ export const AccountLayout = struct<RawAccount>([
   u32('closeAuthorityOption'),
   publicKey('closeAuthority')
 ])
-
-export const getSslAccountKey = async (
-  tokenMintAddress: PublicKey,
-  network: WalletAdapterNetwork
-): Promise<undefined | PublicKey> => {
-  //Tochange:
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
-  //Tochange:
-  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
-  try {
-    const sslAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(SSL_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(PROGRAM_ID)
-      //get metadata address
-    )
-    return sslAccountKey[0]
-  } catch (err) {
-    return undefined
-  }
-}
 export const fetchAllSSLAmountStaked = async (
   connection: Connection,
   sslAccountKeys: PublicKey[],
@@ -131,55 +120,19 @@ export const fetchAllSSLAmountStaked = async (
     console.log(err)
   }
 }
-export const getPTMintKey = async (
-  tokenMintAddress: PublicKey,
-  network: WalletAdapterNetwork
-): Promise<undefined | PublicKey> => {
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
-  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
-  try {
-    const ptMintAddress: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(PT_MINT_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(PROGRAM_ID)
-      //get metadata address
-    )
-    return ptMintAddress[0]
-  } catch (err) {
-    return undefined
-  }
-}
-export const getMainVaultKey = async (
-  tokenMintAddress: PublicKey,
-  network: WalletAdapterNetwork
-): Promise<undefined | PublicKey> => {
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
-  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
-  try {
-    const liabilityKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-      [Buffer.from(SSL_PREFIX), CONTROLLER_KEY.toBuffer(), tokenMintAddress.toBuffer()],
-      toPublicKey(PROGRAM_ID)
-      //get metadata address
-    )
-    let mainVaultKey = liabilityKey[0]
-    mainVaultKey = await findAssociatedTokenAddress(mainVaultKey, tokenMintAddress)
-    return mainVaultKey
-  } catch (err) {
-    return undefined
-  }
-}
 export const getLiquidityAccountKey = async (
   wallet: WalletContextState,
   tokenMintAddress: PublicKey,
   network: WalletAdapterNetwork
 ): Promise<undefined | PublicKey> => {
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
-  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
-
+  //sslchange both of these
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID //7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys(network)
   try {
     const liquidityAccountKey: [PublicKey, number] = await PublicKey.findProgramAddress(
       [
         Buffer.from(LIQUIDITY_ACCOUNT_PREFIX),
-        CONTROLLER_KEY.toBuffer(),
+        poolRegistryAccountKey.toBuffer(), //TODO: ask eric to give updated value
         tokenMintAddress.toBuffer(),
         wallet.publicKey.toBuffer()
       ],
@@ -187,6 +140,43 @@ export const getLiquidityAccountKey = async (
       //get metadata address
     )
     return liquidityAccountKey[0]
+  } catch (err) {
+    return undefined
+  }
+}
+export const getPoolRegistryAccountKeys = async (
+  network: WalletAdapterNetwork
+): Promise<undefined | PublicKey> => {
+  try {
+    //sslchange: change all instances of PROGRAM_ID
+    // const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID //7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5
+    // const poolRegistryKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+    //   [Buffer.from(POOL_REGISTRY_PREFIX), SSL_V2_ADMIN.toBuffer()], //sslchange from ERIC
+    //   toPublicKey(PROGRAM_ID)
+    //   //get metadata address
+    // )
+    return new PublicKey('FZjLbeFjMj8kJ1ipY8FHeA9Ss95WCtjugVNL8i9Qe4RC')
+  } catch (err) {
+    return undefined
+  }
+}
+//program.account.sslPool.fetchAll()
+//.assetType
+export const getsslPoolSignerKey = async (
+  tokenMintAddress: PublicKey,
+  network: WalletAdapterNetwork
+): Promise<undefined | PublicKey> => {
+  //sslchange:
+  //sslchange:
+  const PROGRAM_ID = SDK_ADDRESS[getNetworkConnectionText(network)].SSL_PROGRAM_ID
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys(network) //sslchange: get it checked from Arvind
+  try {
+    const sslPoolSignerKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+      [Buffer.from(SSL_POOL_SIGNER_PREFIX), poolRegistryAccountKey.toBuffer(), tokenMintAddress.toBuffer()],
+      toPublicKey(PROGRAM_ID)
+      //get metadata address
+    )
+    return sslPoolSignerKey[0]
   } catch (err) {
     return undefined
   }
@@ -204,27 +194,31 @@ export const executeWithdraw = async (
   tokenName: string,
   amount: number
 ): Promise<TxnReturn> => {
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys(network)
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
-  const RTVault = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
-  const userRtAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress, network)
+  const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
+  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+  const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
+  const userAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
 
   const withdrawInstructionAccount = {
-    controller: CONTROLLER_KEY,
-    ssl: sslAccountKey,
     liquidityAccount: liquidityAccountKey,
-    rtVault: RTVault,
-    userRtAta: userRtAta,
-    userWallet: wallet.publicKey,
+    owner: wallet.publicKey,
+    userAta: userAta,
+    sslPoolSigner: sslAccountKey,
+    poolVault: poolVaultAccount,
+    sslFeevault: feeVaultAccount,
+    poolRegistryAccountKey: poolRegistryAccountKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amount), {
-    //percent withdraw
+  const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amountInNative), {
     accounts: withdrawInstructionAccount
   })
   const withdrawTX: Transaction = new Transaction()
+
+  //sslchange: For sol - mechanism to unwrap from WRAP-SOL
   if (tokenName === TOKEN_NAMES.SOL) {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, wallet.publicKey)
     const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
@@ -321,26 +315,28 @@ const depositAmount = async (
   program: any,
   sslAccountKey: PublicKey,
   liquidityAccountKey: PublicKey,
+  poolRegistryAccountKey: PublicKey,
   wallet: WalletContextState,
   connection: Connection,
   tokenMintAddress: PublicKey,
   tokenName: string,
   createLiquidityIX: TransactionInstruction | undefined
 ): Promise<TxnReturn> => {
-  const RTVault = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
-  const userRtAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const userAta = await findAssociatedTokenAddress(wallet.publicKey, tokenMintAddress)
+  const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
+  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
 
   const depositInstructionAccount = {
-    controller: CONTROLLER_KEY,
-    ssl: sslAccountKey,
     liquidityAccount: liquidityAccountKey,
-    rtVault: RTVault,
-    userRtAta: userRtAta,
-    userWallet: wallet.publicKey,
+    owner: wallet.publicKey,
+    userAta: userAta,
+    sslPoolSigner: sslAccountKey,
+    poolVault: poolVaultAccount,
+    sslFeevault: feeVaultAccount,
+    poolRegistryAccountKey: poolRegistryAccountKey,
     tokenProgram: TOKEN_PROGRAM_ID
   }
-  // some strage co relation dont will check about it later
+  // some strage co relation dont will check about it later ????
   const amountInBN: BN = new BN(amountInNative)
   const depositAmountIX: TransactionInstruction = await program.instruction.deposit(amountInBN, {
     accounts: depositInstructionAccount
@@ -376,15 +372,22 @@ export const executeDeposit = async (
   amount: number,
   tokenName: string
 ): Promise<TxnReturn> => {
+  console.log('******', amount, tokenName)
   const tokenMintAddress = getTokenMintAddress(network, tokenName)
   const liquidityAccountKey = await getLiquidityAccountKey(wallet, tokenMintAddress, network)
-  const sslAccountKey = await getSslAccountKey(tokenMintAddress, network)
+  const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress, network)
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys(network)
   const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
-
   let createLiquidtyIX = undefined
   if (!liqAccData) {
-    createLiquidtyIX = await createLiquidityAccountIX(program, network, wallet, liquidityAccountKey, sslAccountKey)
+    createLiquidtyIX = await createLiquidityAccountIX(
+      program,
+      network,
+      wallet,
+      liquidityAccountKey,
+      tokenMintAddress
+    )
   }
   return depositAmount(
     amountInNative,
@@ -392,6 +395,7 @@ export const executeDeposit = async (
     program,
     sslAccountKey,
     liquidityAccountKey,
+    poolRegistryAccountKey,
     wallet,
     connection,
     tokenMintAddress,
@@ -405,16 +409,15 @@ export const createLiquidityAccountIX = async (
   network: WalletAdapterNetwork,
   wallet: WalletContextState,
   liquidityAccount: PublicKey,
-  sslKey: PublicKey
+  tokenMintAddress: PublicKey
 ): Promise<TransactionInstruction> => {
-  const CONTROLLER_KEY = SDK_ADDRESS[getNetworkConnectionText(network)].GFX_CONTROLLER
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys(network)
   const createLiquidityInstructionAccount = {
-    controller: CONTROLLER_KEY,
-    ssl: sslKey,
+    poolRegistry: poolRegistryAccountKey,
+    mint: tokenMintAddress,
     liquidityAccount: liquidityAccount,
-    userWallet: wallet.publicKey,
-    systemProgram: SYSTEM,
-    rent: SYSVAR_RENT_PUBKEY
+    owner: wallet.publicKey,
+    systemProgram: SYSTEM
   }
   const createLiquidityIX: TransactionInstruction = await program.instruction.createLiquidityAccount({
     accounts: createLiquidityInstructionAccount

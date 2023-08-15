@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import {
   getStakingAccountKey,
   fetchCurrentAmountStaked,
-  getSslAccountKey,
+  //getSslAccountKey,
   fetchAllSSLAmountStaked,
   getLiquidityAccountKey,
-  getMainVaultKey,
+  //getMainVaultKey,
   AccountLayout,
   getNetworkConnectionText
 } from '../../web3'
@@ -176,6 +176,7 @@ const CustomTableList: FC = () => {
     return prices[`${name.toUpperCase()}/USDC`]
   }
 
+  //sslchange: ASK ARVIND + SHRIHARI
   const calculateBalances = (sslAccountData, mainVault, liquidityAccountData, SSLTokenNames: string[]) => {
     const farmCalculationsArr: IFarmData[] = []
     let totalLiquidity = 0
@@ -251,9 +252,9 @@ const CustomTableList: FC = () => {
         for (let i = 0; i < SSLTokenNames.length; i++) {
           try {
             const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
-            SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
+            //SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
             liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
-            mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
+            //mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
           } catch (err) {
             console.log(err)
           }

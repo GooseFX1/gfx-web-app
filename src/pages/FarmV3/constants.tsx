@@ -89,9 +89,14 @@ export const insufficientSOLMsg = (): Message => ({
   message: 'You need minimum of 0.000001 SOL in your wallet to perform this transaction'
 })
 
-export const invalidInputErrMsg = (userTokenBalance: number, name: string): Message => ({
+export const invalidDepositErrMsg = (userTokenBalance: number, name: string): Message => ({
   type: 'error',
   message: `Please give valid input from 0.00001 to ${userTokenBalance?.toFixed(3)} ${name}`
+})
+
+export const invalidWithdrawErrMsg = (name: string): Message => ({
+  type: 'error',
+  message: `Please give valid input greater than 0.00001 ${name}`
 })
 
 export const genericErrMsg = (error: string): Message => ({
