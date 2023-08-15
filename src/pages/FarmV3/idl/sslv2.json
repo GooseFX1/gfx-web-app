@@ -1,0 +1,1736 @@
+{
+  "version": "0.1.0",
+  "name": "gfx_ssl_v2",
+  "instructions": [
+    {
+      "name": "createPoolRegistry",
+      "accounts": [
+        {
+          "name": "funder",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["Lamports for rent funded from here."]
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true,
+          "docs": ["The pool registry admin."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools."]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create a new account"]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createSsl",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["The admin. This makes the instruction permissioned."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools. This instruction adds an entry on this."]
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The mint associated with this SSL, i.e. its \"main token\"."]
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The SSL's main token vault. User deposits are stored here."]
+        },
+        {
+          "name": "poolFeeVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The SSL's fee vault. Claimable fee revenue accrues here.",
+            "Fees accrue on swaps where this SSL's main token is the output token."
+          ]
+        },
+        {
+          "name": "adminPoolMintAta",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The admin must provide an initial deposit to the new SSL pool"]
+        },
+        {
+          "name": "oraclePriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Stores the oracle price history for the new asset."]
+        },
+        {
+          "name": "oracleAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Needed for a token transfer in this instruction,",
+            "and for creating associated token accounts"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create an associated token account"]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create a new account"]
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create an associated token account"]
+        }
+      ],
+      "args": [
+        {
+          "name": "initialPoolDeposit",
+          "type": "u64"
+        },
+        {
+          "name": "oracleType",
+          "type": "u8"
+        },
+        {
+          "name": "assetType",
+          "type": "u8"
+        },
+        {
+          "name": "mathParams",
+          "type": {
+            "defined": "SSLMathParams"
+          }
+        },
+        {
+          "name": "numberOfSlotsThrottle",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maxSlotPriceStaleness",
+          "type": {
+            "option": "u8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "configSsl",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools. This instruction modifies an entry on this."]
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The mint associated with the [SSLPool] being configured."]
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["The pool registry admin. This makes the instruction permissioned."]
+        }
+      ],
+      "args": [
+        {
+          "name": "isSuspended",
+          "type": "bool"
+        },
+        {
+          "name": "mathParams",
+          "type": {
+            "defined": "SSLMathConfig"
+          }
+        }
+      ]
+    },
+    {
+      "name": "suspendSsl",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools. This instruction modifies an entry on this."]
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The mint associated with the [SSLPool] being configured."]
+        },
+        {
+          "name": "suspendAdmin",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["The suspend admin. This makes the instruction permissioned."]
+        }
+      ],
+      "args": [
+        {
+          "name": "isSuspended",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "configSuspendAdmin",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools. This instruction modifies an entry on this."]
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true,
+          "docs": ["The admin. This makes the instruction permissioned."]
+        },
+        {
+          "name": "suspendAdmin",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createPair",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools."]
+        },
+        {
+          "name": "mintOne",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["A mint associated with an [SSLPool], and one of the tokens in the newly created [Pair]."]
+        },
+        {
+          "name": "mintTwo",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["A mint associated with an [SSLPool], and one of the tokens in the newly created [Pair]."]
+        },
+        {
+          "name": "mintOneFeeDestination",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Fees collected of `mint_one` will flow here."]
+        },
+        {
+          "name": "mintTwoFeeDestination",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Fees collected of `mint_two` will flow here."]
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolOneSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolTwoSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintOneSecondaryVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Mint one SSL Pool's vault for mint two"]
+        },
+        {
+          "name": "mintTwoSecondaryVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Mint two SSL Pool's vault for mint one"]
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true,
+          "docs": [
+            "The pool registry admin. This makes the instruction permissioned.",
+            "This admin address is also recorded on the [Pair]."
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "Needed for a token transfer in this instruction,",
+            "and for creating associated token accounts"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create an associated token account"]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create a new account"]
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Needed to create an associated token account"]
+        }
+      ],
+      "args": [
+        {
+          "name": "mintOneFeeRate",
+          "type": "u16"
+        },
+        {
+          "name": "mintTwoFeeRate",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "configPair",
+      "accounts": [
+        {
+          "name": "mintOneFeeDestination",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Fees collected of `pair.mints.0` will flow here."]
+        },
+        {
+          "name": "mintTwoFeeDestination",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["Fees collected of `pair.mints.1` will flow here."]
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The pair to be configured."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools. This instruction adds an entry on this."]
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true,
+          "docs": ["The pair admin. This makes the instruction permissioned."]
+        }
+      ],
+      "args": [
+        {
+          "name": "mintOneFeeRate",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "mintTwoFeeRate",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
+    },
+    {
+      "name": "configPriceHistory",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true,
+          "docs": ["The admin. This makes the instruction permissioned."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools"]
+        },
+        {
+          "name": "oraclePriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Stores the oracle price history."]
+        }
+      ],
+      "args": [
+        {
+          "name": "minimumElapsedSlots",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maxSlotPriceStaleness",
+          "type": {
+            "option": "u8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "crankPriceHistories",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools."]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "internalSwap",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslAMainToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Main Token account of SSL Pool A, the mint at `self.pair.mints.0`."]
+        },
+        {
+          "name": "sslBMainToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Main Token account of SSL Pool B, the mint at `self.pair.mints.1`."]
+        },
+        {
+          "name": "sslASecondaryToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Token B account of SSL Pool A"]
+        },
+        {
+          "name": "sslBSecondaryToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Token A account of SSL Pool B"]
+        },
+        {
+          "name": "tokenAPriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Oracle price history of `token_a`."]
+        },
+        {
+          "name": "tokenAOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenBPriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Oracle price history of `token_b`."]
+        },
+        {
+          "name": "tokenBOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolASigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolBSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claimFees",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools."]
+        },
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["Signer, user metadata account owner"]
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ownerAta",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Destination account for the claimed USDC fees."]
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createLiquidityAccount",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false,
+          "docs": ["The global registry of SSL pools."]
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeLiquidityAccount",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true,
+          "docs": ["Signer, user metadata account owner"]
+        },
+        {
+          "name": "rentRecipient",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "Recipient of the lamports that supplied the rent-exempt balance",
+            "of the liquidity account account being closed."
+          ]
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Close this account"]
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deposit",
+      "accounts": [
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Origin of the user deposit."]
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The token vault where all user deposits on this SSL are stored."]
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Fee-claim routine is executed during this instruction."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "accounts": [
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Origin of the user deposit."]
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The token vault where all user deposits on this SSL are stored."]
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Fee-claim routine is executed during this instruction."]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "swap",
+      "accounts": [
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Stores state regarding fees"]
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true,
+          "docs": ["Wallet performing the swap"]
+        },
+        {
+          "name": "sslPoolInSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolOutSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userAtaIn",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["User signs for a debit to this account in `amount`."]
+        },
+        {
+          "name": "userAtaOut",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["User receives funds in this account."]
+        },
+        {
+          "name": "sslOutMainVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["The SSL-out's vault containing its main token, i.e. the one LPs deposit."]
+        },
+        {
+          "name": "sslOutSecondaryVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The _non_ main token of SSL-out. For example, if swapping SOL _in_ to USDC out,",
+            "this would be the SOL vault of the USDC SSL pool."
+          ]
+        },
+        {
+          "name": "sslInMainVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslInSecondaryVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Potentially we swap out of this pool vault instead."]
+        },
+        {
+          "name": "sslOutFeeVault",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["SSL fee vault of output mint, destination for fees shared with LPs."]
+        },
+        {
+          "name": "feeDestination",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "The destination for the unshared portion of fees collected.",
+            "Specified on `self.pair`, must match the output mint."
+          ]
+        },
+        {
+          "name": "outputTokenPriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Oracle price history of `mint_out`."]
+        },
+        {
+          "name": "outputTokenOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "inputTokenPriceHistory",
+          "isMut": true,
+          "isSigner": false,
+          "docs": ["Oracle price history of input mint."]
+        },
+        {
+          "name": "inputTokenOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amountIn",
+          "type": "u64"
+        },
+        {
+          "name": "minOut",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "LiquidityAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "poolRegistry",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "docs": ["Associated mint of the liquidity account."],
+            "type": "publicKey"
+          },
+          {
+            "name": "owner",
+            "docs": ["The authority over the liquidity account."],
+            "type": "publicKey"
+          },
+          {
+            "name": "amountDeposited",
+            "docs": ["Current deposited liquidity."],
+            "type": "u64"
+          },
+          {
+            "name": "lastObservedTap",
+            "docs": ["Last observed total accumulated profit (recorded from the [SSLPool])."],
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimed",
+            "docs": ["Unix timestamp of the last execution of fee collection."],
+            "type": "i64"
+          },
+          {
+            "name": "totalEarned",
+            "docs": [
+              "Historical value that records the total earned fee revenue",
+              "over the lifetime of this account."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "createdAt",
+            "docs": ["Unix timestamp of the time of account creation."],
+            "type": "i64"
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalDecimal",
+      "docs": ["A decimal type that can be stored on-chain and converted to a [rust_decimal::Decimal]."],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "num",
+            "type": "i64"
+          },
+          {
+            "name": "scale",
+            "type": "u32"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 4]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalPrice",
+      "docs": [
+        "A common type derivable from any particular oracle price history, whether that",
+        "be a Pyth oracle, a Switchboard oracle, etc.",
+        "",
+        "This is not a value stored on-chain, it is merely generated during instruction execution.",
+        "Therefore it doesn't need to derive any of the Anchor values."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "docs": ["The price of the given asset."],
+            "type": {
+              "defined": "HistoricalPrice"
+            }
+          },
+          {
+            "name": "slot",
+            "docs": [
+              "The slot during which this price was recorded.",
+              "This should be a conservative value, e.g. if the price history account's latest entry",
+              "is from slot X, but the oracle recorded it during slot X-1, the latter should be recorded",
+              "here."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OraclePriceHistory",
+      "docs": [
+        "Scoped to a particular admin, mint, and oracle,",
+        "this account records the continually updated USD-price history",
+        "of that mint in a rotating array.",
+        "",
+        "This account should be cranked every slot."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "oracleType",
+            "docs": [
+              "Whether the oracle is a Pyth oracle, Switchboardv2, etc.",
+              "For [Pod] safety, stored directly as a [u8], and converted to/from an [OracleType]",
+              "using `self.oracle_type()`."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "minimumElapsedSlots",
+            "docs": [
+              "Used if the oracle needs to be throttled so that the price updates aren't too close to each other."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "maxSlotPriceStaleness",
+            "docs": ["Used to configure how many slots can pass before a price is considered stale"],
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 5]
+            }
+          },
+          {
+            "name": "poolRegistry",
+            "docs": ["The pool registry pubkey."],
+            "type": "publicKey"
+          },
+          {
+            "name": "oracleAddress",
+            "docs": ["The oracle pubkey itself."],
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "docs": ["The mint that is being tracked."],
+            "type": "publicKey"
+          },
+          {
+            "name": "numUpdates",
+            "docs": [
+              "Total number of updates that have executed.",
+              "This is used to keep track of where the most recently updated value is."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          },
+          {
+            "name": "priceHistory",
+            "docs": ["Historical record of price values."],
+            "type": {
+              "array": [
+                {
+                  "defined": "HistoricalPrice"
+                },
+                256
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pair",
+      "docs": [
+        "An account that provides additional bookkeeping for a swap market",
+        "that is made available through the existence of a given pair of SSL pools",
+        "under the same admin. When a user is swapping between two mints,",
+        "they're swapping between two SSL pools, and this [Pair] account type",
+        "adds additional bookkeeping across that swap pair."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "poolRegistry",
+            "docs": ["Associated admin account."],
+            "type": "publicKey"
+          },
+          {
+            "name": "mints",
+            "docs": ["The two mints that make up the pair.", "These mints are always ordered \"numerically\"."],
+            "type": {
+              "defined": "(Pubkey,Pubkey)"
+            }
+          },
+          {
+            "name": "feeCollector",
+            "docs": [
+              "Fees go to this pubkey's associated token account for the input mint of a swap.",
+              "That means if a user is swapping SOL for USDC, they're charged fees in SOL,",
+              "and we would move fees to the wrapped SOL associated token account owned by `self.fee_collector`."
+            ],
+            "type": {
+              "defined": "(Pubkey,Pubkey)"
+            }
+          },
+          {
+            "name": "feeRates",
+            "docs": [
+              "Matched to mints.0 and mints.1 respectively.",
+              "Fee rates are allowed to be different depending on the input mint.",
+              "They are expressed as BPS (theoretical maximum = 10_000)."
+            ],
+            "type": {
+              "defined": "(u16,u16)"
+            }
+          },
+          {
+            "name": "totalFeesGeneratedNative",
+            "docs": [
+              "Historical value that records the total amount of fees collected",
+              "over the lifetime of the pair.",
+              "Recorded as native token amounts."
+            ],
+            "type": {
+              "defined": "([u8;16],[u8;16])"
+            }
+          },
+          {
+            "name": "totalHistoricalVolume",
+            "docs": [
+              "Total volume swapped on this pair. Parsed as a u128, little-endian.",
+              "Scaled to [USD_VOLUME_DECIMALS]."
+            ],
+            "type": {
+              "array": ["u8", 16]
+            }
+          },
+          {
+            "name": "totalInternallySwapped",
+            "docs": [
+              "Historical value that records the total amount of internally swapped",
+              "volume over the lifetime of the pair.",
+              "Recorded as native token amounts."
+            ],
+            "type": {
+              "defined": "([u8;16],[u8;16])"
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLPool",
+      "docs": [
+        "A single-sided liquidity pool's metadata, recorded as an entry on a [PoolRegistry].",
+        "Also acts as uninitialized PDA signer and owner of the LP vaults for each SSL pool."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "docs": [
+              "This tells us whether this particular SSL Pool entry has data,",
+              "and if so, whether or not the pool is suspended."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "assetType",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "mint",
+            "docs": ["The main token mint for this SSL pool."],
+            "type": "publicKey"
+          },
+          {
+            "name": "mintDecimals",
+            "docs": ["a copy from the mint"],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "docs": ["Stored for CPI signatures"],
+            "type": "u8"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "totalAccumulatedLpReward",
+            "docs": [
+              "Total historical record of fees accrued to LPs.",
+              "This is not only for informational purposes, but also",
+              "is used in bookkeeping LP rewards."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "totalLiquidityDeposits",
+            "docs": [
+              "Since swaps will alter the main token balance,",
+              "we need to keep track separately from the token account's balance",
+              "to correctly calculate LP fee claims."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "oraclePriceHistories",
+            "docs": [
+              "The price history accounts that record oracle prices.",
+              "In principle, we allow for storage of multiple oracles, although these extra",
+              "indices are not yet used in the program logic."
+            ],
+            "type": {
+              "array": ["publicKey", 3]
+            }
+          },
+          {
+            "name": "mathParams",
+            "docs": [
+              "All parameters related to the mathematical calculations required for price",
+              "determination and swap rule enforcement. \"Swap rules\" are conditions that",
+              "must not be violated, otherwise an attempted swap should fail."
+            ],
+            "type": {
+              "defined": "SSLMathParams"
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolRegistry",
+      "docs": [
+        "A global registry that stores an exhaustive list of all SSL pools owned by a specific admin.",
+        "",
+        "All SSL pools owned by the same admin exist under the same swappable domain.",
+        "The admin therefore splits groups of SSL pools into separate \"magesteria\" of liquidity,",
+        "and an SSL pool owned by admin A isn't swappable with a pool owned by admin B. Admin A and",
+        "admin B would thus also have different [PoolRegistry] accounts, as well."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "docs": ["Only this signer can sign for mutations of accounts under a given pool registry."],
+            "type": "publicKey"
+          },
+          {
+            "name": "seed",
+            "type": "publicKey"
+          },
+          {
+            "name": "suspendAdmin",
+            "docs": ["This address is controlled by the admin, and only has the authority to suspend pools."],
+            "type": "publicKey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 7]
+            }
+          },
+          {
+            "name": "numEntries",
+            "type": "u32"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 4]
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          },
+          {
+            "name": "entries",
+            "docs": [
+              "A list of oracles whose mints are offered as SSL pools under the domain of a given",
+              "admin."
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": "SSLPool"
+                },
+                32
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "SSLMathConfig",
+      "docs": [
+        "Identical to [SSLMathParams] except that every field is an `Option` type,",
+        "which mitigates the possibility of error when configuring the math by marking",
+        "any field as `None` which is not intended for update."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "meanWindow",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "stdWindow",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "fixedPriceDistance",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "minimumPriceDistance",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "maxPoolTokenRatio",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "stdWeight",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "latestPriceWeight",
+            "type": {
+              "option": "u16"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLMathParams",
+      "docs": [
+        "The set of configurable parameters for each SSL pool.",
+        "These control price calculation, and thresholds for various conditionals",
+        "that may force the failure of an attempted swap."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "meanWindow",
+            "docs": ["The number of elements included in mean calculation."],
+            "type": "u8"
+          },
+          {
+            "name": "stdWindow",
+            "docs": ["The number of elements included in std deviation calculation."],
+            "type": "u8"
+          },
+          {
+            "name": "fixedPriceDistance",
+            "docs": [
+              "A percentage distance from the latest oracle price expressed in BPS.",
+              "This is not a minimum or a maximum, it is an arbitrarily picked target fraction",
+              "of the price, and it is added to the mean price along with a few other",
+              "parameters."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "minimumPriceDistance",
+            "docs": ["A minimum distance from the latest oracle price expressed in BPS."],
+            "type": "u16"
+          },
+          {
+            "name": "maxPoolTokenRatio",
+            "docs": [
+              "Maximum allowed ratio of this SSL's main token residing in other pools divided",
+              "by the amount of main token in this SSL pool.",
+              "This number is a percentage expressed in BPS."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "latestPriceWeight",
+            "docs": [
+              "A weight that controls the price influence ratio between",
+              "the mean price and the latest price.",
+              "This number is a percentage expressed in BPS."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "stdWeight",
+            "docs": [
+              "A weight used to control how much influence the",
+              "std deviation should have on bid/ask prices.",
+              "This number is a percentage expressed in BPS, and is _not_ clamped to n <= 100%."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 4]
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 32]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleType",
+      "docs": [
+        "Disambiguates between the various types of oracles we might use to capture historical",
+        "price data.",
+        "",
+        "Each oracle price data needs to be computed in its own special way, depending",
+        "on the type of oracle whose historical data is being recorded.",
+        "",
+        "For [Pod] safety this type is converted to/from a [u8] when represented",
+        "as on-chain account data."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Pyth"
+          },
+          {
+            "name": "Switchboardv2"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SwapIxMintOrdering",
+      "docs": [
+        "The output mint of a swap could either be the first mint in the pair, or the second.",
+        "This enum denotes which is the case."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InOut"
+          },
+          {
+            "name": "OutIn"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLPoolStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Suspended"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetType",
+      "docs": [
+        "Classifies assets into various categories.",
+        "These values are inert in the first release of the SSLv2 protocol."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "BlueChip"
+          },
+          {
+            "name": "Volatile"
+          },
+          {
+            "name": "Stable"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Suspended",
+      "msg": "[G100] The pool is suspended"
+    },
+    {
+      "code": 6001,
+      "name": "NotAdmin",
+      "msg": "[G101] Not admin"
+    },
+    {
+      "code": 6002,
+      "name": "MintsNotSorted",
+      "msg": "[G102] Mints are not sorted"
+    },
+    {
+      "code": 6003,
+      "name": "PriceHistoryEmpty",
+      "msg": "[G103] The price history is empty"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidCrankAccounts",
+      "msg": "[G104] Oracle accounts and price histories must be present in the order listed on the pool registry"
+    },
+    {
+      "code": 6005,
+      "name": "OracleNotHealthyStatus",
+      "msg": "[G105] The oracle is not in a healthy state (status)"
+    },
+    {
+      "code": 6006,
+      "name": "OracleNotHealthyDelay",
+      "msg": "[G106] The oracle is not in a healthy state (delay)"
+    },
+    {
+      "code": 6007,
+      "name": "OracleNotHealthyConfidence",
+      "msg": "[G107] The oracle is not in a healthy state (confidence)"
+    },
+    {
+      "code": 6008,
+      "name": "SlippageTooLarge",
+      "msg": "[G108] SlippageTooLarge"
+    },
+    {
+      "code": 6009,
+      "name": "PercentageOutOfRange",
+      "msg": "[G109] Percentage out of range"
+    },
+    {
+      "code": 6010,
+      "name": "EmaOrStdWindowTooLarge",
+      "msg": "[G110] The Ema window is too large for the amount of available price history data"
+    },
+    {
+      "code": 6011,
+      "name": "MintNotMatchPair",
+      "msg": "[G111] Mint does not match the pair"
+    },
+    {
+      "code": 6012,
+      "name": "FeeCollectorIncorrect",
+      "msg": "[G112] Fee collector account incorrect"
+    },
+    {
+      "code": 6013,
+      "name": "SSLStale",
+      "msg": "[G113] The SSL pool is stale"
+    },
+    {
+      "code": 6014,
+      "name": "PoolRegistryIsFull",
+      "msg": "[G114] The Pool Registry is full, no more SSL Pools can be added"
+    },
+    {
+      "code": 6015,
+      "name": "MintNotFound",
+      "msg": "[G115] Cannot find an SSL Pool with the provided mint"
+    },
+    {
+      "code": 6016,
+      "name": "MintAlreadyIncluded",
+      "msg": "[G116] An SSL Pool for that mint is already included"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidPythOracle",
+      "msg": "[G117] Invalid Pyth Oracle Price Account"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidTokenOwner",
+      "msg": "[G118] Token account not owned by the correct registry"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidTokenMint",
+      "msg": "[G119] Token account does not have the expected mint"
+    },
+    {
+      "code": 6020,
+      "name": "StalePriceHistory",
+      "msg": "[G120] The price history is too stale, requires more recent updates"
+    },
+    {
+      "code": 6021,
+      "name": "InvalidOracleType",
+      "msg": "[G121] Cannot initialize or use an oracle with the given type"
+    },
+    {
+      "code": 6022,
+      "name": "MathError",
+      "msg": "[G122] Math Error"
+    },
+    {
+      "code": 6023,
+      "name": "MintsCannotBeSame",
+      "msg": "[G123] Pair mints cannot be equivalent"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidFeeDestination",
+      "msg": "[G124] Pair fee Destination does not match the target mint"
+    },
+    {
+      "code": 6025,
+      "name": "CannotCloseLiquidityAccount",
+      "msg": "[G125] Liquidity account must be fully withdrawn before closing"
+    },
+    {
+      "code": 6026,
+      "name": "WithdrawTooLarge",
+      "msg": "[G126] Liquidity withdraw is too large compared to the amount the user has deposited"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidOracleAddress",
+      "msg": "[G127] Oracle address does not match was is stored on the price history account"
+    },
+    {
+      "code": 6028,
+      "name": "PoolTokenImbalance",
+      "msg": "[G128] The swap would make the pool token imbalance exceed configured maximum"
+    },
+    {
+      "code": 6029,
+      "name": "PoolRegistryNotMatchPair",
+      "msg": "[G129] Pair does not belong to the Pool Registry"
+    },
+    {
+      "code": 6030,
+      "name": "ZeroInitialDeposit",
+      "msg": "[G130] Initial deposit to a newly created SSL Pool cannot be zero"
+    },
+    {
+      "code": 6031,
+      "name": "OraclePriceRecorded",
+      "msg": "[G131] Oracle price already recorded"
+    },
+    {
+      "code": 6032,
+      "name": "AmountTooSmall",
+      "msg": "[G132] Swap amount too small, fees collected would be zero"
+    },
+    {
+      "code": 6033,
+      "name": "NotEnoughLiquidity",
+      "msg": "[G133] Swap amount too large, not enough liquidity in the output token"
+    },
+    {
+      "code": 6034,
+      "name": "NotATokenAccount",
+      "msg": "[G134] Provided account is not a token account or does not exist"
+    },
+    {
+      "code": 6035,
+      "name": "OracleThrottled",
+      "msg": "[G135] The oracle is being throttled"
+    },
+    {
+      "code": 6036,
+      "name": "NotZeroParameter",
+      "msg": "[G136] Provided parameter can't be 0."
+    },
+    {
+      "code": 6037,
+      "name": "PoolRegistryNotMatchOraclePriceHistory",
+      "msg": "[G137] Oracle price history does not belong to the Pool Registry"
+    }
+  ]
+}
