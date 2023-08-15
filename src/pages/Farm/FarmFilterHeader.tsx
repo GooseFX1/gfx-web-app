@@ -73,7 +73,7 @@ const STYLED_FARM_HEADER = styled.div`
 `
 export const STYLED_BUTTON = styled.button`
   ${tw`sm:m-auto cursor-pointer w-[100px] sm:w-[100px] text-center border-none border-0 sm:font-medium
-  font-semibold text-base h-8.75 rounded-[36px] duration-700 pl-3 text-[15px] sm:text-[13px] text-grey-1`}
+  font-semibold text-base h-8.75 rounded-[36px] duration-700   text-[15px] sm:text-[13px] text-grey-1`}
   background: none;
 
   :disabled {

@@ -36,7 +36,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
 
     @media (max-width: 500px) {
       width: 100vw;
-      ${tw`sticky mt-[0px]`}
+      ${tw` mt-[0px]`}
     }
   }
 
@@ -46,6 +46,9 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   td,
   th {
     display: block;
+    @media (max-width: 500px) {
+      display: relative;
+    }
   }
 
   thead {
@@ -75,7 +78,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
     overflow-x: hidden;
 
     @media (max-width: 500px) {
-      height: calc(100vh - 120px);
+      height: calc(100vh - 100px);
     }
 
     tr {

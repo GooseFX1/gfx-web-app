@@ -432,6 +432,7 @@ const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>
 const SortDropdown = () => {
   const { collectionSort } = useNFTCollections()
   const [arrow, setArrow] = useState<boolean>(false)
+  const { mode } = useDarkMode()
 
   return (
     <div>
@@ -444,7 +445,7 @@ const SortDropdown = () => {
       >
         {checkMobile() ? (
           <div>
-            <img className="shareBtn" src="/img/assets/Aggregator/shareBtn.svg" />
+            <img className="shareBtn" src={`/img/assets/Aggregator/setting${arrow ? `Active` : ``}${mode}.svg`} />
           </div>
         ) : (
           <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
@@ -519,7 +520,7 @@ const CollectionV2 = (): ReactElement => {
   }, [fetchSingleCollection, params.collectionName, refreshClicked])
 
   //had to remove singleCollection useState trigger as it leads to
-  // infinite loop as setSingleCollection is called in fecthSingleCollection
+  // infinite loop as setSingleCollection is called in fetch SingleCollection
   return err ? (
     <GenericNotFound redirectLink="/nfts" redirectString="Go to NFT Aggerator " />
   ) : (

@@ -312,7 +312,11 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
       {singleCollection && (
         <div tw="sm:max-h-[200px] sm:overflow-y-auto">
           <div className="marketTitle">
-            <div> All markets</div>
+            <div>
+              {' '}
+              <img src="/img/assets/Aggregator/AllMarkets.svg" tw="mr-2" />
+              All markets
+            </div>
             <div tw="ml-auto">
               <Switch onChange={(e) => handleAllMarketToggle(e)} checked={allMarketsToggle} />
             </div>
