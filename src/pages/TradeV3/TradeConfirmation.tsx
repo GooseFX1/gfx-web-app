@@ -51,12 +51,16 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
   }, [notionalValue, fee])
 
   const handleClick = async () => {
-    if (takeProfit) {
-      await newOrderTakeProfit(takeProfit.toString())
-    } else {
-      await newOrder()
+    try {
+      if (takeProfit) {
+        await newOrderTakeProfit(takeProfit.toString())
+      } else {
+        await newOrder()
+      }
+      setVisibility(false)
+    } catch (error) {
+      setVisibility(false)
     }
-    setVisibility(false)
   }
 
   const cssStyle = useMemo(() => {
