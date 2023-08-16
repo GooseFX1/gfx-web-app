@@ -197,7 +197,6 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             setSearchFilter={setSearchTokens}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-            set
           />
         )}
       </div>
@@ -208,7 +207,6 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             setSearchFilter={setSearchTokens}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-            set
           />
         </div>
       )}
@@ -536,7 +534,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                 </Button>
               </div>
             ) : (
-              <Connect width="400px" height="35px" />
+              <Connect customButtonStyle={[tw`w-[400px] h-8.75`]} />
             )}
           </div>
         )}
