@@ -126,11 +126,26 @@ interface Timer {
   seconds: number
 }
 
+const transformObject = (original, index) => {
+  return {
+    id: index + 1,
+    address: original.walletAddress,
+    boost: original.boost,
+    loyalty: original.loyalty,
+    pnl: undefined, // You may need to provide logic to set this value
+    dailyPoints: undefined, // You may need to provide logic to set this value
+    weeklyPoints: original.rafflePoints, // You may need to provide logic to set this value
+    prevWeekPoints: original.prevRafflePoints[original.prevRafflePoints.length - 1], // You may need to provide logic to set this value
+    totalPoints: original.totalPoints ? original.totalPoints.toString() : undefined
+  }
+}
 export const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(1)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
-  const [isLive, setIslive] = useState<boolean>(true)
-  const { users } = useStats()
+  const [isLive, setIslive] = useState<boolean>(false)
+  const { users, nftUsers } = useStats()
+  let displayUsers = screenType === 2 ? nftUsers.map((nftUser, index) => transformObject(nftUser, index)) : users
+
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
   const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
@@ -186,17 +201,13 @@ export const LeaderBoard: FC = () => {
                 tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
                 key={index}
                 onClick={
-                  screenType === 1
+                  screenType === 1 || screenType === 2
                     ? () => {
-                        setScreenType(1)
+                        setScreenType(index)
                       }
                     : null
                 }
-                // onClick={() => {
-                //   setScreenType(index)
-                // }}
-                className={index !== 1 ? 'disable' : index === screenType ? 'active' : ''}
-                //className={index === screenType ? 'active' : ''}
+                className={index === 0 ? 'disable' : index === screenType ? 'active' : ''}
               >
                 {pool}
               </div>
@@ -270,37 +281,11 @@ export const LeaderBoard: FC = () => {
         />
         {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
         <BANNER_BTN>
-          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">
-            Trade
-          </a>
+          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade</a>
         </BANNER_BTN>
       </div>
       <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
-        {checkMobile() &&
-          users
-            ?.filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
-            .map((user: User, index: number) => (
-              <CARD key={index}>
-                <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
-                <img
-                  src={`/img/assets/Leaderboard/${user?.id}User_${mode}.svg`}
-                  alt="badge"
-                  height="56"
-                  width="50"
-                  tw="mr-[4%]"
-                />
-                <div tw="flex flex-col mr-auto">
-                  <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
-                    {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
-                  </div>
-                  <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}</div>
-                </div>
-                <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
-                  {user?.boost}x Boost
-                </div>
-              </CARD>
-            ))}
-        {users?.slice(0, 3).map((user: User, index: number) => (
+        {displayUsers?.slice(0, 3).map((user: User, index) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
             <img
@@ -327,7 +312,7 @@ export const LeaderBoard: FC = () => {
           <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
         </thead>
         <tbody>
-          {users
+          {displayUsers
             .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
             .map((user, index: number) => (
               <TABLE_ROW key={index}>
@@ -338,7 +323,7 @@ export const LeaderBoard: FC = () => {
                 )}
               </TABLE_ROW>
             ))}
-          {users
+          {displayUsers
             .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
             .map((user, index: number) => (
               <TABLE_ROW key={index}>

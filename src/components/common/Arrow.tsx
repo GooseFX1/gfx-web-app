@@ -5,12 +5,14 @@ import { useDarkMode } from '../../context'
 
 const ARROW = styled.div<{ $cssStyle: TwStyle; $height: string; $width: string; $invert: boolean }>`
   ${tw`flex justify-center duration-500`}
-  ${({ $cssStyle }) => $cssStyle};
   height: ${({ $height }) => $height};
   width: ${({ $width }) => $width};
   transform: ${({ $invert }) => ($invert ? 'rotate(180deg)' : '')};
+  ${({ $cssStyle }) => $cssStyle};
+  @media (max-width: 500px) {
+    margin-right: ${({ $invert }) => ($invert ? '8px' : '')};
+  }
 `
-
 export const Arrow: FC<{
   height: string
   width: string
@@ -26,6 +28,18 @@ export const Arrow: FC<{
     <>
       <ARROW $cssStyle={cssStyle} $height={height} $width={width} $invert={invert} {...props}>
         <img src={ArrowImg} alt="arrow" />
+      </ARROW>
+    </>
+  )
+}
+// pass height and width
+export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle }> = ({ cssStyle, invert }) => {
+  const { mode } = useDarkMode()
+  const circularArrow = `/img/assets/Aggregator/circularArrow${mode}.svg`
+  return (
+    <>
+      <ARROW $cssStyle={cssStyle} $invert={!!invert}>
+        <img src={circularArrow} css={[cssStyle]} alt="Circular Arrow" />
       </ARROW>
     </>
   )

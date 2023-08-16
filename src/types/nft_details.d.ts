@@ -1,5 +1,6 @@
 import { Connection } from '@solana/web3.js'
 import { Creator } from '../web3'
+import { type } from 'os'
 
 export interface IInfoItemData {
   thumbnail: string
@@ -69,6 +70,19 @@ export interface IMetadataContext {
   draftLoaded: boolean
 }
 
+export type IActivityName = 'BUY' | 'BID' | 'LIST' | 'ACCEPT_BID' | 'CANCEL_BID' | 'CANCEL_LIST'
+
+export interface ITypeOfActivity {
+  _id?: ObjectId
+  walletAddress: string
+  mintAddress: string
+  price: number
+  typeOfActivity: IActivityName
+  marketPlace: string
+  collectionName: string
+  signature: string
+  collectionUuid?: string
+}
 export type INFTMetadata = {
   name: string
   symbol: string

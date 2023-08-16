@@ -5,7 +5,13 @@ import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, TokenToggleNFT } from '../../../components'
-import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, usePriceFeedFarm } from '../../../context'
+import {
+  initialFilters,
+  useNFTAggregator,
+  useNFTAggregatorFilters,
+  useNFTCollections,
+  usePriceFeedFarm
+} from '../../../context'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
 import { PopupCustom } from '../Popup/PopupCustom'
 import { ArrowIcon } from './CollectionV2.styles'
@@ -13,6 +19,8 @@ import { AH_PROGRAM_IDS } from '../../../web3'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
+import useBreakPoint from '../../../hooks/useBreakPoint'
+import { CircularArrow } from '../../../components/common/Arrow'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
@@ -22,7 +30,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
-    height: calc(100vh - 250px);
+    height: calc(100vh - 150px);
 
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
@@ -34,7 +42,8 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
       ${tw`w-[20px] h-[20px] block ml-2`}
     }
     .filtersTitleItem {
-      ${tw`text-[18px] font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+      ${tw`text-[18px] font-semibold h-[50px]  duration-1000 flex items-center
+      duration-1000 justify-between pl-3 pr-3`}
       border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
       visibility: ${open ? 'visible' : 'hidden'};
       font-size: ${open ? '18px' : '1px'};
@@ -70,30 +79,31 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       opacity: ${isOpen ? 1 : 0};
     }
     .ant-switch {
-      ${tw`h-[40px] sm:h-[35px] w-[50px] h-[26px] sm:w-[65px] sm:w-[75px] ml-auto dark:bg-black-4 bg-grey-4`}
+      ${tw`h-[40px] w-[50px] h-[26px] ml-auto dark:bg-black-4 bg-grey-4`}
     }
     .ant-switch-handle {
-      ${tw`left-[0px] top-[0px] sm:left-[1px] sm:top-[1px]`}
+      ${tw`left-[0px] top-[0px]`}
       ::before {
-        ${tw`sm:w-[38px] sm:h-[38px] h-[26px] w-[26px] rounded-[40px] duration-500`}
+        ${tw`h-[26px] w-[26px] rounded-[40px] duration-500`}
       }
     }
     .ant-switch-checked {
       .ant-switch-handle {
         left: calc(100% - 26px);
-        @media (max-width: 500px) {
-          left: calc(100% - 35px);
-        }
       }
       background: linear-gradient(101deg, #f7931a 4%, #ac1cc7 98%);
     }
     .attributeTitle {
       ${tw`!duration-500  text-[15px] w-[100%]
-        font-semibold flex px-3 pt-2 pb-0.5 rounded-[10px] mb-2.5`};
+        font-semibold flex px-3 pb-0.5 rounded-[10px]`};
       height: ${isOpen ? '44px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
       border: 1px solid;
+      padding-top: ${isOpen ? '8px' : 0};
+      margin-bottom: ${isOpen ? '10px' : 0};
+      visibility: ${isOpen ? 'visible' : 'hidden'};
+      padding-bottom: ${isOpen ? '2px' : 0};
     }
     .marketTitle {
       ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3 sm:max-h-20`};
@@ -147,21 +157,23 @@ const STYLED_POPUP = styled(PopupCustom)`
   color: ${({ theme }) => theme.text30};
 
   &.ant-modal {
-    ${tw`max-w-full sm:bottom-[-8px] left-0 sm:mt-auto sm:absolute sm:h-[600px]`}
-
-    background-color: ${({ theme }) => theme.bg20};
+    ${tw`max-w-full sm:bottom-[-8px] left-0 sm:rounded-[20px 20px 0 0]
+     dark:bg-black-2 sm:mt-auto sm:absolute`}
+  }
+  .ant-modal-close {
+    ${tw`!right-[15px] !top-[15px]`}
   }
   .ant-modal-body {
     ${tw`p-0`}
   }
   .wrapper {
-    ${tw`flex flex-col`}
+    ${tw`flex flex-col sm:pt-12`}
   }
   .filtersTitle {
     ${tw`font-semibold h-[50px] text-[22px] sm:mt-3 flex items-center pl-3 sm:pl-4 duration-1000`}
   }
   .filtersTitleItem {
-    ${tw` font-semibold h-[50px]  duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
+    ${tw` font-semibold h-[50px] duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
     border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
     visibility: ${open ? 'visible' : 'hidden'};
     font-size: ${open ? '18px' : '10px'};
@@ -174,28 +186,36 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
   displayIndex
 }): ReactElement => {
   const { availableAttributes } = useNFTCollections()
+  const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+  const clearAllFilters = useCallback(() => {
+    setAdditionalFilters(initialFilters)
+  }, [])
+  const breakpoint = useBreakPoint()
 
   const showPriceAndMarket = useMemo(() => displayIndex === 0, [displayIndex])
 
   if (!showPriceAndMarket && !availableAttributes) return null
   if (checkMobile())
     return (
-      <></>
-      // <STYLED_POPUP
-      //   height={'460px'}
-      //   width={'100vw'}
-      //   title={null}
-      //   visible={open ? true : false}
-      //   onCancel={() => setOpen(false)}
-      //   footer={null}
-      // >
-      //   <div className="wrapper">
-      //     {/* title */}
-      //     {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
-      //     {showPriceAndMarket && <PriceRange isOpen={open} />}
-      //     {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
-      //   </div>
-      // </STYLED_POPUP>
+      <STYLED_POPUP
+        height={'475px'}
+        width={'100vw'}
+        title={null}
+        visible={open ? true : false}
+        onCancel={() => setOpen(false)}
+        footer={null}
+      >
+        <div>
+          {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton />}</div>}
+          <div className="wrapper">
+            <div tw="sm:h-[430px] overflow-y-auto">
+              {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
+              {showPriceAndMarket && <PriceRange isOpen={open} />}
+              {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+            </div>
+          </div>
+        </div>
+      </STYLED_POPUP>
     )
   else
     return (
@@ -209,7 +229,8 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
 }
 
 const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
-  const [isMarketFilterOpen, setIsMarketFilterOpen] = useState<boolean>(true)
+  const breakpoint = useBreakPoint()
+  const [isMarketFilterOpen, setIsMarketFilterOpen] = useState<boolean>(!breakpoint.isMobile)
   const { singleCollection } = useNFTCollections()
   const [allMarketsToggle, setAllMarketsToggle] = useState<boolean>(true)
   const [showMore, setShowMore] = useState<boolean>(false)
@@ -278,7 +299,7 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
 
   return (
     <LISTING_TYPE isOpen={isMarketFilterOpen} isParentOpen={isOpen} showMore={showMore}>
-      <div className="filtersTitleItem">
+      <div className="filtersTitleItem" tw="mt-[-5px]">
         {singleCollection ? (
           <>
             Marketplaces
@@ -291,7 +312,11 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
       {singleCollection && (
         <div tw="sm:max-h-[200px] sm:overflow-y-auto">
           <div className="marketTitle">
-            <div> All markets</div>
+            <div>
+              {' '}
+              <img src="/img/assets/Aggregator/AllMarkets.svg" tw="mr-2" />
+              All markets
+            </div>
             <div tw="ml-auto">
               <Switch onChange={(e) => handleAllMarketToggle(e)} checked={allMarketsToggle} />
             </div>
@@ -406,8 +431,9 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
           disabled={applyDisabled}
           className="genericButtonHeight"
           onClick={updateAdditionalFilters}
-          disabledColor={tw`dark:bg-black-2 bg-grey-4 !text-grey-1 opacity-70`}
-          cssStyle={tw`bg-blue-1 !text-white h-[35px] w-[217px] cursor-pointer font-semibold text-[15px]`}
+          disabledColor={tw`dark:bg-black-2 sm:dark:bg-black-1 bg-grey-4 !text-grey-1 opacity-70`}
+          cssStyle={tw`bg-blue-1 sm:w-[calc(100% - 32px)]
+          !text-white h-[35px] w-[217px] cursor-pointer font-semibold text-[15px]`}
         >
           Apply
         </Button>
@@ -420,12 +446,12 @@ const Attributes: FC<{ isOpen: boolean; displayIndex: number }> = ({ isOpen, dis
   const [isAttributeOpen, setIsAttributeOpen] = useState<boolean>(true)
   const { availableAttributes } = useNFTCollections()
   return (
-    <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen} tw="sm:max-h-[200px] overflow-y-auto">
+    <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen} css={[isAttributeOpen && tw`overflow-y-auto`]}>
       <div className="filtersTitleItem">
         Attribute
         <ArrowIcon isOpen={isAttributeOpen} setIsOpen={setIsAttributeOpen} />
       </div>
-      <div tw="p-3">
+      <div css={[isAttributeOpen && tw`p-3`]}>
         {availableAttributes &&
           Object.keys(availableAttributes).map((attributeTrait, index) => (
             <AttributeDetails key={index} trait={attributeTrait} displayIndex={displayIndex} />
@@ -481,20 +507,19 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
     })
   }
 
-  // const showCheckmarkStatus = useCallback(() => {}, [additionalFilters])
-
   const formatDisplay = (str: string): string => str[0].toLocaleUpperCase() + str.substring(1).replaceAll('_', ' ')
   return (
     <div className="attributeTitle" css={[isTraitOpen && tw`!h-[180px]`]}>
       <div tw="flex flex-col w-[100%]">
-        <div tw="flex justify-between">
+        <div tw="flex justify-between items-center">
           {!isTraitOpen ? (
             <div>{formatDisplay(trait)}</div>
           ) : (
             <input
               className="searchInsideTrait"
               type="text"
-              tw="bg-none border-none dark:bg-black-1 bg-grey-5 outline-none text-[15px] font-semibold w-[85%]"
+              tw="bg-none border-none dark:bg-black-1 sm:dark:bg-black-2
+               bg-grey-5 outline-none text-[15px] font-semibold w-[85%]"
               placeholder={`Search ${formatDisplay(trait)}`}
               onChange={(e) => setSearchInsideTrait(e.target.value)}
             />
@@ -506,7 +531,7 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
         <div css={[isTraitOpen && tw`!h-[160px] overflow-y-auto`]}>
           {isTraitOpen &&
             filteredAvailableTrait.map((subTrait) => (
-              <div key={subTrait.traitValue} tw="flex justify-between h-[30px]   items-center">
+              <div key={subTrait.traitValue} tw="flex justify-between h-[30px]  items-center">
                 <div tw="flex text-[15px] text-grey-5">
                   <Checkbox
                     checked={
@@ -523,6 +548,32 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
             ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+export const ClearAllFiltersButton: FC = (): ReactElement => {
+  const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+  const clearAllFilters = useCallback(() => {
+    setAdditionalFilters(initialFilters)
+  }, [])
+  return (
+    <div>
+      {' '}
+      {((additionalFilters.marketsFilter?.length > 0 &&
+        additionalFilters.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1) ||
+        additionalFilters.minValueFilter ||
+        additionalFilters.attributes?.length > 0) && (
+        <Button
+          onClick={clearAllFilters}
+          height="30px"
+          width="94px"
+          cssStyle={tw`dark:bg-grey-5 bg-black-4 ml-2 font-semibold dark:text-black-4 
+           text-grey-5 mt-4`}
+        >
+          Clear All
+        </Button>
+      )}
     </div>
   )
 }

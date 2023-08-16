@@ -1,17 +1,15 @@
 import React, { useCallback, FC, useRef, useEffect } from 'react'
-import tw, { styled } from 'twin.macro'
+import tw, { TwStyle, styled } from 'twin.macro'
 
 import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
 
-const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number }>`
-${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
+const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number; $cssStyle: TwStyle }>`
+${tw`relative sm:w-3/4`}
   width: 50%;
   max-width: ${({ width }) => (width ? width : '583px')} !important;
-
   margin: 0 0 0 ${({ theme }) => theme.margin(3)};
   background: transparent;
-
   @media(max-width: 500px){
     margin: 0 0 0 10px;
   }
@@ -34,16 +32,15 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
     font-family: 'Montserrat';
     border: transparent;
 
-    ${({ $cssStyle }) => $cssStyle};
-    ${tw`sm:w-full text-[15px] font-semibold duration-500 h-[44px]
+    ${tw`sm:w-full text-[15px] font-semibold duration-500
       !font-semibold  rounded-circle p-[0 40px 0 35px]`}
+    ${({ $cssStyle }) => $cssStyle};
 
     &:focus {
       outline: 1.5px solid ${({ theme }) => theme.text11};
       @media(max-width: 500px){
         outline: none;
     }
-
     }
     ::placeholder {
       color: ${({ theme }) => theme.text18};
@@ -51,25 +48,26 @@ ${tw`relative sm:w-3/4 sm:!h-[45px] !h-11 `}
   }
 
     .ant-image-img {
-      ${tw`absolute w-[16px] left-3`}
+      ${tw`absolute w-[16px] left-3 top-2`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
     .ant-image-clear {
-      ${tw`absolute h-6 w-6 right-3 cursor-pointer`}
+      ${tw`absolute h-6 w-6 right-2 top-[5px] cursor-pointer`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
   }
 `
 
-export const SearchBar: FC<any> = ({
-  placeholder,
-  setSearchFilter,
-  filter,
-  bgColor,
-  shouldFocus,
-  width,
-  ...rest
-}) => {
+export const SearchBar: FC<{
+  placeholder?: string
+  setSearchFilter?: any
+  filter?: any
+  bgColor?: string
+  shouldFocus?: boolean
+  width?: string
+  className?: string
+  cssStyle?: TwStyle
+}> = ({ placeholder, setSearchFilter, filter, bgColor, shouldFocus, width, cssStyle, ...rest }) => {
   const { mode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -89,7 +87,7 @@ export const SearchBar: FC<any> = ({
   }, [inputRef?.current])
 
   return (
-    <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} {...rest}>
+    <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} $cssStyle={cssStyle} {...rest}>
       <input
         placeholder={placeholder || 'Search by nft name'}
         ref={inputRef}

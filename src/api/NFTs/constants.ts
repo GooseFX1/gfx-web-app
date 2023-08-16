@@ -69,5 +69,7 @@ export enum NFT_API_ENDPOINTS {
   SAVE_TX = '/nft-aggregator/saveNftTx',
   TOKEN = '/user/token',
   MAGIC_EDEN_BUY = '/magiceden/buy_tx',
-  MAGIC_EDEN_LISTING = '/magiceden/listing'
+  MAGIC_EDEN_LISTING = '/magiceden/listing',
+  NFT_LEADERBOARD_USERS = '/nft-aggregator/getLeaderboardData',
+  DAILY_VISIT = '/daily-visit'
 }

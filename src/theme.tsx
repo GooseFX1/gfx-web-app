@@ -144,7 +144,7 @@ export function colors(mode: string): Colors {
     backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
     tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
-    borderBottom: mode === 'dark' ? '#555555' : '#CACACA',
+    borderBottom: mode === 'dark' ? '#3C3C3C' : '#B5B5B5',
     multiplierBorder: mode === 'dark' ? '#b5b5b5' : '#5855ff',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
     pbbg: mode === 'dark' ? '#1a1a1a' : '#868686',

@@ -6,6 +6,7 @@ import { Tooltip } from '../components'
 import { useDarkMode } from '../context'
 import { checkMobile, formatSOLDisplay } from './misc'
 import { GFXApprisalPopup } from '../components/NFTAggWelcome'
+import { CircularArrow } from '../components/common/Arrow'
 
 export const HeaderTooltip = (text: string): ReactElement =>
   <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="info-icon" /> && (
@@ -68,18 +69,13 @@ export const TableHeaderTitle = (
   focus?: boolean,
   tooltipMode?: boolean
 ): ReactElement => {
-  const { mode } = useDarkMode()
+  // const { mode } = useDarkMode()
+  console.log('m')
   return (
     <STYLED_TITLE $focus={focus}>
       <div className="textTitle">{text}</div>
       {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
-      {isArrowDown && (
-        <img
-          className={'arrowDown' + (invert ? ' invert' : '')}
-          src={`/img/assets/arrow-down-${mode}.svg`}
-          alt=""
-        />
-      )}
+      {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
     </STYLED_TITLE>
   )
 }

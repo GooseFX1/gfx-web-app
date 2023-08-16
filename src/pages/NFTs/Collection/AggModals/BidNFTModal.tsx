@@ -2,8 +2,8 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import BN from 'bn.js'
-import { FC, ReactElement, useEffect, useMemo, useRef, useState } from 'react'
-import { Button } from '../../../../components'
+import { FC, ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Button } from '../../../../components/Button'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../../constants'
 import {
   useAccounts,
@@ -46,6 +46,7 @@ import { STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
 import { BorderBottom } from '../SellNFTModal'
 import { couldNotDeriveValueForBuyInstruction, pleaseTryAgain, successfulListingMessage } from './AggNotifications'
 import { constructBidInstruction } from '../../../../web3/auction-house-sdk/bid'
+import { saveNftTx } from '../../../../api/NFTs'
 
 export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
   const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
@@ -96,6 +97,21 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
     return false
   }, [curBid])
 
+  const sendNftTransactionLog = useCallback(
+    (txType, signature) => {
+      saveNftTx(
+        'GooseFX',
+        parseFloat(ask?.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
+        general?.mint_address,
+        general?.collection_name,
+        txType,
+        signature,
+        general?.uuid,
+        publicKey.toString()
+      )
+    },
+    [general, ask]
+  )
   const { setVisible } = useWalletModal()
   const updateBidValue = (e) => {
     setCurBid(e.target.value)
@@ -176,14 +192,13 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
     const bidIx = await constructBidInstruction(connection, wal, curBid, general)
     try {
       const signature = await sendTransaction(bidIx, connection)
-
       console.log(signature)
       setPendingTxSig(signature)
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
-      console.log(confirm, 'confirming')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       setIsLoading(false)
       if (confirm.value.err === null) {
         setBidNow(false)
+        sendNftTransactionLog('BID', signature)
         notify(successfulListingMessage(signature, nftMetadata, formatSOLDisplay(curBid)))
       }
     } catch (error) {

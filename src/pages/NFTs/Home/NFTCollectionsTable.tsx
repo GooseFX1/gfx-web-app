@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { Image } from 'antd'
 import { minimizeTheString } from '../../../web3/nfts/utils'
-import { Arrow } from '../../../components/common/Arrow'
+import { CircularArrow } from '../../../components/common/Arrow'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
@@ -128,7 +128,10 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                 <div tw="flex items-center">
                   {minimizeTheString(item?.collection_name)}
                   {item.is_verified && (
-                    <img tw="w-[18px] h-[18px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
+                    <img
+                      tw="sm:h-[15px] sm:w-[15px] w-[18px] h-[18px] ml-1"
+                      src="/img/assets/Aggregator/verifiedNFT.svg"
+                    />
                   )}
                 </div>
 
@@ -154,15 +157,15 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
           {item?.daily_volume !== undefined ? (
             <div tw="flex items-center">
               <div tw="flex flex-col items-center justify-center">
+                <div tw="text-grey-1">{timelineDisplay} Volume: </div>
                 <PriceWithToken
                   price={volume}
                   token={currencyView}
                   cssStyle={tw`h-5 w-5 dark:text-grey-6 text-black-4`}
                 />
-                <div tw="text-grey-1">{timelineDisplay} Volume </div>
               </div>
-              <div className="rotate90" tw="ml-2.5">
-                <Arrow height="10px" width="10px" invert={true} />
+              <div tw="ml-2.5">
+                <CircularArrow cssStyle={tw`h-5 w-5`} invert={false} />
               </div>
             </div>
           ) : (
@@ -341,7 +344,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
         )}
       </td>
       <td className="rotate270">
-        <Arrow height="10px" width="16px" invert={false} cssStyle={tw`mt-auto mb-2 dark:opacity-80`} />
+        <CircularArrow invert={false} cssStyle={tw`h-5 w-5`} />
       </td>
     </tr>
   )

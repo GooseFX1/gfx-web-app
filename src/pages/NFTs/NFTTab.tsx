@@ -62,7 +62,8 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         <>
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
-            style={{ width: checkMobile() ? '100%' : 330 }}
+            // style={{ width: checkMobile() ? '100%' : 330 }}
+            cssStyle={tw`sm:w-full w-[330px] h-8.75`}
             bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
           />

@@ -9,11 +9,11 @@ import { checkMobile } from '../../../utils'
 const CONTAINER = styled.div`
   min-height: 300px;
   flex-wrap: wrap;
-  ${tw`dark:bg-black-1 bg-[#e2e2e2] duration-500 flex absolute z-[10]`}
+  ${tw`dark:bg-black-1 bg-grey-5 duration-500 flex absolute z-[10]`}
 `
 
 const ITEM = styled.div`
-  ${tw`p-4 h-[280px] w-[190px] flex flex-col`}
+  ${tw`p-2 h-[280px] w-[190px] flex flex-col`}
   .value {
     ${tw`flex flex-col mt-[180px] ml-[-177px] relative`}
   }
@@ -22,12 +22,18 @@ const ITEM = styled.div`
 const NFTLoading: FC = () => (
   <CONTAINER>
     {[...Array(50)].map((_, index) => (
-      <ITEM key={index}>
+      <ITEM key={index} tw="mb-2">
         <div tw="flex">
-          <SkeletonCommon width="170px" height="170px" style={{ marginRight: '10px' }} />
-          <div className="value">
-            <SkeletonCommon width="100px" height="24px" style={{ marginRight: '10px' }} />
-            <SkeletonCommon width="60px" height="24px" style={{ marginTop: '10px' }} />
+          <div tw="border-1 border-solid flex p-2 !w-[175px] rounded-[10px] dark:border-grey-1 border-white">
+            <SkeletonCommon width="155px" height="155px" style={{ marginRight: '10px' }} />
+            <div className="value" tw="z-[100] pl-3">
+              <div tw="flex justify-between w-[155px]">
+                <SkeletonCommon width="71px" height="20px" style={{ marginRight: '0px' }} />
+                <SkeletonCommon width="20px" height="20px" borderRadius="50%" />
+              </div>
+              <SkeletonCommon width="71px" height="20px" style={{ marginTop: '10px' }} />
+              <SkeletonCommon width="71px" height="20px" style={{ marginTop: '10px' }} />
+            </div>
           </div>
         </div>
       </ITEM>

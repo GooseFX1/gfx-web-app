@@ -23,7 +23,7 @@ import { SEARCH_RESULT_CONTAINER } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
-import { Arrow } from '../../../components/common/Arrow'
+import { Arrow, CircularArrow } from '../../../components/common/Arrow'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
@@ -61,9 +61,6 @@ const NFT_AGG_WRAP = styled.div<{ $currency }>`
     color: ${({ theme }) => theme.tabNameColor};
     animation: openAnimation 3s ease-in-out;
   }
-  .borderBottom {
-    background: ${({ theme }) => theme.tokenBorder} !important;
-  }
 
   .no-dp-avatar-sm {
     ${tw` h-11 w-11 rounded-full cursor-pointer 
@@ -94,10 +91,10 @@ const NFT_AGG_WRAP = styled.div<{ $currency }>`
     ${tw`text-grey-2`}
   }
   .flexContainer {
-    ${tw`h-[40px] flex ml-[10px] mb-4`}
+    ${tw`h-8.75 flex ml-[10px] sm:ml-[15px]`}
   }
   .iconImg {
-    ${tw`h-[40px] w-[40px] rounded flex items-center justify-center rounded-full	mr-3 `}
+    ${tw`h-8.75 w-8.75 rounded flex items-center justify-center rounded-full	mr-3 `}
     border: 1px solid #cacaca;
     background: ${({ theme }) => theme.bg0};
   }
@@ -141,7 +138,7 @@ const EYE_CONTAINER = styled.div`
   }
 `
 const FILTERS_CONTAINER = styled.div`
-  ${tw`flex mt-[15px] sm:mt-[20px]`}
+  ${tw`flex mt-[15px]`}
   .profilePic {
     ${tw`w-11 mr-5 ml-2 h-11 rounded-full cursor-pointer`}
   }
@@ -171,25 +168,23 @@ const PROFILE_PIC_WRAPPER = styled.div`
     ${tw`h-[100px] w-[100px] rounded-full cursor-pointer sm:h-[70px] sm:w-[70px]`}
   }
 `
-const AVATAR_NFT = styled(Image)`
-  ${tw`h-11 w-11 rounded-full cursor-pointer mr-5`}
-`
+
 export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1 ml-2 sm:ml-0`}
   .slider-animation-timeline {
-    ${tw`absolute w-[60px] h-[44px] sm:h-10 rounded-[36px]  z-[-1]`}
+    ${tw`absolute w-[81px] sm:w-[75px] h-8.75 rounded-[36px]  z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 50}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
   .slider-animation {
-    ${tw`absolute w-[85px] h-[44px] rounded-[36px]  z-[-1]`}
+    ${tw`absolute w-[81px] sm:w-[75px] h-8.75 rounded-[36px]  z-[-1]`}
     /* left: ${({ $poolIndex }) => $poolIndex * 50}%; */
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
   .slider-animation-web {
-    ${tw`absolute w-[40%] h-[44px] rounded-[36px] z-[-1]`}
+    ${tw`absolute w-[45%] h-8.75 rounded-[36px] z-[-1]`}
     left: ${({ $poolIndex }) => $poolIndex * 50 + 4.5}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
@@ -203,13 +198,14 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
 `
 
 const poolTypes = [{ name: 'Popular' }, { name: 'Trending' }]
-const timelineVolume = [{ name: TIMELINE.TWENTY_FOUR_H }, { name: TIMELINE.SEVEN_D }]
+const timelineVolume = [
+  { name: TIMELINE.TWENTY_FOUR_H, title: 'Popular' },
+  { name: TIMELINE.SEVEN_D, title: 'Trending' }
+]
 const SORT_FILTER_OPTIONS = {
   0: NFT_COL_FILTER_OPTIONS.DAILY_VOLUME,
   1: NFT_COL_FILTER_OPTIONS.WEEKLY_VOLUME
 }
-
-const BorderBottom = () => checkMobile() && <div tw="h-[1px] dark:bg-black-4 bg-grey-4 mx-[15px]"></div>
 
 const FiltersContainer = () => {
   const [poolIndex, setPoolIndex] = useState<number>(0)
@@ -218,19 +214,16 @@ const FiltersContainer = () => {
   const [poolFilter, setPoolFilter] = useState<string>('Popular')
   const [searchFilter, setSearchFilter] = useState<string>(undefined)
   const [searchPopup, setSearchPopup] = useState<boolean>(false)
-  const history = useHistory()
   const { setCurrency } = useNFTAggregator()
   const { setPageNumber, pageNumber } = useNFTAggregatorFilters()
   const { wallet } = useWallet()
-  const pubKey = wallet?.adapter ? wallet?.adapter?.publicKey?.toString() : null
   const { mode } = useDarkMode()
   const { setTimelineDisplay, setSortFilter, setSortType, sortType, timelineDisplay } = useNFTAggregatorFilters()
   const { setAllCollections } = useNFTCollections()
   const { sessionUser } = useNFTProfile()
-  const goProfile = () => sessionUser && history.push(`/nfts/profile/${pubKey}`)
   const buttonRefs = useRef<HTMLButtonElement[]>([])
   const sliderRef = useRef<HTMLDivElement>(null)
-  const handleSlide = useAnimateButtonSlide(sliderRef, buttonRefs)
+  const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonRefs)
 
   useEffect(() => {
     if (timelineDisplay === TIMELINE.SEVEN_D && sortType === 'DESC') {
@@ -293,7 +286,7 @@ const FiltersContainer = () => {
           <div className="flexContainer">
             <div className="iconImg">
               <img
-                tw="h-10 w-10"
+                tw="h-8.75 w-8.75"
                 onClick={() => setSearchPopup(true)}
                 src={`/img/assets/Aggregator/search-${mode}.svg`}
               />
@@ -306,18 +299,18 @@ const FiltersContainer = () => {
               <div className="slider-animation-timeline"></div>
               {timelineVolume.map((timeline, index) => (
                 <STYLED_BUTTON
-                  style={{ width: 60 }}
+                  style={{ width: 81 }}
                   key={timeline.name}
                   onClick={() => handleClickTimeline(timeline.name, index)}
                   className={timeline.name === timelineName ? 'selectedBackground' : ''}
                 >
-                  {timeline.name}
+                  {timeline.title}
                 </STYLED_BUTTON>
               ))}
             </ButtonContainer>
           </div>
           <div tw="ml-auto">
-            <div tw="sm:mt-0 mt-2.5 mr-2.5 flex">
+            <div tw="sm:mt-0 sm:mr-[15px] mt-2.5 mr-2.5 flex">
               <TokenToggleNFT toggleToken={setCurrency} />
               {sessionUser && wallet?.adapter?.publicKey && <CurrentUserProfilePic />}
             </div>
@@ -333,7 +326,7 @@ const FiltersContainer = () => {
           className="search-bar"
           width={'425px'}
           filter={searchFilter}
-          cssStyle={tw`!text-black-4  !font-semibold dark:text-grey-5`}
+          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75`}
           bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections"
@@ -383,7 +376,7 @@ export const RefreshBtnWithAnimationNFT: FC = () => {
   }
   return (
     <RefreshIcon onClick={() => refreshFeed()}>
-      <img src={'/img/assets/refresh.svg'} tw="relative z-10   h-11 w-11" className={refreshClass} alt="refresh" />
+      <img src={'/img/assets/refresh.svg'} tw="relative z-10 h-8.75 w-8.75" className={refreshClass} />
     </RefreshIcon>
   )
 }
@@ -421,7 +414,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
       {userPic ? (
         <img
           src={userPic}
-          tw="h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0"
+          tw="h-[44px] w-[44px] sm:h-8.75 sm:w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
           className={mediumSize ? 'userPopupProfilePic' : 'customProfileImg'}
           onClick={goProfile}
         />
@@ -452,9 +445,6 @@ const ShowBannerEye = ({ showBanner, setShowBanner }: any) => {
       ) : (
         <SVGToPrimary2 className="showHideClass" src={eyeImg} alt="eye-image" />
       )}
-
-      {/* {mode === 'dark' ? <img className='showHideClass' src={eyeImg} alt="eye-image" /> :
-          <SVGToPrimary2 src={eyeImg} alt="eye-image" />} */}
       {showBanner ? 'Hide' : 'Show'}
     </EYE_CONTAINER>
   )
@@ -553,7 +543,7 @@ const StatsContainer = ({ showBanner, setShowBanner }: any) => {
   }, [])
 
   return (
-    <div tw="h-[36px] my-[20px] ml-[20px] flex items-center justify-between">
+    <div tw="h-[38px] my-[20px] ml-[20px] flex items-center justify-between">
       <div tw="flex justify-between items-center w-[630px]">
         <Pill
           loading={aggStats === null}
@@ -587,71 +577,11 @@ const TimeLineDropdown = (): ReactElement => {
       placement="bottomRight"
       trigger={[checkMobile() ? 'click' : 'hover']}
     >
-      <div className={`dropdownBtn ${arrow ? `addBorder` : ``}`} tw="h-[44px] w-[104px]">
-        <div tw="ml-[22px]">{timelineDisplay}</div>
-        <Arrow height="9px" width="18px" cssStyle={tw`mr-1`} invert={arrow} />
+      <div className={`dropdownBtn ${arrow ? `addBorder` : ``}`} tw="h-8.75 w-[104px]">
+        <div tw="ml-[18px]">{timelineDisplay}</div>
+        <CircularArrow cssStyle={tw`mr-1 h-5 w-5`} invert={arrow} />
       </div>
     </Dropdown>
-  )
-}
-// V2
-const MarketDropdown = (): ReactElement => {
-  const [arrow, setArrow] = useState<boolean>(false)
-  return (
-    <Dropdown
-      align={{ offset: [0, 16] }}
-      destroyPopupOnHide
-      overlay={<MarketDropdownContents setArrow={setArrow} />}
-      placement="bottomRight"
-      trigger={['click']}
-    >
-      <div className="dropdownBtn" tw="h-[44px] w-[173px]">
-        <img src="/img/assets/Aggregator/menu.svg" />
-        <div>All</div>
-        <Arrow height="9px" width="18px" invert={arrow} />
-      </div>
-    </Dropdown>
-  )
-}
-
-const MarketDropdownContents = ({ setArrow }: any): ReactElement => {
-  const { mode } = useDarkMode()
-
-  useEffect(() => {
-    setArrow(true)
-    return () => setArrow(false)
-  }, [])
-
-  const renderDropdownItems = useCallback(
-    (addr) => (
-      <div
-        tw="flex p-2 items-center cursor-pointer hover:opacity-80"
-        key={addr}
-        onClick={() => console.log(AH_NAME(addr))}
-      >
-        <div>
-          <Image
-            className="marketImg"
-            fallback={`/img/assets/avatar${mode === 'dark' ? '' : '-lite'}.svg`}
-            src={`/img/assets/Aggregator/${AH_NAME(addr)}.svg`}
-            preview={false}
-          />
-        </div>
-        <div tw="ml-2">{AH_NAME(addr)}</div>
-        <div className="checkboxContainer">
-          <input type="checkbox" onClick={() => console.log('s')} />
-        </div>
-      </div>
-    ),
-    []
-  )
-
-  return (
-    <DROPDOWN_CONTAINER tw="w-[173px] h-[211px] overflow-y-auto">
-      {Object.keys(AH_PROGRAM_IDS)
-        .filter((addr) => AH_NAME(addr) !== 'Unknown')
-        .map(renderDropdownItems)}
-    </DROPDOWN_CONTAINER>
   )
 }
 
@@ -744,7 +674,6 @@ const NFTLandingPageV2 = (): ReactElement => {
         </>
       )}
       <FiltersContainer />
-      <BorderBottom />
       <NFTCollectionsTable showBanner={showBanner} />
     </NFT_AGG_WRAP>
   )
