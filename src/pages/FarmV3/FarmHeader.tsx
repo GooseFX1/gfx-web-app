@@ -5,7 +5,7 @@ import { ChoosePool } from './ChoosePool'
 import { checkMobile } from '../../utils'
 
 const CARD_GRADIENT = styled.div`
-  ${tw`h-[56px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+  ${tw`h-[60px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
 `
@@ -70,7 +70,9 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
             <CARD_GRADIENT key={index}>
               <INFO_CARD key={index}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular">{card?.value}</div>
+                <div tw="text-regular font-semibold text-black-4 dark:text-grey-5 sm:text-regular">
+                  {card?.value}
+                </div>
               </INFO_CARD>
             </CARD_GRADIENT>
           </>
