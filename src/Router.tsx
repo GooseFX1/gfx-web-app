@@ -15,7 +15,6 @@ import {
   AccountsProvider,
   TokenRegistryProvider,
   RewardToggleProvider,
-  CryptoProvider,
   OrderProvider
 } from './context'
 import { GenericNotFound } from './pages/InvalidUrl'
