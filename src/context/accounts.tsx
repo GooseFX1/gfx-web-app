@@ -7,7 +7,8 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState
+  useState,
+  useMemo
 } from 'react'
 import { useLocation } from 'react-router-dom'
 import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
@@ -45,7 +46,14 @@ const AccountsContext = createContext<IAccountsConfig | null>(null)
 
 export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { pathname } = useLocation()
-  const { connection, perpsDevnetConnection: devnetConnection } = useConnectionConfig()
+  const { perpsConnection: devnetConnection } = useConnectionConfig()
+  const connection = useMemo(
+    () =>
+      new Connection('https://api.devnet.solana.com', {
+        commitment: 'confirmed'
+      }),
+    []
+  )
   const { tokens: tokenRegistry } = useTokenRegistry()
   const { wallet } = useWallet()
   const [balances, setBalances] = useState<IAccounts>({})

@@ -8,7 +8,7 @@ import {
   fetchCurrentAmountStaked,
   //getSslAccountKey,
   fetchAllSSLAmountStaked,
-  getLiquidityAccountKey,
+  //getLiquidityAccountKey,
   //getMainVaultKey,
   AccountLayout,
   getNetworkConnectionText
@@ -251,9 +251,9 @@ const CustomTableList: FC = () => {
         const mainVaultKeys = []
         for (let i = 0; i < SSLTokenNames.length; i++) {
           try {
-            const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
+            //const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
             //SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
-            liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
+            //liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
             //mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
           } catch (err) {
             console.log(err)
