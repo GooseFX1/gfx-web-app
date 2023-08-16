@@ -3,7 +3,6 @@ import { faqs } from './constants'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { useDarkMode } from '../../context'
-import { checkMobile } from '../../utils'
 
 const FAQ_WRAPPER = styled.div`
   ${tw`sm:w-[calc(100% - 15px)]`}
@@ -45,13 +44,11 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row items-center mt-5">
-      <h2 tw="mr-auto text-[30px] font-semibold dark:text-grey-5 text-black-4 sm:text-lg sm:pl-2">
-        {checkMobile() ? 'FAQs' : 'Frequently Asked Questions'}
-      </h2>
+    <div tw="flex flex-row mt-5">
+      <h2 tw="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">FAQs</h2>
       <a
-        tw="w-[140px] h-[35px] bg-blue-1 mb-5 cursor-pointer text-white font-semibold
-         text-average flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
+        tw="w-[140px] h-[35px] bg-blue-1 cursor-pointer text-white font-semibold
+         text-regular flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
         href="https://docs.goosefx.io/features/farm/single-sided-liquidity-pools"
         target="_blank"
         rel="noreferrer"
@@ -59,7 +56,7 @@ export const Faqs: FC = () => (
         Go To Docs
       </a>
     </div>
-    <div tw="rounded-[18px] dark:bg-black-2 bg-white ">
+    <div tw="rounded-[10px] dark:bg-black-2 bg-white ">
       {faqs.map((item, index) => (
         <FaqRow item={item} key={index} index={index} />
       ))}

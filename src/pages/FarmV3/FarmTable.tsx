@@ -69,7 +69,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
 
   thead {
     ${tw`text-base font-semibold bg-grey-5 dark:bg-black-1 
-    sm:h-[52px] rounded-[20px 20px 5px 5px]`}
+    sm:h-[52px] rounded-[20px 20px 5px 5px] text-regular`}
 
     tr {
       ${tw`h-[40px] sm:h-full`}
@@ -86,11 +86,10 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   }
 
   tbody {
-    ${tw`dark:bg-black-1 bg-grey-5`}
+    ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
     ${({ theme }) => theme.customScrollBar('1px')}
-    overflow-x: hidden;
     tr {
-      ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
+      ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
       sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
 
       /* &:hover {
@@ -153,7 +152,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
         />
         <div tw="flex flex-col">
           <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
-            {selectedPool} Pools
+            {selectedPool === 'stable' ? 'Stable' : 'Alpha'} Pools
           </div>
 
           <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
@@ -178,18 +177,18 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             tw="h-[35px] bg-blue-1 w-[95px] absolute rounded-[50px]"
           ></div>
           <div
-            css={[poolIndex === 0 && tw`!text-white  `]}
-            tw="h-[35px] flex items-center z-[100] justify-center font-semibold w-[95px]  "
+            css={[poolIndex === 0 ? tw`!text-white ` : tw`text-grey-1`]}
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]  "
             onClick={() => handlePoolSelection(poolTypes[0], 0)}
           >
             Stable
           </div>
           <div
-            css={[poolIndex === 1 && tw`!text-white `]}
+            css={[poolIndex === 1 ? tw`!text-white ` : tw`text-grey-1`]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] "
             onClick={() => handlePoolSelection(poolTypes[1], 1)}
           >
-            Hyper
+            Alpha
           </div>
         </div>
         {breakpoint.isDesktop && (
@@ -269,13 +268,13 @@ const FarmTableCoin: FC<{ coin: any; selectedPool: string }> = ({ coin, selected
         {!checkMobile() && <td>$30,596</td>}
         {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%] sm:!w-[33%]">
-          <Button className="pinkGradient" cssStyle={tw`h-[35px] font-semibold text-regular`}>
+          <Button className="pinkGradient" cssStyle={tw`h-[35px] text-white font-semibold text-regular`}>
             Stats
           </Button>
           <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
         </td>
       </tr>
-      <ExpandedView isExpanded={isExpanded} coin={coin} selectedPool={selectedPool} />
+      {<ExpandedView isExpanded={isExpanded} coin={coin} selectedPool={selectedPool} />}
     </>
   )
 }
@@ -418,7 +417,9 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-5 rounded-[0 0 15px 15px] duration-300 
           flex justify-between sm:flex-col`,
-        isExpanded ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4` : tw`h-0 invisible text-[0px] p-0`
+        isExpanded
+          ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4`
+          : tw`h-0 invisible text-[0px] p-0 opacity-0 w-0`
       ]}
     >
       <div tw="flex flex-col">
@@ -434,7 +435,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
               value={`${userTokenBalance.toFixed(2)} ${coin}`}
             />
             <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="Daily Earnings" value={`2.5 ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`2.5 ${coin}`} />
           </div>
         )}
         {isExpanded && (
@@ -489,7 +490,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                   ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
                   : setWithdrawAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
               }
-              tw="font-semibold text-grey-1 dark:text-grey-2 mt-2 ml-4 cursor-pointer"
+              tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
             >
               Min
             </div>
@@ -499,7 +500,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                   ? setDepositAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
                   : setWithdrawAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
               }
-              tw="font-semibold text-grey-1 dark:text-grey-2 mt-2 ml-2 cursor-pointer"
+              tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
             >
               Max
             </div>
@@ -513,12 +514,12 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
               tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 
               bg-grey-5 border-none`,
               isExpanded
-                ? tw`w-[400px] h-10 sm:w-[100%] p-4 pl-[100px] pr-[60px] text-right sm:pl-[72%]`
+                ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[60px] text-right sm:pl-[72%]`
                 : tw`h-0 w-0 pl-0 invisible`
             ]}
             type="number"
           />
-          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-2">{coin}</div>
+          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">{coin}</div>
         </div>
 
         {isExpanded && (
@@ -526,7 +527,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
             {wallet?.adapter?.publicKey ? (
               <div>
                 <Button
-                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-10 bg-blue-1 text-regular !text-white font-semibold
+                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-8.75 bg-blue-1 text-regular !text-white font-semibold
                    rounded-[50px] flex items-center justify-center outline-none border-none`}
                   onClick={modeOfOperation === ModeOfOperation.DEPOSIT ? handleDeposit : handleWithdraw}
                   loading={isButtonLoading}
@@ -535,7 +536,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                 </Button>
               </div>
             ) : (
-              <Connect width="400px" height="40px" />
+              <Connect width="400px" height="35px" />
             )}
           </div>
         )}
@@ -543,9 +544,19 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
 
       {breakpoint.isDesktop && (
         <div>
-          <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin} ($12 USD)`} />
+          <FarmStats
+            alignRight={true}
+            isExpanded={isExpanded}
+            keyStr="Total Earnings"
+            value={`2.5 ${coin} ($12 USD)`}
+          />
           <div tw="mt-2">
-            <FarmStats isExpanded={isExpanded} keyStr="Daily Earnings" value={`2.5 ${coin} ($12 USD)`} />
+            <FarmStats
+              alignRight={true}
+              isExpanded={isExpanded}
+              keyStr="Balance"
+              value={`2.5 ${coin} ($12 USD)`}
+            />
           </div>
         </div>
       )}
@@ -553,14 +564,21 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
   )
 }
 
-const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean }> = ({ keyStr, value, isExpanded }) => (
+const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean; alignRight?: boolean }> = ({
+  keyStr,
+  value,
+  isExpanded,
+  alignRight
+}) => (
   <div
     css={[
       tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
       isExpanded ? tw`text-regular opacity-100` : tw`text-[0px] invisible opacity-0`
     ]}
   >
-    <div tw="text-grey-1">{keyStr}</div>
+    <div tw="text-grey-1" css={[!!alignRight && tw`text-right`]}>
+      {keyStr}
+    </div>
     <div tw="text-grey-2">{value}</div>
   </div>
 )
