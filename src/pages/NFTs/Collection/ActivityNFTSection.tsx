@@ -15,6 +15,7 @@ import { GenericTooltip } from '../../../utils/GenericDegsin'
 import { parseUnixTimestamp } from '../../../utils'
 import { NFTRowLoading } from '../Home/NFTLoading'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
+import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 
 export interface IActivity {
   activity_id: number
@@ -310,12 +311,24 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
     [activity]
   )
 
+  console.log(nftDetails)
+
   return (
     <tr className="tableRow" key={index}>
       <td className="nftNameColumn" tw="!w-[20%]">
         {nftDetails?.nft_name ? (
           <div tw="flex">
-            <img className="nftNameImg" src={nftDetails.image_url} alt="" />
+            <img
+              className="nftNameImg"
+              src={gfxImageService(
+                IMAGE_SIZES.SM_SQUARE,
+                nftDetails.verified_collection_address
+                  ? nftDetails.verified_collection_address
+                  : nftDetails.first_verified_creator_address,
+                nftDetails.image_url
+              )}
+              alt=""
+            />
             <div tw="flex flex-col mt-4.5 ml-2">
               <GenericTooltip text={nftDetails?.nft_name}>
                 <div tw="flex items-center ">

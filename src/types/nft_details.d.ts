@@ -101,6 +101,18 @@ export type BaseNFT = {
   collection_address: string
   gfx_appraisal_value?: string
   is_verified: boolean
+  attributes: IAttributesTabItemData[]
+  first_verified_creator_address: string | null
+  verified_collection_address: string | null
+  is_agg: boolean
+  properties: {
+    files: { uri: string; type: string }[]
+    category: string
+    maxSupply?: number
+    creators: Creator[]
+  }
+  creators?: ICreator[]
+  seller_fee_basis_points: number | null
   nft_price?: number
 }
 

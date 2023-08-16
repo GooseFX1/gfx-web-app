@@ -41,6 +41,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
 import { IAppParams } from '../../../types/app_params'
+import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
+
 //#region styles
 type ICardV2 = {
   singleNFT: ISingleNFT
@@ -270,11 +272,18 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
               onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
             >
               {handleHover}
+              {console.log(localSingleNFT)}
               <div className="nftImg">
                 <img
                   src={
                     localSingleNFT
-                      ? localSingleNFT.image_url
+                      ? gfxImageService(
+                          IMAGE_SIZES.SM_WIDTH,
+                          localSingleNFT.verified_collection_address
+                            ? localSingleNFT.verified_collection_address
+                            : localSingleNFT.first_verified_creator_address,
+                          localSingleNFT.image_url
+                        )
                       : `${window.origin}/img/assets/nft-preview-${mode}.svg`
                   }
                   alt="nft"

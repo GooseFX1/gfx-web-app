@@ -15,6 +15,7 @@ import 'styled-components/macro'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { fetchSingleNFT } from '../../../api/NFTs'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
+import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 
 const stopPropagationClassList = [
   'subText',
@@ -112,11 +113,13 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                   preview={false}
                   className="nftNameImg"
                   fallback={'/img/assets/Aggregator/Unknown.svg'}
-                  src={`${
-                    item?.profile_pic_link.length === 0
-                      ? '/img/assets/Aggregator/Unknown.svg'
-                      : item.profile_pic_link
-                  }`}
+                  src={gfxImageService(
+                    IMAGE_SIZES.SM_SQUARE,
+                    item.verified_collection_address
+                      ? item.verified_collection_address
+                      : item.first_verified_creator_address,
+                    item.profile_pic_link
+                  )}
                   alt=""
                 />
               </div>
@@ -172,6 +175,7 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
 }
 
 const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
+  if (typeof item === 'number' && !Number.isNaN(item)) return <></>
   const { currencyView } = useNFTAggregator()
   const history = useHistory()
   const { timelineDisplay } = useNFTAggregatorFilters()
@@ -249,14 +253,18 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
               onClick={(e) => handleGfxAppraisal(e)}
             />
           )}
-          {item.profile_pic_link ? (
+          {item ? (
             <Image
               preview={false}
               className="nftNameImg"
               fallback={'/img/assets/Aggregator/Unknown.svg'}
-              src={`${
-                item?.profile_pic_link === undefined ? '/img/assets/Aggregator/Unknown.svg' : item.profile_pic_link
-              }`}
+              src={gfxImageService(
+                IMAGE_SIZES.SM_SQUARE,
+                item.verified_collection_address
+                  ? item.verified_collection_address
+                  : item.first_verified_creator_address,
+                item.profile_pic_link
+              )}
               alt="collection-icon"
             />
           ) : (
