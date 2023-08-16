@@ -15,7 +15,7 @@ const INFO_CARD = styled.div`
 `
 
 const POOL_CARD = styled.div`
-  ${tw`h-32 w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border-solid dark:border-grey-2 border-grey-1 p-2.5
+  ${tw`h-[121px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border-solid dark:border-grey-2 border-grey-1 p-2.5
     sm:h-28 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
 `
 
@@ -47,8 +47,8 @@ const infoCards = [
 ]
 
 const topPoolCards = [
-  { name: 'BTC', value: '15.00%', type: 'Hyper' },
-  { name: 'SOL', value: '8.00%', type: 'Hyper' },
+  { name: 'BTC', value: '15.00%', type: 'Alpha' },
+  { name: 'SOL', value: '8.00%', type: 'Alpha' },
   { name: 'USDC', value: '7.45%', type: 'Stable' },
   { name: 'XRP', value: '7.45%', type: 'Stable' }
 ]
@@ -67,7 +67,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
         )}
         {infoCards?.map((card, index) => (
           <>
-            <CARD_GRADIENT>
+            <CARD_GRADIENT key={index}>
               <INFO_CARD key={index}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular">{card?.value}</div>
@@ -77,8 +77,8 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
         ))}
         {!checkMobile() && (
           <div
-            tw="absolute right-0 border border-solid border-grey-1 w-[220px] h-12 rounded-[100px] cursor-pointer
-                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
+            tw="absolute right-0 border border-solid border-grey-1 w-[207px] h-10 rounded-[100px] cursor-pointer
+                py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
           >
             <span
               tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
@@ -94,8 +94,10 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
       </HEADER_WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
-          <div tw="dark:text-grey-2 text-regular font-semibold text-grey-1 sm:mt-3 sm:text-tiny">Today</div>
-          <div tw="dark:text-grey-5 text-lg font-semibold text-black-4 mb-2.5">Top Pools</div>
+          <div tw="dark:text-grey-2 text-regular leading-3 font-semibold text-grey-1 sm:mt-3 sm:text-tiny">
+            Today
+          </div>
+          <div tw="dark:text-grey-5 text-lg font-semibold  text-black-4 mb-2.5">Top Pools</div>
         </div>
         {checkMobile() && (
           <div
@@ -118,7 +120,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
         {topPoolCards?.map((card, index) => (
           <>
             <POOL_CARD key={index}>
-              <div tw="flex flex-row justify-center items-center mb-3.75 sm:mb-2 sm:justify-between">
+              <div tw="flex flex-row justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
                 <img src={`/img/crypto/${card.name}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
                   {card?.name}
