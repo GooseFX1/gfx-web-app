@@ -951,7 +951,7 @@
             "name": "price",
             "docs": ["The price of the given asset."],
             "type": {
-              "defined": "HistoricalPrice"
+              "defined": "HistoricalDecimal"
             }
           },
           {
@@ -1045,93 +1045,6 @@
                 },
                 256
               ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Pair",
-      "docs": [
-        "An account that provides additional bookkeeping for a swap market",
-        "that is made available through the existence of a given pair of SSL pools",
-        "under the same admin. When a user is swapping between two mints,",
-        "they're swapping between two SSL pools, and this [Pair] account type",
-        "adds additional bookkeeping across that swap pair."
-      ],
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "poolRegistry",
-            "docs": ["Associated admin account."],
-            "type": "publicKey"
-          },
-          {
-            "name": "mints",
-            "docs": ["The two mints that make up the pair.", "These mints are always ordered \"numerically\"."],
-            "type": {
-              "defined": "(Pubkey,Pubkey)"
-            }
-          },
-          {
-            "name": "feeCollector",
-            "docs": [
-              "Fees go to this pubkey's associated token account for the input mint of a swap.",
-              "That means if a user is swapping SOL for USDC, they're charged fees in SOL,",
-              "and we would move fees to the wrapped SOL associated token account owned by `self.fee_collector`."
-            ],
-            "type": {
-              "defined": "(Pubkey,Pubkey)"
-            }
-          },
-          {
-            "name": "feeRates",
-            "docs": [
-              "Matched to mints.0 and mints.1 respectively.",
-              "Fee rates are allowed to be different depending on the input mint.",
-              "They are expressed as BPS (theoretical maximum = 10_000)."
-            ],
-            "type": {
-              "defined": "(u16,u16)"
-            }
-          },
-          {
-            "name": "totalFeesGeneratedNative",
-            "docs": [
-              "Historical value that records the total amount of fees collected",
-              "over the lifetime of the pair.",
-              "Recorded as native token amounts."
-            ],
-            "type": {
-              "defined": "([u8;16],[u8;16])"
-            }
-          },
-          {
-            "name": "totalHistoricalVolume",
-            "docs": [
-              "Total volume swapped on this pair. Parsed as a u128, little-endian.",
-              "Scaled to [USD_VOLUME_DECIMALS]."
-            ],
-            "type": {
-              "array": ["u8", 16]
-            }
-          },
-          {
-            "name": "totalInternallySwapped",
-            "docs": [
-              "Historical value that records the total amount of internally swapped",
-              "volume over the lifetime of the pair.",
-              "Recorded as native token amounts."
-            ],
-            "type": {
-              "defined": "([u8;16],[u8;16])"
-            }
-          },
-          {
-            "name": "space",
-            "type": {
-              "array": ["u8", 128]
             }
           }
         ]
@@ -1307,6 +1220,158 @@
     }
   ],
   "types": [
+    {
+      "name": "SSLPool",
+      "docs": [
+        "A single-sided liquidity pool's metadata, recorded as an entry on a [PoolRegistry].",
+        "Also acts as uninitialized PDA signer and owner of the LP vaults for each SSL pool."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "docs": [
+              "This tells us whether this particular SSL Pool entry has data,",
+              "and if so, whether or not the pool is suspended."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "assetType",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "mint",
+            "docs": ["The main token mint for this SSL pool."],
+            "type": "publicKey"
+          },
+          {
+            "name": "mintDecimals",
+            "docs": ["a copy from the mint"],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "docs": ["Stored for CPI signatures"],
+            "type": "u8"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "totalAccumulatedLpReward",
+            "docs": [
+              "Total historical record of fees accrued to LPs.",
+              "This is not only for informational purposes, but also",
+              "is used in bookkeeping LP rewards."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "totalLiquidityDeposits",
+            "docs": [
+              "Since swaps will alter the main token balance,",
+              "we need to keep track separately from the token account's balance",
+              "to correctly calculate LP fee claims."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "oraclePriceHistories",
+            "docs": [
+              "The price history accounts that record oracle prices.",
+              "In principle, we allow for storage of multiple oracles, although these extra",
+              "indices are not yet used in the program logic."
+            ],
+            "type": {
+              "array": ["publicKey", 3]
+            }
+          },
+          {
+            "name": "mathParams",
+            "docs": [
+              "All parameters related to the mathematical calculations required for price",
+              "determination and swap rule enforcement. \"Swap rules\" are conditions that",
+              "must not be violated, otherwise an attempted swap should fail."
+            ],
+            "type": {
+              "defined": "SSLMathParams"
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalPrice",
+      "docs": [
+        "A common type derivable from any particular oracle price history, whether that",
+        "be a Pyth oracle, a Switchboard oracle, etc.",
+        "",
+        "This is not a value stored on-chain, it is merely generated during instruction execution.",
+        "Therefore it doesn't need to derive any of the Anchor values."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "docs": ["The price of the given asset."],
+            "type": {
+              "defined": "HistoricalDecimal"
+            }
+          },
+          {
+            "name": "slot",
+            "docs": [
+              "The slot during which this price was recorded.",
+              "This should be a conservative value, e.g. if the price history account's latest entry",
+              "is from slot X, but the oracle recorded it during slot X-1, the latter should be recorded",
+              "here."
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalDecimal",
+      "docs": ["A decimal type that can be stored on-chain and converted to a [rust_decimal::Decimal]."],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "num",
+            "type": "i64"
+          },
+          {
+            "name": "scale",
+            "type": "u32"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 4]
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "SSLMathConfig",
       "docs": [

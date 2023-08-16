@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useMemo, Dispatch, SetStateAction, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -86,10 +87,8 @@ const WRAPPER = styled.div<{ $poolIndex }>`
 
   tbody {
     ${tw`dark:bg-black-1 bg-grey-5`}
-    // if height need add here
     ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;
-
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
       sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
@@ -216,10 +215,12 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
       )}
       <div>
         <table tw="mt-4">
-          <FarmTableHeaders />
+          <FarmTableHeaders poolSize={filteredTokens && filteredTokens.length && filteredTokens.length} />
           <tbody>
             {filteredTokens && filteredTokens.length ? (
-              filteredTokens.map((coin, index) => <FarmTableCoin key={index} coin={coin} />)
+              filteredTokens.map((coin, index) => (
+                <FarmTableCoin key={index} coin={coin} selectedPool={selectedPool} />
+              ))
             ) : (
               <tr>
                 <div
@@ -237,7 +238,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
   )
 }
 
-const FarmTableHeaders: FC = () => (
+const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   <thead>
     <tr>
       <th tw="!text-left !justify-start pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
@@ -246,12 +247,14 @@ const FarmTableHeaders: FC = () => (
       {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
-      <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">{TableHeaderTitle(`Pools: 3`, null, false)}</th>
+      <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">
+        {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
+      </th>
     </tr>
   </thead>
 )
 
-const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
+const FarmTableCoin: FC<{ coin: any; selectedPool: string }> = ({ coin, selectedPool }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   return (
     <>
@@ -272,22 +275,26 @@ const FarmTableCoin: FC<{ coin: any }> = ({ coin }) => {
           <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
         </td>
       </tr>
-      <ExpandedView isExpanded={isExpanded} coin={coin} />
+      <ExpandedView isExpanded={isExpanded} coin={coin} selectedPool={selectedPool} />
     </>
   )
 }
 
-const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, coin }) => {
+const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string }> = ({
+  isExpanded,
+  coin,
+  selectedPool
+}) => {
   const { wallet } = useWallet()
   const wal = useWallet()
   const { network } = useConnectionConfig()
-  const connection = new Connection('http://localhost:8899')
+  const connection = new Connection('https://api.devnet.solana.com')
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm() //sslchange ssl program
   const { setCounter, setOperationPending } = useFarmContext()
-  const tokenAddress = ADDRESSES['mainnet-beta']?.sslPool[coin].address // sslchange this later
-  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const tokenAddress = ADDRESSES['mainnet-beta']?.[selectedPool][coin].address // sslchange this later
+  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
   const [depositAmount, setDepositAmount] = useState<number>()
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
@@ -295,6 +302,8 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   //sslchange: to use when ssl program is ready
   useEffect(() => {
+    //program.account.sslPool.fetchAll()
+    //.assetType
     ;async () => {
       if (SSLProgram) {
         const sslPool = await SSLProgram.account.sslPool.all()
@@ -303,20 +312,23 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
     }
   }, [SSLProgram])
   useEffect(() => {
-    if (wallet?.adapter?.publicKey) {
-      const SOL = connection.getAccountInfo(wallet?.adapter?.publicKey)
-      SOL.then((res) => setUserSOLBalance(res.lamports / LAMPORTS_PER_SOL)).catch((err) => console.log(err))
-    }
-  }, [wallet?.adapter?.publicKey, userSolBalance])
+    ;(async () => {
+      if (wallet?.adapter?.publicKey) {
+        const SOL = await connection.getAccountInfo(wallet?.adapter?.publicKey)
+        setUserSOLBalance(SOL.lamports / LAMPORTS_PER_SOL)
+      }
+    })()
+  }, [wallet?.adapter?.publicKey])
   const userTokenBalance = useMemo(
-    () => (pubKey && tokenAddress ? getUIAmount(tokenAddress.toString()) : 0),
-    [tokenAddress, getUIAmount, pubKey]
+    () => (userPublicKey && tokenAddress ? getUIAmount(tokenAddress.toString()) : 0),
+    [tokenAddress, getUIAmount, userPublicKey]
   )
   const userTokenBalanceInUSD = useMemo(
     () => prices[getPriceObject(coin)]?.current * userTokenBalance,
     [prices, coin, prices[getPriceObject(coin)], userTokenBalance]
   )
   const enoughSOLInWallet = (): boolean => {
+    console.log('userSolBalance', userSolBalance)
     if (userSolBalance < 0.000001) {
       notify(insufficientSOLMsg())
       return false
@@ -350,7 +362,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      const confirm = executeDeposit(SSLProgram, wal, connection, network, depositAmount, coin)
+      const confirm = executeDeposit(SSLProgram, wal, connection, network, depositAmount, coin, userPublicKey)
       confirm.then((con) => {
         setOperationPending(false)
         setIsButtonLoading(false)
@@ -376,7 +388,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string }> = ({ isExpanded, c
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      executeWithdraw(SSLProgram, wal, connection, network, coin, withdrawAmount).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, network, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {

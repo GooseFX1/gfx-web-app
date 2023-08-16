@@ -79,51 +79,55 @@ export const ADDRESSES: {
       },
       USDC: {
         address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6,
+        decimals: 9,
         name: 'USDC Coin'
       },
       USDT: {
         address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        decimals: 6,
+        decimals: 9,
         name: 'USDT'
       },
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
-        decimals: 8,
+        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     },
     stable: {
       SOL: {
-        address: SYNTH_DEFAULT_MINT,
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
         decimals: 9,
         name: 'Solana'
       },
       USDC: {
-        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6,
+        address: new PublicKey('9rPpetFC7HkjJaxN1mV8hj834TKpNQ1pW52ahEhKHHPA'),
+        decimals: 9,
         name: 'USDC Coin'
       },
       USDT: {
-        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        decimals: 6,
+        address: new PublicKey('BjKZYPPunQrq5pV4t9MAxSMMcuaho2cKM3ReVe2utA3W'),
+        decimals: 9,
         name: 'USDT'
       },
       ETH: {
-        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
-        decimals: 8,
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 6,
         name: 'Wrapped Ether (Wormhole)'
+      },
+      GOFX: {
+        address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
+        decimals: 9
       }
     },
     hyper: {
       USDT: {
-        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        decimals: 6,
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        decimals: 9,
         name: 'USDT'
       },
       ETH: {
-        address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
-        decimals: 8,
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     },
@@ -504,11 +508,12 @@ export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
 
 export const POOL_REGISTRY_PREFIX = 'pool_registry'
 
-export const SSL_V2_ADMIN = new PublicKey('11111111111111111111111111111111') //sslchange: ERIC WILL GIVE CHANGE IT
+export const SSL_V2_ADMIN = new PublicKey('2DT23qqC3zcNs6ESpVvJBWDYJqv628YpTRGozefs2tBk')
+//sslchange: ERIC WILL GIVE CHANGE IT
 
 export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
 
-export const SSL_PROGRAM_ID = 'Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS' //sslchange: ERIC WILL GIVE CHANGE IT
+export const SSL_PROGRAM_ID = 'GFXsSL5sSaDfNFQUYsHekbWBW1TsFdjDYzACh62tEHxn' //sslchange: ERIC WILL GIVE CHANGE IT
 
 export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 
