@@ -113,7 +113,7 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
         <div className={getClassNameForBoost(user?.boost)}>{user?.boost}x</div>
       </td>
       <td>
-        <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty}%</div>
+        <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty.toFixed(1)}%</div>
       </td>
       {screenType !== 2 && (
         <td>
