@@ -106,14 +106,14 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
       </td>
       {screenType !== 2 && (
         <td>
-          <div className={getClassNameForPnl(user?.pnl)}>{user?.pnl && user?.pnl.toFixed(2)}%</div>
+          <div className={getClassNameForPnl(user?.pnl)}>{user?.pnl && user?.pnl}%</div>
         </td>
       )}
       <td>
         <div className={getClassNameForBoost(user?.boost)}>{user?.boost}x</div>
       </td>
       <td>
-        <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty.toFixed(1)}%</div>
+        <div className={getClassNameForLoyalty(user?.loyalty)}>{user?.loyalty && user?.loyalty}%</div>
       </td>
       {screenType !== 2 && (
         <td>
