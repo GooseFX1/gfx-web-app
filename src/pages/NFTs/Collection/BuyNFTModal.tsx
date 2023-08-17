@@ -16,7 +16,7 @@ import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -44,6 +44,7 @@ import {
 } from '../../../api/NFTs'
 import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/executeSale'
 import { getMagicEdenTokenAccount } from '../../../web3/auction-house-sdk/pda'
+import bs58 from 'bs58'
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col mt-[-30px] sm:mt-0  `}
@@ -328,7 +329,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { singleCollection } = useNFTCollections()
   const { getUIAmount } = useAccounts()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
-  const { wallet, sendTransaction } = useWallet()
+  const walletContext = useWallet()
+  const { wallet, sendTransaction } = walletContext
   const { connection } = useConnectionConfig()
   const { general, nftMetadata, ask, onChainMetadata } = useNFTDetails()
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
@@ -420,6 +422,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     try {
       // setting this as operating nft , for loading buttons
       if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
+      if (isBuyingNow) {
+        const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
+        const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
+        const signature = await sendTransaction(tx, connection, {
+          signers: [treasuryWallet],
+          skipPreflight: true
+        })
+        console.log(signature)
+        return
+      }
       const signature = await sendTransaction(tx, connection)
       setPendingTxSig(signature)
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
@@ -508,7 +520,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   }
   const handleOtherBuyOptions = async () => {
     try {
-      const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection)
+      const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, walletContext)
       await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow)
     } catch (err) {
       setIsLoading(false)

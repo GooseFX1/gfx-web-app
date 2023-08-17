@@ -388,7 +388,7 @@ const ButtonContainerForBag = (): ReactElement => {
         ...nft
       }
       return {
-        [key]: await callExecuteSaleInstruction(nft, general, publicKey, true, connection)
+        [key]: await callExecuteSaleInstruction(nft, general, publicKey, true, connection, wal)
       }
     }
     return { [key]: undefined }
