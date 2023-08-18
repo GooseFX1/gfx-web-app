@@ -120,36 +120,34 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
       </div>
       <POOL_CARD_WRAPPER>
         {topPoolCards?.map((card, index) => (
-          <>
-            <POOL_CARD key={index}>
-              <div tw="flex flex-row justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
-                <img src={`/img/crypto/${card.name}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
-                  {card?.name}
-                </div>
-                <div
-                  tw="flex flex-row h-[30px] w-[100px] flex flex-row justify-center items-center 
+          <POOL_CARD key={index}>
+            <div tw="flex flex-row justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
+              <img src={`/img/crypto/${card.name}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
+              <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
+                {card?.name}
+              </div>
+              <div
+                tw="flex flex-row h-[30px] w-[100px] flex flex-row justify-center items-center 
                   rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
-                >
-                  <img
-                    src={`/img/assets/${card.type}_pools.svg`}
-                    alt="pool-type"
-                    width={19}
-                    height={21}
-                    tw="mr-1.25"
-                  />
-                  <div
-                    tw="text-lg font-semibold text-black-4 dark:text-white 
+              >
+                <img
+                  src={`/img/assets/${card.type}_pools.svg`}
+                  alt="pool-type"
+                  width={19}
+                  height={21}
+                  tw="mr-1.25"
+                />
+                <div
+                  tw="text-lg font-semibold text-black-4 dark:text-white 
                         text-regular font-semibold sm:text-average"
-                  >
-                    {card?.type}
-                  </div>
+                >
+                  {card?.type}
                 </div>
               </div>
-              <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY</div>
-              <div tw="text-black-4 text-lg font-semibold dark:text-grey-5 mt-[-4px]">{card?.value}</div>
-            </POOL_CARD>
-          </>
+            </div>
+            <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY</div>
+            <div tw="text-black-4 text-lg font-semibold dark:text-grey-5 mt-[-4px]">{card?.value}</div>
+          </POOL_CARD>
         ))}
       </POOL_CARD_WRAPPER>
     </>
