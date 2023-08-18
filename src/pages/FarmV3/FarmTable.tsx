@@ -20,6 +20,7 @@ import {
 } from './constants'
 import { checkMobile, notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
+import { CircularArrow } from '../../components/common/Arrow'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
   input::-webkit-outer-spin-button,
@@ -31,20 +32,12 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     -moz-appearance: textfield;
   }
 
-  .inputContainer {
-    ${tw`w-[400px] h-10`}
-  }
-  .selectedBackground {
-    ${tw`bg-blue-1 !text-white`};
-  }
   .tableRowGradient {
-    ${tw`duration-500`};
     background: linear-gradient(111deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   }
   table {
-    ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full `}
+    ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden `}
     border-radius: 20px 20px 0 0;
-    overflow-x: hidden;
 
     @media (max-width: 500px) {
       ${tw`sticky mt-[0px] w-[calc(100vw - 30px)]`}
@@ -79,14 +72,9 @@ const WRAPPER = styled.div<{ $poolIndex }>`
 
   tbody {
     ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
-    ${({ theme }) => theme.customScrollBar('1px')}
     tr {
       ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
       sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
-
-      /* &:hover {
-        ${tw`border-grey-2 rounded-[13px] sm:rounded-[8px] `}
-      } */
 
       &:after {
         content: ' ';
@@ -98,7 +86,6 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     td {
       ${tw`h-[100%] flex items-center justify-center  text-[20px] font-semibold text-center
        dark:text-grey-5 text-black-4 `}
-      text-align: center;
     }
   }
 
@@ -195,7 +182,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             />
             <div tw="ml-auto flex items-center mr-2">
               <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
-              <div tw="h-8.75 leading-5 text-regular text-right font-semibold mt-[-4px] ml-2.5">
+              <div tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1 font-semibold mt-[-4px] ml-2.5">
                 Show <br /> Deposited
               </div>
             </div>
@@ -206,6 +193,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
         <div tw="sm:mt-4">
           <SearchBar
             width={`95%`}
+            cssStyle={tw`h-8.75`}
             setSearchFilter={setSearchTokens}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
@@ -255,9 +243,17 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
 
 const FarmTableCoin: FC<{ coin: any; selectedPool: string }> = ({ coin, selectedPool }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  useEffect(() => {
+    setIsExpanded(false)
+  }, [selectedPool])
+
   return (
     <>
-      <tr className={isExpanded ? 'tableRowGradient' : ''} onClick={() => setIsExpanded((prev) => !prev)}>
+      <tr
+        css={[tw`duration-500`]}
+        className={isExpanded && 'tableRowGradient'}
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
         <td tw="!justify-start">
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin}.svg`} />
           <div tw="ml-2.5">{coin}</div>
@@ -269,10 +265,12 @@ const FarmTableCoin: FC<{ coin: any; selectedPool: string }> = ({ coin, selected
         {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%] sm:!w-[33%]">
           <Button cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}>Stats</Button>
-          <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
+          <div tw="ml-2">
+            <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
+          </div>
         </td>
       </tr>
-      {<ExpandedView isExpanded={isExpanded} coin={coin} selectedPool={selectedPool} />}
+      <ExpandedView isExpanded={isExpanded} coin={coin} selectedPool={selectedPool} />
     </>
   )
 }
@@ -297,6 +295,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
+
   //sslchange: to use when ssl program is ready
   useEffect(() => {
     //program.account.sslPool.fetchAll()
@@ -412,7 +411,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
   return (
     <div
       css={[
-        tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-5 rounded-[0 0 15px 15px] duration-300 
+        tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
           flex justify-between sm:flex-col`,
         isExpanded
           ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4`
@@ -420,7 +419,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
       ]}
     >
       <div tw="flex flex-col">
-        {isExpanded && breakpoint.isMobile && (
+        {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
             <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin}`} />
             <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin}`} />
@@ -440,7 +439,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
             <div tw="flex font-semibold duration-500 relative sm:mt-2">
               <div
                 css={[
-                  tw`bg-blue-1 h-8 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
+                  tw`bg-blue-1 h-8.75 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
                     ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
@@ -511,12 +510,12 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
               tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 
               bg-grey-5 border-none`,
               isExpanded
-                ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[60px] text-right sm:pl-[72%]`
+                ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right sm:pl-[65%]`
                 : tw`h-0 w-0 pl-0 invisible`
             ]}
             type="number"
           />
-          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">{coin}</div>
+          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[82%] mt-1.5">{coin}</div>
         </div>
 
         {isExpanded && (
@@ -535,13 +534,13 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                 </Button>
               </div>
             ) : (
-              <Connect customButtonStyle={[tw`!w-[400px] h-8.75`]} />
+              <Connect customButtonStyle={[tw`sm:w-[80vw] w-[400px] h-8.75`]} />
             )}
           </div>
         )}
       </div>
 
-      {breakpoint.isDesktop && (
+      {breakpoint.isDesktop && isExpanded && (
         <div>
           <FarmStats
             alignRight={true}
