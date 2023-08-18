@@ -68,17 +68,13 @@ export const TableHeaderTitle = (
   invert?: boolean,
   focus?: boolean,
   tooltipMode?: boolean
-): ReactElement => {
-  // const { mode } = useDarkMode()
-  console.log('m')
-  return (
-    <STYLED_TITLE $focus={focus}>
-      <div className="textTitle">{text}</div>
-      {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
-      {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
-    </STYLED_TITLE>
-  )
-}
+): ReactElement => (
+  <STYLED_TITLE $focus={focus}>
+    <div className="textTitle">{text}</div>
+    {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
+    {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
+  </STYLED_TITLE>
+)
 
 interface IAppraisalValue {
   text: string | null
