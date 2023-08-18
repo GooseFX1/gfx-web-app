@@ -21,6 +21,14 @@ export type Pool = {
   type: 'crypto' | 'synth'
 }
 
+export type SSLToken = {
+  token: string
+  address: PublicKey
+  decimals: number
+  name: string
+  assetType?: number
+}
+
 export const ADDRESSES: {
   [network in WalletAdapterNetwork]: {
     mints: {
@@ -29,12 +37,8 @@ export const ADDRESSES: {
     sslPool: {
       [token: string]: Mint
     }
-    stable: {
-      [token: string]: Mint
-    }
-    hyper: {
-      [token: string]: Mint
-    }
+    stable: SSLToken[]
+    hyper: SSLToken[]
     pools: {
       [pair: string]: Pool
     }
@@ -93,44 +97,40 @@ export const ADDRESSES: {
         name: 'Wrapped Ether (Wormhole)'
       }
     },
-    stable: {
-      SOL: {
+    stable: [
+      {
+        token: 'SOL',
         address: new PublicKey('So11111111111111111111111111111111111111112'),
         decimals: 9,
         name: 'Solana'
       },
-      USDC: {
-        address: new PublicKey('9rPpetFC7HkjJaxN1mV8hj834TKpNQ1pW52ahEhKHHPA'),
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
         decimals: 9,
         name: 'USDC Coin'
       },
-      USDT: {
-        address: new PublicKey('BjKZYPPunQrq5pV4t9MAxSMMcuaho2cKM3ReVe2utA3W'),
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
         decimals: 9,
         name: 'USDT'
-      },
-      ETH: {
-        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6,
-        name: 'Wrapped Ether (Wormhole)'
-      },
-      GOFX: {
-        address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
-        decimals: 9
       }
-    },
-    hyper: {
-      USDT: {
+    ],
+    hyper: [
+      {
+        token: 'USDT',
         address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
         decimals: 9,
         name: 'USDT'
       },
-      ETH: {
+      {
+        token: 'ETH',
         address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
         decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
-    },
+    ],
     mints: {
       GOFX: {
         address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -232,8 +232,40 @@ export const ADDRESSES: {
     }
   },
   devnet: {
-    stable: {},
-    hyper: {},
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        decimals: 9,
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        decimals: 9,
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        decimals: 9,
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        decimals: 9,
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
     sslPool: {
       USDC: {
         address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
@@ -397,8 +429,40 @@ export const ADDRESSES: {
     mints: {},
     pools: {},
     sslPool: {},
-    stable: {},
-    hyper: {},
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        decimals: 9,
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        decimals: 9,
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        decimals: 9,
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        decimals: 9,
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
     programs: {
       pool: {
         address: PublicKey.default,
