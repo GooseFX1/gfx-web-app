@@ -28,6 +28,14 @@ const WRAPPER = styled.div`
   width: 100%;
   padding: 0px 0px 0px 0px;
   overflow: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  & {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 `
 const TRADES = styled.div`
   ${tw`h-[31px] w-full p-0 text-xs h-7`}
