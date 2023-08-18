@@ -285,7 +285,10 @@ const EarnRewards: FC = () => {
           )}
         </button>
       ) : (
-        <Connect containerStyle={[tw`w-full min-md:w-full`]} customButtonStyle={[tw`w-full min-md:w-full h-10`]} />
+        <Connect
+          containerStyle={[tw`w-full min-md:w-full`]}
+          customButtonStyle={[tw`w-[154px] min-md:w-[154px] h-10`]}
+        />
       )}
 
       {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}

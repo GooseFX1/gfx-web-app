@@ -3,9 +3,9 @@ import { FC, useMemo, Dispatch, SetStateAction, useState, useEffect } from 'reac
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { ArrowClicker, Button, SearchBar } from '../../components'
+import { ArrowClicker, Button, SearchBar, ShowDepositedToggle } from '../../components'
 import { useAccounts, useConnectionConfig, useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
-import { ADDRESSES, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
+import { ADDRESSES, executeDeposit, executeWithdraw, firstLetterCapital, getPriceObject } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -30,15 +30,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   input[type='number'] {
     -moz-appearance: textfield;
   }
-  .pinkGradient {
-    background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
-  }
-  .slider-animation-web {
-    ${tw`absolute w-2/5 h-[44px] rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 50 + 4.5}%;
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-    transition: left 500ms ease-in-out;
-  }
+
   .inputContainer {
     ${tw`w-[400px] h-10`}
   }
@@ -132,6 +124,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
   const [searchTokens, setSearchTokens] = useState<string>()
   const breakpoint = useBreakPoint()
   const arr = useMemo(() => Object.keys(ADDRESSES['mainnet-beta'][selectedPool]).map((coin) => coin), [poolTypes])
+  const [showDeposited, setShowDeposited] = useState<boolean>(false)
   const filteredTokens = useMemo(
     () => (searchTokens ? arr.filter((ar) => ar.toLocaleLowerCase().includes(searchTokens)) : [...arr]),
     [searchTokens, arr]
@@ -144,7 +137,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
     <WRAPPER>
       <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
         <img
-          src={`/img/assets/${selectedPool}_pools.svg`}
+          src={`/img/assets/${firstLetterCapital(selectedPool)}_pools.svg`}
           alt="pool-icon"
           height={77}
           width={70}
@@ -192,12 +185,21 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
           </div>
         </div>
         {breakpoint.isDesktop && (
-          <SearchBar
-            width={`425px`}
-            setSearchFilter={setSearchTokens}
-            placeholder="Search by token symbol"
-            bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-          />
+          <div tw="flex items-center w-full">
+            <SearchBar
+              width="425px"
+              cssStyle={tw`h-8.75`}
+              setSearchFilter={setSearchTokens}
+              placeholder="Search by token symbol"
+              bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+            />
+            <div tw="ml-auto flex items-center mr-2">
+              <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+              <div tw="h-8.75 leading-5 text-regular text-right font-semibold mt-[-4px] ml-2.5">
+                Show <br /> Deposited
+              </div>
+            </div>
+          </div>
         )}
       </div>
       {breakpoint.isMobile && (
@@ -266,9 +268,7 @@ const FarmTableCoin: FC<{ coin: any; selectedPool: string }> = ({ coin, selected
         {!checkMobile() && <td>$30,596</td>}
         {!checkMobile() && <td>0.0</td>}
         <td tw="!w-[10%] sm:!w-[33%]">
-          <Button className="pinkGradient" cssStyle={tw`h-[35px] text-white font-semibold text-regular`}>
-            Stats
-          </Button>
+          <Button cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}>Stats</Button>
           <ArrowClicker cssStyle={tw`h-5 w-5`} arrowRotation={isExpanded} />
         </td>
       </tr>
@@ -325,7 +325,6 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
     [prices, coin, prices[getPriceObject(coin)], userTokenBalance]
   )
   const enoughSOLInWallet = (): boolean => {
-    console.log('userSolBalance', userSolBalance)
     if (userSolBalance < 0.000001) {
       notify(insufficientSOLMsg())
       return false
@@ -384,7 +383,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
     if (checkConditionsForDepositWithdraw(false)) return
     try {
       setIsButtonLoading(true)
-      setOperationPending(true)
+      setOperationPending(true) // this is because the the user must not be able to switch between deposit and withdraw stable and alpha pools
       executeWithdraw(SSLProgram, wal, connection, network, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
         const { confirm, signature } = con
@@ -525,6 +524,8 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
             {wallet?.adapter?.publicKey ? (
               <div>
                 <Button
+                  height="35px"
+                  disabled={isButtonLoading}
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-8.75 bg-blue-1 text-regular !text-white font-semibold
                    rounded-[50px] flex items-center justify-center outline-none border-none`}
                   onClick={modeOfOperation === ModeOfOperation.DEPOSIT ? handleDeposit : handleWithdraw}
@@ -534,7 +535,7 @@ const ExpandedView: FC<{ isExpanded: boolean; coin: string; selectedPool: string
                 </Button>
               </div>
             ) : (
-              <Connect customButtonStyle={[tw`w-[400px] h-8.75`]} />
+              <Connect customButtonStyle={[tw`!w-[400px] h-8.75`]} />
             )}
           </div>
         )}
