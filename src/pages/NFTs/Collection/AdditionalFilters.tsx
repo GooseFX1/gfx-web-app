@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Checkbox, Switch } from 'antd'
-import React, { ReactElement, FC, useState, useMemo, useCallback, useEffect } from 'react'
+import { Checkbox, Drawer, Switch } from 'antd'
+import React, {
+  ReactElement,
+  FC,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  Dispatch,
+  SetStateAction
+} from 'react'
 import styled from 'styled-components'
 import tw, { css } from 'twin.macro'
 import 'styled-components/macro'
@@ -21,6 +30,7 @@ import { minimizeTheString } from '../../../web3/nfts/utils'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { CircularArrow } from '../../../components/common/Arrow'
+import { SVGDynamicReverseMode } from '../../../styles/utils'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
@@ -67,6 +77,25 @@ const STYLED_INPUT = styled.input`
   }
   .textTwo {
     ${tw`ml-3`}
+  }
+`
+const STYLED_DRAWER = styled.div`
+  .ant-modal-body {
+    ${tw`p-0`}
+  }
+  .ant-drawer-content-wrapper {
+    box-shadow: none;
+  }
+  .ant-drawer-content-wrapper {
+    border-radius: 10px;
+  }
+  .ant-drawer-content &.ant-drawer-content {
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    border-radius: 20px 20px 0 0 !important;
   }
 `
 
@@ -153,21 +182,13 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
     }
   `}
 `
-const STYLED_POPUP = styled(PopupCustom)`
-  color: ${({ theme }) => theme.text30};
-
-  &.ant-modal {
-    ${tw`max-w-full sm:bottom-[-8px] left-0 sm:rounded-[20px 20px 0 0]
-     dark:bg-black-2 sm:mt-auto sm:absolute`}
-  }
-  .ant-modal-close {
-    ${tw`!right-[15px] !top-[15px]`}
-  }
-  .ant-modal-body {
-    ${tw`p-0`}
+const DRAWER_CONTENTS = styled.div`
+  color: ${({ theme }) => theme.text30} !important;
+  .searchInsideTrait {
+    background: none;
   }
   .wrapper {
-    ${tw`flex flex-col sm:pt-12`}
+    ${tw`flex flex-col sm:pt-11`}
   }
   .filtersTitle {
     ${tw`font-semibold h-[50px] text-[22px] sm:mt-3 flex items-center pl-3 sm:pl-4 duration-1000`}
@@ -191,31 +212,63 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
     setAdditionalFilters(initialFilters)
   }, [])
   const breakpoint = useBreakPoint()
+  const elem = document.getElementById('nft-aggerator') // TODO-PROFILE: Stop background scroll
 
   const showPriceAndMarket = useMemo(() => displayIndex === 0, [displayIndex])
 
   if (!showPriceAndMarket && !availableAttributes) return null
   if (checkMobile())
     return (
-      <STYLED_POPUP
-        height={'475px'}
-        width={'100vw'}
-        title={null}
-        visible={open ? true : false}
-        onCancel={() => setOpen(false)}
-        footer={null}
-      >
-        <div>
-          {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton />}</div>}
-          <div className="wrapper">
-            <div tw="sm:h-[430px] overflow-y-auto">
-              {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
-              {showPriceAndMarket && <PriceRange isOpen={open} />}
-              {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+      // <STYLED_POPUP
+      //   height={'475px'}
+      //   width={'100vw'}
+      //   title={null}
+      //   visible={open ? true : false}
+      //   onCancel={() => setOpen(false)}
+      //   footer={null}
+      // >
+      //   <div>
+      //     {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton />}</div>}
+      //     <div className="wrapper">
+      //       <div tw="sm:h-[430px] overflow-y-auto">
+      //         {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
+      //         {showPriceAndMarket && <PriceRange isOpen={open} />}
+      //         {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+      //       </div>
+      //     </div>
+      //   </div>
+      // </STYLED_POPUP>
+      <STYLED_DRAWER>
+        <Drawer
+          title={null}
+          className="dark"
+          placement={breakpoint.isMobile ? 'bottom' : 'right'}
+          closable={false}
+          height={'475px'}
+          onClose={() => setOpen(false)}
+          getContainer={elem}
+          open={open}
+          width={'100vw'}
+          bodyStyle={{ padding: '0' }}
+        >
+          <SVGDynamicReverseMode
+            onClick={() => setOpen(false)}
+            tw="absolute right-3 top-3"
+            src={`/img/assets/close-white-icon.svg`}
+            alt="close-icn"
+          />
+          {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton setOpen={setOpen} />}</div>}
+          <DRAWER_CONTENTS>
+            <div tw="mt-12">
+              <div tw="sm:h-[430px] overflow-y-auto">
+                {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
+                {showPriceAndMarket && <PriceRange isOpen={open} />}
+                {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+              </div>
             </div>
-          </div>
-        </div>
-      </STYLED_POPUP>
+          </DRAWER_CONTENTS>
+        </Drawer>
+      </STYLED_DRAWER>
     )
   else
     return (
@@ -518,8 +571,7 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
             <input
               className="searchInsideTrait"
               type="text"
-              tw="bg-none border-none dark:bg-black-1 sm:dark:bg-black-2
-               bg-grey-5 outline-none text-[15px] font-semibold w-[85%]"
+              tw="border-none rounded-[10px] outline-none text-[15px] font-semibold w-[85%]"
               placeholder={`Search ${formatDisplay(trait)}`}
               onChange={(e) => setSearchInsideTrait(e.target.value)}
             />
@@ -552,9 +604,14 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
   )
 }
 
-export const ClearAllFiltersButton: FC = (): ReactElement => {
+export const ClearAllFiltersButton: FC<{ setOpen?: Dispatch<SetStateAction<boolean>> }> = ({
+  setOpen
+}): ReactElement => {
   const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
   const clearAllFilters = useCallback(() => {
+    if (setOpen) {
+      setOpen(false)
+    }
     setAdditionalFilters(initialFilters)
   }, [])
   return (

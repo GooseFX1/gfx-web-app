@@ -173,7 +173,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   ${tw`relative z-0 mr-1 ml-2 sm:ml-0`}
   .slider-animation-timeline {
     ${tw`absolute w-[81px] sm:w-[75px] h-8.75 rounded-[36px]  z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 50}%;
+    left: ${({ $poolIndex }) => $poolIndex * 50 + 2}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -185,7 +185,7 @@ export const ButtonContainer = styled.div<{ $poolIndex: number }>`
   }
   .slider-animation-web {
     ${tw`absolute w-[45%] h-8.75 rounded-[36px] z-[-1]`}
-    left: ${({ $poolIndex }) => $poolIndex * 50 + 4.5}%;
+    left: ${({ $poolIndex }) => $poolIndex * 50 + 2.5}%;
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
