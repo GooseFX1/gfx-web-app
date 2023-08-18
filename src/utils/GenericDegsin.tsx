@@ -69,7 +69,6 @@ export const TableHeaderTitle = (
   focus?: boolean,
   tooltipMode?: boolean
 ): ReactElement => (
-  // const { mode } = useDarkMode()
   <STYLED_TITLE $focus={focus}>
     <div className="textTitle">{text}</div>
     {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
