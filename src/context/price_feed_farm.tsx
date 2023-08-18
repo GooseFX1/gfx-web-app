@@ -16,7 +16,7 @@ import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
 import { getNetworkConnection, getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, Connection } from '@solana/web3.js'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 
@@ -64,7 +64,14 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const wal = useWallet()
   const [solPrice, setSolPrice] = useState<number>(0)
   const { wallet } = useWallet()
-  const { network, connection } = useConnectionConfig()
+  const { network } = useConnectionConfig()
+  const connection = useMemo(
+    () =>
+      new Connection('https://api.devnet.solana.com', {
+        commitment: 'confirmed'
+      }),
+    []
+  )
   const stakeProgram: Program = useMemo(
     () =>
       wallet?.adapter?.publicKey

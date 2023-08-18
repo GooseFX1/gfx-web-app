@@ -208,20 +208,18 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   const onClickWithdraw = (amount: number): void => {
     setIsUnstakeLoading(true)
     try {
-      executeWithdraw(SSLProgram, wal, connection, network, name, amount, wal?.wallet?.adapter?.publicKey).then(
-        (con) => {
-          setIsUnstakeLoading(false)
-          const { confirm, signature } = con
-          if (confirm && confirm?.value && confirm.value.err === null) {
-            notify(sslSuccessfulMessage(signature, unstakeAmt, name, network, Withdraw))
-            setCounter((prev) => prev + 1)
-          } else {
-            const { signature, error } = con
-            notify(sslErrorMessage(name, error?.message, signature, network, Withdraw))
-            return
-          }
+      executeWithdraw(SSLProgram, wal, connection, name, amount, wal?.wallet?.adapter?.publicKey).then((con) => {
+        setIsUnstakeLoading(false)
+        const { confirm, signature } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage(signature, unstakeAmt, name, network, Withdraw))
+          setCounter((prev) => prev + 1)
+        } else {
+          const { signature, error } = con
+          notify(sslErrorMessage(name, error?.message, signature, network, Withdraw))
+          return
         }
-      )
+      })
     } catch (err) {
       setIsUnstakeLoading(false)
       notify(genericErrMsg(err))
@@ -312,15 +310,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
     try {
       setIsStakeLoading(true)
       setOperationPending(true)
-      const confirm = executeDeposit(
-        SSLProgram,
-        wal,
-        connection,
-        network,
-        amount,
-        name,
-        wal?.wallet?.adapter?.publicKey
-      )
+      const confirm = executeDeposit(SSLProgram, wal, connection, amount, name, wal?.wallet?.adapter?.publicKey)
       confirm.then((con) => {
         setOperationPending(false)
         setIsStakeLoading(false)

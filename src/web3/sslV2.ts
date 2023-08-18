@@ -14,7 +14,7 @@ import {
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
-import { SYSTEM, SSL_PROGRAM_ID } from './ids'
+import { SYSTEM, SSL_PROGRAM_ID, SSLToken } from './ids'
 import {
   findAssociatedTokenAddress,
   createAssociatedTokenAccountIx,
@@ -158,18 +158,17 @@ export const executeWithdraw = async (
   program: Program<Idl>,
   wallet: WalletContextState,
   connection: Connection,
-  network: WalletAdapterNetwork,
-  tokenName: string,
+  token: SSLToken,
   amount: number,
   walletPublicKey: PublicKey
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-  const tokenMintAddress = getTokenMintAddress(network, tokenName)
+  const tokenMintAddress = token?.address
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
-  const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
+  const amountInNative = amount * Math.pow(10, token?.decimals)
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
   const withdrawInstructionAccount = {
@@ -188,13 +187,11 @@ export const executeWithdraw = async (
   const withdrawTX: Transaction = new Transaction()
 
   //sslchange: For sol - mechanism to unwrap from WRAP-SOL
-  if (tokenName === TOKEN_NAMES.SOL) {
+  if (token?.token === TOKEN_NAMES.SOL) {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
     const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
-    console.log('inside withdraw if', associatedTokenAccountAddress, associatedTokenAccount, tokenName)
     try {
       if (!associatedTokenAccount) {
-        console.log('inside withdraw try', associatedTokenAccountAddress, associatedTokenAccount)
         const tr = createAssociatedTokenAccountInstruction(
           walletPublicKey,
           associatedTokenAccountAddress,
@@ -222,7 +219,6 @@ export const executeWithdraw = async (
       return { error, signature }
     }
   } else {
-    console.log('inside withdraw else', withdrawIX, tokenName)
     withdrawTX.add(withdrawIX)
     let signature
     try {
@@ -266,15 +262,6 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
   } catch {
     return null
   }
-}
-
-const getTokenMintAddress = (network: WalletAdapterNetwork, tokenName: string): PublicKey => {
-  const tokenMintAddress = ADDRESSES[network].stable[tokenName]?.address
-  return tokenMintAddress ? tokenMintAddress : null
-}
-export const getTokenDecimal = (network: WalletAdapterNetwork, tokenName: string): number => {
-  const decimal = ADDRESSES[network].stable[tokenName].decimals
-  return decimal ? decimal : null
 }
 
 const depositAmount = async (
@@ -335,16 +322,15 @@ export const executeDeposit = async (
   program: Program<Idl>,
   wallet: WalletContextState,
   connection: Connection,
-  network: WalletAdapterNetwork,
   amount: number,
-  tokenName: string,
+  token: SSLToken,
   walletPublicKey: PublicKey
 ): Promise<TxnReturn> => {
-  const tokenMintAddress = getTokenMintAddress(network, tokenName)
+  const tokenMintAddress = token?.address
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-  const amountInNative = amount * Math.pow(10, getTokenDecimal(network, tokenName))
+  const amountInNative = amount * Math.pow(10, token?.decimals)
   console.log('poolRegistryAccountKey', poolRegistryAccountKey)
   console.log('liquidityAccountKey', liquidityAccountKey && liquidityAccountKey.toString())
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
@@ -368,7 +354,7 @@ export const executeDeposit = async (
     wallet,
     connection,
     tokenMintAddress,
-    tokenName,
+    token?.token,
     createLiquidtyIX,
     walletPublicKey
   )
