@@ -70,7 +70,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   }
 
   tbody {
-    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[15px]`}
+    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[10px]`}
     height: calc(
       100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')}
     );

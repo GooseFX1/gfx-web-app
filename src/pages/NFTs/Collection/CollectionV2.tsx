@@ -386,32 +386,35 @@ const FiltersContainer: FC<{
       </div>
 
       <div
+        tw="sm:!w-[100vw]"
         className="filtersViewCategory"
         css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[540px]`]}
       >
-        <div
-          ref={sliderRef}
-          className="pinkGradient"
-          tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
-          style={{
-            transition: 'all 0.8s cubic-bezier(.23,2,.14,.52)'
-          }}
-        ></div>
-
-        {filterCategories.map((category, index) => (
-          <FilterCategory
-            setRef={setButtonRef}
-            key={category.index}
-            displayIndex={displayIndex}
-            currentIndex={category.index}
-            onClick={() => {
-              setDisplayIndex(category.index)
-              handleSlide(index)
+        <div tw="flex z-[100] pl-2.5">
+          <div
+            ref={sliderRef}
+            className="pinkGradient"
+            tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
+            style={{
+              transition: 'all 0.8s cubic-bezier(.23,2,.14,.52)'
             }}
-          >
-            {category.label}
-          </FilterCategory>
-        ))}
+          ></div>
+
+          {filterCategories.map((category, index) => (
+            <FilterCategory
+              setRef={setButtonRef}
+              key={category.index}
+              displayIndex={displayIndex}
+              currentIndex={category.index}
+              onClick={() => {
+                setDisplayIndex(category.index)
+                handleSlide(index)
+              }}
+            >
+              {category.label}
+            </FilterCategory>
+          ))}
+        </div>
       </div>
       <div tw="ml-auto">{breakpoint.isDesktop && <TokenToggleNFT toggleToken={setCurrency} />}</div>
     </NFT_FILTERS_CONTAINER>

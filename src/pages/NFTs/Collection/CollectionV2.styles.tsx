@@ -112,28 +112,11 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
 const ICON_WRAPPER_TD = styled.div`
   cursor: pointer;
   z-index: 1000;
-
-  .invertArrow {
-    transform: rotate(180deg);
-    transition: transform 500ms ease-out;
-  }
-  .dontInvert {
-    transition: transform 500ms ease-out;
-  }
-  img {
-    width: 14px;
-  }
-  @media (max-width: 500px) {
-    img {
-      transition: transform 500ms ease-out;
-      ${tw`mr-2`}
-    }
-  }
 `
 
 export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, setIsOpen }): ReactElement => (
   <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
-    <CircularArrow cssStyle={tw`!h-5 !w-5`} invert={isOpen} />
+    <CircularArrow cssStyle={tw`h-5 w-5`} invert={isOpen} />
   </ICON_WRAPPER_TD>
 )
 
@@ -155,9 +138,6 @@ export const GRID_CONTAINER = styled.div`
       .ant-checkbox-checked {
         ${tw`rounded-[2px]  `}
       }
-    }
-    .searchInsideTrait {
-      ${tw`bg-none`}
     }
 
     .flexContainer {
