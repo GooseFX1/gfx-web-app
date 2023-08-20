@@ -11,15 +11,20 @@ import {
   ModeOfOperation,
   insufficientSOLMsg,
   invalidDepositErrMsg,
-  invalidWithdrawErrMsg,
+  invalidInputErrMsg,
   genericErrMsg,
+  invalidWithdrawErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage
 } from './constants'
 import { notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
-export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isExpanded, coin }) => {
+export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
+  isExpanded,
+  coin,
+  userDepositedAmount
+}) => {
   const { wallet } = useWallet()
   const wal = useWallet()
   const { network } = useConnectionConfig()
@@ -27,7 +32,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm() //sslchange ssl program
-  const { setCounter, setOperationPending } = useFarmContext()
+  const { setCounter, operationPending, setOperationPending, setIsWithdrawSuccessfull, setIsDepositSuccessfull } =
+    useFarmContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [poolToken, setPoolToken] = useState<SSLToken>(coin)
   const tokenMintAddress = poolToken?.address
@@ -46,12 +52,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
           (token: any) => token?.mint?.toString() === tokenMintAddress.toString()
         )
         setPoolToken({ ...poolToken, assetType: sslPoolEntry[0].assetType })
-        //sslchange: remove logs
-        console.log(
-          'sslPoolEntry',
-          sslPoolEntry[0]?.totalLiquidityDeposits.toString(),
-          sslPoolEntry[0]?.totalAccumulatedLpReward.toString()
-        )
+        console.log('sslPoolEntry', sslPoolEntry[0]) //sslchange: remove logs
       }
     })()
   }, [SSLProgram])
@@ -81,20 +82,32 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
   const checkConditionsForDepositWithdraw = (isDeposit: boolean) => {
     if (!enoughSOLInWallet()) return true
     if (isDeposit) {
-      if (
-        isNaN(depositAmount) ||
-        depositAmount < 0.000001 ||
-        depositAmount > parseFloat(userTokenBalance && userTokenBalance.toFixed(3))
-      ) {
+      if (!userTokenBalance) {
+        notify(genericErrMsg(`You have 0 ${coin.token} to deposit!`))
         setDepositAmount(0)
+        return true
+      } else if (isNaN(depositAmount) || depositAmount < 0.000001) {
+        notify(invalidInputErrMsg(coin?.token))
+        setDepositAmount(0)
+        return true
+      } else if (depositAmount > parseFloat(userTokenBalance && userTokenBalance.toFixed(3))) {
         notify(invalidDepositErrMsg(userTokenBalance, coin?.token))
+        setDepositAmount(0)
         return true
       }
       return false
     } else {
-      if (isNaN(withdrawAmount) || withdrawAmount < 0.000001) {
+      if (!userDepositedAmount) {
+        notify(genericErrMsg(`You have 0 ${coin.token} to withdraw!`))
         setWithdrawAmount(0)
-        notify(invalidWithdrawErrMsg(coin?.token))
+        return true
+      } else if (isNaN(withdrawAmount) || withdrawAmount < 0.000001) {
+        notify(invalidInputErrMsg(coin?.token))
+        setWithdrawAmount(0)
+        return true
+      } else if (userDepositedAmount < withdrawAmount) {
+        notify(invalidWithdrawErrMsg(userDepositedAmount, coin?.token))
+        setWithdrawAmount(0)
         return true
       }
       return false
@@ -105,6 +118,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
+      setIsDepositSuccessfull(false)
       const confirm = executeDeposit(SSLProgram, wal, connection, depositAmount, poolToken, userPublicKey)
       confirm.then((con) => {
         setOperationPending(false)
@@ -113,10 +127,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, depositAmount, poolToken?.token, network, 'Deposit'))
           setTimeout(() => setDepositAmount(0), 500)
+          setIsDepositSuccessfull(true)
           setCounter((prev) => prev + 1)
         } else {
           const { signature, error } = con
           notify(sslErrorMessage(poolToken?.token, error?.message, signature, network, 'Deposit'))
+          setIsDepositSuccessfull(false)
           return
         }
       })
@@ -124,29 +140,35 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
       setOperationPending(false)
       setIsButtonLoading(false)
       notify(genericErrMsg(error))
+      setIsDepositSuccessfull(false)
     }
   }
   const handleWithdraw = (): void => {
     if (checkConditionsForDepositWithdraw(false)) return
     try {
       setIsButtonLoading(true)
-      // this is because the the user must not be able to switch between deposit and withdraw stable and alpha pools
       setOperationPending(true)
+      setIsWithdrawSuccessfull(false)
       executeWithdraw(SSLProgram, wal, connection, poolToken, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
+        setOperationPending(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, withdrawAmount, poolToken?.token, network, 'Withdraw'))
           setCounter((prev) => prev + 1)
+          setIsWithdrawSuccessfull(true)
         } else {
           const { signature, error } = con
           notify(sslErrorMessage(poolToken?.token, error?.message, signature, network, 'Withdraw'))
+          setIsWithdrawSuccessfull(false)
           return
         }
       })
     } catch (err) {
       setIsButtonLoading(false)
+      setOperationPending(false)
       notify(genericErrMsg(err))
+      setIsWithdrawSuccessfull(false)
     }
   }
   const handleInputChange = (input: string) => {
@@ -199,7 +221,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
                   tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
-                onClick={() => setModeOfOperation(ModeOfOperation.DEPOSIT)}
+                onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.DEPOSIT))}
               >
                 Deposit
               </div>
@@ -208,7 +230,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
                   tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
-                onClick={() => setModeOfOperation(ModeOfOperation.WITHDRAW)}
+                onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.WITHDRAW))}
               >
                 Withdraw
               </div>
@@ -235,7 +257,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
               onClick={() =>
                 modeOfOperation === ModeOfOperation.DEPOSIT
                   ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
-                  : setWithdrawAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
+                  : setWithdrawAmount(userDepositedAmount ? 0.01 : 0)
               }
               tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
             >
@@ -244,8 +266,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken }> = ({ isEx
             <div
               onClick={() =>
                 modeOfOperation === ModeOfOperation.DEPOSIT
-                  ? setDepositAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
-                  : setWithdrawAmount(parseFloat(userTokenBalance && userTokenBalance.toFixed(2)))
+                  ? setDepositAmount(userTokenBalance ? parseFloat(userTokenBalance.toFixed(2)) : 0)
+                  : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
               }
               tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
             >

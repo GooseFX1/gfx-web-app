@@ -2,32 +2,12 @@
 import { FC, useMemo, Dispatch, SetStateAction, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { ArrowClicker, Button, SearchBar, ShowDepositedToggle } from '../../components'
-import { useAccounts, useConnectionConfig, useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
-import {
-  ADDRESSES,
-  executeDeposit,
-  executeWithdraw,
-  firstLetterCapital,
-  getPriceObject,
-  getPoolRegistryAccountKeys,
-  getLiquidityAccountKey,
-  SSLToken
-} from '../../web3'
+import { Button, SearchBar, ShowDepositedToggle } from '../../components'
+import { useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
+import { ADDRESSES, firstLetterCapital, getLiquidityAccountKey, SSLToken } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Connect } from '../../layouts'
-import {
-  ModeOfOperation,
-  insufficientSOLMsg,
-  invalidDepositErrMsg,
-  invalidWithdrawErrMsg,
-  genericErrMsg,
-  sslSuccessfulMessage,
-  sslErrorMessage
-} from './constants'
-import { checkMobile, notify } from '../../utils'
+import { checkMobile } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -46,7 +26,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     background: linear-gradient(111deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   }
   table {
-    ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden `}
+    ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden`}
     border-radius: 20px 20px 0 0;
 
     @media (max-width: 500px) {
@@ -74,7 +54,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
         ${tw`h-full dark:text-grey-2 text-grey-1 text-center`}
 
         & > div {
-          ${tw`h-full `}
+          ${tw`h-full`}
         }
       }
     }
@@ -95,7 +75,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     }
     td {
       ${tw`h-[100%] flex items-center justify-center  text-[20px] font-semibold text-center
-       dark:text-grey-5 text-black-4 `}
+       dark:text-grey-5 text-black-4`}
     }
   }
 
@@ -106,7 +86,7 @@ const WRAPPER = styled.div<{ $poolIndex }>`
     text-align: center;
 
     @media (max-width: 500px) {
-      ${tw`w-[33%] `}
+      ${tw`w-[33%]`}
     }
   }
 `
@@ -120,15 +100,22 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
   const [selectedPool, setSelectedPool] = useState<string>(poolTypes[0])
   const [searchTokens, setSearchTokens] = useState<string>()
   const breakpoint = useBreakPoint()
+  const { operationPending } = useFarmContext()
   const sslPoolArr = useMemo(
     () => ADDRESSES['mainnet-beta'][selectedPool].map((coin: SSLToken) => coin),
-    [poolTypes]
+    [selectedPool, poolTypes]
   )
+
+  useEffect(() => {
+    if (poolIndex) setSelectedPool(poolTypes[1])
+    else setSelectedPool(poolTypes[0])
+  }, [poolIndex])
+
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? sslPoolArr.filter((token: SSLToken) => token?.name?.toLocaleLowerCase().includes(searchTokens))
+        ? sslPoolArr.filter((token: SSLToken) => token?.token?.toLocaleLowerCase().includes(searchTokens))
         : [...sslPoolArr],
     [searchTokens, sslPoolArr]
   )
@@ -160,7 +147,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             ) : (
               <>
                 If you're looking for high returns with a bit more risk,
-                {!checkMobile() && <br />} Hyper pools are the way to go.
+                {!checkMobile() && <br />} Alpha pools are the way to go.
               </>
             )}
           </div>
@@ -173,16 +160,16 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             tw="h-[35px] bg-blue-1 w-[95px] absolute rounded-[50px]"
           ></div>
           <div
-            css={[poolIndex === 0 ? tw`!text-white ` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]  "
-            onClick={() => handlePoolSelection(poolTypes[0], 0)}
+            css={[poolIndex === 0 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]"
+            onClick={() => (operationPending ? null : handlePoolSelection(poolTypes[0], 0))}
           >
             Stable
           </div>
           <div
             css={[poolIndex === 1 ? tw`!text-white ` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] "
-            onClick={() => handlePoolSelection(poolTypes[1], 1)}
+            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px]"
+            onClick={() => (operationPending ? null : handlePoolSelection(poolTypes[1], 1))}
           >
             Alpha
           </div>
@@ -198,7 +185,10 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
             />
             <div tw="ml-auto flex items-center mr-2">
               <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
-              <div tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1 font-semibold mt-[-4px] ml-2.5">
+              <div
+                tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
+               font-semibold mt-[-4px] ml-2.5"
+              >
                 Show <br /> Deposited
               </div>
             </div>
@@ -221,8 +211,8 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
           <FarmTableHeaders poolSize={filteredTokens && filteredTokens.length && filteredTokens.length} />
           <tbody>
             {filteredTokens && filteredTokens.length ? (
-              filteredTokens.map((coin: SSLToken, index) => (
-                <FarmTableCoin key={index} coin={coin} selectedPool={selectedPool} />
+              filteredTokens.map((coin: SSLToken, index: number) => (
+                <FarmTableCoin key={index} coin={coin} selectedPool={selectedPool} showDeposited={showDeposited} />
               ))
             ) : (
               <tr>
@@ -257,56 +247,72 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string }> = ({ coin, selectedPool }) => {
-  const { SSLProgram } = usePriceFeedFarm() //sslchange ssl program
+const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: boolean }> = ({
+  coin,
+  selectedPool,
+  showDeposited
+}) => {
+  const { SSLProgram } = usePriceFeedFarm()
+  const { isDepositSuccessfull, isWithdrawSuccessfull } = useFarmContext()
   const { wallet } = useWallet()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const [userDepositedAmount, setUserDepositedAmount] = useState<number>(0)
+
   useEffect(() => {
     setIsExpanded(false)
-  }, [selectedPool])
+  }, [selectedPool, showDeposited])
 
-  const [userdepositedAmount, setUserDepositedAmount] = useState<number>(0)
+  const showToggleFilteredTokens: boolean = useMemo(() => {
+    if (!showDeposited) return true
+    else if (showDeposited && userDepositedAmount) return true
+    else if (showDeposited && !userDepositedAmount) return false
+  }, [showDeposited, userDepositedAmount])
 
   useEffect(() => {
     ;(async () => {
+      //sslchange: this will break because no accounts exists on these addresses until the user has not deposited funds
       if (SSLProgram) {
         const liquidityAccountKey = await getLiquidityAccountKey(userPublicKey, coin?.address)
-        if (coin?.address.toString() === 'So11111111111111111111111111111111111111112') {
-          //sslchange: remove this hardcoded
-          const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-          const userDeposited = liquidityAccount?.amountDeposited?.toNumber()
-          //sslchange: remove logs
-          console.log('liquidityAccount', liquidityAccount.totalEarned.toNumber(), userDeposited)
-          setUserDepositedAmount(userDeposited / Math.pow(10, coin?.decimals))
-        }
+        const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
+        const userDeposited = liquidityAccount?.amountDeposited?.toNumber()
+        console.log('liquidityAccount', liquidityAccount.totalEarned.toNumber(), userDeposited)
+        setUserDepositedAmount(userDeposited / Math.pow(10, coin?.decimals))
       }
     })()
-  }, [SSLProgram, userPublicKey])
+  }, [SSLProgram, userPublicKey, userDepositedAmount, isDepositSuccessfull, isWithdrawSuccessfull])
+
   return (
-    <>
-      <tr
-        css={[tw`duration-500`]}
-        className={isExpanded && 'tableRowGradient'}
-        onClick={() => setIsExpanded((prev) => !prev)}
-      >
-        <td tw="!justify-start">
-          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
-          <div tw="ml-2.5">{coin?.token}</div>
-        </td>
-        <td>4.56 %</td>
-        {!checkMobile() && <td>$550,111.22</td>}
-        {!checkMobile() && <td>$80,596</td>}
-        {!checkMobile() && <td>$30,596</td>}
-        {!checkMobile() && <td>{userdepositedAmount ? userdepositedAmount.toFixed(2) : '0.0'}</td>}
-        <td tw="!w-[10%] sm:!w-[33%]">
-          <Button cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}>Stats</Button>
-          <div tw="ml-2">
-            <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
-          </div>
-        </td>
-      </tr>
-      {<ExpandedView isExpanded={isExpanded} coin={coin} />}
-    </>
+    showToggleFilteredTokens && (
+      <>
+        <tr
+          css={[tw`duration-500`]}
+          className={isExpanded && 'tableRowGradient'}
+          onClick={() => setIsExpanded((prev) => !prev)}
+        >
+          <td tw="!justify-start">
+            <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
+            <div tw="ml-2.5">{coin?.token}</div>
+          </td>
+          <td>4.56 %</td>
+          {!checkMobile() && <td>$550,111.22</td>}
+          {!checkMobile() && <td>$80,596</td>}
+          {!checkMobile() && <td>$30,596</td>}
+          {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.0'}</td>}
+          <td tw="!w-[10%] sm:!w-[33%]">
+            <Button
+              cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}
+              onClick={(e: any) => e.stopPropagation()}
+            >
+              Stats
+            </Button>
+            <div tw="ml-2">
+              <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
+            </div>
+          </td>
+        </tr>
+        {<ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />}
+      </>
+    )
   )
 }
