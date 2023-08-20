@@ -107,23 +107,17 @@ export const ADDRESSES: {
       {
         token: 'USDC',
         address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 9,
+        decimals: 4,
         name: 'USDC Coin'
       },
       {
         token: 'USDT',
         address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 9,
+        decimals: 6,
         name: 'USDT'
       }
     ],
     hyper: [
-      {
-        token: 'USDT',
-        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
-        decimals: 9,
-        name: 'USDT'
-      },
       {
         token: 'ETH',
         address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),

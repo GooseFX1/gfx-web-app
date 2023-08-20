@@ -310,7 +310,7 @@ export const ChoosePool: FC<{
               {checkMobile() && (
                 <div tw="text-tiny font-medium dark:text-grey-2 text-grey-1">*Not financial advice</div>
               )}
-              <span tw="dark:text-grey-5 text-black-4">Hyper Pools</span> are the ideal choice for you, <br /> with
+              <span tw="dark:text-grey-5 text-black-4">Alpha Pools</span> are the ideal choice for you, <br /> with
               a bit more risk but higher returns.
             </div>
           ) : (
