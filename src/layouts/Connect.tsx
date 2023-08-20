@@ -26,7 +26,7 @@ export const Connect: FC<MenuItemProps> = ({
   customMenuListItemsContainerStyle,
   customMenuListItemStyle
 }) => {
-  const { connect, wallet, connected, publicKey, disconnect } = useWallet()
+  const { wallet, connected, publicKey, disconnect } = useWallet()
   const isGeoBlocked = useBlacklisted()
   const [isOpen, setIsOpen] = useState(false)
   const breakpoint = useBreakPoint()
@@ -68,36 +68,16 @@ export const Connect: FC<MenuItemProps> = ({
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
-    if (wallet && wallet?.adapter?.name !== SolanaMobileWalletAdapterWalletName && !connected && canConnect) {
-      connect()
-        .then(() => {
-          sessionStorage.setItem('connectedGFXWallet', wallet?.adapter?.name)
-        })
-        .catch((e) => {
-          console.log({ e })
-        })
-    } else if (!canConnect) {
-      sessionStorage.removeItem('connectedGFXWallet')
+    if (!canConnect) {
       disconnect().catch((err) => console.log('disconnect failed', err))
     }
-  }, [wallet, connect, connected, canConnect])
+  }, [disconnect, canConnect])
 
-  //using session storage so that a new open tab will not try to login to wallet
-  //but a refresh will attept wallet login, localStorage stores it forever and will attempt login on new webpage
-  // useEffect(() => {
-  //   const walletName = sessionStorage.getItem('connectedGFXWallet')
-  //   if (!walletName) return
-  //   if (!base58PublicKey && !connected && walletName) {
-  //     console.log(walletName)
-  //     select(walletName as WalletName<string>)
-  //   }
-  // }, [base58PublicKey, connected])
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
   const onClose = useCallback(() => setIsOpen(false), [])
   const handleDisconnect = useCallback(
     (e) => {
       e.preventDefault()
-      sessionStorage.removeItem('connectedGFXWallet')
       disconnect()
         .catch((err) => {
           console.warn('disconnect failed', err)
