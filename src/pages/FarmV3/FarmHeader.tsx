@@ -43,7 +43,8 @@ const infoCards = [
   { name: 'GooseFX TVL', value: '$1.57M' },
   { name: 'Total Volume Traded', value: '$127.58M' },
   { name: '24H Volume', value: '$12,875K' },
-  { name: '7D Volume', value: '$12,875K' }
+  { name: '7D Volume', value: '$12,875K' },
+  { name: 'Total Fees', value: '$1.25K' }
 ]
 
 const topPoolCards = [
