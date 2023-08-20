@@ -5,7 +5,7 @@ import { EarnLeftSidePanel, EarnRightSidePanel } from './RewardDetails'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { useDarkMode } from '../../context'
+import { CryptoProvider, useDarkMode } from '../../context'
 import useRewards, { RewardsProvider } from '../../context/rewardsContext'
 import PanelSelector from './RewardPanelSelector'
 // import { useRive, useStateMachineInput } from '@rive-app/react-canvas'
@@ -104,20 +104,22 @@ export const RewardsPopup: FC = () => {
   const [panelIndex, setPanelIndex] = useState<number>(0)
 
   return (
-    <RewardsProvider>
-      <Wrapper>
-        <REWARD_INFO>
-          <EarnLeftSidePanel panelIndex={panelIndex}>
-            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-          </EarnLeftSidePanel>
-        </REWARD_INFO>
-        <REWARD_REDIRECT $index={panelIndex}>
-          <EarnRightSidePanel panelIndex={panelIndex}>
-            <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
-          </EarnRightSidePanel>
-        </REWARD_REDIRECT>
-      </Wrapper>
-    </RewardsProvider>
+    <CryptoProvider>
+      <RewardsProvider>
+        <Wrapper>
+          <REWARD_INFO>
+            <EarnLeftSidePanel panelIndex={panelIndex}>
+              <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+            </EarnLeftSidePanel>
+          </REWARD_INFO>
+          <REWARD_REDIRECT $index={panelIndex}>
+            <EarnRightSidePanel panelIndex={panelIndex}>
+              <PanelSelector panelIndex={panelIndex} setPanelIndex={setPanelIndex} />
+            </EarnRightSidePanel>
+          </REWARD_REDIRECT>
+        </Wrapper>
+      </RewardsProvider>
+    </CryptoProvider>
   )
 }
 
