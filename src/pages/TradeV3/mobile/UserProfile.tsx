@@ -619,15 +619,15 @@ export const UserProfile = ({ setUserProfile }) => {
       ) : activeTab === 3 ? (
         <></>
       ) : null}
-      {!isDevnet && (
-        <FIXED_BOTTOM>
-          <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
-            <div className="white-background">
-              <div className="deposit-btn">Deposit/Withdraw</div>
-            </div>
+      {/* {!isDevnet && ( */}
+      <FIXED_BOTTOM>
+        <div className="deposit-wrapper" onClick={() => setDepositWithdrawModal(true)}>
+          <div className="white-background">
+            <div className="deposit-btn">Deposit/Withdraw</div>
           </div>
-        </FIXED_BOTTOM>
-      )}
+        </div>
+      </FIXED_BOTTOM>
+      {/* )} */}
     </WRAPPER>
   )
 }
