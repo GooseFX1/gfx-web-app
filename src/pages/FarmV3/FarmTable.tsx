@@ -212,7 +212,12 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
           <tbody>
             {filteredTokens && filteredTokens.length ? (
               filteredTokens.map((coin: SSLToken, index: number) => (
-                <FarmTableCoin key={index} coin={coin} selectedPool={selectedPool} showDeposited={showDeposited} />
+                <FarmTableCoin
+                  key={`${index}_${selectedPool}`}
+                  coin={coin}
+                  selectedPool={selectedPool}
+                  showDeposited={showDeposited}
+                />
               ))
             ) : (
               <tr>
@@ -302,7 +307,7 @@ const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: b
           <td tw="!w-[10%] sm:!w-[33%]">
             <Button
               cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}
-              onClick={(e: any) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
             >
               Stats
             </Button>
