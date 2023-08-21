@@ -48,11 +48,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       if (SSLProgram) {
         const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
         const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
+        console.log('sslpool', sslPool) //sslchange: remove logs
         const sslPoolEntry = sslPool.entries.filter(
           (token: any) => token?.mint?.toString() === tokenMintAddress.toString()
         )
         setPoolToken({ ...poolToken, assetType: sslPoolEntry[0].assetType })
-        console.log('sslPoolEntry', sslPoolEntry[0]) //sslchange: remove logs
+        console.log('sslPoolEntry', sslPoolEntry[0]?.totalLiquidityDeposits?.toNumber()) //sslchange: remove logs
       }
     })()
   }, [SSLProgram])
