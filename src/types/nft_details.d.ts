@@ -1,6 +1,6 @@
 import { Connection } from '@solana/web3.js'
 import { Creator } from '../web3'
-import { type } from 'os'
+// import { type } from 'os'
 
 export interface IInfoItemData {
   thumbnail: string
