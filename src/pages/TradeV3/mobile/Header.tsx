@@ -54,11 +54,14 @@ export const Header: FC = () => {
   const { connected, wallet } = useWallet()
   const { selectedCrypto, isDevnet, setIsDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
-  const { prices, tokenInfo } = usePriceFeed()
+  const {
+    // prices
+    tokenInfo
+  } = usePriceFeed()
 
   const isGeoBlocked = useBlacklisted()
   const [userProfile, setUserProfile] = useState<boolean>(false)
-  const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+  // const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const changeValue = tokenInfos ? tokenInfos.change : ' '
   const publicKey = useMemo(() => wallet?.adapter.publicKey, [wallet, connected])
@@ -70,7 +73,10 @@ export const Header: FC = () => {
 
   const tokenPrice = useMemo(() => {
     if (isDevnet) {
-      return !marketData || !marketData.current ? null : marketData.current
+      // return !marketData || !marketData.current ? null : marketData.current
+
+      const oPrice = getPerpsPrice(orderBook)
+      return !oPrice ? null : oPrice
     } else {
       const oPrice = getPerpsPrice(orderBook)
       return !oPrice ? null : oPrice
