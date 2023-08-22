@@ -64,20 +64,13 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const wal = useWallet()
   const [solPrice, setSolPrice] = useState<number>(0)
   const { wallet } = useWallet()
-  const { network } = useConnectionConfig()
-  const connection = useMemo(
-    () =>
-      new Connection('https://api.devnet.solana.com', {
-        commitment: 'confirmed'
-      }),
-    []
-  )
+  const { connection, network } = useConnectionConfig()
   const stakeProgram: Program = useMemo(
     () =>
       wallet?.adapter?.publicKey
         ? new Program(
-            sslJson as any, //sslchange: change to sslJson
-            SSL_PROGRAM_ID, //sslchange to SSL_PROGRAM_ID
+            sslJson as any,
+            SSL_PROGRAM_ID,
             new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,
