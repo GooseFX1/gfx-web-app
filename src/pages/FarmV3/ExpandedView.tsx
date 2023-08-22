@@ -1,10 +1,11 @@
+/* eslint-disable */
 import { FC, useMemo, useState, useEffect } from 'react'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
 import { useAccounts, useConnectionConfig, useFarmContext, usePriceFeedFarm } from '../../context'
-import { executeDeposit, executeWithdraw, getPriceObject, getPoolRegistryAccountKeys, SSLToken } from '../../web3'
+import { executeDeposit, executeWithdraw, getPriceObject, getPoolRegistryAccountKeys } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -19,6 +20,7 @@ import {
 } from './constants'
 import { notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
+import { SSLToken } from './constants'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -27,8 +29,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 }) => {
   const { wallet } = useWallet()
   const wal = useWallet()
-  const { network } = useConnectionConfig()
-  const connection = new Connection('https://api.devnet.solana.com')
+  const { connection, network } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm() //sslchange ssl program
@@ -46,14 +47,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
-        const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-        const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
-        console.log('sslpool', sslPool) //sslchange: remove logs
-        const sslPoolEntry = sslPool.entries.filter(
-          (token: any) => token?.mint?.toString() === tokenMintAddress.toString()
-        )
-        setPoolToken({ ...poolToken, assetType: sslPoolEntry[0].assetType })
-        console.log('sslPoolEntry', sslPoolEntry[0]?.totalLiquidityDeposits?.toNumber()) //sslchange: remove logs
+        try {
+          const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
+          const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
+          const sslPoolEntry = sslPool.entries.map((token: any) => token?.mint?.toString())
+          // setPoolToken({ ...poolToken, assetType: sslPoolEntry[0].assetType })
+          console.log('sslPoolEntry', sslPoolEntry) //sslchange: remove logs
+        } catch (e) {
+          console.log(e)
+        }
       }
     })()
   }, [SSLProgram])
@@ -70,7 +72,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [tokenMintAddress, getUIAmount, userPublicKey]
   )
   const userTokenBalanceInUSD = useMemo(
-    () => prices[getPriceObject(poolToken?.token)]?.current * userTokenBalance,
+    () =>
+      prices[getPriceObject(poolToken?.token)]?.current
+        ? prices[getPriceObject(poolToken?.token)]?.current * userTokenBalance
+        : 0,
     [prices, poolToken, prices[getPriceObject(poolToken?.token)], userTokenBalance]
   )
   const enoughSOLInWallet = (): boolean => {
@@ -293,7 +298,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             {poolToken?.token}
           </div>
         </div>
-
         {isExpanded && (
           <div tw="mt-4">
             {wallet?.adapter?.publicKey ? (

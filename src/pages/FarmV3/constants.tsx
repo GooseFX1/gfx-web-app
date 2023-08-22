@@ -1,9 +1,181 @@
 /* eslint-disable */
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { PublicKey } from '@solana/web3.js'
+
 interface Message {
   type?: string
   message: string | JSX.Element
+}
+
+export type SSLToken = {
+  token: string
+  address: PublicKey
+  decimals: number
+  name: string
+  assetType?: number
+}
+
+export const PoolType = [
+  {
+    id: 1,
+    pool: 'Primary'
+  },
+  {
+    id: 2,
+    pool: 'Secondary'
+  },
+  {
+    id: 3,
+    pool: 'Tertiary'
+  }
+]
+
+export const ADDRESSES: {
+  [network in WalletAdapterNetwork]: {
+    primary: SSLToken[]
+    stable: SSLToken[]
+    hyper: SSLToken[]
+  }
+} = {
+  'mainnet-beta': {
+    primary: [
+      {
+        token: 'ETH',
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        decimals: 9,
+        name: 'Solana'
+      },
+      {
+        token: 'MSOL',
+        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+        decimals: 9,
+        name: 'MSOL'
+      },
+      {
+        token: 'BONK',
+        address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
+        decimals: 5,
+        name: 'BONK'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+        decimals: 6,
+        name: 'USDT Coin'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+        decimals: 6,
+        name: 'USDC coin'
+      }
+    ],
+    hyper: [
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ]
+  },
+  devnet: {
+    primary: [
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        decimals: 9,
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        decimals: 9,
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        decimals: 9,
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        decimals: 9,
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ]
+  },
+  testnet: {
+    primary: [
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        decimals: 9,
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        decimals: 9,
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        decimals: 9,
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        decimals: 9,
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        decimals: 9,
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ]
+  }
 }
 
 export const faqs = [

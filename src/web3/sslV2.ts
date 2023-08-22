@@ -14,13 +14,8 @@ import {
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
-import { SYSTEM, SSL_PROGRAM_ID, SSLToken } from './ids'
-import {
-  findAssociatedTokenAddress,
-  createAssociatedTokenAccountIx,
-  getNetworkConnectionText,
-  confirmTransaction
-} from './utils'
+import { SYSTEM, SSL_PROGRAM_ID } from './ids'
+import { findAssociatedTokenAddress, confirmTransaction } from './utils'
 import {
   LIQUIDITY_ACCOUNT_PREFIX,
   toPublicKey,
@@ -29,8 +24,8 @@ import {
   SSL_V2_ADMIN,
   SSL_POOL_SIGNER_PREFIX
 } from '../web3'
-import { TOKEN_NAMES } from '../constants'
 import { TxnReturn } from './stake'
+import { SSLToken } from '../pages/FarmV3/constants'
 export interface Account {
   /** Address of the account */
   address: PublicKey
@@ -187,7 +182,7 @@ export const executeWithdraw = async (
   const withdrawTX: Transaction = new Transaction()
 
   //sslchange: For sol - mechanism to unwrap from WRAP-SOL
-  if (token?.token === TOKEN_NAMES.SOL) {
+  if (token?.token === 'SOL') {
     const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
     const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
     try {
@@ -300,8 +295,7 @@ const depositAmount = async (
   let signature
   try {
     let depositAmountTX: Transaction
-    if (tokenName === TOKEN_NAMES.SOL)
-      depositAmountTX = await wrapSolToken(walletPublicKey, connection, amountInNative)
+    if (tokenName === 'SOL') depositAmountTX = await wrapSolToken(walletPublicKey, connection, amountInNative)
     else depositAmountTX = new Transaction()
     if (createLiquidityIX !== undefined) {
       depositAmountTX.add(createLiquidityIX)

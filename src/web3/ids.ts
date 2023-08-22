@@ -1,6 +1,7 @@
 import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
+import { SSLToken } from '../pages/FarmV3/constants'
 import { StringPublicKey } from './metaplex'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
@@ -19,14 +20,6 @@ export type Pool = {
   address: PublicKey
   listing?: PublicKey
   type: 'crypto' | 'synth'
-}
-
-export type SSLToken = {
-  token: string
-  address: PublicKey
-  decimals: number
-  name: string
-  assetType?: number
 }
 
 export const ADDRESSES: {
@@ -566,7 +559,7 @@ export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
 
 export const POOL_REGISTRY_PREFIX = 'pool_registry'
 
-export const SSL_V2_ADMIN = new PublicKey('2DT23qqC3zcNs6ESpVvJBWDYJqv628YpTRGozefs2tBk')
+export const SSL_V2_ADMIN = new PublicKey('GeSkmvDED55EjnybgdN1gJ89p5V5H9W6jrrhxbZ1pDhQ')
 //sslchange: ERIC WILL GIVE CHANGE IT
 
 export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
