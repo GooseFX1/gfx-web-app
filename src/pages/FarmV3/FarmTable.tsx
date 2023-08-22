@@ -4,13 +4,15 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
-import { ADDRESSES, firstLetterCapital, getLiquidityAccountKey, SSLToken } from '../../web3'
+import { firstLetterCapital, getLiquidityAccountKey } from '../../web3'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { checkMobile } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
+import { SSLToken } from './constants'
+import { ADDRESSES } from './constants'
 
 const WRAPPER = styled.div<{ $poolIndex }>`
   input::-webkit-outer-spin-button,
@@ -278,11 +280,15 @@ const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: b
     ;(async () => {
       //sslchange: this will break because no accounts exists on these addresses until the user has not deposited funds
       if (SSLProgram) {
-        const liquidityAccountKey = await getLiquidityAccountKey(userPublicKey, coin?.address)
-        const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-        const userDeposited = liquidityAccount?.amountDeposited?.toNumber()
-        console.log('liquidityAccount', liquidityAccount.totalEarned.toNumber(), userDeposited)
-        setUserDepositedAmount(userDeposited / Math.pow(10, coin?.decimals))
+        try {
+          const liquidityAccountKey = await getLiquidityAccountKey(userPublicKey, coin?.address)
+          const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
+          const userDeposited = liquidityAccount?.amountDeposited?.toNumber()
+          console.log('liquidityAccount', liquidityAccount.totalEarned.toNumber(), userDeposited)
+          setUserDepositedAmount(userDeposited / Math.pow(10, coin?.decimals))
+        } catch (e) {
+          console.log(e)
+        }
       }
     })()
   }, [SSLProgram, userPublicKey, userDepositedAmount, isDepositSuccessfull, isWithdrawSuccessfull])
