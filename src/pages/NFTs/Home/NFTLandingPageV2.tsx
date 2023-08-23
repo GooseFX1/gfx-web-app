@@ -323,10 +323,9 @@ const FiltersContainer = () => {
     return (
       <FILTERS_CONTAINER>
         <SearchBar
-          className="search-bar"
           width={'425px'}
           filter={searchFilter}
-          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75`}
+          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75 mt-[-10px]`}
           bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections"

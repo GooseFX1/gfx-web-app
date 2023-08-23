@@ -78,7 +78,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         </>
       </div>
 
-      <div className="filtersViewCategory" tw="mr-[10px] sm:mr-0">
+      <div className="filtersViewCategory" tw="mr-[10px] mt-10  sm:mt-0 sm:mr-0">
         {checkMobile() && <div className="activeItemProfile" />}
 
         <div

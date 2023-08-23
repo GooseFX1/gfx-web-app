@@ -20,7 +20,7 @@ import { Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/w
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WRAPPED_SOL_MINT, confirmTransaction, AH_NAME, handleRedirect } from '../../../web3'
+import { WRAPPED_SOL_MINT, confirmTransaction, AH_NAME, handleRedirect, getMetadata } from '../../../web3'
 import { Button } from '../../../components'
 import { GFX_LINK } from '../../../styles'
 import { logData } from '../../../api/analytics'
@@ -32,7 +32,7 @@ import {
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
+import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
 import { ITensorBuyIX } from '../../../types/nft_details'
 import {
@@ -329,12 +329,20 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const { singleCollection } = useNFTCollections()
   const { getUIAmount } = useAccounts()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
-  const walletContext = useWallet()
-  const { wallet, sendTransaction } = walletContext
+  const wal = useWallet()
+  const { wallet, sendTransaction } = wal
   const { connection } = useConnectionConfig()
   const { general, nftMetadata, ask, onChainMetadata } = useNFTDetails()
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
   const [pendingTxSig, setPendingTxSig] = useState<string | null>(null)
+  const [onChainNFTMetadata, setOnChainNFTMetadata] = useState<any>()
+
+  useEffect(() => {
+    ;(async () => {
+      const metadata = await getNFTMetadata(await getMetadata(general.mint_address), connection)
+      setOnChainNFTMetadata(metadata)
+    })()
+  }, [])
 
   const publicKey: PublicKey = useMemo(
     () => wallet?.adapter?.publicKey,
@@ -359,6 +367,8 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     () => (onChainMetadata ? onChainMetadata.data.sellerFeeBasisPoints / 100 : 0),
     [onChainMetadata]
   )
+
+  const isPnft = useMemo(() => onChainNFTMetadata?.tokenStandard === 4, [onChainNFTMetadata])
 
   const orderTotal: number = useMemo(() => curBid, [curBid])
 
@@ -422,18 +432,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     try {
       // setting this as operating nft , for loading buttons
       if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
+      let signature
       if (isBuyingNow) {
         const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        const signature = await sendTransaction(tx, connection, {
+        signature = await sendTransaction(tx, connection, {
           signers: [treasuryWallet],
           skipPreflight: true
         })
-        console.log(signature)
-        return
+        setPendingTxSig(signature)
       }
-      const signature = await sendTransaction(tx, connection)
-      setPendingTxSig(signature)
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
         sendNftTransactionLog(isBuyingNow ? 'BUY' : 'BID', signature)
@@ -520,7 +528,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   }
   const handleOtherBuyOptions = async () => {
     try {
-      const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, walletContext)
+      const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, wal, isPnft)
       await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow)
     } catch (err) {
       setIsLoading(false)

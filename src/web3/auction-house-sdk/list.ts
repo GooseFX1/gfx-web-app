@@ -22,11 +22,7 @@ import {
 import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY } from '../ids'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
-import {
-  createSellInstruction,
-  SellInstructionAccounts,
-  createPrintListingReceiptInstruction
-} from '@metaplex-foundation/mpl-auction-house'
+import { createSellInstruction, SellInstructionAccounts } from '@metaplex-foundation/mpl-auction-house'
 import { getMetadata } from '../nfts/metadata'
 import { findTokenRecordPda, getAssociatedTokenAddressSync } from './pda'
 
@@ -135,23 +131,6 @@ export const constructListInstruction = async (
 
   if (isPnft) instructions.push(additionalComputeBudgetInstruction)
   instructions.push(sellInstruction)
-
-  if (printReceipt) {
-    const receipt = metaplex.auctionHouse().pdas().listingReceipt({
-      tradeState: sellerTradeState
-    })
-
-    instructions.push(
-      createPrintListingReceiptInstruction(
-        {
-          receipt,
-          bookkeeper: seller,
-          instruction: SYSVAR_INSTRUCTIONS_PUBKEY
-        },
-        { receiptBump: receipt.bump }
-      )
-    )
-  }
 
   return instructions
 }

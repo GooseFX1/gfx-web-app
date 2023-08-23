@@ -11,7 +11,14 @@ import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
 import { Button, TransactionErrorMsg } from '../../../components'
 import { checkMobile, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
-import { PublicKey, TransactionInstruction, Transaction, SystemProgram } from '@solana/web3.js'
+import {
+  PublicKey,
+  TransactionInstruction,
+  Transaction,
+  SystemProgram,
+  AccountMeta,
+  Keypair
+} from '@solana/web3.js'
 import { tradeStatePDA, tokenSize, freeSellerTradeStatePDA, freeSellerTradeStatePDAAgg } from '../actions'
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 // import { useHistory } from 'react-router-dom'
@@ -55,8 +62,9 @@ import { web3 } from '@project-serum/anchor'
 import DelistNFTModal from './DelistNFTModal'
 import AcceptBidModal, { TermsTextNFT } from './AcceptBidModal'
 import { saveNftTx } from '../../../api/NFTs'
-import { constructListInstruction } from '../../../web3/auction-house-sdk/list'
+import { constructListInstruction, derivePNFTAccounts } from '../../../web3/auction-house-sdk/list'
 import { createRemoveAskIX } from '../../../web3/auction-house-sdk/cancelListing'
+import bs58 from 'bs58'
 
 export const SellNFTModal: FC<{
   visible: boolean
@@ -160,6 +168,8 @@ export const SellNFTModal: FC<{
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus()
   }, [inputRef.current])
+  const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wal))
+  const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
   const auctionHouseClient = useMemo(
     () => new Metaplex(connection).use(walletAdapterIdentity(wal)).auctionHouse(),
@@ -407,7 +417,35 @@ export const SellNFTModal: FC<{
       await derivePDAsForInstruction()
 
     if (isAcceptingBid) {
+      const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
+        pubkey: new PublicKey(creator.address),
+        isWritable: true,
+        isSigner: false
+      }))
       const { programAsSignerPDA } = await derivePDAForExecuteSale()
+
+      const pnftAccounts = await derivePNFTAccounts(
+        connection,
+        toPublicKey(highestBid?.wallet_key),
+        programAsSigner,
+        toPublicKey(highestBid?.token_account_mint_key),
+        wallet?.adapter?.publicKey
+      )
+      const executeSaleAnchorRemainingAccounts: AccountMeta[] = [
+        pnftAccounts.metadataProgram,
+        pnftAccounts.edition,
+        pnftAccounts.sellerTokenRecord,
+        pnftAccounts.tokenRecord,
+        pnftAccounts.authRulesProgram,
+        pnftAccounts.authRules,
+        pnftAccounts.sysvarInstructions
+      ]
+
+      let remainingAccounts: AccountMeta[] = []
+
+      remainingAccounts = remainingAccounts.concat(...creatorAccounts)
+      if (isPnft) remainingAccounts = remainingAccounts.concat(...executeSaleAnchorRemainingAccounts)
+
       const {
         metaDataAccount,
         escrowPaymentAccount,
@@ -423,12 +461,6 @@ export const SellNFTModal: FC<{
         setIsLoading(false)
         return
       }
-
-      const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
-        pubkey: new PublicKey(creator.address),
-        isWritable: true,
-        isSigner: false
-      }))
 
       const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
         escrowPaymentBump: escrowPaymentAccount[1],
@@ -460,7 +492,7 @@ export const SellNFTModal: FC<{
         programAsSigner: programAsSignerPDA[0],
         rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
         ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-        anchorRemainingAccounts: creatorAccounts
+        anchorRemainingAccounts: remainingAccounts
       }
 
       const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
@@ -470,11 +502,10 @@ export const SellNFTModal: FC<{
 
       transaction.add(executeSaleIX)
     }
-
     try {
       const signature = await wal.sendTransaction(transaction, connection)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(signature, acceptBid ? 'ACCEPT_BID' : 'LIST', removeAskIX ? true : false)
+      attemptConfirmTransaction(signature, isAcceptingBid ? 'ACCEPT_BID' : 'LIST', removeAskIX ? true : false)
         .then((res) => console.log('TX Confirmed', res))
         .catch((err) => console.error(err))
     } catch (error) {
@@ -490,7 +521,6 @@ export const SellNFTModal: FC<{
       setAskPrice(parseFloat(e.target.value))
     }
   }
-  const nftID = general?.nft_name.split('#')[1]
   if (acceptBid)
     return (
       <AcceptBidModal

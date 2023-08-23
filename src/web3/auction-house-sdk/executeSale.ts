@@ -119,7 +119,8 @@ export const callExecuteSaleInstruction = async (
   publicKey: PublicKey,
   isBuyingNow: boolean,
   connection: Connection,
-  wallet: WalletContextState
+  wallet: WalletContextState,
+  isPnft?: boolean
 ): Promise<Transaction> => {
   const {
     metaDataAccount,
@@ -203,7 +204,8 @@ export const callExecuteSaleInstruction = async (
     let remainingAccounts: AccountMeta[] = []
 
     remainingAccounts = remainingAccounts.concat(...creatorAccounts)
-    remainingAccounts = remainingAccounts.concat(...executeSaleAnchorRemainingAccounts)
+
+    if (isPnft) remainingAccounts = remainingAccounts.concat(...executeSaleAnchorRemainingAccounts)
 
     const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = {
       buyer: publicKey,

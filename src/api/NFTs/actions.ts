@@ -208,7 +208,7 @@ export const fetchUserNftsFromDb = async (mintAddresses: string[], collectionId?
 }
 
 export const fetchBidsPlacedByUser = async (wallet: string): Promise<any> => {
-  if (!wallet.length) return
+  if (!wallet?.length) return
   try {
     const res = await httpClient(NFT_API_BASE).get(`${NFT_API_ENDPOINTS.USER_BIDS}?user_wallet=${wallet}`)
     return res.data
