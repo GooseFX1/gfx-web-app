@@ -25,15 +25,6 @@ export interface IData {
   creators?: ICreator[]
 }
 
-export interface IOnChainMetadata {
-  key?: number
-  updateAuthority?: string
-  mint?: string
-  data?: IData
-  primarySaleHappened?: number
-  isMutable?: number
-  editionNonce?: number
-}
 export interface ITradingHistoryTabItemData {
   id?: string
   price?: number
@@ -99,6 +90,16 @@ export type INFTMetadata = {
   }
   collection?: { name: string; family: string } | { name: string; family: string }[]
   update_authority?: string
+}
+
+export interface IOnChainMetadata {
+  key?: number
+  updateAuthority?: string
+  mint?: string
+  data?: IData
+  primarySaleHappened?: number
+  isMutable?: number
+  editionNonce?: number
 }
 
 export type BaseNFT = {
