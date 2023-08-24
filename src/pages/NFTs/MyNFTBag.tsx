@@ -475,7 +475,7 @@ export default React.memo(MyNFTBag)
 //   }, [nftInBag])
 //   const { mode } = useDarkMode()
 //   const { pathname } = useLocation()
-//   // Below is rive code for when the animation is added - some thigns might need to changed
+//   // Below is rive code for when the animation is added - some things might need to changed
 
 //   // const rive = useRiveAnimations({
 //   //   animation:'swap',
