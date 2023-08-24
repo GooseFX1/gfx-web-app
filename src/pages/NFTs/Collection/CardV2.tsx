@@ -173,6 +173,13 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   }, [localAsk, localBids, profileNFTOptions])
 
   const gradientBg = useMemo(() => localAsk?.buyer_price || localBids?.length, [localAsk, localBids])
+  const nftImage: string | null = useMemo(() => {
+    if (localSingleNFT && localSingleNFT.image_url) {
+      return localSingleNFT.image_url
+    } else {
+      return null
+    }
+  }, [localSingleNFT, localSingleNFT?.image_url])
 
   const openDetails = async (target: string): Promise<void> => {
     setIsLoadingBeforeRelocate(true)
@@ -272,17 +279,16 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
               onClick={() => (localSingleNFT !== undefined ? openDetails(MODAL_TARGET.DRAWER) : null)}
             >
               {handleHover}
-              {console.log(localSingleNFT)}
               <div className="nftImg">
                 <img
                   src={
-                    localSingleNFT
+                    nftImage
                       ? gfxImageService(
                           IMAGE_SIZES.SM_WIDTH,
                           localSingleNFT.verified_collection_address
                             ? localSingleNFT.verified_collection_address
                             : localSingleNFT.first_verified_creator_address,
-                          localSingleNFT.image_url
+                          nftImage
                         )
                       : `${window.origin}/img/assets/nft-preview-${mode}.svg`
                   }
