@@ -1,8 +1,7 @@
-import { FC, useState, Dispatch, SetStateAction } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
-import { checkMobile } from '../../utils'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[60px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
@@ -54,18 +53,12 @@ const topPoolCards = [
   { name: 'XRP', value: '7.45%', type: 'Stable' }
 ]
 
-export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> = ({ setPoolIndex }) => {
+export const FarmHeader: FC = () => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   return (
     <>
       <HEADER_WRAPPER>
-        {poolSelection && (
-          <ChoosePool
-            poolSelection={poolSelection}
-            setPoolSelection={setPoolSelection}
-            setPoolIndex={setPoolIndex}
-          />
-        )}
+        {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         {infoCards?.map((card, index) => (
           <>
             <CARD_GRADIENT key={index}>
@@ -78,7 +71,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
             </CARD_GRADIENT>
           </>
         ))}
-        {!checkMobile() && (
+        {/* {!checkMobile() && (
           <div
             tw="absolute right-0 border border-solid border-grey-1 w-[207px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
@@ -93,7 +86,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
             </span>
             <img src="/img/assets/questionMark.svg" alt="question-icon" />
           </div>
-        )}
+        )} */}
       </HEADER_WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
@@ -102,7 +95,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
           </div>
           <div tw="dark:text-grey-5 text-lg font-semibold  text-black-4 mb-2.5">Top Pools</div>
         </div>
-        {checkMobile() && (
+        {/* {checkMobile() && (
           <div
             tw="border border-solid border-grey-1 w-[180px] h-10 rounded-[100px] dark:bg-black-2
                flex flex-row items-center justify-center bg-white mr-2.5"
@@ -117,7 +110,7 @@ export const FarmHeader: FC<{ setPoolIndex: Dispatch<SetStateAction<number>> }> 
             </span>
             <img src="/img/assets/questionMark.svg" alt="question-icon" height={25} width={25} />
           </div>
-        )}
+        )} */}
       </div>
       <POOL_CARD_WRAPPER>
         {topPoolCards?.map((card, index) => (

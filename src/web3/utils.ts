@@ -216,8 +216,6 @@ export const int64to8 = (n: number): Uint8Array => {
   return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
 }
 
-export const firstLetterCapital = (str: string): string => str[0].toLocaleUpperCase() + str.slice(1)
-
 export const bnTo8 = (bn: BN): Uint8Array => Buffer.from([...bn.toArray('le', 8)])
 
 export const getNetworkConnectionText = (network: string): string =>

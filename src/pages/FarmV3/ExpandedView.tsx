@@ -1,11 +1,10 @@
-/* eslint-disable */
 import { FC, useMemo, useState, useEffect } from 'react'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
-import { useAccounts, useConnectionConfig, useFarmContext, usePriceFeedFarm } from '../../context'
-import { executeDeposit, executeWithdraw, getPriceObject, getPoolRegistryAccountKeys } from '../../web3'
+import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
+import { executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -16,11 +15,11 @@ import {
   genericErrMsg,
   invalidWithdrawErrMsg,
   sslSuccessfulMessage,
-  sslErrorMessage
+  sslErrorMessage,
+  SSLToken
 } from './constants'
 import { notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { SSLToken } from './constants'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -32,12 +31,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const { connection, network } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
-  const { prices, SSLProgram } = usePriceFeedFarm() //sslchange ssl program
-  const { setCounter, operationPending, setOperationPending, setIsWithdrawSuccessfull, setIsDepositSuccessfull } =
-    useFarmContext()
+  const { prices, SSLProgram } = usePriceFeedFarm()
+  const { operationPending, isTxnSuccessfull, setOperationPending, setIsTxnSuccessfull } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const [poolToken, setPoolToken] = useState<SSLToken>(coin)
-  const tokenMintAddress = poolToken?.address
+  const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
   const [depositAmount, setDepositAmount] = useState<number>()
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
@@ -46,37 +43,22 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   useEffect(() => {
     ;(async () => {
-      if (SSLProgram) {
-        try {
-          const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-          const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
-          const sslPoolEntry = sslPool.entries.map((token: any) => token?.mint?.toString())
-          // setPoolToken({ ...poolToken, assetType: sslPoolEntry[0].assetType })
-          console.log('sslPoolEntry', sslPoolEntry) //sslchange: remove logs
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [SSLProgram])
-  useEffect(() => {
-    ;(async () => {
       if (wallet?.adapter?.publicKey) {
         const SOL = await connection.getAccountInfo(wallet?.adapter?.publicKey)
         setUserSOLBalance(SOL.lamports / LAMPORTS_PER_SOL)
       }
     })()
-  }, [wallet?.adapter?.publicKey])
+  }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
   const userTokenBalance = useMemo(
     () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
     [tokenMintAddress, getUIAmount, userPublicKey]
   )
   const userTokenBalanceInUSD = useMemo(
     () =>
-      prices[getPriceObject(poolToken?.token)]?.current
-        ? prices[getPriceObject(poolToken?.token)]?.current * userTokenBalance
+      prices[getPriceObject(coin?.token)]?.current
+        ? prices[getPriceObject(coin?.token)]?.current * userTokenBalance
         : 0,
-    [prices, poolToken, prices[getPriceObject(poolToken?.token)], userTokenBalance]
+    [prices, coin, prices[getPriceObject(coin?.token)], userTokenBalance]
   )
   const enoughSOLInWallet = (): boolean => {
     if (userSolBalance < 0.000001) {
@@ -124,21 +106,20 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      setIsDepositSuccessfull(false)
-      const confirm = executeDeposit(SSLProgram, wal, connection, depositAmount, poolToken, userPublicKey)
+      setIsTxnSuccessfull(false)
+      const confirm = executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
       confirm.then((con) => {
         setOperationPending(false)
         setIsButtonLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, depositAmount, poolToken?.token, network, 'Deposit'))
+          notify(sslSuccessfulMessage(signature, depositAmount, coin?.token, network, 'Deposit'))
           setTimeout(() => setDepositAmount(0), 500)
-          setIsDepositSuccessfull(true)
-          setCounter((prev) => prev + 1)
+          setIsTxnSuccessfull(true)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(poolToken?.token, error?.message, signature, network, 'Deposit'))
-          setIsDepositSuccessfull(false)
+          notify(sslErrorMessage(coin?.token, error?.message, signature, network, 'Deposit'))
+          setIsTxnSuccessfull(false)
           return
         }
       })
@@ -146,7 +127,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setOperationPending(false)
       setIsButtonLoading(false)
       notify(genericErrMsg(error))
-      setIsDepositSuccessfull(false)
+      setIsTxnSuccessfull(false)
     }
   }
   const handleWithdraw = (): void => {
@@ -154,19 +135,18 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      setIsWithdrawSuccessfull(false)
-      executeWithdraw(SSLProgram, wal, connection, poolToken, withdrawAmount, userPublicKey).then((con) => {
+      setIsTxnSuccessfull(false)
+      executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
         setOperationPending(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, withdrawAmount, poolToken?.token, network, 'Withdraw'))
-          setCounter((prev) => prev + 1)
-          setIsWithdrawSuccessfull(true)
+          notify(sslSuccessfulMessage(signature, withdrawAmount, coin?.token, network, 'Withdraw'))
+          setIsTxnSuccessfull(true)
         } else {
           const { signature, error } = con
-          notify(sslErrorMessage(poolToken?.token, error?.message, signature, network, 'Withdraw'))
-          setIsWithdrawSuccessfull(false)
+          notify(sslErrorMessage(coin?.token, error?.message, signature, network, 'Withdraw'))
+          setIsTxnSuccessfull(false)
           return
         }
       })
@@ -174,7 +154,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setIsButtonLoading(false)
       setOperationPending(false)
       notify(genericErrMsg(err))
-      setIsWithdrawSuccessfull(false)
+      setIsTxnSuccessfull(false)
     }
   }
   const handleInputChange = (input: string) => {
@@ -198,16 +178,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       <div tw="flex flex-col">
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
-            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${poolToken}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${poolToken}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${poolToken}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${poolToken}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${coin}`} />
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${poolToken}`}
+              value={`${userTokenBalance.toFixed(2)} ${coin}`}
             />
-            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${poolToken}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin}`} />
             <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`2.5 ${coin}`} />
           </div>
         )}
@@ -248,9 +228,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${poolToken?.token} ($ ${userTokenBalanceInUSD.toFixed(
-                2
-              )} USD)`}
+              value={`${userTokenBalance.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD.toFixed(2)} USD)`}
             />
           </div>
         )}
@@ -295,7 +273,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             type="number"
           />
           <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">
-            {poolToken?.token}
+            {coin?.token}
           </div>
         </div>
         {isExpanded && (
@@ -326,14 +304,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             alignRight={true}
             isExpanded={isExpanded}
             keyStr="Total Earnings"
-            value={`2.5 ${poolToken?.token} ($12 USD)`}
+            value={`2.5 ${coin?.token} ($12 USD)`}
           />
           <div tw="mt-2">
             <FarmStats
               alignRight={true}
               isExpanded={isExpanded}
               keyStr="Balance"
-              value={`2.5 ${poolToken?.token} ($12 USD)`}
+              value={`2.5 ${coin?.token} ($12 USD)`}
             />
           </div>
         </div>

@@ -22,10 +22,6 @@ interface IShowDeposited {
   setRefreshClass: Dispatch<SetStateAction<string>>
   lastRefreshedClass: string
   setLastRefreshedClass: Dispatch<SetStateAction<string>>
-  isWithdrawSuccessfull: boolean
-  setIsWithdrawSuccessfull: Dispatch<SetStateAction<boolean>>
-  isDepositSuccessfull: boolean
-  setIsDepositSuccessfull: Dispatch<SetStateAction<boolean>>
 }
 
 const FarmContext = createContext<IShowDeposited | null>(null)
@@ -41,8 +37,6 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [refreshClass, setRefreshClass] = useState<string>('')
   const [lastRefreshedClass, setLastRefreshClass] = useState<string>()
-  const [isDepositSuccessfull, setIsDepositSuccessfull] = useState<boolean>(false)
-  const [isWithdrawSuccessfull, setIsWithdrawSuccessfull] = useState<boolean>(false)
 
   useEffect(() => {
     setFarmDataSSLContext(generateListOfSSLTokens(network))
@@ -68,11 +62,7 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
         refreshClass: refreshClass,
         setRefreshClass: setRefreshClass,
         lastRefreshedClass: lastRefreshedClass,
-        setLastRefreshedClass: setLastRefreshClass,
-        isWithdrawSuccessfull: isWithdrawSuccessfull,
-        setIsWithdrawSuccessfull: setIsWithdrawSuccessfull,
-        isDepositSuccessfull: isDepositSuccessfull,
-        setIsDepositSuccessfull: setIsDepositSuccessfull
+        setLastRefreshedClass: setLastRefreshClass
       }}
     >
       {children}
