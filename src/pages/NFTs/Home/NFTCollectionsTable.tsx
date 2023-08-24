@@ -199,7 +199,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       let singleNFTDetails = null
       if (item.gfx_appraisal_supported && item.floor_mint) {
         singleNFTDetails = await fetchSingleNFT(item.floor_mint)
-        const appraisalValue = parseFloat(singleNFTDetails.data.data[0]?.gfx_appraisal_value) || 0
+        const appraisalValue = parseFloat(singleNFTDetails?.data?.data[0]?.gfx_appraisal_value) || 0
         setGfxAppraisal(appraisalValue > 0 ? appraisalValue : 0)
       }
     }

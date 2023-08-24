@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Dropdown, Menu } from 'antd'
+import { Dropdown } from 'antd'
 import React, { ReactElement, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+
 import { Connect } from '../../layouts'
 import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL, Transaction, VersionedTransaction } from '@solana/web3.js'
@@ -15,7 +15,7 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import Lottie from 'lottie-react'
 import EmptyBagDark from '../../animations/emptyBag-dark.json'
 import EmptyBagLite from '../../animations/EmptyBag-lite.json'
-import { formatSOLDisplay, formatSOLNumber, notify, clamp } from '../../utils'
+import { formatSOLDisplay, formatSOLNumber, notify } from '../../utils'
 import { Button } from '../../components'
 import { NFT_MARKETS } from '../../api/NFTs/constants'
 import { ITensorBuyIX } from '../../types/nft_details'
@@ -220,7 +220,7 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
   return (
     <div className="bagContentContainer" style={{ height: wallet ? '238px' : '284px' }}>
       {Object.entries(nftInBag).map(([key, nft], index: number) => (
-        <div tw="flex items-center mt-[15px]" key={key}>
+        <div tw="flex items-center mt-[15px]" key={index}>
           <img className="nftImage" src={nftInBag[key]?.image_url} alt="img" />
           <img
             className="closeImg"
@@ -266,13 +266,17 @@ const EmptyBagDisplay = (): ReactElement => {
 }
 
 const ButtonContainerForBag = (): ReactElement => {
-  const { wallet, sendTransaction } = useWallet()
+  const { wallet } = useWallet()
+  const wal = useWallet()
+
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const { nftInBag, setNftInBag, operatingNFT, setOperatingNFT } = useNFTAggregator()
+  const { nftInBag, setNftInBag, setOperatingNFT } = useNFTAggregator()
   const itemsInBag = useMemo(() => Object.keys(nftInBag ? nftInBag : {}).length, [nftInBag])
   const { connection } = useConnectionConfig()
   const [userSOLBalance, setUserSOLBalance] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const nftInArrayFormat = useMemo(() => Object.values(nftInBag), [nftInBag])
 
   useEffect(() => {
     const SOL = connection.getAccountInfo(publicKey)
@@ -347,12 +351,10 @@ const ButtonContainerForBag = (): ReactElement => {
     []
   )
 
-  const handleNotifications = async (tx: Transaction | VersionedTransaction, item: any, index: number) => {
+  const handleNotifications = async (signature: string, item: any, index: number) => {
     try {
       // setting this as operating nft , for loading buttons
-      const signature = await sendTransaction(tx, connection)
-      console.log(signature)
-      const confirm = await confirmTransaction(connection, signature, 'finalized')
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
         notify(successfulNFTPurchaseMsg(signature, item.nft_name, formatSOLDisplay(item.buyer_price)))
         removeFromCartAndProcessingList(item?.mint_address, false, true)
@@ -402,12 +404,41 @@ const ButtonContainerForBag = (): ReactElement => {
     const results = await Promise.all(promises)
 
     const readyTx = Object.assign({}, ...results)
+    const builtTxs = []
 
-    Object.keys(readyTx).forEach((key, index) => {
-      handleNotifications(readyTx[key], nftInBag[key], index)
+    Object.keys(readyTx).forEach((key) => {
+      builtTxs.push(readyTx[key])
     })
-  }
+    try {
+      const signedTxs = await wal.signAllTransactions(builtTxs)
+      const sentTxs = []
+      for (const transaction of signedTxs) {
+        const rawTransaction = transaction.serialize()
+        const options = {
+          skipPreflight: false,
+          commitment: 'confirmed'
+        }
+        sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
+        const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
+          txid: id,
+          slot: 0
+        }))
 
+        ixResponse.map((ix, index) =>
+          handleNotifications(
+            ix.txid,
+            nftInBag[nftInArrayFormat[index].token_account_mint_key],
+            ixResponse.indexOf(ix)
+          )
+        )
+      }
+    } catch (err) {
+      setOperatingNFT(new Set())
+      setIsLoading(false)
+      pleaseTryAgain(true, err?.message)
+    }
+  }
+  console.log(nftInBag)
   return (
     <div className="buttonContainer">
       {publicKey ? (
@@ -436,66 +467,66 @@ const ButtonContainerForBag = (): ReactElement => {
 }
 export default React.memo(MyNFTBag)
 
-const CartButton: FC = () => {
-  const { nftInBag } = useNFTAggregator()
-  const cartSize = useMemo(() => {
-    const val = clamp(2, 0, 9)
-    return val >= 9 ? '9+' : val
-  }, [nftInBag])
-  const { mode } = useDarkMode()
-  const { pathname } = useLocation()
-  // Below is rive code for when the animation is added - some thigns might need to changed
+// const CartButton: FC = () => {
+//   const { nftInBag } = useNFTAggregator()
+//   const cartSize = useMemo(() => {
+//     const val = clamp(2, 0, 9)
+//     return val >= 9 ? '9+' : val
+//   }, [nftInBag])
+//   const { mode } = useDarkMode()
+//   const { pathname } = useLocation()
+//   // Below is rive code for when the animation is added - some thigns might need to changed
 
-  // const rive = useRiveAnimations({
-  //   animation:'swap',
-  //   autoplay: true,
-  //   canvasWidth: 35,
-  //   canvasHeight: 35
-  // })
-  // const themeInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
-  // const stateInput = useStateMachineInput(rive.rive,
-  //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
-  //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
+//   // const rive = useRiveAnimations({
+//   //   animation:'swap',
+//   //   autoplay: true,
+//   //   canvasWidth: 35,
+//   //   canvasHeight: 35
+//   // })
+//   // const themeInput = useStateMachineInput(rive.rive,
+//   //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+//   //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.Theme)
+//   // const stateInput = useStateMachineInput(rive.rive,
+//   //   RIVE_ANIMATION.cart.stateMachines.CartInteractions.stateMachineName
+//   //   ,RIVE_ANIMATION.cart.stateMachines.CartInteractions.inputs.State)
 
-  // useEffect(()=>{
-  //   if(!stateInput) return
-  //   stateInput.value=pathname.startsWith('/cart')
-  // },[pathname,stateInput])
-  // useEffect(()=>{
-  //   if(!themeInput) return
-  //   themeInput.value = mode === 'dark'
-  // },[themeInput,mode])
-  // const onHover = useCallback((e: BaseSyntheticEvent)=>{
-  //   if(pathname.startsWith('/cart'))return
-  //   stateInput.value=!stateInput.value
-  // },[stateInput,pathname])
+//   // useEffect(()=>{
+//   //   if(!stateInput) return
+//   //   stateInput.value=pathname.startsWith('/cart')
+//   // },[pathname,stateInput])
+//   // useEffect(()=>{
+//   //   if(!themeInput) return
+//   //   themeInput.value = mode === 'dark'
+//   // },[themeInput,mode])
+//   // const onHover = useCallback((e: BaseSyntheticEvent)=>{
+//   //   if(pathname.startsWith('/cart'))return
+//   //   stateInput.value=!stateInput.value
+//   // },[stateInput,pathname])
 
-  const openCart = useCallback(() => {
-    // TODO: fill me in
-    console.log('FILL ME IN')
-  }, [])
-  if (!pathname.startsWith('/nfts')) return null
-  return (
-    <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
-      {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef}
-                           width={35}
-                           height={35}
-                           // onMouseEnter={onHover}
-                           // onMouseLeave={onHover}
-      > */}
-      {/* <rive.RiveComponent /> */}
-      {/* </RiveAnimationWrapper> */}
-      <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
-      <p
-        css={[
-          tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
-        text-grey-1 dark:text-white mt-0.5 h-4`
-        ]}
-      >
-        {cartSize}
-      </p>
-    </div>
-  )
-}
+//   const openCart = useCallback(() => {
+//     // TODO: fill me in
+//     console.log('FILL ME IN')
+//   }, [])
+//   if (!pathname.startsWith('/nfts')) return null
+//   return (
+//     <div css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`} onClick={openCart}>
+//       {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef}
+//                            width={35}
+//                            height={35}
+//                            // onMouseEnter={onHover}
+//                            // onMouseLeave={onHover}
+//       > */}
+//       {/* <rive.RiveComponent /> */}
+//       {/* </RiveAnimationWrapper> */}
+//       <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+//       <p
+//         css={[
+//           tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
+//         text-grey-1 dark:text-white mt-0.5 h-4`
+//         ]}
+//       >
+//         {cartSize}
+//       </p>
+//     </div>
+//   )
+// }
