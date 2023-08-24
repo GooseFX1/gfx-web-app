@@ -4,6 +4,8 @@ import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
+import { poolType, Pool } from './constants'
+import { useSSLContext } from '../../context'
 
 const STYLED_POPUP = styled(PopupCustom)<{
   currentSlide: number
@@ -138,15 +140,15 @@ const PrevArrow: FC<{
 
 export const ChoosePool: FC<{
   poolSelection: boolean
-  setPoolIndex: Dispatch<SetStateAction<number>>
   setPoolSelection: Dispatch<SetStateAction<boolean>>
-}> = ({ poolSelection, setPoolSelection, setPoolIndex }): JSX.Element => {
+}> = ({ poolSelection, setPoolSelection }): JSX.Element => {
+  const { setPool } = useSSLContext()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [isStableOne, setIsStableOne] = useState<boolean>(null)
   const [isStableTwo, setIsStableTwo] = useState<boolean>(null)
   const [isStableThree, setIsStableThree] = useState<boolean>(null)
   const [isStablePool, setIsStablePool] = useState<boolean>(null)
-  const [userPool, setUserPool] = useState<number>(null)
+  const [userPool, setUserPool] = useState<Pool>(null)
   const [isError, setIsError] = useState<boolean>(false)
   const sliderRef = useRef<any>()
 
@@ -182,10 +184,10 @@ export const ChoosePool: FC<{
       (isStableOne && isStableTwo && isStableThree)
     ) {
       setIsStablePool(true)
-      setUserPool(0)
+      setUserPool(poolType.stable)
     } else {
       setIsStablePool(false)
-      setUserPool(1)
+      setUserPool(poolType.primary)
     }
   }
 
@@ -326,7 +328,7 @@ export const ChoosePool: FC<{
             className="cta"
             onClick={() => {
               setPoolSelection(false)
-              setPoolIndex(userPool)
+              setPool(userPool)
             }}
           >
             Start Earning

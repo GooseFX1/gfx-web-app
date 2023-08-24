@@ -2,180 +2,151 @@
 import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
+import BN from 'bn.js'
 
 interface Message {
   type?: string
   message: string | JSX.Element
 }
 
-export type SSLToken = {
-  token: string
-  address: PublicKey
-  decimals: number
+export type Pool = {
+  index: number
   name: string
-  assetType?: number
+  desc: string
 }
 
-export const PoolType = [
-  {
-    id: 1,
-    pool: 'Primary'
+export type LiquidityAccount = {
+  amountDeposited: BN
+  createdAt: BN
+  lastClaimed: BN
+  lastObservedTap?: BN
+  mint?: PublicKey
+  owner?: PublicKey
+  poolRegistry?: PublicKey
+  space?: number[]
+  totalEarned?: BN
+}
+
+export type SSLToken = {
+  token: string
+  name: string
+  address: PublicKey
+  assetType?: number
+  bump?: number
+  mathParams?: any
+  mint?: PublicKey
+  mintDecimals?: number
+  oraclePriceHistories?: number[]
+  pad0?: number[]
+  pad1?: number[]
+  space?: number[]
+  status?: number
+  totalAccumulatedLpReward?: BN
+  totalLiquidityDeposits?: BN
+}
+
+export const poolType = {
+  stable: {
+    index: 3,
+    name: 'Stable',
+    desc: "If you're looking for more stable returns."
   },
-  {
-    id: 2,
-    pool: 'Secondary'
+  primary: {
+    index: 1,
+    name: 'Primary',
+    desc: "If you're looking for medium to high returns."
   },
-  {
-    id: 3,
-    pool: 'Tertiary'
+  hyper: {
+    index: 2,
+    name: 'Hyper',
+    desc: "If you're looking for high returns with more risk"
   }
-]
+}
 
 export const ADDRESSES: {
-  [network in WalletAdapterNetwork]: {
-    primary: SSLToken[]
-    stable: SSLToken[]
-    hyper: SSLToken[]
-  }
+  [network in WalletAdapterNetwork]: SSLToken[]
 } = {
-  'mainnet-beta': {
-    primary: [
-      {
-        token: 'ETH',
-        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ],
-    stable: [
-      {
-        token: 'SOL',
-        address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
-        name: 'Solana'
-      },
-      {
-        token: 'MSOL',
-        address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-        decimals: 9,
-        name: 'MSOL'
-      },
-      {
-        token: 'BONK',
-        address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-        decimals: 5,
-        name: 'BONK'
-      },
-      {
-        token: 'USDT',
-        address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        decimals: 6,
-        name: 'USDT Coin'
-      },
-      {
-        token: 'USDC',
-        address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6,
-        name: 'USDC coin'
-      }
-    ],
-    hyper: [
-      {
-        token: 'ETH',
-        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ]
-  },
-  devnet: {
-    primary: [
-      {
-        token: 'ETH',
-        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ],
-    stable: [
-      {
-        token: 'SOL',
-        address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
-        name: 'Solana'
-      },
-      {
-        token: 'USDC',
-        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 9,
-        name: 'USDC Coin'
-      },
-      {
-        token: 'USDT',
-        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 9,
-        name: 'USDT'
-      }
-    ],
-    hyper: [
-      {
-        token: 'USDT',
-        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
-        decimals: 9,
-        name: 'USDT'
-      },
-      {
-        token: 'ETH',
-        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ]
-  },
-  testnet: {
-    primary: [
-      {
-        token: 'ETH',
-        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ],
-    stable: [
-      {
-        token: 'SOL',
-        address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
-        name: 'Solana'
-      },
-      {
-        token: 'USDC',
-        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 9,
-        name: 'USDC Coin'
-      },
-      {
-        token: 'USDT',
-        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 9,
-        name: 'USDT'
-      }
-    ],
-    hyper: [
-      {
-        token: 'USDT',
-        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
-        decimals: 9,
-        name: 'USDT'
-      },
-      {
-        token: 'ETH',
-        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
-        name: 'Wrapped Ether (Wormhole)'
-      }
-    ]
-  }
+  'mainnet-beta': [
+    {
+      token: 'USDT',
+      name: 'USDT Coin',
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
+    },
+    {
+      token: 'USDC',
+      name: 'USDC coin',
+      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+    },
+    {
+      token: 'SOL',
+      name: 'Solana',
+      address: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    {
+      token: 'MSOL',
+      name: 'MSOL',
+      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
+    },
+    {
+      token: 'BONK',
+      name: 'BONK',
+      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+    }
+  ],
+  devnet: [
+    {
+      token: 'USDT',
+      name: 'USDT Coin',
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
+    },
+    {
+      token: 'USDC',
+      name: 'USDC coin',
+      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+    },
+    {
+      token: 'SOL',
+      name: 'Solana',
+      address: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    {
+      token: 'MSOL',
+      name: 'MSOL',
+      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
+    },
+    {
+      token: 'BONK',
+      name: 'BONK',
+      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+    }
+  ],
+  testnet: [
+    {
+      token: 'USDT',
+      name: 'USDT Coin',
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
+    },
+    {
+      token: 'USDC',
+      name: 'USDC coin',
+      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+    },
+    {
+      token: 'SOL',
+      name: 'Solana',
+      address: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    {
+      token: 'MSOL',
+      name: 'MSOL',
+      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
+    },
+    {
+      token: 'BONK',
+      name: 'BONK',
+      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+    }
+  ]
 }
 
 export const faqs = [
@@ -210,20 +181,31 @@ export const faqs = [
     )
   },
   {
-    question: 'What is the difference between Stable, and Hyper pools?',
+    question: 'What is the difference between Stable, Primary and Hyper pools?',
     answer: (
       <div>
-        <strong>Primary Vault:</strong> The primary vault consists of less volatile assets, typically with larger
-        market capitalizations. These assets tend to have more stable yields, making the primary vault a more
-        conservative option for users seeking lower-risk exposure.
+        <strong>Stable pools:</strong> consists of less volatile tokens, typically with larger market
+        capitalizations. These tokens tend to have more stable yields.
         <br />
         <br />
-        <strong>Hyper Vault:</strong> The hyper vault, on the other hand, contains tokens that are more volatile
-        and may have smaller market capitalizations. These assets can offer potentially higher returns but come
-        with greater risks due to their volatility. Users seeking higher returns and willing to accept the
-        increased risks associated with less established or more volatile assets may opt for the hyper vault.
-        Examples of assets in hyper vaults might include newly launched tokens, DeFi tokens, or smaller-cap
-        cryptocurrencies.
+        <strong>Primary pools:</strong> as the stable pools, contains tokens with larger capitalization and stable
+        yields but with a little more risk due to volatility.
+        <br />
+        <br />
+        <strong>Hyper pools:</strong> on the other hand, contains tokens that are more volatile and may have
+        smaller market capitalizations. These assets can offer potentially higher returns but come with greater
+        risks due to their volatility. Examples of assets in hyper vaults might include newly launched tokens, DeFi
+        tokens, or smaller-cap cryptocurrencies.
+      </div>
+    )
+  },
+  {
+    question: 'How are fees calculated and distributed to LPs?',
+    answer: (
+      <div>
+        50% of fees are sent to LPs (liquidity providers). The remaining are sent to our treasury which are then
+        distributed to buybacks and distributed as $USDC to be claimed daily for $GOFX stakers under our rewards
+        program.
       </div>
     )
   },

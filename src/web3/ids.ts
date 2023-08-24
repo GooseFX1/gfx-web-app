@@ -94,19 +94,16 @@ export const ADDRESSES: {
       {
         token: 'SOL',
         address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
         name: 'Solana'
       },
       {
         token: 'USDC',
         address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 4,
         name: 'USDC Coin'
       },
       {
         token: 'USDT',
         address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 6,
         name: 'USDT'
       }
     ],
@@ -114,7 +111,6 @@ export const ADDRESSES: {
       {
         token: 'ETH',
         address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     ],
@@ -223,19 +219,16 @@ export const ADDRESSES: {
       {
         token: 'SOL',
         address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
         name: 'Solana'
       },
       {
         token: 'USDC',
         address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 9,
         name: 'USDC Coin'
       },
       {
         token: 'USDT',
         address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 9,
         name: 'USDT'
       }
     ],
@@ -243,13 +236,11 @@ export const ADDRESSES: {
       {
         token: 'USDT',
         address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
-        decimals: 9,
         name: 'USDT'
       },
       {
         token: 'ETH',
         address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     ],
@@ -420,19 +411,16 @@ export const ADDRESSES: {
       {
         token: 'SOL',
         address: new PublicKey('So11111111111111111111111111111111111111112'),
-        decimals: 9,
         name: 'Solana'
       },
       {
         token: 'USDC',
         address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
-        decimals: 9,
         name: 'USDC Coin'
       },
       {
         token: 'USDT',
         address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
-        decimals: 9,
         name: 'USDT'
       }
     ],
@@ -440,13 +428,11 @@ export const ADDRESSES: {
       {
         token: 'USDT',
         address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
-        decimals: 9,
         name: 'USDT'
       },
       {
         token: 'ETH',
         address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
-        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     ],
@@ -560,11 +546,10 @@ export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
 export const POOL_REGISTRY_PREFIX = 'pool_registry'
 
 export const SSL_V2_ADMIN = new PublicKey('GeSkmvDED55EjnybgdN1gJ89p5V5H9W6jrrhxbZ1pDhQ')
-//sslchange: ERIC WILL GIVE CHANGE IT
+
+export const SSL_PROGRAM_ID = 'GFXsSL5sSaDfNFQUYsHekbWBW1TsFdjDYzACh62tEHxn'
 
 export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
-
-export const SSL_PROGRAM_ID = 'GFXsSL5sSaDfNFQUYsHekbWBW1TsFdjDYzACh62tEHxn' //sslchange: ERIC WILL GIVE CHANGE IT
 
 export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 

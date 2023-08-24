@@ -1,20 +1,16 @@
-/* eslint-disable */
-import { FC, useMemo, Dispatch, SetStateAction, useState, useEffect } from 'react'
+import { FC, useMemo, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, SearchBar, ShowDepositedToggle } from '../../components'
-import { useDarkMode, useFarmContext, usePriceFeedFarm } from '../../context'
-import { firstLetterCapital, getLiquidityAccountKey } from '../../web3'
+import { useDarkMode, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { checkMobile } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
-import { SSLToken } from './constants'
-import { ADDRESSES } from './constants'
+import { SSLToken, poolType } from './constants'
 
-const WRAPPER = styled.div<{ $poolIndex }>`
+const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -93,87 +89,67 @@ const WRAPPER = styled.div<{ $poolIndex }>`
   }
 `
 
-export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateAction<number>> }> = ({
-  poolIndex,
-  setPoolIndex
-}) => {
+export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const poolTypes = ['stable', 'hyper']
-  const [selectedPool, setSelectedPool] = useState<string>(poolTypes[0])
-  const [searchTokens, setSearchTokens] = useState<string>()
   const breakpoint = useBreakPoint()
-  const { operationPending } = useFarmContext()
-  const sslPoolArr = useMemo(
-    () => ADDRESSES['mainnet-beta'][selectedPool].map((coin: SSLToken) => coin),
-    [selectedPool, poolTypes]
-  )
-
-  useEffect(() => {
-    if (poolIndex) setSelectedPool(poolTypes[1])
-    else setSelectedPool(poolTypes[0])
-  }, [poolIndex])
-
+  const { operationPending, pool, setPool, sslData } = useSSLContext()
+  const [searchTokens, setSearchTokens] = useState<string>()
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? sslPoolArr.filter((token: SSLToken) => token?.token?.toLocaleLowerCase().includes(searchTokens))
-        : [...sslPoolArr],
-    [searchTokens, sslPoolArr]
+        ? sslData.filter((token) => token?.token?.toLocaleLowerCase().includes(searchTokens))
+        : [...sslData],
+    [searchTokens, sslData]
   )
-  const handlePoolSelection = (pool, index) => {
-    setPoolIndex(index)
-    setSelectedPool(pool)
-  }
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-end mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
+      <div tw="flex flex-row items-center mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
         <img
-          src={`/img/assets/${firstLetterCapital(selectedPool)}_pools.svg`}
+          src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
-          height={77}
-          width={70}
+          height={55}
+          width={50}
           tw="mr-3.75 duration-500"
         />
         <div tw="flex flex-col">
-          <div tw="text-[25px] font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
-            {selectedPool === 'stable' ? 'Stable' : 'Alpha'} Pools
+          <div tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
+            {pool.index === 3 ? 'Stable' : pool.index === 1 ? 'Primary' : 'Hyper'} Pools
           </div>
-
           <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
-            {poolIndex === 0 ? (
-              <>
-                If you're looking for stable returns with balanced risk,
-                {!checkMobile() && <br />} Stable pools are the way to go.
-              </>
-            ) : (
-              <>
-                If you're looking for high returns with a bit more risk,
-                {!checkMobile() && <br />} Alpha pools are the way to go.
-              </>
-            )}
+            {pool.desc}
           </div>
         </div>
       </div>
       <div tw="flex items-center">
         <div tw="flex cursor-pointer relative">
           <div
-            css={[tw`duration-500`, poolIndex === 1 ? tw`ml-[95px] ` : tw`ml-0`]}
+            css={[
+              tw`duration-500`,
+              pool.index === 3 ? tw`ml-0` : pool.index === 1 ? tw`ml-[95px]` : tw`ml-[190px]`
+            ]}
             tw="h-[35px] bg-blue-1 w-[95px] absolute rounded-[50px]"
           ></div>
           <div
-            css={[poolIndex === 0 ? tw`!text-white` : tw`text-grey-1`]}
+            css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]"
-            onClick={() => (operationPending ? null : handlePoolSelection(poolTypes[0], 0))}
+            onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
             Stable
           </div>
           <div
-            css={[poolIndex === 1 ? tw`!text-white ` : tw`text-grey-1`]}
+            css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px]"
-            onClick={() => (operationPending ? null : handlePoolSelection(poolTypes[1], 1))}
+            onClick={() => (operationPending ? null : setPool(poolType.primary))}
           >
-            Alpha
+            Primary
+          </div>
+          <div
+            css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]"
+            onClick={() => (operationPending ? null : setPool(poolType.hyper))}
+          >
+            Hyper
           </div>
         </div>
         {breakpoint.isDesktop && (
@@ -214,12 +190,7 @@ export const FarmTable: FC<{ poolIndex: number; setPoolIndex: Dispatch<SetStateA
           <tbody>
             {filteredTokens && filteredTokens.length ? (
               filteredTokens.map((coin: SSLToken, index: number) => (
-                <FarmTableCoin
-                  key={`${index}_${selectedPool}`}
-                  coin={coin}
-                  selectedPool={selectedPool}
-                  showDeposited={showDeposited}
-                />
+                <FarmTableCoin key={`${index}_${pool.name}`} coin={coin} showDeposited={showDeposited} />
               ))
             ) : (
               <tr>
@@ -254,22 +225,15 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: boolean }> = ({
-  coin,
-  selectedPool,
-  showDeposited
-}) => {
-  const { SSLProgram } = usePriceFeedFarm()
-  const { isDepositSuccessfull, isWithdrawSuccessfull } = useFarmContext()
-  const { wallet } = useWallet()
-  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
+  const { pool, filteredLiquidityAccounts, isTxnSuccessfull } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [userDepositedAmount, setUserDepositedAmount] = useState<number>(0)
-
-  useEffect(() => {
-    setIsExpanded(false)
-  }, [selectedPool, showDeposited])
-
+  const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
+  const userDepositedAmount = useMemo(
+    () =>
+      filteredLiquidityAccounts[tokenMintAddress]?.amountDeposited?.toNumber() / Math.pow(10, coin?.mintDecimals),
+    [filteredLiquidityAccounts, isTxnSuccessfull]
+  )
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
@@ -277,21 +241,8 @@ const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: b
   }, [showDeposited, userDepositedAmount])
 
   useEffect(() => {
-    ;(async () => {
-      //sslchange: this will break because no accounts exists on these addresses until the user has not deposited funds
-      if (SSLProgram) {
-        try {
-          const liquidityAccountKey = await getLiquidityAccountKey(userPublicKey, coin?.address)
-          const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-          const userDeposited = liquidityAccount?.amountDeposited?.toNumber()
-          console.log('liquidityAccount', liquidityAccount.totalEarned.toNumber(), userDeposited)
-          setUserDepositedAmount(userDeposited / Math.pow(10, coin?.decimals))
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [SSLProgram, userPublicKey, userDepositedAmount, isDepositSuccessfull, isWithdrawSuccessfull])
+    setIsExpanded(false)
+  }, [pool, showDeposited])
 
   return (
     showToggleFilteredTokens && (
@@ -309,7 +260,9 @@ const FarmTableCoin: FC<{ coin: SSLToken; selectedPool: string; showDeposited: b
           {!checkMobile() && <td>$550,111.22</td>}
           {!checkMobile() && <td>$80,596</td>}
           {!checkMobile() && <td>$30,596</td>}
-          {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.0'}</td>}
+          {!checkMobile() && (
+            <td>{userDepositedAmount && !isNaN(userDepositedAmount) ? userDepositedAmount.toFixed(2) : '0.00'}</td>
+          )}
           <td tw="!w-[10%] sm:!w-[33%]">
             <Button
               cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}
