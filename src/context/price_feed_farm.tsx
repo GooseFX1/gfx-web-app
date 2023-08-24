@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {
   createContext,
   Dispatch,
@@ -13,14 +12,11 @@ import React, {
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
-import { CONTROLLER_IDL, SSL_IDL } from 'goosefx-ssl-sdk'
-import { getNetworkConnection, getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
+import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
-import { PublicKey, Connection } from '@solana/web3.js'
-import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk'
+import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
 
-// const minMaxSuffix = '/ohlc?vs_currency=usd&days=7'
 interface IPrices {
   [x: string]: {
     current: number
@@ -90,14 +86,12 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
 
   const SSLProgram: Program = useMemo(
     () =>
-      wallet?.adapter?.publicKey
-        ? new Program(
-            sslJson as any, //sslchange: change to sslJson
-            SSL_PROGRAM_ID,
-            new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
-          )
-        : undefined,
-    [connection, wallet?.adapter?.publicKey]
+      new Program(
+        sslJson as any,
+        SSL_PROGRAM_ID,
+        new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
+      ),
+    [connection]
   )
 
   const refreshTokenData = useCallback(async () => {

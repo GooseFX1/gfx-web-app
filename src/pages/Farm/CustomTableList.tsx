@@ -176,7 +176,6 @@ const CustomTableList: FC = () => {
     return prices[`${name.toUpperCase()}/USDC`]
   }
 
-  //sslchange: ASK ARVIND + SHRIHARI
   const calculateBalances = (sslAccountData, mainVault, liquidityAccountData, SSLTokenNames: string[]) => {
     const farmCalculationsArr: IFarmData[] = []
     let totalLiquidity = 0
