@@ -269,7 +269,7 @@ export const SingleNFTCard: FC<{
   if (hideThisNFT) return null
 
   return (
-    <div tw="pt-4 px-[8px] sm:px-1 sm:pt-2 ">
+    <div tw="pt-4 px-[8px] sm:px-1 sm:pt-2 " id={item?.mint_address}>
       {handleAppraisalPopup()}
       <div
         className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}

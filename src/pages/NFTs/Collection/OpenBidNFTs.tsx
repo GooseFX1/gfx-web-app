@@ -18,12 +18,12 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
   firstCardRef
 }): ReactElement => {
   const { buyNowClicked, bidNowClicked, sellNFTClicked, setSellNFT, openJustModal } = useNFTAggregator()
-  const { openBidWithinCollection, setOpenBidWithinCollection, singleCollection } = useNFTCollections()
+  const { setOpenBidWithinCollection, singleCollection } = useNFTCollections()
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
 
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
   const { refreshClicked, cancelBidClicked } = useNFTAggregator()
-  const paginationNum = 30
+  const paginationNum = 25
   const { general, nftMetadata } = useNFTDetails()
   const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const [filteredOpenBid, setFilteredOpenBid] = useState<BaseNFT[]>(null)
