@@ -35,6 +35,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //sslchange: devnet tokens in constants
   //sslchange: LiquidityAccount type not implied right now
   //sslchange: code verify of this file
+  //sslchange: confirmed transaction pending
+  //sslchange: formula work
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
@@ -78,6 +80,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const liquidityAccountKey = await getLiquidityAccountKey(wallet?.adapter?.publicKey, token?.mint)
             const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
             liquidityData.push(liquidityAccount)
+            console.log('liquidity data', liquidityData)
           } catch (e) {
             console.log(e)
           }
