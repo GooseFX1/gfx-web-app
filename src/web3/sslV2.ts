@@ -296,7 +296,7 @@ const depositAmount = async (
     }
     depositAmountTX.add(depositAmountIX)
     signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
-    const confirm = await connection.confirmTransaction(signature, 'confirmed')
+    const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'deposit error\n', signature)
