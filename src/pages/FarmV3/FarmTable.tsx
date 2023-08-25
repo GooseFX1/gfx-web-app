@@ -286,7 +286,7 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
           {!checkMobile() && (
             <td>{userDepositedAmount && !isNaN(userDepositedAmount) ? userDepositedAmount.toFixed(2) : '0.00'}</td>
           )}
-          <td tw="!w-[10%] sm:!w-[33%]">
+          <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-0">
             <Button
               cssStyle={tw`h-[35px] w-[100px] mr-3 text-white font-semibold text-regular bg-gradient-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}

@@ -156,7 +156,7 @@ export const ADDRESSES: {
 
 export const faqs = [
   {
-    question: 'How does single sided liquidity work?',
+    question: 'What is single-sided liquidity?',
     answer: (
       <div>
         Single-sided liquidity pools offered by GooseFX, also known as vaults, are designed to optimize returns for
@@ -169,7 +169,7 @@ export const faqs = [
     )
   },
   {
-    question: 'How is APY and impermanent loss calculated?',
+    question: 'How is APY calculated?',
     answer: (
       <div>
         Since the pools in the vaults are single-sided there is no impermanent loss that occurs due to a difference
@@ -186,7 +186,7 @@ export const faqs = [
     )
   },
   {
-    question: 'What is the difference between Stable, Primary and Hyper pools?',
+    question: 'What is the difference between stable, primary, and hyper pools?',
     answer: (
       <div>
         <strong>Stable pools:</strong> consists of less volatile tokens, typically with larger market
@@ -205,7 +205,7 @@ export const faqs = [
     )
   },
   {
-    question: 'How are fees calculated and distributed to LPs?',
+    question: 'How are LP fees distributed?',
     answer: (
       <div>
         50% of fees are sent to LPs (liquidity providers). The remaining are sent to our treasury which are then
@@ -215,7 +215,7 @@ export const faqs = [
     )
   },
   {
-    question: 'Is the platform audited?',
+    question: 'What are the risks?',
     answer: (
       <div>
         Yes, the platform has been audited by both OSEC and Halborn and the audit reports can be found here:{' '}
