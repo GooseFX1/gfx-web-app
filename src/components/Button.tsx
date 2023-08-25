@@ -25,9 +25,9 @@ const BUTTON = styled.button<{
     ${({ $disabledColor }) => $disabledColor};
   }
 `
-
+// removing top-[-1.6rem] from loader the loading animation is not centered
 const LOADER = () => (
-  <div tw="relative top-[-1.6rem]">
+  <div tw="relative ">
     <Loader />
   </div>
 )
