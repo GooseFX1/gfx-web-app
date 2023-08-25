@@ -14,7 +14,8 @@ const INFO_CARD = styled.div`
 `
 
 const POOL_CARD = styled.div`
-  ${tw`h-[121px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border-solid dark:border-grey-2 border-grey-1 p-2.5
+  ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border-solid dark:border-grey-2
+   border-grey-1 p-2.5
     sm:h-28 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
 `
 
@@ -115,13 +116,13 @@ export const FarmHeader: FC = () => {
       <POOL_CARD_WRAPPER>
         {topPoolCards?.map((card, index) => (
           <POOL_CARD key={index}>
-            <div tw="flex flex-row justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
+            <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
               <img src={`/img/crypto/${card.name}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
               <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
                 {card?.name}
               </div>
               <div
-                tw="flex flex-row h-[30px] w-[100px] flex flex-row justify-center items-center 
+                tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
                   rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
               >
                 <img
@@ -139,8 +140,10 @@ export const FarmHeader: FC = () => {
                 </div>
               </div>
             </div>
-            <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY</div>
-            <div tw="text-black-4 text-lg font-semibold dark:text-grey-5 mt-[-4px]">{card?.value}</div>
+            <div tw="flex items-center">
+              <div tw="text-grey-1 text-average font-semibold dark:text-grey-2">APY: </div>
+              <div tw="text-black-4 text-average font-semibold dark:text-grey-5 ml-1">{card?.value}</div>
+            </div>
           </POOL_CARD>
         ))}
       </POOL_CARD_WRAPPER>

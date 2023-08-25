@@ -158,6 +158,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
   }
   const handleInputChange = (input: string) => {
+    // handle if the user sends '' or undefined in input box
+    if (input === '') {
+      if (modeOfOperation === ModeOfOperation.DEPOSIT) setDepositAmount(null)
+      else setWithdrawAmount(null)
+      return
+    }
     const inputValue = +input
     if (!isNaN(inputValue)) {
       if (modeOfOperation === ModeOfOperation.DEPOSIT) setDepositAmount(inputValue)
@@ -292,7 +298,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 </Button>
               </div>
             ) : (
-              <Connect customButtonStyle={[tw`sm:w-[80vw] w-[400px] h-8.75`]} />
+              <Connect customButtonStyle={[tw`sm:w-[80vw] w-[400px] !h-8.75`]} />
             )}
           </div>
         )}

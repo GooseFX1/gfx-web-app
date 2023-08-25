@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect } from 'react'
+import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, SearchBar, ShowDepositedToggle } from '../../components'
@@ -72,7 +72,7 @@ const WRAPPER = styled.div`
       }
     }
     td {
-      ${tw`h-[100%] flex items-center justify-center  text-[20px] font-semibold text-center
+      ${tw`h-[100%] flex items-center justify-center  text-[15px] font-semibold text-center
        dark:text-grey-5 text-black-4`}
     }
   }
@@ -95,6 +95,8 @@ export const FarmTable: FC = () => {
   const { operationPending, pool, setPool, sslData } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>()
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
+  const [numberOfCoinsDeposited, setNumberOfCoinsDeposited] = useState<number>(0)
+
   const filteredTokens = useMemo(
     () =>
       searchTokens
@@ -102,6 +104,8 @@ export const FarmTable: FC = () => {
         : [...sslData],
     [searchTokens, sslData]
   )
+  // when the pool changes to hyper or primary, the number of coins deposited should be reset to 0
+  useEffect(() => setNumberOfCoinsDeposited(0), [pool])
   return (
     <WRAPPER>
       <div tw="flex flex-row items-center mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
@@ -186,28 +190,42 @@ export const FarmTable: FC = () => {
       )}
       <div>
         <table tw="mt-4">
-          <FarmTableHeaders poolSize={filteredTokens && filteredTokens.length && filteredTokens.length} />
+          {/* added extra condition to show the number of coins deposited */}
+          <FarmTableHeaders
+            poolSize={
+              showDeposited
+                ? numberOfCoinsDeposited
+                : filteredTokens && filteredTokens.length && filteredTokens.length
+            }
+          />
           <tbody>
             {filteredTokens && filteredTokens.length ? (
               filteredTokens.map((coin: SSLToken, index: number) => (
-                <FarmTableCoin key={`${index}_${pool.name}`} coin={coin} showDeposited={showDeposited} />
+                <FarmTableCoin
+                  key={`${index}_${pool.name}`}
+                  coin={coin}
+                  showDeposited={showDeposited}
+                  setNumberOfCoinsDeposited={setNumberOfCoinsDeposited}
+                />
               ))
             ) : (
-              <tr>
-                <div
-                  tw="h-full flex flex-row justify-center items-center text-regular 
-                  font-semibold dark:text-white text-black"
-                >
-                  No results found!
-                </div>
-              </tr>
+              <NoResultsFound />
             )}
+            {numberOfCoinsDeposited === 0 && showDeposited && <NoResultsFound str="No Tokens Deposited!" />}
           </tbody>
         </table>
       </div>
     </WRAPPER>
   )
 }
+
+const NoResultsFound: FC<{ str?: string }> = ({ str }) => (
+  <tr>
+    <div tw="h-full flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
+      {str ? str : `No results found!`}
+    </div>
+  </tr>
+)
 
 const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   <thead>
@@ -225,7 +243,11 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
+const FarmTableCoin: FC<{
+  coin: SSLToken
+  showDeposited: boolean
+  setNumberOfCoinsDeposited: Dispatch<SetStateAction<number>>
+}> = ({ coin, showDeposited, setNumberOfCoinsDeposited }) => {
   const { pool, filteredLiquidityAccounts, isTxnSuccessfull } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -234,12 +256,20 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
       filteredLiquidityAccounts[tokenMintAddress]?.amountDeposited?.toNumber() / Math.pow(10, coin?.mintDecimals),
     [filteredLiquidityAccounts, isTxnSuccessfull]
   )
+  console.log(filteredLiquidityAccounts, userDepositedAmount)
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
     else if (showDeposited && !userDepositedAmount) return false
   }, [showDeposited, userDepositedAmount])
 
+  // keeps the count of number of user deposited coins, helps to show No deposit message
+  useEffect(
+    () => userDepositedAmount && setNumberOfCoinsDeposited((prev) => prev + 1),
+    [showToggleFilteredTokens, userDepositedAmount]
+  )
+
+  // closes the expanded view when the pool changes
   useEffect(() => {
     setIsExpanded(false)
   }, [pool, showDeposited])
@@ -265,7 +295,7 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
           )}
           <td tw="!w-[10%] sm:!w-[33%]">
             <Button
-              cssStyle={tw`h-[35px] text-white font-semibold text-regular bg-gradient-1`}
+              cssStyle={tw`h-[35px] w-[100px] mr-4 text-white font-semibold text-regular bg-gradient-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
             >
               Stats
