@@ -9,6 +9,11 @@ interface Message {
   message: string | JSX.Element
 }
 
+export type Faq = {
+  question: string
+  answer: string | JSX.Element
+}
+
 export type Pool = {
   index: number
   name: string

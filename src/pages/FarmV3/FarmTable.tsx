@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -248,15 +249,15 @@ const FarmTableCoin: FC<{
   showDeposited: boolean
   setNumberOfCoinsDeposited: Dispatch<SetStateAction<number>>
 }> = ({ coin, showDeposited, setNumberOfCoinsDeposited }) => {
-  const { pool, filteredLiquidityAccounts, isTxnSuccessfull } = useSSLContext()
+  const { pool, filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const userDepositedAmount = useMemo(
     () =>
       filteredLiquidityAccounts[tokenMintAddress]?.amountDeposited?.toNumber() / Math.pow(10, coin?.mintDecimals),
-    [filteredLiquidityAccounts, isTxnSuccessfull]
+    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull]
   )
-  console.log(filteredLiquidityAccounts, userDepositedAmount)
+  console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true

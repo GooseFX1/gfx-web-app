@@ -51,7 +51,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
   const userTokenBalance = useMemo(
     () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
-    [tokenMintAddress, getUIAmount, userPublicKey]
+    [tokenMintAddress, getUIAmount, userPublicKey, isTxnSuccessfull]
   )
   const userTokenBalanceInUSD = useMemo(
     () =>
