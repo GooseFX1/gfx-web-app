@@ -142,6 +142,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage(signature, withdrawAmount, coin?.token, network, 'Withdraw'))
+          setTimeout(() => setWithdrawAmount(0), 500)
           setIsTxnSuccessfull(true)
         } else {
           const { signature, error } = con
