@@ -84,15 +84,15 @@ export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
 
       <div
         css={[
-          tw`duration-300`,
+          tw`duration-300 text-tiny px-3.75 pb-3.75`,
           isFaqOpen
-            ? tw`h-[fit] text-tiny px-3.75 pb-3.75 font-medium dark:text-grey-2 text-grey-1 border 
+            ? tw`h-[fit]  font-medium dark:text-grey-2 text-grey-1 border 
             border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`
-            : tw`h-0 !text-[0px] invisible opacity-0 `,
+            : tw`h-0  invisible opacity-0 `,
           lastElement && tw`!border-0`
         ]}
       >
-        {item.answer}
+        {isFaqOpen && item.answer}
       </div>
     </>
   )

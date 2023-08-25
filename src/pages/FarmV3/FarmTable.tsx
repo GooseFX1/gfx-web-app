@@ -98,7 +98,18 @@ export const FarmTable: FC = () => {
   const { operationPending, pool, setPool, sslData } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>()
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
-  const [numberOfCoinsDeposited, setNumberOfCoinsDeposited] = useState<number>(0)
+  const { filteredLiquidityAccounts } = useSSLContext()
+
+  const numberOfCoinsDeposited = useMemo(() => {
+    const count = sslData.reduce((accumulator, data) => {
+      if (filteredLiquidityAccounts[data.mint.toBase58()]?.amountDeposited?.toNumber() > 0) {
+        return accumulator + 1
+      }
+      return accumulator
+    }, 0)
+
+    return count
+  }, [pool, filteredLiquidityAccounts, sslData, wallet?.adapter?.publicKey])
 
   const filteredTokens = useMemo(
     () =>
@@ -107,8 +118,9 @@ export const FarmTable: FC = () => {
         : [...sslData],
     [searchTokens, sslData]
   )
-  // when the pool changes to hyper or primary, the number of coins deposited should be reset to 0
-  useEffect(() => setNumberOfCoinsDeposited(0), [pool])
+
+  // const numberOfCoinsDeposited = useMemo(() => filteredTokens.length, [filteredTokens]) // useState<number>(0)
+
   return (
     <WRAPPER>
       <div tw="flex flex-row items-center mb-3.75 sm:items-stretch sm:pr-4">
@@ -162,7 +174,7 @@ export const FarmTable: FC = () => {
         {breakpoint.isDesktop && (
           <div tw="flex items-center w-full">
             <SearchBar
-              width="425px"
+              width="400px"
               cssStyle={tw`h-8.75`}
               setSearchFilter={setSearchTokens}
               placeholder="Search by token symbol"
@@ -202,12 +214,7 @@ export const FarmTable: FC = () => {
           <tbody>
             {filteredTokens && filteredTokens.length ? (
               filteredTokens.map((coin: SSLToken, index: number) => (
-                <FarmTableCoin
-                  key={`${index}_${pool.name}`}
-                  coin={coin}
-                  showDeposited={showDeposited}
-                  setNumberOfCoinsDeposited={setNumberOfCoinsDeposited}
-                />
+                <FarmTableCoin key={`${index}_${pool.name}`} coin={coin} showDeposited={showDeposited} />
               ))
             ) : (
               <NoResultsFound />
@@ -244,11 +251,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableCoin: FC<{
-  coin: SSLToken
-  showDeposited: boolean
-  setNumberOfCoinsDeposited: Dispatch<SetStateAction<number>>
-}> = ({ coin, showDeposited, setNumberOfCoinsDeposited }) => {
+const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { pool, filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -257,23 +260,12 @@ const FarmTableCoin: FC<{
       filteredLiquidityAccounts[tokenMintAddress]?.amountDeposited?.toNumber() / Math.pow(10, coin?.mintDecimals),
     [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull]
   )
-  console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
+  // console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
     else if (showDeposited && !userDepositedAmount) return false
   }, [showDeposited, userDepositedAmount])
-
-  // keeps the count of number of user deposited coins, helps to show No deposit message
-  useEffect(
-    () => userDepositedAmount && setNumberOfCoinsDeposited((prev) => prev + 1),
-    [showToggleFilteredTokens, userDepositedAmount]
-  )
-
-  // closes the expanded view when the pool changes
-  useEffect(() => {
-    setIsExpanded(false)
-  }, [pool, showDeposited])
 
   return (
     showToggleFilteredTokens && (
@@ -296,7 +288,7 @@ const FarmTableCoin: FC<{
           )}
           <td tw="!w-[10%] sm:!w-[33%]">
             <Button
-              cssStyle={tw`h-[35px] w-[100px] mr-4 text-white font-semibold text-regular bg-gradient-1`}
+              cssStyle={tw`h-[35px] w-[100px] mr-3 text-white font-semibold text-regular bg-gradient-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
             >
               Stats
