@@ -1,9 +1,7 @@
 import { FC, useState } from 'react'
-import { faqs } from './constants'
+import { faqs, Faq } from './constants'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useDarkMode } from '../../context'
 import { CircularArrow } from '../../components/common/Arrow'
 
 const FAQ_WRAPPER = styled.div`
@@ -59,15 +57,14 @@ export const Faqs: FC = () => (
       </a>
     </div>
     <div tw="rounded-[10px] dark:bg-black-2 bg-white ">
-      {faqs.map((item, index) => (
+      {faqs.map((item: Faq, index: number) => (
         <FaqRow item={item} key={index} index={index} />
       ))}
     </div>
   </FAQ_WRAPPER>
 )
 
-export const FaqRow: FC<{ item; index }> = ({ item, index }) => {
-  // const { mode } = useDarkMode()
+export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
   const [isFaqOpen, setIsFaqOpen] = useState<boolean>(false)
   const lastElement = index === faqs.length - 1
 
@@ -82,11 +79,6 @@ export const FaqRow: FC<{ item; index }> = ({ item, index }) => {
         <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:text-regular">
           {item.question}
         </div>
-        {/* <img
-          src={`/img/assets/arrow-down-${mode}.svg`}
-          alt="arrow-icon"
-          className={isFaqOpen ? 'invertArrow' : 'dontInvert'}
-        /> */}
         <CircularArrow cssStyle={tw`h-5 w-5 dark:opacity-90`} invert={isFaqOpen} />
       </div>
 
