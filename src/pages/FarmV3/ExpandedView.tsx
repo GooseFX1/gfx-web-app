@@ -176,9 +176,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col`,
-        isExpanded
-          ? tw`h-[135px] sm:h-[382px] visible text-regular p-5 sm:p-4`
-          : tw`h-0 invisible text-[0px] p-0 opacity-0 w-0`
+        isExpanded ? tw`h-[115px] sm:h-[382px] visible  p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
       <div tw="flex flex-col">
@@ -230,7 +228,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           </>
         )}
         {breakpoint.isDesktop && (
-          <div tw="mt-5">
+          <div tw="mt-4">
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
@@ -242,45 +240,51 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
       <div>
         <div tw="flex relative">
-          <div tw="absolute flex z-[100]">
-            <div
-              onClick={() =>
-                modeOfOperation === ModeOfOperation.DEPOSIT
-                  ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
-                  : setWithdrawAmount(userDepositedAmount ? 0.01 : 0)
-              }
-              tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
-            >
-              Min
+          {isExpanded && (
+            <div tw="absolute flex z-[100]">
+              <div
+                onClick={() =>
+                  modeOfOperation === ModeOfOperation.DEPOSIT
+                    ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
+                    : setWithdrawAmount(userDepositedAmount ? 0.01 : 0)
+                }
+                tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
+              >
+                Min
+              </div>
+              <div
+                onClick={() =>
+                  modeOfOperation === ModeOfOperation.DEPOSIT
+                    ? setDepositAmount(userTokenBalance ? parseFloat(userTokenBalance.toFixed(2)) : 0)
+                    : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
+                }
+                tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
+              >
+                Max
+              </div>
             </div>
-            <div
-              onClick={() =>
-                modeOfOperation === ModeOfOperation.DEPOSIT
-                  ? setDepositAmount(userTokenBalance ? parseFloat(userTokenBalance.toFixed(2)) : 0)
-                  : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
-              }
-              tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
-            >
-              Max
-            </div>
-          </div>
+          )}
 
-          <input
-            onChange={(e) => handleInputChange(e.target.value)}
-            placeholder={isExpanded ? `0.00` : ``}
-            value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
-            css={[
-              tw`duration-500 rounded-[50px] relative text-regular font-semibold outline-none dark:bg-black-1 
+          {isExpanded && (
+            <>
+              <input
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder={`0.00`}
+                value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
+                css={[
+                  tw`duration-500 rounded-[50px] relative !text-regular font-semibold outline-none dark:bg-black-1 
                 bg-grey-5 border-none`,
-              isExpanded
-                ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right sm:pl-[65%]`
-                : tw`h-0 w-0 pl-0 invisible`
-            ]}
-            type="number"
-          />
-          <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">
-            {coin?.token}
-          </div>
+                  isExpanded
+                    ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right sm:pl-[65%]`
+                    : tw`h-0 w-0 pl-0 invisible`
+                ]}
+                type="number"
+              />
+              <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">
+                {coin?.token}
+              </div>
+            </>
+          )}
         </div>
         {isExpanded && (
           <div tw="mt-4">
@@ -305,14 +309,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       </div>
 
       {breakpoint.isDesktop && isExpanded && (
-        <div>
+        <div tw="mt-1">
           <FarmStats
             alignRight={true}
             isExpanded={isExpanded}
             keyStr="Total Earnings"
             value={`2.5 ${coin?.token} ($12 USD)`}
           />
-          <div tw="mt-2">
+          <div tw="mt-3">
             <FarmStats
               alignRight={true}
               isExpanded={isExpanded}
@@ -335,10 +339,10 @@ const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean; alignR
   <div
     css={[
       tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
-      isExpanded ? tw`text-regular opacity-100` : tw`text-[0px] invisible opacity-0`
+      isExpanded ? tw`text-regular opacity-100` : tw` duration-100 invisible opacity-0`
     ]}
   >
-    <div tw="text-grey-1" css={[!!alignRight && tw`text-right`]}>
+    <div tw="text-grey-1 leading-3" css={[!!alignRight && tw`text-right`]}>
       {keyStr}
     </div>
     <div tw="text-grey-2">{value}</div>
