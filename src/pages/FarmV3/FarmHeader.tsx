@@ -4,13 +4,13 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 
 const CARD_GRADIENT = styled.div`
-  ${tw`h-[60px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+  ${tw`h-[56px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center px-2.5 sm:py-[5px]`}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] px-2.5 sm:py-[5px]`}
 `
 
 const POOL_CARD = styled.div`
@@ -65,9 +65,7 @@ export const FarmHeader: FC = () => {
             <CARD_GRADIENT key={index}>
               <INFO_CARD key={index}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
-                <div tw="text-regular font-semibold text-black-4 dark:text-grey-5 sm:text-regular">
-                  {card?.value}
-                </div>
+                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular">{card?.value}</div>
               </INFO_CARD>
             </CARD_GRADIENT>
           </>
@@ -94,7 +92,7 @@ export const FarmHeader: FC = () => {
           <div tw="dark:text-grey-2 text-regular leading-3 font-semibold text-grey-1 sm:mt-3 sm:text-tiny">
             Today
           </div>
-          <div tw="dark:text-grey-5 text-lg font-semibold  text-black-4 mb-2.5">Top Pools</div>
+          <div tw="dark:text-grey-5 text-lg font-semibold  text-black-4 mb-3.75 leading-[25px]">Top Pools</div>
         </div>
         {/* {checkMobile() && (
           <div
@@ -140,9 +138,9 @@ export const FarmHeader: FC = () => {
                 </div>
               </div>
             </div>
-            <div tw="flex items-center">
-              <div tw="text-grey-1 text-average font-semibold dark:text-grey-2">APY: </div>
-              <div tw="text-black-4 text-average font-semibold dark:text-grey-5 ml-1">{card?.value}</div>
+            <div tw="flex items-center leading-[22px]">
+              <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
+              <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">{card?.value}</div>
             </div>
           </POOL_CARD>
         ))}

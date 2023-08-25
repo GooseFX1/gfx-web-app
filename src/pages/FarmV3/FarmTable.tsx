@@ -10,6 +10,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
 import { SSLToken, poolType } from './constants'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -93,6 +94,7 @@ const WRAPPER = styled.div`
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
+  const { wallet } = useWallet()
   const { operationPending, pool, setPool, sslData } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>()
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
@@ -109,7 +111,7 @@ export const FarmTable: FC = () => {
   useEffect(() => setNumberOfCoinsDeposited(0), [pool])
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-center mb-5 sm:items-stretch sm:pr-4 sm:mb-3.75">
+      <div tw="flex flex-row items-center mb-3.75 sm:items-stretch sm:pr-4">
         <img
           src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
@@ -119,7 +121,7 @@ export const FarmTable: FC = () => {
         />
         <div tw="flex flex-col">
           <div tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
-            {pool.index === 3 ? 'Stable' : pool.index === 1 ? 'Primary' : 'Hyper'} Pools
+            {pool.name} Pools
           </div>
           <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
             {pool.desc}
@@ -137,21 +139,21 @@ export const FarmTable: FC = () => {
           ></div>
           <div
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]"
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
             Stable
           </div>
           <div
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px]"
+            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.primary))}
           >
             Primary
           </div>
           <div
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px]"
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.hyper))}
           >
             Hyper
@@ -166,15 +168,17 @@ export const FarmTable: FC = () => {
               placeholder="Search by token symbol"
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             />
-            <div tw="ml-auto flex items-center mr-2">
-              <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
-              <div
-                tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
+            {wallet?.adapter?.publicKey && (
+              <div tw="ml-auto flex items-center mr-2">
+                <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+                <div
+                  tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
                font-semibold mt-[-4px] ml-2.5"
-              >
-                Show <br /> Deposited
+                >
+                  Show <br /> Deposited
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -193,11 +197,7 @@ export const FarmTable: FC = () => {
         <table tw="mt-4">
           {/* added extra condition to show the number of coins deposited */}
           <FarmTableHeaders
-            poolSize={
-              showDeposited
-                ? numberOfCoinsDeposited
-                : filteredTokens && filteredTokens.length && filteredTokens.length
-            }
+            poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length && filteredTokens.length}
           />
           <tbody>
             {filteredTokens && filteredTokens.length ? (
@@ -236,7 +236,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
       {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('Balance', null, true)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('My Balance', null, true)} </th>}
       <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">
         {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
       </th>

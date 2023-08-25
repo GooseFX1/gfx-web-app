@@ -44,7 +44,7 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row mt-5">
+    <div tw="flex flex-row mt-10">
       <h2 tw="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">FAQs</h2>
       <a
         tw="w-[140px] h-[35px] bg-blue-1 cursor-pointer text-white font-semibold
