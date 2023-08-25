@@ -24,18 +24,14 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
   const { SSLProgram } = usePriceFeedFarm()
   const { wallet } = useWallet()
-  const [sslData, setSslData] = useState([])
-  const [allPoolSslData, setAllPoolSslData] = useState([])
+  const [sslData, setSslData] = useState<SSLToken[]>([])
+  const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
   const [pool, setPool] = useState<Pool>(poolType.stable)
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
 
-  //sslchange: devnet tokens in constants
-  //sslchange: LiquidityAccount type not implied right now
-  //sslchange: code verify of this file
-  //sslchange: confirmed transaction pending
   //sslchange: formula work
   useEffect(() => {
     ;(async () => {
