@@ -80,12 +80,11 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const liquidityAccountKey = await getLiquidityAccountKey(wallet?.adapter?.publicKey, token?.mint)
             const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
             liquidityData.push(liquidityAccount)
-            console.log('liquidity data', liquidityData)
           } catch (e) {
             console.log(e)
           }
         }
-        if (liquidityData.length) setLiquidityAccounts(liquidityData)
+        setLiquidityAccounts(liquidityData)
       }
     })()
   }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
