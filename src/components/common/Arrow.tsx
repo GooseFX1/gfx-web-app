@@ -9,9 +9,6 @@ const ARROW = styled.div<{ $cssStyle: TwStyle; $height: string; $width: string; 
   width: ${({ $width }) => $width};
   transform: ${({ $invert }) => ($invert ? 'rotate(180deg)' : '')};
   ${({ $cssStyle }) => $cssStyle};
-  @media (max-width: 500px) {
-    margin-right: ${({ $invert }) => ($invert ? '8px' : '')};
-  }
 `
 export const Arrow: FC<{
   height: string

@@ -7,7 +7,7 @@ import { CircularArrow } from '../../components/common/Arrow'
 const FAQ_WRAPPER = styled.div`
   ${tw`sm:w-[calc(100% - 15px)]`}
   .faqs {
-    ${tw`flex flex-row cursor-pointer items-center h-[52px] sm:h-14 px-3.75 w-full
+    ${tw`flex flex-row cursor-pointer items-center h-[52px] sm:h-auto sm:py-3 px-3.75 w-full
      border border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`}
   }
   .last-faq {
@@ -76,7 +76,7 @@ export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
           setIsFaqOpen((prev) => !prev)
         }}
       >
-        <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:text-regular">
+        <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:leading-[25px] sm:text-regular">
           {item.question}
         </div>
         <CircularArrow cssStyle={tw`h-5 w-5 dark:opacity-90`} invert={isFaqOpen} />
@@ -86,7 +86,7 @@ export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
         css={[
           tw`duration-300 text-tiny px-3.75 `,
           isFaqOpen
-            ? tw`h-[fit] font-medium dark:text-grey-2 text-grey-1 border pb-3.75
+            ? tw`h-[fit] font-medium dark:text-grey-2 text-grey-1 border pb-3.75 sm:mt-0.5
             border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`
             : tw`h-0  invisible opacity-0 `,
           lastElement && tw`!border-0`

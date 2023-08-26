@@ -22,6 +22,9 @@ const WRAPPER = styled.div`
     -moz-appearance: textfield;
   }
 
+  .searchBarContainer {
+    ${tw`sm:w-[95vw]`}
+  }
   .tableRowGradient {
     background: linear-gradient(111deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   }
@@ -119,20 +122,18 @@ export const FarmTable: FC = () => {
     [searchTokens, sslData]
   )
 
-  // const numberOfCoinsDeposited = useMemo(() => filteredTokens.length, [filteredTokens]) // useState<number>(0)
-
   return (
     <WRAPPER>
       <div tw="flex flex-row items-center mb-3.75 sm:items-stretch sm:pr-4">
         <img
           src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
-          height={55}
-          width={50}
+          height={breakpoint.isMobile ? 45 : 55}
+          width={breakpoint.isMobile ? 40 : 50}
           tw="mr-3.75 duration-500"
         />
         <div tw="flex flex-col">
-          <div tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-1.5">
+          <div tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-0 sm:leading-[22px]">
             {pool.name} Pools
           </div>
           <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
@@ -145,27 +146,31 @@ export const FarmTable: FC = () => {
           <div
             css={[
               tw`duration-500`,
-              pool.index === 3 ? tw`ml-0` : pool.index === 1 ? tw`ml-[95px]` : tw`ml-[190px]`
+              pool.index === 3
+                ? tw`ml-0`
+                : pool.index === 1
+                ? tw`ml-[95px] sm:ml-[72px]`
+                : tw`ml-[190px] sm:ml-[144px]`
             ]}
-            tw="h-[35px] bg-blue-1 w-[95px] absolute rounded-[50px]"
+            tw="h-[35px] bg-blue-1 w-[95px] sm:w-[72px] absolute rounded-[50px]"
           ></div>
           <div
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px] text-regular"
+            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[72px] justify-center font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
             Stable
           </div>
           <div
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] text-regular"
+            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[72px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.primary))}
           >
             Primary
           </div>
           <div
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold w-[95px] text-regular"
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold sm:w-[72px] w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.hyper))}
           >
             Hyper
@@ -193,18 +198,31 @@ export const FarmTable: FC = () => {
             )}
           </div>
         )}
+
+        {breakpoint.isMobile && wallet?.adapter?.publicKey && (
+          <div tw="ml-auto flex items-center mr-2">
+            <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+            <div
+              tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
+               font-semibold mt-[-4px] ml-2.5 sm:ml-2"
+            >
+              Show <br /> Deposited
+            </div>
+          </div>
+        )}
       </div>
       {breakpoint.isMobile && (
-        <div tw="sm:mt-4">
+        <div tw="sm:mt-4 ">
           <SearchBar
-            width={`95%`}
-            cssStyle={tw`h-8.75`}
+            className="searchBarContainer"
+            cssStyle={tw`h-8.75 w-full`}
             setSearchFilter={setSearchTokens}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
           />
         </div>
       )}
+
       <div>
         <table tw="mt-4">
           {/* added extra condition to show the number of coins deposited */}
@@ -238,13 +256,13 @@ const NoResultsFound: FC<{ str?: string }> = ({ str }) => (
 const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   <thead>
     <tr>
-      <th tw="!text-left !justify-start pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
+      <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
       <th>{TableHeaderTitle('APY', null, true)} </th>
       {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
       {!checkMobile() && <th>{TableHeaderTitle('My Balance', null, true)} </th>}
-      <th tw="!text-right !justify-end !flex !w-[10%] sm:!w-[33%]">
+      <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[33%]">
         {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
       </th>
     </tr>
@@ -252,7 +270,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
 )
 
 const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
-  const { pool, filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
+  const { filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const userDepositedAmount = useMemo(
@@ -276,6 +294,11 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
           onClick={() => setIsExpanded((prev) => !prev)}
         >
           <td tw="!justify-start">
+            {userDepositedAmount && showDeposited ? (
+              <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
+            ) : (
+              <></>
+            )}
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
@@ -286,14 +309,14 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
           {!checkMobile() && (
             <td>{userDepositedAmount && !isNaN(userDepositedAmount) ? userDepositedAmount.toFixed(2) : '0.00'}</td>
           )}
-          <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-0">
+          <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <Button
-              cssStyle={tw`h-[35px] w-[100px] mr-3 text-white font-semibold text-regular bg-gradient-1`}
+              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-regular bg-gradient-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
             >
               Stats
             </Button>
-            <div tw="ml-2">
+            <div tw="ml-2 sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
             </div>
           </td>
