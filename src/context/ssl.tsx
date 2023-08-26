@@ -90,12 +90,17 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         if (liquidityAccounts) {
           const filteredData = {}
-          ADDRESSES[network].forEach((pool: any) =>
-            liquidityAccounts.forEach((account: any) => {
-              if (account?.mint.toBase58() === pool.address.toBase58()) filteredData[pool.address] = account
-              else filteredData[pool.address] = null
-            })
-          )
+          ADDRESSES[network].forEach((pool: any) => {
+            let found = false
+            for (let i = 0; i < liquidityAccounts.length; i++) {
+              const account = liquidityAccounts[i]
+              if (account?.mint.toBase58() === pool.address.toBase58()) {
+                filteredData[pool.address] = account
+                found = true
+              }
+            }
+            if (!found) filteredData[pool.address] = null
+          })
           setFilteredLiquidityAccounts(filteredData)
         }
       } catch (e) {
