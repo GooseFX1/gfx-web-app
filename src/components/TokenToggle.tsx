@@ -13,8 +13,7 @@ const TOGGLE_WRAPPER = styled.div<{ position: number }>`
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%);
   }
   .pinkGradient {
-    ${tw`sm:mr-3   
-    cursor-pointer items-center`}
+    ${tw`cursor-pointer items-center`}
     background: ${({ position }) =>
       position === 1 ? 'linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%)' : 'pink'}
   }
@@ -112,11 +111,12 @@ export const ShowDepositedToggle: FC<{ enabled: boolean; setEnable: Dispatch<Set
 }) => (
   <TOGGLE_WRAPPER position={enabled ? 1 : 0} onClick={() => setEnable((prev) => !prev)}>
     <div
-      tw="!w-[75px] !h-8.75 rounded-[35px] ml-10 duration-500 dark:bg-black-3 bg-grey-4"
+      tw="!rounded-[35px] !w-[75px] sm:!w-[70px] !h-8.75 
+       sm:ml-0 ml-10 duration-500 dark:bg-black-3 bg-grey-4"
       className={enabled && 'pinkGradient'}
     >
       <div
-        css={[enabled ? tw`ml-10` : tw`ml-[-1px]`]}
+        css={[enabled ? tw`ml-10 sm:ml-9` : tw`ml-[-1px] sm:ml-0`]}
         tw="!h-8.75 !w-8.75 z-[10] !bg-black-4 rounded-[50%] duration-200"
       />
     </div>

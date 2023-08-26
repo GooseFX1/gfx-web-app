@@ -177,23 +177,23 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col`,
-        isExpanded ? tw`h-[115px] sm:h-[382px] visible  p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
+        isExpanded ? tw`h-[115px] sm:h-[366px] visible  p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
       <div tw="flex flex-col">
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
-            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${coin}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin?.token}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin?.token}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${coin?.token}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${coin?.token}`} />
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${coin}`}
+              value={`${userTokenBalance.toFixed(2)} ${coin?.token}`}
             />
-            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`2.5 ${coin}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin?.token}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="My Balance" value={`2.5 ${coin?.token}`} />
           </div>
         )}
         {isExpanded && (
@@ -201,7 +201,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <div tw="flex font-semibold duration-500 relative sm:mt-2">
               <div
                 css={[
-                  tw`bg-blue-1 h-8.75 sm:h-10 w-[100px] sm:w-[50%] rounded-full`,
+                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
                     ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
@@ -209,7 +209,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               ></div>
               <div
                 css={[
-                  tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.DEPOSIT))}
@@ -218,7 +218,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               </div>
               <div
                 css={[
-                  tw`h-[35px] w-[100px] sm:h-10 sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
+                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center cursor-pointer`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.WITHDRAW))}
@@ -294,7 +294,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 <Button
                   height="35px"
                   disabled={isButtonLoading}
-                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%]  h-8.75 bg-blue-1 text-regular border-none
+                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={modeOfOperation === ModeOfOperation.DEPOSIT ? handleDeposit : handleWithdraw}
                   loading={isButtonLoading}
@@ -321,7 +321,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               alignRight={true}
               isExpanded={isExpanded}
-              keyStr="Balance"
+              keyStr="My Balance"
               value={`2.5 ${coin?.token} ($12 USD)`}
             />
           </div>
@@ -339,11 +339,11 @@ const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean; alignR
 }) => (
   <div
     css={[
-      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between sm:mb-1`,
+      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`,
       isExpanded ? tw`text-regular opacity-100` : tw` duration-100 invisible opacity-0`
     ]}
   >
-    <div tw="text-grey-1 leading-3" css={[!!alignRight && tw`text-right`]}>
+    <div tw="text-grey-2" css={[!!alignRight && tw`text-right`]}>
       {keyStr}
     </div>
     <div tw="text-grey-2">{value}</div>
