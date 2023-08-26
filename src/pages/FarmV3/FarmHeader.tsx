@@ -4,19 +4,19 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 
 const CARD_GRADIENT = styled.div`
-  ${tw`h-[56px] w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+  ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] px-2.5 sm:py-[5px]`}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1
+   px-2.5 `}
 `
 
 const POOL_CARD = styled.div`
   ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border-solid dark:border-grey-2
-   border-grey-1 p-2.5
-    sm:h-28 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
+   border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
 `
 
 const HEADER_WRAPPER = styled.div`
@@ -30,7 +30,7 @@ const HEADER_WRAPPER = styled.div`
 `
 
 const POOL_CARD_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-between mb-5 sm:my-5`}
+  ${tw`flex flex-row justify-between mb-5 sm:my-3.5`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -65,7 +65,9 @@ export const FarmHeader: FC = () => {
             <CARD_GRADIENT key={index}>
               <INFO_CARD key={index}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular">{card?.value}</div>
+                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
+                  {card?.value}
+                </div>
               </INFO_CARD>
             </CARD_GRADIENT>
           </>
@@ -89,10 +91,15 @@ export const FarmHeader: FC = () => {
       </HEADER_WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
-          <div tw="dark:text-grey-2 text-regular leading-3 font-semibold text-grey-1 sm:mt-3 sm:text-tiny">
+          <div
+            tw="dark:text-grey-2 text-regular sm:!leading-[15px] font-semibold text-grey-1 sm:mt-[-2px]
+           sm:text-tiny"
+          >
             Today
           </div>
-          <div tw="dark:text-grey-5 text-lg font-semibold  text-black-4 mb-3.75 leading-[25px]">Top Pools</div>
+          <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
+            Top Pools
+          </div>
         </div>
         {/* {checkMobile() && (
           <div
@@ -138,7 +145,7 @@ export const FarmHeader: FC = () => {
                 </div>
               </div>
             </div>
-            <div tw="flex items-center leading-[22px]">
+            <div tw="flex items-center leading-[22px] sm:mt-3.5">
               <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
               <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">{card?.value}</div>
             </div>
