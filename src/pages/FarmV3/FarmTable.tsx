@@ -11,6 +11,9 @@ import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
 import { SSLToken, poolType } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
+import Lottie from 'lottie-react'
+import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
+import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -235,9 +238,18 @@ export const FarmTable: FC = () => {
                 <FarmTableCoin key={`${index}_${pool.name}`} coin={coin} showDeposited={showDeposited} />
               ))
             ) : (
-              <NoResultsFound />
+              <NoResultsFound
+                requestPool={true}
+                str="Oops, no pools found"
+                subText="Don’t worry, there are more pools coming soon..."
+              />
             )}
-            {numberOfCoinsDeposited === 0 && showDeposited && <NoResultsFound str="No Tokens Deposited!" />}
+            {numberOfCoinsDeposited === 0 && showDeposited && (
+              <NoResultsFound
+                str="Oops, no pools deposited"
+                subText="Don’t worry, explore our pools and start earning!"
+              />
+            )}
           </tbody>
         </table>
       </div>
@@ -245,13 +257,33 @@ export const FarmTable: FC = () => {
   )
 }
 
-const NoResultsFound: FC<{ str?: string }> = ({ str }) => (
-  <tr>
-    <div tw="h-full flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
-      {str ? str : `No results found!`}
+const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean }> = ({
+  str,
+  subText,
+  requestPool
+}) => {
+  const { mode } = useDarkMode()
+  return (
+    <div css={[requestPool ? tw`h-[258px]` : tw`h-[208px]`]} tw=" flex flex-col mt-[30px] sm:mt-0">
+      <div tw="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
+        <Lottie
+          animationData={mode === 'dark' ? NoResultFarmdark : NoResultFarmlite}
+          tw="h-[97px] sm:h-[81px] w-[168px]"
+        />
+      </div>
+      <div tw="flex items-center flex-col">
+        <div tw="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
+        <div tw="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
+        {/* need to add on click */}
+        {requestPool && (
+          <div tw="w-[219px] h-8.75  cursor-pointer flex items-center justify-center mt-4 text-regular rounded-[30px] font-semibold bg-gradient-1">
+            Request pool
+          </div>
+        )}
+      </div>
     </div>
-  </tr>
-)
+  )
+}
 
 const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   <thead>
@@ -269,15 +301,24 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
+// lets paste this in some helper doc
+function calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin) {
+  const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
+  const amountDeposited = account.amountDeposited?.toNumber() || 0 // Get deposited amount or use 0
+  const mintDecimals = coin?.mintDecimals || 0 // Get mint decimals or use 0
+  return amountDeposited / Math.pow(10, mintDecimals) // Calculate and return user deposited amount
+}
+
 const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
-  const userDepositedAmount = useMemo(
-    () =>
-      filteredLiquidityAccounts[tokenMintAddress]?.amountDeposited?.toNumber() / Math.pow(10, coin?.mintDecimals),
-    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull]
+
+  const userDepositedAmount: number = useMemo(
+    () => calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin), // Calculate user deposited amount
+    [filteredLiquidityAccounts, tokenMintAddress, coin]
   )
+
   // console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
@@ -306,12 +347,10 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
           {!checkMobile() && <td>$550,111.22</td>}
           {!checkMobile() && <td>$80,596</td>}
           {!checkMobile() && <td>$30,596</td>}
-          {!checkMobile() && (
-            <td>{userDepositedAmount && !isNaN(userDepositedAmount) ? userDepositedAmount.toFixed(2) : '0.00'}</td>
-          )}
+          {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <Button
-              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-regular bg-gradient-1`}
+              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-[15px] bg-gradient-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
             >
               Stats
