@@ -62,8 +62,8 @@ export const FarmHeader: FC = () => {
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         {infoCards?.map((card, index) => (
           <>
-            <CARD_GRADIENT key={index}>
-              <INFO_CARD key={index}>
+            <CARD_GRADIENT key={index + card?.name}>
+              <INFO_CARD key={index + card?.value}>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
                   {card?.value}
@@ -120,7 +120,7 @@ export const FarmHeader: FC = () => {
       </div>
       <POOL_CARD_WRAPPER>
         {topPoolCards?.map((card, index) => (
-          <POOL_CARD key={index}>
+          <POOL_CARD key={index + card?.name}>
             <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
               <img src={`/img/crypto/${card.name}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
               <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">

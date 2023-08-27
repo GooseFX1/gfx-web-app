@@ -40,6 +40,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
+  const { pool } = useSSLContext()
 
   useEffect(() => {
     ;(async () => {
@@ -49,6 +50,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       }
     })()
   }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
+
   const userTokenBalance = useMemo(
     () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
     [tokenMintAddress, getUIAmount, userPublicKey, isTxnSuccessfull]
@@ -67,6 +69,30 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
     return true
   }
+
+  // Disable action button when deposit mode with zero user balance or no deposit amount,
+  // or withdraw mode with zero user deposited amount or no withdraw amount
+  const disableActionButton = useMemo(
+    () =>
+      (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
+      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount)),
+    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount]
+  )
+
+  // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
+  const actionButtonText = useMemo(() => {
+    if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (depositAmount) return modeOfOperation
+      if (!depositAmount) return `Enter Amount`
+      if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
+    }
+    if (modeOfOperation === ModeOfOperation.WITHDRAW) {
+      if (withdrawAmount) return modeOfOperation
+      if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
+      if (!withdrawAmount) return `Enter Amount`
+    }
+  }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount])
+
   const checkConditionsForDepositWithdraw = (isDeposit: boolean) => {
     if (!enoughSOLInWallet()) return true
     if (isDeposit) {
@@ -293,13 +319,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div>
                 <Button
                   height="35px"
-                  disabled={isButtonLoading}
+                  disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
+                  disabled={isButtonLoading || disableActionButton}
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={modeOfOperation === ModeOfOperation.DEPOSIT ? handleDeposit : handleWithdraw}
                   loading={isButtonLoading}
                 >
-                  {modeOfOperation}
+                  {actionButtonText}
                 </Button>
               </div>
             ) : (
