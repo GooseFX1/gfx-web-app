@@ -1,20 +1,24 @@
-import styled from 'styled-components'
+/* eslint-disable   */
 import { Row, Col } from 'antd'
 import { FC } from 'react'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
 
 const MESSAGE = styled.div`
   margin: -12px 0;
   font-size: 12px;
   font-weight: 700;
+  ${tw``}
 
   .add-text {
     font-weight: 600;
   }
-  .m-title {
+  .mTitle {
     margin-bottom: 16px;
   }
 
-  .m-icon {
+  .mIcon {
     width: 20.5px;
     height: 20px;
   }
@@ -22,7 +26,7 @@ const MESSAGE = styled.div`
 
 interface ISuccessfulListingMsg {
   title: string
-  itemName: string
+  itemName?: string
   supportText?: string
   additionalText?: string
   tx_url: string
@@ -30,14 +34,14 @@ interface ISuccessfulListingMsg {
 
 export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
   <MESSAGE>
-    <Row className="m-title" justify="space-between" align="middle">
+    <Row className="mTitle" justify="space-between" align="middle">
       <Col>{props.title}</Col>
       <Col>
-        <img className="m-icon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+        <img className="mIcon" src={`/img/assets/bid-success-icon.svg`} alt="" />
       </Col>
     </Row>
-    <div>{props.itemName}</div>
-    <div>{props.supportText}</div>
+
+    <div tw="font-medium">{props.supportText}</div>
     <div className="add-text">{props.additionalText}</div>
     <div>
       <a
@@ -55,6 +59,25 @@ export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
   </MESSAGE>
 )
 
+export const SuccessSSLMessage: FC<{ operation?: string; token?: string; amount?: number | string }> = ({
+  operation,
+  token,
+  amount
+}) => (
+  <MESSAGE>
+    <div tw="flex items-center justify-between">
+      <div tw="text-[15px]">Success</div>
+      <div>
+        <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+      </div>
+    </div>
+
+    <div tw="font-semibold text-[13px]">
+      You’ve {operation} {amount} <b>{token}</b> to <b>{token} POOL</b>, Remember the more you deposit the more you
+      can earn!
+    </div>
+  </MESSAGE>
+)
 interface ITransactionErrorMsg {
   title: string
   itemName: string
@@ -64,10 +87,10 @@ interface ITransactionErrorMsg {
 
 export const TransactionErrorMsg: FC<ITransactionErrorMsg> = (props) => (
   <MESSAGE>
-    <Row className="m-title" justify="space-between" align="middle">
+    <Row className="mTitle" justify="space-between" align="middle">
       <Col>{props.title}</Col>
       <Col>
-        <img className="m-icon" src={`/img/assets/close-white-icon.svg`} alt="" />
+        <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
       </Col>
     </Row>
     <div>{props.itemName}</div>
@@ -86,5 +109,22 @@ export const TransactionErrorMsg: FC<ITransactionErrorMsg> = (props) => (
         </a>
       </div>
     )}
+  </MESSAGE>
+)
+export const TransactionErrorMsgSSL: FC = () => (
+  <MESSAGE>
+    <div tw="flex items-center justify-between">
+      <div tw="text-regular text-white">We didn't catch that!</div>
+      <div>
+        <img className="mIcon" src={`/img/assets/close-circle.svg`} alt="" />
+      </div>
+    </div>
+    <div tw="text-[13px] font-semibold">
+      {/* Ask Emiliano what must be here */}
+      Please bear with us and try again, or if the error continues{' '}
+      <a href="https://solscan.com/tx/" target="_blank" tw="text-white font-semibold">
+        <u>go to docs</u>
+      </a>
+    </div>
   </MESSAGE>
 )

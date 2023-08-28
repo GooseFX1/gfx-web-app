@@ -28,7 +28,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 }) => {
   const { wallet } = useWallet()
   const wal = useWallet()
-  const { connection, network } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm()
@@ -127,6 +127,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       return false
     }
   }
+  notify(sslSuccessfulMessage('Deposit', depositAmount, coin?.token))
+  notify(sslErrorMessage())
+
   const handleDeposit = (): void => {
     if (checkConditionsForDepositWithdraw(true)) return
     try {
@@ -137,14 +140,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       confirm.then((con) => {
         setOperationPending(false)
         setIsButtonLoading(false)
-        const { confirm, signature } = con
+        const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, depositAmount, coin?.token, network, 'Deposit'))
+          notify(sslSuccessfulMessage('Deposit', depositAmount, coin?.token))
           setTimeout(() => setDepositAmount(0), 500)
           setIsTxnSuccessfull(true)
         } else {
-          const { signature, error } = con
-          notify(sslErrorMessage(coin?.token, error?.message, signature, network, 'Deposit'))
+          notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }
@@ -165,14 +167,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
         setOperationPending(false)
-        const { confirm, signature } = con
+        const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage(signature, withdrawAmount, coin?.token, network, 'Withdraw'))
+          notify(sslSuccessfulMessage('Withdraw', withdrawAmount, coin?.token))
           setTimeout(() => setWithdrawAmount(0), 500)
           setIsTxnSuccessfull(true)
         } else {
-          const { signature, error } = con
-          notify(sslErrorMessage(coin?.token, error?.message, signature, network, 'Withdraw'))
+          notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }

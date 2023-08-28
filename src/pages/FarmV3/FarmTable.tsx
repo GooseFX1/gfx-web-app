@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction } from 'react'
+import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction, useCallback } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, SearchBar, ShowDepositedToggle } from '../../components'
@@ -301,14 +301,6 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-// lets paste this in some helper doc
-function calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin) {
-  const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
-  const amountDeposited = account.amountDeposited?.toNumber() || 0 // Get deposited amount or use 0
-  const mintDecimals = coin?.mintDecimals || 0 // Get mint decimals or use 0
-  return amountDeposited / Math.pow(10, mintDecimals) // Calculate and return user deposited amount
-}
-
 const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -319,7 +311,13 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
     [filteredLiquidityAccounts, tokenMintAddress, coin]
   )
 
-  // console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
+  const calculateUserDepositedAmount = useCallback((filteredLiquidityAccounts, tokenMintAddress, coin) => {
+    const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
+    const amountDeposited = account.amountDeposited?.toNumber() || 0 // Get deposited amount or use 0
+    const mintDecimals = coin?.mintDecimals || 0
+    return amountDeposited / Math.pow(10, mintDecimals) // Calculate and return user deposited amount
+  }, [])
+
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
