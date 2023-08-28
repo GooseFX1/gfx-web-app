@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { SuccessfulListingMsg, TransactionErrorMsg } from '../../components'
+import {
+  SuccessSSLMessage,
+  SuccessfulListingMsg,
+  TransactionErrorMsg,
+  TransactionErrorMsgSSL
+} from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -231,39 +236,13 @@ export const genericErrMsg = (error: string): Message => ({
   message: error
 })
 
-export const sslSuccessfulMessage = (
-  signature: string,
-  price: string | number,
-  name: string,
-  network: WalletAdapterNetwork,
-  operation: string
-): Message => ({
-  message: (
-    <SuccessfulListingMsg
-      title={`${name} ${operation} sucessfull!`}
-      itemName={`You ${operation} ${price} ${name}`}
-      supportText={`Farm ${name}`}
-      tx_url={`https://solscan.io/tx/${signature}?cluster=${network}`}
-    />
-  )
+export const sslSuccessfulMessage = (operation: string, price: string | number, name: string): Message => ({
+  message: <SuccessSSLMessage operation={operation} amount={price} token={name} />
 })
 
-export const sslErrorMessage = (
-  name: string,
-  supportTxt: string,
-  signature: string,
-  network: WalletAdapterNetwork,
-  operation: string
-): Message => ({
+export const sslErrorMessage = (): Message => ({
   type: 'error',
-  message: (
-    <TransactionErrorMsg
-      title={`${operation} error!`}
-      itemName={`${operation} ${name} Error`}
-      supportText={supportTxt}
-      tx_url={signature ? `https://solscan.io/tx/${signature}?cluster=${network}` : null}
-    />
-  )
+  message: <TransactionErrorMsgSSL />
 })
 
 export const TOKEN_NAMES = {
