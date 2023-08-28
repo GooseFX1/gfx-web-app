@@ -3,7 +3,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
-import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
+import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
 import { executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -20,6 +20,7 @@ import {
 } from './constants'
 import { notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
+import { toPublicKey } from '@metaplex-foundation/js'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -30,7 +31,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const wal = useWallet()
   const { connection } = useConnectionConfig()
   const breakpoint = useBreakPoint()
-  const { getUIAmount } = useAccounts()
+  // const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm()
   const { operationPending, isTxnSuccessfull, setOperationPending, setIsTxnSuccessfull } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -40,7 +41,23 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [withdrawAmount, setWithdrawAmount] = useState<number>()
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
+  const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
   const { pool } = useSSLContext()
+  // use this to get user token balance removed getUIAmount
+  useEffect(() => {
+    ;(async () => {
+      if (wallet?.adapter?.publicKey) {
+        const account = await connection.getTokenAccountsByOwner(wallet?.adapter?.publicKey, {
+          mint: toPublicKey(tokenMintAddress)
+        })
+
+        if (account.value[0]) {
+          const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+          setUserTokenBalance(balance.value.uiAmount)
+        }
+      }
+    })()
+  }, [coin?.mint, tokenMintAddress, wallet?.adapter?.publicKey, isTxnSuccessfull, pool.name])
 
   useEffect(() => {
     ;(async () => {
@@ -51,10 +68,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     })()
   }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
 
-  const userTokenBalance = useMemo(
-    () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
-    [tokenMintAddress, getUIAmount, userPublicKey, isTxnSuccessfull]
-  )
+  // const userTokenBalance = useMemo(
+  //   () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
+  //   [tokenMintAddress, getUIAmount, userPublicKey, isTxnSuccessfull, coin?.token]
+  // )
+
   const userTokenBalanceInUSD = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current
@@ -82,13 +100,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`
-      if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
-      if (withdrawAmount) return modeOfOperation
       if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
+      if (withdrawAmount) return modeOfOperation
       if (!withdrawAmount) return `Enter Amount`
     }
   }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount])
@@ -343,14 +361,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             keyStr="Total Earnings"
             value={`2.5 ${coin?.token} ($12 USD)`}
           />
-          <div tw="mt-3">
-            <FarmStats
-              alignRight={true}
-              isExpanded={isExpanded}
-              keyStr="My Balance"
-              value={`2.5 ${coin?.token} ($12 USD)`}
-            />
-          </div>
         </div>
       )}
     </div>

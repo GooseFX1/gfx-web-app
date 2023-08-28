@@ -2,7 +2,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { usePriceFeedFarm } from '.'
 import { ADDRESSES, poolType, Pool, SSLToken } from '../pages/FarmV3/constants'
-import { getLiquidityAccountKey, getPoolRegistryAccountKeys } from '../web3/sslV2'
+import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 
 interface SSLData {
@@ -16,23 +16,27 @@ interface SSLData {
   setOperationPending: Dispatch<SetStateAction<boolean>>
   isTxnSuccessfull: boolean
   setIsTxnSuccessfull: Dispatch<SetStateAction<boolean>>
+  liquidityAmount: any
+  setLiquidityAmount: any
+  allPoolSslData: SSLToken[]
+  setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
 }
 
 const SSLContext = createContext<SSLData | null>(null)
 
 export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { network } = useConnectionConfig()
+  const { network, connection } = useConnectionConfig()
   const { SSLProgram } = usePriceFeedFarm()
   const { wallet } = useWallet()
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
+  const [liquidityAmount, setLiquidityAmount] = useState({})
   const [pool, setPool] = useState<Pool>(poolType.stable)
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
 
-  //sslchange: formula work
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
@@ -77,7 +81,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
             liquidityData.push(liquidityAccount)
           } catch (e) {
-            console.log(e)
+            console.error(e)
           }
         }
         setLiquidityAccounts(liquidityData)
@@ -109,6 +113,27 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [liquidityAccounts])
 
+  useEffect(() => {
+    ;(async () => {
+      if (SSLProgram) {
+        const liquidityAmountsArray = {}
+        for (const token of sslData) {
+          try {
+            const sslAccountKey = await getsslPoolSignerKey(token.mint)
+            const response = await connection.getParsedTokenAccountsByOwner(sslAccountKey, {
+              mint: token.mint
+            })
+            const liquidityAmount = response?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount
+            liquidityAmountsArray[token?.mint?.toBase58()] = liquidityAmount
+          } catch (e) {
+            console.log(e)
+          }
+        }
+        setLiquidityAmount(liquidityAmountsArray)
+      }
+    })()
+  }, [sslData, isTxnSuccessfull])
+
   return (
     <SSLContext.Provider
       value={{
@@ -121,7 +146,11 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         operationPending: operationPending,
         setOperationPending: setOperationPending,
         isTxnSuccessfull: isTxnSuccessfull,
-        setIsTxnSuccessfull: setIsTxnSuccessfull
+        setIsTxnSuccessfull: setIsTxnSuccessfull,
+        liquidityAmount: liquidityAmount,
+        setLiquidityAmount: setLiquidityAmount,
+        allPoolSslData: allPoolSslData,
+        setAllPoolSslData: setAllPoolSslData
       }}
     >
       {children}
