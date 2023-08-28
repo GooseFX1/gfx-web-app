@@ -2,8 +2,8 @@
 import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction, useCallback } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Button, SearchBar, ShowDepositedToggle } from '../../components'
-import { useDarkMode, useSSLContext } from '../../context'
+import { Button, Loader, SearchBar, ShowDepositedToggle } from '../../components'
+import { useAccounts, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { checkMobile } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -14,6 +14,8 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
 import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
+import { getPriceObject } from '../../web3/utils'
+import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -302,9 +304,10 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
 )
 
 const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
-  const { filteredLiquidityAccounts, isTxnSuccessfull, sslData } = useSSLContext()
+  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
+  const { prices } = usePriceFeedFarm()
 
   const calculateUserDepositedAmount = useCallback((filteredLiquidityAccounts, tokenMintAddress, coin) => {
     const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
@@ -317,7 +320,13 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
     () => calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin), // Calculate user deposited amount
     [filteredLiquidityAccounts, tokenMintAddress, coin]
   )
-
+  const liquidity = useMemo(
+    () =>
+      prices[getPriceObject(coin?.token)]?.current &&
+      prices[getPriceObject(coin?.token)]?.current * liquidityAmount[tokenMintAddress],
+    [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
+  )
+  // console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
@@ -342,7 +351,7 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
           <td>4.56 %</td>
-          {!checkMobile() && <td>$550,111.22</td>}
+          {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(3) : <SkeletonCommon height="100%" />}</td>}
           {!checkMobile() && <td>$80,596</td>}
           {!checkMobile() && <td>$30,596</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
