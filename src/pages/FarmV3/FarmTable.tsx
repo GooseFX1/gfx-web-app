@@ -1,9 +1,8 @@
-/* eslint-disable */
-import { FC, useMemo, useState, useEffect, Dispatch, SetStateAction, useCallback } from 'react'
+import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Button, Loader, SearchBar, ShowDepositedToggle } from '../../components'
-import { useAccounts, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { Button, SearchBar, ShowDepositedToggle } from '../../components'
+import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { checkMobile } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -84,6 +83,9 @@ const WRAPPER = styled.div`
     td {
       ${tw`h-[100%] flex items-center justify-center  text-[15px] font-semibold text-center
        dark:text-grey-5 text-black-4`}
+      >span {
+        ${tw`w-1/2 h-1/2`}
+      }
     }
   }
 
@@ -105,8 +107,13 @@ export const FarmTable: FC = () => {
   const { wallet } = useWallet()
   const { operationPending, pool, setPool, sslData } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>()
+  //const [initalLoad, setInitalLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
   const { filteredLiquidityAccounts } = useSSLContext()
+
+  // useEffect(() => {
+  //   setInitalLoad(false)
+  // }, [])
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
@@ -138,7 +145,10 @@ export const FarmTable: FC = () => {
           tw="mr-3.75 duration-500"
         />
         <div tw="flex flex-col">
-          <div tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize sm:text-average sm:mb-0 sm:leading-[22px]">
+          <div
+            tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize 
+            sm:text-average sm:mb-0 sm:leading-[22px]"
+          >
             {pool.name} Pools
           </div>
           <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
@@ -161,7 +171,8 @@ export const FarmTable: FC = () => {
           ></div>
           <div
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[72px] justify-center font-semibold w-[95px] text-regular"
+            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[72px] justify-center 
+            font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
             Stable
@@ -175,7 +186,8 @@ export const FarmTable: FC = () => {
           </div>
           <div
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold sm:w-[72px] w-[95px] text-regular"
+            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
+            sm:w-[72px] w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.hyper))}
           >
             Hyper
@@ -230,14 +242,13 @@ export const FarmTable: FC = () => {
 
       <div>
         <table tw="mt-4">
-          {/* added extra condition to show the number of coins deposited */}
           <FarmTableHeaders
             poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length && filteredTokens.length}
           />
           <tbody>
             {filteredTokens && filteredTokens.length ? (
-              filteredTokens.map((coin: SSLToken, index: number) => (
-                <FarmTableCoin key={`${index}_${pool.name}`} coin={coin} showDeposited={showDeposited} />
+              filteredTokens.map((coin: SSLToken) => (
+                <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
               ))
             ) : (
               <NoResultsFound
@@ -267,7 +278,10 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   const { mode } = useDarkMode()
   return (
     <div css={[requestPool ? tw`h-[258px]` : tw`h-[208px]`]} tw=" flex flex-col mt-[30px] sm:mt-0">
-      <div tw="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold dark:text-white text-black">
+      <div
+        tw="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold 
+          dark:text-white text-black"
+      >
         <Lottie
           animationData={mode === 'dark' ? NoResultFarmdark : NoResultFarmlite}
           tw="h-[97px] sm:h-[81px] w-[168px]"
@@ -278,7 +292,10 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
         <div tw="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
         {/* need to add on click */}
         {requestPool && (
-          <div tw="w-[219px] h-8.75  cursor-pointer flex items-center justify-center mt-4 text-regular rounded-[30px] font-semibold bg-gradient-1">
+          <div
+            tw="w-[219px] h-8.75  cursor-pointer flex items-center justify-center mt-4 text-regular 
+            rounded-[30px] font-semibold bg-gradient-1"
+          >
             Request pool
           </div>
         )}
@@ -309,16 +326,21 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
 
-  const calculateUserDepositedAmount = useCallback((filteredLiquidityAccounts, tokenMintAddress, coin) => {
+  const calculateUserDepositedAmount = (
+    filteredLiquidityAccounts: any,
+    tokenMintAddress: string,
+    coin: SSLToken
+  ) => {
     const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
     const amountDeposited = account.amountDeposited?.toNumber() || 0 // Get deposited amount or use 0
     const mintDecimals = coin?.mintDecimals || 0
     return amountDeposited / Math.pow(10, mintDecimals) // Calculate and return user deposited amount
-  }, [])
+  }
 
   const userDepositedAmount: number = useMemo(
-    () => calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin), // Calculate user deposited amount
-    [filteredLiquidityAccounts, tokenMintAddress, coin]
+    // Calculate user deposited amount
+    () => calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin),
+    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
   )
   const liquidity = useMemo(
     () =>
@@ -350,10 +372,10 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
-          <td>4.56 %</td>
+          <td>0.00 %</td>
           {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(3) : <SkeletonCommon height="100%" />}</td>}
-          {!checkMobile() && <td>$80,596</td>}
-          {!checkMobile() && <td>$30,596</td>}
+          {!checkMobile() && <td>$0.00</td>}
+          {!checkMobile() && <td>$0.00</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <Button
