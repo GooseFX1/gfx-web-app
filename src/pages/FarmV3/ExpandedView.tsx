@@ -31,9 +31,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const wal = useWallet()
   const { connection } = useConnectionConfig()
   const breakpoint = useBreakPoint()
-  // const { getUIAmount } = useAccounts()
   const { prices, SSLProgram } = usePriceFeedFarm()
-  const { operationPending, isTxnSuccessfull, setOperationPending, setIsTxnSuccessfull } = useSSLContext()
+  const {
+    pool,
+    operationPending,
+    isTxnSuccessfull,
+    setOperationPending,
+    setIsTxnSuccessfull,
+    filteredLiquidityAccounts
+  } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
@@ -42,36 +48,42 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
-  const { pool } = useSSLContext()
-  // use this to get user token balance removed getUIAmount
   useEffect(() => {
     ;(async () => {
       if (wallet?.adapter?.publicKey) {
         const account = await connection.getTokenAccountsByOwner(wallet?.adapter?.publicKey, {
           mint: toPublicKey(tokenMintAddress)
         })
-
+        if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
         if (account.value[0]) {
           const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
           setUserTokenBalance(balance.value.uiAmount)
         }
       }
     })()
-  }, [coin?.mint, tokenMintAddress, wallet?.adapter?.publicKey, isTxnSuccessfull, pool.name])
+  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance])
 
   useEffect(() => {
     ;(async () => {
       if (wallet?.adapter?.publicKey) {
-        const SOL = await connection.getAccountInfo(wallet?.adapter?.publicKey)
-        setUserSOLBalance(SOL.lamports / LAMPORTS_PER_SOL)
+        const solAmount = await connection.getBalance(wallet?.adapter?.publicKey)
+        setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
       }
     })()
   }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
 
-  // const userTokenBalance = useMemo(
-  //   () => (userPublicKey && tokenMintAddress ? getUIAmount(tokenMintAddress.toString()) : 0),
-  //   [tokenMintAddress, getUIAmount, userPublicKey, isTxnSuccessfull, coin?.token]
-  // )
+  const totalEarned = useMemo(
+    () => filteredLiquidityAccounts[tokenMintAddress]?.totalEarned?.toNumber(),
+    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
+  )
+
+  const totalEarnedInUSD = useMemo(
+    () =>
+      prices[getPriceObject(coin?.token)]?.current
+        ? prices[getPriceObject(coin?.token)]?.current * totalEarned
+        : 0,
+    [totalEarned]
+  )
 
   const userTokenBalanceInUSD = useMemo(
     () =>
@@ -276,7 +288,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD.toFixed(2)} USD)`}
+              value={`${userTokenBalance?.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD?.toFixed(2)} USD)`}
             />
           </div>
         )}
@@ -323,6 +335,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     : tw`h-0 w-0 pl-0 invisible`
                 ]}
                 type="number"
+                key={modeOfOperation}
               />
               <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute ml-[345px] sm:ml-[85%] mt-1.5">
                 {coin?.token}
@@ -359,7 +372,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             alignRight={true}
             isExpanded={isExpanded}
             keyStr="Total Earnings"
-            value={`2.5 ${coin?.token} ($12 USD)`}
+            value={
+              totalEarned ? (
+                <span>{`$ ${totalEarned.toFixed(3)} ${totalEarnedInUSD} USD`}</span>
+              ) : (
+                `0.00 ${coin?.token} ($0.00 USD)`
+              )
+            }
           />
         </div>
       )}
@@ -367,12 +386,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   )
 }
 
-const FarmStats: FC<{ keyStr: string; value: string; isExpanded: boolean; alignRight?: boolean }> = ({
-  keyStr,
-  value,
-  isExpanded,
-  alignRight
-}) => (
+const FarmStats: FC<{
+  keyStr: string
+  value: string | JSX.Element
+  isExpanded: boolean
+  alignRight?: boolean
+}> = ({ keyStr, value, isExpanded, alignRight }) => (
   <div
     css={[
       tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`,

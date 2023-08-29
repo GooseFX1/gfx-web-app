@@ -40,6 +40,10 @@ const POOL_CARD_WRAPPER = styled.div`
   }
   -ms-overflow-style: none;
   scrollbar-width: none;
+
+  > span {
+    ${tw`w-full`}
+  }
 `
 
 const infoCards = [
@@ -123,7 +127,7 @@ export const FarmHeader: FC = () => {
         )} */}
       </div>
       <POOL_CARD_WRAPPER>
-        {allPoolSslData ? (
+        {allPoolSslData?.length ? (
           allPoolSslData.slice(0, 4).map((card, index) => (
             <POOL_CARD key={index + card?.name}>
               <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
