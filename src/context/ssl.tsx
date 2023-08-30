@@ -1,7 +1,15 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { usePriceFeedFarm } from '.'
-import { ADDRESSES, poolType, Pool, SSLToken, SSLTableData, GET_24_CHANGES } from '../pages/FarmV3/constants'
+import {
+  ADDRESSES,
+  poolType,
+  Pool,
+  SSLToken,
+  SSLTableData,
+  GET_24_CHANGES,
+  IS_WHITELIST
+} from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
@@ -57,7 +65,20 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const isWhitelistApi = async (_publicKey) => true
+  const isWhitelistApi = async () => {
+    try {
+      const walletAddress = wallet?.adapter?.publicKey
+      if (walletAddress) {
+        const res = await httpClient('api-services').post(`${IS_WHITELIST}`, {
+          walletAddress: walletAddress.toBase58()
+        })
+        const data = res.data
+        setIsWhitelisted(data)
+      }
+    } catch (e) {
+      setIsWhitelisted(false)
+    }
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -112,8 +133,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
 
   useEffect(() => {
-    if (wallet?.adapter?.connected) isWhitelistApi(wallet?.adapter?.publicKey)
-  }, [wallet?.adapter])
+    if (wallet?.adapter?.connected) isWhitelistApi()
+  }, [wallet?.adapter.connected])
 
   useEffect(() => {
     ;(async () => {
