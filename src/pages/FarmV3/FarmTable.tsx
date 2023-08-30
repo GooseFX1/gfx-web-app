@@ -327,7 +327,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
 )
 
 const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
-  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount } = useSSLContext()
+  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
@@ -354,6 +354,36 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
       prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
     [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
   )
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const apiSslData = useMemo(() => {
+    try {
+      if (sslTableData) {
+        const key = coin.token === 'SOL' ? 'WSOL' : coin.token
+        const decimal = coin.mintDecimals
+        return {
+          apy: sslTableData[key].apy,
+          fee: sslTableData[key].fee / decimal,
+          volume: sslTableData[key].volume / 1_000_000
+        }
+      } else
+        return {
+          apy: 0,
+          fee: 0,
+          volume: 0
+        }
+    } catch (e) {
+      console.log('error in ssl api data: ', e)
+    }
+  }, [coin, sslTableData])
+
+  const formattedapiSslData = useMemo(
+    () => ({
+      apy: apiSslData.apy.toFixed(2),
+      fee: apiSslData.fee.toFixed(2),
+      volume: apiSslData.volume.toFixed(2)
+    }),
+    [apiSslData]
+  )
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
@@ -378,10 +408,10 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
-          <td>0.00 %</td>
+          <td>{formattedapiSslData.apy} %</td>
           {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}</td>}
-          {!checkMobile() && <td>$0.00</td>}
-          {!checkMobile() && <td>$0.00</td>}
+          {!checkMobile() && <td>${formattedapiSslData.volume}</td>}
+          {!checkMobile() && <td>${formattedapiSslData.fee}</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <Button
