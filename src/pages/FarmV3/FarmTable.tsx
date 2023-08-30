@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, SearchBar, ShowDepositedToggle } from '../../components'
@@ -99,21 +99,26 @@ const WRAPPER = styled.div`
       ${tw`w-[33%]`}
     }
   }
+
+  address {
+    > a {
+      ${tw`text-white`}
+    }
+  }
 `
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
-  const { operationPending, pool, setPool, sslData } = useSSLContext()
+  const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>()
-  //const [initalLoad, setInitalLoad] = useState<boolean>(true)
+  const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
-  const { filteredLiquidityAccounts } = useSSLContext()
 
-  // useEffect(() => {
-  //   setInitalLoad(false)
-  // }, [])
+  useEffect(() => {
+    sslData?.length && setInitialLoad(false)
+  }, [sslData])
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
@@ -136,7 +141,7 @@ export const FarmTable: FC = () => {
 
   return (
     <WRAPPER>
-      <div tw="flex flex-row items-center mb-3.75 sm:items-stretch sm:pr-4">
+      <div tw="flex flex-row items-center mb-3.75 sm:pr-4">
         <img
           src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
@@ -246,10 +251,12 @@ export const FarmTable: FC = () => {
             poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length && filteredTokens.length}
           />
           <tbody>
-            {filteredTokens && filteredTokens.length ? (
+            {filteredTokens?.length ? (
               filteredTokens.map((coin: SSLToken) => (
                 <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
               ))
+            ) : initialLoad ? (
+              <SkeletonCommon height="120px" style={{ marginTop: '15px' }} />
             ) : (
               <NoResultsFound
                 requestPool={true}
@@ -290,14 +297,13 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
       <div tw="flex items-center flex-col">
         <div tw="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
         <div tw="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
-        {/* need to add on click */}
         {requestPool && (
-          <div
-            tw="w-[219px] h-8.75  cursor-pointer flex items-center justify-center mt-4 text-regular 
+          <address
+            tw="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular 
             rounded-[30px] font-semibold bg-gradient-1"
           >
-            Request pool
-          </div>
+            <a href="mailto:contact@goosefx.io">Request Pool</a>
+          </address>
         )}
       </div>
     </div>
@@ -345,10 +351,10 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
   const liquidity = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current &&
-      prices[getPriceObject(coin?.token)]?.current * liquidityAmount[tokenMintAddress],
+      prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
     [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
   )
-  // console.log('ssldata', tokenMintAddress, filteredLiquidityAccounts, userDepositedAmount)
+
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
     else if (showDeposited && userDepositedAmount) return true
@@ -373,7 +379,7 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
           <td>0.00 %</td>
-          {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(3) : <SkeletonCommon height="100%" />}</td>}
+          {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}</td>}
           {!checkMobile() && <td>$0.00</td>}
           {!checkMobile() && <td>$0.00</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
