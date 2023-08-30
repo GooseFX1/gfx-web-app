@@ -55,6 +55,12 @@ export type SSLToken = {
   totalLiquidityDeposits?: BN
 }
 
+export type SSLTableData = {
+  apy: number
+  fee: number
+  volume: number
+}
+
 export const poolType = {
   stable: {
     index: 3,
@@ -252,3 +258,5 @@ export const TOKEN_NAMES = {
   USDT: 'USDT',
   USDC: 'USDC'
 }
+
+export const GET_24_CHANGES = '/ssl-apis/get24hChanges'

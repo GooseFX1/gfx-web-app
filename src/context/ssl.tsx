@@ -1,9 +1,10 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
 import { usePriceFeedFarm } from '.'
-import { ADDRESSES, poolType, Pool, SSLToken } from '../pages/FarmV3/constants'
+import { ADDRESSES, poolType, Pool, SSLToken, SSLTableData, GET_24_CHANGES } from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
+import { httpClient } from '../api'
 
 interface SSLData {
   pool: Pool
@@ -20,6 +21,7 @@ interface SSLData {
   setLiquidityAmount: any
   allPoolSslData: SSLToken[]
   setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
+  sslTableData: SSLTableData
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -36,6 +38,20 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pool, setPool] = useState<Pool>(poolType.stable)
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [sslTableData, setTableData] = useState<SSLTableData>(null)
+
+  const getSSLTableData = async () => {
+    try {
+      const res = await httpClient('api-services').post(`${GET_24_CHANGES}`, {
+        devnet: false
+      })
+      const data = res.data
+      setTableData(data)
+    } catch (e) {
+      setTableData(null)
+    }
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -113,6 +129,11 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [liquidityAccounts])
 
+  //Call API to get ssl table data. Need to run only once
+  useEffect(() => {
+    getSSLTableData()
+  }, [])
+
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
@@ -150,7 +171,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         liquidityAmount: liquidityAmount,
         setLiquidityAmount: setLiquidityAmount,
         allPoolSslData: allPoolSslData,
-        setAllPoolSslData: setAllPoolSslData
+        setAllPoolSslData: setAllPoolSslData,
+        sslTableData: sslTableData
       }}
     >
       {children}
