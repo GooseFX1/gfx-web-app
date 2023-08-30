@@ -22,6 +22,7 @@ interface SSLData {
   allPoolSslData: SSLToken[]
   setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
   sslTableData: SSLTableData
+  isWhitelisted: boolean
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -40,6 +41,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isWhitelisted, setIsWhitelisted] = useState<boolean>()
 
   const getSSLTableData = async () => {
     try {
@@ -52,6 +55,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setTableData(null)
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isWhitelistApi = async (_publicKey) => true
 
   useEffect(() => {
     ;(async () => {
@@ -104,6 +110,10 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })()
   }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
+
+  useEffect(() => {
+    if (wallet?.adapter?.connected) isWhitelistApi(wallet?.adapter?.publicKey)
+  }, [wallet?.adapter])
 
   useEffect(() => {
     ;(async () => {
@@ -172,7 +182,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setLiquidityAmount: setLiquidityAmount,
         allPoolSslData: allPoolSslData,
         setAllPoolSslData: setAllPoolSslData,
-        sslTableData: sslTableData
+        sslTableData: sslTableData,
+        isWhitelisted: isWhitelisted
       }}
     >
       {children}
