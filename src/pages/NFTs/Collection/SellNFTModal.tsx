@@ -17,7 +17,8 @@ import {
   Transaction,
   SystemProgram,
   AccountMeta,
-  Keypair
+  Keypair,
+  ComputeBudgetProgram
 } from '@solana/web3.js'
 import { tradeStatePDA, tokenSize, freeSellerTradeStatePDA, freeSellerTradeStatePDAAgg } from '../actions'
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
@@ -168,8 +169,6 @@ export const SellNFTModal: FC<{
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus()
   }, [inputRef.current])
-  const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wal))
-  const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
   const auctionHouseClient = useMemo(
     () => new Metaplex(connection).use(walletAdapterIdentity(wal)).auctionHouse(),
@@ -203,7 +202,8 @@ export const SellNFTModal: FC<{
     signature: any,
     notifyStr?: string,
     isModified?: boolean,
-    signatureStatus?: string
+    signatureStatus?: string,
+    dontNotify?: boolean
   ): Promise<void> => {
     try {
       const confirm = await confirmTransaction(
@@ -217,6 +217,9 @@ export const SellNFTModal: FC<{
           console.log('refreshing after 15 sec')
           setRefreshClicked((prev) => prev + 1)
         }, 15000)
+        if (dontNotify) {
+          return
+        }
         if (isAcceptingBid)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
         else
@@ -416,13 +419,32 @@ export const SellNFTModal: FC<{
     const { metaDataAccount, tradeState, freeTradeState, programAsSignerPDA, buyerPrice } =
       await derivePDAsForInstruction()
 
+    let executePnftAcceptBid: Transaction
     if (isAcceptingBid) {
+      const { programAsSignerPDA } = await derivePDAForExecuteSale()
+      const {
+        metaDataAccount,
+        escrowPaymentAccount,
+        buyerTradeState,
+        bidPrice,
+        buyerReceiptTokenAccount,
+        auctionHouseTreasuryAddress,
+        sellerTradeState
+      } = await derivePDAsForInstructionSell()
+
+      if (!onChainNFTMetadata) {
+        couldNotFetchNFTMetaData()
+        setIsLoading(false)
+        return
+      }
+
       const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
         pubkey: new PublicKey(creator.address),
         isWritable: true,
         isSigner: false
       }))
-      const { programAsSignerPDA } = await derivePDAForExecuteSale()
+      const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wal))
+      const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
       const pnftAccounts = await derivePNFTAccounts(
         connection,
@@ -445,22 +467,6 @@ export const SellNFTModal: FC<{
 
       remainingAccounts = remainingAccounts.concat(...creatorAccounts)
       if (isPnft) remainingAccounts = remainingAccounts.concat(...executeSaleAnchorRemainingAccounts)
-
-      const {
-        metaDataAccount,
-        escrowPaymentAccount,
-        buyerTradeState,
-        bidPrice,
-        buyerReceiptTokenAccount,
-        auctionHouseTreasuryAddress,
-        sellerTradeState
-      } = await derivePDAsForInstructionSell()
-
-      if (!onChainNFTMetadata) {
-        couldNotFetchNFTMetaData()
-        setIsLoading(false)
-        return
-      }
 
       const executeSaleInstructionArgs: ExecuteSaleInstructionArgs = {
         escrowPaymentBump: escrowPaymentAccount[1],
@@ -499,14 +505,59 @@ export const SellNFTModal: FC<{
         executeSaleInstructionAccounts,
         executeSaleInstructionArgs
       )
-
-      transaction.add(executeSaleIX)
+      if (isPnft) {
+        executeSaleIX.keys.at(4).isWritable = true
+        executeSaleIX.keys.at(9).isSigner = true
+        executeSaleIX.keys.at(9).isWritable = true
+      }
+      const additionalComputeBudgetInstruction = ComputeBudgetProgram.setComputeUnitLimit({ units: 400000 })
+      if (isPnft) {
+        executePnftAcceptBid = new Transaction()
+        executePnftAcceptBid.add(additionalComputeBudgetInstruction)
+        executePnftAcceptBid.add(executeSaleIX)
+      } else {
+        transaction.add(executeSaleIX)
+      }
     }
+
     try {
       const signature = await wal.sendTransaction(transaction, connection)
       setPendingTxSig(signature)
-      attemptConfirmTransaction(signature, isAcceptingBid ? 'ACCEPT_BID' : 'LIST', removeAskIX ? true : false)
-        .then((res) => console.log('TX Confirmed', res))
+      attemptConfirmTransaction(
+        signature,
+        !isPnft && acceptBid ? 'ACCEPT_BID' : 'LIST',
+        removeAskIX ? true : false,
+        isPnft ? 'finalized' : 'confirmed',
+        isPnft
+      )
+        .then(async (res) => {
+          // for pnft accept bid facing too long issue, so sending it separately, this is temp fix,find better solution
+          if (isPnft) {
+            const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
+            const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
+
+            const pnftExecuteSaleSig = await wal.sendTransaction(executePnftAcceptBid, connection, {
+              signers: [treasuryWallet],
+              skipPreflight: true
+            })
+
+            attemptConfirmTransaction(
+              pnftExecuteSaleSig,
+              acceptBid ? 'ACCEPT_BID' : 'LIST',
+              removeAskIX ? true : false
+            )
+              .then((res) => console.log('Accepted bid', res))
+              .catch((err) => {
+                setIsLoading(false)
+                setPendingTxSig(null)
+                console.log(err)
+              })
+
+            console.log('Pnft tx confirmed', res)
+          }
+          console.log('NFT tx confirmed', res)
+        })
+
         .catch((err) => console.error(err))
     } catch (error) {
       console.error('User exited signing transaction to list fixed price')
@@ -521,6 +572,7 @@ export const SellNFTModal: FC<{
       setAskPrice(parseFloat(e.target.value))
     }
   }
+  const nftID = general?.nft_name.split('#')[1]
   if (acceptBid)
     return (
       <AcceptBidModal

@@ -419,19 +419,19 @@ const ButtonContainerForBag = (): ReactElement => {
           commitment: 'confirmed'
         }
         sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
-        const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
-          txid: id,
-          slot: 0
-        }))
-
-        ixResponse.map((ix, index) =>
-          handleNotifications(
-            ix.txid,
-            nftInBag[nftInArrayFormat[index].token_account_mint_key],
-            ixResponse.indexOf(ix)
-          )
-        )
       }
+      const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
+        txid: id,
+        slot: 0
+      }))
+
+      ixResponse.map((ix, index) =>
+        handleNotifications(
+          ix.txid,
+          nftInBag[nftInArrayFormat[index].token_account_mint_key],
+          ixResponse.indexOf(ix)
+        )
+      )
     } catch (err) {
       setOperatingNFT(new Set())
       setIsLoading(false)

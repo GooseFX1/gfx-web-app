@@ -413,7 +413,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
       {userPic ? (
         <img
           src={userPic}
-          tw="h-[44px] w-[44px] sm:h-8.75 sm:w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
+          tw="h-8.75 w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
           className={mediumSize ? 'userPopupProfilePic' : 'customProfileImg'}
           onClick={goProfile}
         />
