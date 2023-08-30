@@ -21,6 +21,7 @@ import {
 import { notify } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
+import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -38,7 +39,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     isTxnSuccessfull,
     setOperationPending,
     setIsTxnSuccessfull,
-    filteredLiquidityAccounts
+    filteredLiquidityAccounts,
+    liquidityAmount
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -48,6 +50,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
+
   useEffect(() => {
     ;(async () => {
       if (wallet?.adapter?.publicKey) {
@@ -71,6 +74,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       }
     })()
   }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
+
+  const liquidity = useMemo(
+    () =>
+      prices[getPriceObject(coin?.token)]?.current &&
+      prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
+    [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
+  )
 
   const totalEarned = useMemo(
     () => filteredLiquidityAccounts[tokenMintAddress]?.totalEarned?.toNumber(),
@@ -104,14 +114,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // or withdraw mode with zero user deposited amount or no withdraw amount
   const disableActionButton = useMemo(
     () =>
+      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > 5000) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount)),
-    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount]
+    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
   )
 
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (coin?.token === 'BONK' && liquidity > 5000) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`
@@ -121,7 +133,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       if (withdrawAmount) return modeOfOperation
       if (!withdrawAmount) return `Enter Amount`
     }
-  }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount])
+  }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount, liquidity])
 
   const checkConditionsForDepositWithdraw = (isDeposit: boolean) => {
     if (!enoughSOLInWallet()) return true
@@ -238,17 +250,34 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       <div tw="flex flex-col">
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
-            <FarmStats isExpanded={isExpanded} keyStr="Liquidity" value={`${2} ${coin?.token}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`${3} ${coin?.token}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`${4} ${coin?.token}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="Balance" value={`${4} ${coin?.token}`} />
+            <FarmStats
+              isExpanded={isExpanded}
+              keyStr="Liquidity"
+              value={liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
+            />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`00.00 ${coin?.token}`} />
+            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`00.00 ${coin?.token}`} />
+            <FarmStats
+              isExpanded={isExpanded}
+              keyStr="My Balance"
+              value={userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}
+            />
             <FarmStats
               isExpanded={isExpanded}
               keyStr="Wallet Balance"
               value={`${userTokenBalance.toFixed(2)} ${coin?.token}`}
             />
-            <FarmStats isExpanded={isExpanded} keyStr="Total Earnings" value={`2.5 ${coin?.token}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="My Balance" value={`2.5 ${coin?.token}`} />
+            <FarmStats
+              isExpanded={isExpanded}
+              keyStr="Total Earnings"
+              value={
+                totalEarned ? (
+                  <span>{`$ ${totalEarned.toFixed(3)} ${totalEarnedInUSD} USD`}</span>
+                ) : (
+                  `0.00 ${coin?.token} ($0.00 USD)`
+                )
+              }
+            />
           </div>
         )}
         {isExpanded && (

@@ -1,10 +1,10 @@
-/* eslint-disable */
 import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+import { checkMobile } from '../../utils'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
@@ -13,8 +13,7 @@ const CARD_GRADIENT = styled.div`
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1
-   px-2.5 `}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1 px-2.5 `}
 `
 
 const POOL_CARD = styled.div`
@@ -54,13 +53,6 @@ const infoCards = [
   { name: 'Total Fees', value: '$1.25K' }
 ]
 
-// const topPoolCards = [
-//   { name: 'BTC', value: '15.00%', type: 'Alpha' },
-//   { name: 'SOL', value: '8.00%', type: 'Alpha' },
-//   { name: 'USDC', value: '7.45%', type: 'Stable' },
-//   { name: 'XRP', value: '7.45%', type: 'Stable' }
-// ]
-
 export const FarmHeader: FC = () => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   const { allPoolSslData } = useSSLContext()
@@ -68,10 +60,10 @@ export const FarmHeader: FC = () => {
     <>
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
-        {infoCards?.map((card, index) => (
+        {infoCards?.map((card) => (
           <>
-            <CARD_GRADIENT key={index + card?.name}>
-              <INFO_CARD key={index + card?.value}>
+            <CARD_GRADIENT key={card?.name}>
+              <INFO_CARD>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
                   {card?.value}
@@ -127,44 +119,49 @@ export const FarmHeader: FC = () => {
         )} */}
       </div>
       <POOL_CARD_WRAPPER>
-        {allPoolSslData?.length ? (
-          allPoolSslData.slice(0, 4).map((card, index) => (
-            <POOL_CARD key={index + card?.name}>
-              <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
-                <img src={`/img/crypto/${card.token}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
-                  {card?.token}
-                </div>
-                <div
-                  tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
-                  rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
-                >
-                  <img
-                    src={`/img/assets/${
-                      card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'
-                    }_pools.svg`}
-                    alt="pool-type"
-                    width={19}
-                    height={21}
-                    tw="mr-1.25"
-                  />
+        {allPoolSslData?.length
+          ? allPoolSslData.slice(0, 4).map((card) => (
+              <POOL_CARD key={card?.token}>
+                <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
+                  <img src={`/img/crypto/${card.token}.svg`} alt="pool-icon" height={40} width={40} tw="mr-2.5" />
+                  <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
+                    {card?.token}
+                  </div>
                   <div
-                    tw="text-lg font-semibold text-black-4 dark:text-white 
-                        text-regular font-semibold sm:text-average"
+                    tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
+                  rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
                   >
-                    {card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'}
+                    <img
+                      src={`/img/assets/${
+                        card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'
+                      }_pools.svg`}
+                      alt="pool-type"
+                      width={19}
+                      height={21}
+                      tw="mr-1.25"
+                    />
+                    <div
+                      tw="text-lg font-semibold text-black-4 dark:text-white 
+                        text-regular font-semibold sm:text-average"
+                    >
+                      {card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div tw="flex items-center leading-[22px] sm:mt-3.5">
-                <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
-                <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">{10}</div>
-              </div>
-            </POOL_CARD>
-          ))
-        ) : (
-          <SkeletonCommon height="100px" width="100%" />
-        )}
+                <div tw="flex items-center leading-[22px] sm:mt-3.5">
+                  <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
+                  <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">00.00</div>
+                </div>
+              </POOL_CARD>
+            ))
+          : [0, 1, 2, 3].map((item) => (
+              <SkeletonCommon
+                height="97px"
+                width={!checkMobile() ? '95%' : '257px'}
+                key={item}
+                style={checkMobile() && { marginRight: '15px' }}
+              />
+            ))}
       </POOL_CARD_WRAPPER>
     </>
   )
