@@ -388,7 +388,7 @@ const ButtonContainerForBag = (): ReactElement => {
         ...nft
       }
       return {
-        [key]: await callExecuteSaleInstruction(nft, general, publicKey, true, connection)
+        [key]: await callExecuteSaleInstruction(nft, general, publicKey, true, connection, wal)
       }
     }
     return { [key]: undefined }
@@ -419,19 +419,19 @@ const ButtonContainerForBag = (): ReactElement => {
           commitment: 'confirmed'
         }
         sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
-        const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
-          txid: id,
-          slot: 0
-        }))
-
-        ixResponse.map((ix, index) =>
-          handleNotifications(
-            ix.txid,
-            nftInBag[nftInArrayFormat[index].token_account_mint_key],
-            ixResponse.indexOf(ix)
-          )
-        )
       }
+      const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
+        txid: id,
+        slot: 0
+      }))
+
+      ixResponse.map((ix, index) =>
+        handleNotifications(
+          ix.txid,
+          nftInBag[nftInArrayFormat[index].token_account_mint_key],
+          ixResponse.indexOf(ix)
+        )
+      )
     } catch (err) {
       setOperatingNFT(new Set())
       setIsLoading(false)
@@ -475,7 +475,7 @@ export default React.memo(MyNFTBag)
 //   }, [nftInBag])
 //   const { mode } = useDarkMode()
 //   const { pathname } = useLocation()
-//   // Below is rive code for when the animation is added - some thigns might need to changed
+//   // Below is rive code for when the animation is added - some things might need to changed
 
 //   // const rive = useRiveAnimations({
 //   //   animation:'swap',

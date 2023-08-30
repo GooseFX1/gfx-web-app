@@ -1,7 +1,7 @@
 import { deserializeUnchecked } from 'borsh'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { METADATA_PREFIX, METADATA_PROGRAM, MetaplexMetadata } from '../metaplex'
-import { decodeMetadata, PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
+import { PARSE_NFT_ACCOUNT_SCHEMA } from './metadata'
 import { fetchUpdatedJwtToken } from '../../api/NFTs'
 import { capitalizeFirstLetter } from '../../utils/misc'
 import { notify } from '../../utils'
@@ -13,6 +13,7 @@ import { Wallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { INFTInBag } from '../../types/nft_details'
 import { Metaplex, toPublicKey, walletAdapterIdentity } from '@metaplex-foundation/js'
 import { AUCTION_HOUSE } from '../ids'
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 
 const metaProgamPublicKey = new PublicKey(METADATA_PROGRAM)
 const metaProgamPublicKeyBuffer = metaProgamPublicKey.toBuffer()
@@ -77,11 +78,10 @@ export const getNFTMetadata = async (metadataAccountPublicKey: string, connectio
   try {
     const metadataAddress = new PublicKey(metadataAccountPublicKey)
     const metadataAccount = await connection.getAccountInfo(metadataAddress)
-
     if (metadataAccount) {
       // Decode metadata account data
-      const metadata = decodeMetadata(metadataAccount.data)
-      return metadata
+      const metadata = Metadata.deserialize(metadataAccount.data)
+      return metadata[0]
     } else {
       console.log('Metadata account not found')
       return null

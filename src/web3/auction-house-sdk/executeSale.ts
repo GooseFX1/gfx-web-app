@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import { INFTAsk, ISingleNFT } from '../../types/nft_details'
-import { PublicKey } from '@metaplex-foundation/js'
+import { Metaplex, PublicKey, walletAdapterIdentity } from '@metaplex-foundation/js'
 import {
   AH_FEE_ACCT,
   AUCTION_HOUSE,
@@ -25,7 +25,7 @@ import {
   couldNotDeriveValueForBuyInstruction,
   couldNotFetchNFTMetaData
 } from '../../pages/NFTs/Collection/AggModals/AggNotifications'
-import { Connection, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { AccountMeta, Connection, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { getNFTMetadata } from '../nfts/utils'
 import { web3 } from '@project-serum/anchor'
 import {
@@ -34,6 +34,8 @@ import {
   createExecuteSaleInstruction
 } from '../auction-house/generated/instructions'
 import { bnTo8 } from '../utils'
+import { WalletContextState } from '@solana/wallet-adapter-react'
+import { derivePNFTAccounts } from './list'
 
 const derivePDAsForInstruction = async (
   ask: INFTAsk | any,
@@ -116,7 +118,9 @@ export const callExecuteSaleInstruction = async (
   general: ISingleNFT | any,
   publicKey: PublicKey,
   isBuyingNow: boolean,
-  connection: Connection
+  connection: Connection,
+  wallet: WalletContextState,
+  isPnft?: boolean
 ): Promise<Transaction> => {
   const {
     metaDataAccount,
@@ -130,6 +134,11 @@ export const callExecuteSaleInstruction = async (
     couldNotDeriveValueForBuyInstruction()
     return
   }
+
+  const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet))
+  const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
+  const mintAddress = new PublicKey(ask?.token_account_mint_key)
+  const seller = new PublicKey(ask?.wallet_key)
 
   const buyInstructionArgs: BuyInstructionArgs = {
     tradeStateBump: buyerTradeState[1],
@@ -166,6 +175,18 @@ export const callExecuteSaleInstruction = async (
       return
     }
 
+    const pnftAccounts = await derivePNFTAccounts(connection, publicKey, programAsSigner, mintAddress, seller)
+
+    const executeSaleAnchorRemainingAccounts: AccountMeta[] = [
+      pnftAccounts.metadataProgram,
+      pnftAccounts.edition,
+      pnftAccounts.sellerTokenRecord,
+      pnftAccounts.tokenRecord,
+      pnftAccounts.authRulesProgram,
+      pnftAccounts.authRules,
+      pnftAccounts.sysvarInstructions
+    ]
+
     const creatorAccounts: web3.AccountMeta[] = onChainNFTMetadata.data.creators.map((creator) => ({
       pubkey: new PublicKey(creator.address),
       isWritable: true,
@@ -179,6 +200,13 @@ export const callExecuteSaleInstruction = async (
       buyerPrice: buyerPrice,
       tokenSize: tokenSize
     }
+
+    let remainingAccounts: AccountMeta[] = []
+
+    remainingAccounts = remainingAccounts.concat(...creatorAccounts)
+
+    if (isPnft) remainingAccounts = remainingAccounts.concat(...executeSaleAnchorRemainingAccounts)
+
     const executeSaleInstructionAccounts: ExecuteSaleInstructionAccounts = {
       buyer: publicKey,
       seller: new PublicKey(ask?.wallet_key),
@@ -200,13 +228,17 @@ export const callExecuteSaleInstruction = async (
       programAsSigner: programAsSignerPDA[0],
       rent: new PublicKey('SysvarRent111111111111111111111111111111111'),
       ataProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-      anchorRemainingAccounts: creatorAccounts
+      anchorRemainingAccounts: remainingAccounts
     }
 
     const executeSaleIX: TransactionInstruction = await createExecuteSaleInstruction(
       executeSaleInstructionAccounts,
       executeSaleInstructionArgs
     )
+
+    executeSaleIX.keys.at(4).isWritable = true
+    executeSaleIX.keys.at(9).isSigner = true
+    executeSaleIX.keys.at(9).isWritable = true
 
     transaction.add(executeSaleIX)
   }

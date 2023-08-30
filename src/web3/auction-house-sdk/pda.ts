@@ -101,6 +101,23 @@ export const getMagicEdenTokenAccount = async (item: INFTInBag | any): Promise<[
   return tokenAccount
 }
 
+export function getAssociatedTokenAddressSync(
+  mint: PublicKey,
+  owner: PublicKey,
+  allowOwnerOffCurve = false,
+  programId = TOKEN_PROGRAM_ID,
+  associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
+): PublicKey {
+  if (!allowOwnerOffCurve && !PublicKey.isOnCurve(owner.toBuffer())) throw new Error('error')
+
+  const [address] = PublicKey.findProgramAddressSync(
+    [owner.toBuffer(), programId.toBuffer(), mint.toBuffer()],
+    associatedTokenProgramId
+  )
+
+  return address
+}
+
 export const findTokenRecordPda = (mint: PublicKey, token: PublicKey): PublicKey =>
   PublicKey.findProgramAddressSync(
     [

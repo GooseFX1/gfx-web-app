@@ -24,9 +24,12 @@ import { callWithdrawInstruction, tradeStatePDA } from '../actions'
 import BN from 'bn.js'
 import { successBidRemovedMsg } from './AggModals/AggNotifications'
 import { constructCancelBidInstruction } from '../../../web3/auction-house-sdk/bid'
-import tw from 'twin.macro'
 import { saveNftTx } from '../../../api/NFTs'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
+import styled from 'styled-components'
+import tw from 'twin.macro'
+import 'styled-components/macro'
+const div = styled.div``
 
 const CancelBidModal = (): ReactElement => {
   const { general, ask, bids, nftMetadata } = useNFTDetails()
@@ -150,7 +153,7 @@ const CancelBidModal = (): ReactElement => {
       }
       const signature = await sendTransaction(transaction, connection)
       console.log(signature)
-      const confirm = await await confirmTransaction(connection, signature, 'processed')
+      const confirm = await await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
         sendNftTransactionLog('CANCEL_BID', signature)
         notify(successBidRemovedMsg(signature, nftMetadata, myBidPrice.toFixed(2)))
@@ -210,16 +213,16 @@ const CancelBidModal = (): ReactElement => {
             <div className="rightAlign">{myBidPrice.toFixed(2)} SOL</div>
           </div>
         </div>
-
         <Button
           onClick={callCancelInstruction}
           className={'sellButton'}
-          tw="!bottom-[100px]     absolute sm:!bottom-[60px]"
+          tw="!bottom-[100px] mt-[150px] sm:!bottom-[60px]"
           loading={isLoading}
         >
-          <span tw="font-semibold text-[20px] sm:text-[16px] ">Remove Bid</span>
+          <span tw="font-semibold text-[20px] sm:text-[16px]">Remove Bid</span>
         </Button>
-        <div className="cancelText" tw="!bottom-[58px] sm:!bottom-[20px] " onClick={closeTheModal}>
+
+        <div className="cancelText" tw="!bottom-[58px] absolute sm:!bottom-[20px] " onClick={closeTheModal}>
           {!isLoading && `Cancel`}
         </div>
         {<TermsTextNFT string="Remove" />}
