@@ -625,7 +625,11 @@ export const SellNFTModal: FC<{
                 </>
               )}
             </div>
-            {!checkMobile() && <img className="nftImg" src={general.image_url} alt="" />}
+            {!checkMobile() && (
+              <div className="nftImg">
+                <img src={general.image_url} alt="nft-image" />
+              </div>
+            )}
 
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">

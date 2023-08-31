@@ -21,6 +21,7 @@ import { NFT_MARKETS } from '../../api/NFTs/constants'
 import { ITensorBuyIX } from '../../types/nft_details'
 import { confirmTransaction, getParsedAccountByMint, StringPublicKey } from '../../web3'
 import { getMagicEdenBuyInstruction, getMagicEdenListing, getTensorBuyInstruction } from '../../api/NFTs'
+import gfxImageService, { IMAGE_SIZES } from '../../api/gfxImageService'
 import { pleaseTryAgain, successfulNFTPurchaseMsg } from './Collection/AggModals/AggNotifications'
 import { getMagicEdenTokenAccount } from '../../web3/auction-house-sdk/pda'
 import { callExecuteSaleInstruction } from '../../web3/auction-house-sdk/executeSale'
@@ -221,7 +222,18 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
     <div className="bagContentContainer" style={{ height: wallet ? '238px' : '284px' }}>
       {Object.entries(nftInBag).map(([key, nft], index: number) => (
         <div tw="flex items-center mt-[15px]" key={index}>
-          <img className="nftImage" src={nftInBag[key]?.image_url} alt="img" />
+          <img
+            className="nftImage"
+            src={gfxImageService(
+              IMAGE_SIZES.SM_SQUARE,
+              nftInBag[key]?.verified_collection_address
+                ? nftInBag[key]?.verified_collection_address
+                : nftInBag[key]?.first_verified_creator_address,
+              nftInBag[key]?.image_url
+            )}
+            alt="img"
+          />
+
           <img
             className="closeImg"
             onClick={() => removeNFTFromBag(nft.mint_address, setNftInBag)}

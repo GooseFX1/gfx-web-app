@@ -142,7 +142,12 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
 
   .nftImg {
-    ${tw`w-[165px] h-[165px] sm:mt-[150px] mt-[25px] rounded-[5px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
+    ${tw`flex items-center w-[165px] min-h-[164px] max-h-[184px] overflow-hidden mt-[25px] rounded-[5px] 
+      sm:mt-[150px] sm:h-[125px] sm:w-[125px] sm:left-0 sm:absolute`}
+    img {
+      height: auto;
+      width: 100%;
+    }
   }
   .currentBid {
     color: ${({ theme }) => theme.text22};
@@ -578,7 +583,11 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         </div>
 
         <div className="vContainer">
-          {!checkMobile() && <img className="nftImg" src={general?.image_url} alt="" />}
+          {!checkMobile() && (
+            <div className="nftImg">
+              <img src={general.image_url} alt="nft-image" />
+            </div>
+          )}
         </div>
 
         <div className="vContainer" tw="flex items-center !mt-2 sm:!mt-[70px] justify-center">
