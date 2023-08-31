@@ -202,6 +202,7 @@ export const FarmTable: FC = () => {
           <div tw="flex items-center w-full">
             <SearchBar
               width="400px"
+              filter={searchTokens}
               cssStyle={tw`h-8.75`}
               setSearchFilter={setSearchTokens}
               placeholder="Search by token symbol"
@@ -256,7 +257,7 @@ export const FarmTable: FC = () => {
                 <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
               ))
             ) : initialLoad ? (
-              <SkeletonCommon height="120px" style={{ marginTop: '15px' }} />
+              <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />
             ) : (
               <NoResultsFound
                 requestPool={true}
@@ -264,7 +265,7 @@ export const FarmTable: FC = () => {
                 subText="Don’t worry, there are more pools coming soon..."
               />
             )}
-            {numberOfCoinsDeposited === 0 && showDeposited && (
+            {numberOfCoinsDeposited === 0 && showDeposited && searchTokens.length === 0 && (
               <NoResultsFound
                 str="Oops, no pools deposited"
                 subText="Don’t worry, explore our pools and start earning!"
@@ -409,7 +410,9 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
           <td>{formattedapiSslData.apy} %</td>
-          {!checkMobile() && <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}</td>}
+          {!checkMobile() && (
+            <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="75%" width="75%" />}</td>
+          )}
           {!checkMobile() && <td>${formattedapiSslData.volume}</td>}
           {!checkMobile() && <td>${formattedapiSslData.fee}</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}

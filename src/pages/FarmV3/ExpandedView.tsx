@@ -5,6 +5,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
 import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
 import { executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -125,14 +126,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
   // or withdraw mode with zero user deposited amount or no withdraw amount
-  const disableActionButton = useMemo(
-    () =>
-      (!depositAmount && !isUserWhitelisted()) || //shrihari i am talking about this
+  const disableActionButton = useMemo(() => {
+    if (!isUserWhitelisted()) return false
+    return (
       (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > 5000) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
-      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount)),
-    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
-  )
+      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
+    )
+  }, [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity, isWhitelisted])
 
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
