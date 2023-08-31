@@ -125,9 +125,13 @@ export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   .nftNameColumn {
     text-align: left;
     width: 25%;
+
     .nftNameImg {
-      border-radius: 5px;
-      ${tw`w-10 h-10 sm:mt-3 ml-4 mt-5`}
+      ${tw`flex items-center w-10 h-10 overflow-hidden rounded-[5px] sm:mt-3 ml-4 mt-5`}
+      img {
+        height: auto;
+        width: 100%;
+      }
     }
   }
   .collectionName {
@@ -318,17 +322,18 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
       <td className="nftNameColumn" tw="!w-[20%]">
         {nftDetails?.nft_name ? (
           <div tw="flex">
-            <img
-              className="nftNameImg"
-              src={gfxImageService(
-                IMAGE_SIZES.SM_SQUARE,
-                nftDetails.verified_collection_address
-                  ? nftDetails.verified_collection_address
-                  : nftDetails.first_verified_creator_address,
-                nftDetails.image_url
-              )}
-              alt=""
-            />
+            <div className="nftNameImg">
+              <img
+                src={gfxImageService(
+                  IMAGE_SIZES.SM_SQUARE,
+                  nftDetails.verified_collection_address
+                    ? nftDetails.verified_collection_address
+                    : nftDetails.first_verified_creator_address,
+                  nftDetails.image_url
+                )}
+                alt=""
+              />
+            </div>
             <div tw="flex flex-col mt-4.5 ml-2">
               <GenericTooltip text={nftDetails?.nft_name}>
                 <div tw="flex items-center ">

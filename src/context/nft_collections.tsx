@@ -43,7 +43,7 @@ export const NFTCollectionProvider: FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     if (!publicKey) setMyNFTsCollection([])
-    if (sessionUserParsedAccounts.length && singleCollection && publicKey) {
+    if (sessionUserParsedAccounts && sessionUserParsedAccounts.length && singleCollection && publicKey) {
       ;(async () => {
         const mintAddresses: string[] = sessionUserParsedAccounts.map((acc) => acc.mint)
         const myNFTs = await fetchUserNftsFromDb(mintAddresses, singleCollection[0].uuid)
