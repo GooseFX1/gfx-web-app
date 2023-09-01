@@ -260,7 +260,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     <div
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
-            flex justify-between sm:flex-col sm:justify-around`,
+            flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
         isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
@@ -268,24 +268,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
             <FarmStats
-              isExpanded={isExpanded}
               keyStr="Liquidity"
               value={liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
             />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Volume" value={`00.00 ${coin?.token}`} />
-            <FarmStats isExpanded={isExpanded} keyStr="24H Fees" value={`00.00 ${coin?.token}`} />
+            <FarmStats keyStr="24H Volume" value={`00.00 ${coin?.token}`} />
+            <FarmStats keyStr="24H Fees" value={`00.00 ${coin?.token}`} />
+            <FarmStats keyStr="My Balance" value={userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'} />
+            <FarmStats keyStr="Wallet Balance" value={`${userTokenBalance.toFixed(2)} ${coin?.token}`} />
             <FarmStats
-              isExpanded={isExpanded}
-              keyStr="My Balance"
-              value={userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}
-            />
-            <FarmStats
-              isExpanded={isExpanded}
-              keyStr="Wallet Balance"
-              value={`${userTokenBalance.toFixed(2)} ${coin?.token}`}
-            />
-            <FarmStats
-              isExpanded={isExpanded}
               keyStr="Total Earnings"
               value={
                 totalEarned ? (
@@ -329,10 +319,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             </div>
           </>
         )}
-        {breakpoint.isDesktop && (
+        {breakpoint.isDesktop && isExpanded && (
           <div tw="mt-4">
             <FarmStats
-              isExpanded={isExpanded}
               keyStr="Wallet Balance"
               value={`${userTokenBalance?.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD?.toFixed(2)} USD)`}
             />
@@ -422,7 +411,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         <div tw="mt-1">
           <FarmStats
             alignRight={true}
-            isExpanded={isExpanded}
             keyStr="Total Earnings"
             value={
               totalEarned ? (
@@ -441,15 +429,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 const FarmStats: FC<{
   keyStr: string
   value: string | JSX.Element
-  isExpanded: boolean
   alignRight?: boolean
-}> = ({ keyStr, value, isExpanded, alignRight }) => (
-  <div
-    css={[
-      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`,
-      isExpanded ? tw`text-regular opacity-100` : tw` duration-100 invisible opacity-0`
-    ]}
-  >
+}> = ({ keyStr, value, alignRight }) => (
+  <div css={[tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`]}>
     <div tw="text-grey-2" css={[!!alignRight && tw`text-right`]}>
       {keyStr}
     </div>
