@@ -33,7 +33,7 @@ const POOL_CARD = styled.div`
 // `
 
 const POOL_CARD_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-between mb-5 sm:my-3.5`}
+  ${tw`flex flex-row justify-between mb-5 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -101,7 +101,7 @@ export const FarmHeader: FC = () => {
         <div tw="flex flex-col">
           <div
             tw="dark:text-grey-2 text-regular sm:!leading-[15px] font-semibold text-grey-1 sm:mt-[-2px]
-           sm:text-tiny"
+           sm:text-tiny font-semibold"
           >
             Today
           </div>
@@ -159,7 +159,7 @@ export const FarmHeader: FC = () => {
                       />
                       <div
                         tw="text-lg font-semibold text-black-4 dark:text-white 
-                        text-regular font-semibold sm:text-average"
+                        text-regular font-semibold"
                       >
                         {card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'}
                       </div>

@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { Button, SearchBar, ShowDepositedToggle } from '../../components'
+import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { checkMobile } from '../../utils'
@@ -253,7 +253,7 @@ export const FarmTable: FC = () => {
           <tbody>
             {filteredTokens?.length
               ? filteredTokens.map((coin: SSLToken) => (
-                  <FarmTableToken key={coin?.token} coin={coin} showDeposited={showDeposited} />
+                  <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} />
                 ))
               : initialLoad && <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />}
             {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
@@ -325,7 +325,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableToken: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
+const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -398,7 +398,7 @@ const FarmTableToken: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, 
           onClick={() => setIsExpanded((prev) => !prev)}
         >
           <td tw="!justify-start">
-            {userDepositedAmount && showDeposited ? (
+            {userDepositedAmount ? (
               <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
             ) : (
               <></>
@@ -414,14 +414,7 @@ const FarmTableToken: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, 
           {!checkMobile() && <td>${formattedapiSslData?.fee}</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
-            <Button
-              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-[15px] bg-grey-1`}
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-              disabled={true}
-            >
-              Stats
-            </Button>
-            <div tw="ml-2 sm:mr-2">
+            <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
             </div>
           </td>
