@@ -59,11 +59,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         const account = await connection.getTokenAccountsByOwner(wallet?.adapter?.publicKey, {
           mint: toPublicKey(tokenMintAddress)
         })
-        if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
         if (account.value[0]) {
           const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-          setUserTokenBalance(balance.value.uiAmount)
+          setUserTokenBalance(balance?.value?.uiAmount)
         }
+        if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
       }
     })()
   }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance])
@@ -121,7 +121,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   }
 
   const goToTwitter = () => {
-    window.open('https://www.twiiter.com', '_blank')
+    window.open('https://x.com/goosefx1/status/1697232645363523922', '_blank')
   }
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
@@ -138,14 +138,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      if (!isUserWhitelisted()) return `Whitelist Pending`
+      if (!isUserWhitelisted()) return `Get Access`
       if (coin?.token === 'BONK' && liquidity > 5000) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
-      if (!isUserWhitelisted()) return `Whitelist Pending`
+      if (!isUserWhitelisted()) return `Get Access`
       if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
       if (withdrawAmount) return modeOfOperation
       if (!withdrawAmount) return `Enter Amount`
@@ -260,8 +260,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     <div
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
-            flex justify-between sm:flex-col`,
-        isExpanded ? tw`h-[115px] sm:h-[366px] visible  p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
+            flex justify-between sm:flex-col sm:justify-around`,
+        isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
       <div tw="flex flex-col">
@@ -347,7 +347,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? parseFloat((userTokenBalance / 2).toFixed(2)) : 0)
+                    ? setDepositAmount(userTokenBalance ? 0.01 : 0)
                     : setWithdrawAmount(userDepositedAmount ? 0.01 : 0)
                 }
                 tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
