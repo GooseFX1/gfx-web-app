@@ -252,23 +252,24 @@ export const FarmTable: FC = () => {
             poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length && filteredTokens.length}
           />
           <tbody>
-            {filteredTokens?.length ? (
-              filteredTokens.map((coin: SSLToken) => (
-                <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
-              ))
-            ) : initialLoad ? (
-              <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />
-            ) : (
+            {filteredTokens?.length
+              ? filteredTokens.map((coin: SSLToken) => (
+                  <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
+                ))
+              : initialLoad && <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />}
+
+            {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
+              <NoResultsFound
+                str="Oops, no pools deposited"
+                subText="Don’t worry, explore our pools and start earning!"
+              />
+            )}
+
+            {filteredTokens?.length === 0 && searchTokens?.length > 0 && (
               <NoResultsFound
                 requestPool={true}
                 str="Oops, no pools found"
                 subText="Don’t worry, there are more pools coming soon..."
-              />
-            )}
-            {numberOfCoinsDeposited === 0 && showDeposited && searchTokens.length === 0 && (
-              <NoResultsFound
-                str="Oops, no pools deposited"
-                subText="Don’t worry, explore our pools and start earning!"
               />
             )}
           </tbody>
