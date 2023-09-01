@@ -112,7 +112,7 @@ export const FarmTable: FC = () => {
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
   const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts } = useSSLContext()
-  const [searchTokens, setSearchTokens] = useState<string>()
+  const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
 
@@ -122,12 +122,13 @@ export const FarmTable: FC = () => {
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
-      if (filteredLiquidityAccounts[data.mint.toBase58()]?.amountDeposited?.toNumber() > 0) {
+      const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toNumber()
+      const amount = amountInNative / Math.pow(10, data?.mintDecimals)
+      if (+amount?.toFixed(2) > 0) {
         return accumulator + 1
       }
       return accumulator
     }, 0)
-
     return count
   }, [pool, filteredLiquidityAccounts, sslData, wallet?.adapter?.publicKey])
 
@@ -248,23 +249,19 @@ export const FarmTable: FC = () => {
 
       <div>
         <table tw="mt-4">
-          <FarmTableHeaders
-            poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length && filteredTokens.length}
-          />
+          <FarmTableHeaders poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length} />
           <tbody>
             {filteredTokens?.length
               ? filteredTokens.map((coin: SSLToken) => (
-                  <FarmTableCoin key={coin?.token} coin={coin} showDeposited={showDeposited} />
+                  <FarmTableToken key={coin?.token} coin={coin} showDeposited={showDeposited} />
                 ))
               : initialLoad && <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />}
-
             {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
               <NoResultsFound
                 str="Oops, no pools deposited"
                 subText="Don’t worry, explore our pools and start earning!"
               />
             )}
-
             {filteredTokens?.length === 0 && searchTokens?.length > 0 && (
               <NoResultsFound
                 requestPool={true}
@@ -328,7 +325,7 @@ const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   </thead>
 )
 
-const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
+const FarmTableToken: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -356,7 +353,6 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
       prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
     [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
   )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const apiSslData = useMemo(() => {
     try {
       if (sslTableData) {
@@ -389,8 +385,8 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && userDepositedAmount) return true
-    else if (showDeposited && !userDepositedAmount) return false
+    else if (showDeposited && +userDepositedAmount.toFixed(2) > 0) return true
+    else if (showDeposited && !(+userDepositedAmount.toFixed(2) > 0)) return false
   }, [showDeposited, userDepositedAmount])
 
   return (
@@ -410,17 +406,18 @@ const FarmTableCoin: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, s
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
           </td>
-          <td>{formattedapiSslData.apy} %</td>
+          <td>{formattedapiSslData?.apy} %</td>
           {!checkMobile() && (
             <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
-          {!checkMobile() && <td>${formattedapiSslData.volume}</td>}
-          {!checkMobile() && <td>${formattedapiSslData.fee}</td>}
+          {!checkMobile() && <td>${formattedapiSslData?.volume}</td>}
+          {!checkMobile() && <td>${formattedapiSslData?.fee}</td>}
           {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <Button
-              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-[15px] bg-gradient-1`}
+              cssStyle={tw`h-[35px] w-[100px] mr-3 sm:mr-1 text-white font-semibold text-[15px] bg-grey-1`}
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
+              disabled={true}
             >
               Stats
             </Button>
