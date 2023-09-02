@@ -261,3 +261,4 @@ export const TOKEN_NAMES = {
 
 export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
 export const IS_WHITELIST = '/wallet-apis/isWhitelist'
+export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
