@@ -63,6 +63,9 @@ const WRAPPER = styled.div<{ $index: number }>`
     ${tw`text-green-3`}
     filter: drop-shadow(0px 0px 5px #80ce00);
   }
+  .disable {
+    ${tw`cursor-not-allowed`}
+  }
 `
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-60 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
@@ -144,7 +147,7 @@ export const LeaderBoard: FC = () => {
                 onClick={() => {
                   index === 0 ? null : setScreenType(index)
                 }}
-                className={index === screenType ? 'active' : ''}
+                className={index === 0 ? 'disable' : index === screenType ? 'active' : ''}
               >
                 {pool}
               </div>
