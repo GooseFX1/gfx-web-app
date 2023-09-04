@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
-import { Farm, Swap, FarmV2 } from './pages'
+import { Farm, FarmV2 } from './pages'
 import {
   NavCollapseProvider,
   PriceFeedProvider,
@@ -31,7 +31,7 @@ import { StatsProvider } from './context/stats'
 
 export const Router: FC = () => (
   <BrowserRouter>
-    {window.location.pathname === '/' && <Redirect from="/" to="/swap" />}
+    {window.location.pathname === '/' && <Redirect from="/" to="/trade" />}
     <TokenRegistryProvider>
       <AccountsProvider>
         <RewardToggleProvider>
@@ -41,9 +41,9 @@ export const Router: FC = () => (
                 <NavCollapseProvider>
                   <AppLayout>
                     <Switch>
-                      <Route exact path="/swap/:tradePair?">
+                      {/* <Route exact path="/swap/:tradePair?">
                         <Swap />
-                      </Route>
+                      </Route> */}
                       <Route path="/trade">
                         <PriceFeedProvider>
                           <OrderProvider>

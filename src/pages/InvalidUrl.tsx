@@ -73,7 +73,7 @@ export const GenericNotFound: FC<{ redirectLink?: string; redirectString?: strin
           status={'action'}
           width={'267px'}
           radius={'20px'}
-          onClick={() => history.push(redirectLink ? redirectLink : '/swap')}
+          onClick={() => history.push(redirectLink ? redirectLink : '/trade')}
         >
           <span> {redirectString ? redirectString : `Go Back Home`}</span>
         </HOME_BTN>
