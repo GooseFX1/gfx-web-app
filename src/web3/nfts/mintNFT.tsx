@@ -17,7 +17,7 @@ import {
 import { IMetadataContext } from '../../types/nft_details.d'
 import { updateMetadata } from './metadata'
 import { sendTransactionWithRetry } from '../transactions'
-import crypto from 'crypto'
+import crypto from 'crypto-browserify'
 import BN from 'bn.js'
 import { calculate } from '@metaplex/arweave-cost'
 

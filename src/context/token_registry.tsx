@@ -3,7 +3,7 @@ import { ENV, TokenInfo } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { FARM_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
-import { TOKEN_LIST_URL } from '@jup-ag/core'
+//import { TOKEN_LIST_URL } from '@jup-ag/core'
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
@@ -63,7 +63,7 @@ export const TokenRegistryProvider: FC<{ children: ReactNode }> = ({ children })
         }
       }
       try {
-        const splList = (await (await fetch(TOKEN_LIST_URL[network])).json()).map((token: ITokenInfo) => {
+        const splList = (await (await fetch('TOKEN_LIST_URL[network]')).json()).map((token: ITokenInfo) => {
           token.imageURL = `/img/crypto/${token.symbol}.svg`
           return token
         })

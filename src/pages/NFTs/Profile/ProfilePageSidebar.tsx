@@ -5,7 +5,7 @@ import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { WRAPPED_SOL_MINT } from '@jup-ag/core'
+//import { WRAPPED_SOL_MINT } from '@jup-ag/core'
 import { formatNumber } from '../../../web3/utils_launchpad'
 import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
@@ -13,6 +13,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { copyToClipboard, signAndUpdateDetails } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
 
 const PROFILE = styled.div`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
@@ -173,7 +174,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   const handleCancel = () => setProfileModal(false)
   const { getUIAmount } = useAccounts()
   const { wallet } = useWallet()
-  const solAmount = getUIAmount(WRAPPED_SOL_MINT.toBase58())
+  const solAmount = getUIAmount(PublicKey.default.toBase58())
   const userSol = formatNumber.format(solAmount)
   const [twitterHover, setTwitterHover] = useState<boolean>(false)
   const [telegramHover, setTelegramHover] = useState<boolean>(false)
