@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import {
   getStakingAccountKey,
   fetchCurrentAmountStaked,
-  getSslAccountKey,
+  //getSslAccountKey,
   fetchAllSSLAmountStaked,
-  getLiquidityAccountKey,
-  getMainVaultKey,
+  //getLiquidityAccountKey,
+  //getMainVaultKey,
   AccountLayout,
   getNetworkConnectionText
 } from '../../web3'
@@ -250,10 +250,10 @@ const CustomTableList: FC = () => {
         const mainVaultKeys = []
         for (let i = 0; i < SSLTokenNames.length; i++) {
           try {
-            const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
-            SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
-            liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
-            mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
+            //const tokenMint = ADDRESSES[network].sslPool[SSLTokenNames[i]].address
+            //SSLAccountKeys.push(await getSslAccountKey(tokenMint, network))
+            //liquidityAccountKeys.push(await getLiquidityAccountKey(wal, tokenMint, network))
+            //mainVaultKeys.push(await getMainVaultKey(tokenMint, network))
           } catch (err) {
             console.log(err)
           }

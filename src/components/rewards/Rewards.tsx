@@ -2,9 +2,9 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Input, InputRef } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig, useRewardToggle } from '../../context'
+import { useConnectionConfig } from '../../context'
 import useRewards from '../../context/rewardsContext'
-import { useHistory } from 'react-router-dom'
+
 import { Connection, PublicKey, TokenAmount } from '@solana/web3.js'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
@@ -26,7 +26,7 @@ const EarnRewards: FC = () => {
   const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { stake, rewards, getUiAmount } = useRewards()
-  const history = useHistory()
+
   const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
   const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
@@ -37,7 +37,7 @@ const EarnRewards: FC = () => {
   }))
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
-  const { rewardToggle } = useRewardToggle()
+  // const { rewardToggle } = useRewardToggle()
   const getUserGoFXBalance = useCallback(
     async (publicKey: PublicKey, connection: Connection, network: WalletAdapterNetwork) => {
       if (!publicKey) {
@@ -122,17 +122,20 @@ const EarnRewards: FC = () => {
     const value = parseFloat(e.target.value)
     setInputValue(isNaN(value) ? 0.0 : value)
   }, [])
-  const handleGoToSwap = useCallback(() => {
-    history.push({
-      pathname: '/swap',
-      search: '?from=SOL&to=GOFX', // query string
-      state: {
-        // location state
-        update: true
-      }
-    })
-    rewardToggle(false)
-  }, [history, rewardToggle])
+
+  // const handleGoToSwap = useCallback(() => {
+  //   history.push({
+  //     pathname: '/swap',
+  //     search: '?from=SOL&to=GOFX', // query string
+  //     state: {
+  //       // location state
+  //       update: true
+  //     }
+  //   })
+
+  //   rewardToggle(false)
+  // }, [history, rewardToggle])
+
   const handleUnstakeConfirmationModalClose = useCallback(() => {
     setIsUnstakeConfirmationModalOpen(false)
   }, [])
@@ -182,7 +185,7 @@ const EarnRewards: FC = () => {
             {nFormatter(userGoFxBalance.uiAmount)} GOFX
           </p>
         </div>
-        <button
+        {/* <button
           css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 min-md:px-8 font-semibold flex
           items-center justify-center min-md:w-[158px] w-[146px] whitespace-nowrap
             text-regular px-2.5
@@ -193,7 +196,7 @@ const EarnRewards: FC = () => {
           onClick={handleGoToSwap}
         >
           Swap GOFX now!
-        </button>
+        </button> */}
       </div>
 
       <div css={tw`flex flex-row w-full gap-2.5 min-md:mt-[15px]`}>
@@ -285,7 +288,10 @@ const EarnRewards: FC = () => {
           )}
         </button>
       ) : (
-        <Connect containerStyle={[tw`w-full min-md:w-full`]} customButtonStyle={[tw`w-full min-md:w-full h-10`]} />
+        <Connect
+          containerStyle={[tw`w-full min-md:w-full`]}
+          customButtonStyle={[tw`w-[154px] min-md:w-[154px] h-10`]}
+        />
       )}
 
       {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}

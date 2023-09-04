@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -207,8 +208,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
   const onClickWithdraw = (amount: number): void => {
     setIsUnstakeLoading(true)
     try {
-      //const confirm =
-      executeWithdraw(SSLProgram, wal, connection, network, name, amount).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, name, amount, wal?.wallet?.adapter?.publicKey).then((con) => {
         setIsUnstakeLoading(false)
         const { confirm, signature } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
@@ -310,7 +310,7 @@ const ExpandedComponent: FC<{ farm: IFarmData; setIsOpen: any }> = ({ farm, setI
     try {
       setIsStakeLoading(true)
       setOperationPending(true)
-      const confirm = executeDeposit(SSLProgram, wal, connection, network, amount, name)
+      const confirm = executeDeposit(SSLProgram, wal, connection, amount, name, wal?.wallet?.adapter?.publicKey)
       confirm.then((con) => {
         setOperationPending(false)
         setIsStakeLoading(false)

@@ -8,25 +8,23 @@ import {
   token,
   walletAdapterIdentity
 } from '@metaplex-foundation/js'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v2'
 import { Metadata, PROGRAM_ID as TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata'
 import {
+  AccountMeta,
+  ComputeBudgetProgram,
   Connection,
   PublicKey,
   SystemProgram,
   SYSVAR_INSTRUCTIONS_PUBKEY,
-  TransactionInstruction,
-  SYSVAR_CLOCK_PUBKEY
+  TransactionInstruction
 } from '@solana/web3.js'
-import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY, AUTH_PROGRAM_ID } from '../ids'
+import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY } from '../ids'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
-import {
-  createSellInstruction,
-  createPrintListingReceiptInstruction
-} from '@metaplex-foundation/mpl-auction-house'
-import { getAtaForMint, findTokenRecordPda, getEditionDataAccount } from './pda'
+import { createSellInstruction, SellInstructionAccounts } from '@metaplex-foundation/mpl-auction-house'
 import { getMetadata } from '../nfts/metadata'
+import { findTokenRecordPda, getAssociatedTokenAddressSync } from './pda'
 
 export const currency: SplTokenCurrency = {
   symbol: 'SOL',
@@ -41,31 +39,25 @@ export const constructListInstruction = async (
   mintAccount: PublicKey,
   tokenAccount: PublicKey,
   amount: number,
-  printReceipt: boolean
+  printReceipt: boolean,
+  isPnft: boolean
 ): Promise<TransactionInstruction[]> => {
   const price: SplTokenAmount = {
     basisPoints: toBigNumber(amount * LAMPORTS_PER_SOL_NUMBER),
     currency
   }
   const seller = wallet?.wallet?.adapter?.publicKey
-  const tokenAccountKey: PublicKey = (await getAtaForMint(mintAccount, seller))[0]
 
   const metaplex: Metaplex = new Metaplex(connection).use(walletAdapterIdentity(wallet))
   const programAsSigner = metaplex.auctionHouse().pdas().programAsSigner()
 
-  // const metadata = metaplex.nfts().pdas().metadata({
-  //   mint: mintAccount
-  // })
-
   const metadataAccount = await getMetadata(mintAccount.toBase58())
-  const metadataObj = await connection.getAccountInfo(toPublicKey(metadataAccount))
-  const metadataParsed = Metadata.deserialize(metadataObj.data)[0]
 
   const auctionHouse = await metaplex.auctionHouse().findByAddress({ address: toPublicKey(AUCTION_HOUSE) })
 
   const sellerTradeState = metaplex.auctionHouse().pdas().tradeState({
     auctionHouse: auctionHouse.address,
-    wallet: wallet?.wallet?.adapter?.publicKey,
+    wallet: seller,
     treasuryMint: auctionHouse.treasuryMint.address,
     tokenMint: mintAccount,
     price: price.basisPoints,
@@ -78,22 +70,32 @@ export const constructListInstruction = async (
     .pdas()
     .tradeState({
       auctionHouse: auctionHouse.address,
-      wallet: wallet?.wallet?.adapter?.publicKey,
+      wallet: seller,
       treasuryMint: auctionHouse.treasuryMint.address,
       tokenMint: mintAccount,
       price: lamports(0).basisPoints,
       tokenSize: tokenSizeSDK.basisPoints,
       tokenAccount
     })
+  let sellRemainingAccounts: ISellAnchorRemainingAccounts
+  if (isPnft) {
+    const pnftAccounts = await derivePNFTAccounts(connection, seller, programAsSigner, mintAccount)
 
-  const tokenRecord = findTokenRecordPda(mintAccount, tokenAccountKey)
-  const editionAccount: PublicKey = (await getEditionDataAccount(mintAccount))[0]
+    sellRemainingAccounts = {
+      metadataProgram: pnftAccounts.metadataProgram,
+      delegateRecord: pnftAccounts.delegateRecord,
+      tokenRecord: pnftAccounts.tokenRecord,
+      tokenMint: pnftAccounts.tokenMint,
+      edition: pnftAccounts.edition,
+      authRulesProgram: pnftAccounts.authRulesProgram,
+      authRules: pnftAccounts.authRules,
+      sysvarInstructions: pnftAccounts.sysvarInstructions
+    }
+  }
 
-  const accounts = {
+  const accounts: SellInstructionAccounts = {
     wallet: seller,
-    sellerBrokerWallet: SystemProgram.programId,
-    tokenMint: mintAccount,
-    tokenAccount: tokenAccountKey,
+    tokenAccount: tokenAccount,
     metadata: toPublicKey(metadataAccount),
     authority: toPublicKey(AUCTION_HOUSE_AUTHORITY),
     auctionHouse: auctionHouse.address,
@@ -102,16 +104,8 @@ export const constructListInstruction = async (
     freeSellerTradeState,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: SystemProgram.programId,
-    metadataProgram: TOKEN_METADATA_PROGRAM_ID,
     programAsSigner: programAsSigner,
-    instructions: SYSVAR_INSTRUCTIONS_PUBKEY,
-    tokenRecord: tokenRecord,
-    editionAccount: editionAccount,
-    authorizationRules: metadataParsed.programmableConfig?.ruleSet
-      ? metadataParsed.programmableConfig.ruleSet
-      : TOKEN_METADATA_PROGRAM_ID,
-    mplTokenAuthRulesProgram: AUTH_PROGRAM_ID,
-    clock: SYSVAR_CLOCK_PUBKEY
+    anchorRemainingAccounts: isPnft ? Object.values(sellRemainingAccounts) : null
   }
 
   const args = {
@@ -121,34 +115,165 @@ export const constructListInstruction = async (
     buyerPrice: price.basisPoints,
     tokenSize: tokenSizeSDK.basisPoints
   }
+  const additionalComputeBudgetInstruction = ComputeBudgetProgram.setComputeUnitLimit({ units: 400000 })
   const instructions: TransactionInstruction[] = []
 
-  // Sell Instruction.
   const sellInstruction = createSellInstruction(accounts, args)
+
+  /** We should set metadata account as writable for pnfts, when we do createSellInstruction for normal nfts,
+   *  the metadata is set to be non writable **/
+  if (isPnft) sellInstruction.keys.at(2).isWritable = true
 
   // Make seller as signer since createSellInstruction don't assign a signer
   const signerKeyIndex = sellInstruction.keys.findIndex((key) => key.pubkey.equals(seller))
   sellInstruction.keys[signerKeyIndex].isSigner = true
   sellInstruction.keys[signerKeyIndex].isWritable = true
 
+  if (isPnft) instructions.push(additionalComputeBudgetInstruction)
   instructions.push(sellInstruction)
 
-  if (printReceipt) {
-    const receipt = metaplex.auctionHouse().pdas().listingReceipt({
-      tradeState: sellerTradeState
-    })
+  return instructions
+}
 
-    instructions.push(
-      createPrintListingReceiptInstruction(
-        {
-          receipt,
-          bookkeeper: seller,
-          instruction: SYSVAR_INSTRUCTIONS_PUBKEY
-        },
-        { receiptBump: receipt.bump }
-      )
-    )
+const TOKEN_AUTH_RULES_ID = new PublicKey('auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg')
+
+export const getMasterEditionAccount = (mint: PublicKey): PublicKey =>
+  PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('metadata', 'utf8'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      mint.toBuffer(),
+      Buffer.from('edition', 'utf8')
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  )[0]
+
+export function findDelegateRecordPdas(
+  collectionMint: PublicKey,
+  payer: PublicKey,
+  delegate: PublicKey
+): PublicKey {
+  return PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('metadata'),
+      TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+      collectionMint.toBuffer(),
+      Buffer.from('programmable_config_delegate'),
+      payer.toBuffer(),
+      delegate.toBuffer()
+    ],
+    TOKEN_METADATA_PROGRAM_ID
+  )[0]
+}
+
+interface ISellAnchorRemainingAccounts {
+  metadataProgram: AccountMeta
+  delegateRecord: AccountMeta
+  tokenRecord: AccountMeta
+  tokenMint: AccountMeta
+  edition: AccountMeta
+  authRulesProgram: AccountMeta
+  authRules: AccountMeta
+  sysvarInstructions: AccountMeta
+}
+
+interface IPNFTAccounts {
+  metadataProgram: AccountMeta
+  delegateRecord: AccountMeta
+  tokenRecord: AccountMeta
+  tokenMint: AccountMeta
+  edition: AccountMeta
+  authRulesProgram: AccountMeta
+  authRules: AccountMeta
+  sysvarInstructions: AccountMeta
+  programAsSigner: AccountMeta
+  systemProgram: AccountMeta
+  sellerTokenRecord: AccountMeta
+  metadataAccount: AccountMeta
+}
+
+export const derivePNFTAccounts = async (
+  connection: Connection,
+  wallet: PublicKey,
+  programAsSigner: PublicKey,
+  mint: PublicKey,
+  seller?: PublicKey
+): Promise<IPNFTAccounts> => {
+  const metadataAccount = await getMetadata(mint.toBase58())
+  const metadata = await Metadata.fromAccountAddress(connection, toPublicKey(metadataAccount))
+  const associatedTokenAccount = getAssociatedTokenAddressSync(mint, wallet)
+  const tokenRecord = findTokenRecordPda(mint, associatedTokenAccount)
+  const masterEdition = getMasterEditionAccount(mint)
+  const authRules = metadata.programmableConfig?.ruleSet
+  const pasAssociatedTokenAccount = getAssociatedTokenAddressSync(mint, programAsSigner, true)
+  const delegateRecord = findTokenRecordPda(mint, pasAssociatedTokenAccount)
+  let sellerTokenRecord = TOKEN_METADATA_PROGRAM_ID
+
+  if (seller) {
+    const sellerAssociatedTokenAccount = getAssociatedTokenAddressSync(mint, seller)
+    sellerTokenRecord = findTokenRecordPda(mint, sellerAssociatedTokenAccount)
   }
 
-  return instructions
+  return {
+    metadataProgram: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: TOKEN_METADATA_PROGRAM_ID
+    },
+    delegateRecord: {
+      isSigner: false,
+      isWritable: true,
+      pubkey: delegateRecord ?? tokenRecord
+    },
+    tokenRecord: {
+      isSigner: false,
+      isWritable: true,
+      pubkey: tokenRecord
+    },
+    tokenMint: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: mint
+    },
+    edition: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: masterEdition
+    },
+    authRulesProgram: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: TOKEN_AUTH_RULES_ID
+    },
+    authRules: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: authRules ?? TOKEN_METADATA_PROGRAM_ID
+    },
+    sysvarInstructions: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: SYSVAR_INSTRUCTIONS_PUBKEY
+    },
+    programAsSigner: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: programAsSigner
+    },
+    systemProgram: {
+      isSigner: false,
+      isWritable: false,
+      pubkey: SystemProgram.programId
+    },
+    sellerTokenRecord: {
+      isSigner: false,
+      isWritable: true,
+      pubkey: sellerTokenRecord
+    },
+    metadataAccount: {
+      isSigner: false,
+      isWritable: true,
+      pubkey: toPublicKey(metadataAccount)
+    }
+  }
 }

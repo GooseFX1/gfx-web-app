@@ -43,7 +43,7 @@ const WRAPPER = styled.div<{ $width; $mode }>`
 export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
   ${tw`flex flex-row items-center justify-center cursor-pointer`}
   .textTitle {
-    ${tw`font-semibold text-base dark:text-white text-grey-1`}
+    ${tw`font-semibold `}
   }
   .info-icon {
     ${tw`!w-[20px] !h-[20px] block ml-2`}
@@ -68,17 +68,13 @@ export const TableHeaderTitle = (
   invert?: boolean,
   focus?: boolean,
   tooltipMode?: boolean
-): ReactElement => {
-  // const { mode } = useDarkMode()
-  console.log('m')
-  return (
-    <STYLED_TITLE $focus={focus}>
-      <div className="textTitle">{text}</div>
-      {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
-      {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
-    </STYLED_TITLE>
-  )
-}
+): ReactElement => (
+  <STYLED_TITLE $focus={focus}>
+    <div className="textTitle">{text}</div>
+    {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
+    {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
+  </STYLED_TITLE>
+)
 
 interface IAppraisalValue {
   text: string | null

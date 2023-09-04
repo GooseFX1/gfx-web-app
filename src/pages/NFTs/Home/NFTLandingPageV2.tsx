@@ -85,7 +85,7 @@ const NFT_AGG_WRAP = styled.div<{ $currency }>`
   }
   .search-bar {
     transition: 0.5s ease;
-    ${tw`sm:w-0 !w-[100%]`}
+    ${tw`sm:w-0 !w-[100%] !w-[425px]`}
   }
   .comingSoon {
     ${tw`text-grey-2`}
@@ -323,10 +323,9 @@ const FiltersContainer = () => {
     return (
       <FILTERS_CONTAINER>
         <SearchBar
-          className="search-bar"
           width={'425px'}
           filter={searchFilter}
-          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75`}
+          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75 mt-[-10px]`}
           bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
           setSearchFilter={setSearchFilter}
           placeholder="Search by collections"
@@ -414,7 +413,7 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
       {userPic ? (
         <img
           src={userPic}
-          tw="h-[44px] w-[44px] sm:h-8.75 sm:w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
+          tw="h-8.75 w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
           className={mediumSize ? 'userPopupProfilePic' : 'customProfileImg'}
           onClick={goProfile}
         />

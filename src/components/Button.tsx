@@ -26,8 +26,9 @@ const BUTTON = styled.button<{
   }
 `
 
+// removed tw="relative top-[-1.6rem]" from the div below
 const LOADER = () => (
-  <div tw="relative top-[-1.6rem]">
+  <div>
     <Loader />
   </div>
 )

@@ -617,26 +617,14 @@ export const PlaceOrderMobi = () => {
   ]
 
   const buttonState = useMemo(() => {
-    if (isDevnet) {
-      if (isGeoBlocked) return ButtonState.isGeoBlocked
-      if (!connected) return ButtonState.Connect
-      if (
-        (order.side === 'buy' && order.total > userBalance) ||
-        (order.side === 'sell' && order.size > userBalance)
-      )
-        return ButtonState.BalanceExceeded
-      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      return ButtonState.CanPlaceOrder
-    } else {
-      if (isGeoBlocked) return ButtonState.isGeoBlocked
-      if (!connected) return ButtonState.Connect
-      if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
-      if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-      if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
-      if (order.size < 0.01) return ButtonState.OrderTooSmall
-      //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
-      return ButtonState.CanPlaceOrder
-    }
+    if (isGeoBlocked) return ButtonState.isGeoBlocked
+    if (!connected) return ButtonState.Connect
+    if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
+    if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
+    if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
+    if (order.size < 0.01) return ButtonState.OrderTooSmall
+    //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
+    return ButtonState.CanPlaceOrder
   }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
 
   const buttonText = useMemo(() => {

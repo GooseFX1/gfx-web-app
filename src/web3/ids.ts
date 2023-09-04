@@ -1,6 +1,7 @@
 import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
+import { SSLToken } from '../pages/FarmV3/constants'
 import { StringPublicKey } from './metaplex'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
@@ -12,6 +13,7 @@ export type Mint = {
   decimals: number
   sslPool?: boolean
   name?: string
+  controller?: PublicKey
 }
 
 export type Pool = {
@@ -28,6 +30,8 @@ export const ADDRESSES: {
     sslPool: {
       [token: string]: Mint
     }
+    stable: SSLToken[]
+    hyper: SSLToken[]
     pools: {
       [pair: string]: Pool
     }
@@ -72,20 +76,44 @@ export const ADDRESSES: {
       },
       USDC: {
         address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-        decimals: 6,
+        decimals: 9,
         name: 'USDC Coin'
       },
       USDT: {
         address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-        decimals: 6,
+        decimals: 9,
         name: 'USDT'
       },
       ETH: {
         address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
-        decimals: 8,
+        decimals: 9,
         name: 'Wrapped Ether (Wormhole)'
       }
     },
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
     mints: {
       GOFX: {
         address: new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'),
@@ -187,6 +215,35 @@ export const ADDRESSES: {
     }
   },
   devnet: {
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
     sslPool: {
       USDC: {
         address: new PublicKey('USDhTjkUXFfigLELiFpbBnpLmEm4aXHvdY2kDSadJDH'),
@@ -350,6 +407,35 @@ export const ADDRESSES: {
     mints: {},
     pools: {},
     sslPool: {},
+    stable: [
+      {
+        token: 'SOL',
+        address: new PublicKey('So11111111111111111111111111111111111111112'),
+        name: 'Solana'
+      },
+      {
+        token: 'USDC',
+        address: new PublicKey('BNWkCAoNdXmG6Z5jnscA64fjgpu9WSHdkhf7Nc6X6SPM'),
+        name: 'USDC Coin'
+      },
+      {
+        token: 'USDT',
+        address: new PublicKey('6jjKDiFUohqfSk6KofB3xEG46ENASWpSvbaPUX7Tbqgq'),
+        name: 'USDT'
+      }
+    ],
+    hyper: [
+      {
+        token: 'USDT',
+        address: new PublicKey('GofVPcuBh2BzNexQ3BbfDGhxHboGGEf43q4vEq6hEzVs'),
+        name: 'USDT'
+      },
+      {
+        token: 'ETH',
+        address: new PublicKey('HsxJynHah88rWuJ3FeP4fPzyLDt8KDoPGJzsAP57T1Ba'),
+        name: 'Wrapped Ether (Wormhole)'
+      }
+    ],
     programs: {
       pool: {
         address: PublicKey.default,
@@ -449,13 +535,21 @@ export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4C
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 
-// STAKE CONSTANTS
+// SSL-V2 CONSTANTS
 
 export const STAKE_PREFIX = 'GFX-STAKINGACCOUNT'
 
 export const SSL_PREFIX = 'GFX-SSL'
 
-export const LIQUIDITY_ACCOUNT_PREFIX = 'GFX-LIQUIDITYACCOUNT'
+export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
+
+export const POOL_REGISTRY_PREFIX = 'pool_registry'
+
+export const SSL_V2_ADMIN = new PublicKey('GeSkmvDED55EjnybgdN1gJ89p5V5H9W6jrrhxbZ1pDhQ')
+
+export const SSL_PROGRAM_ID = 'GFXsSL5sSaDfNFQUYsHekbWBW1TsFdjDYzACh62tEHxn'
+
+export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
 
 export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 

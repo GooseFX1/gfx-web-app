@@ -234,3 +234,8 @@ export const handleRedirect = (marketplace: string, mintAddress: string): void =
       break
   }
 }
+export const getPriceObject = (str: string): string => {
+  if (str === 'USDC') return `USDC/USDT`
+  if (str === 'USDT') return 'USDT/USD'
+  return `${str}/USDC`
+}

@@ -6,6 +6,7 @@ import {
   useNFTAggregator,
   useNFTDetails,
   useNFTProfile,
+  useDarkMode,
   usePriceFeedFarm
 } from '../../../context'
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -39,11 +40,20 @@ export const SingleNFTCard: FC<{
   lastCardRef?: any
   firstCardRef?: React.RefObject<HTMLElement | null> | null
 }> = ({ item, index, myItems = false, addNftToBag, lastCardRef, firstCardRef }) => {
+  const { mode } = useDarkMode()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
-  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata, general } =
-    useNFTDetails()
+  const {
+    setBids,
+    setAsk,
+    setTotalLikes,
+    setNftMetadata,
+    setGeneral,
+    setOnChainMetadata,
+    general,
+    onChainMetadata
+  } = useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])
@@ -103,6 +113,14 @@ export const SingleNFTCard: FC<{
     () => (currencyView === 'USDC' ? solPrice * appraisalPriceNative : appraisalPriceNative),
     [item?.gfx_appraisal_value, currencyView, appraisalPriceNative]
   )
+
+  const nftImage: string | null = useMemo(() => {
+    if (localSingleNFT && localSingleNFT.image_url) {
+      return localSingleNFT.image_url
+    } else {
+      return null
+    }
+  }, [localSingleNFT, localSingleNFT?.image_url])
   useEffect(() => {
     if (item && sessionUser && sessionUser.user_likes) {
       setIsFavorited(sessionUser.user_likes.includes(item.uuid))
@@ -269,7 +287,7 @@ export const SingleNFTCard: FC<{
   if (hideThisNFT) return null
 
   return (
-    <div tw="pt-4 px-[8px] sm:px-1 sm:pt-2 ">
+    <div tw="pt-4 px-[8px] sm:px-1 sm:pt-2 " id={item?.mint_address}>
       {handleAppraisalPopup()}
       <div
         className={`gridItemRegular ${gradientBg ? 'gridGradient' : ''}`}
@@ -285,21 +303,27 @@ export const SingleNFTCard: FC<{
             onMouseLeave={() => setHover(false)}
           >
             {handleHover}
+
             {localSingleNFT ? (
               <div className="nftImg">
                 <Image
-                  src={gfxImageService(
-                    IMAGE_SIZES.SM_WIDTH,
-                    localSingleNFT.verified_collection_address
-                      ? localSingleNFT.verified_collection_address
-                      : localSingleNFT.first_verified_creator_address,
-                    localSingleNFT.image_url
-                  )}
+                  src={
+                    nftImage
+                      ? gfxImageService(
+                          IMAGE_SIZES.SM_WIDTH,
+                          localSingleNFT.verified_collection_address
+                            ? localSingleNFT.verified_collection_address
+                            : localSingleNFT.first_verified_creator_address,
+                          nftImage
+                        )
+                      : `${window.origin}/img/assets/nft-preview-${mode}.svg`
+                  }
                   width={'100%'}
                   preview={false}
                   onError={(e) => console.error(e)}
                   alt="NFT Preview"
                 />
+
                 {isOwner && localAsk !== null && (
                   <div tw="absolute left-[16px] top-[14px] sm:left-3 sm:top-2.5">
                     <Tag loading={false}>

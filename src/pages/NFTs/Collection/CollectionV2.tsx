@@ -197,9 +197,8 @@ const NFTStatsContainer = () => {
             {!checkMobile() && (
               <div className="wrapper">
                 <div className="titleText" tw="leading-none">
-                  {fixedPriceWithinCollection?.total_count +
-                    '/' +
-                    (singleCollection ? singleCollection[0]?.nfts_count : 0)}
+                  {fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : '00'} /{' '}
+                  {singleCollection ? singleCollection[0]?.nfts_count : '000'}
                 </div>
                 <div className="subTitleText">Listed</div>
               </div>

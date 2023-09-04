@@ -1,0 +1,1462 @@
+{
+  "version": "0.1.0",
+  "name": "gfx_ssl_v2",
+  "instructions": [
+    {
+      "name": "createPoolRegistry",
+      "accounts": [
+        {
+          "name": "funder",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createSsl",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "adminPoolMintAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "oraclePriceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "oracleAccount",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "initialPoolDeposit",
+          "type": "u64"
+        },
+        {
+          "name": "oracleType",
+          "type": "u8"
+        },
+        {
+          "name": "assetType",
+          "type": "u8"
+        },
+        {
+          "name": "mathParams",
+          "type": {
+            "defined": "SSLMathParams"
+          }
+        },
+        {
+          "name": "numberOfSlotsThrottle",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maxSlotPriceStaleness",
+          "type": {
+            "option": "u8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "configSsl",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "isSuspended",
+          "type": "bool"
+        },
+        {
+          "name": "mathParams",
+          "type": {
+            "defined": "SSLMathConfig"
+          }
+        }
+      ]
+    },
+    {
+      "name": "suspendSsl",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "suspendAdmin",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "isSuspended",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "configSuspendAdmin",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "suspendAdmin",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createPair",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintOne",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintTwo",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintOneFeeDestination",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintTwoFeeDestination",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolOneSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolTwoSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintOneSecondaryVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintTwoSecondaryVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "mintOneFeeRate",
+          "type": "u16"
+        },
+        {
+          "name": "mintTwoFeeRate",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "configPair",
+      "accounts": [
+        {
+          "name": "mintOneFeeDestination",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mintTwoFeeDestination",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "mintOneFeeRate",
+          "type": {
+            "option": "u16"
+          }
+        },
+        {
+          "name": "mintTwoFeeRate",
+          "type": {
+            "option": "u16"
+          }
+        }
+      ]
+    },
+    {
+      "name": "configPriceHistory",
+      "accounts": [
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "oraclePriceHistory",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "minimumElapsedSlots",
+          "type": {
+            "option": "u8"
+          }
+        },
+        {
+          "name": "maxSlotPriceStaleness",
+          "type": {
+            "option": "u8"
+          }
+        }
+      ]
+    },
+    {
+      "name": "crankPriceHistories",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "internalSwap",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslAMainToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslBMainToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslASecondaryToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslBSecondaryToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAPriceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenAOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenBPriceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenBOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolASigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolBSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claimFees",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ownerAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createLiquidityAccount",
+      "accounts": [
+        {
+          "name": "poolRegistry",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeLiquidityAccount",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "rentRecipient",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deposit",
+      "accounts": [
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "accounts": [
+        {
+          "name": "liquidityAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "owner",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userAta",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "poolVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "swap",
+      "accounts": [
+        {
+          "name": "pair",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userWallet",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "sslPoolInSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "sslPoolOutSigner",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userAtaIn",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAtaOut",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslOutMainVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslOutSecondaryVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslInMainVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslInSecondaryVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "sslOutFeeVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "feeDestination",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "outputTokenPriceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "outputTokenOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "inputTokenPriceHistory",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "inputTokenOracle",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amountIn",
+          "type": "u64"
+        },
+        {
+          "name": "minOut",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "LiquidityAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "poolRegistry",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "amountDeposited",
+            "type": "u64"
+          },
+          {
+            "name": "lastObservedTap",
+            "type": "u64"
+          },
+          {
+            "name": "lastClaimed",
+            "type": "i64"
+          },
+          {
+            "name": "totalEarned",
+            "type": "u64"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Pair",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "poolRegistry",
+            "type": "publicKey"
+          },
+          {
+            "name": "mints",
+            "type": {
+              "array": ["publicKey", 2]
+            }
+          },
+          {
+            "name": "feeCollector",
+            "type": {
+              "array": ["publicKey", 2]
+            }
+          },
+          {
+            "name": "feeRates",
+            "type": {
+              "array": ["u16", 2]
+            }
+          },
+          {
+            "name": "totalFeesGeneratedNative",
+            "type": {
+              "array": ["u8", 32]
+            }
+          },
+          {
+            "name": "totalHistoricalVolume",
+            "type": {
+              "array": ["u8", 16]
+            }
+          },
+          {
+            "name": "totalInternallySwapped",
+            "type": {
+              "array": ["u8", 32]
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OraclePriceHistory",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "oracleType",
+            "type": "u8"
+          },
+          {
+            "name": "minimumElapsedSlots",
+            "type": "u8"
+          },
+          {
+            "name": "maxSlotPriceStaleness",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 5]
+            }
+          },
+          {
+            "name": "poolRegistry",
+            "type": "publicKey"
+          },
+          {
+            "name": "oracleAddress",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "numUpdates",
+            "type": "u64"
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          },
+          {
+            "name": "priceHistory",
+            "type": {
+              "array": [
+                {
+                  "defined": "HistoricalPrice"
+                },
+                256
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolRegistry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "seed",
+            "type": "publicKey"
+          },
+          {
+            "name": "suspendAdmin",
+            "type": "publicKey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 7]
+            }
+          },
+          {
+            "name": "numEntries",
+            "type": "u32"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 4]
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 128]
+            }
+          },
+          {
+            "name": "entries",
+            "type": {
+              "array": [
+                {
+                  "defined": "SSLPool"
+                },
+                32
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "SSLPool",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "type": "u8"
+          },
+          {
+            "name": "assetType",
+            "type": "u8"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "mintDecimals",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "totalAccumulatedLpReward",
+            "type": "u64"
+          },
+          {
+            "name": "totalLiquidityDeposits",
+            "type": "u64"
+          },
+          {
+            "name": "oraclePriceHistories",
+            "type": {
+              "array": ["publicKey", 3]
+            }
+          },
+          {
+            "name": "mathParams",
+            "type": {
+              "defined": "SSLMathParams"
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalDecimal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "num",
+            "type": "i64"
+          },
+          {
+            "name": "scale",
+            "type": "u32"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 4]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HistoricalPrice",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "price",
+            "type": {
+              "defined": "HistoricalDecimal"
+            }
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLMathConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "meanWindow",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "stdWindow",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "fixedPriceDistance",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "minimumPriceDistance",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "maxPoolTokenRatio",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "stdWeight",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "latestPriceWeight",
+            "type": {
+              "option": "u16"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLMathParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "meanWindow",
+            "type": "u8"
+          },
+          {
+            "name": "stdWindow",
+            "type": "u8"
+          },
+          {
+            "name": "fixedPriceDistance",
+            "type": "u16"
+          },
+          {
+            "name": "minimumPriceDistance",
+            "type": "u16"
+          },
+          {
+            "name": "maxPoolTokenRatio",
+            "type": "u16"
+          },
+          {
+            "name": "latestPriceWeight",
+            "type": "u16"
+          },
+          {
+            "name": "pad0",
+            "type": {
+              "array": ["u8", 6]
+            }
+          },
+          {
+            "name": "stdWeight",
+            "type": "u32"
+          },
+          {
+            "name": "pad1",
+            "type": {
+              "array": ["u8", 4]
+            }
+          },
+          {
+            "name": "space",
+            "type": {
+              "array": ["u8", 32]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Pyth"
+          },
+          {
+            "name": "Switchboardv2"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SwapIxMintOrdering",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "InOut"
+          },
+          {
+            "name": "OutIn"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SSLPoolStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Suspended"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "BlueChip"
+          },
+          {
+            "name": "Volatile"
+          },
+          {
+            "name": "Stable"
+          },
+          {
+            "name": "Invalid"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Suspended",
+      "msg": "[G100] The pool is suspended"
+    },
+    {
+      "code": 6001,
+      "name": "NotAdmin",
+      "msg": "[G101] Not admin"
+    },
+    {
+      "code": 6002,
+      "name": "MintsNotSorted",
+      "msg": "[G102] Mints are not sorted"
+    },
+    {
+      "code": 6003,
+      "name": "PriceHistoryEmpty",
+      "msg": "[G103] The price history is empty"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidCrankAccounts",
+      "msg": "[G104] Oracle accounts and price histories must be present in the order listed on the pool registry"
+    },
+    {
+      "code": 6005,
+      "name": "OracleNotHealthyStatus",
+      "msg": "[G105] The oracle is not in a healthy state (status)"
+    },
+    {
+      "code": 6006,
+      "name": "OracleNotHealthyDelay",
+      "msg": "[G106] The oracle is not in a healthy state (delay)"
+    },
+    {
+      "code": 6007,
+      "name": "OracleNotHealthyConfidence",
+      "msg": "[G107] The oracle is not in a healthy state (confidence)"
+    },
+    {
+      "code": 6008,
+      "name": "SlippageTooLarge",
+      "msg": "[G108] SlippageTooLarge"
+    },
+    {
+      "code": 6009,
+      "name": "PercentageOutOfRange",
+      "msg": "[G109] Percentage out of range"
+    },
+    {
+      "code": 6010,
+      "name": "EmaOrStdWindowTooLarge",
+      "msg": "[G110] The Ema window is too large for the amount of available price history data"
+    },
+    {
+      "code": 6011,
+      "name": "MintNotMatchPair",
+      "msg": "[G111] Mint does not match the pair"
+    },
+    {
+      "code": 6012,
+      "name": "FeeCollectorIncorrect",
+      "msg": "[G112] Fee collector account incorrect"
+    },
+    {
+      "code": 6013,
+      "name": "SSLStale",
+      "msg": "[G113] The SSL pool is stale"
+    },
+    {
+      "code": 6014,
+      "name": "PoolRegistryIsFull",
+      "msg": "[G114] The Pool Registry is full, no more SSL Pools can be added"
+    },
+    {
+      "code": 6015,
+      "name": "MintNotFound",
+      "msg": "[G115] Cannot find an SSL Pool with the provided mint"
+    },
+    {
+      "code": 6016,
+      "name": "MintAlreadyIncluded",
+      "msg": "[G116] An SSL Pool for that mint is already included"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidPythOracle",
+      "msg": "[G117] Invalid Pyth Oracle Price Account"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidTokenOwner",
+      "msg": "[G118] Token account not owned by the correct registry"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidTokenMint",
+      "msg": "[G119] Token account does not have the expected mint"
+    },
+    {
+      "code": 6020,
+      "name": "StalePriceHistory",
+      "msg": "[G120] The price history is too stale, requires more recent updates"
+    },
+    {
+      "code": 6021,
+      "name": "InvalidOracleType",
+      "msg": "[G121] Cannot initialize or use an oracle with the given type"
+    },
+    {
+      "code": 6022,
+      "name": "MathError",
+      "msg": "[G122] Math Error"
+    },
+    {
+      "code": 6023,
+      "name": "MintsCannotBeSame",
+      "msg": "[G123] Pair mints cannot be equivalent"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidFeeDestination",
+      "msg": "[G124] Pair fee Destination does not match the target mint"
+    },
+    {
+      "code": 6025,
+      "name": "CannotCloseLiquidityAccount",
+      "msg": "[G125] Liquidity account must be fully withdrawn before closing"
+    },
+    {
+      "code": 6026,
+      "name": "WithdrawTooLarge",
+      "msg": "[G126] Liquidity withdraw is too large compared to the amount the user has deposited"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidOracleAddress",
+      "msg": "[G127] Oracle address does not match was is stored on the price history account"
+    },
+    {
+      "code": 6028,
+      "name": "PoolTokenImbalance",
+      "msg": "[G128] The swap would make the pool token imbalance exceed configured maximum"
+    },
+    {
+      "code": 6029,
+      "name": "PoolRegistryNotMatchPair",
+      "msg": "[G129] Pair does not belong to the Pool Registry"
+    },
+    {
+      "code": 6030,
+      "name": "ZeroInitialDeposit",
+      "msg": "[G130] Initial deposit to a newly created SSL Pool cannot be zero"
+    },
+    {
+      "code": 6031,
+      "name": "OraclePriceRecorded",
+      "msg": "[G131] Oracle price already recorded"
+    },
+    {
+      "code": 6032,
+      "name": "AmountTooSmall",
+      "msg": "[G132] Swap amount too small, fees collected would be zero"
+    },
+    {
+      "code": 6033,
+      "name": "NotEnoughLiquidity",
+      "msg": "[G133] Swap amount too large, not enough liquidity in the output token"
+    },
+    {
+      "code": 6034,
+      "name": "NotATokenAccount",
+      "msg": "[G134] Provided account is not a token account or does not exist"
+    },
+    {
+      "code": 6035,
+      "name": "OracleThrottled",
+      "msg": "[G135] The oracle is being throttled"
+    },
+    {
+      "code": 6036,
+      "name": "NotZeroParameter",
+      "msg": "[G136] Provided parameter can't be 0."
+    },
+    {
+      "code": 6037,
+      "name": "PoolRegistryNotMatchOraclePriceHistory",
+      "msg": "[G137] Oracle price history does not belong to the Pool Registry"
+    }
+  ]
+}

@@ -36,7 +36,7 @@ const ABSTRACT = styled.div`
     ${tw`text-white font-semibold text-sm pl-2.5 pr-2.5`}
   }
   .toggle {
-    ${tw`ml-4`}
+    ${tw`ml-4 cursor-pointer`}
   }
 `
 const WRAPPER = styled.div`

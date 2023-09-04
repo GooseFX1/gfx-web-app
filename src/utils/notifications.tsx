@@ -131,10 +131,11 @@ export const notify = async (
     onClick: () => notification.close(key),
     placement: 'bottomLeft',
     style: {
-      backgroundColor: type === 'error' ? '#bb3535' : '#3735bb',
-      borderRadius: '20px',
-      padding: '32px 16px',
-      minWidth: '320px',
+      backgroundColor: type === 'error' ? '#F35355' : '#5855FF',
+      borderRadius: '10px',
+      padding: '20px 10px',
+      minWidth: '250px',
+      maxWidth: '272px',
       ...styles
     }
   })

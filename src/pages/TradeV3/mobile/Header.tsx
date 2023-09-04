@@ -4,13 +4,14 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { DropdownPairs } from '../DropdownPairs'
 import { useCrypto, useOrderBook, usePriceFeed } from '../../../context'
 import { getPerpsPrice } from '../perps/utils'
+import useBlacklisted from '../../../utils/useBlacklisted'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../NFTs/Skeleton/SkeletonCommon'
 
 const HEADER = styled.div`
-  ${tw`flex flex-row justify-between m-2.5 `}
+  ${tw`flex flex-row justify-between m-2.5 flex-wrap gap-y-2`}
   .up24h {
     ${tw`text-green-3`}
   }
@@ -28,15 +29,39 @@ const HEADER = styled.div`
     font-semibold text-tiny h-[18px] w-[18px] rounded-circle text-white`}
     background: linear-gradient(127.87deg, #f7931a 9.69%, #dc1fff 111.25%);
   }
+
+  .spot-toggle .perps {
+    ${tw`cursor-pointer mr-5`}
+  }
+  .spot-toggle .spot {
+    ${tw`cursor-pointer`}
+  }
+  .spot-toggle .selected {
+    ${tw`!text-white border border-solid border-black`}
+    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+  }
+  .spot-toggle .toggle {
+    ${tw`rounded-[36px] h-10 leading-[40px] inline-block text-center border-0 border-none align-middle w-[90px]`}
+    font-size: 16px;
+    color: ${({ theme }) => theme.text16};
+  }
+  .spot-toggle .geoblocked {
+    cursor: not-allowed;
+  }
 `
 
 export const Header: FC = () => {
   const { connected, wallet } = useWallet()
-  const { selectedCrypto, isDevnet } = useCrypto()
+  const { selectedCrypto, isDevnet, setIsDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
-  const { prices, tokenInfo } = usePriceFeed()
+  const {
+    // prices
+    tokenInfo
+  } = usePriceFeed()
+
+  const isGeoBlocked = useBlacklisted()
   const [userProfile, setUserProfile] = useState<boolean>(false)
-  const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
+  // const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const changeValue = tokenInfos ? tokenInfos.change : ' '
   const publicKey = useMemo(() => wallet?.adapter.publicKey, [wallet, connected])
@@ -48,12 +73,20 @@ export const Header: FC = () => {
 
   const tokenPrice = useMemo(() => {
     if (isDevnet) {
-      return !marketData || !marketData.current ? null : marketData.current
+      // return !marketData || !marketData.current ? null : marketData.current
+
+      const oPrice = getPerpsPrice(orderBook)
+      return !oPrice ? null : oPrice
     } else {
       const oPrice = getPerpsPrice(orderBook)
       return !oPrice ? null : oPrice
     }
   }, [isDevnet, selectedCrypto, orderBook])
+
+  const handleToggle = (e) => {
+    if (e === 'spot') setIsDevnet(true)
+    else setIsDevnet(false)
+  }
 
   return (
     <HEADER>
@@ -92,7 +125,24 @@ export const Header: FC = () => {
                 )}
               </div>
             )}
-            <DropdownPairs />
+          </div>
+
+          <DropdownPairs />
+          <div className="spot-toggle">
+            <span
+              className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
+              key="spot"
+              onClick={() => handleToggle('perps')}
+            >
+              MAINNET
+            </span>
+            <span
+              className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : isDevnet ? 'selected' : '')}
+              key="perps"
+              onClick={isGeoBlocked ? null : () => handleToggle('spot')}
+            >
+              DEVNET
+            </span>
           </div>
           <div tw="flex flex-col">
             <span tw="text-lg dark:text-grey-5 text-black-4 font-semibold">$ {tokenPrice}</span>

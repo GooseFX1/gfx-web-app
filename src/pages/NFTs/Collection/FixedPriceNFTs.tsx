@@ -78,7 +78,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   const { setAdditionalFilters } = useNFTAggregatorFilters()
   const { solPrice } = usePriceFeedFarm()
   const observer = useRef<any>()
-  const paginationNum = 30
+  const paginationNum = 25
   const collectionId = useMemo(
     () => (singleCollection ? singleCollection[0].collection_id : null),
     [singleCollection]

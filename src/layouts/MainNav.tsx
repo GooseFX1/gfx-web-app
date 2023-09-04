@@ -25,7 +25,7 @@ export const MainNav: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
-  const navigateHome = useCallback(() => history.push('/swap'), [history])
+  const navigateHome = useCallback(() => history.push('/trade'), [history])
   const { rewardModal, rewardToggle } = useRewardToggle()
 
   return (
@@ -147,14 +147,14 @@ const MobileNav: FC = () => {
           path: '/leaderboard'
         })
         break
-      case pathname.includes('swap'):
-        setCurrentPage({
-          // animation: 'swap',
-          // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'Swap',
-          path: '/swap'
-        })
-        break
+      // case pathname.includes('swap'):
+      //   setCurrentPage({
+      // animation: 'swap',
+      // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
+      //   text: 'Swap',
+      //   path: '/swap'
+      // })
+      // break
       default:
         break
     }
@@ -240,12 +240,12 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
         <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
       </button>
       <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
-        <NavItem
-          // animation={'swap'}
-          // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        {/* <NavItem
+          animation={'swap'}
+          stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
           text={'swap'}
           path={'/swap'}
-        />
+        /> */}
         <NavItem
           // animation={'dex'}
           // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
@@ -460,12 +460,12 @@ const DesktopNav: FC = () => {
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
     <div css={tw`flex items-center gap-6 mx-auto`}>
-      <NavItem
+      {/* <NavItem
         text={'swap'}
-        // riveAnimation={'swap'}
-        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        riveAnimation={'swap'}
+        stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
         path={'/swap'}
-      />
+      /> */}
       <NavItem
         text={'trade'}
         // riveAnimation={'dex'}
