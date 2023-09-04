@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -16,7 +16,7 @@
     "typeRoots": ["./types"],
     "jsx": "react-jsx",
     "isolatedModules": true,
-    "outDir": "./dist",
+    "outDir": "./bundle",
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],

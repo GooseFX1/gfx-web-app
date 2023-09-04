@@ -1,5 +1,4 @@
 import {
-  PhantomWalletAdapter,
   SolflareWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
@@ -29,7 +28,6 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     cluster: network,
     onWalletNotFound: createDefaultWalletNotFoundHandler()
   }),
-  new PhantomWalletAdapter(),
   new SolflareWalletAdapter({ network }),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),

@@ -105,9 +105,11 @@ const HEADER = styled.div`
     border-right: none;
     border-color: #3c3c3c;
     .pairName {
+      display: inline-flex;
+      align-items: center;
       color: ${({ theme }) => theme.text32};
       img {
-        ${tw`h-5 w-5 mr-2.5 mt-[-2px]`}
+        ${tw`h-5 w-5 mr-2.5`}
       }
     }
     .pairLeverage {

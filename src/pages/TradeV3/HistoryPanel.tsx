@@ -50,7 +50,9 @@ const WRAPPER = styled.div`
   .no-positions-found {
     padding-top: 40px;
     text-align: center;
-
+    > img {
+      margin: auto;
+    }
     > div {
       ${tw`mt-3.75 text-gray-2 text-tiny font-semibold`}
     }

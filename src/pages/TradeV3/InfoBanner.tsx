@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
-import tw, { styled } from 'twin.macro'
+import tw from 'twin.macro'
 import { useCrypto, usePriceFeed, useDarkMode, useOrderBook } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
@@ -9,7 +9,7 @@ import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import useBlacklisted from '../../utils/useBlacklisted'
-import 'styled-components/macro'
+import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip } from '../../components'
 
@@ -96,7 +96,7 @@ const LOCK_LAYOUT_CTN = styled.div`
   height: 40px;
   width: 65px;
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  margin-left: '15px';
+  margin-left: 15px;
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}
@@ -105,13 +105,13 @@ const LOCK_LAYOUT_CTN = styled.div`
 `
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
-  ${tw`w-[63px] leading-[38px] rounded-[36px] text-center`}
+  ${tw`w-[63px] leading-[38px] rounded-[36px] text-center h-full flex items-center justify-center`}
   background: linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%);
   img {
     ${tw`relative bottom-0.5`}
   }
 `
-const DEPOSIT_WRAPPER = styled.div`
+const DEPOSIT_WRAPPER = styled.div<{ $isLocked: boolean }>`
   ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto sm:ml-0`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '15px')};
