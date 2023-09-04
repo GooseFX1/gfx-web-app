@@ -130,7 +130,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   const isUserWhitelisted = useMemo(() => {
     if (isWhitelisted) return true
-    else if (userBonkBalance === 123) return true
+    else if (userBonkBalance > 0) return true
     else return false
   }, [isWhitelisted, userBonkBalance])
 
