@@ -100,10 +100,11 @@ export const FarmHeader: FC = () => {
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <div
-            tw="dark:text-grey-2 text-regular sm:!leading-[15px] font-semibold text-grey-1 sm:mt-[-2px]
+            tw="dark:text-[#FF7F50] text-regular sm:!leading-[15px] font-semibold text-[#FF7F50] sm:mt-[-2px]
            sm:text-tiny font-semibold"
           >
-            Today
+            Join our beta! APY generation begins post-Jupiter integration next week; limited first-come-first-serve
+            deposit pools now open.
           </div>
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Pools
