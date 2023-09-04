@@ -51,9 +51,10 @@ module.exports = {
 
       webpackConfig.module.rules.push(
         {
-          test: /\.mjs$/,
-          include: path.resolve(__dirname, 'node_modules'),
-          type: 'javascript/auto'
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false
+          }
         },
         {
           test: /\.js$/,
@@ -161,7 +162,7 @@ module.exports = {
       //   }
       // }
       //webpackConfig.devtool = 'source-map'
-
+      webpackConfig.re
       return webpackConfig
     },
     plugins: []
