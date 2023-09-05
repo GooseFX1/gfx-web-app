@@ -1,16 +1,11 @@
 import {
-  BackpackWalletAdapter,
-  GlowWalletAdapter,
-  PhantomWalletAdapter,
   SolflareWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
   LedgerWalletAdapter,
-  BraveWalletAdapter,
   Coin98WalletAdapter,
   CoinbaseWalletAdapter,
-  NightlyWalletAdapter,
-  ExodusWalletAdapter
+  NightlyWalletAdapter
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
@@ -33,16 +28,11 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     cluster: network,
     onWalletNotFound: createDefaultWalletNotFoundHandler()
   }),
-  new BackpackWalletAdapter(),
-  new PhantomWalletAdapter(),
-  new GlowWalletAdapter({ network }),
   new SolflareWalletAdapter({ network }),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
   new LedgerWalletAdapter(),
-  new BraveWalletAdapter(),
   new Coin98WalletAdapter(),
   new CoinbaseWalletAdapter(),
-  new NightlyWalletAdapter(),
-  new ExodusWalletAdapter()
+  new NightlyWalletAdapter()
 ]

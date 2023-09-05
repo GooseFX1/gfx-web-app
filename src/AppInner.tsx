@@ -28,7 +28,7 @@ export default function AppInner(): JSX.Element {
 
     const values = queryString.parse(window.location?.search)
     if (values.r && !localStorage.getItem('referrer')) {
-      localStorage.setItem('referrer', values.r)
+      localStorage.setItem('referrer', values.r[0])
     }
   }, [])
 

@@ -1,0 +1,10 @@
+{
+  "name": "openbook-package",
+  "version": "1.0.0",
+  "files": [
+    "serum"
+  ],
+  "module": "./serum/lib/index.js",
+  "types": "./serum/lib/index.d.ts",
+  "sideEffects": false
+}

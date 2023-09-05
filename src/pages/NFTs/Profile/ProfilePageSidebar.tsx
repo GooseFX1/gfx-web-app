@@ -5,7 +5,6 @@ import { checkMobile, notify, truncateAddress } from '../../../utils'
 import { PopupProfile } from './PopupProfile'
 import { Share } from '../Share'
 import { generateTinyURL } from '../../../api/tinyUrl'
-import { WRAPPED_SOL_MINT } from '@jup-ag/core'
 import { formatNumber } from '../../../web3/utils_launchpad'
 import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
@@ -13,7 +12,8 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { copyToClipboard, signAndUpdateDetails } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-
+import { PublicKey } from '@solana/web3.js'
+const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 const PROFILE = styled.div`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
   border-top-right-radius: 20px;

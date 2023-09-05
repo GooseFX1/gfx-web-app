@@ -1,10 +1,6 @@
 import React, { useCallback } from 'react'
-import {
-  ThemeProvider as StyledComponentsThemeProvider,
-  css,
-  DefaultTheme,
-  createGlobalStyle
-} from 'styled-components'
+import { ThemeProvider as StyledComponentsThemeProvider, css, DefaultTheme } from 'styled-components'
+import { createGlobalStyle } from 'styled-components/macro'
 import { useDarkMode } from './context'
 import type { Colors, Text } from './types/theme'
 

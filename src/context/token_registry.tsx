@@ -3,7 +3,12 @@ import { ENV, TokenInfo } from '@solana/spl-token-registry'
 import { useConnectionConfig } from './settings'
 import { FARM_SUPPORTED_TOKEN_LIST } from '../constants'
 import { ADDRESSES } from '../web3'
-import { TOKEN_LIST_URL } from '@jup-ag/core'
+// taken from @jup-ag/core -> due to webpack not resolving
+const TOKEN_LIST_URL = {
+  devnet: 'https://api.jup.ag/api/tokens/devnet',
+  testnet: 'https://api.jup.ag/api/markets/devnet',
+  'mainnet-beta': 'https://cache.jup.ag/tokens'
+} as const
 
 interface ITokenRegistryConfig {
   getTokenInfoFromSymbol: (x: string) => TokenInfo | undefined
