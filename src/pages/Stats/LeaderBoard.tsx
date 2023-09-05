@@ -121,7 +121,7 @@ const transformObject = (original, index) => ({
 })
 
 export const LeaderBoard: FC = () => {
-  const [screenType, setScreenType] = useState<number>(1)
+  const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const { users, nftUsers } = useStats()
   const displayUsers = screenType === 2 ? nftUsers.map((nftUser, index) => transformObject(nftUser, index)) : users
@@ -145,9 +145,9 @@ export const LeaderBoard: FC = () => {
                 tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
                 key={index}
                 onClick={() => {
-                  index === 0 ? null : setScreenType(index)
+                  index === 1 ? null : setScreenType(index)
                 }}
-                className={index === 0 ? 'disable' : index === screenType ? 'active' : ''}
+                className={index === 1 ? 'disable' : index === screenType ? 'active' : ''}
               >
                 {pool}
               </div>

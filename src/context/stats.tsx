@@ -47,7 +47,7 @@ export const StatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           data: User[]
         }
       } = await httpClient('api-services').post(`${GET_LEADERBOARD_DATA}`, {
-        devnet: true
+        devnet: false
       })
       return res.data.data
     } catch (e) {
