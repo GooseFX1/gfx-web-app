@@ -103,8 +103,8 @@ export const FarmHeader: FC = () => {
             tw="mb-5 dark:text-[#FF7F50] text-[#FF7F50] text-regular sm:!leading-[15px] 
              sm:mt-[-2px] sm:text-tiny font-semibold"
           >
-            Join our beta! APY generation begins post-Jupiter integration next week. Limited first-come-first-serve
-            deposit pools now open.
+            Join our beta! Please wait while we integrate our AMM with DEXs/Aggregators in the next couple weeks to
+            kickstart more volume/APY. Play around with our other features in the meantime!
           </div>
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Pools
