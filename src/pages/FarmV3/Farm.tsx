@@ -9,7 +9,7 @@ import { Faqs } from './Faqs'
 import { SSLProvider } from '../../context'
 
 const WRAPPER = styled.div`
-  ${tw`p-5 border-1 dark:bg-black-1 bg-grey-5 sm:pt-3.75 sm:pb-3.75 sm:pl-2.5 sm:pr-0`}
+  ${tw`p-5 dark:bg-black-1 bg-grey-5 sm:pt-3.75 sm:pb-3.75 sm:pl-2.5 sm:pr-0`}
   * {
     font-family: Montserrat;
   }
