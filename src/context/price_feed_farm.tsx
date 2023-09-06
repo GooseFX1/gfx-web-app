@@ -97,7 +97,9 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const refreshTokenData = useCallback(async () => {
     ;(async () => {
       const { data } = await getFarmTokenPrices()
-      setPrices(data)
+      if (data !== undefined && data !== null) {
+        setPrices(data)
+      }
 
       setPriceFetched(true)
     })()
