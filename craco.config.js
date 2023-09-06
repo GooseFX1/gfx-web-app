@@ -2,6 +2,8 @@ const CracoEsbuildPlugin = require('craco-esbuild')
 const CracoLessPlugin = require('craco-less')
 const path = require('path')
 const webpack = require('webpack')
+const CompressionPlugin = require('compression-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
   plugins: [
@@ -67,6 +69,10 @@ module.exports = {
           test: /\.js$/,
           enforce: 'pre',
           use: ['source-map-loader']
+        },
+        {
+          test: /\.(jpe?g|png|gif|svg)$/i,
+          type: 'asset'
         }
       )
       // POLYFILLS
@@ -77,7 +83,8 @@ module.exports = {
         new webpack.ProvidePlugin({
           // you must `npm install buffer` to use this.
           Buffer: ['buffer', 'Buffer']
-        })
+        }),
+        new CompressionPlugin()
       )
       // SOURCEMAP warning removal for older packages
       webpackConfig.ignoreWarnings = [
@@ -102,37 +109,52 @@ module.exports = {
       // CHUNKING - optimizing our builds
       webpackConfig.optimization = {
         sideEffects: true,
+        minimize: true,
+        minimizer: [new TerserPlugin()],
         splitChunks: {
           chunks: 'async',
           minSize: 20000,
           minRemainingSize: 0,
-          minChunks: 1,
+          minChunks: 5,
           maxAsyncRequests: 30,
           maxInitialRequests: 30,
           enforceSizeThreshold: 50000,
+          automaticNameDelimiter: '~',
           cacheGroups: {
             defaultVendors: {
               test: /[\\/]node_modules[\\/]/,
               priority: -10,
-              reuseExistingChunk: true
+              reuseExistingChunk: true,
+              chunks: 'initial',
+              name: 'common_app',
+              minSize: 0
             },
             openBookTs: {
               test: /[\\/]openbook-package[\\/]/,
               minChunks: 2,
               priority: -20,
-              reuseExistingChunk: true
+              reuseExistingChunk: true,
+              chunks: 'initial',
+              name: 'openbook_ts',
+              minSize: 0
             },
             wasm: {
               test: /[\\/]wasm[\\/]/,
               minChunks: 2,
               priority: -20,
-              reuseExistingChunk: true
+              reuseExistingChunk: true,
+              chunks: 'initial',
+              name: 'wasm',
+              minSize: 0
             },
             perpsWasm: {
               test: /[\\/]perps-wasm[\\/]/,
               minChunks: 2,
               priority: -20,
-              reuseExistingChunk: true
+              reuseExistingChunk: true,
+              chunks: 'initial',
+              name: 'perps_wasm',
+              minSize: 0
             },
             default: {
               minChunks: 2,
@@ -146,11 +168,11 @@ module.exports = {
       //webpackConfig.resolve.modules = [path.resolve("./src"), 'node_modules']
 
       // TODO: determine if below would be possibly better when building for prod
-      // webpackConfig.output = {
-      //   filename: '[name].js',
-      //   chunkFilename: '[id].[chunkhash]js',
-      //   path: path.resolve(__dirname, 'build')
-      // }
+      webpackConfig.output = {
+        filename: '[name].js',
+        chunkFilename: '[id].[contenthash]js',
+        path: path.resolve(__dirname, 'build')
+      }
       //webpackConfig.entry = './src/index.jsx'
 
       // sourcemapping
