@@ -22,7 +22,7 @@ import {
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
 import { checkMobile, formatSOLDisplay } from '../../../utils'
-import { GenericNotFound } from '../../InvalidUrl'
+const GenericNotFound = React.lazy(() => import('../../InvalidUrl'))
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import ActivityNFTSection from './ActivityNFTSection'
 

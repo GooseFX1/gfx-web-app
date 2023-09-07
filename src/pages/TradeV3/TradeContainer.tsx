@@ -299,7 +299,7 @@ function getInitLayout() {
   return { lg: componentDimensionsLg, md: componentDimensionsMd }
 }
 
-export const CryptoContent: FC = () => {
+const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
   const isGeoBlocked = useBlacklisted()
@@ -470,3 +470,4 @@ export const CryptoContent: FC = () => {
     <DexhomeMobi />
   )
 }
+export default CryptoContent

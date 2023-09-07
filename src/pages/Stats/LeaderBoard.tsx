@@ -120,7 +120,7 @@ const transformObject = (original, index) => ({
   totalPoints: original.totalPoints ? original.totalPoints.toString() : undefined
 })
 
-export const LeaderBoard: FC = () => {
+const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const { users, nftUsers } = useStats()
@@ -275,3 +275,4 @@ export const LeaderBoard: FC = () => {
     </WRAPPER>
   )
 }
+export default LeaderBoard

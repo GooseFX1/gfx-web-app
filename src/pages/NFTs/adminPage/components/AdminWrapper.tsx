@@ -37,7 +37,7 @@ const WRAPPER = styled.div`
   }
 `
 
-export const AdminWrapper: FC = () => {
+const AdminWrapper: FC = () => {
   const wallet = useWallet()
   const { adminAllowed } = useNFTAdmin()
 
@@ -61,3 +61,4 @@ export const AdminWrapper: FC = () => {
     <AdminDashboard />
   )
 }
+export default AdminWrapper

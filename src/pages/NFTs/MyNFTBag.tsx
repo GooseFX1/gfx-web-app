@@ -125,7 +125,6 @@ const MY_BAG = styled.div`
 
 export const MyNFTBag = (): ReactElement => {
   const { pathname } = useLocation()
-  if (!pathname.startsWith('/nfts')) return null
 
   const { mode } = useDarkMode()
   const { nftInBag } = useNFTAggregator()
@@ -144,7 +143,7 @@ export const MyNFTBag = (): ReactElement => {
   const handleDropdownClick = async () => {
     await setVisible((prev) => !prev)
   }
-
+  if (!pathname.startsWith('/nfts')) return null
   if (isCollapsed) return null
 
   return (

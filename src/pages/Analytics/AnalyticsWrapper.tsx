@@ -37,7 +37,7 @@ const WRAPPER = styled.div`
   }
 `
 
-export const AnalyticsWrapper: FC = () => {
+const AnalyticsWrapper: FC = () => {
   const { wallet, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
 
@@ -70,3 +70,4 @@ export const AnalyticsWrapper: FC = () => {
     <AnalyticsDashboard />
   )
 }
+export default AnalyticsWrapper

@@ -16,7 +16,7 @@ const WRAPPER = styled.div`
   ${({ theme }) => theme.customScrollBar('0px')};
 `
 
-export const Farm: FC = () => {
+const Farm: FC = () => {
   const { refreshTokenData } = usePriceFeedFarm()
 
   // initial load of all the prices
@@ -34,3 +34,4 @@ export const Farm: FC = () => {
     </SSLProvider>
   )
 }
+export default Farm

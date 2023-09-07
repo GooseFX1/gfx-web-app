@@ -2,8 +2,8 @@ const CracoEsbuildPlugin = require('craco-esbuild')
 const CracoLessPlugin = require('craco-less')
 const path = require('path')
 const webpack = require('webpack')
-const CompressionPlugin = require('compression-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
   plugins: [
@@ -60,19 +60,15 @@ module.exports = {
       // JS/MJS loading
       webpackConfig.module.rules.push(
         {
-          test: /\.m?js/,
+          test: /\.m?js/i,
           resolve: {
             fullySpecified: false
           }
         },
         {
-          test: /\.js$/,
+          test: /\.js$/i,
           enforce: 'pre',
           use: ['source-map-loader']
-        },
-        {
-          test: /\.(jpe?g|png|gif|svg)$/i,
-          type: 'asset'
         }
       )
       // POLYFILLS
@@ -84,7 +80,7 @@ module.exports = {
           // you must `npm install buffer` to use this.
           Buffer: ['buffer', 'Buffer']
         }),
-        new CompressionPlugin()
+        new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: true })
       )
       // SOURCEMAP warning removal for older packages
       webpackConfig.ignoreWarnings = [
@@ -108,14 +104,16 @@ module.exports = {
       }
       // CHUNKING - optimizing our builds
       webpackConfig.optimization = {
-        sideEffects: true,
+        usedExports: true,
+        sideEffects: false,
         minimize: true,
         minimizer: [new TerserPlugin()],
+        runtimeChunk: 'single',
         splitChunks: {
           chunks: 'async',
           minSize: 20000,
           minRemainingSize: 0,
-          minChunks: 5,
+          minChunks: 1,
           maxAsyncRequests: 30,
           maxInitialRequests: 30,
           enforceSizeThreshold: 50000,
@@ -127,39 +125,14 @@ module.exports = {
               reuseExistingChunk: true,
               chunks: 'initial',
               name: 'common_app',
-              minSize: 0
-            },
-            openBookTs: {
-              test: /[\\/]openbook-package[\\/]/,
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-              chunks: 'initial',
-              name: 'openbook_ts',
-              minSize: 0
-            },
-            wasm: {
-              test: /[\\/]wasm[\\/]/,
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-              chunks: 'initial',
-              name: 'wasm',
-              minSize: 0
-            },
-            perpsWasm: {
-              test: /[\\/]perps-wasm[\\/]/,
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-              chunks: 'initial',
-              name: 'perps_wasm',
-              minSize: 0
+              minSize: 0,
+              minChunks: 4
             },
             default: {
-              minChunks: 2,
+              minChunks: 4,
               priority: -30,
-              reuseExistingChunk: true
+              reuseExistingChunk: true,
+              name: 'default_main'
             }
           }
         }
@@ -168,12 +141,13 @@ module.exports = {
       //webpackConfig.resolve.modules = [path.resolve("./src"), 'node_modules']
 
       // TODO: determine if below would be possibly better when building for prod
-      webpackConfig.output = {
-        filename: '[name].js',
-        chunkFilename: '[id].[contenthash]js',
-        path: path.resolve(__dirname, 'build')
-      }
-      //webpackConfig.entry = './src/index.jsx'
+      // webpackConfig.output = {
+      //   filename: '[name].bundle.js',
+      //   chunkFilename: '[id].[contenthash].js',
+      //   path: path.resolve(__dirname, 'build'),
+      //   clean:true,
+      //   asyncChunks:true,
+      // }
 
       // sourcemapping
       webpackConfig.devtool = 'source-map'
