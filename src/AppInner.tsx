@@ -28,9 +28,15 @@ export default function AppInner(): JSX.Element {
 
     const values = queryString.parse(window.location?.search)
     if (values.r && !localStorage.getItem('referrer')) {
-      localStorage.setItem('referrer', values.r[0])
+      localStorage.setItem('referrer', values.r as string)
     }
   }, [])
+
+  useEffect(() => {
+    const values = queryString.parse(window.location?.search)
+
+    console.log(window.location, values)
+  }, [window.location.href])
 
   useEffect(() => console.log('** GFX Application Init **'), [init])
 

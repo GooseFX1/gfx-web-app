@@ -79,7 +79,7 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
         if (JSON.stringify(tokenInfo) === '{}') refreshTokenData(null)
         const { pair, market } = selectedCrypto
         if (location.pathname.includes('trade') && !location.pathname.includes(selectedCrypto.marketAddress)) {
-          history.push('/trade/' + selectedCrypto.marketAddress)
+          history.push('/trade/' + selectedCrypto.marketAddress + (window.location.search || ''))
         }
         if (market) {
           try {

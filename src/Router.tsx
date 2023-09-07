@@ -31,7 +31,9 @@ import { StatsProvider } from './context/stats'
 
 export const Router: FC = () => (
   <BrowserRouter>
-    {window.location.pathname === '/' && <Redirect from="/" to="/trade" />}
+    {window.location.pathname === '/' && (
+      <Redirect from="/" to={{ search: window.location.search, pathname: '/trade' }} />
+    )}
     <TokenRegistryProvider>
       <AccountsProvider>
         <RewardToggleProvider>
