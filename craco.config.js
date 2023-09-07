@@ -83,6 +83,60 @@ module.exports = {
       )
       if (isDevelopment) {
         webpackConfig.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: true }))
+      } else {
+        webpackConfig.mode = 'production'
+        // CHUNKING - optimizing our builds
+        webpackConfig.optimization = {
+          usedExports: true,
+          sideEffects: false,
+          minimize: true,
+          minimizer: [
+            new TerserPlugin({
+              terserOptions: {
+                compress: {
+                  drop_console: true
+                },
+                mangle: true
+              }
+            })
+          ],
+          runtimeChunk: 'single',
+          splitChunks: {
+            chunks: 'async',
+            minSize: 20000,
+            minRemainingSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 30,
+            maxInitialRequests: 30,
+            enforceSizeThreshold: 50000,
+            automaticNameDelimiter: '~',
+            cacheGroups: {
+              defaultVendors: {
+                test: /[\\/]node_modules[\\/]/,
+                priority: -10,
+                reuseExistingChunk: true,
+                chunks: 'initial',
+                name: 'common_app',
+                minSize: 0,
+                minChunks: 4
+              },
+              default: {
+                minChunks: 4,
+                priority: -30,
+                reuseExistingChunk: true,
+                name: 'default_main'
+              }
+            }
+          }
+        }
+        webpackConfig.snapshot = {
+          managedPaths: [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve(__dirname, 'openbook-package'),
+            path.resolve(__dirname, 'wasm'),
+            path.resolve(__dirname, 'perps-wasm')
+          ]
+        }
       }
       // SOURCEMAP warning removal for older packages
       webpackConfig.ignoreWarnings = [
@@ -96,49 +150,6 @@ module.exports = {
         },
         /Failed to parse source map/
       ]
-      webpackConfig.snapshot = {
-        managedPaths: [
-          path.resolve(__dirname, 'node_modules'),
-          path.resolve(__dirname, 'openbook-package'),
-          path.resolve(__dirname, 'wasm'),
-          path.resolve(__dirname, 'perps-wasm')
-        ]
-      }
-      // CHUNKING - optimizing our builds
-      webpackConfig.optimization = {
-        usedExports: true,
-        sideEffects: false,
-        minimize: true,
-        minimizer: [new TerserPlugin()],
-        runtimeChunk: 'single',
-        splitChunks: {
-          chunks: 'async',
-          minSize: 20000,
-          minRemainingSize: 0,
-          minChunks: 1,
-          maxAsyncRequests: 30,
-          maxInitialRequests: 30,
-          enforceSizeThreshold: 50000,
-          automaticNameDelimiter: '~',
-          cacheGroups: {
-            defaultVendors: {
-              test: /[\\/]node_modules[\\/]/,
-              priority: -10,
-              reuseExistingChunk: true,
-              chunks: 'initial',
-              name: 'common_app',
-              minSize: 0,
-              minChunks: 4
-            },
-            default: {
-              minChunks: 4,
-              priority: -30,
-              reuseExistingChunk: true,
-              name: 'default_main'
-            }
-          }
-        }
-      }
 
       //webpackConfig.resolve.modules = [path.resolve("./src"), 'node_modules']
 
@@ -154,6 +165,7 @@ module.exports = {
       // sourcemapping
       webpackConfig.devtool = 'source-map'
       // WEBPACK 5 POLYFILL
+
       webpackConfig.resolve.fallback = {
         zlib: require.resolve('browserify-zlib'),
         stream: require.resolve('stream-browserify'),
