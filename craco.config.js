@@ -4,7 +4,7 @@ const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-
+const isDevelopment = process.env.NODE_ENV !== 'production'
 module.exports = {
   plugins: [
     {
@@ -79,9 +79,11 @@ module.exports = {
         new webpack.ProvidePlugin({
           // you must `npm install buffer` to use this.
           Buffer: ['buffer', 'Buffer']
-        }),
-        new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: true })
+        })
       )
+      if (isDevelopment) {
+        webpackConfig.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: true }))
+      }
       // SOURCEMAP warning removal for older packages
       webpackConfig.ignoreWarnings = [
         function ignoreSourcemapsloaderWarnings(warning) {
