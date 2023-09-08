@@ -537,10 +537,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (prevCountRef.current === undefined) prevCountRef.current = isDevnet
-    if (wallet.connected) {
+    if (wallet.connected && wallet.publicKey) {
       setDefaults()
       const fetchTrgAcc = async () => {
-        const trgAccount = await getTraderRiskGroupAccount(wallet, connection, MPG_ID)
+        const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
         if (trgAccount) {
           setTRG(trgAccount.pubkey)
         }

@@ -26,11 +26,11 @@ const BuddyLinkReferral: FC = () => {
     return perpsConnection
   }, [isDevnet])
 
-  const referLink = useMemo(() => `app.goosefx.io/trade?r=${name}`, [name])
+  const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
 
   useMemo(() => {
     if (connection && wallet.publicKey)
-      getTraderRiskGroupAccount(wallet, connection).then((result) => {
+      getTraderRiskGroupAccount(wallet.publicKey, connection).then((result) => {
         setRiskGroup(result)
       })
   }, [connection, wallet])

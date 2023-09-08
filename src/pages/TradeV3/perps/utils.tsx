@@ -114,7 +114,7 @@ export const getAllMP = async (wallet: any, connection: Connection): Promise<any
 }
 
 export const getTraderRiskGroupAccount = async (
-  wallet: any,
+  publicKey: PublicKey,
   connection: Connection,
   MPG_ID_OPT?: string
 ): Promise<any> => {
@@ -127,7 +127,7 @@ export const getTraderRiskGroupAccount = async (
         memcmp: {
           offset: 48,
           /** data to match, a base-58 encoded string and limited to less than 129 bytes */
-          bytes: wallet.publicKey.toBase58()
+          bytes: publicKey.toBase58()
         }
       },
       {
