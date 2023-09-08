@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { Client, Member, Treasury } from '@ladderlabs/buddy-sdk'
 import { AccountMeta, Connection, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { useConnectionConfig } from '../context'
@@ -13,8 +13,10 @@ const ORGANIZATION_NAME = 'goose'
 export default function useReferrals(): IReferrals {
   const [client, setClient] = useState<Client | null>(null)
   const [member, setMember] = useState<Member | null>(null)
-  const { publicKey } = useWallet()
+  const { wallet } = useWallet()
   const { connection } = useConnectionConfig()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+
   useEffect(() => {
     if (connection && publicKey) {
       const client = new Client(connection, publicKey)
