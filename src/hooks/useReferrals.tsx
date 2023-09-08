@@ -75,14 +75,14 @@ export default function useReferrals(): IReferrals {
 
       return (await createRandom(connection, publicKey, referrer)).instructions
     },
-    [client]
+    [client, publicKey]
   )
 
   const getReferred = useCallback(async () => {
     const treasury = await getTreasury()
 
     return treasury ? await client.member.getByTreasuryReferrer(treasury.account.pda) : null
-  }, [])
+  }, [client])
   const getTotalClaimed = useCallback(async () => {
     const treasury = await getTreasury()
     const buddy = await client.buddy.getProfile(publicKey)

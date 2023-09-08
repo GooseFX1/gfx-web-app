@@ -110,20 +110,11 @@ export const ReferRightPanel: FC = () => {
         if (newTreasury) {
           setTreasury(newTreasury)
           setTotalEarned((await newTreasury.getClaimableBalance()) / Math.pow(10, USDC_DECIMALS))
-        } else {
-          setTreasury(null)
-          setTotalEarned(0)
-        }
-      })
-  }, [isReady])
-
-  useEffect(() => {
-    if (isReady)
-      getTreasury().then(async (newTreasury) => {
-        if (newTreasury) {
           const referredMembers = await getReferred() // Use this list to show members
           setTotalFriends(referredMembers.length)
         } else {
+          setTreasury(null)
+          setTotalEarned(0)
           setTotalFriends(0)
         }
       })
