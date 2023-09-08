@@ -30,7 +30,7 @@ const BuddyLinkReferral: FC = () => {
 
   useMemo(() => {
     if (connection && wallet.publicKey)
-      getTraderRiskGroupAccount(wallet, connection).then((result) => {
+      getTraderRiskGroupAccount(wallet.publicKey, connection).then((result) => {
         setRiskGroup(result)
       })
   }, [connection, wallet])

@@ -29,7 +29,6 @@ import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
 import { IActiveProduct, ITraderHistory } from '../../../context/trader_risk_group'
 import { OrderBook, OrderSide } from '../../../context'
-import { WalletContextState } from '@solana/wallet-adapter-react'
 
 export const getDexProgram = async (connection: Connection, wallet: any): Promise<anchor.Program> => {
   const provider = new anchor.Provider(connection, wallet, anchor.Provider.defaultOptions())
@@ -115,11 +114,10 @@ export const getAllMP = async (wallet: any, connection: Connection): Promise<any
 }
 
 export const getTraderRiskGroupAccount = async (
-  wallet: WalletContextState,
+  publicKey: PublicKey,
   connection: Connection,
   MPG_ID_OPT?: string
 ): Promise<any> => {
-  if (wallet === undefined) return null
   const response = await connection.getParsedProgramAccounts(new PublicKey(DEX_ID), {
     filters: [
       //  {
@@ -129,7 +127,7 @@ export const getTraderRiskGroupAccount = async (
         memcmp: {
           offset: 48,
           /** data to match, a base-58 encoded string and limited to less than 129 bytes */
-          bytes: wallet.publicKey.toBase58()
+          bytes: publicKey.toBase58()
         }
       },
       {
