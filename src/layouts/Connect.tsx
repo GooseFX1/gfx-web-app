@@ -36,9 +36,10 @@ export const Connect: FC<MenuItemProps> = ({
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const canConnect = useMemo(
-    () => !isGeoBlocked || (isGeoBlocked && !pathname.includes('trade')),
+    () => !isGeoBlocked || (isGeoBlocked && !pathname.includes('trade') && !pathname.includes('farm')),
     [isGeoBlocked, pathname]
   )
+
   const handleMoveOutside = useCallback(() => {
     if (isOpen) {
       onClose()
@@ -49,6 +50,7 @@ export const Connect: FC<MenuItemProps> = ({
   useEffect(() => {
     if (connected) logData('wallet_connected')
   }, [connected])
+
   const connectLabel = useMemo(() => {
     if (!canConnect) {
       return 'Georestricted'

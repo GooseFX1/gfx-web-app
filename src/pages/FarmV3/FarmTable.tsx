@@ -146,9 +146,7 @@ export const FarmTable: FC = () => {
         <img
           src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
-          height={breakpoint.isMobile ? 45 : 55}
-          width={breakpoint.isMobile ? 40 : 50}
-          tw="mr-3.75 duration-500"
+          tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
         />
         <div tw="flex flex-col">
           <div
