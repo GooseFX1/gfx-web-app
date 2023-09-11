@@ -132,7 +132,7 @@ export const DepositWithdraw: FC<{
   tradeType: string
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
-  const { devnetBalances: devnetbalances, balances: mainnetBalances } = useAccounts()
+  const { devnetBalances: devnetbalances, balances: mainnetBalances, fetchAccounts } = useAccounts()
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
@@ -200,7 +200,8 @@ export const DepositWithdraw: FC<{
     try {
       const answer = convertToFractional(amount)
       const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
-
+      // this will update balances
+      fetchAccounts()
       if (response && response.txid) setDepositWithdrawModal(false)
     } catch (e) {
       console.log(e)
