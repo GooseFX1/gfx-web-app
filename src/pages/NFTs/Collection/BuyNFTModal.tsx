@@ -433,7 +433,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     })
   }
 
-  const handleNotifications = async (tx: Transaction | VersionedTransaction, buyerPrice: string, isBuyingNow) => {
+  const handleNotifications = async (
+    tx: Transaction | VersionedTransaction,
+    buyerPrice: string,
+    isBuyingNow: boolean,
+    marketPlace: string
+  ) => {
     try {
       // setting this as operating nft , for loading buttons
       if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
@@ -441,10 +446,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       if (isBuyingNow) {
         const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        signature = await sendTransaction(tx, connection, {
-          signers: [treasuryWallet],
-          skipPreflight: true
-        })
+        if (isPnft && marketPlace === NFT_MARKETS.GOOSE) {
+          signature = await sendTransaction(tx, connection, {
+            signers: [treasuryWallet],
+            skipPreflight: true
+          })
+        } else {
+          signature = await sendTransaction(tx, connection)
+        }
         setPendingTxSig(signature)
       }
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
@@ -472,8 +481,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       pleaseTryAgain(isBuyingNow, error?.message)
     }
   }
+
   const callMagicEdenAPIs = async (): Promise<void> => {
-    const tokenAccount = getMagicEdenTokenAccount(general)
+    const tokenAccount = await getMagicEdenTokenAccount({ ...ask, ...general })
     try {
       const listing_res = await getMagicEdenListing(general?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
       const res = await getMagicEdenBuyInstruction(
@@ -487,12 +497,13 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       )
 
       const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
-      await handleNotifications(tx, ask.buyer_price, true)
+      await handleNotifications(tx, ask.buyer_price, true, ask?.marketplace_name)
     } catch (err) {
       console.log(err)
       setIsLoading(false)
     }
   }
+
   const callTensorAPIs = async (): Promise<void> => {
     try {
       const res: ITensorBuyIX = await getTensorBuyInstruction(
@@ -502,12 +513,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         ask.token_account_mint_key,
         process.env.REACT_APP_JWT_SECRET_KEY
       )
-
-      const tx = res.data.legacy_tx
+      console.log(res)
+      const tx = res.data?.legacy_tx
         ? Transaction.from(Buffer.from(res.data.bytes))
         : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
 
-      await handleNotifications(tx, ask.buyer_price, true)
+      await handleNotifications(tx, ask.buyer_price, true, ask?.marketplace_name)
     } catch (err) {
       console.log(err)
       setIsLoading(false)
@@ -534,7 +545,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleOtherBuyOptions = async () => {
     try {
       const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, wal, isPnft)
-      await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow)
+      await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow, ask?.marketplace_name)
     } catch (err) {
       setIsLoading(false)
       pleaseTryAgain(isBuyingNow, 'Failed to load data needed')
