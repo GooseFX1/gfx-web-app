@@ -70,16 +70,10 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   }
 
   tbody {
-    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[10px]`}
-    height: calc(
-      100vh - ${({ showBanner }) => (showBanner ? '425px' : '236px')}
-    );
+    ${tw`dark:bg-black-1 bg-grey-5 sm:px-[10px] overflow-y-hidden`};
+
     ${({ theme }) => theme.customScrollBar('1px')}
     overflow-x: hidden;
-
-    @media (max-width: 500px) {
-      height: calc(100vh - 100px);
-    }
 
     tr {
       ${tw`dark:bg-black-2 bg-white mt-[15px] border-solid border-1 dark:border-black-2 border-white
@@ -121,7 +115,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
   }
   .rotate270 {
     ${tw`!flex !w-[5%] !justify-center !items-center`}
-    rotate: 270deg;
+    rotate: 270deg !important;
   }
   .index {
     ${tw` flex items-center ml-[6px]`}

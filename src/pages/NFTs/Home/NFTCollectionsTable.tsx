@@ -164,7 +164,11 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                   cssStyle={tw`h-5 w-5 dark:text-grey-6 text-black-4`}
                 />
               </div>
-              <div className="rotate270" tw="ml-3">
+              <div
+                className="
+              "
+                tw="ml-3"
+              >
                 <CircularArrow cssStyle={tw`h-5 w-5`} invert={false} />
               </div>
             </div>

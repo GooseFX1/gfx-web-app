@@ -14,8 +14,7 @@ import { dailyVisitData } from '../../api/NFTs'
 const BODY_NFT = styled.div`
   position: relative;
   width: 100vw;
-  height: calc(100vh - 56px);
-  overflow-y: hidden;
+  overflow-y: auto;
   overflow-x: hidden;
 
   * {

@@ -40,7 +40,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
     opacity: ${open ? 1 : 0};
-    height: calc(100vh - 150px);
+    height: calc(100vh);
 
     .filtersTitle {
       ${tw`font-semibold h-[50px] flex items-center pl-3 duration-1000`}
@@ -498,7 +498,7 @@ const Attributes: FC<{ isOpen: boolean; displayIndex: number }> = ({ isOpen, dis
   return (
     <LISTING_TYPE isOpen={isAttributeOpen} isParentOpen={isOpen} css={[isAttributeOpen && tw`overflow-y-auto`]}>
       <div className="filtersTitleItem">
-        Attribute
+        Attributes
         <ArrowIcon isOpen={isAttributeOpen} setIsOpen={setIsAttributeOpen} />
       </div>
       <div css={[isAttributeOpen && tw`p-3`]}>
@@ -568,7 +568,7 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
             <input
               className="searchInsideTrait"
               type="text"
-              tw="border-none rounded-[10px] outline-none text-[15px] font-semibold w-[85%]"
+              tw="border-none rounded-[10px] outline-none bg-transparent text-[15px] font-semibold w-[85%]"
               placeholder={`Search ${formatDisplay(trait)}`}
               onChange={(e) => setSearchInsideTrait(e.target.value)}
             />
