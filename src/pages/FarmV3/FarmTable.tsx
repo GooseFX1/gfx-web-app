@@ -358,7 +358,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         const decimal = coin.mintDecimals
         return {
           apy: sslTableData[key].apy,
-          fee: sslTableData[key].fee / decimal,
+          fee: sslTableData[key].fee / 10 ** decimal,
           volume: sslTableData[key].volume / 1_000_000
         }
       } else
