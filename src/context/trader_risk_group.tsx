@@ -874,6 +874,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [marketProductGroup, wallet])
 
   useEffect(() => {
+    refreshMpg()
+    refreshWasm()
     // perpsWasm()
   }, [rawData])
 
