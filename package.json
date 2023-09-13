@@ -69,7 +69,7 @@
     "highcharts": "^10.2.1",
     "highcharts-react-official": "^3.1.0",
     "https-browserify": "^1.0.0",
-    "jsonwebtoken": "9.0.0",
+    "jsonwebtoken": "8.5.1",
     "lodash.chunk": "^4.2.0",
     "lodash.orderby": "^4.6.0",
     "lottie-react": "^2.2.1",
