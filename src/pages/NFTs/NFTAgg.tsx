@@ -10,12 +10,12 @@ import styled from 'styled-components'
 import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 import { checkMobile } from '../../utils'
 import { dailyVisitData } from '../../api/NFTs'
-import tw from 'twin.macro'
 
 const BODY_NFT = styled.div`
   position: relative;
   width: 100vw;
-  overflow-y: auto;
+  height: calc(100vh - 56px);
+  overflow-y: hidden;
   overflow-x: hidden;
 
   * {
@@ -29,7 +29,6 @@ const NFTAgg: FC = (): ReactElement => {
   const { wallet } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const profilePage = useMemo(() => window.location.href.indexOf('profile') > -1, [window.location.href])
 
   useEffect(() => {
     refreshTokenData()
@@ -76,7 +75,7 @@ const NFTAgg: FC = (): ReactElement => {
   }, [publicKey])
 
   return Object.keys(prices) ? (
-    <BODY_NFT css={[profilePage && tw`h-[calc(100vh - 60px)] overflow-y-hidden`]}>
+    <BODY_NFT>
       <NFTAggFiltersProvider>
         <Switch>
           <Route exact path={path}>

@@ -23,11 +23,12 @@ import { SEARCH_RESULT_CONTAINER } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'
 import SearchNFTMobile from './SearchNFTMobile'
-import { CircularArrow } from '../../../components/common/Arrow'
+import { Arrow, CircularArrow } from '../../../components/common/Arrow'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { DROPDOWN_CONTAINER } from '../Collection/CollectionV2.styles'
 import { useHistory } from 'react-router-dom'
-import { Dropdown } from 'antd'
+import { Image, Dropdown } from 'antd'
+import { AH_PROGRAM_IDS, AH_NAME } from '../../../web3'
 import { SVGToPrimary2 } from '../../../styles'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import ShowEyeLite from '../../../animations/showEyelite.json'
@@ -321,17 +322,14 @@ const FiltersContainer = () => {
   else
     return (
       <FILTERS_CONTAINER>
-        <div tw="!h-8.75">
-          <SearchBar
-            width={'425px'}
-            filter={searchFilter}
-            cssStyle={tw`text-black-4 font-medium dark:text-grey-5 !h-8.75`}
-            bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
-            setSearchFilter={setSearchFilter}
-            placeholder="Search by collections"
-          />
-        </div>
-
+        <SearchBar
+          width={'425px'}
+          filter={searchFilter}
+          cssStyle={tw`text-black-4 !font-semibold dark:text-grey-5 h-8.75 mt-[-10px]`}
+          bgColor={mode === 'dark' ? '#1c1c1c' : '#fff'}
+          setSearchFilter={setSearchFilter}
+          placeholder="Search by collections"
+        />
         <ButtonContainer $poolIndex={poolIndex}>
           <div className="slider-animation-web"></div>
           {poolTypes.map((pool, index) => (
@@ -346,10 +344,10 @@ const FiltersContainer = () => {
         </ButtonContainer>
         {/* Web */}
         {searchFilter && <SearchResultContainer searchFilter={searchFilter} />}
-        <div tw="flex items-center mr-5 ml-auto">
+        <div tw="flex items-center mr-6 ml-auto">
           {/* <MarketDropdown /> */}
           <TimeLineDropdown />
-          <div tw="ml-4 h-8.75">
+          <div tw="ml-4">
             <RefreshBtnWithAnimationNFT />
           </div>
 
@@ -415,14 +413,14 @@ export const CurrentUserProfilePic: FC<{ mediumSize?: boolean; profileImg?: stri
       {userPic ? (
         <img
           src={userPic}
-          tw="h-8.75 w-8.75 rounded-full cursor-pointer  sm:mr-0"
+          tw="h-8.75 w-8.75 rounded-full cursor-pointer mr-5 sm:mr-0"
           className={mediumSize ? 'userPopupProfilePic' : 'customProfileImg'}
           onClick={goProfile}
         />
       ) : (
         <img
           className={mediumSize ? 'userPopupProfilePic' : ''}
-          tw="h-8.75 w-8.75 rounded-full cursor-pointer sm:mr-0"
+          tw="h-[44px] w-[44px] sm:h-[41px] sm:w-[41px] rounded-full cursor-pointer mr-5 sm:mr-0"
           src={`/img/assets/Aggregator/avatar-${mode}.svg`}
           alt="profile picture"
         />
@@ -499,7 +497,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
               >
                 <img className="searchImg" src={data?.collection?.profile_pic_link} alt="" />
                 <div className="searchText" tw="flex flex-col leading-[19px]">
-                  <div tw="flex">
+                  <div>
                     {minimizeTheString(data?.collection?.collection_name, 25)}
                     {data?.collection?.is_verified && (
                       <img tw="!w-[15px] !h-[15px] ml-1" src="/img/assets/Aggregator/verifiedNFT.svg" />
@@ -580,7 +578,7 @@ const TimeLineDropdown = (): ReactElement => {
     >
       <div className={`dropdownBtn ${arrow ? `addBorder` : ``}`} tw="h-8.75 w-[104px]">
         <div tw="ml-[18px]">{timelineDisplay}</div>
-        <CircularArrow cssStyle={tw`h-5 w-5`} invert={arrow} />
+        <CircularArrow cssStyle={tw`mr-1 h-5 w-5`} invert={arrow} />
       </div>
     </Dropdown>
   )
@@ -657,19 +655,9 @@ const NFTLandingPageV2 = (): ReactElement => {
     if (hasOnboarded)
       return <NFTAggWelcome setShowTerms={setShowTerms} showTerms={showTerms} setShowPopup={handleHasOnboarded} />
   }, [hasOnboarded])
-  const { mode } = useDarkMode()
-
-  const handleTopScroll = useCallback(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-  }, [])
 
   return (
     <NFT_AGG_WRAP $currency={currencyView}>
-      <img
-        src={`/img/assets/Aggregator/go-to-top-${mode}.svg`}
-        tw="fixed right-4 bottom-4 sm:right-2.5 sm:bottom-2.5 z-[100] cursor-pointer"
-        onClick={handleTopScroll}
-      />
       {handleWelcomeModal()}
       {!checkMobile() && (
         <>

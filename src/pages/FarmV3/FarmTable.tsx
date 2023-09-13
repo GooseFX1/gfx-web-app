@@ -71,10 +71,10 @@ const WRAPPER = styled.div`
     ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
     tr {
       ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
-      sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`};
+      sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
 
       &:after {
-        content: '';
+        content: ' ';
         display: block;
         visibility: hidden;
         clear: both;

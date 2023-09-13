@@ -34,8 +34,9 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
       bottom: 50px;
       left: 28px;
       .avatar-profile {
-        ${tw`dark:border-black-1 border-white h-[116px] rounded-[50%]`}
+        ${tw`dark:border-black-1 border-white`}
         width: 116px;
+        border-radius: 50%;
         border: 8px solid;
       }
     
@@ -454,10 +455,8 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
         {isSessionUser ? (
           <SOL>
             <div>Wallet Ballance</div>
-            <div tw="flex">
-              <span tw="dark:text-grey-5 text-black-4">{userSol ? userSol : '0.00'} SOL</span>
-              <img src="/img/crypto/SOL.png" alt="sol-icon" tw="ml-2 h-6 w-6" />
-            </div>
+            <span tw="dark:text-grey-5 text-black-4">{userSol ? userSol : '0.00'} SOL</span>
+            <img src="/img/crypto/SOL.png" alt="sol-icon" />
           </SOL>
         ) : (
           <div tw="h-20"> </div>

@@ -72,7 +72,7 @@ export const TableHeaderTitle = (
   <STYLED_TITLE $focus={focus}>
     <div className="textTitle">{text}</div>
     {infoText && <GenericTooltip text={infoText} tooltipMode={tooltipMode} />}
-    <div tw="!ml-1.5">{isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5`} invert={invert} />}</div>
+    {isArrowDown && <CircularArrow cssStyle={tw`h-5 w-5 !ml-1.5`} invert={invert} />}
   </STYLED_TITLE>
 )
 
