@@ -17,7 +17,6 @@ import EmptyBagLite from '../../animations/EmptyBag-lite.json'
 import { formatSOLDisplay, formatSOLNumber, notify } from '../../utils'
 import { Button } from '../../components'
 import { NFT_MARKETS } from '../../api/NFTs/constants'
-import { ITensorBuyIX } from '../../types/nft_details'
 import { confirmTransaction, getParsedAccountByMint, StringPublicKey } from '../../web3'
 import { getMagicEdenBuyInstruction, getMagicEdenListing, getTensorBuyInstruction } from '../../api/NFTs'
 import gfxImageService, { IMAGE_SIZES } from '../../api/gfxImageService'
@@ -342,7 +341,7 @@ const ButtonContainerForBag = (): ReactElement => {
   }
   const callTensorAPIs = async (item): Promise<VersionedTransaction | Transaction> => {
     try {
-      const res: ITensorBuyIX = await getTensorBuyInstruction(
+      const res: any = await getTensorBuyInstruction(
         parseFloat(item.buyer_price),
         publicKey.toBase58(),
         item.wallet_key,
@@ -350,9 +349,10 @@ const ButtonContainerForBag = (): ReactElement => {
         process.env.REACT_APP_JWT_SECRET_KEY
       )
 
-      const tx = res.data.legacy_tx
-        ? Transaction.from(Buffer.from(res.data.bytes))
-        : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
+      const tx = res.data?.txV0
+        ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
+        : Transaction.from(Buffer.from(res.data.txV0.data))
+
       return tx
     } catch (err) {
       console.log(err)

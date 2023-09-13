@@ -34,7 +34,6 @@ import {
 } from './AggModals/AggNotifications'
 import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
-import { ITensorBuyIX } from '../../../types/nft_details'
 import {
   getMagicEdenBuyInstruction,
   getMagicEdenListing,
@@ -506,17 +505,16 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
   const callTensorAPIs = async (): Promise<void> => {
     try {
-      const res: ITensorBuyIX = await getTensorBuyInstruction(
+      const res: any = await getTensorBuyInstruction(
         parseFloat(ask.buyer_price),
         publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
         process.env.REACT_APP_JWT_SECRET_KEY
       )
-      console.log(res)
-      const tx = res.data?.legacy_tx
-        ? Transaction.from(Buffer.from(res.data.bytes))
-        : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
+      const tx = res.data?.txV0
+        ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
+        : Transaction.from(Buffer.from(res.data.txV0.data))
 
       await handleNotifications(tx, ask.buyer_price, true, ask?.marketplace_name)
     } catch (err) {

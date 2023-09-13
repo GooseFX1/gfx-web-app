@@ -121,10 +121,10 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
     ${tw` flex items-center ml-[6px]`}
   }
   .nftNameImg {
-    ${tw`w-10 h-10 sm:mt-0 sm:h-8.75 sm:w-8.75 ml-4 rounded-full  sm:ml-1`}
+    ${tw`w-10 h-10 sm:mt-0 sm:h-8.75 sm:w-8.75 ml-4 rounded-full  sm:ml-1 sm:mt-0 mt-2`}
   }
   .gfxTooltip {
-    ${tw`w-5 sm:w-[15px] sm:h-[15px] h-5 absolute left-2 top-[-5px] sm:left-0 z-10`}
+    ${tw`w-5 sm:w-[15px] sm:h-[15px] h-5 absolute left-2 top-0 sm:left-0 z-10`}
   }
   .nftNameColumn {
     text-align: left;
