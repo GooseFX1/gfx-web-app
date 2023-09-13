@@ -17,9 +17,7 @@ import {
   useNFTAggregator,
   useNFTCollections,
   useNFTAggregatorFilters,
-  initialFilters,
-  usePriceFeed,
-  usePriceFeedFarm
+  initialFilters
 } from '../../../context'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
@@ -61,35 +59,19 @@ import useBreakPoint from '../../../hooks/useBreakPoint'
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
-  const { lastRefreshedClass, refreshClass, setLastRefreshedClass, currencyView } = useNFTAggregator()
+  const { lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
-  const { solPrice } = usePriceFeedFarm()
   const [shareModal, setShareModal] = useState<boolean>(false)
-  const volume24h = useMemo(
-    () =>
-      singleCollection
-        ? truncateBigNumber(
-            parseFloat(
-              formatSOLDisplay(singleCollection[0].daily_volume * (currencyView === 'USDC' ? solPrice : 1))
-            )
-          )
-        : undefined,
-    [singleCollection, currencyView]
-  )
 
   const collection: NFTCollection | undefined = useMemo(
     () => (singleCollection ? singleCollection[0] : undefined),
     [singleCollection]
   )
   const collectionFloor: number = useMemo(
-    () =>
-      singleCollection
-        ? (singleCollection[0].floor_price / LAMPORTS_PER_SOL_NUMBER) * (currencyView === 'USDC' ? solPrice : 1)
-        : 0,
-    [collection, currencyView]
+    () => (singleCollection ? singleCollection[0].floor_price / LAMPORTS_PER_SOL_NUMBER : 0),
+    [collection]
   )
-
   const { wallet } = useWallet()
   const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
@@ -158,7 +140,7 @@ const NFTStatsContainer = () => {
             <div tw="sm:text-[13px] font-bold flex items-center text-[15px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="text-[18px] ml-3 font-bold flex items-center max-w-[325px]">
+                  <div tw="text-[18px] ml-3 font-bold max-w-[325px]">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
                     {collection && collection.is_verified ? (
                       <img
@@ -208,7 +190,7 @@ const NFTStatsContainer = () => {
 
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {collectionFloor.toFixed(2)} {currencyView}
+                {collectionFloor.toFixed(2)} SOL
               </div>
               <div className="subTitleText">Floor Price</div>
             </div>
@@ -223,17 +205,20 @@ const NFTStatsContainer = () => {
             )}
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
-                {singleCollection ? volume24h : 0} {currencyView}
+                {singleCollection
+                  ? truncateBigNumber(parseFloat(formatSOLDisplay(singleCollection[0].daily_volume)))
+                  : 0}{' '}
+                SOL
               </div>
               <div className="subTitleText"> 24H Volume </div>
             </div>
           </div>
           {!checkMobile() && (
-            <div tw="ml-auto mr-1 flex">
-              <div tw="mr-4">
+            <div tw="ml-auto mr-1" className="moreOptions">
+              <div>
                 <RefreshBtnWithAnimationNFT />
               </div>
-              <div tw="mr-4">
+              <div>
                 <img
                   tw="h-8.75 w-8.75 !mr-0"
                   src="/img/assets/shareBlue.svg"
@@ -382,10 +367,9 @@ const FiltersContainer: FC<{
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex}>
       <div className="flitersFlexContainer">
-        <div tw="sm:mr-2">{DisplayFilterIcon}</div>
+        {DisplayFilterIcon}
 
         <SearchBar
-          width="70%"
           setSearchFilter={setSearchInsideCollection}
           cssStyle={tw`w-[332px] h-8.75`}
           filter={searchInsideCollection}
@@ -403,7 +387,7 @@ const FiltersContainer: FC<{
       <div
         tw="sm:!w-[100vw]"
         className="filtersViewCategory"
-        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[560px]`]}
+        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[540px]`]}
       >
         <div tw="flex z-[100] pl-2.5">
           <div
@@ -411,25 +395,24 @@ const FiltersContainer: FC<{
             className="pinkGradient"
             tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
             style={{
-              transition: 'all 0.5s'
+              transition: 'all 0.8s cubic-bezier(.23,2,.14,.52)'
             }}
           ></div>
-          <div tw="flex">
-            {filterCategories.map((category, index) => (
-              <FilterCategory
-                setRef={setButtonRef}
-                key={category.index}
-                displayIndex={displayIndex}
-                currentIndex={category.index}
-                onClick={() => {
-                  setDisplayIndex(category.index)
-                  handleSlide(index)
-                }}
-              >
-                {category.label}
-              </FilterCategory>
-            ))}
-          </div>
+
+          {filterCategories.map((category, index) => (
+            <FilterCategory
+              setRef={setButtonRef}
+              key={category.index}
+              displayIndex={displayIndex}
+              currentIndex={category.index}
+              onClick={() => {
+                setDisplayIndex(category.index)
+                handleSlide(index)
+              }}
+            >
+              {category.label}
+            </FilterCategory>
+          ))}
         </div>
       </div>
       <div tw="ml-auto">{breakpoint.isDesktop && <TokenToggleNFT toggleToken={setCurrency} />}</div>
@@ -443,11 +426,8 @@ const FiltersIcon: FC<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>
     setOpen((prev) => !prev)
   }, [])
   return (
-    <div
-      tw="duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px] !w-8.75 !h-8.75"
-      onClick={handleButtonClick}
-    >
-      <img tw="!h-8.75 !w-8.75" src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
+    <div tw="duration-1000 cursor-pointer z-[100] sm:ml-0 sm:mr-0 ml-[8px] mr-[-10px]" onClick={handleButtonClick}>
+      <img tw="h-8.75 w-8.75" src={`/img/assets/Aggregator/filters${open ? 'Closed' : 'Button'}${mode}.svg`} />
     </div>
   )
 }
@@ -473,9 +453,7 @@ const SortDropdown = () => {
           <div className={`sortingBtn ${arrow ? `addBorder` : ''}`}>
             Price:
             <>{collectionSort === 'ASC' ? ' Ascending' : ' Descending'}</>
-            <div tw="ml-2">
-              <CircularArrow cssStyle={tw`h-5 w-5`} invert={arrow} />
-            </div>
+            <CircularArrow cssStyle={tw`ml-2 h-5 w-5`} invert={arrow} />
           </div>
         )}
       </Dropdown>
