@@ -23,14 +23,7 @@ const WalletModalProvider: FC<{ children: ReactNode; modal: ReactNode }> = ({ ch
     </WalletModalContext.Provider>
   )
 }
-const relayUrl = 'wss://relay.walletconnect.com'
-const projectId = 'e899c82be21d4acca2c8aec45e893598'
-const metadata = {
-  name: 'Example App',
-  description: 'Example App',
-  url: 'https://github.com/solana-labs/wallet-adapter',
-  icons: ['https://avatars.githubusercontent.com/u/35608259?s=200']
-}
+
 export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network } = useConnectionConfig()
   const walletConnect = useMemo(
@@ -38,10 +31,8 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
       new WalletConnectWalletAdapter({
         network: network == WalletAdapterNetwork.Testnet ? WalletAdapterNetwork.Devnet : network,
         options: {
-          relayUrl,
           // example WC app project ID
-          projectId,
-          metadata
+          projectId: 'f294cea1e9cd00f0e185354688de6620' // env var?
         }
       }),
     [network]

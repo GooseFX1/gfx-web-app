@@ -10,7 +10,6 @@ module.exports = {
     {
       plugin: {
         ...CracoEsbuildPlugin,
-
         overrideWebpackConfig: ({ webpackConfig, cracoConfig }) => {
           if (typeof cracoConfig.disableEslint !== 'undefined' && cracoConfig.disableEslint === true) {
             webpackConfig.plugins = webpackConfig.plugins.filter(
@@ -45,10 +44,11 @@ module.exports = {
 
       webpackConfig.experiments = {
         asyncWebAssembly: true,
-        syncWebAssembly: true
-        // topLevelAwait: true,
-        // layers:true,
-        // outputModule:true
+        syncWebAssembly: true,
+        topLevelAwait: true,
+        layers: true,
+        lazyCompilation: isDevelopment
+        //outputModule:true
       }
       webpackConfig.module.rules.forEach((rule) => {
         ;(rule.oneOf || []).forEach((oneOf) => {
@@ -81,17 +81,35 @@ module.exports = {
           Buffer: ['buffer', 'Buffer']
         })
       )
+      webpackConfig.devtool = 'source-map'
       if (isDevelopment) {
-        webpackConfig.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: true }))
+        webpackConfig.plugins.push(new BundleAnalyzerPlugin({ openAnalyzer: true }))
+        webpackConfig.mode = 'development'
+        webpackConfig.snapshot = {
+          managedPaths: [
+            path.resolve(__dirname, 'node_modules')
+            // path.resolve(__dirname, 'openbook-package'),
+            // path.resolve(__dirname, 'wasm'),
+            // path.resolve(__dirname, 'perps-wasm')
+          ]
+        }
+        // sourcemapping
       } else {
         webpackConfig.mode = 'production'
         // CHUNKING - optimizing our builds
         webpackConfig.optimization = {
           usedExports: true,
-          sideEffects: false,
+          sideEffects: true,
           minimize: true,
+          mangleExports: true,
+          mangleWasmImports: true,
+          mergeDuplicateChunks: true,
+          removeEmptyChunks: true,
           minimizer: [
             new TerserPlugin({
+              parallel: true,
+              extractComments: true,
+              minify: TerserPlugin.swcMinify,
               terserOptions: {
                 compress: {
                   drop_console: true
@@ -106,9 +124,10 @@ module.exports = {
             minSize: 20000,
             minRemainingSize: 0,
             minChunks: 1,
-            maxAsyncRequests: 30,
-            maxInitialRequests: 30,
-            enforceSizeThreshold: 50000,
+            maxAsyncRequests: 100,
+            maxAsyncSize: 1000000,
+            maxInitialRequests: 100,
+            enforceSizeThreshold: 500000,
             automaticNameDelimiter: '~',
             cacheGroups: {
               defaultVendors: {
@@ -118,10 +137,10 @@ module.exports = {
                 chunks: 'initial',
                 name: 'common_app',
                 minSize: 0,
-                minChunks: 4
+                minChunks: 1
               },
               default: {
-                minChunks: 4,
+                minChunks: 1,
                 priority: -30,
                 reuseExistingChunk: true,
                 name: 'default_main'
@@ -129,28 +148,10 @@ module.exports = {
             }
           }
         }
-        webpackConfig.snapshot = {
-          managedPaths: [
-            path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, 'openbook-package'),
-            path.resolve(__dirname, 'wasm'),
-            path.resolve(__dirname, 'perps-wasm')
-          ]
-        }
       }
-      // SOURCEMAP warning removal for older packages
-      webpackConfig.ignoreWarnings = [
-        function ignoreSourcemapsloaderWarnings(warning) {
-          return (
-            warning.module &&
-            warning.module.resource.includes('node_modules') &&
-            warning.details &&
-            warning.details.includes('source-map-loader')
-          )
-        },
-        /Failed to parse source map/
-      ]
 
+      // SOURCEMAP warning removal for older packages
+      webpackConfig.ignoreWarnings = [/Failed to parse source map/]
       //webpackConfig.resolve.modules = [path.resolve("./src"), 'node_modules']
 
       // TODO: determine if below would be possibly better when building for prod
@@ -162,8 +163,6 @@ module.exports = {
       //   asyncChunks:true,
       // }
 
-      // sourcemapping
-      webpackConfig.devtool = 'source-map'
       // WEBPACK 5 POLYFILL
 
       webpackConfig.resolve.fallback = {
