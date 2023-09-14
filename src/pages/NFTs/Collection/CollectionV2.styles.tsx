@@ -71,12 +71,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
           height: 25px !important;
           width: 30px !important;
         }
-        .moreOptions {
-          ${tw`flex`}
-          div {
-            ${tw`mr-4 cursor-pointer`}
-          }
-        }
+
         .generalStats {
           ${tw`flex  justify-center items-center sm:!left-0  
           sm:w-[95%] sm:ml-2 sm:mt-3 sm:relative sm:flex sm:justify-between `}
@@ -122,7 +117,7 @@ export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, set
 
 export const GRID_CONTAINER = styled.div`
   ${() => css`
-    height: calc(100vh - 180px);
+    height: calc(100vh - 162px);
     ${tw`duration-500`}
     @media(max-width: 500px) {
       height: auto;

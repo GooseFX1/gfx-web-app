@@ -4,7 +4,6 @@ import React, { ReactElement, FC, useMemo, useState, useEffect, useCallback } fr
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-
 import { Connect } from '../../layouts'
 import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
 import { LAMPORTS_PER_SOL, Transaction, VersionedTransaction } from '@solana/web3.js'
@@ -18,7 +17,6 @@ import EmptyBagLite from '../../animations/EmptyBag-lite.json'
 import { formatSOLDisplay, formatSOLNumber, notify } from '../../utils'
 import { Button } from '../../components'
 import { NFT_MARKETS } from '../../api/NFTs/constants'
-import { ITensorBuyIX } from '../../types/nft_details'
 import { confirmTransaction, getParsedAccountByMint, StringPublicKey } from '../../web3'
 import { getMagicEdenBuyInstruction, getMagicEdenListing, getTensorBuyInstruction } from '../../api/NFTs'
 import gfxImageService, { IMAGE_SIZES } from '../../api/gfxImageService'
@@ -51,11 +49,11 @@ const BAG_WRAPPER = styled.div`
   }
 `
 const MY_BAG = styled.div`
-  ${tw`w-[245px] h-[394px] rounded-[10px] border-grey-2
+  ${tw`w-[245px] h-[394px] rounded-[10px] border-grey-2 
     sm:w-[100vw] sm:h-[auto] sm:fixed sm:left-0 sm:border-none sm:bottom-0`}
 
   border: 1px solid;
-  background-color: ${({ theme }) => theme.bg20};
+  background-color: ${({ theme }) => theme.bgForNFTCollection};
 
   .bagContainer {
     ${tw`flex flex-col pt-1 pl-[10px]`}
@@ -68,7 +66,8 @@ const MY_BAG = styled.div`
     color: ${({ theme }) => theme.text33};
   }
   .headerContainer {
-    ${tw`flex items-center gap-4 sm:justify-between z-[9999]`}
+    ${tw`flex items-center gap-2 sm:justify-between z-[9999]`}
+    overflow-wrap: no-wrap;
   }
   .bagContentContainer {
     ${tw`h-[233px] flex flex-col sm:h-auto mb-20`}
@@ -184,10 +183,26 @@ const MyBagContent: FC<{ handleDropdownClick: () => void }> = ({ handleDropdownC
     <MY_BAG>
       <div className="bagContainer">
         <div className="headerContainer">
-          <div className="myBagText">My Bag ({itemsPresentInBag})</div>
-          <div className={itemsPresentInBag ? 'clearTextActive' : 'clearText'} onClick={() => setNftInBag({})}>
-            Clear
+          <div className="myBagText" tw="!font-semibold">
+            My Bag{' '}
+            <span css={[tw`font-semibold`, itemsPresentInBag && tw`dark:text-grey-5 text-grey-2`]}>
+              ({itemsPresentInBag})
+            </span>
           </div>
+          <Button
+            disabled={!itemsPresentInBag}
+            onClick={() => setNftInBag({})}
+            cssStyle={
+              itemsPresentInBag
+                ? tw`bg-blue-1 w-20 h-[30px] font-semibold ml-2 text-white mt-1`
+                : tw`bg-black-2 w-20 h-[30px] font-semibold ml-2 mt-1 !text-white`
+            }
+          >
+            Clear All
+          </Button>
+          {/* <div className={itemsPresentInBag ? 'clearTextActive' : 'clearText'} onClick={() => setNftInBag({})}>
+            Clear All
+          </div> */}
           <div tw="ml-auto mr-[10px]" onClick={handleDropdownClick}>
             <img
               tw="h-4 w-4  z-[100] cursor-pointer"
@@ -326,7 +341,7 @@ const ButtonContainerForBag = (): ReactElement => {
   }
   const callTensorAPIs = async (item): Promise<VersionedTransaction | Transaction> => {
     try {
-      const res: ITensorBuyIX = await getTensorBuyInstruction(
+      const res: any = await getTensorBuyInstruction(
         parseFloat(item.buyer_price),
         publicKey.toBase58(),
         item.wallet_key,
@@ -334,9 +349,10 @@ const ButtonContainerForBag = (): ReactElement => {
         process.env.REACT_APP_JWT_SECRET_KEY
       )
 
-      const tx = res.data.legacy_tx
-        ? Transaction.from(Buffer.from(res.data.bytes))
-        : VersionedTransaction.deserialize(Buffer.from(res.data.bytes))
+      const tx = res.data?.txV0
+        ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
+        : Transaction.from(Buffer.from(res.data.txV0.data))
+
       return tx
     } catch (err) {
       console.log(err)

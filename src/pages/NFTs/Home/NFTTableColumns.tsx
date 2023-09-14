@@ -9,7 +9,7 @@ import 'styled-components/macro'
 import { LOADING_ARR } from '../../../utils'
 
 const TOKEN_DIV = styled.div`
-  ${tw`mr-2`}
+  ${tw`sm:mr-2`}
 `
 
 export const NFTColumnsTitleWeb = (): ReactElement => {
