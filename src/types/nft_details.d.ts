@@ -227,10 +227,3 @@ export interface INFTDetailsConfig {
   onChainMetadata: IOnChainMetadata
   setOnChainMetadata: Dispatch<SetStateAction<IOnChainMetadata>>
 }
-
-export interface ITensorBuyIX {
-  data: {
-    legacy_tx: boolean
-    bytes: any[]
-  }
-}

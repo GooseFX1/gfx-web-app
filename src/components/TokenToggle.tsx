@@ -8,7 +8,7 @@ import 'styled-components/macro'
 
 const TOGGLE_WRAPPER = styled.div<{ position: number }>`
   .background {
-    ${tw`w-[50px] h-[26px] sm:h-[35px] sm:mr-3 mr-2 sm:w-[65px] rounded-[33px] duration-500 flex 
+    ${tw`w-[50px] h-[26px] sm:h-[35px] sm:mr-3 sm:w-[65px] rounded-[33px] duration-500 flex 
     cursor-pointer items-center`}
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%);
   }
