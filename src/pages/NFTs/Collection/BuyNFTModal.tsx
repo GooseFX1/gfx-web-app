@@ -577,7 +577,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             </div>
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">
-                <div>
+                <div tw="flex items-center">
                   {!checkMobile() && (
                     <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
                   )}
