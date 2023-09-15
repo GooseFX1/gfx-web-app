@@ -16,13 +16,15 @@ import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
 
 const WRAPPER = styled.div<{ $index: number }>`
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   ${tw`dark:bg-black-1 bg-grey-5`}
   table {
     ${tw`w-full dark:bg-black-1 px-5 bg-grey-5 border-separate sm:px-[15px]`}
-    border-spacing: 0 20px;
-    @media (max-width: 500px) {
-      border-spacing: 0 15px;
-    }
+    border-spacing: 0 15px;
   }
   .tableHeader {
     th {
@@ -30,8 +32,8 @@ const WRAPPER = styled.div<{ $index: number }>`
     }
   }
   .slider {
-    ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px]`}
-    left: ${({ $index }) => $index * 80 + 'px'};
+    ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px] sm:w-[90px]`}
+    left: ${({ $index }) => (checkMobile() ? $index * 90 + 'px' : $index * 80 + 'px')};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -68,7 +70,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
 `
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
-  ${tw`h-60 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
+  ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
   background: ${({ $mode }) => `url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')`};
   background-repeat: no-repeat;
   background-size: ${({ $isMobile }) => ($isMobile ? 'auto' : '100%')};
@@ -100,6 +102,17 @@ const BANNER_BTN = styled.div`
   > a:hover {
     ${tw`text-white`}
   }
+`
+
+const BANNER_TXT_1 = styled.div`
+  ${tw`absolute top-[15%] left-20 text-[4.6vw] font-semibold`}
+  background: -webkit-linear-gradient(#eee, #a954a2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`
+
+const BANNER_TXT_2 = styled.div`
+  ${tw`absolute top-[15%] right-[30%] text-[3.2vw] font-semibold leading-none`}
 `
 
 const CARD = styled.div`
@@ -145,11 +158,12 @@ const LeaderBoard: FC = () => {
           <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
         )}
         <div tw="relative sm:justify-start relative z-0">
-          <div tw="w-[240px] mx-auto flex flex-row justify-center relative">
+          <div tw="w-[240px] mx-auto flex flex-row justify-center relative sm:w-[270px]">
             <div className="slider"></div>
             {leaderboardScreens.map((pool, index) => (
               <div
-                tw="w-20 h-10 flex justify-center items-center cursor-pointer font-semibold text-regular text-grey-2"
+                tw="w-[90px] h-10 flex justify-center items-center cursor-pointer font-semibold 
+                text-regular text-grey-2"
                 key={index}
                 onClick={() => {
                   index === 1 ? null : setScreenType(index)
@@ -178,7 +192,7 @@ const LeaderBoard: FC = () => {
           )}
         </div>
         <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
-          <div tw="text-grey-5 font-semibold text-[30px] text-center mt-3 mb-3.75 sm:text-lg">
+          <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">
             {screenType === 1 ? (
               <div tw="sm:text-left">Paper Trade {checkMobile() && <br />}Season 1</div>
             ) : (
@@ -217,22 +231,27 @@ const LeaderBoard: FC = () => {
       <div tw="relative">
         <img
           src={
-            checkMobile()
-              ? '/img/assets/Leaderboard/nft_banner_mobile.webp'
-              : '/img/assets/Leaderboard/nft_banner.webp'
+            checkMobile() ? '/img/assets/Leaderboard/nft_banner_mobile.webp' : '/img/assets/Leaderboard/Banner.png'
           }
           alt="nft-banner"
           width={!checkMobile() ? '100%' : '90%'}
           height={!checkMobile() ? 134 : 240}
           tw="mb-5 px-5 sm:!mx-auto sm:px-3.75"
         />
-        {/* <BANNER_TEXT>Solana Monkey Buisness Gen 3</BANNER_TEXT> */}
+        {!checkMobile() && <BANNER_TXT_1>+1.5x Boost</BANNER_TXT_1>}
         <BANNER_BTN>
-          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade</a>
+          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
         </BANNER_BTN>
+        {!checkMobile() && (
+          <BANNER_TXT_2>
+            {' '}
+            <span tw="text-[#f5ce18] font-semibold">Monke</span> <br />{' '}
+            <span tw="dark:text-[#fbeaa7] text-pink-500 font-semibold">Dao</span>
+          </BANNER_TXT_2>
+        )}
       </div>
-      <div tw="flex flex-row justify-between relative px-5 mb-[30px] sm:block sm:px-[15px] sm:mb-0">
-        {displayUsers?.slice(0, 3).map((user: User, index) => (
+      <div tw="flex flex-row justify-between relative px-5 sm:block sm:px-[15px] sm:mb-0">
+        {displayUsers?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
             <img
@@ -270,13 +289,33 @@ const LeaderBoard: FC = () => {
                 )}
               </TABLE_ROW>
             ))}
-          {displayUsers
-            .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-            .map((user, index: number) => (
-              <TABLE_ROW key={index}>
-                {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} screenType={screenType} />}
-              </TABLE_ROW>
-            ))}
+          {screenType !== 2
+            ? displayUsers
+                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
+                .map((user: User, index: number) =>
+                  user?.weeklyPoints ? (
+                    <TABLE_ROW key={index}>
+                      {checkMobile() ? (
+                        <ColumnMobile user={user} />
+                      ) : (
+                        <ColumnWeb user={user} screenType={screenType} />
+                      )}
+                    </TABLE_ROW>
+                  ) : (
+                    <></>
+                  )
+                )
+            : displayUsers
+                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
+                .map((user, index: number) => (
+                  <TABLE_ROW key={index}>
+                    {checkMobile() ? (
+                      <ColumnMobile user={user} />
+                    ) : (
+                      <ColumnWeb user={user} screenType={screenType} />
+                    )}
+                  </TABLE_ROW>
+                ))}
         </tbody>
       </table>
     </WRAPPER>
