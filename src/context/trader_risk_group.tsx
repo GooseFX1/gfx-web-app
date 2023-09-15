@@ -317,7 +317,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }
 
-  const perpsWasm = async () => {
+  const perpsWasm = useCallback(async () => {
     const wasm = await import('perps-wasm')
     const mpg = rawData.mpg
     const trg = rawData.trg
@@ -434,7 +434,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     }
-  }
+  }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
     const current = Number(currentLeverage)
@@ -507,16 +507,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     await setMPGDetails()
   }, [setMPGDetails, rawData.mpg])
 
-  const refreshWasm = useCallback(async () => {
-    await perpsWasm()
-  }, [rawData.mpg, rawData.trg, currentTRG])
+  useEffect(() => {
+    perpsWasm()
+  }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
-    if (wallet.connected) {
-      const t2 = setInterval(refreshMpg, 1000)
-      return () => clearInterval(t2)
-    }
-  }, [currentMPG, wallet.connected, wallet.publicKey, rawData])
+    const t2 = setInterval(refreshMpg, 1000)
+    return () => clearInterval(t2)
+  }, [currentMPG])
 
   useEffect(() => {
     if (wallet.connected) {
@@ -526,14 +524,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setDefaults()
     }
   }, [currentTRG, wallet.connected])
-
-  useEffect(() => {
-    let t2 = null
-    if (wallet.connected && (rawData.mpg || rawData.trg)) {
-      t2 = setInterval(refreshWasm, 1000)
-    }
-    return () => clearInterval(t2)
-  }, [refreshWasm, wallet.connected, wallet.publicKey, rawData.mpg, rawData.trg])
 
   const fetchTrgAcc = async () => {
     const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
@@ -873,12 +863,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       testing()
     }
   }, [marketProductGroup, wallet])
-
-  useEffect(() => {
-    refreshMpg()
-    refreshWasm()
-    // perpsWasm()
-  }, [rawData])
 
   useEffect(() => {
     if (order.display === 'market') {
