@@ -535,16 +535,17 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(t2)
   }, [refreshWasm, wallet.connected, wallet.publicKey, rawData.mpg, rawData.trg])
 
+  const fetchTrgAcc = async () => {
+    const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
+    if (trgAccount) {
+      setTRG(trgAccount.pubkey)
+    }
+  }
+
   useEffect(() => {
     if (prevCountRef.current === undefined) prevCountRef.current = isDevnet
     if (wallet.connected && wallet.publicKey) {
       setDefaults()
-      const fetchTrgAcc = async () => {
-        const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
-        if (trgAccount) {
-          setTRG(trgAccount.pubkey)
-        }
-      }
       fetchTrgAcc()
     }
   }, [MPG_ID, wallet.connected, wallet.publicKey])
@@ -818,7 +819,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const response = traderRiskGroup
         ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
         : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg, isDevnet)
-      refreshTraderRiskGroup()
+      traderRiskGroup ? refreshTraderRiskGroup() : fetchTrgAcc()
       return response
     },
     [traderRiskGroup, marketProductGroup, wallet]

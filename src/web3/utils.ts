@@ -17,6 +17,8 @@ import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 
 const SECONDS_30 = 30 * 1000
+const COMMITMENT_LEVELS = ['processed', 'confirmed', 'finalized']
+
 export const SOL_TLD_AUTHORITY = new PublicKey('58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx')
 
 export const isValidSolanaAddress = (address: string): boolean => {
@@ -25,6 +27,11 @@ export const isValidSolanaAddress = (address: string): boolean => {
   } catch (error) {
     return false
   }
+}
+
+const getCommitmentIndex = (commitment: string): number => {
+  const confirmationIndex = COMMITMENT_LEVELS.findIndex((element) => element === commitment)
+  return confirmationIndex
 }
 
 const gfxConfirmTransaction = async (
@@ -38,11 +45,14 @@ const gfxConfirmTransaction = async (
   if (currentTime - startTime >= SECONDS_30) {
     throw new Error('Transaction timeout error!')
   }
-  if (res.value[0]?.confirmationStatus === statusType || res.value[0]?.confirmationStatus === 'finalized') {
+  const requiredCommitment = getCommitmentIndex(statusType)
+  const onChainCommitment = getCommitmentIndex(res.value[0]?.confirmationStatus)
+
+  if (onChainCommitment > -1 && (onChainCommitment >= requiredCommitment || onChainCommitment === 2)) {
     const confirm = { value: { err: null } }
     return confirm
   } else {
-    await new Promise((resolve) => setTimeout(() => resolve(true), 500))
+    await new Promise((resolve) => setTimeout(() => resolve(true), 200))
     return gfxConfirmTransaction(connection, sig, statusType, startTime)
   }
 }
