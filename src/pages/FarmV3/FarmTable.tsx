@@ -71,10 +71,10 @@ const WRAPPER = styled.div`
     ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
     tr {
       ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
-      sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`}
+      sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`};
 
       &:after {
-        content: ' ';
+        content: '';
         display: block;
         visibility: hidden;
         clear: both;
@@ -146,9 +146,7 @@ export const FarmTable: FC = () => {
         <img
           src={`/img/assets/${pool.name}_pools.svg`}
           alt="pool-icon"
-          height={breakpoint.isMobile ? 45 : 55}
-          width={breakpoint.isMobile ? 40 : 50}
-          tw="mr-3.75 duration-500"
+          tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
         />
         <div tw="flex flex-col">
           <div
@@ -360,7 +358,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         const decimal = coin.mintDecimals
         return {
           apy: sslTableData[key].apy,
-          fee: sslTableData[key].fee / decimal,
+          fee: sslTableData[key].fee / 10 ** decimal,
           volume: sslTableData[key].volume / 1_000_000
         }
       } else

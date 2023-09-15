@@ -2,10 +2,11 @@ import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
-import { useSSLContext } from '../../context'
+import { useDarkMode, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { checkMobile } from '../../utils'
 import { SSLToken } from './constants'
+import useBlacklisted from '../../utils/useBlacklisted'
 
 // const CARD_GRADIENT = styled.div`
 //   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
@@ -55,6 +56,8 @@ const POOL_CARD_WRAPPER = styled.div`
 // ]
 
 export const FarmHeader: FC = () => {
+  const isGeoBlocked = useBlacklisted()
+  const { mode } = useDarkMode()
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   const { allPoolSslData, sslTableData } = useSSLContext()
 
@@ -97,15 +100,24 @@ export const FarmHeader: FC = () => {
           </div>
         )} */}
       {/* </HEADER_WRAPPER> */}
+      {isGeoBlocked && (
+        <div tw="flex w-full justify-center items-center mb-2">
+          <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
+          <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
+            GooseFX Farm is unavailable <br /> in your location.
+          </div>
+        </div>
+      )}
+      <div
+        tw="mb-5 dark:text-[#FF7F50] text-[#FF7F50] text-regular sm:!leading-[15px] 
+          sm:mt-[-2px] sm:text-tiny font-semibold"
+      >
+        Join our beta! Please wait while we integrate our AMM with DEXs/Aggregators in the next couple weeks to
+        kickstart more volume/APY. Play around with our other features in the meantime!
+      </div>
+
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
-          <div
-            tw="mb-5 dark:text-[#FF7F50] text-[#FF7F50] text-regular sm:!leading-[15px] 
-             sm:mt-[-2px] sm:text-tiny font-semibold"
-          >
-            Join our beta! Please wait while we integrate our AMM with DEXs/Aggregators in the next couple weeks to
-            kickstart more volume/APY. Play around with our other features in the meantime!
-          </div>
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Pools
           </div>
@@ -154,9 +166,7 @@ export const FarmHeader: FC = () => {
                           card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'
                         }_pools.svg`}
                         alt="pool-type"
-                        width={19}
-                        height={21}
-                        tw="mr-1.25"
+                        tw="mr-1.25 h-[21px] w-[19px]"
                       />
                       <div
                         tw="text-lg font-semibold text-black-4 dark:text-white 

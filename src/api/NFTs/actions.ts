@@ -3,7 +3,7 @@ import { gooseFxProd, httpClient } from '../../api'
 
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
 import { INFTProfile } from '../../types/nft_profile.d'
-import { IActivityName, IRegisterNFT, ITensorBuyIX, ITypeOfActivity } from '../../types/nft_details.d'
+import { IActivityName, IRegisterNFT, ITypeOfActivity } from '../../types/nft_details.d'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN, localhost } from '../analytics'
@@ -326,7 +326,7 @@ export const getTensorBuyInstruction = async (
   ownerKey: string,
   mintAddress: string,
   secretKey: string
-): Promise<ITensorBuyIX> => {
+): Promise<any> => {
   try {
     const token = jwt.sign(
       {

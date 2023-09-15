@@ -310,24 +310,7 @@ export const sendPerpsTransactions = async (
           styles: {}
         })
       }
-      let confirmation = null
-      if (messages && messages.errorMessage) {
-        confirmation = await awaitTransactionSignatureConfirmation(
-          response.txid,
-          DEFAULT_TIMEOUT,
-          connection,
-          commitment,
-          false,
-          { ...messages.errorMessage, key }
-        )
-      } else {
-        confirmation = await awaitTransactionSignatureConfirmation(
-          response.txid,
-          DEFAULT_TIMEOUT,
-          connection,
-          commitment
-        )
-      }
+      const confirmation = await confirmTransaction(connection, response.txid, 'processed')
 
       if (!confirmation) {
         console.log('in error notifier')

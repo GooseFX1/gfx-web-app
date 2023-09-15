@@ -1,12 +1,13 @@
 import React, { useCallback, FC, useRef, useEffect } from 'react'
 import tw, { TwStyle, styled } from 'twin.macro'
 
+import 'styled-components/macro'
 import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number; $cssStyle: TwStyle }>`
 ${tw`relative sm:w-3/4`}
-  width: 50%;
+  width: ${({ width }) => (width ? width : '50%')} !important;
   max-width: ${({ width }) => (width ? width : '583px')} !important;
   margin: 0 0 0 ${({ theme }) => theme.margin(3)};
   background: transparent;
@@ -32,8 +33,8 @@ ${tw`relative sm:w-3/4`}
     font-family: 'Montserrat';
     border: transparent;
 
-    ${tw`sm:w-full text-[15px] font-semibold duration-500
-      !font-semibold  rounded-circle p-[0 40px 0 35px]`}
+    ${tw`sm:w-full text-[15px] duration-500
+      font-semibold  rounded-circle p-[0 40px 0 35px]`}
     ${({ $cssStyle }) => $cssStyle};
 
     &:focus {

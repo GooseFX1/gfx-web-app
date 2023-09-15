@@ -337,7 +337,7 @@ const RewardsRightPanel: FC = () => {
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
-  }, [])
+  }, [claimFees])
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
@@ -365,9 +365,7 @@ const RewardsRightPanel: FC = () => {
         >
           {nFormatter(totalEarned)}
         </span>
-        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>
-          {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
-        </p>
+        <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
       <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
         <p
@@ -389,7 +387,7 @@ const RewardsRightPanel: FC = () => {
             usdcClaimable > 0.0 ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
-          disabled={usdcClaimable <= 0.0}
+          //disabled={usdcClaimable <= 0.0}
           onClick={handleClaimFees}
         >
           {isClaiming ? (
