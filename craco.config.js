@@ -106,7 +106,7 @@ module.exports = {
         // CHUNKING - optimizing our builds
         webpackConfig.optimization = {
           usedExports: true,
-          sideEffects: trusere,
+          sideEffects: true,
           minimize: true,
           mangleExports: true,
           mangleWasmImports: true,
