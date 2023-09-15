@@ -74,29 +74,31 @@ export const StatsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getDomainNameOfUser = async () => {
     let userFavouriteDomain
     for (let i = 0; i < users.length; i++) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { domain, reverse } = await getFavoriteDomain(connection, new PublicKey(users[i].address))
-        userFavouriteDomain = reverse
-        if (reverse) {
-          users[i] = { ...users[i], domainName: reverse }
-          setUsers([...users, users[i]])
-        }
-      } catch (e) {
-        userFavouriteDomain = null
-        console.log('No favourite domain of user', e)
-      }
-      try {
-        if (!userFavouriteDomain) {
-          const allDomainsOfUser = await getAllDomains(connection, new PublicKey(users[i].address))
-          if (allDomainsOfUser && allDomainsOfUser.length) {
-            const domainName = await reverseLookup(connection, allDomainsOfUser[0])
-            users[i] = { ...users[i], domainName: domainName }
-            setUsers([...users, users[i]])
+      if (users[i].weeklyPoints) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { domain, reverse } = await getFavoriteDomain(connection, new PublicKey(users[i].address))
+          userFavouriteDomain = reverse
+          if (reverse) {
+            users[i] = { ...users[i], domainName: reverse }
+            setUsers([...users])
           }
+        } catch (e) {
+          userFavouriteDomain = null
+          console.log('No favourite domain of user', e)
         }
-      } catch (e) {
-        console.log('No domain exists for user', e)
+        try {
+          if (!userFavouriteDomain) {
+            const allDomainsOfUser = await getAllDomains(connection, new PublicKey(users[i].address))
+            if (allDomainsOfUser && allDomainsOfUser.length) {
+              const domainName = await reverseLookup(connection, allDomainsOfUser[0])
+              users[i] = { ...users[i], domainName: domainName }
+              setUsers([...users])
+            }
+          }
+        } catch (e) {
+          console.log('No domain exists for user', e)
+        }
       }
     }
   }
