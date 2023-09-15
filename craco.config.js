@@ -4,6 +4,8 @@ const path = require('path')
 const webpack = require('webpack')
 const TerserPlugin = require('terser-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CompressionPlugin = require('compression-webpack-plugin')
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 module.exports = {
   plugins: [
@@ -69,6 +71,10 @@ module.exports = {
           test: /\.js$/i,
           enforce: 'pre',
           use: ['source-map-loader']
+        },
+        {
+          test: /\.riv/i,
+          type: 'asset/resource'
         }
       )
       // POLYFILLS
@@ -81,8 +87,8 @@ module.exports = {
           Buffer: ['buffer', 'Buffer']
         })
       )
-      webpackConfig.devtool = 'source-map'
       if (isDevelopment) {
+        webpackConfig.devtool = 'source-map'
         webpackConfig.plugins.push(new BundleAnalyzerPlugin({ openAnalyzer: true }))
         webpackConfig.mode = 'development'
         webpackConfig.snapshot = {
@@ -96,10 +102,11 @@ module.exports = {
         // sourcemapping
       } else {
         webpackConfig.mode = 'production'
+        webpackConfig.plugins.push(new CompressionPlugin())
         // CHUNKING - optimizing our builds
         webpackConfig.optimization = {
           usedExports: true,
-          sideEffects: true,
+          sideEffects: trusere,
           minimize: true,
           mangleExports: true,
           mangleWasmImports: true,
