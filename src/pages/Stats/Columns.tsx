@@ -121,12 +121,13 @@ export const ColumnWeb: FC<{ user: User; screenType: number; connectedUser?: boo
         </td>
       )}
       <td>
-        <div>{user?.weeklyPoints ?? '0'}</div>
+        <div className={screenType !== 2 ? 'right' : ''}>{user?.weeklyPoints ?? '0'}</div>
       </td>
-
-      <td>
-        <div tw="text-right pr-2.5">{user?.totalPoints ?? '0'}</div>
-      </td>
+      {screenType === 2 && (
+        <td>
+          <div tw="text-right pr-2.5">{user?.totalPoints ?? '0'}</div>
+        </td>
+      )}
     </>
   )
 }
@@ -160,7 +161,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
           color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
           title={
             <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-              Your return on investment, calculated as Total Profit and Loss divided by Net Deposits.
+              Hold an SMB NFT and earn loyalty for more points.
             </span>
           }
           overlayClassName={mode === 'dark' ? 'dark' : ''}
@@ -175,7 +176,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
           color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
           title={
             <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-              Higher volume and trading frequency boosts loyalty, enhancing your rewards and leaderboard position.
+              Trade often; higher loyalty equals more points.
             </span>
           }
           overlayClassName={mode === 'dark' ? 'dark' : ''}
@@ -186,9 +187,8 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
         </Tooltip>
       </th>
       {screenType !== 2 && <th tw="w-1/6">24H points</th>}
-      <th>14D points</th>
-
-      <th tw="text-right">Total</th>
+      <th className={screenType !== 2 ? 'right' : ''}>14D points</th>
+      {screenType === 2 && <th tw="text-right">Total</th>}
     </>
   )
 }
@@ -209,7 +209,7 @@ export const ColumnHeadersMobile: FC = () => (
   <>
     <th>Rank</th>
     <th>Wallet</th>
-    <th>Total points</th>
+    <th>14D points</th>
   </>
 )
 
