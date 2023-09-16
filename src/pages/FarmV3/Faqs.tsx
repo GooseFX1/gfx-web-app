@@ -79,7 +79,7 @@ export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
         <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:leading-[25px] sm:text-regular">
           {item.question}
         </div>
-        <CircularArrow cssStyle={tw`h-5 w-5 dark:opacity-90`} invert={isFaqOpen} />
+        <CircularArrow cssStyle={tw`h-5 w-5 dark:opacity-90 max-w-none`} invert={isFaqOpen} />
       </div>
 
       <div

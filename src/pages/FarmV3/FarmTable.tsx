@@ -15,6 +15,7 @@ import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
 import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 import { getPriceObject } from '../../web3/utils'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+import { Tooltip } from 'antd'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -96,7 +97,7 @@ const WRAPPER = styled.div`
     text-align: center;
 
     @media (max-width: 500px) {
-      ${tw`w-[33%]`}
+      ${tw`w-[32%]`}
     }
   }
 
@@ -310,13 +311,15 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
 const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
   <thead>
     <tr>
-      <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex"> {TableHeaderTitle('Asset', null, true)} </th>
-      <th>{TableHeaderTitle('APY', null, true)} </th>
-      {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, true)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, true)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, true)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('My Balance', null, true)} </th>}
-      <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[33%]">
+      <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]">
+        {TableHeaderTitle('Asset', null, false)}{' '}
+      </th>
+      <th tw="sm:!w-[31vw] ">{TableHeaderTitle('APY', null, false)} </th>
+      {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, false)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, false)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, false)} </th>}
+      {!checkMobile() && <th>{TableHeaderTitle('My Balance', null, false)} </th>}
+      <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[31vw]">
         {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
       </th>
     </tr>
@@ -328,6 +331,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
+  const { mode } = useDarkMode()
 
   const calculateUserDepositedAmount = (
     filteredLiquidityAccounts: any,
@@ -351,6 +355,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
       prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
     [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
   )
+
+  const depositPercentage = useMemo(() => (liquidity / coin?.cappedDeposit) * 100, [liquidity, coin])
+
   const apiSslData = useMemo(() => {
     try {
       if (sslTableData) {
@@ -403,6 +410,27 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             )}
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
+            <div tw="z-[999]" onClick={(e) => e.stopPropagation()}>
+              <Tooltip
+                color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+                title={
+                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $5K.
+                  </span>
+                }
+                overlayClassName={mode === 'dark' ? 'dark' : ''}
+                placement="topLeft"
+                overlayInnerStyle={{ borderRadius: '8px' }}
+              >
+                <img
+                  src="/img/assets/farm_cap.svg"
+                  alt="deposit-cap"
+                  tw="ml-2.5 sm:ml-[5px] max-w-none"
+                  height={20}
+                  width={20}
+                />
+              </Tooltip>
+            </div>
           </td>
           <td>{formattedapiSslData?.apy} %</td>
           {!checkMobile() && (

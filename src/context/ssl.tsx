@@ -88,7 +88,12 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
           sslPool.entries.forEach((token: any) =>
             ADDRESSES[network].forEach((farm) => {
               if (token?.mint.toBase58() === farm.address.toBase58()) {
-                const sslToken = { ...token, token: farm.token, name: farm.name }
+                const sslToken = {
+                  ...token,
+                  token: farm.token,
+                  name: farm.name,
+                  cappedDeposit: farm.cappedDeposit
+                }
                 allPoolentries.push(sslToken)
                 if (token.assetType === pool.index) sslPoolEntries.push(sslToken)
               }
