@@ -68,6 +68,9 @@ const WRAPPER = styled.div<{ $index: number }>`
   .disable {
     ${tw`cursor-not-allowed`}
   }
+  .right {
+    ${tw`text-right`}
+  }
 `
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
