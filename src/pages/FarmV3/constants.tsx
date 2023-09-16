@@ -1,10 +1,4 @@
-/* eslint-disable */
-import {
-  SuccessSSLMessage,
-  SuccessfulListingMsg,
-  TransactionErrorMsg,
-  TransactionErrorMsgSSL
-} from '../../components'
+import { SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -53,6 +47,7 @@ export type SSLToken = {
   status?: number
   totalAccumulatedLpReward?: BN
   totalLiquidityDeposits?: BN
+  cappedDeposit?: number
 }
 
 export type SSLTableData = {
@@ -75,7 +70,7 @@ export const poolType = {
   hyper: {
     index: 2,
     name: 'Hyper',
-    desc: "If you're looking for high returns with more risk"
+    desc: 'If you want higher returns with some risk.'
   }
 }
 
@@ -86,54 +81,64 @@ export const ADDRESSES: {
     {
       token: 'USDT',
       name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+      cappedDeposit: 5000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
-      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+      cappedDeposit: 5000
     },
     {
       token: 'SOL',
       name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112')
+      address: new PublicKey('So11111111111111111111111111111111111111112'),
+      cappedDeposit: 5000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
-      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
+      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+      cappedDeposit: 5000
     },
     {
       token: 'BONK',
       name: 'BONK',
-      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
+      cappedDeposit: 5000
     }
   ],
   devnet: [
     {
       token: 'USDT',
       name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+      cappedDeposit: 5000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
-      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+      cappedDeposit: 5000
     },
     {
       token: 'SOL',
       name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112')
+      address: new PublicKey('So11111111111111111111111111111111111111112'),
+      cappedDeposit: 5000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
-      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
+      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+      cappedDeposit: 5000
     },
     {
       token: 'BONK',
       name: 'BONK',
-      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
+      cappedDeposit: 5000
     }
   ],
   testnet: [
