@@ -57,6 +57,9 @@ ${tw`relative sm:w-3/4`}
       ${tw`absolute h-6 w-6 right-2 top-[5px] cursor-pointer`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
+    .ant-image-clear-farm {
+      ${tw`absolute h-6 w-6 right-2 top-[5px] cursor-pointer`}
+    }
   }
 `
 
@@ -69,7 +72,8 @@ export const SearchBar: FC<{
   width?: string
   className?: string
   cssStyle?: TwStyle
-}> = ({ placeholder, setSearchFilter, filter, bgColor, shouldFocus, width, cssStyle, ...rest }) => {
+  isFarm?: boolean
+}> = ({ placeholder, setSearchFilter, filter, bgColor, shouldFocus, width, cssStyle, isFarm, ...rest }) => {
   const { mode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -99,9 +103,10 @@ export const SearchBar: FC<{
       <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />
       {filter && (
         <img
-          className="ant-image-clear"
-          src={`/img/assets/Aggregator/removeSearch${mode}.svg`}
+          className={isFarm ? 'ant-image-clear-farm' : 'ant-image-clear'}
+          src={!isFarm ? `/img/assets/Aggregator/removeSearch${mode}.svg` : `/img/assets/search_farm_${mode}.svg`}
           onClick={() => handleCloseClick()}
+          alt="clear-search"
         />
       )}
     </SEARCH_BAR_WRAPPER>

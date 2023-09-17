@@ -69,7 +69,7 @@ const WRAPPER = styled.div<{ $index: number }>`
     ${tw`cursor-not-allowed`}
   }
   .right {
-    ${tw`text-right`}
+    ${tw`text-right pr-2.5`}
   }
 `
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
@@ -94,16 +94,16 @@ export const TABLE_ROW = styled.tr`
 `
 
 const BANNER_BTN = styled.div`
-  ${tw`absolute bottom-[60px] font-semibold text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
+  ${tw`absolute bottom-[60px] text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
     text-white flex flex-row items-center justify-center cursor-pointer sm:bottom-[120px] sm:w-1/2`}
   left: calc(50% - 100px);
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
 
   > a {
-    ${tw`text-white`}
+    ${tw`text-white font-semibold`}
   }
   > a:hover {
-    ${tw`text-white`}
+    ${tw`text-white font-semibold`}
   }
 `
 
@@ -204,8 +204,8 @@ const LeaderBoard: FC = () => {
           </div>
           {checkMobile() && (
             <div
-              tw="border border-solid border-grey-1 w-2/5 h-10 rounded-[100px]
-                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1"
+              tw="border border-solid border-grey-1 w-[45%] h-10 rounded-[100px]
+                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-around bg-white dark:bg-black-1"
             >
               <span
                 tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
