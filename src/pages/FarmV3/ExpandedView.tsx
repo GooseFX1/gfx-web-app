@@ -287,7 +287,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Total Earnings"
               value={
                 totalEarned ? (
-                  <span>{`$ ${totalEarned.toFixed(3)} ${totalEarnedInUSD} USD`}</span>
+                  <>{`$ ${totalEarned.toFixed(3)} (${totalEarnedInUSD} USD)`}</>
                 ) : (
                   `0.00 ${coin?.token} ($0.00 USD)`
                 )

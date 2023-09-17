@@ -159,7 +159,7 @@ export const FarmHeader: FC = () => {
                     </div>
                     <div
                       tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
-                  rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[90px]"
+                      rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[100px]"
                     >
                       <img
                         src={`/img/assets/${

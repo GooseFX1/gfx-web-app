@@ -207,6 +207,7 @@ export const FarmTable: FC = () => {
               setSearchFilter={setSearchTokens}
               placeholder="Search by token symbol"
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+              isFarm={true}
             />
             {wallet?.adapter?.publicKey && (
               <div tw="ml-auto flex items-center mr-2">
@@ -242,6 +243,8 @@ export const FarmTable: FC = () => {
             setSearchFilter={setSearchTokens}
             placeholder="Search by token symbol"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+            filter={searchTokens}
+            isFarm={true}
           />
         </div>
       )}
@@ -300,7 +303,9 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
             tw="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular 
             rounded-[30px] font-semibold bg-gradient-1"
           >
-            <a href="mailto:contact@goosefx.io">Request Pool</a>
+            <a href="mailto:contact@goosefx.io" tw="font-semibold">
+              Request Pool
+            </a>
           </address>
         )}
       </div>
@@ -412,14 +417,14 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             <div tw="ml-2.5">{coin?.token}</div>
             <div tw="z-[999]" onClick={(e) => e.stopPropagation()}>
               <Tooltip
-                color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                     Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $5K.
                   </span>
                 }
-                overlayClassName={mode === 'dark' ? 'dark' : ''}
                 placement="topLeft"
+                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
                 <img
