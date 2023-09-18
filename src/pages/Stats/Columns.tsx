@@ -168,7 +168,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
           overlayInnerStyle={{ borderRadius: '8px' }}
           placement="topLeft"
         >
-          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5">Boost</span>
+          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5 underline">Boost</span>
         </Tooltip>
       </th>
       <th tw="w-1/6">
@@ -183,7 +183,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
           overlayInnerStyle={{ borderRadius: '8px' }}
           placement="topLeft"
         >
-          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5">Loyalty</span>
+          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5 underline">Loyalty</span>
         </Tooltip>
       </th>
       {screenType !== 2 && <th tw="w-1/6">24H points</th>}

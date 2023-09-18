@@ -310,15 +310,19 @@ const LeaderBoard: FC = () => {
                 )
             : displayUsers
                 .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-                .map((user, index: number) => (
-                  <TABLE_ROW key={index}>
-                    {checkMobile() ? (
-                      <ColumnMobile user={user} />
-                    ) : (
-                      <ColumnWeb user={user} screenType={screenType} />
-                    )}
-                  </TABLE_ROW>
-                ))}
+                .map((user, index: number) =>
+                  user?.totalPoints ? (
+                    <TABLE_ROW key={index}>
+                      {checkMobile() ? (
+                        <ColumnMobile user={user} />
+                      ) : (
+                        <ColumnWeb user={user} screenType={screenType} />
+                      )}
+                    </TABLE_ROW>
+                  ) : (
+                    <></>
+                  )
+                )}
         </tbody>
       </table>
     </WRAPPER>
