@@ -152,7 +152,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
             placement="topLeft"
             overlayInnerStyle={{ borderRadius: '8px' }}
           >
-            <span tw="font-semibold text-regular text-black-4 dark:text-grey-5">PnL</span>
+            <span tw="font-semibold text-regular text-black-4 dark:text-grey-5 underline">PnL</span>
           </Tooltip>
         </th>
       )}
