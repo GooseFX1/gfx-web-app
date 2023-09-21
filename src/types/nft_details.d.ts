@@ -166,7 +166,10 @@ export type INFTBid = {
 }
 
 export type INFTInBag = {
-  [mintAddress: string]: INFTAsk & ISingleNFT
+  [mintAddress: string]: INFTAsk &
+    ISingleNFT & {
+      index?: number
+    }
 }
 
 export type INFTAsk = {

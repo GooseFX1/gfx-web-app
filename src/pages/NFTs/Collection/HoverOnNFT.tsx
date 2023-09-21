@@ -100,6 +100,7 @@ export const HoverOnNFT: FC<{
       !nftInBag[item?.mint_address] &&
       (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN ||
         ask.marketplace_name === NFT_MARKETS.TENSOR ||
+        ask.marketplace_name === NFT_MARKETS.GOOSE ||
         !ask.marketplace_name),
     [ask, nftInBag, item, addNftToBag]
   )

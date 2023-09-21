@@ -111,7 +111,7 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
   const subText = obj.subText
   return (
     <NO_CONTENT $cssStyle={cssStyle}>
-      <div className="spacing">
+      <div className="spacing" tw="flex flex-col items-center">
         <img
           className="no-data-image"
           src={`/img/assets/${type}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.svg`}
