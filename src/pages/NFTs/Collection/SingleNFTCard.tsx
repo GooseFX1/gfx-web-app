@@ -146,7 +146,7 @@ export const SingleNFTCard: FC<{
   }, [hideThisNFT, operatingNFT])
 
   useEffect(() => {
-    if (index === sweeperCount) {
+    if (index === sweeperCount && addNftToSweeper) {
       addNftToSweeper(item, localAsk, index)
     }
   }, [sweeperCount])
