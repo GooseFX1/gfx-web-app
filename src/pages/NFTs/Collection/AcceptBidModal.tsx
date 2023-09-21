@@ -113,13 +113,20 @@ export const TermsTextNFT: FC<{ string: string; bottom?: boolean }> = ({ string,
   <div
     className="termsText"
     css={[bottom ? tw`sm:bottom-[100px]` : tw`sm:bottom-[120px]`]}
-    tw="absolute bottom-4  "
+    tw="absolute bottom-4 text-grey-1 dark:text-grey-2 "
   >
     By clicking ¨{string}¨, you agree to{' '}
-    <a target="_blank" rel="noopener noreferrer" href="https://docs.goosefx.io/risks">
-      {' '}
-      Terms of Service.
-    </a>
+    <u>
+      <a
+        target="_blank"
+        tw="dark:text-grey-5 text-blue-1"
+        rel="noopener noreferrer"
+        href="https://docs.goosefx.io/risks"
+      >
+        {' '}
+        Terms of Service.
+      </a>
+    </u>
   </div>
 )
 

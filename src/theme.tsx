@@ -235,7 +235,7 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
-    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#3c3c3c',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#eeeeee',
     sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
     sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 

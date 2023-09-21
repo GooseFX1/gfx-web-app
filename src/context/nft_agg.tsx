@@ -16,7 +16,9 @@ interface INFTAggConfig {
   setOpenJustModal: Dispatch<SetStateAction<any>>
   openJustModal: boolean
   nftInBag: INFTInBag
+  nftInSweeper: INFTInBag
   setNftInBag: Dispatch<SetStateAction<INFTInBag>>
+  setNftInSweeper: Dispatch<SetStateAction<INFTInBag>>
   buyNowClicked: boolean
   bidNowClicked: boolean
   setCurrency?: () => void
@@ -37,11 +39,18 @@ interface INFTAggConfig {
   setShowAcceptBidModal?: Dispatch<SetStateAction<boolean>>
   operatingNFT?: Set<string>
   setOperatingNFT: (value: Set<string> | ((prevSet: Set<string>) => Set<string>)) => void
+  sweeperCount: number
+  setSweeperCount: Dispatch<SetStateAction<number>>
+  showSweeperModal: boolean
+  setShowSweeperModal: Dispatch<SetStateAction<boolean>>
 }
 
 const NFTAggContext = createContext<INFTAggConfig>(null)
 export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [nftInBag, setNftInBag] = useState<any>({})
+  const [nftInSweeper, setNftInSweeper] = useState<any>({})
+  const [sweeperCount, setSweeperCount] = useState<number>(0)
+  const [showSweeperModal, setShowSweeperModal] = useState<boolean>(false)
   const [buyNowClicked, setBuyNow] = useState<boolean>(false)
   const [bidNowClicked, setBidNow] = useState<boolean>(false)
   const [delistNFT, setDelistNFT] = useState<boolean>(false)
@@ -87,7 +96,13 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         showAcceptBid: showAcceptBid,
         setShowAcceptBidModal: setShowAcceptBidModal,
         operatingNFT: operatingNFT,
-        setOperatingNFT: setOperatingNFT
+        setOperatingNFT: setOperatingNFT,
+        nftInSweeper: nftInSweeper,
+        setNftInSweeper: setNftInSweeper,
+        sweeperCount: sweeperCount,
+        setSweeperCount: setSweeperCount,
+        showSweeperModal: showSweeperModal,
+        setShowSweeperModal: setShowSweeperModal
       }}
     >
       {children}

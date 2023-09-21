@@ -229,11 +229,11 @@ const NFTStatsContainer = () => {
             </div>
           </div>
           {!checkMobile() && (
-            <div tw="ml-auto mr-1 flex">
-              <div tw="mr-4">
+            <div tw="ml-auto flex">
+              <div tw="ml-2.5">
                 <RefreshBtnWithAnimationNFT />
               </div>
-              <div tw="mr-4">
+              <div tw="ml-2.5">
                 <img
                   tw="h-8.75 w-8.75 !mr-0"
                   src="/img/assets/shareBlue.svg"
@@ -241,7 +241,7 @@ const NFTStatsContainer = () => {
                   onClick={() => copyToClipboard()}
                 />
               </div>
-              {pubKey && <div tw="!w-10">{<CurrentUserProfilePic />}</div>}
+              {pubKey && <div tw="!w-10 ml-2.5">{<CurrentUserProfilePic />}</div>}
               {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
                 <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
               </div>   
@@ -263,7 +263,7 @@ export const NFTGridContainer = (): ReactElement => {
   const [open, setOpen] = useState<boolean>(!breakpoint.isMobile)
   const { singleCollection } = useNFTCollections()
   const [displayIndex, setDisplayIndex] = useState<number>(0)
-  const firstCardRef = useRef<HTMLElement | null>()
+  const firstCardRef = useRef<HTMLElement | HTMLDivElement | null>()
   const { mode } = useDarkMode()
   const AdditionalFiltersComponent = useMemo(
     () =>
@@ -290,6 +290,7 @@ export const NFTGridContainer = (): ReactElement => {
     if (displayIndex === 3)
       return (
         <ActivityNFTSection
+          firstCardRef={firstCardRef}
           cssStyle={tw`bg-grey-5`}
           address={activityAddress}
           typeOfAddress={NFT_ACTIVITY_ENDPOINT.COLLECTION_ADDRESS}
@@ -352,7 +353,7 @@ const FiltersContainer: FC<{
   const breakpoint = useBreakPoint()
   const sliderRef = useRef(null)
   const buttonRefs = useRef<HTMLDivElement[]>([])
-  const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, 0)
+  const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
 
   // TODO add this inside use memo
   const filterCategories = [
@@ -518,15 +519,19 @@ const CollectionV2 = (): ReactElement => {
   const [err, setErr] = useState(false)
   const { refreshClicked } = useNFTAggregator()
   const { setAdditionalFilters } = useNFTAggregatorFilters()
-
-  useEffect(() => () => setAdditionalFilters(initialFilters), [])
+  const { setNftInSweeper } = useNFTAggregator()
 
   useEffect(() => {
     if (singleCollection) logData('collection_page_' + singleCollection[0].collection_name.replace(' ', '_'))
   }, [singleCollection])
 
+  useEffect(() => {
+    setNftInSweeper(undefined)
+  }, [])
+
   useEffect(
     () => () => {
+      setAdditionalFilters(initialFilters)
       setSingleCollection(undefined)
       setFixedPriceWithinCollection(undefined)
       setOpenBidWithinCollection(undefined)

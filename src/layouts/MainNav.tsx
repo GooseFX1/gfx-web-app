@@ -25,7 +25,7 @@ export const MainNav: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
-  const navigateHome = useCallback(() => history.push('/trade'), [history])
+  const navigateHome = useCallback(() => window.location.reload(), [history])
   const { rewardModal, rewardToggle } = useRewardToggle()
 
   return (

@@ -16,7 +16,7 @@ import {
 import { BuyNFTModal } from './BuyNFTModal'
 import { NFT_COLLECTIONS_GRID } from './CollectionV2.styles'
 import DetailViewNFT from './DetailViewNFTDrawer'
-import { BaseNFT } from '../../../types/nft_details'
+import { BaseNFT, INFTAsk } from '../../../types/nft_details'
 import { SingleNFTCard } from './SingleNFTCard'
 import { fetchFixedPriceByPages, fetchSearchNFTbyCollection } from '../../../api/NFTs'
 import NFTLoading from '../Home/NFTLoading'
@@ -32,6 +32,8 @@ import { Button } from '../../../components'
 import { AH_PROGRAM_IDS } from '../../../web3'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { ClearAllFiltersButton } from './AdditionalFilters'
+import { set } from '@project-serum/anchor/dist/cjs/utils/features'
+import { SweeperModal } from './CollectionSweeper'
 
 const WRAPPER = styled.div`
   -ms-overflow-style: none; /* IE and Edge */
@@ -58,7 +60,10 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     refreshClicked,
     cancelBidClicked,
     delistNFT,
-    setDelistNFT
+    setDelistNFT,
+    setNftInSweeper,
+    currencyView,
+    showSweeperModal
   } = useNFTAggregator()
   const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const {
@@ -74,8 +79,6 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const [fixedPriceLoading, setFixedPriceLoading] = useState<boolean>(true)
   const [filteredFixedPrice, setFilteredFixPrice] = useState<BaseNFT[] | null>(null)
-  const { currencyView } = useNFTAggregator()
-  const { setAdditionalFilters } = useNFTAggregatorFilters()
   const { solPrice } = usePriceFeedFarm()
   const observer = useRef<any>()
   const paginationNum = 25
@@ -240,6 +243,17 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     return () => resetLocalState()
   }, [singleCollection])
 
+  const addNftToSweeper = useCallback((item, ask: INFTAsk, index: number) => {
+    setNftInSweeper((prev) => ({
+      ...prev,
+      [item.mint_address]: {
+        ...ask,
+        ...item,
+        index: index
+      }
+    }))
+  }, [])
+
   const addNftToBag = async (e, item, ask) => {
     e.stopPropagation()
     await setNftInBag((prev) => ({
@@ -259,10 +273,11 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (cancelBidClicked) return <CancelBidModal />
+    if (showSweeperModal) return <SweeperModal />
     if (delistNFT)
       return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={true} />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT])
+  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT, showSweeperModal])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
 
@@ -279,17 +294,17 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         <div className="gridContainer">
           {filteredFixedPrice !== null ? (
             <>
-              {filteredFixedPrice.map((item: any, index) => (
+              {filteredFixedPrice.map((item: any, index: number) => (
                 <SingleNFTCard
                   item={item}
                   key={index}
+                  addNftToSweeper={addNftToSweeper}
                   lastCardRef={index + 1 === filteredFixedPrice.length ? lastCardRef : null}
-                  index={index}
+                  index={index + 1} // this is being user everywhere
                   addNftToBag={addNftToBag}
                   firstCardRef={index === 0 ? firstCardRef : null}
                 />
               ))}
-              {/* TODO add a Loading Div here <div>Loading div comming</div> */}
             </>
           ) : (
             <NFTLoading />

@@ -6,7 +6,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
 import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
-import { LAMPORTS_PER_SOL, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { GradientText } from '../../components/GradientText'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
 import { removeNFTFromBag } from '../../web3/nfts/utils'
@@ -24,6 +24,7 @@ import { pleaseTryAgain, successfulNFTPurchaseMsg } from './Collection/AggModals
 import { getMagicEdenTokenAccount } from '../../web3/auction-house-sdk/pda'
 import { callExecuteSaleInstruction } from '../../web3/auction-house-sdk/executeSale'
 import { useHistory, useLocation } from 'react-router-dom'
+import useBreakPoint from '../../hooks/useBreakPoint'
 
 const BAG_WRAPPER = styled.div`
   ${tw` duration-500`}
@@ -132,10 +133,13 @@ export const MyNFTBag = (): ReactElement => {
   const itemsPresentInBag = Object.keys(nftInBag ? nftInBag : {}).length // no items in the bag
   const [visible, setVisible] = useState<boolean>(false)
   const history = useHistory()
+  const breakpoint = useBreakPoint()
 
   useEffect(() => {
-    if (Object.keys(nftInBag).length && !visible) setVisible(true)
-    if (Object.keys(nftInBag).length === 0) setVisible(false)
+    if (breakpoint.isDesktop) {
+      if (Object.keys(nftInBag)?.length && !visible) setVisible(true)
+      if (Object.keys(nftInBag)?.length === 0) setVisible(false)
+    }
   }, [nftInBag])
 
   useEffect(() => history.listen(() => setVisible(false)), [history])
@@ -167,7 +171,11 @@ export const MyNFTBag = (): ReactElement => {
           >
             {itemsPresentInBag}
           </p>
-          <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+          {itemsPresentInBag ? (
+            <img src={`/img/assets/shopping-bag-${mode}-active.svg`} />
+          ) : (
+            <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+          )}
         </div>
       </Dropdown>
     </BAG_WRAPPER>
@@ -236,7 +244,7 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
   return (
     <div className="bagContentContainer" style={{ height: wallet ? '238px' : '284px' }}>
       {Object.entries(nftInBag).map(([key, nft], index: number) => (
-        <div tw="flex items-center mt-[15px]" key={index}>
+        <div tw="flex items-center mt-[15px] " key={index}>
           <img
             className="nftImage"
             src={gfxImageService(
@@ -255,13 +263,14 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
             src={`/img/assets/Aggregator/closeRed.svg`}
             alt="img"
           />
+
           <div tw="flex flex-col text-[15px] font-semibold">
             <div className="nftNumber">#{nftInBag[key]?.nft_name?.split('#')[1]}</div>
             <div tw="w-[78px] truncate">
               <GradientText text={nftInBag[key]?.nft_name?.split('#')[0]} fontSize={16} fontWeight={600} />
             </div>
           </div>
-          <div>
+          <div tw="sm:ml-auto sm:mr-5">
             <PriceWithToken
               price={formatSOLDisplay(nftInBag[key]?.buyer_price)}
               token={'SOL'}
@@ -276,7 +285,7 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
 const EmptyBagDisplay = (): ReactElement => {
   const { mode } = useDarkMode()
   return (
-    <div tw="flex items-center sm:h-auto flex-col sm:flex-row sm:mb-[100px] h-[230px] justify-center">
+    <div tw="flex items-center sm:h-auto flex-col sm:mb-[100px] h-[230px] justify-center">
       <div>
         {mode === 'dark' ? (
           <Lottie className="emptyBag" animationData={EmptyBagDark} />
@@ -284,12 +293,59 @@ const EmptyBagDisplay = (): ReactElement => {
           <Lottie className="emptyBag" animationData={EmptyBagLite} />
         )}
       </div>
-      <div className="nothingHere">
+      <div className="nothingHere" tw="sm:mt-[-10px]">
         Whoops.. <br />
         Nothing in here!
       </div>
     </div>
   )
+}
+
+export const callTensorAPIs = async (
+  item: any | string,
+  publicKey: PublicKey
+): Promise<VersionedTransaction | Transaction> => {
+  try {
+    const res = await getTensorBuyInstruction(
+      parseFloat(item.buyer_price),
+      publicKey.toBase58(),
+      item.wallet_key,
+      item.token_account_mint_key,
+      process.env.REACT_APP_JWT_SECRET_KEY
+    )
+
+    const tx = res.data?.txV0
+      ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
+      : Transaction.from(Buffer.from(res.data.txV0.data))
+    return tx
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const callMagicEdenAPIs = async (
+  item: any | string,
+  publicKey: PublicKey
+): Promise<VersionedTransaction | Transaction> => {
+  const tokenAccount = await getMagicEdenTokenAccount(item)
+
+  try {
+    const listing_res = await getMagicEdenListing(item?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
+    const res = await getMagicEdenBuyInstruction(
+      parseFloat(item.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
+      publicKey.toBase58(),
+      item.wallet_key,
+      item.token_account_mint_key,
+      listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
+      process.env.REACT_APP_JWT_SECRET_KEY,
+      listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
+    )
+
+    const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
+    return tx
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 const ButtonContainerForBag = (): ReactElement => {
@@ -402,7 +458,8 @@ const ButtonContainerForBag = (): ReactElement => {
     if (nft.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
       return { [key]: await callMagicEdenAPIs(nft) }
     }
-    if (!nft.mint_address) {
+
+    if (nft.marketplace_name === NFT_MARKETS.GOOSE) {
       const parsedAccounts = await getParsedAccountByMint({
         mintAddress: nft.mint_address as StringPublicKey,
         connection: connection
@@ -415,8 +472,13 @@ const ButtonContainerForBag = (): ReactElement => {
         ...accountInfo,
         ...nft
       }
+      const gooseFxTx = await callExecuteSaleInstruction(nft, general, publicKey, true, connection, wal)
+      const blockhash = (await connection.getLatestBlockhash('finalized')).blockhash
+
+      gooseFxTx.recentBlockhash = blockhash
+      gooseFxTx.feePayer = publicKey
       return {
-        [key]: await callExecuteSaleInstruction(nft, general, publicKey, true, connection, wal)
+        [key]: gooseFxTx
       }
     }
     return { [key]: undefined }
@@ -466,7 +528,6 @@ const ButtonContainerForBag = (): ReactElement => {
       pleaseTryAgain(true, err?.message)
     }
   }
-  console.log(nftInBag)
   return (
     <div className="buttonContainer">
       {publicKey ? (
