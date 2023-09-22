@@ -9,11 +9,18 @@ interface UnstakeConfirmationModalProps {
   isOpen: boolean
   onClose: () => void
   amount: number
+  setStakeLoading: (loading: boolean) => void
 }
-const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({ isOpen, onClose, amount = 0.0 }) => {
+const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  amount = 0.0,
+  setStakeLoading
+}) => {
   const { unstake, rewards } = useRewards()
   const handleStakeConfirmation = useCallback(() => {
-    unstake(amount)
+    setStakeLoading(true)
+    unstake(amount).finally(() => setStakeLoading(false))
     onClose()
   }, [amount])
   const canUnstake = useMemo(

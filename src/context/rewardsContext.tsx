@@ -274,7 +274,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const initializeUserAccount = useCallback(async () => {
     const txn: TransactionInstruction = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
 
-    const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection)
+    const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
+      console.log(err)
+      return ''
+    })
 
     await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
       .then(() =>
@@ -308,7 +311,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       stakeRewards.closeUserAccount(null, walletContext.publicKey)
     )
 
-    const txnSig = await walletContext.sendTransaction(txn, connection)
+    const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+      console.log(err)
+      return ''
+    })
     await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
       .then(() => {
         updateStakeDetails()
@@ -345,7 +351,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const txn: Transaction = await checkForUserAccount(() =>
         stakeRewards.stake(stakeAmount, walletContext.publicKey)
       )
-      const txnSig = await walletContext.sendTransaction(txn, connection)
+      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+        console.log(err)
+        return ''
+      })
 
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
@@ -399,7 +408,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
       //const proposedEndDate = moment().add(7, 'days').calendar()
-      const txnSig = await walletContext.sendTransaction(txn, connection)
+      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+        console.log(err)
+        return ''
+      })
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
           notify({
@@ -497,7 +509,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const totalUnstaked = toUnstake
         .reduce((a, b) => a.add(b.ticket.totalUnstaked), new anchor.BN(0.0))
         .div(ANCHOR_BN.BASE_9)
-      const txnSig = await walletContext.sendTransaction(txn, connection)
+      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+        console.log(err)
+        return ''
+      })
+
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
           updateStakeDetails()
