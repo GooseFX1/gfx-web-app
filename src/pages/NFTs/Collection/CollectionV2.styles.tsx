@@ -223,7 +223,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .nftTextContainer {
-    ${tw`relative p-2.5 sm:px-2.5 sm:py-1 dark:text-white text-black-4 sm:h-[105px] h-[120px]`}
+    ${tw`relative p-2.5 sm:px-2.5 sm:py-1 dark:text-white text-black-4 sm:h-[105px]`}
   }
   .collectionId {
     ${tw`text-[15px] font-semibold flex items-center leading-[18px] justify-between`}
@@ -237,7 +237,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
   }
   .nftPrice {
-    ${tw`font-semibold text-[15px] flex items-center pt-2 sm:pt-1.5`}
+    ${tw`font-semibold text-[15px] flex items-center pt-3 sm:pt-1.5`}
     img {
       ${tw`w-5 h-5 ml-2.5`}
     }

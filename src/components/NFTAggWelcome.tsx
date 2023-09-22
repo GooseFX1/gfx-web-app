@@ -8,7 +8,7 @@ import { checkMobile } from '../utils'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useDarkMode } from '../context'
+import { useDarkMode, useNFTAggregator } from '../context'
 
 const WRAPPER = styled.div`
   ${tw`flex items-center justify-center`}
@@ -182,6 +182,7 @@ export const GFXApprisalPopup: FC<{ showTerms: boolean; setShowTerms: any }> = (
 export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const { mode } = useDarkMode()
+  const { appraisalIsEnabled } = useNFTAggregator()
 
   const showNextButton = useMemo(() => (currentSlide === 1 ? 'Start' : 'Next'), [currentSlide])
   const settings = {
@@ -220,22 +221,26 @@ export const NFTAggWelcome = ({ showTerms, setShowPopup }: any) => {
                 rewards on every sale!
               </div>
             </div>
-            <div className="slide">
-              <h2>
-                Unleash the Power of GFX
-                <br />
-                Appraisal value!
-              </h2>
-              <img className="trackNFTImg" src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`} alt="" />
-              <h3 tw="!text-[15px] font-semibold">*For individual assets in a collection</h3>
-              <div className="subText">
-                Using the GFX Appraisal Engine, navigate the NFT Market with confidence. Our unique appraisal
-                engine focuses on actual sales data, ensuring you receive precise, data-driven valuations for your
-                NFTs.
+            {appraisalIsEnabled && (
+              <div className="slide">
+                <h2>
+                  Unleash the Power of GFX
+                  <br />
+                  Appraisal value!
+                </h2>
+                <img
+                  className="trackNFTImg"
+                  src={`/img/assets/Aggregator/GFXAppraisalGraphic${mode}.png`}
+                  alt=""
+                />
+                <h3 tw="!text-[15px] font-semibold">*For individual assets in a collection</h3>
+                <div className="subText">
+                  Using the GFX Appraisal Engine, navigate the NFT Market with confidence. Our unique appraisal
+                  engine focuses on actual sales data, ensuring you receive precise, data-driven valuations for
+                  your NFTs.
+                </div>
               </div>
-            </div>
-
-            {<div className="slide"></div>}
+            )}
           </Slider>
         </div>
       </div>

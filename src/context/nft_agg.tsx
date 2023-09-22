@@ -9,8 +9,10 @@ import React, {
   useCallback
 } from 'react'
 import { INFTInBag } from '../types/nft_details'
+import { GFX_APPRAISAL_ENABLED } from '../constants'
 
 interface INFTAggConfig {
+  appraisalIsEnabled: boolean
   setBuyNow: Dispatch<SetStateAction<any>>
   setBidNow: Dispatch<SetStateAction<any>>
   setOpenJustModal: Dispatch<SetStateAction<any>>
@@ -71,6 +73,7 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   return (
     <NFTAggContext.Provider
       value={{
+        appraisalIsEnabled: GFX_APPRAISAL_ENABLED,
         buyNowClicked: buyNowClicked,
         bidNowClicked: bidNowClicked,
         setBidNow: setBidNow,

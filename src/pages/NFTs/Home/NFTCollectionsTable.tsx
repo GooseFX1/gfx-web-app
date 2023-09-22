@@ -47,7 +47,7 @@ const NFTTableRowMobile = ({ allItems, lastRowElementRef }: any): ReactElement =
 )
 const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
   const { timelineDisplay } = useNFTAggregatorFilters()
-  const { currencyView } = useNFTAggregator()
+  const { currencyView, appraisalIsEnabled } = useNFTAggregator()
   const history = useHistory()
   const { prices } = usePriceFeedFarm()
   // TODO: move floorPrice volume marketcap to NFTCollectionProvider context
@@ -102,13 +102,14 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
             <>
               <div className="index">{index + 1} </div>
               <div tw="relative">
-                {item?.gfx_appraisal_supported && (
+                {appraisalIsEnabled && item?.gfx_appraisal_supported && (
                   <img
                     src="/img/assets/Aggregator/Tooltip.svg"
                     onClick={(e) => handleGfxAppraisal(e)}
                     className="gfxTooltip"
                   />
                 )}
+                `
                 <Image
                   preview={false}
                   className="nftNameImg"
@@ -183,7 +184,7 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
 
 const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
   if (typeof item === 'number' && !Number.isNaN(item)) return <></>
-  const { currencyView } = useNFTAggregator()
+  const { currencyView, appraisalIsEnabled } = useNFTAggregator()
   const history = useHistory()
   const { timelineDisplay } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
@@ -253,7 +254,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
       {showAppraisalPopup}
       <td className="nftNameColumn">
         <div tw="relative">
-          {item?.gfx_appraisal_supported && (
+          {appraisalIsEnabled && item?.gfx_appraisal_supported && (
             <img
               src="/img/assets/Aggregator/Tooltip.svg"
               className="gfxTooltip"
@@ -296,22 +297,24 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
           <Loader />
         )}
       </td>
-      <td className="tdItem">
-        {item?.floor_price >= 0 ? (
-          // gfx appraisal
-          gfxAppraisalDisplay ? (
-            <PriceWithToken
-              price={gfxAppraisalDisplay ? gfxAppraisalDisplay : 0}
-              token={currencyView}
-              cssStyle={tw`h-5 w-5`}
-            />
+      {appraisalIsEnabled && (
+        <td className="tdItem">
+          {item?.floor_price >= 0 ? (
+            // gfx appraisal
+            gfxAppraisalDisplay ? (
+              <PriceWithToken
+                price={gfxAppraisalDisplay ? gfxAppraisalDisplay : 0}
+                token={currencyView}
+                cssStyle={tw`h-5 w-5`}
+              />
+            ) : (
+              'NA'
+            )
           ) : (
-            'NA'
-          )
-        ) : (
-          <Loader />
-        )}
-      </td>
+            <Loader />
+          )}
+        </td>
+      )}
       <td className="tdItem">
         {item?.collection_name ? (
           <>
