@@ -31,6 +31,8 @@ import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { CircularArrow } from '../../../components/common/Arrow'
 import { SVGDynamicReverseMode } from '../../../styles/utils'
+import CollectionSweeper from './CollectionSweeper'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
@@ -63,9 +65,13 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
     }
   `}
 `
-const STYLED_INPUT = styled.input`
+export const STYLED_INPUT = styled.input`
   ${tw`rounded-[5px] h-[35px] w-[95px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  `};
   border: 1px solid ${({ theme }) => theme.tokenBorder};
+  background: ${({ theme }) => theme.sweepModalCard};
+  @media (max-width: 500px) {
+    background: ${({ theme }) => theme.bg25} !important;
+  }
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -85,9 +91,12 @@ const STYLED_DRAWER = styled.div`
   }
   .ant-drawer-content-wrapper {
     box-shadow: none;
+    border-radius: 10px !important;
   }
-  .ant-drawer-content-wrapper {
-    border-radius: 10px;
+
+  .ant-drawer-content {
+    ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[10px] sm:border-solid sm:border-1 sm:dark:border-black-4 
+      sm:border-grey-2 `}
   }
   .ant-drawer-content &.ant-drawer-content {
     ::-webkit-outer-spin-button,
@@ -134,10 +143,13 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       visibility: ${isOpen ? 'visible' : 'hidden'};
       padding-bottom: ${isOpen ? '2px' : 0};
     }
+    .showMoreText {
+      color: ${({ theme }) => theme.text39};
+    }
     .marketTitle {
       ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3 sm:max-h-20`};
       height: ${isOpen ? '40px' : 0};
-      color: ${({ theme }) => theme.text20};
+      color: 
       opacity: ${isOpen ? 1 : 0};
     }
     .genericButtonHeight {
@@ -146,6 +158,10 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       opacity: ${isOpen ? 1 : 0};
       margin-top: ${isOpen ? '20px' : 0};
       visibility: ${isOpen ? 'visible' : 'hidden'};
+      :disabled {
+        opacity: 0.7;
+        background: ${({ theme }) => theme.bg22};
+      }
     }
     .showMoreAnimation {
       ${tw`!duration-500`};
@@ -183,7 +199,7 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
   `}
 `
 const DRAWER_CONTENTS = styled.div`
-  color: ${({ theme }) => theme.text30} !important;
+  color: ${({ theme }) => theme.text32};
   .searchInsideTrait {
     background: none;
   }
@@ -208,6 +224,8 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
 }): ReactElement => {
   const { availableAttributes } = useNFTCollections()
   const { additionalFilters, setAdditionalFilters } = useNFTAggregatorFilters()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const clearAllFilters = useCallback(() => {
     setAdditionalFilters(initialFilters)
   }, [])
@@ -217,28 +235,9 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
   const showPriceAndMarket = useMemo(() => displayIndex === 0, [displayIndex])
 
   if (!showPriceAndMarket && !availableAttributes) return null
-  if (checkMobile())
+  if (breakpoint.isMobile)
     return (
-      // <STYLED_POPUP
-      //   height={'475px'}
-      //   width={'100vw'}
-      //   title={null}
-      //   visible={open ? true : false}
-      //   onCancel={() => setOpen(false)}
-      //   footer={null}
-      // >
-      //   <div>
-      //     {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton />}</div>}
-      //     <div className="wrapper">
-      //       <div tw="sm:h-[430px] overflow-y-auto">
-      //         {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
-      //         {showPriceAndMarket && <PriceRange isOpen={open} />}
-      //         {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
-      //       </div>
-      //     </div>
-      //   </div>
-      // </STYLED_POPUP>
-      <STYLED_DRAWER>
+      <STYLED_DRAWER id="nft-aggerator" className="dark">
         <Drawer
           title={null}
           className="dark"
@@ -260,10 +259,11 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
           {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton setOpen={setOpen} />}</div>}
           <DRAWER_CONTENTS>
             <div tw="mt-12">
-              <div tw="sm:h-[430px] overflow-y-auto">
+              <div tw="sm:h-[430px] overflow-y-auto " className="dark">
                 {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
                 {showPriceAndMarket && <PriceRange isOpen={open} />}
                 {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+                {publicKey && <CollectionSweeper />}
               </div>
             </div>
           </DRAWER_CONTENTS>
@@ -277,6 +277,7 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
         {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
         {showPriceAndMarket && <PriceRange isOpen={open} />}
         {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
+        {publicKey && <CollectionSweeper />}
       </ADDITIONAL_FILTERS>
     )
 }
@@ -394,7 +395,10 @@ const MarketPlacesFilter: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement =
               onClick={handleShowMoreClicked}
               tw="font-bold cursor-pointer ml-[72px] sm:ml-[calc(50% - 45px)] duration-1000"
             >
-              <u tw="dark:text-grey-5 text-blue-1 leading-7"> Show {showMore ? 'less' : 'more'} </u>
+              <u className="showMoreText" tw="leading-7">
+                {' '}
+                Show {showMore ? 'less' : 'more'}{' '}
+              </u>
             </div>
           )}
         </div>
@@ -459,7 +463,7 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
               placeholder="0.00"
               onChange={(e) => setMinValue(e.target.value ? parseFloat(e.target.value) : undefined)}
             />
-            <img tw="h-5 w-5 items-center  ml-[-25px] mt-3 z-[1000] " src={`/img/crypto/${currencyView}.svg`} />
+            <img tw="h-5 w-5 items-center ml-[-25px] mt-3 z-[1000] " src={`/img/crypto/${currencyView}.svg`} />
           </div>
         </div>
         <div className="inputContainer">
@@ -481,7 +485,7 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
           disabled={applyDisabled}
           className="genericButtonHeight"
           onClick={updateAdditionalFilters}
-          disabledColor={tw`dark:bg-black-2 sm:dark:bg-black-1 bg-grey-4 !text-grey-1 opacity-70`}
+          // disabledColor={tw`dark:bg-black-2 bg-grey-4 !text-grey-1 opacity-70`}
           cssStyle={tw`bg-blue-1 sm:w-[calc(100% - 32px)]
           !text-white h-[35px] w-[217px] cursor-pointer font-semibold text-[15px]`}
         >
@@ -501,7 +505,7 @@ const Attributes: FC<{ isOpen: boolean; displayIndex: number }> = ({ isOpen, dis
         Attributes
         <ArrowIcon isOpen={isAttributeOpen} setIsOpen={setIsAttributeOpen} />
       </div>
-      <div css={[isAttributeOpen && tw`p-3`]}>
+      <div css={[isAttributeOpen && tw`p-3 pb-20`]}>
         {availableAttributes &&
           Object.keys(availableAttributes).map((attributeTrait, index) => (
             <AttributeDetails key={index} trait={attributeTrait} displayIndex={displayIndex} />

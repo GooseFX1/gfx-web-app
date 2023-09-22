@@ -53,7 +53,7 @@ export const NFTProfileProvider: FC<{ children: ReactNode }> = ({ children }) =>
           const updatedPA = await getParsedAccounts(parameter as StringPublicKey, connection)
           setParsedAccounts((prev) => {
             if (prev === undefined) return []
-            return prev.length !== updatedPA.length ? updatedPA : [...prev]
+            return prev?.length !== updatedPA?.length ? updatedPA : [...prev]
           })
         }, 15000)
 

@@ -160,6 +160,7 @@ export const NFT_MARKET_PLACE_FEES = {
   TENSOR: 1.4,
   MAGIC_EDEN: 1.5
 }
+export const GFX_APPRAISAL_ENABLED = false
 
 export const stakeTokens: IFarmData[] = [
   {

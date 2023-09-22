@@ -13,12 +13,12 @@ import {
 import { GradientText } from '../../../components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
-import { fetchSingleNFT } from '../../../api/NFTs'
+import { NFT_MARKETS, fetchSingleNFT } from '../../../api/NFTs'
 import { getParsedAccountByMint, StringPublicKey, AH_NAME, getMetadata } from '../../../web3'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { getNFTMetadata, minimizeTheString } from '../../../web3/nfts/utils'
+import { getNFTMetadata, minimizeTheString, removeNFTFromBag } from '../../../web3/nfts/utils'
 import { useHistory } from 'react-router-dom'
 import { notify, capitalizeFirstLetter, commafy, checkMobile } from '../../../utils'
 import { genericErrMsg } from '../../Farm/FarmClickHandler'
@@ -31,15 +31,17 @@ import { Image } from 'antd'
 import { HoverOnNFT } from './HoverOnNFT'
 import { InProcessNFT } from '../../../components/InProcessNFT'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
+import useBreakPoint from '../../../hooks/useBreakPoint'
 
 export const SingleNFTCard: FC<{
   item: BaseNFT
   index: number
   myItems?: boolean
   addNftToBag?: any
+  addNftToSweeper?: (item: any, ask: INFTAsk, index: number) => void
   lastCardRef?: any
   firstCardRef?: React.RefObject<HTMLElement | null> | null
-}> = ({ item, index, myItems = false, addNftToBag, lastCardRef, firstCardRef }) => {
+}> = ({ item, index, myItems = false, addNftToBag, addNftToSweeper, lastCardRef, firstCardRef }) => {
   const { mode } = useDarkMode()
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
@@ -68,7 +70,16 @@ export const SingleNFTCard: FC<{
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-  const { currencyView, operatingNFT, setOperatingNFT, nftInBag } = useNFTAggregator()
+  const {
+    currencyView,
+    operatingNFT,
+    setOperatingNFT,
+    nftInBag,
+    nftInSweeper,
+    sweeperCount,
+    setNftInBag,
+    appraisalIsEnabled
+  } = useNFTAggregator()
   const refreshCard = useRef(null)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -89,6 +100,7 @@ export const SingleNFTCard: FC<{
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item?.mint_address)
     return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
   }, [myNFTsByCollection, operatingNFT, item])
+  const breakpoint = useBreakPoint()
 
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -140,6 +152,12 @@ export const SingleNFTCard: FC<{
       }
     }
   }, [hideThisNFT, operatingNFT])
+
+  useEffect(() => {
+    if (index === sweeperCount && addNftToSweeper) {
+      addNftToSweeper(item, localAsk, index)
+    }
+  }, [sweeperCount])
 
   useEffect(() => {
     if (item?.mint_address) {
@@ -250,9 +268,13 @@ export const SingleNFTCard: FC<{
     if (apprisalPopup) return <GFXApprisalPopup showTerms={apprisalPopup} setShowTerms={setGFXApprisalPopup} />
   }, [apprisalPopup])
 
+  // either owner or in bag or in sweeper
   const gradientBg: boolean = useMemo(
-    () => (isOwner && localAsk !== null) || nftInBag[item?.mint_address] !== undefined,
-    [localAsk, isOwner, nftInBag]
+    () =>
+      (isOwner && localAsk !== null) ||
+      nftInBag[item?.mint_address] !== undefined ||
+      (nftInSweeper && nftInSweeper[item?.mint_address] !== undefined),
+    [localAsk, isOwner, nftInBag, nftInSweeper]
   )
 
   const handleMarketplaceFormat = useCallback((ask: INFTAsk) => {
@@ -266,6 +288,24 @@ export const SingleNFTCard: FC<{
   const handleLoading = useMemo(() => {
     if (isLoadingBeforeRelocate || isActive) return <InProcessNFT text={isActive ? 'In Process' : ''} />
   }, [isActive, isLoadingBeforeRelocate])
+
+  const shouldShowImage = useMemo(
+    () =>
+      breakpoint.isMobile &&
+      addNftToBag &&
+      localAsk &&
+      !nftInBag[item?.mint_address] &&
+      (localAsk?.marketplace_name === NFT_MARKETS.MAGIC_EDEN ||
+        localAsk.marketplace_name === NFT_MARKETS.TENSOR ||
+        localAsk.marketplace_name === NFT_MARKETS.GOOSE ||
+        !localAsk.marketplace_name),
+    [localAsk, nftInBag, item, addNftToBag]
+  )
+
+  const addedToBagImg = useMemo(
+    () => breakpoint.isMobile && addNftToBag && localAsk && nftInBag[item?.mint_address] !== undefined,
+    [localAsk, nftInBag, item, addNftToBag]
+  )
 
   const handleHover = useMemo(() => {
     if (hover)
@@ -296,16 +336,34 @@ export const SingleNFTCard: FC<{
         ref={firstCardRef ? firstCardRef : lastCardRef}
       >
         <div className={'gridItem'}>
-          {handleLoading}
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
           >
+            {handleLoading}
             {handleHover}
 
             {localSingleNFT ? (
               <div className="nftImg">
+                {shouldShowImage && (
+                  <img
+                    className="hoverAddToBag"
+                    tw="!h-8.75 !w-8.75 z-[1000]"
+                    src={`/img/assets/Aggregator/addToBag.svg`}
+                    alt=""
+                    onClick={(e) => addNftToBag(e, item, localAsk)}
+                  />
+                )}
+                {addedToBagImg && (
+                  <img
+                    className="hoverAddToBag"
+                    tw="!h-8.75 !w-8.75 z-[1000]"
+                    src={`/img/assets/Aggregator/addedToBag.svg`}
+                    alt=""
+                    onClick={(e) => removeNFTFromBag(item?.mint_address, setNftInBag, e)}
+                  />
+                )}
                 <Image
                   src={
                     nftImage
@@ -344,36 +402,41 @@ export const SingleNFTCard: FC<{
             )}
           </div>
           <div className="nftTextContainer">
-            <div className="collectionId">
-              <div tw="flex items-center">
-                {nftId ? nftId : '# Nft'}
-                {item?.is_verified && (
-                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
+            <div>
+              <div className="collectionId">
+                <div tw="flex items-center">
+                  {nftId ? nftId : '# Nft'}
+                  {item?.is_verified && (
+                    <img
+                      className="isVerified"
+                      src="/img/assets/Aggregator/verifiedNFT.svg"
+                      alt={'verified nft'}
+                    />
+                  )}
+                </div>
+                {localAsk !== null && (
+                  <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
+                    <div>
+                      <img
+                        className="ah-name"
+                        alt="marketplace"
+                        src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
+                      />
+                    </div>
+                  </GenericTooltip>
                 )}
               </div>
-              {localAsk !== null && (
-                <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
-                  <div>
-                    <img
-                      className="ah-name"
-                      alt="marketplace"
-                      src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
-                    />
-                  </div>
-                </GenericTooltip>
+              {singleCollection ? (
+                <GradientText
+                  text={minimizeTheString(singleCollection[0].collection_name)}
+                  fontSize={15}
+                  fontWeight={600}
+                  lineHeight={18}
+                />
+              ) : (
+                <SkeletonCommon width="100px" height="20px" />
               )}
             </div>
-
-            {singleCollection ? (
-              <GradientText
-                text={minimizeTheString(singleCollection[0].collection_name)}
-                fontSize={15}
-                fontWeight={600}
-                lineHeight={18}
-              />
-            ) : (
-              <SkeletonCommon width="100px" height="20px" />
-            )}
 
             <div className="nftPrice">
               {localAsk && (
@@ -385,10 +448,12 @@ export const SingleNFTCard: FC<{
               )}
               {localAsk === null && <span tw="dark:text-grey-3 h-7 text-grey-4 font-semibold">Not Listed</span>}
             </div>
-            <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
-              {displayAppraisalPrice ? displayAppraisalPrice.toFixed(2) : 'NA'}
-              {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
-            </div>
+            {appraisalIsEnabled && (
+              <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
+                {displayAppraisalPrice ? displayAppraisalPrice.toFixed(2) : 'NA'}
+                {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
+              </div>
+            )}
             {/* {sessionUser && !isOwner && (
             <img
               className="card-like"

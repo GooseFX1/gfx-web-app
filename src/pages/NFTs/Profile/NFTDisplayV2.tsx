@@ -19,6 +19,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 import tw from 'twin.macro'
+import 'styled-components/macro'
 
 interface INFTDisplayV2 {
   type: 'collected' | 'created' | 'favorited' | 'bids'

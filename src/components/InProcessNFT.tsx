@@ -20,12 +20,9 @@ export const InProcessNFT: FC<{ text?: string }> = ({ text = '' }) => {
   const { mode } = useDarkMode()
   return (
     <WRAPPER>
-      <div
-        className="backGround"
-        tw="  h-[calc(100% - 110px)] sm:h-[calc(100% - 100px)] w-full opacity-100  z-[1001] rounded-[15px]  absolute"
-      ></div>
-      <div tw="absolute z-[1004]  justify-center flex flex-col items-center  h-full w-full">
-        <div tw=" absolute mt-[-80px] ml-[-15px] w-auto h-auto">
+      <div className="backGround" tw="absolute h-full w-full opacity-100 z-[1001] rounded-[15px]"></div>
+      <div tw="absolute z-[1004] justify-center flex flex-col items-center  h-full w-full">
+        <div tw=" absolute ml-[-15px] w-auto h-auto">
           <Loader color={mode === 'dark' ? '#ffffff' : '#3C3C3C'} />
         </div>
         <div tw="mt-8">{text.length > 0 && <span className="loadingText">{text}</span>}</div>

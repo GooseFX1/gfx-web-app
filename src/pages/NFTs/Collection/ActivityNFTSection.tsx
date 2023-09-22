@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactElement, useEffect, useMemo, useState } from 'react'
+import React, { FC, ReactElement, RefObject, useEffect, useMemo, useState } from 'react'
 import { fetchActivityOfAddress, fetchSingleNFT } from '../../../api/NFTs'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, usePriceFeedFarm } from '../../../context'
@@ -84,7 +84,7 @@ export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
     ${tw`sm:h-[100%]`}
   }
   td {
-    ${tw`h-[76px] sm:h-[72px]`}
+    ${tw`h-[76px] sm:h-[56px]`}
   }
   tbody td,
   thead th {
@@ -105,7 +105,7 @@ export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
     color: ${({ theme }) => theme.text20};
   }
   .tableRow {
-    ${tw`h-14`}
+    ${tw`h-14 sm:h-[65px]`}
     @media(max-width: 500px) {
       /* border-bottom: 1px solid ${({ theme }) => theme.borderBottom} ; */
     }
@@ -143,7 +143,7 @@ export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
     padding-top: 0!important;
   }
   .textContainer {
-    ${tw`text-[15px] text-right pt-3 mr-[45px]  flex flex-col`}
+    ${tw`text-[15px] text-right mr-[45px]  flex flex-col`}
   }
   .primaryText {
     ${tw`ml-auto`}
@@ -156,17 +156,18 @@ export const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
     color: ${({ theme }) => theme.text20};
   }
   .solscan {
-    ${tw`h-[35px] w-[35px] -mt-11 sm:mt-[-80px] ml-auto sm:ml-auto`}
+    ${tw`h-[35px] w-[35px] -mt-11 sm:mt-[-45px] ml-auto sm:ml-auto`}
   }
   .priceActivity {
     ${tw`flex flex-col w-[75%] pr-2`}
   }
 `
-const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string; cssStyle?: TwStyle }> = ({
-  address,
-  typeOfAddress,
-  cssStyle
-}): ReactElement => {
+const ActivityNFTSection: FC<{
+  address: string
+  typeOfAddress: string
+  firstCardRef?: RefObject<HTMLElement | null>
+  cssStyle?: TwStyle
+}> = ({ address, typeOfAddress, cssStyle, firstCardRef }): ReactElement => {
   const [activityData, setActivityData] = useState<IActivity[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -194,8 +195,8 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string; cssStyl
           <tbody>
             {/* <NFTTableRow allItems={allItems} /> */}
             {checkMobile()
-              ? activityData && <NFTActivityRowMobile activityData={activityData} />
-              : activityData && <NFTActivityRowWeb activityData={activityData} />}
+              ? activityData && <NFTActivityRowMobile firstCardRef={firstCardRef} activityData={activityData} />
+              : activityData && <NFTActivityRowWeb firstCardRef={firstCardRef} activityData={activityData} />}
           </tbody>
         </table>
       ) : (
@@ -205,14 +206,26 @@ const ActivityNFTSection: FC<{ address?: string; typeOfAddress?: string; cssStyl
   )
 }
 
-const NFTActivityRowMobile = ({ activityData }: any): any => (
+const NFTActivityRowMobile: FC<{ activityData: IActivity[]; firstCardRef?: RefObject<HTMLElement | null> }> = ({
+  activityData,
+  firstCardRef
+}): any => (
   <>
     {activityData.map((activity: IActivity, index: number) => (
-      <NFTActivityRowMobileContents activity={activity} index={index} key={index} />
+      <NFTActivityRowMobileContents
+        firstCardRef={index === 0 ? firstCardRef : null}
+        activity={activity}
+        index={index}
+        key={index}
+      />
     ))}
   </>
 )
-const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
+const NFTActivityRowMobileContents: FC<{
+  activity: IActivity
+  index: number
+  firstCardRef: RefObject<HTMLElement | null>
+}> = ({ activity, index, firstCardRef }) => {
   const [nftDetails, setNFTDetails] = useState<any>()
   const { currencyView } = useNFTAggregator()
   const { solPrice } = usePriceFeedFarm()
@@ -237,15 +250,29 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
     () => (activity?.marketplace_name ? activity.marketplace_name : activity?.auction_house),
     [activity]
   )
+  const nftId = useMemo(
+    () =>
+      nftDetails?.nft_name
+        ? nftDetails?.nft_name.includes('#')
+          ? '#' + nftDetails?.nft_name.split('#')[1]
+          : minimizeTheString(nftDetails?.nft_name, checkMobile() ? 10 : 12)
+        : null,
+    [nftDetails]
+  )
 
+  const unixTime = useMemo(() => {
+    const timeStr = parseUnixTimestamp(activity?.clock).split(',')[1]
+    const length = timeStr.length
+    return timeStr.slice(0, length - 6) + ' ' + timeStr.slice(length - 3, length)
+  }, [activity?.clock])
   return (
     <>
       <tr className="tableRow" key={index}>
         <td className="nftNameColumn" colSpan={4}>
           {activity?.collection_id && (
-            <div>
+            <div ref={firstCardRef as RefObject<HTMLDivElement>}>
               <img className="nftActivityImg" src={nftDetails?.image_url} alt="" />
-              <div className="nftCollectionName">{minimizeTheString(nftDetails?.nft_name, 18)}</div>
+              <div className="nftCollectionName">{nftId}</div>
               <div className="collectionName">
                 <div tw="mr-2">Type:</div>
 
@@ -261,15 +288,13 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
           )}
         </td>
         {/* <td></td> */}
-        <td className="priceActivity" tw="flex items-end justify-end">
-          <div className="textContainer">
+        <td className="priceActivity" tw="flex items-end justify-between">
+          <div className="textContainer" tw="!mt-2">
             <div className="primaryText">
               <PriceWithToken token={currencyView} price={displayPrice} />
             </div>
             <div className="secondaryText">
-              <div>
-                {activity && activity.clock ? <>{parseUnixTimestamp(activity?.clock).split(',')[1]}</> : <> </>}
-              </div>
+              <div>{activity && activity.clock ? <>{unixTime}</> : <> </>}</div>
             </div>
           </div>
 
@@ -282,14 +307,26 @@ const NFTActivityRowMobileContents: FC<{ activity: IActivity; index: number }> =
   )
 }
 
-const NFTActivityRowWeb = ({ activityData }: any): any => (
+const NFTActivityRowWeb: FC<{ activityData: IActivity[]; firstCardRef?: RefObject<HTMLElement | null> }> = ({
+  activityData,
+  firstCardRef
+}): any => (
   <>
     {activityData.map((activity: IActivity, index: number) => (
-      <NFTActivityRowWebContents activity={activity} index={index} key={index} />
+      <NFTActivityRowWebContents
+        firstCardRef={index === 0 ? firstCardRef : null}
+        activity={activity}
+        index={index}
+        key={index}
+      />
     ))}
   </>
 )
-const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({ activity, index }) => {
+const NFTActivityRowWebContents: FC<{
+  activity: IActivity
+  index: number
+  firstCardRef?: RefObject<HTMLElement | null>
+}> = ({ activity, index, firstCardRef }) => {
   const [nftDetails, setNFTDetails] = useState<any>()
   const { currencyView } = useNFTAggregator()
   const { solPrice } = usePriceFeedFarm()
@@ -315,13 +352,11 @@ const NFTActivityRowWebContents: FC<{ activity: IActivity; index: number }> = ({
     [activity]
   )
 
-  console.log(nftDetails)
-
   return (
     <tr className="tableRow" key={index}>
       <td className="nftNameColumn" tw="!w-[20%]">
         {nftDetails?.nft_name ? (
-          <div tw="flex">
+          <div tw="flex" ref={firstCardRef as RefObject<HTMLDivElement>}>
             <div className="nftNameImg">
               <img
                 src={gfxImageService(

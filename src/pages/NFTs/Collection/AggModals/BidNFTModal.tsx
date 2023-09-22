@@ -49,7 +49,7 @@ import { constructBidInstruction } from '../../../../web3/auction-house-sdk/bid'
 import { saveNftTx } from '../../../../api/NFTs'
 
 export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactElement => {
-  const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal } = useNFTAggregator()
+  const { bidNowClicked, setBidNow, setOpenJustModal, openJustModal, appraisalIsEnabled } = useNFTAggregator()
   const [selectedBtn, setSelectedBtn] = useState<number | undefined>(undefined)
   const [reviewBtnClicked, setReviewClicked] = useState<boolean>(false)
   const { connected, sendTransaction, wallet } = useWallet()
@@ -378,13 +378,16 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           {displayErrorMsg}
         </div>
 
-        <div tw="mt-[20px]  sm:mt-4">
-          <AppraisalValueSmall
-            text={parseFloat(general?.gfx_appraisal_value) > 0 ? `${general.gfx_appraisal_value}` : null}
-            label={parseFloat(general?.gfx_appraisal_value) > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'}
-            width={246}
-          />
-        </div>
+        {appraisalIsEnabled && (
+          <div tw="mt-[20px]  sm:mt-4">
+            <AppraisalValueSmall
+              text={parseFloat(general?.gfx_appraisal_value) > 0 ? `${general.gfx_appraisal_value}` : null}
+              label={parseFloat(general?.gfx_appraisal_value) > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'}
+              width={246}
+            />
+          </div>
+        )}
+
         {pendingTxSig && (
           <div className="bm-title">
             <span>
