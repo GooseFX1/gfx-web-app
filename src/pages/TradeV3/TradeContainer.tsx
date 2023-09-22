@@ -299,13 +299,12 @@ function getInitLayout() {
   return { lg: componentDimensionsLg, md: componentDimensionsMd }
 }
 
-export const CryptoContent: FC = () => {
+const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
   const isGeoBlocked = useBlacklisted()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const { selectedCrypto, isDevnet } = useCrypto()
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
   const isInitialRender = useRef(true)
@@ -315,12 +314,12 @@ export const CryptoContent: FC = () => {
   }, [])
 
   useEffect(() => {
-    setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
-    setTimeout(() => {
-      setChartContainer(<></>)
-      setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
-    }, 300)
-  }, [isDevnet, selectedCrypto, mode])
+    setChartContainer(<TVChartContainer visible={true} />)
+    // setTimeout(() => {
+    //   setChartContainer(<></>)
+    //   setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
+    // }, 300)
+  }, [])
 
   useEffect(() => {
     if (!isInitialRender.current) {
@@ -451,6 +450,7 @@ export const CryptoContent: FC = () => {
   const resetLayout = () => {
     setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
+  // useSuspense(isPageLoaded)
   return !checkMobile() ? (
     <DEX_CONTAINER $isLocked={isLocked} $mode={mode}>
       <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
@@ -470,3 +470,4 @@ export const CryptoContent: FC = () => {
     <DexhomeMobi />
   )
 }
+export default CryptoContent

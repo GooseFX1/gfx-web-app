@@ -49,17 +49,14 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     const refreshOrderbook = async () => {
-      await fetchPerpsOrderBook()
-      if (wallet.connected && traderInfo.traderRiskGroupKey) {
-        await fetchPerpsOpenOrders()
-      } else {
-        setPerpsOpenOrders([])
-      }
+      await Promise.allSettled([
+        fetchPerpsOrderBook(),
+        wallet.connected && traderInfo.traderRiskGroupKey ? fetchPerpsOpenOrders() : setPerpsOpenOrders([])
+      ])
     }
     const t2 = setInterval(refreshOrderbook, 500)
     return () => clearInterval(t2) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo, wallet.connected])
-
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
       let size = item.size
@@ -133,6 +130,9 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const fetchPerpsOpenOrders = async () => {
+    if (!(wallet.connected && traderInfo.traderRiskGroupKey)) {
+      return
+    }
     const res = await httpClient('api-services').post(`${GET_OPEN_ORDERS}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
       pairName: activeProduct.pairName,

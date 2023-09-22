@@ -54,7 +54,7 @@ const HOME_BTN = styled(MainButton)`
   }
 `
 
-export const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = ({
+const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = ({
   redirectLink,
   redirectString
 }) => {
@@ -81,3 +81,4 @@ export const GenericNotFound: FC<{ redirectLink?: string; redirectString?: strin
     </PAGE_CONTAINER>
   )
 }
+export default GenericNotFound

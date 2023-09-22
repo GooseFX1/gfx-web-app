@@ -47,7 +47,7 @@ const DATA_WRAPPER = styled.div`
   }
 `
 
-export const TradeAnalyticsWrapper: FC = () => {
+const TradeAnalyticsWrapper: FC = () => {
   const { wallet, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -218,3 +218,4 @@ export const TradeAnalyticsWrapper: FC = () => {
     </DATA_WRAPPER>
   )
 }
+export default TradeAnalyticsWrapper

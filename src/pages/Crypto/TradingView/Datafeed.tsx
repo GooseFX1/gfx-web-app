@@ -1,13 +1,19 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { SUPPORTED_TOKEN_LIST } from '../../../constants'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
-import { sleep, getUnixTs } from '../../../utils'
+import { sleep, getUnixTs, aborter } from '../../../utils'
 
 const URL_SERVER = 'https://trading-view.goosefx.io/tradingview/'
 
 export const DataFeedWrapper = (): any => {
   const { selectedCrypto, isDevnet } = useCrypto()
   const dataFeed = useMemo(() => makeDataFeed(), [selectedCrypto, isDevnet])
+  useEffect(
+    () => () => {
+      aborter.abortSignal('data-feed-fetch-handler')
+    },
+    []
+  )
   return dataFeed
 }
 
@@ -18,7 +24,7 @@ const makeDataFeed = () => {
 
   const apiFetchHandler = async (url: string) => {
     try {
-      const response = await fetch(url)
+      const response = await fetch(url, { signal: aborter.addSignal('data-feed-fetch-handler') })
       if (response.ok) {
         const responseJson = await response.json()
         return responseJson.success ? responseJson.data : responseJson ? responseJson : null

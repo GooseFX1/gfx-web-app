@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import * as saveLoadAdapter from './save-load-adapter'
 import { convertResolutionToApi, DataFeedWrapper } from './Datafeed'
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
-import { useDarkMode } from '../../../context'
+import { useCrypto, useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
 
 const CONTAINER = styled.div<{ $visible: boolean }>`
@@ -32,11 +32,12 @@ export interface ChartContainerProps {
   timeframe: ChartingLibraryWidgetOptions['timeframe']
 }
 
-export const TVChartContainer: FC<{ symbol: string; visible: boolean }> = ({ symbol, visible }) => {
+export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
+  const { selectedCrypto } = useCrypto()
+  const symbol = selectedCrypto.pair
   const { mode } = useDarkMode()
   const datafeed = DataFeedWrapper()
   let resolution = window.localStorage.getItem('resolution') ?? '60'
-
   try {
     convertResolutionToApi(resolution)
   } catch (e) {
