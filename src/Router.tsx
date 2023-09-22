@@ -27,7 +27,7 @@ const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper')
 const NFTAgg = lazy(() => import('./pages/NFTs/NFTAgg'))
 const TradeAnalyticsWrapper = lazy(() => import('./pages/Analytics/trade/TradeAnalyticsWrapper'))
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
-const FarmV2 = lazy(() => import('./pages/Farm/Farm'))
+const FarmDeprecated = lazy(() => import('./pages/Farm/Farm'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
@@ -125,7 +125,7 @@ export const Router: FC = () => (
                           </PriceFeedFarmProvider>
                         </Route>
                         <Route exact path="/withdraw">
-                          <FarmV2 />
+                          <FarmDeprecated />
                         </Route>
                         <Route exact path="/analytics">
                           <AnalyticsWrapper />
