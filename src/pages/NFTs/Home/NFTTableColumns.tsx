@@ -13,7 +13,7 @@ const TOKEN_DIV = styled.div`
 `
 
 export const NFTColumnsTitleWeb = (): ReactElement => {
-  const { setCurrency } = useNFTAggregator()
+  const { setCurrency, appraisalIsEnabled } = useNFTAggregator()
   const { setAllCollections } = useNFTCollections()
   const { sortFilter, setSortFilter, setSortType, setPageNumber, sortType, timelineDisplay } =
     useNFTAggregatorFilters()
@@ -78,15 +78,17 @@ export const NFTColumnsTitleWeb = (): ReactElement => {
             sortFilter === NFT_COL_FILTER_OPTIONS.FLOOR_PRICE
           )}
         </th>
-        <th>
-          {TableHeaderTitle(
-            'GFX Appraisal',
-            'The appraisal engine uses machine learning and non-linear statistical models to generate' +
-              'real-time fair market  value prices for individual NFTs.' +
-              'These can help you determine what prices to buy or sell your NFTs.',
-            false
-          )}
-        </th>
+        {appraisalIsEnabled && (
+          <th>
+            {TableHeaderTitle(
+              'GFX Appraisal',
+              'The appraisal engine uses machine learning and non-linear statistical models to generate' +
+                'real-time fair market  value prices for individual NFTs.' +
+                'These can help you determine what prices to buy or sell your NFTs.',
+              false
+            )}
+          </th>
+        )}
         <th>{TableHeaderTitle('24H Change', '24 hours change based on Volume.', false)}</th>
         <th onClick={() => handleSortChangeForVolume(timelineDisplay)}>
           {TableHeaderTitle(

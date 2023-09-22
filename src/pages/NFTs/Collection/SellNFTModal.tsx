@@ -90,7 +90,7 @@ export const SellNFTModal: FC<{
     () => (highestBid ? parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0),
     [highestBid]
   )
-  const { setSellNFT, setOpenJustModal, setRefreshClicked } = useNFTAggregator()
+  const { setSellNFT, setOpenJustModal, setRefreshClicked, appraisalIsEnabled } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(0)
@@ -664,9 +664,11 @@ export const SellNFTModal: FC<{
           />
         </div>
 
-        <div tw="mt-[90px]">
-          <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
-        </div>
+        {appraisalIsEnabled && (
+          <div tw="mt-[90px]">
+            <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
+          </div>
+        )}
 
         {pendingTxSig && (
           <div tw="mt-3 text-center">

@@ -61,7 +61,8 @@ import useBreakPoint from '../../../hooks/useBreakPoint'
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
-  const { lastRefreshedClass, refreshClass, setLastRefreshedClass, currencyView } = useNFTAggregator()
+  const { lastRefreshedClass, refreshClass, setLastRefreshedClass, currencyView, appraisalIsEnabled } =
+    useNFTAggregator()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const { solPrice } = usePriceFeedFarm()
@@ -189,22 +190,24 @@ const NFTStatsContainer = () => {
           </div>
 
           <div className="generalStats">
-            <div tw="flex items-center">
-              <img
-                onClick={() => setGFXAppraisalPopup(true)}
-                tw="h-[20px] w-[20px] cursor-pointer"
-                src="/img/assets/Aggregator/Tooltip.svg"
-                alt="appraisal-icon"
-              />
-              <div className="wrapper" tw="ml-2">
-                <div className={collection?.gfx_appraisal_supported ? 'titleText' : 'titleTextNoSupport'}>
-                  Appraisal
-                </div>
-                <div className={collection?.gfx_appraisal_supported ? 'subTitleText' : 'subTitleTextNoSupport'}>
-                  {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
+            {appraisalIsEnabled && (
+              <div tw="flex items-center">
+                <img
+                  onClick={() => setGFXAppraisalPopup(true)}
+                  tw="h-[20px] w-[20px] cursor-pointer"
+                  src="/img/assets/Aggregator/Tooltip.svg"
+                  alt="appraisal-icon"
+                />
+                <div className="wrapper" tw="ml-2">
+                  <div className={collection?.gfx_appraisal_supported ? 'titleText' : 'titleTextNoSupport'}>
+                    Appraisal
+                  </div>
+                  <div className={collection?.gfx_appraisal_supported ? 'subTitleText' : 'subTitleTextNoSupport'}>
+                    {collection && collection.gfx_appraisal_supported ? 'Supported' : 'Not Supported'}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <div className="wrapper">
               <div className="titleText" tw="leading-none">

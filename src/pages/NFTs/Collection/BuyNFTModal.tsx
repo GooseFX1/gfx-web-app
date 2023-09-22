@@ -311,7 +311,7 @@ export const BuyNFTModal = (): ReactElement => {
   return (
     <STYLED_POPUP_BUY_MODAL
       lockModal={isLoading}
-      height={checkMobile() ? '603px' : '780px'}
+      height={checkMobile() ? '524px' : '715px'}
       width={checkMobile() ? '100%' : '580px'}
       title={null}
       centered={checkMobile() ? false : true}
@@ -329,7 +329,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   isLoading,
   setIsLoading
 }): ReactElement => {
-  const { setBidNow, setOperatingNFT } = useNFTAggregator()
+  const { setBidNow, setOperatingNFT, appraisalIsEnabled } = useNFTAggregator()
   const { singleCollection } = useNFTCollections()
   const { getUIAmount } = useAccounts()
   const { sessionUser, fetchSessionUser } = useNFTProfile()
@@ -381,20 +381,26 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     [curBid]
   )
 
-  const appraisalValueAsFloat = useMemo(
-    () => (general?.gfx_appraisal_value ? parseFloat(general?.gfx_appraisal_value) : null),
-    [general?.gfx_appraisal_value]
-  )
+  const appraisalValueAsFloat = appraisalIsEnabled
+    ? useMemo(
+        () => (general?.gfx_appraisal_value ? parseFloat(general?.gfx_appraisal_value) : null),
+        [general?.gfx_appraisal_value]
+      )
+    : null
 
-  const appraisalValueText = useMemo(
-    () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? `${general?.gfx_appraisal_value}` : null),
-    [appraisalValueAsFloat, general?.gfx_appraisal_value]
-  )
+  const appraisalValueText = appraisalIsEnabled
+    ? useMemo(
+        () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? `${general?.gfx_appraisal_value}` : null),
+        [appraisalValueAsFloat, general?.gfx_appraisal_value]
+      )
+    : null
 
-  const appraisalValueLabel = useMemo(
-    () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'),
-    [appraisalValueAsFloat]
-  )
+  const appraisalValueLabel = appraisalIsEnabled
+    ? useMemo(
+        () => (appraisalValueAsFloat && appraisalValueAsFloat > 0 ? 'Appraisal Value' : 'Appraisal Not Supported'),
+        [appraisalValueAsFloat]
+      )
+    : null
 
   const sendNftTransactionLog = useCallback(
     (txType, signature) => {
@@ -609,9 +615,12 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           </div>
         </div>
 
-        <div tw="mt-4">
-          <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
-        </div>
+        {appraisalIsEnabled && (
+          <div tw="mt-4">
+            <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
+          </div>
+        )}
+
         {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
 
         <div className="feesContainer">

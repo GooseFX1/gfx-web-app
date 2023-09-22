@@ -193,11 +193,18 @@ const ImageViewer = (): ReactElement => {
   const { general, ask, setGeneral } = useNFTDetails()
   const { sessionUser } = useNFTProfile()
   const [shareModal, setShareModal] = useState<boolean>(false)
-  const gfxAppraisalValue = general?.gfx_appraisal_value
-    ? parseFloat(general?.gfx_appraisal_value) > 0
-      ? general?.gfx_appraisal_value
+  const { appraisalIsEnabled } = useNFTAggregator()
+
+  const gfxAppraisalValue = useMemo(() => {
+    if (appraisalIsEnabled === false) return null
+
+    return general?.gfx_appraisal_value
+      ? parseFloat(general?.gfx_appraisal_value) > 0
+        ? general?.gfx_appraisal_value
+        : null
       : null
-    : null
+  }, [general, appraisalIsEnabled])
+
   const onShare = async (social: string) => {
     if (social === 'copy link') {
       copyToClipboard()
@@ -283,12 +290,15 @@ const ImageViewer = (): ReactElement => {
         </div>
         <div>{general?.nft_description}</div>
 
-        <div tw="mt-[30px]">
-          <AppraisalValue
-            text={gfxAppraisalValue ? gfxAppraisalValue : null}
-            label={gfxAppraisalValue ? 'Appraisal Value' : 'Appraisal Not Supported'}
-          />
-        </div>
+        {appraisalIsEnabled && (
+          <div tw="mt-[30px]">
+            <AppraisalValue
+              text={gfxAppraisalValue ? gfxAppraisalValue : null}
+              label={gfxAppraisalValue ? 'Appraisal Value' : 'Appraisal Not Supported'}
+            />
+          </div>
+        )}
+
         {/* <img tw="h-[390px] w-[100%]" src="/img/assets/Aggregator/priceHistory.svg" /> */}
         <div tw="mt-8">
           <NFTTabSections activeTab={activeTab} setActiveTab={setActiveTab} />

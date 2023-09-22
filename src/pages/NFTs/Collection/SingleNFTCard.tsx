@@ -70,8 +70,16 @@ export const SingleNFTCard: FC<{
   const history = useHistory()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-  const { currencyView, operatingNFT, setOperatingNFT, nftInBag, nftInSweeper, sweeperCount, setNftInBag } =
-    useNFTAggregator()
+  const {
+    currencyView,
+    operatingNFT,
+    setOperatingNFT,
+    nftInBag,
+    nftInSweeper,
+    sweeperCount,
+    setNftInBag,
+    appraisalIsEnabled
+  } = useNFTAggregator()
   const refreshCard = useRef(null)
 
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -328,12 +336,12 @@ export const SingleNFTCard: FC<{
         ref={firstCardRef ? firstCardRef : lastCardRef}
       >
         <div className={'gridItem'}>
-          {handleLoading}
           <div
             className="gridItemContainer"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
           >
+            {handleLoading}
             {handleHover}
 
             {localSingleNFT ? (
@@ -394,36 +402,41 @@ export const SingleNFTCard: FC<{
             )}
           </div>
           <div className="nftTextContainer">
-            <div className="collectionId">
-              <div tw="flex items-center">
-                {nftId ? nftId : '# Nft'}
-                {item?.is_verified && (
-                  <img className="isVerified" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
+            <div>
+              <div className="collectionId">
+                <div tw="flex items-center">
+                  {nftId ? nftId : '# Nft'}
+                  {item?.is_verified && (
+                    <img
+                      className="isVerified"
+                      src="/img/assets/Aggregator/verifiedNFT.svg"
+                      alt={'verified nft'}
+                    />
+                  )}
+                </div>
+                {localAsk !== null && (
+                  <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
+                    <div>
+                      <img
+                        className="ah-name"
+                        alt="marketplace"
+                        src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
+                      />
+                    </div>
+                  </GenericTooltip>
                 )}
               </div>
-              {localAsk !== null && (
-                <GenericTooltip text={handleMarketplaceFormat(localAsk)}>
-                  <div>
-                    <img
-                      className="ah-name"
-                      alt="marketplace"
-                      src={`/img/assets/Aggregator/${handleMarketplaceFormat(localAsk)}.svg`}
-                    />
-                  </div>
-                </GenericTooltip>
+              {singleCollection ? (
+                <GradientText
+                  text={minimizeTheString(singleCollection[0].collection_name)}
+                  fontSize={15}
+                  fontWeight={600}
+                  lineHeight={18}
+                />
+              ) : (
+                <SkeletonCommon width="100px" height="20px" />
               )}
             </div>
-
-            {singleCollection ? (
-              <GradientText
-                text={minimizeTheString(singleCollection[0].collection_name)}
-                fontSize={15}
-                fontWeight={600}
-                lineHeight={18}
-              />
-            ) : (
-              <SkeletonCommon width="100px" height="20px" />
-            )}
 
             <div className="nftPrice">
               {localAsk && (
@@ -435,10 +448,12 @@ export const SingleNFTCard: FC<{
               )}
               {localAsk === null && <span tw="dark:text-grey-3 h-7 text-grey-4 font-semibold">Not Listed</span>}
             </div>
-            <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
-              {displayAppraisalPrice ? displayAppraisalPrice.toFixed(2) : 'NA'}
-              {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
-            </div>
+            {appraisalIsEnabled && (
+              <div className="apprisalPrice" tw="flex items-center" onClick={(e) => handleInfoIconClicked(e)}>
+                {displayAppraisalPrice ? displayAppraisalPrice.toFixed(2) : 'NA'}
+                {<img src={`/img/assets/Aggregator/Tooltip.svg`} alt={'SOL'} />}
+              </div>
+            )}
             {/* {sessionUser && !isOwner && (
             <img
               className="card-like"

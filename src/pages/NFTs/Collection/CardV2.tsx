@@ -79,7 +79,7 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
   const [showDrawerSingleNFT, setDrawerSingleNFT] = useState<boolean>(false)
   const [isLoadingBeforeRelocate, setIsLoadingBeforeRelocate] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
-  const { currencyView, setDelistNFT, setSellNFT } = useNFTAggregator()
+  const { currencyView, setDelistNFT, setSellNFT, appraisalIsEnabled } = useNFTAggregator()
   const { profileNFTOptions } = useNFTAggregatorFilters()
   const { prices } = usePriceFeedFarm()
   const solPrice = useMemo(() => prices['SOL/USDC']?.current, [prices])
@@ -339,31 +339,32 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
               )}
               <div>
                 {localSingleNFT ? (
-                  <div>
-                    <div className="nftPrice">
-                      {displayPrice !== null ? (
-                        <PriceWithToken
-                          cssStyle={tw``}
-                          price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
-                          token={currencyView}
-                        />
-                      ) : (
-                        ''
-                      )}
-                      {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
-                    </div>
+                  <div className="nftPrice">
+                    {displayPrice !== null ? (
+                      <PriceWithToken
+                        cssStyle={tw``}
+                        price={dynamicPriceValue(parseFloat(displayPrice) / LAMPORTS_PER_SOL_NUMBER)}
+                        token={currencyView}
+                      />
+                    ) : (
+                      ''
+                    )}
+                    {/* <img src={`/img/crypto/SOL.svg`} alt={'SOL'} /> */}
                   </div>
                 ) : (
                   <SkeletonCommon width="64px" height="24px" />
                 )}
-                <div className="apprisalPriceProfile">
-                  NA
-                  <img
-                    src={`/img/assets/Aggregator/Tooltip.svg`}
-                    alt={'tooltip'}
-                    onClick={() => setGfxAppraisal(true)}
-                  />
-                </div>
+
+                {appraisalIsEnabled && (
+                  <div className="apprisalPriceProfile">
+                    NA
+                    <img
+                      src={`/img/assets/Aggregator/Tooltip.svg`}
+                      alt={'tooltip'}
+                      onClick={() => setGfxAppraisal(true)}
+                    />
+                  </div>
+                )}
 
                 {/* {sessionUser && (
                     <img
