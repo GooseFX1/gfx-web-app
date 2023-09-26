@@ -96,7 +96,7 @@ export const SellNFTModal: FC<{
   const [askPrice, setAskPrice] = useState<number | null>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
-  const [pendingTxSig, setPendingTxSig] = useState<any>(null)
+  const [pendingTxSig, setPendingTxSig] = useState<any>('null')
   const { singleCollection } = useNFTCollections()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -217,9 +217,6 @@ export const SellNFTModal: FC<{
           console.log('refreshing after 15 sec')
           setRefreshClicked((prev) => prev + 1)
         }, 15000)
-        if (dontNotify) {
-          return
-        }
         if (isAcceptingBid)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
         else
@@ -664,14 +661,14 @@ export const SellNFTModal: FC<{
           />
         </div>
 
-        {appraisalIsEnabled && (
-          <div tw="mt-[90px]">
+        <div tw="mt-[90px]">
+          {appraisalIsEnabled && (
             <AppraisalValueSmall text={appraisalValueText} label={appraisalValueLabel} width={246} />
-          </div>
-        )}
+          )}
+        </div>
 
         {pendingTxSig && (
-          <div tw="mt-3 text-center">
+          <div tw="absolute sm:relative flex ml-[calc(50% - 100px)] sm:ml-[calc(50% - 85px)]">
             <span>
               <img
                 style={{ height: '26px', marginRight: '6px' }}
@@ -679,11 +676,7 @@ export const SellNFTModal: FC<{
                 alt="solscan-icon"
               />
             </span>
-            <GFX_LINK
-              href={`https://solscan.io/tx/${pendingTxSig}?cluster=${network}`}
-              target={'_blank'}
-              rel="noreferrer"
-            >
+            <GFX_LINK href={`https://solscan.io/tx/${pendingTxSig}`} target={'_blank'} rel="noreferrer">
               View Transaction
             </GFX_LINK>
           </div>

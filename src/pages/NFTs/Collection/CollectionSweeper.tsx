@@ -99,10 +99,11 @@ const STYLED_INPUT = styled.input`
 
 const WRAPPER = styled.div`
   .background {
-    position: absolute !important;
+    position: fixed;
     background: ${({ theme }) => theme.bg2} !important;
     @media (max-width: 500px) {
       background: ${({ theme }) => theme.bg25} !important;
+      position: absolute !important;
     }
   }
 `
@@ -146,7 +147,7 @@ const CollectionSweeper = (): ReactElement => {
       <div
         className="background"
         css={tw`h-20 sm:h-[92px] !w-[100%] !max-w-[247px] sm:!max-w-[100vw] sm:!w-[99vw] bg-grey-5  bottom-1
-        sm:bottom-0 absolute  z-[1000] flex flex-col items-center dark:bg-black-1 sm:bg-none`}
+        sm:bottom-0 sm:absolute fixed z-[1000] flex flex-col items-center dark:bg-black-1 sm:bg-none`}
       >
         <div css={tw`flex h-8.75 w-[100%] justify-between items-center px-2 `}>
           <div onClick={() => removeNftFromSweeper(sweeperCount)}>
