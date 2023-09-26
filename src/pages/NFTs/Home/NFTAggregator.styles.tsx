@@ -98,7 +98,7 @@ export const WRAPPER_TABLE = styled.div<{ showBanner }>`
 
   tbody td,
   thead th {
-    width: 17%;
+    width: 17.5%;
     float: left;
     text-align: center;
 

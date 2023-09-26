@@ -92,7 +92,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     color: ${({ theme }) => theme.text20};
   }
   .verifiedText {
-    ${tw`font-semibold text-[16px]   sm:text-[15px] mt-2 mb-1
+    ${tw`font-semibold text-[16px] sm:text-[15px] mt-1 mb-1
         sm:text-left sm:ml-[140px] sm:mt-[5px] h-4`}
     color: ${({ theme }) => theme.text38};
   }
@@ -453,7 +453,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         console.log(authority, 'authority', typeof authority)
 
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        if (isPnft && marketPlace === NFT_MARKETS.GOOSE) {
+        if (isPnft || marketPlace === NFT_MARKETS.GOOSE) {
           signature = await sendTransaction(tx, connection, {
             signers: [treasuryWallet],
             skipPreflight: true
@@ -585,7 +585,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
             </div>
             {singleCollection && singleCollection[0]?.is_verified && (
               <div className="verifiedText">
-                <div tw="flex items-center">
+                <div tw="flex items-center ">
                   {!checkMobile() && (
                     <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
                   )}

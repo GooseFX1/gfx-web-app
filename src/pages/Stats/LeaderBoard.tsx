@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../utils'
@@ -124,7 +124,14 @@ const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const { users, nftUsers } = useStats()
-  const displayUsers = screenType === 2 ? nftUsers.map((nftUser, index) => transformObject(nftUser, index)) : users
+  const displayUsers = useMemo(() => {
+    if (screenType === 2) {
+      const transformedObjectUser = nftUsers.map((nftUser, index) => transformObject(nftUser, index))
+      return transformedObjectUser.filter((user) => user.weeklyPoints > 0)
+    } else {
+      return users
+    }
+  }, [nftUsers, users, screenType])
 
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
