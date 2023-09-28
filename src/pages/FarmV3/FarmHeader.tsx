@@ -23,15 +23,15 @@ const POOL_CARD = styled.div`
    border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
 `
 
-// const HEADER_WRAPPER = styled.div`
-//   ${tw`flex flex-row justify-start relative mb-5`}
-//   overflow-x: scroll;
-//   ::-webkit-scrollbar {
-//     display: none;
-//   }
-//   -ms-overflow-style: none;
-//   scrollbar-width: none;
-// `
+const HEADER_WRAPPER = styled.div`
+  ${tw`flex flex-row justify-start relative mb-5`}
+  overflow-x: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`
 
 const POOL_CARD_WRAPPER = styled.div`
   ${tw`flex flex-row justify-between mb-5 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
@@ -69,21 +69,9 @@ export const FarmHeader: FC = () => {
 
   return (
     <>
-      {/* <HEADER_WRAPPER> */}
-      {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
-      {/* {infoCards?.map((card) => (
-          <>
-            <CARD_GRADIENT key={card?.name}>
-              <INFO_CARD>
-                <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
-                  {card?.value}
-                </div>
-              </INFO_CARD>
-            </CARD_GRADIENT>
-          </>
-        ))} */}
-      {/* {!checkMobile() && (
+      <HEADER_WRAPPER>
+        {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
+        {
           <div
             tw="absolute right-0 border border-solid border-grey-1 w-[207px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
@@ -98,8 +86,8 @@ export const FarmHeader: FC = () => {
             </span>
             <img src="/img/assets/questionMark.svg" alt="question-icon" />
           </div>
-        )} */}
-      {/* </HEADER_WRAPPER> */}
+        }
+      </HEADER_WRAPPER>
       {isGeoBlocked && (
         <div tw="flex w-full justify-center items-center mb-2">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />

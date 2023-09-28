@@ -44,7 +44,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
   const [liquidityAmount, setLiquidityAmount] = useState({})
-  const [pool, setPool] = useState<Pool>(poolType.stable)
+  const [pool, setPool] = useState<Pool>(poolType.all)
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
@@ -96,6 +96,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 }
                 allPoolentries.push(sslToken)
                 if (token.assetType === pool.index) sslPoolEntries.push(sslToken)
+                else if (pool.index === 4) sslPoolEntries.push(sslToken)
               }
             })
           )
@@ -112,6 +113,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const filteredPoolData = []
     allPoolSslData.forEach((token: any) => {
       if (token.assetType === pool.index) filteredPoolData.push(token)
+      else if (pool.index === 4) filteredPoolData.push(token)
     })
     setSslData(filteredPoolData)
   }, [pool])

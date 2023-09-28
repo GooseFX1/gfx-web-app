@@ -70,7 +70,12 @@ export const poolType = {
   hyper: {
     index: 2,
     name: 'Hyper',
-    desc: 'If you want higher returns with some risk.'
+    desc: "If you're looking for high returns with more risk."
+  },
+  all: {
+    index: 4,
+    name: 'All',
+    desc: 'Explore all our different pools.'
   }
 }
 

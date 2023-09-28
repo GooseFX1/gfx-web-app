@@ -141,6 +141,11 @@ export const FarmTable: FC = () => {
     [searchTokens, sslData]
   )
 
+  const initiateGlobalSearch = (value) => {
+    setPool(poolType.all)
+    setSearchTokens(value)
+  }
+
   return (
     <WRAPPER>
       <div tw="flex flex-row items-center mb-3.75 sm:pr-4">
@@ -162,21 +167,31 @@ export const FarmTable: FC = () => {
         </div>
       </div>
       <div tw="flex items-center">
-        <div tw="flex cursor-pointer relative">
+        <div tw="flex cursor-pointer relative sm:w-full">
           <div
             css={[
               tw`duration-500`,
-              pool.index === 3
+              pool.index === 4
                 ? tw`ml-0`
+                : pool.index === 3
+                ? tw`ml-[95px] sm:ml-[24%]`
                 : pool.index === 1
-                ? tw`ml-[95px] sm:ml-[72px]`
-                : tw`ml-[190px] sm:ml-[144px]`
+                ? tw`ml-[190px] sm:ml-[48%]`
+                : tw`ml-[285px] sm:ml-[72%]`
             ]}
-            tw="h-[35px] bg-blue-1 w-[95px] sm:w-[72px] absolute rounded-[50px]"
+            tw="h-[35px] bg-blue-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
           ></div>
           <div
+            css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
+            font-semibold w-[95px] text-regular"
+            onClick={() => (operationPending ? null : setPool(poolType.all))}
+          >
+            All Pools
+          </div>
+          <div
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[72px] justify-center 
+            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
@@ -184,7 +199,7 @@ export const FarmTable: FC = () => {
           </div>
           <div
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[72px] text-regular"
+            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[24%] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.primary))}
           >
             Primary
@@ -192,7 +207,7 @@ export const FarmTable: FC = () => {
           <div
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
-            sm:w-[72px] w-[95px] text-regular"
+            sm:w-[24%] w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.hyper))}
           >
             Hyper
@@ -204,7 +219,7 @@ export const FarmTable: FC = () => {
               width="400px"
               filter={searchTokens}
               cssStyle={tw`h-8.75`}
-              setSearchFilter={setSearchTokens}
+              setSearchFilter={initiateGlobalSearch}
               placeholder="Search by token symbol"
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
               isFarm={true}
@@ -222,33 +237,33 @@ export const FarmTable: FC = () => {
             )}
           </div>
         )}
-
-        {breakpoint.isMobile && wallet?.adapter?.publicKey && (
-          <div tw="ml-auto flex items-center mr-2">
-            <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
-            <div
-              tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
-               font-semibold mt-[-4px] ml-2.5 sm:ml-2"
-            >
-              Show <br /> Deposited
-            </div>
-          </div>
-        )}
       </div>
       {breakpoint.isMobile && (
-        <div tw="sm:mt-4 ">
+        <div tw="flex flex-row mt-4">
           <SearchBar
+            filter={searchTokens}
+            width={wallet?.adapter?.publicKey ? '55%' : '95%'}
             className="searchBarContainer"
-            cssStyle={tw`h-8.75 w-full`}
-            setSearchFilter={setSearchTokens}
-            placeholder="Search by token symbol"
+            cssStyle={tw`h-8.75`}
+            setSearchFilter={initiateGlobalSearch}
+            placeholder="Search by token"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             filter={searchTokens}
             isFarm={true}
           />
+          {wallet?.adapter?.publicKey && (
+            <div tw="ml-auto flex items-center mr-2">
+              <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+              <div
+                tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
+                          font-semibold mt-[-4px] ml-2.5 sm:ml-2"
+              >
+                Show <br /> Deposited
+              </div>
+            </div>
+          )}
         </div>
       )}
-
       <div>
         <table tw="mt-4">
           <FarmTableHeaders poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length} />
@@ -369,9 +384,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         const key = coin.token === 'SOL' ? 'WSOL' : coin.token
         const decimal = coin.mintDecimals
         return {
-          apy: sslTableData[key].apy,
-          fee: sslTableData[key].fee / 10 ** decimal,
-          volume: sslTableData[key].volume / 1_000_000
+          apy: sslTableData[key]?.apy,
+          fee: sslTableData[key]?.fee / 10 ** decimal,
+          volume: sslTableData[key]?.volume / 1_000_000
         }
       } else
         return {
@@ -386,9 +401,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
 
   const formattedapiSslData = useMemo(
     () => ({
-      apy: apiSslData.apy.toFixed(2),
-      fee: apiSslData.fee.toFixed(2),
-      volume: apiSslData.volume.toFixed(2)
+      apy: apiSslData?.apy?.toFixed(2),
+      fee: apiSslData?.fee?.toFixed(2),
+      volume: apiSslData?.volume?.toFixed(2)
     }),
     [apiSslData]
   )
