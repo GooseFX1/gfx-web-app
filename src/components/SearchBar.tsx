@@ -44,8 +44,7 @@ ${tw`relative sm:w-3/4`}
     }
     }
     ::placeholder {
-      font-weight: 500;
-      color: ${({ theme }) => theme.text18};
+      ${tw`font-medium text-regular`}
     }
   }
 
