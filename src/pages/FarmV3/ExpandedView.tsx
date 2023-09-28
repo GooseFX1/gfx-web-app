@@ -331,7 +331,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           <div tw="mt-4">
             <FarmStats
               keyStr="Wallet Balance"
-              value={`${userTokenBalance?.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD?.toFixed(2)} USD)`}
+              value={
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  ${userTokenBalance?.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD?.toFixed(2)} USD)
+                </span>
+              }
             />
           </div>
         )}
@@ -422,9 +426,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             keyStr="Total Earnings"
             value={
               totalEarned ? (
-                <span>{`$ ${totalEarned.toFixed(3)} ${totalEarnedInUSD} USD`}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`$ ${totalEarned?.toFixed(
+                  3
+                )} (${totalEarnedInUSD?.toFixed(2)} USD)`}</span>
               ) : (
-                `0.00 ${coin?.token} ($0.00 USD)`
+                <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
+                  0.00 ${coin?.token} ($0.00 USD)
+                </span>
               )
             }
           />
@@ -440,9 +448,9 @@ const FarmStats: FC<{
   alignRight?: boolean
 }> = ({ keyStr, value, alignRight }) => (
   <div css={[tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`]}>
-    <div tw="text-grey-2" css={[!!alignRight && tw`text-right`]}>
+    <div tw="dark:text-grey-2 text-grey-1" css={[!!alignRight && tw`text-right`]}>
       {keyStr}
     </div>
-    <div tw="text-grey-2">{value}</div>
+    <div>{value}</div>
   </div>
 )
