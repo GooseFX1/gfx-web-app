@@ -313,7 +313,7 @@ const LeaderBoard: FC = () => {
         <tbody>
           {displayUsers
             .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
-            .map((user, index: number) => (
+            .map((user: User, index: number) => (
               <TABLE_ROW key={index}>
                 {checkMobile() ? (
                   <ColumnMobile user={user} />
