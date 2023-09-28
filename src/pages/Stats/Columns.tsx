@@ -148,7 +148,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
                 assets and your net deposits.
               </span>
             }
-            overlayClassName={mode === 'dark' ? 'dark' : ''}
+            overlayClassName={mode === 'dark' ? 'dark leaderboard-tooltip' : 'leaderboard-tooltip'}
             placement="topLeft"
             overlayInnerStyle={{ borderRadius: '8px' }}
           >
@@ -164,7 +164,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
               Hold an SMB NFT and earn loyalty for more points.
             </span>
           }
-          overlayClassName={mode === 'dark' ? 'dark' : ''}
+          overlayClassName={mode === 'dark' ? 'dark leaderboard-tooltip' : 'leaderboard-tooltip'}
           overlayInnerStyle={{ borderRadius: '8px' }}
           placement="topLeft"
         >
@@ -179,7 +179,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
               Trade often; higher loyalty equals more points.
             </span>
           }
-          overlayClassName={mode === 'dark' ? 'dark' : ''}
+          overlayClassName={mode === 'dark' ? 'dark leaderboard-tooltip' : 'leaderboard-tooltip'}
           overlayInnerStyle={{ borderRadius: '8px' }}
           placement="topLeft"
         >

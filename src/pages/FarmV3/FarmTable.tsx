@@ -423,7 +423,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
                     Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $5K.
                   </span>
                 }
-                placement="topLeft"
+                placement="topRight"
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
