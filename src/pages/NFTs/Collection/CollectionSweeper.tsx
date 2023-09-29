@@ -42,7 +42,7 @@ import { INFTInBag } from '../../../types/nft_details'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
-import { GenericTooltip } from '../../Farm/Columns'
+import { GenericTooltip } from '../../../components/Farm/generic'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { useHistory } from 'react-router-dom'
 

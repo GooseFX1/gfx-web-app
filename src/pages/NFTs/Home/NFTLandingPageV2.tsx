@@ -18,7 +18,7 @@ import {
   RefreshIcon,
   STYLED_BUTTON,
   useAnimateButtonSlide
-} from '../../Farm/FarmFilterHeader'
+} from '../../../components/Farm/generic'
 import { SEARCH_RESULT_CONTAINER } from './NFTAggregator.styles'
 import NFTBanners from './NFTBanners'
 import NFTCollectionsTable from './NFTCollectionsTable'

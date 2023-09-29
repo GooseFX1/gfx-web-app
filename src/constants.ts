@@ -1,6 +1,3 @@
-import { ADDRESSES } from './web3'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { IFarmData } from './pages/Farm/CustomTableList'
 import tw from 'twin.macro'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
@@ -161,36 +158,6 @@ export const NFT_MARKET_PLACE_FEES = {
   MAGIC_EDEN: 1.5
 }
 export const GFX_APPRAISAL_ENABLED = false
-
-export const stakeTokens: IFarmData[] = [
-  {
-    id: '0',
-    image: 'GOFX',
-    name: 'GOFX',
-    apr: 'not-supported',
-    volume: 'not-supported',
-    earned: null,
-    rewards: 100,
-    liquidity: null,
-    type: 'Staking',
-    currentlyStaked: null
-  }
-]
-
-export const generateListOfSSLTokens = (network: WalletAdapterNetwork): IFarmData[] => {
-  const supportedTokens = Object.keys(ADDRESSES[network].sslPool)
-  return supportedTokens.map((token, n) => ({
-    id: String(n + 1),
-    image: token,
-    apr: 'loading',
-    volume: 'loading',
-    name: token,
-    earned: null,
-    liquidity: null,
-    type: 'SSL',
-    currentlyStaked: null
-  }))
-}
 
 export const USER_SOCIALS = {
   TWITTER: 'twitter.com/',

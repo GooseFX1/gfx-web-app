@@ -1,7 +1,7 @@
 import React, { BaseSyntheticEvent, useCallback, useRef } from 'react'
 import { InputRef } from 'antd'
 import { TokenAmount } from '@solana/web3.js'
-import { useAnimateButtonSlide } from '../../pages/Farm/FarmFilterHeader'
+import { useAnimateButtonSlide } from '../../components/Farm/generic'
 import useRewards from '../../context/rewardsContext'
 import { clamp } from '../../utils'
 import tw from 'twin.macro'

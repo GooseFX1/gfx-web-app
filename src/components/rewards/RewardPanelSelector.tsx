@@ -1,5 +1,5 @@
 import React, { BaseSyntheticEvent, FC, useCallback, useRef } from 'react'
-import { useAnimateButtonSlide } from '../../pages/Farm/FarmFilterHeader'
+import { useAnimateButtonSlide } from '../../components/Farm/generic'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
