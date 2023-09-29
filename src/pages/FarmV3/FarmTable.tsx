@@ -136,7 +136,7 @@ export const FarmTable: FC = () => {
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? sslData.filter((token) => token?.token?.toLocaleLowerCase().includes(searchTokens))
+        ? sslData.filter((token) => token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()))
         : [...sslData],
     [searchTokens, sslData]
   )
