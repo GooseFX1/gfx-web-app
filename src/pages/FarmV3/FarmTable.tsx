@@ -248,7 +248,7 @@ export const FarmTable: FC = () => {
             setSearchFilter={initiateGlobalSearch}
             placeholder="Search by token"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-            filter={searchTokens}
+            //filter={searchTokens}
             isFarm={true}
           />
           {wallet?.adapter?.publicKey && (
