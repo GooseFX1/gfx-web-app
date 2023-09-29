@@ -303,7 +303,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
             tw="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular 
             rounded-[30px] font-semibold bg-gradient-1"
           >
-            <a href="mailto:contact@goosefx.io" tw="font-semibold">
+            <a href="https://discord.com/invite/cDEPXpY26q" tw="font-semibold">
               Request Pool
             </a>
           </address>
