@@ -60,17 +60,17 @@ export const poolType = {
   stable: {
     index: 3,
     name: 'Stable',
-    desc: "If you're looking for more stable returns."
+    desc: 'More stable returns.'
   },
   primary: {
     index: 1,
     name: 'Primary',
-    desc: "If you're looking for medium to high returns."
+    desc: 'Medium to high returns.'
   },
   hyper: {
     index: 2,
     name: 'Hyper',
-    desc: "If you're looking for high returns with risk"
+    desc: 'Higher returns with more risk.'
   },
   all: {
     index: 4,
