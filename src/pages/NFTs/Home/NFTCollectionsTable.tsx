@@ -2,7 +2,7 @@ import React, { useEffect, useState, FC, ReactElement, useRef, useCallback, useM
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTCollections, usePriceFeedFarm } from '../../../context'
 import { checkMobile, formatSOLDisplay, LOADING_ARR } from '../../../utils'
-import { Loader, LoaderForImg } from '../../Farm/Columns'
+import { Loader, LoaderForImg } from '../../../components/Farm/generic'
 import { WRAPPER_TABLE } from './NFTAggregator.styles'
 import { NFTColumnsTitleWeb } from './NFTTableColumns'
 import { useHistory } from 'react-router-dom'

@@ -39,7 +39,7 @@ import {
   WRAPPED_SOL_MINT
 } from '../../../../web3'
 import { minimizeTheString } from '../../../../web3/nfts/utils'
-import { GenericTooltip } from '../../../Farm/Columns'
+import { GenericTooltip } from '../../../../components/Farm/generic'
 import { tokenSize, tradeStatePDA } from '../../actions'
 import { TermsTextNFT } from '../AcceptBidModal'
 import { PendingTransaction, STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
