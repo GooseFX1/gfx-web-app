@@ -277,19 +277,55 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           <div tw="flex flex-col">
             <FarmStats
               keyStr="Liquidity"
-              value={liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
+              value={
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  {liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
+                </span>
+              }
             />
-            <FarmStats keyStr="24H Volume" value={`00.00 ${coin?.token}`} />
-            <FarmStats keyStr="24H Fees" value={`00.00 ${coin?.token}`} />
-            <FarmStats keyStr="My Balance" value={userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'} />
-            <FarmStats keyStr="Wallet Balance" value={`${userTokenBalance.toFixed(2)} ${coin?.token}`} />
+            <FarmStats
+              keyStr="24H Volume"
+              value={
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 ${coin?.token}</span>
+              }
+            />
+            <FarmStats
+              keyStr="24H Fees"
+              value={
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 ${coin?.token}</span>
+              }
+            />
+            <FarmStats
+              keyStr="My Balance"
+              value={
+                userDepositedAmount ? (
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    {userDepositedAmount.toFixed(2)}
+                  </span>
+                ) : (
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00</span>
+                )
+              }
+            />
+            <FarmStats
+              keyStr="Wallet Balance"
+              value={
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  ${userTokenBalance.toFixed(2)} ${coin?.token}
+                </span>
+              }
+            />
             <FarmStats
               keyStr="Total Earnings"
               value={
                 totalEarned ? (
-                  <>{`$ ${totalEarned.toFixed(3)} (${totalEarnedInUSD} USD)`}</>
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`$ ${totalEarned.toFixed(
+                    3
+                  )} (${totalEarnedInUSD} USD)`}</span>
                 ) : (
-                  `0.00 ${coin?.token} ($0.00 USD)`
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    0.00 ${coin?.token} ($0.00 USD)
+                  </span>
                 )
               }
             />
@@ -384,7 +420,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 type="number"
                 key={modeOfOperation}
               />
-              <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute mt-1.5 ml-[345px] sm:ml-[82%] sm:mt-[5.5px]">
+              <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute mt-1.5 ml-[345px] sm:ml-[85%] sm:mt-[6.5px]">
                 {coin?.token}
               </div>
             </>
