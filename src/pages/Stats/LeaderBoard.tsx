@@ -71,7 +71,20 @@ const WRAPPER = styled.div<{ $index: number }>`
   .right {
     ${tw`text-right pr-2.5`}
   }
+  .banner-mobile {
+    ${tw`absolute bottom-0`}
+    left: calc(50% - 110px)
+  }
 `
+
+const BANNER_TXT_MOBILE = styled.div`
+  ${tw`absolute bottom-0 font-semibold text-[30px] leading-[35px]`}
+  left: 50%;
+  background: -webkit-linear-gradient(#e0b5ff, #9e1aff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`
+
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
   background: ${({ $mode }) => `url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')`};
@@ -94,11 +107,10 @@ export const TABLE_ROW = styled.tr`
 `
 
 const BANNER_BTN = styled.div`
-  ${tw`absolute bottom-[60px] text-lg text-grey-5 w-[200px] h-10 rounded-[36px] 
-    text-white flex flex-row items-center justify-center cursor-pointer sm:bottom-[120px] sm:w-1/2`}
+  ${tw`absolute bottom-[60px] text-lg text-grey-5 w-[200px] h-10 rounded-[36px] cursor-pointer
+  text-white flex flex-row items-center justify-center sm:bottom-auto sm:mb-2.5`}
   left: calc(50% - 100px);
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-
   > a {
     ${tw`text-white font-semibold`}
   }
@@ -109,7 +121,7 @@ const BANNER_BTN = styled.div`
 
 const BANNER_TXT_1 = styled.div`
   ${tw`absolute top-[15%] left-20 text-[4.6vw] font-semibold`}
-  background: -webkit-linear-gradient(#eee, #a954a2);
+  background: -webkit-linear-gradient(#E0B5FF, #9E1AFF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 `
@@ -231,28 +243,46 @@ const LeaderBoard: FC = () => {
           )}
         </div>
       </HEADER>
-      <div tw="relative">
-        <img
-          src={
-            checkMobile() ? '/img/assets/Leaderboard/nft_banner_mobile.webp' : '/img/assets/Leaderboard/Banner.png'
-          }
-          alt="nft-banner"
-          width={!checkMobile() ? '100%' : '90%'}
-          height={!checkMobile() ? 134 : 240}
-          tw="mb-5 px-5 sm:!mx-auto sm:px-3.75"
-        />
-        {!checkMobile() && <BANNER_TXT_1>+1.5x Boost</BANNER_TXT_1>}
-        <BANNER_BTN>
-          <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
-        </BANNER_BTN>
-        {!checkMobile() && (
+      {checkMobile() ? (
+        <div
+          tw="relative h-[213px] w-11/12 border border-solid dark:border-grey-2 border-grey-1 
+            mx-auto my-3.75 rounded-tiny pt-5 px-10"
+        >
+          <div tw="text-center text-lg font-semibold mb-3 dark:text-grey-5 text-black-4">Monke Dao</div>
+          <BANNER_BTN>
+            <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
+          </BANNER_BTN>
+          <img
+            src="/img/assets/Leaderboard/mobile_banner.png"
+            alt="nft-banner"
+            height="98px"
+            width="120px"
+            className="banner-mobile"
+          />
+          <BANNER_TXT_MOBILE>
+            1.5x <br /> Boost
+          </BANNER_TXT_MOBILE>
+        </div>
+      ) : (
+        <div tw="relative">
+          <img
+            src="/img/assets/Leaderboard/Banner.png"
+            alt="nft-banner"
+            width={'100%'}
+            height={134}
+            tw="mb-5 px-5 sm:!mx-auto sm:px-3.75"
+          />
+          <BANNER_TXT_1>+1.5x Boost</BANNER_TXT_1>
+          <BANNER_BTN>
+            <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
+          </BANNER_BTN>
           <BANNER_TXT_2>
             {' '}
             <span tw="text-[#f5ce18] font-semibold">Monke</span> <br />{' '}
             <span tw="dark:text-[#fbeaa7] text-pink-500 font-semibold">Dao</span>
           </BANNER_TXT_2>
-        )}
-      </div>
+        </div>
+      )}
       <div tw="flex flex-row justify-between relative px-5 sm:block sm:px-[15px] sm:mb-0">
         {displayUsers?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
