@@ -28,7 +28,7 @@ interface ISuccessfulListingMsg {
   itemName: string
   supportText?: string
   additionalText?: string
-  tx_url: string
+  tx_url?: string
 }
 
 export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
@@ -55,6 +55,19 @@ export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
         Transaction ID
       </a>
     </div>
+  </MESSAGE>
+)
+export const SuccessfulListingMsgAMM: FC<ISuccessfulListingMsg> = (props) => (
+  <MESSAGE>
+    <Row className="mTitle" justify="space-between" align="middle">
+      <Col>{props.title}</Col>
+      <Col>
+        <img className="mIcon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+      </Col>
+    </Row>
+
+    <div tw="font-medium">{props?.supportText}</div>
+    <div className="add-text">{props?.additionalText}</div>
   </MESSAGE>
 )
 
@@ -125,6 +138,19 @@ export const TransactionErrorMsgSSL: FC = () => (
       <a href="https://solscan.com/tx/" target="_blank" tw="text-white font-semibold" rel="noreferrer">
         <u>go to docs</u>
       </a>
+    </div>
+  </MESSAGE>
+)
+export const SuccessfulNFTBidAMM: FC<{ collectionName: string }> = ({ collectionName }) => (
+  <MESSAGE>
+    <div tw="flex items-center justify-between">
+      <div tw="text-regular text-white">Congratulations!</div>
+      <div>
+        <img className="mIcon" src={`/img/assets/close-circle.svg`} alt="" />
+      </div>
+    </div>
+    <div tw="text-[13px] font-semibold">
+      Please bear{collectionName} with us and try again, or if the error continues{' '}
     </div>
   </MESSAGE>
 )

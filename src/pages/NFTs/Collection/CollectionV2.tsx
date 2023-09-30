@@ -43,8 +43,8 @@ import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation, useAnimateButtonSlide } from '../../Farm/FarmFilterHeader'
-import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
-import { SearchBar, TokenToggleNFT } from '../../../components'
+import { copyToClipboard, minimizeTheString, signAndUpdateDetails } from '../../../web3/nfts/utils'
+import { Button, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
@@ -57,16 +57,21 @@ import { logData } from '../../../api/analytics'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import AdditionalFilters from './AdditionalFilters'
 import useBreakPoint from '../../../hooks/useBreakPoint'
+import AMMBidsTable from '../AMM/AMMBidsTable'
+import { useNFTAMMContext } from '../../../context/nft_amm'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
-  const { lastRefreshedClass, refreshClass, setLastRefreshedClass, currencyView, appraisalIsEnabled } =
-    useNFTAggregator()
+  const { currencyView, appraisalIsEnabled } = useNFTAggregator()
+  const { setCollectionWideBid } = useNFTAMMContext()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
   const { solPrice } = usePriceFeedFarm()
   const [shareModal, setShareModal] = useState<boolean>(false)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const breakpoint = useBreakPoint()
   const volume24h = useMemo(
     () =>
       singleCollection
@@ -91,24 +96,9 @@ const NFTStatsContainer = () => {
     [collection, currencyView]
   )
 
-  const { wallet } = useWallet()
-  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-
   useEffect(() => {
     setFirstPageLoad(false)
   }, [])
-
-  useEffect(() => {
-    if (refreshClass === '' && !firstLoad) {
-      setLastRefreshedClass('lastRefreshed')
-    }
-  }, [refreshClass])
-
-  useEffect(() => {
-    if (lastRefreshedClass !== ' ' && !firstLoad) {
-      setTimeout(() => setLastRefreshedClass(' '), 3000)
-    }
-  }, [lastRefreshedClass])
 
   const onShare = async (social: string) => {
     if (social === 'copy link') {
@@ -116,6 +106,11 @@ const NFTStatsContainer = () => {
       return
     }
   }
+
+  const handleCollectionBidClick = useCallback(async () => {
+    await signAndUpdateDetails(wallet, true, setCollectionWideBid)
+  }, [publicKey])
+
   const handlePopup = useCallback(() => {
     if (appraisalPopup) return <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
     if (shareModal)
@@ -233,9 +228,16 @@ const NFTStatsContainer = () => {
           </div>
           {!checkMobile() && (
             <div tw="ml-auto flex">
-              <div tw="ml-2.5">
-                <RefreshBtnWithAnimationNFT />
-              </div>
+              {publicKey && breakpoint.isDesktop && (
+                <div>
+                  <Button
+                    onClick={handleCollectionBidClick}
+                    cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular`}
+                  >
+                    Collection Bid
+                  </Button>
+                </div>
+              )}
               <div tw="ml-2.5">
                 <img
                   tw="h-8.75 w-8.75 !mr-0"
@@ -244,15 +246,11 @@ const NFTStatsContainer = () => {
                   onClick={() => copyToClipboard()}
                 />
               </div>
-              {pubKey && <div tw="!w-10 ml-2.5">{<CurrentUserProfilePic />}</div>}
-              {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
-                <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
-              </div>   
-              <div>
-                 <ICON $mode={mode === 'dark'}>
-                  <img src={`/img/assets/more_icon.svg`} alt="more" />
-                </ICON> 
-              </div>  */}
+              {publicKey && (
+                <div tw="!w-10 ml-2.5">
+                  <CurrentUserProfilePic />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -287,9 +285,10 @@ export const NFTGridContainer = (): ReactElement => {
     : null
 
   const NFTDisplayComponent = useMemo(() => {
-    if (displayIndex === 0) return <FixedPriceNFTs firstCardRef={firstCardRef} />
+    if (displayIndex === 0) return <FixedPriceNFTs setDisplayIndex={setDisplayIndex} firstCardRef={firstCardRef} />
     if (displayIndex === 1) return <MyItemsNFTs setDisplayIndex={setDisplayIndex} firstCardRef={firstCardRef} />
     if (displayIndex === 2) return <OpenBidNFTs firstCardRef={firstCardRef} />
+    if (displayIndex === 4) return <AMMBidsTable />
     if (displayIndex === 3)
       return (
         <ActivityNFTSection
@@ -330,7 +329,6 @@ const FilterCategory: FC<{
 }> = ({ setRef, displayIndex, currentIndex, onClick, children }) => {
   const isSelected = displayIndex === currentIndex
   const className = isSelected ? 'selected' : 'flexItem'
-
   return (
     <div className={className} onClick={onClick} tw="z-[15]">
       <div tw="px-4 sm:px-2 mt-[5px] sm:mt-[1px]" ref={setRef}>
@@ -375,6 +373,10 @@ const FiltersContainer: FC<{
     {
       label: 'Activity',
       index: 3
+    },
+    breakpoint.isDesktop && {
+      label: 'Bids',
+      index: 4
     }
   ]
 
@@ -407,16 +409,14 @@ const FiltersContainer: FC<{
       <div
         tw="sm:!w-[100vw]"
         className="filtersViewCategory"
-        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[560px]`]}
+        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[580px]`]}
       >
         <div tw="flex z-[100] pl-2.5">
           <div
             ref={sliderRef}
             className="pinkGradient"
             tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
-            style={{
-              transition: 'all 0.5s'
-            }}
+            style={{ transition: 'all 0.5s' }}
           ></div>
           <div tw="flex">
             {filterCategories.map((category, index) => (
@@ -520,7 +520,6 @@ const CollectionV2 = (): ReactElement => {
     singleCollection
   } = useNFTCollections()
   const [err, setErr] = useState(false)
-  const { refreshClicked } = useNFTAggregator()
   const { setAdditionalFilters } = useNFTAggregatorFilters()
   const { setNftInSweeper } = useNFTAggregator()
 
@@ -549,7 +548,7 @@ const CollectionV2 = (): ReactElement => {
     })
 
     return null
-  }, [fetchSingleCollection, params.collectionName, refreshClicked])
+  }, [fetchSingleCollection, params.collectionName])
 
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fetch SingleCollection

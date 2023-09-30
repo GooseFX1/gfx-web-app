@@ -161,8 +161,12 @@ const LeaderBoard: FC = () => {
   const { users, nftUsers } = useStats()
   const displayUsers = useMemo(() => {
     if (screenType === 2) {
-      const transformedObjectUser = nftUsers.map((nftUser, index) => transformObject(nftUser, index))
-      return transformedObjectUser.filter((user) => user.weeklyPoints > 0)
+      // initially when the new raffle starts all the users will have 0 points, so we will display the top 5 users
+      let transformedObjectUser = nftUsers.map((nftUser, index) => transformObject(nftUser, index))
+      transformedObjectUser = transformedObjectUser.filter((user) => user.weeklyPoints > 0)
+      return transformObject.length === 0
+        ? nftUsers.filter((user, index) => user && index < 5)
+        : transformedObjectUser
     } else {
       return users
     }
