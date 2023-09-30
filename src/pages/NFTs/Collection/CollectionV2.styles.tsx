@@ -338,7 +338,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`mt-10 text-[15px] font-medium`}
     }
     .selected {
-      ${tw`w-[140px] sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
+      ${tw`w-auto sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
        font-semibold text-white flex justify-between flex-col cursor-pointer`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
@@ -353,7 +353,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     
     .flexItem {
-      ${tw` w-[140px] sm:pl-4 sm:pr-6 mb-4 font-medium text-[15px] text-grey-1
+      ${tw` w-auto sm:pl-4 sm:pr-6 mb-4 font-medium text-[15px] text-grey-1
        sm:mt-1 items-center flex justify-between flex-col cursor-pointer sm:w-[125px]`}
         white-space: nowrap; /* Prevent content from wrapping */
     }

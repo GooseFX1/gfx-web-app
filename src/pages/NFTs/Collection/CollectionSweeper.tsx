@@ -38,7 +38,7 @@ import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/exec
 import { AH_NAME, WRAPPED_SOL_MINT, confirmTransaction } from '../../../web3'
 import { pleaseTryAgain, successfulNFTPurchaseMsg } from './AggModals/AggNotifications'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { INFTInBag } from '../../../types/nft_details'
+import { INFTGeneralData, INFTInBag } from '../../../types/nft_details'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -432,8 +432,9 @@ export const SweeperModal = (): ReactElement => {
               tw="w-[100% - 20px] ml-[-16px] pl-4 mr-[-16px] 
   pr-4 sm:h-[220px] h-[290px] overflow-x-visible overflow-y-hidden flex"
             >
+              {/* Mission accomplished   */}
               {Object.values(nftInSweeper).map((nft, index) => (
-                <LargeNFTCardView nft={nft} key={index} />
+                <NFTCardView nft={nft} key={index} />
               ))}
             </div>
           ) : (
@@ -507,7 +508,7 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
     setTimeout(() => {
       setNftInSweeper({})
       setShowSweeperModal(false)
-    }, 1000000)
+    }, 5000)
   }, [])
 
   const totalPrice = useMemo(() => {
@@ -543,7 +544,7 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
   pr-4 sm:h-[220px] h-[290px] overflow-x-visible overflow-y-hidden flex"
           >
             {Object.values(nftInSweeper).map((nft, index) => (
-              <LargeNFTCardView nft={nft} key={index} />
+              <NFTCardView nft={nft} key={index} />
             ))}
           </div>
         ) : (
@@ -653,18 +654,24 @@ const SmallNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement =
     </div>
   )
 }
-const LargeNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement => {
+export const NFTCardView: FC<{
+  nft: INFTInBag | any
+  setSelectedNFT?: Dispatch<SetStateAction<INFTGeneralData>>
+  mintAddress?: INFTInBag
+  showPrice?: string
+}> = ({ nft, setSelectedNFT, mintAddress, showPrice }): ReactElement => {
   const { singleCollection } = useNFTCollections()
-
-  const nftId = useMemo(
-    () =>
-      nft?.nft_name
+  const nftId = useMemo(() => {
+    try {
+      return nft?.nft_name
         ? nft?.nft_name.includes('#')
           ? '#' + nft?.nft_name.split('#')[1]
           : minimizeTheString(nft?.nft_name, checkMobile() ? 10 : 12)
-        : null,
-    [nft]
-  )
+        : null
+    } catch (err) {
+      return 'null'
+    }
+  }, [nft])
 
   const handleMarketplaceFormat = useCallback((ask) => {
     if (ask?.marketplace_name === null) return AH_NAME(ask?.auction_house_key)
@@ -675,55 +682,68 @@ const LargeNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement =
   }, [])
 
   return (
-    <div tw="mt-5 mr-4 dark:bg-black-1 bg-white w-[193px] h-[268px] rounded-[10px] flex flex-col p-2.5">
-      <div tw="flex">
-        <div tw="w-[173px]  min-h-[164px] max-h-[174px]">
-          <div
-            tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[157px] sm:max-w-[157px]
-       overflow-hidden rounded-[8px] sm:min-h-[150px]"
-          >
-            <Image
-              src={nft?.image_url}
-              width={'100%'}
-              preview={false}
-              onError={(e) => console.error(e)}
-              alt="NFT Preview"
-            />
-          </div>
-          <div tw="flex items-center justify-between mt-2 text-black-4 dark:text-grey-5">
-            <div tw="flex font-semibold">
-              {nftId ? nftId : '# Nft'}
-              {nft?.is_verified && (
-                <img tw="ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
-              )}
+    <div
+      css={[mintAddress === nft?.mint_address ? tw`bg-gradient-1` : tw`dark:bg-black-4 bg-grey-4`]}
+      tw=" mt-5 mr-4 w-[195px] h-[270px] flex items-center justify-center rounded-[11px]"
+    >
+      <div
+        onClick={setSelectedNFT ? () => setSelectedNFT(nft) : null}
+        tw=" dark:bg-black-1 bg-white w-[192.5px] h-[267.5px] rounded-[10px] flex flex-col p-2.5"
+      >
+        <div tw="flex">
+          <div tw="w-[173px]  min-h-[164px] max-h-[174px]">
+            <div
+              tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[157px] sm:max-w-[157px]
+ overflow-hidden rounded-[8px] sm:min-h-[150px]"
+            >
+              <Image
+                src={nft?.image_url}
+                width={'100%'}
+                preview={false}
+                onError={(e) => console.error(e)}
+                alt="NFT Preview"
+              />
+            </div>
+            <div tw="flex items-center justify-between mt-2 text-black-4 dark:text-grey-5">
+              <div tw="flex font-semibold">
+                {nftId ? nftId : '# Nft'}
+                {nft?.is_verified && (
+                  <img tw="ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
+                )}
+              </div>
+              <div>
+                {(nft?.marketplace_name || nft?.auction_house_key) && (
+                  <GenericTooltip text={handleMarketplaceFormat(nft)}>
+                    <div>
+                      <img
+                        tw="h-5 w-5"
+                        alt="marketplace"
+                        src={`/img/assets/Aggregator/${handleMarketplaceFormat(nft)}.svg`}
+                      />
+                    </div>
+                  </GenericTooltip>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <GradientText
+                text={minimizeTheString(singleCollection[0].collection_name)}
+                fontSize={15}
+                fontWeight={600}
+                lineHeight={18}
+              />
             </div>
             <div>
-              <GenericTooltip text={handleMarketplaceFormat(nft)}>
-                <div>
-                  <img
-                    tw="h-5 w-5"
-                    alt="marketplace"
-                    src={`/img/assets/Aggregator/${handleMarketplaceFormat(nft)}.svg`}
-                  />
-                </div>
-              </GenericTooltip>
+              <PriceWithToken
+                token="SOL"
+                price={showPrice ?? formatSOLDisplay(nft?.buyer_price)}
+                cssStyle={tw`h-5 w-5`}
+              />
             </div>
-          </div>
-
-          <div>
-            <GradientText
-              text={minimizeTheString(singleCollection[0].collection_name)}
-              fontSize={15}
-              fontWeight={600}
-              lineHeight={18}
-            />
-          </div>
-          <div>
-            <PriceWithToken token="SOL" price={formatSOLDisplay(nft?.buyer_price)} cssStyle={tw`h-5 w-5`} />
           </div>
         </div>
       </div>
-      <div tw="flex flex-col"></div>
     </div>
   )
 }

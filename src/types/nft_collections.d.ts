@@ -5,6 +5,27 @@ export enum COLLECTION_TYPES {
   NFT_FEATURED_COLLECTION = 'NFTFeaturedCollection',
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
+export type IActiveOrdersAMM = {
+  address: string
+  createdUnix: number
+  curveType: string
+  delta: string
+  mmFeeBps: null | number
+  nftsForSale: any[]
+  nftsHeld: number
+  ownerAddress: string
+  poolType: string
+  solBalance: string
+  startingPrice: string
+  buyNowPrice: null | string
+  sellNowPrice: string
+  statsAccumulatedMmProfit: string
+  statsTakerBuyCount: number
+  statsTakerSellCount: number
+  takerBuyCount: number
+  takerSellCount: number
+  updatedAt: number
+}
 
 export type IAvailableAttributes = object
 export type NFTCollection = {

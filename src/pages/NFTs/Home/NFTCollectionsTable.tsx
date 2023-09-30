@@ -372,7 +372,6 @@ const NFTTableRow = ({ allItems, lastRowElementRef }: any) => (
 const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
   const { fetchAllCollectionsByPages, allCollections, allCollectionLoading, setAllCollections } =
     useNFTCollections()
-  const { refreshClicked } = useNFTAggregator()
   const { sortFilter, sortType, pageNumber, setPageNumber, timelineDisplay } = useNFTAggregatorFilters()
   const paginationNumber = 20
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
@@ -400,7 +399,7 @@ const NFTCollectionsTable: FC<{ showBanner: boolean }> = ({ showBanner }) => {
         fetchAllCollectionsByPages(0, paginationNumber, sortFilter, sortType)
       }, 500)
     }
-  }, [refreshClicked])
+  }, [])
 
   useEffect(() => {
     if (sortFilter && !firstLoad) {

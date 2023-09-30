@@ -46,16 +46,8 @@ export const SingleNFTCard: FC<{
   const { sessionUser, sessionUserParsedAccounts } = useNFTProfile()
   const { connection } = useConnectionConfig()
   const { singleCollection } = useNFTCollections()
-  const {
-    setBids,
-    setAsk,
-    setTotalLikes,
-    setNftMetadata,
-    setGeneral,
-    setOnChainMetadata,
-    general,
-    onChainMetadata
-  } = useNFTDetails()
+  const { setBids, setAsk, setTotalLikes, setNftMetadata, setGeneral, setOnChainMetadata, general } =
+    useNFTDetails()
   const [apprisalPopup, setGFXApprisalPopup] = useState<boolean>(false)
   const [hover, setHover] = useState<boolean>(false)
   const [localBids, setLocalBids] = useState<INFTBid[]>([])

@@ -22,7 +22,7 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
 
   const [openBidArr, setOpenBidArr] = useState<any[]>([])
-  const { refreshClicked, cancelBidClicked } = useNFTAggregator()
+  const { cancelBidClicked } = useNFTAggregator()
   const paginationNum = 25
   const { general, nftMetadata } = useNFTDetails()
   const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
@@ -117,7 +117,7 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
     } finally {
       setOpenBidLoading(false)
     }
-  }, [singleCollection, pageNumber, refreshClicked, additionalFilters])
+  }, [singleCollection, pageNumber, additionalFilters])
 
   useEffect(() => {
     fetchOpenBidNFTs()
@@ -127,7 +127,7 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
     setOpenBidArr([])
     setPageNumber(0)
     setOpenBidLoading(true)
-  }, [refreshClicked, window.location])
+  }, [window.location])
 
   const handleDrawerOpen = useCallback(() => {
     if (general !== null && nftMetadata !== null && !openJustModal) return <DetailViewNFT />
@@ -141,7 +141,6 @@ export const OpenBidNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = 
   }, [buyNowClicked, bidNowClicked, general, nftMetadata, sellNFTClicked, cancelBidClicked])
 
   const gridType = useMemo(() => (filteredOpenBid?.length > 10 ? '1fr' : '210px'), [filteredOpenBid])
-  console.log(openBidLoading)
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {handleDrawerOpen()}
