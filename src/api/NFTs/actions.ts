@@ -415,6 +415,126 @@ export const getMagicEdenListing = async (mintAddress: string, secretKey: string
   }
 }
 
+export const createPoolOrder = async (
+  initial_price: string, // multiplied by lamports
+  slug: string, // slug of the collection, will be there in collection api response
+  delta: string, // delta is increase of lamports when there in a sell refer tensor docs
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.CREATE_ORDER}`,
+      {
+        initial_price: initial_price,
+        slug: slug,
+        delta: delta
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+export const getCloseOrderPoolTx = async (
+  pool: string, // pool
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.CLOSE_ORDER}`,
+      {
+        pool: pool
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+export const fetchAllActiveOrdersAMM = async (slug: string, token: string): Promise<any[]> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM}`,
+      {
+        slug: slug
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+export const sellNFTOrderAMM = async (
+  mint: string,
+  slug: string,
+  pool: string,
+  min_price_lamports: string,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SELL_NFT_ORDER_AMM}`,
+      {
+        pool: pool,
+        slug: slug,
+        mint: mint,
+        min_price_lamports: min_price_lamports
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+// same API is user for deposit and withdraw of SOL
+export const orderDepositSol = async (
+  pool: string,
+  lamports: string,
+  is_withdrawal: boolean,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.DEPOSIT_SOL}`,
+      {
+        pool: pool,
+        lamports: lamports,
+        is_withdrawal: is_withdrawal
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const fetchUpdatedJwtToken = async (
   wallet: string,
   signature: string,

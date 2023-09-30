@@ -38,7 +38,7 @@ const CancelBidModal = (): ReactElement => {
   const { connection } = useConnectionConfig()
   const [userEscrowBalance, setUserEscrowBalance] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { setCancelBidClicked, cancelBidClicked, setRefreshClicked, setOpenJustModal } = useNFTAggregator()
+  const { setCancelBidClicked, cancelBidClicked, setOpenJustModal } = useNFTAggregator()
 
   const [escrowPaymentAccount, setEscrowPaymentAccount] = useState<[PublicKey, number]>()
 
@@ -159,10 +159,6 @@ const CancelBidModal = (): ReactElement => {
         notify(successBidRemovedMsg(signature, nftMetadata, myBidPrice.toFixed(2)))
         setUserEscrowBalance(userEscrowBalance - myBidPrice)
         setIsLoading(false)
-        setTimeout(() => {
-          // refresh so that sync with database
-          setRefreshClicked((prev) => prev + 1)
-        }, 3000)
         setCancelBidClicked(false)
       }
     } catch (err) {

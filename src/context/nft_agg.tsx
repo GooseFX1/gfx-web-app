@@ -27,12 +27,6 @@ interface INFTAggConfig {
   currencyView: string
   sellNFTClicked?: any
   setSellNFT?: Dispatch<SetStateAction<any>>
-  refreshClass?: string
-  setRefreshClass?: Dispatch<SetStateAction<string>>
-  refreshClicked?: number
-  setRefreshClicked?: Dispatch<SetStateAction<number>>
-  lastRefreshedClass?: string
-  setLastRefreshedClass?: Dispatch<SetStateAction<string>>
   cancelBidClicked?: boolean
   setCancelBidClicked?: Dispatch<SetStateAction<boolean>>
   delistNFT?: boolean
@@ -59,9 +53,6 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
   const [cancelBidClicked, setCancelBidClicked] = useState<boolean>(false)
   const [sellNFTClicked, setSellNFT] = useState<any>(undefined)
   const [currencyView, setCurrencyView] = useState<'SOL' | 'USDC'>('SOL')
-  const [refreshClass, setRefreshClass] = useState<string>('')
-  const [refreshClicked, setRefreshClicked] = useState<number>(0)
-  const [lastRefreshedClass, setLastRefreshedClass] = useState<string>()
   const [openJustModal, setOpenJustModal] = useState<boolean>(false)
   const [showAcceptBid, setShowAcceptBidModal] = useState<boolean>(false)
   const [operatingNFT, setOperatingNFT] = useState<Set<string>>(new Set())
@@ -84,12 +75,6 @@ export const NFTAggregatorProvider: FC<{ children: ReactNode }> = ({ children })
         setCurrency: setCurrency,
         sellNFTClicked: sellNFTClicked,
         setSellNFT: setSellNFT,
-        refreshClass: refreshClass,
-        setRefreshClicked: setRefreshClicked,
-        refreshClicked: refreshClicked,
-        setRefreshClass: setRefreshClass,
-        lastRefreshedClass: lastRefreshedClass,
-        setLastRefreshedClass: setLastRefreshedClass,
         openJustModal: openJustModal,
         setOpenJustModal: setOpenJustModal,
         setCancelBidClicked: setCancelBidClicked,

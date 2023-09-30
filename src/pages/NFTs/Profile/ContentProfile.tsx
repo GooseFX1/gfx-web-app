@@ -36,7 +36,6 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
   } = useNFTProfile()
   const [createdItems, setCreatedItems] = useState<ParsedAccount[]>()
   const [favoritedItems, setFavoritedItems] = useState<ISingleNFT[]>()
-  const { refreshClicked } = useNFTAggregator()
   const params = useParams<IAppParams>()
   const { wallet } = useWallet()
   const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -97,7 +96,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
         )
       }
     ],
-    [currentUserParsedAccounts, favoritedItems, noOfNFTs, refreshClicked, pubKey]
+    [currentUserParsedAccounts, favoritedItems, noOfNFTs, pubKey]
   )
 
   useEffect(() => {

@@ -90,7 +90,7 @@ export const SellNFTModal: FC<{
     () => (highestBid ? parseFloat(highestBid.buyer_price) / LAMPORTS_PER_SOL_NUMBER : 0),
     [highestBid]
   )
-  const { setSellNFT, setOpenJustModal, setRefreshClicked, appraisalIsEnabled } = useNFTAggregator()
+  const { setSellNFT, setOpenJustModal, appraisalIsEnabled } = useNFTAggregator()
   const wal = useWallet()
   const { wallet } = wal
   const [askPrice, setAskPrice] = useState<number | null>(0)
@@ -213,10 +213,6 @@ export const SellNFTModal: FC<{
       )
       // successfully list nft
       if (confirm.value.err === null) {
-        setTimeout(() => {
-          console.log('refreshing after 15 sec')
-          setRefreshClicked((prev) => prev + 1)
-        }, 15000)
         if (isAcceptingBid)
           notify(successfulListingMsg('accepted bid of', signature, nftMetadata, askPrice.toFixed(2)))
         else
