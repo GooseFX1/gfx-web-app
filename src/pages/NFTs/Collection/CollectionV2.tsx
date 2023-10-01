@@ -19,7 +19,8 @@ import {
   useNFTAggregatorFilters,
   initialFilters,
   usePriceFeed,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  useWalletModal
 } from '../../../context'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
@@ -59,19 +60,25 @@ import AdditionalFilters from './AdditionalFilters'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import AMMBidsTable from '../AMM/AMMBidsTable'
 import { useNFTAMMContext } from '../../../context/nft_amm'
+import CollectionWideBidPopup from '../AMM/CollectionWideBidPopup'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
   const { currencyView, appraisalIsEnabled } = useNFTAggregator()
-  const { setCollectionWideBid } = useNFTAMMContext()
+  const { setCollectionWideBid, collectionWideBid } = useNFTAMMContext()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
+  const { setVisible: setWalletModalVisible } = useWalletModal()
   const { solPrice } = usePriceFeedFarm()
   const [shareModal, setShareModal] = useState<boolean>(false)
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const breakpoint = useBreakPoint()
+  const showCollectionWideModal = useMemo(() => {
+    if (collectionWideBid) return <CollectionWideBidPopup />
+  }, [collectionWideBid])
+
   const volume24h = useMemo(
     () =>
       singleCollection
@@ -108,7 +115,8 @@ const NFTStatsContainer = () => {
   }
 
   const handleCollectionBidClick = useCallback(async () => {
-    await signAndUpdateDetails(wallet, true, setCollectionWideBid)
+    if (publicKey) await signAndUpdateDetails(wallet, true, setCollectionWideBid)
+    else setWalletModalVisible(true)
   }, [publicKey])
 
   const handlePopup = useCallback(() => {
@@ -130,6 +138,7 @@ const NFTStatsContainer = () => {
         {/* <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} /> */}
       </div>
       {handlePopup()}
+      {showCollectionWideModal}
       <div className="nftStatsContainer">
         {!checkMobile() && (
           <button className="backBtn" onClick={() => history.push('/nfts')} tw="border-0">
@@ -228,11 +237,11 @@ const NFTStatsContainer = () => {
           </div>
           {!checkMobile() && (
             <div tw="ml-auto flex">
-              {publicKey && breakpoint.isDesktop && (
+              {breakpoint.isDesktop && (
                 <div>
                   <Button
                     onClick={handleCollectionBidClick}
-                    cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular`}
+                    cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular text-white`}
                   >
                     Collection Bid
                   </Button>

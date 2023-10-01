@@ -11,6 +11,7 @@ import Lottie from 'lottie-react'
 import confettiAnimation from '../../../../animations/confettiAnimation.json'
 import { useNFTAMMContext } from '../../../../context/nft_amm'
 import { Button } from '../../../../components/Button'
+import { NFTCardView } from '../CollectionSweeper'
 
 const MISSION_WRAPPER = styled.div`
   ${tw`flex flex-col items-center mt-4 h-[620px] sm:h-full`}
@@ -77,19 +78,25 @@ const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
       <div className="missionAccomplished">Mission accomplished!</div>
 
       <div className="proudOwner">{displayStr ?? `You are a proud owner of:`}</div>
-      <div className="nftDetails">
-        <strong>{displayStr ? selectedNFT?.nft_name : general?.nft_name}</strong>
+      <div className="proudOwner" tw="!text-[25px]">
+        <strong tw="mr-1">{displayStr ? selectedNFT?.nft_name : general?.nft_name}</strong>
         by
-        <strong>{general?.collection_name ?? nftName}</strong>
+        <strong tw="ml-1">{general?.collection_name ?? nftName}</strong>
       </div>
 
-      <div className="nftImage">
-        <img src={general?.image_url ?? selectedNFT?.image_url} />
-      </div>
-      <div tw="mt-4 flex items-center">
-        <div className="priceText">Price:</div>
+      {displayStr ? (
+        <NFTCardView nft={selectedNFT} hidePrice={true} />
+      ) : (
+        <div className="nftImage">
+          <img src={general?.image_url ?? selectedNFT?.image_url} />
+        </div>
+      )}
+      <div tw="mt-4 flex items-center font-semibold">
+        <div className="proudOwner" tw="!text-[25px]">
+          Price:
+        </div>
 
-        <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
+        <div className={'proudOwner'} tw="flex items-center !text-[25px] ml-2">
           <div>{formatSOLDisplay(price)}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
         </div>
       </div>

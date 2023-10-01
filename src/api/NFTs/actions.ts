@@ -124,7 +124,8 @@ export const fetchOpenBidByPages = async (
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?${
+    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?
+    ${
       isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
     }&offset=${offset}&limit=${limit}`
     url = handleAdditionalFilters(url, additionalFilters)

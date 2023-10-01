@@ -14,7 +14,7 @@ import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import { VersionedTransaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { confirmTransaction } from '../../../web3'
-import { pleaseTryAgain, successBidAMMMessage } from '../Collection/AggModals/AggNotifications'
+import { pleaseTryAgain, successCancelBidAMMMessage } from '../Collection/AggModals/AggNotifications'
 
 const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   overflow-x: hidden;
@@ -121,10 +121,12 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
   const walletContext = useWallet()
   const { singleCollection } = useNFTCollections()
   const { connection } = useConnectionConfig()
+
   const publicKey = useMemo(
     () => walletContext?.wallet?.adapter?.publicKey,
     [walletContext?.wallet?.adapter, walletContext?.wallet?.adapter?.publicKey]
   )
+
   const getHumanReadableTime = useCallback((bid: IActiveOrdersAMM) => {
     const timeStr = parseUnixTimestamp(bid?.updatedAt.toString()).split(',')[1]
     const length = timeStr.length
@@ -138,6 +140,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
     },
     [activeBids]
   )
+
   const handleCancelClick = useCallback(
     async (bid: IActiveOrdersAMM) => {
       try {
@@ -162,7 +165,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
         const confirm = await confirmTransaction(connection, ixResponse[1].txid, 'confirmed')
 
         if (confirm.value.err === null) {
-          notify(successBidAMMMessage(singleCollection[0].collection_name))
+          notify(successCancelBidAMMMessage(singleCollection[0].collection_name))
           setTimeout(() => {
             setRefreshAPI((prev) => prev + 1)
           }, 5000)
