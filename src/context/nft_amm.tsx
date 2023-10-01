@@ -48,10 +48,14 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     ;(async () => {
       if (!slug) return
-      const activeOrder = await fetchAllActiveOrdersAMM(slug, userCache?.jwtToken)
-      const sortedOrders = activeOrder.sort((a, b) => parseFloat(b?.sellNowPrice) - parseFloat(a?.sellNowPrice))
-      setActiveOrders(sortedOrders)
-      setCurrentHighest(parseFloat(sortedOrders[0].sellNowPrice) / LAMPORTS_PER_SOL_NUMBER)
+      try {
+        const activeOrder = await fetchAllActiveOrdersAMM(slug, userCache?.jwtToken)
+        const sortedOrders = activeOrder.sort((a, b) => parseFloat(b?.sellNowPrice) - parseFloat(a?.sellNowPrice))
+        setActiveOrders(sortedOrders)
+        setCurrentHighest(parseFloat(sortedOrders[0].sellNowPrice) / LAMPORTS_PER_SOL_NUMBER)
+      } catch (error) {
+        console.log(error)
+      }
     })()
   }, [slug, refreshAPI])
 

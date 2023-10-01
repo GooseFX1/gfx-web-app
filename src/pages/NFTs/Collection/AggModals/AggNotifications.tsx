@@ -174,6 +174,17 @@ export const successBidAMMMessage = (collectionName: string): any => ({
     />
   )
 })
+export const successCancelBidAMMMessage = (collectionName: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsgAMM
+      title={`Success!`}
+      itemName={collectionName}
+      supportText={`Your bid for ${collectionName} has been 
+      successfully Cancelled. Good luck in the auction!`}
+    />
+  )
+})
 export const successSaleAMMMessage = (collectionName: string): any => ({
   notificationDuration: checkMobile() ? 3000 : 10000,
   message: (

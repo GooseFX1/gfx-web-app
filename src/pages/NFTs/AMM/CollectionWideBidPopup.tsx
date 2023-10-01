@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'styled-components/macro'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { useAccounts, useConnectionConfig, useNFTCollections } from '../../../context'
@@ -13,7 +14,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { VersionedTransaction } from '@solana/web3.js'
 import { WRAPPED_SOL_MINT } from '@metaplex-foundation/js'
 import { confirmTransaction } from '../../../web3'
-import { pleaseTryAgain, successBidAMMMessage } from '../Collection/AggModals/AggNotifications'
+import { pleaseTryAgain, pleaseTryAgainAMM, successBidAMMMessage } from '../Collection/AggModals/AggNotifications'
 import { notify } from '../../../utils'
 import { useNFTAMMContext } from '../../../context/nft_amm'
 
@@ -58,6 +59,8 @@ const CollectionWideBidPopup = (): ReactElement => {
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
       if (confirm.value.err === null) {
         notify(successBidAMMMessage(singleCollection[0].collection_name))
+        setIsLoading(false)
+        setCollectionWideBid(false)
       }
     } catch (error) {
       pleaseTryAgain(true, error?.message)
@@ -85,8 +88,11 @@ const CollectionWideBidPopup = (): ReactElement => {
         const depositSolTx = await VersionedTransaction.deserialize(depositSolRes?.txs[0].tx.data)
         const depositSolSig = await walletContext.sendTransaction(depositSolTx, connection)
         await handleNotifications(depositSolSig)
+      } else {
+        pleaseTryAgainAMM('NFT Bid creation failed')
       }
     } catch (err) {
+      pleaseTryAgainAMM(err?.message)
       setIsLoading(false)
       console.log(err)
     }
@@ -151,15 +157,15 @@ const CollectionWideBidPopup = (): ReactElement => {
             <div>Wallet Balance</div>
             <div tw="dark:text-grey-5 text-black-4">{solBalance ? solBalance.toFixed(2) : 0} SOL</div>
           </div>
-          <div tw="flex items-center justify-between dark:text-grey-2 text-black-1">
+          <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
             <div>Bid Offer/Item </div>
             <div tw="dark:text-grey-5 text-black-4">{bidPrice ? bidPrice.toFixed(2) : 0} SOL</div>
           </div>
-          <div tw="flex items-center justify-between dark:text-grey-2 text-black-1">
+          <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
             <div>Maker Fees</div>
             <div tw="dark:text-grey-5 text-black-4">{marketFees ? marketFees.toFixed(3) : 0} SOL</div>
           </div>
-          <div tw="flex items-center justify-between dark:text-grey-2 text-black-1">
+          <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
             <div>Seller Receives</div>
             <div tw="dark:text-grey-5 text-black-4">{sellerReceives ? sellerReceives.toFixed(2) : 0} SOL</div>
           </div>
@@ -173,7 +179,7 @@ const CollectionWideBidPopup = (): ReactElement => {
           onClick={handleBidClicked}
           loading={isLoading}
           className={!insufficientBalance && bidPrice ? 'pinkGradient' : ''}
-          cssStyle={tw` h-10 w-[100%] text-regular font-semibold mt-4`}
+          cssStyle={tw` h-10 w-[100%] text-regular font-semibold mt-3`}
           disabledColor={tw`dark:bg-black-1 bg-grey-4`}
           disabled={!bidPrice || insufficientBalance}
         >

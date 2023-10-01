@@ -659,7 +659,8 @@ export const NFTCardView: FC<{
   setSelectedNFT?: Dispatch<SetStateAction<INFTGeneralData>>
   mintAddress?: INFTInBag
   showPrice?: string
-}> = ({ nft, setSelectedNFT, mintAddress, showPrice }): ReactElement => {
+  hidePrice?: boolean
+}> = ({ nft, setSelectedNFT, mintAddress, showPrice, hidePrice }): ReactElement => {
   const { singleCollection } = useNFTCollections()
   const nftId = useMemo(() => {
     try {
@@ -684,11 +685,11 @@ export const NFTCardView: FC<{
   return (
     <div
       css={[mintAddress === nft?.mint_address ? tw`bg-gradient-1` : tw`dark:bg-black-4 bg-grey-4`]}
-      tw=" mt-5 mr-4 w-[195px] h-[270px] flex items-center justify-center rounded-[11px]"
+      tw=" mt-5 mr-4 w-[195px] h-[270px] flex items-center justify-center rounded-[11px] p-[2px]"
     >
       <div
         onClick={setSelectedNFT ? () => setSelectedNFT(nft) : null}
-        tw=" dark:bg-black-1 bg-white w-[192.5px] h-[267.5px] rounded-[10px] flex flex-col p-2.5"
+        tw=" dark:bg-black-1 bg-white w-[193px] h-[267.5px] rounded-[10px] flex flex-col p-2.5"
       >
         <div tw="flex">
           <div tw="w-[173px]  min-h-[164px] max-h-[174px]">
@@ -734,13 +735,15 @@ export const NFTCardView: FC<{
                 lineHeight={18}
               />
             </div>
-            <div>
-              <PriceWithToken
-                token="SOL"
-                price={showPrice ?? formatSOLDisplay(nft?.buyer_price)}
-                cssStyle={tw`h-5 w-5`}
-              />
-            </div>
+            {hidePrice === undefined && (
+              <div>
+                <PriceWithToken
+                  token="SOL"
+                  price={showPrice ?? formatSOLDisplay(nft?.buyer_price)}
+                  cssStyle={tw`h-5 w-5`}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

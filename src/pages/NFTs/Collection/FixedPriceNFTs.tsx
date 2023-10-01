@@ -39,14 +39,12 @@ import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import debounce from 'lodash.debounce'
 import { PILL_SECONDARY } from '../NFTDetails/AttributesTabContent'
-import { Button } from '../../../components'
 import { AH_PROGRAM_IDS } from '../../../web3'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { ClearAllFiltersButton } from './AdditionalFilters'
 import { SweeperModal } from './CollectionSweeper'
 import InstantSellCard from '../AMM/InstantSellCard'
 import InstantSellPopup from '../AMM/InstantSellPopup'
-import CollectionWideBidPopup from '../AMM/CollectionWideBidPopup'
 import { useNFTAMMContext } from '../../../context/nft_amm'
 
 const WRAPPER = styled.div`
@@ -283,7 +281,6 @@ export const FixedPriceNFTs: FC<{
 
   const handleModalClick = useCallback(() => {
     if (instantSellClicked) return <InstantSellPopup />
-    if (collectionWideBid) return <CollectionWideBidPopup />
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (cancelBidClicked) return <CancelBidModal />
@@ -298,8 +295,7 @@ export const FixedPriceNFTs: FC<{
     cancelBidClicked,
     delistNFT,
     showSweeperModal,
-    instantSellClicked,
-    collectionWideBid
+    instantSellClicked
   ])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
