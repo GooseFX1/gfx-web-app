@@ -1,7 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
-
 import 'styled-components/macro'
 import { PopupCustom } from '../Popup/PopupCustom'
 import useBreakPoint from '../../../hooks/useBreakPoint'
@@ -27,6 +26,13 @@ const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content .ant-modal-body {
     height: 100% !important;
   }
+  .hideScrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
@@ -44,17 +50,11 @@ const InstantSellPopup = (): ReactElement => {
   const { instantSellClicked, setInstantSell } = useNFTAMMContext()
   const { myNFTsByCollection } = useNFTCollections()
   const { singleCollection } = useNFTCollections()
-  const {
-    activeOrders,
-    currentHighest,
-    selectedNFT,
-    setSelectedNFT,
-    setSelectedBidFromOrders,
-    selectedBidFromOrders,
-    setCurrentHighest
-  } = useNFTAMMContext()
+  const { activeOrders, currentHighest, selectedNFT, setSelectedNFT, selectedBidFromOrders, setCurrentHighest } =
+    useNFTAMMContext()
   const slug = useMemo(() => singleCollection && singleCollection[0].slug_tensor, [singleCollection])
   const walletContext = useWallet()
+
   const { wallet } = useWallet()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { connection } = useConnectionConfig()
@@ -69,9 +69,6 @@ const InstantSellPopup = (): ReactElement => {
   useEffect(() => {
     if (selectedBidFromOrders)
       setCurrentHighest(parseFloat(selectedBidFromOrders?.sellNowPrice) / LAMPORTS_PER_SOL_NUMBER)
-    return () => {
-      setSelectedBidFromOrders(undefined)
-    }
   }, [selectedBidFromOrders])
 
   const marketFees = useMemo(() => currentHighest * 0.04, [currentHighest])
@@ -83,8 +80,7 @@ const InstantSellPopup = (): ReactElement => {
 
   const handleNotifications = async (signature: any): Promise<void> => {
     try {
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
-      // successfully sell nft
+      const confirm = await confirmTransaction(connection, signature, 'processed')
       if (confirm.value.err === null) {
         setIsLoading(false)
         setMissionAccomplished(true)
@@ -110,6 +106,7 @@ const InstantSellPopup = (): ReactElement => {
       const instantSellSig = await walletContext.sendTransaction(instantSellTx, connection)
       await handleNotifications(instantSellSig)
     } catch (err) {
+      pleaseTryAgainAMM(err?.message)
       setIsLoading(false)
       console.log(err)
     }
@@ -126,7 +123,10 @@ const InstantSellPopup = (): ReactElement => {
       footer={null}
     >
       {missionAccomplished ? (
-        <MissionAccomplishedModal price={currentHighest.toFixed(2)} displayStr="You Successfully sold:" />
+        <MissionAccomplishedModal
+          price={(currentHighest * LAMPORTS_PER_SOL_NUMBER).toString()}
+          displayStr="You Successfully sold:"
+        />
       ) : isLoading ? (
         <HoldTight />
       ) : (
@@ -138,7 +138,7 @@ const InstantSellPopup = (): ReactElement => {
           <div tw="mt-4 dark:text-grey-2 text-grey-1 font-semibold text-average">
             {myNFTsByCollection.length ? `Select NFT(s) that you will like to sell` : 'No NFTs to sell'}
           </div>
-          <div tw="w-full flex overflow-x-auto mt-[-5px] h-[290px]">
+          <div className="hideScrollbar" tw="w-[110%] pl-5 flex overflow-x-auto mt-[-5px] h-[290px]">
             {myNFTsByCollection.map((nft, index) => (
               <NFTCardView
                 key={index}
