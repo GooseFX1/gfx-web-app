@@ -463,19 +463,11 @@ export const getCloseOrderPoolTx = async (
   }
 }
 
-export const fetchAllActiveOrdersAMM = async (slug: string, token: string): Promise<any[]> => {
+export const fetchAllActiveOrdersAMM = async (slug: string): Promise<any[]> => {
   try {
-    const res = await httpClient(NFT_API_BASE).post(
-      `${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM}`,
-      {
-        slug: slug
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    )
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM}`, {
+      slug: slug
+    })
     return res.data
   } catch (error) {
     return error
