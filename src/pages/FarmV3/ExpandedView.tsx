@@ -137,7 +137,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const disableActionButton = useMemo(() => {
     if (!isWhitelisted) return false
     return (
-      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > 5000) ||
+      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > 5000) ||
+      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > 15000) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
     )
@@ -147,12 +148,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (!isWhitelisted) return `Get Access`
-      if (liquidity > 5000) return `${coin?.token} Temporarily Closed`
+      if (coin?.token === 'BONK' && liquidity > 5000) return `${coin?.token} Temporarily Closed`
+      if (liquidity > 15000) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
+      if (userDepositedAmount > 0) return modeOfOperation
       if (!isWhitelisted) return `Get Access`
       if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
       if (withdrawAmount) return modeOfOperation
@@ -437,7 +440,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
-                    !isWhitelisted
+                    modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount > 0
+                      ? handleWithdraw
+                      : !isWhitelisted
                       ? goToTwitter
                       : modeOfOperation === ModeOfOperation.DEPOSIT
                       ? handleDeposit
