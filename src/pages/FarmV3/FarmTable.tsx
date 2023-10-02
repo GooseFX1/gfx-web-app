@@ -401,7 +401,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
 
   const formattedapiSslData = useMemo(
     () => ({
-      apy: apiSslData?.apy?.toFixed(2),
+      apy: apiSslData?.apy,
       fee: apiSslData?.fee?.toFixed(2),
       volume: apiSslData?.volume?.toFixed(2)
     }),
