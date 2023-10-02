@@ -50,7 +50,7 @@ const BAG_WRAPPER = styled.div`
   }
 `
 const MY_BAG = styled.div`
-  ${tw`w-[245px] h-[394px] rounded-[10px] border-grey-2 
+  ${tw`w-[245px] h-[394px] rounded-[10px] dark:border-grey-2 
     sm:w-[100vw] sm:h-[auto] sm:fixed sm:left-0 sm:border-none sm:bottom-0`}
 
   border: 1px solid;
@@ -66,10 +66,7 @@ const MY_BAG = styled.div`
     ${tw`text-center text-[15px] mt-[-20px] font-semibold sm:gap-5 sm:mt-0`}
     color: ${({ theme }) => theme.text33};
   }
-  .headerContainer {
-    ${tw`flex items-center gap-2 sm:justify-between z-[9999]`}
-    overflow-wrap: no-wrap;
-  }
+
   .bagContentContainer {
     ${tw`h-[233px] flex flex-col sm:h-auto mb-20`}
     ${({ theme }) => theme.customScrollBar('1px')}
@@ -85,10 +82,7 @@ const MY_BAG = styled.div`
     }
     overflow-y: auto;
   }
-  .myBagText {
-    ${tw`font-semibold text-[18px] `}
-    color: ${({ theme }) => theme.text33};
-  }
+
   .buttonContainer {
     border-top: 1px solid ${({ theme }) => theme.tokenBorder};
     ${tw` flex flex-col bottom-2 absolute items-center justify-between w-[92%] `}
@@ -103,12 +97,15 @@ const MY_BAG = styled.div`
       }
     }
     .button {
-      ${tw`h-[40px] w-[225px] flex items-center mb-1 border-none text-[15px] text-center 
-       font-semibold mx-2.5 mt-1.5 rounded-[30px] bg-[#5855ff] flex items-center justify-center `}
-      :disabled {
-        background: ${({ theme }) => theme.bg22};
+      &:disabled {
+        opacity: 1 !important;
+        ${tw`dark:!bg-black-2 !bg-grey-4`}
+        color: #636363;
+        &:hover {
+          color: #636363;
+        }
       }
-      :hover {
+      &:hover {
         color: white;
       }
     }
@@ -182,27 +179,45 @@ export const MyNFTBag = (): ReactElement => {
 }
 const MyBagContent: FC<{ handleDropdownClick: () => void }> = ({ handleDropdownClick }): ReactElement => {
   const { nftInBag, setNftInBag } = useNFTAggregator()
-  const itemsPresentInBag = Object.keys(nftInBag ? nftInBag : {}).length // no items in the bag
   const { wallet } = useWallet()
   const { mode } = useDarkMode()
+  const itemsPresentInBag: number = useMemo(() => Object.keys(nftInBag ? nftInBag : {}).length, [nftInBag])
 
   return (
     <MY_BAG>
       <div className="bagContainer">
-        <div className="headerContainer">
-          <div className="myBagText" tw="!font-semibold">
-            My Bag{' '}
-            <span css={[tw`font-semibold`, itemsPresentInBag && tw`dark:text-grey-5 text-grey-2`]}>
+        <div tw="flex items-center mt-1 gap-2 sm:justify-between z-[9999]">
+          <div>
+            <span
+              css={[
+                mode === 'dark'
+                  ? tw`!font-semibold text-[18px] text-grey-2`
+                  : tw`!font-semibold text-[18px] text-black-4`
+              ]}
+            >
+              My Bag
+            </span>{' '}
+            <span
+              css={[
+                mode === 'dark' && itemsPresentInBag > 0
+                  ? tw`!font-semibold text-[18px] text-white`
+                  : tw`!font-semibold text-[18px] text-black-4`
+              ]}
+            >
               ({itemsPresentInBag})
             </span>
           </div>
           <Button
-            disabled={!itemsPresentInBag}
+            disabled={itemsPresentInBag === 0}
+            disabledColor={
+              mode === 'dark' ? tw`bg-black-2 !text-grey-1 !opacity-100` : tw`bg-grey-4 !text-grey-1 !opacity-100`
+            }
             onClick={() => setNftInBag({})}
+            height={'30px'}
             cssStyle={
-              itemsPresentInBag
-                ? tw`bg-blue-1 w-20 h-[30px] font-semibold ml-2 text-white mt-1`
-                : tw`bg-black-2 w-20 h-[30px] font-semibold ml-2 mt-1 !text-white`
+              itemsPresentInBag > 0
+                ? tw`bg-blue-1 font-semibold ml-2 text-white`
+                : tw`bg-black-2 font-semibold ml-2 !text-grey-1`
             }
           >
             Clear All
@@ -218,7 +233,7 @@ const MyBagContent: FC<{ handleDropdownClick: () => void }> = ({ handleDropdownC
           </div>
         </div>
 
-        {itemsPresentInBag ? <ItemsPresentInBag wallet={wallet} /> : <EmptyBagDisplay />}
+        {itemsPresentInBag > 0 ? <ItemsPresentInBag wallet={wallet} /> : <EmptyBagDisplay />}
         <ButtonContainerForBag />
       </div>
     </MY_BAG>
@@ -350,7 +365,7 @@ export const callMagicEdenAPIs = async (
 const ButtonContainerForBag = (): ReactElement => {
   const { wallet } = useWallet()
   const wal = useWallet()
-
+  const { mode } = useDarkMode()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { nftInBag, setNftInBag, setOperatingNFT } = useNFTAggregator()
   const itemsInBag = useMemo(() => Object.keys(nftInBag ? nftInBag : {}).length, [nftInBag])
@@ -373,6 +388,13 @@ const ButtonContainerForBag = (): ReactElement => {
   )
 
   const enoughFunds = totalCost < userSOLBalance
+  const cssStyle = useMemo(() => {
+    if (enoughFunds && !isLoading && itemsInBag > 0)
+      return tw`mb-1 text-[15px] text-center font-semibold mx-2.5 mt-1.5 
+  bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2`
+    else return tw`mb-1 text-[15px] text-center font-semibold mx-2.5 mt-1.5`
+  }, [isLoading, itemsInBag, enoughFunds])
+
   const callMagicEdenAPIs = async (item): Promise<VersionedTransaction | Transaction> => {
     const tokenAccount = await getMagicEdenTokenAccount(item)
 
@@ -534,12 +556,21 @@ const ButtonContainerForBag = (): ReactElement => {
           {itemsInBag ? <BagTokenBalanceRow title="You pay:" amount={totalCost} /> : <></>}
           <BagTokenBalanceRow title="Your Balance:" amount={userSOLBalance} />
           <Button
-            className="button"
+            cssStyle={cssStyle}
+            disabledColor={
+              mode === 'dark' ? tw`bg-black-2 !text-grey-1 !opacity-100` : tw`bg-grey-4 !text-grey-1 !opacity-100`
+            }
+            height="35px"
+            width="225px"
             disabled={!enoughFunds || isLoading || itemsInBag === 0}
             loading={isLoading}
             onClick={handleBulkPurchase}
           >
-            {enoughFunds ? 'Buy now' : 'Insufficient SOL'}
+            {itemsInBag === 0
+              ? 'Add NFTs'
+              : enoughFunds
+              ? `Buy now for ${totalCost?.toFixed(2)} SOL`
+              : 'Insufficient SOL'}
           </Button>
         </>
       ) : (
