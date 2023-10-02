@@ -26,6 +26,24 @@ const STYLED_POPUP = styled(PopupCustom)`
       ${tw`sm:h-[18px] sm:w-[18px] h-5 w-5 flex`}
     }
   }
+  .disableScroll {
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  .ant-modal-body {
+    ${tw`p-4 sm:p-2`}
+  }
+  &.ant-modal {
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-4`}
+    border-radius: 20px;
+
+    @media (max-width: 500px) {
+      border-radius: 20px 20px 0 0;
+    }
+  }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
@@ -100,33 +118,40 @@ const CollectionWideBidPopup = (): ReactElement => {
 
   return (
     <STYLED_POPUP
-      height={breakpoint.isMobile ? '553px' : '692px'}
-      width={breakpoint.isMobile ? '354px' : '548px'}
+      height={breakpoint.isMobile ? '568px' : '692px'}
+      width={breakpoint.isMobile ? '100%' : '548px'}
       title={null}
-      centered={true}
+      centered={breakpoint.isDesktop ? true : false}
       visible={collectionWideBid ? true : false}
       onCancel={() => setCollectionWideBid(false)}
       footer={null}
     >
       <div tw="flex flex-col items-center justify-center">
         <div tw="flex  items-center justify-center">
-          <img src="/img/assets/Aggregator/InstantSell.svg" tw="w-[58px] h-[50px]" />
+          {breakpoint.isDesktop && <img src="/img/assets/Aggregator/InstantSell.svg" tw="w-[58px] h-[50px]" />}
           <div tw="text-lg ml-1 dark:text-grey-5 font-semibold text-black-4">Collection Bid</div>
         </div>
         <div>
-          <img tw="h-[173px] w-[173px] rounded-[10px] mt-4" src={singleCollection[0]?.profile_pic_link} />
+          <img
+            tw="h-[173px] w-[173px] sm:h-[125px] sm:w-[125px]
+           rounded-[10px] mt-4 sm:mt-2"
+            src={singleCollection[0]?.profile_pic_link}
+          />
         </div>
-        <div tw="flex items-center text-average font-semibold dark:text-grey-5 text-black-4 mt-4">
+        <div tw="flex items-center text-average font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-4">
           {singleCollection[0]?.collection_name}
           <img tw="h-5 w-5 ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" />
         </div>
-        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 mt-6">NFTs to Bid</div>
+        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-6">
+          NFTs to Bid
+        </div>
         <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 mt-2">
           {/* <div onClick={() => setNFTsToBid((prev) => (prev > 0 ? prev - 1 : prev))}>
             <img tw="h-5 w-5 cursor-pointer mx-4" src={`/img/assets/minus${mode}.svg`} alt="plus" />
           </div> */}
           <div>
             <input
+              className="disableScroll"
               value={nftsToBid}
               onChange={() => setNFTsToBid(1)} //+e.target.value)} change this
               tw="dark:bg-black-2 bg-grey-5 text-center border-solid border-1 border-grey-1 
@@ -137,14 +162,14 @@ const CollectionWideBidPopup = (): ReactElement => {
             <img tw="h-5 w-5 cursor-pointer mx-4" src={`/img/assets/plus${mode}.svg`} alt="plus" />
           </div> */}
         </div>
-        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 mt-4">
+        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-4">
           <u> Bid Price</u>{' '}
         </div>
         <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 mt-2">
           <input
             placeholder="0.0"
             onChange={(e) => (e.target.value === '' ? setBidPrice(null) : setBidPrice(+e.target.value))}
-            value={bidPrice}
+            value={bidPrice !== undefined ? bidPrice : ''} // to solve the console error
             type="number"
             tw="dark:bg-black-2 bg-grey-5 text-left border-solid border-1 border-grey-1 pl-2
               rounded-[10px] w-[348px] h-8.75 font-semibold text-regular outline-none"
@@ -152,7 +177,7 @@ const CollectionWideBidPopup = (): ReactElement => {
           <img src="/img/crypto/SOL.svg" tw="h-5 w-5 absolute ml-[320px]" />
         </div>
 
-        <div tw=" w-[100%] mt-4 font-semibold text-regular">
+        <div tw=" w-[100%] mt-4 sm:mt-2 font-semibold text-regular">
           <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
             <div>Wallet Balance</div>
             <div tw="dark:text-grey-5 text-black-4">{solBalance ? solBalance.toFixed(2) : 0} SOL</div>
@@ -181,7 +206,7 @@ const CollectionWideBidPopup = (): ReactElement => {
           className={!insufficientBalance && bidPrice ? 'pinkGradient' : ''}
           cssStyle={tw` h-10 w-[100%] text-regular font-semibold mt-3`}
           disabledColor={tw`dark:bg-black-1 bg-grey-4`}
-          disabled={!bidPrice || insufficientBalance}
+          disabled={!(bidPrice > 0) || insufficientBalance}
         >
           {insufficientBalance
             ? `Insufficient SOL`

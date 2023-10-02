@@ -59,6 +59,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
       ${tw`w-5 h-5 mt-[-5px] sm:h-[15px] sm:w-[15px] ml-2 opacity-70`}
     }
   }
+
   &.ant-modal {
     ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px]`}
     background-color: ${({ theme }) => theme.bg20};

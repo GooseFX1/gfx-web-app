@@ -23,6 +23,17 @@ import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:bg-black-2 bg-white`};
+  .ant-modal-body {
+    ${tw`p-4 sm:p-2`}
+  }
+  &.ant-modal {
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-4`}
+    border-radius: 20px;
+
+    @media (max-width: 500px) {
+      border-radius: 20px 20px 0 0;
+    }
+  }
   .ant-modal-content .ant-modal-body {
     height: 100% !important;
   }
@@ -114,10 +125,10 @@ const InstantSellPopup = (): ReactElement => {
 
   return (
     <STYLED_POPUP
-      height={breakpoint.isMobile ? '553px' : '689px'}
-      width={breakpoint.isMobile ? '354px' : '500px'}
+      height={breakpoint.isMobile ? '568px' : '689px'}
+      width={breakpoint.isMobile ? '100%' : '500px'}
       title={null}
-      centered={true}
+      centered={breakpoint.isDesktop ? true : false}
       visible={instantSellClicked ? true : false}
       onCancel={() => setInstantSell(false)}
       footer={null}
@@ -132,13 +143,13 @@ const InstantSellPopup = (): ReactElement => {
       ) : (
         <div tw="flex flex-col items-center justify-center">
           <div tw="flex  items-center justify-center">
-            <img src="/img/assets/Aggregator/InstantSell.svg" tw="w-[58px] h-[50px]" />
+            {breakpoint.isDesktop && <img src="/img/assets/Aggregator/InstantSell.svg" tw="w-[58px] h-[50px]" />}
             <div tw="text-lg ml-1 dark:text-grey-5 font-semibold text-black-4">Sell Now</div>
           </div>
-          <div tw="mt-4 dark:text-grey-2 text-grey-1 font-semibold text-average">
+          <div tw="mt-4 sm:mt-2 dark:text-grey-2 text-grey-1 font-semibold text-average">
             {myNFTsByCollection.length ? `Select NFT(s) that you will like to sell` : 'No NFTs to sell'}
           </div>
-          <div className="hideScrollbar" tw="w-[110%] pl-5 flex overflow-x-auto mt-[-5px] h-[290px]">
+          <div className="hideScrollbar" tw="w-[110%] pl-5 flex overflow-x-auto mt-[-5px] h-[290px] sm:h-[240px]">
             {myNFTsByCollection.map((nft, index) => (
               <NFTCardView
                 key={index}
@@ -149,10 +160,10 @@ const InstantSellPopup = (): ReactElement => {
               />
             ))}
           </div>
-          <div tw="h-[65px] flex items-center flex-col">
+          <div tw="h-[65px]  sm:h-[50px] flex items-center flex-col">
             {myNFTsByCollection.length !== 0 && (
               <>
-                <div tw="text-average font-semibold dark:text-grey-2 text-grey-1 mt-4">Current Offer</div>
+                <div tw="text-average font-semibold dark:text-grey-2 text-grey-1 mt-4 sm:mt-0">Current Offer</div>
                 <div>
                   <PriceWithToken
                     token="SOL"
@@ -164,7 +175,7 @@ const InstantSellPopup = (): ReactElement => {
             )}
           </div>
 
-          <div tw=" w-[calc(100% - 12px)] mt-4 font-semibold text-regular">
+          <div tw=" w-[calc(100% - 12px)] mt-4 sm: mt-1 font-semibold text-regular">
             <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
               <div>Wallet Balance</div>
               <div>{formatSOLDisplay(solBalance)} SOL</div>

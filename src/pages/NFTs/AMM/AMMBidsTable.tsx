@@ -201,7 +201,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
           {/* Market */}
           <td>{getHumanReadableTime(bid)}</td> {/* Time */}
           <td tw="!text-right flex">
-            {publicKey.toString() === bid?.ownerAddress ? (
+            {publicKey && publicKey.toString() === bid?.ownerAddress ? (
               <div onClick={() => handleCancelClick(bid)}>Cancel</div>
             ) : (
               <Button

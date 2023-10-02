@@ -25,7 +25,7 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
   }, [wallet?.wallet?.adapter, wallet?.wallet?.adapter?.publicKey, setInstantSell])
 
   return (
-    <div tw="pt-4 pl-2 pr-2 font-semibold">
+    <div tw="pt-4 sm:mt-[-8px] pl-2 pr-2 font-semibold">
       <div className="gridItemRegular gridGradient">
         <div tw="w-[100%] h-[100%] bg-white dark:bg-black-1 rounded-[14px] flex flex-col items-center justify-center">
           <img src={`/img/assets/Aggregator/InstantSell.svg`} tw="w-[60px] h-[66px]" />
