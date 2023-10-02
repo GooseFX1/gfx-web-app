@@ -315,7 +315,7 @@ export const FixedPriceNFTs: FC<{
         <div className="gridContainer">
           {filteredFixedPrice !== null ? (
             <>
-              {breakpoint.isDesktop && <InstantSellCard setDisplayIndex={setDisplayIndex} />}
+              <InstantSellCard setDisplayIndex={setDisplayIndex} />
               {filteredFixedPrice.map((item: any, index: number) => (
                 <SingleNFTCard
                   item={item}

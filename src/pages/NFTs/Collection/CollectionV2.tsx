@@ -114,11 +114,6 @@ const NFTStatsContainer = () => {
     }
   }
 
-  const handleCollectionBidClick = useCallback(async () => {
-    if (publicKey) await signAndUpdateDetails(wallet, true, setCollectionWideBid)
-    else setWalletModalVisible(true)
-  }, [publicKey])
-
   const handlePopup = useCallback(() => {
     if (appraisalPopup) return <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
     if (shareModal)
@@ -187,6 +182,7 @@ const NFTStatsContainer = () => {
             </div>
             {checkMobile() && (
               <div className="title" tw="flex ml-auto items-center">
+                <CollectionBidButton />
                 <CurrentUserProfilePic />
                 <SortDropdown />
               </div>
@@ -237,16 +233,11 @@ const NFTStatsContainer = () => {
           </div>
           {!checkMobile() && (
             <div tw="ml-auto flex">
-              {breakpoint.isDesktop && (
+              {
                 <div>
-                  <Button
-                    onClick={handleCollectionBidClick}
-                    cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular text-white`}
-                  >
-                    Collection Bid
-                  </Button>
+                  <CollectionBidButton />
                 </div>
-              )}
+              }
               <div tw="ml-2.5">
                 <img
                   tw="h-8.75 w-8.75 !mr-0"
@@ -264,6 +255,28 @@ const NFTStatsContainer = () => {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+const CollectionBidButton = () => {
+  const { setCollectionWideBid } = useNFTAMMContext()
+  const { wallet } = useWallet()
+  const { setVisible: setWalletModalVisible } = useWalletModal()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const breakpoint = useBreakPoint()
+  const handleCollectionBidClick = useCallback(async () => {
+    if (publicKey) await signAndUpdateDetails(wallet, true, setCollectionWideBid)
+    else setWalletModalVisible(true)
+  }, [publicKey])
+
+  return (
+    <div tw="sm:mr-2">
+      <Button
+        onClick={handleCollectionBidClick}
+        cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular text-white`}
+      >
+        {breakpoint.isMobile ? `Bid` : `Collection Bid`}
+      </Button>
     </div>
   )
 }
@@ -431,7 +444,7 @@ const FiltersContainer: FC<{
             {filterCategories.map((category, index) => (
               <FilterCategory
                 setRef={setButtonRef}
-                key={category.index}
+                key={index}
                 displayIndex={displayIndex}
                 currentIndex={category.index}
                 onClick={() => {
@@ -518,6 +531,7 @@ const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
     </DROPDOWN_CONTAINER>
   )
 }
+
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
 

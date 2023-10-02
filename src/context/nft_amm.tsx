@@ -13,7 +13,6 @@ import { IActiveOrdersAMM } from '../types/nft_collections'
 import { useNFTCollections } from './nft_collections'
 import { fetchAllActiveOrdersAMM } from '../api/NFTs'
 import { LAMPORTS_PER_SOL_NUMBER } from '../constants'
-import { USER_CONFIG_CACHE } from '../types/app_params'
 
 interface INFTAMMConfig {
   activeOrders: IActiveOrdersAMM[]
@@ -43,13 +42,12 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [refreshAPI, setRefreshAPI] = useState<number>(0)
   const { singleCollection } = useNFTCollections()
   const slug = useMemo(() => singleCollection && singleCollection[0].slug_tensor, [singleCollection])
-  const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   useEffect(() => {
     ;(async () => {
       if (!slug) return
       try {
-        const activeOrder = await fetchAllActiveOrdersAMM(slug, userCache?.jwtToken)
+        const activeOrder = await fetchAllActiveOrdersAMM(slug)
         const sortedOrders = activeOrder.sort((a, b) => parseFloat(b?.sellNowPrice) - parseFloat(a?.sellNowPrice))
         setActiveOrders(sortedOrders)
         setCurrentHighest(parseFloat(sortedOrders[0].sellNowPrice) / LAMPORTS_PER_SOL_NUMBER)

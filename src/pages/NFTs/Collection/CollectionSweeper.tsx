@@ -685,17 +685,19 @@ export const NFTCardView: FC<{
   return (
     <div
       css={[mintAddress === nft?.mint_address ? tw`bg-gradient-1` : tw`dark:bg-black-4 bg-grey-4`]}
-      tw=" mt-5 mr-4 w-[195px] h-[270px] flex items-center justify-center rounded-[11px] p-[2px]"
+      tw=" mt-5 sm:mt-4 mr-4 w-[195px] h-[270px] sm:w-[145px] sm:h-[222px]
+       flex items-center justify-center rounded-[11px] p-[2px]"
     >
       <div
         onClick={setSelectedNFT ? () => setSelectedNFT(nft) : null}
-        tw=" dark:bg-black-1 bg-white w-[193px] h-[267.5px] rounded-[10px] flex flex-col p-2.5"
+        tw=" dark:bg-black-1 bg-white w-[193px] h-[267.5px] 
+        sm:w-[143px] sm:h-[220px] rounded-[10px] flex flex-col p-2.5"
       >
         <div tw="flex">
-          <div tw="w-[173px]  min-h-[164px] max-h-[174px]">
+          <div tw="w-[173px] min-h-[164px] max-h-[174px]">
             <div
-              tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[157px] sm:max-w-[157px]
- overflow-hidden rounded-[8px] sm:min-h-[150px]"
+              tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[125px] sm:max-w-[157px]
+ overflow-hidden rounded-[8px] sm:min-h-[120px]"
             >
               <Image
                 src={nft?.image_url}
