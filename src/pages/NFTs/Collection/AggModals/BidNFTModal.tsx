@@ -42,7 +42,7 @@ import { minimizeTheString } from '../../../../web3/nfts/utils'
 import { GenericTooltip } from '../../../Farm/Columns'
 import { tokenSize, tradeStatePDA } from '../../actions'
 import { TermsTextNFT } from '../AcceptBidModal'
-import { STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
+import { PendingTransaction, STYLED_POPUP_BUY_MODAL } from '../BuyNFTModal'
 import { BorderBottom } from '../SellNFTModal'
 import { couldNotDeriveValueForBuyInstruction, pleaseTryAgain, successfulListingMessage } from './AggNotifications'
 import { constructBidInstruction } from '../../../../web3/auction-house-sdk/bid'
@@ -303,8 +303,7 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
             {checkMobile() && <br />}
             {general?.collection_name && (
               <>
-                {' '}
-                by{' '}
+                by
                 <GenericTooltip text={general?.collection_name}>
                   <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
                 </GenericTooltip>
@@ -388,20 +387,9 @@ export const BidNFTModal: FC<{ cancelBid?: boolean }> = ({ cancelBid }): ReactEl
           </div>
         )}
 
-        {pendingTxSig && (
-          <div className="bm-title">
-            <span>
-              <img
-                style={{ height: '26px', marginRight: '6px' }}
-                src={`/img/assets/solscan.png`}
-                alt="solscan-icon"
-              />
-            </span>
-            <GFX_LINK href={`https://solscan.io/tx/${pendingTxSig}`} target={'_blank'} rel="noreferrer">
-              View Transaction
-            </GFX_LINK>
-          </div>
-        )}
+        <div tw="flex items-center ml-[185px] sm:ml-[(50% - 80px)]">
+          {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
+        </div>
 
         {/* {yourPreviousBid ? (
             <div tw=" flex !bottom-0">

@@ -621,7 +621,9 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
           </div>
         )}
 
-        {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
+        <div tw="ml-[180px] sm:ml-[calc(50% - 85px)]">
+          {pendingTxSig && <PendingTransaction pendingTxSig={pendingTxSig} />}
+        </div>
 
         <div className="feesContainer">
           <div className="rowContainer">
@@ -661,10 +663,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 }
 
 export const PendingTransaction: FC<{ pendingTxSig: string }> = ({ pendingTxSig }): ReactElement => (
-  <div className="bm-title">
-    <span>
+  <div className="bm-title" tw="flex items-center">
+    <div>
       <img style={{ height: '26px', marginRight: '6px' }} src={`/img/assets/solscan.png`} alt="solscan-icon" />
-    </span>
+    </div>
     <GFX_LINK href={`https://solscan.io/tx/${pendingTxSig}`} target={'_blank'} rel="noreferrer">
       View Transaction
     </GFX_LINK>
