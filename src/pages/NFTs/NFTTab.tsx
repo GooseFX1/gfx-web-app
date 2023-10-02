@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactNode, FC, ReactElement, useState, useEffect, Dispatch, SetStateAction, useMemo } from 'react'
+import React, {
+  ReactNode,
+  FC,
+  ReactElement,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useMemo,
+  useRef
+} from 'react'
 import { Dropdown } from 'antd'
 import { DROPDOWN_CONTAINER, GRID_CONTAINER, NFT_FILTERS_CONTAINER } from './Collection/CollectionV2.styles'
 import { useDarkMode, useNFTAggregator, useNFTAggregatorFilters } from '../../context'
@@ -11,6 +21,7 @@ import { NFT_PROFILE_OPTIONS } from '../../api/NFTs'
 import { Arrow } from '../../components/common/Arrow'
 import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useAnimateButtonSlide } from '../Farm/FarmFilterHeader'
 
 type TabPanesType = {
   name: string
@@ -55,6 +66,9 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
   useEffect(() => setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL), [displayIndex])
+  const sliderRef = useRef(null)
+  const buttonRefs = useRef<HTMLDivElement[]>([])
+  const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6">
@@ -62,7 +76,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         <>
           <SearchBar
             setSearchFilter={setSearchInsideProfile}
-            // style={{ width: checkMobile() ? '100%' : 330 }}
+            width={checkMobile() ? '100%' : '330px'}
             cssStyle={tw`sm:w-full w-[330px] h-8.75`}
             bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
             placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
@@ -78,18 +92,25 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         </>
       </div>
 
-      <div className="filtersViewCategory" tw="mr-[10px] mt-10  sm:mt-0 sm:mr-0">
-        {checkMobile() && <div className="activeItemProfile" />}
-
+      <div className="filtersViewCategory" tw="mr-[10px] mt-5  sm:mt-0 sm:mr-0">
         <div
+          ref={sliderRef}
+          className="pinkGradient"
+          tw="h-8.75 w-[150px] absolute z-[10] mt-[-6px] sm:mt-[0px] rounded-[30px]"
+          style={{
+            transition: 'all 0.5s'
+          }}
+        ></div>
+        <div
+          ref={setButtonRef}
           className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(0)}
         >
           {collections}
-          {!checkMobile() && <div className="activeItemProfile" />}
         </div>
         {wallet?.adapter?.publicKey && (
           <div
+            ref={setButtonRef}
             className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
             onClick={() => setDisplayIndex(1)}
           >
@@ -97,6 +118,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           </div>
         )}
         <div
+          ref={setButtonRef}
           className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(wallet?.adapter?.publicKey ? 2 : 1)}
         >
@@ -124,7 +146,7 @@ const ProfileNFTFiltersDropdown: FC<{ displayIndex: number }> = ({ displayIndex 
         {checkMobile() ? (
           <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5 sm:mr-3" />
         ) : (
-          <div tw="flex items-center ml-2">
+          <div tw="flex items-center h-8.75 ml-2">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>
             <Arrow height="9px" width="18px" cssStyle={tw`ml-[-25px]`} invert={arrow} />
           </div>

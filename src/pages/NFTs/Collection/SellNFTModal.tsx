@@ -96,7 +96,7 @@ export const SellNFTModal: FC<{
   const [askPrice, setAskPrice] = useState<number | null>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isDelistLoading, setDelistLoading] = useState<boolean>(false)
-  const [pendingTxSig, setPendingTxSig] = useState<any>('null')
+  const [pendingTxSig, setPendingTxSig] = useState<any>(null)
   const { singleCollection } = useNFTCollections()
   const inputRef = useRef<HTMLInputElement | null>(null)
 

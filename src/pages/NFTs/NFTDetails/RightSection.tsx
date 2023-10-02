@@ -255,7 +255,7 @@ export const RightSection: FC<{
             </div>
 
             <div className="ls-bottom-panel">
-              <div className="img-holder">
+              <div className="img-holder" tw="flex">
                 {/* {sessionUser && isFavorited ? (
                   <img
                     className="ls-favorite-heart"
@@ -272,9 +272,9 @@ export const RightSection: FC<{
                   />
                 )} */}
 
-                <span className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
+                <div className={`ls-favorite-number ${isFavorited ? 'ls-favorite-number-highlight' : ''}`}>
                   {likes ? likes : null}
-                </span>
+                </div>
                 <a href={`https://solscan.io/token/${general.mint_address}`} target="_blank" rel="noreferrer">
                   <img
                     src="/img/assets/solscanBlack.svg"
