@@ -44,7 +44,13 @@ export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
     <div className="add-text">{props.additionalText}</div>
     <div>
       <a
-        style={{ color: 'white', fontWeight: 'bold', textDecoration: 'underline' }}
+        style={{
+          color: 'white',
+          fontWeight: 'bold',
+          textDecoration: 'underline',
+          display: 'flex',
+          alignItems: 'center'
+        }}
         href={props.tx_url}
         target="_blank"
         rel="noopener noreferrer"

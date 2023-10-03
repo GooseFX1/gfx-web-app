@@ -13,13 +13,15 @@ interface StakeUnstakeToggleProps {
   inputRef: React.MutableRefObject<InputRef>
   setInputValue: (value: number) => void
   userGoFxBalance: TokenAmount
+  isStakeLoading: boolean
 }
 const StakeUnstakeToggle = ({
   isStakeSelected,
   setIsStakeSelected,
   inputRef,
   setInputValue,
-  userGoFxBalance
+  userGoFxBalance,
+  isStakeLoading
 }: StakeUnstakeToggleProps): JSX.Element => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLButtonElement[]>([])
@@ -66,9 +68,11 @@ const StakeUnstakeToggle = ({
                 border-0 font-semibold text-regular h-[40px] rounded-[36px] duration-700 bg-transparent
                 flex items-center justify-center
                 `,
-          isStakeSelected ? tw`text-white` : tw`text-grey-1`
+          isStakeSelected ? tw`text-white` : tw`text-grey-1`,
+          isStakeLoading && !isStakeSelected && tw`cursor-not-allowed`
         ]}
         onClick={handleStakeUnstakeToggle}
+        disabled={isStakeLoading && !isStakeSelected}
       >
         Stake
       </button>
@@ -80,9 +84,11 @@ const StakeUnstakeToggle = ({
                 border-0 font-semibold text-regular h-[40px] rounded-[36px] duration-700 bg-transparent
                 flex items-center justify-center
                 `,
-          !isStakeSelected ? tw`text-white` : tw`text-grey-1`
+          !isStakeSelected ? tw`text-white` : tw`text-grey-1`,
+          isStakeLoading && isStakeSelected && tw`cursor-not-allowed`
         ]}
         onClick={handleStakeUnstakeToggle}
+        disabled={isStakeLoading && isStakeSelected}
       >
         Unstake
       </button>

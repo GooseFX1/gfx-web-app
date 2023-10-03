@@ -110,12 +110,12 @@ const EarnRewards: FC = () => {
       } catch (error) {
         console.error(error)
       } finally {
-        setStakeLoading(false)
+        //
       }
     } else {
       setIsUnstakeConfirmationModalOpen(true)
-      setStakeLoading(false)
     }
+    setStakeLoading(false)
   }, [stake, inputRef, network, isStakeSelected])
 
   const handleInputChange = useCallback((e) => {
@@ -159,6 +159,7 @@ const EarnRewards: FC = () => {
         amount={inputValue}
         isOpen={isUnstakeConfirmationModalOpen}
         onClose={handleUnstakeConfirmationModalClose}
+        setStakeLoading={setStakeLoading}
       />
       <div css={tw`flex flex-row w-full justify-between items-center flex-wrap gap-3.75`}>
         {breakpoints.isMobile && (
@@ -168,6 +169,7 @@ const EarnRewards: FC = () => {
             inputRef={inputRef}
             userGoFxBalance={userGoFxBalance}
             setInputValue={setInputValue}
+            isStakeLoading={isStakeLoading}
           />
         )}
         <div tw={' flex flex-col min-md:flex-row gap-1 '}>
@@ -207,6 +209,7 @@ const EarnRewards: FC = () => {
             inputRef={inputRef}
             userGoFxBalance={userGoFxBalance}
             setInputValue={setInputValue}
+            isStakeLoading={isStakeLoading}
           />
         )}
         <div
@@ -273,12 +276,12 @@ const EarnRewards: FC = () => {
            h-10 flex items-center justify-center
            `,
             canStakeOrUnstake ? tw`bg-blue-1 text-white dark:bg-blue-1 dark:text-white cursor-pointer` : tw``,
-            isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
+            isStakeLoading ? tw`cursor-not-allowed flex justify-center items-center opacity-80` : tw``
           ]}
           disabled={!canStakeOrUnstake}
         >
           {isStakeLoading ? (
-            <div css={[tw`absolute top-[-5px]`]}>
+            <div css={[tw`absolute `]}>
               <Loader zIndex={2} />
             </div>
           ) : userGoFxBalance.uiAmount > 0.0 ? (
@@ -387,7 +390,7 @@ const RewardsRightPanel: FC = () => {
             usdcClaimable > 0.0 ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
-          //disabled={usdcClaimable <= 0.0}
+          disabled={usdcClaimable <= 0.0}
           onClick={handleClaimFees}
         >
           {isClaiming ? (

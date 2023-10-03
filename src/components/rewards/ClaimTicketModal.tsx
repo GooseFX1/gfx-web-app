@@ -1,10 +1,11 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useRewards from '../../context/rewardsContext'
 import Modal from '../common/Modal'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment/moment'
+import { Loader } from '../Loader'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
@@ -52,7 +53,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
             <p
               css={[
                 tw`
-              font-semibold text-lg dark:bg-black-1 text-grey-1
+              font-semibold text-lg text-grey-1
             `
               ]}
             >
@@ -65,41 +66,43 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   )
 }
 const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
-  const countDownRef = useRef<HTMLButtonElement>(null)
   const [oneDayLeft, setOneDayLeft] = useState(false)
   const [canClaim, setCanClaim] = useState(false)
   const { redeemUnstakingTickets, getUiAmount, rewards } = useRewards()
-  const setRef = useCallback(
+  const [isClaiming, setIsClaiming] = useState(false)
+  const [claimButtonText, setClaimButtonText] = useState('Unstake GOFX')
+  const setClaimText = useCallback(
     (interval: NodeJS.Timer) => {
       const unixTime = moment.unix(ticket.createdAt.toNumber()).add(7, 'days')
       const momentTime = moment.duration(unixTime.diff(moment()))
       const secondDuration = momentTime.asSeconds()
       setOneDayLeft(secondDuration < 86400)
       setCanClaim(secondDuration <= 0)
-      if (countDownRef.current === null) {
-        return
-      }
+
       if (secondDuration <= 0) {
-        countDownRef.current.innerText = 'Unstake GOFX'
+        setClaimButtonText('Unstake GOFX')
         clearInterval(interval)
         return
       }
 
-      countDownRef.current.innerText = `${momentTime.days()}d: ${momentTime.hours()}h: ${momentTime.minutes()}min`
+      setClaimButtonText(`${momentTime.days()}d: ${momentTime.hours()}h: ${momentTime.minutes()}min`)
     },
-    [ticket.createdAt, countDownRef.current]
+    [ticket.createdAt]
   )
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRef(interval)
+      setClaimText(interval)
     }, 60000)
-    setRef(interval)
+    setClaimText(interval)
     return () => clearInterval(interval)
-  }, [setRef])
+  }, [setClaimText])
   const unstakeGoFX = useCallback(() => {
-    const index = rewards.user.staking.unstakeableTickets.findIndex((t) => t.ticket.createdAt.eq(ticket.createdAt))
-    redeemUnstakingTickets([{ index, ticket }])
+    setIsClaiming(true)
+    const index = rewards.user.staking.userMetadata.unstakingTickets.findIndex((t) =>
+      t.createdAt.eq(ticket.createdAt)
+    )
+    redeemUnstakingTickets([{ index, ticket }]).finally(() => setIsClaiming(false))
   }, [redeemUnstakingTickets, ticket, rewards])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked).toString(), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
@@ -112,19 +115,28 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
       </p>
 
       <button
-        ref={countDownRef}
         css={[
           tw`py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 text-[15px] leading-normal
-      font-semibold h-[40px] w-[160px] min-md:w-[207px] border-0 cursor-not-allowed whitespace-nowrap`,
-          oneDayLeft && !canClaim ? tw`text-red-2` : tw``,
-          canClaim ? tw` text-white cursor-pointer` : tw``
+      font-semibold h-[40px] w-[160px] min-md:w-[207px] border-0 cursor-not-allowed whitespace-nowrap
+      relative flex items-center justify-center`,
+          oneDayLeft && !canClaim && tw`text-red-2`,
+          canClaim && tw` text-white cursor-pointer`,
+          isClaiming && tw`cursor-not-allowed `
         ]}
         disabled={!canClaim}
         style={{
           background: canClaim ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)' : ''
         }}
         onClick={unstakeGoFX}
-      />
+      >
+        {isClaiming ? (
+          <div css={[tw`absolute`]}>
+            <Loader zIndex={2} />
+          </div>
+        ) : (
+          claimButtonText
+        )}
+      </button>
     </div>
   )
 }
