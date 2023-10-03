@@ -10,6 +10,7 @@ import {
   useState
 } from 'react'
 import {
+  ADDRESSES,
   GfxStakeRewards,
   GOFXVault,
   StakePool,
@@ -21,11 +22,12 @@ import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { Wallet } from '@project-serum/anchor'
-import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction } from '../web3'
 import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
+import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
 
 const ANCHOR_BN = {
   ZERO: new anchor.BN(0.0),
@@ -42,6 +44,7 @@ interface Rewards extends BaseClaim {
   userMetadata: UserMetadata
   activeUnstakingTickets: UnstakeTicket[]
   unstakeableTickets: UnstakeableTicket[]
+  hasUsdcAccount: boolean
 }
 
 interface Referred extends BaseClaim {
@@ -67,7 +70,7 @@ interface RewardState {
 interface IRewardsContext {
   rewards: RewardState
   hasRewards: boolean
-  initializeUserAccount: () => Promise<void>
+  initializeUserAccount: () => Promise<boolean>
   closeUserAccount: () => Promise<void>
   stake: (amount: number) => Promise<void>
   unstake: (amount: number) => Promise<void>
@@ -94,7 +97,8 @@ const initialState: RewardState = {
       totalClaimed: 0,
       claimable: 0,
       unstakeableTickets: [],
-      activeUnstakingTickets: []
+      activeUnstakingTickets: [],
+      hasUsdcAccount: false
     },
     referred: {
       symbol: '',
@@ -158,6 +162,9 @@ function reducer(state: RewardState, action) {
     case 'setReferredClaimable':
       state.user.referred.claimable = action.payload
       return state
+    case 'setHasUsdcAccount':
+      state.user.staking.hasUsdcAccount = action.payload
+      return state
     //TODO: add giveaway unique -  cases
     default:
       console.warn('unknown action--->', action)
@@ -179,19 +186,22 @@ const MESSAGE = styled.div`
     height: 20px;
   }
 `
-const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
-  const [userMetadata, stakePool, gofxVault, unstakingTickets] = await Promise.all([
+const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey, connection: Connection) => {
+  const [userMetadata, stakePool, gofxVault, unstakingTickets, usdcAddress] = await Promise.all([
     stakeRewards.getUserMetaData(wallet),
     stakeRewards.getStakePool(),
     stakeRewards.getGoFxVault(),
-    stakeRewards.getUnstakingTickets(wallet)
+    stakeRewards.getUnstakingTickets(wallet),
+    getAssociatedTokenAddress(ADDRESSES.MAINNET.USDC_MINT, wallet)
   ])
+  const userUsdcAccount = await connection.getAccountInfo(usdcAddress)
   const unstakeableTickets = stakeRewards.getUnstakeableTickets(unstakingTickets)
   return {
     userMetadata,
     stakePool,
     gofxVault,
-    unstakeableTickets
+    unstakeableTickets,
+    hasUsdcAccount: !!userUsdcAccount
   }
 }
 const Notification = (title: string, isError: boolean, description: ReactNode): JSX.Element => (
@@ -228,14 +238,16 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
-    fetchAllRewardData(stakeRewards, walletContext?.publicKey)
-      .then((data) => {
+    fetchAllRewardData(stakeRewards, walletContext?.publicKey, connection)
+      .then(async (data) => {
         const payload: RewardState = structuredClone(rewards)
         payload.user.staking.userMetadata = data.userMetadata
         payload.user.staking.unstakeableTickets = data.unstakeableTickets
         payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
           (ticket) => ticket.createdAt.toString() !== '0'
         )
+        payload.user.staking.hasUsdcAccount = data.hasUsdcAccount
+
         payload.stakePool = data.stakePool
         payload.gofxVault = data.gofxVault
         dispatch({ type: 'setAll', payload })
@@ -244,13 +256,25 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.warn('fetch-all-reward-data-failed', err)
       })
   }, [walletContext.publicKey, connection, network])
+  const updateStakeDetails = useCallback(async () => {
+    const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey, connection)
+    const payload: RewardState = structuredClone(rewards)
+    payload.user.staking.userMetadata = data.userMetadata
+    payload.user.staking.unstakeableTickets = data.unstakeableTickets
+    payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
+      (ticket) => ticket.createdAt.toString() !== '0'
+    )
+    payload.user.staking.hasUsdcAccount = data.hasUsdcAccount
+
+    payload.stakePool = data.stakePool
+    payload.gofxVault = data.gofxVault
+    dispatch({ type: 'setAll', payload })
+  }, [stakeRewards, connection])
 
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
-      const txn = new Transaction()
       if (!stakeRewards) {
         console.warn('stake rewards not loaded')
-        return txn
       }
       const userMetadata: UserMetadata | null = await stakeRewards
         .getUserMetaData(walletContext.publicKey)
@@ -259,28 +283,43 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return null
         })
 
+      const txnForUserAccountRequirements = new Transaction()
       if (userMetadata === null) {
-        const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
-        console.log('init user account', ix)
-        txn.add(ix)
+        const txn = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
+        txnForUserAccountRequirements.add(txn)
+        //const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
+        //console.log('init user account', ix)
+        //txn.add(ix)
       }
-      console.log('check-for-user-account', userMetadata, txn)
-      txn.add(await callback())
-      return txn
+      if (!rewards.user.staking.hasUsdcAccount) {
+        const usdcAddress = await getAssociatedTokenAddress(ADDRESSES.MAINNET.USDC_MINT, walletContext.publicKey)
+        const txn = createAssociatedTokenAccountInstruction(
+          walletContext.publicKey,
+          usdcAddress,
+          walletContext.publicKey,
+          ADDRESSES.MAINNET.USDC_MINT
+        )
+        txnForUserAccountRequirements.add(txn)
+      }
+
+      txnForUserAccountRequirements.add(await callback())
+      return txnForUserAccountRequirements
     },
-    [stakeRewards, walletContext]
+    [stakeRewards, walletContext, rewards.user.staking.hasUsdcAccount]
   )
 
-  const initializeUserAccount = useCallback(async () => {
+  const initializeUserAccount = useCallback(async (): Promise<boolean> => {
     const txn: TransactionInstruction = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
 
     const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
       console.log(err)
       return ''
     })
-
-    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
-      .then(() =>
+    if (txnSig === '') {
+      return false
+    }
+    return await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
+      .then(() => {
         notify({
           message: Notification(
             'Initialize successful!',
@@ -291,74 +330,81 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           ),
           type: 'success'
         })
-      )
+        return true
+      })
       .catch((err) => {
         console.log('initialize-failed', err)
-        notify({
-          message: Notification(
-            'Initialize failed!',
-            true,
-            <div>
-              <p>{err.msg}</p>
-            </div>
-          ),
-          type: 'error'
-        })
+        {
+          notify({
+            message: Notification(
+              'Initialize failed!',
+              true,
+              <div>
+                <p>{err.msg}</p>
+              </div>
+            ),
+            type: 'error'
+          })
+          return false
+        }
       })
-  }, [stakeRewards, walletContext, confirmTransaction, connection])
+      .finally(() => updateStakeDetails())
+  }, [stakeRewards, walletContext, confirmTransaction, connection, updateStakeDetails])
   const closeUserAccount = useCallback(async () => {
-    const txn: Transaction = await checkForUserAccount(() =>
-      stakeRewards.closeUserAccount(null, walletContext.publicKey)
-    )
-
-    const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
-      console.log(err)
-      return ''
-    })
-    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
-      .then(() => {
-        updateStakeDetails()
-        notify({
-          message: Notification(
-            'Close successful!',
-            false,
-            <div>
-              <p>Account closed</p>
-            </div>
-          ),
-          type: 'success'
-        })
-      })
-      .catch((err) => {
-        console.log('close-failed', err)
-        notify({
-          message: Notification(
-            'Close failed!',
-            true,
-            <div>
-              <p>{err.msg}</p>
-            </div>
-          ),
-          type: 'error'
-        })
-      })
-  }, [stakeRewards, connection, walletContext])
+    //TODO: the below is not currently in use -> removing for now if needed add back in
+    // const txn = stakeRewards.closeUserAccount(null, walletContext.publicKey)
+    //
+    //    const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
+    //      console.log(err)
+    //      return ''
+    //    })
+    //    await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
+    //      .then(() => {
+    //        notify({
+    //          message: Notification(
+    //            'Close successful!',
+    //            false,
+    //            <div>
+    //              <p>Account closed</p>
+    //            </div>
+    //          ),
+    //          type: 'success'
+    //        })
+    //      })
+    //      .catch((err) => {
+    //        console.log('close-failed', err)
+    //        notify({
+    //          message: Notification(
+    //            'Close failed!',
+    //            true,
+    //            <div>
+    //              <p>{err.msg}</p>
+    //            </div>
+    //          ),
+    //          type: 'error'
+    //        })
+    //      }).finally(()=>updateStakeDetails()
+    //      )
+    //
+  }, [stakeRewards, connection, walletContext, updateStakeDetails])
 
   const stake = useCallback(
     async (amount: number) => {
-      console.log(amount)
+      // console.log(amount)
       const stakeAmount = new anchor.BN(amount).mul(ANCHOR_BN.BASE_9)
-      const txn: Transaction = await checkForUserAccount(() =>
-        stakeRewards.stake(stakeAmount, walletContext.publicKey)
-      )
-      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
-        console.log(err)
-        return ''
-      })
-
+      const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, walletContext.publicKey))
+      const txnSig = await walletContext
+        .sendTransaction(new Transaction().add(txn), connection, {
+          skipPreflight: true,
+          preflightCommitment: 'confirmed'
+        })
+        .catch((err) => {
+          console.log(err)
+          return ''
+        })
+      console.log('txnSig', txnSig)
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
-          updateStakeDetails()
           notify({
             message: Notification(
               'Bravo!',
@@ -386,29 +432,18 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             type: 'error'
           })
         })
+        .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext, confirmTransaction, connection]
+    [stakeRewards, walletContext, confirmTransaction, connection, updateStakeDetails]
   )
-  const updateStakeDetails = useCallback(async () => {
-    const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
-    const payload: RewardState = structuredClone(rewards)
-    payload.user.staking.userMetadata = data.userMetadata
-    payload.user.staking.unstakeableTickets = data.unstakeableTickets
-    payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
-      (ticket) => ticket.createdAt.toString() !== '0'
-    )
-    payload.stakePool = data.stakePool
-    payload.gofxVault = data.gofxVault
-    dispatch({ type: 'setAll', payload })
-  }, [stakeRewards])
   const unstake = useCallback(
     async (amount: number) => {
       const unstakeAmount = new anchor.BN(amount).mul(ANCHOR_BN.BASE_9)
-      const txn: Transaction = await checkForUserAccount(() =>
+      const txn = await checkForUserAccount(async () =>
         stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
       //const proposedEndDate = moment().add(7, 'days').calendar()
-      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+      const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
         console.log(err)
         return ''
       })
@@ -441,7 +476,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
         .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext, connection]
+    [stakeRewards, walletContext, connection, updateStakeDetails]
   )
   const getClaimableFees = useCallback((): number => {
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
@@ -461,16 +496,15 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     rewards.user.staking.userMetadata.totalStaked
   ])
   const claimFees = useCallback(async () => {
-    const txn: Transaction = await checkForUserAccount(() => stakeRewards.claimFees(walletContext.publicKey))
     const amount = getClaimableFees()
 
-    const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+    const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
+    const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
       console.log(err)
       return ''
     })
     await confirmTransaction(connection, txnSig, 'confirmed')
       .then(() => {
-        updateStakeDetails()
         notify({
           message: Notification(
             'Congratulations!',
@@ -496,27 +530,26 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           )
         })
       })
+      .finally(() => updateStakeDetails())
   }, [stakeRewards, walletContext, connection, rewards, getClaimableFees])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
-      const txn: Transaction = await checkForUserAccount(
-        async () =>
-          await stakeRewards.resolveUnstakingTicket(
-            toUnstake.map((ticket) => ticket.index),
-            walletContext.publicKey
-          )
+      const txn = await checkForUserAccount(async () =>
+        stakeRewards.resolveUnstakingTicket(
+          toUnstake.map((ticket) => ticket.index),
+          walletContext.publicKey
+        )
       )
       const totalUnstaked = toUnstake
         .reduce((a, b) => a.add(b.ticket.totalUnstaked), new anchor.BN(0.0))
         .div(ANCHOR_BN.BASE_9)
-      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
+      const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
         console.log(err)
         return ''
       })
 
       await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
         .then(() => {
-          updateStakeDetails()
           notify({
             message: Notification(
               'Magic!',
@@ -544,8 +577,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             type: 'error'
           })
         })
+        .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext]
+    [stakeRewards, walletContext, updateStakeDetails]
   )
   const enterGiveaway = useCallback(
     (giveawayContract: string) => {
