@@ -223,7 +223,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => (network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'),
     [network]
   )
-
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
@@ -269,7 +268,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
     dispatch({ type: 'setAll', payload })
-  }, [stakeRewards, connection])
+  }, [stakeRewards, connection, network])
 
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
@@ -284,15 +283,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
 
       const txnForUserAccountRequirements = new Transaction()
-      if (userMetadata === null) {
-        const txn = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
-        txnForUserAccountRequirements.add(txn)
-        //const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
-        //console.log('init user account', ix)
-        //txn.add(ix)
-      }
+
       if (!rewards.user.staking.hasUsdcAccount) {
-        const usdcAddress = await getAssociatedTokenAddress(ADDRESSES.MAINNET.USDC_MINT, walletContext.publicKey)
+        const usdcAddress = await getAssociatedTokenAddress(
+          ADDRESSES[getNetwork()].USDC_MINT,
+          walletContext.publicKey
+        )
         const txn = createAssociatedTokenAccountInstruction(
           walletContext.publicKey,
           usdcAddress,
@@ -302,10 +298,58 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txnForUserAccountRequirements.add(txn)
       }
 
-      txnForUserAccountRequirements.add(await callback())
-      return txnForUserAccountRequirements
+      if (userMetadata === null) {
+        const txn = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
+        txnForUserAccountRequirements.add(txn)
+        //const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
+        //console.log('init user account', ix)
+        //txn.add(ix)
+      }
+      if (txnForUserAccountRequirements.instructions.length > 0) {
+        const txnSig = await walletContext
+          .sendTransaction(txnForUserAccountRequirements, connection)
+          .catch((err) => {
+            console.log(err)
+            return ''
+          })
+
+        await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
+          .then(() => {
+            notify({
+              message: Notification(
+                'Initialize successful!',
+                false,
+                <div>
+                  <p>Accounts required for staking initialized.</p>
+                </div>
+              ),
+              type: 'success'
+            })
+            return true
+          })
+          .catch((err) => {
+            console.log('initialize-failed', err)
+            {
+              notify({
+                message: Notification(
+                  'Initialize failed!',
+                  true,
+                  <div>
+                    <p>Failed to initialize accounts for staking.</p>
+                  </div>
+                ),
+                type: 'error'
+              })
+              return false
+            }
+          })
+          .finally(() => updateStakeDetails())
+      }
+      const txn = new Transaction()
+      txn.add(await callback())
+      return txn
     },
-    [stakeRewards, walletContext, rewards.user.staking.hasUsdcAccount]
+    [stakeRewards, walletContext, rewards.user.staking.hasUsdcAccount, getNetwork]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
