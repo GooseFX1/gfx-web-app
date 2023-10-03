@@ -99,13 +99,13 @@ export const EarnLeftSidePanel: FC<RewardSegmentProps> = ({ panelIndex, children
       {
         title: 'Earn USDC daily by staking your GOFX',
         subtitle: 'How much would you like to stake?',
-        icon: <img src={`/img/assets/rewards-${mode}.svg`} />,
+        icon: <img style={{ maxWidth: 'none' }} src={`/img/assets/rewards-${mode}.svg`} />,
         children: <EarnRewards />
       },
       {
         title: 'Refer friends and earn 20% of their taker fees!',
         subtitle: '',
-        icon: <img src={`/img/assets/referral-${mode}.svg`} />,
+        icon: <img style={{ maxWidth: 'none' }} src={`/img/assets/referral-${mode}.svg`} />,
         children: <ReferAndEarn />
       }
     ],
