@@ -268,7 +268,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
     dispatch({ type: 'setAll', payload })
-  }, [stakeRewards, connection, network])
+  }, [stakeRewards, connection, network, walletContext.publicKey])
 
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
@@ -352,7 +352,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txn.add(await callback())
       return txn
     },
-    [stakeRewards, walletContext, rewards.user.staking.hasUsdcAccount, getNetwork]
+    [stakeRewards, walletContext, rewards, getNetwork]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
