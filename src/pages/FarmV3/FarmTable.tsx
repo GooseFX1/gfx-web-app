@@ -446,7 +446,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
                 <img
                   src="/img/assets/farm_cap.svg"
                   alt="deposit-cap"
-                  tw="ml-2.5 sm:ml-[5px] max-w-none"
+                  tw="ml-2.5 sm:ml-1.25 max-w-none"
                   height={20}
                   width={20}
                 />

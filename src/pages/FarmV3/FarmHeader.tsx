@@ -77,7 +77,7 @@ export const FarmHeader: FC = () => {
                 py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
           >
             <span
-              tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
+              tw="mr-1.25 font-semibold text-regular dark:text-grey-5 text-black-4"
               onClick={() => {
                 setPoolSelection(true)
               }}
