@@ -51,7 +51,7 @@ export type SSLToken = {
 }
 
 export type SSLTableData = {
-  apy: number
+  apy: string
   fee: number
   volume: number
 }
@@ -87,25 +87,25 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'BONK',
@@ -119,25 +119,25 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 5000
+      cappedDeposit: 15000
     },
     {
       token: 'BONK',

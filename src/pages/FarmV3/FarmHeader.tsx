@@ -24,7 +24,7 @@ const POOL_CARD = styled.div`
 `
 
 const HEADER_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-start relative mb-5`}
+  ${tw`flex flex-row justify-start relative`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -62,7 +62,7 @@ export const FarmHeader: FC = () => {
   const { allPoolSslData, sslTableData } = useSSLContext()
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
-    const apy = sslTableData?.[data?.token]?.apy
+    const apy = Number(sslTableData?.[data?.token]?.apy)
     const apyObj = { ...data, apy: apy }
     return apyObj
   })
@@ -96,14 +96,6 @@ export const FarmHeader: FC = () => {
           </div>
         </div>
       )}
-      <div
-        tw="mb-5 dark:text-[#FF7F50] text-[#FF7F50] text-regular sm:!leading-[15px] 
-          sm:mt-[-2px] sm:text-tiny font-semibold"
-      >
-        Join our beta! Please wait while we integrate our AMM with DEXs/Aggregators in the next couple weeks to
-        kickstart more volume/APY. Play around with our other features in the meantime!
-      </div>
-
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
@@ -167,7 +159,7 @@ export const FarmHeader: FC = () => {
                   <div tw="flex items-center leading-[22px] sm:mt-3.5">
                     <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
                     <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">
-                      {card?.apy ? card.apy : '00.00'}
+                      {card?.apy ? `${card.apy?.toFixed(2)}%` : '00.00%'}
                     </div>
                   </div>
                 </POOL_CARD>

@@ -199,3 +199,37 @@ export const parseUnixTimestamp = (unixTime: string): string => {
 }
 
 export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)
+
+export const truncateBigNumber = (bigNumber: number): string | number => {
+  if (!bigNumber || bigNumber === null) return 0
+
+  try {
+    if (bigNumber > 1000000000) {
+      const nArray = (bigNumber / 1000000000).toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray.length > 1 ? nArray[1] : null
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
+      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'B'
+    }
+    if (bigNumber > 1000000) {
+      const nArray = (bigNumber / 1000000).toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray.length > 1 ? nArray[1] : null
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
+      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
+    }
+    if (bigNumber > 1000) {
+      const nArray = (bigNumber / 1000).toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray[1]
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
+      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
+    }
+    return Number(bigNumber.toFixed(2))
+  } catch (error) {
+    console.log('BIG NUM ERROR', bigNumber)
+  }
+}
