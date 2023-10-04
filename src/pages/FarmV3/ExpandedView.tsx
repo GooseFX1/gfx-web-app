@@ -5,7 +5,6 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
 import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
 import { executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -20,7 +19,7 @@ import {
   SSLToken,
   BONK_MINT
 } from './constants'
-import { notify } from '../../utils'
+import { notify, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
@@ -101,7 +100,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   )
 
   const totalEarned = useMemo(
-    () => filteredLiquidityAccounts[tokenMintAddress]?.totalEarned?.toNumber(),
+    () => filteredLiquidityAccounts[tokenMintAddress]?.totalEarned?.toNumber() / Math.pow(10, coin?.mintDecimals),
     [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
   )
 
@@ -289,13 +288,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="24H Volume"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 ${coin?.token}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 {coin?.token}</span>
               }
             />
             <FarmStats
               keyStr="24H Fees"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 ${coin?.token}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 {coin?.token}</span>
               }
             />
             <FarmStats
@@ -303,7 +302,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 userDepositedAmount ? (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {userDepositedAmount.toFixed(2)}
+                    {truncateBigNumber(userDepositedAmount)}
                   </span>
                 ) : (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00</span>
@@ -314,7 +313,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Wallet Balance"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  ${userTokenBalance.toFixed(2)} ${coin?.token}
+                  {truncateBigNumber(userTokenBalance)} {coin?.token}
                 </span>
               }
             />
@@ -322,12 +321,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Total Earnings"
               value={
                 totalEarned ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`$ ${totalEarned.toFixed(
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`${totalEarned.toFixed(
                     3
                   )} (${totalEarnedInUSD} USD)`}</span>
                 ) : (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    0.00 ${coin?.token} ($0.00 USD)
+                    0.00 {coin?.token} ($0.00 USD)
                   </span>
                 )
               }
@@ -372,7 +371,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Wallet Balance"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  ${userTokenBalance?.toFixed(2)} ${coin?.token} ($ ${userTokenBalanceInUSD?.toFixed(2)} USD)
+                  {truncateBigNumber(userTokenBalance)} {coin?.token} (${truncateBigNumber(userTokenBalanceInUSD)}{' '}
+                  USD)
                 </span>
               }
             />
@@ -467,12 +467,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             keyStr="Total Earnings"
             value={
               totalEarned ? (
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`$ ${totalEarned?.toFixed(
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`${totalEarned?.toFixed(
                   3
-                )} (${totalEarnedInUSD?.toFixed(2)} USD)`}</span>
+                )} ($${totalEarnedInUSD?.toFixed(2)} USD)`}</span>
               ) : (
                 <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
-                  0.00 ${coin?.token} ($0.00 USD)
+                  0.00 {coin?.token} ($0.00 USD)
                 </span>
               )
             }

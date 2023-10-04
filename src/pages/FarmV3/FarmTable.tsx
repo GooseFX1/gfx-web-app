@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { checkMobile } from '../../utils'
+import { checkMobile, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -318,7 +318,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
             tw="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular 
             rounded-[30px] font-semibold bg-gradient-1"
           >
-            <a href="https://discord.gg/cDEPXpY26q" tw="font-semibold">
+            <a href="https://discord.gg/cDEPXpY26q" tw="font-semibold" target="_blank" rel="noreferrer">
               Request Pool
             </a>
           </address>
@@ -430,12 +430,13 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             )}
             <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
             <div tw="ml-2.5">{coin?.token}</div>
-            <div tw="z-[999]" onClick={(e) => e.stopPropagation()}>
+            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
               <Tooltip
                 color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $5K.
+                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                    {truncateBigNumber(coin?.cappedDeposit)}.
                   </span>
                 }
                 placement="topRight"
@@ -452,13 +453,13 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
               </Tooltip>
             </div>
           </td>
-          <td>{formattedapiSslData?.apy} %</td>
+          <td>{Number(formattedapiSslData?.apy)?.toFixed(2)}%</td>
           {!checkMobile() && (
             <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
           {!checkMobile() && <td>${formattedapiSslData?.volume}</td>}
           {!checkMobile() && <td>${formattedapiSslData?.fee}</td>}
-          {!checkMobile() && <td>{userDepositedAmount ? userDepositedAmount.toFixed(2) : '0.00'}</td>}
+          {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
