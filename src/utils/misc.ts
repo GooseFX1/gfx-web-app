@@ -201,7 +201,7 @@ export const parseUnixTimestamp = (unixTime: string): string => {
 export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)
 
 export const truncateBigNumber = (bigNumber: number): string | number => {
-  if (!bigNumber || bigNumber === null) return 0
+  if (!bigNumber || bigNumber === null) return '00.00'
 
   try {
     if (bigNumber > 1000000000) {
