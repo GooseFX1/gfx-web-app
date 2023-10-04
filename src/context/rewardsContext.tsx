@@ -22,7 +22,7 @@ import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { Wallet } from '@project-serum/anchor'
-import { Connection, Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction } from '../web3'
 import { notify } from '../utils'
 import { Col, Row } from 'antd'
@@ -44,7 +44,6 @@ interface Rewards extends BaseClaim {
   userMetadata: UserMetadata
   activeUnstakingTickets: UnstakeTicket[]
   unstakeableTickets: UnstakeableTicket[]
-  hasUsdcAccount: boolean
 }
 
 interface Referred extends BaseClaim {
@@ -97,8 +96,7 @@ const initialState: RewardState = {
       totalClaimed: 0,
       claimable: 0,
       unstakeableTickets: [],
-      activeUnstakingTickets: [],
-      hasUsdcAccount: false
+      activeUnstakingTickets: []
     },
     referred: {
       symbol: '',
@@ -162,9 +160,6 @@ function reducer(state: RewardState, action) {
     case 'setReferredClaimable':
       state.user.referred.claimable = action.payload
       return state
-    case 'setHasUsdcAccount':
-      state.user.staking.hasUsdcAccount = action.payload
-      return state
     //TODO: add giveaway unique -  cases
     default:
       console.warn('unknown action--->', action)
@@ -186,22 +181,20 @@ const MESSAGE = styled.div`
     height: 20px;
   }
 `
-const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey, connection: Connection) => {
-  const [userMetadata, stakePool, gofxVault, unstakingTickets, usdcAddress] = await Promise.all([
+const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+  const [userMetadata, stakePool, gofxVault, unstakingTickets] = await Promise.all([
     stakeRewards.getUserMetaData(wallet),
     stakeRewards.getStakePool(),
     stakeRewards.getGoFxVault(),
-    stakeRewards.getUnstakingTickets(wallet),
-    getAssociatedTokenAddress(ADDRESSES.MAINNET.USDC_MINT, wallet)
+    stakeRewards.getUnstakingTickets(wallet)
   ])
-  const userUsdcAccount = await connection.getAccountInfo(usdcAddress)
+
   const unstakeableTickets = stakeRewards.getUnstakeableTickets(unstakingTickets)
   return {
     userMetadata,
     stakePool,
     gofxVault,
-    unstakeableTickets,
-    hasUsdcAccount: !!userUsdcAccount
+    unstakeableTickets
   }
 }
 const Notification = (title: string, isError: boolean, description: ReactNode): JSX.Element => (
@@ -237,7 +230,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
-    fetchAllRewardData(stakeRewards, walletContext?.publicKey, connection)
+    fetchAllRewardData(stakeRewards, walletContext?.publicKey)
       .then(async (data) => {
         const payload: RewardState = structuredClone(rewards)
         payload.user.staking.userMetadata = data.userMetadata
@@ -245,7 +238,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
           (ticket) => ticket.createdAt.toString() !== '0'
         )
-        payload.user.staking.hasUsdcAccount = data.hasUsdcAccount
 
         payload.stakePool = data.stakePool
         payload.gofxVault = data.gofxVault
@@ -256,15 +248,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
   }, [walletContext.publicKey, connection, network])
   const updateStakeDetails = useCallback(async () => {
-    const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey, connection)
+    const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
     const payload: RewardState = structuredClone(rewards)
     payload.user.staking.userMetadata = data.userMetadata
     payload.user.staking.unstakeableTickets = data.unstakeableTickets
     payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
       (ticket) => ticket.createdAt.toString() !== '0'
     )
-    payload.user.staking.hasUsdcAccount = data.hasUsdcAccount
-
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
     dispatch({ type: 'setAll', payload })
@@ -275,25 +265,23 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!stakeRewards) {
         console.warn('stake rewards not loaded')
       }
-      const userMetadata: UserMetadata | null = await stakeRewards
-        .getUserMetaData(walletContext.publicKey)
-        .catch((err) => {
+
+      const [userMetadata, usdcAddress] = await Promise.all([
+        stakeRewards.getUserMetaData(walletContext.publicKey).catch((err) => {
           console.log('get-user-metadata-failed', err)
           return null
-        })
-
+        }),
+        getAssociatedTokenAddress(ADDRESSES[getNetwork()].USDC_MINT, walletContext.publicKey)
+      ])
+      const usdcAccount = await connection.getAccountInfo(usdcAddress)
       const txnForUserAccountRequirements = new Transaction()
-      let res = userMetadata != null && rewards.user.staking.hasUsdcAccount
-      if (!rewards.user.staking.hasUsdcAccount) {
-        const usdcAddress = await getAssociatedTokenAddress(
-          ADDRESSES[getNetwork()].USDC_MINT,
-          walletContext.publicKey
-        )
+      let res = userMetadata != null && usdcAccount != null
+      if (!usdcAccount) {
         const txn = createAssociatedTokenAccountInstruction(
           walletContext.publicKey,
           usdcAddress,
           walletContext.publicKey,
-          ADDRESSES.MAINNET.USDC_MINT
+          ADDRESSES[getNetwork()].USDC_MINT
         )
         txnForUserAccountRequirements.add(txn)
       }
