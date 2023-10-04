@@ -283,7 +283,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
 
       const txnForUserAccountRequirements = new Transaction()
-
+      let res = userMetadata != null && rewards.user.staking.hasUsdcAccount
       if (!rewards.user.staking.hasUsdcAccount) {
         const usdcAddress = await getAssociatedTokenAddress(
           ADDRESSES[getNetwork()].USDC_MINT,
@@ -313,7 +313,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             return ''
           })
 
-        await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
+        res = await confirmTransaction(stakeRewards.connection, txnSig, 'confirmed')
           .then(() => {
             notify({
               message: Notification(
@@ -344,6 +344,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             }
           })
           .finally(() => updateStakeDetails())
+      }
+      if (!res) {
+        return
       }
       const txn = new Transaction()
       txn.add(await callback())
