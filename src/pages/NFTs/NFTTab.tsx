@@ -21,7 +21,7 @@ import { NFT_PROFILE_OPTIONS } from '../../api/NFTs'
 import { Arrow } from '../../components/common/Arrow'
 import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useAnimateButtonSlide } from '../Farm/FarmFilterHeader'
+import { useAnimateButtonSlide } from '../../components/Farm/generic'
 
 type TabPanesType = {
   name: string
