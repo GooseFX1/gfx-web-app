@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { checkMobile, truncateBigNumber } from '../../utils'
+import { commafy, checkMobile, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -402,8 +402,8 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   const formattedapiSslData = useMemo(
     () => ({
       apy: apiSslData?.apy,
-      fee: apiSslData?.fee?.toFixed(2),
-      volume: apiSslData?.volume?.toFixed(2)
+      fee: commafy(apiSslData?.fee, 2),
+      volume: commafy(apiSslData?.volume, 2)
     }),
     [apiSslData]
   )
@@ -455,11 +455,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           </td>
           <td>{Number(formattedapiSslData?.apy)?.toFixed(2)}%</td>
           {!checkMobile() && (
-            <td>{liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="75%" width="75%" />}</td>
+            <td>{liquidity ? '$' + commafy(liquidity, 2) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
           {!checkMobile() && <td>${formattedapiSslData?.volume}</td>}
           {!checkMobile() && <td>${formattedapiSslData?.fee}</td>}
-          {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
+          {!checkMobile() && <td>{userDepositedAmount ? commafy(userDepositedAmount, 2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
