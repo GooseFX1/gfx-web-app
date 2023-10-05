@@ -292,8 +292,8 @@ const EarnRewards: FC = () => {
         </button>
       ) : (
         <Connect
-          containerStyle={[tw`w-full min-md:w-full`]}
-          customButtonStyle={[tw`w-[154px] min-md:w-[154px] h-10`]}
+          containerStyle={[tw`w-full min-md:w-full h-10`]}
+          customButtonStyle={[tw` min-md:h-10 w-full max-w-full`]}
         />
       )}
 
