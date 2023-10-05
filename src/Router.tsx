@@ -77,9 +77,11 @@ export const Router: FC = () => (
                   <AppLayout>
                     <Suspense fallback={<PageLoader />}>
                       <Switch>
-                        {/* <Route exact path="/swap/:tradePair?">
-                        <Swap />
-                      </Route> */}
+                        {/* 
+                          <Route exact path="/swap/:tradePair?">
+                            <Swap />
+                          </Route> 
+                        */}
                         <Route path="/trade">
                           <PriceFeedProvider>
                             <OrderProvider>
@@ -96,10 +98,10 @@ export const Router: FC = () => (
                             <LeaderBoard />
                           </StatsProvider>
                         </Route>
-                        <Route path="/NFTs/Creator">
+                        <Route path="/nfts/creator">
                           <Creator />
                         </Route>
-                        <Route path="/NFTs/admin">
+                        <Route path="/nfts/admin">
                           <NFTAdminProvider>
                             <AdminWrapper />
                           </NFTAdminProvider>

@@ -20,7 +20,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       {/*To enable dark mode using tailwind - using dark:classname*/}
       <MainNav />
       <TermsOfService />
-      <div css={[tw`mt-14`]}>{children}</div>
+      <div css={[tw`min-2xl:w-[2500px] m-auto mt-14`]}>{children}</div>
     </Wrapper>
   )
 }

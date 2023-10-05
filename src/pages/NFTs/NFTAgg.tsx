@@ -14,7 +14,7 @@ import tw from 'twin.macro'
 
 const BODY_NFT = styled.div`
   position: relative;
-  width: 100vw;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 

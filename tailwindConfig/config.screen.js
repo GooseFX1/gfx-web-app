@@ -9,7 +9,8 @@ const screens = {
   'min-sm': '501px',
   'min-md': '721px',
   'min-lg': '961px',
-  'min-xl': '1281px'
+  'min-xl': '1281px',
+  'min-2xl': '2561px'
 }
 
 module.exports = { screens }
