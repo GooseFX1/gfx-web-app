@@ -48,15 +48,25 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const { activeProduct, marketProductGroup, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
 
   useEffect(() => {
-    const refreshOrderbook = async () => {
-      await Promise.allSettled([
-        fetchPerpsOrderBook(),
-        wallet.connected && traderInfo.traderRiskGroupKey ? fetchPerpsOpenOrders() : setPerpsOpenOrders([])
-      ])
+    const refreshOpenOrders = async () => {
+      if (wallet.connected && traderInfo.traderRiskGroupKey) {
+        await fetchPerpsOpenOrders()
+      } else {
+        setPerpsOpenOrders([])
+      }
     }
-    const t2 = setInterval(refreshOrderbook, 500)
+    const t2 = setInterval(refreshOpenOrders, 500)
     return () => clearInterval(t2) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo, wallet.connected])
+
+  useEffect(() => {
+    const refreshOrderbook = async () => {
+      await fetchPerpsOrderBook()
+    }
+    const t3 = setInterval(refreshOrderbook, 500)
+    return () => clearInterval(t3) // clear
+  }, [selectedCrypto.pair, isDevnet, selectedCrypto.type])
+
   const convertBidsAsks = (bids: IOrderbookType[], asks: IOrderbookType[]) => {
     const bidReturn: [number, number, BN, BN, string, string][] = bids.map((item) => {
       let size = item.size
