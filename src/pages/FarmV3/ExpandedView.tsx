@@ -417,7 +417,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
                 css={[
                   tw`duration-500 rounded-[50px] relative !text-regular font-semibold outline-none dark:bg-black-1 
-                bg-grey-5 border-none`,
+                bg-grey-5 border-none dark:text-white text-black-4`,
                   isExpanded
                     ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right sm:pl-[65%]`
                     : tw`h-0 w-0 pl-0 invisible`
