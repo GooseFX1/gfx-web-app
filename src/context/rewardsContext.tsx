@@ -517,13 +517,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
       return 0.0
     }
-    console.log(
-      'RES',
-      ((rewards.stakePool.totalAccumulatedProfit.toString() -
-        rewards.user.staking.userMetadata.lastObservedTap.toString()) *
-        (rewards.user.staking.userMetadata.totalStaked.toString() / rewards.gofxVault.amount.toString())) /
-        1e6
-    )
+
     return (
       ((rewards.stakePool.totalAccumulatedProfit.toString() -
         rewards.user.staking.userMetadata.lastObservedTap.toString()) *
@@ -633,10 +627,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getUiAmount = useCallback((value: BN, isUsdc: boolean = true) => {
     const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
     const uiAmount = value.divmod(base)
-    console.log('uiAmount', `${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.log('uiAmount -> 2', value.toString() / (isUsdc ? 1e6 : 1e9))
+    //console.log('uiAmount', `${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
+
     return parseFloat(`${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
   }, [])
   const hasRewards = useMemo(
