@@ -332,11 +332,12 @@ const RewardsRightPanel: FC = () => {
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
       usdcClaimable: getClaimableFees(),
-      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
+      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked, false),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
     }),
     [rewards, getClaimableFees, publicKey, connection]
   )
+  console.log(rewards.user.staking.userMetadata.totalEarned.toString())
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
@@ -366,7 +367,7 @@ const RewardsRightPanel: FC = () => {
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
-          {nFormatter(totalEarned)}
+          ${nFormatter(totalEarned)}
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
