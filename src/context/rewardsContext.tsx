@@ -21,7 +21,7 @@ import {
 import * as anchor from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { Wallet } from '@project-serum/anchor'
+import { BN, Wallet } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction } from '../web3'
 import { notify } from '../utils'
@@ -77,7 +77,7 @@ interface IRewardsContext {
   redeemUnstakingTickets: (ticketContracts: UnstakeableTicket[]) => Promise<void>
   enterGiveaway: (giveawayContract: string) => void
   getClaimableFees: () => number
-  getUiAmount: (value: anchor.BN) => number
+  getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
 }
 
 const initialState: RewardState = {
@@ -517,6 +517,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
       return 0.0
     }
+    console.log(
+      'RES',
+      ((rewards.stakePool.totalAccumulatedProfit.toString() -
+        rewards.user.staking.userMetadata.lastObservedTap.toString()) *
+        (rewards.user.staking.userMetadata.totalStaked.toString() / rewards.gofxVault.amount.toString())) /
+        1e6
+    )
     return (
       ((rewards.stakePool.totalAccumulatedProfit.toString() -
         rewards.user.staking.userMetadata.lastObservedTap.toString()) *
@@ -527,8 +534,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     rewards.user.staking.userMetadata.totalStaked,
     rewards.gofxVault.amount,
     rewards.stakePool.totalAccumulatedProfit,
-    rewards.user.staking.userMetadata.lastObservedTap,
-    rewards.user.staking.userMetadata.totalStaked
+    rewards.user.staking.userMetadata.lastObservedTap
   ])
   const claimFees = useCallback(async () => {
     const amount = getClaimableFees()
@@ -624,8 +630,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [stakeRewards, walletContext]
   )
 
-  const getUiAmount = useCallback((value: anchor.BN, isUsdc?: boolean) => {
-    const uiAmount = value.divmod(isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9)
+  const getUiAmount = useCallback((value: BN, isUsdc: boolean = true) => {
+    const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
+    const uiAmount = value.divmod(base)
+    console.log('uiAmount', `${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.log('uiAmount -> 2', value.toString() / (isUsdc ? 1e6 : 1e9))
     return parseFloat(`${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
   }, [])
   const hasRewards = useMemo(

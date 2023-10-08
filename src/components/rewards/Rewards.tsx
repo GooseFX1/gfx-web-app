@@ -332,11 +332,12 @@ const RewardsRightPanel: FC = () => {
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
       usdcClaimable: getClaimableFees(),
-      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
+      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked, false),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
     }),
     [rewards, getClaimableFees, publicKey, connection]
   )
+  console.log(rewards.user.staking.userMetadata.totalEarned.toString())
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
