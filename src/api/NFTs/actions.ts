@@ -428,7 +428,8 @@ export const createPoolOrder = async (
       {
         initial_price: initial_price,
         slug: slug,
-        delta: delta
+        delta: delta,
+        curve_type: 'LINEAR' // change this
       },
       {
         headers: {

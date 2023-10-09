@@ -66,7 +66,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     border-radius: 20px;
 
     @media (max-width: 500px) {
-      border-radius: 20px 20px 0 0;
+      border-radius: 10px 10px 0 0;
     }
   }
   color: ${({ theme }) => theme.text20};

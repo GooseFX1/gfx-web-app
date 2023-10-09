@@ -21,17 +21,17 @@ import MissionAccomplishedModal from '../Collection/AggModals/MissionAcomplished
 import { HoldTight } from '../Collection/AggModals/HoldTight'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 
-const STYLED_POPUP = styled(PopupCustom)`
+const STYLED_POPUP = styled(PopupCustom)<{ $hideClose?: boolean }>`
   ${tw`dark:bg-black-2 bg-white`};
   .ant-modal-body {
-    ${tw`p-4 sm:p-2`}
+    ${tw`p-0 sm:p-0`}
   }
   &.ant-modal {
-    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-4`}
-    border-radius: 20px;
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-2.5`}
+    border-radius: 10px;
 
     @media (max-width: 500px) {
-      border-radius: 20px 20px 0 0;
+      border-radius: 10px 10px 0 0;
     }
   }
   .ant-modal-content .ant-modal-body {
@@ -48,10 +48,10 @@ const STYLED_POPUP = styled(PopupCustom)`
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
   }
   .ant-modal-close {
-    ${tw`absolute top-5 right-5`}
-
+    ${tw`absolute top-3 right-2 sm:top-1.5`}
     .ant-modal-close-x {
       ${tw`sm:h-[18px] sm:w-[18px] h-5 w-5 flex`}
+      visibility: ${({ $hideClose }) => ($hideClose ? 'hidden' : 'visible')};
     }
   }
 `
@@ -125,9 +125,10 @@ const InstantSellPopup = (): ReactElement => {
 
   return (
     <STYLED_POPUP
-      height={breakpoint.isMobile ? '568px' : '689px'}
+      height={breakpoint.isMobile ? '545px' : '689px'}
       width={breakpoint.isMobile ? '100%' : '500px'}
       title={null}
+      $hideClose={isLoading}
       centered={breakpoint.isDesktop ? true : false}
       visible={instantSellClicked ? true : false}
       onCancel={() => setInstantSell(false)}
@@ -146,10 +147,13 @@ const InstantSellPopup = (): ReactElement => {
             {breakpoint.isDesktop && <img src="/img/assets/Aggregator/InstantSell.svg" tw="w-[58px] h-[50px]" />}
             <div tw="text-lg ml-1 dark:text-grey-5 font-semibold text-black-4">Sell Now</div>
           </div>
-          <div tw="mt-4 sm:mt-2 dark:text-grey-2 text-grey-1 font-semibold text-average">
+          <div tw="mt-2 sm:mt-0 dark:text-grey-2 text-grey-1 font-semibold text-average sm:text-regular">
             {myNFTsByCollection.length ? `Select NFT(s) that you will like to sell` : 'No NFTs to sell'}
           </div>
-          <div className="hideScrollbar" tw="w-[110%] pl-5 flex overflow-x-auto mt-[-5px] h-[290px] sm:h-[240px]">
+          <div
+            className="hideScrollbar"
+            tw="w-[104%] sm:mt-[-5px] pl-3 flex overflow-x-auto mt-[-5px] h-[290px] sm:h-[238px]"
+          >
             {myNFTsByCollection.map((nft, index) => (
               <NFTCardView
                 key={index}
@@ -160,26 +164,39 @@ const InstantSellPopup = (): ReactElement => {
               />
             ))}
           </div>
-          <div tw="h-[65px]  sm:h-[50px] flex items-center flex-col">
+          <div tw="h-[65px]  sm:h-auto flex items-center flex-col mb-1">
             {myNFTsByCollection.length !== 0 && (
-              <>
-                <div tw="text-average font-semibold dark:text-grey-2 text-grey-1 mt-4 sm:mt-0">Current Offer</div>
-                <div>
-                  <PriceWithToken
-                    token="SOL"
-                    price={currentHighest.toFixed(3)}
-                    cssStyle={tw`font-semibold text-lg h-5 w-5 text-lg`}
-                  />{' '}
+              <div tw="sm:pt-2 sm:flex-row items-center flex flex-col">
+                <div
+                  tw="text-average sm:text-regular font-semibold  dark:text-grey-2 text-grey-1 mt-4  sm:mr-1.5
+                 sm:mt-1"
+                >
+                  Current Offer:
                 </div>
-              </>
+                <div>
+                  {breakpoint.isDesktop ? (
+                    <PriceWithToken
+                      token="SOL"
+                      price={currentHighest.toFixed(3)}
+                      cssStyle={tw`font-semibold dark:text-grey-5 text-black-4 text-average h-5 w-5 sm:text-regular`}
+                    />
+                  ) : (
+                    <div tw="font-semibold dark:text-grey-5 text-black-4 sm:text-regular">
+                      {currentHighest.toFixed(3)} SOL
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
-          <div tw=" w-[calc(100% - 12px)] mt-4 sm: mt-1 font-semibold text-regular">
-            <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
-              <div>Wallet Balance</div>
-              <div>{formatSOLDisplay(solBalance)} SOL</div>
-            </div>
+          <div tw=" w-[calc(100% - 12px)] mt-4 sm:mt-1 font-semibold text-regular">
+            {breakpoint.isDesktop && (
+              <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
+                <div>Wallet Balance</div>
+                <div>{formatSOLDisplay(solBalance)} SOL</div>
+              </div>
+            )}
             <div tw="flex items-center justify-between dark:text-grey-2 text-black-1">
               <div>Marketplace Fees</div>
               <div>{marketFees.toFixed(3)} SOL</div>
@@ -206,14 +223,31 @@ const InstantSellPopup = (): ReactElement => {
             disabled={selectedNFT ? false : true}
             onClick={handleInstantSellClick}
             disabledColor={tw`dark:bg-black-1 bg-grey-4`}
-            cssStyle={tw`h-10 w-[100%] text-regular font-semibold mt-4`}
+            cssStyle={tw`h-10 w-[calc(100% - 10px)] text-regular font-semibold mt-5 sm:mt-3`}
           >
-            {selectedNFT ? `Accept Offer for ${youWillReceive.toFixed(2)} SOL` : 'Select NFT'}
+            {selectedNFT ? `Accept Offer for ${youWillReceive.toFixed(2)} SOL` : 'Select NFT(s)'}
           </Button>
+          <TermsText />
         </div>
       )}
     </STYLED_POPUP>
   )
 }
 
+const TermsText = () => {
+  const breakpoint = useBreakPoint()
+  return (
+    <div tw="text-center pt-2 text-grey-1 dark:text-grey-2 ">
+      By selecting "Accept Offer" you agree {breakpoint.isMobile && <br />} to{' '}
+      <a
+        target="_blank"
+        tw="dark:text-grey-5 text-blue-1"
+        rel="noopener noreferrer"
+        href="https://docs.goosefx.io/risks"
+      >
+        <u tw="text-grey-5 font-semibold"> Terms of Service</u>
+      </a>
+    </div>
+  )
+}
 export default InstantSellPopup

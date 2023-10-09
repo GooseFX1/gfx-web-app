@@ -15,6 +15,9 @@ import { VersionedTransaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { confirmTransaction } from '../../../web3'
 import { pleaseTryAgain, successCancelBidAMMMessage } from '../Collection/AggModals/AggNotifications'
+import useBreakPoint from '../../../hooks/useBreakPoint'
+import { PriceWithToken } from '../../../components/common/PriceWithToken'
+import { Checkbox } from 'antd'
 
 const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   overflow-x: hidden;
@@ -51,7 +54,7 @@ const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   thead th {
     height: 26px;
     text-align: center;
-    width: 14.25%;
+    ${tw`w-[14.25%] sm:w-[33%]`}
   }
   tbody {
     height: calc(100vh - 80px);
@@ -60,7 +63,7 @@ const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
     ${tw`sm:h-[100%] w-[100%]`}
   }
   td {
-    ${tw`h-[50px] sm:h-[56px] w-[14.25%] pt-3`}
+    ${tw`h-[50px] sm:h-[56px] w-[14.25%] sm:w-[33%] pt-3`}
   }
   tbody td,
   thead th {
@@ -89,9 +92,20 @@ const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
 `
 const AMMBidsTable = (): ReactElement => {
   const { activeOrders, instantSellClicked, setRefreshAPI } = useNFTAMMContext()
+  const breakpoint = useBreakPoint()
+  const { myBidsAMMChecked } = useNFTAMMContext()
   useEffect(() => {
     setRefreshAPI((prev) => prev + 1)
   }, [])
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
+
+  const filteredActiveOrders = useMemo(() => {
+    if (publicKey && myBidsAMMChecked) {
+      return activeOrders.filter((order) => order.ownerAddress === publicKey.toString())
+    }
+    return activeOrders
+  }, [activeOrders, myBidsAMMChecked, publicKey])
 
   const handleModals = useCallback(() => {
     if (instantSellClicked) return <InstantSellPopup />
@@ -101,12 +115,10 @@ const AMMBidsTable = (): ReactElement => {
     <WRAPPER_TABLE $cssStyle={tw``}>
       {handleModals()}
       <table>
-        <thead>
-          <NFTAMMTitles />
-        </thead>
+        <thead>{breakpoint.isDesktop && <NFTAMMTitles />}</thead>
         {/* <NFTActiveBidsRow activeBids={activeOrders} /> */}
         <tbody>
-          <NFTActiveBidsRow activeBids={activeOrders} />
+          <NFTActiveBidsRow activeBids={filteredActiveOrders} />
         </tbody>
       </table>
     </WRAPPER_TABLE>
@@ -121,6 +133,10 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
   const walletContext = useWallet()
   const { singleCollection } = useNFTCollections()
   const { connection } = useConnectionConfig()
+  const breakpoint = useBreakPoint()
+  const { myBidsAMMChecked, setMyBidsAMM } = useNFTAMMContext()
+  const hostURL = useMemo(() => window.location.origin, [window.location.origin])
+  const profileLink = hostURL + `/nfts/profile/`
 
   const publicKey = useMemo(
     () => walletContext?.wallet?.adapter?.publicKey,
@@ -182,36 +198,95 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
   useEffect(() => () => setSelectedBidFromOrders(null), [])
   return (
     <>
+      <div>
+        {breakpoint.isMobile && (
+          <div tw="flex  items-center ml-2">
+            <Checkbox checked={myBidsAMMChecked} onChange={() => setMyBidsAMM((prev) => !prev)} />
+            <div tw="ml-2 font-semibold mr-2 text-grey-1 dark:text-grey-2">My Bids</div>
+          </div>
+        )}
+      </div>
       {activeBids.map((bid: IActiveOrdersAMM, index) => (
         <tr key={index}>
           <td tw="pl-2 !text-left">
-            {formatSOLDisplay((parseFloat(bid.sellNowPrice) / LAMPORTS_PER_SOL_NUMBER) * 0.94)}
-          </td>{' '}
-          <td>{formatSOLDisplay(bid.sellNowPrice)}</td> {/* Bid  */}
-          <td>1</td> {/* Quantity */}
-          <td>{truncateAddress(bid.ownerAddress)}</td> {/* User */}
-          <td>
-            <div tw="flex justify-center items-center">
-              <div>
-                <img tw="h-5 w-5 mr-2" src={`/img/assets/Aggregator/Tensor.svg`} />
+            {breakpoint.isDesktop ? (
+              formatSOLDisplay((parseFloat(bid.sellNowPrice) / LAMPORTS_PER_SOL_NUMBER) * 0.94)
+            ) : (
+              <div tw="flex flex-col sm:text-tiny">
+                <div tw="flex items-center whitespace-nowrap sm:text-tiny">
+                  <div tw="mr-2">Bid Price:</div>
+                  <PriceWithToken
+                    token="SOL"
+                    price={formatSOLDisplay(bid.sellNowPrice)}
+                    cssStyle={tw`h-5 w-5 sm:text-tiny`}
+                  />
+                </div>
+                <div tw="flex ">
+                  <div tw="whitespace-nowrap flex items-center sm:text-tiny">Qty/Market: 1</div>
+                  <div>
+                    <img tw="h-5 w-5 ml-1" src={`/img/assets/Aggregator/Tensor.svg`} />
+                  </div>
+                </div>
               </div>
-              <div>Tensor</div>
-            </div>
-          </td>{' '}
+            )}
+          </td>
+          {breakpoint.isDesktop && <td>{formatSOLDisplay(bid.sellNowPrice)}</td>} {/* Bid  */}
+          {breakpoint.isDesktop && <td>1</td>} {/* Quantity */}
+          {
+            <td tw="cursor-pointer" onClick={() => window.open(`${profileLink}${bid.ownerAddress}`)}>
+              {breakpoint.isDesktop ? (
+                truncateAddress(bid.ownerAddress)
+              ) : (
+                <div tw="ml-4">
+                  <div tw="flex items-center sm:text-tiny ">
+                    <div tw="mr-2">User:</div>
+                    <div
+                      onClick={() => window.open(`${profileLink}${bid.ownerAddress}`)}
+                      tw="sm:text-tiny cursor-pointer"
+                    >
+                      {truncateAddress(bid.ownerAddress)}
+                    </div>
+                  </div>
+                  <div tw="flex items-center">
+                    <div tw="mr-2">time:</div>
+                    <div tw="sm:text-tiny whitespace-nowrap">{getHumanReadableTime(bid)}</div>
+                  </div>
+                </div>
+              )}
+            </td>
+          }
+          {/* User */}
+          {breakpoint.isDesktop && (
+            <td>
+              <div tw="flex justify-center items-center">
+                <div>
+                  <img tw="h-5 w-5 mr-2" src={`/img/assets/Aggregator/Tensor.svg`} />
+                </div>
+                <div>Tensor</div>
+              </div>
+            </td>
+          )}
           {/* Market */}
-          <td>{getHumanReadableTime(bid)}</td> {/* Time */}
+          {breakpoint.isDesktop && <td>{getHumanReadableTime(bid)}</td>} {/* Time */}
           <td tw="!text-right flex">
             {publicKey && publicKey.toString() === bid?.ownerAddress ? (
-              <div onClick={() => handleCancelClick(bid)}>Cancel</div>
+              <>
+                <Button
+                  onClick={() => handleCancelClick(bid)}
+                  cssStyle={tw`h-[30px] w-[110px] sm:w-[92px] sm:h-8.75 text-white ml-auto bg-red-1`}
+                >
+                  Cancel
+                </Button>
+              </>
             ) : (
               <Button
                 className={!disableAcceptBtn && 'pinkGradient'}
                 disabled={disableAcceptBtn}
                 disabledColor={tw`dark:bg-black-2 bg-grey-4`}
                 onClick={() => handleAcceptClicked(bid)}
-                tw="h-[30px] w-[110px] text-white ml-auto"
+                tw="h-[30px] w-[110px] sm:w-[92px] sm:h-8.75 text-white ml-auto"
               >
-                Accept Bid
+                {disableAcceptBtn ? `No NFTs` : breakpoint.isDesktop ? `Accept Bid` : `Accept`}
               </Button>
             )}
           </td>{' '}
@@ -221,15 +296,18 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
     </>
   )
 }
-const NFTAMMTitles = (): ReactElement => (
-  <tr>
-    <th tw="!text-left pl-2">Seller Receives</th>
-    <th>Bid Price</th>
-    <th>Quantity</th>
-    <th>User</th>
-    <th>Market</th>
-    <th>Time</th>
-    <th tw="!text-right pr-2">Accept Bid</th>
-  </tr>
-)
+const NFTAMMTitles = (): ReactElement => {
+  const breakpoint = useBreakPoint()
+  return (
+    <tr>
+      <th tw="pl-2 !text-left">Bid</th>
+      <th>Price</th>
+      {breakpoint.isDesktop && <th>Quantity</th>}
+      {breakpoint.isDesktop && <th>User</th>}
+      {breakpoint.isDesktop && <th>Market</th>}
+      {breakpoint.isDesktop && <th>Time</th>}
+      <th tw="!text-right">Accept Bid</th>
+    </tr>
+  )
+}
 export default AMMBidsTable

@@ -14,16 +14,16 @@ import { Button } from '../../../../components/Button'
 import { NFTCardView } from '../CollectionSweeper'
 
 const MISSION_WRAPPER = styled.div`
-  ${tw`flex flex-col items-center mt-4 h-[620px] sm:h-full`}
+  ${tw`flex flex-col items-center mt-4 h-[620px] sm:h-[520px]`}
   .proudOwner {
     ${tw`mt-2 text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text28};
   }
   .confettiAnimation {
-    position: absolute;
     top: 0px;
     z-index: 3;
     pointer-events: none;
+    ${tw`h-[115%] absolute w-[100%] top-0`}
   }
   .missionAccomplished {
     color: ${({ theme }) => theme.text7};
@@ -78,10 +78,10 @@ const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
       <div className="missionAccomplished">Mission accomplished!</div>
 
       <div className="proudOwner">{displayStr ?? `You are a proud owner of:`}</div>
-      <div className="proudOwner" tw="!text-[25px]">
-        <strong tw="mr-1">{displayStr ? selectedNFT?.nft_name : general?.nft_name}</strong>
-        by
-        <strong tw="ml-1">{general?.collection_name ?? nftName}</strong>
+      <div className="proudOwner">
+        <span>{displayStr ? selectedNFT?.nft_name : general?.nft_name}</span>
+        <span tw="ml-1">by</span>
+        <span tw="ml-1">{general?.collection_name ?? nftName}</span>
       </div>
 
       {displayStr ? (
@@ -92,12 +92,18 @@ const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
         </div>
       )}
       <div tw="mt-4 flex items-center font-semibold">
-        <div className="proudOwner" tw="!text-[25px]">
+        <div className="proudOwner" tw="!text-[25px] sm:!text-lg">
+          You Received
+        </div>
+      </div>
+      <div tw="mt-4 flex items-center font-semibold">
+        <div className="proudOwner" tw="!text-[25px] sm:!text-lg">
           Price:
         </div>
 
-        <div className={'proudOwner'} tw="flex items-center !text-[25px] ml-2">
-          <div>{formatSOLDisplay(price)}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
+        <div className={'proudOwner'} tw="flex items-center !text-[25px] sm:!text-lg ml-2">
+          <div>{formatSOLDisplay(price)}</div>{' '}
+          <img tw="h-[25px] w-[25px] sm:h-5 sm:w-5 ml-2" src={`/img/crypto/SOL.svg`} />
         </div>
       </div>
 

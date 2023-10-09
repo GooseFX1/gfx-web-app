@@ -34,18 +34,24 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .ant-modal-body {
-    ${tw`p-4 sm:p-2`}
+    ${tw`p-2 sm:p-0`}
   }
   &.ant-modal {
-    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-4`}
+    ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px] !p-2.5`}
     border-radius: 20px;
 
     @media (max-width: 500px) {
-      border-radius: 20px 20px 0 0;
+      border-radius: 10px 10px 0 0;
     }
   }
   .pinkGradient {
     background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+  }
+  .ant-modal-close {
+    ${tw`absolute top-3 right-2 sm:top-1.5`}
+    .ant-modal-close-x {
+      ${tw`sm:h-[18px] sm:w-[18px] h-5 w-5 flex`}
+    }
   }
 `
 
@@ -138,11 +144,11 @@ const CollectionWideBidPopup = (): ReactElement => {
             src={singleCollection[0]?.profile_pic_link}
           />
         </div>
-        <div tw="flex items-center text-average font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-4">
+        <div tw="flex items-center text-average font-semibold dark:text-grey-5 text-black-4 mt-2">
           {singleCollection[0]?.collection_name}
           <img tw="h-5 w-5 ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" />
         </div>
-        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-6">
+        <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 sm:mt-2 mt-3">
           NFTs to Bid
         </div>
         <div tw="flex items-center text-regular font-semibold dark:text-grey-5 text-black-4 mt-2">
@@ -152,10 +158,10 @@ const CollectionWideBidPopup = (): ReactElement => {
           <div>
             <input
               className="disableScroll"
-              value={nftsToBid}
+              value={nftsToBid ?? ''}
               onChange={() => setNFTsToBid(1)} //+e.target.value)} change this
               tw="dark:bg-black-2 bg-grey-5 text-center border-solid border-1 border-grey-1 
-              rounded-[10px] w-[278px] h-8.75 font-semibold text-regular outline-none"
+              rounded-[5px] w-[278px] h-8.75 font-semibold text-regular outline-none"
             />
           </div>
           {/* <div onClick={() => setNFTsToBid((prev) => (prev < 10 ? prev + 1 : prev))}>
@@ -172,16 +178,18 @@ const CollectionWideBidPopup = (): ReactElement => {
             value={bidPrice !== undefined ? bidPrice : ''} // to solve the console error
             type="number"
             tw="dark:bg-black-2 bg-grey-5 text-left border-solid border-1 border-grey-1 pl-2
-              rounded-[10px] w-[348px] h-8.75 font-semibold text-regular outline-none"
+              rounded-[5px] w-[348px] h-8.75 font-semibold text-regular outline-none"
           />
           <img src="/img/crypto/SOL.svg" tw="h-5 w-5 absolute ml-[320px]" />
         </div>
 
         <div tw=" w-[100%] mt-4 sm:mt-2 font-semibold text-regular">
-          <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
-            <div>Wallet Balance</div>
-            <div tw="dark:text-grey-5 text-black-4">{solBalance ? solBalance.toFixed(2) : 0} SOL</div>
-          </div>
+          {breakpoint.isDesktop && (
+            <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
+              <div>Wallet Balance</div>
+              <div tw="dark:text-grey-5 text-black-4">{solBalance ? solBalance.toFixed(2) : 0} SOL</div>
+            </div>
+          )}
           <div tw="flex items-center justify-between dark:text-grey-2 text-grey-1">
             <div>Bid Offer/Item </div>
             <div tw="dark:text-grey-5 text-black-4">{bidPrice ? bidPrice.toFixed(2) : 0} SOL</div>
@@ -214,8 +222,26 @@ const CollectionWideBidPopup = (): ReactElement => {
             ? `Place Bid for ${nftsToBid * bidPrice} SOL`
             : `Select # NFTs and Bid Price`}
         </Button>
+        <TermsText />
       </div>
     </STYLED_POPUP>
+  )
+}
+
+const TermsText = () => {
+  const breakpoint = useBreakPoint()
+  return (
+    <div tw="text-center pt-2 text-grey-1 dark:text-grey-2 ">
+      By selecting "Place Bid" you agree {breakpoint.isMobile && <br />} to{' '}
+      <a
+        target="_blank"
+        tw="dark:text-grey-5 text-blue-1"
+        rel="noopener noreferrer"
+        href="https://docs.goosefx.io/risks"
+      >
+        <u tw="text-grey-5 font-semibold"> Terms of Service</u>
+      </a>
+    </div>
   )
 }
 export default CollectionWideBidPopup

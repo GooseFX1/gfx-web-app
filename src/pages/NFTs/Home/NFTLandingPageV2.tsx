@@ -223,6 +223,12 @@ const FiltersContainer = () => {
   const buttonRefs = useRef<HTMLButtonElement[]>([])
   const sliderRef = useRef<HTMLDivElement>(null)
   const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonRefs)
+  const { setNftInSweeper } = useNFTAggregator()
+  const { singleCollection } = useNFTCollections()
+
+  useEffect(() => {
+    setNftInSweeper({})
+  }, [singleCollection])
 
   useEffect(() => {
     if (timelineDisplay === TIMELINE.SEVEN_D && sortType === 'DESC') {

@@ -29,6 +29,8 @@ interface INFTAMMConfig {
   setSelectedBidFromOrders: Dispatch<SetStateAction<IActiveOrdersAMM>>
   refreshAPI: number
   setRefreshAPI: Dispatch<SetStateAction<number>>
+  myBidsAMMChecked: boolean
+  setMyBidsAMM: Dispatch<SetStateAction<boolean>>
 }
 
 const NFTAMMContext = createContext<INFTAMMConfig>(null)
@@ -40,6 +42,7 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [collectionWideBid, setCollectionWideBid] = useState<boolean>(false)
   const [selectedBidFromOrders, setSelectedBidFromOrders] = useState<IActiveOrdersAMM>()
   const [refreshAPI, setRefreshAPI] = useState<number>(0)
+  const [myBidsAMMChecked, setMyBidsAMM] = useState<boolean>(false)
   const { singleCollection } = useNFTCollections()
   const slug = useMemo(() => singleCollection && singleCollection[0].slug_tensor, [singleCollection])
 
@@ -73,7 +76,9 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedBidFromOrders: selectedBidFromOrders,
         setSelectedBidFromOrders: setSelectedBidFromOrders,
         refreshAPI: refreshAPI,
-        setRefreshAPI: setRefreshAPI
+        setRefreshAPI: setRefreshAPI,
+        myBidsAMMChecked: myBidsAMMChecked,
+        setMyBidsAMM: setMyBidsAMM
       }}
     >
       {children}
