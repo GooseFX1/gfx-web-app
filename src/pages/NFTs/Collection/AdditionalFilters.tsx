@@ -37,7 +37,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   ${({ open }) => css`
     ${tw`duration-500 h-full dark:text-grey-5 text-black-4 overflow-y-scroll`}
-    width: ${open ? '16%' : '0px'} !important;
+    width: ${open ? '15vh' : '0px'} !important;
     min-width: ${open ? '248px' : '0px'} !important;
     border-right: 1px solid ${({ theme }) => theme.borderBottom};
     border: ${!open && 'none'};
@@ -66,7 +66,7 @@ export const ADDITIONAL_FILTERS = styled.div<{ open }>`
   `}
 `
 export const STYLED_INPUT = styled.input`
-  ${tw`rounded-[5px] h-[35px] w-[95px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  `};
+  ${tw`rounded-[5px] h-[35px] w-[95px] sm:w-[165px] m-0 p-[10%] dark:bg-black-1 bg-grey-5  `};
   border: 1px solid ${({ theme }) => theme.tokenBorder};
   background: ${({ theme }) => theme.sweepModalCard};
   @media (max-width: 500px) {
@@ -91,12 +91,18 @@ const STYLED_DRAWER = styled.div`
   }
   .ant-drawer-content-wrapper {
     box-shadow: none;
-    border-radius: 10px !important;
+    border-radius: 10px 10px 0 0 !important;
+    @media (max-width: 500px) {
+      border-radius: 10px 10px 0 0 !important;
+    }
   }
 
   .ant-drawer-content {
     ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[10px] sm:border-solid sm:border-1 sm:dark:border-black-4 
       sm:border-grey-2 `}
+    @media (max-width: 500px) {
+      border-radius: 10px 10px 0 0 !important;
+    }
   }
   .ant-drawer-content &.ant-drawer-content {
     ::-webkit-outer-spin-button,
@@ -104,14 +110,17 @@ const STYLED_DRAWER = styled.div`
       -webkit-appearance: none;
       margin: 0;
     }
-    border-radius: 20px 20px 0 0 !important;
+    border-radius: 10px 10px 0 0 !important;
+    @media (max-width: 500px) {
+      border-radius: 10px 10px 0 0 !important;
+    }
   }
 `
 
 export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean; showMore?: boolean }>`
   ${({ isOpen, isParentOpen, showMore }) => css`
     .listItemCurreny {
-      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3 pr-3`}
+      ${tw`duration-500 items-center text-[15px] sm:text-[18px] justify-between font-semibold flex pl-3 pr-3`}
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
@@ -133,12 +142,12 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
     }
     .attributeTitle {
       ${tw`!duration-500  text-[15px] w-[100%]
-        font-semibold flex px-3 pb-0.5 rounded-[10px]`};
-      height: ${isOpen ? '44px' : 0};
+        font-semibold flex px-3 pb-0.5 rounded-[7.5px]`};
+      height: ${isOpen ? '50px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
-      border: 1px solid;
-      padding-top: ${isOpen ? '8px' : 0};
+      border: 2px solid ${({ theme }) => theme.text20};
+      padding-top: ${isOpen ? '11px' : 0};
       margin-bottom: ${isOpen ? '10px' : 0};
       visibility: ${isOpen ? 'visible' : 'hidden'};
       padding-bottom: ${isOpen ? '2px' : 0};
@@ -149,8 +158,8 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
     .marketTitle {
       ${tw`!duration-500 items-center text-[15px] flex font-semibold flex pl-3 pr-3 sm:max-h-20`};
       height: ${isOpen ? '40px' : 0};
-      color: 
       opacity: ${isOpen ? 1 : 0};
+      visibility: ${isOpen ? 'visible' : 'hidden'};
     }
     .genericButtonHeight {
       ${tw`!duration-500`};
@@ -160,7 +169,6 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       visibility: ${isOpen ? 'visible' : 'hidden'};
       :disabled {
         opacity: 0.7;
-        background: ${({ theme }) => theme.bg22};
       }
     }
     .showMoreAnimation {
@@ -177,7 +185,7 @@ export const LISTING_TYPE = styled.div<{ isOpen: boolean; isParentOpen?: boolean
       font-size: ${isParentOpen ? '20px' : '10px'};
     }
     .listItem {
-      ${tw`duration-500 items-center text-[15px]  justify-between font-semibold flex pl-3`}
+      ${tw`duration-500 items-center text-[15px] sm:text-[18px] justify-between font-semibold flex pl-3`}
       height: ${isOpen ? '53px' : 0};
       color: ${({ theme }) => theme.text20};
       opacity: ${isOpen ? 1 : 0};
@@ -213,7 +221,7 @@ const DRAWER_CONTENTS = styled.div`
     ${tw` font-semibold h-[50px] duration-1000 flex items-center duration-1000 justify-between pl-3 pr-3`}
     border-bottom:  1px solid ${({ theme }) => theme.borderBottom};
     visibility: ${open ? 'visible' : 'hidden'};
-    font-size: ${open ? '18px' : '10px'};
+    font-size: ${open ? '18px' : '1px'};
   }
 `
 
@@ -243,23 +251,34 @@ const AdditionalFilters: FC<{ open: boolean; setOpen: any; displayIndex: number 
           className="dark"
           placement={breakpoint.isMobile ? 'bottom' : 'right'}
           closable={false}
-          height={'475px'}
+          height={'500px'}
           onClose={() => setOpen(false)}
           getContainer={elem}
           open={open}
           width={'100vw'}
           bodyStyle={{ padding: '0' }}
         >
-          <SVGDynamicReverseMode
-            onClick={() => setOpen(false)}
-            tw="absolute right-3 top-3"
-            src={`/img/assets/close-white-icon.svg`}
-            alt="close-icn"
-          />
-          {<div tw="absolute">{breakpoint.isMobile && <ClearAllFiltersButton setOpen={setOpen} />}</div>}
           <DRAWER_CONTENTS>
+            <SVGDynamicReverseMode
+              onClick={() => setOpen(false)}
+              tw="absolute right-3 top-3"
+              src={`/img/assets/close-white-icon.svg`}
+              alt="close-icn"
+            />
+            {
+              <div tw="absolute mt-[-44px]">
+                {breakpoint.isMobile && (
+                  <div tw="flex items-center">
+                    <div tw="!border-none" className="filtersTitleItem">
+                      Filters
+                    </div>
+                    <ClearAllFiltersButton setOpen={setOpen} />
+                  </div>
+                )}
+              </div>
+            }
             <div tw="mt-12">
-              <div tw="sm:h-[430px] overflow-y-auto " className="dark">
+              <div tw="sm:h-[445px] overflow-y-auto " className="dark">
                 {showPriceAndMarket && <MarketPlacesFilter isOpen={open} />}
                 {showPriceAndMarket && <PriceRange isOpen={open} />}
                 {availableAttributes && <Attributes isOpen={open} displayIndex={displayIndex} />}
@@ -485,7 +504,7 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
           disabled={applyDisabled}
           className="genericButtonHeight"
           onClick={updateAdditionalFilters}
-          // disabledColor={tw`dark:bg-black-2 bg-grey-4 !text-grey-1 opacity-70`}
+          disabledColor={tw`dark:bg-black-2 bg-grey-4 !text-grey-1 opacity-70`}
           cssStyle={tw`bg-blue-1 sm:w-[calc(100% - 32px)]
           !text-white h-[35px] w-[217px] cursor-pointer font-semibold text-[15px]`}
         >
@@ -565,7 +584,7 @@ const AttributeDetails: FC<{ trait: string; displayIndex: number }> = ({ trait, 
   return (
     <div className="attributeTitle" css={[isTraitOpen && tw`!h-[180px]`]}>
       <div tw="flex flex-col w-[100%]">
-        <div tw="flex justify-between items-center">
+        <div tw="flex justify-between items-center sm:text-[18px]">
           {!isTraitOpen ? (
             <div>{formatDisplay(trait)}</div>
           ) : (
@@ -627,7 +646,7 @@ export const ClearAllFiltersButton: FC<{ setOpen?: Dispatch<SetStateAction<boole
           height="30px"
           width="94px"
           cssStyle={tw`dark:bg-grey-5 bg-black-4 ml-2 font-semibold dark:text-black-4 
-           text-grey-5 mt-4`}
+           text-grey-5 `}
         >
           Clear All
         </Button>

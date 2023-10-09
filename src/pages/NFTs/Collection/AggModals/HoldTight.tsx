@@ -9,11 +9,6 @@ import MintAnimationDark from '../../../../animations/mint-animation-dark.json'
 
 export const HOLD_TIGHT = styled.div`
   ${tw`flex flex-col overflow-hidden`}
-  .ant-modal-close-x {
-    img {
-      ${tw`hidden`}
-    }
-  }
 
   .animationClass {
     @media (max-width: 500px) {

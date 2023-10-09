@@ -77,7 +77,7 @@ const NFTAgg: FC = (): ReactElement => {
   }, [publicKey])
 
   return Object.keys(prices) ? (
-    <BODY_NFT css={[profilePage && tw`h-[calc(100vh - 60px)] overflow-y-hidden`]}>
+    <BODY_NFT css={[profilePage ? tw`h-[calc(100vh - 60px)] overflow-y-hidden` : tw`h-[100vh]`]}>
       <NFTAggFiltersProvider>
         <NFTAMMProvider>
           <Switch>

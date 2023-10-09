@@ -22,6 +22,8 @@ import { Arrow } from '../../components/common/Arrow'
 import { RefreshBtnWithAnimationNFT } from './Home/NFTLandingPageV2'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useAnimateButtonSlide } from '../../components/Farm/generic'
+import { useParams } from 'react-router-dom'
+import { IAppParams } from '../../types/app_params'
 
 type TabPanesType = {
   name: string
@@ -65,10 +67,14 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
   const { setSearchInsideProfile, setProfileNFTOptions } = useNFTAggregatorFilters()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  useEffect(() => setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL), [displayIndex])
   const sliderRef = useRef(null)
+  const params = useParams<IAppParams>()
+
   const buttonRefs = useRef<HTMLDivElement[]>([])
   const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+
+  useEffect(() => setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL), [displayIndex])
 
   return (
     <NFT_FILTERS_CONTAINER index={displayIndex} tw="rounded-l-none dark:bg-black-1 bg-grey-6">
@@ -108,7 +114,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         >
           {collections}
         </div>
-        {wallet?.adapter?.publicKey && (
+        {publicKey.toString() === params.userAddress && (
           <div
             ref={setButtonRef}
             className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}

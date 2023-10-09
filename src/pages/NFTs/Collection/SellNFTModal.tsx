@@ -209,7 +209,7 @@ export const SellNFTModal: FC<{
       const confirm = await confirmTransaction(
         connection,
         signature,
-        signatureStatus ? signatureStatus : 'confirmed'
+        signatureStatus ? signatureStatus : 'processed'
       )
       // successfully list nft
       if (confirm.value.err === null) {

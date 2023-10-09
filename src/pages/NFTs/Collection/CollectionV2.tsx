@@ -10,7 +10,7 @@ import React, {
   SetStateAction,
   MutableRefObject
 } from 'react'
-import { Dropdown } from 'antd'
+import { Checkbox, Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
@@ -158,7 +158,7 @@ const NFTStatsContainer = () => {
             <div tw="sm:text-[13px] font-bold flex items-center text-[15px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="text-[18px] ml-3 font-bold flex items-center max-w-[325px]">
+                  <div tw="text-[18px] ml-3 font-bold flex items-center max-w-[335px]">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
                     {collection && collection.is_verified ? (
                       <img
@@ -215,15 +215,16 @@ const NFTStatsContainer = () => {
               </div>
               <div className="subTitleText">Floor Price</div>
             </div>
-            {!checkMobile() && (
+
+            {
               <div className="wrapper">
                 <div className="titleText" tw="leading-none">
-                  {fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : '00'} /{' '}
-                  {singleCollection ? singleCollection[0]?.nfts_count : '000'}
+                  {fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : '00'}
+                  {breakpoint.isDesktop && `/ ${singleCollection ? singleCollection[0]?.nfts_count : '000'}`}
                 </div>
                 <div className="subTitleText">Listed</div>
               </div>
-            )}
+            }
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
                 {singleCollection ? volume24h : 0} {currencyView}
@@ -370,6 +371,7 @@ const FiltersContainer: FC<{
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection, searchInsideCollection } = useNFTAggregatorFilters()
   const { myNFTsByCollection } = useNFTCollections()
+  const { myBidsAMMChecked, setMyBidsAMM } = useNFTAMMContext()
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
   const { availableAttributes } = useNFTCollections()
@@ -377,6 +379,8 @@ const FiltersContainer: FC<{
   const sliderRef = useRef(null)
   const buttonRefs = useRef<HTMLDivElement[]>([])
   const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   // TODO add this inside use memo
   const filterCategories = [
@@ -396,7 +400,7 @@ const FiltersContainer: FC<{
       label: 'Activity',
       index: 3
     },
-    breakpoint.isDesktop && {
+    {
       label: 'Bids',
       index: 4
     }
@@ -413,9 +417,9 @@ const FiltersContainer: FC<{
         <div tw="sm:mr-2">{DisplayFilterIcon}</div>
 
         <SearchBar
-          width="70%"
+          width={breakpoint.isDesktop ? '332px' : '255px'}
           setSearchFilter={setSearchInsideCollection}
-          cssStyle={tw`w-[332px] h-8.75`}
+          cssStyle={tw`!w-[332px] h-8.75`}
           filter={searchInsideCollection}
           bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
@@ -458,7 +462,20 @@ const FiltersContainer: FC<{
           </div>
         </div>
       </div>
-      <div tw="ml-auto">{breakpoint.isDesktop && <TokenToggleNFT toggleToken={setCurrency} />}</div>
+      <div tw="ml-auto">
+        {breakpoint.isDesktop && (
+          <div tw="flex items-center">
+            {breakpoint.isDesktop && publicKey && displayIndex === 4 && (
+              <div tw="flex  items-center m-1">
+                <Checkbox checked={myBidsAMMChecked} onChange={() => setMyBidsAMM((prev) => !prev)} />
+                <div tw="ml-2 font-semibold mr-2 text-grey-1 dark:text-grey-2">My Bids</div>
+              </div>
+            )}
+
+            <TokenToggleNFT toggleToken={setCurrency} />
+          </div>
+        )}
+      </div>
     </NFT_FILTERS_CONTAINER>
   )
 }
@@ -544,15 +561,10 @@ const CollectionV2 = (): ReactElement => {
   } = useNFTCollections()
   const [err, setErr] = useState(false)
   const { setAdditionalFilters } = useNFTAggregatorFilters()
-  const { setNftInSweeper } = useNFTAggregator()
 
   useEffect(() => {
     if (singleCollection) logData('collection_page_' + singleCollection[0].collection_name.replace(' ', '_'))
   }, [singleCollection])
-
-  useEffect(() => {
-    setNftInSweeper(undefined)
-  }, [])
 
   useEffect(
     () => () => {

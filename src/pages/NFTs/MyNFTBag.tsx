@@ -159,21 +159,21 @@ export const MyNFTBag = (): ReactElement => {
         open={visible}
       >
         <div
-          css={tw`flex items-center justify-center h-full cursor-pointer relative w-7.5 h-7.5`}
+          css={tw`flex items-center justify-center h-full cursor-pointer relative w-8.75 h-8.75`}
           onClick={handleDropdownClick}
         >
           <p
             css={[
               tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
-                      text-grey-1 dark:text-white mt-0.5 h-4`
+                      text-white mt-0.5 h-4`
             ]}
           >
             {itemsPresentInBag}
           </p>
           {itemsPresentInBag ? (
-            <img src={`/img/assets/shopping-bag-${mode}-active.svg`} />
+            <img tw="h-full w-full" src={`/img/assets/shopping-bag-${mode}-active.svg`} />
           ) : (
-            <img src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
+            <img tw="h-full w-full" src={`/img/assets/shopping-bag-${mode}-inactive.svg`} />
           )}
         </div>
       </Dropdown>
