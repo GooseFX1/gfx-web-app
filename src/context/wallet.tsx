@@ -31,8 +31,7 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
       new WalletConnectWalletAdapter({
         network: network == WalletAdapterNetwork.Testnet ? WalletAdapterNetwork.Devnet : network,
         options: {
-          // example WC app project ID
-          projectId: 'f294cea1e9cd00f0e185354688de6620' // env var?
+          projectId: process.env.REACT_APP_WALLETCONNECT_ID
         }
       }),
     [network]
