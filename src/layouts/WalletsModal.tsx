@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
+import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
@@ -64,6 +65,9 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`mr-3.75 text-tiny font-semibold text-green-3`}
   }
 `
+
+// metamask detection
+initializeWhenDetected()
 
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
