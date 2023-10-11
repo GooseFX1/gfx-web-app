@@ -48,6 +48,8 @@ const INFO_WRAPPER = styled.div`
   .spot-toggle .toggle {
     ${tw`rounded-[36px] h-10 leading-[40px] inline-block text-center border-0 border-none align-middle w-[90px]`}
     font-size: 16px;
+    font-family: 'Montserrat';
+    font-weight: 600;
     color: ${({ theme }) => theme.text16};
   }
   .spot-toggle .geoblocked {
@@ -311,14 +313,14 @@ export const InfoBanner: FC<{
           key="spot"
           onClick={() => handleToggle('perps')}
         >
-          MAINNET
+          Mainnet
         </span>
         <span
           className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : isDevnet ? 'selected' : '')}
           key="perps"
           onClick={isGeoBlocked ? null : () => handleToggle('spot')}
         >
-          DEVNET
+          Devnet
         </span>
       </div>
 

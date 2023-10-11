@@ -12,7 +12,7 @@ import { RotatingLoader } from '../../components/RotatingLoader'
 import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
+const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'Unsettled P&L']
 
 const END_MODAL = styled(PopupCustom)`
   ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
@@ -31,16 +31,19 @@ const END_MODAL = styled(PopupCustom)`
 
 const columns = [
   {
-    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'PNL']
+    Positions: ['Market', 'Side', 'Entry', 'Quantity', 'Market Price', 'Value', 'Est.Liq.Price', 'uPNL']
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
   },
   {
-    'Trade History': ['Side', 'Size', 'Price', 'USD Value']
+    Trades: ['Side', 'Size', 'Price', 'USD Value', 'Fees', 'Type']
   },
   {
-    'SOL Unsettled P&L': ['Market', 'Size', 'Amount USDC']
+    'Funding History': ['Market', 'Direction', 'Funding Paid', 'Time']
+  },
+  {
+    'Unsettled P&L': ['Market', 'Size', 'Amount in USDC']
   }
 ]
 const WRAPPER = styled.div`
@@ -119,24 +122,28 @@ const HEADER = styled.div`
     }
   }
   .headers.Open-Orders {
+    ${tw`flex justify-between items-center flex-nowrap`}
     span:first-child {
       ${tw`pl-3`}
     }
   }
-  .headers.Open-Orders > span {
-    ${tw`w-1/5`}
-  }
-  .headers.Trade-History {
-    ${tw`pl-1`}
+  .headers.Trades {
+    ${tw`flex justify-between items-center flex-nowrap`}
     span:first-child {
       ${tw`pl-3`}
     }
-    > span {
-      ${tw`w-1/4`}
+  }
+  .headers.Funding-History {
+    ${tw`flex justify-between items-center flex-nowrap`}
+    span:first-child {
+      ${tw`pl-3`}
     }
   }
-  .headers.SOL-Unsettled-P-L > span {
-    ${tw`w-1/3`}
+  .headers.Unsettled-P-L {
+    ${tw`flex justify-between items-center flex-nowrap`}
+    span:first-child {
+      ${tw`pl-3`}
+    }
   }
 `
 const POSITIONS = styled.div`
@@ -203,7 +210,7 @@ const TRADE_HISTORY = styled.div`
     display: none;
   }
   div {
-    ${tw`w-full h-[45px] text-sm font-medium py-1`}
+    ${tw`flex justify-between items-center gap-7 flex-nowrap h-[45px] text-sm font-medium`}
     color: ${({ theme }) => theme.text24};
     span {
       ${tw`w-1/4 inline-block capitalize`}
@@ -345,6 +352,8 @@ const TradeHistoryComponent: FC = () => {
                 <span>{order.size}</span>
                 <span>${order.price}</span>
                 <span>{(order.size * order.price).toFixed(2)}</span>
+                <span>{''}</span>
+                <span>{''}</span>
               </div>
             ))}
         </TRADE_HISTORY>

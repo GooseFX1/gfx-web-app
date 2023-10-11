@@ -312,10 +312,10 @@ export const DropdownPairs: FC = () => {
               <img className="asset-icon" src={assetIcon} alt="asset-icon" />
               {displayPair}
               <img
-                src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
+                src={mode === 'lite' ? '/img/assets/arrow-circle-down.svg' : '/img/assets/arrow-circle-down.svg'}
                 alt="arrow-icon"
-                height="7"
-                width="15"
+                height="16"
+                width="16"
               />
             </GRADIENT_BACKGROUND>
           </SELECTED_PAIR>
