@@ -402,7 +402,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   const formattedapiSslData = useMemo(
     () => ({
       apy: apiSslData?.apy,
-      fee: commafy(apiSslData?.fee, 2),
+      fee: apiSslData?.fee,
       volume: commafy(apiSslData?.volume, 2)
     }),
     [apiSslData]
@@ -458,7 +458,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             <td>{liquidity ? '$' + commafy(liquidity, 2) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
           {!checkMobile() && <td>${formattedapiSslData?.volume}</td>}
-          {!checkMobile() && <td>${formattedapiSslData?.fee}</td>}
+          {!checkMobile() && <td>{truncateBigNumber(formattedapiSslData?.fee)}</td>}
           {!checkMobile() && <td>{userDepositedAmount ? commafy(userDepositedAmount, 2) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <div tw="ml-auto sm:mr-2">
