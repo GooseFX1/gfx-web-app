@@ -1,4 +1,15 @@
-import { FC, ReactElement, RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  ReactElement,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -28,12 +39,13 @@ import CancelBidModal from './CancelBidModal'
 import { BidNFTModal } from './AggModals/BidNFTModal'
 import debounce from 'lodash.debounce'
 import { PILL_SECONDARY } from '../NFTDetails/AttributesTabContent'
-import { Button } from '../../../components'
 import { AH_PROGRAM_IDS } from '../../../web3'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { ClearAllFiltersButton } from './AdditionalFilters'
-import { set } from '@project-serum/anchor/dist/cjs/utils/features'
 import { SweeperModal } from './CollectionSweeper'
+import InstantSellCard from '../AMM/InstantSellCard'
+import InstantSellPopup from '../AMM/InstantSellPopup'
+import { useNFTAMMContext } from '../../../context/nft_amm'
 
 const WRAPPER = styled.div`
   -ms-overflow-style: none; /* IE and Edge */
@@ -42,9 +54,10 @@ const WRAPPER = styled.div`
     display: none;
   }
 `
-export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }> = ({
-  firstCardRef
-}): ReactElement => {
+export const FixedPriceNFTs: FC<{
+  firstCardRef: RefObject<HTMLElement | null>
+  setDisplayIndex: Dispatch<SetStateAction<number>>
+}> = ({ firstCardRef, setDisplayIndex }): ReactElement => {
   const { general, nftMetadata, fetchGeneral } = useNFTDetails()
   const { connection } = useConnectionConfig()
   const urlSearchParams = new URLSearchParams(window.location.search)
@@ -54,10 +67,8 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     bidNowClicked,
     setNftInBag,
     setSellNFT,
-    nftInBag,
     sellNFTClicked,
     openJustModal,
-    refreshClicked,
     cancelBidClicked,
     delistNFT,
     setDelistNFT,
@@ -65,6 +76,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     currencyView,
     showSweeperModal
   } = useNFTAggregator()
+  const { instantSellClicked, collectionWideBid } = useNFTAMMContext()
   const { searchInsideCollection, setSearchInsideCollection, additionalFilters } = useNFTAggregatorFilters()
   const {
     singleCollection,
@@ -156,7 +168,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         setFixedPriceLoading(false)
       }
     },
-    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, refreshClicked, additionalFilters]
+    [singleCollection, fixedPriceWithinCollection, setFixedPriceArr, pageNumber, additionalFilters]
   )
 
   useEffect(() => {
@@ -234,8 +246,6 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     fetchData()
   }, [searchInsideCollection, fixedPriceArr])
 
-  useEffect(() => refreshClicked && resetLocalState(), [refreshClicked])
-
   useEffect(() => {
     if (firstLoad) {
       fetchFixedPriceNFTs(0, collectionSort)
@@ -270,6 +280,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
   }, [nftMetadata, general, params.address, openJustModal])
 
   const handleModalClick = useCallback(() => {
+    if (instantSellClicked) return <InstantSellPopup />
     if (buyNowClicked) return <BuyNFTModal />
     if (bidNowClicked) return <BidNFTModal />
     if (cancelBidClicked) return <CancelBidModal />
@@ -277,11 +288,21 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
     if (delistNFT)
       return <SellNFTModal visible={delistNFT} handleClose={() => setDelistNFT(false)} delistNFT={true} />
     if (sellNFTClicked) return <SellNFTModal visible={sellNFTClicked} handleClose={() => setSellNFT(false)} />
-  }, [buyNowClicked, bidNowClicked, sellNFTClicked, cancelBidClicked, delistNFT, showSweeperModal])
+  }, [
+    buyNowClicked,
+    bidNowClicked,
+    sellNFTClicked,
+    cancelBidClicked,
+    delistNFT,
+    showSweeperModal,
+    instantSellClicked
+  ])
 
   const gridType = useMemo(() => (filteredFixedPrice?.length > 10 ? '1fr' : '210px'), [filteredFixedPrice])
 
   const showFilterTags = useMemo(() => <FilterTags />, [])
+  const breakpoint = useBreakPoint()
+
   return (
     <NFT_COLLECTIONS_GRID gridType={gridType} id="border">
       {showFilterTags}
@@ -294,6 +315,7 @@ export const FixedPriceNFTs: FC<{ firstCardRef: RefObject<HTMLElement | null> }>
         <div className="gridContainer">
           {filteredFixedPrice !== null ? (
             <>
+              <InstantSellCard setDisplayIndex={setDisplayIndex} />
               {filteredFixedPrice.map((item: any, index: number) => (
                 <SingleNFTCard
                   item={item}

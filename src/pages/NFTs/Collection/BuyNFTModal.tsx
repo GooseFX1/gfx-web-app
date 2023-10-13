@@ -59,13 +59,14 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
       ${tw`w-5 h-5 mt-[-5px] sm:h-[15px] sm:w-[15px] ml-2 opacity-70`}
     }
   }
+
   &.ant-modal {
     ${tw`max-w-full sm:bottom-[-8px] sm:mt-auto sm:absolute sm:h-[600px]`}
     background-color: ${({ theme }) => theme.bg20};
     border-radius: 20px;
 
     @media (max-width: 500px) {
-      border-radius: 20px 20px 0 0;
+      border-radius: 10px 10px 0 0;
     }
   }
   color: ${({ theme }) => theme.text20};
@@ -450,7 +451,6 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       let signature
       if (isBuyingNow) {
         const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
-        console.log(authority, 'authority', typeof authority)
 
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
         if (isPnft || marketPlace === NFT_MARKETS.GOOSE) {

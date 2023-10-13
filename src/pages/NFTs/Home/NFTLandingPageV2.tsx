@@ -223,6 +223,12 @@ const FiltersContainer = () => {
   const buttonRefs = useRef<HTMLButtonElement[]>([])
   const sliderRef = useRef<HTMLDivElement>(null)
   const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonRefs)
+  const { setNftInSweeper } = useNFTAggregator()
+  const { singleCollection } = useNFTCollections()
+
+  useEffect(() => {
+    setNftInSweeper({})
+  }, [singleCollection])
 
   useEffect(() => {
     if (timelineDisplay === TIMELINE.SEVEN_D && sortType === 'DESC') {
@@ -349,9 +355,6 @@ const FiltersContainer = () => {
         <div tw="flex items-center mr-5 ml-auto">
           {/* <MarketDropdown /> */}
           <TimeLineDropdown />
-          <div tw="ml-4 h-8.75">
-            <RefreshBtnWithAnimationNFT />
-          </div>
 
           {sessionUser && wallet?.adapter?.publicKey && (
             <div tw="ml-4">
@@ -364,20 +367,14 @@ const FiltersContainer = () => {
 }
 export const RefreshBtnWithAnimationNFT: FC = () => {
   const { setAllCollections } = useNFTCollections()
-  const { refreshClass, setRefreshClass, setRefreshClicked } = useNFTAggregator()
   const { setPageNumber } = useNFTAggregatorFilters()
   const refreshFeed = () => {
     setPageNumber(0)
     setAllCollections(LOADING_ARR)
-    setRefreshClass('rotateRefreshBtn')
-    setRefreshClicked((prev) => prev + 1)
-    setTimeout(() => {
-      setRefreshClass('')
-    }, 1000)
   }
   return (
     <RefreshIcon onClick={() => refreshFeed()}>
-      <img src={'/img/assets/refresh.svg'} tw="relative z-10 h-8.75 w-8.75" className={refreshClass} />
+      <img src={'/img/assets/refresh.svg'} tw="relative z-10 h-8.75 w-8.75" />
     </RefreshIcon>
   )
 }
@@ -481,6 +478,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr !== null &&
+        searchResultArr !== undefined &&
         searchResultArr.length > 0 &&
         searchResultArr.map(
           (data: any, index) =>
@@ -622,24 +620,12 @@ const NFTLandingPageV2 = (): ReactElement => {
   const [hasOnboarded, setHasOnboarded] = useState<boolean>(!existingUserCache.hasAggOnboarded)
   const [showTerms, setShowTerms] = useState<boolean>(true)
   const { setGeneral } = useNFTDetails()
-  const { currencyView, lastRefreshedClass, refreshClass, setLastRefreshedClass } = useNFTAggregator()
+  const { currencyView } = useNFTAggregator()
 
   useEffect(() => {
     setFirstPageLoad(false)
     setGeneral(null)
   }, [])
-
-  useEffect(() => {
-    if (refreshClass === '' && !firstLoad) {
-      setLastRefreshedClass('lastRefreshed')
-    }
-  }, [refreshClass])
-
-  useEffect(() => {
-    if (lastRefreshedClass !== ' ' && !firstLoad) {
-      setTimeout(() => setLastRefreshedClass(' '), 3000)
-    }
-  }, [lastRefreshedClass])
 
   const handleHasOnboarded = (res: boolean) => {
     setHasOnboarded(false)
@@ -674,11 +660,6 @@ const NFTLandingPageV2 = (): ReactElement => {
       {!checkMobile() && (
         <>
           <BannerContainer showBanner={showBanner}>
-            {
-              <div tw="flex justify-center">
-                <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} />
-              </div>
-            }
             <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
             <NFTBanners showBanner={showBanner} />
           </BannerContainer>

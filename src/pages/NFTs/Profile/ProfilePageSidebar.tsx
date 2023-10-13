@@ -255,7 +255,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
   if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.png') profilePic = null
 
   const editButtonClicked = useCallback(async () => {
-    await signAndUpdateDetails(wallet, isSessionUser, publicKey, setProfileModal)
+    await signAndUpdateDetails(wallet, isSessionUser, setProfileModal)
   }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
 
   return (

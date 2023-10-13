@@ -296,7 +296,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
   }, [currentUserProfile])
 
   const completeButtonClicked = useCallback(async () => {
-    await signAndUpdateDetails(wallet, isSessionUser, publicKey, setProfileModal)
+    await signAndUpdateDetails(wallet, isSessionUser, setProfileModal)
   }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
 
   // const isProfileComplete = useMemo(() => {

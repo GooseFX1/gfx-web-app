@@ -3,24 +3,27 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useNFTAggregator, useNFTDetails } from '../../../../context'
-import { Button } from 'antd'
+
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useHistory } from 'react-router-dom'
 import { formatSOLDisplay } from '../../../../utils'
 import Lottie from 'lottie-react'
 import confettiAnimation from '../../../../animations/confettiAnimation.json'
+import { useNFTAMMContext } from '../../../../context/nft_amm'
+import { Button } from '../../../../components/Button'
+import { NFTCardView } from '../CollectionSweeper'
 
 const MISSION_WRAPPER = styled.div`
-  ${tw`flex flex-col items-center mt-4`}
+  ${tw`flex flex-col items-center mt-4 h-[620px] sm:h-[520px]`}
   .proudOwner {
     ${tw`mt-2 text-[16px] font-semibold`}
     color: ${({ theme }) => theme.text28};
   }
   .confettiAnimation {
-    position: absolute;
     top: 0px;
     z-index: 3;
     pointer-events: none;
+    ${tw`h-[115%] absolute w-[100%] top-0`}
   }
   .missionAccomplished {
     color: ${({ theme }) => theme.text7};
@@ -53,9 +56,13 @@ const MISSION_WRAPPER = styled.div`
     }
   }
 `
-const MissionAccomplishedModal: FC<{ price: string }> = ({ price }): ReactElement => {
+const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
+  price,
+  displayStr
+}): ReactElement => {
+  const { selectedNFT } = useNFTAMMContext()
   const { general } = useNFTDetails()
-  const nftName = general?.nft_name.split('#')[0]
+  const nftName = selectedNFT?.nft_name.split('#')[0] ?? general?.nft_name.split('#')[0]
   const { publicKey } = useWallet()
   const { setBuyNow } = useNFTAggregator()
   const history = useHistory()
@@ -70,29 +77,43 @@ const MissionAccomplishedModal: FC<{ price: string }> = ({ price }): ReactElemen
       <Lottie animationData={confettiAnimation} className="confettiAnimation" />
       <div className="missionAccomplished">Mission accomplished!</div>
 
-      <div className="proudOwner">You are a proud owner of:</div>
-      <div className="nftDetails">
-        <strong>{general?.nft_name}</strong>
-        by
-        <strong>{general?.collection_name ? general?.collection_name : nftName}</strong>
+      <div className="proudOwner">{displayStr ?? `You are a proud owner of:`}</div>
+      <div className="proudOwner">
+        <span>{displayStr ? selectedNFT?.nft_name : general?.nft_name}</span>
+        <span tw="ml-1">by</span>
+        <span tw="ml-1">{general?.collection_name ?? nftName}</span>
       </div>
 
-      <div className="nftImage">
-        <img src={general?.image_url} />
+      {displayStr ? (
+        <NFTCardView nft={selectedNFT} hidePrice={true} />
+      ) : (
+        <div className="nftImage">
+          <img src={general?.image_url ?? selectedNFT?.image_url} />
+        </div>
+      )}
+      <div tw="mt-4 flex items-center font-semibold">
+        <div className="proudOwner" tw="!text-[25px] sm:!text-lg">
+          You Received
+        </div>
       </div>
-      <div tw="mt-4 flex items-center">
-        <div className="priceText">Price:</div>
+      <div tw="mt-4 flex items-center font-semibold">
+        <div className="proudOwner" tw="!text-[25px] sm:!text-lg">
+          Price:
+        </div>
 
-        <div className={'priceValue'} tw="flex items-center text-[25px] ml-2">
-          <div>{formatSOLDisplay(price)}</div> <img tw="h-[25px] w-[25px] ml-2" src={`/img/crypto/SOL.svg`} />
+        <div className={'proudOwner'} tw="flex items-center !text-[25px] sm:!text-lg ml-2">
+          <div>{formatSOLDisplay(price)}</div>{' '}
+          <img tw="h-[25px] w-[25px] sm:h-5 sm:w-5 ml-2" src={`/img/crypto/SOL.svg`} />
         </div>
       </div>
 
       {/* <div className="shareWithFriends">Share it with your friends!</div> */}
       <div className="shareMediaIcons"></div>
 
-      <Button tw="absolute sm:h-[45px] bottom-6 sm:bottom-4">
-        <a onClick={() => history.push(`/nfts/profile/${publicKey?.toString()}`)}>Go to my collection</a>
+      <Button cssStyle={tw`bg-blue-1 w-[calc(100% - 48px)] absolute h-10 bottom-6 font-semibold sm:bottom-4`}>
+        <a tw="text-white font-semibold" onClick={() => history.push(`/nfts/profile/${publicKey?.toString()}`)}>
+          Go to my collection
+        </a>
       </Button>
     </MISSION_WRAPPER>
   )

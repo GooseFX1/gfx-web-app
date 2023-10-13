@@ -123,7 +123,6 @@ export const validateSocialLinks = (url: string, social: string): string => {
 export const signAndUpdateDetails = async (
   wallet: Wallet,
   isSessionUser: boolean,
-  publicKey: PublicKey,
   setModal: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
@@ -132,7 +131,7 @@ export const signAndUpdateDetails = async (
     "Clicking 'Sign' or 'Approve' proves us that wallet is you \n\n" +
     'Please note that NO SOL will be deducted from your wallet during this process. \n' +
     new Date().getTime()
-
+  const publicKey = wallet?.adapter?.publicKey
   const storedToken = userCache?.jwtToken ? userCache?.jwtToken.split('.') : null
 
   const payload = storedToken ? JSON.parse(atob(storedToken[1])) : null

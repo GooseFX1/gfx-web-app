@@ -10,7 +10,7 @@ import React, {
   SetStateAction,
   MutableRefObject
 } from 'react'
-import { Dropdown } from 'antd'
+import { Checkbox, Dropdown } from 'antd'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   useDarkMode,
@@ -19,7 +19,8 @@ import {
   useNFTAggregatorFilters,
   initialFilters,
   usePriceFeed,
-  usePriceFeedFarm
+  usePriceFeedFarm,
+  useWalletModal
 } from '../../../context'
 import { IAppParams } from '../../../types/app_params'
 import { NFTCollection } from '../../../types/nft_collections'
@@ -43,8 +44,8 @@ import { Image } from 'antd'
 import { GFXApprisalPopup } from '../../../components/NFTAggWelcome'
 import { CurrentUserProfilePic, RefreshBtnWithAnimationNFT } from '../Home/NFTLandingPageV2'
 import { LastRefreshedAnimation, useAnimateButtonSlide } from '../../../components/Farm/generic'
-import { copyToClipboard, minimizeTheString } from '../../../web3/nfts/utils'
-import { SearchBar, TokenToggleNFT } from '../../../components'
+import { copyToClipboard, minimizeTheString, signAndUpdateDetails } from '../../../web3/nfts/utils'
+import { Button, SearchBar, TokenToggleNFT } from '../../../components'
 import { NFT_ACTIVITY_ENDPOINT } from '../../../api/NFTs'
 import { truncateBigNumber } from '../../TradeV3/perps/utils'
 import { useCallback } from 'react'
@@ -57,16 +58,27 @@ import { logData } from '../../../api/analytics'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import AdditionalFilters from './AdditionalFilters'
 import useBreakPoint from '../../../hooks/useBreakPoint'
+import AMMBidsTable from '../AMM/AMMBidsTable'
+import { useNFTAMMContext } from '../../../context/nft_amm'
+import CollectionWideBidPopup from '../AMM/CollectionWideBidPopup'
 
 const NFTStatsContainer = () => {
   const history = useHistory()
   const { singleCollection, fixedPriceWithinCollection } = useNFTCollections()
-  const { lastRefreshedClass, refreshClass, setLastRefreshedClass, currencyView, appraisalIsEnabled } =
-    useNFTAggregator()
+  const { currencyView, appraisalIsEnabled } = useNFTAggregator()
+  const { setCollectionWideBid, collectionWideBid } = useNFTAMMContext()
   const [appraisalPopup, setGFXAppraisalPopup] = useState<boolean>(false)
   const [firstLoad, setFirstPageLoad] = useState<boolean>(true)
+  const { setVisible: setWalletModalVisible } = useWalletModal()
   const { solPrice } = usePriceFeedFarm()
   const [shareModal, setShareModal] = useState<boolean>(false)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const breakpoint = useBreakPoint()
+  const showCollectionWideModal = useMemo(() => {
+    if (collectionWideBid) return <CollectionWideBidPopup />
+  }, [collectionWideBid])
+
   const volume24h = useMemo(
     () =>
       singleCollection
@@ -91,24 +103,9 @@ const NFTStatsContainer = () => {
     [collection, currencyView]
   )
 
-  const { wallet } = useWallet()
-  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
-
   useEffect(() => {
     setFirstPageLoad(false)
   }, [])
-
-  useEffect(() => {
-    if (refreshClass === '' && !firstLoad) {
-      setLastRefreshedClass('lastRefreshed')
-    }
-  }, [refreshClass])
-
-  useEffect(() => {
-    if (lastRefreshedClass !== ' ' && !firstLoad) {
-      setTimeout(() => setLastRefreshedClass(' '), 3000)
-    }
-  }, [lastRefreshedClass])
 
   const onShare = async (social: string) => {
     if (social === 'copy link') {
@@ -116,6 +113,7 @@ const NFTStatsContainer = () => {
       return
     }
   }
+
   const handlePopup = useCallback(() => {
     if (appraisalPopup) return <GFXApprisalPopup showTerms={appraisalPopup} setShowTerms={setGFXAppraisalPopup} />
     if (shareModal)
@@ -135,6 +133,7 @@ const NFTStatsContainer = () => {
         {/* <LastRefreshedAnimation lastRefreshedClass={lastRefreshedClass} /> */}
       </div>
       {handlePopup()}
+      {showCollectionWideModal}
       <div className="nftStatsContainer">
         {!checkMobile() && (
           <button className="backBtn" onClick={() => history.push('/nfts')} tw="border-0">
@@ -159,7 +158,7 @@ const NFTStatsContainer = () => {
             <div tw="sm:text-[13px] font-bold flex items-center text-[15px]">
               {collection ? (
                 <GenericTooltip text={collection.collection_name}>
-                  <div tw="text-[18px] ml-3 font-bold flex items-center max-w-[325px]">
+                  <div tw="text-[18px] ml-3 font-bold flex items-center max-w-[335px]">
                     {minimizeTheString(collection.collection_name, checkMobile() ? 10 : 40)}
                     {collection && collection.is_verified ? (
                       <img
@@ -183,6 +182,7 @@ const NFTStatsContainer = () => {
             </div>
             {checkMobile() && (
               <div className="title" tw="flex ml-auto items-center">
+                <CollectionBidButton />
                 <CurrentUserProfilePic />
                 <SortDropdown />
               </div>
@@ -215,15 +215,16 @@ const NFTStatsContainer = () => {
               </div>
               <div className="subTitleText">Floor Price</div>
             </div>
-            {!checkMobile() && (
+
+            {
               <div className="wrapper">
                 <div className="titleText" tw="leading-none">
-                  {fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : '00'} /{' '}
-                  {singleCollection ? singleCollection[0]?.nfts_count : '000'}
+                  {fixedPriceWithinCollection ? fixedPriceWithinCollection.total_count : '00'}
+                  {breakpoint.isDesktop && `/ ${singleCollection ? singleCollection[0]?.nfts_count : '000'}`}
                 </div>
                 <div className="subTitleText">Listed</div>
               </div>
-            )}
+            }
             <div className="wrapper">
               <div className="titleText" tw="leading-none">
                 {singleCollection ? volume24h : 0} {currencyView}
@@ -233,9 +234,11 @@ const NFTStatsContainer = () => {
           </div>
           {!checkMobile() && (
             <div tw="ml-auto flex">
-              <div tw="ml-2.5">
-                <RefreshBtnWithAnimationNFT />
-              </div>
+              {
+                <div>
+                  <CollectionBidButton />
+                </div>
+              }
               <div tw="ml-2.5">
                 <img
                   tw="h-8.75 w-8.75 !mr-0"
@@ -244,19 +247,37 @@ const NFTStatsContainer = () => {
                   onClick={() => copyToClipboard()}
                 />
               </div>
-              {pubKey && <div tw="!w-10 ml-2.5">{<CurrentUserProfilePic />}</div>}
-              {/* <div className="sweepBtn" onClick={() => setSweepCollection(true)}>
-                <img src="/img/assets/Aggregator/sweepButton.svg" alt="" />
-              </div>   
-              <div>
-                 <ICON $mode={mode === 'dark'}>
-                  <img src={`/img/assets/more_icon.svg`} alt="more" />
-                </ICON> 
-              </div>  */}
+              {publicKey && (
+                <div tw="!w-10 ml-2.5">
+                  <CurrentUserProfilePic />
+                </div>
+              )}
             </div>
           )}
         </div>
       </div>
+    </div>
+  )
+}
+const CollectionBidButton = () => {
+  const { setCollectionWideBid } = useNFTAMMContext()
+  const { wallet } = useWallet()
+  const { setVisible: setWalletModalVisible } = useWalletModal()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const breakpoint = useBreakPoint()
+  const handleCollectionBidClick = useCallback(async () => {
+    if (publicKey) await signAndUpdateDetails(wallet, true, setCollectionWideBid)
+    else setWalletModalVisible(true)
+  }, [publicKey])
+
+  return (
+    <div tw="sm:mr-2">
+      <Button
+        onClick={handleCollectionBidClick}
+        cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular text-white`}
+      >
+        {breakpoint.isMobile ? `Bid` : `Collection Bid`}
+      </Button>
     </div>
   )
 }
@@ -287,9 +308,10 @@ export const NFTGridContainer = (): ReactElement => {
     : null
 
   const NFTDisplayComponent = useMemo(() => {
-    if (displayIndex === 0) return <FixedPriceNFTs firstCardRef={firstCardRef} />
+    if (displayIndex === 0) return <FixedPriceNFTs setDisplayIndex={setDisplayIndex} firstCardRef={firstCardRef} />
     if (displayIndex === 1) return <MyItemsNFTs setDisplayIndex={setDisplayIndex} firstCardRef={firstCardRef} />
     if (displayIndex === 2) return <OpenBidNFTs firstCardRef={firstCardRef} />
+    if (displayIndex === 4) return <AMMBidsTable />
     if (displayIndex === 3)
       return (
         <ActivityNFTSection
@@ -330,7 +352,6 @@ const FilterCategory: FC<{
 }> = ({ setRef, displayIndex, currentIndex, onClick, children }) => {
   const isSelected = displayIndex === currentIndex
   const className = isSelected ? 'selected' : 'flexItem'
-
   return (
     <div className={className} onClick={onClick} tw="z-[15]">
       <div tw="px-4 sm:px-2 mt-[5px] sm:mt-[1px]" ref={setRef}>
@@ -350,6 +371,7 @@ const FiltersContainer: FC<{
   const { fixedPriceWithinCollection, singleCollection } = useNFTCollections()
   const { setSearchInsideCollection, searchInsideCollection } = useNFTAggregatorFilters()
   const { myNFTsByCollection } = useNFTCollections()
+  const { myBidsAMMChecked, setMyBidsAMM } = useNFTAMMContext()
   const { mode } = useDarkMode()
   const { setCurrency } = useNFTAggregator()
   const { availableAttributes } = useNFTCollections()
@@ -357,6 +379,8 @@ const FiltersContainer: FC<{
   const sliderRef = useRef(null)
   const buttonRefs = useRef<HTMLDivElement[]>([])
   const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   // TODO add this inside use memo
   const filterCategories = [
@@ -375,6 +399,10 @@ const FiltersContainer: FC<{
     {
       label: 'Activity',
       index: 3
+    },
+    {
+      label: 'Bids',
+      index: 4
     }
   ]
 
@@ -389,9 +417,9 @@ const FiltersContainer: FC<{
         <div tw="sm:mr-2">{DisplayFilterIcon}</div>
 
         <SearchBar
-          width="70%"
+          width={breakpoint.isDesktop ? '332px' : '255px'}
           setSearchFilter={setSearchInsideCollection}
-          cssStyle={tw`w-[332px] h-8.75`}
+          cssStyle={tw`!w-[332px] h-8.75`}
           filter={searchInsideCollection}
           bgColor={mode === 'dark' ? '#1C1C1C' : '#fff'}
           placeholder={checkMobile() ? `Search by nft ` : `Search by nft name`}
@@ -407,22 +435,20 @@ const FiltersContainer: FC<{
       <div
         tw="sm:!w-[100vw]"
         className="filtersViewCategory"
-        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[560px]`]}
+        css={[breakpoint.isMobile ? tw`relative ml-0 sm:pt-1.5 sm:h-[45px]` : tw`absolute pt-4 !ml-[580px]`]}
       >
         <div tw="flex z-[100] pl-2.5">
           <div
             ref={sliderRef}
             className="pinkGradient"
             tw="h-8.75 w-[148px] absolute z-[10] sm:mt-[0px] rounded-[30px]"
-            style={{
-              transition: 'all 0.5s'
-            }}
+            style={{ transition: 'all 0.5s' }}
           ></div>
           <div tw="flex">
             {filterCategories.map((category, index) => (
               <FilterCategory
                 setRef={setButtonRef}
-                key={category.index}
+                key={index}
                 displayIndex={displayIndex}
                 currentIndex={category.index}
                 onClick={() => {
@@ -436,7 +462,20 @@ const FiltersContainer: FC<{
           </div>
         </div>
       </div>
-      <div tw="ml-auto">{breakpoint.isDesktop && <TokenToggleNFT toggleToken={setCurrency} />}</div>
+      <div tw="ml-auto">
+        {breakpoint.isDesktop && (
+          <div tw="flex items-center">
+            {breakpoint.isDesktop && publicKey && displayIndex === 4 && (
+              <div tw="flex  items-center m-1">
+                <Checkbox checked={myBidsAMMChecked} onChange={() => setMyBidsAMM((prev) => !prev)} />
+                <div tw="ml-2 font-semibold mr-2 text-grey-1 dark:text-grey-2">My Bids</div>
+              </div>
+            )}
+
+            <TokenToggleNFT toggleToken={setCurrency} />
+          </div>
+        )}
+      </div>
     </NFT_FILTERS_CONTAINER>
   )
 }
@@ -509,6 +548,7 @@ const OverlayOptions: FC<{ setArrow: any }> = ({ setArrow }): ReactElement => {
     </DROPDOWN_CONTAINER>
   )
 }
+
 const CollectionV2 = (): ReactElement => {
   const params = useParams<IAppParams>()
 
@@ -520,17 +560,11 @@ const CollectionV2 = (): ReactElement => {
     singleCollection
   } = useNFTCollections()
   const [err, setErr] = useState(false)
-  const { refreshClicked } = useNFTAggregator()
   const { setAdditionalFilters } = useNFTAggregatorFilters()
-  const { setNftInSweeper } = useNFTAggregator()
 
   useEffect(() => {
     if (singleCollection) logData('collection_page_' + singleCollection[0].collection_name.replace(' ', '_'))
   }, [singleCollection])
-
-  useEffect(() => {
-    setNftInSweeper(undefined)
-  }, [])
 
   useEffect(
     () => () => {
@@ -549,7 +583,7 @@ const CollectionV2 = (): ReactElement => {
     })
 
     return null
-  }, [fetchSingleCollection, params.collectionName, refreshClicked])
+  }, [fetchSingleCollection, params.collectionName])
 
   //had to remove singleCollection useState trigger as it leads to
   // infinite loop as setSingleCollection is called in fetch SingleCollection

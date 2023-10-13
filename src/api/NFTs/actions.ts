@@ -124,7 +124,8 @@ export const fetchOpenBidByPages = async (
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?${
+    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?
+    ${
       isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
     }&offset=${offset}&limit=${limit}`
     url = handleAdditionalFilters(url, additionalFilters)
@@ -415,6 +416,163 @@ export const getMagicEdenListing = async (mintAddress: string, secretKey: string
   }
 }
 
+export const createPoolOrder = async (
+  initial_price: string, // multiplied by lamports
+  slug: string, // slug of the collection, will be there in collection api response
+  delta: string, // delta is increase of lamports when there in a sell refer tensor docs
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.CREATE_ORDER}`,
+      {
+        initial_price: initial_price,
+        slug: slug,
+        delta: delta,
+        curve_type: 'LINEAR' // change this
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+export const getCloseOrderPoolTx = async (
+  pool: string, // pool
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.CLOSE_ORDER}`,
+      {
+        pool: pool
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+// tensor
+export const fetchAllActiveOrdersAMM = async (slug: string): Promise<any[]> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM}`, {
+      slug: slug
+    })
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+// Magic Eden
+export const fetchMEActiveOrdersAMM = async (mint_address: string): Promise<any[]> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM_ME}`, {
+      mint_address: mint_address
+    })
+    return res.data.results
+  } catch (error) {
+    return error
+  }
+}
+
+export const sellNFTOrderAMM = async (
+  mint: string,
+  slug: string,
+  pool: string,
+  min_price_lamports: string,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SELL_NFT_ORDER_AMM}`,
+      {
+        pool: pool,
+        slug: slug,
+        mint: mint,
+        min_price_lamports: min_price_lamports
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+// magic eden sell amm
+export const sellMENFTOrderAMM = async (
+  pool: string,
+  min_payment_amount: string, // this should be in SOL not lamports
+  seller: string,
+  asset_mint: string,
+  asset_token_account: string,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SELL_NFT_ORDER_AMM_ME}`, // magic eden
+      {
+        asset_mint,
+        asset_amount: '1',
+        min_payment_amount: min_payment_amount,
+        pool,
+        seller,
+        asset_token_account
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+// same API is user for deposit and withdraw of SOL
+export const orderDepositSol = async (
+  pool: string,
+  lamports: string,
+  is_withdrawal: boolean,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.DEPOSIT_SOL}`,
+      {
+        pool: pool,
+        lamports: lamports,
+        is_withdrawal: is_withdrawal
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const fetchUpdatedJwtToken = async (
   wallet: string,
   signature: string,

@@ -13,6 +13,7 @@ import tw from 'twin.macro'
 import Lottie from 'lottie-react'
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import confettiAnimation from '../../../animations/confettiAnimation.json'
 import LoadingAnimation from '../../../animations/Loading_animation.json'
 
 import 'styled-components/macro'
@@ -38,7 +39,7 @@ import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/exec
 import { AH_NAME, WRAPPED_SOL_MINT, confirmTransaction } from '../../../web3'
 import { pleaseTryAgain, successfulNFTPurchaseMsg } from './AggModals/AggNotifications'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { INFTInBag } from '../../../types/nft_details'
+import { INFTGeneralData, INFTInBag } from '../../../types/nft_details'
 import gfxImageService, { IMAGE_SIZES } from '../../../api/gfxImageService'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
@@ -47,10 +48,22 @@ import useBreakPoint from '../../../hooks/useBreakPoint'
 import { useHistory } from 'react-router-dom'
 
 const STYLED_POPUP = styled(PopupCustom)`
+  @media (max-width: 500px) {
+    overflow: hidden !important;
+  }
+  .confettiAnimation {
+    position: absolute;
+    top: 0px;
+    z-index: 3;
+    ${tw`h-full w-full absolute`}
+    pointer-events: none;
+  }
   .loadingAnimation {
-    scale: 1.64;
+    ${tw` rounded-[10px]`}
+    scale: 1.7;
+    border-radius: 10px;
     @media (max-width: 500px) {
-      scale: 1.25;
+      scale: 1.35;
     }
   }
   .ant-modal-close {
@@ -67,7 +80,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     background-color: ${({ theme }) => theme.bg25};
 
     @media (max-width: 500px) {
-      border-radius: 20px 20px 0 0;
+      border-radius: 10px 10px 0 0;
     }
   }
   .hideScrollbar {
@@ -98,6 +111,9 @@ const STYLED_INPUT = styled.input`
 `
 
 const WRAPPER = styled.div`
+  .pinkGradient {
+    background: linear-gradient(97deg, #f7931a 2%, #ac1cc7 99%);
+  }
   .background {
     position: fixed;
     background: ${({ theme }) => theme.bg2} !important;
@@ -111,6 +127,7 @@ const CollectionSweeper = (): ReactElement => {
   const { sweeperCount, setSweeperCount, setNftInSweeper, setShowSweeperModal, nftInSweeper } = useNFTAggregator()
   const { mode } = useDarkMode()
   const disableSweepButton = useMemo(() => sweeperCount === 0, [sweeperCount])
+  const { singleCollection } = useNFTCollections()
 
   useEffect(() => {
     try {
@@ -119,6 +136,10 @@ const CollectionSweeper = (): ReactElement => {
       setSweeperCount(0)
     }
   }, [nftInSweeper])
+
+  useEffect(() => {
+    setSweeperCount(0)
+  }, [singleCollection])
 
   // handling removing from sweeper here and adding in single page
   // because i dont have access to nft ask and mint address details here
@@ -146,16 +167,21 @@ const CollectionSweeper = (): ReactElement => {
     <WRAPPER>
       <div
         className="background"
-        css={tw`h-20 sm:h-[92px] !w-[100%] !max-w-[247px] sm:!max-w-[100vw] sm:!w-[99vw] bg-grey-5  bottom-1
-        sm:bottom-0 sm:absolute fixed z-[1000] flex flex-col items-center dark:bg-black-1 sm:bg-none`}
+        css={tw`h-[90px] sm:h-[92px] !w-[15vw] !max-w-[247px] !min-w-[242px] sm:!max-w-[100vw] sm:!w-[99vw] bg-grey-5 
+        sm:bottom-0 sm:absolute fixed z-[1000] flex flex-col items-center dark:bg-black-1 sm:bg-none border-solid 
+        bottom-0 `}
       >
         <div css={tw`flex h-8.75 w-[100%] justify-between items-center px-2 `}>
           <div onClick={() => removeNftFromSweeper(sweeperCount)}>
-            <img tw="h-5 w-5 cursor-pointer" src={`/img/assets/minus${mode}.svg`} alt="plus" />
+            <img
+              tw="h-5 w-5 cursor-pointer sm:h-[30px] sm:w-[30px]"
+              src={`/img/assets/minus${mode}.svg`}
+              alt="plus"
+            />
           </div>
           <div>
             <STYLED_INPUT
-              tw="text-center font-semibold"
+              tw="text-center font-semibold w-[127px] sm:w-[200px]"
               value={sweeperCount}
               type="number"
               onChange={(e) => setSweeperCount(+e.target.value)}
@@ -163,16 +189,23 @@ const CollectionSweeper = (): ReactElement => {
           </div>
 
           <div onClick={() => setSweeperCount((prev) => (prev < 10 ? prev + 1 : 10))}>
-            <img tw="h-5 w-5 cursor-pointer" src={`/img/assets/plus${mode}.svg`} alt="plus" />
+            <img
+              tw="h-5 w-5 cursor-pointer sm:h-[30px] sm:w-[30px]"
+              src={`/img/assets/plus${mode}.svg`}
+              alt="plus"
+            />
           </div>
         </div>
         <div>
           <Button
+            className={!disableSweepButton && 'pinkGradient'}
             onClick={() => setShowSweeperModal(true)}
-            cssStyle={tw`h-8.75 mt-2.5 text-regular bg-gradient-1 w-[228px] font-semibold !text-white`}
+            disabledColor={tw`sm:dark:bg-black-1 dark:bg-black-2 bg-grey-4`}
+            cssStyle={tw`h-8.75 mt-2.5 text-regular sm:w-[calc(100vw - 30px)] 
+            w-[228px] font-semibold !text-white`}
             disabled={disableSweepButton}
           >
-            Sweep{' '}
+            Sweep
             <img src="/img/assets/Aggregator/sweep_icon_white.svg" alt="arrow-right" tw="ml-2 h-[25px] w-[25px]" />
           </Button>
         </div>
@@ -182,8 +215,7 @@ const CollectionSweeper = (): ReactElement => {
 }
 
 export const SweeperModal = (): ReactElement => {
-  const { showSweeperModal, setShowSweeperModal, nftInSweeper, setOperatingNFT, setNftInSweeper } =
-    useNFTAggregator()
+  const { showSweeperModal, setShowSweeperModal, nftInSweeper, setOperatingNFT } = useNFTAggregator()
   const { additionalFilters } = useNFTAggregatorFilters()
 
   const filtersApplied = useMemo(() => {
@@ -193,7 +225,6 @@ export const SweeperModal = (): ReactElement => {
     return false
   }, [additionalFilters])
 
-  const disableButton = useMemo(() => false, [])
   const wal = useWallet()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -202,6 +233,14 @@ export const SweeperModal = (): ReactElement => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
 
+  const { getUIAmount } = useAccounts()
+  const breakpoint = useBreakPoint()
+  const { singleCollection } = useNFTCollections()
+  const { mode } = useDarkMode()
+  const solBalance = useMemo(
+    () => getUIAmount(WRAPPED_SOL_MINT.toString()),
+    [wallet?.adapter, wallet?.adapter?.publicKey]
+  )
   const totalPrice = useMemo(() => {
     try {
       const total = Object.values(nftInSweeper).reduce(
@@ -213,8 +252,9 @@ export const SweeperModal = (): ReactElement => {
       return 0
     }
   }, [nftInSweeper])
-
   const numberOfNFTs = useMemo(() => Object.keys(nftInSweeper).length, [nftInSweeper])
+  const disableButton = useMemo(() => totalPrice > solBalance, [totalPrice, solBalance])
+  const insufficientBalance = useMemo(() => totalPrice > solBalance, [totalPrice, solBalance])
 
   const handleAPIRequest = async (nft, key) => {
     if (nft.marketplace_name === NFT_MARKETS.TENSOR) {
@@ -329,16 +369,7 @@ export const SweeperModal = (): ReactElement => {
       pleaseTryAgain(true, err?.message)
     }
   }
-  const { getUIAmount } = useAccounts()
-  const breakpoint = useBreakPoint()
-  const { singleCollection } = useNFTCollections()
 
-  const solBalance = useMemo(
-    () => getUIAmount(WRAPPED_SOL_MINT.toString()),
-    [wallet?.adapter, wallet?.adapter?.publicKey]
-  )
-
-  const { mode } = useDarkMode()
   if (isLoading)
     return (
       <STYLED_POPUP
@@ -364,11 +395,11 @@ export const SweeperModal = (): ReactElement => {
           <div tw="flex items-center justify-center mt-4 sm:mt-1">
             <Lottie animationData={LoadingAnimation} className="loadingAnimation" tw="absolute" />
             <div
-              tw="max-h-[173px] sm:max-h-[125px] sm:max-w-[125px] sm:min-h-[120px] 
-            min-h-[170px] w-[173px] rounded-[10px]"
+              tw="max-h-[164px] mt-[-10.5px] sm:max-h-[125px] sm:max-w-[125px] sm:min-h-[120px] 
+            min-h-[162px] w-[173.5px] sm:mt-0"
             >
               <img
-                tw="w-[100%] rounded-[10px]"
+                tw="w-[100%] rounded-[5px]"
                 src={gfxImageService(
                   IMAGE_SIZES.SQUARE,
                   singleCollection[0].uuid,
@@ -377,11 +408,11 @@ export const SweeperModal = (): ReactElement => {
               />
             </div>
           </div>
-
+          {singleCollection[0]?.is_verified}
           {singleCollection[0]?.is_verified && (
             <div
               tw="font-semibold text-regular dark:text-grey-5 text-black-4 flex items-center
-             justify-center mt-2 sm:text-tiny"
+             justify-center mt-5 sm:mt-2 sm:text-tiny"
             >
               This is a verified creator
               <img tw="h-5 w-5 ml-2" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
@@ -389,7 +420,7 @@ export const SweeperModal = (): ReactElement => {
           )}
           <div
             tw="h-[79px] sm:h-[74px] w-[400px] sm:w-[100%] dark:bg-black-1 bg-white bottom-0 absolute ml-[-3px] 
-            items-center flex flex-col justify-between p-2 border-solid dark:border-black-4 rounded-[2px]
+            items-center flex flex-col justify-between p-2 border-solid dark:border-black-4 rounded-[5px]
              border-grey-2 border-1"
           >
             <div tw="mt-2 mb-2 ml-[-25px]">
@@ -422,24 +453,26 @@ export const SweeperModal = (): ReactElement => {
           </div>
 
           <div tw="mt-1 dark:text-grey-2 text-grey-1 font-semibold text-regular text-center">
-            Here {numberOfNFTs > 1 ? `are` : `is`} the {numberOfNFTs} cheapest NFTs <br /> of this collection:
+            Here {numberOfNFTs > 1 ? `are` : `is`} the {numberOfNFTs} cheapest NFTs{' '}
+            {breakpoint.isDesktop && <br />} of this collection:
           </div>
 
           {/* Large card if filters applied else small card */}
           {filtersApplied ? (
             <div
               className="hideScrollbar"
-              tw="w-[100% - 20px] ml-[-16px] pl-4 mr-[-16px] 
-  pr-4 sm:h-[220px] h-[290px] overflow-x-visible overflow-y-hidden flex"
+              tw="ml-[-16px] pl-4 mr-[-16px] pr-4 sm:h-[245px] h-[290px] overflow-x-visible overflow-y-hidden flex"
             >
+              {/* Mission accomplished   */}
               {Object.values(nftInSweeper).map((nft, index) => (
-                <LargeNFTCardView nft={nft} key={index} />
+                <NFTCardView nft={nft} key={index} />
               ))}
             </div>
           ) : (
             <div
               className="hideScrollbar"
-              tw="w-[100% - 20px] ml-[-16px] pl-4 mr-[-16px] 
+              css={[Object.values(nftInSweeper).length < 4 && tw`items-center !ml-2 sm:!ml-[-8px]`]}
+              tw="ml-[-16px] pl-4 mr-[-16px] 
           pr-4 sm:h-[245px] h-[320px] overflow-x-visible overflow-y-hidden flex  flex-wrap flex-col"
             >
               {Object.values(nftInSweeper).map((nft, index) => (
@@ -447,8 +480,19 @@ export const SweeperModal = (): ReactElement => {
               ))}
             </div>
           )}
+          <div>
+            {singleCollection[0]?.is_verified && (
+              <div
+                tw="font-semibold text-regular dark:text-grey-5 text-black-4 flex items-center
+             justify-center mt-2 sm:mt-3 sm:text-tiny"
+              >
+                This is a verified creator
+                <img tw="h-5 w-5 ml-2" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
+              </div>
+            )}
+          </div>
 
-          <div tw="absolute bottom-[110px] w-[calc(100% - 12px)] font-semibold text-regular">
+          <div tw="absolute bottom-[100px] w-[calc(100% - 12px)] font-semibold text-regular">
             <div tw="flex items-center justify-between dark:text-grey-5 text-black-4">
               <div>Wallet Balance</div>
               <div>{solBalance.toFixed(3)} SOL</div>
@@ -466,22 +510,17 @@ export const SweeperModal = (): ReactElement => {
               <div>{totalPrice.toFixed(3)} SOL</div>
             </div>
           </div>
-          <div tw="absolute bottom-12 sm:bottom-6 w-[calc(100% - 12px)]">
+          <div tw="absolute bottom-1 sm:bottom-0 w-[calc(100% - 12px)]">
             <Button
               loading={isLoading}
               onClick={handleBulkPurchase}
               css={[disableButton ? tw`bg-black-4` : tw`!bg-gradient-1`]}
               cssStyle={tw`w-[100%] h-8.75 font-semibold`}
             >
-              Sweep
+              {insufficientBalance ? `Insufficient SOL` : 'Sweep now'}
             </Button>
+            <TermsText />
           </div>
-
-          {breakpoint.isDesktop && (
-            <div tw="bottom-0 w-[100%] ml-[60px] h-3">
-              <TermsTextNFT string="Sweep now" />
-            </div>
-          )}
         </div>
       )}
     </STYLED_POPUP>
@@ -506,8 +545,7 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
   useEffect(() => {
     setTimeout(() => {
       setNftInSweeper({})
-      setShowSweeperModal(false)
-    }, 1000000)
+    }, 15000)
   }, [])
 
   const totalPrice = useMemo(() => {
@@ -524,6 +562,8 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
 
   return (
     <div tw="h-[100%] ">
+      <Lottie animationData={confettiAnimation} className="confettiAnimation" />
+
       <div tw="font-semibold text-lg dark:text-grey-5 text-black-4 flex items-center justify-center">
         Mission Accomplished!
       </div>
@@ -539,17 +579,18 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
         {filtersApplied ? (
           <div
             className="hideScrollbar"
-            tw="w-[100% - 20px] ml-[-16px] pl-4 mr-[-16px] 
-  pr-4 sm:h-[220px] h-[290px] overflow-x-visible overflow-y-hidden flex"
+            css={[Object.values(nftInSweeper).length < 4 && tw`items-center`]}
+            tw="ml-[-16px] pl-4 mr-[-16px] 
+  pr-4 sm:h-[245px] h-[290px] overflow-x-visible overflow-y-hidden flex"
           >
             {Object.values(nftInSweeper).map((nft, index) => (
-              <LargeNFTCardView nft={nft} key={index} />
+              <NFTCardView nft={nft} key={index} />
             ))}
           </div>
         ) : (
           <div
             className="hideScrollbar"
-            tw="w-[100% - 20px] ml-[-16px] pl-4 mr-[-16px] 
+            tw="ml-[-16px] pl-4 mr-[-16px] 
           pr-4 sm:h-[245px] h-[320px] overflow-x-visible overflow-y-hidden flex  flex-wrap flex-col"
           >
             {Object.values(nftInSweeper).map((nft, index) => (
@@ -564,7 +605,11 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
       >
         <div tw="mb-2">You Paid</div>
         <div>
-          <PriceWithToken token="SOL" price={totalPrice} cssStyle={tw`h-5 w-5 text-lg ml-2 mt-2`} />
+          <PriceWithToken
+            token="SOL"
+            price={formatSOLDisplay(totalPrice, true)}
+            cssStyle={tw`h-5 w-5 text-lg ml-2 mt-2`}
+          />
         </div>
       </div>
       <div>
@@ -653,18 +698,25 @@ const SmallNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement =
     </div>
   )
 }
-const LargeNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement => {
+export const NFTCardView: FC<{
+  nft: INFTInBag | any
+  setSelectedNFT?: Dispatch<SetStateAction<INFTGeneralData>>
+  mintAddress?: INFTInBag
+  showPrice?: string
+  hidePrice?: boolean
+}> = ({ nft, setSelectedNFT, mintAddress, showPrice, hidePrice }): ReactElement => {
   const { singleCollection } = useNFTCollections()
-
-  const nftId = useMemo(
-    () =>
-      nft?.nft_name
+  const nftId = useMemo(() => {
+    try {
+      return nft?.nft_name
         ? nft?.nft_name.includes('#')
           ? '#' + nft?.nft_name.split('#')[1]
           : minimizeTheString(nft?.nft_name, checkMobile() ? 10 : 12)
-        : null,
-    [nft]
-  )
+        : null
+    } catch (err) {
+      return 'null'
+    }
+  }, [nft])
 
   const handleMarketplaceFormat = useCallback((ask) => {
     if (ask?.marketplace_name === null) return AH_NAME(ask?.auction_house_key)
@@ -675,55 +727,88 @@ const LargeNFTCardView: FC<{ nft: INFTInBag | any }> = ({ nft }): ReactElement =
   }, [])
 
   return (
-    <div tw="mt-5 mr-4 dark:bg-black-1 bg-white w-[193px] h-[268px] rounded-[10px] flex flex-col p-2.5">
-      <div tw="flex">
-        <div tw="w-[173px]  min-h-[164px] max-h-[174px]">
-          <div
-            tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[157px] sm:max-w-[157px]
-       overflow-hidden rounded-[8px] sm:min-h-[150px]"
-          >
-            <Image
-              src={nft?.image_url}
-              width={'100%'}
-              preview={false}
-              onError={(e) => console.error(e)}
-              alt="NFT Preview"
-            />
-          </div>
-          <div tw="flex items-center justify-between mt-2 text-black-4 dark:text-grey-5">
-            <div tw="flex font-semibold">
-              {nftId ? nftId : '# Nft'}
-              {nft?.is_verified && (
-                <img tw="ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
-              )}
+    <div
+      css={[mintAddress === nft?.mint_address ? tw`bg-gradient-1` : tw`dark:bg-black-4 bg-grey-4`]}
+      tw=" mt-5 sm:mt-4 mr-4 w-[196px] h-[270px] sm:w-[145px] sm:h-[222px]
+       flex items-center justify-center rounded-[11px] p-[2px]"
+    >
+      <div
+        onClick={setSelectedNFT ? () => setSelectedNFT(nft) : null}
+        tw=" dark:bg-black-1 bg-white w-[193px] h-[267.5px] 
+        sm:w-[143px] sm:h-[220px] rounded-[10px] flex flex-col p-2.5"
+      >
+        <div tw="flex">
+          <div tw="w-[173px] min-h-[164px] max-h-[174px]">
+            <div
+              tw="flex items-center w-full min-h-[164px] max-h-[174px] sm:!max-h-[125px] sm:max-w-[157px]
+ overflow-hidden rounded-[8px] sm:min-h-[120px]"
+            >
+              <Image
+                src={nft?.image_url}
+                width={'100%'}
+                preview={false}
+                onError={(e) => console.error(e)}
+                alt="NFT Preview"
+              />
             </div>
-            <div>
-              <GenericTooltip text={handleMarketplaceFormat(nft)}>
-                <div>
-                  <img
-                    tw="h-5 w-5"
-                    alt="marketplace"
-                    src={`/img/assets/Aggregator/${handleMarketplaceFormat(nft)}.svg`}
-                  />
-                </div>
-              </GenericTooltip>
+            <div tw="flex items-center justify-between mt-2 text-black-4 dark:text-grey-5">
+              <div tw="flex font-semibold">
+                {nftId ? nftId : '# Nft'}
+                {nft?.is_verified && (
+                  <img tw="ml-2" src="/img/assets/Aggregator/verifiedNFT.svg" alt={'verified nft'} />
+                )}
+              </div>
+              <div>
+                {(nft?.marketplace_name || nft?.auction_house_key) && (
+                  <GenericTooltip text={handleMarketplaceFormat(nft)}>
+                    <div>
+                      <img
+                        tw="h-5 w-5"
+                        alt="marketplace"
+                        src={`/img/assets/Aggregator/${handleMarketplaceFormat(nft)}.svg`}
+                      />
+                    </div>
+                  </GenericTooltip>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <GradientText
-              text={minimizeTheString(singleCollection[0].collection_name)}
-              fontSize={15}
-              fontWeight={600}
-              lineHeight={18}
-            />
-          </div>
-          <div>
-            <PriceWithToken token="SOL" price={formatSOLDisplay(nft?.buyer_price)} cssStyle={tw`h-5 w-5`} />
+            <div>
+              <GradientText
+                text={minimizeTheString(singleCollection[0].collection_name)}
+                fontSize={15}
+                fontWeight={600}
+                lineHeight={18}
+              />
+            </div>
+            {hidePrice === undefined && (
+              <div>
+                <PriceWithToken
+                  token="SOL"
+                  price={showPrice ?? formatSOLDisplay(nft?.buyer_price)}
+                  cssStyle={tw`h-5 w-5`}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <div tw="flex flex-col"></div>
+    </div>
+  )
+}
+const TermsText = () => {
+  const breakpoint = useBreakPoint()
+  return (
+    <div tw="text-center pt-2 text-grey-1 dark:text-grey-2 ">
+      By selecting "Sweep Now" you agree {breakpoint.isMobile && <br />} to{' '}
+      <a
+        target="_blank"
+        tw="dark:text-grey-5 text-blue-1"
+        rel="noopener noreferrer"
+        href="https://docs.goosefx.io/risks"
+      >
+        <u tw="text-grey-5 font-semibold"> Terms of Service</u>
+      </a>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
-import { SuccessfulListingMsg, TransactionErrorMsg } from '../../../../components'
+import { SuccessfulListingMsg, SuccessfulListingMsgAMM, TransactionErrorMsg } from '../../../../components'
 import { INFTMetadata } from '../../../../types/nft_details'
 import { checkMobile, notify } from '../../../../utils'
 
@@ -42,6 +42,23 @@ export const pleaseTryAgain = (isBuyingNow = false, message: string): any => {
       <MESSAGE>
         <Row justify="space-between" align="middle">
           <Col>NFT {isBuyingNow ? 'Buying' : 'Biding'} error!</Col>
+          <Col>
+            <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
+          </Col>
+        </Row>
+        <div>{message}</div>
+        <div>Please try again, if the error persists please contact support.</div>
+      </MESSAGE>
+    )
+  })
+}
+export const pleaseTryAgainAMM = (message: string): any => {
+  notify({
+    type: 'error',
+    message: (
+      <MESSAGE>
+        <Row justify="space-between" align="middle">
+          <Col>NFT error!</Col>
           <Col>
             <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
           </Col>
@@ -146,6 +163,39 @@ export const successfulListingMessage = (signature: string, nftMetadata: INFTMet
   )
 })
 
+export const successBidAMMMessage = (collectionName: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsgAMM
+      title={`Success!`}
+      itemName={collectionName}
+      supportText={`Congratulations! 🎉 Your bid for ${collectionName} has been 
+      successfully placed. Good luck in the auction!`}
+    />
+  )
+})
+export const successCancelBidAMMMessage = (collectionName: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsgAMM
+      title={`Success!`}
+      itemName={collectionName}
+      supportText={`Your bid for ${collectionName} has been 
+      successfully Cancelled. Good luck in the auction!`}
+    />
+  )
+})
+export const successSaleAMMMessage = (collectionName: string): any => ({
+  notificationDuration: checkMobile() ? 3000 : 10000,
+  message: (
+    <SuccessfulListingMsgAMM
+      title={`NFT purchased Successfully!`}
+      itemName={collectionName}
+      supportText={`Congratulations! 🎉 Your bid for ${collectionName} has been 
+      successfully placed. Good luck in the auction!`}
+    />
+  )
+})
 export const successBidMatchedMessage = (signature: string, nftMetadata: INFTMetadata, price: string): any => ({
   notificationDuration: checkMobile() ? 3000 : 10000,
   message: (

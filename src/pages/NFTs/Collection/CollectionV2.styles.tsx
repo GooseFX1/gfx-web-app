@@ -10,10 +10,10 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
     color: ${({ theme }) => theme.text30};
     ${({ theme }) => theme.customScrollBar(0)};
     .ant-drawer-content-wrapper {
-      ${tw`sm:rounded-[30px]`}
+      ${tw`sm:rounded-[10px]`}
     }
     .ant-drawer-content {
-      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[30px] sm:border-solid sm:border-1 sm:dark:border-black-4 
+      ${tw`dark:bg-black-2 bg-grey-5 sm:rounded-[10px] sm:border-solid sm:border-1 sm:dark:border-black-4 
       sm:border-grey-2 `}
     }
     .addBorder {
@@ -111,7 +111,7 @@ const ICON_WRAPPER_TD = styled.div`
 
 export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, setIsOpen }): ReactElement => (
   <ICON_WRAPPER_TD onClick={() => setIsOpen((prev) => !prev)}>
-    <CircularArrow cssStyle={tw`h-5 w-5`} invert={isOpen} />
+    <CircularArrow cssStyle={tw`h-5 w-5 sm:h-[30px] sm:w-[30px]`} invert={isOpen} />
   </ICON_WRAPPER_TD>
 )
 
@@ -166,7 +166,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
   .gridContainer {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
-    ${tw`grid pl-2 sm:pl-1 sm:grid-cols-2 rounded-xl pb-[300px]`}
+    ${tw`grid pl-2 sm:pl-1 sm:grid-cols-2 rounded-[10px] pb-[300px]`}
   }
   .gridContainerProfile {
     grid-template-columns: repeat(auto-fit, minmax(195px, ${({ gridType }) => (gridType ? gridType : '1fr')}));
@@ -180,7 +180,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
   .gridItemRegular {
     ${tw`w-full h-full p-[1px] sm:flex max-h-[305px] max-w-[300px]
-     sm:w-[175px] sm:h-[270px] sm:mt-1 rounded-[15px] mx-auto sm:ml-0.5 z-[0]`}
+     sm:w-[175px] sm:h-[270px] sm:mt-1 rounded-[10px] mx-auto sm:ml-0.5 z-[0]`}
     background: ${({ theme }) => theme.borderForNFTCard};
   }
   .gridGradient {
@@ -189,12 +189,12 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
   }
 
   .gridItem {
-    ${tw`relative h-full w-full rounded-[14px] dark:bg-black-1 bg-white 
+    ${tw`relative h-full w-full rounded-[9.7px] dark:bg-black-1 bg-white 
       duration-500 cursor-pointer mx-auto z-[0]`}
   }
 
   .gridItemCollections {
-    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[15px] dark:bg-black-1 bg-white
+    ${tw`h-[295px] w-[190px] sm:w-[185px] rounded-[10px] dark:bg-black-1 bg-white
       duration-500 cursor-pointer mb-[10px] mt-[15px] sm:mt-[8px] mx-auto sm:ml-0.5 z-[0]`};
     border: 1px solid ${({ theme }) => theme.borderForNFTCard}; // change lite mode
   }
@@ -204,7 +204,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
 
     .nftImg {
       ${tw`flex items-center w-full min-h-[164px] max-h-[184px] sm:!max-h-[157px] sm:max-w-[157px]
-       overflow-hidden rounded-[8px] sm:min-h-[150px] `}
+       overflow-hidden rounded-[5px] sm:min-h-[150px] `}
       img {
         height: auto;
         width: 100%;
@@ -218,7 +218,7 @@ export const NFT_COLLECTIONS_GRID = styled.div<{ gridType?: string }>`
     }
 
     .hoverNFT {
-      ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[15px]`}
+      ${tw`absolute opacity-100 duration-300 z-10 w-full h-[102%] mt-[-8px] rounded-[10px]`}
       background: ${({ theme }) => theme.hoverGradient};
     }
   }
@@ -338,7 +338,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       ${tw`mt-10 text-[15px] font-medium`}
     }
     .selected {
-      ${tw`w-[140px] sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
+      ${tw`w-auto sm:pl-3 sm:pr-6  sm:w-[125px] mb-4 sm:mb-0 items-center sm:mt-1 text-[15px] duration-500
        font-semibold text-white flex justify-between flex-col cursor-pointer`}
         white-space: nowrap; /* Prevent content from wrapping */
     }
@@ -353,7 +353,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
     }
     
     .flexItem {
-      ${tw` w-[140px] sm:pl-4 sm:pr-6 mb-4 font-medium text-[15px] text-grey-1
+      ${tw` w-auto sm:pl-4 sm:pr-6 mb-4 font-medium text-[15px] text-grey-1
        sm:mt-1 items-center flex justify-between flex-col cursor-pointer sm:w-[125px]`}
         white-space: nowrap; /* Prevent content from wrapping */
     }

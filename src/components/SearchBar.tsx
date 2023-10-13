@@ -96,7 +96,7 @@ export const SearchBar: FC<{
       <input
         placeholder={placeholder || 'Search by nft name'}
         ref={inputRef}
-        value={filter}
+        value={filter ?? ''}
         onChange={handleInputValue}
       />
       <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />

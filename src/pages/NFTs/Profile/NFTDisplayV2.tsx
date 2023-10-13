@@ -42,7 +42,6 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
     buyNowClicked,
     bidNowClicked,
     setDelistNFT,
-    refreshClicked,
     sellNFTClicked,
     delistNFT,
     showAcceptBid,
@@ -125,7 +124,7 @@ const NFTDisplayV2 = (props: INFTDisplayV2): JSX.Element => {
     fetchNfts()
 
     return () => setCollectedItemsPag(undefined)
-  }, [props.parsedAccounts, refreshClicked, props.type])
+  }, [props.parsedAccounts, props.type])
 
   const getCollectionName = useCallback((value) => {
     if (value?.data?.collection?.name) {

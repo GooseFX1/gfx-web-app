@@ -11,6 +11,7 @@ import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 import { checkMobile } from '../../utils'
 import { dailyVisitData } from '../../api/NFTs'
 import tw from 'twin.macro'
+import { NFTAMMProvider } from '../../context/nft_amm'
 
 const BODY_NFT = styled.div`
   position: relative;
@@ -76,22 +77,24 @@ const NFTAgg: FC = (): ReactElement => {
   }, [publicKey])
 
   return Object.keys(prices) ? (
-    <BODY_NFT css={[profilePage && tw`h-[calc(100vh - 60px)] overflow-y-hidden`]}>
+    <BODY_NFT css={[profilePage ? tw`h-[calc(100vh - 60px)] overflow-y-hidden` : tw`h-[100vh]`]}>
       <NFTAggFiltersProvider>
-        <Switch>
-          <Route exact path={path}>
-            <NFTLandingPageV2 />
-          </Route>
-          <Route exact path={'/nfts/NestQuest'}>
-            <NestQuestSingleListing />
-          </Route>
-          <Route exact path="/nfts/collection/:collectionName">
-            <CollectionV2 />
-          </Route>
-          <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
-            <Profile />
-          </Route>
-        </Switch>
+        <NFTAMMProvider>
+          <Switch>
+            <Route exact path={path}>
+              <NFTLandingPageV2 />
+            </Route>
+            <Route exact path={'/nfts/NestQuest'}>
+              <NestQuestSingleListing />
+            </Route>
+            <Route exact path="/nfts/collection/:collectionName">
+              <CollectionV2 />
+            </Route>
+            <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
+              <Profile />
+            </Route>
+          </Switch>
+        </NFTAMMProvider>
       </NFTAggFiltersProvider>
     </BODY_NFT>
   ) : (
