@@ -126,7 +126,7 @@ const AMMBidsTable = (): ReactElement => {
 }
 
 const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }): ReactElement => {
-  const { setInstantSell, setSelectedBidFromOrders, setRefreshAPI } = useNFTAMMContext()
+  const { setInstantSell, setSelectedBidFromOrders, setRefreshAPI, setCurrentHighest } = useNFTAMMContext()
   const { myNFTsByCollection } = useNFTCollections()
   const userCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const disableAcceptBtn = useMemo(() => myNFTsByCollection.length === 0, [myNFTsByCollection])
@@ -153,6 +153,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
     (bid: IActiveOrdersAMM) => {
       setInstantSell(true)
       setSelectedBidFromOrders(bid)
+      setCurrentHighest({ price: parseFloat(bid.sellNowPrice) / LAMPORTS_PER_SOL_NUMBER, marketPlace: 'Tensor' })
     },
     [activeBids]
   )

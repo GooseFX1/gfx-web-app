@@ -231,7 +231,7 @@ export const SweeperModal = (): ReactElement => {
 
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(true)
+  const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
 
   const { getUIAmount } = useAccounts()
   const breakpoint = useBreakPoint()
@@ -729,7 +729,7 @@ export const NFTCardView: FC<{
   return (
     <div
       css={[mintAddress === nft?.mint_address ? tw`bg-gradient-1` : tw`dark:bg-black-4 bg-grey-4`]}
-      tw=" mt-5 sm:mt-4 mr-4 w-[195px] h-[270px] sm:w-[145px] sm:h-[222px]
+      tw=" mt-5 sm:mt-4 mr-4 w-[196px] h-[270px] sm:w-[145px] sm:h-[222px]
        flex items-center justify-center rounded-[11px] p-[2px]"
     >
       <div

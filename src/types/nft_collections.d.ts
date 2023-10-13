@@ -5,6 +5,34 @@ export enum COLLECTION_TYPES {
   NFT_FEATURED_COLLECTION = 'NFTFeaturedCollection',
   NFT_UPCOMING_COLLECTION = 'NFTUpcomingCollection'
 }
+export type IMEActiveOrdersAMM = {
+  spotPrice: number
+  curveType: string
+  curveDelta: number
+  reinvestFulfillBuy: boolean
+  reinvestFulfillSell: boolean
+  expiry: number
+  lpFeeBp: number
+  buysideCreatorRoyaltyBp: number
+  poolOwner: string
+  sellsideAssetAmount: number
+  buysidePaymentAmount: number
+  buyOrdersAmount: number
+  collectionSymbol: string
+  collectionName: string
+  poolType: string
+  updatedAt: string
+  uuid: string
+  poolKey: string
+  cosigner: string
+  mints: string[]
+  collectionSellerFeeBasisPoints: number
+  lpFeeEarned: number
+  buyPriceTaker: number
+  isMIP1: boolean
+  isOCP: boolean
+  attributes: any
+}
 export type IActiveOrdersAMM = {
   address: string
   createdUnix: number
