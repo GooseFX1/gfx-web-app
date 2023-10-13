@@ -14,7 +14,10 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
   const { setInstantSell, currentHighest, setRefreshAPI } = useNFTAMMContext()
   const wallet = useWallet()
   const { myNFTsByCollection } = useNFTCollections()
-  const disableAcceptBtn = useMemo(() => myNFTsByCollection.length === 0, [myNFTsByCollection])
+  const disableAcceptBtn = useMemo(
+    () => myNFTsByCollection && myNFTsByCollection?.length === 0,
+    [myNFTsByCollection]
+  )
   const { setVisible: setWalletModalVisible } = useWalletModal()
   useEffect(() => {
     const interval = setInterval(() => setRefreshAPI((prev) => prev + 1), 15000)
@@ -37,7 +40,7 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
             <img src={`/img/assets/Aggregator/InstantSell.svg`} tw="w-[60px] h-[66px]" />
           )}
           <div tw="text-grey-1 dark:text-grey-2 text-regular mt-3">Sell now for</div>
-          <div tw="dark:text-grey-5 text-black-4 text-lg">{currentHighest.toFixed(2)} SOL</div>
+          <div tw="dark:text-grey-5 text-black-4 text-lg">{currentHighest.price.toFixed(2)} SOL</div>
           {publicKey ? (
             <Button
               className={!disableAcceptBtn && 'pinkGradient'}

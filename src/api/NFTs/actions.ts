@@ -464,12 +464,25 @@ export const getCloseOrderPoolTx = async (
   }
 }
 
+// tensor
 export const fetchAllActiveOrdersAMM = async (slug: string): Promise<any[]> => {
   try {
     const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM}`, {
       slug: slug
     })
     return res.data
+  } catch (error) {
+    return error
+  }
+}
+
+// Magic Eden
+export const fetchMEActiveOrdersAMM = async (mint_address: string): Promise<any[]> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(`${NFT_API_ENDPOINTS.ACTIVE_ORDERS_AMM_ME}`, {
+      mint_address: mint_address
+    })
+    return res.data.results
   } catch (error) {
     return error
   }
@@ -490,6 +503,37 @@ export const sellNFTOrderAMM = async (
         slug: slug,
         mint: mint,
         min_price_lamports: min_price_lamports
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res.data
+  } catch (error) {
+    return error
+  }
+}
+// magic eden sell amm
+export const sellMENFTOrderAMM = async (
+  pool: string,
+  min_payment_amount: string, // this should be in SOL not lamports
+  seller: string,
+  asset_mint: string,
+  asset_token_account: string,
+  token: string
+): Promise<any> => {
+  try {
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SELL_NFT_ORDER_AMM_ME}`, // magic eden
+      {
+        asset_mint,
+        asset_amount: '1',
+        min_payment_amount: min_payment_amount,
+        pool,
+        seller,
+        asset_token_account
       },
       {
         headers: {

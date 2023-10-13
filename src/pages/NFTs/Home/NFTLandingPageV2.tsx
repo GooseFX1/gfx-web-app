@@ -478,6 +478,7 @@ const SearchResultContainer = ({ searchFilter }: any) => {
   return (
     <SEARCH_RESULT_CONTAINER>
       {searchResultArr !== null &&
+        searchResultArr !== undefined &&
         searchResultArr.length > 0 &&
         searchResultArr.map(
           (data: any, index) =>

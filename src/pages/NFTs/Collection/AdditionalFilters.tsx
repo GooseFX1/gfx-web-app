@@ -476,7 +476,7 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
           <div>Min</div>
           <div tw="flex">
             <STYLED_INPUT
-              value={minValue}
+              value={minValue ?? ''}
               className="styledInput"
               type="number"
               placeholder="0.00"
@@ -489,7 +489,7 @@ const PriceRange: FC<{ isOpen: boolean }> = ({ isOpen }): ReactElement => {
           <div>Max</div>
           <div tw="flex">
             <STYLED_INPUT
-              value={maxValue}
+              value={maxValue ?? ''}
               className="styledInput"
               type="number"
               placeholder={`0.00 `}

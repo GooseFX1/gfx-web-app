@@ -1,21 +1,22 @@
-import React, { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactElement, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { PopupCustom } from '../Popup/PopupCustom'
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { useAccounts, useConnectionConfig, useNFTCollections } from '../../../context'
 import { NFTCardView } from '../Collection/CollectionSweeper'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { Button } from '../../../components'
-import { sellNFTOrderAMM } from '../../../api/NFTs'
+import { sellMENFTOrderAMM, sellNFTOrderAMM } from '../../../api/NFTs'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import { VersionedTransaction } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WRAPPED_SOL_MINT } from '@metaplex-foundation/js'
 import { formatSOLDisplay } from '../../../utils'
 import { useNFTAMMContext } from '../../../context/nft_amm'
-import { confirmTransaction } from '../../../web3'
+import { confirmTransaction, getParsedAccountByMint } from '../../../web3'
 import { pleaseTryAgainAMM } from '../Collection/AggModals/AggNotifications'
 import MissionAccomplishedModal from '../Collection/AggModals/MissionAcomplishedModal'
 import { HoldTight } from '../Collection/AggModals/HoldTight'
@@ -61,11 +62,10 @@ const InstantSellPopup = (): ReactElement => {
   const { instantSellClicked, setInstantSell } = useNFTAMMContext()
   const { myNFTsByCollection } = useNFTCollections()
   const { singleCollection } = useNFTCollections()
-  const { activeOrders, currentHighest, selectedNFT, setSelectedNFT, selectedBidFromOrders, setCurrentHighest } =
+  const { activeOrders, currentHighest, selectedNFT, setSelectedNFT, selectedBidFromOrders, collectionRoyalty } =
     useNFTAMMContext()
   const slug = useMemo(() => singleCollection && singleCollection[0].slug_tensor, [singleCollection])
   const walletContext = useWallet()
-
   const { wallet } = useWallet()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { connection } = useConnectionConfig()
@@ -76,18 +76,30 @@ const InstantSellPopup = (): ReactElement => {
     () => getUIAmount(WRAPPED_SOL_MINT.toString()),
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
-  useEffect(() => {
-    if (selectedBidFromOrders)
-      setCurrentHighest(parseFloat(selectedBidFromOrders?.sellNowPrice) / LAMPORTS_PER_SOL_NUMBER)
-  }, [selectedBidFromOrders])
-
-  const marketFees = useMemo(() => currentHighest * 0.04, [currentHighest])
-  const creatorRoyalties = useMemo(() => currentHighest * 0.05, [currentHighest])
-  const youWillReceive = useMemo(
-    () => currentHighest - marketFees - creatorRoyalties,
-    [currentHighest, marketFees, creatorRoyalties]
+  const displayParams = useMemo(
+    () => ({
+      price:
+        currentHighest.marketPlace === 'Tensor'
+          ? (currentHighest.price * (1 - collectionRoyalty)).toFixed(3)
+          : currentHighest.price.toFixed(3),
+      marketPlace: currentHighest.marketPlace
+    }),
+    [currentHighest, collectionRoyalty]
   )
+  const marketFees = useMemo(() => parseFloat(displayParams.price) * 0.015, [currentHighest, collectionRoyalty])
+  const creatorRoyalties = useMemo(
+    () => parseFloat(displayParams.price) * collectionRoyalty,
+    [currentHighest, collectionRoyalty]
+  )
+  const youWillReceive = useMemo(() => {
+    if (currentHighest.marketPlace === 'Tensor') {
+      return currentHighest.price * (1 - collectionRoyalty)
+    } else {
+      return currentHighest.price
+    }
+  }, [currentHighest, marketFees, creatorRoyalties])
 
   const handleNotifications = async (signature: any): Promise<void> => {
     try {
@@ -104,24 +116,45 @@ const InstantSellPopup = (): ReactElement => {
 
   const handleInstantSellClick = useCallback(async () => {
     setIsLoading(true)
-    const sellOrder = await sellNFTOrderAMM(
-      selectedNFT?.mint_address, // mint
-      slug,
-      selectedBidFromOrders?.address ?? activeOrders[0].address, //pool
-      selectedBidFromOrders?.sellNowPrice ?? activeOrders[0].sellNowPrice, // price
-      userCache?.jwtToken
-    )
 
-    try {
-      const instantSellTx = await VersionedTransaction.deserialize(sellOrder.txs[0].txV0.data)
-      const instantSellSig = await walletContext.sendTransaction(instantSellTx, connection)
-      await handleNotifications(instantSellSig)
-    } catch (err) {
-      pleaseTryAgainAMM(err?.message)
-      setIsLoading(false)
-      console.log(err)
+    if (currentHighest.marketPlace === 'Magiceden') {
+      const parsedAccount = await getParsedAccountByMint({ mintAddress: selectedNFT?.mint_address, connection })
+      const sellOrder = await sellMENFTOrderAMM(
+        currentHighest.pool,
+        currentHighest.price.toString(),
+        publicKey.toString(),
+        selectedNFT?.mint_address, // mint
+        parsedAccount?.pubkey,
+        userCache?.jwtToken
+      )
+      try {
+        const instantSellTxMe = await VersionedTransaction.deserialize(sellOrder.txSigned.data)
+        const instantSellSigMe = await walletContext.sendTransaction(instantSellTxMe, connection)
+        await handleNotifications(instantSellSigMe)
+      } catch (err) {
+        setIsLoading(false)
+        pleaseTryAgainAMM(err?.message)
+      }
     }
-  }, [activeOrders, selectedNFT, slug, activeOrders, userCache?.jwtToken])
+    if (currentHighest.marketPlace === 'Tensor') {
+      const sellOrder = await sellNFTOrderAMM(
+        selectedNFT?.mint_address, // mint
+        slug,
+        selectedBidFromOrders?.address ?? activeOrders[0].address, //pool
+        selectedBidFromOrders?.sellNowPrice ?? activeOrders[0].sellNowPrice, // price
+        userCache?.jwtToken
+      )
+
+      try {
+        const instantSellTx = await VersionedTransaction.deserialize(sellOrder.txs[0].txV0.data)
+        const instantSellSig = await walletContext.sendTransaction(instantSellTx, connection)
+        await handleNotifications(instantSellSig)
+      } catch (err) {
+        pleaseTryAgainAMM(err?.message)
+        setIsLoading(false)
+      }
+    }
+  }, [activeOrders, selectedNFT, slug, userCache?.jwtToken])
 
   return (
     <STYLED_POPUP
@@ -136,7 +169,7 @@ const InstantSellPopup = (): ReactElement => {
     >
       {missionAccomplished ? (
         <MissionAccomplishedModal
-          price={(currentHighest * LAMPORTS_PER_SOL_NUMBER).toString()}
+          price={(currentHighest.price * LAMPORTS_PER_SOL_NUMBER).toString()}
           displayStr="You Successfully sold:"
         />
       ) : isLoading ? (
@@ -154,18 +187,19 @@ const InstantSellPopup = (): ReactElement => {
             className="hideScrollbar"
             tw="w-[104%] sm:mt-[-5px] pl-3 flex overflow-x-auto mt-[-5px] h-[290px] sm:h-[238px]"
           >
-            {myNFTsByCollection.map((nft, index) => (
-              <NFTCardView
-                key={index}
-                nft={nft.data[0]}
-                showPrice={currentHighest.toFixed(3)}
-                setSelectedNFT={setSelectedNFT}
-                mintAddress={selectedNFT?.mint_address}
-              />
-            ))}
+            {myNFTsByCollection &&
+              myNFTsByCollection.map((nft, index) => (
+                <NFTCardView
+                  key={index}
+                  nft={nft.data[0]}
+                  showPrice={displayParams.price}
+                  setSelectedNFT={setSelectedNFT}
+                  mintAddress={selectedNFT?.mint_address}
+                />
+              ))}
           </div>
           <div tw="h-[65px]  sm:h-auto flex items-center flex-col mb-1">
-            {myNFTsByCollection.length !== 0 && (
+            {myNFTsByCollection && myNFTsByCollection.length !== 0 && (
               <div tw="sm:pt-2 sm:flex-row items-center flex flex-col">
                 <div
                   tw="text-average sm:text-regular font-semibold  dark:text-grey-2 text-grey-1 mt-4  sm:mr-1.5
@@ -177,12 +211,12 @@ const InstantSellPopup = (): ReactElement => {
                   {breakpoint.isDesktop ? (
                     <PriceWithToken
                       token="SOL"
-                      price={currentHighest.toFixed(3)}
+                      price={displayParams.price}
                       cssStyle={tw`font-semibold dark:text-grey-5 text-black-4 text-average h-5 w-5 sm:text-regular`}
                     />
                   ) : (
                     <div tw="font-semibold dark:text-grey-5 text-black-4 sm:text-regular">
-                      {currentHighest.toFixed(3)} SOL
+                      {displayParams.price} SOL
                     </div>
                   )}
                 </div>
@@ -208,8 +242,8 @@ const InstantSellPopup = (): ReactElement => {
             <div tw="flex items-center justify-between dark:text-grey-2 text-black-1">
               <div>Marketplace</div>
               <div tw="flex">
-                <img tw="h-5 w-5 mr-2" src={`/img/assets/Aggregator/Tensor.svg`} />
-                Tensor
+                <img tw="h-5 w-5 mr-2" src={`/img/assets/Aggregator/${currentHighest.marketPlace}.svg`} />
+                {currentHighest.marketPlace}
               </div>
             </div>
             <div tw="flex items-center justify-between dark:text-grey-5 text-black-4">
