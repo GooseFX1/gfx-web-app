@@ -26,6 +26,7 @@ const AdminWrapper = lazy(() => import('./pages/NFTs/adminPage/components/AdminW
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
 const NFTAgg = lazy(() => import('./pages/NFTs/NFTAgg'))
 const TradeAnalyticsWrapper = lazy(() => import('./pages/Analytics/trade/TradeAnalyticsWrapper'))
+const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 import { TraderProvider } from './context/trader_risk_group'
@@ -130,6 +131,9 @@ export const Router: FC = () => (
                         </Route>
                         <Route exact path="/analytics/trade">
                           <TradeAnalyticsWrapper />
+                        </Route>
+                        <Route exact path="/analytics/ssl">
+                          <SSLAnalyticsDashboard />
                         </Route>
                         <Route>
                           <GenericNotFound />
