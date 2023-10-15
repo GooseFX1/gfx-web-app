@@ -27,18 +27,23 @@ const WRAPPER = styled.div`
 const SSLAnalyticsDashboard: FC = () => {
   const { wallet, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
-  const [rawData, setRawData] = useState({ data: [] })
+  const [rawData, setRawData] = useState([])
   const [processedData, setProcessedData] = useState(null)
 
   const getAnalyticsData = async (token) => {
     const url = GET_SSL_ANALYTICS + token
     const res = await httpClient('api-services').get(`${url}`)
     if (res.status === 200) {
-      return res.data
+      return res.data.data
     } else {
-      return { data: [] }
+      return []
     }
   }
+
+  const processData = async () => {
+    console.log(rawData)
+  }
+
   useEffect(() => {
     ;(async () => {
       if (isAdminAllowed) {
@@ -49,10 +54,14 @@ const SSLAnalyticsDashboard: FC = () => {
           const info = await getAnalyticsData(token)
           infos.push(info)
         }
-        setRawData({ data: infos })
+        setRawData(infos)
       }
     })()
   }, [isAdminAllowed])
+
+  useEffect(() => {
+    if (rawData.length) processData()
+  }, [rawData])
 
   useEffect(() => {
     ;(async () => {
@@ -75,7 +84,7 @@ const SSLAnalyticsDashboard: FC = () => {
       </div>
     </WRAPPER>
   ) : (
-    <div>Length is: {rawData.data ? rawData.data.length : 0}</div>
+    <div>Length is: {rawData ? rawData.length : 0}</div>
   )
 }
 
