@@ -624,7 +624,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [stakeRewards, walletContext]
   )
 
-  const getUiAmount = useCallback((value: BN, isUsdc = true) => {
+  const getUiAmount = useCallback((value: BN, isUsdc = false) => {
     const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
     const uiAmount = value.divmod(base)
     //console.log('uiAmount', `${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
