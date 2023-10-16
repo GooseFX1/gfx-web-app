@@ -8,6 +8,8 @@ import { GradientText } from '../../../components'
 import { httpClient } from '../../../api'
 import { GET_SSL_ANALYTICS } from '../../TradeV3/perps/perpsConstants'
 import { MINTS } from './utils'
+import { Connection, PublicKey } from '@solana/web3.js'
+import SSLAnalyticsTableWrapper from './SSLAnalyticsTableWrapper'
 
 const WRAPPER = styled.div`
   ${tw`flex justify-center mt-4 items-center flex-col h-screen`}
@@ -28,6 +30,7 @@ const SSLAnalyticsDashboard: FC = () => {
   const { wallet, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
   const [rawData, setRawData] = useState([])
+  const [liveBalances, setLiveBalances] = useState([])
   const [processedData, setProcessedData] = useState(null)
 
   const getAnalyticsData = async (token) => {
@@ -41,7 +44,42 @@ const SSLAnalyticsDashboard: FC = () => {
   }
 
   const processData = async () => {
-    console.log(rawData)
+    //console.log(rawData)
+  }
+
+  const getLiveData = async () => {
+    const aggregatedData = []
+    const connection = new Connection('https://rpc-pool.goosefx.io/rpc', {
+      commitment: 'processed',
+      httpAgent: false,
+      disableRetryOnRateLimit: true
+    })
+    for (let i = 0; i < rawData.length; i++) {
+      const poolData = rawData[i][0]
+      const primarytokenAccount = poolData.tokenAccount
+      const res = await connection.getParsedAccountInfo(new PublicKey(primarytokenAccount))
+      const amount = (res.value.data as any).parsed.info.tokenAmount.uiAmountString
+      const secondaryBalances = []
+      for (let j = 0; j < poolData.secondaryBalances.length; j++) {
+        const secondaryToken = poolData.secondaryBalances[j]
+        const resp = await connection.getParsedAccountInfo(new PublicKey(secondaryToken.tokenAccount))
+        const amount = (resp.value.data as any).parsed.info.tokenAmount.uiAmountString
+        secondaryBalances.push({
+          mintName: secondaryToken.mintName,
+          mint: secondaryToken.mint,
+          price: secondaryToken.price,
+          amount
+        })
+      }
+      aggregatedData.push({
+        mintName: rawData[i][0].mintName,
+        mint: rawData[i][0].mint,
+        price: rawData[i][0].price,
+        amount,
+        secondaryBalances
+      })
+    }
+    setLiveBalances(aggregatedData)
   }
 
   useEffect(() => {
@@ -60,7 +98,10 @@ const SSLAnalyticsDashboard: FC = () => {
   }, [isAdminAllowed])
 
   useEffect(() => {
-    if (rawData.length) processData()
+    if (rawData.length) {
+      processData()
+      getLiveData()
+    }
   }, [rawData])
 
   useEffect(() => {
@@ -84,7 +125,9 @@ const SSLAnalyticsDashboard: FC = () => {
       </div>
     </WRAPPER>
   ) : (
-    <div>Length is: {rawData ? rawData.length : 0}</div>
+    <div>
+      <SSLAnalyticsTableWrapper liveBalances={liveBalances} />
+    </div>
   )
 }
 
