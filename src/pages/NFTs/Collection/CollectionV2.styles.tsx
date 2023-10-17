@@ -106,7 +106,7 @@ export const COLLECTION_VIEW_WRAPPER = styled.div`
 `
 const ICON_WRAPPER_TD = styled.div`
   cursor: pointer;
-  z-index: 1000;
+  z-index: 200;
 `
 
 export const ArrowIcon: FC<{ isOpen: boolean; setIsOpen: any }> = ({ isOpen, setIsOpen }): ReactElement => (
