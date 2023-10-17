@@ -72,7 +72,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
 
   const buttonRefs = useRef<HTMLDivElement[]>([])
   const { handleSlide, setButtonRef } = useAnimateButtonSlide(sliderRef, buttonRefs, displayIndex)
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const pubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   useEffect(() => setProfileNFTOptions(NFT_PROFILE_OPTIONS.ALL), [displayIndex])
 
@@ -114,7 +114,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         >
           {collections}
         </div>
-        {publicKey.toString() === params.userAddress && (
+        {pubKey && pubKey.toString() === params.userAddress && (
           <div
             ref={setButtonRef}
             className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
@@ -126,7 +126,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
         <div
           ref={setButtonRef}
           className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}
-          onClick={() => setDisplayIndex(wallet?.adapter?.publicKey ? 2 : 1)}
+          onClick={() => setDisplayIndex(pubKey ? 2 : 1)}
         >
           Activity
         </div>

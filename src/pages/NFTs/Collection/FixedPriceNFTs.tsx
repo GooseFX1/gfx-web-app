@@ -398,7 +398,7 @@ export const FilterTags = (): ReactElement => {
     []
   )
   return (
-    <WRAPPER tw="flex overflow-x-auto">
+    <WRAPPER tw="flex items-center overflow-x-auto">
       {additionalFilters.maxValueFilter && additionalFilters.minValueFilter && (
         <PILL_SECONDARY $mode={mode} tw="!w-[fit] h-[45px] mt-2 mx-2">
           <div className="layer" tw="!w-[fit] flex p-0.5 pr-2">

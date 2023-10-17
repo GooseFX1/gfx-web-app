@@ -635,8 +635,7 @@ export const ClearAllFiltersButton: FC<{ setOpen?: Dispatch<SetStateAction<boole
     setAdditionalFilters(initialFilters)
   }, [])
   return (
-    <div>
-      {' '}
+    <span>
       {((additionalFilters.marketsFilter?.length > 0 &&
         additionalFilters.marketsFilter?.length !== Object.keys(AH_PROGRAM_IDS).length - 1) ||
         additionalFilters.minValueFilter ||
@@ -651,7 +650,7 @@ export const ClearAllFiltersButton: FC<{ setOpen?: Dispatch<SetStateAction<boole
           Clear All
         </Button>
       )}
-    </div>
+    </span>
   )
 }
 
