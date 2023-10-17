@@ -168,7 +168,7 @@ const CollectionSweeper = (): ReactElement => {
       <div
         className="background"
         css={tw`h-[90px] sm:h-[92px] !w-[15vw] !max-w-[247px] !min-w-[242px] sm:!max-w-[100vw] sm:!w-[99vw] bg-grey-5 
-        sm:bottom-0 sm:absolute fixed z-[1000] flex flex-col items-center dark:bg-black-1 sm:bg-none border-solid 
+        sm:bottom-0 sm:absolute fixed z-[200] flex flex-col items-center dark:bg-black-1 sm:bg-none border-solid 
         bottom-0 `}
       >
         <div css={tw`flex h-8.75 w-[100%] justify-between items-center px-2 `}>
