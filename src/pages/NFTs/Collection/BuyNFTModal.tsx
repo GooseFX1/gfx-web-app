@@ -453,7 +453,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
 
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        if (isPnft || marketPlace === NFT_MARKETS.GOOSE) {
+        if (isPnft && marketPlace === NFT_MARKETS.GOOSE) {
           signature = await sendTransaction(tx, connection, {
             signers: [treasuryWallet],
             skipPreflight: true
