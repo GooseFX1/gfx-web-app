@@ -6,7 +6,7 @@ import 'styled-components/macro'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment/moment'
 import { Loader } from '../Loader'
-import { currencyFormatter } from '../../utils'
+import { numberFormatter } from '../../utils'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
@@ -112,7 +112,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   return (
     <div css={tw`flex w-full justify-between items-center`}>
       <p css={tw`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
-        {currencyFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)} GOFX
+        {numberFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)} GOFX
       </p>
 
       <button

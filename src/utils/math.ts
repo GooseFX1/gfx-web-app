@@ -78,7 +78,7 @@ export const commafy = (num: number, decimal: number): string => {
 }
 export const currencyUnits = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
 
-export const currencyFormatter = (num: number, digits = 2): string => {
+export const numberFormatter = (num: number, digits = 2): string => {
   const exponentNum = num.toExponential(digits)
   const splitNum = exponentNum.toLowerCase().split('e')
   const exponent = Number(splitNum[1])
@@ -88,12 +88,17 @@ export const currencyFormatter = (num: number, digits = 2): string => {
 
   let numString: string
   if (splitNum[1].startsWith('-')) {
-    numString = (numExponented * Math.pow(10, exponent)).toFixed(digits)
+    numString = (numExponented * Math.pow(10, exponent)).toString(10)
   } else {
     numExponented = num / Math.pow(10, exponent)
     const differenceToNextUnit = exponent % 3
-    numString = (numExponented * Math.pow(10, differenceToNextUnit)).toFixed(digits)
+    numString = (numExponented * Math.pow(10, differenceToNextUnit)).toString(10)
   }
 
+  const splitOnDecimal = numString.split('.')
+  //accuracy fix
+  if (splitOnDecimal.length === 1) return `${numString}${unit ?? ''}`
+  const decimal = splitOnDecimal[1].slice(0, digits)
+  numString = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
   return `${numString}${unit ?? ''}`
 }
