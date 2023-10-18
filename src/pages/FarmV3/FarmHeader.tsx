@@ -1,22 +1,23 @@
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
-import { useDarkMode, useSSLContext } from '../../context'
+import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
-import { checkMobile } from '../../utils'
+import { checkMobile, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import useBlacklisted from '../../utils/useBlacklisted'
+import { getPriceObject } from '../../web3'
 
-// const CARD_GRADIENT = styled.div`
-//   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
-//   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-//   flex-shrink: 0;
-// `
+const CARD_GRADIENT = styled.div`
+  ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
+  flex-shrink: 0;
+`
 
-// const INFO_CARD = styled.div`
-//   ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1 px-2.5 `}
-// `
+const INFO_CARD = styled.div`
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1 px-2.5 `}
+`
 
 const POOL_CARD = styled.div`
   ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border border-solid dark:border-grey-2
@@ -24,7 +25,7 @@ const POOL_CARD = styled.div`
 `
 
 const HEADER_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-start relative`}
+  ${tw`flex flex-row justify-start relative mb-5`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -47,31 +48,103 @@ const POOL_CARD_WRAPPER = styled.div`
   }
 `
 
-// const infoCards = [
-//   { name: 'GooseFX TVL', value: '$1.57M' },
-//   { name: 'Total Volume Traded', value: '$127.58M' },
-//   { name: '24H Volume', value: '$12,875K' },
-//   { name: '7D Volume', value: '$12,875K' },
-//   { name: 'Total Fees', value: '$1.25K' }
-// ]
-
 export const FarmHeader: FC = () => {
   const isGeoBlocked = useBlacklisted()
   const { mode } = useDarkMode()
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
-  const { allPoolSslData, sslTableData } = useSSLContext()
+  const { allPoolSslData, sslTableData, liquidityAmount, sslTotalMetrics } = useSSLContext()
+  const { prices } = usePriceFeedFarm()
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
-    const apy = Number(sslTableData?.[data?.token]?.apy)
+    const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
+    const apy = Number(sslTableData?.[tokenName].apy)
     const apyObj = { ...data, apy: apy }
     return apyObj
   })
+
+  const TVL = useMemo(() => {
+    let totalLiquidity = 0
+    allPoolSslData.map((token: SSLToken) => {
+      const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
+      console.log('liquidity amount', liquidityAmount)
+      const liquidityInUSD =
+        prices[getPriceObject(token?.token)]?.current &&
+        prices[getPriceObject(token?.token)]?.current * nativeLiquidity
+      totalLiquidity += liquidityInUSD
+    })
+    return '$' + truncateBigNumber(totalLiquidity)
+  }, [allPoolSslData, liquidityAmount])
+
+  const V24H = useMemo(() => {
+    let totalVolume = 0
+    allPoolSslData.map((token: SSLToken) => {
+      const key = token.token === 'SOL' ? 'WSOL' : token.token
+      const volume = sslTableData?.[key]?.volume
+      const volumeinUSD = volume / 1_000_000
+      totalVolume += volumeinUSD
+    })
+    return '$' + truncateBigNumber(totalVolume)
+  }, [allPoolSslData, sslTableData])
+
+  const V7D = useMemo(() => {
+    let totalVolume = 0
+    allPoolSslData.map((token: SSLToken) => {
+      const key = token.token === 'SOL' ? 'WSOL' : token.token
+      const volume = sslTotalMetrics?.[key]?.volume7D
+      const volumeinUSD = volume / 1_000_000
+      totalVolume += volumeinUSD
+    })
+    return '$' + truncateBigNumber(totalVolume)
+  }, [allPoolSslData, sslTotalMetrics])
+
+  const totalVolumeTraded = useMemo(() => {
+    let totalVolume = 0
+    allPoolSslData.map((token: SSLToken) => {
+      const key = token.token === 'SOL' ? 'WSOL' : token.token
+      const volume = sslTotalMetrics?.[key]?.totalTokenVolume
+      const volumeinUSD = volume / 1_000_000
+      totalVolume += volumeinUSD
+    })
+    return '$' + truncateBigNumber(totalVolume)
+  }, [allPoolSslData, sslTotalMetrics])
+
+  const totalFees = useMemo(() => {
+    let feesSum = 0
+    allPoolSslData.map((token: SSLToken) => {
+      const key = token.token === 'SOL' ? 'WSOL' : token.token
+      const nativeFees = sslTotalMetrics?.[key]?.totalTokenFees / 10 ** token?.mintDecimals
+      const feesInUSD =
+        prices[getPriceObject(token?.token)]?.current && prices[getPriceObject(token?.token)]?.current * nativeFees
+      feesSum += feesInUSD
+    })
+    return '$' + truncateBigNumber(feesSum)
+  }, [allPoolSslData, sslTotalMetrics])
+
+  const infoCards = [
+    { name: 'GooseFX TVL', value: TVL },
+    { name: 'Total Volume Traded', value: totalVolumeTraded },
+    { name: '24H Volume', value: V24H },
+    { name: '7D Volume', value: V7D },
+    { name: 'Total Fees', value: totalFees }
+  ]
 
   return (
     <>
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
-        {
+        {infoCards?.map((card) => (
+          <>
+            <CARD_GRADIENT key={card?.name}>
+              <INFO_CARD>
+                <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
+                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
+                  {card?.value}
+                </div>
+              </INFO_CARD>
+            </CARD_GRADIENT>
+          </>
+        ))}
+        {/* {
           <div
             tw="absolute right-0 border border-solid border-grey-1 w-[207px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
@@ -86,7 +159,7 @@ export const FarmHeader: FC = () => {
             </span>
             <img src="/img/assets/questionMark.svg" alt="question-icon" />
           </div>
-        }
+        } */}
       </HEADER_WRAPPER>
       {isGeoBlocked && (
         <div tw="flex w-full justify-center items-center mb-2">

@@ -136,8 +136,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const disableActionButton = useMemo(() => {
     if (!isWhitelisted) return false
     return (
-      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > 5000) ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > 15000) ||
+      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) ||
+      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
     )
@@ -147,8 +147,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (!isWhitelisted) return `Get Access`
-      if (coin?.token === 'BONK' && liquidity > 5000) return `${coin?.token} Temporarily Closed`
-      if (liquidity > 15000) return `${coin?.token} Temporarily Closed`
+      if (coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
+      if (liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`

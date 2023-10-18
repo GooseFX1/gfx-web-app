@@ -8,7 +8,8 @@ import {
   SSLToken,
   SSLTableData,
   GET_24_CHANGES,
-  IS_WHITELIST
+  IS_WHITELIST,
+  TOTAL_METRICS
 } from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
@@ -30,6 +31,7 @@ interface SSLData {
   allPoolSslData: SSLToken[]
   setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
   sslTableData: SSLTableData
+  sslTotalMetrics: any
   isWhitelisted: boolean
 }
 
@@ -48,6 +50,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
+  const [sslTotalMetrics, setSslTotalMetrics] = useState<SSLTableData>(null)
   const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const getSSLTableData = async () => {
@@ -59,6 +62,18 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setTableData(data)
     } catch (e) {
       setTableData(null)
+    }
+  }
+
+  const getTotalMetrics = async () => {
+    try {
+      const res = await httpClient('api-services').post(`${TOTAL_METRICS}`, {
+        devnet: false
+      })
+      const data = res.data
+      setSslTotalMetrics(data)
+    } catch (e) {
+      setSslTotalMetrics(null)
     }
   }
 
@@ -166,14 +181,14 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   //Call API to get ssl table data. Need to run only once
   useEffect(() => {
-    getSSLTableData()
+    getSSLTableData(), getTotalMetrics()
   }, [])
 
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
         const liquidityAmountsArray = {}
-        for (const token of sslData) {
+        for (const token of allPoolSslData) {
           try {
             const sslAccountKey = await getsslPoolSignerKey(token.mint)
             const response = await connection.getParsedTokenAccountsByOwner(sslAccountKey, {
@@ -188,7 +203,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setLiquidityAmount(liquidityAmountsArray)
       }
     })()
-  }, [sslData, isTxnSuccessfull])
+  }, [allPoolSslData, isTxnSuccessfull])
 
   return (
     <SSLContext.Provider
@@ -208,6 +223,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         allPoolSslData: allPoolSslData,
         setAllPoolSslData: setAllPoolSslData,
         sslTableData: sslTableData,
+        sslTotalMetrics: sslTotalMetrics,
         isWhitelisted: isWhitelisted
       }}
     >

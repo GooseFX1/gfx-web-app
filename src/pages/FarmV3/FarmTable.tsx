@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { commafy, checkMobile, truncateBigNumber } from '../../utils'
+import { checkMobile, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -112,10 +112,14 @@ export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
-  const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts } = useSSLContext()
+  const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts, sslTableData, liquidityAmount } =
+    useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
+  const [sort, setSort] = useState<string>('ASC')
+  const [sortType, setSortType] = useState<string>(null)
+  const { prices } = usePriceFeedFarm()
 
   useEffect(() => {
     sslData?.length && setInitialLoad(false)
@@ -133,17 +137,62 @@ export const FarmTable: FC = () => {
     return count
   }, [pool, filteredLiquidityAccounts, sslData, wallet?.adapter?.publicKey])
 
+  const farmTableRow = useMemo(
+    () =>
+      sslData.map((token: SSLToken) => {
+        const tokenName = token?.token === 'SOL' ? 'WSOL' : token?.token
+        const apy = Number(sslTableData?.[tokenName]?.apy)
+        const volume = sslTableData?.[tokenName]?.volume / 1_000_000
+        const nativeFees = sslTableData?.[tokenName]?.fee / 10 ** token?.mintDecimals
+        const feesInUSD =
+          prices[getPriceObject(token?.token)]?.current &&
+          prices[getPriceObject(token?.token)]?.current * nativeFees
+        const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
+        const liquidityInUSD =
+          prices[getPriceObject(token?.token)]?.current &&
+          prices[getPriceObject(token?.token)]?.current * nativeLiquidity
+        const account = filteredLiquidityAccounts[token?.mint?.toBase58()]
+        const amountDeposited = account ? account?.amountDeposited?.toNumber() / 10 ** token?.mintDecimals : 0
+        const dataObj = {
+          ...token,
+          apy: apy,
+          volume: volume,
+          fee: feesInUSD,
+          liquidity: liquidityInUSD,
+          balance: amountDeposited
+        }
+        return dataObj
+      }),
+    [sslData, sslTableData, liquidityAmount, filteredLiquidityAccounts]
+  )
+
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? sslData.filter((token) => token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()))
-        : [...sslData],
-    [searchTokens, sslData]
+        ? farmTableRow.filter((token) =>
+            token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+          )
+        : [...farmTableRow],
+    [searchTokens, farmTableRow, sort]
   )
 
-  const initiateGlobalSearch = (value) => {
+  const initiateGlobalSearch = (value: string) => {
     setPool(poolType.all)
     setSearchTokens(value)
+  }
+
+  const poolSize = useMemo(
+    () => (showDeposited ? numberOfCoinsDeposited : filteredTokens?.length),
+    [showDeposited, numberOfCoinsDeposited, filteredTokens]
+  )
+
+  const handleColumnSort = (sortValue: string) => {
+    farmTableRow.sort((a, b) => {
+      if (sort === 'DESC') return a[sortValue] > b[sortValue] ? -1 : 1
+      else return a[sortValue] > b[sortValue] ? 1 : -1
+    })
+    setSort((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'))
+    setSortType(sortValue)
   }
 
   return (
@@ -266,7 +315,42 @@ export const FarmTable: FC = () => {
       )}
       <div>
         <table tw="mt-4">
-          <FarmTableHeaders poolSize={showDeposited ? numberOfCoinsDeposited : filteredTokens?.length} />
+          <thead>
+            <tr>
+              <th
+                tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]"
+                onClick={() => handleColumnSort('token')}
+              >
+                {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
+              </th>
+              <th tw="sm:!w-[31vw]" onClick={() => handleColumnSort('apy')}>
+                {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
+              </th>
+              {!checkMobile() && (
+                <th onClick={() => handleColumnSort('liquidity')}>
+                  {TableHeaderTitle('Liquidity', null, true, sort === 'DESC' && sortType === 'liquidity')}{' '}
+                </th>
+              )}
+              {!checkMobile() && (
+                <th onClick={() => handleColumnSort('volume')}>
+                  {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
+                </th>
+              )}
+              {!checkMobile() && (
+                <th onClick={() => handleColumnSort('fee')}>
+                  {TableHeaderTitle('24H Fees', null, true, sort === 'DESC' && sortType === 'fee')}{' '}
+                </th>
+              )}
+              {!checkMobile() && (
+                <th onClick={() => handleColumnSort('balance')}>
+                  {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
+                </th>
+              )}
+              <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[31vw]">
+                {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
+              </th>
+            </tr>
+          </thead>
           <tbody>
             {filteredTokens?.length
               ? filteredTokens.map((coin: SSLToken) => (
@@ -328,24 +412,6 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   )
 }
 
-const FarmTableHeaders: FC<{ poolSize: number }> = ({ poolSize }) => (
-  <thead>
-    <tr>
-      <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]">
-        {TableHeaderTitle('Asset', null, false)}{' '}
-      </th>
-      <th tw="sm:!w-[31vw] ">{TableHeaderTitle('APY', null, false)} </th>
-      {!checkMobile() && <th>{TableHeaderTitle('Liquidity', null, false)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('24H Volume', null, false)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('24H Fees', null, false)} </th>}
-      {!checkMobile() && <th>{TableHeaderTitle('My Balance', null, false)} </th>}
-      <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[31vw]">
-        {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
-      </th>
-    </tr>
-  </thead>
-)
-
 const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
   const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
@@ -403,7 +469,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     () => ({
       apy: apiSslData?.apy,
       fee: apiSslData?.fee,
-      volume: commafy(apiSslData?.volume, 2)
+      volume: apiSslData?.volume
     }),
     [apiSslData]
   )
@@ -455,11 +521,27 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           </td>
           <td>{Number(formattedapiSslData?.apy)?.toFixed(2)}%</td>
           {!checkMobile() && (
-            <td>{liquidity ? '$' + commafy(liquidity, 2) : <SkeletonCommon height="75%" width="75%" />}</td>
+            <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
-          {!checkMobile() && <td>${formattedapiSslData?.volume}</td>}
-          {!checkMobile() && <td>{truncateBigNumber(formattedapiSslData?.fee)}</td>}
-          {!checkMobile() && <td>{userDepositedAmount ? commafy(userDepositedAmount, 2) : '0.00'}</td>}
+          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
+          {!checkMobile() && (
+            <td>
+              <Tooltip
+                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                title={
+                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                    {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
+                  </span>
+                }
+                placement="topRight"
+                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                overlayInnerStyle={{ borderRadius: '8px' }}
+              >
+                ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+              </Tooltip>
+            </td>
+          )}
+          {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
