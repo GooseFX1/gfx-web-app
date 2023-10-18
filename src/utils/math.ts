@@ -86,19 +86,19 @@ export const numberFormatter = (num: number, digits = 2): string => {
   const unitIndex = Math.floor(exponent / 3)
   const unit = currencyUnits[unitIndex]
 
-  let numString: string
+  let numString: number
   if (splitNum[1].startsWith('-')) {
-    numString = (numExponented * Math.pow(10, exponent)).toString(10)
+    numString = numExponented * Math.pow(10, exponent)
   } else {
     numExponented = num / Math.pow(10, exponent)
     const differenceToNextUnit = exponent % 3
-    numString = (numExponented * Math.pow(10, differenceToNextUnit)).toString(10)
+    numString = numExponented * Math.pow(10, differenceToNextUnit)
   }
 
-  const splitOnDecimal = numString.split('.')
+  const splitOnDecimal = numString.toString().split('.')
   //accuracy fix
-  if (splitOnDecimal.length === 1) return `${numString}${unit ?? ''}`
+  if (splitOnDecimal.length === 1) return `${numString.toFixed(digits)}${unit ?? ''}`
   const decimal = splitOnDecimal[1].slice(0, digits)
-  numString = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
-  return `${numString}${unit ?? ''}`
+  const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
+  return `${accurateResult}${unit ?? ''}`
 }
