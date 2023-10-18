@@ -366,7 +366,7 @@ const RewardsRightPanel: FC = () => {
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
-          ${nFormatter(totalEarned)}
+          ${totalEarned >= 1.0 ? nFormatter(totalEarned) : totalEarned.toFixed(4)}
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
