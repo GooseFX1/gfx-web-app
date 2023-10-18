@@ -10,7 +10,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { currencyFormatter } from '../../utils'
+import { numberFormatter } from '../../utils'
 import { Loader } from '../Loader'
 import { Connect } from '../../layouts'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk/dist/constants/swap'
@@ -184,7 +184,7 @@ const EarnRewards: FC = () => {
               userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
             ]}
           >
-            {currencyFormatter(userGoFxBalance.uiAmount)} GOFX
+            {numberFormatter(userGoFxBalance.uiAmount)} GOFX
           </p>
         </div>
         {/* <button
@@ -287,7 +287,7 @@ const EarnRewards: FC = () => {
           ) : userGoFxBalance.uiAmount > 0.0 ? (
             `${isStakeSelected ? 'Stake' : 'Unstake'} ${
               inputValue > 0.0
-                ? `${currencyFormatter(inputValue, inputValue < 0.1 && inputValue > 1e-6 ? 4 : 2)} GOFX`
+                ? `${numberFormatter(inputValue, inputValue < 0.1 && inputValue > 1e-6 ? 4 : 2)} GOFX`
                 : ''
             } `
           ) : (
@@ -370,7 +370,7 @@ const RewardsRightPanel: FC = () => {
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
-          ${currencyFormatter(totalEarned, totalEarned < 0.1 && totalEarned > 1e-6 ? 4 : 2)}
+          ${numberFormatter(totalEarned, totalEarned < 0.1 && totalEarned > 1e-6 ? 4 : 2)}
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
@@ -382,7 +382,7 @@ const RewardsRightPanel: FC = () => {
             gofxStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
           ]}
         >
-          Total Staked: {currencyFormatter(gofxStaked)} GOFX
+          Total Staked: {numberFormatter(gofxStaked)} GOFX
         </p>
         <button
           css={[
@@ -402,7 +402,7 @@ const RewardsRightPanel: FC = () => {
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
           ) : usdcClaimable > 0.0 ? (
-            `Claim ${currencyFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
+            `Claim ${numberFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
           ) : (
             'No USDC Claimable'
           )}
