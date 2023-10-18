@@ -626,10 +626,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getUiAmount = useCallback((value: BN, isUsdc = false) => {
     const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
-    const uiAmount = value.divmod(base)
-    //console.log('uiAmount', `${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
+    //const uiAmount = new anchor.BN(5163).divmod(base)
 
-    return parseFloat(`${uiAmount.div.toString()}.${uiAmount.mod.toString()}`)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const v = value.toString() / base.toString()
+
+    return v
   }, [])
   const hasRewards = useMemo(
     () => rewards?.staking?.unstakeableTickets.length > 0 || getClaimableFees() > 0.0,
