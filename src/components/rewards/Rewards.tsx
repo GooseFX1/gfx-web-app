@@ -255,7 +255,7 @@ const EarnRewards: FC = () => {
             placeholder={'0'}
             onChange={handleInputChange}
             type={'number'}
-            value={inputValue > 0.0 ? inputValue : ''}
+            value={inputValue > 0.0 ? inputValue.toFixed(4) : ''}
           />
           <p
             css={tw`mb-0 text-lg absolute right-[15px] z-[1] text-grey-1
@@ -286,7 +286,9 @@ const EarnRewards: FC = () => {
             </div>
           ) : userGoFxBalance.uiAmount > 0.0 ? (
             `${isStakeSelected ? 'Stake' : 'Unstake'} ${
-              inputValue > 0.0 ? `${currencyFormatter(inputValue, inputValue < 0.1 ? 4 : 2)} GOFX` : ''
+              inputValue > 0.0
+                ? `${currencyFormatter(inputValue, inputValue < 0.1 && inputValue > 1e-6 ? 4 : 2)} GOFX`
+                : ''
             } `
           ) : (
             'Insufficient GOFX'
@@ -368,7 +370,7 @@ const RewardsRightPanel: FC = () => {
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
-          ${currencyFormatter(totalEarned, totalEarned < 0.1 ? 4 : 2)}
+          ${currencyFormatter(totalEarned, totalEarned < 0.1 && totalEarned > 1e-6 ? 4 : 2)}
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
@@ -400,7 +402,7 @@ const RewardsRightPanel: FC = () => {
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
           ) : usdcClaimable > 0.0 ? (
-            `Claim ${currencyFormatter(usdcClaimable, usdcClaimable < 0.1 ? 4 : 2)} USDC`
+            `Claim ${currencyFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
           ) : (
             'No USDC Claimable'
           )}
