@@ -6,6 +6,7 @@ import 'styled-components/macro'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment/moment'
 import { Loader } from '../Loader'
+import { currencyFormatter } from '../../utils'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
@@ -104,14 +105,14 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
     )
     redeemUnstakingTickets([{ index, ticket }]).finally(() => setIsClaiming(false))
   }, [redeemUnstakingTickets, ticket, rewards])
-  const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked).toString(), [ticket.totalUnstaked])
+  const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null
   }
   return (
     <div css={tw`flex w-full justify-between items-center`}>
       <p css={tw`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
-        {uiUnstakeAmount} GOFX
+        {currencyFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)} GOFX
       </p>
 
       <button
