@@ -28,6 +28,7 @@ const NFTAgg = lazy(() => import('./pages/NFTs/NFTAgg'))
 const TradeAnalyticsWrapper = lazy(() => import('./pages/Analytics/trade/TradeAnalyticsWrapper'))
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
+const Account = lazy(() => import('./pages/Account/Account'))
 import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
@@ -124,6 +125,15 @@ export const Router: FC = () => (
                           <PriceFeedFarmProvider>
                             <Farm />
                           </PriceFeedFarmProvider>
+                        </Route>
+                        <Route exact path="/account">
+                          <PriceFeedProvider>
+                            <OrderProvider>
+                              <TraderProvider>
+                                <Account />
+                              </TraderProvider>
+                            </OrderProvider>
+                          </PriceFeedProvider>
                         </Route>
                         <Route exact path="/analytics">
                           <AnalyticsWrapper />
