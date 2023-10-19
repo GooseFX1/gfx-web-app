@@ -7,6 +7,18 @@ const WRAPPER = styled.div`
   ${tw`flex flex-col px-5  w-36`}
   border-right: 1px solid #3C3C3C;
   height: calc(100vh - 52px);
+  div {
+    opacity: 0;
+    transform: translateY(20px);
+    visibility: hidden;
+    transition: opacity 1s, transform 1s, visibility 0s 1s;
+  }
+  .show-history {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    transition: opacity 1s, transform 1s, visibility 0s;
+  }
 `
 
 const SPAN = styled.span`
@@ -64,22 +76,24 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
         />
         History
         <img
-          src={historySelected ? '/img/assets/arrow-circle-down.svg' : '/img/assets/arrow-circle-down-black.svg'}
+          src={historySelected ? '/img/assets/arrow-circle-up.svg' : '/img/assets/arrow-circle-down-black.svg'}
           alt="dropdown icon"
         />
       </SPAN>
-      <SPAN className={selected == 2 && 'selected'} onClick={() => handleClick(2)}>
-        Deposits
-      </SPAN>
-      <SPAN className={selected == 3 && 'selected'} onClick={() => handleClick(3)}>
-        Trades
-      </SPAN>
-      <SPAN className={selected == 4 && 'selected'} onClick={() => handleClick(4)}>
-        Funding
-      </SPAN>
-      <SPAN className={selected == 5 && 'selected'} onClick={() => handleClick(5)}>
-        Liquidations
-      </SPAN>
+      <div className={historySelected && 'show-history'}>
+        <SPAN className={selected == 2 && 'selected'} onClick={() => handleClick(2)}>
+          Deposits
+        </SPAN>
+        <SPAN className={selected == 3 && 'selected'} onClick={() => handleClick(3)}>
+          Trades
+        </SPAN>
+        <SPAN className={selected == 4 && 'selected'} onClick={() => handleClick(4)}>
+          Funding
+        </SPAN>
+        <SPAN className={selected == 5 && 'selected'} onClick={() => handleClick(5)}>
+          Liquidations
+        </SPAN>
+      </div>
     </WRAPPER>
   )
 }
