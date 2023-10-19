@@ -321,9 +321,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Total Earnings"
               value={
                 totalEarned ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`${totalEarned.toFixed(
-                    3
-                  )} (${totalEarnedInUSD} USD)`}</span>
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    {`${totalEarned.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                  </span>
                 ) : (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
                     0.00 {coin?.token} ($0.00 USD)
@@ -469,9 +469,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             keyStr="Total Earnings"
             value={
               totalEarned ? (
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">{`${totalEarned?.toFixed(
-                  3
-                )} ($${totalEarnedInUSD?.toFixed(2)} USD)`}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  {`${totalEarned?.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                </span>
               ) : (
                 <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
                   0.00 {coin?.token} ($0.00 USD)
