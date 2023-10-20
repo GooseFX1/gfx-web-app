@@ -18,6 +18,14 @@ const BODY_NFT = styled.div`
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  & {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 
   * {
     font-family: Montserrat;
@@ -30,7 +38,6 @@ const NFTAgg: FC = (): ReactElement => {
   const { wallet } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const profilePage = useMemo(() => window.location.href.indexOf('profile') > -1, [window.location.href])
 
   useEffect(() => {
     refreshTokenData()
@@ -77,7 +84,7 @@ const NFTAgg: FC = (): ReactElement => {
   }, [publicKey])
 
   return Object.keys(prices) ? (
-    <BODY_NFT css={[profilePage ? tw`h-[calc(100vh - 60px)] overflow-y-hidden` : tw`h-[100vh]`]}>
+    <BODY_NFT css={[tw`h-[calc(100vh - 60px)]`]}>
       <NFTAggFiltersProvider>
         <NFTAMMProvider>
           <Switch>

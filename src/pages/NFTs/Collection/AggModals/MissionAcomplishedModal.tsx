@@ -56,9 +56,10 @@ const MISSION_WRAPPER = styled.div`
     }
   }
 `
-const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
+const MissionAccomplishedModal: FC<{ price: string; displayStr?: string; subTextStr?: string }> = ({
   price,
-  displayStr
+  displayStr,
+  subTextStr
 }): ReactElement => {
   const { selectedNFT } = useNFTAMMContext()
   const { general } = useNFTDetails()
@@ -93,7 +94,7 @@ const MissionAccomplishedModal: FC<{ price: string; displayStr?: string }> = ({
       )}
       <div tw="mt-4 flex items-center font-semibold">
         <div className="proudOwner" tw="!text-[25px] sm:!text-lg">
-          You Received
+          {subTextStr ?? `You Received`}
         </div>
       </div>
       <div tw="mt-4 flex items-center font-semibold">
