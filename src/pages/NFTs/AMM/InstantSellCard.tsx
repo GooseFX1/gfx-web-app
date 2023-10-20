@@ -53,7 +53,7 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
             </Button>
           ) : (
             <div tw="mt-4">
-              <Connect customButtonStyle={[tw`w-[132px] h-8.75`]} />
+              <Connect customButtonStyle={[tw`!w-[132px] !min-w-[132px] h-8.75`]} />
             </div>
           )}
           <Button

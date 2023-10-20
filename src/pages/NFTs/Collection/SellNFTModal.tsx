@@ -624,13 +624,13 @@ export const SellNFTModal: FC<{
               </div>
             )}
 
-            {singleCollection && singleCollection[0]?.is_verified && (
-              <div className="verifiedText">
-                <div>
+            {general && general?.is_verified && (
+              <div className="verifiedText" tw="flex !pt-1">
+                <div tw="flex items-center">
                   {!checkMobile() && (
                     <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
                   )}
-                  This is a verified {checkMobile() && <br />} Creator
+                  <div> This is a verified {checkMobile() && <br />} Creator</div>
                   {checkMobile() && (
                     <img className="verifiedImg" src={`/img/assets/Aggregator/verifiedNFT.svg`} alt="" />
                   )}
@@ -648,7 +648,7 @@ export const SellNFTModal: FC<{
             placeholder="0.0"
             type="number"
             ref={inputRef}
-            value={askPrice}
+            value={askPrice ?? ''}
             onChange={(e) => updateAskPrice(e)}
           />
           <img

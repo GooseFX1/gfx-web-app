@@ -128,7 +128,7 @@ const CollectionSweeper = (): ReactElement => {
   const { mode } = useDarkMode()
   const disableSweepButton = useMemo(() => sweeperCount === 0, [sweeperCount])
   const { singleCollection } = useNFTCollections()
-
+  const { additionalFilters } = useNFTAggregatorFilters()
   useEffect(() => {
     try {
       if (Object.values(nftInSweeper).length === 0) setSweeperCount(0)
@@ -138,8 +138,9 @@ const CollectionSweeper = (): ReactElement => {
   }, [nftInSweeper])
 
   useEffect(() => {
+    setNftInSweeper({})
     setSweeperCount(0)
-  }, [singleCollection])
+  }, [singleCollection, additionalFilters])
 
   // handling removing from sweeper here and adding in single page
   // because i dont have access to nft ask and mint address details here
@@ -232,7 +233,6 @@ export const SweeperModal = (): ReactElement => {
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [missionAccomplished, setMissionAccomplished] = useState<boolean>(false)
-
   const { getUIAmount } = useAccounts()
   const breakpoint = useBreakPoint()
   const { singleCollection } = useNFTCollections()
@@ -545,7 +545,7 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
   useEffect(() => {
     setTimeout(() => {
       setNftInSweeper({})
-    }, 15000)
+    }, 135000)
   }, [])
 
   const totalPrice = useMemo(() => {
@@ -575,7 +575,7 @@ const MissionAccomplishedSweeper: FC<{ setShowSweeperModal: Dispatch<SetStateAct
         You are now a proud owner of: <br />
         <div tw="dark:text-grey-5 text-black-4 ml-1"> {Object.values(nftInSweeper)?.length} NFTs by SMB Gen2 </div>
       </div>
-      <div tw="mt-4">
+      <div tw="mt-4" css={[Object.values(nftInSweeper).length < 4 && tw`pl-[90px] sm:pl-1`]}>
         {filtersApplied ? (
           <div
             className="hideScrollbar"

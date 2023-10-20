@@ -453,7 +453,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
 
         const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        if (isPnft && marketPlace === NFT_MARKETS.GOOSE) {
+        if (marketPlace === NFT_MARKETS.GOOSE) {
           signature = await sendTransaction(tx, connection, {
             signers: [treasuryWallet],
             skipPreflight: true
@@ -551,14 +551,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleOtherBuyOptions = async () => {
     try {
       const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, wal, isPnft)
-      await handleNotifications(tx, formatSOLDisplay(ask.buyer_price), isBuyingNow, ask?.marketplace_name)
+      await handleNotifications(tx, ask.buyer_price, isBuyingNow, ask?.marketplace_name)
     } catch (err) {
       setIsLoading(false)
       pleaseTryAgain(isBuyingNow, 'Failed to load data needed')
     }
   }
 
-  if (missionAccomplished) return <MissionAccomplishedModal price={ask?.buyer_price} />
+  if (missionAccomplished) return <MissionAccomplishedModal price={ask?.buyer_price} subTextStr={`You Paid`} />
   else if (isLoading && isBuyingNow && pendingTxSig) return <HoldTight />
   else
     return (

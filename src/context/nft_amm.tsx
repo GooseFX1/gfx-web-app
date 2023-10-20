@@ -75,7 +75,7 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setRoyalty(onChainData.data.sellerFeeBasisPoints / (100 * 100)) // directly multiply
       }
     })()
-  }, [refMintAddress])
+  }, [refMintAddress, singleCollection])
 
   useEffect(() => {
     ;(async () => {
@@ -87,7 +87,7 @@ export const NFTAMMProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setMagicedenHighest(sortedOrders[0])
       }
     })()
-  }, [refMintAddress])
+  }, [refMintAddress, singleCollection])
 
   useEffect(() => {
     if (tensorHighest && magicedenHighest) {

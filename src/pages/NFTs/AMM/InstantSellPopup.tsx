@@ -77,25 +77,26 @@ const InstantSellPopup = (): ReactElement => {
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const marketFees = useMemo(() => currentHighest.price * 0.015, [currentHighest, collectionRoyalty])
 
   const displayParams = useMemo(
     () => ({
       price:
         currentHighest.marketPlace === 'Tensor'
-          ? (currentHighest.price * (1 - collectionRoyalty)).toFixed(3)
+          ? (currentHighest.price - marketFees).toFixed(3)
           : currentHighest.price.toFixed(3),
       marketPlace: currentHighest.marketPlace
     }),
     [currentHighest, collectionRoyalty]
   )
-  const marketFees = useMemo(() => parseFloat(displayParams.price) * 0.015, [currentHighest, collectionRoyalty])
+
   const creatorRoyalties = useMemo(
     () => parseFloat(displayParams.price) * collectionRoyalty,
     [currentHighest, collectionRoyalty]
   )
   const youWillReceive = useMemo(() => {
     if (currentHighest.marketPlace === 'Tensor') {
-      return currentHighest.price * (1 - collectionRoyalty)
+      return currentHighest.price - marketFees
     } else {
       return currentHighest.price
     }
@@ -259,7 +260,9 @@ const InstantSellPopup = (): ReactElement => {
             disabledColor={tw`dark:bg-black-1 bg-grey-4`}
             cssStyle={tw`h-10 w-[calc(100% - 10px)] text-regular font-semibold mt-5 sm:mt-3`}
           >
-            {selectedNFT ? `Accept Offer for ${youWillReceive.toFixed(2)} SOL` : 'Select NFT(s)'}
+            {selectedNFT
+              ? `Accept Offer for ${youWillReceive.toFixed(youWillReceive < 0.99 ? 3 : 2)} SOL`
+              : 'Select NFT(s)'}
           </Button>
           <TermsText />
         </div>
