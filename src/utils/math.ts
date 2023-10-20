@@ -76,3 +76,29 @@ export const commafy = (num: number, decimal: number): string => {
   }
   return str.join('.')
 }
+export const currencyUnits = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
+
+export const numberFormatter = (num: number, digits = 2): string => {
+  const exponentNum = num.toExponential(digits)
+  const splitNum = exponentNum.toLowerCase().split('e')
+  const exponent = Number(splitNum[1])
+  let numExponented = Number(splitNum[0])
+  const unitIndex = Math.floor(exponent / 3)
+  const unit = currencyUnits[unitIndex]
+
+  let numString: number
+  if (splitNum[1].startsWith('-')) {
+    numString = numExponented * Math.pow(10, exponent)
+  } else {
+    numExponented = num / Math.pow(10, exponent)
+    const differenceToNextUnit = exponent % 3
+    numString = numExponented * Math.pow(10, differenceToNextUnit)
+  }
+
+  const splitOnDecimal = numString.toString().split('.')
+  //accuracy fix
+  if (splitOnDecimal.length === 1) return `${numString.toFixed(digits)}${unit ?? ''}`
+  const decimal = splitOnDecimal[1].slice(0, digits)
+  const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
+  return `${accurateResult}${unit ?? ''}`
+}

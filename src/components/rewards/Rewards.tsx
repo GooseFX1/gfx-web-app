@@ -10,7 +10,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { nFormatter } from '../../utils'
+import { numberFormatter } from '../../utils'
 import { Loader } from '../Loader'
 import { Connect } from '../../layouts'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk/dist/constants/swap'
@@ -148,7 +148,7 @@ const EarnRewards: FC = () => {
       return inputValue <= totalStaked
     }
   }, [inputValue, userGoFxBalance.uiAmount, totalStaked])
-
+  console.log(canStakeOrUnstake)
   // twin.macro crashing on obj.property nested access
   return (
     <div
@@ -184,7 +184,7 @@ const EarnRewards: FC = () => {
               userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
             ]}
           >
-            {nFormatter(userGoFxBalance.uiAmount)} GOFX
+            {numberFormatter(userGoFxBalance.uiAmount)} GOFX
           </p>
         </div>
         {/* <button
@@ -255,7 +255,7 @@ const EarnRewards: FC = () => {
             placeholder={'0'}
             onChange={handleInputChange}
             type={'number'}
-            value={inputValue > 0.0 ? inputValue : ''}
+            value={inputValue > 0.0 ? inputValue.toFixed(4) : ''}
           />
           <p
             css={tw`mb-0 text-lg absolute right-[15px] z-[1] text-grey-1
@@ -285,7 +285,11 @@ const EarnRewards: FC = () => {
               <Loader zIndex={2} />
             </div>
           ) : userGoFxBalance.uiAmount > 0.0 ? (
-            `${isStakeSelected ? 'Stake' : 'Unstake'} ${inputValue > 0.0 ? `${nFormatter(inputValue)} GOFX` : ''} `
+            `${isStakeSelected ? 'Stake' : 'Unstake'} ${
+              inputValue > 0.0
+                ? `${numberFormatter(inputValue, inputValue < 0.1 && inputValue > 1e-6 ? 4 : 2)} GOFX`
+                : ''
+            } `
           ) : (
             'Insufficient GOFX'
           )}
@@ -332,12 +336,11 @@ const RewardsRightPanel: FC = () => {
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
       usdcClaimable: getClaimableFees(),
-      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked, false),
-      totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned)
+      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
+      totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned, true)
     }),
     [rewards, getClaimableFees, publicKey, connection]
   )
-  console.log(rewards.user.staking.userMetadata.totalEarned.toString())
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
@@ -367,7 +370,7 @@ const RewardsRightPanel: FC = () => {
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
-          ${nFormatter(totalEarned)}
+          ${numberFormatter(totalEarned, totalEarned < 0.1 && totalEarned > 1e-6 ? 4 : 2)}
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
@@ -379,7 +382,7 @@ const RewardsRightPanel: FC = () => {
             gofxStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
           ]}
         >
-          Total Staked: {nFormatter(gofxStaked)} GOFX
+          Total Staked: {numberFormatter(gofxStaked)} GOFX
         </p>
         <button
           css={[
@@ -399,7 +402,7 @@ const RewardsRightPanel: FC = () => {
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
           ) : usdcClaimable > 0.0 ? (
-            `Claim ${nFormatter(usdcClaimable)} USDC`
+            `Claim ${numberFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
           ) : (
             'No USDC Claimable'
           )}
