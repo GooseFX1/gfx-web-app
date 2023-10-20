@@ -16,11 +16,15 @@ import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
 
 const WRAPPER = styled.div<{ $index: number }>`
-  ::-webkit-scrollbar {
+  height: calc(100vh - 56px);
+  &::-webkit-scrollbar {
     display: none;
   }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  & {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
   ${tw`dark:bg-black-1 bg-grey-5`}
   table {
     ${tw`w-full dark:bg-black-1 px-5 bg-grey-5 border-separate sm:px-[15px]`}
