@@ -2,11 +2,10 @@ import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
-import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { checkMobile, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
-import useBlacklisted from '../../utils/useBlacklisted'
 import { getPriceObject } from '../../web3'
 
 const CARD_GRADIENT = styled.div`
@@ -49,8 +48,6 @@ const POOL_CARD_WRAPPER = styled.div`
 `
 
 export const FarmHeader: FC = () => {
-  const isGeoBlocked = useBlacklisted()
-  const { mode } = useDarkMode()
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   const { allPoolSslData, sslTableData, liquidityAmount, sslTotalMetrics } = useSSLContext()
   const { prices } = usePriceFeedFarm()
@@ -161,14 +158,6 @@ export const FarmHeader: FC = () => {
           </div>
         } */}
       </HEADER_WRAPPER>
-      {isGeoBlocked && (
-        <div tw="flex w-full justify-center items-center mb-2">
-          <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
-          <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">
-            GooseFX Farm is unavailable <br /> in your location.
-          </div>
-        </div>
-      )}
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
