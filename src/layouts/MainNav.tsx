@@ -471,7 +471,21 @@ const DesktopNav: FC = () => {
         // riveAnimation={'dex'}
         // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
         path={'/trade'}
-        hasDropdown={false}
+        hasDropdown={true}
+        iconBase={'stats'}
+        options={[
+          {
+            text: 'Trade',
+            onClick: () => history.push('/trade'),
+            //onClick: () => null,
+            isActive: pathname.includes('trade')
+          },
+          {
+            text: 'Account',
+            onClick: () => history.push('/account'),
+            isActive: pathname.includes('account')
+          }
+        ]}
       />
       <NavItem
         text={'nfts'}
