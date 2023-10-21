@@ -86,19 +86,27 @@ export const numberFormatter = (num: number, digits = 2): string => {
   const unitIndex = Math.floor(exponent / 3)
   const unit = currencyUnits[unitIndex]
 
-  let numString: number
+  let numCalc: number
   if (splitNum[1].startsWith('-')) {
-    numString = numExponented * Math.pow(10, exponent)
+    numCalc = numExponented * Math.pow(10, exponent)
   } else {
     numExponented = num / Math.pow(10, exponent)
     const differenceToNextUnit = exponent % 3
-    numString = numExponented * Math.pow(10, differenceToNextUnit)
+    numCalc = numExponented * Math.pow(10, differenceToNextUnit)
   }
 
-  const splitOnDecimal = numString.toString().split('.')
+  const splitOnDecimal = numCalc.toString().split('.')
   //accuracy fix
-  if (splitOnDecimal.length === 1) return `${numString.toFixed(digits)}${unit ?? ''}`
+  if (splitOnDecimal.length === 1) return `${numCalc.toFixed(digits)}${unit ?? ''}`
   const decimal = splitOnDecimal[1].slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
   return `${accurateResult}${unit ?? ''}`
+}
+export const getAccurateNumber = (num: number, digits = 2): number => {
+  const splitOnDecimal = num.toString().split('.')
+  //accuracy fix
+  if (splitOnDecimal.length === 1) return num
+  const decimal = splitOnDecimal[1].slice(0, digits)
+  const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
+  return Number(accurateResult)
 }

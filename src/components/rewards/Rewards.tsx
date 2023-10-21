@@ -10,7 +10,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { numberFormatter } from '../../utils'
+import { getAccurateNumber, numberFormatter } from '../../utils'
 import { Loader } from '../Loader'
 import { Connect } from '../../layouts'
 import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk/dist/constants/swap'
@@ -69,44 +69,40 @@ const EarnRewards: FC = () => {
     [rewards.user.staking.userMetadata.totalStaked]
   )
   const handleHalf = useCallback(async () => {
-    let half = '0'
+    let half: number
     if (isStakeSelected) {
-      half = (userGoFxBalance.uiAmount / 2).toString()
+      half = userGoFxBalance.uiAmount / 2
     } else {
-      half = (totalStaked / 2).toString()
+      half = totalStaked / 2
     }
 
-    setInputValue(parseFloat(half))
-    if (inputRef.current) {
-      inputRef.current.input.value = half
-    }
-  }, [userGoFxBalance, inputRef, totalStaked, isStakeSelected])
+    setInputValue(getAccurateNumber(half))
+  }, [userGoFxBalance, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
-    let max = userGoFxBalance.uiAmount.toString()
-    if (!isStakeSelected) max = totalStaked.toString()
-    setInputValue(parseFloat(max))
-    if (inputRef.current) {
-      inputRef.current.input.value = max
-    }
-  }, [userGoFxBalance, inputRef, isStakeSelected, totalStaked])
+    let max = userGoFxBalance.uiAmount
+    if (!isStakeSelected) max = totalStaked
+    setInputValue(getAccurateNumber(max))
+  }, [userGoFxBalance, isStakeSelected, totalStaked])
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
 
   const handleStakeUnstake = useCallback(async () => {
-    if (!wallet || !connection || !connected || !inputRef.current) {
+    if (!wallet || !connection || !connected) {
+      console.warn('WALLET NOT CONNECTED')
       return
     }
-    const amount = parseFloat(inputRef.current?.input.value)
-    if (!amount || isNaN(amount)) {
+
+    if (!inputValue || inputValue <= 0) {
+      console.warn('INPUT VALUE IS NOT VALID', inputValue)
       return
     }
 
     setStakeLoading(true)
     if (isStakeSelected) {
       try {
-        await stake(amount)
-        console.log(`Successful Stake: ${publicKey.toBase58()} - ${amount}`)
+        await stake(inputValue)
+        console.log(`Successful Stake: ${publicKey.toBase58()} - ${inputValue}`)
       } catch (error) {
         console.error(error)
       } finally {
@@ -116,7 +112,7 @@ const EarnRewards: FC = () => {
       setIsUnstakeConfirmationModalOpen(true)
     }
     setStakeLoading(false)
-  }, [stake, inputRef, network, isStakeSelected])
+  }, [stake, inputValue, network, isStakeSelected])
 
   const handleInputChange = useCallback((e) => {
     const value = parseFloat(e.target.value)
@@ -141,14 +137,13 @@ const EarnRewards: FC = () => {
   }, [])
 
   const canStakeOrUnstake = useMemo(() => {
-    if (inputValue == 0) return false
+    if (inputValue <= 0) return false
     if (isStakeSelected) {
       return inputValue <= userGoFxBalance.uiAmount
     } else {
       return inputValue <= totalStaked
     }
   }, [inputValue, userGoFxBalance.uiAmount, totalStaked])
-  console.log(canStakeOrUnstake)
   // twin.macro crashing on obj.property nested access
   return (
     <div
@@ -166,9 +161,9 @@ const EarnRewards: FC = () => {
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
             isStakeSelected={isStakeSelected}
-            inputRef={inputRef}
             userGoFxBalance={userGoFxBalance}
             setInputValue={setInputValue}
+            inputValue={inputValue}
             isStakeLoading={isStakeLoading}
           />
         )}
@@ -206,7 +201,7 @@ const EarnRewards: FC = () => {
           <StakeUnstakeToggle
             setIsStakeSelected={setIsStakeSelected}
             isStakeSelected={isStakeSelected}
-            inputRef={inputRef}
+            inputValue={inputValue}
             userGoFxBalance={userGoFxBalance}
             setInputValue={setInputValue}
             isStakeLoading={isStakeLoading}
@@ -255,7 +250,7 @@ const EarnRewards: FC = () => {
             placeholder={'0'}
             onChange={handleInputChange}
             type={'number'}
-            value={inputValue > 0.0 ? inputValue.toFixed(4) : ''}
+            value={inputValue > 0.0 ? inputValue : ''}
           />
           <p
             css={tw`mb-0 text-lg absolute right-[15px] z-[1] text-grey-1
