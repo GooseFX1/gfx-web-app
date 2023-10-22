@@ -77,7 +77,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTableData?.[key]?.volume
-      const volumeinUSD = volume / 1_000_000
+      const volumeinUSD = volume / (1_000_000 * 2)
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
@@ -88,7 +88,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.volume7D
-      const volumeinUSD = volume / 1_000_000
+      const volumeinUSD = volume / (1_000_000 * 2)
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
@@ -99,7 +99,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.totalTokenVolume
-      const volumeinUSD = volume / 1_000_000
+      const volumeinUSD = volume / (1_000_000 * 2)
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
@@ -161,7 +161,7 @@ export const FarmHeader: FC = () => {
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
-            Top Pools
+            Top Single Asset Pools
           </div>
         </div>
         {/* {checkMobile() && (

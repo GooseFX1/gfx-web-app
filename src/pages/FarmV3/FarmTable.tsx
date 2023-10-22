@@ -488,7 +488,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           className={isExpanded && 'tableRowGradient'}
           onClick={() => setIsExpanded((prev) => !prev)}
         >
-          <td tw="!justify-start">
+          <td tw="!justify-start relative">
             {userDepositedAmount ? (
               <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
             ) : (
@@ -523,7 +523,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           {!checkMobile() && (
             <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
-          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
+          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume / 2)}</td>}
           {!checkMobile() && (
             <td>
               <Tooltip
