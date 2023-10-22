@@ -42,7 +42,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     setIsTxnSuccessfull,
     filteredLiquidityAccounts,
     liquidityAmount,
-    isWhitelisted
+    isWhitelisted,
+    sslTableData
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -97,6 +98,36 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       prices[getPriceObject(coin?.token)]?.current &&
       prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[tokenMintAddress],
     [liquidityAmount, tokenMintAddress, isTxnSuccessfull, coin]
+  )
+
+  const apiSslData = useMemo(() => {
+    try {
+      if (sslTableData) {
+        const key = coin.token === 'SOL' ? 'WSOL' : coin.token
+        const decimal = coin.mintDecimals
+        return {
+          apy: sslTableData[key]?.apy,
+          fee: sslTableData[key]?.fee / 10 ** decimal,
+          volume: sslTableData[key]?.volume / 1_000_000
+        }
+      } else
+        return {
+          apy: 0,
+          fee: 0,
+          volume: 0
+        }
+    } catch (e) {
+      console.log('error in ssl api data: ', e)
+    }
+  }, [coin, sslTableData])
+
+  const formattedapiSslData = useMemo(
+    () => ({
+      apy: apiSslData?.apy,
+      fee: apiSslData?.fee,
+      volume: apiSslData?.volume
+    }),
+    [apiSslData]
   )
 
   const totalEarned = useMemo(
@@ -288,13 +319,21 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="24H Volume"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 {coin?.token}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  ${truncateBigNumber(formattedapiSslData?.volume)} {coin?.token}
+                </span>
               }
             />
             <FarmStats
               keyStr="24H Fees"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">00.00 {coin?.token}</span>
+                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  {' '}
+                  ${truncateBigNumber(
+                    formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current
+                  )}{' '}
+                  {coin?.token}
+                </span>
               }
             />
             <FarmStats

@@ -263,7 +263,7 @@ const LeaderBoard: FC = () => {
           tw="relative h-[213px] w-11/12 border border-solid dark:border-grey-2 border-grey-1 
             mx-auto my-3.75 rounded-tiny pt-5 px-10"
         >
-          <div tw="text-center text-lg font-semibold mb-3 dark:text-grey-5 text-black-4">Monke Dao</div>
+          <div tw="text-center text-lg font-semibold mb-3 dark:text-grey-5 text-black-4">MonkeDAO</div>
           <BANNER_BTN>
             <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
           </BANNER_BTN>
@@ -288,7 +288,7 @@ const LeaderBoard: FC = () => {
             <BANNER_BTN>
               <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
             </BANNER_BTN>
-            <BANNER_TXT_2>Monke Dao</BANNER_TXT_2>
+            <BANNER_TXT_2>MonkeDAO</BANNER_TXT_2>
           </div>
         </BANNER_WRAPPER>
       )}
