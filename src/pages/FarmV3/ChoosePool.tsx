@@ -73,7 +73,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
       ${tw`font-semibold text-lg dark:text-grey-5 text-black-4 text-left mt-6 mb-3.75 sm:text-average`}
     }
     .cta {
-      ${tw`text-white text-regular font-semibold cursor-pointer w-[152px] h-[50px] rounded-half
+      ${tw`text-white text-regular font-semibold cursor-pointer w-[152px] h-[35px] rounded-half
         mx-auto flex flex-row justify-center items-center mt-5 mb-3 sm:mt-[30px]`}
       background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     }
