@@ -47,6 +47,7 @@ const gfxConfirmTransaction = async (
   }
   const requiredCommitment = getCommitmentIndex(statusType)
   const onChainCommitment = getCommitmentIndex(res.value[0]?.confirmationStatus)
+  if (res.value[0]?.err) throw new Error(res.value[0]?.err.toString())
 
   if (onChainCommitment > -1 && (onChainCommitment >= requiredCommitment || onChainCommitment === 2)) {
     const confirm = { value: { err: null } }
