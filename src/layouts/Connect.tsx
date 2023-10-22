@@ -111,6 +111,8 @@ export const Connect: FC<MenuItemProps> = ({
           text={`We are sorry, ${
             pathname.includes('trade') ? 'Trade' : 'Farm'
           } is currently unavailable in your location`}
+          tooltipMode={true}
+          active={!canConnect}
         >
           <Menu.Button
             as={'button'}
