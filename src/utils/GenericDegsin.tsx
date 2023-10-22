@@ -169,23 +169,29 @@ const InfoImgGFXAppraisal: FC<{ setAppraisalPopup: Dispatch<SetStateAction<boole
 )
 
 // if you want info icon send infoIcon = true else just send children
-export const GenericTooltip: FC<{ text: string; children?: any; tooltipMode?: boolean }> = ({
+export const GenericTooltip: FC<{ text: string; children?: any; tooltipMode?: boolean; active?: boolean }> = ({
   text,
   tooltipMode,
-  children
+  children,
+  active
 }): JSX.Element => {
   const { mode } = useDarkMode()
-  if (children)
+
+  if (!active && children) {
+    return children
+  } else if (active && children) {
     return (
       <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#eeeeee' : '#000'}>
         {children}
       </Tooltip>
     )
-  return (
-    <img className="info-icon" src={`/img/assets/info-icon-${tooltipMode ? mode : 'dark'}.svg`} alt="" /> && (
-      <Tooltip placement="topLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
-        <span>{text}</span>
-      </Tooltip>
+  } else {
+    return (
+      <img className="info-icon" src={`/img/assets/info-icon-${tooltipMode ? mode : 'dark'}.svg`} alt="" /> && (
+        <Tooltip placement="topLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+          <span>{text}</span>
+        </Tooltip>
+      )
     )
-  )
+  }
 }
