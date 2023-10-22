@@ -1,6 +1,7 @@
-import React, { FC, useCallback, useState, useEffect } from 'react'
+import React, { FC, useCallback, useState, useEffect, useMemo } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
+import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
@@ -65,6 +66,9 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
 `
 
+// metamask detection
+initializeWhenDetected()
+
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
@@ -94,7 +98,16 @@ export const WalletsModal: FC = () => {
     [select, handleCancel]
   )
 
-  const detectedWallets = wallets.filter(({ readyState }) => readyState === WalletReadyState.Installed)
+  // filters detected wallets and de-duplicates
+  const detectedWallets = useMemo(
+    () =>
+      wallets
+        .filter(({ readyState }) => readyState === WalletReadyState.Installed)
+        .filter(
+          (value, index, self) => self.findIndex((item) => item.adapter.name === value.adapter.name) === index
+        ),
+    [wallets]
+  )
 
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />

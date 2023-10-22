@@ -46,6 +46,7 @@
     "@solana/wallet-adapter-walletconnect": "^0.1.16",
     "@solana/wallet-adapter-wallets": "^0.19.21",
     "@solana/web3.js": "^1.75.0",
+    "@solflare-wallet/metamask-wallet-standard": "^1.0.7",
     "antd": "^4.21.6",
     "axios": "^0.24.0",
     "bn.js": "^5.2.0",
