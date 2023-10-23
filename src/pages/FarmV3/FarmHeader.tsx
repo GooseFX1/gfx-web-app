@@ -77,7 +77,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTableData?.[key]?.volume
-      const volumeinUSD = volume / (1_000_000 * 2)
+      const volumeinUSD = volume / 1_000_000
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
@@ -88,7 +88,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.volume7D
-      const volumeinUSD = volume / (1_000_000 * 2)
+      const volumeinUSD = volume / 1_000_000
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
@@ -99,7 +99,7 @@ export const FarmHeader: FC = () => {
     allPoolSslData.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.totalTokenVolume
-      const volumeinUSD = volume / (1_000_000 * 2)
+      const volumeinUSD = volume / 1_000_000
       totalVolume += volumeinUSD
     })
     return '$' + truncateBigNumber(totalVolume)
