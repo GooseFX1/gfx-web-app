@@ -433,7 +433,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/twitterNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/Aggregator/twitterNew.svg`} alt="" />
                 </a>
               )}
 
@@ -443,7 +443,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/telegramNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/Aggregator/telegramNew.svg`} alt="" />
                 </a>
               )}
               {currentUserProfile.discord_profile && (
@@ -452,12 +452,12 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
                   target={'_blank'}
                   rel={'noreferrer'}
                 >
-                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/discordNew.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/Aggregator/discordNew.svg`} alt="" />
                 </a>
               )}
               {currentUserProfile.website_link && (
                 <a href={validExternalLink(currentUserProfile.website_link)} target={'_blank'} rel={'noreferrer'}>
-                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/website.svg`} alt="" />
+                  <img tw="h-[32px] w-[32px] ml-2" src={`/img/assets/Aggregator/website.svg`} alt="" />
                 </a>
               )}
             </div>

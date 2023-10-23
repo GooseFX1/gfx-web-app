@@ -165,7 +165,7 @@ export const MyNFTBag = (): ReactElement => {
           <p
             css={[
               tw`mb-0 absolute top-1/4 transform -translate-x-1/2 -translate-y-1/2 text-tiny font-medium
-                      text-white mt-0.5 h-4`
+                      dark:text-white mt-[3px] h-4 text-grey-1`
             ]}
           >
             {itemsPresentInBag}

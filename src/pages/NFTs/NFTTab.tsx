@@ -140,6 +140,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
 const ProfileNFTFiltersDropdown: FC<{ displayIndex: number }> = ({ displayIndex }) => {
   const { profileNFTOptions } = useNFTAggregatorFilters()
   const [arrow, setArrow] = useState<boolean>(false)
+  const { mode } = useDarkMode()
   return (
     <div>
       <Dropdown
@@ -150,7 +151,7 @@ const ProfileNFTFiltersDropdown: FC<{ displayIndex: number }> = ({ displayIndex 
         trigger={checkMobile() ? ['click'] : ['hover']}
       >
         {checkMobile() ? (
-          <img src="/img/assets/Aggregator/shareButtonMobile.svg" tw="h-5 w-2 mr-5 sm:mr-3" />
+          <img src={`/img/assets/Aggregator/threeDots${mode}.svg`} tw="h-8.75 w-5 mr-5 sm:mr-3" />
         ) : (
           <div tw="flex items-center h-8.75 ml-2">
             <div className="offerBtn">{profileNFTOptions.replace('_', ' ')}</div>

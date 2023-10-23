@@ -5,7 +5,7 @@ import { Button } from '../../../components'
 import { useNFTAMMContext } from '../../../context/nft_amm'
 import { signAndUpdateDetails } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useNFTCollections, useWalletModal } from '../../../context'
+import { useDarkMode, useNFTCollections, useWalletModal } from '../../../context'
 import { Connect } from '../../../layouts'
 
 const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }> = ({
@@ -13,6 +13,7 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
 }): ReactElement => {
   const { setInstantSell, currentHighest, setRefreshAPI } = useNFTAMMContext()
   const wallet = useWallet()
+  const { mode } = useDarkMode()
   const { myNFTsByCollection } = useNFTCollections()
   const disableAcceptBtn = useMemo(
     () => myNFTsByCollection && myNFTsByCollection?.length === 0,
@@ -35,7 +36,7 @@ const InstantSellCard: FC<{ setDisplayIndex: Dispatch<SetStateAction<number>> }>
       <div className={`gridItemRegular ${!disableAcceptBtn && `gridGradient`}`}>
         <div tw="w-[100%] h-[100%] bg-white dark:bg-black-1 rounded-[9.7px] flex flex-col items-center justify-center">
           {disableAcceptBtn ? (
-            <img src={`/img/assets/Aggregator/noNFTsToSell.svg`} tw="w-[60px] h-[66px]" />
+            <img src={`/img/assets/Aggregator/noNFTsToSell${mode}.svg`} tw="w-[60px] h-[66px]" />
           ) : (
             <img src={`/img/assets/Aggregator/InstantSell.svg`} tw="w-[60px] h-[66px]" />
           )}

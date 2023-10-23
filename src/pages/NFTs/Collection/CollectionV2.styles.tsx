@@ -347,7 +347,7 @@ export const NFT_FILTERS_CONTAINER = styled.div<{ index }>`
       items-center flex justify-between flex-col cursor-pointer`}
     }
     .selectedProfile {
-      ${tw`w-[130px] sm:w-[33%] sm:pl-1 mb-4 items-center sm:mt-1 text-[#5855ff] dark:text-white
+      ${tw`w-[130px] sm:w-[33%] sm:pl-1 mb-4 items-center sm:mt-1  text-white
        font-semibold  flex justify-between flex-col cursor-pointer !z-[20]`}
     }
     }
