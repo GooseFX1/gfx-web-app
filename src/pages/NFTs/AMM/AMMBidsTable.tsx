@@ -18,6 +18,7 @@ import { pleaseTryAgain, successCancelBidAMMMessage } from '../Collection/AggMod
 import useBreakPoint from '../../../hooks/useBreakPoint'
 import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { Checkbox } from 'antd'
+import NoContent from '../Profile/NoContent'
 
 const WRAPPER_TABLE = styled.div<{ $cssStyle }>`
   overflow-x: hidden;
@@ -118,7 +119,11 @@ const AMMBidsTable = (): ReactElement => {
         <thead>{breakpoint.isDesktop && <NFTAMMTitles />}</thead>
         {/* <NFTActiveBidsRow activeBids={activeOrders} /> */}
         <tbody>
-          <NFTActiveBidsRow activeBids={filteredActiveOrders} />
+          {filteredActiveOrders.length ? (
+            <NFTActiveBidsRow activeBids={filteredActiveOrders} />
+          ) : (
+            <NoContent type="ammBids" />
+          )}
         </tbody>
       </table>
     </WRAPPER_TABLE>
@@ -219,7 +224,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
                   <PriceWithToken
                     token="SOL"
                     price={formatSOLDisplay(bid.sellNowPrice)}
-                    cssStyle={tw`h-5 w-5 sm:text-tiny`}
+                    cssStyle={tw`h-5 w-5 sm:text-tiny sm:ml-1`}
                   />
                 </div>
                 <div tw="flex ">
@@ -238,19 +243,21 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
               {breakpoint.isDesktop ? (
                 truncateAddress(bid.ownerAddress)
               ) : (
-                <div tw="ml-4">
+                <div tw="ml-4 sm:ml-6">
                   <div tw="flex items-center sm:text-tiny ">
                     <div tw="mr-2">User:</div>
                     <div
                       onClick={() => window.open(`${profileLink}${bid.ownerAddress}`)}
-                      tw="sm:text-tiny cursor-pointer"
+                      tw="sm:text-tiny cursor-pointer dark:text-white text-blue-1"
                     >
                       {truncateAddress(bid.ownerAddress)}
                     </div>
                   </div>
                   <div tw="flex items-center">
                     <div tw="mr-2">time:</div>
-                    <div tw="sm:text-tiny whitespace-nowrap">{getHumanReadableTime(bid)}</div>
+                    <div tw="sm:text-tiny whitespace-nowrap dark:text-white text-black-4">
+                      {getHumanReadableTime(bid)}
+                    </div>
                   </div>
                 </div>
               )}
@@ -285,7 +292,7 @@ const NFTActiveBidsRow: FC<{ activeBids: IActiveOrdersAMM[] }> = ({ activeBids }
                 disabled={disableAcceptBtn}
                 disabledColor={tw`dark:bg-black-2 bg-grey-4`}
                 onClick={() => handleAcceptClicked(bid)}
-                tw="h-[30px] w-[110px] sm:w-[92px] sm:h-8.75 text-white ml-auto"
+                tw="h-[30px] w-[110px] sm:w-[92px] sm:h-8.75 dark:text-white text-grey-1 ml-auto"
               >
                 {disableAcceptBtn ? `No NFTs` : breakpoint.isDesktop ? `Accept Bid` : `Accept`}
               </Button>

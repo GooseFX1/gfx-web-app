@@ -61,6 +61,10 @@ const options = {
     mainText: 'No Bids',
     subText: 'Bids you make or receive \n will be shown here'
   },
+  ammBids: {
+    mainText: 'No Bids',
+    subText: 'Bids you make will be shown here'
+  },
   noItems: {
     mainText: 'No Items',
     subText: `Start buying or bidding ${
@@ -109,13 +113,14 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
   }
 
   const subText = obj.subText
+  const imageType = type === 'ammBids' ? 'bids' : type
   return (
     <NO_CONTENT $cssStyle={cssStyle}>
       <div className="spacing" tw="flex flex-col items-center">
         <img
           className="no-data-image"
-          src={`/img/assets/${type}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.svg`}
-          alt={`no-${type}-found`}
+          src={`/img/assets/${imageType}-no-data-${mode === 'dark' ? 'dark' : 'lite'}.svg`}
+          alt={`no-${imageType}-found`}
         />
         <div className="main-text">{obj.mainText}</div>
         <div className="sub-text">
