@@ -55,7 +55,7 @@ const WRAPPER = styled.div`
     sm:h-[52px] rounded-[20px 20px 5px 5px] text-regular`}
 
     tr {
-      ${tw`h-[40px] sm:h-full`}
+      ${tw`h-10 sm:h-full`}
       border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
 
       th {
@@ -323,8 +323,23 @@ export const FarmTable: FC = () => {
               >
                 {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
               </th>
-              <th tw="sm:!w-[31vw]" onClick={() => handleColumnSort('apy')}>
-                {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
+              <th
+                tw="!flex !flex-row !justify-center !items-center sm:!w-[31vw]"
+                onClick={() => handleColumnSort('apy')}
+              >
+                <Tooltip
+                  color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                  title={
+                    <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                      APY is calculated based on 7D fees
+                    </span>
+                  }
+                  placement="topLeft"
+                  overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                  overlayInnerStyle={{ borderRadius: '8px' }}
+                >
+                  {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
+                </Tooltip>
               </th>
               {!checkMobile() && (
                 <th onClick={() => handleColumnSort('liquidity')}>
