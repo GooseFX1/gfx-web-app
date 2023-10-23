@@ -523,7 +523,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           {!checkMobile() && (
             <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
           )}
-          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume / 2)}</td>}
+          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
           {!checkMobile() && (
             <td>
               <Tooltip
