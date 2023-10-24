@@ -88,31 +88,31 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 15000
+      cappedDeposit: 75000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 15000
+      cappedDeposit: 75000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 15000
+      cappedDeposit: 20000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 15000
+      cappedDeposit: 17000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 7500
+      cappedDeposit: 10000
     }
   ],
   devnet: [
@@ -120,31 +120,31 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 15000
+      cappedDeposit: 75000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 15000
+      cappedDeposit: 75000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 15000
+      cappedDeposit: 20000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 15000
+      cappedDeposit: 17000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 5000
+      cappedDeposit: 10000
     }
   ],
   testnet: [
