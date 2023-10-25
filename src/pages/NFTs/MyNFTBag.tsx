@@ -253,6 +253,7 @@ const ItemsPresentInBag: FC<{ wallet: any }> = ({ wallet }): ReactElement => {
                 : nftInBag[key]?.first_verified_creator_address,
               nftInBag[key]?.image_url
             )}
+            onError={(e) => (e.currentTarget.src = nftInBag[key]?.image_url)}
             alt="img"
           />
 

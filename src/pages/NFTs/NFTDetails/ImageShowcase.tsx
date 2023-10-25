@@ -151,7 +151,7 @@ export const ImageShowcase: FC<{
         </>
       )}
 
-      <div tw="w-[390px] h-[390px] sm:w-[100%] sm:h-[360px]">
+      <div tw="flex items-center rounded-[10px] w-[390px] h-[390px] sm:w-[100%] sm:h-[360px] overflow-hidden">
         <img
           className="ls-image"
           height={'100%'}

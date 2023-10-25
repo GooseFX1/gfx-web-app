@@ -148,8 +148,8 @@ const NFTStatsContainer = () => {
               <Image
                 preview={false}
                 className="collectionNameImage"
-                fallback={'/img/assets/Aggregator/Unknown.svg'}
                 src={gfxImageService(IMAGE_SIZES.SM_SQUARE, collection.uuid, collection.profile_pic_link)}
+                onError={(e) => (e.currentTarget.src = collection.profile_pic_link)}
                 alt="collection-image"
               />
             ) : (
@@ -274,7 +274,7 @@ const CollectionBidButton = () => {
     <div tw="sm:mr-2">
       <Button
         onClick={handleCollectionBidClick}
-        cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-2 text-regular text-white`}
+        cssStyle={tw`bg-gradient-1 h-8.75 w-full font-semibold px-4 text-regular text-white`}
       >
         {breakpoint.isMobile ? `Bid` : `Collection Bid`}
       </Button>

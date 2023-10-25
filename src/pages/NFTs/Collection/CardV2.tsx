@@ -292,6 +292,11 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
                         )
                       : `${window.origin}/img/assets/nft-preview-${mode}.svg`
                   }
+                  onError={(e) =>
+                    (e.currentTarget.src = nftImage
+                      ? nftImage
+                      : `${window.origin}/img/assets/nft-preview-${mode}.svg`)
+                  }
                   alt="nft"
                 />
               </div>
