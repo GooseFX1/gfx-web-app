@@ -1,27 +1,26 @@
 import React, { BaseSyntheticEvent, useCallback, useRef } from 'react'
-import { InputRef } from 'antd'
 import { TokenAmount } from '@solana/web3.js'
-import { useAnimateButtonSlide } from '../../components/Farm/generic'
+import { useAnimateButtonSlide } from '../Farm/generic'
 import useRewards from '../../context/rewardsContext'
-import { clamp } from '../../utils'
+import { clamp, getAccurateNumber } from '../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 
 interface StakeUnstakeToggleProps {
   isStakeSelected: boolean
   setIsStakeSelected: (isStakeSelected: boolean) => void
-  inputRef: React.MutableRefObject<InputRef>
   setInputValue: (value: number) => void
   userGoFxBalance: TokenAmount
   isStakeLoading: boolean
+  inputValue: number
 }
 const StakeUnstakeToggle = ({
   isStakeSelected,
   setIsStakeSelected,
-  inputRef,
   setInputValue,
   userGoFxBalance,
-  isStakeLoading
+  isStakeLoading,
+  inputValue
 }: StakeUnstakeToggleProps): JSX.Element => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLButtonElement[]>([])
@@ -43,19 +42,18 @@ const StakeUnstakeToggle = ({
       const index = parseInt(el.target.dataset.index)
       handleSlide(index)
       setIsStakeSelected(index === 0)
-      const amount = parseFloat(inputRef.current?.input.value)
 
-      if (!amount) {
+      if (!inputValue) {
         return
       }
+      const value =
+        index == 0
+          ? clamp(inputValue, 0, Number(userGoFxBalance.uiAmount))
+          : clamp(inputValue, 0, Number(getUiAmount(rewards.user.staking.userMetadata.totalStaked)))
 
-      setInputValue(
-        isStakeSelected
-          ? clamp(amount, 0, userGoFxBalance.uiAmount)
-          : clamp(amount, 0, getUiAmount(rewards.user.staking.userMetadata.totalStaked))
-      )
+      setInputValue(getAccurateNumber(value))
     },
-    [inputRef, rewards, userGoFxBalance]
+    [inputValue, rewards, userGoFxBalance]
   )
   return (
     <div css={tw`w-full min-md:w-max flex flex-row relative justify-between min-md:justify-start items-center `}>
