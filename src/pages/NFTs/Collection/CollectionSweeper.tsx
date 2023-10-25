@@ -405,6 +405,7 @@ export const SweeperModal = (): ReactElement => {
                   singleCollection[0].uuid,
                   singleCollection[0].profile_pic_link
                 )}
+                onError={(e) => (e.currentTarget.src = singleCollection[0].profile_pic_link)}
               />
             </div>
           </div>

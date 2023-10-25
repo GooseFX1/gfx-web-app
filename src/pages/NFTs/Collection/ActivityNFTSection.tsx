@@ -366,7 +366,8 @@ const NFTActivityRowWebContents: FC<{
                     : nftDetails.first_verified_creator_address,
                   nftDetails.image_url
                 )}
-                alt=""
+                onError={(e) => (e.currentTarget.src = nftDetails.image_url)}
+                alt="nft-image"
               />
             </div>
             <div tw="flex flex-col mt-4.5 ml-2">

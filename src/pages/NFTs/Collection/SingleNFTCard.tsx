@@ -370,7 +370,11 @@ export const SingleNFTCard: FC<{
                   }
                   width={'100%'}
                   preview={false}
-                  onError={(e) => console.error(e)}
+                  onError={(e) =>
+                    (e.currentTarget.src = nftImage
+                      ? nftImage
+                      : `${window.origin}/img/assets/nft-preview-${mode}.svg`)
+                  }
                   alt="NFT Preview"
                 />
 

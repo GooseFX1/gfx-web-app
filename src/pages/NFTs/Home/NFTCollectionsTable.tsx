@@ -121,7 +121,8 @@ const NFTRowMobileItem = ({ item, index, lastRowElementRef }: any) => {
                       : item.first_verified_creator_address,
                     item.profile_pic_link
                   )}
-                  alt=""
+                  alt="nft-image"
+                  onError={(e) => (e.currentTarget.src = item.profile_pic_link)}
                 />
               </div>
 
@@ -265,7 +266,6 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
             <Image
               preview={false}
               className="nftNameImg"
-              fallback={'/img/assets/Aggregator/Unknown.svg'}
               src={gfxImageService(
                 IMAGE_SIZES.SM_SQUARE,
                 item.verified_collection_address
@@ -274,6 +274,7 @@ const NFTRowItem = ({ item, index, lastRowElementRef }: any) => {
                 item.profile_pic_link
               )}
               alt="collection-icon"
+              onError={(e) => (e.currentTarget.src = item.profile_pic_link)}
             />
           ) : (
             <div className="nftCollectionName">
