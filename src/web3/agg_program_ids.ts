@@ -1,5 +1,6 @@
 export const AH_PROGRAM_IDS = {
   '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv': 'GooseFX',
+  '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi': 'GooseFX',
   M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K: 'Magic Eden',
   TSWAPaqyCSx2KABk68Shruf4rp7CxcNi8hAsbdwmHbN: 'Tensor',
   GWErq8nJf5JQtohg5k7RTkiZmoCxvGBJqbMSfkrxYFFy: 'Solanart',
