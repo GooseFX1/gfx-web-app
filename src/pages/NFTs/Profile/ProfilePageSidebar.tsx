@@ -309,8 +309,8 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                 )}
               >
                 <img
-                  className={twitterHover ? 'social-icon twitterHeight' : 'social-icon'}
-                  src={twitterHover ? '/img/assets/twitterHover.svg' : '/img/assets/twitterNew.svg'}
+                  className={twitterHover ? 'social-icon' : 'social-icon'}
+                  src={'/img/assets/Aggregator/twitterNew.svg'}
                   alt=""
                 />
               </a>
@@ -334,7 +334,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
               >
                 <img
                   className={discordHover ? 'social-icon height' : 'social-icon'}
-                  src={discordHover ? '/img/assets/discordHover.svg' : '/img/assets/discordNew.svg'}
+                  src={discordHover ? '/img/assets/discordHover.svg' : '/img/assets/Aggregator/discordNew.svg'}
                   alt=""
                 />
               </a>
@@ -354,7 +354,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
               >
                 <img
                   className={websiteHover ? 'social-icon height' : 'social-icon'}
-                  src={websiteHover ? '/img/assets/website-hover.svg' : '/img/assets/website.svg'}
+                  src={websiteHover ? '/img/assets/website-hover.svg' : '/img/assets/Aggregator/website.svg'}
                   alt=""
                 />
               </a>
@@ -379,7 +379,7 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
               >
                 <img
                   className={telegramHover ? 'social-icon height' : 'social-icon'}
-                  src={telegramHover ? '/img/assets/telegramHover.svg' : '/img/assets/telegramNew.svg'}
+                  src={telegramHover ? '/img/assets/telegramHover.svg' : '/img/assets/Aggregator/telegramNew.svg'}
                   alt=""
                 />
               </a>

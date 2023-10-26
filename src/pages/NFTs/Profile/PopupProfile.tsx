@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { Form, Upload, UploadProps, Button } from 'antd'
-import { uploadFile } from 'react-s3'
 import { STYLED_PROFILE_POPUP } from './PopupProfile.styled'
 import { useNFTProfile, useDarkMode } from '../../../context'
 import tw from 'twin.macro'
@@ -15,12 +14,6 @@ import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
 import { USER_SOCIALS } from '../../../constants'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 
-const config = {
-  bucketName: 'gfx-nest-image-resources',
-  region: 'ap-south-1',
-  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
-  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
-}
 interface Props {
   visible: boolean
   setVisible: (value: boolean) => void
@@ -62,10 +55,10 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     setIsLoading(true)
     try {
       const formattedProfile = profileFormData
-      let imageLink = ''
+      const imageLink = ''
 
       if (profileImage) {
-        imageLink = (await uploadFile(profileImage, config)).location
+        // imageLink = (await uploadFile(profileImage, config)).location
       }
 
       if (sessionUser.uuid === null) {
