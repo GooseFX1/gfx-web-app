@@ -23,6 +23,7 @@ import { notify, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+import { WithdrawModal } from './WithdrawModal'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -54,6 +55,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
+  const [withdrawModal, setWithdrawModal] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -221,7 +223,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         return true
       } else if (userDepositedAmount < withdrawAmount) {
         notify(invalidWithdrawErrMsg(userDepositedAmount, coin?.token))
-        setWithdrawAmount(0)
         return true
       }
       return false
@@ -269,6 +270,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage('Withdraw', withdrawAmount, coin?.token))
           setTimeout(() => setWithdrawAmount(0), 500)
+          setWithdrawModal(false)
           setIsTxnSuccessfull(true)
         } else {
           notify(sslErrorMessage())
@@ -305,6 +307,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
+      {withdrawModal && (
+        <WithdrawModal
+          withdrawModal={withdrawModal}
+          setWithdrawModal={setWithdrawModal}
+          handleWithdraw={handleWithdraw}
+          isButtonLoading={isButtonLoading}
+          withdrawAmount={withdrawAmount}
+          token={coin}
+        />
+      )}
       <div tw="flex flex-col">
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
@@ -482,14 +494,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
                     modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount > 0
-                      ? handleWithdraw
+                      ? () => {
+                          setWithdrawModal(true)
+                        }
                       : !isWhitelisted
                       ? goToTwitter
                       : modeOfOperation === ModeOfOperation.DEPOSIT
                       ? handleDeposit
-                      : handleWithdraw
+                      : null
                   }
-                  loading={isButtonLoading}
+                  loading={withdrawModal ? false : isButtonLoading ? true : false}
                 >
                   {actionButtonText}
                 </Button>

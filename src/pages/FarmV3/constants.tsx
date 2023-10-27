@@ -273,4 +273,5 @@ export const TOKEN_NAMES = {
 export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
 export const TOTAL_METRICS = 'ssl-apis/getTotalMetrics'
 export const IS_WHITELIST = '/wallet-apis/isWhitelist'
+export const SSL_CHARTS = '/ssl-apis/charts/prices/'
 export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
