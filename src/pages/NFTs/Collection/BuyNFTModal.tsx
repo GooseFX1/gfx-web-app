@@ -10,6 +10,8 @@ import {
   useWalletModal
 } from '../../../context'
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
@@ -32,15 +34,22 @@ import {
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
+import {
+  getNFTMetadata,
+  handleMarketplaceFormat,
+  handleUpdateJWTToken,
+  minimizeTheString
+} from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
 import {
   getMagicEdenBuyInstruction,
   getMagicEdenListing,
+  getSignedTxPNFTGooseFX,
   getTensorBuyInstruction,
   NFT_MARKETS,
   saveNftTx
 } from '../../../api/NFTs'
+
 import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/executeSale'
 import { getMagicEdenTokenAccount } from '../../../web3/auction-house-sdk/pda'
 
@@ -480,20 +489,37 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const callMagicEdenAPIs = async (): Promise<void> => {
     const tokenAccount = await getMagicEdenTokenAccount({ ...ask, ...general })
     try {
-      const listing_res = await getMagicEdenListing(general?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
+      const listing_res = await getMagicEdenListing(general?.mint_address)
       const res = await getMagicEdenBuyInstruction(
         parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
         publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
         listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
-        process.env.REACT_APP_JWT_SECRET_KEY,
         listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
       )
 
       const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
       await handleNotifications(tx, ask.buyer_price, true)
+    } catch (error) {
+      if (parseInt(error.message) === 401) handleUpdateJWTToken(wallet)
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  const getSignedTransactionForPnft = async () => {
+    try {
+      const res = await getSignedTxPNFTGooseFX(
+        parseFloat(ask?.buyer_price),
+        publicKey.toString(),
+        ask?.wallet_key,
+        general?.mint_address
+      )
+      const tx = VersionedTransaction.deserialize(Buffer.from(res.data.Buffer))
+      await handleNotifications(tx, ask.buyer_price, true)
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
       setIsLoading(false)
     }
@@ -505,8 +531,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         parseFloat(ask.buyer_price),
         publicKey.toBase58(),
         ask.wallet_key,
-        ask.token_account_mint_key,
-        process.env.REACT_APP_JWT_SECRET_KEY
+        ask.token_account_mint_key
       )
       const tx = res.data?.txV0
         ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
@@ -514,6 +539,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
 
       await handleNotifications(tx, ask.buyer_price, true)
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
       setIsLoading(false)
     }
@@ -529,6 +555,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
     logData(`attempt_buy_now_${ask?.marketplace_name?.toLowerCase()}`)
     if (ask?.marketplace_name === NFT_MARKETS.TENSOR) {
       callTensorAPIs()
+      return
+    }
+    if (isPnft && ask?.marketplace_name === NFT_MARKETS.GOOSE) {
+      getSignedTransactionForPnft()
       return
     }
     if (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {

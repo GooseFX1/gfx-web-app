@@ -1,4 +1,4 @@
-import { useWallet } from '@solana/wallet-adapter-react'
+import { Wallet, useWallet } from '@solana/wallet-adapter-react'
 import { Dropdown } from 'antd'
 import React, { ReactElement, FC, useMemo, useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
@@ -6,10 +6,10 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Connect } from '../../layouts'
 import { useConnectionConfig, useDarkMode, useNavCollapse, useNFTAggregator } from '../../context'
-import { LAMPORTS_PER_SOL, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { GradientText } from '../../components/GradientText'
 import { PriceWithToken } from '../../components/common/PriceWithToken'
-import { removeNFTFromBag } from '../../web3/nfts/utils'
+import { handleUpdateJWTToken, removeNFTFromBag } from '../../web3/nfts/utils'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import Lottie from 'lottie-react'
 import EmptyBagDark from '../../animations/emptyBag-dark.json'
@@ -303,15 +303,14 @@ const EmptyBagDisplay = (): ReactElement => {
 
 export const callTensorAPIs = async (
   item: any | string,
-  publicKey: PublicKey
+  wallet: Wallet
 ): Promise<VersionedTransaction | Transaction> => {
   try {
     const res = await getTensorBuyInstruction(
       parseFloat(item.buyer_price),
-      publicKey.toBase58(),
+      wallet?.adapter?.publicKey.toBase58(),
       item.wallet_key,
-      item.token_account_mint_key,
-      process.env.REACT_APP_JWT_SECRET_KEY
+      item.token_account_mint_key
     )
 
     const tx = res.data?.txV0
@@ -319,31 +318,33 @@ export const callTensorAPIs = async (
       : Transaction.from(Buffer.from(res.data.txV0.data))
     return tx
   } catch (err) {
+    if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
     console.log(err)
   }
 }
 
 export const callMagicEdenAPIs = async (
   item: any | string,
-  publicKey: PublicKey
+  wallet: Wallet
 ): Promise<VersionedTransaction | Transaction> => {
   const tokenAccount = await getMagicEdenTokenAccount(item)
 
   try {
-    const listing_res = await getMagicEdenListing(item?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
+    const listing_res = await getMagicEdenListing(item?.mint_address)
     const res = await getMagicEdenBuyInstruction(
       parseFloat(item.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
-      publicKey.toBase58(),
+      wallet?.adapter?.publicKey.toBase58(),
       item.wallet_key,
       item.token_account_mint_key,
       listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
-      process.env.REACT_APP_JWT_SECRET_KEY,
       listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
     )
 
     const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
     return tx
   } catch (err) {
+    if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
+
     console.log(err)
   }
 }
@@ -374,35 +375,34 @@ const ButtonContainerForBag = (): ReactElement => {
   )
 
   const enoughFunds = totalCost < userSOLBalance
-  const callMagicEdenAPIs = async (item): Promise<VersionedTransaction | Transaction> => {
+  const callMagicEdenAPIs = async (item, wallet: Wallet): Promise<VersionedTransaction | Transaction> => {
     const tokenAccount = await getMagicEdenTokenAccount(item)
 
     try {
-      const listing_res = await getMagicEdenListing(item?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
+      const listing_res = await getMagicEdenListing(item?.mint_address)
       const res = await getMagicEdenBuyInstruction(
         parseFloat(item.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
         publicKey.toBase58(),
         item.wallet_key,
         item.token_account_mint_key,
         listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
-        process.env.REACT_APP_JWT_SECRET_KEY,
         listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
       )
 
       const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
       return tx
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
     }
   }
-  const callTensorAPIs = async (item): Promise<VersionedTransaction | Transaction> => {
+  const callTensorAPIs = async (item, wallet: Wallet): Promise<VersionedTransaction | Transaction> => {
     try {
       const res: any = await getTensorBuyInstruction(
         parseFloat(item.buyer_price),
         publicKey.toBase58(),
         item.wallet_key,
-        item.token_account_mint_key,
-        process.env.REACT_APP_JWT_SECRET_KEY
+        item.token_account_mint_key
       )
 
       const tx = res.data?.txV0
@@ -411,6 +411,7 @@ const ButtonContainerForBag = (): ReactElement => {
 
       return tx
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
     }
   }
@@ -453,10 +454,10 @@ const ButtonContainerForBag = (): ReactElement => {
 
   const handleAPIRequest = async (nft, key) => {
     if (nft.marketplace_name === NFT_MARKETS.TENSOR) {
-      return { [key]: await callTensorAPIs(nft) }
+      return { [key]: await callTensorAPIs(nft, wallet) }
     }
     if (nft.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
-      return { [key]: await callMagicEdenAPIs(nft) }
+      return { [key]: await callMagicEdenAPIs(nft, wallet) }
     }
 
     if (nft.marketplace_name === NFT_MARKETS.GOOSE) {
