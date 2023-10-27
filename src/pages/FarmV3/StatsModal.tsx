@@ -5,12 +5,12 @@ import { checkMobile } from '../../utils'
 import 'styled-components/macro'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
-import { SSLToken } from './constants'
-import axios from 'axios'
+import { SSLToken, SSL_CHARTS } from './constants'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { useDarkMode } from '../../context'
+import { httpClient } from '../../api'
 
 const STYLED_POPUP = styled(PopupCustom)<{
   currentSlide: number
@@ -117,8 +117,8 @@ export const StatsModal: FC<{
   }
 
   const getSSLCharts = async () => {
-    //const url = SSL_CHARTS + token
-    const res = await axios.get(`http://localhost:4000/ssl-apis/charts/prices/${token?.token}`)
+    const url = SSL_CHARTS + token?.token
+    const res = await httpClient('api-services').get(`${url}`)
     if (res.status === 200) {
       setData(res.data.data)
     } else {
