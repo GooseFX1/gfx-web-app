@@ -5,7 +5,7 @@ import { checkMobile } from '../../utils'
 import 'styled-components/macro'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
-import { SSLToken, SSL_CHARTS } from './constants'
+import { SSLToken } from './constants'
 import axios from 'axios'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
@@ -117,7 +117,7 @@ export const StatsModal: FC<{
   }
 
   const getSSLCharts = async () => {
-    const url = SSL_CHARTS + token
+    //const url = SSL_CHARTS + token
     const res = await axios.get(`http://localhost:4000/ssl-apis/charts/prices/${token?.token}`)
     if (res.status === 200) {
       setData(res.data.data)
