@@ -11,6 +11,7 @@ import { AH_PROGRAM_IDS, MAGIC_EDEN_AUCTION_HOUSE } from '../../web3'
 import { IAdditionalFilters } from '../../context'
 import axios from 'axios'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 
 export const completeNFTUserProfile = async (address: string): Promise<any> => {
   try {
@@ -325,60 +326,54 @@ export const getTensorBuyInstruction = async (
   buyerPrice: number,
   buyerKey: string,
   ownerKey: string,
-  mintAddress: string,
-  secretKey: string
+  mintAddress: string
 ): Promise<any> => {
   try {
-    const token = jwt.sign(
+    const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+    const token = userCache?.jwtToken
+
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.TENSOR_BUY}`,
       {
-        exp: Math.floor(Date.now() / 1000) + 10,
-        iat: Math.floor(Date.now() / 1000),
         price: buyerPrice,
         buyer: buyerKey,
         owner: ownerKey,
         mint: mintAddress
       },
-      secretKey
-    )
-    const res = await httpClient(NFT_API_BASE).post(
-      `${NFT_API_ENDPOINTS.TENSOR_BUY}`,
-      {},
       {
         headers: { Authorization: `Bearer ${token}` }
       }
     )
     return res
   } catch (error) {
-    return error
+    if (error.response) throw new Error(error.response.status)
+    throw new Error(error)
   }
 }
+
+// add jwt token
 export const getMagicEdenBuyInstruction = async (
   buyerPrice: number,
   buyerKey: string,
   ownerKey: string,
   mintAddress: string,
   tokenAta: string,
-  secretKey: string,
   sellerExpiry: string
 ): Promise<any> => {
   try {
-    const token = jwt.sign(
+    const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+    const token = userCache?.jwtToken
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.MAGIC_EDEN_BUY}`,
       {
-        exp: Math.floor(Date.now() / 1000) + 10,
-        iat: Math.floor(Date.now() / 1000),
         buyer: buyerKey,
         auction_house: MAGIC_EDEN_AUCTION_HOUSE,
         token_ata: tokenAta,
         owner: ownerKey,
         mint: mintAddress,
-        price: buyerPrice,
+        price: buyerPrice.toString(), // recently changed
         seller_expiry: sellerExpiry
       },
-      secretKey
-    )
-    const res = await httpClient(NFT_API_BASE).post(
-      `${NFT_API_ENDPOINTS.MAGIC_EDEN_BUY}`,
-      {},
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -387,23 +382,52 @@ export const getMagicEdenBuyInstruction = async (
     )
     return res
   } catch (error) {
-    return error
+    if (error.response) throw new Error(error.response.status)
+    throw new Error(error)
+  }
+}
+export const getSignedTxPNFTGooseFX = async (
+  buyerPrice: number,
+  buyerPubkey: string,
+  sellerPubkey: string,
+  mintAddress: string
+): Promise<any> => {
+  try {
+    const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+    const token = userCache?.jwtToken
+    const res = await httpClient(NFT_API_BASE).post(
+      `${NFT_API_ENDPOINTS.SIGNED_PNFT}`,
+      {
+        buyer_pubkey: buyerPubkey,
+        seller_pubkey: sellerPubkey,
+        mint_address: mintAddress,
+        buyer_price: buyerPrice // recently changed
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+    return res
+  } catch (error) {
+    if (error.response) throw new Error(error.response.status)
+    throw new Error(error)
   }
 }
 
-export const getMagicEdenListing = async (mintAddress: string, secretKey: string): Promise<any> => {
+// add jwt token
+
+export const getMagicEdenListing = async (mintAddress: string): Promise<any> => {
   try {
-    const token = jwt.sign(
-      {
-        exp: Math.floor(Date.now() / 1000) + 5,
-        iat: Math.floor(Date.now() / 1000),
-        mint: mintAddress
-      },
-      secretKey
-    )
+    const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+    const token = userCache?.jwtToken
+
     const res = await httpClient(NFT_API_BASE).post(
       `${NFT_API_ENDPOINTS.MAGIC_EDEN_LISTING}`,
-      {},
+      {
+        mint: mintAddress
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -412,7 +436,8 @@ export const getMagicEdenListing = async (mintAddress: string, secretKey: string
     )
     return res
   } catch (error) {
-    return error
+    if (error.response) throw new Error(error.response.status)
+    throw new Error(error)
   }
 }
 
@@ -602,6 +627,7 @@ export const dailyVisitData = async (walletAddress: string): Promise<any> => {
   }
 }
 
+// fix this one jwt issue monday
 export const saveNftTx = async (
   marketPlace: string,
   price: number,

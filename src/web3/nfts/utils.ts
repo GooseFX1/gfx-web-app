@@ -123,7 +123,7 @@ export const validateSocialLinks = (url: string, social: string): string => {
 export const signAndUpdateDetails = async (
   wallet: Wallet,
   isSessionUser: boolean,
-  setModal: Dispatch<SetStateAction<boolean>>
+  setModal?: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const createSignMessage = () =>
@@ -160,7 +160,7 @@ export const signAndUpdateDetails = async (
           jwtToken: updatedJwtToken
         })
       )
-      setModal(true)
+      if (setModal) setModal(true)
     } catch (err) {
       console.error(err)
     }
@@ -189,3 +189,15 @@ export const getMetaplexInstance = async (connection: Connection, wallet: Wallet
 
 export const findOurAuctionHouse = async (metaplex: Metaplex): Promise<any> =>
   metaplex.auctionHouse().findByAddress({ address: toPublicKey(AUCTION_HOUSE) })
+
+export const handleUpdateJWTToken = async (wallet: Wallet): Promise<void> => {
+  const userCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  window.localStorage.setItem(
+    'gfx-user-cache',
+    JSON.stringify({
+      ...userCache,
+      jwtToken: null
+    })
+  )
+  await signAndUpdateDetails(wallet, true)
+}
