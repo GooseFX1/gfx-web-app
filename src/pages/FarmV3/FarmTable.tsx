@@ -571,7 +571,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           )}
           {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
-            {!checkMobile() && <STATS onClick={(e) => openStatsModal(e)}>Stats</STATS>}
+            {!checkMobile() && (
+              <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
+            )}
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
             </div>
