@@ -79,5 +79,6 @@ export enum NFT_API_ENDPOINTS {
   ACTIVE_ORDERS_AMM_ME = '/magiceden/nft_offers',
   SELL_NFT_ORDER_AMM_ME = '/magiceden/sell_nft_tx',
   SELL_NFT_ORDER_AMM = '/tensor/sell_nft_order',
-  CLOSE_ORDER = '/tensor/close_order'
+  CLOSE_ORDER = '/tensor/close_order',
+  SIGNED_PNFT = '/signed_pnft_tx'
 }
