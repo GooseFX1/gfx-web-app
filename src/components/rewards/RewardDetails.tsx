@@ -8,7 +8,7 @@ import EarnRewards, { RewardsRightPanel } from './Rewards'
 import ReferAndEarn, { ReferFriendSegment, ReferRightPanel } from './Refer'
 
 const FLEX_COL_CONTAINER = styled.div`
-  ${tw`flex flex-col py-2.5 min-md:pt-5 px-7.5 min-md:px-[125px] h-[275px] min-md:h-full items-center rounded-t-bigger
+  ${tw`flex flex-col py-2.5 min-md:pt-5 px-7.5  h-[275px] min-md:h-full items-center rounded-t-bigger
   `}
 `
 
