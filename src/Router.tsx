@@ -130,7 +130,9 @@ export const Router: FC = () => (
                           <PriceFeedProvider>
                             <OrderProvider>
                               <TraderProvider>
-                                <Account />
+                                <OrderBookProvider>
+                                  <Account />
+                                </OrderBookProvider>
                               </TraderProvider>
                             </OrderProvider>
                           </PriceFeedProvider>
