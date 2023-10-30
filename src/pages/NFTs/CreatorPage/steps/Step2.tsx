@@ -6,9 +6,9 @@ import tw from 'twin.macro'
 import { FileDrop } from 'react-file-drop'
 import { useNFTCreator } from '../../../../context/nft_creator'
 import { ICreatorData } from '../../../../types/nft_launchpad'
-import { uploadFile } from 'react-s3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../../../utils'
+import { getPresignedUrl, uploadToPresignedUrl } from '../../../../api/gfxImageService/s3presigned'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -190,15 +190,17 @@ export const Step2: FC = () => {
       notify({
         message: 'Upload Started...'
       })
-      uploadFile(file, {
-        ...config,
-        dirName: 'launchpad_' + wallet?.adapter?.publicKey.toBase58() + '_cover'
-      }).then((data: any) => {
-        setImageLink(data.location)
+      // NEW S3 Code
+      const presignedUrl = await getPresignedUrl(
+        `launchpad_${wallet?.adapter?.publicKey.toBase58()}_cover`,
+        config.bucketName
+      )
+      uploadToPresignedUrl(presignedUrl, file).then((res) => {
+        setImageLink(res)
         notify({
           message: 'Upload Complete!'
         })
-      }) //save image link with setS3Link(dataLink)
+      })
     }
   }
 

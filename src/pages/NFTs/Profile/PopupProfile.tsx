@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { Form, Upload, UploadProps, Button } from 'antd'
-import { uploadFile } from 'react-s3'
 import { STYLED_PROFILE_POPUP } from './PopupProfile.styled'
 import { useNFTProfile, useDarkMode } from '../../../context'
 import tw from 'twin.macro'
@@ -14,6 +13,7 @@ import { checkMobile } from '../../../utils'
 import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
 import { USER_SOCIALS } from '../../../constants'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
+import { getPresignedUrl, uploadToPresignedUrl } from '../../../api/gfxImageService/s3presigned'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -65,7 +65,8 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
       let imageLink = ''
 
       if (profileImage) {
-        imageLink = (await uploadFile(profileImage, config)).location
+        const presignedUrl = await getPresignedUrl(profileImage.name, config.bucketName)
+        imageLink = await uploadToPresignedUrl(presignedUrl, profileImage)
       }
 
       if (sessionUser.uuid === null) {
