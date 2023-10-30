@@ -7,9 +7,9 @@ import { FileDrop } from 'react-file-drop'
 import { ImageContainer, NextStepsButton } from '../components/SharedComponents'
 import 'styled-components/macro'
 import { ICreatorData } from '../../../../types/nft_launchpad'
-import { uploadFile } from 'react-s3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { notify } from '../../../../utils'
+import { getPresignedUrl, uploadToPresignedUrl } from '../../../../api/gfxImageService/s3presigned'
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
@@ -123,16 +123,17 @@ export const Step4: FC = () => {
   const [isDelayedReveal, setIsDelayedReveal] = useState<boolean>(false)
   const [nextButtonActive, setNextButtonActive] = useState<boolean>(false)
 
-  const fileConstraints = (file) => {
+  const fileConstraints = async (file) => {
     const extension = file.name.split('.')[1]
     if ((extension === '7z' || extension === 'rar' || extension === 'zip') && file.size < 200 * 1024 * 1024) {
       notify({
         message: 'Please wait for the upload to finish it may take a while...'
       })
-      uploadFile(file, {
-        ...config,
-        dirName: `launchpad_${wallet?.adapter?.publicKey.toBase58()}_assets`
-      }).then((data: any) => {
+      const presignedUrl = await getPresignedUrl(
+        `launchpad_${wallet?.adapter?.publicKey.toBase58()}_assets`,
+        config.bucketName
+      )
+      uploadToPresignedUrl(presignedUrl, file).then((data: any) => {
         setImageLink(data.location)
         notify({
           message: 'Upload Complete!'
