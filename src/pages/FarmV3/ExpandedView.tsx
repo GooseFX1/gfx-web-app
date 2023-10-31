@@ -324,7 +324,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Liquidity"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  {liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
+                  {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="100%" />}
                 </span>
               }
             />
@@ -344,7 +344,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   ${truncateBigNumber(
                     formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current
                   )}{' '}
-                  {coin?.token}
                 </span>
               }
             />
