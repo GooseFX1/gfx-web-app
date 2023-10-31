@@ -31,7 +31,7 @@ export const WithdrawModal: FC<{
   token: SSLToken
 }> = ({ withdrawModal, setWithdrawModal, handleWithdraw, isButtonLoading, withdrawAmount, token }) => (
   <STYLED_POPUP
-    height={checkMobile() ? '363px' : '250px'}
+    height={checkMobile() ? '300px' : '250px'}
     width={checkMobile() ? '95%' : '560px'}
     title={null}
     centered={true}
@@ -40,10 +40,10 @@ export const WithdrawModal: FC<{
     footer={null}
   >
     <WRAPPER>
-      <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center">
-        Are you sure you want to withdraw?
+      <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center sm:text-average">
+        Are you sure you want to {checkMobile() && <br />} withdraw?
       </div>
-      <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold text-center mb-3">
+      <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold text-center mb-3 sm:text-tiny">
         By withdrawing you will claim any pending yield available.
       </div>
       <div tw="flex flex-row items-center justify-between mb-3.75">

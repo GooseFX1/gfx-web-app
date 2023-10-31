@@ -109,10 +109,10 @@ const WRAPPER = styled.div`
   }
 `
 
-const STATS = styled.div`
-  ${tw`h-[30px] w-[90px] rounded-circle flex items-center justify-center text-white`};
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-`
+// const STATS = styled.div`
+//   ${tw`h-[30px] w-[90px] rounded-circle flex items-center justify-center text-white`};
+//   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+//`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
@@ -502,10 +502,10 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     else if (showDeposited && !(+userDepositedAmount.toFixed(2) > 0)) return false
   }, [showDeposited, userDepositedAmount])
 
-  const openStatsModal = (e) => {
-    e.stopPropagation()
-    setStatsModal(true)
-  }
+  // const openStatsModal = (e) => {
+  //   e.stopPropagation()
+  //   setStatsModal(true)
+  // }
 
   return (
     showToggleFilteredTokens && (
@@ -571,9 +571,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           )}
           {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
-            {!checkMobile() && (
+            {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
-            )}
+            )} */}
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
             </div>
