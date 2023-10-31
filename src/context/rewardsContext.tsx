@@ -635,8 +635,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return v
   }, [])
   const hasRewards = useMemo(
-    () => rewards?.staking?.unstakeableTickets.length > 0 || getClaimableFees() > 0.0,
-    [rewards]
+    () => rewards?.user?.staking?.unstakeableTickets.length > 0 || getClaimableFees() > 0.0,
+    [rewards?.user?.staking?.unstakeableTickets, getClaimableFees]
   )
   return (
     <RewardsContext.Provider
