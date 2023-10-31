@@ -211,8 +211,11 @@ export const faqs = [
     question: 'What are the risks?',
     answer: (
       <div>
-        In periods of high volatility certain pools may become imbalanced. While no actual losses occur users may
-        have to wait until the pool rebalances itself to fully withdraw their total earned amount.
+        The risks associated with single-sided liquidity are price inventory risk which is common for any market
+        maker. This risk occurs when the price of the assets used for market making decline in value in excess of
+        the fees generated. In periods of high volatility certain pools may become imbalanced. While no actual
+        losses occur users may have to wait until the pool rebalances itself to fully withdraw their total earned
+        amount.
       </div>
     )
   },
