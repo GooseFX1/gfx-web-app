@@ -161,7 +161,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   }
 
   const goToTwitter = () => {
-    window.open('https://x.com/goosefx1/status/1697232645363523922', '_blank')
+    window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
   }
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
@@ -169,7 +169,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const disableActionButton = useMemo(() => {
     if (!isWhitelisted) return false
     return (
-      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
@@ -180,7 +179,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (!isWhitelisted) return `Get Access`
-      if (coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
