@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useNFTAggregator, useNFTProfile } from '../../../context'
-import { ISingleNFT } from '../../../types/nft_details.d'
+import { ISingleNFT } from '../../../types/nft_details'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs'
 import { NFTTab } from '../NFTTab'
@@ -103,7 +103,8 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {
       const userCreated = currentUserParsedAccounts.filter(
         (nft: ParsedAccount) =>
-          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === currentUserProfile.pubkey)
+          nft.data.creators !== undefined &&
+          nft.data.creators.find((c) => c.address.toBase58() === currentUserProfile.pubkey)
       )
       setCreatedItems(userCreated)
     } else {

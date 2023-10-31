@@ -1,5 +1,6 @@
 import { Connection } from '@solana/web3.js'
-import { Creator } from '../web3'
+import { Attribute, Creator } from '../web3'
+import { Dispatch, SetStateAction } from 'react'
 // import { type } from 'os'
 
 export interface IInfoItemData {
@@ -64,7 +65,7 @@ export interface IMetadataContext {
 export type IActivityName = 'BUY' | 'BID' | 'LIST' | 'ACCEPT_BID' | 'CANCEL_BID' | 'CANCEL_LIST'
 
 export interface ITypeOfActivity {
-  _id?: ObjectId
+  _id?: string
   walletAddress: string
   mintAddress: string
   price: number

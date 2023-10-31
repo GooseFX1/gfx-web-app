@@ -9,7 +9,7 @@ import {
   NFTFeaturedCollection,
   NFTUpcomingCollection,
   CollectionSort
-} from '../types/nft_collections.d'
+} from '../types/nft_collections'
 import { httpClient } from '../api'
 import {
   NFT_API_BASE,

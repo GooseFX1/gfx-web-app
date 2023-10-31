@@ -1,6 +1,8 @@
-import { PublicKey, Program, Keypair } from '@solana/web3.js'
+import { PublicKey, Keypair } from '@solana/web3.js'
 import BN from 'bn.js'
-import { Fractional } from './fractional_dexterity'
+import { Fractional } from '../pages/TradeV3/perps/dexterity/types'
+import { Accounts, Address, Program } from '@project-serum/anchor'
+import { IdlAccountItem } from '@project-serum/anchor/dist/esm/idl'
 
 export interface IInitializeMarketProductGroupAccounts {
   authority: PublicKey
@@ -13,8 +15,8 @@ export interface IInitializeMarketProductGroupAccounts {
   riskModelConfigurationAcct: PublicKey
   riskEngineProgram: PublicKey
   sysvarRent: PublicKey
-  systemProgram: Program
-  tokenProgram: Program
+  systemProgram: Accounts<IdlAccountItem> | Address
+  tokenProgram: Accounts<IdlAccountItem> | Address
   feeOutputRegister: Keypair
   riskOutputRegister: Keypair
 }

@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from 'react'
 import { Connection } from '@solana/web3.js'
 import { UserFetchType } from '../context'
+import { ParsedAccount } from '../web3'
 
 export interface INFTProfile {
   uuid: string
   user_id: number
-  uuid: string
   pubkey: string
   nickname: string
   email: string

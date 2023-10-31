@@ -14,7 +14,7 @@ import {
   IMetadataContext,
   INFTGeneralData,
   IOnChainMetadata
-} from '../types/nft_details.d'
+} from '../types/nft_details'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 const NFTDetailsContext = createContext<INFTDetailsConfig | null>(null)

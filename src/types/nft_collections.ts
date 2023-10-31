@@ -1,4 +1,5 @@
-import { ISingleNFT, IFixedPriceWithinCollection, IOpenBidWithinCollection, BaseNFT } from './nft_details.d'
+import { ISingleNFT, BaseNFT } from './nft_details'
+import { Dispatch, SetStateAction } from 'react'
 
 export enum COLLECTION_TYPES {
   NFT_COLLECTION = 'NFTCollection',
@@ -147,7 +148,7 @@ export interface INFTCollectionConfig {
   fetchUpcomingCollections: any
   singleCollection: NFTCollection
   setSingleCollection: Dispatch<SetStateAction<NFTCollection>>
-  setCollectionOwners: Dispatch<SetStateAction<CollectionOwner>>
+  setCollectionOwners: Dispatch<SetStateAction<CollectionOwner[]>>
   setFixedPriceWithinCollection: Dispatch<SetStateAction<IFixedPriceWithinCollection>>
   setOpenBidWithinCollection: Dispatch<SetStateAction<IOpenBidWithinCollection>>
   fetchSingleCollection: (id: string) => Promise<any>

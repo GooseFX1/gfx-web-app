@@ -2,8 +2,8 @@ import { GFX_NEST_BASE_URL, httpClient } from '../../api'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
-import { INFTProfile } from '../../types/nft_profile.d'
-import { IActivityName, IRegisterNFT, ITypeOfActivity } from '../../types/nft_details.d'
+import { INFTProfile } from '../../types/nft_profile'
+import { IActivityName, IRegisterNFT, ITypeOfActivity } from '../../types/nft_details'
 import { validateUUID } from '../../utils'
 import jwt from 'jsonwebtoken'
 import { ANALYTICS_SUBDOMAIN, localhost } from '../analytics'

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { IAppParams } from '../../../types/app_params.d'
+import { IAppParams } from '../../../types/app_params'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { HeaderProfile } from './HeaderProfile'
 import { ContentProfile } from './ContentProfile'

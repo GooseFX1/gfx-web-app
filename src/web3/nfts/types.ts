@@ -1,5 +1,6 @@
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { MetadataKey } from '../metaplex'
+import { Creator } from '@metaplex-foundation/js'
 export type ENDPOINT_NAME = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet' | 'lending'
 
 export type ParsedAccount = {
@@ -14,16 +15,14 @@ export type ParsedAccount = {
   edition?: string
 }
 
-export type WalletSigner = Pick<WalletAdapter, 'publicKey' | 'signTransaction' | 'signAllTransactions'>
-
-interface PromiseFulfilledResult<T> {
+export interface PromiseFulfilledResult<T> {
   status: 'fulfilled'
   value: T
 }
 
-interface PromiseRejectedResult {
+export interface PromiseRejectedResult {
   status: 'rejected'
   reason: any
 }
 
-type PromiseSettledResult<T> = PromiseFulfilledResult<T> | PromiseRejectedResult
+export type PromiseSettledResult<T> = PromiseFulfilledResult<T> | PromiseRejectedResult
