@@ -124,8 +124,8 @@ export const SuccessSSLMessage: FC<{ operation?: string; token?: string; amount?
     </div>
 
     <div tw="font-semibold text-[13px]">
-      You’ve {operation} {amount} <b>{token}</b> to <b>{token} POOL</b>, Remember the more you deposit the more you
-      can earn!
+      You’ve {operation} {amount} <b>{token}</b> {operation === 'deposited' ? 'to' : 'from'} <b>{token} POOL</b>,
+      Remember the more you deposit the more you can earn!
     </div>
   </MESSAGE>
 )
