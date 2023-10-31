@@ -393,7 +393,7 @@ const RewardsRightPanel: FC = () => {
           onClick={handleClaimFees}
         >
           {isClaiming ? (
-            <div css={[tw`absolute top-[-5px]`]}>
+            <div css={[tw`absolute`]}>
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
           ) : usdcClaimable > 0.0 ? (
