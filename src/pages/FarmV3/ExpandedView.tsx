@@ -241,7 +241,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setIsButtonLoading(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('Deposit', depositAmount, coin?.token))
+          notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token))
           setTimeout(() => setDepositAmount(0), 500)
           setIsTxnSuccessfull(true)
         } else {
@@ -268,7 +268,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('Withdraw', withdrawAmount, coin?.token))
+          notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token))
           setTimeout(() => setWithdrawAmount(0), 500)
           setWithdrawModal(false)
           setIsTxnSuccessfull(true)
