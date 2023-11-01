@@ -23,6 +23,7 @@ import { notify, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+import { WithdrawModal } from './WithdrawModal'
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -54,6 +55,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
+  const [withdrawModal, setWithdrawModal] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -159,7 +161,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   }
 
   const goToTwitter = () => {
-    window.open('https://x.com/goosefx1/status/1697232645363523922', '_blank')
+    window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
   }
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
@@ -167,7 +169,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const disableActionButton = useMemo(() => {
     if (!isWhitelisted) return false
     return (
-      (modeOfOperation === ModeOfOperation.DEPOSIT && coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
@@ -178,7 +179,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (!isWhitelisted) return `Get Access`
-      if (coin?.token === 'BONK' && liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
@@ -204,7 +204,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         notify(invalidInputErrMsg(coin?.token))
         setDepositAmount(0)
         return true
-      } else if (depositAmount > parseFloat(userTokenBalance && userTokenBalance.toFixed(3))) {
+      } else if (depositAmount > userTokenBalance) {
         notify(invalidDepositErrMsg(userTokenBalance, coin?.token))
         setDepositAmount(0)
         return true
@@ -221,7 +221,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         return true
       } else if (userDepositedAmount < withdrawAmount) {
         notify(invalidWithdrawErrMsg(userDepositedAmount, coin?.token))
-        setWithdrawAmount(0)
         return true
       }
       return false
@@ -240,7 +239,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setIsButtonLoading(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('Deposit', depositAmount, coin?.token))
+          notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token))
           setTimeout(() => setDepositAmount(0), 500)
           setIsTxnSuccessfull(true)
         } else {
@@ -267,8 +266,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('Withdraw', withdrawAmount, coin?.token))
+          notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token))
           setTimeout(() => setWithdrawAmount(0), 500)
+          setWithdrawModal(false)
           setIsTxnSuccessfull(true)
         } else {
           notify(sslErrorMessage())
@@ -305,6 +305,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
+      {withdrawModal && (
+        <WithdrawModal
+          withdrawModal={withdrawModal}
+          setWithdrawModal={setWithdrawModal}
+          handleWithdraw={handleWithdraw}
+          isButtonLoading={isButtonLoading}
+          withdrawAmount={withdrawAmount}
+          token={coin}
+        />
+      )}
       <div tw="flex flex-col">
         {breakpoint.isMobile && isExpanded && (
           <div tw="flex flex-col">
@@ -312,7 +322,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Liquidity"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  {liquidity ? '$' + liquidity.toFixed(2) : <SkeletonCommon height="100%" />}
+                  {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="100%" />}
                 </span>
               }
             />
@@ -332,7 +342,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   ${truncateBigNumber(
                     formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current
                   )}{' '}
-                  {coin?.token}
                 </span>
               }
             />
@@ -438,7 +447,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? parseFloat(userTokenBalance.toFixed(2)) : 0)
+                    ? setDepositAmount(userTokenBalance ? userTokenBalance : 0)
                     : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
                 }
                 tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
@@ -482,14 +491,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
                     modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount > 0
-                      ? handleWithdraw
+                      ? () => {
+                          setWithdrawModal(true)
+                        }
                       : !isWhitelisted
                       ? goToTwitter
                       : modeOfOperation === ModeOfOperation.DEPOSIT
                       ? handleDeposit
-                      : handleWithdraw
+                      : null
                   }
-                  loading={isButtonLoading}
+                  loading={withdrawModal ? false : isButtonLoading ? true : false}
                 >
                   {actionButtonText}
                 </Button>

@@ -16,6 +16,7 @@ import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 import { getPriceObject } from '../../web3/utils'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { Tooltip } from 'antd'
+import { StatsModal } from './StatsModal'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -107,6 +108,11 @@ const WRAPPER = styled.div`
     }
   }
 `
+
+// const STATS = styled.div`
+//   ${tw`h-[30px] w-[90px] rounded-circle flex items-center justify-center text-white`};
+//   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+//`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
@@ -433,6 +439,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
+  const [statsModal, setStatsModal] = useState<boolean>(false)
 
   const calculateUserDepositedAmount = (
     filteredLiquidityAccounts: any,
@@ -495,9 +502,15 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     else if (showDeposited && !(+userDepositedAmount.toFixed(2) > 0)) return false
   }, [showDeposited, userDepositedAmount])
 
+  // const openStatsModal = (e) => {
+  //   e.stopPropagation()
+  //   setStatsModal(true)
+  // }
+
   return (
     showToggleFilteredTokens && (
       <>
+        {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
         <tr
           css={[tw`duration-500`]}
           className={isExpanded && 'tableRowGradient'}
@@ -558,12 +571,15 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           )}
           {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
           <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
+            {/* {!checkMobile() && (
+              <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
+            )} */}
             <div tw="ml-auto sm:mr-2">
               <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
             </div>
           </td>
         </tr>
-        {<ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />}
+        <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
       </>
     )
   )

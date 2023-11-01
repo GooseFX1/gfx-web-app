@@ -13,9 +13,7 @@ import { getPresignedUrl, uploadToPresignedUrl } from '../../../../api/gfxImageS
 
 const config = {
   bucketName: 'gfx-nest-image-resources',
-  region: 'ap-south-1',
-  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
-  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
+  region: 'ap-south-1'
 }
 
 const WRAPPER = styled.div`

@@ -208,7 +208,7 @@ export const ADDRESSES: {
       nestquestSale: {
         address: new PublicKey('EBNsQvZppDTRgcW6jc93QbEqFUm2aJRyxK4CEFhgQ3V8'),
         civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
-        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'),
+        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93a'), // change this
         gofx_revenue: new PublicKey('AfbSheiV3PJdA8ydTDQjGnQfHLafsqZJFkJp2iENWcGb'),
         program_id: new PublicKey('NQSGXu86wvXx88mvzhh9PfD3dJfGX3n1SdFdYacGX9H')
       }
@@ -397,7 +397,7 @@ export const ADDRESSES: {
       nestquestSale: {
         address: new PublicKey('3QvkzDXSgrLmsCK5ZDoddPFL7tYjzC5oHiiA5TJ9NsoA'),
         civic_gatekeeper: new PublicKey('ignREusXmGrscGNUesoU9mxfds9AiYTezUKex2PsZV6'),
-        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'),
+        sol_revenue: new PublicKey('3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93a'), // change this
         gofx_revenue: new PublicKey('8mYdcqseZ327gLW1b5Mr19srw6yMP7z2ZG6sNbq8R8G2'),
         program_id: new PublicKey('MKT2yrwL977mJwu9suRUBkckpnBShxtKN3ppasBseAb')
       }
@@ -562,15 +562,15 @@ export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQR
 
 export const MAGIC_EDEN_AUCTION_HOUSE = 'E8cU1WiRWjanGxmn96ewBgk9vPTcL6AEZ1t6F6fkgUWe'
 
-export const AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
+export const AUCTION_HOUSE: StringPublicKey = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
 
 export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
 
-export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = '3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'
+export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = 'CeU4mJ3piGG59rd48iDV7jbPu3zijir6dBcD5xzrwp37'
 
-export const AH_FEE_ACCT: StringPublicKey = 'JD8Jfejdfxq7KkRisP465aCrWkXGZ8JYqqPHCn9hz7Kc'
+export const AH_FEE_ACCT: StringPublicKey = '7PQhSEPvLM87Kdd1cbydhaMGPxKf2J1fzU65VALvK6J2'
 
-export const TREASURY_ACCT: StringPublicKey = '3wRqpyrETku2x2EZyfRKJeKVVb6F9J8HQLGcNf5VwuJ9'
+export const TREASURY_ACCT: StringPublicKey = 'Crh7HNLeizFgSNBjfxj6jf7NcmwPuN53a93NBi2fa8h'
 
 export const FEE_PAYER_BAL_GENESIS = 0
 

@@ -258,10 +258,10 @@ export const SweeperModal = (): ReactElement => {
 
   const handleAPIRequest = async (nft, key) => {
     if (nft.marketplace_name === NFT_MARKETS.TENSOR) {
-      return { [key]: await callTensorAPIs(nft, publicKey) }
+      return { [key]: await callTensorAPIs(nft, wallet) }
     }
     if (nft.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
-      return { [key]: await callMagicEdenAPIs(nft, publicKey) }
+      return { [key]: await callMagicEdenAPIs(nft, wallet) }
     }
     if (nft.marketplace_name === NFT_MARKETS.GOOSE) {
       const parsedAccounts = await getParsedAccountByMint({

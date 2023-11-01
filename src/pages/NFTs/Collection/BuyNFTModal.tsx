@@ -10,13 +10,15 @@ import {
   useWalletModal
 } from '../../../context'
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { checkMobile, formatSOLDisplay, formatSOLNumber, notify } from '../../../utils'
 import { AppraisalValueSmall, GenericTooltip } from '../../../utils/GenericDegsin'
 import { PopupCustom } from '../Popup/PopupCustom'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 
 import { LAMPORTS_PER_SOL_NUMBER, NFT_MARKET_PLACE_FEES, NFT_MARKET_TRANSACTION_FEE } from '../../../constants'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -32,18 +34,24 @@ import {
   successBidMatchedMessage,
   successfulListingMessage
 } from './AggModals/AggNotifications'
-import { getNFTMetadata, handleMarketplaceFormat, minimizeTheString } from '../../../web3/nfts/utils'
+import {
+  getNFTMetadata,
+  handleMarketplaceFormat,
+  handleUpdateJWTToken,
+  minimizeTheString
+} from '../../../web3/nfts/utils'
 import { TermsTextNFT } from './AcceptBidModal'
 import {
   getMagicEdenBuyInstruction,
   getMagicEdenListing,
+  getSignedTxPNFTGooseFX,
   getTensorBuyInstruction,
   NFT_MARKETS,
   saveNftTx
 } from '../../../api/NFTs'
+
 import { callExecuteSaleInstruction } from '../../../web3/auction-house-sdk/executeSale'
 import { getMagicEdenTokenAccount } from '../../../web3/auction-house-sdk/pda'
-import bs58 from 'bs58'
 
 export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }>`
   ${tw`flex flex-col mt-[-30px] sm:mt-0  `}
@@ -442,24 +450,14 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleNotifications = async (
     tx: Transaction | VersionedTransaction,
     buyerPrice: string,
-    isBuyingNow: boolean,
-    marketPlace: string
+    isBuyingNow: boolean
   ) => {
     try {
       // setting this as operating nft , for loading buttons
       if (isBuyingNow) setOperatingNFT((prevSet) => new Set([...Array.from(prevSet), general?.mint_address]))
       let signature
       if (isBuyingNow) {
-        const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
-        const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
-        if (marketPlace === NFT_MARKETS.GOOSE) {
-          signature = await sendTransaction(tx, connection, {
-            signers: [treasuryWallet],
-            skipPreflight: true
-          })
-        } else {
-          signature = await sendTransaction(tx, connection)
-        }
+        signature = await sendTransaction(tx, connection)
         setPendingTxSig(signature)
       }
       const confirm = await confirmTransaction(connection, signature, 'confirmed')
@@ -491,20 +489,37 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const callMagicEdenAPIs = async (): Promise<void> => {
     const tokenAccount = await getMagicEdenTokenAccount({ ...ask, ...general })
     try {
-      const listing_res = await getMagicEdenListing(general?.mint_address, process.env.REACT_APP_JWT_SECRET_KEY)
+      const listing_res = await getMagicEdenListing(general?.mint_address)
       const res = await getMagicEdenBuyInstruction(
         parseFloat(ask.buyer_price) / LAMPORTS_PER_SOL_NUMBER,
         publicKey.toBase58(),
         ask.wallet_key,
         ask.token_account_mint_key,
         listing_res.data?.[0].tokenAddress ? listing_res.data?.[0].tokenAddress : tokenAccount[0].toString(),
-        process.env.REACT_APP_JWT_SECRET_KEY,
         listing_res.data?.[0].expiry ? listing_res?.data[0].expiry.toString() : '-1'
       )
 
       const tx = VersionedTransaction.deserialize(Buffer.from(res.data.v0.txSigned.data))
-      await handleNotifications(tx, ask.buyer_price, true, ask?.marketplace_name)
+      await handleNotifications(tx, ask.buyer_price, true)
+    } catch (error) {
+      if (parseInt(error.message) === 401) handleUpdateJWTToken(wallet)
+      setIsLoading(false)
+      console.log(error)
+    }
+  }
+
+  const getSignedTransactionForPnft = async () => {
+    try {
+      const res = await getSignedTxPNFTGooseFX(
+        parseFloat(ask?.buyer_price),
+        publicKey.toString(),
+        ask?.wallet_key,
+        general?.mint_address
+      )
+      const tx = VersionedTransaction.deserialize(Buffer.from(res.data.Buffer))
+      await handleNotifications(tx, ask.buyer_price, true)
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
       setIsLoading(false)
     }
@@ -516,15 +531,15 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
         parseFloat(ask.buyer_price),
         publicKey.toBase58(),
         ask.wallet_key,
-        ask.token_account_mint_key,
-        process.env.REACT_APP_JWT_SECRET_KEY
+        ask.token_account_mint_key
       )
       const tx = res.data?.txV0
         ? VersionedTransaction.deserialize(Buffer.from(res.data.tx.data))
         : Transaction.from(Buffer.from(res.data.txV0.data))
 
-      await handleNotifications(tx, ask.buyer_price, true, ask?.marketplace_name)
+      await handleNotifications(tx, ask.buyer_price, true)
     } catch (err) {
+      if (parseInt(err.message) === 401) handleUpdateJWTToken(wallet)
       console.log(err)
       setIsLoading(false)
     }
@@ -542,6 +557,10 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
       callTensorAPIs()
       return
     }
+    if (isPnft && ask?.marketplace_name === NFT_MARKETS.GOOSE) {
+      getSignedTransactionForPnft()
+      return
+    }
     if (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN) {
       callMagicEdenAPIs()
       return
@@ -550,7 +569,7 @@ const FinalPlaceBid: FC<{ curBid: number; isLoading: boolean; setIsLoading: any 
   const handleOtherBuyOptions = async () => {
     try {
       const tx = await callExecuteSaleInstruction(ask, general, publicKey, isBuyingNow, connection, wal, isPnft)
-      await handleNotifications(tx, ask.buyer_price, isBuyingNow, ask?.marketplace_name)
+      await handleNotifications(tx, ask.buyer_price, isBuyingNow)
     } catch (err) {
       setIsLoading(false)
       pleaseTryAgain(isBuyingNow, 'Failed to load data needed')

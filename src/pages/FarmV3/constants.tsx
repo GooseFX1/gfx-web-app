@@ -88,31 +88,31 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 20000
+      cappedDeposit: 100000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 17000
+      cappedDeposit: 100000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 10000
+      cappedDeposit: 125000
     }
   ],
   devnet: [
@@ -120,31 +120,31 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 20000
+      cappedDeposit: 100000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 17000
+      cappedDeposit: 100000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 10000
+      cappedDeposit: 125000
     }
   ],
   testnet: [
@@ -213,7 +213,9 @@ export const faqs = [
       <div>
         The risks associated with single-sided liquidity are price inventory risk which is common for any market
         maker. This risk occurs when the price of the assets used for market making decline in value in excess of
-        the fees generated.
+        the fees generated. In periods of high volatility certain pools may become imbalanced. While no actual
+        losses occur users may have to wait until the pool rebalances itself to fully withdraw their total earned
+        amount.
       </div>
     )
   },
@@ -235,7 +237,7 @@ export const insufficientSOLMsg = (): Message => ({
 
 export const invalidDepositErrMsg = (tokenBalance: number, name: string): Message => ({
   type: 'error',
-  message: `Please give valid input from 0.00001 to ${tokenBalance?.toFixed(3)} ${name}`
+  message: `Please give valid input from 0.000001 to ${tokenBalance} ${name}`
 })
 
 export const invalidWithdrawErrMsg = (tokenBalance: number, name: string): Message => ({
@@ -273,4 +275,5 @@ export const TOKEN_NAMES = {
 export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
 export const TOTAL_METRICS = 'ssl-apis/getTotalMetrics'
 export const IS_WHITELIST = '/wallet-apis/isWhitelist'
+export const SSL_CHARTS = '/ssl-apis/charts/prices/'
 export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'

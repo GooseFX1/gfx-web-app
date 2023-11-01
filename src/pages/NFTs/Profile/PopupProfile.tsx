@@ -15,12 +15,6 @@ import { USER_SOCIALS } from '../../../constants'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
 import { getPresignedUrl, uploadToPresignedUrl } from '../../../api/gfxImageService/s3presigned'
 
-const config = {
-  bucketName: 'gfx-nest-image-resources',
-  region: 'ap-south-1',
-  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY,
-  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY
-}
 interface Props {
   visible: boolean
   setVisible: (value: boolean) => void
@@ -62,7 +56,7 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     setIsLoading(true)
     try {
       const formattedProfile = profileFormData
-      let imageLink = ''
+      const imageLink = ''
 
       if (profileImage) {
         const presignedUrl = await getPresignedUrl(profileImage.name, config.bucketName)
