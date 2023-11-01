@@ -204,7 +204,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         notify(invalidInputErrMsg(coin?.token))
         setDepositAmount(0)
         return true
-      } else if (depositAmount > parseFloat(userTokenBalance && userTokenBalance.toFixed(3))) {
+      } else if (depositAmount > userTokenBalance) {
         notify(invalidDepositErrMsg(userTokenBalance, coin?.token))
         setDepositAmount(0)
         return true
@@ -447,7 +447,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? parseFloat(userTokenBalance.toFixed(2)) : 0)
+                    ? setDepositAmount(userTokenBalance ? userTokenBalance : 0)
                     : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
                 }
                 tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"

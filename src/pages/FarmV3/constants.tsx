@@ -112,7 +112,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     }
   ],
   devnet: [
@@ -144,7 +144,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 75000
+      cappedDeposit: 125000
     }
   ],
   testnet: [
@@ -237,7 +237,7 @@ export const insufficientSOLMsg = (): Message => ({
 
 export const invalidDepositErrMsg = (tokenBalance: number, name: string): Message => ({
   type: 'error',
-  message: `Please give valid input from 0.00001 to ${tokenBalance?.toFixed(3)} ${name}`
+  message: `Please give valid input from 0.000001 to ${tokenBalance} ${name}`
 })
 
 export const invalidWithdrawErrMsg = (tokenBalance: number, name: string): Message => ({
