@@ -4,10 +4,10 @@
   "license": "MIT",
   "scripts": {
     "start": "PORT=3000 craco start",
-    "build": "craco build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=32768 vite build",
     "test": "craco test",
     "dev": "vite",
-    "vite:build": "tsc && vite build",
+    "vite:build": "cross-env NODE_OPTIONS=--max-old-space-size=32768 vite build",
     "eject": "react-scripts eject",
     "format:fix": "prettier --write \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
     "format:check": "prettier -c \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
@@ -137,6 +137,7 @@
     "arweave-deploy": "^1.9.1",
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-styled-components": "^2.1.4",
+    "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "eslint": "^7.1.1",
     "eslint-config-airbnb": "19.0.4",
@@ -161,6 +162,7 @@
     "vite": "^4.5.0",
     "vite-plugin-babel-macros": "^1.0.6",
     "vite-plugin-node-polyfills": "^0.15.0",
+    "vite-plugin-require-transform": "^1.0.21",
     "vite-plugin-top-level-await": "^1.3.1",
     "vite-plugin-wasm": "^3.2.2"
   },
