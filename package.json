@@ -4,10 +4,10 @@
   "license": "MIT",
   "scripts": {
     "start": "PORT=3000 craco start",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=32768 vite build",
+    "build": "vite build",
     "test": "craco test",
     "dev": "vite",
-    "vite:build": "cross-env NODE_OPTIONS=--max-old-space-size=32768 vite build",
+    "vite:build": "vite build",
     "eject": "react-scripts eject",
     "format:fix": "prettier --write \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",
     "format:check": "prettier -c \"src/*.+(js|jsx|ts|tsx|json|css|md)\"",

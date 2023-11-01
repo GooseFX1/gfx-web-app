@@ -23,6 +23,11 @@ export default defineConfig(() => ({
     outDir: 'build',
     commonjsOptions: {
       transformMixedEsModules: true
+    },
+    output: {
+      manualChunks: (id) => {
+        if (id.includes('node_modules')) return 'vendor'
+      }
     }
   }
 }))
