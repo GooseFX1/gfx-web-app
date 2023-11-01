@@ -5,6 +5,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
+import * as path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -27,9 +28,14 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     output: {
       cache: false,
-      maxParallelFileOps: 2,
+      sourcemap: mode === 'development',
+      maxParallelFileOps: 1,
       manualChunks: (id) => {
         if (id.includes('node_modules')) return 'vendor'
+      },
+      sourcemapIgnoreList: (relativeSourcePath) => {
+        const normalizedPath = path.normalize(relativeSourcePath)
+        return normalizedPath.includes('node_modules')
       }
     }
   }
