@@ -7,7 +7,7 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
 
 // https://vitejs.dev/config/
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
   plugins: [react(), macrosPlugin(), nodePolyfills(), wasm(), topLevelAwait(), requireTransform({})],
   css: {
     preprocessorOptions: {
@@ -24,6 +24,7 @@ export default defineConfig(() => ({
     commonjsOptions: {
       transformMixedEsModules: true
     },
+    sourcemap: mode === 'development',
     output: {
       manualChunks: (id) => {
         if (id.includes('node_modules')) return 'vendor'

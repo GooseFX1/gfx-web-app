@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "PORT=3000 craco start",
-    "build": "vite build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=6656 vite build",
     "test": "craco test",
     "dev": "vite",
     "vite:build": "vite build",
