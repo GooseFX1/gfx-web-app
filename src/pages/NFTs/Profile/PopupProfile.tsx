@@ -56,10 +56,10 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     setIsLoading(true)
     try {
       const formattedProfile = profileFormData
-      const imageLink = ''
+      let imageLink = ''
 
       if (profileImage) {
-        const presignedUrl = await getPresignedUrl(profileImage.name, config.bucketName)
+        const presignedUrl = await getPresignedUrl(profileImage.name, 'gfx-nest-image-resources')
         imageLink = await uploadToPresignedUrl(presignedUrl, profileImage)
       }
 
