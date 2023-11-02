@@ -563,10 +563,15 @@ export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQR
 export const MAGIC_EDEN_AUCTION_HOUSE = 'E8cU1WiRWjanGxmn96ewBgk9vPTcL6AEZ1t6F6fkgUWe'
 
 export const AUCTION_HOUSE: StringPublicKey = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
+export const OLD_AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
+// export const AUCTION_HOUSE: StringPublicKey = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
 
 export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
 
+// Current Authority
 export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = 'CeU4mJ3piGG59rd48iDV7jbPu3zijir6dBcD5xzrwp37'
+export const OLD_AUCTION_HOUSE_AUTHORITY: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+export const TEMP_AUCTION_HOUSE_AUTHORITY: StringPublicKey = '3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'
 
 export const AH_FEE_ACCT: StringPublicKey = '7PQhSEPvLM87Kdd1cbydhaMGPxKf2J1fzU65VALvK6J2'
 

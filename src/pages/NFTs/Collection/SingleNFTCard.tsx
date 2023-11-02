@@ -14,7 +14,7 @@ import { GradientText } from '../../../components'
 import { SkeletonCommon } from '../Skeleton/SkeletonCommon'
 import { BaseNFT, INFTAsk, INFTBid, INFTGeneralData } from '../../../types/nft_details'
 import { NFT_MARKETS, fetchSingleNFT } from '../../../api/NFTs'
-import { getParsedAccountByMint, StringPublicKey, AH_NAME, getMetadata } from '../../../web3'
+import { getParsedAccountByMint, StringPublicKey, AH_NAME, getMetadata, OLD_AUCTION_HOUSE } from '../../../web3'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -88,10 +88,13 @@ export const SingleNFTCard: FC<{
   }, [sessionUser, sessionUserParsedAccounts, item, operatingNFT])
 
   const hideThisNFT: boolean = useMemo(() => {
+    if (localAsk?.auction_house_key === OLD_AUCTION_HOUSE) return true
+
     if (myNFTsByCollection === null || myNFTsByCollection === undefined || !item) return false
     const currentNFT = myNFTsByCollection.filter((myNFT) => myNFT.data[0]?.mint_address === item?.mint_address)
     return currentNFT.length > 0 && currentNFT[0].asks.length === 0 && !myItems
-  }, [myNFTsByCollection, operatingNFT, item])
+  }, [myNFTsByCollection, operatingNFT, item, localAsk])
+
   const breakpoint = useBreakPoint()
 
   const { prices } = usePriceFeedFarm()
