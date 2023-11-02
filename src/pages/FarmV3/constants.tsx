@@ -112,7 +112,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 125000
+      cappedDeposit: 175000
     }
   ],
   devnet: [
@@ -144,7 +144,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 125000
+      cappedDeposit: 175000
     }
   ],
   testnet: [
