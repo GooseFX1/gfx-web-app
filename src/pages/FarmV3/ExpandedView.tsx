@@ -1,10 +1,10 @@
 import { FC, useMemo, useState, useEffect } from 'react'
-import tw from 'twin.macro'
+import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button } from '../../components'
 import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
-import { executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
+import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -19,11 +19,16 @@ import {
   SSLToken,
   BONK_MINT
 } from './constants'
-import { notify, truncateBigNumber } from '../../utils'
+import { checkMobile, notify, truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
-import { WithdrawModal } from './WithdrawModal'
+import { ActionModal } from './ActionModal'
+
+const CLAIM = styled.div`
+  ${tw`h-8.75 w-[140px] rounded-circle flex items-center justify-center text-white cursor-pointer ml-2 sm:w-[33%]`};
+  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+`
 
 export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
   isExpanded,
@@ -43,7 +48,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     setIsTxnSuccessfull,
     filteredLiquidityAccounts,
     liquidityAmount,
-    sslTableData
+    sslTableData,
+    rewards
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -54,7 +60,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
-  const [withdrawModal, setWithdrawModal] = useState<boolean>(false)
+  const [actionModal, setActionModal] = useState<boolean>(false)
+  const [actionType, setActionType] = useState<string>(null)
 
   useEffect(() => {
     ;(async () => {
@@ -136,12 +143,25 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
   )
 
+  const claimableReward = useMemo(
+    () => rewards[tokenMintAddress]?.toNumber() / Math.pow(10, coin?.mintDecimals),
+    [rewards, tokenMintAddress, isTxnSuccessfull, coin]
+  )
+
   const totalEarnedInUSD = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current
         ? prices[getPriceObject(coin?.token)]?.current * totalEarned
         : 0,
     [totalEarned]
+  )
+
+  const claimableRewardInUSD = useMemo(
+    () =>
+      prices[getPriceObject(coin?.token)]?.current
+        ? prices[getPriceObject(coin?.token)]?.current * claimableReward
+        : 0,
+    [claimableReward]
   )
 
   const userTokenBalanceInUSD = useMemo(
@@ -157,6 +177,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       return false
     }
     return true
+  }
+
+  const goToTwitter = () => {
+    window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
+  }
+
+  const openActionModal = (actionValue: string) => {
+    setActionType(actionValue)
+    setActionModal(true)
   }
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
@@ -260,7 +289,33 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token))
           setTimeout(() => setWithdrawAmount(0), 500)
-          setWithdrawModal(false)
+          setActionModal(false)
+          setIsTxnSuccessfull(true)
+        } else {
+          notify(sslErrorMessage())
+          setIsTxnSuccessfull(false)
+          return
+        }
+      })
+    } catch (err) {
+      setIsButtonLoading(false)
+      setOperationPending(false)
+      notify(genericErrMsg(err))
+      setIsTxnSuccessfull(false)
+    }
+  }
+  const handleClaim = () => {
+    try {
+      setIsButtonLoading(true)
+      setOperationPending(true)
+      setIsTxnSuccessfull(false)
+      executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey).then((con) => {
+        setIsButtonLoading(false)
+        setOperationPending(false)
+        const { confirm } = con
+        if (confirm && confirm?.value && confirm.value.err === null) {
+          notify(sslSuccessfulMessage('claimed', withdrawAmount, coin?.token))
+          setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
           notify(sslErrorMessage())
@@ -297,13 +352,18 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
-      {withdrawModal && (
-        <WithdrawModal
-          withdrawModal={withdrawModal}
-          setWithdrawModal={setWithdrawModal}
+      {actionModal && (
+        <ActionModal
+          actionModal={actionModal}
+          setActionModal={setActionModal}
           handleWithdraw={handleWithdraw}
+          handleDeposit={handleDeposit}
+          handleClaim={handleClaim}
           isButtonLoading={isButtonLoading}
           withdrawAmount={withdrawAmount}
+          depositAmount={depositAmount}
+          claimAmount={claimableReward}
+          actionType={actionType}
           token={coin}
         />
       )}
@@ -371,6 +431,21 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 )
               }
             />
+            <FarmStats
+              alignRight={true}
+              keyStr="Claimable rewards"
+              value={
+                totalEarned ? (
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                  </span>
+                ) : (
+                  <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
+                    0.00 {coin?.token} ($0.00 USD)
+                  </span>
+                )
+              }
+            />
           </div>
         )}
         {isExpanded && (
@@ -378,15 +453,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <div tw="flex font-semibold duration-500 relative sm:mt-2">
               <div
                 css={[
-                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
+                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[33%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
-                    ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
+                    ? tw`absolute ml-[100px] sm:ml-[33%] duration-500`
                     : tw`absolute ml-0 duration-500`
                 ]}
               ></div>
               <div
                 css={[
-                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
+                  tw`h-8.75 w-[100px] sm:w-[33%] z-10 flex items-center justify-center 
                   cursor-pointer dark:text-white text-grey-1`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
@@ -396,7 +471,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               </div>
               <div
                 css={[
-                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
+                  tw`h-8.75 w-[100px] sm:w-[33%] z-10 flex items-center justify-center 
                   cursor-pointer dark:text-white text-grey-1`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
@@ -404,6 +479,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               >
                 Withdraw
               </div>
+              <CLAIM onClick={() => openActionModal('claim')}>{checkMobile() ? 'Claim' : 'Claim Rewards'}</CLAIM>
             </div>
           </>
         )}
@@ -459,7 +535,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   tw`duration-500 rounded-[50px] relative !text-regular font-semibold outline-none dark:bg-black-1 
                 bg-grey-5 border-none dark:text-white text-black-4`,
                   isExpanded
-                    ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right sm:pl-[65%]`
+                    ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right`
                     : tw`h-0 w-0 pl-0 invisible`
                 ]}
                 type="number"
@@ -484,13 +560,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   onClick={
                     modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount > 0
                       ? () => {
-                          setWithdrawModal(true)
+                          openActionModal('withdraw')
                         }
                       : modeOfOperation === ModeOfOperation.DEPOSIT
-                      ? handleDeposit
+                      ? () => {
+                          openActionModal('deposit')
+                        }
                       : null
                   }
-                  loading={withdrawModal ? false : isButtonLoading ? true : false}
+                  loading={actionModal ? false : isButtonLoading ? true : false}
                 >
                   {actionButtonText}
                 </Button>
@@ -503,15 +581,17 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       </div>
 
       {breakpoint.isDesktop && isExpanded && (
-        <div tw="mt-1">
+        <div tw="mt-1 flex flex-col">
           <FarmStats
             alignRight={true}
             keyStr="Total Earnings"
             value={
               totalEarned ? (
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  {`${totalEarned?.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
-                </span>
+                <div tw="text-right">
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular text-right">
+                    {`${totalEarned?.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                  </span>
+                </div>
               ) : (
                 <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
                   0.00 {coin?.token} ($0.00 USD)
@@ -519,6 +599,23 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               )
             }
           />
+          <div tw="mt-2">
+            <FarmStats
+              alignRight={true}
+              keyStr="Claimable rewards"
+              value={
+                totalEarned ? (
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                  </span>
+                ) : (
+                  <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
+                    0.00 {coin?.token} ($0.00 USD)
+                  </span>
+                )
+              }
+            />
+          </div>
         </div>
       )}
     </div>

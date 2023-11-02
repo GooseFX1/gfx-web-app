@@ -565,7 +565,9 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
-                ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+                <span tw="font-semibold">
+                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+                </span>
               </Tooltip>
             </td>
           )}

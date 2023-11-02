@@ -63,7 +63,6 @@ export const FarmHeader: FC = () => {
     let totalLiquidity = 0
     allPoolSslData.map((token: SSLToken) => {
       const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
-      console.log('liquidity amount', liquidityAmount)
       const liquidityInUSD =
         prices[getPriceObject(token?.token)]?.current &&
         prices[getPriceObject(token?.token)]?.current * nativeLiquidity
