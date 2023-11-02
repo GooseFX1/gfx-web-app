@@ -164,6 +164,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [claimableReward]
   )
 
+  console.log('******', claimableReward, coin.token)
+
   const userTokenBalanceInUSD = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current
@@ -418,31 +420,38 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               }
             />
             <FarmStats
-              keyStr="Total Earnings"
+              keyStr="Total Earned"
               value={
                 totalEarned ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {`${totalEarned.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
-                  </span>
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                      {`${totalEarned.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                    </span>
+                  </div>
                 ) : (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    0.00 {coin?.token} ($0.00 USD)
-                  </span>
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                      0.00 {coin?.token} ($0.00 USD)
+                    </span>
+                  </div>
                 )
               }
             />
             <FarmStats
-              alignRight={true}
-              keyStr="Claimable rewards"
+              keyStr="Pending Rewards"
               value={
-                totalEarned ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
-                  </span>
+                claimableReward ? (
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                    </span>
+                  </div>
                 ) : (
-                  <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
-                    0.00 {coin?.token} ($0.00 USD)
-                  </span>
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
+                      0.00 {coin?.token} ($0.00 USD)
+                    </span>
+                  </div>
                 )
               }
             />
@@ -584,7 +593,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         <div tw="mt-1 flex flex-col">
           <FarmStats
             alignRight={true}
-            keyStr="Total Earnings"
+            keyStr="Total Earned"
             value={
               totalEarned ? (
                 <div tw="text-right">
@@ -602,16 +611,20 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           <div tw="mt-2">
             <FarmStats
               alignRight={true}
-              keyStr="Claimable rewards"
+              keyStr="Pending Rewards"
               value={
-                totalEarned ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
-                  </span>
+                claimableReward ? (
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                    </span>
+                  </div>
                 ) : (
-                  <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
-                    0.00 {coin?.token} ($0.00 USD)
-                  </span>
+                  <div tw="text-right">
+                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
+                      0.00 {coin?.token} ($0.00 USD)
+                    </span>
+                  </div>
                 )
               }
             />
