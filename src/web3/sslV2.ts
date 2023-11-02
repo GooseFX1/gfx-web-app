@@ -224,6 +224,78 @@ export const executeWithdraw = async (
   }
 }
 
+export const executeClaimRewards = async (
+  program: Program<Idl>,
+  wallet: WalletContextState,
+  connection: Connection,
+  token: SSLToken,
+  walletPublicKey: PublicKey
+): Promise<TxnReturn> => {
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
+  const tokenMintAddress = token?.mint
+  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+  const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
+  const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
+
+  const claimIxAcc = {
+    poolRegistry: poolRegistryAccountKey,
+    owner: walletPublicKey,
+    sslFeeVault: feeVaultAccount,
+    ownerAta: userAta,
+    liquidityAccount: liquidityAccountKey,
+    tokenProgram: TOKEN_PROGRAM_ID
+  }
+  const claimIX: TransactionInstruction = await program.instruction.claimFees({
+    accounts: claimIxAcc
+  })
+  const claimTX: Transaction = new Transaction()
+
+  //sslchange: For sol - mechanism to unwrap from WRAP-SOL
+  if (token?.token === 'SOL') {
+    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
+    const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
+    try {
+      if (!associatedTokenAccount) {
+        const tr = createAssociatedTokenAccountInstruction(
+          walletPublicKey,
+          associatedTokenAccountAddress,
+          walletPublicKey,
+          NATIVE_MINT
+        )
+        claimTX.add(tr)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+
+    claimTX.add(claimIX)
+    const tr = createCloseAccountInstruction(associatedTokenAccountAddress, walletPublicKey, walletPublicKey)
+    claimTX.add(tr)
+    let signature
+    try {
+      signature = await wallet.sendTransaction(claimTX, connection)
+      console.log(signature)
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
+      return { confirm, signature }
+    } catch (error) {
+      console.log(error, 'withdraw error\n', signature)
+      return { error, signature }
+    }
+  } else {
+    claimTX.add(claimIX)
+    let signature
+    try {
+      signature = await wallet.sendTransaction(claimTX, connection)
+      console.log('SIGN', signature)
+      const confirm = await confirmTransaction(connection, signature, 'confirmed')
+      return { confirm, signature }
+    } catch (error) {
+      console.log(error, 'claim rewards error\n', signature)
+      return { error, signature }
+    }
+  }
+}
+
 const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: number) => {
   try {
     const tx = new Transaction()

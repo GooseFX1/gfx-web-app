@@ -33,6 +33,7 @@ interface SSLData {
   sslTableData: SSLTableData
   sslTotalMetrics: any
   // isWhitelisted: boolean
+  rewards: any
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -45,6 +46,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
+  const [rewards, setRewards] = useState({})
   const [liquidityAmount, setLiquidityAmount] = useState({})
   const [pool, setPool] = useState<Pool>(poolType.all)
   const [operationPending, setOperationPending] = useState<boolean>(false)
@@ -179,6 +181,34 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [liquidityAccounts])
 
+  function isEmpty(obj) {
+    for (const prop in obj) {
+      if (Object.hasOwn(obj, prop)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  useEffect(() => {
+    if (filteredLiquidityAccounts && !isEmpty(filteredLiquidityAccounts) && sslData && sslData.length) {
+      const tempRewards = {}
+      for (let i = 0; i < sslData.length; i++) {
+        const mint = sslData[i].mint.toBase58()
+        const liqForMint = filteredLiquidityAccounts[mint]
+        if (!filteredLiquidityAccounts[mint]) {
+          tempRewards[mint] = null
+        } else {
+          const diff = sslData[i].totalAccumulatedLpReward.sub(liqForMint.lastObservedTap)
+          const numerator = diff.mul(liqForMint.amountDeposited)
+          const answer = numerator.div(sslData[i].totalLiquidityDeposits)
+          tempRewards[mint] = answer
+        }
+      }
+      setRewards(tempRewards)
+    } else setRewards({})
+  }, [filteredLiquidityAccounts])
+
   //Call API to get ssl table data. Need to run only once
   useEffect(() => {
     getSSLTableData(), getTotalMetrics()
@@ -223,8 +253,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         allPoolSslData: allPoolSslData,
         setAllPoolSslData: setAllPoolSslData,
         sslTableData: sslTableData,
-        sslTotalMetrics: sslTotalMetrics
-        // isWhitelisted: isWhitelisted
+        sslTotalMetrics: sslTotalMetrics,
+        // isWhitelisted: isWhitelisted,
+        rewards: rewards
       }}
     >
       {children}
