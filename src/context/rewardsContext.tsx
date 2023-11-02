@@ -182,6 +182,7 @@ const MESSAGE = styled.div`
   }
 `
 const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+  // bulk operation to retrieve all cachable values of the contract
   const [userMetadata, stakePool, gofxVault, unstakingTickets, claimable] = await Promise.all([
     stakeRewards.getUserMetaData(wallet),
     stakeRewards.getStakePool(),
@@ -228,7 +229,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setStakeRewards(s)
   }, [connection, getNetwork])
   const updateStakeDetails = useCallback(async () => {
+    // updates the details of the rewards object
     const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
+    // deep clone to avoid reference preventing re-render
     const payload: RewardState = structuredClone(rewards)
     payload.user.staking.userMetadata = data.userMetadata
     payload.user.staking.unstakeableTickets = data.unstakeableTickets
@@ -249,9 +252,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
-    })
-    stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey).then((res) => {
-      console.log('S', res)
     })
   }, [walletContext.publicKey, updateStakeDetails])
   const checkForUserAccount = useCallback(
@@ -508,6 +508,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [stakeRewards, walletContext, connection, updateStakeDetails]
   )
   const getClaimableFees = useCallback(async (): Promise<number> => {
+    // retrieves value of claimable amount from contract
     const value = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
     return Number(value)
   }, [stakeRewards, walletContext])
@@ -608,7 +609,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getUiAmount = useCallback((value: BN, isUsdc = false) => {
     const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
     //const uiAmount = new anchor.BN(5163).divmod(base)
-
+    // TODO: quick fix -> below will need to be fixed; decimal issue with BN.js
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const v = value.toString() / base.toString()
