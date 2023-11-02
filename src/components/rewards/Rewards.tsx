@@ -83,6 +83,7 @@ const EarnRewards: FC = () => {
     if (!isStakeSelected) max = totalStaked
     setInputValue(getAccurateNumber(max))
   }, [userGoFxBalance, isStakeSelected, totalStaked])
+  // focus input on toggle of stake/unstake
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
@@ -328,6 +329,7 @@ const RewardsRightPanel: FC = () => {
       .then((apr) => setApr(apr.toFixed(2)))
       .catch((err) => console.error(err))
   }, [])
+  // retrieves value from rewards hook -> usdcClaimable has already been converte to UI amount
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
       usdcClaimable: rewards.user.staking.claimable,
@@ -340,7 +342,7 @@ const RewardsRightPanel: FC = () => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
-  console.log(usdcClaimable)
+
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
