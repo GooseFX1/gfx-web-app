@@ -307,7 +307,7 @@ const RewardsRightPanel: FC = () => {
   const [apr, setApr] = useState(0)
   const { connection } = useConnectionConfig()
   const { publicKey } = useWallet()
-  const { rewards, getClaimableFees, getUiAmount, claimFees } = useRewards()
+  const { rewards, getUiAmount, claimFees } = useRewards()
   const breakpoints = useBreakPoint()
   const [isClaiming, setIsClaiming] = useState(false)
   const fetchGOFXData = async () => {
@@ -330,16 +330,17 @@ const RewardsRightPanel: FC = () => {
   }, [])
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
-      usdcClaimable: getClaimableFees(),
+      usdcClaimable: rewards.user.staking.claimable,
       gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned, true)
     }),
-    [rewards, getClaimableFees, publicKey, connection]
+    [rewards, publicKey, connection]
   )
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
+  console.log(usdcClaimable)
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
