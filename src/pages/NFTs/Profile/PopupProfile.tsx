@@ -13,6 +13,7 @@ import { checkMobile } from '../../../utils'
 import { CurrentUserProfilePic } from '../Home/NFTLandingPageV2'
 import { USER_SOCIALS } from '../../../constants'
 import { USER_CONFIG_CACHE } from '../../../types/app_params'
+import { getPresignedUrl, uploadToPresignedUrl } from '../../../api/gfxImageService/s3presigned'
 
 interface Props {
   visible: boolean
@@ -55,10 +56,11 @@ export const PopupProfile: FC<Props> = ({ visible, setVisible, handleCancel }) =
     setIsLoading(true)
     try {
       const formattedProfile = profileFormData
-      const imageLink = ''
+      let imageLink = ''
 
       if (profileImage) {
-        // imageLink = (await uploadFile(profileImage, config)).location
+        const presignedUrl = await getPresignedUrl(profileImage.name, 'gfx-nest-image-resources')
+        imageLink = await uploadToPresignedUrl(presignedUrl, profileImage)
       }
 
       if (sessionUser.uuid === null) {

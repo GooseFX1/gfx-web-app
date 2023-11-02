@@ -76,7 +76,7 @@ interface IRewardsContext {
   claimFees: () => Promise<void>
   redeemUnstakingTickets: (ticketContracts: UnstakeableTicket[]) => Promise<void>
   enterGiveaway: (giveawayContract: string) => void
-  getClaimableFees: () => number
+  getClaimableFees: () => Promise<number>
   getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
 }
 
@@ -182,11 +182,13 @@ const MESSAGE = styled.div`
   }
 `
 const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
-  const [userMetadata, stakePool, gofxVault, unstakingTickets] = await Promise.all([
+  // bulk operation to retrieve all cachable values of the contract
+  const [userMetadata, stakePool, gofxVault, unstakingTickets, claimable] = await Promise.all([
     stakeRewards.getUserMetaData(wallet),
     stakeRewards.getStakePool(),
     stakeRewards.getGoFxVault(),
-    stakeRewards.getUnstakingTickets(wallet)
+    stakeRewards.getUnstakingTickets(wallet),
+    stakeRewards.getUserRewardsHoldingAmount(wallet)
   ])
 
   const unstakeableTickets = stakeRewards.getUnstakeableTickets(unstakingTickets)
@@ -194,7 +196,8 @@ const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicK
     userMetadata,
     stakePool,
     gofxVault,
-    unstakeableTickets
+    unstakeableTickets,
+    claimable
   }
 }
 const Notification = (title: string, isError: boolean, description: ReactNode): JSX.Element => (
@@ -225,41 +228,32 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     s.setConnection(connection, getNetwork())
     setStakeRewards(s)
   }, [connection, getNetwork])
-  useEffect(() => {
-    if (!walletContext?.publicKey) {
-      return
-    }
-    console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
-    fetchAllRewardData(stakeRewards, walletContext?.publicKey)
-      .then(async (data) => {
-        const payload: RewardState = structuredClone(rewards)
-        payload.user.staking.userMetadata = data.userMetadata
-        payload.user.staking.unstakeableTickets = data.unstakeableTickets
-        payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
-          (ticket) => ticket.createdAt.toString() !== '0'
-        )
-
-        payload.stakePool = data.stakePool
-        payload.gofxVault = data.gofxVault
-        dispatch({ type: 'setAll', payload })
-      })
-      .catch((err) => {
-        console.warn('fetch-all-reward-data-failed', err)
-      })
-  }, [walletContext.publicKey, connection, network])
   const updateStakeDetails = useCallback(async () => {
+    // updates the details of the rewards object
     const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
+    // deep clone to avoid reference preventing re-render
     const payload: RewardState = structuredClone(rewards)
     payload.user.staking.userMetadata = data.userMetadata
     payload.user.staking.unstakeableTickets = data.unstakeableTickets
     payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
       (ticket) => ticket.createdAt.toString() !== '0'
     )
+    payload.user.staking.claimable = Number(data.claimable)
+
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
     dispatch({ type: 'setAll', payload })
   }, [stakeRewards, connection, network, walletContext.publicKey])
 
+  useEffect(() => {
+    if (!walletContext?.publicKey) {
+      return
+    }
+    console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
+    updateStakeDetails().catch((err) => {
+      console.warn('fetch-all-reward-data-failed', err)
+    })
+  }, [walletContext.publicKey, updateStakeDetails])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       if (!stakeRewards) {
@@ -513,25 +507,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [stakeRewards, walletContext, connection, updateStakeDetails]
   )
-  const getClaimableFees = useCallback((): number => {
-    if (rewards.user.staking.userMetadata.totalStaked.isZero()) {
-      return 0.0
-    }
-
-    return (
-      ((rewards.stakePool.totalAccumulatedProfit.toString() -
-        rewards.user.staking.userMetadata.lastObservedTap.toString()) *
-        (rewards.user.staking.userMetadata.totalStaked.toString() / rewards.gofxVault.amount.toString())) /
-      1e6
-    )
-  }, [
-    rewards.user.staking.userMetadata.totalStaked,
-    rewards.gofxVault.amount,
-    rewards.stakePool.totalAccumulatedProfit,
-    rewards.user.staking.userMetadata.lastObservedTap
-  ])
+  const getClaimableFees = useCallback(async (): Promise<number> => {
+    // retrieves value of claimable amount from contract
+    const value = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+    return Number(value)
+  }, [stakeRewards, walletContext])
   const claimFees = useCallback(async () => {
-    const amount = getClaimableFees()
+    const amount = await getClaimableFees()
 
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
     const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
@@ -627,7 +609,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getUiAmount = useCallback((value: BN, isUsdc = false) => {
     const base = isUsdc ? ANCHOR_BN.BASE_6 : ANCHOR_BN.BASE_9
     //const uiAmount = new anchor.BN(5163).divmod(base)
-
+    // TODO: quick fix -> below will need to be fixed; decimal issue with BN.js
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const v = value.toString() / base.toString()
@@ -635,8 +617,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return v
   }, [])
   const hasRewards = useMemo(
-    () => rewards?.staking?.unstakeableTickets.length > 0 || getClaimableFees() > 0.0,
-    [rewards]
+    () => rewards?.user?.staking?.unstakeableTickets.length > 0 || rewards.user.staking.claimable > 0.0,
+    [rewards?.user?.staking?.unstakeableTickets, rewards.user.staking.claimable]
   )
   return (
     <RewardsContext.Provider

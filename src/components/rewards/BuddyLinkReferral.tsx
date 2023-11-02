@@ -162,7 +162,7 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div css={tw`flex flex-col gap-5 min-h-[40px] min-md:mt-2.5 items-center `}>
+    <div css={tw`flex flex-col gap-5 min-h-[40px] min-md:mt-2.5 items-center relative justify-center`}>
       {!initialFetch ? (
         <>
           <div
@@ -183,7 +183,7 @@ const BuddyLinkReferral: FC = () => {
           ]}
         />
       ) : (
-        <div css={[tw`relative`]}>
+        <div css={[tw`absolute`]}>
           <Loader zIndex={1} />
         </div>
       )}

@@ -83,6 +83,7 @@ const EarnRewards: FC = () => {
     if (!isStakeSelected) max = totalStaked
     setInputValue(getAccurateNumber(max))
   }, [userGoFxBalance, isStakeSelected, totalStaked])
+  // focus input on toggle of stake/unstake
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
@@ -307,7 +308,7 @@ const RewardsRightPanel: FC = () => {
   const [apr, setApr] = useState(0)
   const { connection } = useConnectionConfig()
   const { publicKey } = useWallet()
-  const { rewards, getClaimableFees, getUiAmount, claimFees } = useRewards()
+  const { rewards, getUiAmount, claimFees } = useRewards()
   const breakpoints = useBreakPoint()
   const [isClaiming, setIsClaiming] = useState(false)
   const fetchGOFXData = async () => {
@@ -328,18 +329,20 @@ const RewardsRightPanel: FC = () => {
       .then((apr) => setApr(apr.toFixed(2)))
       .catch((err) => console.error(err))
   }, [])
+  // retrieves value from rewards hook -> usdcClaimable has already been converte to UI amount
   const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
     () => ({
-      usdcClaimable: getClaimableFees(),
+      usdcClaimable: rewards.user.staking.claimable,
       gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
       totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned, true)
     }),
-    [rewards, getClaimableFees, publicKey, connection]
+    [rewards, publicKey, connection]
   )
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
+
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
@@ -393,7 +396,7 @@ const RewardsRightPanel: FC = () => {
           onClick={handleClaimFees}
         >
           {isClaiming ? (
-            <div css={[tw`absolute top-[-5px]`]}>
+            <div css={[tw`absolute`]}>
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
           ) : usdcClaimable > 0.0 ? (
