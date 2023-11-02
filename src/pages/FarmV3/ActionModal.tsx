@@ -105,14 +105,20 @@ export const ActionModal: FC<{
               {<div>{actionType === 'deposit' ? 'Deposit' : 'Withdraw'} Amount</div>}
             </div>
             <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-              actionType === 'deposit' ? depositAmount : withdrawAmount
+              actionType === 'deposit'
+                ? depositAmount
+                  ? depositAmount
+                  : '00.00'
+                : withdrawAmount
+                ? withdrawAmount
+                : '00.00'
             } ${token?.token}`}</div>
           </div>
         )}
         <div tw="flex flex-row items-center justify-between mb-3.75">
           <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable rewards</div>
           <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-            claimAmount + ' ' + token?.token
+            claimAmount ? claimAmount + ' ' + token?.token : '00.00 ' + token?.token
           }`}</div>
         </div>
         <Button
@@ -121,7 +127,11 @@ export const ActionModal: FC<{
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
           onClick={handleUserAction}
           loading={isButtonLoading}
-          disabled={actionType === 'claim' && claimAmount === 0}
+          disabled={
+            (actionType === 'claim' && !claimAmount) ||
+            (actionType === 'deposit' && !depositAmount) ||
+            (actionType === 'withdraw' && !withdrawAmount)
+          }
           disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
         >
           {`${
@@ -129,7 +139,7 @@ export const ActionModal: FC<{
               ? `Deposit ${depositAmount} ${token?.token} + Claim rewards`
               : actionType === 'withdraw'
               ? `Withdraw ${withdrawAmount + claimAmount} ${token?.token}`
-              : `${claimAmount + ' ' + token?.token}`
+              : `${claimAmount ? claimAmount + token?.token : '00.00 ' + token?.token}`
           }`}
         </Button>
         <div
