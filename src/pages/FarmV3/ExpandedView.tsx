@@ -314,7 +314,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('claimed', withdrawAmount, coin?.token))
+          notify(sslSuccessfulMessage('claimed', claimableReward, coin?.token))
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
