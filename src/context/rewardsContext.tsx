@@ -1,14 +1,4 @@
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState
-} from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import {
   ADDRESSES,
   GfxStakeRewards,
@@ -213,6 +203,7 @@ const Notification = (title: string, isError: boolean, description: ReactNode): 
 )
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [rewards, dispatch] = useReducer(reducer, initialState)
+  const [hasRewards, setHasRewards] = useState(false)
   const walletContext = useWallet()
   const { network, connection } = useConnectionConfig()
   const getNetwork = useCallback(
@@ -242,6 +233,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
+    setHasRewards(payload.user.staking.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
     dispatch({ type: 'setAll', payload })
   }, [stakeRewards, connection, network, walletContext.publicKey])
 
@@ -616,10 +608,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return v
   }, [])
-  const hasRewards = useMemo(
-    () => rewards?.user?.staking?.unstakeableTickets.length > 0 || rewards.user.staking.claimable > 0.0,
-    [rewards?.user?.staking?.unstakeableTickets, rewards.user.staking.claimable]
-  )
+
   return (
     <RewardsContext.Provider
       value={{
