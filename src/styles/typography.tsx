@@ -253,6 +253,6 @@ export const GFX_LINK = styled.a<{ fontSize?: number }>`
   line-height: ${({ fontSize }) => (fontSize ? fontSize + 2 : '16')}px;
 
   &:hover {
-    color: ${({ theme }) => theme.secondary1};
+    color: ${({ theme }) => theme.secondary1} !important;
   }
 `
