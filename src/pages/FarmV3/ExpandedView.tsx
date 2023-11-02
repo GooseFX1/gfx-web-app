@@ -164,8 +164,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [claimableReward]
   )
 
-  console.log('******', claimableReward, coin.token)
-
   const userTokenBalanceInUSD = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current
@@ -181,9 +179,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     return true
   }
 
-  const goToTwitter = () => {
-    window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
-  }
+  // const goToTwitter = () => {
+  //   window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
+  // }
 
   const openActionModal = (actionValue: string) => {
     setActionType(actionValue)
