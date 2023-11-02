@@ -43,7 +43,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     setIsTxnSuccessfull,
     filteredLiquidityAccounts,
     liquidityAmount,
-    isWhitelisted,
     sslTableData
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -160,25 +159,19 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     return true
   }
 
-  const goToTwitter = () => {
-    window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
-  }
-
   // Disable action button when deposit mode with zero user balance or no deposit amount,
   // or withdraw mode with zero user deposited amount or no withdraw amount
-  const disableActionButton = useMemo(() => {
-    if (!isWhitelisted) return false
-    return (
+  const disableActionButton = useMemo(
+    () =>
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
-      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount))
-    )
-  }, [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity, isWhitelisted])
+      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount)),
+    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
+  )
 
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      if (!isWhitelisted) return `Get Access`
       if (liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
@@ -186,12 +179,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
       if (userDepositedAmount > 0) return modeOfOperation
-      if (!isWhitelisted) return `Get Access`
       if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
       if (withdrawAmount) return modeOfOperation
       if (!withdrawAmount) return `Enter Amount`
     }
-  }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount, liquidity, isWhitelisted])
+  }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount, liquidity])
 
   const checkConditionsForDepositWithdraw = (isDeposit: boolean) => {
     if (!enoughSOLInWallet()) return true
@@ -494,8 +486,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                       ? () => {
                           setWithdrawModal(true)
                         }
-                      : !isWhitelisted
-                      ? goToTwitter
                       : modeOfOperation === ModeOfOperation.DEPOSIT
                       ? handleDeposit
                       : null

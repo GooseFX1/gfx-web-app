@@ -8,7 +8,7 @@ import {
   SSLToken,
   SSLTableData,
   GET_24_CHANGES,
-  IS_WHITELIST,
+  // IS_WHITELIST,
   TOTAL_METRICS
 } from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
@@ -32,7 +32,7 @@ interface SSLData {
   setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
   sslTableData: SSLTableData
   sslTotalMetrics: any
-  isWhitelisted: boolean
+  // isWhitelisted: boolean
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -51,7 +51,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
   const [sslTotalMetrics, setSslTotalMetrics] = useState<SSLTableData>(null)
-  const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
+  // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const getSSLTableData = async () => {
     try {
@@ -77,20 +77,20 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  const isWhitelistApi = async () => {
-    try {
-      const walletAddress = wallet?.adapter?.publicKey
-      if (walletAddress) {
-        const res = await httpClient('api-services').post(`${IS_WHITELIST}`, {
-          walletAddress: walletAddress?.toBase58()
-        })
-        const data = res.data
-        setIsWhitelisted(data)
-      }
-    } catch (e) {
-      setIsWhitelisted(false)
-    }
-  }
+  // const isWhitelistApi = async () => {
+  //   try {
+  //     const walletAddress = wallet?.adapter?.publicKey
+  //     if (walletAddress) {
+  //       const res = await httpClient('api-services').post(`${IS_WHITELIST}`, {
+  //         walletAddress: walletAddress?.toBase58()
+  //       })
+  //       const data = res.data
+  //       setIsWhitelisted(data)
+  //     }
+  //   } catch (e) {
+  //     setIsWhitelisted(false)
+  //   }
+  // }
 
   useEffect(() => {
     ;(async () => {
@@ -151,9 +151,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
 
-  useEffect(() => {
-    if (wallet?.adapter?.publicKey) isWhitelistApi()
-  }, [wallet?.adapter?.publicKey])
+  // useEffect(() => {
+  //   if (wallet?.adapter?.publicKey) isWhitelistApi()
+  // }, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
     ;(async () => {
@@ -223,8 +223,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         allPoolSslData: allPoolSslData,
         setAllPoolSslData: setAllPoolSslData,
         sslTableData: sslTableData,
-        sslTotalMetrics: sslTotalMetrics,
-        isWhitelisted: isWhitelisted
+        sslTotalMetrics: sslTotalMetrics
+        // isWhitelisted: isWhitelisted
       }}
     >
       {children}
