@@ -40,12 +40,11 @@ export default defineConfig(({ mode }) => ({
     },
     minify: 'esbuild',
     cssMinify: 'esbuild',
-    sourcemap: mode === 'development',
+    sourcemap: false,
     output: {
       cache: false,
-      sourcemap: mode === 'development',
-      preserveModule: true,
-      maxParallelFileOps: Math.max(1, cpus().length - 1),
+      sourcemap: false,
+      maxParallelFileOps: 1,
       manualChunks: (id) => {
         if (id.includes('node_modules')) return 'vendor'
         if (id.includes('openbook-package')) return 'openbook'
