@@ -201,7 +201,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      if (liquidity > coin?.cappedDeposit) return `${coin?.token} Temporarily Closed`
+      if (liquidity > coin?.cappedDeposit) return `${coin?.token} Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (depositAmount) return modeOfOperation
       if (!depositAmount) return `Enter Amount`
@@ -262,6 +262,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token))
           setTimeout(() => setDepositAmount(0), 500)
+          setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
           notify(sslErrorMessage())
