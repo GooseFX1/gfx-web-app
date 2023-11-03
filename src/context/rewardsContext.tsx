@@ -505,7 +505,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return Number(value)
   }, [stakeRewards, walletContext])
   const claimFees = useCallback(async () => {
-    const amount = await getClaimableFees()
+    const amount = rewards.user.staking.claimable
 
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
     const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
@@ -540,7 +540,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       })
       .finally(() => updateStakeDetails())
-  }, [stakeRewards, walletContext, connection, rewards, getClaimableFees])
+  }, [stakeRewards, walletContext, connection, rewards, updateStakeDetails])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
