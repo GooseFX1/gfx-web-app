@@ -40,10 +40,15 @@ const ACCOUNTHEADER = styled.div`
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
+  border-top: none;
 
   .history-items-container {
     height: 450px;
     overflow: auto;
+  }
+
+  .history-items-container div:last-child {
+    border-bottom: none;
   }
 
   .history-item {
@@ -117,8 +122,7 @@ const DepositWithdrawHistory: FC = () => {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        walletAddress: 'Hwix1jZD2WF9SQP57bpcjSAUzuJ956HDwgdNJbm6Tt1P',
-        // walletAddress: 'FEx8K7Ci2wJTe9hjzaDGkoMqu6EDyJCTMoPYLsNDaWiG',
+        walletAddress: publicKey.toString(),
         page: pagination.page,
         limit: pagination.limit
       }

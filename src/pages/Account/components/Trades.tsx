@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -41,12 +41,23 @@ const ACCOUNTHEADER = styled.div`
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
+  border-top: none;
 
   .history-items-container {
     height: 450px;
     overflow: auto;
   }
+  .pair-container {
+    ${tw`flex gap-x-1 items-center`}
+  }
+  .pair-container img {
+    height: 24px;
+    width: 24px;
+  }
 
+  .history-items-container div:last-child {
+    border-bottom: none;
+  }
   .history-item {
     ${tw`grid grid-cols-8  items-center w-full`}
     padding: 10px;
@@ -99,7 +110,7 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Market', 'Direction', 'Type', 'Filled', 'Avg. Fill Price', 'Limit', 'Status', 'Date']
+const columns = ['Market', 'Direction', 'Size', 'Notional', 'Entry Price', 'Fee', 'Status', 'Date']
 
 type Pagination = {
   page: number
@@ -117,6 +128,12 @@ const Trades: FC = () => {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [filledTrades, setFilledTrades] = useState([])
 
+  const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
+  const symbol = useMemo(
+    () => getAskSymbolFromPair(selectedCrypto.pair),
+    [getAskSymbolFromPair, selectedCrypto.pair]
+  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
   const fetchFilledTrades = async () => {
     const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
       params: {
@@ -178,12 +195,15 @@ const Trades: FC = () => {
             <div className="history-items-container">
               {filledTrades.map((trade) => (
                 <div key={trade._id} className="history-item">
-                  <span>SOL-PERP</span>
+                  <div className="pair-container">
+                    <img src={`${assetIcon}`} alt="SOL icon" />
+                    <span>{selectedCrypto.pair}</span>
+                  </div>
                   <span className={trade.side}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
-                  <span>{trade.qty} SOL</span>
+                  <span>{trade.qty.toFixed(3)} SOL</span>
                   <span>${(trade.qty * trade.price).toFixed(2)}</span>
-                  <span>${trade.price}</span>
-                  <span></span>
+                  <span>${trade.price.toFixed(2)}</span>
+                  <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
                   <span className="filled">Filled</span>
                   <span>{convertUnixTimestampToFormattedDate(trade.time)}</span>
                 </div>
