@@ -55,7 +55,7 @@ const PanelSelector: FC<PanelSelectorProps> = ({ panelIndex, setPanelIndex }) =>
         ref={setRef}
         data-index={1}
         onClick={onChangePanel}
-        // disabled={true}
+        disabled={true}
       >
         Refer
       </button>
