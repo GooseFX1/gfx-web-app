@@ -1,14 +1,17 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useDarkMode } from '../../../context'
+import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
 
 import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
+import { httpClient } from '../../../api'
+import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
+import { useTraderConfig } from '../../../context/trader_risk_group'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -19,7 +22,7 @@ const WRAPPER = styled.div`
 `
 
 const ACCOUNTHEADER = styled.div`
-    ${tw`flex justify-between items-center flex-nowrap w-full`}
+    ${tw`grid grid-cols-8  items-center w-full`}
     border: 1px solid #3C3C3C;
     margin-top: 10px;
     span {
@@ -36,12 +39,27 @@ const ACCOUNTHEADER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex items-center justify-center w-full h-full`}
-  border:1px solid #3C3C3C;
+  ${tw`flex flex-col w-full h-full`}
+  border: 1px solid #3c3c3c;
 
+  .history-items-container {
+    height: 450px;
+    overflow: auto;
+  }
+
+  .history-item {
+    ${tw`grid grid-cols-8  items-center w-full`}
+    padding: 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #3c3c3c;
+  }
+  .history-item span:first-child {
+    ${tw`pl-1`}
+  }
   .no-trades-found {
     max-width: 155px;
     display: flex;
+    margin: auto;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -53,6 +71,16 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
 
+  .pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #3c3c3c;
+  }
+  .pagination-container > div {
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
   .deposit {
     background: linear-gradient(97deg, #f7931a 4.25%, #ac1cc7 97.61%);
     border-radius: 70px;
@@ -60,16 +88,64 @@ const HISTORY = styled.div`
     font-size: 15px;
     font-weight: 600;
   }
+  .Bid {
+    color: #80ce00;
+  }
+  .filled {
+    color: #80ce00;
+  }
+  .Ask {
+    color: #f35355;
+  }
 `
 
 const columns = ['Market', 'Direction', 'Type', 'Filled', 'Avg. Fill Price', 'Limit', 'Status', 'Date']
+
+type Pagination = {
+  page: number
+  limit: number
+}
 const Trades: FC = () => {
   const { mode } = useDarkMode()
 
-  const { connected } = useWallet()
+  const { connected, publicKey } = useWallet()
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [tradeType, setTradeType] = useState<string>('deposit')
+  const { isDevnet } = useCrypto()
+  const { traderInfo } = useTraderConfig()
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
+  const [filledTrades, setFilledTrades] = useState([])
+
+  const fetchFilledTrades = async () => {
+    const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
+      params: {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        devnet: isDevnet,
+        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+        page: pagination.page,
+        limit: pagination.limit
+      }
+    })
+    setFilledTrades(res.data.data)
+  }
+
+  useEffect(() => {
+    fetchFilledTrades()
+    console.log(setPagination)
+  }, [connected, publicKey])
+
+  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
+    // Create a new Date object using the Unix timestamp (in milliseconds)
+    const date = new Date(unixTimestamp * 1000)
+    console.log(unixTimestamp)
+    console.log(date.toString())
+
+    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
+    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
+
+    return formattedDate
+  }
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -97,16 +173,40 @@ const Trades: FC = () => {
         ))}
       </ACCOUNTHEADER>
       <HISTORY>
-        <div className="no-trades-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-          <p>No Trades Found</p>
-          {!connected && <Connect />}
-          {connected && (
-            <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-              Deposit Now
-            </button>
-          )}
-        </div>
+        {filledTrades.length ? (
+          <div>
+            <div className="history-items-container">
+              {filledTrades.map((trade) => (
+                <div key={trade._id} className="history-item">
+                  <span>SOL-PERP</span>
+                  <span className={trade.side}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
+                  <span>{trade.qty} SOL</span>
+                  <span>${(trade.qty * trade.price).toFixed(2)}</span>
+                  <span>${trade.price}</span>
+                  <span></span>
+                  <span className="filled">Filled</span>
+                  <span>{convertUnixTimestampToFormattedDate(trade.time)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="pagination-container">
+              <div>
+                <p>1 of 20 Transactions</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="no-trades-found">
+            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
+            <p>No deposits Found</p>
+            {!connected && <Connect />}
+            {connected && (
+              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+                Deposit Now
+              </button>
+            )}
+          </div>
+        )}
       </HISTORY>
     </WRAPPER>
   )
