@@ -233,3 +233,37 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
     console.log('BIG NUM ERROR', bigNumber)
   }
 }
+
+export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
+  if (!nativeString || nativeString === null || nativeString === '0') return '00.00'
+
+  const nativeStringLen = nativeString.length
+  const usdString =
+    nativeString.substring(0, nativeStringLen - mintDecimals) +
+    '.' +
+    nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+  const decimalIndex = usdString?.indexOf('.')
+  const beforeDecimal = usdString?.substring(0, decimalIndex)
+  const length = beforeDecimal.length
+
+  try {
+    if (length > 9) {
+      const resultStr =
+        beforeDecimal.substring(0, length - 9) + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
+      return resultStr + 'B'
+    }
+    if (length > 6) {
+      const resultStr =
+        beforeDecimal.substring(0, length - 6) + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
+      return resultStr + 'M'
+    }
+    if (length > 3) {
+      const resultStr =
+        beforeDecimal.substring(0, length - 3) + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
+      return resultStr + 'K'
+    }
+    return usdString
+  } catch (error) {
+    console.log('BIG STRING ERROR', usdString)
+  }
+}
