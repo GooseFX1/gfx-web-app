@@ -161,7 +161,7 @@ export const executeWithdraw = async (
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
-  const amountInNative = +amount * 10 ** token?.mintDecimals
+  const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
   const withdrawInstructionAccount = {
