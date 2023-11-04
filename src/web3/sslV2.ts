@@ -23,6 +23,7 @@ import {
 } from '../web3'
 import { TxnReturn } from './stake'
 import { SSLToken } from '../pages/FarmV3/constants'
+import { convertToNativeValue } from '../utils'
 export interface Account {
   /** Address of the account */
   address: PublicKey
@@ -296,7 +297,7 @@ export const executeClaimRewards = async (
   }
 }
 
-const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: number) => {
+const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: string) => {
   try {
     const tx = new Transaction()
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
@@ -316,7 +317,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
       SystemProgram.transfer({
         fromPubkey: walletPublicKey,
         toPubkey: associatedTokenAccount,
-        lamports: amount
+        lamports: +amount
       }),
       createSyncNativeInstruction(associatedTokenAccount)
     )
@@ -327,7 +328,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
 }
 
 const depositAmount = async (
-  amountInNative: number,
+  amountInNative: string,
   program: any,
   sslAccountKey: PublicKey,
   liquidityAccountKey: PublicKey,
@@ -388,7 +389,7 @@ export const executeDeposit = async (
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-  const amountInNative = +amount * 10 ** token?.mintDecimals
+  const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
 
   let createLiquidtyIX = undefined
