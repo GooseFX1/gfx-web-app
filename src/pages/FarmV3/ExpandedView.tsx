@@ -405,7 +405,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 userDepositedAmount ? (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {userDepositedAmount?.toString()}
+                    {truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)}
                   </span>
                 ) : (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00</span>
@@ -423,7 +423,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="Total Earned"
               value={
-                totalEarned ? (
+                totalEarned > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
                       {`${totalEarned.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
