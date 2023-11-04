@@ -491,8 +491,6 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     else if (showDeposited && userDepositedAmount && userDepositedAmount?.toString() === '0') return false
   }, [showDeposited, userDepositedAmount])
 
-  console.log('userDepositedAmount', userDepositedAmount, userDepositedAmount?.toString())
-
   // const openStatsModal = (e) => {
   //   e.stopPropagation()
   //   setStatsModal(true)
