@@ -342,7 +342,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         '.' +
         userDepositedAmount
           ?.toString()
-          .substring(nativeStringLen - coin?.mintDecimals, nativeStringLen - coin?.mintDecimals + 2)
+          ?.substring(nativeStringLen - coin?.mintDecimals, nativeStringLen - coin?.mintDecimals + 2)
       return usdString
     }
   }, [userDepositedAmount, coin?.mintDecimals])

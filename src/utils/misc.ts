@@ -267,3 +267,40 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
     console.log('BIG STRING ERROR', usdString)
   }
 }
+
+export const convertToNativeValue = (value: string, decimals: number): string => {
+  try {
+    const decimalIndex = value.indexOf('.')
+    if (decimalIndex !== -1) {
+      const beforeDecimal = value?.substring(0, decimalIndex)
+      const afterDecimal = value?.substring(decimalIndex + 1)
+      const afterDecimalLen = afterDecimal.length
+      let i = 0
+      let res = ''
+      let afterDecimalVal = ''
+
+      if (afterDecimalLen < decimals) {
+        while (i < decimals - afterDecimalLen) {
+          res += '0'
+          i++
+        }
+        afterDecimalVal = afterDecimal + res
+      } else {
+        afterDecimalVal = afterDecimal.substring(0, decimals)
+      }
+      const result = beforeDecimal + afterDecimalVal
+      return result
+    } else {
+      let i = 0
+      let res = ''
+      while (i < decimals) {
+        res += '0'
+        i++
+      }
+      const result = value + res
+      return result
+    }
+  } catch (e) {
+    console.log('ERROR IN INPUT STRING', value)
+  }
+}
