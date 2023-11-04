@@ -135,7 +135,7 @@ export const FarmTable: FC = () => {
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
-      if (amountInNative !== '0') {
+      if (amountInNative && amountInNative !== '0') {
         return accumulator + 1
       }
       return accumulator
@@ -487,9 +487,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && userDepositedAmount?.toString() !== '0') return true
-    else if (showDeposited && userDepositedAmount?.toString() === '0') return false
+    else if (showDeposited && userDepositedAmount && userDepositedAmount?.toString() !== '0') return true
+    else if (showDeposited && userDepositedAmount && userDepositedAmount?.toString() === '0') return false
   }, [showDeposited, userDepositedAmount])
+
+  console.log('userDepositedAmount', userDepositedAmount, userDepositedAmount?.toString())
 
   // const openStatsModal = (e) => {
   //   e.stopPropagation()
@@ -505,7 +507,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative">
-          {userDepositedAmount?.toString() !== '0' ? (
+          {userDepositedAmount && userDepositedAmount?.toString() !== '0' ? (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           ) : (
             <></>
