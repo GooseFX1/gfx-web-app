@@ -151,7 +151,7 @@ export const executeWithdraw = async (
   wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
-  amount: number,
+  amount: string,
   walletPublicKey: PublicKey
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
@@ -160,7 +160,7 @@ export const executeWithdraw = async (
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
   const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
-  const amountInNative = amount * Math.pow(10, token?.mintDecimals)
+  const amountInNative = +amount * 10 ** token?.mintDecimals
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
   const withdrawInstructionAccount = {
@@ -380,7 +380,7 @@ export const executeDeposit = async (
   program: Program<Idl>,
   wallet: WalletContextState,
   connection: Connection,
-  amount: number,
+  amount: string,
   token: SSLToken,
   walletPublicKey: PublicKey
 ): Promise<TxnReturn> => {
@@ -388,7 +388,7 @@ export const executeDeposit = async (
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
   const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-  const amountInNative = amount * Math.pow(10, token?.mintDecimals)
+  const amountInNative = +amount * 10 ** token?.mintDecimals
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
 
   let createLiquidtyIX = undefined

@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { checkMobile, truncateBigNumber } from '../../utils'
+import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -17,6 +17,7 @@ import { getPriceObject } from '../../web3/utils'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
+import BN from 'bn.js'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -133,9 +134,8 @@ export const FarmTable: FC = () => {
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
-      const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toNumber()
-      const amount = amountInNative / Math.pow(10, data?.mintDecimals)
-      if (+amount?.toFixed(2) > 0) {
+      const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
+      if (amountInNative !== '0') {
         return accumulator + 1
       }
       return accumulator
@@ -158,7 +158,7 @@ export const FarmTable: FC = () => {
           prices[getPriceObject(token?.token)]?.current &&
           prices[getPriceObject(token?.token)]?.current * nativeLiquidity
         const account = filteredLiquidityAccounts[token?.mint?.toBase58()]
-        const amountDeposited = account ? account?.amountDeposited?.toNumber() / 10 ** token?.mintDecimals : 0
+        const amountDeposited = account ? account?.amountDeposited?.toString() : 0
         const dataObj = {
           ...token,
           apy: apy,
@@ -441,22 +441,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   const { mode } = useDarkMode()
   const [statsModal, setStatsModal] = useState<boolean>(false)
 
-  const calculateUserDepositedAmount = (
-    filteredLiquidityAccounts: any,
-    tokenMintAddress: string,
-    coin: SSLToken
-  ) => {
-    const account = filteredLiquidityAccounts[tokenMintAddress] || {} // Get account or use an empty object
-    const amountDeposited = account.amountDeposited?.toNumber() || 0 // Get deposited amount or use 0
-    const mintDecimals = coin?.mintDecimals || 0
-    return amountDeposited / Math.pow(10, mintDecimals) // Calculate and return user deposited amount
-  }
+  const userDepositedAmount: BN = useMemo(() => {
+    const account = filteredLiquidityAccounts?.[tokenMintAddress]
+    return account?.amountDeposited
+  }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin])
 
-  const userDepositedAmount: number = useMemo(
-    // Calculate user deposited amount
-    () => calculateUserDepositedAmount(filteredLiquidityAccounts, tokenMintAddress, coin),
-    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
-  )
   const liquidity = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current &&
@@ -498,8 +487,8 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && +userDepositedAmount.toFixed(2) > 0) return true
-    else if (showDeposited && !(+userDepositedAmount.toFixed(2) > 0)) return false
+    else if (showDeposited && userDepositedAmount?.toString() !== '0') return true
+    else if (showDeposited && userDepositedAmount?.toString() === '0') return false
   }, [showDeposited, userDepositedAmount])
 
   // const openStatsModal = (e) => {
@@ -507,82 +496,86 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
   //   setStatsModal(true)
   // }
 
-  return (
-    showToggleFilteredTokens && (
-      <>
-        {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-        <tr
-          css={[tw`duration-500`]}
-          className={isExpanded && 'tableRowGradient'}
-          onClick={() => setIsExpanded((prev) => !prev)}
-        >
-          <td tw="!justify-start relative">
-            {userDepositedAmount ? (
-              <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
-            ) : (
-              <></>
-            )}
-            <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
-            <div tw="ml-2.5">{coin?.token}</div>
-            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
-              <Tooltip
-                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
-                title={
-                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}.
-                  </span>
-                }
-                placement="topRight"
-                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                overlayInnerStyle={{ borderRadius: '8px' }}
-              >
-                <img
-                  src="/img/assets/farm_cap.svg"
-                  alt="deposit-cap"
-                  tw="ml-2.5 sm:ml-1.25 max-w-none"
-                  height={20}
-                  width={20}
-                />
-              </Tooltip>
-            </div>
-          </td>
-          <td>{Number(formattedapiSslData?.apy)?.toFixed(2)}%</td>
-          {!checkMobile() && (
-            <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
+  return showToggleFilteredTokens ? (
+    <>
+      {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+      <tr
+        css={[tw`duration-500`]}
+        className={isExpanded && 'tableRowGradient'}
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
+        <td tw="!justify-start relative">
+          {userDepositedAmount?.toString() !== '0' ? (
+            <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
+          ) : (
+            <></>
           )}
-          {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
-          {!checkMobile() && (
-            <td>
-              <Tooltip
-                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
-                title={
-                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
-                  </span>
-                }
-                placement="topRight"
-                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                overlayInnerStyle={{ borderRadius: '8px' }}
-              >
-                <span tw="font-semibold">
-                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
+          <div tw="ml-2.5">{coin?.token}</div>
+          <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
+            <Tooltip
+              color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+              title={
+                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                  Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                  {truncateBigNumber(coin?.cappedDeposit)}.
                 </span>
-              </Tooltip>
-            </td>
-          )}
-          {!checkMobile() && <td>{userDepositedAmount ? truncateBigNumber(userDepositedAmount) : '0.00'}</td>}
-          <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
-            {/* {!checkMobile() && (
+              }
+              placement="topRight"
+              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+              overlayInnerStyle={{ borderRadius: '8px' }}
+            >
+              <img
+                src="/img/assets/farm_cap.svg"
+                alt="deposit-cap"
+                tw="ml-2.5 sm:ml-1.25 max-w-none"
+                height={20}
+                width={20}
+              />
+            </Tooltip>
+          </div>
+        </td>
+        <td>{Number(formattedapiSslData?.apy)?.toFixed(2)}%</td>
+        {!checkMobile() && (
+          <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
+        )}
+        {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
+        {!checkMobile() && (
+          <td>
+            <Tooltip
+              color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+              title={
+                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                  {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
+                </span>
+              }
+              placement="topRight"
+              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+              overlayInnerStyle={{ borderRadius: '8px' }}
+            >
+              <span tw="font-semibold">
+                ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+              </span>
+            </Tooltip>
+          </td>
+        )}
+        {!checkMobile() && (
+          <td>
+            {userDepositedAmount ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals) : '00.00'}
+          </td>
+        )}
+        <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
+          {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
-            <div tw="ml-auto sm:mr-2">
-              <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
-            </div>
-          </td>
-        </tr>
-        <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
-      </>
-    )
+          <div tw="ml-auto sm:mr-2">
+            <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
+          </div>
+        </td>
+      </tr>
+      <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
+    </>
+  ) : (
+    <></>
   )
 }
