@@ -36,8 +36,8 @@ export const ActionModal: FC<{
   handleDeposit: any
   handleClaim: any
   isButtonLoading: boolean
-  withdrawAmount: number
-  depositAmount: number
+  withdrawAmount: string
+  depositAmount: string
   claimAmount: number
   actionType: string
   token: SSLToken
@@ -138,7 +138,7 @@ export const ActionModal: FC<{
             actionType === 'deposit'
               ? `Deposit ${depositAmount} ${token?.token} + Claim rewards`
               : actionType === 'withdraw'
-              ? `Withdraw ${withdrawAmount + claimAmount} ${token?.token}`
+              ? `Withdraw ${+withdrawAmount + claimAmount} ${token?.token}`
               : `${claimAmount ? claimAmount + token?.token : '00.00 ' + token?.token}`
           }`}
         </Button>

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useMemo, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -13,24 +14,24 @@ import {
   invalidDepositErrMsg,
   invalidInputErrMsg,
   genericErrMsg,
-  invalidWithdrawErrMsg,
+  //invalidWithdrawErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage,
-  SSLToken,
-  BONK_MINT
+  SSLToken
 } from './constants'
-import { checkMobile, notify, truncateBigNumber } from '../../utils'
+import { checkMobile, notify, truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { ActionModal } from './ActionModal'
+import BN from 'bn.js'
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[140px] rounded-circle flex items-center justify-center text-white cursor-pointer ml-2 sm:w-[33%]`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
-export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: number }> = ({
+export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDepositedAmount: BN }> = ({
   isExpanded,
   coin,
   userDepositedAmount
@@ -54,12 +55,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
-  const [userBonkBalance, setUserBonkBalance] = useState<number>()
-  const [depositAmount, setDepositAmount] = useState<number>()
-  const [withdrawAmount, setWithdrawAmount] = useState<number>()
+  const [depositAmount, setDepositAmount] = useState<string>()
+  const [withdrawAmount, setWithdrawAmount] = useState<string>()
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
-  const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
+  const [userTokenBalance, setUserTokenBalance] = useState<number>()
   const [actionModal, setActionModal] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>(null)
 
@@ -77,20 +77,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       }
     })()
   }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance])
-
-  useEffect(() => {
-    ;(async () => {
-      if (wallet?.adapter?.publicKey) {
-        const account = await connection.getTokenAccountsByOwner(wallet?.adapter?.publicKey, {
-          mint: toPublicKey(BONK_MINT)
-        })
-        if (account.value[0]) {
-          const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-          setUserBonkBalance(balance?.value?.uiAmount)
-        }
-      }
-    })()
-  }, [userBonkBalance, userPublicKey, isTxnSuccessfull])
 
   useEffect(() => {
     ;(async () => {
@@ -194,7 +180,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     () =>
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
-      (modeOfOperation === ModeOfOperation.WITHDRAW && (userDepositedAmount === 0 || !withdrawAmount)),
+      (modeOfOperation === ModeOfOperation.WITHDRAW &&
+        (!userDepositedAmount || !withdrawAmount || withdrawAmount === '00.00')),
     [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
   )
 
@@ -207,8 +194,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       if (!depositAmount) return `Enter Amount`
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
-      if (userDepositedAmount > 0) return modeOfOperation
-      if (userDepositedAmount === 0) return `Insufficient ${coin?.token}`
+      if (userDepositedAmount) return modeOfOperation
+      if (!userDepositedAmount) return `Insufficient ${coin?.token}`
       if (withdrawAmount) return modeOfOperation
       if (!withdrawAmount) return `Enter Amount`
     }
@@ -219,31 +206,31 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     if (isDeposit) {
       if (!userTokenBalance) {
         notify(genericErrMsg(`You have 0 ${coin.token} to deposit!`))
-        setDepositAmount(0)
+        setDepositAmount('0')
         return true
-      } else if (isNaN(depositAmount) || depositAmount < 0.000001) {
+      } else if (!depositAmount || +depositAmount < 0.000001) {
         notify(invalidInputErrMsg(coin?.token))
-        setDepositAmount(0)
+        setDepositAmount('0')
         return true
-      } else if (depositAmount > userTokenBalance) {
+      } else if (+depositAmount > userTokenBalance) {
         notify(invalidDepositErrMsg(userTokenBalance, coin?.token))
-        setDepositAmount(0)
+        setDepositAmount('0')
         return true
       }
       return false
     } else {
       if (!userDepositedAmount) {
         notify(genericErrMsg(`You have 0 ${coin.token} to withdraw!`))
-        setWithdrawAmount(0)
+        setWithdrawAmount('0')
         return true
-      } else if (isNaN(withdrawAmount) || withdrawAmount < 0.000001) {
+      } else if (!withdrawAmount || +withdrawAmount < 0.000001) {
         notify(invalidInputErrMsg(coin?.token))
-        setWithdrawAmount(0)
+        setWithdrawAmount('0')
         return true
-      } else if (userDepositedAmount < withdrawAmount) {
-        notify(invalidWithdrawErrMsg(userDepositedAmount, coin?.token))
-        return true
-      }
+      } // else if (userDepositedAmount?.lte(new BN(withdrawAmount))) {
+      //   notify(invalidWithdrawErrMsg(userDepositedAmount, coin?.token))
+      //   return true
+      // }
       return false
     }
   }
@@ -261,7 +248,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token))
-          setTimeout(() => setDepositAmount(0), 500)
+          setTimeout(() => setDepositAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
@@ -289,7 +276,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token))
-          setTimeout(() => setWithdrawAmount(0), 500)
+          setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
@@ -340,10 +327,25 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
     const inputValue = +input
     if (!isNaN(inputValue)) {
-      if (modeOfOperation === ModeOfOperation.DEPOSIT) setDepositAmount(inputValue)
-      else setWithdrawAmount(inputValue)
+      if (modeOfOperation === ModeOfOperation.DEPOSIT) setDepositAmount(input)
+      else setWithdrawAmount(input)
     }
   }
+
+  const userDepositInUSD = useMemo(() => {
+    if (!userDepositedAmount || userDepositedAmount === null || userDepositedAmount?.toString() === '0')
+      return '00.00'
+    else {
+      const nativeStringLen = userDepositedAmount?.toString().length
+      const usdString =
+        userDepositedAmount?.toString().substring(0, nativeStringLen - coin?.mintDecimals) +
+        '.' +
+        userDepositedAmount
+          ?.toString()
+          .substring(nativeStringLen - coin?.mintDecimals, nativeStringLen - coin?.mintDecimals + 2)
+      return usdString
+    }
+  }, [userDepositedAmount, coin?.mintDecimals])
 
   return (
     <div
@@ -403,7 +405,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 userDepositedAmount ? (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {truncateBigNumber(userDepositedAmount)}
+                    {userDepositedAmount?.toString()}
                   </span>
                 ) : (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00</span>
@@ -439,7 +441,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="Pending Rewards"
               value={
-                claimableReward ? (
+                claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
                       {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
@@ -513,8 +515,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? 0.01 : 0)
-                    : setWithdrawAmount(userDepositedAmount ? 0.01 : 0)
+                    ? setDepositAmount(userTokenBalance ? '0.01' : '0')
+                    : setWithdrawAmount(userDepositedAmount ? '0.01' : '0')
                 }
                 tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
               >
@@ -523,8 +525,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? userTokenBalance : 0)
-                    : setWithdrawAmount(userDepositedAmount ? userDepositedAmount : 0)
+                    ? setDepositAmount(userTokenBalance ? String(userTokenBalance) : '0')
+                    : setWithdrawAmount(userDepositedAmount ? userDepositInUSD : '0')
                 }
                 tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
               >
@@ -566,7 +568,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   cssStyle={tw`duration-500 w-[400px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
-                    modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount > 0
+                    modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
                       ? () => {
                           openActionModal('withdraw')
                         }
