@@ -108,6 +108,10 @@ const WRAPPER = styled.div`
       ${tw`text-white`}
     }
   }
+
+  .sort {
+    ${tw`flex flex-row items-center justify-center`}
+  }
 `
 
 // const STATS = styled.div`
@@ -323,16 +327,12 @@ export const FarmTable: FC = () => {
         <table tw="mt-4">
           <thead>
             <tr>
-              <th
-                tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]"
-                onClick={() => handleColumnSort('token')}
-              >
-                {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
+              <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]">
+                <div className="sort" onClick={() => handleColumnSort('token')}>
+                  {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
+                </div>
               </th>
-              <th
-                tw="!flex !flex-row !justify-center !items-center sm:!w-[31vw]"
-                onClick={() => handleColumnSort('apy')}
-              >
+              <th tw="!flex !flex-row !justify-center !items-center sm:!w-[31vw]">
                 <Tooltip
                   color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
                   title={
@@ -344,27 +344,37 @@ export const FarmTable: FC = () => {
                   overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                   overlayInnerStyle={{ borderRadius: '8px' }}
                 >
-                  {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
+                  <div className="sort" onClick={() => handleColumnSort('apy')}>
+                    {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
+                  </div>
                 </Tooltip>
               </th>
               {!checkMobile() && (
-                <th onClick={() => handleColumnSort('liquidity')}>
-                  {TableHeaderTitle('Liquidity', null, true, sort === 'DESC' && sortType === 'liquidity')}{' '}
+                <th tw="!flex !justify-center">
+                  <div className="sort" onClick={() => handleColumnSort('liquidity')}>
+                    {TableHeaderTitle('Liquidity', null, true, sort === 'DESC' && sortType === 'liquidity')}{' '}
+                  </div>
                 </th>
               )}
               {!checkMobile() && (
-                <th onClick={() => handleColumnSort('volume')}>
-                  {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
+                <th tw="!flex !justify-center">
+                  <div className="sort" onClick={() => handleColumnSort('volume')}>
+                    {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
+                  </div>
                 </th>
               )}
               {!checkMobile() && (
-                <th onClick={() => handleColumnSort('fee')}>
-                  {TableHeaderTitle('24H Fees', null, true, sort === 'DESC' && sortType === 'fee')}{' '}
+                <th tw="!flex !justify-center">
+                  <div className="sort" onClick={() => handleColumnSort('fee')}>
+                    {TableHeaderTitle('24H Fees', null, true, sort === 'DESC' && sortType === 'fee')}{' '}
+                  </div>
                 </th>
               )}
               {!checkMobile() && (
-                <th onClick={() => handleColumnSort('balance')}>
-                  {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
+                <th tw="!flex !justify-center">
+                  <div className="sort" onClick={() => handleColumnSort('balance')}>
+                    {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
+                  </div>
                 </th>
               )}
               <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[31vw]">
