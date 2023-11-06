@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useMemo, useState, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -385,7 +384,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="24H Volume"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  ${truncateBigNumber(formattedapiSslData?.volume)} {coin?.token}
+                  ${truncateBigNumber(formattedapiSslData?.volume)}
                 </span>
               }
             />
@@ -426,7 +425,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 totalEarned > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      {`${totalEarned.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                      {`${totalEarned.toFixed(4)} ($${totalEarnedInUSD?.toFixed(4)} USD)`}
                     </span>
                   </div>
                 ) : (
@@ -599,7 +598,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               totalEarned ? (
                 <div tw="text-right">
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular text-right">
-                    {`${totalEarned?.toFixed(3)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                    {`${totalEarned?.toFixed(4)} ($${totalEarnedInUSD?.toFixed(4)} USD)`}
                   </span>
                 </div>
               ) : (
@@ -614,7 +613,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               alignRight={true}
               keyStr="Pending Rewards"
               value={
-                claimableReward ? (
+                claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
                       {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
