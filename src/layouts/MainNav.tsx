@@ -27,6 +27,15 @@ export const MainNav: FC = () => {
   const history = useHistory()
   const navigateHome = useCallback(() => window.location.reload(), [history])
   const { rewardModal, rewardToggle } = useRewardToggle()
+  const location = useLocation()
+  const query = new URLSearchParams(location.search)
+  const showRewardsModal = query.get('rewards')
+
+  useEffect(() => {
+    if (showRewardsModal) {
+      rewardToggle(true)
+    }
+  }, [location])
 
   return (
     <div
