@@ -114,6 +114,12 @@ export const ADDRESSES: {
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
       cappedDeposit: 400000
+    },
+    {
+      token: 'JITOSOL',
+      name: 'Jito Staked SOL',
+      address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
+      cappedDeposit: 100000
     }
   ],
   devnet: [
@@ -146,6 +152,12 @@ export const ADDRESSES: {
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
       cappedDeposit: 400000
+    },
+    {
+      token: 'JITOSOL',
+      name: 'Jito Staked SOL',
+      address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
+      cappedDeposit: 100000
     }
   ],
   testnet: [
