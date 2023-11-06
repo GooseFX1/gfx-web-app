@@ -42,4 +42,18 @@ $npx install-peerdeps --dev eslint-config-airbnb
 $yarn start
 ```
 
+## Checking Bundle size
+
+If you want more information on vite-bundle-visualizer please run:
+
+```bash
+npx vite-bundle-visualizer --help
+```
+
+To run the bundle analyzer please run:
+
+```bash
+NODE_OPTIONS=--max-old-space-size=32000 npx vite-bundle-visualizer -c vite.config.ts
+```
+
 All Rights Reserved 2022 Copyright.
