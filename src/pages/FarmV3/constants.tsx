@@ -182,9 +182,9 @@ export const faqs = [
     question: 'What is single-sided liquidity?',
     answer: (
       <div>
-        Single-sided liquidity is a revolutionary AMM which allows you to deposit a single asset to earn
-        auto-compounded yield. The yield is derived from the arbitrage profit from the spread between the quoted
-        oracle and pool price and the swap fee.
+        Single-sided liquidity is a revolutionary AMM which allows you to deposit a single asset to earn yield. The
+        yield is derived from the arbitrage profit from the spread between the quoted oracle and pool price and the
+        swap fee.
       </div>
     )
   },
@@ -235,7 +235,7 @@ export const faqs = [
   },
   {
     question: 'How are LP fees distributed?',
-    answer: <div>Fees and arbitrage profits are auto-compounded and are earned in the deposited asset.</div>
+    answer: <div>Fees and arbitrage profits are earned in the deposited asset.</div>
   }
 ]
 
