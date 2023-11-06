@@ -5,9 +5,37 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
+import viteImagemin from 'vite-plugin-imagemin'
+import viteCompression from 'vite-plugin-compression'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), macrosPlugin(), nodePolyfills(), wasm(), topLevelAwait(), requireTransform({})],
+  plugins: [
+    react(),
+    macrosPlugin(),
+    nodePolyfills(),
+    wasm(),
+    topLevelAwait(),
+    requireTransform({}),
+    viteImagemin({
+      pngquant: {
+        quality: [0.8, 0.9],
+        speed: 4
+      },
+      svgo: {
+        plugins: [
+          {
+            name: 'removeViewBox'
+          },
+          {
+            name: 'removeEmptyAttrs',
+            active: false
+          }
+        ]
+      }
+    }),
+    viteCompression()
+  ],
   css: {
     preprocessorOptions: {
       less: {
