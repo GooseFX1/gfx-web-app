@@ -1,4 +1,3 @@
-import { WalletAdapter } from '@solana/wallet-adapter-base'
 import { MetadataKey } from '../metaplex'
 import { Creator } from '@metaplex-foundation/js'
 export type ENDPOINT_NAME = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet' | 'lending'

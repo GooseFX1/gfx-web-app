@@ -1,7 +1,7 @@
 import { PublicKey, Keypair } from '@solana/web3.js'
 import BN from 'bn.js'
 import { Fractional } from '../pages/TradeV3/perps/dexterity/types'
-import { Accounts, Address, Program } from '@project-serum/anchor'
+import { Accounts, Address } from '@project-serum/anchor'
 import { IdlAccountItem } from '@project-serum/anchor/dist/esm/idl'
 
 export interface IInitializeMarketProductGroupAccounts {
