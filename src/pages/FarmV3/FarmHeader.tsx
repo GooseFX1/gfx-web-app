@@ -54,7 +54,7 @@ export const FarmHeader: FC = () => {
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
     const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
-    const apy = Number(sslTableData?.[tokenName].apy)
+    const apy = Number(sslTableData?.[tokenName]?.apy)
     const apyObj = { ...data, apy: apy }
     return apyObj
   })
