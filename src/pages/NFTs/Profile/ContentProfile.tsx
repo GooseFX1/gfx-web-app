@@ -104,14 +104,7 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {
       const userCreated = currentUserParsedAccounts.filter(
         (nft: ParsedAccount) =>
-          nft.data.creators !== undefined &&
-          nft.data.creators.find((c) => {
-            if (c.address instanceof PublicKey) {
-              // types seem to point its a pubkey but its a string adding check for ts
-              return c.address.toBase58() === currentUserProfile.pubkey
-            }
-            return c.address === currentUserProfile.pubkey
-          })
+          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === currentUserProfile.pubkey)
       )
       setCreatedItems(userCreated)
     } else {
