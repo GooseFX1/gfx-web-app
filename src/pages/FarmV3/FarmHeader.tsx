@@ -61,7 +61,7 @@ export const FarmHeader: FC = () => {
 
   const TVL = useMemo(() => {
     let totalLiquidity = 0
-    allPoolSslData.map((token: SSLToken) => {
+    allPoolSslData?.slice(0, allPoolSslData?.length - 1)?.map((token: SSLToken) => {
       const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
       const liquidityInUSD =
         prices[getPriceObject(token?.token)]?.current &&
@@ -73,7 +73,7 @@ export const FarmHeader: FC = () => {
 
   const V24H = useMemo(() => {
     let totalVolume = 0
-    allPoolSslData.map((token: SSLToken) => {
+    allPoolSslData?.slice(0, allPoolSslData?.length - 1)?.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTableData?.[key]?.volume
       const volumeinUSD = volume / 1_000_000
@@ -84,7 +84,7 @@ export const FarmHeader: FC = () => {
 
   const V7D = useMemo(() => {
     let totalVolume = 0
-    allPoolSslData.map((token: SSLToken) => {
+    allPoolSslData?.slice(0, allPoolSslData?.length - 1)?.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.volume7D
       const volumeinUSD = volume / 1_000_000
@@ -95,7 +95,7 @@ export const FarmHeader: FC = () => {
 
   const totalVolumeTraded = useMemo(() => {
     let totalVolume = 0
-    allPoolSslData.map((token: SSLToken) => {
+    allPoolSslData?.slice(0, allPoolSslData?.length - 1)?.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const volume = sslTotalMetrics?.[key]?.totalTokenVolume
       const volumeinUSD = volume / 1_000_000
@@ -106,7 +106,7 @@ export const FarmHeader: FC = () => {
 
   const totalFees = useMemo(() => {
     let feesSum = 0
-    allPoolSslData.map((token: SSLToken) => {
+    allPoolSslData?.slice(0, allPoolSslData?.length - 1)?.map((token: SSLToken) => {
       const key = token.token === 'SOL' ? 'WSOL' : token.token
       const nativeFees = sslTotalMetrics?.[key]?.totalTokenFees / 10 ** token?.mintDecimals
       const feesInUSD =
