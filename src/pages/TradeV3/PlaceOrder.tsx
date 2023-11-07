@@ -197,6 +197,7 @@ const INPUT_WRAPPER = styled.div<{ $halfWidth?: boolean }>`
   img {
     height: 20px;
     width: 20px;
+    object-fit: contain;
   }
   .suffixText {
     ${tw`text-tiny font-semibold`}

@@ -91,9 +91,6 @@ const NFTAgg: FC = (): ReactElement => {
             <Route exact path={path}>
               <NFTLandingPageV2 />
             </Route>
-            <Route exact path={'/nfts/NestQuest'}>
-              <NestQuestSingleListing />
-            </Route>
             <Route exact path="/nfts/collection/:collectionName">
               <CollectionV2 />
             </Route>

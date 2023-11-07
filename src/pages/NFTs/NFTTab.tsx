@@ -111,6 +111,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           ref={setButtonRef}
           className={displayIndex === 0 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(0)}
+          data-index={0}
         >
           {collections}
         </div>
@@ -119,6 +120,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
             ref={setButtonRef}
             className={displayIndex === 1 ? 'selectedProfile' : 'flexItemProfile'}
             onClick={() => setDisplayIndex(1)}
+            data-index={1}
           >
             {favourited}
           </div>
@@ -127,6 +129,7 @@ const FiltersContainer = ({ collections, favourited, displayIndex, setDisplayInd
           ref={setButtonRef}
           className={displayIndex === 2 ? 'selectedProfile' : 'flexItemProfile'}
           onClick={() => setDisplayIndex(pubKey ? 2 : 1)}
+          data-index={pubKey ? 2 : 1}
         >
           Activity
         </div>

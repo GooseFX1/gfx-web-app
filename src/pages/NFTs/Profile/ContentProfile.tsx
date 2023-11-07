@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 import NFTDisplayV2 from './NFTDisplayV2'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
 
 type Props = {
   isSessionUser: boolean
@@ -104,7 +105,13 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
       const userCreated = currentUserParsedAccounts.filter(
         (nft: ParsedAccount) =>
           nft.data.creators !== undefined &&
-          nft.data.creators.find((c) => c.address.toBase58() === currentUserProfile.pubkey)
+          nft.data.creators.find((c) => {
+            if (c.address instanceof PublicKey) {
+              // types seem to point its a pubkey but its a string adding check for ts
+              return c.address.toBase58() === currentUserProfile.pubkey
+            }
+            return c.address === currentUserProfile.pubkey
+          })
       )
       setCreatedItems(userCreated)
     } else {
