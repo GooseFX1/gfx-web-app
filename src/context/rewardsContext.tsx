@@ -1,14 +1,4 @@
-import {
-  createContext,
-  FC,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState
-} from 'react'
+import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import {
   ADDRESSES,
   GfxStakeRewards,
@@ -213,6 +203,7 @@ const Notification = (title: string, isError: boolean, description: ReactNode): 
 )
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [rewards, dispatch] = useReducer(reducer, initialState)
+  const [hasRewards, setHasRewards] = useState(false)
   const walletContext = useWallet()
   const { network, connection } = useConnectionConfig()
   const getNetwork = useCallback(
@@ -242,6 +233,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     payload.stakePool = data.stakePool
     payload.gofxVault = data.gofxVault
+    setHasRewards(payload.user.staking.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
     dispatch({ type: 'setAll', payload })
   }, [stakeRewards, connection, network, walletContext.publicKey])
 
@@ -253,6 +245,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
+    const interval = setInterval(updateStakeDetails, 10 * 1e3)
+    return () => clearInterval(interval)
   }, [walletContext.publicKey, updateStakeDetails])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
@@ -513,7 +507,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return Number(value)
   }, [stakeRewards, walletContext])
   const claimFees = useCallback(async () => {
-    const amount = await getClaimableFees()
+    const amount = rewards.user.staking.claimable
 
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
     const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
@@ -548,7 +542,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       })
       .finally(() => updateStakeDetails())
-  }, [stakeRewards, walletContext, connection, rewards, getClaimableFees])
+  }, [stakeRewards, walletContext, connection, rewards, updateStakeDetails])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
@@ -616,10 +610,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return v
   }, [])
-  const hasRewards = useMemo(
-    () => rewards?.user?.staking?.unstakeableTickets.length > 0 || rewards.user.staking.claimable > 0.0,
-    [rewards?.user?.staking?.unstakeableTickets, rewards.user.staking.claimable]
-  )
+
   return (
     <RewardsContext.Provider
       value={{
