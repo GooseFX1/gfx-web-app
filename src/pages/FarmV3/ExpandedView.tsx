@@ -550,7 +550,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 type="number"
                 key={modeOfOperation}
               />
-              <div tw="font-semibold text-grey-1 dark:text-grey-2 absolute mt-1.5 ml-[345px] sm:ml-[85%] sm:mt-[6.5px]">
+              <div
+                css={[
+                  tw`font-semibold text-grey-1 dark:text-grey-2 absolute mt-1.5 sm:ml-[85%] sm:mt-[6.5px]`,
+                  coin?.token === 'JITOSOL'
+                    ? tw`text-[12px] mt-2 ml-[340px] font-semibold`
+                    : tw`text-[14px] mt-1.5 ml-[345px]`
+                ]}
+              >
                 {coin?.token}
               </div>
             </>
