@@ -238,11 +238,12 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   if (!nativeString || nativeString === null || nativeString === '0') return '00.00'
 
   const nativeStringLen = nativeString.length
-  const usdString =
+  let usdString =
     nativeString.substring(0, nativeStringLen - mintDecimals) +
     '.' +
     nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
   const decimalIndex = usdString?.indexOf('.')
+  if (decimalIndex === 0) usdString = '0' + usdString
   const beforeDecimal = usdString?.substring(0, decimalIndex)
   const length = beforeDecimal.length
 

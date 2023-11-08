@@ -245,7 +245,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-    const interval = setInterval(updateStakeDetails, 10 * 1e3)
+    const interval = setInterval(
+      () => updateStakeDetails().catch((e) => console.warn('interval-fetch-all-reward-data-failed', e)),
+      10 * 1e3
+    )
     return () => clearInterval(interval)
   }, [walletContext.publicKey, updateStakeDetails])
   const checkForUserAccount = useCallback(
