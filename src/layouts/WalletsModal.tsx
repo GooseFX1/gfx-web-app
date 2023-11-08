@@ -28,7 +28,7 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
   .ant-modal-body {
-    ${tw`py-6 px-0 pr-1`}
+    ${tw`py-0 h-auto h-[298px] overflow-y-scroll`}
   }
   &.ant-modal {
     ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
@@ -39,12 +39,21 @@ const STYLED_POPUP = styled(PopupCustom)`
       display: none;
     }
   }
-  .show-more {
-    ${tw`text-average pl-4 font-semibold underline mt-3.75 text-center 
-      cursor-pointer dark:text-white text-blue-1 pb-3.75`}
+  .ant-modal-header {
+    ${tw`bg-transparent text-center py-2`}
+    .ant-modal-title {
+      ${tw`text-lg !font-semibold dark:text-white text-blue-1`}
+    }
   }
-  .ant-modal-close-x {
-    ${tw`!w-5 !h-5 `}
+  .show-more {
+    ${tw`text-average font-semibold underline text-center 
+      cursor-pointer dark:text-white text-blue-1`}
+  }
+  .ant-modal-close {
+    ${tw`top-[14px] right-[14px]`}
+    .ant-modal-close-x {
+      ${tw`!w-5 !h-5`}
+    }
   }
   .titleContainer {
     ${tw`flex items-center text-lg text-center justify-center font-semibold leading-7 dark:text-grey-5 text-black-4`}
@@ -116,79 +125,57 @@ export const WalletsModal: FC = () => {
       width={'354px'}
       height={'396px'}
       visible={visible}
-      title={null}
-      footer={null}
+      title={'Select a wallet'}
+      footer={
+        <div className="show-more" onClick={() => setIsShowMore((v) => !v)}>
+          Show {isShowMore ? 'less' : 'more'}
+        </div>
+      }
       onCancel={() => setVisible(false)}
     >
-      <div>
-        <div className="titleContainer">Select a wallet</div>
-        <div className="wallets-container">
-          <div className="wallets-holder wallet-border">
-            {detectedWallets.length ? (
-              detectedWallets.map((wallet, index) => (
-                <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-                  <div tw="flex items-center">
-                    <img
-                      src={wallet.adapter.icon}
-                      alt="wallet-icon"
-                      height={'30px'}
-                      width={'30px'}
-                      tw="mr-2.5 ml-2 rounded-half"
-                    />
-                    <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-                  </div>
-                  <div className="textDetected">Detected</div>
-                </WALLET_DETECTED>
-              ))
-            ) : (
-              <NAME tw="text-lg mt-14">No wallets detected</NAME>
-            )}
+      <div className="wallets-container">
+        {detectedWallets.length ? (
+          <div>
+            {detectedWallets.map((wallet, index) => (
+              <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+                <div tw="flex items-center">
+                  <img
+                    src={wallet.adapter.icon}
+                    alt="wallet-icon"
+                    height={'30px'}
+                    width={'30px'}
+                    tw="mr-2.5 ml-2 rounded-half"
+                  />
+                  <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+                </div>
+                <div className="textDetected">Detected</div>
+              </WALLET_DETECTED>
+            ))}
+            {isShowMore &&
+              wallets
+                .filter(
+                  ({ readyState }) =>
+                    readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+                )
+                .map((wallet, index) => (
+                  <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+                    <div tw="flex items-center">
+                      <img
+                        src={wallet.adapter.icon}
+                        alt="wallet-icon"
+                        height={'30px'}
+                        width={'30px'}
+                        tw="mr-2.5 ml-2 rounded-half"
+                      />
+                      <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+                    </div>
+                  </WALLET_DETECTED>
+                ))}
           </div>
-        </div>
+        ) : (
+          <NAME tw="text-lg mt-14">No wallets detected</NAME>
+        )}
       </div>
-      {!isShowMore && (
-        <div
-          className="show-more"
-          onClick={() => {
-            setIsShowMore(true)
-          }}
-        >
-          Show more
-        </div>
-      )}
-      {isShowMore && (
-        <div className="wallets-container">
-          <div className="wallets-holder">
-            {wallets
-              .filter(
-                ({ readyState }) =>
-                  readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-              )
-              .map((wallet, index) => (
-                <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-                  <div tw="flex items-center">
-                    <img
-                      src={wallet.adapter.icon}
-                      alt="wallet-icon"
-                      height={'30px'}
-                      width={'30px'}
-                      tw="mr-2.5 ml-2 rounded-half"
-                    />
-                    <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-                  </div>
-                </WALLET_DETECTED>
-              ))}
-            <div
-              className="show-more"
-              onClick={() => {
-                setIsShowMore(false)
-              }}
-            >
-              Show less
-            </div>
-          </div>
-        </div>
-      )}
     </STYLED_POPUP>
   )
 }
