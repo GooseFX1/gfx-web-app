@@ -89,37 +89,37 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 180000
+      cappedDeposit: 500000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 180000
+      cappedDeposit: 500000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 150000
+      cappedDeposit: 500000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 200000
+      cappedDeposit: 500000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 400000
+      cappedDeposit: 500000
     },
     {
       token: 'JITOSOL',
       name: 'Jito Staked SOL',
       address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 100000
+      cappedDeposit: 150000
     }
   ],
   devnet: [
@@ -127,37 +127,37 @@ export const ADDRESSES: {
       token: 'USDT',
       name: 'USDT Coin',
       address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 180000
+      cappedDeposit: 500000
     },
     {
       token: 'USDC',
       name: 'USDC coin',
       address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 180000
+      cappedDeposit: 500000
     },
     {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 200000
+      cappedDeposit: 500000
     },
     {
       token: 'MSOL',
       name: 'MSOL',
       address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 175000
+      cappedDeposit: 500000
     },
     {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 400000
+      cappedDeposit: 500000
     },
     {
       token: 'JITOSOL',
       name: 'Jito Staked SOL',
       address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 100000
+      cappedDeposit: 150000
     }
   ],
   testnet: [
