@@ -119,7 +119,7 @@ export const ADDRESSES: {
       token: 'JITOSOL',
       name: 'Jito Staked SOL',
       address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 150000
+      cappedDeposit: 200000
     }
   ],
   devnet: [
@@ -157,7 +157,7 @@ export const ADDRESSES: {
       token: 'JITOSOL',
       name: 'Jito Staked SOL',
       address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 150000
+      cappedDeposit: 200000
     }
   ],
   testnet: [
