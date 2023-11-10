@@ -151,30 +151,30 @@ export const WalletsModal: FC = () => {
                 <div className="textDetected">Detected</div>
               </WALLET_DETECTED>
             ))}
-            {isShowMore &&
-              wallets
-                .filter(
-                  ({ readyState }) =>
-                    readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-                )
-                .map((wallet, index) => (
-                  <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-                    <div tw="flex items-center">
-                      <img
-                        src={wallet.adapter.icon}
-                        alt="wallet-icon"
-                        height={'30px'}
-                        width={'30px'}
-                        tw="mr-2.5 ml-2 rounded-half"
-                      />
-                      <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-                    </div>
-                  </WALLET_DETECTED>
-                ))}
           </div>
         ) : (
-          <NAME tw="text-lg mt-14">No wallets detected</NAME>
+          <NAME tw="text-lg mb-2.5">No wallets detected</NAME>
         )}
+        {isShowMore &&
+          wallets
+            .filter(
+              ({ readyState }) =>
+                readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+            )
+            .map((wallet, index) => (
+              <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+                <div tw="flex items-center">
+                  <img
+                    src={wallet.adapter.icon}
+                    alt="wallet-icon"
+                    height={'30px'}
+                    width={'30px'}
+                    tw="mr-2.5 ml-2 rounded-half"
+                  />
+                  <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+                </div>
+              </WALLET_DETECTED>
+            ))}
       </div>
     </STYLED_POPUP>
   )
