@@ -1,4 +1,4 @@
-import { gooseFxProd, httpClient } from '../../api'
+import { GFX_NEST_BASE_URL, httpClient } from '../../api'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { NFT_API_ENDPOINTS, NFT_API_BASE } from './constants'
@@ -116,6 +116,7 @@ const handleAdditionalFilters = (receivedUrl: string, additionalFilters: IAdditi
   }
   return url
 }
+
 export const fetchOpenBidByPages = async (
   paramValue: string,
   offset: number,
@@ -125,8 +126,7 @@ export const fetchOpenBidByPages = async (
   const isUUID: boolean = validateUUID(paramValue)
 
   try {
-    let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.OPEN_BID}?
-    ${
+    let url = `${GFX_NEST_BASE_URL}${NFT_API_ENDPOINTS.OPEN_BID}?${
       isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
     }&offset=${offset}&limit=${limit}`
     url = handleAdditionalFilters(url, additionalFilters)
@@ -149,7 +149,7 @@ export const fetchFixedPriceByPages = async (
 ): Promise<any> => {
   const isUUID: boolean = validateUUID(paramValue)
 
-  let url = `${gooseFxProd()}${NFT_API_ENDPOINTS.FIXED_PRICE}?${
+  let url = `${GFX_NEST_BASE_URL}${NFT_API_ENDPOINTS.FIXED_PRICE}?${
     isUUID ? `collection_id=${paramValue}` : `collection_name=${encodeURIComponent(paramValue)}`
   }&offset=${offset}&limit=${limit}&sort=${sort}`
 
@@ -187,6 +187,7 @@ export const fetchFixedPriceByPages = async (
     return err
   }
 }
+
 export const fetchSingleNFT = async (address: string): Promise<any> => {
   if (!address) return
   try {
@@ -196,6 +197,7 @@ export const fetchSingleNFT = async (address: string): Promise<any> => {
     return err
   }
 }
+
 export const fetchUserNftsFromDb = async (mintAddresses: string[], collectionId?: string): Promise<any> => {
   if (!mintAddresses.length) return null
   try {
@@ -228,6 +230,7 @@ export const fetchGlobalSearchNFT = async (collectionName: string): Promise<any>
     return err
   }
 }
+
 export const fetchSearchNFTbyCollection = async (
   collectionId: number,
   nftName: string,
@@ -242,6 +245,7 @@ export const fetchSearchNFTbyCollection = async (
     return err
   }
 }
+
 //eslint-disable-next-line
 export const fetchNFTById = async (nftUUID: string): Promise<any> => {
   try {
@@ -386,6 +390,7 @@ export const getMagicEdenBuyInstruction = async (
     throw new Error(error)
   }
 }
+
 export const getSignedTxPNFTGooseFX = async (
   buyerPrice: number,
   buyerPubkey: string,
@@ -467,6 +472,7 @@ export const createPoolOrder = async (
     return error
   }
 }
+
 export const getCloseOrderPoolTx = async (
   pool: string, // pool
   token: string
@@ -540,6 +546,7 @@ export const sellNFTOrderAMM = async (
     return error
   }
 }
+
 // magic eden sell amm
 export const sellMENFTOrderAMM = async (
   pool: string,
@@ -598,6 +605,7 @@ export const orderDepositSol = async (
     throw new Error(error)
   }
 }
+
 export const fetchUpdatedJwtToken = async (
   wallet: string,
   signature: string,
