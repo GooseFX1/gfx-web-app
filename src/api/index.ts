@@ -1,6 +1,8 @@
 import { ANALYTICS_ENDPOINTS, ANALYTICS_BASE } from './analytics/constants'
 import axios from 'axios'
 
+export const GFX_NEST_BASE_URL = `https://nest-api.goosefx.io`
+
 const DOMAIN = () => {
   const sub =
     window.location.hostname.includes('staging') || process.env.NODE_ENV !== 'production'
@@ -20,10 +22,6 @@ const apiClient = (base: string) =>
       'Content-Type': 'application/json'
     }
   })
-
-export const gooseFxProd = () => {
-  return `https://nest-api.goosefx.io`
-}
 
 export const httpClient = (base: string) =>
   axios.create({
