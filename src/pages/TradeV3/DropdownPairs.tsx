@@ -65,12 +65,14 @@ const DROPDOWN_MODAL = styled(Modal)`
   }
 
   .dropdown-modal-search {
-    ${tw`w-[440px] m-0 sm:w-full`}
+    ${tw`m-0`}
+
     background-color: ${({ theme }) => theme.bg2} !important;
     border-radius: 50px !important;
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
       border-radius: 50px !important;
+      height: 36px;
     }
     > input::placeholder {
       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
@@ -227,17 +229,17 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 }
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
-  const { isDevnet, setIsDevnet } = useCrypto()
-  const isGeoBlocked = useBlacklisted()
+  // const { isDevnet, setIsDevnet } = useCrypto()
+  // const isGeoBlocked = useBlacklisted()
 
-  const handleToggle = (e: string) => {
-    if (e === 'spot') setIsDevnet(true)
-    else setIsDevnet(false)
-  }
+  // const handleToggle = (e: string) => {
+  //   if (e === 'spot') setIsDevnet(true)
+  //   else setIsDevnet(false)
+  // }
 
   return (
     <div className="header-wrapper">
-      <MODAL_TITLE>
+      {/* <MODAL_TITLE>
         <div onClick={() => handleToggle('spot')} className={isDevnet ? 'active btn' : 'btn'}>
           Spot
         </div>
@@ -247,7 +249,7 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
         >
           Perps
         </div>
-      </MODAL_TITLE>
+      </MODAL_TITLE> */}
       <SearchBar
         className="dropdown-modal-search"
         placeholder="Search by name"
