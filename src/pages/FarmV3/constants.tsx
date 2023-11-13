@@ -62,17 +62,17 @@ export const poolType = {
   stable: {
     index: 3,
     name: 'Stable',
-    desc: 'More stable returns.'
+    desc: 'Pools composed of stablecoins'
   },
   primary: {
     index: 1,
     name: 'Primary',
-    desc: 'Medium to high returns.'
+    desc: 'Bluechip assets'
   },
   hyper: {
     index: 2,
     name: 'Hyper',
-    desc: 'Higher returns with more risk.'
+    desc: 'More volatile and newer tokens'
   },
   all: {
     index: 4,
@@ -248,6 +248,15 @@ export const faqs = [
   {
     question: 'How are LP fees distributed?',
     answer: <div>Fees and arbitrage profits are earned in the deposited asset.</div>
+  },
+  {
+    question: 'I am getting an error on withdrawal, what should I do now?',
+    answer: (
+      <div>
+        Please make sure you have the token in your wallet before withdrawing. For example, if you wish to withdraw
+        BONK you need at least 1 BONK in your wallet to withdraw successfully.
+      </div>
+    )
   }
 ]
 
