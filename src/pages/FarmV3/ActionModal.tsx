@@ -96,7 +96,7 @@ export const ActionModal: FC<{
           ) : actionType === 'deposit' ? (
             <div className="sub-header">By depositing, you will claim any pending yield available.</div>
           ) : (
-            <div className="sub-header">By claimimg, you will get all pending yield available. </div>
+            <div className="sub-header">By claiming, you will get all pending yield available. </div>
           )}
         </div>
         {actionType !== 'claim' && (
