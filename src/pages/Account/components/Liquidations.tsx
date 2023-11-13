@@ -20,6 +20,7 @@ const WRAPPER = styled.div`
 const ACCOUNTHEADER = styled.div`
     ${tw`flex justify-between items-center flex-nowrap w-full`}
     border: 1px solid #3C3C3C;
+    border-bottom: none;
     margin-top: 10px;
     span {
         padding-top:10px;
@@ -46,7 +47,8 @@ const HISTORY = styled.div`
     align-items: center;
   }
   .no-liquidations-found > p {
-    margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
     color: #636363;
     font-size: 15px;
     font-weight: 600;

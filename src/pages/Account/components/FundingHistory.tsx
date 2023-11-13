@@ -45,6 +45,7 @@ const ACCOUNTVALUE = styled.div`
 const ACCOUNTHEADER = styled.div`
     ${tw`flex justify-between items-center flex-nowrap w-full`}
     border: 1px solid #3C3C3C;
+    border-bottom: none;
     margin-top: 10px;
     span {
         padding-top:10px;

@@ -47,6 +47,7 @@ const ACCOUNTHEADER = styled.div`
     /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
     ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
     border: 1px solid #3C3C3C;
+    border-bottom: none;
     margin-top: 10px;
     span {
         padding-top:10px;
