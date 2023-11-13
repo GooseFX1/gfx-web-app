@@ -11,13 +11,13 @@ const WRAPPER = styled.div`
     opacity: 0;
     transform: translateY(20px);
     visibility: hidden;
-    transition: opacity 1s, transform 1s, visibility 0s 1s;
+    transition: opacity 0.5s, transform 0.5s, visibility 0s 0.5s;
   }
   .show-history {
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
-    transition: opacity 1s, transform 1s, visibility 0s;
+    transition: opacity 0.5s, transform 0.5s, visibility 0s;
   }
 `
 

@@ -77,6 +77,8 @@ const HISTORY = styled.div`
   }
   .no-trades-found > p {
     margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
     color: #636363;
     font-size: 15px;
     font-weight: 600;
@@ -148,9 +150,11 @@ const Trades: FC = () => {
   }
 
   useEffect(() => {
-    fetchFilledTrades()
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFilledTrades()
+    }
     console.log(setPagination)
-  }, [connected, publicKey])
+  }, [connected, publicKey, traderInfo])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)

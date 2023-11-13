@@ -74,6 +74,8 @@ const HISTORY = styled.div`
 
   .no-funding-found > p {
     margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
     color: #636363;
     font-size: 15px;
     font-weight: 600;
