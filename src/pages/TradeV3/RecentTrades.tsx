@@ -54,11 +54,12 @@ const TRADES = styled.div`
       ${tw`text-right w-1/3 justify-end`}
     }
     .bid {
-        ${tw`text-green-500`}
+      ${tw`text-green-500`}
     }
     .ask {
-        ${tw`text-red-500`}
+      ${tw`text-red-500`}
     }
+  }
 `
 
 const GET_TRADE_HISTORY = '/perps-apis/getTradeHistory'
@@ -115,8 +116,8 @@ export const RecentTrades: FC = () => {
       <TRADES>
         {tradeHistory.map((trade) => (
           <div key={trade._id}>
-            <span className={trade.side === 'Bid' ? 'bid' : 'ask'}>{trade.price.toFixed(2)}</span>
-            <span>{trade.qty.toFixed(3)}</span>
+            <span className={trade.side === 'Bid' ? 'bid' : 'ask'}>{trade.price}</span>
+            <span>{trade.qty && trade.qty.toFixed(3)}</span>
             <span>{unixTimestampToHHMMSS(trade.time)}</span>
           </div>
         ))}
