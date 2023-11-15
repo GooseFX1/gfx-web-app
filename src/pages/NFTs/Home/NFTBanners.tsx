@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+//import { useHistory } from 'react-router-dom'
 import { MainButton } from '../../../components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
@@ -111,9 +111,9 @@ const SLIDER_ITEM = styled.div<{ $url: string; $bg?: boolean }>`
   }
 `
 
-const ORANGE_BTN = styled(MainButton)`
-  background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
-`
+// const ORANGE_BTN = styled(MainButton)`
+//   background: linear-gradient(270deg, #dc1fff 0%, #f7931a 106.38%);
+// `
 
 const TERTIERY_BTN = styled(MainButton)`
   background: ${({ theme }) => theme.primary3} !important;
@@ -134,51 +134,49 @@ const settings = {
   prevArrow: <img src={`/img/assets/Aggregator/home-slider-next.svg`} alt="banner-previous" />
 }
 
-export const NFTBanners = ({ showBanner }: any) => {
-  const history = useHistory()
-  const goNestQuestSingleListing = () => history.push(`/nfts/NestQuest`)
-  return (
-    <>
-      <CAROUSEL_WRAPPER showBanner={showBanner}>
-        <Slider {...settings}>
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/DailySaleCollectionsBanner.png`} />
+export const NFTBanners = ({ showBanner }: any) => (
+  //const history = useHistory()
+  // const goNestQuestSingleListing = () => history.push(`/nfts/NestQuest`)
+  <>
+    <CAROUSEL_WRAPPER showBanner={showBanner}>
+      <Slider {...settings}>
+        <SLIDER_ITEM $url={`img/assets/DailySaleCollectionsBanner.png`} />
 
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/NestQuest.png`}>
-            <div className="home-slider-content">
-              <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
-                NestQuest
-              </h1>
-              <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>
-                Tier #1
-              </h1>
-              <ORANGE_BTN
-                className="home-slider-button"
-                height={'30px'}
-                status="action"
-                width={'140px'}
-                onClick={goNestQuestSingleListing}
-              >
-                <span>Mint</span>
-              </ORANGE_BTN>
-            </div>
-          </SLIDER_ITEM>
+        {/*<SLIDER_ITEM $url={`img/assets/NestQuest.png`}>*/}
+        {/*  <div className="home-slider-content">*/}
+        {/*    <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>*/}
+        {/*      NestQuest*/}
+        {/*    </h1>*/}
+        {/*    <h1 className="home-slider-title" style={{ visibility: 'hidden' }}>*/}
+        {/*      Tier #1*/}
+        {/*    </h1>*/}
+        {/*    <ORANGE_BTN*/}
+        {/*      className="home-slider-button"*/}
+        {/*      height={'30px'}*/}
+        {/*      status="action"*/}
+        {/*      width={'140px'}*/}
+        {/*      onClick={goNestQuestSingleListing}*/}
+        {/*    >*/}
+        {/*      <span>Mint</span>*/}
+        {/*    </ORANGE_BTN>*/}
+        {/*  </div>*/}
+        {/*</SLIDER_ITEM>*/}
 
-          <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/become-a-creator.webp`}>
-            <div className="home-slider-content">
-              <h1 className="home-slider-title">Launch</h1>
-              <h1 className="home-slider-title">Your Collection</h1>
-              <TERTIERY_BTN className="home-slider-button" height={'30px'} status="action" width={'140px'}>
-                <span>More info</span>
-              </TERTIERY_BTN>
-            </div>
-          </SLIDER_ITEM>
+        <SLIDER_ITEM $url={`img/assets/become-a-creator.webp`}>
+          <div className="home-slider-content">
+            <h1 className="home-slider-title">Launch</h1>
+            <h1 className="home-slider-title">Your Collection</h1>
+            <TERTIERY_BTN className="home-slider-button" height={'30px'} status="action" width={'140px'}>
+              <span>More info</span>
+            </TERTIERY_BTN>
+          </div>
+        </SLIDER_ITEM>
 
-          {/* <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM> */}
-        </Slider>
-        <div className="fade"></div>
-      </CAROUSEL_WRAPPER>
-    </>
-  )
-}
+        {/* <SLIDER_ITEM $url={`${process.env.PUBLIC_URL}/img/assets/MultichainBanner.svg`}></SLIDER_ITEM> */}
+      </Slider>
+      <div className="fade"></div>
+    </CAROUSEL_WRAPPER>
+  </>
+)
 
 export default NFTBanners
