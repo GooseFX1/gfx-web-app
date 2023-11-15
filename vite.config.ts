@@ -5,8 +5,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
-import viteImagemin from 'vite-plugin-imagemin'
 import viteCompression from 'vite-plugin-compression'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -17,21 +17,48 @@ export default defineConfig(({ mode }) => ({
     wasm(),
     topLevelAwait(),
     requireTransform({}),
-    viteImagemin({
-      pngquant: {
-        quality: [0.8, 0.9],
-        speed: 4
-      },
-      svgo: {
+    ViteImageOptimizer({
+      svg: {
+        multipass: true,
         plugins: [
           {
-            name: 'removeViewBox'
+            name: 'preset-default',
+            params: {
+              overrides: {
+                cleanupNumericValues: false,
+                removeViewBox: false // https://github.com/svg/svgo/issues/1128
+              },
+              cleanupIDs: {
+                minify: false,
+                remove: false
+              },
+              convertPathData: false
+            }
           },
+          'sortAttrs',
           {
-            name: 'removeEmptyAttrs',
-            active: false
+            name: 'addAttributesToSVGElement',
+            params: {
+              attributes: [{ xmlns: 'http://www.w3.org/2000/svg' }]
+            }
           }
         ]
+      },
+      png: {
+        // https://sharp.pixelplumbing.com/api-output#png
+        quality: 90
+      },
+      jpeg: {
+        // https://sharp.pixelplumbing.com/api-output#jpeg
+        quality: 80
+      },
+      jpg: {
+        // https://sharp.pixelplumbing.com/api-output#jpeg
+        quality: 80
+      },
+      tiff: {
+        // https://sharp.pixelplumbing.com/api-output#tiff
+        quality: 80
       }
     }),
     viteCompression()
