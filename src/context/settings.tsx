@@ -17,7 +17,7 @@ export type RPC = {
 export const APP_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'GooseFX',
-  endpoint: `https://rpc-pool.goosefx.io/rpc`,
+  endpoint: `https://rpc-proxy.goosefx.workers.dev`,
   network: WalletAdapterNetwork.Mainnet
 }
 
