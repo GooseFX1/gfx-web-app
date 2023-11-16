@@ -68,7 +68,7 @@ const SSLAnalyticsDashboard: FC = () => {
 
   const getLiveData = async () => {
     const aggregatedData = []
-    const connection = new Connection('https://rpc-pool.goosefx.io/rpc', {
+    const connection = new Connection('https://rpc-proxy.goosefx.workers.dev', {
       commitment: 'processed',
       httpAgent: false,
       disableRetryOnRateLimit: true
