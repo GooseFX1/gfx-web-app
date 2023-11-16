@@ -262,16 +262,16 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           path={'/trade'}
         />
         <NavItem
-          // animation={'aggregator'}
-          // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-          text={'nfts'}
-          path={'/nfts'}
-        />
-        <NavItem
           // animation={'farm'}
           // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
           text={'farm'}
           path={'/farm'}
+        />
+        <NavItem
+          // animation={'aggregator'}
+          // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+          text={'nfts'}
+          path={'/nfts'}
         />
         <NavItem
           // animation={'stats'}
@@ -483,16 +483,16 @@ const DesktopNav: FC = () => {
         hasDropdown={false}
       />
       <NavItem
-        text={'nfts'}
-        // riveAnimation={'aggregator'}
-        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        path={'/nfts'}
-      />
-      <NavItem
         text={'farm'}
         // riveAnimation={'farm'}
         // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
         path={'/farm'}
+      />
+      <NavItem
+        text={'nfts'}
+        // riveAnimation={'aggregator'}
+        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
+        path={'/nfts'}
       />
       <NavItem
         text={'More'}

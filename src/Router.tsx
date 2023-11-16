@@ -66,7 +66,7 @@ function PageLoader() {
 export const Router: FC = () => (
   <BrowserRouter>
     {window.location.pathname === '/' && (
-      <Redirect from="/" to={{ search: window.location.search, pathname: '/trade' }} />
+      <Redirect from="/" to={{ search: window.location.search, pathname: '/farm' }} />
     )}
     <TokenRegistryProvider>
       <AccountsProvider>
