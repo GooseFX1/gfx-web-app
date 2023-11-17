@@ -19,6 +19,9 @@ import { LAMPORTS_PER_SOL } from '../../constants'
 import { StakeBottomBar, UnstakeBottomBar } from './StakeUnstakeBottomBar'
 import StakeUnstakeToggle from './StakeUnstakeToggle'
 import UnstakeConfirmationModal from './UnstakeConfirmationModal'
+import useSolSub, { SubType } from '../../hooks/useSolSub'
+import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
@@ -38,10 +41,41 @@ const EarnRewards: FC = () => {
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   // const { rewardToggle } = useRewardToggle()
-
+  useSolSub([
+    {
+      SubType: SubType.AccountChange,
+      callback: async () => {
+        const currentNetwork =
+          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+        const [address] = findProgramAddressSync(
+          [
+            publicKey.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
+          ],
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+        const balance = await connection.getTokenAccountBalance(address, 'confirmed')
+        setUserGoFxBalance(balance.value)
+      },
+      pubKeyRetrieval: () => {
+        if (!publicKey) return null
+        const currentNetwork =
+          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+        const [address] = findProgramAddressSync(
+          [
+            publicKey.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
+          ],
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+        return address
+      }
+    }
+  ])
   useEffect(() => {
-    let gofxAddressSub: number | undefined
-
+    if (!publicKey) return
     const getData = async () => {
       const currentNetwork =
         network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
@@ -49,21 +83,12 @@ const EarnRewards: FC = () => {
       const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
       const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
       if (!account || !account.value.length) return
-      gofxAddressSub = connection.onAccountChange(account.value[0].pubkey, async () => {
-        const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-        console.log('GOFX BALANCE CHANGE', balance)
-        setUserGoFxBalance(balance.value)
-      })
+
       const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
 
       setUserGoFxBalance(balance.value)
     }
     void getData()
-    return () => {
-      if (userGoFxBalance != undefined) {
-        connection.removeAccountChangeListener(gofxAddressSub)
-      }
-    }
   }, [publicKey, connection, network])
   const totalStaked = useMemo(
     () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
@@ -336,7 +361,6 @@ const RewardsRightPanel: FC = () => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
-  console.log({ totalStaked, totalEarned, claimable }, rewards)
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}

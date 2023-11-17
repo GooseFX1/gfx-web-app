@@ -10,15 +10,16 @@ import {
   UserMetadata
 } from 'goosefx-stake-rewards-sdk'
 import * as anchor from '@project-serum/anchor'
+import { BN, Wallet } from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { BN, Wallet } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction } from '../web3'
 import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
+import useSolSub, { SubType } from '../hooks/useSolSub'
 
 const ANCHOR_BN = {
   ZERO: new anchor.BN(0.0),
@@ -303,7 +304,63 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
+  useSolSub([
+    {
+      SubType: SubType.AccountChange,
+      pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(),
+      callback: async () => {
+        const userRewardsHoldingAccount = await stakeRewards.getUserRewardsHoldingAccount()
+        const userRewardsHoldingAccountInfo = await connection.getParsedAccountInfo(
+          userRewardsHoldingAccount,
+          'confirmed'
+        )
+        //console.log('userRewardsHoldingAccountChanged', userRewardsHoldingAccountInfo)
+        if (userRewardsHoldingAccountInfo && userRewardsHoldingAccountInfo.value) {
+          const claimable =
+            (userRewardsHoldingAccountInfo.value.data as any).parsed.info.tokenAmount.uiAmountString ?? '0.0'
+          dispatch({ type: 'setStaking', payload: { claimable } })
+          setHasRewards((prev) => prev || claimable != '0.0')
+        }
+      }
+    },
+    {
+      SubType: SubType.AccountChange,
+      pubKeyRetrieval: () => {
+        if (!walletContext.publicKey) return null
+        const [address] = PublicKey.findProgramAddressSync(
+          [TOKEN_SEEDS.userMetaData, walletContext.publicKey.toBuffer()],
+          GfxStakeRewards.programId
+        )
+        return address
+      },
+      callback: async () => {
+        const userMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+        const unstakeableTickets = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
+        // console.log('userMetaDataChanged', userMetaData, {
+        //   totalStaked: getUiAmount(userMetaData.totalStaked),
+        //   unstakeableTickets: unstakeableTickets,
+        //   unstakingTickets: userMetaData.unstakingTickets
+        //     .filter((x) => x.createdAt.toString() != '0')
+        //     .map((t) => ({ createdAt: t.createdAt.toString(), amount: t.totalUnstaked.toString() })),
+        //   activeTickets: userMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+        // })
+        dispatch({
+          type: 'setStaking',
+          payload: {
+            userMetadata: userMetaData,
+            totalEarned: getUiAmount(userMetaData.totalEarned, true),
+            totalStaked: getUiAmount(userMetaData.totalStaked),
+            unstakeableTickets: unstakeableTickets,
+            activeUnstakingTickets: userMetaData.unstakingTickets.filter(
+              (ticket) => ticket.createdAt.toString() !== '0'
+            )
+          }
+        })
 
+        setHasRewards((prev) => prev || unstakeableTickets.length > 0)
+      }
+    }
+  ])
   useEffect(() => {
     const s = stakeRewards
     s.setConnection(connection, getNetwork())
@@ -337,60 +394,60 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-    const unsubIds: number[] = []
-    const updateData = async () => {
-      const userRewardsHoldingAccount = await stakeRewards.getUserRewardsHoldingAccount()
-      const userMetaData = PublicKey.findProgramAddressSync(
-        [TOKEN_SEEDS.userMetaData, walletContext.publicKey.toBuffer()],
-        GfxStakeRewards.programId
-      )
-
-      unsubIds.push(
-        connection.onAccountChange(userRewardsHoldingAccount, async () => {
-          const userRewardsHoldingAccountInfo = await connection.getParsedAccountInfo(
-            userRewardsHoldingAccount,
-            'confirmed'
-          )
-          console.log('userRewardsHoldingAccountChanged', userRewardsHoldingAccountInfo)
-          if (userRewardsHoldingAccountInfo && userRewardsHoldingAccountInfo.value) {
-            const claimable =
-              (userRewardsHoldingAccountInfo.value.data as any).parsed.info.tokenAmount.uiAmountString ?? '0.0'
-            dispatch({ type: 'setStaking', payload: { claimable } })
-            setHasRewards((prev) => prev || claimable != '0.0')
-          }
-        }),
-        connection.onAccountChange(userMetaData[0], async () => {
-          const userMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
-          const unstakeableTickets = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
-          console.log('userMetaDataChanged', userMetaData, {
-            totalStaked: getUiAmount(userMetaData.totalStaked),
-            unstakeableTickets: unstakeableTickets,
-            unstakingTickets: userMetaData.unstakingTickets
-              .filter((x) => x.createdAt.toString() != '0')
-              .map((t) => ({ createdAt: t.createdAt.toString(), amount: t.totalUnstaked.toString() })),
-            activeTickets: userMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
-          })
-          dispatch({
-            type: 'setStaking',
-            payload: {
-              userMetadata: userMetaData,
-              totalEarned: getUiAmount(userMetaData.totalEarned, true),
-              totalStaked: getUiAmount(userMetaData.totalStaked),
-              unstakeableTickets: unstakeableTickets,
-              activeUnstakingTickets: userMetaData.unstakingTickets.filter(
-                (ticket) => ticket.createdAt.toString() !== '0'
-              )
-            }
-          })
-
-          setHasRewards((prev) => prev || unstakeableTickets.length > 0)
-        })
-      )
-    }
-    updateData()
-    return () => {
-      unsubIds.forEach((id) => connection.removeAccountChangeListener(id))
-    }
+    // const unsubIds: number[] = []
+    // const updateData = async () => {
+    //   const userRewardsHoldingAccount = await stakeRewards.getUserRewardsHoldingAccount()
+    //   const userMetaData = PublicKey.findProgramAddressSync(
+    //     [TOKEN_SEEDS.userMetaData, walletContext.publicKey.toBuffer()],
+    //     GfxStakeRewards.programId
+    //   )
+    //
+    //   unsubIds.push(
+    //     connection.onAccountChange(userRewardsHoldingAccount, async () => {
+    //       const userRewardsHoldingAccountInfo = await connection.getParsedAccountInfo(
+    //         userRewardsHoldingAccount,
+    //         'confirmed'
+    //       )
+    //       console.log('userRewardsHoldingAccountChanged', userRewardsHoldingAccountInfo)
+    //       if (userRewardsHoldingAccountInfo && userRewardsHoldingAccountInfo.value) {
+    //         const claimable =
+    //           (userRewardsHoldingAccountInfo.value.data as any).parsed.info.tokenAmount.uiAmountString ?? '0.0'
+    //         dispatch({ type: 'setStaking', payload: { claimable } })
+    //         setHasRewards((prev) => prev || claimable != '0.0')
+    //       }
+    //     }),
+    //     connection.onAccountChange(userMetaData[0], async () => {
+    //       const userMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+    //       const unstakeableTickets = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
+    //       console.log('userMetaDataChanged', userMetaData, {
+    //         totalStaked: getUiAmount(userMetaData.totalStaked),
+    //         unstakeableTickets: unstakeableTickets,
+    //         unstakingTickets: userMetaData.unstakingTickets
+    //           .filter((x) => x.createdAt.toString() != '0')
+    //           .map((t) => ({ createdAt: t.createdAt.toString(), amount: t.totalUnstaked.toString() })),
+    //         activeTickets: userMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+    //       })
+    //       dispatch({
+    //         type: 'setStaking',
+    //         payload: {
+    //           userMetadata: userMetaData,
+    //           totalEarned: getUiAmount(userMetaData.totalEarned, true),
+    //           totalStaked: getUiAmount(userMetaData.totalStaked),
+    //           unstakeableTickets: unstakeableTickets,
+    //           activeUnstakingTickets: userMetaData.unstakingTickets.filter(
+    //             (ticket) => ticket.createdAt.toString() !== '0'
+    //           )
+    //         }
+    //       })
+    //
+    //       setHasRewards((prev) => prev || unstakeableTickets.length > 0)
+    //     })
+    //   )
+    // }
+    // updateData()
+    // return () => {
+    //   unsubIds.forEach((id) => connection.removeAccountChangeListener(id))
+    // }
   }, [walletContext.publicKey, updateStakeDetails, stakeRewards])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
