@@ -5,7 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '../../context'
 import useRewards from '../../context/rewardsContext'
 
-import { Connection, PublicKey, TokenAmount } from '@solana/web3.js'
+import { TokenAmount } from '@solana/web3.js'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import tw from 'twin.macro'
@@ -38,31 +38,32 @@ const EarnRewards: FC = () => {
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   // const { rewardToggle } = useRewardToggle()
-  const getUserGoFXBalance = useCallback(
-    async (publicKey: PublicKey, connection: Connection, network: WalletAdapterNetwork) => {
-      if (!publicKey) {
-        return
-      }
-      const currentNetwork =
-        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-      const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
-      const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
-      console.log(account)
-      if (account.value[0]) {
-        const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-        setUserGoFxBalance(() => balance.value)
-      }
-    },
-    []
-  )
 
   useEffect(() => {
-    getUserGoFXBalance(publicKey, connection, network)
-    // poll user balance
-    const interval = setInterval(async () => {
-      await getUserGoFXBalance(publicKey, connection, network)
-    }, 10000)
-    return () => clearInterval(interval)
+    let gofxAddressSub: number | undefined
+
+    const getData = async () => {
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+
+      const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
+      const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
+      if (!account || !account.value.length) return
+      gofxAddressSub = connection.onAccountChange(account.value[0].pubkey, async () => {
+        const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+        console.log('GOFX BALANCE CHANGE', balance)
+        setUserGoFxBalance(balance.value)
+      })
+      const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+
+      setUserGoFxBalance(balance.value)
+    }
+    void getData()
+    return () => {
+      if (userGoFxBalance != undefined) {
+        connection.removeAccountChangeListener(gofxAddressSub)
+      }
+    }
   }, [publicKey, connection, network])
   const totalStaked = useMemo(
     () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
@@ -307,8 +308,8 @@ export default EarnRewards
 const RewardsRightPanel: FC = () => {
   const [apr, setApr] = useState(0)
   const { connection } = useConnectionConfig()
-  const { publicKey } = useWallet()
-  const { rewards, getUiAmount, claimFees } = useRewards()
+  const { rewards, claimFees } = useRewards()
+  const { totalEarned, totalStaked, claimable } = rewards.user.staking
   const breakpoints = useBreakPoint()
   const [isClaiming, setIsClaiming] = useState(false)
   const fetchGOFXData = async () => {
@@ -330,19 +331,12 @@ const RewardsRightPanel: FC = () => {
       .catch((err) => console.error(err))
   }, [])
   // retrieves value from rewards hook -> usdcClaimable has already been converte to UI amount
-  const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
-    () => ({
-      usdcClaimable: rewards.user.staking.claimable,
-      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
-      totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned, true)
-    }),
-    [rewards, publicKey, connection]
-  )
+
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
-
+  console.log({ totalStaked, totalEarned, claimable }, rewards)
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
@@ -377,10 +371,10 @@ const RewardsRightPanel: FC = () => {
           css={[
             tw`mb-0 text-regular min-md:text-average font-semibold
          text-grey-5 text-center leading-normal`,
-            gofxStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+            totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
           ]}
         >
-          Total Staked: {numberFormatter(gofxStaked)} GOFX
+          Total Staked: {numberFormatter(totalStaked)} GOFX
         </p>
         <button
           css={[
@@ -389,18 +383,18 @@ const RewardsRightPanel: FC = () => {
             min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75
             min-md:text-average
             `,
-            usdcClaimable > 0.0 ? tw`opacity-100` : tw``,
+            claimable > 0.0 ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
-          disabled={usdcClaimable <= 0.0}
+          disabled={claimable <= 0.0}
           onClick={handleClaimFees}
         >
           {isClaiming ? (
             <div css={[tw`absolute`]}>
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
-          ) : usdcClaimable > 0.0 ? (
-            `Claim ${numberFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
+          ) : claimable > 0.0 ? (
+            `Claim ${numberFormatter(claimable, claimable < 0.1 && claimable > 1e-6 ? 4 : 2)} USDC`
           ) : (
             'No USDC Claimable'
           )}

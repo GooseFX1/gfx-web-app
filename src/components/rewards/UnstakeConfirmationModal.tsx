@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import useRewards from '../../context/rewardsContext'
-import { BN } from '@project-serum/anchor'
 import Modal from '../common/Modal'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -24,7 +23,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
     onClose()
   }, [amount])
   const canUnstake = useMemo(
-    () => rewards.user.staking.userMetadata.totalStaked.gte(new BN(amount)),
+    () => rewards.user.staking.totalStaked >= amount,
     [amount, rewards.user.staking.userMetadata]
   )
   return (
