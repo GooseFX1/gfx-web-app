@@ -3,7 +3,7 @@ import { Checkbox } from 'antd'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import { Modal } from '../components'
-import useBlacklisted from '../utils/useBlacklisted'
+import { useConnectionConfig } from '../context'
 import { GFX_LINK } from '../styles'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import 'styled-components/macro'
@@ -84,7 +84,7 @@ export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
-  const blacklisted = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   const [toShow, setToShow] = useState<boolean>(!!visible && true)

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable */
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { useCrypto, useDarkMode } from '../../context'
+import { useCrypto, useDarkMode, useConnectionConfig } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
@@ -13,7 +13,6 @@ import { CollateralPanel } from './perps/components/CollateralPanel'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
-import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
 import { logData } from '../../api/analytics'
 import 'react-grid-layout/css/styles.css'
@@ -210,7 +209,7 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
   }
 `
 
-const UNLOCKED_OVERLAY = styled.div<{ $isGeoBlocked?: boolean }>`
+const UNLOCKED_OVERLAY = styled.div<{ $blacklisted?: boolean }>`
   height: 100%;
   width: 100%;
   background: linear-gradient(101.33deg, rgba(247, 147, 26, 0.5) 7.41%, rgba(220, 31, 255, 0.3) 87.43%);
@@ -302,7 +301,7 @@ function getInitLayout() {
 const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
-  const isGeoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
@@ -337,7 +336,7 @@ const CryptoContent: FC = () => {
     rowHeight: getRowHeight(height),
     cols: { lg: 8, md: 4, sm: 2, xs: 2, xxs: 2 },
     isBounded: false,
-    isDraggable: !isGeoBlocked && !isLocked,
+    isDraggable: !blacklisted && !isLocked,
     margin: [0, 0]
   }
   const generateDOM = () =>
@@ -413,10 +412,10 @@ const CryptoContent: FC = () => {
         )
       if (i === 4)
         return (
-          <div key={i} className={`space-cont ${isGeoBlocked ? ' filtering' : ''}`}>
+          <div key={i} className={`space-cont ${blacklisted ? ' filtering' : ''}`}>
             {<CollateralPanel />}
-            {isGeoBlocked ? (
-              <UNLOCKED_OVERLAY $isGeoBlocked={isGeoBlocked}>
+            {blacklisted ? (
+              <UNLOCKED_OVERLAY $blacklisted={blacklisted}>
                 <button className="georestricted">Georestricted</button>
               </UNLOCKED_OVERLAY>
             ) : !isLocked ? (
