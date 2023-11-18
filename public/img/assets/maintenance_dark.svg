@@ -1,0 +1,14 @@
+<svg width="527" height="138" viewBox="0 0 527 138" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 127H170" stroke="#636363" stroke-width="2" stroke-linecap="round"/>
+<path d="M355 127H525.5" stroke="#636363" stroke-width="2" stroke-linecap="round"/>
+<rect x="171.5" y="1.5" width="182" height="135" rx="4.5" stroke="#EEEEEE" stroke-width="3"/>
+<rect x="186" y="14" width="36" height="111" rx="2" fill="#C27EFF" stroke="#EEEEEE" stroke-width="2"/>
+<rect x="244" y="14" width="38" height="65" rx="2" fill="#C27EFF" stroke="#EEEEEE" stroke-width="2"/>
+<rect x="243" y="89" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="302" y="105" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="302" y="116" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="243" y="100" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="243" y="111" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="243" y="121" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M315.059 20.2416C315.213 20.087 315.418 20 315.634 20H335.586C335.95 20 336.132 20.4445 335.874 20.7006L331.931 24.6725C331.778 24.8271 331.572 24.9141 331.356 24.9141H311.409C311.045 24.9141 310.863 24.4695 311.121 24.2135L315.059 20.2416ZM315.059 35.0852C315.213 34.9305 315.418 34.8436 315.634 34.8436H335.586C335.95 34.8436 336.132 35.2881 335.874 35.5442L331.931 39.516C331.778 39.6707 331.572 39.7576 331.356 39.7576H311.409C311.045 39.7576 310.863 39.3131 311.121 39.057L315.059 35.0852ZM331.356 27.3739C331.572 27.3739 331.778 27.4609 331.931 27.6155L335.879 31.5874C336.137 31.8435 335.955 32.288 335.591 32.288H315.639C315.423 32.288 315.217 32.201 315.064 32.0464L311.121 28.0746C310.863 27.8185 311.045 27.3739 311.409 27.3739H331.356Z" fill="#C27EFF"/>
+</svg>
