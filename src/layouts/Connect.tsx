@@ -41,8 +41,6 @@ export const Connect: FC<MenuItemProps> = ({
     [blacklisted, pathname]
   )
 
-  console.log('IS BLACKLISTED' + blacklisted)
-
   const handleMoveOutside = useCallback(() => {
     if (isOpen) {
       onClose()
