@@ -3,8 +3,9 @@ import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
-// import { useLocalStorageState } from '../utils'
+import { fetchBrowserCountryCode } from '../api/analytics'
 
+const banned_countries = ['BY', 'CF', 'CD', 'KP', 'CU', 'IR', 'LY', 'SO', 'SS', 'SD', 'SY', 'US', 'YE', 'ZW']
 export const DEFAULT_SLIPPAGE = 0.005
 
 export type RPC = {
@@ -32,6 +33,7 @@ interface ISettingsConfig {
   endpointName: string
   network: WalletAdapterNetwork
   setEndpointName: Dispatch<SetStateAction<string>>
+  blacklisted: boolean
   setSlippage?: Dispatch<SetStateAction<number>>
   slippage?: number
 }
@@ -57,33 +59,14 @@ export function useConnectionConfig(): ISettingsConfig {
     throw new Error('Missing settings context')
   }
 
-  const {
-    chainId,
-    connection,
-    endpoint,
-    network,
-    endpointName,
-    setEndpointName,
-    perpsConnection,
-    perpsDevnetConnection
-  } = context
-  return {
-    chainId,
-    connection,
-    endpoint,
-    network,
-    endpointName,
-    setEndpointName,
-    perpsConnection,
-    perpsDevnetConnection
-  }
+  return context
 }
 
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
+  const [blacklisted, setBlacklisted] = useState<boolean>(false)
 
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-
   const [endpointName, setEndpointName] = useState<string | null>(null)
 
   const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
@@ -155,13 +138,25 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       disableRetryOnRateLimit: true
     })
   }, [endpointName, endpoint])
-  //fetchMiddleware:
+
+  // Geo Restriction
+  const callGeoService = () => {
+    fetchBrowserCountryCode().then((countryCode: null | string) => {
+      if (countryCode) {
+        setBlacklisted(banned_countries.includes(countryCode))
+      }
+    })
+  }
 
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
         existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
       )
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      callGeoService()
     }
   }, [])
 
@@ -177,7 +172,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage: (val: number) => setSlippage(val),
         slippage: slippage,
         perpsConnection,
-        perpsDevnetConnection
+        perpsDevnetConnection,
+        blacklisted
       }}
     >
       {children}

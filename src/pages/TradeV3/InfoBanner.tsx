@@ -2,13 +2,12 @@
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import tw from 'twin.macro'
-import { useCrypto, usePriceFeed, useDarkMode, useOrderBook } from '../../context'
+import { useCrypto, usePriceFeed, useDarkMode, useOrderBook, useConnectionConfig } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import useBlacklisted from '../../utils/useBlacklisted'
 import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip } from '../../components'
@@ -34,7 +33,7 @@ const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const INFO_WRAPPER = styled.div`
-  ${tw`py-0 px-[30px] flex flex-row sm:justify-center`}
+  ${tw`py-0 px-3 flex flex-row sm:justify-center`}
   .spot-toggle .perps {
     ${tw`cursor-pointer mr-5`}
   }
@@ -47,7 +46,7 @@ const INFO_WRAPPER = styled.div`
   }
   .spot-toggle .toggle {
     ${tw`rounded-[36px] h-10 leading-[40px] inline-block text-center border-0 border-none align-middle w-[90px]`}
-    font-size: 16px;
+    font-size: 14px;
     color: ${({ theme }) => theme.text16};
   }
   .spot-toggle .geoblocked {
@@ -217,7 +216,7 @@ export const InfoBanner: FC<{
   const { orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const { traderInfo } = useTraderConfig()
-  const isGeoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const { height, width } = useWindowSize()
@@ -314,9 +313,9 @@ export const InfoBanner: FC<{
           MAINNET
         </span>
         <span
-          className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : isDevnet ? 'selected' : '')}
+          className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
           key="perps"
-          onClick={isGeoBlocked ? null : () => handleToggle('spot')}
+          onClick={blacklisted ? null : () => handleToggle('spot')}
         >
           DEVNET
         </span>
@@ -428,7 +427,7 @@ export const InfoBanner: FC<{
           </>
         </INFO_STATS>
       }
-      {isDevnet && isGeoBlocked && (
+      {isDevnet && blacklisted && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
           <div tw="ml-2 text-tiny font-semibold dark:text-grey-5 text-grey-1">

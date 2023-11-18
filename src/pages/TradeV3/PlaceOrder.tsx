@@ -13,7 +13,8 @@ import {
   useOrder,
   useOrderBook,
   useDarkMode,
-  useTokenRegistry
+  useTokenRegistry,
+  useConnectionConfig
 } from '../../context'
 import { Input } from 'antd'
 import { removeFloatingPointError } from '../../utils'
@@ -27,7 +28,6 @@ import { TradeConfirmation } from './TradeConfirmation'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
-import useBlacklisted from '../../utils/useBlacklisted'
 import useWindowSize from '../../utils/useWindowSize'
 import { DepositWithdraw } from './perps/DepositWithdraw'
 
@@ -501,7 +501,7 @@ export const PlaceOrder: FC = () => {
   const { mode } = useDarkMode()
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
-  const geoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   //Take profit state:
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
@@ -587,7 +587,7 @@ export const PlaceOrder: FC = () => {
   //  }, [traderInfo])
 
   const buttonState = useMemo(() => {
-    if (geoBlocked) return ButtonState.isGeoBlocked
+    if (blacklisted) return ButtonState.isGeoBlocked
     if (!connected) return ButtonState.Connect
     if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
     if (!order.price || !order.total || !order.size) return ButtonState.NullAmount

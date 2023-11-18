@@ -7,7 +7,7 @@ import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
 import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
-import useBlacklisted from '../utils/useBlacklisted'
+import { useConnectionConfig } from '../context'
 import { Menu, Transition } from '@headlessui/react'
 import 'styled-components/macro'
 import { useDarkMode, useWalletModal } from '../context'
@@ -28,7 +28,7 @@ export const Connect: FC<MenuItemProps> = ({
   customMenuListItemStyle
 }) => {
   const { wallet, connected, publicKey, disconnect } = useWallet()
-  const isGeoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useState(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
@@ -37,9 +37,11 @@ export const Connect: FC<MenuItemProps> = ({
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const canConnect = useMemo(
-    () => !isGeoBlocked || (isGeoBlocked && !pathname.includes('trade') && !pathname.includes('farm')),
-    [isGeoBlocked, pathname]
+    () => !blacklisted || (blacklisted && !pathname.includes('trade') && !pathname.includes('farm')),
+    [blacklisted, pathname]
   )
+
+  console.log('IS BLACKLISTED' + blacklisted)
 
   const handleMoveOutside = useCallback(() => {
     if (isOpen) {
