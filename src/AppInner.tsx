@@ -38,7 +38,9 @@ export default function AppInner(): JSX.Element {
     console.log(window.location, values)
   }, [window.location.href])
 
-  useEffect(() => console.log('** GFX Application Init **'), [init])
+  useEffect(() => {
+    console.log('** GFX Application Init **')
+  }, [init])
 
   return (
     existingUserCache !== null && (
