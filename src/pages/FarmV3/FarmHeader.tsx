@@ -7,6 +7,7 @@ import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { checkMobile, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
+import { isEmpty } from 'lodash'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
@@ -60,61 +61,73 @@ export const FarmHeader: FC = () => {
   })
 
   const TVL = useMemo(() => {
-    let totalLiquidity = 0
-    allPoolSslData?.map((token: SSLToken) => {
-      const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
-      const liquidityInUSD =
-        prices[getPriceObject(token?.token)]?.current &&
-        prices[getPriceObject(token?.token)]?.current * nativeLiquidity
-      totalLiquidity += liquidityInUSD
-    })
+    if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$00.00`
+
+    const totalLiquidity = allPoolSslData
+      .map((token: SSLToken) => {
+        const nativeLiquidity = liquidityAmount[token?.mint?.toBase58()]
+        return prices[getPriceObject(token?.token)]?.current * nativeLiquidity
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
     return '$' + truncateBigNumber(totalLiquidity)
-  }, [allPoolSslData, liquidityAmount])
+  }, [allPoolSslData, liquidityAmount, prices])
 
   const V24H = useMemo(() => {
-    let totalVolume = 0
-    allPoolSslData?.map((token: SSLToken) => {
-      const key = token.token === 'SOL' ? 'WSOL' : token.token
-      const volume = sslTableData?.[key]?.volume
-      const volumeinUSD = volume / 1_000_000
-      totalVolume += volumeinUSD
-    })
+    if (allPoolSslData == null) return `$00.00`
+
+    const totalVolume = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const volume = sslTableData?.[key]?.volume
+        return volume / 1_000_000
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
     return '$' + truncateBigNumber(totalVolume)
   }, [allPoolSslData, sslTableData])
 
   const V7D = useMemo(() => {
-    let totalVolume = 0
-    allPoolSslData?.map((token: SSLToken) => {
-      const key = token.token === 'SOL' ? 'WSOL' : token.token
-      const volume = sslTotalMetrics?.[key]?.volume7D
-      const volumeinUSD = volume / 1_000_000
-      totalVolume += volumeinUSD
-    })
+    if (allPoolSslData == null) return `$00.00`
+
+    const totalVolume = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const volume = sslTotalMetrics?.[key]?.volume7D
+        return volume / 1_000_000
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
     return '$' + truncateBigNumber(totalVolume)
   }, [allPoolSslData, sslTotalMetrics])
 
   const totalVolumeTraded = useMemo(() => {
-    let totalVolume = 0
-    allPoolSslData?.map((token: SSLToken) => {
-      const key = token.token === 'SOL' ? 'WSOL' : token.token
-      const volume = sslTotalMetrics?.[key]?.totalTokenVolume
-      const volumeinUSD = volume / 1_000_000
-      totalVolume += volumeinUSD
-    })
+    if (allPoolSslData == null) return `$00.00`
+
+    const totalVolume = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const volume = sslTotalMetrics?.[key]?.totalTokenVolume
+        return volume / 1_000_000
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
     return '$' + truncateBigNumber(totalVolume)
   }, [allPoolSslData, sslTotalMetrics])
 
   const totalFees = useMemo(() => {
-    let feesSum = 0
-    allPoolSslData?.map((token: SSLToken) => {
-      const key = token.token === 'SOL' ? 'WSOL' : token.token
-      const nativeFees = sslTotalMetrics?.[key]?.totalTokenFees / 10 ** token?.mintDecimals
-      const feesInUSD =
-        prices[getPriceObject(token?.token)]?.current && prices[getPriceObject(token?.token)]?.current * nativeFees
-      feesSum += feesInUSD
-    })
+    if (allPoolSslData == null || isEmpty(prices)) return `$00.00`
+
+    const feesSum = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const nativeFees = sslTotalMetrics?.[key]?.totalTokenFees / 10 ** token?.mintDecimals
+        return prices[getPriceObject(token?.token)]?.current * nativeFees
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
     return '$' + truncateBigNumber(feesSum)
-  }, [allPoolSslData, sslTotalMetrics])
+  }, [allPoolSslData, sslTotalMetrics, prices])
 
   const infoCards = [
     { name: 'GooseFX TVL', value: TVL },
@@ -132,7 +145,7 @@ export const FarmHeader: FC = () => {
           <>
             <CARD_GRADIENT key={card?.name}>
               <INFO_CARD>
-                <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</div>
+                <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</div>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
                   {card?.value}
                 </div>
