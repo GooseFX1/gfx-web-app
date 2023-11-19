@@ -113,7 +113,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 1000000
+      cappedDeposit: 2000000
     },
     {
       token: 'JITOSOL',
@@ -151,7 +151,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 1000000
+      cappedDeposit: 2000000
     },
     {
       token: 'JITOSOL',
