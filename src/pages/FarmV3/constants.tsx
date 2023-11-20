@@ -290,8 +290,13 @@ export const genericErrMsg = (error: string): Message => ({
   message: error
 })
 
-export const sslSuccessfulMessage = (operation: string, price: string | number, name: string): Message => ({
-  message: <SuccessSSLMessage operation={operation} amount={price} token={name} />
+export const sslSuccessfulMessage = (
+  operation: string,
+  price: string | number,
+  name: string,
+  wallet_name: string
+): Message => ({
+  message: <SuccessSSLMessage operation={operation} amount={price} token={name} wallet_name={wallet_name} />
 })
 
 export const sslErrorMessage = (): Message => ({
