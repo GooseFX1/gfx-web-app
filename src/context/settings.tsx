@@ -5,7 +5,7 @@ import { Connection } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 
-const banned_countries = ['BY', 'CF', 'CD', 'KP', 'CU', 'IR', 'LY', 'SO', 'SS', 'SD', 'SY', 'US', 'YE', 'ZW']
+const banned_countries = ['BY', 'CA', 'CF', 'CD', 'KP', 'CU', 'IR', 'LY', 'SO', 'SS', 'SD', 'SY', 'US', 'YE', 'ZW']
 export const DEFAULT_SLIPPAGE = 0.005
 
 export type RPC = {
