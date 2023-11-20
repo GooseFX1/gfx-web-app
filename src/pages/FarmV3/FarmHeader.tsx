@@ -35,7 +35,7 @@ const HEADER_WRAPPER = styled.div`
 `
 
 const POOL_CARD_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-between mb-5 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
+  ${tw`flex flex-row justify-between mb-7 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -142,7 +142,7 @@ export const FarmHeader: FC = () => {
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         {infoCards?.map((card) => (
-          <>
+          <span key={card?.name}>
             <CARD_GRADIENT key={card?.name}>
               <INFO_CARD>
                 <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</div>
@@ -151,7 +151,7 @@ export const FarmHeader: FC = () => {
                 </div>
               </INFO_CARD>
             </CARD_GRADIENT>
-          </>
+          </span>
         ))}
         {/* {
           <div
