@@ -110,25 +110,36 @@ export const TransactionErrorMsg: FC<ITransactionErrorMsg> = (props) => (
     )}
   </MESSAGE>
 )
-export const SuccessSSLMessage: FC<{ operation?: string; token?: string; amount?: number | string }> = ({
-  operation,
-  token,
-  amount
-}) => (
-  <MESSAGE>
-    <div tw="flex items-center justify-between">
-      <div tw="text-[15px]">Success</div>
-      <div>
-        <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+export const SuccessSSLMessage: FC<{
+  operation?: string
+  token?: string
+  amount?: number | string
+  wallet_name: string
+}> = ({ operation, token, amount, wallet_name }) => {
+  const walletName = wallet_name
+  return (
+    <MESSAGE>
+      <div tw="flex items-center justify-between">
+        <div tw="text-[15px]">Success</div>
+        <div>
+          <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+        </div>
       </div>
-    </div>
 
-    <div tw="font-semibold text-[13px]">
-      You’ve {operation} {amount} <b>{token}</b> {operation === 'deposited' ? 'to' : 'from'} <b>{token} POOL</b>,
-      Remember the more you deposit the more you can earn!
-    </div>
-  </MESSAGE>
-)
+      <div tw="font-semibold text-[13px]">
+        <div tw="font-semibold text-[13px]">
+          {walletName !== 'SquadsX'
+            ? `You’ve ${operation} ${amount} ${token} ${
+                operation === 'deposited' ? 'to' : 'from'
+              } ${token} POOL, Remember the more you deposit the more you can earn!`
+            : `You’ve initialized a ${operation} for ${amount} ${token} ${
+                operation === 'deposited' ? 'to' : 'from'
+              } ${token} POOL on SquadsX. Remember the more you deposit the more you can earn!`}
+        </div>
+      </div>
+    </MESSAGE>
+  )
+}
 
 export const TransactionErrorMsgSSL: FC = () => (
   <MESSAGE>
