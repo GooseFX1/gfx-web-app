@@ -4,7 +4,7 @@ import { useCrypto } from './crypto'
 import { serum } from '../web3'
 import { useConnectionConfig } from '../context'
 import axios from 'axios'
-import { useHistory, useLocation } from 'react-router-dom'
+// import { useHistory, useLocation } from 'react-router-dom'
 import { NFT_LAUNCHPAD_API_BASE, NFT_LAUNCHPAD_API_ENDPOINTS } from '../api/NFTLaunchpad'
 
 interface IPrices {
@@ -38,8 +38,8 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const { connection } = useConnectionConfig()
   const [priceFetched, setPriceFetched] = useState<boolean>(false)
   const { pairs, selectedCrypto } = useCrypto()
-  const history = useHistory()
-  const location = useLocation()
+  // const history = useHistory()
+  // const location = useLocation()
 
   const refreshTokenData = async (coinGeckoId) => {
     if (!coinGeckoId) {
@@ -78,9 +78,9 @@ export const PriceFeedProvider: FC<{ children: ReactNode }> = ({ children }) => 
       ;(async () => {
         if (JSON.stringify(tokenInfo) === '{}') refreshTokenData(null)
         const { pair, market } = selectedCrypto
-        if (location.pathname.includes('trade') && !location.pathname.includes(selectedCrypto.marketAddress)) {
-          history.push('/trade/' + selectedCrypto.marketAddress + (window.location.search || ''))
-        }
+        // if (location.pathname.includes('trade') && !location.pathname.includes(selectedCrypto.marketAddress)) {
+        //   history.push('/trade/' + selectedCrypto.marketAddress + (window.location.search || ''))
+        // }
         if (market) {
           try {
             //set SOL/USDC price always
