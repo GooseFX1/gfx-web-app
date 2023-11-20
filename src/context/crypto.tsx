@@ -59,32 +59,40 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const pairsToset = MARKET_PAIRS as any
   const devnetPairs = MARKET_PAIRS_DEVNET as any
 
-  const getPairWithMarketAddress = () => {
+  // const getPairWithMarketAddress = () => {
+  //   let pairSet = pairsToset[0]
+  //   let isDevnet = useBlacklisted()
+  //   try {
+  //     const paths = window.location.href.split('/')
+  //     const marketAddress = paths[4]
+  //     pairsToset.map((item) => {
+  //       if (marketAddress === item.marketAddress) {
+  //         pairSet = item
+  //         isDevnet = false
+  //       }
+  //     })
+  //     devnetPairs.map((item) => {
+  //       if (marketAddress === item.marketAddress) {
+  //         pairSet = item
+  //         isDevnet = true
+  //       }
+  //     })
+  //     return { set: pairSet, isDevnet: isDevnet }
+  //   } catch (e) {
+  //     return { set: pairSet, isDevnet: isDevnet }
+  //   }
+  // }
+  const getInitialPairAndNetwork = () => {
     let pairSet = pairsToset[0]
-    // const { blacklisted } = useConnectionConfig()
-    let isDevnet = false
-    try {
-      const paths = window.location.href.split('/')
-      const marketAddress = paths[4]
-      pairsToset.map((item) => {
-        if (marketAddress === item.marketAddress) {
-          pairSet = item
-          isDevnet = false
-        }
-      })
-      devnetPairs.map((item) => {
-        if (marketAddress === item.marketAddress) {
-          pairSet = item
-          isDevnet = true
-        }
-      })
-      return { set: pairSet, isDevnet: isDevnet }
-    } catch (e) {
-      return { set: pairSet, isDevnet: isDevnet }
+    let isDevnet = useBlacklisted()
+    if (isDevnet) {
+      pairSet = devnetPairs[0]
+      isDevnet = true
     }
+    return { set: pairSet, isDevnet: isDevnet }
   }
-  const [isDevnet, setIsDevnet] = useState<boolean>(getPairWithMarketAddress().isDevnet)
-  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getPairWithMarketAddress().set)
+  const [isDevnet, setIsDevnet] = useState<boolean>(getInitialPairAndNetwork().isDevnet)
+  const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getInitialPairAndNetwork().set)
   const { connection } = useConnectionConfig()
 
   useEffect(() => {
