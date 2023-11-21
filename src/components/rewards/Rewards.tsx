@@ -13,15 +13,14 @@ import 'styled-components/macro'
 import { getAccurateNumber, numberFormatter } from '../../utils'
 import { Loader } from '../Loader'
 import { Connect } from '../../layouts'
-import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk/dist/constants/swap'
-import { CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
-import { LAMPORTS_PER_SOL } from '../../constants'
 import { StakeBottomBar, UnstakeBottomBar } from './StakeUnstakeBottomBar'
 import StakeUnstakeToggle from './StakeUnstakeToggle'
 import UnstakeConfirmationModal from './UnstakeConfirmationModal'
 import useSolSub, { SubType } from '../../hooks/useSolSub'
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import Skeleton from 'react-loading-skeleton'
+import useTimer from '../../hooks/useTimer'
 
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
@@ -331,29 +330,24 @@ const EarnRewards: FC = () => {
 export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
-  const [apr, setApr] = useState(0)
-  const { connection } = useConnectionConfig()
+  const [apy, setApy] = useState<string | undefined>()
   const { rewards, claimFees } = useRewards()
   const { totalEarned, totalStaked, claimable } = rewards.user.staking
   const breakpoints = useBreakPoint()
   const [isClaiming, setIsClaiming] = useState(false)
-  const fetchGOFXData = async () => {
-    try {
-      const { data: controllerData } = await connection.getAccountInfo(SDK_ADDRESS.MAINNET.GFX_CONTROLLER)
-      const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
-      const liqidity = Number(stakingBalance / LAMPORTS_PER_SOL)
-      const DR = Number(dailyReward / LAMPORTS_PER_SOL)
-      const APR: number = (1 / liqidity) * DR * 365 * 100
-      return APR
-    } catch (err) {
-      return err
-    }
-    console.log(apr)
-  }
+  const { time, isDone } = useTimer({
+    targetTime: {
+      hour: 9,
+      minute: 30,
+      second: 0
+    },
+    offsetToFuture: true
+  })
   useEffect(() => {
-    fetchGOFXData()
-      .then((apr) => setApr(apr.toFixed(2)))
-      .catch((err) => console.error(err))
+    fetch('https://api-services.goosefx.io/gofx-stake/getApy')
+      .then((res) => res.json())
+      .then((res) => setApy(res.data))
+      .catch((err) => console.error('failed to fetch apy', err))
   }, [])
   // retrieves value from rewards hook -> usdcClaimable has already been converte to UI amount
 
@@ -372,7 +366,9 @@ const RewardsRightPanel: FC = () => {
         ]}
       >
         <p tw={'mb-0 hidden'}>Rewards</p>
-        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>APY Coming Soon</p>
+        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>
+          {!apy ? <Skeleton /> : `APY ${apy}%`}
+        </p>
       </div>
       <div
         css={[
@@ -419,6 +415,8 @@ const RewardsRightPanel: FC = () => {
             </div>
           ) : claimable > 0.0 ? (
             `Claim ${numberFormatter(claimable, claimable < 0.1 && claimable > 1e-6 ? 4 : 2)} USDC`
+          ) : !isDone ? (
+            time
           ) : (
             'No USDC Claimable'
           )}

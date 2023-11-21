@@ -22,9 +22,8 @@ interface Unsubs {
   id: number
   unsubType: SubType
 }
-function UseSolSub(subs: SolsSubs[]): void {
+function useSolSub(subs: SolsSubs[]): void {
   const { connection } = useConnectionConfig()
-
   useEffect(() => {
     if (subs.length == 0) return
     const unsubIds: Unsubs[] = []
@@ -50,4 +49,4 @@ function UseSolSub(subs: SolsSubs[]): void {
   }, [subs, connection])
 }
 
-export default UseSolSub
+export default useSolSub

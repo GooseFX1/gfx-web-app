@@ -304,23 +304,15 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
+
   useSolSub([
     {
       SubType: SubType.AccountChange,
-      pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(),
+      pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
       callback: async () => {
-        const userRewardsHoldingAccount = await stakeRewards.getUserRewardsHoldingAccount()
-        const userRewardsHoldingAccountInfo = await connection.getParsedAccountInfo(
-          userRewardsHoldingAccount,
-          'confirmed'
-        )
-        //console.log('userRewardsHoldingAccountChanged', userRewardsHoldingAccountInfo)
-        if (userRewardsHoldingAccountInfo && userRewardsHoldingAccountInfo.value) {
-          const claimable =
-            (userRewardsHoldingAccountInfo.value.data as any).parsed.info.tokenAmount.uiAmountString ?? '0.0'
-          dispatch({ type: 'setStaking', payload: { claimable } })
-          setHasRewards((prev) => prev || claimable != '0.0')
-        }
+        const claimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+        dispatch({ type: 'setStaking', payload: { claimable } })
+        setHasRewards((prev) => prev || claimable != '0.0')
       }
     },
     {
