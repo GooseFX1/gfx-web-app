@@ -59,6 +59,7 @@
     "coingecko-api": "^1.0.10",
     "crypto-browserify": "^3.12.0",
     "customize-cra": "^1.0.0",
+    "dayjs": "^1.11.10",
     "echarts": "^5.1.2",
     "emailjs-com": "^3.2.0",
     "eventemitter3": "^4.0.7",
