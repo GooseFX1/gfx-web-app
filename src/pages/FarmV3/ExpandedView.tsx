@@ -169,6 +169,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // }
 
   const openActionModal = (actionValue: string) => {
+    if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
     setActionType(actionValue)
     setActionModal(true)
   }
