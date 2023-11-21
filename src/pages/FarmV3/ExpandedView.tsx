@@ -236,8 +236,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
   }
 
-  const walletName = wallet?.adapter?.name
-
   const handleDeposit = (): void => {
     if (checkConditionsForDepositWithdraw(true)) return
     try {
