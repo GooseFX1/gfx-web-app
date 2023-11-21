@@ -388,7 +388,8 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const description =
           wallet.adapter.name !== 'SquadsX'
             ? `You traded ${inTokens} for at least ${outTokens}`
-            : `You initialized a trade for ${inTokens} to at least ${outTokens}. Execute it on Squads for the changes to take place`
+            : `You initialized a trade for ${inTokens} to at least ${outTokens}. 
+            Execute it on Squads for the changes to take place`
 
         const message = wallet.adapter.name !== 'SquadsX' ? 'Swap successful!' : 'Swap initialized!'
 
