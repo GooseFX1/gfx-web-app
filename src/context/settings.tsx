@@ -5,7 +5,26 @@ import { Connection } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 
-const banned_countries = ['BY', 'CA', 'CF', 'CD', 'KP', 'CU', 'IR', 'LY', 'SO', 'SS', 'SD', 'SY', 'US', 'YE', 'ZW']
+const countries = [
+  { code: 'BY', name: 'Belarus' },
+  { code: 'CA', name: 'Canada' },
+  { code: 'CF', name: 'Central African Republic' },
+  { code: 'CD', name: 'Congo, Democratic Republic of the' },
+  { code: 'KP', name: 'North Korea' },
+  { code: 'CU', name: 'Cuba' },
+  { code: 'IR', name: 'Iran' },
+  { code: 'LY', name: 'Lybia' },
+  { code: 'RU', name: 'Russia' },
+  { code: 'SO', name: 'Somalia' },
+  { code: 'SS', name: 'South Sudan' },
+  { code: 'SD', name: 'Sudan' },
+  { code: 'SY', name: 'Syrian Arab Republic' },
+  { code: 'US', name: 'United States of America' },
+  { code: 'YE', name: 'Yemen' },
+  { code: 'ZW', name: 'Zimbabwe' }
+]
+const banned_countries = countries.map((c) => c.code)
+
 export const DEFAULT_SLIPPAGE = 0.005
 
 export type RPC = {
@@ -139,15 +158,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }, [endpointName, endpoint])
 
-  // Geo Restriction
-  const callGeoService = () => {
-    fetchBrowserCountryCode().then((countryCode: null | string) => {
-      if (countryCode) {
-        setBlacklisted(banned_countries.includes(countryCode))
-      }
-    })
-  }
-
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
@@ -156,7 +166,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     if (process.env.NODE_ENV === 'production') {
-      callGeoService()
+      fetchBrowserCountryCode().then((countryCode: null | string) => {
+        if (countryCode) {
+          setBlacklisted(banned_countries.includes(countryCode))
+        }
+      })
     }
   }, [])
 
