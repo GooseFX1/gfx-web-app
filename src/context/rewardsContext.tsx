@@ -312,7 +312,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       callback: async () => {
         const claimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
         dispatch({ type: 'setStaking', payload: { claimable } })
-        setHasRewards((prev) => prev || claimable != '0.0')
+        setHasRewards(Number(claimable) > 0 || rewards.user.staking.unstakeableTickets.length > 0)
       }
     },
     {
@@ -348,8 +348,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             )
           }
         })
-
-        setHasRewards((prev) => prev || unstakeableTickets.length > 0)
+        setHasRewards(Number(rewards.user.staking.claimable) > 0 || unstakeableTickets.length > 0)
       }
     }
   ])
