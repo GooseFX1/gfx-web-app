@@ -12,11 +12,11 @@ import Skeleton from 'react-loading-skeleton'
 
 const UnstakeBottomBar: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { rewards } = useRewards()
+  const { unstakeableTickets, activeUnstakingTickets } = useRewards()
   const showUnstakingModal = useCallback(() => {
-    if (rewards.user.staking.activeUnstakingTickets.length == 0) return
+    if (activeUnstakingTickets.length == 0) return
     setIsModalOpen(true)
-  }, [rewards.user.staking.unstakeableTickets])
+  }, [unstakeableTickets, activeUnstakingTickets])
   const hideUnstakingModal = useCallback(() => setIsModalOpen(false), [])
   return (
     <div css={[tw`min-md:h-[91px]`]}>
@@ -27,14 +27,12 @@ const UnstakeBottomBar: FC = () => {
           underline dark:text-grey-5 cursor-pointer bg-transparent hover:bg-transparent focus:bg-transparent
            active:bg-transparent font-semibold border-0 min-md:mb-[28px]
   `,
-          rewards.user.staking.unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
+          unstakeableTickets.length == 0 ? 'text-grey-1' : tw``
         ]}
-        disabled={rewards.user.staking.activeUnstakingTickets.length == 0}
+        disabled={activeUnstakingTickets.length == 0}
         onClick={showUnstakingModal}
       >
-        {rewards.user.staking.activeUnstakingTickets.length == 0
-          ? 'No Active Cooldowns'
-          : 'See All Active Cooldowns'}
+        {activeUnstakingTickets.length == 0 ? 'No Active Cooldowns' : 'See All Active Cooldowns'}
       </button>
     </div>
   )
