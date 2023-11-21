@@ -37,7 +37,7 @@ export const Connect: FC<MenuItemProps> = ({
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const canConnect = useMemo(
-    () => !blacklisted || (blacklisted && !pathname.includes('trade') && !pathname.includes('farm')),
+    () => !blacklisted || pathname === '/nfts' || (blacklisted && pathname === '/farm/temp-withdraw'),
     [blacklisted, pathname]
   )
 
