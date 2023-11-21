@@ -80,7 +80,7 @@ export const getSOLPrice = async (): Promise<any> => {
 export const fetchBrowserCountryCode = async (): Promise<null | string> => {
   try {
     const resp = await axios.get(`https://geocode.goosefx.workers.dev`)
-    const country = resp.data.results[0].components.country_code
+    const country = resp.data.country
     return country.toUpperCase()
   } catch (error) {
     console.error(error)
