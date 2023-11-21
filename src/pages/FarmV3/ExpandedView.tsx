@@ -52,6 +52,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     rewards
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
   const [depositAmount, setDepositAmount] = useState<string>()
@@ -234,8 +235,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       return false
     }
   }
-
-  const walletName = wallet?.adapter?.name
 
   const handleDeposit = (): void => {
     if (checkConditionsForDepositWithdraw(true)) return
