@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback } from 'react'
 import useRewards from '../../context/rewardsContext'
 import Modal from '../common/Modal'
 import tw from 'twin.macro'
@@ -16,16 +16,13 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
   amount = 0.0,
   setStakeLoading
 }) => {
-  const { unstake, rewards } = useRewards()
+  const { unstake, totalStaked } = useRewards()
   const handleStakeConfirmation = useCallback(() => {
     setStakeLoading(true)
     unstake(amount).finally(() => setStakeLoading(false))
     onClose()
   }, [amount])
-  const canUnstake = useMemo(
-    () => rewards.user.staking.totalStaked >= amount,
-    [amount, rewards.user.staking.userMetadata]
-  )
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div css={[tw`sm:absolute bottom-0 left-0`]}>
@@ -59,7 +56,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
           dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px] border-0
         `}
             onClick={handleStakeConfirmation}
-            disabled={!canUnstake}
+            disabled={!(totalStaked >= amount)}
           >
             Yes, Continue With Cooldown
           </button>

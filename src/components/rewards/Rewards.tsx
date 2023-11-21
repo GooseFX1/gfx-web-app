@@ -27,7 +27,7 @@ const EarnRewards: FC = () => {
   const inputRef = useRef<InputRef>(null)
   const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { stake, rewards, getUiAmount, gofxValue } = useRewards()
+  const { stake, totalStaked, gofxValue } = useRewards()
 
   const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
   const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
@@ -40,9 +40,12 @@ const EarnRewards: FC = () => {
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   // const { rewardToggle } = useRewardToggle()
-  useSolSub([
-    {
+  // const subs = useMemo(()=>([]),[connection,publicKey])
+  const { on, off } = useSolSub(connection)
+  useEffect(() => {
+    on({
       SubType: SubType.AccountChange,
+      id: 'user-gofx-balance-staking',
       callback: async () => {
         const currentNetwork =
           network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
@@ -71,8 +74,12 @@ const EarnRewards: FC = () => {
         )
         return address
       }
+    })
+    return () => {
+      off()
+      return
     }
-  ])
+  }, [connection, network, publicKey])
   useEffect(() => {
     if (!publicKey) return
     const getData = async () => {
@@ -89,10 +96,7 @@ const EarnRewards: FC = () => {
     }
     void getData()
   }, [publicKey, connection, network])
-  const totalStaked = useMemo(
-    () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
-    [rewards.user.staking.userMetadata.totalStaked]
-  )
+
   const handleHalf = useCallback(async () => {
     let half: number
     if (isStakeSelected) {
@@ -344,8 +348,7 @@ export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
   const [apy, setApy] = useState<string | undefined>()
-  const { rewards, claimFees, totalStakedInUSD } = useRewards()
-  const { totalEarned, totalStaked, claimable } = rewards.user.staking
+  const { totalEarned, totalStaked, claimable, claimFees, totalStakedInUSD, userStakeRatio } = useRewards()
   const breakpoints = useBreakPoint()
   const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useState(false)
@@ -370,6 +373,8 @@ const RewardsRightPanel: FC = () => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
+  const stakeRatio = useMemo(() => numberFormatter(userStakeRatio, 2), [userStakeRatio])
+
   return (
     <div
       css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3.75 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
@@ -413,6 +418,17 @@ const RewardsRightPanel: FC = () => {
             Total Staked: {numberFormatter(totalStaked)} GOFX
           </p>
         </Tooltip>
+        {totalStaked > 0 && (
+          <p
+            css={[
+              tw`mb-0 text-regular min-md:text-average font-semibold
+         text-grey-5 text-center leading-normal`,
+              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+            ]}
+          >
+            Staked Ratio {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+          </p>
+        )}
         <button
           css={[
             tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white

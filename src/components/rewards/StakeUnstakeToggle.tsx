@@ -25,7 +25,7 @@ const StakeUnstakeToggle = ({
   const sliderRef = useRef<HTMLDivElement>(null)
   const buttonsRef = useRef<HTMLButtonElement[]>([])
   const { handleSlide } = useAnimateButtonSlide(sliderRef, buttonsRef, isStakeSelected ? 0 : 1)
-  const { rewards, getUiAmount } = useRewards()
+  const { totalStaked } = useRewards()
   const setSliderRef = useCallback(
     (el: HTMLButtonElement) => {
       const index = parseInt(el?.dataset?.index)
@@ -49,11 +49,11 @@ const StakeUnstakeToggle = ({
       const value =
         index == 0
           ? clamp(inputValue, 0, Number(userGoFxBalance.uiAmount))
-          : clamp(inputValue, 0, Number(getUiAmount(rewards.user.staking.userMetadata.totalStaked)))
+          : clamp(inputValue, 0, Number(totalStaked))
 
       setInputValue(getAccurateNumber(value))
     },
-    [inputValue, rewards, userGoFxBalance]
+    [inputValue, totalStaked, userGoFxBalance]
   )
   return (
     <div css={tw`w-full min-md:w-max flex flex-row relative justify-between min-md:justify-start items-center `}>
