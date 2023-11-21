@@ -126,7 +126,7 @@ export const Router: FC = () => (
                               </NFTCollectionProvider>
                             </NFTProfileProvider>
                           </Route>
-                          <Route exact path="/farm">
+                          <Route exact path={['/farm', '/farm/temp-withdraw']}>
                             <PriceFeedFarmProvider>
                               <Farm />
                             </PriceFeedFarmProvider>
