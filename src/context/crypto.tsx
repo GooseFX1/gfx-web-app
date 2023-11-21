@@ -61,7 +61,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   // const getPairWithMarketAddress = () => {
   //   let pairSet = pairsToset[0]
-  //   let isDevnet = useBlacklisted()
+  //   let isDevnet = blacklisted // from useConnectionConfig
   //   try {
   //     const paths = window.location.href.split('/')
   //     const marketAddress = paths[4]
@@ -84,7 +84,7 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // }
   const getInitialPairAndNetwork = () => {
     let pairSet = pairsToset[0]
-    let isDevnet = useBlacklisted()
+    let isDevnet = false
     if (isDevnet) {
       pairSet = devnetPairs[0]
       isDevnet = true
