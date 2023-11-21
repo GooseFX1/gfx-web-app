@@ -384,10 +384,19 @@ export const SwapProvider: FC<{ children: ReactNode }> = ({ children }) => {
       try {
         const signature = await callPathExchange(route, exchange)
         if (!signature) throw new Error('Swap unsuccessful')
+
+        const description =
+          wallet.adapter.name !== 'SquadsX'
+            ? `You traded ${inTokens} for at least ${outTokens}`
+            : `You initialized a trade for ${inTokens} to at least ${outTokens}. 
+            Execute it on Squads for the changes to take place`
+
+        const message = wallet.adapter.name !== 'SquadsX' ? 'Swap successful!' : 'Swap initialized!'
+
         notify({
           type: 'success',
-          message: 'Swap successful!',
-          description: `You traded ${inTokens} for at least ${outTokens}`,
+          message,
+          description,
           icon: 'success',
           txid: signature,
           network: network

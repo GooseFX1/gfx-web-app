@@ -52,6 +52,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     rewards
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const [userSolBalance, setUserSOLBalance] = useState<number>()
   const [depositAmount, setDepositAmount] = useState<string>()
@@ -247,7 +248,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setIsButtonLoading(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token))
+          notify(sslSuccessfulMessage('deposited', depositAmount, coin?.token, walletName))
           setTimeout(() => setDepositAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
@@ -275,7 +276,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token))
+          notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token, walletName))
           setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
@@ -302,7 +303,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('claimed', claimableReward, coin?.token))
+          notify(sslSuccessfulMessage('claimed', claimableReward, coin?.token, walletName))
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
