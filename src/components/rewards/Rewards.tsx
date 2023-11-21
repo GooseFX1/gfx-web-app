@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { Input, InputRef } from 'antd'
+import { Input, InputRef, Tooltip } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '../../context'
 import useRewards from '../../context/rewardsContext'
@@ -27,7 +27,7 @@ const EarnRewards: FC = () => {
   const inputRef = useRef<InputRef>(null)
   const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { stake, rewards, getUiAmount } = useRewards()
+  const { stake, rewards, getUiAmount, gofxValue } = useRewards()
 
   const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
   const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
@@ -128,7 +128,8 @@ const EarnRewards: FC = () => {
     if (isStakeSelected) {
       try {
         await stake(inputValue)
-        console.log(`Successful Stake: ${publicKey.toBase58()} - ${inputValue}`)
+        console.log(`Successful Stake: ${publicKey.toBase58()}
+         - ${inputValue}`)
       } catch (error) {
         console.error(error)
       } finally {
@@ -193,21 +194,29 @@ const EarnRewards: FC = () => {
             isStakeLoading={isStakeLoading}
           />
         )}
-        <div tw={' flex flex-col min-md:flex-row gap-1 '}>
-          <p
-            css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
-          >
-            Wallet Balance:
-          </p>
-          <p
-            css={[
-              tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-1`,
-              userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
-            ]}
-          >
-            {numberFormatter(userGoFxBalance.uiAmount)} GOFX
-          </p>
-        </div>
+        <Tooltip
+          title={
+            userGoFxBalance.uiAmount > 0.0
+              ? `Approx ${numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)} USD`
+              : ''
+          }
+        >
+          <div tw={' flex flex-col min-md:flex-row gap-1 '}>
+            <p
+              css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
+            >
+              Wallet Balance:
+            </p>
+            <p
+              css={[
+                tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-1`,
+                userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
+              ]}
+            >
+              {numberFormatter(userGoFxBalance.uiAmount)} GOFX
+            </p>
+          </div>
+        </Tooltip>
         {/* <button
           css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 min-md:px-8 font-semibold flex
           items-center justify-center min-md:w-[158px] w-[146px] whitespace-nowrap
@@ -322,7 +331,11 @@ const EarnRewards: FC = () => {
         />
       )}
 
-      {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}
+      {isStakeSelected ? (
+        <StakeBottomBar proposedStakeAmount={isStakeSelected ? inputValue : 0.0} />
+      ) : (
+        <UnstakeBottomBar />
+      )}
     </div>
   )
 }
@@ -331,9 +344,10 @@ export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
   const [apy, setApy] = useState<string | undefined>()
-  const { rewards, claimFees } = useRewards()
+  const { rewards, claimFees, totalStakedInUSD } = useRewards()
   const { totalEarned, totalStaked, claimable } = rewards.user.staking
   const breakpoints = useBreakPoint()
+  const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useState(false)
   const { time, isDone } = useTimer({
     targetTime: {
@@ -341,6 +355,7 @@ const RewardsRightPanel: FC = () => {
       minute: 30,
       second: 0
     },
+    format: `HH[h] mm[m]`,
     offsetToFuture: true
   })
   useEffect(() => {
@@ -387,15 +402,17 @@ const RewardsRightPanel: FC = () => {
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
       <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
-        <p
-          css={[
-            tw`mb-0 text-regular min-md:text-average font-semibold
+        <Tooltip title={totalStaked > 0.0 ? `Approx. ${numberFormatter(totalStakedInUSD, 2)} USD` : ''}>
+          <p
+            css={[
+              tw`mb-0 text-regular min-md:text-average font-semibold
          text-grey-5 text-center leading-normal`,
-            totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
-          ]}
-        >
-          Total Staked: {numberFormatter(totalStaked)} GOFX
-        </p>
+              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+            ]}
+          >
+            Total Staked: {numberFormatter(totalStaked)} GOFX
+          </p>
+        </Tooltip>
         <button
           css={[
             tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
@@ -415,8 +432,8 @@ const RewardsRightPanel: FC = () => {
             </div>
           ) : claimable > 0.0 ? (
             `Claim ${numberFormatter(claimable, claimable < 0.1 && claimable > 1e-6 ? 4 : 2)} USDC`
-          ) : !isDone ? (
-            time
+          ) : connected && !isDone && Boolean(time) && totalStaked > 0.0 ? (
+            `Claim in ${time}`
           ) : (
             'No USDC Claimable'
           )}
