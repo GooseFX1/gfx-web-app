@@ -28,7 +28,7 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
   .ant-modal-body {
-    ${tw`py-0 h-auto h-[298px] overflow-y-scroll`}
+    ${tw`py-0 h-auto h-[425px] overflow-y-scroll`}
   }
   &.ant-modal {
     ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
@@ -123,7 +123,7 @@ export const WalletsModal: FC = () => {
   ) : (
     <STYLED_POPUP
       width={'354px'}
-      height={'396px'}
+      height={'525px'}
       visible={visible}
       title={'Select a wallet'}
       footer={

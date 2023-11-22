@@ -389,28 +389,20 @@ const RewardsRightPanel: FC = () => {
   const stakeRatio = useMemo(() => numberFormatter(userStakeRatio, 2), [userStakeRatio])
 
   return (
-    <div
-      css={tw`flex h-full py-2.5 sm:pt-3.75 gap-0.5 min-md:gap-0 w-full min-md:pt-[45px] flex-col items-center`}
-    >
+    <div css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3 min-md:gap-16 w-full min-md:pt-[45px] flex-col items-center`}>
       <div
         css={[
-          tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5
-      leading-normal`
+          tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5 leading-normal`
         ]}
       >
         <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>
           {!apy ? <Skeleton /> : `APY ${apy}%`}
         </p>
       </div>
-      <div
-        css={[
-          tw`flex flex-col text-center text-[15px] min-md:text-lg gap-[15px] min-md:mt-[61px]
-           text-grey-5 `
-        ]}
-      >
+      <div css={[tw`flex flex-col text-center text-[15px] min-md:text-lg text-grey-5 sm:gap-1 min-md:gap-4`]}>
         <span
           css={[
-            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-10  h-[42px] min-md:h-auto`,
+            tw`text-2xl text-grey-5 min-md:text-4xl font-semibold leading-10 h-[42px] min-md:h-auto`,
             totalEarned > 0 ? tw`opacity-100` : tw`opacity-60`
           ]}
         >
@@ -458,9 +450,9 @@ const RewardsRightPanel: FC = () => {
         </div>
         <button
           css={[
-            tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
+            tw` w-full min-md:w-[320px] items-center h-10 bg-white mt-2 min-md:mb-0 
             text-black-4 border-0 font-semibold text-regular leading-normal opacity-[0.5] rounded-[50px]
-            min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75
+            overflow-hidden whitespace-nowrap relative flex justify-center py-3.75
             min-md:text-average
             `,
             claimable > 0.0 ? tw`opacity-100` : tw``,
