@@ -89,6 +89,7 @@ const maxHeight = {
 }
 const gap = {
   0.25: '1px',
+  0.5: '8px',
   1.25: '5px',
   1.75: '7px',
   2: '8px',
