@@ -226,7 +226,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
         if (gfxVaultVal !== totalStakedGlobally) {
           setTotalStakedGlobally(gfxVaultVal)
-          setUserStakeRatio(Number(totalStaked) / gfxVaultVal)
+          setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
         }
         setGofxVault(t)
       }
@@ -269,7 +269,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [walletContext.publicKey, stakeRewards, claimable])
   useEffect(() => {
     on({
-      SubType: SubType.ProgramAccountChange,
+      SubType: SubType.AccountChange,
       id: 'usdc-staking-claimable',
       pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
       callback: async () => {
@@ -306,7 +306,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setHasRewards(data.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
-    setUserStakeRatio(Number(totalStaked) / gfxVaultVal)
+    setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
   }, [stakeRewards, walletContext.publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
