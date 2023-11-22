@@ -225,10 +225,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log('goFxVault changed', t)
         if (!t) return
         const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
-        if (gfxVaultVal !== totalStakedGlobally) {
-          setTotalStakedGlobally(gfxVaultVal)
-          setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
-        }
+        setTotalStakedGlobally(gfxVaultVal)
+        setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
         setGofxVault(t)
       }
     }).then((id) => (unsubId = id))
@@ -236,7 +234,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       off(unsubId)
       return
     }
-  }, [stakeRewards])
+  }, [stakeRewards, totalStaked])
   useEffect(() => {
     let unsubId: string
     on({
@@ -251,16 +249,16 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return address
       },
       callback: async () => {
-        const userMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
-        const unstakeableTickets = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
+        const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+        const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
         setUserMetaData(userMetaData)
-        setTotalEarned(getUiAmount(userMetaData.totalEarned, true))
-        setTotalStaked(getUiAmount(userMetaData.totalStaked))
-        setUnstakeableTickets(unstakeableTickets)
+        setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
+        setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
+        setUnstakeableTickets(newUnstakaebleTicekts)
         setActiveUnstakingTickets(
-          userMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+          newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
         )
-        setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+        setHasRewards(Number(claimable) > 0 || newUnstakaebleTicekts.length > 0)
         console.log('user meta data update')
       }
     }).then((id) => (unsubId = id))
@@ -276,16 +274,16 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       id: 'usdc-staking-claimable',
       pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
       callback: async () => {
-        const claimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
-        setClaimable(Number(claimable))
-        setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+        const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+        setClaimable(Number(newClaimable))
+        setHasRewards(Number(newClaimable) > 0 || unstakeableTickets.length > 0)
       }
     }).then((id) => (unsubId = id))
     return () => {
       off(unsubId)
       return
     }
-  }, [stakeRewards, walletContext.publicKey])
+  }, [stakeRewards, walletContext.publicKey, unstakeableTickets])
 
   useEffect(() => {
     const s = stakeRewards
@@ -303,13 +301,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
     setClaimable(Number(data.claimable))
     setTotalEarned(getUiAmount(data.userMetadata.totalEarned, true))
-    setTotalStaked(getUiAmount(data.userMetadata.totalStaked))
+    const newTotalStaked = getUiAmount(data.userMetadata.totalStaked)
+    setTotalStaked(newTotalStaked)
     setStakePool(data.stakePool)
     setGofxVault(data.gofxVault)
     setHasRewards(data.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
-    setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
+    setUserStakeRatio((Number(newTotalStaked) / gfxVaultVal) * 100)
   }, [stakeRewards, walletContext.publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
