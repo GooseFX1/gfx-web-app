@@ -104,7 +104,14 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {
       const userCreated = currentUserParsedAccounts.filter(
         (nft: ParsedAccount) =>
-          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === currentUserProfile.pubkey)
+          nft.data.creators !== undefined &&
+          nft.data.creators.find((c) => {
+            // KEEP THIS - METAPLEX types are wrong against actual value -> states pubkey on types but its string
+            if (typeof c.address == 'string') {
+              return c.address === currentUserProfile.pubkey
+            }
+            return c.address.toBase58() === currentUserProfile.pubkey
+          })
       )
       setCreatedItems(userCreated)
     } else {
