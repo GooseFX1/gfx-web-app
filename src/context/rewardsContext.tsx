@@ -211,6 +211,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const { on, off } = useSolSub(connection)
   useEffect(() => {
+    let unsubId: string
     on({
       SubType: SubType.AccountChange,
       id: 'gofx-pool',
@@ -230,13 +231,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         setGofxVault(t)
       }
-    })
+    }).then((id) => (unsubId = id))
     return () => {
-      off()
+      off(unsubId)
       return
     }
   }, [stakeRewards])
   useEffect(() => {
+    let unsubId: string
     on({
       SubType: SubType.AccountChange,
       id: 'usermetadata-staking-claimable',
@@ -261,13 +263,14 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
         console.log('user meta data update')
       }
-    })
+    }).then((id) => (unsubId = id))
     return () => {
-      off()
+      off(unsubId)
       return
     }
   }, [walletContext.publicKey, stakeRewards, claimable])
   useEffect(() => {
+    let unsubId: string
     on({
       SubType: SubType.AccountChange,
       id: 'usdc-staking-claimable',
@@ -277,9 +280,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setClaimable(Number(claimable))
         setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
       }
-    })
+    }).then((id) => (unsubId = id))
     return () => {
-      off()
+      off(unsubId)
       return
     }
   }, [stakeRewards, walletContext.publicKey])
