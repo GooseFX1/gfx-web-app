@@ -30,8 +30,8 @@ interface Unsubs {
 }
 
 function useSolSub(connection: Connection): {
-  on: (sub: SolsSubs) => Promise<void>
-  off: () => Promise<void>
+  on: (sub: SolsSubs) => Promise<string>
+  off: (id?: string) => Promise<void>
 } {
   const subs = useRef<Map<string, Unsubs>>(new Map())
   const on = useCallback(
@@ -62,13 +62,12 @@ function useSolSub(connection: Connection): {
         id,
         unsubType: sub.SubType
       })
+      return sub.id
     },
     [connection]
   )
-  const off = useCallback(async () => {
-    console.log('OFF SUBS', subs.current)
-    if (subs.current.size === 0) return
-    subs.current.forEach(async (sub) => {
+  const removeListener = useCallback(
+    async (sub: Unsubs) => {
       switch (sub.unsubType) {
         case SubType.AccountChange:
           await connection.removeAccountChangeListener(sub.id)
@@ -80,9 +79,24 @@ function useSolSub(connection: Connection): {
           console.warn('unkown option passed for unsub')
           break
       }
-    })
-    return
-  }, [])
+    },
+    [connection]
+  )
+  const off = useCallback(
+    async (id?: string) => {
+      console.log('OFF SUBS', subs.current)
+      if (subs.current.size === 0) return
+      if (id && subs.current.has(id)) {
+        await removeListener(subs.current.get(id))
+        return
+      }
+      subs.current.forEach((sub) => {
+        removeListener(sub)
+      })
+      return
+    },
+    [removeListener]
+  )
 
   return {
     on,
