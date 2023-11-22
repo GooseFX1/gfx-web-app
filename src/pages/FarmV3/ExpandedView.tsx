@@ -355,7 +355,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
-        isExpanded ? tw`h-[115px] sm:h-[450px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
+        isExpanded
+          ? tw`h-[115px] visible p-3.5 sm:h-[400px] sm:p-4`
+          : tw`!h-0 invisible p-0 opacity-0 w-0 sm:h-[366px]`
       ]}
     >
       {actionModal && (
@@ -426,7 +428,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 totalEarned > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      {`${totalEarned.toFixed(4)} ($${totalEarnedInUSD?.toFixed(4)} USD)`}
+                      <div>{totalEarned.toFixed(4)}</div>
+                      <div>(${totalEarnedInUSD?.toFixed(4)}USD)</div>
                     </span>
                   </div>
                 ) : (
@@ -442,12 +445,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                      <div>{claimableReward?.toFixed(4)}</div>
+                      <div>(${claimableRewardInUSD?.toFixed(4)} USD)</div>
                     </span>
                   </div>
                 ) : (
                   <div tw="text-right">
-                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">0.00 ($0.00 USD)</span>
+                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">0.00 JS {coin?.token}</span>
                   </div>
                 )
               }
@@ -456,7 +460,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         )}
         {isExpanded && (
           <>
-            <div tw="flex font-semibold duration-500 relative sm:mt-2">
+            <div tw="flex font-semibold duration-500 relative sm:mt-1">
               <div
                 css={[
                   tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
@@ -504,16 +508,16 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       </div>
 
       <div>
-        <div tw="flex relative">
+        <div tw="flex relative w-[400px] sm:w-[100%] dark:bg-black-1 bg-grey-5 rounded-[50px] items-center">
           {isExpanded && (
-            <div tw="absolute flex z-[100]">
+            <div tw="flex z-[100]">
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
                     ? setDepositAmount(userTokenBalance ? '0.01' : '0')
                     : setWithdrawAmount(userDepositedAmount ? '0.01' : '0')
                 }
-                tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-4 cursor-pointer"
+                tw="font-semibold text-grey-1 dark:text-grey-2 ml-3 cursor-pointer"
               >
                 Min
               </div>
@@ -523,39 +527,31 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     ? setDepositAmount(userTokenBalance ? String(userTokenBalance) : '0')
                     : setWithdrawAmount(userDepositedAmount ? userDepositInUSD : '0')
                 }
-                tw="font-semibold text-grey-1 dark:text-grey-2 mt-1.5 ml-2 cursor-pointer"
+                tw="font-semibold text-grey-1 dark:text-grey-2 ml-2 cursor-pointer"
               >
                 Max
               </div>
             </div>
           )}
 
+          {/*  */}
           {isExpanded && (
             <>
               <input
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder={`0.00`}
-                value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount : withdrawAmount}
+                value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
                 css={[
-                  tw`duration-500 rounded-[50px] relative !text-regular font-semibold outline-none dark:bg-black-1 
-                bg-grey-5 border-none dark:text-white text-black-4`,
+                  tw` relative !text-regular font-semibold outline-none border-none 
+                  dark:text-white text-black-4`,
                   isExpanded
-                    ? tw`w-[400px] h-8.75 sm:w-[100%] p-4 pl-[100px] pr-[64px] text-right`
+                    ? tw`w-[100%] h-8.75  dark:bg-black-1 bg-grey-5 p-1 pl-[100px] text-right`
                     : tw`h-0 w-0 pl-0 invisible`
                 ]}
                 type="number"
                 key={modeOfOperation}
               />
-              <div
-                css={[
-                  tw`font-semibold text-grey-1 dark:text-grey-2 absolute mt-1.5 sm:ml-[85%] sm:mt-[6.5px]`,
-                  coin?.token === 'JITOSOL'
-                    ? tw`text-[12px] mt-2 ml-[340px] font-semibold`
-                    : tw`text-[14px] mt-1.5 ml-[345px]`
-                ]}
-              >
-                {coin?.token}
-              </div>
+              <div css={[tw`font-semibold text-grey-1 dark:text-grey-2 text-[14px] pr-3`]}>{coin?.token}</div>
             </>
           )}
         </div>
@@ -663,7 +659,12 @@ const FarmStats: FC<{
   value: string | JSX.Element
   alignRight?: boolean
 }> = ({ keyStr, value, alignRight }) => (
-  <div css={[tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between leading-[18px] sm:mb-2`]}>
+  <div
+    css={[
+      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between items-center 
+  leading-[18px] sm:mb-2`
+    ]}
+  >
     <div tw="dark:text-grey-2 text-grey-1" css={[!!alignRight && tw`text-right`]}>
       {keyStr}
     </div>
