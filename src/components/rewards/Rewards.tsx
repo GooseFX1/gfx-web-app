@@ -450,7 +450,7 @@ const RewardsRightPanel: FC = () => {
         </div>
         <button
           css={[
-            tw` w-full min-md:w-[320px] items-center h-10 bg-white mt-2 min-md:mb-0 
+            tw` w-full min-md:w-[320px] items-center h-10 bg-white mt-2 min-md:mb-0
             text-black-4 border-0 font-semibold text-regular leading-normal opacity-[0.5] rounded-[50px]
             overflow-hidden whitespace-nowrap relative flex justify-center py-3.75
             min-md:text-average
