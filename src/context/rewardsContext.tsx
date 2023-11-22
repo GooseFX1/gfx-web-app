@@ -1,23 +1,38 @@
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   ADDRESSES,
   GfxStakeRewards,
   GOFXVault,
   StakePool,
+  TOKEN_SEEDS,
   UnstakeableTicket,
   UnstakeTicket,
   UserMetadata
 } from 'goosefx-stake-rewards-sdk'
 import * as anchor from '@project-serum/anchor'
+import { BN, Wallet } from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { BN, Wallet } from '@project-serum/anchor'
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction } from '../web3'
 import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
+import useSolSub, { SubType } from '../hooks/useSolSub'
+import CoinGecko from 'coingecko-api'
+
+const cg = new CoinGecko()
 
 const ANCHOR_BN = {
   ZERO: new anchor.BN(0.0),
@@ -34,6 +49,8 @@ interface Rewards extends BaseClaim {
   userMetadata: UserMetadata
   activeUnstakingTickets: UnstakeTicket[]
   unstakeableTickets: UnstakeableTicket[]
+  totalStaked: number
+  totalEarned: number
 }
 
 interface Referred extends BaseClaim {
@@ -57,7 +74,14 @@ interface RewardState {
 }
 
 interface IRewardsContext {
-  rewards: RewardState
+  stakePool: StakePool
+  gofxVault: GOFXVault
+  userMetaData: UserMetadata
+  claimable: number
+  totalStaked: number
+  totalEarned: number
+  unstakeableTickets: UnstakeableTicket[]
+  activeUnstakingTickets: UnstakeTicket[]
   hasRewards: boolean
   initializeUserAccount: () => Promise<boolean>
   closeUserAccount: () => Promise<void>
@@ -68,6 +92,10 @@ interface IRewardsContext {
   enterGiveaway: (giveawayContract: string) => void
   getClaimableFees: () => Promise<number>
   getUiAmount: (value: anchor.BN, isUsdc?: boolean) => number
+  totalStakedInUSD: number
+  gofxValue: number
+  userStakeRatio: number
+  totalStakedGlobally: number
 }
 
 const initialState: RewardState = {
@@ -85,6 +113,8 @@ const initialState: RewardState = {
       },
       totalClaimed: 0,
       claimable: 0,
+      totalStaked: 0,
+      totalEarned: 0,
       unstakeableTickets: [],
       activeUnstakingTickets: []
     },
@@ -105,54 +135,6 @@ const initialState: RewardState = {
   },
   gofxVault: {
     amount: BigInt(1)
-  }
-}
-
-function reducer(state: RewardState, action) {
-  switch (action.type) {
-    // Initial Cases - allows for higher order setting
-    case 'setAll':
-      return action.payload
-    case 'setStaking':
-      state.user.staking = action.payload
-      return state
-    case 'setReferred':
-      state.user.referred = action.payload
-      return state
-    case 'setGiveaway':
-      state.user.giveaway = action.payload
-      return state
-    case 'setStakePool':
-      state.stakePool = action.payload
-      return state
-    case 'setGoFxVault':
-      state.gofxVault = action.payload
-      return state
-    // Individual Cases - allows for finer grain setting
-    case 'setUserMetadata':
-      state.user.staking.userMetadata = action.payload
-      return state
-    case 'setStakingTotalClaimed':
-      state.user.staking.totalClaimed = action.payload
-      return state
-    case 'setStakingClaimable':
-      state.user.staking.claimable = action.payload
-      return state
-    case 'setReferralSymbol':
-      state.user.referred.symbol = action.payload
-      return state
-    case 'setReferralReferrals':
-      state.user.referred.referrals = action.payload
-      return state
-    case 'setReferredTotalClaimed':
-      state.user.referred.totalClaimed = action.payload
-      return state
-    case 'setReferredClaimable':
-      state.user.referred.claimable = action.payload
-      return state
-    //TODO: add giveaway unique -  cases
-    default:
-      console.warn('unknown action--->', action)
   }
 }
 
@@ -202,10 +184,24 @@ const Notification = (title: string, isError: boolean, description: ReactNode): 
   </MESSAGE>
 )
 export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [rewards, dispatch] = useReducer(reducer, initialState)
+  const [stakePool, setStakePool] = useState<StakePool>(initialState.stakePool)
+  const [gofxVault, setGofxVault] = useState<GOFXVault>(initialState.gofxVault)
+  const [userMetaData, setUserMetaData] = useState<UserMetadata>(initialState.user.staking.userMetadata)
+  const [claimable, setClaimable] = useState<number>(initialState.user.staking.claimable)
+  const [totalStaked, setTotalStaked] = useState<number>(initialState.user.staking.totalStaked)
+  const [totalEarned, setTotalEarned] = useState<number>(initialState.user.staking.totalEarned)
+  const [unstakeableTickets, setUnstakeableTickets] = useState<UnstakeableTicket[]>(
+    initialState.user.staking.unstakeableTickets
+  )
+  const [activeUnstakingTickets, setActiveUnstakingTickets] = useState<UnstakeTicket[]>(
+    initialState.user.staking.activeUnstakingTickets
+  )
   const [hasRewards, setHasRewards] = useState(false)
+  const [userStakeRatio, setUserStakeRatio] = useState<number>(0)
   const walletContext = useWallet()
   const { network, connection } = useConnectionConfig()
+  const [gofxValue, setGofxValue] = useState<number>(0)
+  const [totalStakedGlobally, setTotalStakedGlobally] = useState<number>(0)
   const getNetwork = useCallback(
     () => (network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'),
     [network]
@@ -213,6 +209,83 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
+  const { on, off } = useSolSub(connection)
+  useEffect(() => {
+    let unsubId: string
+    on({
+      SubType: SubType.AccountChange,
+      id: 'gofx-pool',
+      pubKeyRetrieval: async () => {
+        const t = await stakeRewards.getGoFxVault()
+        if (!t) return null
+        return (t as any).address
+      },
+      callback: async () => {
+        const t = await stakeRewards.getGoFxVault()
+        console.log('goFxVault changed', t)
+        if (!t) return
+        const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
+        if (gfxVaultVal !== totalStakedGlobally) {
+          setTotalStakedGlobally(gfxVaultVal)
+          setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
+        }
+        setGofxVault(t)
+      }
+    }).then((id) => (unsubId = id))
+    return () => {
+      off(unsubId)
+      return
+    }
+  }, [stakeRewards])
+  useEffect(() => {
+    let unsubId: string
+    on({
+      SubType: SubType.AccountChange,
+      id: 'usermetadata-staking-claimable',
+      pubKeyRetrieval: () => {
+        if (!walletContext.publicKey) return null
+        const [address] = PublicKey.findProgramAddressSync(
+          [TOKEN_SEEDS.userMetaData, walletContext.publicKey.toBuffer()],
+          GfxStakeRewards.programId
+        )
+        return address
+      },
+      callback: async () => {
+        const userMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+        const unstakeableTickets = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
+        setUserMetaData(userMetaData)
+        setTotalEarned(getUiAmount(userMetaData.totalEarned, true))
+        setTotalStaked(getUiAmount(userMetaData.totalStaked))
+        setUnstakeableTickets(unstakeableTickets)
+        setActiveUnstakingTickets(
+          userMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+        )
+        setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+        console.log('user meta data update')
+      }
+    }).then((id) => (unsubId = id))
+    return () => {
+      off(unsubId)
+      return
+    }
+  }, [walletContext.publicKey, stakeRewards, claimable])
+  useEffect(() => {
+    let unsubId: string
+    on({
+      SubType: SubType.AccountChange,
+      id: 'usdc-staking-claimable',
+      pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
+      callback: async () => {
+        const claimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+        setClaimable(Number(claimable))
+        setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+      }
+    }).then((id) => (unsubId = id))
+    return () => {
+      off(unsubId)
+      return
+    }
+  }, [stakeRewards, walletContext.publicKey])
 
   useEffect(() => {
     const s = stakeRewards
@@ -223,34 +296,44 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // updates the details of the rewards object
     const data = await fetchAllRewardData(stakeRewards, walletContext.publicKey)
     // deep clone to avoid reference preventing re-render
-    const payload: RewardState = structuredClone(rewards)
-    payload.user.staking.userMetadata = data.userMetadata
-    payload.user.staking.unstakeableTickets = data.unstakeableTickets
-    payload.user.staking.activeUnstakingTickets = data.userMetadata.unstakingTickets.filter(
-      (ticket) => ticket.createdAt.toString() !== '0'
+    setUserMetaData(data.userMetadata)
+    setUnstakeableTickets(data.unstakeableTickets)
+    setActiveUnstakingTickets(
+      data.userMetadata.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
     )
-    payload.user.staking.claimable = Number(data.claimable)
-
-    payload.stakePool = data.stakePool
-    payload.gofxVault = data.gofxVault
-    setHasRewards(payload.user.staking.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
-    dispatch({ type: 'setAll', payload })
-  }, [stakeRewards, connection, network, walletContext.publicKey])
-
+    setClaimable(Number(data.claimable))
+    setTotalEarned(getUiAmount(data.userMetadata.totalEarned, true))
+    setTotalStaked(getUiAmount(data.userMetadata.totalStaked))
+    setStakePool(data.stakePool)
+    setGofxVault(data.gofxVault)
+    setHasRewards(data.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
+    const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
+    setTotalStakedGlobally(gfxVaultVal)
+    setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
+  }, [stakeRewards, walletContext.publicKey])
+  useLayoutEffect(() => {
+    const fetchGofxValue = async () => {
+      const res = await cg.coins.fetch('goosefx', {}).catch((err) => {
+        console.log(err)
+        return Response.error()
+      })
+      if (res.code != 200) return
+      const data = res.data
+      if (!data) return
+      if (!data.market_data || !data.market_data.current_price || !data.market_data.current_price.usd) return
+      setGofxValue(data.market_data.current_price.usd)
+    }
+    fetchGofxValue()
+  }, [])
   useEffect(() => {
-    if (!walletContext?.publicKey) {
+    if (!walletContext?.publicKey || !stakeRewards) {
       return
     }
     console.log('fetching-rewards', walletContext?.publicKey?.toBase58())
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-    const interval = setInterval(
-      () => updateStakeDetails().catch((e) => console.warn('interval-fetch-all-reward-data-failed', e)),
-      10 * 1e3
-    )
-    return () => clearInterval(interval)
-  }, [walletContext.publicKey, updateStakeDetails])
+  }, [walletContext.publicKey, updateStakeDetails, stakeRewards])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       if (!stakeRewards) {
@@ -322,7 +405,6 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
               return false
             }
           })
-          .finally(() => updateStakeDetails())
       }
       if (!res) {
         return
@@ -331,7 +413,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txn.add(await callback())
       return txn
     },
-    [stakeRewards, walletContext, rewards, getNetwork]
+    [stakeRewards, walletContext, getNetwork]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
@@ -374,8 +456,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           return false
         }
       })
-      .finally(() => updateStakeDetails())
-  }, [stakeRewards, walletContext, confirmTransaction, connection, updateStakeDetails])
+  }, [stakeRewards, walletContext, confirmTransaction, connection])
   const closeUserAccount = useCallback(async () => {
     //TODO: the below is not currently in use -> removing for now if needed add back in
     // const txn = stakeRewards.closeUserAccount(null, walletContext.publicKey)
@@ -412,12 +493,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     //      }).finally(()=>updateStakeDetails()
     //      )
     //
-  }, [stakeRewards, connection, walletContext, updateStakeDetails])
+  }, [stakeRewards, connection, walletContext])
 
   const stake = useCallback(
     async (amount: number) => {
       // console.log(amount)
-      const stakeAmount = new anchor.BN(amount).mul(ANCHOR_BN.BASE_9)
+      const stakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, walletContext.publicKey))
       const txnSig = await walletContext
         .sendTransaction(new Transaction().add(txn), connection, {
@@ -458,13 +539,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             type: 'error'
           })
         })
-        .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext, confirmTransaction, connection, updateStakeDetails]
+    [stakeRewards, walletContext, confirmTransaction, connection]
   )
   const unstake = useCallback(
     async (amount: number) => {
-      const unstakeAmount = new anchor.BN(amount).mul(ANCHOR_BN.BASE_9)
+      const unstakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () =>
         stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
@@ -500,9 +580,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             )
           })
         })
-        .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext, connection, updateStakeDetails]
+    [stakeRewards, walletContext, connection]
   )
   const getClaimableFees = useCallback(async (): Promise<number> => {
     // retrieves value of claimable amount from contract
@@ -510,7 +589,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return Number(value)
   }, [stakeRewards, walletContext])
   const claimFees = useCallback(async () => {
-    const amount = rewards.user.staking.claimable
+    const amount = claimable
 
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
     const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
@@ -544,8 +623,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           )
         })
       })
-      .finally(() => updateStakeDetails())
-  }, [stakeRewards, walletContext, connection, rewards, updateStakeDetails])
+  }, [stakeRewards, walletContext, connection, claimable])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
@@ -591,9 +669,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             type: 'error'
           })
         })
-        .finally(() => updateStakeDetails())
     },
-    [stakeRewards, walletContext, updateStakeDetails]
+    [stakeRewards, walletContext]
   )
   const enterGiveaway = useCallback(
     (giveawayContract: string) => {
@@ -613,11 +690,23 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return v
   }, [])
+  const totalStakedInUSD = useMemo(() => {
+    if (!gofxValue) return 0.0
+    if (!totalStaked) return 0.0
+    return gofxValue * totalStaked
+  }, [gofxValue, totalStaked])
 
   return (
     <RewardsContext.Provider
       value={{
-        rewards,
+        stakePool,
+        gofxVault,
+        userMetaData,
+        claimable,
+        totalStaked,
+        totalEarned,
+        unstakeableTickets,
+        activeUnstakingTickets,
         initializeUserAccount,
         closeUserAccount,
         stake,
@@ -627,7 +716,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         enterGiveaway,
         getClaimableFees,
         getUiAmount,
-        hasRewards
+        hasRewards,
+        totalStakedInUSD,
+        gofxValue,
+        userStakeRatio,
+        totalStakedGlobally
       }}
     >
       {children}

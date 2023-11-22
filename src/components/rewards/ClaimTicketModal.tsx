@@ -13,7 +13,7 @@ interface AllUnstakingTicketModalProps {
   onClose: () => void
 }
 const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, onClose }) => {
-  const { rewards } = useRewards()
+  const { activeUnstakingTickets } = useRewards()
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div
@@ -46,8 +46,8 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
             min-md:gap-5
       `}
         >
-          {rewards.user.staking.activeUnstakingTickets.length > 0 ? (
-            rewards.user.staking.activeUnstakingTickets
+          {activeUnstakingTickets.length > 0 ? (
+            activeUnstakingTickets
               .sort((a, b) => a.createdAt.toNumber() - b.createdAt.toNumber())
               .map((ticket) => <UnstakingTicketLineItem key={ticket.createdAt.toString()} ticket={ticket} />)
           ) : (
@@ -69,7 +69,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
 const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   const [oneDayLeft, setOneDayLeft] = useState(false)
   const [canClaim, setCanClaim] = useState(false)
-  const { redeemUnstakingTickets, getUiAmount, rewards } = useRewards()
+  const { redeemUnstakingTickets, getUiAmount, userMetaData } = useRewards()
   const [isClaiming, setIsClaiming] = useState(false)
   const [claimButtonText, setClaimButtonText] = useState('Unstake GOFX')
   const setClaimText = useCallback(
@@ -100,11 +100,9 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   }, [setClaimText])
   const unstakeGoFX = useCallback(() => {
     setIsClaiming(true)
-    const index = rewards.user.staking.userMetadata.unstakingTickets.findIndex((t) =>
-      t.createdAt.eq(ticket.createdAt)
-    )
+    const index = userMetaData.unstakingTickets.findIndex((t) => t.createdAt.eq(ticket.createdAt))
     redeemUnstakingTickets([{ index, ticket }]).finally(() => setIsClaiming(false))
-  }, [redeemUnstakingTickets, ticket, rewards])
+  }, [redeemUnstakingTickets, ticket])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null

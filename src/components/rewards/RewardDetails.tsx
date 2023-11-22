@@ -120,7 +120,7 @@ export const EarnLeftSidePanel: FC<RewardSegmentProps> = ({ panelIndex, children
   return (
     <div
       css={[
-        tw`flex flex-col px-[30px] min-md:px-[145px] py-3.75 min-md:pt-5 h-full items-center 
+        tw`flex flex-col px-[30px] min-md:px-[145px] py-7 min-md:pt-5 h-full items-center 
         font-semibold bg-white dark:bg-black-2 min-h-[461px] min-md:min-h-0`,
         panelIndex == 1 ? tw`min-md:pb-[41px]` : tw`min-md:pb-0`
       ]}

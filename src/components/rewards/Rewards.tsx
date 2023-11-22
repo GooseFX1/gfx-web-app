@@ -1,11 +1,11 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { Input, InputRef } from 'antd'
+import { Input, InputRef, Tooltip } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '../../context'
 import useRewards from '../../context/rewardsContext'
 
-import { Connection, PublicKey, TokenAmount } from '@solana/web3.js'
+import { TokenAmount } from '@solana/web3.js'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import tw from 'twin.macro'
@@ -13,19 +13,21 @@ import 'styled-components/macro'
 import { getAccurateNumber, numberFormatter } from '../../utils'
 import { Loader } from '../Loader'
 import { Connect } from '../../layouts'
-import { ADDRESSES as SDK_ADDRESS } from 'goosefx-ssl-sdk/dist/constants/swap'
-import { CONTROLLER_LAYOUT } from 'goosefx-ssl-sdk'
-import { LAMPORTS_PER_SOL } from '../../constants'
 import { StakeBottomBar, UnstakeBottomBar } from './StakeUnstakeBottomBar'
 import StakeUnstakeToggle from './StakeUnstakeToggle'
 import UnstakeConfirmationModal from './UnstakeConfirmationModal'
+import useSolSub, { SubType } from '../../hooks/useSolSub'
+import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import Skeleton from 'react-loading-skeleton'
+import useTimer from '../../hooks/useTimer'
 
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
   const inputRef = useRef<InputRef>(null)
   const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
-  const { stake, rewards, getUiAmount } = useRewards()
+  const { stake, totalStaked, gofxValue } = useRewards()
 
   const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
   const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
@@ -38,36 +40,63 @@ const EarnRewards: FC = () => {
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
   // const { rewardToggle } = useRewardToggle()
-  const getUserGoFXBalance = useCallback(
-    async (publicKey: PublicKey, connection: Connection, network: WalletAdapterNetwork) => {
-      if (!publicKey) {
-        return
+  // const subs = useMemo(()=>([]),[connection,publicKey])
+  const { on, off } = useSolSub(connection)
+  useEffect(() => {
+    on({
+      SubType: SubType.AccountChange,
+      id: 'user-gofx-balance-staking',
+      callback: async () => {
+        const currentNetwork =
+          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+        const [address] = findProgramAddressSync(
+          [
+            publicKey.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
+          ],
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+        const balance = await connection.getTokenAccountBalance(address, 'confirmed')
+        setUserGoFxBalance(balance.value)
+      },
+      pubKeyRetrieval: () => {
+        if (!publicKey) return null
+        const currentNetwork =
+          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+        const [address] = findProgramAddressSync(
+          [
+            publicKey.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
+          ],
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+        return address
       }
+    })
+    return () => {
+      off()
+      return
+    }
+  }, [connection, network, publicKey])
+  useEffect(() => {
+    if (!publicKey) return
+    const getData = async () => {
       const currentNetwork =
         network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+
       const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
       const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
-      console.log(account)
-      if (account.value[0]) {
-        const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-        setUserGoFxBalance(() => balance.value)
-      }
-    },
-    []
-  )
+      if (!account || !account.value.length) return
 
-  useEffect(() => {
-    getUserGoFXBalance(publicKey, connection, network)
-    // poll user balance
-    const interval = setInterval(async () => {
-      await getUserGoFXBalance(publicKey, connection, network)
-    }, 10000)
-    return () => clearInterval(interval)
+      const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
+
+      setUserGoFxBalance(balance.value)
+    }
+    void getData()
   }, [publicKey, connection, network])
-  const totalStaked = useMemo(
-    () => getUiAmount(rewards.user.staking.userMetadata.totalStaked),
-    [rewards.user.staking.userMetadata.totalStaked]
-  )
+
   const handleHalf = useCallback(async () => {
     let half: number
     if (isStakeSelected) {
@@ -103,7 +132,8 @@ const EarnRewards: FC = () => {
     if (isStakeSelected) {
       try {
         await stake(inputValue)
-        console.log(`Successful Stake: ${publicKey.toBase58()} - ${inputValue}`)
+        console.log(`Successful Stake: ${publicKey.toBase58()}
+         - ${inputValue}`)
       } catch (error) {
         console.error(error)
       } finally {
@@ -168,21 +198,29 @@ const EarnRewards: FC = () => {
             isStakeLoading={isStakeLoading}
           />
         )}
-        <div tw={' flex flex-col min-md:flex-row gap-1 '}>
-          <p
-            css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
-          >
-            Wallet Balance:
-          </p>
-          <p
-            css={[
-              tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-1`,
-              userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
-            ]}
-          >
-            {numberFormatter(userGoFxBalance.uiAmount)} GOFX
-          </p>
-        </div>
+        <Tooltip
+          title={
+            userGoFxBalance.uiAmount > 0.0
+              ? `Approx ${numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)} USD`
+              : ''
+          }
+        >
+          <div tw={' flex flex-col min-md:flex-row gap-1 '}>
+            <p
+              css={tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-2 w-max`}
+            >
+              Wallet Balance:
+            </p>
+            <p
+              css={[
+                tw`text-[15px] leading-[18px] min-md:text-lg mb-0 font-semibold text-grey-1 dark:text-grey-1`,
+                userGoFxBalance.uiAmount > 0 ? tw`text-black-4 dark:text-grey-2` : tw``
+              ]}
+            >
+              {numberFormatter(userGoFxBalance.uiAmount)} GOFX
+            </p>
+          </div>
+        </Tooltip>
         {/* <button
           css={tw`h-10 mt-auto min-md:mt-0 border-0 rounded-full py-2.25 min-md:px-8 font-semibold flex
           items-center justify-center min-md:w-[158px] w-[146px] whitespace-nowrap
@@ -297,7 +335,11 @@ const EarnRewards: FC = () => {
         />
       )}
 
-      {isStakeSelected ? <StakeBottomBar /> : <UnstakeBottomBar />}
+      {isStakeSelected ? (
+        <StakeBottomBar proposedStakeAmount={isStakeSelected ? inputValue : 0.0} />
+      ) : (
+        <UnstakeBottomBar />
+      )}
     </div>
   )
 }
@@ -305,43 +347,33 @@ const EarnRewards: FC = () => {
 export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
-  const [apr, setApr] = useState(0)
-  const { connection } = useConnectionConfig()
-  const { publicKey } = useWallet()
-  const { rewards, getUiAmount, claimFees } = useRewards()
+  const [apy, setApy] = useState<string | undefined>()
+  const { totalEarned, totalStaked, claimable, claimFees, totalStakedInUSD, userStakeRatio } = useRewards()
   const breakpoints = useBreakPoint()
+  const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useState(false)
-  const fetchGOFXData = async () => {
-    try {
-      const { data: controllerData } = await connection.getAccountInfo(SDK_ADDRESS.MAINNET.GFX_CONTROLLER)
-      const { stakingBalance, dailyReward } = await CONTROLLER_LAYOUT.decode(controllerData)
-      const liqidity = Number(stakingBalance / LAMPORTS_PER_SOL)
-      const DR = Number(dailyReward / LAMPORTS_PER_SOL)
-      const APR: number = (1 / liqidity) * DR * 365 * 100
-      return APR
-    } catch (err) {
-      return err
-    }
-    console.log(apr)
-  }
+  const { time, isDone } = useTimer({
+    targetTime: {
+      hour: 9,
+      minute: 30,
+      second: 0
+    },
+    format: `HH[h] mm[m]`,
+    offsetToFuture: true
+  })
   useEffect(() => {
-    fetchGOFXData()
-      .then((apr) => setApr(apr.toFixed(2)))
-      .catch((err) => console.error(err))
+    fetch('https://api-services.goosefx.io/gofx-stake/getApy')
+      .then((res) => res.json())
+      .then((res) => setApy(res.data))
+      .catch((err) => console.error('failed to fetch apy', err))
   }, [])
   // retrieves value from rewards hook -> usdcClaimable has already been converte to UI amount
-  const { usdcClaimable, gofxStaked, totalEarned } = useMemo(
-    () => ({
-      usdcClaimable: rewards.user.staking.claimable,
-      gofxStaked: getUiAmount(rewards.user.staking.userMetadata.totalStaked),
-      totalEarned: getUiAmount(rewards.user.staking.userMetadata.totalEarned, true)
-    }),
-    [rewards, publicKey, connection]
-  )
+
   const handleClaimFees = useCallback(() => {
     setIsClaiming(true)
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
+  const stakeRatio = useMemo(() => numberFormatter(userStakeRatio, 2), [userStakeRatio])
 
   return (
     <div
@@ -354,7 +386,9 @@ const RewardsRightPanel: FC = () => {
         ]}
       >
         <p tw={'mb-0 hidden'}>Rewards</p>
-        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>APY Coming Soon</p>
+        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>
+          {!apy ? <Skeleton /> : `APY ${apy}%`}
+        </p>
       </div>
       <div
         css={[
@@ -373,15 +407,28 @@ const RewardsRightPanel: FC = () => {
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
       <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
-        <p
-          css={[
-            tw`mb-0 text-regular min-md:text-average font-semibold
+        <Tooltip title={totalStaked > 0.0 ? `Approx. ${numberFormatter(totalStakedInUSD, 2)} USD` : ''}>
+          <p
+            css={[
+              tw`mb-0 text-regular min-md:text-average font-semibold
          text-grey-5 text-center leading-normal`,
-            gofxStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
-          ]}
-        >
-          Total Staked: {numberFormatter(gofxStaked)} GOFX
-        </p>
+              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+            ]}
+          >
+            Total Staked: {numberFormatter(totalStaked)} GOFX
+          </p>
+        </Tooltip>
+        {totalStaked > 0 && (
+          <p
+            css={[
+              tw`mb-0 text-regular min-md:text-average font-semibold
+         text-grey-5 text-center leading-normal`,
+              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+            ]}
+          >
+            Staked Ratio {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+          </p>
+        )}
         <button
           css={[
             tw` min-md:mt-8 w-full min-md:w-[320px] items-center h-10 bg-white
@@ -389,18 +436,20 @@ const RewardsRightPanel: FC = () => {
             min-md:mb-0 overflow-hidden whitespace-nowrap relative flex items-center justify-center py-3.75
             min-md:text-average
             `,
-            usdcClaimable > 0.0 ? tw`opacity-100` : tw``,
+            claimable > 0.0 ? tw`opacity-100` : tw``,
             isClaiming ? tw`cursor-not-allowed flex justify-center items-center ` : tw``
           ]}
-          disabled={usdcClaimable <= 0.0}
+          disabled={claimable <= 0.0}
           onClick={handleClaimFees}
         >
           {isClaiming ? (
             <div css={[tw`absolute`]}>
               <Loader color={'#5855FF'} zIndex={2} />
             </div>
-          ) : usdcClaimable > 0.0 ? (
-            `Claim ${numberFormatter(usdcClaimable, usdcClaimable < 0.1 && usdcClaimable > 1e-6 ? 4 : 2)} USDC`
+          ) : claimable > 0.0 ? (
+            `Claim ${numberFormatter(claimable, claimable < 0.1 && claimable > 1e-6 ? 4 : 2)} USDC`
+          ) : connected && !isDone && Boolean(time) && totalStaked > 0.0 ? (
+            `Claim in ${time}`
           ) : (
             'No USDC Claimable'
           )}
