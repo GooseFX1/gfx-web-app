@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { Input, InputRef, Tooltip } from 'antd'
+import { Input, InputRef } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig } from '../../context'
+import { useConnectionConfig, useDarkMode } from '../../context'
 import useRewards from '../../context/rewardsContext'
 
 import { TokenAmount } from '@solana/web3.js'
@@ -21,6 +21,7 @@ import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pub
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import Skeleton from 'react-loading-skeleton'
 import useTimer from '../../hooks/useTimer'
+import { Tooltip } from '../Tooltip'
 
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
@@ -28,7 +29,6 @@ const EarnRewards: FC = () => {
   const { wallet, publicKey, connected } = useWallet()
   const { connection, network } = useConnectionConfig()
   const { stake, totalStaked, gofxValue } = useRewards()
-
   const [isStakeSelected, setIsStakeSelected] = useState<boolean>(true)
   const [isStakeLoading, setStakeLoading] = useState<boolean>(false)
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
@@ -39,6 +39,7 @@ const EarnRewards: FC = () => {
   }))
   const [inputValue, setInputValue] = useState<number>(0.0)
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useState<boolean>(false)
+  const { mode } = useDarkMode()
   // const { rewardToggle } = useRewardToggle()
   // const subs = useMemo(()=>([]),[connection,publicKey])
   const { on, off } = useSolSub(connection)
@@ -199,6 +200,8 @@ const EarnRewards: FC = () => {
           />
         )}
         <Tooltip
+          color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+          infoIcon={false}
           title={
             userGoFxBalance.uiAmount > 0.0
               ? `Approx ${numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)} USD`
@@ -348,10 +351,20 @@ export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
   const [apy, setApy] = useState<string | undefined>()
-  const { totalEarned, totalStaked, claimable, claimFees, totalStakedInUSD, userStakeRatio } = useRewards()
+  const {
+    totalEarned,
+    totalStaked,
+    claimable,
+    claimFees,
+    totalStakedInUSD,
+    userStakeRatio,
+    totalStakedGlobally,
+    gofxValue
+  } = useRewards()
   const breakpoints = useBreakPoint()
   const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useState(false)
+  const { mode } = useDarkMode()
   const { time, isDone } = useTimer({
     targetTime: {
       hour: 9,
@@ -382,7 +395,6 @@ const RewardsRightPanel: FC = () => {
           tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5 leading-normal`
         ]}
       >
-        <p tw={'mb-0 hidden'}>Rewards</p>
         <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>
           {!apy ? <Skeleton /> : `APY ${apy}%`}
         </p>
@@ -398,32 +410,47 @@ const RewardsRightPanel: FC = () => {
         </span>
         <p tw={'mb-0 text-grey-5 text-regular min-md:text-lg font-semibold leading-normal'}>Past $USDC Earnings</p>
       </div>
-      <div css={[tw`flex flex-col w-full gap-0 items-center`]}>
-        <Tooltip title={totalStaked > 0.0 ? `Approx. ${numberFormatter(totalStakedInUSD, 2)} USD` : ''}>
-          <p
-            css={[
-              tw`mb-0 text-regular min-md:text-average font-semibold
-         text-grey-5 text-center leading-normal`,
-              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
-            ]}
+      <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
+        <div css={[tw`flex flex-row `]}>
+          <Tooltip
+            color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+            infoIcon={false}
+            title={totalStaked > 0.0 ? `Approx. ${numberFormatter(totalStakedInUSD, 2)} USD` : ''}
           >
-            Total Staked: {numberFormatter(totalStaked)} GOFX
-          </p>
-        </Tooltip>
-        {totalStaked > 0 && (
-          <p
-            css={[
-              tw`mb-0 text-regular min-md:text-average font-semibold
+            <p
+              css={[
+                tw`mb-0 text-regular min-md:text-average font-semibold
          text-grey-5 text-center leading-normal`,
-              totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
-            ]}
-          >
-            Staked Ratio {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
-          </p>
-        )}
+                totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`
+              ]}
+            >
+              Total Staked: {numberFormatter(totalStaked)} GOFX
+            </p>
+          </Tooltip>
+          <Tooltip className={'ml-0'} color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            <div css={[tw`flex flex-col gap-1 flex-wrap  `]}>
+              <Tooltip
+                infoIcon={false}
+                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                title={
+                  totalStakedGlobally > 0.0
+                    ? `Approx. ${numberFormatter(totalStakedGlobally * gofxValue, 2)} USD`
+                    : ''
+                }
+              >
+                <p css={[tw`mb-0`]}>Globally Staked {numberFormatter(totalStakedGlobally, 2)} GOFX</p>
+              </Tooltip>
+              {totalStaked > 0 && (
+                <p css={[tw`mb-0 `, totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`]}>
+                  Staked Ratio ≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+                </p>
+              )}
+            </div>
+          </Tooltip>
+        </div>
         <button
           css={[
-            tw` w-full min-md:w-[320px] items-center h-10 bg-white mt-2 min-md:mb-0 
+            tw` w-full min-md:w-[320px] items-center h-10 bg-white mt-2 min-md:mb-0
             text-black-4 border-0 font-semibold text-regular leading-normal opacity-[0.5] rounded-[50px]
             overflow-hidden whitespace-nowrap relative flex justify-center py-3.75
             min-md:text-average
