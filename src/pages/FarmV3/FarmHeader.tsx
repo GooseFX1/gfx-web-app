@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
-import { checkMobile, truncateBigNumber } from '../../utils'
+import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
@@ -50,7 +50,7 @@ const POOL_CARD_WRAPPER = styled.div`
 
 export const FarmHeader: FC = () => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
-  const { allPoolSslData, sslTableData, liquidityAmount, sslTotalMetrics } = useSSLContext()
+  const { allPoolSslData, sslTableData, liquidityAmount, sslAllVolume, sslTotalFees } = useSSLContext()
   const { prices } = usePriceFeedFarm()
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
@@ -93,13 +93,13 @@ export const FarmHeader: FC = () => {
     const totalVolume = allPoolSslData
       .map((token: SSLToken) => {
         const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const volume = sslTotalMetrics?.[key]?.volume7D
+        const volume = sslAllVolume?.[key]?.volume7D
         return volume / 1_000_000
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
     return '$' + truncateBigNumber(totalVolume)
-  }, [allPoolSslData, sslTotalMetrics])
+  }, [allPoolSslData, sslAllVolume])
 
   const totalVolumeTraded = useMemo(() => {
     if (allPoolSslData == null) return `$00.00`
@@ -107,27 +107,20 @@ export const FarmHeader: FC = () => {
     const totalVolume = allPoolSslData
       .map((token: SSLToken) => {
         const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const volume = sslTotalMetrics?.[key]?.totalTokenVolume
+        const volume = sslAllVolume?.[key]?.totalTokenVolume
         return volume / 1_000_000
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
     return '$' + truncateBigNumber(totalVolume)
-  }, [allPoolSslData, sslTotalMetrics])
+  }, [allPoolSslData, sslAllVolume])
 
   const totalFees = useMemo(() => {
-    if (allPoolSslData == null || isEmpty(prices)) return `$00.00`
+    if (allPoolSslData == null || isEmpty(prices) || !sslTotalFees) return `$00.00`
 
-    const feesSum = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const nativeFees = sslTotalMetrics?.[key]?.totalTokenFees / 10 ** token?.mintDecimals
-        return prices[getPriceObject(token?.token)]?.current * nativeFees
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(feesSum)
-  }, [allPoolSslData, sslTotalMetrics, prices])
+    const feesWithoutDecimals = sslTotalFees?.replace('.', '')
+    return '$' + truncateBigString(feesWithoutDecimals, 5) // As fees is coming with 5 decimal places
+  }, [allPoolSslData, sslTotalFees, prices])
 
   const infoCards = [
     { name: 'GooseFX TVL', value: TVL },

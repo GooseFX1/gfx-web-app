@@ -9,7 +9,8 @@ import {
   SSLTableData,
   GET_24_CHANGES,
   // IS_WHITELIST,
-  TOTAL_METRICS
+  TOTAL_VOLUME,
+  TOTAL_FEES
 } from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
@@ -31,7 +32,8 @@ interface SSLData {
   allPoolSslData: SSLToken[]
   setAllPoolSslData: Dispatch<SetStateAction<SSLToken[]>>
   sslTableData: SSLTableData
-  sslTotalMetrics: any
+  sslAllVolume: any
+  sslTotalFees: string
   // isWhitelisted: boolean
   rewards: any
 }
@@ -52,7 +54,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [operationPending, setOperationPending] = useState<boolean>(false)
   const [isTxnSuccessfull, setIsTxnSuccessfull] = useState<boolean>(false)
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
-  const [sslTotalMetrics, setSslTotalMetrics] = useState<SSLTableData>(null)
+  const [sslAllVolume, setSslAllVolume] = useState<any>(null)
+  const [sslTotalFees, setSslTotalFees] = useState<string>(null)
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const getSSLTableData = async () => {
@@ -67,15 +70,27 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  const getTotalMetrics = async () => {
+  const getAllVolume = async () => {
     try {
-      const res = await httpClient('api-services').post(`${TOTAL_METRICS}`, {
+      const res = await httpClient('api-services').post(`${TOTAL_VOLUME}`, {
         devnet: false
       })
       const data = res.data
-      setSslTotalMetrics(data)
+      setSslAllVolume(data)
     } catch (e) {
-      setSslTotalMetrics(null)
+      setSslAllVolume(null)
+    }
+  }
+
+  const getTotalFees = async () => {
+    try {
+      const res = await httpClient('api-services').post(`${TOTAL_FEES}`, {
+        devnet: false
+      })
+      const data = res?.data?.data
+      setSslTotalFees(data)
+    } catch (e) {
+      setSslTotalFees(null)
     }
   }
 
@@ -211,7 +226,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   //Call API to get ssl table data. Need to run only once
   useEffect(() => {
-    getSSLTableData(), getTotalMetrics()
+    getSSLTableData(), getAllVolume(), getTotalFees()
   }, [])
 
   useEffect(() => {
@@ -253,7 +268,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         allPoolSslData: allPoolSslData,
         setAllPoolSslData: setAllPoolSslData,
         sslTableData: sslTableData,
-        sslTotalMetrics: sslTotalMetrics,
+        sslAllVolume: sslAllVolume,
+        sslTotalFees: sslTotalFees,
         // isWhitelisted: isWhitelisted,
         rewards: rewards
       }}
