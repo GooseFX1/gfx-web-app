@@ -165,13 +165,14 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
     }
 
-    if (process.env.NODE_ENV === 'production') {
-      fetchBrowserCountryCode().then((countryCode: null | string) => {
-        if (countryCode) {
-          setBlacklisted(banned_countries.includes(countryCode))
-        }
-      })
-    }
+    // *** this should only be commented out on festure/internal-only-nogeo ***
+    // if (process.env.NODE_ENV === 'production') {
+    //   fetchBrowserCountryCode().then((countryCode: null | string) => {
+    //     if (countryCode) {
+    //       setBlacklisted(banned_countries.includes(countryCode))
+    //     }
+    //   })
+    // }
   }, [])
 
   return (
