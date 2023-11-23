@@ -235,7 +235,9 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
 }
 
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
-  if (!nativeString || nativeString === null || nativeString === '0') return '00.00'
+  // eslint-disable-next-line max-len
+  if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
+    return '00.00'
 
   const nativeStringLen = nativeString.length
   let usdString =
