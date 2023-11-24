@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react'
+import { PublicKey } from '@solana/web3.js'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
@@ -134,9 +135,10 @@ export const FarmTable: FC = () => {
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
 
-  useEffect(() => {
-    sslData?.length && setInitialLoad(false)
-  }, [sslData])
+  const pubKey: PublicKey | null = useMemo(
+    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey]
+  )
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
@@ -147,7 +149,7 @@ export const FarmTable: FC = () => {
       return accumulator
     }, 0)
     return count
-  }, [pool, filteredLiquidityAccounts, sslData, wallet?.adapter?.publicKey])
+  }, [pool, filteredLiquidityAccounts, sslData, pubKey])
 
   const farmTableRow = useMemo(
     () =>
@@ -188,15 +190,23 @@ export const FarmTable: FC = () => {
     [searchTokens, farmTableRow, sort]
   )
 
-  const initiateGlobalSearch = (value: string) => {
-    setPool(poolType.all)
-    setSearchTokens(value)
-  }
+  useEffect(() => {
+    if (pubKey === null) setShowDeposited(false)
+  }, [pubKey])
+
+  useEffect(() => {
+    sslData?.length && setInitialLoad(false)
+  }, [sslData])
 
   const poolSize = useMemo(
     () => (showDeposited ? numberOfCoinsDeposited : filteredTokens?.length),
     [showDeposited, numberOfCoinsDeposited, filteredTokens]
   )
+
+  const initiateGlobalSearch = (value: string) => {
+    setPool(poolType.all)
+    setSearchTokens(value)
+  }
 
   const handleColumnSort = (sortValue: string) => {
     farmTableRow.sort((a, b) => {
@@ -285,7 +295,7 @@ export const FarmTable: FC = () => {
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
               isFarm={true}
             />
-            {wallet?.adapter?.publicKey && (
+            {pubKey && (
               <div tw="ml-auto flex items-center mr-2">
                 <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
                 <div
@@ -303,7 +313,7 @@ export const FarmTable: FC = () => {
         <div tw="flex flex-row mt-4">
           <SearchBar
             filter={searchTokens}
-            width={wallet?.adapter?.publicKey ? '55%' : '95%'}
+            width={pubKey ? '55%' : '95%'}
             className="searchBarContainer"
             cssStyle={tw`h-8.75`}
             setSearchFilter={initiateGlobalSearch}
@@ -312,7 +322,7 @@ export const FarmTable: FC = () => {
             //filter={searchTokens}
             isFarm={true}
           />
-          {wallet?.adapter?.publicKey && (
+          {pubKey && (
             <div tw="ml-auto flex items-center mr-2">
               <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
               <div
