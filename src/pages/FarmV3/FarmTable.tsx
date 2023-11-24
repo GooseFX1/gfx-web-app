@@ -1,4 +1,5 @@
 import { FC, useEffect, useMemo, useState } from 'react'
+import { PublicKey } from '@solana/web3.js'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
@@ -46,10 +47,22 @@ const WRAPPER = styled.div`
 
   thead,
   tbody,
-  tr,
   td,
   th {
     display: block;
+  }
+
+  tr {
+    display: flex;
+    > * {
+      flex: 1;
+    }
+
+    @media (max-width: 500px) {
+      > :nth-child(1) {
+        flex: 2;
+      }
+    }
   }
 
   thead {
@@ -73,7 +86,7 @@ const WRAPPER = styled.div`
   tbody {
     ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
     tr {
-      ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
+      ${tw`dark:bg-black-2 bg-white mt-[15px] dark:border-black-2 border-white
       sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`};
 
       &:after {
@@ -83,23 +96,13 @@ const WRAPPER = styled.div`
         clear: both;
       }
     }
+
     td {
-      ${tw`h-[100%] flex items-center justify-center  text-[15px] font-semibold text-center
+      ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center
        dark:text-grey-5 text-black-4`}
       >span {
         ${tw`w-1/2 h-1/2`}
       }
-    }
-  }
-
-  tbody td,
-  thead th {
-    width: 15%;
-    float: left;
-    text-align: center;
-
-    @media (max-width: 500px) {
-      ${tw`w-[32%]`}
     }
   }
 
@@ -132,9 +135,10 @@ export const FarmTable: FC = () => {
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
 
-  useEffect(() => {
-    sslData?.length && setInitialLoad(false)
-  }, [sslData])
+  const pubKey: PublicKey | null = useMemo(
+    () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
+    [wallet?.adapter?.publicKey]
+  )
 
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
@@ -145,7 +149,7 @@ export const FarmTable: FC = () => {
       return accumulator
     }, 0)
     return count
-  }, [pool, filteredLiquidityAccounts, sslData, wallet?.adapter?.publicKey])
+  }, [pool, filteredLiquidityAccounts, sslData, pubKey])
 
   const farmTableRow = useMemo(
     () =>
@@ -186,15 +190,23 @@ export const FarmTable: FC = () => {
     [searchTokens, farmTableRow, sort]
   )
 
-  const initiateGlobalSearch = (value: string) => {
-    setPool(poolType.all)
-    setSearchTokens(value)
-  }
+  useEffect(() => {
+    if (pubKey === null) setShowDeposited(false)
+  }, [pubKey])
+
+  useEffect(() => {
+    sslData?.length && setInitialLoad(false)
+  }, [sslData])
 
   const poolSize = useMemo(
     () => (showDeposited ? numberOfCoinsDeposited : filteredTokens?.length),
     [showDeposited, numberOfCoinsDeposited, filteredTokens]
   )
+
+  const initiateGlobalSearch = (value: string) => {
+    setPool(poolType.all)
+    setSearchTokens(value)
+  }
 
   const handleColumnSort = (sortValue: string) => {
     farmTableRow.sort((a, b) => {
@@ -283,7 +295,7 @@ export const FarmTable: FC = () => {
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
               isFarm={true}
             />
-            {wallet?.adapter?.publicKey && (
+            {pubKey && (
               <div tw="ml-auto flex items-center mr-2">
                 <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
                 <div
@@ -301,7 +313,7 @@ export const FarmTable: FC = () => {
         <div tw="flex flex-row mt-4">
           <SearchBar
             filter={searchTokens}
-            width={wallet?.adapter?.publicKey ? '55%' : '95%'}
+            width={pubKey ? '55%' : '95%'}
             className="searchBarContainer"
             cssStyle={tw`h-8.75`}
             setSearchFilter={initiateGlobalSearch}
@@ -310,7 +322,7 @@ export const FarmTable: FC = () => {
             //filter={searchTokens}
             isFarm={true}
           />
-          {wallet?.adapter?.publicKey && (
+          {pubKey && (
             <div tw="ml-auto flex items-center mr-2">
               <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
               <div
@@ -515,12 +527,10 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative">
-          {userDepositedAmount && userDepositedAmount?.toString() !== '0' ? (
+          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
-          ) : (
-            <></>
           )}
-          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
+          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
           <div tw="ml-2.5">{coin?.token}</div>
           <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
             <Tooltip
@@ -563,7 +573,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
               overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
               overlayInnerStyle={{ borderRadius: '8px' }}
             >
-              <span tw="font-semibold">
+              <span tw="flex justify-center items-center font-semibold">
                 ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
               </span>
             </Tooltip>
