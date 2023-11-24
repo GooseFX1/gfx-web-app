@@ -46,10 +46,22 @@ const WRAPPER = styled.div`
 
   thead,
   tbody,
-  tr,
   td,
   th {
     display: block;
+  }
+
+  tr {
+    display: flex;
+    > * {
+      flex: 1;
+    }
+
+    @media (max-width: 500px) {
+      > :nth-child(1) {
+        flex: 2;
+      }
+    }
   }
 
   thead {
@@ -73,7 +85,7 @@ const WRAPPER = styled.div`
   tbody {
     ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
     tr {
-      ${tw`dark:bg-black-2 bg-white  mt-[15px] dark:border-black-2 border-white
+      ${tw`dark:bg-black-2 bg-white mt-[15px] dark:border-black-2 border-white
       sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`};
 
       &:after {
@@ -83,23 +95,13 @@ const WRAPPER = styled.div`
         clear: both;
       }
     }
+
     td {
-      ${tw`h-[100%] flex items-center justify-center  text-[15px] font-semibold text-center
+      ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center
        dark:text-grey-5 text-black-4`}
       >span {
         ${tw`w-1/2 h-1/2`}
       }
-    }
-  }
-
-  tbody td,
-  thead th {
-    width: 15%;
-    float: left;
-    text-align: center;
-
-    @media (max-width: 500px) {
-      ${tw`w-[32%]`}
     }
   }
 
@@ -515,10 +517,8 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative">
-          {userDepositedAmount && userDepositedAmount?.toString() !== '0' ? (
+          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
-          ) : (
-            <></>
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
           <div tw="ml-2.5">{coin?.token}</div>
