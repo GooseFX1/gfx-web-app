@@ -180,9 +180,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const disableActionButton = useMemo(
     () =>
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT && (userTokenBalance === 0 || !depositAmount)) ||
+      (modeOfOperation === ModeOfOperation.DEPOSIT &&
+        (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW &&
-        (!userDepositedAmount || !withdrawAmount || withdrawAmount === '00.00')),
+        (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0)),
     [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
   )
 
@@ -191,14 +192,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (liquidity > coin?.cappedDeposit) return `${coin?.token} Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
+      if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
       if (depositAmount) return modeOfOperation
-      if (!depositAmount) return `Enter Amount`
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
       if (userDepositedAmount) return modeOfOperation
       if (!userDepositedAmount) return `Insufficient ${coin?.token}`
+      if (!withdrawAmount || +withdrawAmount <= 0) return `Enter Amount`
       if (withdrawAmount) return modeOfOperation
-      if (!withdrawAmount) return `Enter Amount`
     }
   }, [modeOfOperation, pool, coin, userTokenBalance, depositAmount, withdrawAmount, liquidity])
 
@@ -429,9 +430,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   </div>
                 ) : (
                   <div tw="text-right">
-                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      0.00 {coin?.token} ($0.00 USD)
-                    </span>
+                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00 ($0.00 USD)</span>
                   </div>
                 )
               }
@@ -447,9 +446,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   </div>
                 ) : (
                   <div tw="text-right">
-                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
-                      0.00 {coin?.token} ($0.00 USD)
-                    </span>
+                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">0.00 ($0.00 USD)</span>
                   </div>
                 )
               }
