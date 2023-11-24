@@ -520,7 +520,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
           ) : (
             <></>
           )}
-          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} />
+          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
           <div tw="ml-2.5">{coin?.token}</div>
           <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
             <Tooltip
@@ -563,7 +563,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
               overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
               overlayInnerStyle={{ borderRadius: '8px' }}
             >
-              <span tw="font-semibold">
+              <span tw="flex justify-center items-center font-semibold">
                 ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
               </span>
             </Tooltip>

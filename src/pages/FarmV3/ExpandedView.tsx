@@ -394,10 +394,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="24H Fees"
               value={
                 <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  {' '}
-                  ${truncateBigNumber(
-                    formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current
-                  )}{' '}
+                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
                 </span>
               }
             />
