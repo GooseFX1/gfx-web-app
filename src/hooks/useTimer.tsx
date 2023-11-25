@@ -13,6 +13,7 @@ interface UseTimerProps {
   offsetToFuture?: boolean
   isUtc?: boolean
   updateInterval?: number
+  isDoneByDefault?: boolean
 }
 
 /**
@@ -28,13 +29,14 @@ export default function useTimer({
   format = 'HH:mm:ss',
   offsetToFuture = true,
   isUtc = true,
-  updateInterval = 1000
+  updateInterval = 1000,
+  isDoneByDefault = false
 }: UseTimerProps): {
   time: string
   isDone: boolean
 } {
   const [time, setTime] = useState<string>('')
-  const [isDone, setIsDone] = useState(false)
+  const [isDone, setIsDone] = useState(isDoneByDefault)
   const getUtcTime = useCallback(
     (d: dayjs.Dayjs) => {
       if (!isUtc) return d
@@ -45,14 +47,14 @@ export default function useTimer({
   const target = useMemo(() => {
     let newTarget: dayjs.Dayjs
     if (typeof targetTime == 'number') {
-      newTarget = dayjs(targetTime)
+      newTarget = getUtcTime(dayjs(targetTime))
     } else {
-      newTarget = dayjs()
+      newTarget = getUtcTime(dayjs())
       Object.keys(targetTime).forEach((k) => {
         newTarget = newTarget.set(k as UnitType, targetTime[k])
       })
     }
-    newTarget = getUtcTime(newTarget)
+
     if (newTarget.isBefore(getUtcTime(dayjs())) && offsetToFuture) {
       // If it has passed, calculate the time for tomorrow
       newTarget = newTarget.add(1, 'day')
@@ -71,6 +73,7 @@ export default function useTimer({
   }, [target, format, isUtc])
 
   useEffect(() => {
+    calculateTime()
     const id = setInterval(calculateTime, updateInterval)
     return () => clearInterval(id)
   }, [calculateTime, updateInterval])

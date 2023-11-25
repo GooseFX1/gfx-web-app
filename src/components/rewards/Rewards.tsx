@@ -371,7 +371,7 @@ const RewardsRightPanel: FC = () => {
       minute: 30,
       second: 0
     },
-    format: `HH[h] mm[m]`,
+    format: `HH[H] mm[min]`,
     offsetToFuture: true
   })
   useEffect(() => {
@@ -387,7 +387,6 @@ const RewardsRightPanel: FC = () => {
     claimFees().finally(() => setIsClaiming(false))
   }, [claimFees])
   const stakeRatio = useMemo(() => numberFormatter(userStakeRatio, 2), [userStakeRatio])
-
   return (
     <div css={tw`flex h-full py-2.5 sm:pt-3.75 gap-3 min-md:gap-16 w-full min-md:pt-[45px] flex-col items-center`}>
       <div

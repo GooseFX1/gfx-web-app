@@ -209,12 +209,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [stakeRewards, setStakeRewards] = useState<GfxStakeRewards>(
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
-  const { on, off } = useSolSub(connection)
+  const { on, off } = useSolSub()
   useEffect(() => {
-    let unsubId: string
+    const id = 'gofx-pool'
     on({
       SubType: SubType.AccountChange,
-      id: 'gofx-pool',
+      id,
       pubKeyRetrieval: async () => {
         const t = await stakeRewards.getGoFxVault()
         if (!t) return null
@@ -229,17 +229,17 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
         setGofxVault(t)
       }
-    }).then((id) => (unsubId = id))
+    })
     return () => {
-      off(unsubId)
+      off(id)
       return
     }
   }, [stakeRewards, totalStaked])
   useEffect(() => {
-    let unsubId: string
+    const id = 'usermetadata-staking-claimable'
     on({
       SubType: SubType.AccountChange,
-      id: 'usermetadata-staking-claimable',
+      id,
       pubKeyRetrieval: () => {
         if (!walletContext.publicKey) return null
         const [address] = PublicKey.findProgramAddressSync(
@@ -251,7 +251,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       callback: async () => {
         const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
         const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(userMetaData.unstakingTickets)
-        setUserMetaData(userMetaData)
+        setUserMetaData(newUserMetaData)
         setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
         setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
         setUnstakeableTickets(newUnstakaebleTicekts)
@@ -261,26 +261,26 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setHasRewards(Number(claimable) > 0 || newUnstakaebleTicekts.length > 0)
         console.log('user meta data update')
       }
-    }).then((id) => (unsubId = id))
+    })
     return () => {
-      off(unsubId)
+      off(id)
       return
     }
   }, [walletContext.publicKey, stakeRewards, claimable])
   useEffect(() => {
-    let unsubId: string
+    const id = 'usdc-staking-claimable'
     on({
       SubType: SubType.AccountChange,
-      id: 'usdc-staking-claimable',
+      id,
       pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
       callback: async () => {
         const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
         setClaimable(Number(newClaimable))
         setHasRewards(Number(newClaimable) > 0 || unstakeableTickets.length > 0)
       }
-    }).then((id) => (unsubId = id))
+    })
     return () => {
-      off(unsubId)
+      off(id)
       return
     }
   }, [stakeRewards, walletContext.publicKey, unstakeableTickets])
