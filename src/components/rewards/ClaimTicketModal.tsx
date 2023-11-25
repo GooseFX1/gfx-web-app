@@ -17,7 +17,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div
-        css={tw`flex flex-col items-center justify-center w-screen min-md:w-[628px] h-[300px] min-md:h-auto
+        css={tw`flex flex-col items-center justify-center w-screen min-md:w-[628px] h-[300px] min-md:h-[360px]
         absolute min-md:static bottom-0 left-0
       `}
       >
@@ -101,8 +101,9 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   const unstakeGoFX = useCallback(() => {
     setIsClaiming(true)
     const index = userMetaData.unstakingTickets.findIndex((t) => t.createdAt.eq(ticket.createdAt))
+    console.log(userMetaData.unstakingTickets, index)
     redeemUnstakingTickets([{ index, ticket }]).finally(() => setIsClaiming(false))
-  }, [redeemUnstakingTickets, ticket])
+  }, [redeemUnstakingTickets, ticket, userMetaData])
   const uiUnstakeAmount = useMemo(() => getUiAmount(ticket.totalUnstaked), [ticket.totalUnstaked])
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null

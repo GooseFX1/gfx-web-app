@@ -1,5 +1,6 @@
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useCallback, useRef } from 'react'
+import { APP_RPC } from '../context'
 
 interface PubKeyButNoRetrieval {
   publicKey: PublicKey
@@ -29,7 +30,13 @@ interface Unsubs {
   unsubType: SubType
 }
 
-function useSolSub(connection: Connection): {
+function useSolSub(
+  connection = new Connection(APP_RPC.endpoint, {
+    commitment: 'processed',
+    httpAgent: false,
+    disableRetryOnRateLimit: true
+  })
+): {
   on: (sub: SolsSubs) => Promise<string>
   off: (id?: string) => Promise<void>
 } {
@@ -83,9 +90,17 @@ function useSolSub(connection: Connection): {
     [connection]
   )
   const off = useCallback(
-    async (id?: string) => {
-      console.log('OFF SUBS', subs.current)
+    async (id?: string | string[]) => {
+      console.log('OFF SUBS', subs.current, { id })
       if (subs.current.size === 0) return
+      if (Array.isArray(id)) {
+        id.forEach((i) => {
+          if (subs.current.has(i)) {
+            removeListener(subs.current.get(i))
+          }
+        })
+        return
+      }
       if (id && subs.current.has(id)) {
         await removeListener(subs.current.get(id))
         return
