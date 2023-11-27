@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { OrderBook } from '../OrderBook'
+import { RecentTrades } from '../RecentTrades'
 
 const WRAPPER = styled.div<{ $index: number }>`
   background: ${({ theme }) => theme.bg20};
@@ -82,7 +83,7 @@ export const OrderBookMobi: FC = () => {
           Recent Trades
         </span>
       </div>
-      {selectedTab === 0 ? <OrderBook /> : null}
+      {selectedTab === 0 ? <OrderBook /> : <RecentTrades />}
     </WRAPPER>
   )
 }
