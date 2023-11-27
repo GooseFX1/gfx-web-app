@@ -544,6 +544,7 @@ export const SSL_PREFIX = 'GFX-SSL'
 export const LIQUIDITY_ACCOUNT_PREFIX = 'liquidity_account'
 
 export const POOL_REGISTRY_PREFIX = 'pool_registry'
+export const EVENT_EMITTER = 'event'
 
 export const SSL_V2_ADMIN = new PublicKey('GeSkmvDED55EjnybgdN1gJ89p5V5H9W6jrrhxbZ1pDhQ')
 
