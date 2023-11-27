@@ -10,9 +10,6 @@ import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 
-const NAME = styled.div`
-  ${tw`text-[14px] font-semibold text-center m-auto flex justify-center mt-5 items-center sm:mt-3.75 sm:text-[12px]`}
-`
 const DETECTED_NAME = styled.div`
   ${tw`text-regular font-semibold`}
 `
@@ -28,7 +25,7 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
   .ant-modal-body {
-    ${tw`py-0 h-auto h-[425px] overflow-y-scroll`}
+    ${tw`py-0 h-auto h-[460px] overflow-y-scroll`}
   }
   &.ant-modal {
     ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
@@ -82,7 +79,6 @@ export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
-  const [isShowMore, setIsShowMore] = useState<boolean>(false)
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   useEffect(() => {
@@ -118,6 +114,11 @@ export const WalletsModal: FC = () => {
     [wallets]
   )
 
+  const undetectedWallets = useMemo(
+    () => wallets.filter(({ readyState }) => readyState !== WalletReadyState.Installed),
+    [wallets]
+  )
+
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
@@ -126,55 +127,45 @@ export const WalletsModal: FC = () => {
       height={'525px'}
       visible={visible}
       title={'Select a wallet'}
-      footer={
-        <div className="show-more" onClick={() => setIsShowMore((v) => !v)}>
-          Show {isShowMore ? 'less' : 'more'}
-        </div>
-      }
+      footer={null}
       onCancel={() => setVisible(false)}
     >
       <div className="wallets-container">
-        {detectedWallets.length ? (
-          <div>
-            {detectedWallets.map((wallet, index) => (
-              <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-                <div tw="flex items-center">
-                  <img
-                    src={wallet.adapter.icon}
-                    alt="wallet-icon"
-                    height={'30px'}
-                    width={'30px'}
-                    tw="mr-2.5 ml-2 rounded-half"
-                  />
-                  <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-                </div>
-                <div className="textDetected">Detected</div>
-              </WALLET_DETECTED>
-            ))}
-          </div>
-        ) : (
-          <NAME tw="text-lg mb-2.5">No wallets detected</NAME>
-        )}
-        {isShowMore &&
-          wallets
-            .filter(
-              ({ readyState }) =>
-                readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-            )
-            .map((wallet, index) => (
-              <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
-                <div tw="flex items-center">
-                  <img
-                    src={wallet.adapter.icon}
-                    alt="wallet-icon"
-                    height={'30px'}
-                    width={'30px'}
-                    tw="mr-2.5 ml-2 rounded-half"
-                  />
-                  <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-                </div>
-              </WALLET_DETECTED>
-            ))}
+        {detectedWallets.map((wallet, index) => (
+          <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+            <div tw="flex items-center">
+              <img
+                src={wallet.adapter.icon}
+                alt="wallet-icon"
+                height={'30px'}
+                width={'30px'}
+                tw="mr-2.5 ml-2 rounded-half"
+              />
+              <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+            </div>
+            <div className="textDetected">Detected</div>
+          </WALLET_DETECTED>
+        ))}
+
+        {undetectedWallets
+          .filter(
+            ({ readyState }) =>
+              readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+          )
+          .map((wallet, index) => (
+            <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+              <div tw="flex items-center">
+                <img
+                  src={wallet.adapter.icon}
+                  alt="wallet-icon"
+                  height={'30px'}
+                  width={'30px'}
+                  tw="mr-2.5 ml-2 rounded-half"
+                />
+                <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+              </div>
+            </WALLET_DETECTED>
+          ))}
       </div>
     </STYLED_POPUP>
   )
