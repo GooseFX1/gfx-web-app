@@ -168,7 +168,6 @@ export const FarmTable: FC = () => {
         const account = filteredLiquidityAccounts[token?.mint?.toBase58()]
         const amountDeposited = formatUserBalance(account?.amountDeposited?.toString(), token?.mintDecimals)
         const beforeDecimal = amountDeposited?.beforeDecimalBN
-        console.log('values', beforeDecimal?.toString(), token?.name, amountDeposited)
         const dataObj = {
           ...token,
           apy: apy,
