@@ -46,7 +46,9 @@ const ACCOUNTVALUE = styled.div`
 `
 
 const ACCOUNTHEADER = styled.div`
-    ${tw`flex justify-between items-center flex-nowrap w-full`}
+    /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
+
+    ${tw`grid grid-cols-5  items-center w-full`}
     border: 1px solid #3C3C3C;
     border-bottom: none;
     margin-top: 10px;
@@ -64,17 +66,39 @@ const ACCOUNTHEADER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex items-center justify-center w-full h-full`}
-  border:1px solid #3C3C3C;
+  ${tw`flex flex-col w-full h-full`}
+  border: 1px solid #3c3c3c;
+
+  .history-items-container {
+    height: 300px;
+    overflow: auto;
+  }
+  .pair-container {
+    ${tw`flex gap-x-1 items-center`}
+  }
+  .pair-container img {
+    height: 24px;
+    width: 24px;
+  }
+
+  .history-item {
+    ${tw`grid grid-cols-5  items-center w-full`}
+    padding: 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #3c3c3c;
+  }
+  .history-item span:first-child {
+    ${tw`pl-1`}
+  }
 
   .no-funding-found {
     max-width: 155px;
     display: flex;
+    margin: auto;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-
   .no-funding-found > p {
     margin: 0;
     margin-top: 15px;
@@ -84,12 +108,31 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
 
+  .pagination-container {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #3c3c3c;
+  }
+  .pagination-container > div {
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
   .deposit {
     background: linear-gradient(97deg, #f7931a 4.25%, #ac1cc7 97.61%);
     border-radius: 70px;
     padding: 3px 18px;
     font-size: 15px;
     font-weight: 600;
+  }
+  .Bid {
+    color: #80ce00;
+  }
+  .filled {
+    color: #80ce00;
+  }
+  .Ask {
+    color: #f35355;
   }
 `
 
@@ -198,11 +241,11 @@ const FundingHistory: FC = () => {
                     <span>{selectedCrypto.pair}</span>
                   </div>
                   <span className={item.averagePosition.side}>
-                    {item.averagePosition.side === 'Bid' ? 'Long' : 'Short'}
+                    {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                     {item.averagePosition.side === undefined && ''}
                   </span>
-                  <span>{item.averagePosition.qty.toFixed(3)} SOL</span>
-                  <span>{(item.fundingBalanceDifference / item.fundingBlance.exp).toFixed(4)}</span>
+                  <span>{item.averagePosition.quantity} SOL</span>
+                  <span>{(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}</span>
                   <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
                 </div>
               ))}
