@@ -5,7 +5,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
+import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -166,14 +166,16 @@ export const FarmTable: FC = () => {
           prices[getPriceObject(token?.token)]?.current &&
           prices[getPriceObject(token?.token)]?.current * nativeLiquidity
         const account = filteredLiquidityAccounts[token?.mint?.toBase58()]
-        const amountDeposited = account ? account?.amountDeposited?.toString() : 0
+        const amountDeposited = formatUserBalance(account?.amountDeposited?.toString(), token?.mintDecimals)
+        const beforeDecimal = amountDeposited?.beforeDecimalBN
+        console.log('values', beforeDecimal?.toString(), token?.name, amountDeposited)
         const dataObj = {
           ...token,
           apy: apy,
           volume: volume,
           fee: feesInUSD,
           liquidity: liquidityInUSD,
-          balance: amountDeposited
+          beforeDecimal: beforeDecimal
         }
         return dataObj
       }),
@@ -203,12 +205,29 @@ export const FarmTable: FC = () => {
     [showDeposited, numberOfCoinsDeposited, filteredTokens]
   )
 
+  const sortUserBalances = (sortValue: string) => {
+    farmTableRow.sort((a, b) => {
+      let firstBN = a?.beforeDecimal
+      let secondBN = b?.beforeDecimal
+      if (!firstBN) firstBN = new BN(0)
+      if (!secondBN) secondBN = new BN(0)
+      if (sort === 'DESC') return firstBN.gt(secondBN) ? -1 : 1
+      else return firstBN.lt(secondBN) ? -1 : 1
+    })
+    setSort((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'))
+    setSortType(sortValue)
+  }
+
   const initiateGlobalSearch = (value: string) => {
     setPool(poolType.all)
     setSearchTokens(value)
   }
 
   const handleColumnSort = (sortValue: string) => {
+    if (sortValue === 'balance') {
+      sortUserBalances(sortValue)
+      return
+    }
     farmTableRow.sort((a, b) => {
       if (sort === 'DESC') return a[sortValue] > b[sortValue] ? -1 : 1
       else return a[sortValue] > b[sortValue] ? 1 : -1
@@ -221,7 +240,7 @@ export const FarmTable: FC = () => {
     <WRAPPER>
       <div tw="flex flex-row items-center mb-3.75 sm:pr-4">
         <img
-          src={`/img/assets/${pool.name}_pools.svg`}
+          src={`/img/assets/${pool.name}_pools_${mode}.svg`}
           alt="pool-icon"
           tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
         />
@@ -468,6 +487,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     return account?.amountDeposited
   }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin])
 
+  const userDepositedAmountUI: string = useMemo(
+    () => truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
+    [userDepositedAmount, coin]
+  )
+
   const liquidity = useMemo(
     () =>
       prices[getPriceObject(coin?.token)]?.current &&
@@ -509,8 +533,8 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && userDepositedAmount && userDepositedAmount?.toString() !== '0') return true
-    else if (showDeposited && userDepositedAmount && userDepositedAmount?.toString() === '0') return false
+    else if (showDeposited && userDepositedAmountUI !== '0.00') return true
+    else if (showDeposited && userDepositedAmountUI === '0.00') return false
   }, [showDeposited, userDepositedAmount])
 
   // const openStatsModal = (e) => {
@@ -527,33 +551,41 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative">
-          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
+          {userDepositedAmountUI !== '0.00' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
           <div tw="ml-2.5">{coin?.token}</div>
-          <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
-            <Tooltip
-              color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
-              title={
-                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                  Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                  {truncateBigNumber(coin?.cappedDeposit)}.
-                </span>
-              }
-              placement="topRight"
-              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-              overlayInnerStyle={{ borderRadius: '8px' }}
-            >
-              <img
-                src="/img/assets/farm_cap.svg"
-                alt="deposit-cap"
-                tw="ml-2.5 sm:ml-1.25 max-w-none"
-                height={20}
-                width={20}
-              />
-            </Tooltip>
-          </div>
+          {depositPercentage ? (
+            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
+              <Tooltip
+                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                title={
+                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                    {truncateBigNumber(coin?.cappedDeposit)}.
+                  </span>
+                }
+                placement="topRight"
+                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                overlayInnerStyle={{ borderRadius: '8px' }}
+              >
+                <img
+                  src={
+                    +depositPercentage?.toFixed(2) >= 100
+                      ? '/img/assets/farm_cap_red.svg'
+                      : '/img/assets/farm_cap_green.svg'
+                  }
+                  alt="deposit-cap"
+                  tw="ml-2.5 sm:ml-1.25 max-w-none"
+                  height={20}
+                  width={20}
+                />
+              </Tooltip>
+            </div>
+          ) : (
+            <></>
+          )}
         </td>
         <td>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</td>
         {!checkMobile() && (
@@ -579,11 +611,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             </Tooltip>
           </td>
         )}
-        {!checkMobile() && (
-          <td>
-            {userDepositedAmount ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals) : '00.00'}
-          </td>
-        )}
+        {!checkMobile() && <td>{userDepositedAmountUI !== '0.00' ? userDepositedAmountUI : '0.00'}</td>}
         <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
           {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>

@@ -18,7 +18,7 @@ import {
   sslErrorMessage,
   SSLToken
 } from './constants'
-import { checkMobile, notify, truncateBigNumber, truncateBigString } from '../../utils'
+import { notify, truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
@@ -26,7 +26,8 @@ import { ActionModal } from './ActionModal'
 import BN from 'bn.js'
 
 const CLAIM = styled.div`
-  ${tw`h-8.75 w-[140px] rounded-circle flex items-center justify-center text-white cursor-pointer ml-2 sm:w-[33%]`};
+  ${tw`h-8.75 w-[195px] rounded-circle flex items-center justify-center text-white cursor-pointer 
+  ml-2 p-[3px] sm:w-full sm:mt-3.75`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -190,7 +191,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      if (liquidity > coin?.cappedDeposit) return `${coin?.token} Pool at Max Capacity`
+      if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
       if (depositAmount) return modeOfOperation
@@ -354,7 +355,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
-        isExpanded ? tw`h-[115px] sm:h-[366px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
+        isExpanded ? tw`h-[115px] sm:h-[450px] visible p-3.5 sm:p-4` : tw`h-0 invisible p-0 opacity-0 w-0`
       ]}
     >
       {actionModal && (
@@ -458,15 +459,15 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <div tw="flex font-semibold duration-500 relative sm:mt-2">
               <div
                 css={[
-                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[33%] rounded-full`,
+                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
-                    ? tw`absolute ml-[100px] sm:ml-[33%] duration-500`
+                    ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
                 ]}
               ></div>
               <div
                 css={[
-                  tw`h-8.75 w-[100px] sm:w-[33%] z-10 flex items-center justify-center 
+                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
                   cursor-pointer dark:text-white text-grey-1`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
@@ -476,7 +477,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               </div>
               <div
                 css={[
-                  tw`h-8.75 w-[100px] sm:w-[33%] z-10 flex items-center justify-center 
+                  tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
                   cursor-pointer dark:text-white text-grey-1`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
@@ -484,7 +485,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               >
                 Withdraw
               </div>
-              <CLAIM onClick={() => openActionModal('claim')}>{checkMobile() ? 'Claim' : 'Claim Rewards'}</CLAIM>
             </div>
           </>
         )}
@@ -562,12 +562,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         {isExpanded && (
           <div tw="mt-4">
             {wallet?.adapter?.publicKey ? (
-              <div>
+              <div tw="flex flex-row sm:flex-col">
                 <Button
                   height="35px"
                   disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
                   disabled={isButtonLoading || disableActionButton}
-                  cssStyle={tw`duration-500 w-[400px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
+                  cssStyle={tw`duration-500 w-[195px] mr-[5px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
                     modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
@@ -584,6 +584,24 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 >
                   {actionButtonText}
                 </Button>
+                {claimableReward && +claimableReward.toFixed(4) > 0 ? (
+                  <CLAIM onClick={() => openActionModal('claim')}>
+                    <div
+                      tw="h-full w-full dark:bg-black-1 bg-grey-5 rounded-circle flex sm:w-full
+                    items-center justify-center dark:text-white text-black-4 text-tiny font-bold"
+                    >
+                      Claim {claimableReward?.toFixed(4)} {coin?.token}
+                    </div>
+                  </CLAIM>
+                ) : (
+                  <div
+                    tw="h-8.75 w-[195px] rounded-circle flex items-center border-solid
+                    text-tiny cursor-pointer ml-2 p-[3px] border-[1.5px] border-grey-1 
+                    cursor-not-allowed justify-center text-grey-1 font-bold sm:w-full sm:mt-3.75"
+                  >
+                    No Claimable Rewards
+                  </div>
+                )}
               </div>
             ) : (
               <Connect customButtonStyle={[tw`sm:w-[80vw] w-[400px] !h-8.75`]} />

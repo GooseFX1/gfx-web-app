@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
-import { usePriceFeedFarm, useSSLContext } from '../../context'
+import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
 import { SSLToken } from './constants'
@@ -52,6 +52,7 @@ export const FarmHeader: FC = () => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
   const { allPoolSslData, sslTableData, liquidityAmount, sslAllVolume, sslTotalFees } = useSSLContext()
   const { prices } = usePriceFeedFarm()
+  const { mode } = useDarkMode()
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
     const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
@@ -211,7 +212,7 @@ export const FarmHeader: FC = () => {
                       <img
                         src={`/img/assets/${
                           card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'
-                        }_pools.svg`}
+                        }_pools_${mode}.svg`}
                         alt="pool-type"
                         tw="mr-1.25 h-[21px] w-[19px]"
                       />
