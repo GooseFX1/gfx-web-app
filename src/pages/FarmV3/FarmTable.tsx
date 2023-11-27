@@ -389,9 +389,21 @@ export const FarmTable: FC = () => {
               )}
               {!checkMobile() && (
                 <th tw="!flex !justify-center">
-                  <div className="sort" onClick={() => handleColumnSort('volume')}>
-                    {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
-                  </div>
+                  <Tooltip
+                    color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                    title={
+                      <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                        24H Volume is calculated since 10P.M UTC on a daily basis
+                      </span>
+                    }
+                    placement="topLeft"
+                    overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                    overlayInnerStyle={{ borderRadius: '8px' }}
+                  >
+                    <div className="sort" onClick={() => handleColumnSort('volume')}>
+                      {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
+                    </div>
+                  </Tooltip>
                 </th>
               )}
               {!checkMobile() && (
