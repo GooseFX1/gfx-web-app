@@ -25,7 +25,7 @@ const WALLET_DETECTED = styled(SpaceBetweenDiv)`
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
   .ant-modal-body {
-    ${tw`py-0 h-auto h-[460px] overflow-y-scroll`}
+    ${tw`py-0 h-[calc(100% - 47px)] overflow-y-scroll`}
   }
   &.ant-modal {
     ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
