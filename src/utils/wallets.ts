@@ -1,5 +1,6 @@
 import {
   SolflareWalletAdapter,
+  PhantomWalletAdapter,
   TorusWalletAdapter,
   MathWalletAdapter,
   LedgerWalletAdapter,
@@ -7,14 +8,14 @@ import {
   CoinbaseWalletAdapter,
   NightlyWalletAdapter
 } from '@solana/wallet-adapter-wallets'
-import { WalletAdapter } from '@solana/wallet-adapter-base'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import { WalletAdapterNetwork, WalletAdapter } from '@solana/wallet-adapter-base'
 import {
   createDefaultAddressSelector,
   createDefaultAuthorizationResultCache,
   createDefaultWalletNotFoundHandler,
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
+import { WalletConnectWalletAdapter } from '@solana/wallet-adapter-walletconnect'
 
 export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[] => [
   new SolanaMobileWalletAdapter({
@@ -28,10 +29,17 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
     cluster: network,
     onWalletNotFound: createDefaultWalletNotFoundHandler()
   }),
+  new PhantomWalletAdapter(),
   new SolflareWalletAdapter({ network }),
+  new WalletConnectWalletAdapter({
+    network: network == WalletAdapterNetwork.Testnet ? WalletAdapterNetwork.Devnet : network,
+    options: {
+      projectId: process.env.REACT_APP_WALLETCONNECT_ID
+    }
+  }),
+  new LedgerWalletAdapter(),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
-  new LedgerWalletAdapter(),
   new Coin98WalletAdapter(),
   new CoinbaseWalletAdapter(),
   new NightlyWalletAdapter()
