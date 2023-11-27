@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../constants'
+import BN from 'bn.js'
 
 export type ConditionalData<T> = 'not-supported' | 'loading' | T
 
@@ -237,15 +238,26 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
   // eslint-disable-next-line max-len
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
-    return '00.00'
+    return '0.00'
 
+  let usdString = ''
   const nativeStringLen = nativeString.length
-  let usdString =
-    nativeString.substring(0, nativeStringLen - mintDecimals) +
-    '.' +
-    nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+  if (nativeStringLen > mintDecimals) {
+    usdString =
+      nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+  } else {
+    let i = 0
+    let result = '0.'
+    while (i < mintDecimals - nativeStringLen) {
+      result += '0'
+      i++
+    }
+    usdString = result + nativeString
+    usdString = usdString?.substring(0, 4)
+  }
   const decimalIndex = usdString?.indexOf('.')
-  if (decimalIndex === 0) usdString = '0' + usdString
   const beforeDecimal = usdString?.substring(0, decimalIndex)
   const length = beforeDecimal.length
 
@@ -305,5 +317,41 @@ export const convertToNativeValue = (value: string, decimals: number): string =>
     }
   } catch (e) {
     console.log('ERROR IN INPUT STRING', value)
+  }
+}
+
+export const formatUserBalance = (nativeBN: string, mintDecimals: number): any => {
+  if (!nativeBN || nativeBN === null || nativeBN === '0') return null
+
+  let beforeDecimalBN = new BN(0)
+  let afterDecimalBN = new BN(0)
+  let usdString = ''
+  const nativeStringLen = nativeBN?.length
+
+  if (nativeStringLen > mintDecimals) {
+    usdString =
+      nativeBN?.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeBN?.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+  } else {
+    let i = 0
+    let result = '0.'
+    while (i < mintDecimals - nativeStringLen) {
+      result += '0'
+      i++
+    }
+    usdString = result + nativeBN
+    usdString = usdString?.substring(0, 4)
+  }
+
+  const decimalIndex = usdString?.indexOf('.')
+  const beforeDecimal = usdString?.substring(0, decimalIndex)
+  const afterDecimal = usdString?.substring(decimalIndex + 1)
+  beforeDecimalBN = new BN(beforeDecimal)
+  afterDecimalBN = new BN(afterDecimal)
+
+  return {
+    beforeDecimalBN,
+    afterDecimalBN
   }
 }

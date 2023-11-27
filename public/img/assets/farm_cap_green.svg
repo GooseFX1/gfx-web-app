@@ -1,0 +1,12 @@
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Cap status" clip-path="url(#clip0_1753_12152)">
+<path id="Vector" d="M10 0C15.5228 0 20 4.47715 20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0Z" fill="#6EAD57"/>
+<path id="Vector 483" d="M10 14V9" stroke="#EEEEEE" stroke-width="2" stroke-linecap="round"/>
+<circle id="Ellipse 2907" cx="10" cy="6" r="0.5" transform="rotate(-180 10 6)" fill="#F7F0FD" stroke="#EEEEEE"/>
+</g>
+<defs>
+<clipPath id="clip0_1753_12152">
+<rect width="20" height="20" fill="white" transform="matrix(1 0 0 -1 0 20)"/>
+</clipPath>
+</defs>
+</svg>
