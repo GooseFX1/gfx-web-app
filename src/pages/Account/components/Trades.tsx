@@ -159,8 +159,6 @@ const Trades: FC = () => {
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)
     const date = new Date(unixTimestamp * 1000)
-    console.log(unixTimestamp)
-    console.log(date.toString())
 
     // Format the date as "MM/DD/YYYY hh:mmAM/PM"
     const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`

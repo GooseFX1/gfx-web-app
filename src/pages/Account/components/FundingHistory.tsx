@@ -1,14 +1,17 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useDarkMode } from '../../../context'
+import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
 
 import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
+import { httpClient } from '../../../api'
+import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
+import { useTraderConfig } from '../../../context/trader_risk_group'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -91,14 +94,59 @@ const HISTORY = styled.div`
 `
 
 const columns = ['Market', 'Direction', 'Position Size', 'Payment', 'Date']
+type Pagination = {
+  page: number
+  limit: number
+}
 const FundingHistory: FC = () => {
   const { mode } = useDarkMode()
 
-  const { connected } = useWallet()
+  const { connected, publicKey } = useWallet()
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [tradeType, setTradeType] = useState<string>('deposit')
+
+  const { isDevnet } = useCrypto()
+  const { traderInfo } = useTraderConfig()
+  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
+  const [fundingHistory, setFundingHistory] = useState([])
+
+  const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
+  const symbol = useMemo(
+    () => getAskSymbolFromPair(selectedCrypto.pair),
+    [getAskSymbolFromPair, selectedCrypto.pair]
+  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
+  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
+    // Create a new Date object using the Unix timestamp (in milliseconds)
+    const date = new Date(unixTimestamp * 1000)
+
+    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
+    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
+
+    return formattedDate
+  }
+  const fetchFundingHistory = async () => {
+    const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
+      params: {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        devnet: isDevnet,
+        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+        page: pagination.page,
+        limit: pagination.limit
+      }
+    })
+    setFundingHistory(res.data.data)
+  }
+
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFundingHistory()
+    }
+    console.log(setPagination)
+  }, [connected, publicKey, traderInfo])
+
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -140,16 +188,42 @@ const FundingHistory: FC = () => {
         ))}
       </ACCOUNTHEADER>
       <HISTORY>
-        <div className="no-funding-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-          <p>No Funding Found</p>
-          {!connected && <Connect />}
-          {connected && (
-            <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-              Deposit Now
-            </button>
-          )}
-        </div>
+        {fundingHistory.length ? (
+          <div>
+            <div className="history-items-container">
+              {fundingHistory.map((item) => (
+                <div key={item._id} className="history-item">
+                  <div className="pair-container">
+                    <img src={`${assetIcon}`} alt="SOL icon" />
+                    <span>{selectedCrypto.pair}</span>
+                  </div>
+                  <span className={item.averagePosition.side}>
+                    {item.averagePosition.side === 'Bid' ? 'Long' : 'Short'}
+                    {item.averagePosition.side === undefined && ''}
+                  </span>
+                  <span>{item.averagePosition.qty.toFixed(3)} SOL</span>
+                  <span>{(item.fundingBalanceDifference / item.fundingBlance.exp).toFixed(4)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="pagination-container">
+              <div>
+                <p>1 of 20 Transactions</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="no-funding-found">
+            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
+            <p>No deposits Found</p>
+            {!connected && <Connect />}
+            {connected && (
+              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+                Deposit Now
+              </button>
+            )}
+          </div>
+        )}
       </HISTORY>
     </WRAPPER>
   )
