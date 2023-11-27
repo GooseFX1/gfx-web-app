@@ -203,6 +203,7 @@ const FundingHistory: FC = () => {
                   </span>
                   <span>{item.averagePosition.qty.toFixed(3)} SOL</span>
                   <span>{(item.fundingBalanceDifference / item.fundingBlance.exp).toFixed(4)}</span>
+                  <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
                 </div>
               ))}
             </div>
