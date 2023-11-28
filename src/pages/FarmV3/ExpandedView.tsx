@@ -27,7 +27,7 @@ import BN from 'bn.js'
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[195px] rounded-circle flex items-center justify-center text-white cursor-pointer 
-  ml-2 p-[3px] sm:w-full sm:mt-3.75`};
+  ml-2 p-[1.5px] sm:w-full sm:mt-3.75`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -587,7 +587,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 {claimableReward && +claimableReward.toFixed(4) > 0 ? (
                   <CLAIM onClick={() => openActionModal('claim')}>
                     <div
-                      tw="h-full w-full dark:bg-black-1 bg-grey-5 rounded-circle flex sm:w-full
+                      tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                     items-center justify-center dark:text-white text-black-4 text-tiny font-bold"
                     >
                       Claim {claimableReward?.toFixed(4)} {coin?.token}
