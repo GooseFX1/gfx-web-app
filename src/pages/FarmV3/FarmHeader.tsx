@@ -137,13 +137,8 @@ export const FarmHeader: FC = () => {
       <div>
         <Snackbar cssStyle={tw`mb-5 dark:border-white border-black-1`} height={'auto'} width={'100%'}>
           <div tw="dark:text-white text-black-1">
-            <strong>
-              Please note we did a recent upgrade to our SSL program to improve performance and reduce risk!
-            </strong>{' '}
-            <>
-              We are pending a Jupiter integration so volumes will be lower. We aim to reintegrate the new version
-              very soon. All functionality including deposits and withdrawals are working fine.
-            </>
+            Please note we did a recent upgrade to our SSL program and pending Jupiter integration volumes will be
+            low, we aim to be reintegrated very soon
           </div>
         </Snackbar>
       </div>
