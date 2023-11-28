@@ -141,7 +141,7 @@ export const FarmHeader: FC = () => {
               Please note we did a recent upgrade to our SSL program to improve performance and reduce risk!
             </strong>{' '}
             <>
-              We are pending a Jupiter integration so volumes will be lower, we aim to reintegrated the new version
+              We are pending a Jupiter integration so volumes will be lower. We aim to reintegrate the new version
               very soon. All functionality including deposits and withdrawals are working fine.
             </>
           </div>
