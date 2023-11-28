@@ -66,7 +66,7 @@ export const Banner = ({ title, support, handleDismiss, iconFileName }: IProps):
       </div>
       {support && <p>{support}</p>}
       {handleDismiss && (
-        <button className={'close-button'} onClick={() => handleDismiss(false)}>
+        <button className={'close-button'} onClick={() => handleDismiss(false)} aria-label="Close banner">
           <SVGDynamicReverseMode className="close-icon" src={`/img/assets/close-white-icon.svg`} alt="close" />
         </button>
       )}

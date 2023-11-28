@@ -8,6 +8,7 @@ import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
+import { Snackbar } from '../../components'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
@@ -133,6 +134,19 @@ export const FarmHeader: FC = () => {
 
   return (
     <>
+      <div>
+        <Snackbar cssStyle={tw`mb-5 dark:border-white border-black-1`} height={'auto'} width={'100%'}>
+          <div tw="dark:text-white text-black-1">
+            <strong>
+              Please note we did a recent upgrade to our SSL program to improve performance and reduce risk!
+            </strong>{' '}
+            <>
+              We are pending a Jupiter integration so volumes will be lower, we aim to reintegrated the new version
+              very soon. All functionality including deposits and withdrawals are working fine.
+            </>
+          </div>
+        </Snackbar>
+      </div>
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         {infoCards?.map((card) => (
@@ -164,6 +178,7 @@ export const FarmHeader: FC = () => {
           </div>
         } */}
       </HEADER_WRAPPER>
+
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
@@ -194,7 +209,7 @@ export const FarmHeader: FC = () => {
               ?.slice(0, 4)
               ?.map((card) => (
                 <POOL_CARD key={card?.token}>
-                  <div tw="flex flex-row  justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
+                  <div tw="flex flex-row justify-center items-center mb-3.5 sm:mb-2 sm:justify-between">
                     <img
                       src={`/img/crypto/${card.token}.svg`}
                       alt="pool-icon"
