@@ -163,41 +163,6 @@
       ]
     },
     {
-      "name": "configSsl",
-      "accounts": [
-        {
-          "name": "poolRegistry",
-          "isMut": true,
-          "isSigner": false,
-          "docs": ["The global registry of SSL pools. This instruction modifies an entry on this."]
-        },
-        {
-          "name": "mint",
-          "isMut": false,
-          "isSigner": false,
-          "docs": ["The mint associated with the [SSLPool] being configured."]
-        },
-        {
-          "name": "admin",
-          "isMut": true,
-          "isSigner": true,
-          "docs": ["The pool registry admin. This makes the instruction permissioned."]
-        }
-      ],
-      "args": [
-        {
-          "name": "isSuspended",
-          "type": "bool"
-        },
-        {
-          "name": "mathParams",
-          "type": {
-            "defined": "SSLMathConfig"
-          }
-        }
-      ]
-    },
-    {
       "name": "suspendSsl",
       "accounts": [
         {
@@ -523,11 +488,6 @@
           "isSigner": false
         },
         {
-          "name": "eventEmitter",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -557,11 +517,6 @@
           "name": "owner",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "eventEmitter",
-          "isMut": true,
-          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -636,11 +591,6 @@
           "isSigner": false
         },
         {
-          "name": "eventEmitter",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -688,11 +638,6 @@
         },
         {
           "name": "poolRegistry",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "eventEmitter",
           "isMut": true,
           "isSigner": false
         },

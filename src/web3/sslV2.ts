@@ -12,7 +12,7 @@ import {
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
-import { SYSTEM, SSL_PROGRAM_ID, EVENT_EMITTER } from './ids'
+import { SYSTEM, SSL_PROGRAM_ID } from './ids'
 import { findAssociatedTokenAddress, confirmTransaction } from './utils'
 import {
   LIQUIDITY_ACCOUNT_PREFIX,
@@ -135,18 +135,6 @@ export const getPoolRegistryAccountKeys = async (): Promise<undefined | PublicKe
   }
 }
 
-export const getEventEmitterAccount = (): PublicKey => {
-  try {
-    const eventEmitterKey: [PublicKey, number] = PublicKey.findProgramAddressSync(
-      [Buffer.from(EVENT_EMITTER)],
-      toPublicKey(SSL_PROGRAM_ID)
-    )
-    return eventEmitterKey[0]
-  } catch (err) {
-    return undefined
-  }
-}
-
 export const getsslPoolSignerKey = async (tokenMintAddress: PublicKey): Promise<undefined | PublicKey> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   try {
@@ -184,7 +172,6 @@ export const executeWithdraw = async (
     poolVault: poolVaultAccount,
     sslFeeVault: feeVaultAccount,
     poolRegistry: poolRegistryAccountKey,
-    eventEmitter: getEventEmitterAccount(),
     tokenProgram: TOKEN_PROGRAM_ID
   }
   const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amountInNative), {
@@ -257,7 +244,6 @@ export const executeClaimRewards = async (
     sslFeeVault: feeVaultAccount,
     ownerAta: userAta,
     liquidityAccount: liquidityAccountKey,
-    eventEmitter: getEventEmitterAccount(),
     tokenProgram: TOKEN_PROGRAM_ID
   }
   const claimIX: TransactionInstruction = await program.instruction.claimFees({
@@ -366,7 +352,6 @@ const depositAmount = async (
     poolVault: poolVaultAccount,
     sslFeeVault: feeVaultAccount,
     poolRegistry: poolRegistryAccountKey,
-    eventEmitter: getEventEmitterAccount(),
     tokenProgram: TOKEN_PROGRAM_ID
   }
   // some strage co relation dont will check about it later: sslchange - shrihari
@@ -443,7 +428,6 @@ export const createLiquidityAccountIX = async (
     mint: tokenMintAddress,
     liquidityAccount: liquidityAccount,
     owner: walletPublicKey,
-    eventEmitter: getEventEmitterAccount(),
     systemProgram: SYSTEM
   }
   const createLiquidityIX: TransactionInstruction = await program.instruction.createLiquidityAccount({
