@@ -43,7 +43,7 @@ const EarnRewards: FC = () => {
   const { mode } = useDarkMode()
   // const { rewardToggle } = useRewardToggle()
   // const subs = useMemo(()=>([]),[connection,publicKey])
-  const { on, off } = useSolSub(connection)
+  const { on, off } = useSolSub()
   useEffect(() => {
     on({
       SubType: SubType.AccountChange,
@@ -78,7 +78,7 @@ const EarnRewards: FC = () => {
       }
     })
     return () => {
-      off()
+      off('user-gofx-balance-staking')
       return
     }
   }, [connection, network, publicKey])
