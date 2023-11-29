@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect } from 'react'
+import { FC, useMemo, useState, useEffect, useCallback } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
@@ -27,7 +27,7 @@ import BN from 'bn.js'
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[195px] rounded-circle flex items-center justify-center text-white cursor-pointer 
-  ml-2 p-[1.5px] sm:w-full sm:mt-3.75`};
+    ml-2 p-[1.5px] sm:w-full sm:mt-3.75 sm:ml-0`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -350,13 +350,22 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
   }, [userDepositedAmount, coin?.mintDecimals])
 
+  const renderStatsAsZero = useCallback(
+    (token: string | undefined) => (
+      <div tw="text-right dark:text-grey-1 text-grey-2 font-semibold text-regular">
+        <div>0.00 {token}</div>
+      </div>
+    ),
+    []
+  )
+
   return (
     <div
       css={[
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
         isExpanded
-          ? tw`h-[115px] visible p-3.5 sm:h-[400px] sm:p-4`
+          ? tw`h-[115px] visible p-3.5 sm:h-[458px] sm:p-4`
           : tw`!h-0 invisible p-0 opacity-0 w-0 sm:h-[366px]`
       ]}
     >
@@ -405,37 +414,37 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="My Balance"
               value={
-                userDepositedAmount ? (
+                userDepositedAmount && userDepositedAmount.toNumber() > 0 ? (
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
                     {truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)}
                   </span>
                 ) : (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00</span>
+                  renderStatsAsZero(coin?.token)
                 )
               }
             />
             <FarmStats
               keyStr="Wallet Balance"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                  {truncateBigNumber(userTokenBalance)} {coin?.token}
-                </span>
+                userTokenBalance > 0 ? (
+                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    {truncateBigNumber(userTokenBalance)} {coin?.token}
+                  </span>
+                ) : (
+                  renderStatsAsZero(coin?.token)
+                )
               }
             />
             <FarmStats
               keyStr="Total Earned"
               value={
                 totalEarned > 0 ? (
-                  <div tw="text-right">
-                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      <div>{totalEarned.toFixed(4)}</div>
-                      <div>(${totalEarnedInUSD?.toFixed(4)}USD)</div>
-                    </span>
+                  <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    <div>{totalEarned.toFixed(4)}</div>
+                    <div>(${totalEarnedInUSD?.toFixed(2)} USD)</div>
                   </div>
                 ) : (
-                  <div tw="text-right">
-                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">0.00 ($0.00 USD)</span>
-                  </div>
+                  renderStatsAsZero(coin?.token)
                 )
               }
             />
@@ -443,16 +452,12 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Pending Rewards"
               value={
                 claimableReward > 0 ? (
-                  <div tw="text-right">
-                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      <div>{claimableReward?.toFixed(4)}</div>
-                      <div>(${claimableRewardInUSD?.toFixed(4)} USD)</div>
-                    </span>
+                  <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    <div>{claimableReward?.toFixed(4)}</div>
+                    <div>(${claimableRewardInUSD?.toFixed(2)} USD)</div>
                   </div>
                 ) : (
-                  <div tw="text-right">
-                    <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">0.00 JS {coin?.token}</span>
-                  </div>
+                  renderStatsAsZero(coin?.token)
                 )
               }
             />
@@ -593,7 +598,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   <div
                     tw="h-8.75 w-[195px] rounded-circle flex items-center border-solid
                     text-tiny cursor-pointer ml-2 p-[3px] border-[1.5px] border-grey-1 
-                    cursor-not-allowed justify-center text-grey-1 font-bold sm:w-full sm:mt-3.75"
+                    cursor-not-allowed justify-center text-grey-1 font-bold sm:w-full sm:mt-3.75 sm:ml-0"
                   >
                     No Claimable Rewards
                   </div>
@@ -615,7 +620,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               totalEarned ? (
                 <div tw="text-right">
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {`${totalEarned?.toFixed(4)} ($${totalEarnedInUSD?.toFixed(4)} USD)`}
+                    {`${totalEarned?.toFixed(4)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
                   </span>
                 </div>
               ) : (
@@ -635,7 +640,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(4)} USD)`}
+                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(2)} USD)`}
                     </span>
                   </div>
                 ) : (
