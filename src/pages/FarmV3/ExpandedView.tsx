@@ -441,7 +441,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 totalEarned > 0 ? (
                   <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
                     <div>{totalEarned.toFixed(4)}</div>
-                    <div>(${totalEarnedInUSD?.toFixed(2)} USD)</div>
+                    <div tw="dark:text-grey-1 text-grey-2">(${totalEarnedInUSD?.toFixed(2)} USD)</div>
                   </div>
                 ) : (
                   renderStatsAsZero(coin?.token)
@@ -454,7 +454,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 claimableReward > 0 ? (
                   <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
                     <div>{claimableReward?.toFixed(4)}</div>
-                    <div>(${claimableRewardInUSD?.toFixed(2)} USD)</div>
+                    <div tw="dark:text-grey-1 text-grey-2">(${claimableRewardInUSD?.toFixed(2)} USD)</div>
                   </div>
                 ) : (
                   renderStatsAsZero(coin?.token)
