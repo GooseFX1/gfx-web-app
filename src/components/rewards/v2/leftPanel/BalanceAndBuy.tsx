@@ -1,0 +1,50 @@
+import { TokenAmount } from '@solana/web3.js'
+import tw from 'twin.macro'
+import { numberFormatter } from '../../../../utils'
+import Button from '../../../twComponents/Button'
+import React from 'react'
+import { Tooltip } from '../../../Tooltip'
+import { useDarkMode } from '../../../../context'
+import useRewards from '../../../../context/rewardsContext'
+
+export default function RewardsWalletBalanceAndBuyGofx({
+  userGoFxBalance
+}: {
+  userGoFxBalance: TokenAmount
+}): JSX.Element {
+  const { mode } = useDarkMode()
+  const { gofxValue } = useRewards()
+  return (
+    <div css={[tw`flex justify-between w-full items-center order-2 min-md:order-1`]}>
+      <p css={[tw`text-average font-semibold text-grey-1 dark:text-grey-2 mb-0`]}>
+        Wallet Balance:{' '}
+        <Tooltip
+          color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
+          infoIcon={false}
+          showArrow={false}
+          placement={'topLeft'}
+          title={
+            userGoFxBalance.uiAmount > 0.0 ? (
+              <p css={[tw`mb-0 text-tiny font-semibold text-grey-5 dark:text-black-4`]}>
+                Approx {numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)} USD
+              </p>
+            ) : (
+              ''
+            )
+          }
+        >
+          <span css={[tw`text-grey-2 dark:text-grey-1`]}>{numberFormatter(userGoFxBalance.uiAmount)} GOFX</span>
+        </Tooltip>
+      </p>
+      <Button
+        onClick={() => window.open('https://jup.ag/swap/USDC-GOFX', '_blank')}
+        cssClasses={[
+          tw`ml-auto h-[40px] font-bold bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 text-white
+      min-w-[122px] py-2.5`
+        ]}
+      >
+        Buy GOFX now!
+      </Button>
+    </div>
+  )
+}
