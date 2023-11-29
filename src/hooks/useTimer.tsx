@@ -40,7 +40,7 @@ export default function useTimer({
   const getUtcTime = useCallback(
     (d: dayjs.Dayjs) => {
       if (!isUtc) return d
-      return d.utc()
+      return d.utc(true)
     },
     [isUtc]
   )
@@ -65,11 +65,11 @@ export default function useTimer({
     const currentTime = getUtcTime(dayjs())
 
     const offset = target.diff(currentTime)
+
     const offsetDayjs = getUtcTime(dayjs(offset))
 
     setTime(offsetDayjs.format(format))
-    const done = offsetDayjs.hour() == 0 && offsetDayjs.minute() == 0 && offsetDayjs.second() == 0
-    setIsDone(done)
+    setIsDone(offset <= 0)
   }, [target, format, isUtc])
 
   useEffect(() => {
