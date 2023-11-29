@@ -271,6 +271,12 @@ declare global {
   }
 }
 
+declare global {
+  interface Window {
+    MayanSwap: any // replace 'any' with the actual type if known
+  }
+}
+
 export interface Text {
   fontFamily: Font
   mainText: FlattenSimpleInterpolation
