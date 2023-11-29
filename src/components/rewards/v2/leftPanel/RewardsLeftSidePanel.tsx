@@ -40,11 +40,12 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [isStakeLoading, setIsStakeLoading] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<number>(0)
-  const { on, off } = useSolSub(connection)
+  const { on, off } = useSolSub()
   useEffect(() => {
+    const id = 'user-gofx-balance-staking'
     on({
       SubType: SubType.AccountChange,
-      id: 'user-gofx-balance-staking',
+      id,
       callback: async () => {
         const currentNetwork =
           network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
@@ -75,7 +76,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       }
     })
     return () => {
-      off()
+      off(id)
       return
     }
   }, [connection, network, publicKey])

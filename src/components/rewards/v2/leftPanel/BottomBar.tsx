@@ -19,7 +19,7 @@ export default function RewardsStakeBottomBar({
         tw`mt-3 min-md:mt-auto flex min-md:p-2.5 min-md:bg-gradient-to-r
         from-green-gradient-3 text-regular min-md:text-average
     to-green-gradient-4 bg-none rounded-t-tiny  min-md:text-tiny font-semibold text-grey-1
-     dark:text-grey-2  min-md:text-grey-5
+     dark:text-grey-2  min-md:text-grey-5 min-md:max-w-[342px]
         min-md:dark:text-grey-5 items-center flex-col min-md:flex-row w-full max-w-[580px]`
       ]}
     >
