@@ -10,8 +10,11 @@ const fontSize = {
   regular: '15px',
   average: '18px',
   lg: ['20px', '30px'],
+  h1: '28px',
   xl: '40px',
+  45: '45px',
   '2xl': '50px',
+  '3xl': '60px',
   '4xl': '80px'
 }
 const lineHeight = {

@@ -27,10 +27,12 @@ export const Tooltip: FC<{
   infoIcon?: boolean
   children: ReactNode
   notInherit?: boolean
-  title?: string
+  title?: ReactNode
   overlayClassName?: string
   className?: string
   overrideIcon?: string
+  tooltipIconClassName?: string
+  showArrow?: boolean
 }> = ({
   dark,
   lite,
@@ -42,7 +44,9 @@ export const Tooltip: FC<{
   title,
   overlayClassName,
   className,
-  overrideIcon
+  overrideIcon,
+  tooltipIconClassName = '',
+  showArrow = true
 }) => {
   const { mode } = useDarkMode()
 
@@ -58,13 +62,14 @@ export const Tooltip: FC<{
         padding: '8px 8px 0',
         maxWidth: '180px'
       }}
+      showArrow={showArrow}
       placement={placement}
       title={<TEXT> {title ? title : children}</TEXT>}
       overlayClassName={overlayClassName}
     >
       {infoIcon ? (
         <ICON notDoxxed={!!notInherit} className={className}>
-          <img className="tooltipIcon" src={overrideIcon ?? icon} alt="tooltip" />
+          <img className={'tooltipIcon ' + tooltipIconClassName} src={overrideIcon ?? icon} alt="tooltip" />
         </ICON>
       ) : (
         children

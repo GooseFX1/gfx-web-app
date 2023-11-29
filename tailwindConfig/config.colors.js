@@ -22,13 +22,16 @@ const colors = {
   'red-2': '#F35355',
   'green-gradient-1': '#8ADE75',
   'green-gradient-2': '#4B831D',
+  'green-gradient-3': '#37BB7D',
+  'green-gradient-4': '#1a4c5f',
   'primary-gradient-1': '#5855FF',
   'primary-gradient-2': '#DC1FFF',
   'secondary-gradient-1': '#F7931A',
   'secondary-gradient-2': '#AC1CC7',
   'gray-1': '#9A9A9A',
   'gray-2': '#636363',
-  'gray-3': '#969696'
+  'gray-3': '#969696',
+  divider: 'rgba(248, 255, 253, 0.20)'
 }
 const backgroundImage = {
   'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)'

@@ -22,6 +22,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token
 import Skeleton from 'react-loading-skeleton'
 import useTimer from '../../hooks/useTimer'
 import { Tooltip } from '../Tooltip'
+import useBoolean from '../../hooks/useBoolean'
 
 const EarnRewards: FC = () => {
   const breakpoints = useBreakPoint()
@@ -251,10 +252,12 @@ const EarnRewards: FC = () => {
         )}
         <div
           onClick={focusInput}
-          css={tw`
+          css={[
+            tw`
         relative rounded-[100px] h-[40px] w-full min-md:w-[381px] bg-grey-5 dark:bg-black-1
           dark:border-black-1 items-center flex justify-center
-        `}
+        `
+          ]}
         >
           <div
             css={tw`text-lg absolute  left-[15px] z-[1] flex flex-row gap-[15px]
@@ -351,6 +354,8 @@ export default EarnRewards
 
 const RewardsRightPanel: FC = () => {
   const [apy, setApy] = useState<string | undefined>()
+  const [isFetchingApy, setIsFetchingApy] = useBoolean(false)
+  console.log(setIsFetchingApy)
   const {
     totalEarned,
     totalStaked,
@@ -394,9 +399,11 @@ const RewardsRightPanel: FC = () => {
           tw`flex min-md:gap-3.75 min-md:flex-col items-center text-average font-semibold text-grey-5 leading-normal`
         ]}
       >
-        <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>
-          {!apy ? <Skeleton /> : `APY ${apy}%`}
-        </p>
+        {isFetchingApy ? (
+          <Skeleton baseColor={'#EEE'} highlightColor={'#8ADE75'} height={'15px'} width={'33%'} />
+        ) : (
+          <p tw={' min-md:ml-0 min-md:text-[40px] font-semibold min-md:text-white mb-0 '}>{`APY ${apy}%`}</p>
+        )}
       </div>
       <div css={[tw`flex flex-col text-center text-[15px] min-md:text-lg text-grey-5 sm:gap-1 min-md:gap-4`]}>
         <span
