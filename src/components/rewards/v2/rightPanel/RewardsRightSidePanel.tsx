@@ -20,14 +20,14 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 font-semibold  flex-1 flex-basis[40%] items-center`
       ]}
     >
-      <h1 css={[tw`text-h2 min-md:text-h2 font-semibold !mb-0 leading-[auto]`]}>
+      <h1 css={[tw`text-h2 min-md:text-h1 font-semibold !mb-0`]}>
         {apy == 0 ? (
           <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />
         ) : (
           `${apy}% APY`
         )}
       </h1>
-      <div css={[tw`flex flex-col gap-2 flex-1 max-w-[300px] w-full`]}>
+      <div css={[tw`flex flex-col gap-2 flex-1 max-w-[300px] w-full justify-center`]}>
         <div css={[tw`flex flex-col gap-2 items-center`]}>
           <p
             css={[
@@ -50,7 +50,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
                   ]}
                 >
                   <p>Global Staked GOFX</p>
-                  <p>≈ {numberFormatter(totalStakedGlobally * gofxValue, 2)}</p>
+                  <p>≈ {numberFormatter(totalStakedGlobally, 2)}</p>
                   <p>My Stake Ratio</p>
                   <p>≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%</p>
                 </div>
@@ -64,14 +64,36 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
               <></>
             </Tooltip>
           </p>
-          <p
-            css={[
-              tw`mb-0 text-regular min-sm:text-average opacity-60 text-white`,
-              totalStaked > 0 && tw`opacity-100`
-            ]}
+          <Tooltip
+            showArrow={false}
+            infoIcon={false}
+            title={
+              totalStaked > 0 ? (
+                <p
+                  css={[
+                    tw`flex flex-col gap-1.25 [&>p]:mb-0 text-tiny font-semibold text-grey-5 dark:text-black-4`
+                  ]}
+                >
+                  ≈ {numberFormatter(gofxValue * totalStaked)} USD
+                </p>
+              ) : (
+                ''
+              )
+            }
+            className={'!inline-flex !m-0 !my-auto'}
+            color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
+            tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4 min-sm:!h-4'}
+            overrideIcon={'/img/assets/tooltip_holo.svg'}
           >
-            {numberFormatter(totalStaked)} GOFX
-          </p>
+            <p
+              css={[
+                tw`mb-0 text-regular min-sm:text-average opacity-60 text-white`,
+                totalStaked > 0 && tw`opacity-100`
+              ]}
+            >
+              {numberFormatter(totalStaked)} GOFX
+            </p>
+          </Tooltip>
         </div>
         <RewardsClaimButton />
       </div>
