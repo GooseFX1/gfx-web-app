@@ -17,7 +17,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div
-        css={tw`flex flex-col items-center justify-center w-screen min-md:w-[628px] h-[300px] min-md:h-[360px]
+        css={tw`flex flex-col items-center justify-center w-screen min-md:w-[600px] max-h-[360px]
         absolute min-md:static bottom-0 left-0
       `}
       >
