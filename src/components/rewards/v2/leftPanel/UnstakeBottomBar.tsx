@@ -9,7 +9,7 @@ function RewardsUnstakeBottomBar(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useBoolean(false)
   const { activeUnstakingTickets } = useRewards()
   return (
-    <div css={[tw`mt-3 h-[69px]`]}>
+    <div css={[tw`mt-3 min-md:mt-0 h-[69px] max-w-[580px]`]}>
       <AllUnstakingTicketsModal isOpen={isModalOpen} onClose={setIsModalOpen.off} />
       <Button
         css={[

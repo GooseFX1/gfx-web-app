@@ -5,6 +5,7 @@ import tw from 'twin.macro'
 import { Tooltip } from '../../../Tooltip'
 import RewardsClaimButton from './RewardsClaimButton'
 import React from 'react'
+import Skeleton from 'react-loading-skeleton'
 
 export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Element {
   const { totalEarned, totalStaked, gofxValue, totalStakedGlobally, userStakeRatio } = useRewards()
@@ -15,14 +16,25 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
   return (
     <div
       css={[
-        tw`py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 bg-gradient-to-r from-green-gradient-3 to-green-gradient-4
-    font-semibold  flex-1 flex-basis[40%] items-center`
+        tw`pt-0 pb-2.5 min-md:py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 leading-normal
+        bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 font-semibold  flex-1 flex-basis[40%] items-center`
       ]}
     >
-      <h1 css={[tw`text-h1 font-semibold !mb-0 leading-[auto]`]}>{apy}% APY</h1>
+      <h1 css={[tw`text-h2 min-md:text-h2 font-semibold !mb-0 leading-[auto]`]}>
+        {apy == 0 ? (
+          <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />
+        ) : (
+          `${apy}% APY`
+        )}
+      </h1>
       <div css={[tw`flex flex-col gap-2 flex-1 max-w-[300px] w-full`]}>
         <div css={[tw`flex flex-col gap-2 items-center`]}>
-          <p css={[tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60`, totalEarned > 0 && tw`opacity-100`]}>
+          <p
+            css={[
+              tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-normal`,
+              totalEarned > 0 && tw`opacity-100`
+            ]}
+          >
             {totalEarnedString == '0.00' ? (totalEarned > 0 ? '< 0.00' : '0.00') : totalEarnedString}
           </p>
           <p css={[tw`mb-0 text-regular min-sm:text-average text-white`]}>Past USDC Earnings</p>
@@ -63,7 +75,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         </div>
         <RewardsClaimButton />
       </div>
-      <h4 css={[tw`mb-0 text-white font-semibold text-regular font-semibold !mb-0 leading-[auto]`]}>
+      <h4 css={[tw`mb-0 text-white font-semibold text-tiny min-md:text-regular font-semibold !mb-0 `]}>
         During cooldown no rewards will be earned
       </h4>
     </div>
