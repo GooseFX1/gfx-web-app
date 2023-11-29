@@ -16,7 +16,7 @@ function RewardsClaimButton(): JSX.Element {
       minute: 30,
       second: 0
     },
-    format: '[Claim In:] hh[H] mm[Min] ss[s]'
+    format: '[Claim In:] hh[H] mm[Min]'
   })
   const handleClaim = useCallback(async () => {
     setIsClaiming.on()

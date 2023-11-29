@@ -139,7 +139,13 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     (!isStakeSelected && proposedStakeAmount > totalStaked)
 
   return (
-    <div css={[tw` flex flex-col flex-1 flex-basis[60%] items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5`]}>
+    <div
+      css={[
+        tw`flex flex-col flex-1 flex-basis[60%] items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
+      leading-normal max-h-[60dvh] overflow-y-auto
+    `
+      ]}
+    >
       <UnstakeConfirmationModal
         amount={proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
@@ -156,7 +162,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
             <AnimatedButtonGroup
               containerStyle={[
                 tw`order-1 min-md:order-2 flex-1 flex flex-row gap-2 font-semibold
-          text-tiny min-sm:flex-third`
+          text-tiny min-sm:flex-basis[calc(33% - 20px)]`
               ]}
               animatedButtonStyle={[tw`bg-blue-1 h-[40px]`]}
               buttonWrapperStyle={[
@@ -221,7 +227,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         </div>
       </div>
       {isStakeSelected ? (
-        <RewardsStakeBottomBar calculating={calculating} approxRewardAmount={approxRewardAmount} />
+        <RewardsStakeBottomBar calculating={calculating || apy == 0} approxRewardAmount={approxRewardAmount} />
       ) : (
         <RewardsUnstakeBottomBar />
       )}

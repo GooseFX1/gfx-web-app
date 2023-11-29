@@ -50,7 +50,7 @@ export default function RewardsInput({
     <div
       onClick={focusInput}
       css={[
-        tw`order-3 min-sm:flex-two-thirds
+        tw`order-3 flex-1 min-md:flex-basis[calc(66% - 20px)]
         relative rounded-[100px] h-[40px] w-full min-md:min-w-[200px] bg-grey-5 dark:bg-black-1
           dark:border-black-1 items-center flex justify-center
         `

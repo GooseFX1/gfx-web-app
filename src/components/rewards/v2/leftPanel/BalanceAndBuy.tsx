@@ -16,8 +16,10 @@ export default function RewardsWalletBalanceAndBuyGofx({
   const { gofxValue } = useRewards()
   return (
     <div css={[tw`flex justify-between w-full items-center order-2 min-md:order-1`]}>
-      <p css={[tw`text-average font-semibold text-grey-1 dark:text-grey-2 mb-0`]}>
-        Wallet Balance:{' '}
+      <div css={[tw`flex flex-wrap`]}>
+        <p css={[tw`text-regular min-md:text-average font-semibold text-grey-1 dark:text-grey-2 mb-0 `]}>
+          Wallet Balance:&nbsp;
+        </p>
         <Tooltip
           color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
           infoIcon={false}
@@ -33,14 +35,16 @@ export default function RewardsWalletBalanceAndBuyGofx({
             )
           }
         >
-          <span css={[tw`text-grey-2 dark:text-grey-1`]}>{numberFormatter(userGoFxBalance.uiAmount)} GOFX</span>
+          <span css={[tw`text-average font-semibold text-grey-2 dark:text-grey-1 whitespace-nowrap`]}>
+            {numberFormatter(userGoFxBalance.uiAmount)} GOFX
+          </span>
         </Tooltip>
-      </p>
+      </div>
       <Button
         onClick={() => window.open('https://jup.ag/swap/USDC-GOFX', '_blank')}
         cssClasses={[
           tw`ml-auto h-[40px] font-bold bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 text-white
-      min-w-[122px] py-2.5`
+      min-w-[122px] min-md:py-2.5 py-1.875 px-2.5 min-md:px-1.5 box-border`
         ]}
       >
         Buy GOFX now!

@@ -5,4 +5,4 @@ const flex = {
   full: '1 1 100%'
 }
 
-export default { flex }
+module.exports = { flex }
