@@ -4,7 +4,7 @@ import { httpClient } from '../../api/'
 import { useCrypto } from '../../context'
 
 const HEADER = styled.div`
-  ${tw`h-[31px] w-full p-0 text-xs h-7`}
+  ${tw`w-full p-0 text-xs h-7`}
   border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   & div {
     ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
@@ -38,7 +38,7 @@ const WRAPPER = styled.div`
   }
 `
 const TRADES = styled.div`
-  ${tw`h-[31px] w-full p-0 text-xs h-7`}
+  ${tw`w-full p-0 text-xs overflow-auto`}
   & div {
     ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
     span {
