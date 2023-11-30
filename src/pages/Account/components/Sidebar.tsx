@@ -90,9 +90,9 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
         <SPAN className={selected == 4 && 'selected'} onClick={() => handleClick(4)}>
           Funding
         </SPAN>
-        <SPAN className={selected == 5 && 'selected'} onClick={() => handleClick(5)}>
-          Liquidations
-        </SPAN>
+        {/* <SPAN className={selected == 5 && 'selected'} onClick={() => handleClick(5)}> */}
+        {/*   Liquidations */}
+        {/* </SPAN> */}
       </div>
     </WRAPPER>
   )

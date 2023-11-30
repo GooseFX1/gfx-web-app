@@ -70,7 +70,7 @@ const HISTORY = styled.div`
   border: 1px solid #3c3c3c;
 
   .history-items-container {
-    height: 300px;
+    height: 400px;
     overflow: auto;
   }
   .pair-container {
@@ -250,11 +250,11 @@ const FundingHistory: FC = () => {
                 </div>
               ))}
             </div>
-            <div className="pagination-container">
-              <div>
-                <p>1 of 20 Transactions</p>
-              </div>
-            </div>
+            {/* <div className="pagination-container"> */}
+            {/*   <div> */}
+            {/*     <p>1 of 20 Transactions</p> */}
+            {/*   </div> */}
+            {/* </div> */}
           </div>
         ) : (
           <div className="no-funding-found">

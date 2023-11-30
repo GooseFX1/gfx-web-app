@@ -55,9 +55,6 @@ const HISTORY = styled.div`
     width: 24px;
   }
 
-  .history-items-container div:last-child {
-    border-bottom: none;
-  }
   .history-item {
     ${tw`grid grid-cols-8  items-center w-full`}
     padding: 10px;
@@ -90,8 +87,13 @@ const HISTORY = styled.div`
     border-top: 1px solid #3c3c3c;
   }
   .pagination-container > div {
-    margin-right: 10px;
-    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .pagination-container .icons-container {
+    display: flex;
+    flex-direction: row;
   }
 
   .deposit {
@@ -211,11 +213,33 @@ const Trades: FC = () => {
                 </div>
               ))}
             </div>
-            <div className="pagination-container">
-              <div>
-                <p>1 of 20 Transactions</p>
-              </div>
-            </div>
+            {/* <div className="pagination-container"> */}
+            {/*   <div> */}
+            {/*     <p>1 of 20 Transactions</p> */}
+            {/*     <div className="icons-container"> */}
+            {/*       <img */}
+            {/*         src={ */}
+            {/*           mode === 'lite' */}
+            {/*             ? '/img/assets/arrow-circle-down-light-mode.svg' */}
+            {/*             : '/img/assets/arrow-circle-down.svg' */}
+            {/*         } */}
+            {/*         alt="arrow-icon" */}
+            {/*         height="16" */}
+            {/*         width="16" */}
+            {/*       /> */}
+            {/*       <img */}
+            {/*         src={ */}
+            {/*           mode === 'lite' */}
+            {/*             ? '/img/assets/arrow-circle-down-light-mode.svg' */}
+            {/*             : '/img/assets/arrow-circle-down.svg' */}
+            {/*         } */}
+            {/*         alt="arrow-icon" */}
+            {/*         height="16" */}
+            {/*         width="16" */}
+            {/*       /> */}
+            {/*     </div> */}
+            {/*   </div> */}
+            {/* </div> */}
           </div>
         ) : (
           <div className="no-trades-found">

@@ -184,11 +184,11 @@ const DepositWithdrawHistory: FC = () => {
                 </div>
               ))}
             </div>
-            <div className="pagination-container">
-              <div>
-                <p>1 of 20 Transactions</p>
-              </div>
-            </div>
+            {/* <div className="pagination-container"> */}
+            {/*   <div> */}
+            {/*     <p>1 of 20 Transactions</p> */}
+            {/*   </div> */}
+            {/* </div> */}
           </div>
         ) : (
           <div className="no-deposits-found">
