@@ -21,7 +21,7 @@ export default function RewardsWalletBalanceAndBuyGofx({
           Wallet Balance:&nbsp;
         </p>
         <Tooltip
-          color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
+          color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
           infoIcon={false}
           showArrow={false}
           placement={'topLeft'}

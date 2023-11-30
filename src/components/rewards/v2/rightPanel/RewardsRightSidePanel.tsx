@@ -56,7 +56,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
                 </div>
               }
               className={'!inline-flex !m-0 !my-auto'}
-              color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
+              color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
               tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4 min-sm:!h-4'}
               showArrow={false}
               overrideIcon={'/img/assets/tooltip_holo.svg'}
@@ -81,7 +81,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
               )
             }
             className={'!inline-flex !m-0 !my-auto'}
-            color={mode !== 'dark' ? '#FFF' : '#1C1C1C'}
+            color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
             tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4 min-sm:!h-4'}
             overrideIcon={'/img/assets/tooltip_holo.svg'}
           >
@@ -97,7 +97,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         </div>
         <RewardsClaimButton />
       </div>
-      <h4 css={[tw`mb-0 text-white font-semibold text-tiny min-md:text-regular font-semibold !mb-0 `]}>
+      <h4 css={[tw`mb-0 text-center text-white font-semibold text-tiny min-md:text-regular font-semibold !mb-0 `]}>
         During cooldown no rewards will be earned
       </h4>
     </div>
