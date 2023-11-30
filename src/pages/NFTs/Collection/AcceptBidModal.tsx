@@ -115,7 +115,7 @@ export const TermsTextNFT: FC<{ string: string; bottom?: boolean }> = ({ string,
     css={[bottom ? tw`sm:bottom-[100px]` : tw`sm:bottom-[120px]`]}
     tw="absolute bottom-4 text-grey-1 dark:text-grey-2 "
   >
-    By clicking ¨{string}¨, you agree to{' '}
+    By clicking ¨{string}¨ you agree to{' '}
     <u>
       <a
         target="_blank"

@@ -14,6 +14,8 @@ import {
 import { User, useStats } from '../../context/stats'
 import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 const WRAPPER = styled.div<{ $index: number }>`
   height: calc(100vh - 56px);

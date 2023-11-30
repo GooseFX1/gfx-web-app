@@ -48,7 +48,7 @@ export const createRemoveAskIX = async (
   const curAskingPrice: BN = new BN(parseFloat(ask.buyer_price))
   const tradeState: [PublicKey, number] = await tradeStatePDA(
     usrAddr,
-    AUCTION_HOUSE,
+    ask?.auction_house_key ?? AUCTION_HOUSE,
     general.token_account,
     general.mint_address,
     TREASURY_MINT,
@@ -87,9 +87,9 @@ export const createRemoveAskIX = async (
     wallet: wallet?.wallet?.adapter?.publicKey,
     tokenAccount: new PublicKey(general.token_account),
     tokenMint: new PublicKey(general.mint_address),
-    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
-    auctionHouse: new PublicKey(AUCTION_HOUSE),
-    auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
+    authority: new PublicKey(ask?.auction_house_authority ?? AUCTION_HOUSE_AUTHORITY),
+    auctionHouse: new PublicKey(ask?.auction_house_key ?? AUCTION_HOUSE),
+    auctionHouseFeeAccount: new PublicKey(ask?.auction_house_fee_account ?? AH_FEE_ACCT),
     tradeState: tradeState[0],
     anchorRemainingAccounts: isPnft ? Object.values(cancelAnchorRemainingAccounts) : null
   }

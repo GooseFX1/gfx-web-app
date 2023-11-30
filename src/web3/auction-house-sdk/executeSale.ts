@@ -156,7 +156,9 @@ export const callExecuteSaleInstruction = async (
     tokenAccount: new PublicKey(general.token_account),
     metadata: new PublicKey(metaDataAccount),
     escrowPaymentAccount: escrowPaymentAccount[0],
-    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+    authority: new PublicKey(
+      isBuyingNow ? ask?.auction_house_authority ?? AUCTION_HOUSE_AUTHORITY : AUCTION_HOUSE_AUTHORITY
+    ),
     auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
     auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
     buyerTradeState: buyerTradeState[0]
@@ -217,7 +219,7 @@ export const callExecuteSaleInstruction = async (
       escrowPaymentAccount: escrowPaymentAccount[0],
       sellerPaymentReceiptAccount: new PublicKey(ask?.wallet_key),
       buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-      authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
       auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
       auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
       auctionHouseTreasury: auctionHouseTreasuryAddress[0],
@@ -236,9 +238,9 @@ export const callExecuteSaleInstruction = async (
       executeSaleInstructionArgs
     )
 
-    executeSaleIX.keys.at(4).isWritable = true
-    executeSaleIX.keys.at(9).isSigner = true
-    executeSaleIX.keys.at(9).isWritable = true
+    // executeSaleIX.keys.at(4).isWritable = true
+    // executeSaleIX.keys.at(9).isSigner = true
+    // executeSaleIX.keys.at(9).isWritable = true
 
     transaction.add(executeSaleIX)
   }

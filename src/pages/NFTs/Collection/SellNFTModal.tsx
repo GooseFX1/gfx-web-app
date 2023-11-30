@@ -525,29 +525,7 @@ export const SellNFTModal: FC<{
       )
         .then(async (res) => {
           // for pnft accept bid facing too long issue, so sending it separately, this is temp fix,find better solution
-          if (isPnft) {
-            const authority = process.env.REACT_APP_AUCTION_HOUSE_PRIVATE_KEY
-            const treasuryWallet = Keypair.fromSecretKey(bs58.decode(authority))
 
-            const pnftExecuteSaleSig = await wal.sendTransaction(executePnftAcceptBid, connection, {
-              signers: [treasuryWallet],
-              skipPreflight: true
-            })
-
-            attemptConfirmTransaction(
-              pnftExecuteSaleSig,
-              acceptBid ? 'ACCEPT_BID' : 'LIST',
-              removeAskIX ? true : false
-            )
-              .then((res) => console.log('Accepted bid', res))
-              .catch((err) => {
-                setIsLoading(false)
-                setPendingTxSig(null)
-                console.log(err)
-              })
-
-            console.log('Pnft tx confirmed', res)
-          }
           console.log('NFT tx confirmed', res)
         })
 
