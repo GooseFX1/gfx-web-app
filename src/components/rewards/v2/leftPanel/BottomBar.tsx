@@ -25,7 +25,7 @@ export default function RewardsStakeBottomBar({
     >
       <div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>
         <p css={[tw`mb-0 whitespace-nowrap`]}>Daily Rewards</p>
-        <p css={[tw` mb-0 text-black-4 dark:text-grey-5`]}>
+        <p css={[tw` mb-0 text-black-4 dark:text-grey-5 min-md:text-grey-5`]}>
           {calculating ? (
             <Skeleton height={'15px'} width={'60px'} borderRadius={'1rem'} highlightColor={'#37BB7D'} />
           ) : (
@@ -41,14 +41,14 @@ export default function RewardsStakeBottomBar({
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
             className={'!inline-flex !m-0 !my-auto'}
             color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-            tooltipIconClassName={'!ml-0'}
+            tooltipIconClassName={'!ml-0 text-blue-1 dark:text-white min-md:text-white'}
             showArrow={false}
             overrideIcon={'/img/assets/tooltip_holo.svg'}
           >
             <></>
           </Tooltip>
         </p>
-        <p css={[tw`mb-0 text-black-4 dark:text-grey-5`]}>7 Days</p>
+        <p css={[tw`mb-0 text-black-4 dark:text-grey-5 min-md:text-grey-5`]}>7 Days</p>
       </div>
     </div>
   )
