@@ -147,6 +147,27 @@ export const getsslPoolSignerKey = async (tokenMintAddress: PublicKey): Promise<
     return undefined
   }
 }
+
+const checkIfTokenAccExists = async (
+  tokenMintAddress: PublicKey,
+  wallet: PublicKey,
+  connection,
+  ataAddress: PublicKey
+) => {
+  const associatedTokenAccount = await connection.getAccountInfo(ataAddress)
+
+  // CHECK if the associated token account exists or not if not create one
+  if (!associatedTokenAccount) {
+    try {
+      const tr = createAssociatedTokenAccountInstruction(wallet, ataAddress, wallet, tokenMintAddress)
+      return tr
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  return null
+}
 export const executeWithdraw = async (
   program: Program<Idl>,
   wallet: WalletContextState,
@@ -164,6 +185,13 @@ export const executeWithdraw = async (
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
+  const withdrawTX: Transaction = new Transaction()
+
+  const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+
+  const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
+  if (createTokenAccIX) withdrawTX.add(createTokenAccIX)
+
   const withdrawInstructionAccount = {
     liquidityAccount: liquidityAccountKey,
     owner: walletPublicKey,
@@ -177,51 +205,21 @@ export const executeWithdraw = async (
   const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amountInNative), {
     accounts: withdrawInstructionAccount
   })
-  const withdrawTX: Transaction = new Transaction()
 
-  //sslchange: For sol - mechanism to unwrap from WRAP-SOL
+  withdrawTX.add(withdrawIX)
   if (token?.token === 'SOL') {
-    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
-    const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
-    try {
-      if (!associatedTokenAccount) {
-        const tr = createAssociatedTokenAccountInstruction(
-          walletPublicKey,
-          associatedTokenAccountAddress,
-          walletPublicKey,
-          NATIVE_MINT
-        )
-        withdrawTX.add(tr)
-      }
-    } catch (e) {
-      console.log(e)
-    }
-
-    withdrawTX.add(withdrawIX)
-    const tr = createCloseAccountInstruction(associatedTokenAccountAddress, walletPublicKey, walletPublicKey)
+    const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     withdrawTX.add(tr)
-    let signature
-    try {
-      signature = await wallet.sendTransaction(withdrawTX, connection)
-      console.log(signature)
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
-      return { confirm, signature }
-    } catch (error) {
-      console.log(error, 'withdraw error\n', signature)
-      return { error, signature }
-    }
-  } else {
-    withdrawTX.add(withdrawIX)
-    let signature
-    try {
-      signature = await wallet.sendTransaction(withdrawTX, connection)
-      console.log(signature)
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
-      return { confirm, signature }
-    } catch (error) {
-      console.log(error, 'withdraw error\n', signature)
-      return { error, signature }
-    }
+  }
+  let signature
+  try {
+    signature = await wallet.sendTransaction(withdrawTX, connection)
+    console.log(signature)
+    const confirm = await confirmTransaction(connection, signature, 'processed')
+    return { confirm, signature }
+  } catch (error) {
+    console.log(error, 'withdraw error\n', signature)
+    return { error, signature }
   }
 }
 
@@ -238,6 +236,12 @@ export const executeClaimRewards = async (
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
 
+  const claimTX: Transaction = new Transaction()
+  const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+
+  const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
+  if (createTokenAccIX) claimTX.add(createTokenAccIX)
+
   const claimIxAcc = {
     poolRegistry: poolRegistryAccountKey,
     owner: walletPublicKey,
@@ -249,51 +253,22 @@ export const executeClaimRewards = async (
   const claimIX: TransactionInstruction = await program.instruction.claimFees({
     accounts: claimIxAcc
   })
-  const claimTX: Transaction = new Transaction()
 
-  //sslchange: For sol - mechanism to unwrap from WRAP-SOL
+  claimTX.add(claimIX)
+
   if (token?.token === 'SOL') {
-    const associatedTokenAccountAddress = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
-    const associatedTokenAccount = await connection.getAccountInfo(associatedTokenAccountAddress)
-    try {
-      if (!associatedTokenAccount) {
-        const tr = createAssociatedTokenAccountInstruction(
-          walletPublicKey,
-          associatedTokenAccountAddress,
-          walletPublicKey,
-          NATIVE_MINT
-        )
-        claimTX.add(tr)
-      }
-    } catch (e) {
-      console.log(e)
-    }
-
-    claimTX.add(claimIX)
-    const tr = createCloseAccountInstruction(associatedTokenAccountAddress, walletPublicKey, walletPublicKey)
+    const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     claimTX.add(tr)
-    let signature
-    try {
-      signature = await wallet.sendTransaction(claimTX, connection)
-      console.log(signature)
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
-      return { confirm, signature }
-    } catch (error) {
-      console.log(error, 'withdraw error\n', signature)
-      return { error, signature }
-    }
-  } else {
-    claimTX.add(claimIX)
-    let signature
-    try {
-      signature = await wallet.sendTransaction(claimTX, connection)
-      console.log('SIGN', signature)
-      const confirm = await confirmTransaction(connection, signature, 'confirmed')
-      return { confirm, signature }
-    } catch (error) {
-      console.log(error, 'claim rewards error\n', signature)
-      return { error, signature }
-    }
+  }
+  let signature
+  try {
+    signature = await wallet.sendTransaction(claimTX, connection)
+    console.log('SIGN', signature)
+    const confirm = await confirmTransaction(connection, signature, 'processed')
+    return { confirm, signature }
+  } catch (error) {
+    console.log(error, 'claim rewards error\n', signature)
+    return { error, signature }
   }
 }
 
@@ -392,9 +367,9 @@ export const executeDeposit = async (
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
 
-  let createLiquidtyIX = undefined
+  let createLiquidityIX = undefined
   if (!liqAccData) {
-    createLiquidtyIX = await createLiquidityAccountIX(
+    createLiquidityIX = await createLiquidityAccountIX(
       program,
       walletPublicKey,
       liquidityAccountKey,
@@ -411,7 +386,7 @@ export const executeDeposit = async (
     connection,
     tokenMintAddress,
     token?.token,
-    createLiquidtyIX,
+    createLiquidityIX,
     walletPublicKey
   )
 }
