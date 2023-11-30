@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { useCrypto, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -112,30 +111,48 @@ export const ClosePosition: FC<{
     setPercentageindex(index)
   }
 
-  const entryPrice = useMemo(() => {
-    return traderInfo.averagePosition.price
-  }, [traderInfo, activeProduct])
+  const entryPrice = useMemo(() => traderInfo.averagePosition.price, [traderInfo, activeProduct])
 
-  const totalExitQty = useMemo(() => {
-    return getExitQuntity(traderInfo.balances, activeProduct)
-  }, [traderInfo, activeProduct])
+  const totalExitQty = useMemo(
+    () => getExitQuntity(traderInfo.balances, activeProduct),
+    [traderInfo, activeProduct]
+  )
 
-  const totalExitQtyNumber = useMemo(() => {
-    return getExitQuantityInNumber(traderInfo.balances, activeProduct)
-  }, [traderInfo, activeProduct])
+  const totalExitQtyNumber = useMemo(
+    () => getExitQuantityInNumber(traderInfo.balances, activeProduct),
+    [traderInfo, activeProduct]
+  )
+
+  const getFractionalCustomAmount = (customAmount: string) => {
+    const side = traderInfo.averagePosition.side
+    const fractionalCustomAmount = convertToFractional(customAmount)
+    if (side === 'sell') {
+      const negativeCustomAmount = mulFractionals(
+        new Fractional({
+          m: new anchor.BN(-1),
+          exp: new anchor.BN(0)
+        }),
+        fractionalCustomAmount
+      )
+      return negativeCustomAmount
+    } else {
+      return fractionalCustomAmount
+    }
+  }
 
   const selectedExitQty = useMemo(() => {
     if (!percentageIndex && customAmount) {
-      return convertToFractional(customAmount)
+      return getFractionalCustomAmount(customAmount)
     } else {
       const multiplier = percentDetails[percentageIndex]?.value
       return mulFractionals(multiplier, totalExitQty)
     }
   }, [totalExitQty, percentageIndex, customAmount])
 
-  const exitPrice = useMemo(() => {
-    return getClosePositionPrice(displayFractional(selectedExitQty), orderBook)
-  }, [selectedExitQty, orderBook])
+  const exitPrice = useMemo(
+    () => getClosePositionPrice(displayFractional(selectedExitQty), orderBook),
+    [selectedExitQty, orderBook]
+  )
 
   const pnlNumber = useMemo(() => {
     if (!traderInfo.averagePosition.price) return '-'
@@ -193,7 +210,7 @@ export const ClosePosition: FC<{
     const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
     if (!isNaN(+inputAmt)) setInputValue(+inputAmt)
     if (!isNaN(+inputAmt) && +inputAmt) {
-      if (+inputAmt <= totalExitQtyNumber) {
+      if (+inputAmt <= Math.abs(totalExitQtyNumber)) {
         setPercentageindex(null)
         setCustomAmount(inputAmt)
       }
@@ -259,7 +276,7 @@ export const ClosePosition: FC<{
       </div>
       <div tw="flex flex-row justify-between">
         <span tw="text-regular font-semibold dark:text-grey-4 text-grey-1 mb-2.5 sm:text-tiny">Custom</span>
-        {inputValue > totalExitQtyNumber ? (
+        {inputValue > Math.abs(totalExitQtyNumber) ? (
           <span tw="text-red-1 font-semibold text-regular">Maximum quantity exceeded!</span>
         ) : null}
       </div>
