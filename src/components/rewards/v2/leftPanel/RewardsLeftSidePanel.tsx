@@ -142,7 +142,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     <div
       css={[
         tw`flex flex-col flex-1 flex-basis[60%] items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
-      leading-normal max-h-[60dvh] overflow-y-auto
+      leading-normal overflow-y-auto
     `
       ]}
     >
