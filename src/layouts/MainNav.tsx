@@ -233,7 +233,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
   return (
     <div
       css={[
-        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-white items-center flex flex-col
+        tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
         dark:text-grey-5 rounded-b-bigger block justify-center z-[999]`,
         isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
         playCloseAnimation ? tw`animate-slideOutTop` : tw``
@@ -591,8 +591,8 @@ const NavItem: FC<MainNavIconProps> = ({
         css={[
           tw`flex min-md:flex-col items-center justify-center h-full cursor-pointer
         px-4.5 py-1.25 min-md:p-0 rounded-full min-md:rounded-none h-12.5 min-md:h-auto
-        w-42 min-md:w-auto bg-grey-5 dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent
-        gap-2.5 min-md:gap-0.25
+        w-42 min-md:w-auto bg-white dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent
+        gap-2.5 min-md:gap-0.25 leading-[1]
         `
         ]}
         onClick={() => {
@@ -611,9 +611,9 @@ const NavItem: FC<MainNavIconProps> = ({
             alt={text}
           />
           <div css={[tw`flex gap-2.5`]}>
-            <p
+            <h5
               css={[
-                tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
+                tw`mb-0 text-average min-md:text-tiny uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
                 curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
               ]}
@@ -622,7 +622,7 @@ const NavItem: FC<MainNavIconProps> = ({
               // }}
             >
               {text}
-            </p>
+            </h5>
             {hasDropdown && (
               <img
                 css={[tw`w-3.5 min-md:w-2.25`]}
@@ -632,9 +632,9 @@ const NavItem: FC<MainNavIconProps> = ({
             )}
           </div>
         </div>
-        <p
+        <h3
           css={[
-            tw`mb-0 text-average min-md:text-smallest uppercase font-semibold tracking-wider
+            tw`mb-0 text-average min-md:text-tiny uppercase font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
             curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
@@ -643,7 +643,7 @@ const NavItem: FC<MainNavIconProps> = ({
           // }}
         >
           {text}
-        </p>
+        </h3>
       </div>
     )
   }, [mode, pathname, navigateToPath, isOpen, hasDropdown])
