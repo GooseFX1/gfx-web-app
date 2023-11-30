@@ -7,7 +7,7 @@ import { TotalLiquidityVolume } from './TotalLiquidityVolume'
 const WRAPPER = styled.div`
   font-size: 25px;
   font-weight: 600;
-  color: #eeeeee;
+  color: #f7f0fd;
 `
 
 export const AnalyticsStats: FC = () => (

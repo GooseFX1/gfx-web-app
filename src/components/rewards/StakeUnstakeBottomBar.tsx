@@ -80,7 +80,7 @@ const StakeBottomBar: FC<{ proposedStakeAmount: number }> = ({ proposedStakeAmou
           <p css={tw`mb-0 text-[15px] leading-[18px] text-black-4 dark:text-grey-5`}>Cooldown Period</p>
 
           <Tooltip
-            color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+            color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GO FX.'}
           >
             <img src="/img/assets/info-icon-transparent.svg" css={tw`w-[18px] h-[18px] ml-2`} />
@@ -99,7 +99,7 @@ const StakeBottomBar: FC<{ proposedStakeAmount: number }> = ({ proposedStakeAmou
       <div css={tw` flex flex-col`}>
         <p css={tw`mb-0 text-[13px] leading-[16px] `}>Approx. Daily Rewards</p>
         {calculating ? (
-          <Skeleton baseColor={'#EEE'} highlightColor={'#8ADE75'} height={'15px'} width={'66%'} />
+          <Skeleton baseColor={'#F7F0FD'} highlightColor={'#8ADE75'} height={'15px'} width={'66%'} />
         ) : (
           <p css={tw`mb-0 text-[15px] leading-[18px] text-white`}>${approxRewardAmount.toFixed(2)} USDC</p>
         )}
@@ -114,7 +114,7 @@ const StakeBottomBar: FC<{ proposedStakeAmount: number }> = ({ proposedStakeAmou
         <div css={tw`flex`}>
           <p css={tw`mb-0 text-[13px] leading-[16px]`}>Cooldown period</p>
           <Tooltip
-            color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+            color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
             overrideIcon={'/img/assets/info-icon-transparent.svg'}
             dark={false}

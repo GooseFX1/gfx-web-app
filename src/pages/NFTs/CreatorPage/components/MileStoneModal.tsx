@@ -19,7 +19,7 @@ const MODAL_WRAPPER = styled(Modal)`
       color: ${({ theme }) => theme.text11};
       &.active {
         background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-        color: #eeeeee;
+        color: #f7f0fd;
       }
     }
   }
@@ -49,7 +49,7 @@ const MODAL_WRAPPER = styled(Modal)`
       color: ${({ theme }) => theme.text11};
       &.active {
         background-color: ${({ theme }) => theme.primary3};
-        color: #eeeeee;
+        color: #f7f0fd;
       }
     }
   }

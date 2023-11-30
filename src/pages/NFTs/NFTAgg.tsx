@@ -25,10 +25,6 @@ const BODY_NFT = styled.div`
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-
-  * {
-    font-family: Montserrat;
-  }
 `
 const NFTAgg: FC = (): ReactElement => {
   const { path } = useRouteMatch()

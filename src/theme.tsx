@@ -60,7 +60,7 @@ export function colors(mode: string): Colors {
     text7: mode === 'dark' ? white : '#3C3C3C',
     text9: mode === 'dark' ? '#616161' : '#3C3C3C',
     text10: mode === 'dark' ? '#3C3C3C' : '#636363',
-    text11: mode === 'dark' ? '#eeeeee' : '#636363',
+    text11: mode === 'dark' ? '#F7F0FD' : '#636363',
     text12: mode === 'dark' ? '#909090' : '#636363',
     text13: mode === 'dark' ? 'rgba(255, 255, 255, 0.55)' : '#636363',
     text14: mode === 'dark' ? '#b1b1b1' : '#fff',
@@ -76,34 +76,34 @@ export function colors(mode: string): Colors {
     text24: mode === 'dark' ? '#EFEDED' : '#636363',
     text25: mode === 'dark' ? '#7D7D7D' : '#636363',
     text26: mode === 'dark' ? '#999999' : '#353535',
-    text27: mode === 'dark' ? '#b5b5b5' : '#eee',
+    text27: mode === 'dark' ? '#b5b5b5' : '#F7F0FD',
     text28: mode === 'dark' ? '#b5b5b5' : '#636363',
     text29: mode === 'dark' ? '#b5b5b5' : '#8d4cdd',
     text30: mode === 'dark' ? '#ffffff' : '#8d4cdd',
     text31: mode === 'dark' ? '#636363' : '#8d4cdd',
-    text32: mode === 'dark' ? '#eeeeee' : '#3C3C3C',
+    text32: mode === 'dark' ? '#F7F0FD' : '#3C3C3C',
     text33: mode === 'dark' ? '#b5b5b5' : '#3c3c3c',
     text34: mode === 'dark' ? '#636363' : '#b5b5b5',
     text37: mode === 'dark' ? '#b5b5b5' : '#636363',
     text35: mode === 'dark' ? '#3c3c3c' : '#636363',
     text36: mode === 'dark' ? '#3c3c3c' : '#9C9C9C',
     text38: mode === 'dark' ? '#ffffff' : '#5855ff',
-    text39: mode === 'dark' ? '#eeeeee' : '#5855ff',
+    text39: mode === 'dark' ? '#F7F0FD' : '#5855ff',
 
-    bidColor: mode === 'dark' ? '#eeeeee' : '#50bb35',
-    askColor: mode === 'dark' ? '#eeeeee' : '#f06565',
+    bidColor: mode === 'dark' ? '#F7F0FD' : '#50bb35',
+    askColor: mode === 'dark' ? '#F7F0FD' : '#f06565',
     textWhitePurple: mode === 'dark' ? '#fff' : '#8d4cdd',
 
     text1h: '#7d7d7d',
     comingSoon: mode === 'dark' ? '#262626' : '#b5b5b5',
-    themeToggleButton: mode === 'dark' ? '#1c1c1c' : '#eee',
+    themeToggleButton: mode === 'dark' ? '#1c1c1c' : '#F7F0FD',
     themeToggleContainer: mode === 'dark' ? '#131313' : 'white',
 
     // backgrounds / greys
     bg0: mode === 'dark' ? '#000' : '#fff',
     bg1: mode === 'dark' ? '#1e1e1e' : white,
-    bg2: mode === 'dark' ? '#131313' : '#eeeeee',
-    bg3: mode === 'dark' ? '#343434' : '#eeeeee',
+    bg2: mode === 'dark' ? '#131313' : '#F7F0FD',
+    bg3: mode === 'dark' ? '#343434' : '#F7F0FD',
     bg4: mode === 'dark' ? '#171717' : '#f4f4f4',
     bg5: mode === 'dark' ? black : '#e0e0e0',
     bg6: mode === 'dark' ? 'black' : 'gray',
@@ -115,15 +115,15 @@ export function colors(mode: string): Colors {
     swapSides1:
       mode === 'dark'
         ? 'linear-gradient(256deg, #2a2a2a 1.49%, #131313 93.4%)'
-        : 'linear-gradient(256deg, #fff 1.49%, #EEEEEE 93.4%)',
+        : 'linear-gradient(256deg, #fff 1.49%, #F7F0FD 93.4%)',
     swapSides2:
       mode === 'dark'
         ? 'linear-gradient(88.61deg, #2a2a2a 1.49%, #131313 93.4%)'
-        : 'linear-gradient(88.61deg, #fff 1.49%, #EEEEEE 93.4%)',
-    bg13: mode === 'dark' ? '#191919' : '#eee',
+        : 'linear-gradient(88.61deg, #fff 1.49%, #F7F0FD 93.4%)',
+    bg13: mode === 'dark' ? '#191919' : '#F7F0FD',
     bg14: mode === 'dark' ? '#1b1b1b' : '#555555',
     bg15: mode === 'dark' ? '#191919' : '#555555',
-    bg16: mode === 'dark' ? '#1E1E1E' : '#EEEEEE',
+    bg16: mode === 'dark' ? '#1E1E1E' : '#F7F0FD',
     bg17: mode === 'dark' ? '#272727' : '#e2e2e2',
     bg18: mode === 'dark' ? '#2a2a2a' : '#dadada',
     bg19: mode === 'dark' ? '#131313' : '#3c3c3c',
@@ -132,7 +132,7 @@ export function colors(mode: string): Colors {
     bg22: mode === 'dark' ? '#131313' : '#cacaca',
     bg23: mode === 'dark' ? '#1c1c1c' : '#cacaca',
     bg24: mode === 'dark' ? '#2A2A2A' : '#cacaca',
-    bg25: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
+    bg25: mode === 'dark' ? '#1c1c1c' : '#F7F0FD',
     bg26: mode === 'dark' ? '#1c1c1c' : '#d9d9d9',
     bg27: mode === 'dark' ? '#3c3c3c' : '#ffffff',
     bgForNFTCollection: mode === 'dark' ? '#131313' : '#ffffff',
@@ -172,11 +172,11 @@ export function colors(mode: string): Colors {
 
     // specialty colors
     appLayoutFooterBorder: mode === 'dark' ? '#c4c4c4' : '#dedede',
-    appLayoutFooterToggle: mode === 'dark' ? '#1c1c1c' : '#eee',
+    appLayoutFooterToggle: mode === 'dark' ? '#1c1c1c' : '#F7F0FD',
     cryptoOrderHeaderBorder: mode === 'dark' ? '#9f9f9f' : white,
     tabsGradients: ['#3735bb', '#5232b9', '#672fb7', '#792cb4', '#8829b1', '#9625ae'],
     textBox: mode === 'dark' ? '#484747' : '#ABABAB',
-    walletModalWallet: mode === 'dark' ? '#1c1c1c' : '#eeeeee',
+    walletModalWallet: mode === 'dark' ? '#1c1c1c' : '#F7F0FD',
     searchbarBackground: mode === 'dark' ? '#131313' : '#fff',
     searchbarSmallBackground: mode === 'dark' ? '#404040' : 'white',
     collectionHeader: mode === 'dark' ? 'linear-gradient(0, #131313 0%, transparent 100%)' : '#fff',
@@ -187,7 +187,7 @@ export function colors(mode: string): Colors {
 
     // card
     cardBg: mode === 'dark' ? '#171717' : 'rgba(114, 114, 114, 1)',
-    tableBorder: mode === 'dark' ? '#3C3C3C' : '#eeeeee',
+    tableBorder: mode === 'dark' ? '#3C3C3C' : '#F7F0FD',
     dropdownBackground: mode === 'dark' ? '#1c1c1c' : '#ffffff',
 
     //color changing options
@@ -235,11 +235,11 @@ export function colors(mode: string): Colors {
 
     // nft detail
     nftDetailBackground: mode === 'dark' ? '#2a2a2a' : '#f4f4f4',
-    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#eeeeee',
+    sweepModalCard: mode === 'dark' ? '#1F1F1F' : '#F7F0FD',
     sweepPriceCard: mode === 'dark' ? '#131313' : '#727272',
     sweepProgressCard: mode === 'dark' ? '#222222' : '#d9d9d9',
 
-    profileTabContainerBg: mode === 'dark' ? '#2A2A2A' : '#EEEEEE',
+    profileTabContainerBg: mode === 'dark' ? '#2A2A2A' : '#F7F0FD',
     // tab content current bid
     tabContentBidBackground: mode === 'dark' ? '#2A2A2A' : '#fff',
     tabContentBidFooterBackground:
@@ -262,7 +262,7 @@ export function colors(mode: string): Colors {
     tabNameColor: mode === 'dark' ? '#616161' : '#8F8F8F',
 
     // farm
-    farmContainerBg: mode === 'dark' ? '#1e1e1e' : '#eee',
+    farmContainerBg: mode === 'dark' ? '#1e1e1e' : '#F7F0FD',
     farmHeaderBg: '#2a2a2a',
     solPillBg: mode === 'dark' ? '#111' : '#313131',
     stakePillBg: mode === 'dark' ? '#1e1e1e' : 'rgba(49, 49, 49, 0.5)',
@@ -332,7 +332,6 @@ export function text(mode: string): Text {
   return {
     fontFamily: 'Montserrat',
     mainText: css`
-      font-family: 'Montserrat';
       font-stretch: normal;
       font-style: normal;
       line-height: normal;

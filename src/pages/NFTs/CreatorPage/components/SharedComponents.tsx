@@ -158,7 +158,7 @@ const NEXT_BUTTON_WRAPPER = styled.div`
   }
   .ant-btn.activeButton {
     background-color: ${({ theme }) => theme.primary3};
-    color: #eeeeee;
+    color: #f7f0fd;
   }
 `
 

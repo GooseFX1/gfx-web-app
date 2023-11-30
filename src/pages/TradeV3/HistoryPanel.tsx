@@ -144,7 +144,7 @@ const POSITIONS = styled.div`
   height: calc(100% - 57px);
 
   .positions {
-    ${tw`w-full h-10 p-0 text-sm font-semibold dark:text-[#EEEEEE] text-[#3C3C3C]`}
+    ${tw`w-full h-10 p-0 text-sm font-semibold dark:text-grey-5 text-[#3C3C3C]`}
     span {
       ${tw`w-[11.1%] inline-block`}
     }
@@ -490,7 +490,11 @@ export const HistoryPanel: FC = () => {
             {tabs.map((item, index) => (
               <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
                 <div className="white-background">
-                  <div className={index === activeTab ? 'active tab' : 'tab'} onClick={() => setActiveTab(index)}>
+                  <div
+                    className={index === activeTab ? 'active tab' : 'tab'}
+                    onClick={() => setActiveTab(index)}
+                    css={[tw`!text-regular !font-bold`]}
+                  >
                     {index === 1 ? (
                       <div className="open-order-header">
                         <div>{item}</div>

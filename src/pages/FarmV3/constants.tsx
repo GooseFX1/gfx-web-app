@@ -215,7 +215,7 @@ export const faqs = [
           href="https://docs.goosefx.io/features/farm/faq-ssl-v2"
           target="_blank"
           rel="noreferrer"
-          fontSize={13}
+          fontSize={15}
         >
           docs
         </GFX_LINK>

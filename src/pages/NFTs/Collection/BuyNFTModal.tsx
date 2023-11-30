@@ -198,7 +198,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
   }
   .sellButton {
     ${tw`w-[520px] sm:ml-0 ml-1.5 sm:h-[50px] sm:w-[calc(100vw - 48px)] sm:text-[15px]
-    sm:bottom-[0px] cursor-pointer text-[#EEEEEE] rounded-[50px] sm:h-[45px]
+    sm:bottom-[0px] cursor-pointer text-grey-5 rounded-[50px] sm:h-[45px]
      border-none  h-[56px] text-white text-[18px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
       ${tw`text-[#636363] cursor-not-allowed`}
@@ -209,7 +209,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     ${tw`!bg-blue-1`}
   }
   .semiSellButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]   cursor-pointer text-[#EEEEEE]
+    ${tw`w-[250px] mr-4 sm:h-[50px]  sm:mr-3 sm:w-[42vw]  sm:text-[15px]   cursor-pointer text-grey-5
      rounded-[50px] border-none sm:max-w[180px]
      h-[56px] text-white text-[20px] font-semibold flex items-center bg-red-2 justify-center`}
     :disabled {
@@ -218,7 +218,7 @@ export const STYLED_POPUP_BUY_MODAL = styled(PopupCustom)<{ lockModal: boolean }
     }
   }
   .semiBuyButton {
-    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  cursor-pointer text-[#EEEEEE] 
+    ${tw`w-[250px] mr-4 sm:h-[50px] sm:text-[15px]  cursor-pointer text-grey-5
     rounded-[50px] border-none
      h-[60px] text-white text-[20px] font-semibold flex items-center   justify-center`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);

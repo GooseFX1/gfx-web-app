@@ -24,7 +24,7 @@ const SELECTED_PAIR = styled.div`
 
 const GRADIENT_BACKGROUND = styled.div`
   ${tw`h-full w-full rounded-[36px] dark:text-white text-black-4 
-    text-regular font-semibold flex justify-around items-center`}
+    text-regular font-bold flex justify-around items-center`}
   background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
 `
 

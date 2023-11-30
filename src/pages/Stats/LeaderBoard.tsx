@@ -194,7 +194,7 @@ const LeaderBoard: FC = () => {
             <div className="slider"></div>
             {leaderboardScreens.map((pool, index) => (
               <div
-                tw="w-[90px] h-10 flex justify-center items-center cursor-pointer font-semibold 
+                tw="w-[90px] h-10 flex justify-center items-center cursor-pointer font-bold
                 text-regular text-grey-2"
                 key={index}
                 onClick={() => {
@@ -210,13 +210,11 @@ const LeaderBoard: FC = () => {
             <div
               tw="absolute right-5 top-0 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
+              onClick={() => {
+                setHowToEarn(true)
+              }}
             >
-              <span
-                tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4 sm:text-tiny"
-                onClick={() => {
-                  setHowToEarn(true)
-                }}
-              >
+              <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
                 How to earn
               </span>
               <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />

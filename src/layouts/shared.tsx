@@ -6,10 +6,6 @@ export const Menu = styled.ul`
   width: fit-content;
   background-color: ${({ theme }) => theme.bg3};
   ${({ theme }) => theme.smallShadow}
-
-  * {
-    font-family: 'Montserrat' !important;
-  }
 `
 
 export const MenuItem = styled.li`

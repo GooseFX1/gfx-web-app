@@ -92,7 +92,7 @@ const WRAPPER = styled.div`
     }
     .ant-btn {
       background-color: ${({ theme }) => theme.primary3};
-      color: #eeeeee;
+      color: #f7f0fd;
       ${tw`h-11 rounded-[29px] px-10 mt-5`}
     }
     .image-uploaded-section {

@@ -29,7 +29,7 @@ const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
     cursor: pointer;
   }
   .active {
-    ${tw`text-[#3C3C3C] dark:text-[#EEEEEE]`}
+    ${tw`text-[#3C3C3C] dark:text-grey-5`}
     background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     padding: 2px;
   }
@@ -103,7 +103,7 @@ const ACCOUNT_ROW = styled.div<{ $height: boolean }>`
     ${tw`text-tiny font-semibold text-[#636363] dark:text-[#B5B5B5]`}
   }
   .value {
-    ${tw`text-tiny font-semibold text-[#3C3C3C] dark:text-[#EEEEEE]`}
+    ${tw`text-tiny font-semibold text-[#3C3C3C] dark:text-grey-5`}
   }
   .balances {
     ${tw`text-right`}
@@ -216,7 +216,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <div className="health-icon">
           <span className="key">Health</span>
           <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             The health bar shows how close you are to being liquidated.{' '}
           </Tooltip>
         </div>
@@ -252,7 +252,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
           >
             Unrealized P&L
           </span>
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             The total profit and loss from your positions in your account{' '}
           </Tooltip>
         </div>
@@ -261,7 +261,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span className="key">User Volume</span>
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             User volume refers to the total volume of trades made by you. The higher your volume, the greater your
             chances of receiving rewards in the competition{' '}
           </Tooltip>
@@ -271,7 +271,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span className="key">Balance</span>
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             Balance refers to the total value of your cash balance that you can use as collateral for opening new
             positions or maintaining existing ones. A negative balance indicates a notional position size greater
             than the amount deposited.{' '}
@@ -282,7 +282,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
           <span className="key">Margin Available</span>
-          <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             Margin Available is the amount of funds available in your account that can be used to open new
             positions or increase your position size. This is calculated based on your Balance and the margin
             requirements for the specific assets you are trading{' '}
@@ -294,7 +294,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
         <ACCOUNT_ROW $height={height}>
           <div className="tooltip-row">
             <span className="key">{ask + ' Liquidation Price'}</span>
-            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
               The Liquidation Price is the price at which your position will be automatically closed out by the
               trading platform if your margin falls below a certain threshold. The Liquidation Price is calculated
               based on the current market price, your position size, and the margin requirements for the specific
@@ -358,7 +358,12 @@ export const CollateralPanel: FC = (): JSX.Element => {
               onClick={index === 1 ? null : () => setActiveTab(index)}
             >
               <div className="white-background">
-                <div className={index === activeTab ? 'field activeTab' : 'field'}>{item}</div>
+                <div
+                  className={index === activeTab ? 'field activeTab' : 'field'}
+                  css={[tw`!text-regular !font-bold`]}
+                >
+                  {item}
+                </div>
               </div>
             </div>
           ))}

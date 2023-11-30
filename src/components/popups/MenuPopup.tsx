@@ -10,7 +10,6 @@ const WRAPPER = styled.div`
   height: 650px;
   width: 100%;
   bottom: 0;
-  font-family: Montserrat !important;
   background-color: ${({ theme }) => theme.bg9};
   border-radius: 20px 20px 0 0;
   position: absolute;

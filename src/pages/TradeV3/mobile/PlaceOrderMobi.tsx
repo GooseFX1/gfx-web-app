@@ -849,7 +849,7 @@ export const PlaceOrderMobi = () => {
       <div tw="flex flex-row mb-3">
         <INPUT_WRAPPER $rotateArrow={showMarketDrawer}>
           <div className="drawer">
-            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+            <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
               Limit order is executed only when the market reaches the amount you specify.{' '}
             </Tooltip>
             <div

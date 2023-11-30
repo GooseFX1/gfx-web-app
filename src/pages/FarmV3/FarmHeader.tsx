@@ -148,7 +148,7 @@ export const FarmHeader: FC = () => {
           <span key={card?.name}>
             <CARD_GRADIENT key={card?.name}>
               <INFO_CARD>
-                <div tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</div>
+                <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</h4>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
                   {card?.value}
                 </div>
@@ -176,9 +176,9 @@ export const FarmHeader: FC = () => {
 
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
-          <div tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
+          <h2 tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Single Asset Pools
-          </div>
+          </h2>
         </div>
         {/* {checkMobile() && (
           <div
@@ -212,9 +212,9 @@ export const FarmHeader: FC = () => {
                       width={40}
                       tw="mr-2.5"
                     />
-                    <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
+                    <h2 tw="text-lg font-semibold text-black-4 dark:text-grey-5 mr-auto sm:text-average">
                       {card?.token}
-                    </div>
+                    </h2>
                     <div
                       tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
                       rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[100px]"
@@ -226,19 +226,19 @@ export const FarmHeader: FC = () => {
                         alt="pool-type"
                         tw="mr-1.25 h-[21px] w-[19px]"
                       />
-                      <div
+                      <h4
                         tw="text-lg font-semibold text-black-4 dark:text-white 
                         text-regular font-semibold"
                       >
                         {card.assetType === 1 ? 'Primary' : card.assetType === 2 ? 'Hyper' : 'Stable'}
-                      </div>
+                      </h4>
                     </div>
                   </div>
                   <div tw="flex items-center leading-[22px] sm:mt-3.5">
-                    <div tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </div>
-                    <div tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">
+                    <h4 tw="text-grey-1 text-regular font-semibold dark:text-grey-2">APY: </h4>
+                    <h4 tw="text-black-4 text-regular font-semibold dark:text-grey-5 ml-1">
                       {card?.apy ? `${card.apy?.toFixed(2)}%` : '00.00%'}
-                    </div>
+                    </h4>
                   </div>
                 </POOL_CARD>
               ))

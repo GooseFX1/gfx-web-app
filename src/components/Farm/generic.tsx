@@ -35,13 +35,13 @@ export const GenericTooltip: FC<{ text: string; children?: any }> = ({ text, chi
   const { mode } = useDarkMode()
   if (children)
     return (
-      <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+      <Tooltip dark title={text} infoIcon={false} color={mode === 'dark' ? '#F7F0FD' : '#000'}>
         {children}
       </Tooltip>
     )
   return (
     <img className="info-icon" src={`/img/assets/info-icon.svg`} alt="" /> && (
-      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+      <Tooltip dark placement="bottomLeft" infoIcon={true} color={mode === 'dark' ? '#F7F0FD' : '#000'}>
         <span>{text}</span>
       </Tooltip>
     )

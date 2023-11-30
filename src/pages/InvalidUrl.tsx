@@ -29,7 +29,6 @@ const PAGE_CONTAINER = styled.div`
     right: 0px;
   }
   .not-found-message {
-    font-family: 'Montserrat';
     margin: 0 auto;
     color: ${({ theme }) => theme.text11};
     font-size: 25px;

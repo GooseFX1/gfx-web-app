@@ -280,7 +280,7 @@ export const CollateralPanelMobi = ({ setUserProfile }) => {
                 height="20"
                 className="heart-icon"
               />
-              <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+              <Tooltip color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
                 The health bar shows how close you are to being liquidated.{' '}
               </Tooltip>
             </div>

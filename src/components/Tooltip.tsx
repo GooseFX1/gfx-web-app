@@ -17,7 +17,6 @@ const ICON = styled(CenteredImg)<{ notDoxxed?: boolean; className?: string }>`
 const TEXT = styled.span`
   ${tw`text-[12px] pb-2.5`}
   color: ${({ theme }) => theme.text0};
-  font-family: 'Montserrat';
 `
 
 export const Tooltip: FC<{

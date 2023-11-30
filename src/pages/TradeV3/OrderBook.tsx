@@ -13,16 +13,16 @@ const HEADER = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   & div {
     ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
-    span {
-      ${tw`inline-block w-1/3 text-tiny font-medium`}
+    h5 {
+      ${tw`inline-block w-1/3 text-tiny`}
     }
-    span:nth-child(2) {
+    h5:nth-child(2) {
       ${tw`text-center`}
     }
-    span:nth-child(3) {
+    h5:nth-child(3) {
       ${tw`text-right`}
     }
-    div:nth-child(3) {
+    h5:nth-child(3) {
       ${tw`text-right w-1/3 justify-end`}
     }
   }
@@ -434,9 +434,9 @@ export const OrderBook: FC = () => {
     <WRAPPER>
       <HEADER>
         <div>
-          <span>Size ({ask})</span>
-          <span> Price ({bid})</span>
-          <span>Size ({ask})</span>
+          <h5>Size ({ask})</h5>
+          <h5> Price ({bid})</h5>
+          <h5>Size ({ask})</h5>
         </div>
       </HEADER>
       <ORDERS $visible={order.isHidden || (!orderBook.bids.length && !orderBook.asks.length)}>

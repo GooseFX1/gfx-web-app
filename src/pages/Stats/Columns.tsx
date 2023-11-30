@@ -141,7 +141,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
       {screenType !== 2 && (
         <th tw="w-[10%]">
           <Tooltip
-            color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+            color={mode === 'dark' ? '#F7F0FD' : '#3C3C3C'}
             title={
               <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                 Your PnL% reflects your return on investment, calculated using the current market price of your
@@ -158,7 +158,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
       )}
       <th tw="w-[10%]">
         <Tooltip
-          color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+          color={mode === 'dark' ? '#F7F0FD' : '#3C3C3C'}
           title={
             <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
               Hold an SMB NFT and earn loyalty for more points.
@@ -173,7 +173,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
       </th>
       <th tw="w-1/6">
         <Tooltip
-          color={mode === 'dark' ? '#EEEEEE' : '#3C3C3C'}
+          color={mode === 'dark' ? '#F7F0FD' : '#3C3C3C'}
           title={
             <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
               Trade often; higher loyalty equals more points.
@@ -244,8 +244,8 @@ export const HowToEarn: FC<{
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    nextArrow: <div> {currentSlide !== 3 && `Next`}</div>,
-    prevArrow: <div> {currentSlide !== 0 && `Previous`}</div>,
+    nextArrow: <div css={[tw`!text-regular !font-bold`]}> {currentSlide !== 3 && `Next`}</div>,
+    prevArrow: <div css={[tw`!text-regular !font-bold`]}> {currentSlide !== 0 && `Previous`}</div>,
     beforeChange: (current, next) => {
       setCurrentSlide(next)
     }
@@ -380,7 +380,9 @@ export const HowToEarn: FC<{
                 rel="noreferrer"
                 tw="block w-1/2 mx-auto my-0 sm:w-full"
               >
-                <div className="explore">Trade Now</div>
+                <div className="explore" css={[tw`!text-regular !font-bold`]}>
+                  Trade Now
+                </div>
               </Link>
             </div>
           </Slider>

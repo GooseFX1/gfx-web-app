@@ -8,9 +8,6 @@ export const StyledPopupProfile = styled(Modal)`
   @media (max-width: 500px) {
     max-width: 100%;
   }
-  * {
-    font-family: 'Montserrat' !important;
-  }
 
   ${({ theme }) => `
   background: ${theme.bg3};

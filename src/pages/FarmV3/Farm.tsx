@@ -19,9 +19,6 @@ const WRAPPER = styled.div`
     scrollbar-width: none; /* Firefox */
   }
 
-  * {
-    font-family: Montserrat;
-  }
   ${({ theme }) => theme.customScrollBar('0px')};
 `
 

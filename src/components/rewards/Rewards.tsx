@@ -200,7 +200,7 @@ const EarnRewards: FC = () => {
           />
         )}
         <Tooltip
-          color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+          color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
           infoIcon={false}
           title={
             userGoFxBalance.uiAmount > 0.0
@@ -413,7 +413,7 @@ const RewardsRightPanel: FC = () => {
       <div css={[tw`flex flex-col w-full  gap-3.75 min-md:gap-0 items-center`]}>
         <div css={[tw`flex flex-row `]}>
           <Tooltip
-            color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+            color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
             infoIcon={false}
             title={totalStaked > 0.0 ? `Approx. ${numberFormatter(totalStakedInUSD, 2)} USD` : ''}
           >
@@ -427,11 +427,11 @@ const RewardsRightPanel: FC = () => {
               Total Staked: {numberFormatter(totalStaked)} GOFX
             </p>
           </Tooltip>
-          <Tooltip className={'ml-0'} color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+          <Tooltip className={'ml-0'} color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}>
             <div css={[tw`flex flex-col gap-1 flex-wrap  `]}>
               <Tooltip
                 infoIcon={false}
-                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                 title={
                   totalStakedGlobally > 0.0
                     ? `Approx. ${numberFormatter(totalStakedGlobally * gofxValue, 2)} USD`

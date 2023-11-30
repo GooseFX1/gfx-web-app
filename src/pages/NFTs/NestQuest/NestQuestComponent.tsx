@@ -60,7 +60,6 @@ const STYLED_SHARE_PROFILE = styled.div`
       }
     }
     .share {
-      font-family: Montserrat;
       font-size: 22px;
       font-weight: 600;
       color: ${theme.textShareModal};
@@ -83,7 +82,6 @@ const STYLED_SHARE_PROFILE = styled.div`
     }
     .social-text {
       text-transform: capitalize;
-      font-family: Montserrat;
       font-size: 17px;
       font-weight: 500;
       text-align: center;

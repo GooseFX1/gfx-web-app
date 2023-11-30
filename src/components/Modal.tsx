@@ -68,7 +68,6 @@ export const Modal: FC<{
       bodyStyle={{
         borderRadius: '20px',
         maxHeight: '660px',
-        fontFamily: 'Montserrat',
         ...style
       }}
       centered
