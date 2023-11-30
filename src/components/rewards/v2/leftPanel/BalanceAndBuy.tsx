@@ -35,7 +35,12 @@ export default function RewardsWalletBalanceAndBuyGofx({
             )
           }
         >
-          <span css={[tw`text-average font-semibold text-grey-2 dark:text-grey-1 whitespace-nowrap`]}>
+          <span
+            css={[
+              tw`text-average font-semibold text-grey-2 dark:text-grey-1 whitespace-nowrap`,
+              userGoFxBalance.uiAmount > 0 && tw`dark:text-grey-5 text-black-4`
+            ]}
+          >
             {numberFormatter(userGoFxBalance.uiAmount)} GOFX
           </span>
         </Tooltip>
