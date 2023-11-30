@@ -31,7 +31,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         <div css={[tw`flex flex-col gap-2 items-center`]}>
           <p
             css={[
-              tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-normal`,
+              tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-[1]`,
               totalEarned > 0 && tw`opacity-100`
             ]}
           >

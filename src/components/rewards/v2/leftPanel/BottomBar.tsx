@@ -24,12 +24,12 @@ export default function RewardsStakeBottomBar({
       ]}
     >
       <div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>
-        <p css={[tw`mb-0 whitespace-nowrap`]}>Approx. Daily Rewards</p>
+        <p css={[tw`mb-0 whitespace-nowrap`]}>Daily Rewards</p>
         <p css={[tw` mb-0 text-black-4 dark:text-grey-5`]}>
           {calculating ? (
             <Skeleton height={'15px'} width={'60px'} borderRadius={'1rem'} highlightColor={'#37BB7D'} />
           ) : (
-            `${numberFormatter(approxRewardAmount)} USDC`
+            `≈ ${numberFormatter(approxRewardAmount)} USDC`
           )}
         </p>
       </div>
