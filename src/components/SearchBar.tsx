@@ -30,7 +30,6 @@ ${tw`relative sm:w-3/4`}
     background: ${({ bgColor, theme }) => (bgColor ? bgColor : theme.searchbarBackground)};
     flex: 1;
     color: ${({ theme }) => theme.text32};
-    font-family: 'Montserrat';
     border: transparent;
 
     ${tw`sm:w-full text-[15px] duration-500

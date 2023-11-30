@@ -49,7 +49,6 @@ import debounce from 'lodash.debounce'
 const NFT_AGG_WRAP = styled.div<{ $currency }>`
   height: 100%;
   transition: 0.5s ease;
-  font-family: 'Montserrat';
   font-style: normal;
   ${({ theme }) => theme.customScrollBar(0)}
   .addBorder {

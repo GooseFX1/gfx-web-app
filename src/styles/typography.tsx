@@ -1,12 +1,8 @@
 import styled, { AnyStyledComponent } from 'styled-components'
 import { Color } from '../types/theme'
-import { text } from '../theme'
 import tw from 'twin.macro'
 
-const { fontFamily } = text('Montserrat')
-
 export const H1 = styled.h1<{ $color: string }>`
-  font-family: 'Montserrat';
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -26,7 +22,6 @@ export const H1 = styled.h1<{ $color: string }>`
 `
 
 export const H2 = (color?: Color): AnyStyledComponent => styled.h2`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -48,7 +43,6 @@ export const H2 = (color?: Color): AnyStyledComponent => styled.h2`
 `
 
 export const H3 = (color?: Color): AnyStyledComponent => styled.h3`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -70,7 +64,6 @@ export const H3 = (color?: Color): AnyStyledComponent => styled.h3`
 `
 
 export const MainText = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -79,7 +72,6 @@ export const MainText = (t: AnyStyledComponent, color?: Color): AnyStyledCompone
 `
 
 export const TextSmall = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -98,7 +90,6 @@ export const TextSmall = (t: AnyStyledComponent, color?: Color): AnyStyledCompon
 `
 
 export const TextSmallBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -118,7 +109,6 @@ export const TextSmallBold = (t: AnyStyledComponent, color?: Color): AnyStyledCo
 `
 
 export const TextMedium = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -137,7 +127,6 @@ export const TextMedium = (t: AnyStyledComponent, color?: Color): AnyStyledCompo
 `
 
 export const TextMediumBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -157,7 +146,6 @@ export const TextMediumBold = (t: AnyStyledComponent, color?: Color): AnyStyledC
 `
 
 export const TextLarge = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -176,7 +164,6 @@ export const TextLarge = (t: AnyStyledComponent, color?: Color): AnyStyledCompon
 `
 
 export const TextLargeBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -196,7 +183,6 @@ export const TextLargeBold = (t: AnyStyledComponent, color?: Color): AnyStyledCo
 `
 
 export const TextXLarge = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -215,7 +201,6 @@ export const TextXLarge = (t: AnyStyledComponent, color?: Color): AnyStyledCompo
 `
 
 export const TextXLargeBold = (t: AnyStyledComponent, color?: Color): AnyStyledComponent => styled(t)`
-  font-family: ${fontFamily};
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -242,13 +227,11 @@ export const TXT_PRIMARY_GRADIENT = styled.span`
 `
 
 export const GFX_LINK = styled.a<{ fontSize?: number }>`
-  font-family: '${fontFamily}';
+  ${tw`text-purple-1 border-b-[2px] border-purple-1 border-solid`}
   font-stretch: normal;
   font-style: normal;
   letter-spacing: normal;
   font-weight: bold;
-  color: ${({ theme }) => theme.secondary4};
-  border-bottom: 2px solid ${({ theme }) => theme.secondary4};
   font-size: ${({ fontSize }) => (fontSize ? fontSize : '14')}px;
   line-height: ${({ fontSize }) => (fontSize ? fontSize + 2 : '16')}px;
 

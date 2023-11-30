@@ -19,7 +19,6 @@ const BODY = styled(CenteredDiv)<{ $mode: string }>`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: Montserrat;
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
@@ -276,7 +275,7 @@ export const Wrap: FC<{ setVisible?: (x: boolean) => void }> = () => {
     <BODY $mode={mode}>
       <div>
         <TITLE>Wrap / Unwrap SOL</TITLE>
-        <Tooltip placement="top" notInherit={true} color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <Tooltip placement="top" notInherit={true} color={mode === 'dark' ? '#F7F0FD' : '#000'}>
           You can now manually wrap SOL and unwrap wSOL here.
         </Tooltip>
       </div>
