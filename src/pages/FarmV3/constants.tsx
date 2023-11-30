@@ -55,7 +55,7 @@ export type SSLTableData = {
   apy: string
   fee: number
   volume: number
-  volume7D: number
+  totalVolume: number
 }
 
 export const poolType = {
@@ -113,7 +113,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 3000000
+      cappedDeposit: 3500000
     },
     {
       token: 'JITOSOL',
@@ -151,7 +151,7 @@ export const ADDRESSES: {
       token: 'BONK',
       name: 'BONK',
       address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 3000000
+      cappedDeposit: 3500000
     },
     {
       token: 'JITOSOL',
@@ -313,7 +313,8 @@ export const TOKEN_NAMES = {
 }
 
 export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
-export const TOTAL_METRICS = 'ssl-apis/getTotalMetrics'
+export const TOTAL_VOLUME = 'ssl-apis/getTotalVolumeSSL'
+export const TOTAL_FEES = 'ssl-apis/getTotalFeesSSL'
 export const IS_WHITELIST = '/wallet-apis/isWhitelist'
 export const SSL_CHARTS = '/ssl-apis/charts/prices/'
 export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
