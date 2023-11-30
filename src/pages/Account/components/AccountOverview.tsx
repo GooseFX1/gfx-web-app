@@ -6,7 +6,6 @@ import { useCrypto, useDarkMode, useOrderBook } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-
 import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { getPerpsPrice } from '../../TradeV3/perps/utils'
