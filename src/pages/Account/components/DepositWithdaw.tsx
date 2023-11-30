@@ -125,7 +125,6 @@ const DepositWithdrawHistory: FC = () => {
         limit: pagination.limit
       }
     })
-    console.log(res.data)
     setFundTransfers(res.data.data)
   }
   useEffect(() => {
