@@ -7,7 +7,6 @@ import { Modal, SearchBar } from '../../components'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'
-import useBlacklisted from '../../utils/useBlacklisted'
 
 const SELECTED_PAIR_CTN = styled.div`
   ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
@@ -230,7 +229,7 @@ const ModalHeader = ({ handleDropdownSearch }) => {
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   // const { isDevnet, setIsDevnet } = useCrypto()
-  // const isGeoBlocked = useBlacklisted()
+  // const {isGeoBlocked} = useConnectionConfig()
 
   // const handleToggle = (e: string) => {
   //   if (e === 'spot') setIsDevnet(true)

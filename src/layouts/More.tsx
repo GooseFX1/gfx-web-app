@@ -88,7 +88,13 @@ const Overlay = () => {
   const saveHandler = (e: BaseSyntheticEvent, type: string) => {
     e.preventDefault()
 
-    if (nodeURL.length === 0 || nodeURL === ' ' || nodeURL === endpoint) return
+    if (type === 'reset') {
+      setEndpointName(APP_RPC.name)
+      notify({ message: `Switched to ${APP_RPC.name} (${APP_RPC.network})` })
+      return
+    }
+
+    if (nodeURL.length === 0 || nodeURL === ' ' || !nodeURL.startsWith('https://') || nodeURL === endpoint) return
     const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
     window.localStorage.setItem(
@@ -100,13 +106,8 @@ const Overlay = () => {
       })
     )
 
-    if (type === 'custom') {
-      setEndpointName('Custom')
-      notify({ message: 'Switched to Custom' })
-    } else {
-      setEndpointName(APP_RPC.name)
-      notify({ message: `Switched to ${APP_RPC.name} (${APP_RPC.network})` })
-    }
+    setEndpointName('Custom')
+    notify({ message: 'Switched to Custom' })
   }
 
   const nodeURLHandler = ({ target }) => setNodeURL(target.value)

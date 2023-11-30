@@ -2,9 +2,8 @@ import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DropdownPairs } from '../DropdownPairs'
-import { useCrypto, useOrderBook, usePriceFeed } from '../../../context'
+import { useCrypto, useOrderBook, usePriceFeed, useConnectionConfig } from '../../../context'
 import { getPerpsPrice } from '../perps/utils'
-import useBlacklisted from '../../../utils/useBlacklisted'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
@@ -59,7 +58,7 @@ export const Header: FC = () => {
     tokenInfo
   } = usePriceFeed()
 
-  const isGeoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
   const [userProfile, setUserProfile] = useState<boolean>(false)
   // const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
@@ -137,9 +136,9 @@ export const Header: FC = () => {
               MAINNET
             </span>
             <span
-              className={'perps toggle ' + (isGeoBlocked ? 'geoblocked' : isDevnet ? 'selected' : '')}
+              className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
               key="perps"
-              onClick={isGeoBlocked ? null : () => handleToggle('spot')}
+              onClick={blacklisted ? null : () => handleToggle('spot')}
             >
               DEVNET
             </span>

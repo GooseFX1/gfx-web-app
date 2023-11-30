@@ -12,12 +12,12 @@ import {
   OrderDisplayType,
   useDarkMode,
   useOrderBook,
-  useWalletModal
+  useWalletModal,
+  useConnectionConfig
 } from '../../../context'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { Picker } from '../Picker'
 import { useWallet } from '@solana/wallet-adapter-react'
-import useBlacklisted from '../../../utils/useBlacklisted'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import 'styled-components/macro'
 import { Tooltip } from '../../../components'
@@ -511,7 +511,8 @@ export const PlaceOrderMobi = () => {
   const [profitPrice, setProfitPrice] = useState<number>(null)
   const elem = document.getElementById('dex-mobi-home')
   const { mode } = useDarkMode()
-  const isGeoBlocked = useBlacklisted()
+  const { blacklisted } = useConnectionConfig()
+  const isGeoBlocked = useMemo(() => blacklisted, [blacklisted])
 
   const handleOrderSide = (side) => {
     if (side !== order.side) {
