@@ -6,9 +6,11 @@ import useTimer from '../../../../hooks/useTimer'
 import { numberFormatter } from '../../../../utils'
 import { Loader } from '../../../Loader'
 import useBoolean from '../../../../hooks/useBoolean'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 function RewardsClaimButton(): JSX.Element {
   const { claimable, claimFees } = useRewards()
+  const { connected } = useWallet()
   const [isClaiming, setIsClaiming] = useBoolean(false)
   const { isDone, time } = useTimer({
     targetTime: {
@@ -22,9 +24,11 @@ function RewardsClaimButton(): JSX.Element {
     setIsClaiming.on()
     await claimFees().finally(setIsClaiming.off)
   }, [claimFees])
+  console.log(claimable, isDone, time)
+  const buttonDisabled = !connected || claimable <= 0 || (!isDone && claimable <= 0)
   return (
     <Button
-      disabled={claimable <= 0.0 || !isDone}
+      disabled={buttonDisabled || isClaiming}
       onClick={handleClaim}
       cssClasses={[
         tw`py-2.5 text-blue-1 bg-white opacity-50 font-bold max-w-[300px] w-full text-center h-10`,
@@ -32,11 +36,11 @@ function RewardsClaimButton(): JSX.Element {
       ]}
     >
       {isClaiming ? (
-        <Loader zIndex={2} />
-      ) : !isDone ? (
-        time
-      ) : claimable >= 0 ? (
+        <Loader zIndex={2} color={'blue-1'} />
+      ) : claimable > 0 && connected ? (
         `Claim ${numberFormatter(claimable)} USDC`
+      ) : !isDone && connected ? (
+        time
       ) : (
         'No USDC Claimable'
       )}

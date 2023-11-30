@@ -40,7 +40,7 @@ export default function useTimer({
   const getUtcTime = useCallback(
     (d: dayjs.Dayjs) => {
       if (!isUtc) return d
-      return d.utc(true)
+      return d.utc()
     },
     [isUtc]
   )
@@ -65,8 +65,21 @@ export default function useTimer({
     const currentTime = getUtcTime(dayjs())
 
     const offset = target.diff(currentTime)
-
+    const year = Math.floor(offset / (1000 * 60 * 60 * 24 * 30 * 12))
+    const month = Math.floor(offset / (1000 * 60 * 60 * 24 * 30))
+    const days = Math.floor(offset / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((offset % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((offset % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((offset % (1000 * 60)) / 1000)
+    const milliseconds = Math.floor((offset % 1000) / 100)
     const offsetDayjs = getUtcTime(dayjs(offset))
+      .year(year)
+      .month(month)
+      .day(days)
+      .hour(hours)
+      .minute(minutes)
+      .second(seconds)
+      .millisecond(milliseconds)
 
     setTime(offsetDayjs.format(format))
     setIsDone(offset <= 0)
