@@ -11,6 +11,8 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
     'https://docs.google.com/forms/d/e/1FAIpQLSeg1OzYlHdNqWiAEPl2QUZj7XwLvEpXAkGtWd4-H9SyyQe1DQ/viewform'
 }
 
+export const IS_UNDER_MAINTENANCE = false
+export const APP_DEFAULT_ROUTE = '/farm'
 export const SOLSCAN_BASE = 'https://api.solscan.io'
 
 export const SOL_TX_STATUS = {

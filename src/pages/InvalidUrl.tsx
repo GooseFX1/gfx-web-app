@@ -5,6 +5,7 @@ import { useDarkMode } from '../context'
 import { useHistory } from 'react-router-dom'
 import Lottie from 'lottie-react'
 import notFound from '../animations/404.json'
+import { APP_DEFAULT_ROUTE } from '../constants'
 
 const PAGE_CONTAINER = styled.div`
   width: 100vw;
@@ -73,7 +74,7 @@ const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = 
           status={'action'}
           width={'267px'}
           radius={'20px'}
-          onClick={() => history.push(redirectLink ? redirectLink : '/trade')}
+          onClick={() => history.push(redirectLink ? redirectLink : APP_DEFAULT_ROUTE)}
         >
           <span> {redirectString ? redirectString : `Go Back Home`}</span>
         </HOME_BTN>

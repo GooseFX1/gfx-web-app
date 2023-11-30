@@ -1,0 +1,15 @@
+<svg width="528" height="138" viewBox="0 0 528 138" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 127H171" stroke="#B5B5B5" stroke-width="3" stroke-linecap="round"/>
+<path d="M356 127H526.5" stroke="#B5B5B5" stroke-width="3" stroke-linecap="round"/>
+<rect x="172.5" y="1.5" width="182" height="135" rx="4.5" stroke="#3C3C3C" stroke-width="3"/>
+<rect x="187.5" y="14.5" width="35" height="110" rx="1.5" fill="#C27EFF" stroke="#3C3C3C" stroke-width="3"/>
+<rect x="245.5" y="14.5" width="37" height="64" rx="1.5" fill="#C27EFF" stroke="#3C3C3C" stroke-width="3"/>
+<rect x="244" y="89" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="303" y="105" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="303" y="116" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="244" y="100" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="244" y="111" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<rect x="244" y="121" width="40" height="5" rx="2.5" fill="#C27EFF"/>
+<path d="M305 17V91C305 92.6569 306.343 94 308 94H340C341.657 94 343 92.6569 343 91V17C343 15.3431 341.657 14 340 14H308C306.343 14 305 15.3431 305 17Z" stroke="#C27EFF" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 6"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M316.059 20.2416C316.213 20.087 316.418 20 316.634 20H336.586C336.95 20 337.132 20.4445 336.874 20.7006L332.931 24.6725C332.778 24.8271 332.572 24.9141 332.356 24.9141H312.409C312.045 24.9141 311.863 24.4695 312.121 24.2135L316.059 20.2416ZM316.059 35.0852C316.213 34.9305 316.418 34.8436 316.634 34.8436H336.586C336.95 34.8436 337.132 35.2881 336.874 35.5442L332.931 39.516C332.778 39.6707 332.572 39.7576 332.356 39.7576H312.409C312.045 39.7576 311.863 39.3131 312.121 39.057L316.059 35.0852ZM332.356 27.3739C332.572 27.3739 332.778 27.4609 332.931 27.6155L336.879 31.5874C337.137 31.8435 336.955 32.288 336.591 32.288H316.639C316.423 32.288 316.217 32.201 316.064 32.0464L312.121 28.0746C311.863 27.8185 312.045 27.3739 312.409 27.3739H332.356Z" fill="#C27EFF"/>
+</svg>
