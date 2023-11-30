@@ -365,7 +365,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
         isExpanded
-          ? tw`h-[115px] visible p-3.5 sm:h-[458px] sm:p-4`
+          ? tw`h-[115px] visible p-3.5 sm:h-auto sm:p-4`
           : tw`!h-0 invisible p-0 opacity-0 w-0 sm:h-[366px]`
       ]}
     >
@@ -465,7 +465,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         )}
         {isExpanded && (
           <>
-            <div tw="flex font-semibold duration-500 relative sm:mt-1">
+            <div tw="flex font-semibold duration-500 relative sm:my-1 sm:mb-[15px]">
               <div
                 css={[
                   tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,

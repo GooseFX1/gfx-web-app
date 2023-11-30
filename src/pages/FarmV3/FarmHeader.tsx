@@ -135,7 +135,7 @@ export const FarmHeader: FC = () => {
   return (
     <>
       <div>
-        <Snackbar cssStyle={tw`mb-5 dark:border-white border-black-1`} height={'auto'} width={'100%'}>
+        <Snackbar cssStyle={tw`mb-5 dark:border-white border-black-1 sm:w-[97%]`} height={'auto'} width={'100%'}>
           <div tw="dark:text-white text-black-1">
             Please note we did a recent upgrade to our SSL program and pending Jupiter integration volumes will be
             low, we aim to be reintegrated very soon
