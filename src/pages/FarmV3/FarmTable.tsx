@@ -101,7 +101,7 @@ const WRAPPER = styled.div`
       ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center
        dark:text-grey-5 text-black-4`}
       >span {
-        ${tw`w-1/2 h-1/2`}
+        ${tw`w-1/2`}
       }
     }
   }
@@ -357,7 +357,7 @@ export const FarmTable: FC = () => {
         <table tw="mt-4">
           <thead>
             <tr>
-              <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[30vw]">
+              <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[41%]">
                 <div className="sort" onClick={() => handleColumnSort('token')}>
                   {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
                 </div>
@@ -419,8 +419,8 @@ export const FarmTable: FC = () => {
                   </div>
                 </th>
               )}
-              <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[31vw]">
-                {TableHeaderTitle(`Pools: ${poolSize}`, null, false)}
+              <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
+                <div tw="items-center flex">{`Pools: ${poolSize}`}</div>
               </th>
             </tr>
           </thead>
@@ -561,8 +561,8 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         className={isExpanded && 'tableRowGradient'}
         onClick={() => setIsExpanded((prev) => !prev)}
       >
-        <td tw="!justify-start relative">
-          {userDepositedAmountUI !== '0.00' && (
+        <td tw="!justify-start relative sm:!w-[41%]">
+          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
@@ -626,8 +626,12 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             </Tooltip>
           </td>
         )}
-        {!checkMobile() && <td>{userDepositedAmountUI !== '0.00' ? userDepositedAmountUI : '0.00'}</td>}
-        <td tw="!w-[10%] pr-3 sm:!w-[33%] sm:pr-1">
+        {!checkMobile() && (
+          <td>
+            {userDepositedAmount ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals) : '00.00'}
+          </td>
+        )}
+        <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
           {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
