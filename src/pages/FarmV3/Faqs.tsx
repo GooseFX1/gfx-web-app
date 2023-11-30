@@ -51,7 +51,7 @@ export const Faqs: FC = () => (
          text-regular flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
         href="https://docs.goosefx.io/features/farm"
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
         Go To Docs
       </a>
