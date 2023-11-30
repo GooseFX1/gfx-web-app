@@ -9,7 +9,7 @@ const colors = {
   'grey-2': '#B5B5B5',
   'grey-3': '#7D7D7D',
   'grey-4': '#CACACA',
-  'grey-5': '#EEEEEE',
+  'grey-5': '#F7F0FD',
   'grey-6': '#E2E2E2',
   'grey-7': '#D9D9D9',
   'blue-1': '#5855FF',

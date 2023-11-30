@@ -31,7 +31,6 @@ const WRAPPER = styled.div`
   overflow-y: auto;
   min-height: 780px;
   z-index: 10;
-  font-family: 'Montserrat';
   font-style: normal;
 
   .ant-row {
@@ -86,7 +85,7 @@ const WRAPPER = styled.div`
   }
   .whiteText {
     ${tw`text-lg font-semibold`}
-    color: #eeeeee;
+    color: #F7F0FD;
   }
   .secondryText {
     ${tw`text-base font-semibold`}

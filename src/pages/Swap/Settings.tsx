@@ -107,7 +107,6 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: Montserrat;
     font-stretch: normal;
     font-style: normal;
     line-height: normal;
@@ -148,7 +147,7 @@ export const Settings: FC<{ setVisible?: (x: boolean) => void }> = ({ setVisible
     <BODY>
       <div>
         <TITLE>Slippage tolerance</TITLE>
-        <Tooltip notInherit={true} placement="topRight" color={mode === 'dark' ? '#eeeeee' : '#000'}>
+        <Tooltip notInherit={true} placement="topRight" color={mode === 'dark' ? '#F7F0FD' : '#000'}>
           The minimum amount on how many tokens you will accept, in the event that the price increases or
           decreases.
         </Tooltip>

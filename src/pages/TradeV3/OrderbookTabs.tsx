@@ -29,6 +29,11 @@ const HEADER_WRAPPER = styled.div`
       background: ${({ theme }) => theme.bg2} !important;
       color: ${({ theme }) => theme.text1} !important;
     }
+    .ant-radio-button-wrapper {
+      > span {
+        ${tw`text-regular font-bold`}
+      }
+    }
     .ant-radio-button-wrapper:last-child {
       border-radius: 0 !important;
     }

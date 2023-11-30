@@ -59,8 +59,8 @@ const INFO_STATS = styled.div`
     display: inline-flex;
     align-items: center;
   }
-  div:first-child {
-    ${tw`text-tiny font-medium`}
+  h4:first-child {
+    ${tw`text-regular`}
     color: ${({ theme }) => theme.text22};
   }
   .price {
@@ -122,13 +122,13 @@ const DEPOSIT_WRAPPER = styled.div<{ $isLocked: boolean }>`
 `
 
 const DEPOSIT_BTN = styled.div`
-  ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-tiny font-semibold`}
+  ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-regular font-bold`}
   background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   color: ${({ theme }) => theme.text11};
 `
 
 const RESET_LAYOUT_BUTTON = styled.div`
-  ${tw`h-[38px] text-tiny text-center flex items-center font-semibold underline cursor-pointer ml-auto`}
+  ${tw`h-[38px] text-tiny text-center flex items-center text-regular font-bold underline cursor-pointer ml-auto`}
   color: ${({ theme }) => theme.text11};
 `
 
@@ -307,6 +307,7 @@ export const InfoBanner: FC<{
       <div className="spot-toggle">
         <span
           className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
+          css={[tw`text-regular font-bold`]}
           key="spot"
           onClick={() => handleToggle('perps')}
         >
@@ -314,6 +315,7 @@ export const InfoBanner: FC<{
         </span>
         <span
           className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
+          css={[tw`text-regular font-bold`]}
           key="perps"
           onClick={blacklisted ? null : () => handleToggle('spot')}
         >
@@ -326,7 +328,7 @@ export const InfoBanner: FC<{
         <>
           <INFO_STATS>
             <>
-              <span className="price">Price</span>
+              <h4 className="price">Price</h4>
               <div>
                 {tokenPrice}
                 <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
@@ -361,7 +363,7 @@ export const InfoBanner: FC<{
          </INFO_STATS> */}
       {width > 1400 && (
         <INFO_STATS>
-          <div>Daily Range</div>
+          <h4>Daily Range</h4>
           {!range ? (
             <Loader />
           ) : (
@@ -381,7 +383,7 @@ export const InfoBanner: FC<{
       {
         <INFO_STATS>
           <>
-            <div>Open Interest</div>
+            <h4>Open Interest</h4>
             {!traderInfo.openInterests ? <Loader /> : <div> {openInterestFormatted} SOL</div>}
           </>
         </INFO_STATS>
@@ -390,7 +392,7 @@ export const InfoBanner: FC<{
         <INFO_STATS>
           <>
             <div tw="flex flex-row">
-              <div>1H Funding</div>
+              <h4>1H Funding</h4>
               <Tooltip
                 placement="rightTop"
                 notInherit={true}
@@ -418,7 +420,7 @@ export const InfoBanner: FC<{
       {
         <INFO_STATS>
           <>
-            <div>1YR Funding</div>
+            <h4>1YR Funding</h4>
             {!traderInfo.fundingRate ? (
               <Loader />
             ) : (

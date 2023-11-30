@@ -45,7 +45,7 @@ const WRAPPER = styled.div`
       color: #b5b5b5;
     }
     .mintDetails {
-      color: #eeeeee;
+      color: #f7f0fd;
     }
     .mintRow {
       padding-top: 10px;

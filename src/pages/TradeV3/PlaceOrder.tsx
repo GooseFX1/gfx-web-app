@@ -906,7 +906,10 @@ export const PlaceOrder: FC = () => {
             onClick={() => handleOrderSide('buy')}
           >
             <div className="holder">
-              <div className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}>
+              <div
+                className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}
+                css={[tw`text-regular font-bold`]}
+              >
                 {'Buy'}
               </div>
             </div>
@@ -916,7 +919,10 @@ export const PlaceOrder: FC = () => {
             onClick={() => handleOrderSide('sell')}
           >
             <div className="holder">
-              <div className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}>
+              <div
+                className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}
+                css={[tw`text-regular font-bold`]}
+              >
                 {'Sell'}
               </div>
             </div>
@@ -929,7 +935,7 @@ export const PlaceOrder: FC = () => {
             <INPUT_WRAPPER>
               <div className="label">Order Type</div>
               <div className={`dropdownContainer ${mode}`} onClick={handleDropdownClick}>
-                <div>{displayedOrder?.text}</div>
+                <div css={[tw`text-regular font-bold`]}>{displayedOrder?.text}</div>
                 <ArrowDropdown
                   arrowRotation={arrowRotation}
                   offset={[-115, 10]}
@@ -1076,7 +1082,7 @@ export const PlaceOrder: FC = () => {
               <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label">Take Profit</div>
                 <div className={`dropdownContainer ${mode} take-profit`}>
-                  <span className="green">
+                  <span className="green" css={[tw`text-regular font-bold`]}>
                     {takeProfitIndex === 0
                       ? 'None'
                       : takeProfitIndex !== null
@@ -1101,8 +1107,10 @@ export const PlaceOrder: FC = () => {
               </INPUT_WRAPPER>
               <INPUT_WRAPPER $halfWidth={true}>
                 <div className="label disable">Stop Loss</div>
-                <div className={`dropdownContainer ${mode} stop-loss`}>
-                  <span className="red">None</span>
+                <div className={`dropdownContainer ${mode} stop-loss`} css={[tw`text-regular font-bold`]}>
+                  <span className="red" css={[tw`text-regular font-bold`]}>
+                    None
+                  </span>
                   <ArrowDropdown
                     arrowRotation={false}
                     overlayClassName="takep-stopl-container"

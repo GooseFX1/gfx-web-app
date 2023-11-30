@@ -154,9 +154,6 @@ const componentDimensionsMd = [
 const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
   ${tw`relative flex w-full h-full flex-col pt-[24px] overflow-y-scroll overflow-x-hidden`}
 
-  * {
-    font-family: Montserrat;
-  }
   .layout {
     ${tw`w-[99%] mt-5 mx-auto mb-0 relative`}
     .react-grid-item.react-draggable:nth-child(4) {
@@ -175,7 +172,7 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
     .react-resizable-handle-se {
       background: ${({ $mode }) =>
         $mode === 'dark'
-          ? 'url(/img/assets/resizeArrow_dark.svg) center no-repeat #eeeeee'
+          ? 'url(/img/assets/resizeArrow_dark.svg) center no-repeat #F7F0FD'
           : 'url(/img/assets/resizeArrow_lite.svg) center no-repeat, linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%)'};
       height: 20px;
       width: 20px;
