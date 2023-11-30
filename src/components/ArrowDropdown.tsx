@@ -3,7 +3,6 @@ import { Dropdown, Row } from 'antd'
 import { CenteredDiv, SVGToWhite, SVGDynamicMode } from '../styles'
 import tw, { TwStyle, styled } from 'twin.macro'
 import 'styled-components/macro'
-import { useDarkMode } from '../context'
 
 const ARROW_CLICKER = styled(CenteredDiv)<{
   $arrowRotation?: boolean
@@ -57,32 +56,21 @@ export const ArrowDropdown: FC<{
   overlay: ReactElement | (() => ReactElement)
   children?: ReactElement | (() => ReactElement)
   [x: string]: any
-}> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, placement, children, ...props }) => {
-  const { mode } = useDarkMode()
-  return (
-    <Dropdown
-      align={{ offset }}
-      destroyPopupOnHide
-      onVisibleChange={onVisibleChange}
-      overlay={overlay}
-      placement={placement || 'bottomRight'}
-      trigger={['click']}
-      {...props}
-    >
-      <Row align="middle" wrap={false}>
-        {children}
-        <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
-          <img
-            src={
-              mode === 'dark'
-                ? `/img/assets/arrow-circle-down.svg`
-                : `/img/assets/arrow-circle-down-light-mode.svg`
-            }
-            alt="arrow"
-            className={'arrow-icon'}
-          />
-        </ARROW_CLICKER>
-      </Row>
-    </Dropdown>
-  )
-}
+}> = ({ arrowRotation, measurements, offset, onVisibleChange, overlay, placement, children, ...props }) => (
+  <Dropdown
+    align={{ offset }}
+    destroyPopupOnHide
+    onVisibleChange={onVisibleChange}
+    overlay={overlay}
+    placement={placement || 'bottomRight'}
+    trigger={['click']}
+    {...props}
+  >
+    <Row align="middle" wrap={false}>
+      {children}
+      <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
+        <SVGToWhite src={`/img/assets/arrow.svg`} alt="arrow" className={'arrow-icon'} />
+      </ARROW_CLICKER>
+    </Row>
+  </Dropdown>
+)

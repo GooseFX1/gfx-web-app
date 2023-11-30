@@ -46,7 +46,9 @@ const INFO_WRAPPER = styled.div`
   }
   .spot-toggle .toggle {
     ${tw`rounded-[36px] h-10 leading-[40px] inline-block text-center border-0 border-none align-middle w-[90px]`}
-    font-size: 14px;
+    font-size: 16px;
+    font-family: 'Montserrat';
+    font-weight: 600;
     color: ${({ theme }) => theme.text16};
   }
   .spot-toggle .geoblocked {
