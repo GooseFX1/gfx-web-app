@@ -442,7 +442,7 @@ const RewardsRightPanel: FC = () => {
               </Tooltip>
               {totalStaked > 0 && (
                 <p css={[tw`mb-0 `, totalStaked > 0.0 ? tw`opacity-100` : tw`min-md:opacity-[0.6]`]}>
-                  Staked Ratio ≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+                  My Stake Ratio ≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
                 </p>
               )}
             </div>
