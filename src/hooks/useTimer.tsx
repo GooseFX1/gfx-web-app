@@ -72,16 +72,21 @@ export default function useTimer({
     const minutes = Math.floor((offset % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((offset % (1000 * 60)) / 1000)
     const milliseconds = Math.floor((offset % 1000) / 100)
-    const offsetDayjs = getUtcTime(dayjs(offset))
-      .year(year)
-      .month(month)
-      .day(days)
-      .hour(hours)
-      .minute(minutes)
-      .second(seconds)
-      .millisecond(milliseconds)
 
-    setTime(offsetDayjs.format(format))
+    setTime(
+      getFormattedDate(
+        {
+          year,
+          month,
+          days,
+          hours,
+          minutes,
+          seconds,
+          milliseconds
+        },
+        format
+      )
+    )
     setIsDone(offset <= 0)
   }, [target, format, isUtc])
 
@@ -94,5 +99,68 @@ export default function useTimer({
   return {
     time,
     isDone
+  }
+}
+
+function getFormattedDate(data, format): string {
+  const newFormat = format
+    .replace(/\b(?:yyyy|m|dd|hh|mm|ss|sss)\b/gi, (match) => data[getMappedMatch(match)])
+    .replace(/(?:\[|])/gi, '')
+  return newFormat
+}
+
+function getMappedMatch(match) {
+  switch (match) {
+    case 'yyyy':
+    case 'YYYY':
+    case 'year':
+    case 'YEAR':
+    case 'years':
+    case 'YEARS':
+      return 'year'
+    case 'm':
+    case 'M':
+    case 'month':
+    case 'MONTH':
+    case 'months':
+    case 'MONTHS':
+      return 'month'
+    case 'dd':
+    case 'DD':
+    case 'day':
+    case 'DAY':
+    case 'days':
+    case 'DAYS':
+      return 'days'
+    case 'hh':
+    case 'HH':
+    case 'hour':
+    case 'HOUR':
+    case 'hours':
+    case 'HOURS':
+      return 'hours'
+    case 'mm':
+    case 'MM':
+    case 'minute':
+    case 'MINUTE':
+    case 'minutes':
+    case 'MINUTES':
+      return 'minutes'
+    case 'ss':
+    case 'SS':
+    case 'second':
+    case 'SECOND':
+    case 'seconds':
+    case 'SECONDS':
+      return 'seconds'
+    case 'sss':
+    case 'SSS':
+    case 'millisecond':
+    case 'MILLISECOND':
+    case 'milliseconds':
+    case 'MILLISECONDS':
+      return 'milliseconds'
+    default:
+      return match
   }
 }

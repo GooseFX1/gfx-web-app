@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
-
-function useBoolean(
-  initialValue = false
-): [boolean, { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }] {
+type useBooleanReturn = [
+  boolean,
+  { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+]
+function useBoolean(initialValue = false): useBooleanReturn {
   const [val, setVal] = useState(initialValue)
   const toggle = useCallback(() => setVal((prev) => !prev), [])
   const on = useCallback(() => setVal(true), [])
