@@ -24,7 +24,6 @@ function RewardsClaimButton(): JSX.Element {
     setIsClaiming.on()
     await claimFees().finally(setIsClaiming.off)
   }, [claimFees])
-  console.log(claimable, isDone, time)
   const buttonDisabled = !connected || claimable <= 0 || (!isDone && claimable <= 0)
   return (
     <Button
