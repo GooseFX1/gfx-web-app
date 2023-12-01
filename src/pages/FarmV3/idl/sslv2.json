@@ -488,6 +488,11 @@
           "isSigner": false
         },
         {
+          "name": "eventEmitter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -517,6 +522,11 @@
           "name": "owner",
           "isMut": true,
           "isSigner": true
+        },
+        {
+          "name": "eventEmitter",
+          "isMut": true,
+          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -591,6 +601,11 @@
           "isSigner": false
         },
         {
+          "name": "eventEmitter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
@@ -638,6 +653,11 @@
         },
         {
           "name": "poolRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventEmitter",
           "isMut": true,
           "isSigner": false
         },
