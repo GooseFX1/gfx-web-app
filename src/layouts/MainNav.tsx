@@ -632,10 +632,10 @@ const NavItem: FC<MainNavIconProps> = ({
             )}
           </div>
         </div>
-        <h3
+        <h6
           css={[
-            tw`mb-0 text-average min-md:text-tiny uppercase font-semibold tracking-wider
-            text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-0.5 min-md:h-4 hidden min-md:block`,
+            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
+            text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-1 hidden min-md:block`,
             curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
           // style={{
@@ -643,7 +643,7 @@ const NavItem: FC<MainNavIconProps> = ({
           // }}
         >
           {text}
-        </h3>
+        </h6>
       </div>
     )
   }, [mode, pathname, navigateToPath, isOpen, hasDropdown])
