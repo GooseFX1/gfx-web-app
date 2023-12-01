@@ -59,10 +59,10 @@ export const MainNav: FC = () => {
         `
         ]}
       >
-        <div css={tw`flex items-center gap-1 absolute cursor-pointer`} onClick={navigateHome}>
-          <img css={breakpoint.isMobile ? [tw`h-[28px]`] : [tw`h-[22px]`]} src={`/img/mainnav/g-logo.svg`} />
+        <div css={tw`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
+          <img css={breakpoint.isMobile ? [tw`h-[28px]`] : [tw`h-[22px]`]} src={`/img/mainnav/Icon.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img css={tw`h-[14px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+            <img css={tw`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
         </div>
 

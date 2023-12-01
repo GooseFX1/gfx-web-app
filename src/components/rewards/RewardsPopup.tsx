@@ -43,10 +43,7 @@ export const RewardsButton: FC = () => {
         />
 
         {hasRewards && (
-          <img
-            css={tw`absolute top-[5px] min-md:top-[1px] right-0`}
-            src={'/img/assets/red-notification-circle.svg'}
-          />
+          <div tw="absolute rounded-[50%] top-[1px] right-[-3px] sm:right-0 sm:top-[3px] h-2 w-2 bg-gradient-1" />
         )}
       </div>
     ),

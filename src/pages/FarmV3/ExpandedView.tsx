@@ -474,26 +474,26 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     : tw`absolute ml-0 duration-500`
                 ]}
               ></div>
-              <div
+              <h6
                 css={[
                   tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
-                  cursor-pointer dark:text-white text-grey-1 text-regular font-bold`,
+                  cursor-pointer dark:text-white text-grey-1 text-regular`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.DEPOSIT))}
               >
                 Deposit
-              </div>
-              <div
+              </h6>
+              <h6
                 css={[
                   tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
-                  cursor-pointer dark:text-white text-grey-1 text-regular font-bold`,
+                  cursor-pointer dark:text-white text-grey-1 text-regular`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.WITHDRAW))}
               >
                 Withdraw
-              </div>
+              </h6>
             </div>
           </>
         )}
