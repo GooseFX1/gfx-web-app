@@ -75,7 +75,11 @@ export const RewardsPopup: FC = () => {
         <div
           css={[
             tw`mt-auto  min-md:min-h-[441px] w-full flex flex-row md:flex-col
-           rounded-t-bigger max-h-[100dvh] bg-white dark:bg-black-6  relative`
+           rounded-t-bigger max-h-[100dvh] bg-white dark:bg-black-2 relative
+           rounded-t-[10px]
+           [&>div:first-child]:min-md:rounded-tl-[10px] [&>div:first-child]:min-md:rounded-tr-[0px]
+           [&>div:last-child]:min-md:rounded-tr-[10px]
+           `
           ]}
         >
           <Button onClick={() => rewardToggle(false)} cssClasses={[tw`absolute p-[inherit] right-2 top-2`]}>

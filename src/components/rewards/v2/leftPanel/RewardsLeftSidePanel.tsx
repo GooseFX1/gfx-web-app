@@ -153,10 +153,10 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         setStakeLoading={setIsStakeLoading.set}
       />
       <TopLinks />
-      <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3.75 mb-0 min-md:my-7.5`]}>
+      <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:my-7.5`]}>
         <RewardsLeftPanelHeading />
-        <div css={[tw`flex w-full flex-col gap-5 mt-2.5`]}>
-          <div css={[tw`flex flex-1 w-full flex-row flex-wrap gap-2.5`]}>
+        <div css={[tw`flex w-full flex-col gap-3 min-md:gap-5 mt-3 min-md:mt-2.5`]}>
+          <div css={[tw`flex flex-1 w-full flex-row flex-wrap gap-3 min-md:gap-y-5`]}>
             <RewardsWalletBalanceAndBuyGofx userGoFxBalance={userGoFxBalance} />
 
             <AnimatedButtonGroup
