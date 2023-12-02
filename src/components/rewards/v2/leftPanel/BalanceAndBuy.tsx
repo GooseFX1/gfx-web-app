@@ -3,8 +3,6 @@ import tw from 'twin.macro'
 import { numberFormatter } from '../../../../utils'
 import Button from '../../../twComponents/Button'
 import React from 'react'
-import { Tooltip } from '../../../Tooltip'
-import { useDarkMode } from '../../../../context'
 import useRewards from '../../../../context/rewardsContext'
 
 export default function RewardsWalletBalanceAndBuyGofx({
@@ -12,39 +10,38 @@ export default function RewardsWalletBalanceAndBuyGofx({
 }: {
   userGoFxBalance: TokenAmount
 }): JSX.Element {
-  const { mode } = useDarkMode()
   const { gofxValue } = useRewards()
   return (
     <div css={[tw`flex justify-between w-full items-center order-2 min-md:order-1`]}>
-      <div css={[tw`flex flex-wrap`]}>
-        <p css={[tw`text-regular min-md:text-average font-semibold text-grey-1 dark:text-grey-2 mb-0 `]}>
-          Wallet Balance:&nbsp;
-        </p>
-        <Tooltip
-          color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-          infoIcon={false}
-          showArrow={false}
-          placement={'topLeft'}
-          title={
-            userGoFxBalance.uiAmount > 0.0 ? (
-              <p css={[tw`mb-0 text-tiny font-semibold text-grey-5 dark:text-black-4`]}>
-                Approx {numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)} USD
-              </p>
-            ) : (
-              ''
-            )
-          }
-        >
-          <span
+      <div css={[tw`flex flex-col gap-1.5`]}>
+        <div css={[tw`flex flex-wrap items-center`]}>
+          <p css={[tw`mb-0 text-regular min-md:text-average font-semibold text-grey-1 dark:text-grey-2 mb-0 `]}>
+            Wallet Balance:&nbsp;
+          </p>
+          <p
             css={[
-              tw`text-average font-semibold text-grey-2 dark:text-grey-1 whitespace-nowrap`,
+              tw`mb-0 text-average font-semibold text-grey-2 dark:text-grey-1 whitespace-nowrap`,
               userGoFxBalance.uiAmount > 0 && tw`dark:text-grey-5 text-black-4`
             ]}
           >
             {numberFormatter(userGoFxBalance.uiAmount)} GOFX
-          </span>
-        </Tooltip>
+          </p>
+        </div>
+        <div css={[tw`flex flex-wrap items-center`]}>
+          <p css={[tw`mb-0 text-regular min-md:text-average font-semibold text-grey-1 dark:text-grey-2 mb-0 `]}>
+            ≈ USD Value:&nbsp;
+          </p>
+          <p
+            css={[
+              tw`mb-0 text-average font-semibold text-grey-2 dark:text-grey-1`,
+              userGoFxBalance.uiAmount > 0 && tw`dark:text-grey-5 text-black-4`
+            ]}
+          >
+            (${numberFormatter(gofxValue * userGoFxBalance.uiAmount, 2)})
+          </p>
+        </div>
       </div>
+
       <Button
         onClick={() => window.open('https://jup.ag/swap/USDC-GOFX', '_blank')}
         cssClasses={[

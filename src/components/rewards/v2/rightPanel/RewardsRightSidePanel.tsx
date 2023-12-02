@@ -41,59 +41,39 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
         </div>
         <div css={[tw`flex flex-col items-center`]}>
           <p css={[tw`mb-0 text-regular min-sm:text-average text-white flex items-center gap-1.25`]}>
-            Total Staked{' '}
+            Total Staked&nbsp;
             <Tooltip
               title={
-                <div
-                  css={[
-                    tw`flex flex-col gap-1.25 [&>p]:mb-0 text-tiny font-semibold text-grey-5 dark:text-black-4`
-                  ]}
-                >
-                  <p>Global Staked GOFX</p>
-                  <p>≈ {numberFormatter(totalStakedGlobally, 2)}</p>
-                  <p>My Stake Ratio</p>
-                  <p>≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%</p>
+                <div css={[tw`flex flex-col gap-1.25 [&>p]:mb-0 text-tiny font-semibold `]}>
+                  <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>Global Staked GOFX</p>
+                  <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>
+                    ≈ {numberFormatter(totalStakedGlobally, 2)}
+                  </p>
+                  <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>My Stake Ratio</p>
+                  <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>
+                    ≈ {stakeRatio == '0.00' ? '<0.01' : stakeRatio}%
+                  </p>
                 </div>
               }
               className={'!inline-flex !m-0 !my-auto'}
+              overlayClassName={'rewards-tooltip small'}
               color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-              tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4 min-sm:!h-4'}
+              tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4.5 min-sm:!h-4.5'}
               showArrow={false}
               overrideIcon={'/img/assets/tooltip_holo.svg'}
             >
               <></>
             </Tooltip>
           </p>
-          <Tooltip
-            showArrow={false}
-            infoIcon={false}
-            title={
-              totalStaked > 0 ? (
-                <p
-                  css={[
-                    tw`flex flex-col gap-1.25 [&>p]:mb-0 text-tiny font-semibold text-grey-5 dark:text-black-4`
-                  ]}
-                >
-                  ≈ {numberFormatter(gofxValue * totalStaked)} USD
-                </p>
-              ) : (
-                ''
-              )
-            }
-            className={'!inline-flex !m-0 !my-auto'}
-            color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-            tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4 min-sm:!h-4'}
-            overrideIcon={'/img/assets/tooltip_holo.svg'}
+
+          <p
+            css={[
+              tw`mb-0 text-regular min-sm:text-average opacity-60 text-white`,
+              totalStaked > 0 && tw`opacity-100`
+            ]}
           >
-            <p
-              css={[
-                tw`mb-0 text-regular min-sm:text-average opacity-60 text-white`,
-                totalStaked > 0 && tw`opacity-100`
-              ]}
-            >
-              {numberFormatter(totalStaked)} GOFX
-            </p>
-          </Tooltip>
+            {numberFormatter(totalStaked)} GOFX (≈ ${numberFormatter(gofxValue * totalStaked)})
+          </p>
         </div>
         <RewardsClaimButton />
       </div>

@@ -40,8 +40,10 @@ export default function RewardsStakeBottomBar({
           <Tooltip
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
             className={'!inline-flex !m-0 !my-auto'}
+            overlayClassName={'rewards-tooltip large'}
             color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-            tooltipIconClassName={'!ml-0 text-blue-1 dark:text-white min-md:text-white'}
+            tooltipIconClassName={`!ml-0 text-blue-1 dark:text-white min-md:text-white !w-5 !h-5
+             min-md:!w-4.5 min-md:!h-4.5`}
             showArrow={false}
             overrideIcon={'/img/assets/tooltip_holo.svg'}
           >
