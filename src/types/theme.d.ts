@@ -1,4 +1,3 @@
-import { Color } from './theme.d'
 import { FlattenSimpleInterpolation, ThemedCssFunction, CSSProp } from 'styled-components'
 //import tw from 'twin.macro'
 
@@ -129,8 +128,6 @@ export interface Colors {
   cardBg: Color
   boxShadow: Color
   fade: Color
-  // share modal
-  textShareModal: Color
 
   // share modal
   textShareModal: Color

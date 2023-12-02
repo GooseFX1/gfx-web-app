@@ -28,7 +28,7 @@ import {
   StringPublicKey,
   bnTo8
 } from '../../web3'
-import { ISingleNFT } from '../../types/nft_details.d'
+import { ISingleNFT } from '../../types/nft_details'
 import BN from 'bn.js'
 
 export const tokenSize: BN = new BN(1)

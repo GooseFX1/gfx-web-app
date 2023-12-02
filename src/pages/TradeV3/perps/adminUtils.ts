@@ -61,6 +61,7 @@ export const initializeMarketProductGroup = async (
       programId: new PublicKey(DEX_ID)
     })
   )
+
   instructions.push(
     await dexProgram.instruction.initializeMarketProductGroup(initializeProductGroupParams, {
       accounts: {

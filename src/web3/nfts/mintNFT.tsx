@@ -14,7 +14,7 @@ import {
   createMint,
   programIds
 } from '../index'
-import { IMetadataContext } from '../../types/nft_details.d'
+import { IMetadataContext } from '../../types/nft_details'
 import { updateMetadata } from './metadata'
 import { sendTransactionWithRetry } from '../transactions'
 import crypto from 'crypto-browserify'

@@ -14,7 +14,7 @@ import axios from 'axios'
 import { useHistory, useParams } from 'react-router-dom'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../../constants'
 import { commafy, checkMobile } from '../../../utils'
-import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details.d'
+import { ISingleNFT, INFTBid, INFTAsk, INFTGeneralData } from '../../../types/nft_details'
 import {
   useNFTProfile,
   useNFTDetails,

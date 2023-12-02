@@ -7,7 +7,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
 import { logData } from '../../api/analytics'
 import styled from 'styled-components'
-import { NestQuestSingleListing } from './NestQuest/NestQuestSingleListing'
 import { checkMobile } from '../../utils'
 import { dailyVisitData } from '../../api/NFTs'
 import tw from 'twin.macro'
@@ -90,9 +89,6 @@ const NFTAgg: FC = (): ReactElement => {
           <Switch>
             <Route exact path={path}>
               <NFTLandingPageV2 />
-            </Route>
-            <Route exact path={'/nfts/NestQuest'}>
-              <NestQuestSingleListing />
             </Route>
             <Route exact path="/nfts/collection/:collectionName">
               <CollectionV2 />

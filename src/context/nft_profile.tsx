@@ -1,5 +1,5 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { INFTProfile, INFTUserActivity, INFTProfileConfig } from '../types/nft_profile.d'
+import { INFTProfile, INFTUserActivity, INFTProfileConfig } from '../types/nft_profile'
 import { httpClient } from '../api'
 import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../api/NFTs'
 import { Connection } from '@solana/web3.js'

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useMemo, FC } from 'react'
 import { useNFTAggregator, useNFTProfile } from '../../../context'
-import { ISingleNFT } from '../../../types/nft_details.d'
+import { ISingleNFT } from '../../../types/nft_details'
 import { ParsedAccount } from '../../../web3'
 import { fetchNFTById } from '../../../api/NFTs'
 import { NFTTab } from '../NFTTab'
@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom'
 import { IAppParams } from '../../../types/app_params'
 import NFTDisplayV2 from './NFTDisplayV2'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
 
 type Props = {
   isSessionUser: boolean
@@ -103,7 +104,14 @@ export const ContentProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element
     if (currentUserProfile && currentUserParsedAccounts && currentUserParsedAccounts.length > 0) {
       const userCreated = currentUserParsedAccounts.filter(
         (nft: ParsedAccount) =>
-          nft.data.creators !== undefined && nft.data.creators.find((c) => c.address === currentUserProfile.pubkey)
+          nft.data.creators !== undefined &&
+          nft.data.creators.find((c) => {
+            // KEEP THIS - METAPLEX types are wrong against actual value -> states pubkey on types but its string
+            if (typeof c.address == 'string') {
+              return c.address === currentUserProfile.pubkey
+            }
+            return c.address.toBase58() === currentUserProfile.pubkey
+          })
       )
       setCreatedItems(userCreated)
     } else {

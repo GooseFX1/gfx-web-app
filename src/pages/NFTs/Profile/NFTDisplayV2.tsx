@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, Dispatch, Set
 import { ParsedAccount } from '../../../web3'
 import NoContent from './NoContent'
 import { useNFTAggregator, useNFTAggregatorFilters, useNFTDetails, useNFTProfile } from '../../../context'
-import { INFTGeneralData, ISingleNFT } from '../../../types/nft_details.d'
+import { INFTGeneralData, ISingleNFT } from '../../../types/nft_details'
 import 'styled-components/macro'
 import { NFT_COLLECTIONS_GRID } from '../Collection/CollectionV2.styles'
 import NFTLoading from '../Home/NFTLoading'
