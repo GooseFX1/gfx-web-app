@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+// port over to plugin-react-swc once we no longer need babel
+import react from '@vitejs/plugin-react'
 import macrosPlugin from 'vite-plugin-babel-macros'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
@@ -11,7 +12,11 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: ['babel-plugin-macros', 'babel-plugin-styled-components']
+      }
+    }),
     macrosPlugin(),
     nodePolyfills(),
     wasm(),

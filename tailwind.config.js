@@ -16,7 +16,7 @@ For more details: https://github.com/ben-rogerson/twin.examples/blob/master/cra-
 /* eslint-disable @typescript-eslint/no-var-requires */
 const config = require('./tailwindConfig')
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx,less}', './public/index.html'],
+  content: ['./src/**/*.{js,jsx,ts,tsx,less}', './index.html'],
   //purge: ['./src/**/*.{js,jsx,ts,tsx,less}', './index.html'],
   darkMode: 'class', //To enable dark mode using tailwind - using dark:classname
   theme: {
