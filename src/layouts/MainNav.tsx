@@ -615,7 +615,7 @@ const NavItem: FC<MainNavIconProps> = ({
           <div css={[tw`flex gap-2.5`]}>
             <h5
               css={[
-                tw`mb-0 text-average min-md:text-tiny uppercase font-semibold tracking-wider
+                tw`mb-0 text-average min-md:text-tiny capitalize font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
                 curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
               ]}
@@ -636,7 +636,7 @@ const NavItem: FC<MainNavIconProps> = ({
         </div>
         <h6
           css={[
-            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
+            tw`mb-0 text-smallest capitalize font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-1 hidden min-md:block`,
             curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
