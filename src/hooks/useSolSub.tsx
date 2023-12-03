@@ -1,6 +1,7 @@
 import { PublicKey } from '@solana/web3.js'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import SolanaSubscriber from '../utils/connectionSub'
+import { useConnectionConfig } from '../context'
 
 interface PubKeyButNoRetrieval {
   publicKey: PublicKey
@@ -35,11 +36,14 @@ function useSolSub(): {
   on: (sub: SolsSubs) => Promise<void>
   off: (id: string | string[]) => Promise<void>
 } {
+  const { endpoint } = useConnectionConfig()
+  useEffect(() => SolanaSubscriber.changeConnection(endpoint), [endpoint])
   const on = useCallback(async (sub: SolsSubs) => {
     console.log('ON SUB', sub)
 
     const pubkey = sub.publicKey || (await sub?.pubKeyRetrieval?.())
     if (!pubkey) {
+      console.log('CANCELLING SUB FOR: ', sub.id, ' NO PUBKEY')
       return
     }
     switch (sub.SubType) {
