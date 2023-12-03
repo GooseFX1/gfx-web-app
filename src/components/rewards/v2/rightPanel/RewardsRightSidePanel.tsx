@@ -59,6 +59,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
               overlayClassName={'rewards-tooltip small'}
               color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
               tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4.5 min-sm:!h-4.5'}
+              useTextWrapper={false}
               showArrow={false}
               overrideIcon={'/img/assets/tooltip_holo.svg'}
             >

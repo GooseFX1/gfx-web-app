@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 // port over to plugin-react-swc once we no longer need babel
 import react from '@vitejs/plugin-react'
+import eslint from 'vite-plugin-eslint'
 import macrosPlugin from 'vite-plugin-babel-macros'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
@@ -17,6 +18,7 @@ export default defineConfig(({ mode }) => ({
         plugins: ['babel-plugin-macros', 'babel-plugin-styled-components']
       }
     }),
+    eslint(),
     macrosPlugin(),
     nodePolyfills(),
     wasm(),

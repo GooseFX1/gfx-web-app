@@ -79,6 +79,7 @@ export const commafy = (num: number, decimal: number): string => {
 export const currencyUnits = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
 
 export const numberFormatter = (num: number, digits = 2): string => {
+  if (isNaN(num)) return '0.'.padEnd(digits, '0')
   const exponentNum = num.toExponential(digits)
   const splitNum = exponentNum.toLowerCase().split('e')
   const exponent = Number(splitNum[1])

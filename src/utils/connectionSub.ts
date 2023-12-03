@@ -8,14 +8,17 @@ class SolanaSub {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {
     this.subs = new Map()
-    this.connection = new Connection(APP_RPC.endpoint, 'confirmed')
+    this.connection = new Connection(APP_RPC.endpoint, 'processed')
   }
-
+  changeConnection = (endpoint: string) => {
+    if (endpoint === this.connection.rpcEndpoint) return
+    this.connection = new Connection(endpoint, 'processed')
+  }
   subscribeAccountChange = async (publicKey: PublicKey, subId: string, callback: () => void) => {
     if (this.subs.has(subId)) {
       await this.connection.removeAccountChangeListener(this.subs.get(subId).id)
     }
-    const id = await this.connection.onAccountChange(publicKey, callback, 'confirmed')
+    const id = await this.connection.onAccountChange(publicKey, callback, 'processed')
     this.subs.set(subId, {
       subId,
       id,
@@ -32,7 +35,7 @@ class SolanaSub {
     if (this.subs.has(subId)) {
       await this.connection.removeProgramAccountChangeListener(this.subs.get(subId).id)
     }
-    const id = await this.connection.onProgramAccountChange(programId, callback, 'confirmed')
+    const id = await this.connection.onProgramAccountChange(programId, callback, 'processed')
     this.subs.set(subId, {
       subId,
       id,
@@ -47,6 +50,6 @@ class SolanaSub {
   }
 }
 
-const solanaSub = new SolanaSub()
-const SolanaSubscriber = Object.freeze(solanaSub)
+const SolanaSubscriber = new SolanaSub()
+
 export default SolanaSubscriber
