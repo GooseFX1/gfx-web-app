@@ -173,6 +173,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
               index={isStakeSelected ? 0 : 1}
             >
               <Button
+                key={'stake'}
                 cssClasses={[
                   tw`text-center w-full flex flex-1  min-md:min-w-[85px] h-[40px] py-2.75 px-3`,
                   isStakeSelected && tw` text-white `
@@ -182,6 +183,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
                 Stake
               </Button>
               <Button
+                key={'unstake'}
                 cssClasses={[
                   tw`text-center w-full flex flex-1   min-md:min-w-[85px] h-[40px] py-2.75 px-3`,
                   !isStakeSelected && tw`text-white`

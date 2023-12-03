@@ -26,7 +26,11 @@ function AnimatedButtonGroup(
         ].concat(animatedButtonStyle ?? [])}
       />
       {children.map((child: ReactElement, idx) => (
-        <div css={[tw`z-[2] relative`].concat(buttonWrapperStyle ?? [])} ref={setButtonRef}>
+        <div
+          key={`animated_${idx}`}
+          css={[tw`z-[2] relative`].concat(buttonWrapperStyle ?? [])}
+          ref={setButtonRef}
+        >
           {cloneElement(child, {
             onClick: (...args: any) => {
               handleSlide(idx)

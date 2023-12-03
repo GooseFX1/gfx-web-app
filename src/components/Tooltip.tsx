@@ -34,6 +34,7 @@ export const Tooltip: FC<{
   overrideIcon?: string
   tooltipIconClassName?: string
   showArrow?: boolean
+  useTextWrapper?: boolean
 }> = ({
   dark,
   lite,
@@ -47,7 +48,8 @@ export const Tooltip: FC<{
   className,
   overrideIcon,
   tooltipIconClassName = '',
-  showArrow = true
+  showArrow = true,
+  useTextWrapper = true
 }) => {
   const { mode } = useDarkMode()
 
@@ -65,7 +67,7 @@ export const Tooltip: FC<{
       }}
       showArrow={showArrow}
       placement={placement}
-      title={<TEXT> {title ? title : children}</TEXT>}
+      title={useTextWrapper ? <TEXT>{title ? title : children} </TEXT> : title ? title : children}
       overlayClassName={overlayClassName}
     >
       {infoIcon ? (
