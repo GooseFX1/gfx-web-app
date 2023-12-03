@@ -137,6 +137,7 @@
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-styled-components": "^2.1.4",
     "eslint": "^7.1.1",
+    "postcss": "^8.4.32",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^3.5.0",
