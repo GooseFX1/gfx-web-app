@@ -28,6 +28,7 @@ const colors = {
   'primary-gradient-2': '#DC1FFF',
   'secondary-gradient-1': '#F7931A',
   'secondary-gradient-2': '#AC1CC7',
+  'blue-gradient-1': '#31309F',
   'gray-1': '#9A9A9A',
   'gray-2': '#636363',
   'gray-3': '#969696',

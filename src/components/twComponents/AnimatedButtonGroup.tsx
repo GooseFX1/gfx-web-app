@@ -1,6 +1,7 @@
 import React, { ReactElement, cloneElement, ReactNode, useRef } from 'react'
 import tw, { TwStyle } from 'twin.macro'
 import { useAnimateButtonSlide } from '../Farm/generic'
+import { useRewardToggle } from '../../context'
 
 interface AnimatedButtonGroupProps {
   children: ReactNode[]
@@ -10,13 +11,16 @@ interface AnimatedButtonGroupProps {
   index?: number
 }
 
-function AnimatedButtonGroup(
-  { children, containerStyle, animatedButtonStyle, buttonWrapperStyle }: AnimatedButtonGroupProps,
-  index = 0
-): JSX.Element {
+function AnimatedButtonGroup({
+  children,
+  containerStyle,
+  animatedButtonStyle,
+  buttonWrapperStyle
+}: AnimatedButtonGroupProps): JSX.Element {
   const slideRef = useRef<HTMLDivElement>()
   const buttonRefs = useRef<HTMLDivElement[]>([])
-  const { handleSlide, setButtonRef } = useAnimateButtonSlide(slideRef, buttonRefs, index)
+  const { panelIndex } = useRewardToggle()
+  const { handleSlide, setButtonRef } = useAnimateButtonSlide(slideRef, buttonRefs, panelIndex)
   return (
     <div css={[tw`relative`].concat(containerStyle ?? [])}>
       <div

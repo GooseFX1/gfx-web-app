@@ -2,10 +2,13 @@ import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, Se
 interface IRewardToggleConfig {
   rewardModal: boolean
   rewardToggle: Dispatch<SetStateAction<boolean>>
+  panelIndex: number
+  changePanel: (index: number) => void
 }
 const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
+  const [panelIndex, setPanelIndex] = useState<number>(0)
   const closeModalBox = (val: boolean) => {
     if (val) {
       setMode(val)
@@ -15,11 +18,14 @@ export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) 
       document.body.style.overflow = 'auto'
     }
   }
+  const changePanel = (index: number) => setPanelIndex(index)
   return (
     <RewardToggleContext.Provider
       value={{
         rewardModal: mode,
-        rewardToggle: closeModalBox
+        rewardToggle: closeModalBox,
+        panelIndex: panelIndex,
+        changePanel: changePanel
       }}
     >
       {children}
