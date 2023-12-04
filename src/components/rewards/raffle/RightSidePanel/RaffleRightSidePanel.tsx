@@ -9,10 +9,11 @@ import { Button } from '../../../Button'
 import { getRaffleDetails } from '../../../../api/rewards'
 import { RaffleContest } from '../../../../types/raffle_details'
 import PastTopPrizesPopup from '../../modals/RaffleTopPrizesPopup'
+import useBoolean from '../../../../hooks/useBoolean'
 
 const RaffleRightPanel = (): ReactElement => {
   const [raffleDetails, setRaffleDetails] = useState<RaffleContest>()
-  const [showPastPrize, setShowPastPrize] = useState(false)
+  const [showPastPrize, setShowPastPrize] = useBoolean(false)
 
   useEffect(() => {
     ;(async () => {
@@ -54,38 +55,34 @@ const RaffleRightPanel = (): ReactElement => {
 
   const showModals = useMemo(() => {
     if (showPastPrize)
-      return <PastTopPrizesPopup showPastPrize={showPastPrize} setShowPastPrize={setShowPastPrize} />
+      return <PastTopPrizesPopup showPastPrize={showPastPrize} setShowPastPrize={setShowPastPrize.off} />
   }, [showPastPrize])
 
   return (
-    <div tw="border h-full w-full">
+    <div tw="flex flex-col flex-1  gap-2.5 min-md:gap-7.5">
       {showModals}
-      <div tw="text-average font-semibold flex items-center justify-center">{raffleDetails?.contestName}</div>
-      <div>
-        <div tw="flex items-center w-full justify-center mt-8">
-          <PrizeItem prizeAmount={firstPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
-          <PrizeItem prizeAmount={secondPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
-          <PrizeItem prizeAmount={thirdPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
+      <p tw="text-average font-semibold flex items-center justify-center">{raffleDetails?.contestName}</p>
+      <div css={[tw`flex flex-col gap-2.5 min-md:gap-7.5`]}>
+        <div tw="flex flex-1 flex-wrap  items-center w-full justify-around ">
+          <PrizeItem position={'first'} prizeAmount={firstPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
+          <PrizeItem position={'second'} prizeAmount={secondPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
+          <PrizeItem position={'third'} prizeAmount={thirdPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
         </div>
 
-        <div tw="mt-8 text-white font-semibold text-average text-center flex justify-center">
+        <p tw="hidden min-md:flex text-white font-semibold text-average text-center justify-center">
           And 20,000 GOFX Distributed to <br /> winners from #4 to #20!
-        </div>
+        </p>
 
-        <div tw="mt-8 text-white font-semibold text-average flex justify-center">Next Raffle Starts In:</div>
+        <p tw="text-white font-semibold text-average flex justify-center">Next Raffle Starts In:</p>
 
-        <div tw="flex items-center justify-center mt-2.5">
-          <Button cssStyle={tw`flex justify-center w-[320px] h-10 text-blue-1 font-semibold text-average`}>
-            {<Countdown timestamp={raffleDetails?.contestStartTimestamp} />}
-          </Button>
-        </div>
-        <div
-          onClick={() => setShowPastPrize(true)}
-          tw="underline text-white font-semibold text-regular mt-2.5 flex
-        justify-center cursor-pointer"
+        <Countdown timestamp={raffleDetails?.contestStartTimestamp} />
+        <Button
+          onClick={setShowPastPrize.on}
+          cssStyle={tw`underline text-white font-semibold text-regular  flex
+        justify-center cursor-pointer`}
         >
           See Past Top Prices
-        </div>
+        </Button>
       </div>
     </div>
   )

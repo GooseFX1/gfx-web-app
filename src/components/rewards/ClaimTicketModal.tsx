@@ -18,14 +18,14 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
       <div
         css={[
-          tw`flex flex-col items-center justify-center w-screen min-md:w-[598px] h-[360px]
+          tw`flex flex-col items-center justify-center w-screen min-md:w-[598px] h-[380px] min-md:h-[263px]
         absolute min-md:static bottom-0 left-0 sm:animate-slideInBottom
       `
         ]}
       >
         <div
           css={[
-            tw`rounded-t-[10px] min-md:mt-[50%] min-md:mt-0 w-full  flex flex-col
+            tw`rounded-t-[10px] min-md:mt-[50%] min-md:mt-0 w-full flex flex-col
            justify-center items-center text-white text-lg font-semibold py-[10px] gap-[10px]`
           ]}
           style={{ background: 'linear-gradient(67deg, #22A668 0%, #194A5E 100%)' }}
