@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import { useRewardToggle } from '../../context/reward_toggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -10,6 +10,7 @@ import useRewards, { RewardsProvider } from '../../context/rewardsContext'
 import Button from '../twComponents/Button'
 
 import Rewards from './v2/Rewards'
+import Raffle from './raffle/Raffle'
 
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
@@ -67,8 +68,7 @@ export const RewardsButton: FC = () => {
 
 export const RewardsPopup: FC = () => {
   const { rewardToggle } = useRewardToggle()
-  const [panelIndex, setPanelIndex] = useState<number>(0)
-  console.log(setPanelIndex)
+  const { panelIndex } = useRewardToggle()
   return (
     <CryptoProvider>
       <RewardsProvider>
@@ -86,6 +86,7 @@ export const RewardsPopup: FC = () => {
             <img css={[tw`h-8.75 w-8.75`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
           </Button>
           {panelIndex == 0 && <Rewards />}
+          {panelIndex == 1 && <Raffle />}
         </div>
       </RewardsProvider>
     </CryptoProvider>

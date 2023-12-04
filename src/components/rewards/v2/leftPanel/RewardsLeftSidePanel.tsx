@@ -23,6 +23,8 @@ import { numberFormatter } from '../../../../utils'
 import TopLinks from '../TopLinks'
 import UnstakeConfirmationModal from '../../UnstakeConfirmationModal'
 import { Loader } from '../../../Loader'
+import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
+import HowItWorksButton from '../HowItWorksButton'
 
 export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
@@ -152,7 +154,10 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         onClose={setIsUnstakeConfirmationModalOpen.off}
         setStakeLoading={setIsStakeLoading.set}
       />
-      <TopLinks />
+      <CombinedRewardsTopLinks>
+        <TopLinks />
+        <HowItWorksButton />
+      </CombinedRewardsTopLinks>
       <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:my-7.5`]}>
         <RewardsLeftPanelHeading />
         <div css={[tw`flex w-full flex-col gap-3 min-md:gap-5 mt-3 min-md:mt-2.5`]}>
