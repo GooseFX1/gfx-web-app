@@ -12,6 +12,7 @@ import RewardsLeftLayout from '../layout/RewardsLeftLayout'
 import RewardsRightLayout from '../layout/RewardsRightLayout'
 import RaffleRightPanel from './RightSidePanel/RaffleRightSidePanel'
 import tw from 'twin.macro'
+import useBreakPoint from '../../../hooks/useBreakPoint'
 // import styled from 'styled-components'
 // import tw from "twin.macro";
 //
@@ -30,7 +31,7 @@ function Raffle(): JSX.Element {
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [myRecentWinnings, setMyRecentWinnings] = useState()
-
+  const { isMobile, isTablet } = useBreakPoint()
   useEffect(() => {
     // make api call to get raffle info
     ;(async () => {
@@ -46,7 +47,15 @@ function Raffle(): JSX.Element {
       <RewardsLeftLayout className={'no-scrollbar '}>
         <CombinedRewardsTopLinks>
           <TopLinks />
-          <HowItWorksButton />
+          <div css={[tw`flex gap-4 items-center`]}>
+            <p css={[tw`hidden min-md:block`]}>Points:&nbsp;0</p>
+            <HowItWorksButton
+              link={'linkToWinDocs'}
+              cssClasses={[(isMobile || isTablet) && tw`rounded-full w-[35px] h-[35px] text-lg font-bold`]}
+            >
+              {isMobile || isTablet ? '?' : 'How it works'}
+            </HowItWorksButton>
+          </div>
         </CombinedRewardsTopLinks>
 
         {!publicKey && <RaffleForWalletNotConnected />}
