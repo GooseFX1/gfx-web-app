@@ -87,7 +87,7 @@ export const RecentTrades: FC = () => {
       devnet: isDevnet,
       pairName: 'SOL-PERP'
     })
-    setTradeHistory(res.data)
+    setTradeHistory(res.data.data)
   }
 
   useEffect(() => {
