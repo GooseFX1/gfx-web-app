@@ -25,14 +25,14 @@ function AnimatedButtonGroup({
     <div css={[tw`relative`].concat(containerStyle ?? [])}>
       <div
         ref={slideRef}
-        css={[
-          tw`bg-white text-black min-md:bg-blue-1 h-7.5 rounded-[36px] z-[-1] absolute transition-all z-[1]`
-        ].concat(animatedButtonStyle ?? [])}
+        css={[tw`bg-white text-black min-md:bg-blue-1 h-7.5 rounded-[36px] z-[-1] absolute transition-all z-[1]`]
+          .concat(animatedButtonStyle ?? [])
+          .flat()}
       />
       {children.map((child: ReactElement, idx) => (
         <div
           key={`animated_${idx}`}
-          css={[tw`z-[2] relative`].concat(buttonWrapperStyle ?? [])}
+          css={[tw`z-[2] relative`].concat(buttonWrapperStyle ?? []).flat()}
           ref={setButtonRef}
         >
           {cloneElement(child, {

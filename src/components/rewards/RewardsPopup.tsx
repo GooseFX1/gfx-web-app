@@ -79,6 +79,7 @@ export const RewardsPopup: FC = () => {
            rounded-t-[10px]
            [&>div:first-child]:min-md:rounded-tl-[10px] [&>div:first-child]:min-md:rounded-tr-[0px]
            [&>div:last-child]:min-md:rounded-tr-[10px]
+           [& * p:not([data-tw*="mb-"])]:mb-0
            `
           ]}
         >

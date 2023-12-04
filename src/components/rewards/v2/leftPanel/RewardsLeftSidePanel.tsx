@@ -25,6 +25,7 @@ import UnstakeConfirmationModal from '../../UnstakeConfirmationModal'
 import { Loader } from '../../../Loader'
 import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
 import HowItWorksButton from '../HowItWorksButton'
+import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
 
 export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
@@ -141,13 +142,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     (!isStakeSelected && proposedStakeAmount > totalStaked)
 
   return (
-    <div
-      css={[
-        tw`flex flex-col flex-1 flex-basis[60%] items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
-      leading-normal overflow-y-auto
-    `
-      ]}
-    >
+    <RewardsLeftLayout>
       <UnstakeConfirmationModal
         amount={proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
@@ -238,6 +233,6 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       ) : (
         <RewardsUnstakeBottomBar />
       )}
-    </div>
+    </RewardsLeftLayout>
   )
 }

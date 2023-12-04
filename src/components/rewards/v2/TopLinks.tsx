@@ -12,13 +12,13 @@ function TopLinks(): JSX.Element {
       animatedButtonStyle={[tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 h-[35px]`]}
     >
       <Button
-        cssClasses={[tw`h-[35px] px-5 py-2.75`, panelIndex == 0 && tw`dark:text-white text-blue-1`]}
+        cssClasses={[tw`h-[35px] !px-5 !py-1.875`, panelIndex == 0 && tw`dark:text-white text-blue-1`]}
         onClick={() => changePanel(0)}
       >
         Earn
       </Button>
       <Button
-        cssClasses={[tw`h-[35px] px-5 py-2.75`, panelIndex == 1 && tw`dark:text-white text-blue-1`]}
+        cssClasses={[tw`h-[35px] !px-5 !py-1.875`, panelIndex == 1 && tw`dark:text-white text-blue-1`]}
         onClick={() => changePanel(1)}
       >
         Win

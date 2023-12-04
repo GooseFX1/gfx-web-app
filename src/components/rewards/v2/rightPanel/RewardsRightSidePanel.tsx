@@ -6,6 +6,7 @@ import { Tooltip } from '../../../Tooltip'
 import RewardsClaimButton from './RewardsClaimButton'
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
+import RewardsRightLayout from '../../layout/RewardsRightLayout'
 
 export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Element {
   const { totalEarned, totalStaked, gofxValue, totalStakedGlobally, userStakeRatio } = useRewards()
@@ -14,12 +15,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
   const totalEarnedString = numberFormatter(totalEarned, 2)
   const stakeRatio = numberFormatter(userStakeRatio, 2)
   return (
-    <div
-      css={[
-        tw`pt-0 pb-2.5 min-md:py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 leading-normal
-        bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 font-semibold  flex-1 flex-basis[40%] items-center`
-      ]}
-    >
+    <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 `]}>
       <h1 css={[tw`text-h2 min-md:text-h1 font-semibold !mb-0`]}>
         {apy == 0 ? (
           <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />
@@ -81,6 +77,6 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
       <h4 css={[tw`mb-0 text-center text-white font-semibold text-tiny min-md:text-regular font-semibold !mb-0 `]}>
         During cooldown no rewards will be earned
       </h4>
-    </div>
+    </RewardsRightLayout>
   )
 }
