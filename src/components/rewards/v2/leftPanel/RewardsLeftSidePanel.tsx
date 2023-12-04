@@ -20,7 +20,6 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token
 import useRewards from '../../../../context/rewardsContext'
 import RewardsUnstakeBottomBar from './UnstakeBottomBar'
 import { numberFormatter } from '../../../../utils'
-import TopLinks from '../TopLinks'
 import UnstakeConfirmationModal from '../../UnstakeConfirmationModal'
 import { Loader } from '../../../Loader'
 import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
@@ -150,8 +149,8 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         setStakeLoading={setIsStakeLoading.set}
       />
       <CombinedRewardsTopLinks>
-        <TopLinks />
-        <HowItWorksButton />
+        {/*<TopLinks />*/}
+        <HowItWorksButton cssClasses={[tw`ml-auto`]} />
       </CombinedRewardsTopLinks>
       <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:my-7.5`]}>
         <RewardsLeftPanelHeading />
