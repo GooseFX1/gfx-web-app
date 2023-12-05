@@ -153,6 +153,18 @@ const MESSAGE = styled.div`
     height: 20px;
   }
 `
+// const fetchUserMetaData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+//   const userMetadata = await stakeRewards.getUserMetaData(wallet)
+//   return userMetadata
+// }
+const fetchUserRewardsHoldingAmount = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+  const claimable = await stakeRewards.getUserRewardsHoldingAmount(wallet)
+  return claimable
+}
+// const fetchUnstakingTickets = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
+//   const unstakingTickets = await stakeRewards.getUnstakingTickets(wallet)
+//   return unstakingTickets
+// }
 const fetchAllRewardData = async (stakeRewards: GfxStakeRewards, wallet: PublicKey) => {
   // bulk operation to retrieve all cachable values of the contract
   const [userMetadata, stakePool, gofxVault, unstakingTickets, claimable] = await Promise.all([
@@ -287,78 +299,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return undefined
     }
   }, [pubKeys, stakeRewards])
-  // useEffect(() => {
-  //   const id = 'gofx-pool'
-  //   on({
-  //     SubType: SubType.AccountChange,
-  //     id,
-  //     pubKeyRetrieval: async () => {
-  //       const t = await stakeRewards.getGoFxVault()
-  //       if (!t) return null
-  //       return (t as any).address
-  //     },
-  //     callback: async () => {
-  //       const t = await stakeRewards.getGoFxVault()
-  //       console.log('goFxVault changed', t)
-  //       if (!t) return
-  //       const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
-  //       setTotalStakedGlobally(gfxVaultVal)
-  //       setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
-  //       setGofxVault(t)
-  //     }
-  //   })
-  //   return () => {
-  //     off(id)
-  //     return
-  //   }
-  // }, [stakeRewards, totalStaked])
-  // useEffect(() => {
-  //   const id = 'usermetadata-staking-claimable'
-  //   on({
-  //     SubType: SubType.AccountChange,
-  //     id,
-  //     pubKeyRetrieval: () => {
-  //       if (!walletContext.publicKey) return null
-  //       const [address] = PublicKey.findProgramAddressSync(
-  //         [TOKEN_SEEDS.userMetaData, walletContext.publicKey.toBuffer()],
-  //         GfxStakeRewards.programId
-  //       )
-  //       return address
-  //     },
-  //     callback: async () => {
-  //       const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
-  //       const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
-  //       setUserMetaData(newUserMetaData)
-  //       setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
-  //       setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
-  //       setUnstakeableTickets(newUnstakaebleTicekts)
-  //       setActiveUnstakingTickets(
-  //         newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
-  //       )
-  //       console.log('user meta data update')
-  //     }
-  //   })
-  //   return () => {
-  //     off(id)
-  //     return
-  //   }
-  // }, [walletContext.publicKey, stakeRewards, claimable])
-  // useEffect(() => {
-  //   const id = 'usdc-staking-claimable'
-  //   on({
-  //     SubType: SubType.AccountChange,
-  //     id,
-  //     pubKeyRetrieval: async () => await stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
-  //     callback: async () => {
-  //       const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
-  //       setClaimable(Number(newClaimable))
-  //     }
-  //   })
-  //   return () => {
-  //     off(id)
-  //     return
-  //   }
-  // }, [stakeRewards, walletContext.publicKey, unstakeableTickets])
+
   useEffect(() => {
     console.log(claimable, unstakeableTickets)
     setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
@@ -674,7 +615,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return ''
     })
     await confirmTransaction(connection, txnSig, 'confirmed')
-      .then(() => {
+      .then(async () => {
         notify({
           message: Notification(
             'Congratulations!',
@@ -687,6 +628,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             </>
           )
         })
+        const v = await fetchUserRewardsHoldingAmount(stakeRewards, walletContext.publicKey)
+        setClaimable(Number(v))
       })
       .catch((err) => {
         console.log('CLAIM_FAILED', err)
