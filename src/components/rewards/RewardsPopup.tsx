@@ -55,13 +55,13 @@ export const RewardsButton: FC = () => {
       css={[
         tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
             bg-grey-5 dark:bg-black-1 px-2.25 flex flex-row items-center gap-1.75 cursor-pointer
-            text-tiny font-semibold text-black-4 dark:text-white leading-normal
+            text-regular  text-black-4 dark:text-white leading-normal
        `,
         breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px]` : tw`h-[30px]`
       ]}
     >
       {riveComponent}
-      <span>Rewards</span>
+      <span css={[tw`font-bold`]}>Rewards</span>
     </div>
   )
 }
