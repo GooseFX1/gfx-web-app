@@ -9,18 +9,22 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
 import viteCompression from 'vite-plugin-compression'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { getThemeVariables } from 'antd/dist/theme'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
+    nodePolyfills(),
+    tsconfigPaths(),
     react({
+      include: /.(jsx|tsx)$/,
       babel: {
-        plugins: ['babel-plugin-macros', 'babel-plugin-styled-components']
+        plugins: ['babel-plugin-macros', 'styled-components']
       }
     }),
     eslint(),
     macrosPlugin(),
-    nodePolyfills(),
     wasm(),
     topLevelAwait(),
     requireTransform({}),
@@ -73,6 +77,10 @@ export default defineConfig(({ mode }) => ({
   css: {
     preprocessorOptions: {
       less: {
+        modifyVars: getThemeVariables({
+          dark: true
+          // compact: true,
+        }),
         javascriptEnabled: true
       }
     }
@@ -97,5 +105,8 @@ export default defineConfig(({ mode }) => ({
       sourcemap: false,
       maxParallelFileOps: 1
     }
+  },
+  resolve: {
+    alias: [{ find: /^~/, replacement: '' }]
   }
 }))
