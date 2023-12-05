@@ -56,4 +56,8 @@ To run the bundle analyzer please run:
 NODE_OPTIONS=--max-old-space-size=32000 npx vite-bundle-visualizer -c vite.config.ts
 ```
 
+```bash
+NODE_OPTIONS=--max-old-space-size=32000 yarn build
+```
+
 All Rights Reserved 2022 Copyright.

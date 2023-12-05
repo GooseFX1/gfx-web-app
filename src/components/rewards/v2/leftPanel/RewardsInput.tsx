@@ -1,6 +1,5 @@
 import { TokenAmount } from '@solana/web3.js'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Input, InputRef } from 'antd'
 import useRewards from '../../../../context/rewardsContext'
 import { getAccurateNumber } from '../../../../utils'
 import tw from 'twin.macro'
@@ -16,7 +15,7 @@ export default function RewardsInput({
   isStakeSelected,
   onInputChange
 }: RewardsInputProps): JSX.Element {
-  const inputRef = useRef<InputRef>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const { totalStaked } = useRewards()
   const [inputValue, setInputValue] = useState<number>(0.0)
   const handleHalf = useCallback(async () => {
@@ -82,12 +81,12 @@ export default function RewardsInput({
         </p>
       </div>
 
-      <Input
+      <input
         css={[
           tw`text-lg h-10  w-full rounded-[100px] bg-grey-5 text-black-4
             placeholder-grey-1  border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
             dark:bg-black-1 dark:text-grey-5 focus:dark:border-grey-2 active:dark:border-grey-2
-            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2 h-10
+            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2 h-10 text-right
             `
         ]}
         ref={inputRef}
