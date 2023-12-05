@@ -78,7 +78,7 @@ const INPUT = styled.input`
 
 const SetButton = styled.button`
   ${tw`h-[40px] w-[44px] flex justify-center items-center font-semibold 
-      text-regular bg-blue-1 cursor-pointer border-transparent rounded-r-full`}
+      text-regular !bg-blue-1 cursor-pointer border-transparent rounded-r-full`}
 `
 
 const Overlay = () => {
