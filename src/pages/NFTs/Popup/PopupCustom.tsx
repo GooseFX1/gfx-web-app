@@ -7,10 +7,6 @@ import { SVGDynamicReverseMode } from '../../../styles'
 import { useDarkMode } from '../../../context'
 
 export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
-  * {
-    font-family: 'Montserrat' !important;
-  }
-
   height: ${({ height }) => height};
   width: ${({ width }) => width} !important;
   background-color: ${({ theme }) => theme.bg3};

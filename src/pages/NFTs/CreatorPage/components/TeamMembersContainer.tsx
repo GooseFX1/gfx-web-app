@@ -82,7 +82,6 @@ const MEMBER_CONTAINER = styled.div`
     margin-bottom: 30px;
   }
   .text {
-    font-family: Montserrat;
     font-size: 15px;
     font-weight: 600;
     text-align: center;
@@ -102,7 +101,7 @@ const MEMBER_CONTAINER = styled.div`
     width: 322px;
     font-weight: 600;
     font-size: 20px;
-    color: #eeeeee;
+    color: #f7f0fd;
     margin-top: 10px;
     margin-bottom: 10px;
   }
@@ -126,7 +125,6 @@ const STYLED_INPUT = styled.input`
   padding: 0 ${({ theme }) => theme.margin(4)};
   margin: 0 ${({ theme }) => theme.margin(1.5)} ${({ theme }) => theme.margin(1)};
   .inputValue {
-    font-family: Montserrat;
     font-size: 22px;
     font-weight: 500;
     font-stretch: normal;

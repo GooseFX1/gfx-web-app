@@ -14,7 +14,6 @@ export const CENTER_WRAP = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 10%;
-  font-family: 'Montserrat';
   font-style: normal;
 `
 const WRAPPER = styled.div`
@@ -56,7 +55,7 @@ const WRAPPER = styled.div`
       cursor: no-drop;
       &.active {
         background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-        color: #eeeeee;
+        color: #f7f0fd;
         opacity: 1 !important;
         cursor: pointer;
       }

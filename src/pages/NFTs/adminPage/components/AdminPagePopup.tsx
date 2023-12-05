@@ -54,7 +54,7 @@ const WRAPPER = styled.div`
     font-weight: 600;
     font-size: 15px;
     line-height: 18px;
-    color: #eeeeee;
+    color: #f7f0fd;
     cursor: pointer;
   }
   .secondaryText {

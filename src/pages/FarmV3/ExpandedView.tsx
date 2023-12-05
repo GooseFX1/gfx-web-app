@@ -474,26 +474,26 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     : tw`absolute ml-0 duration-500`
                 ]}
               ></div>
-              <div
+              <h6
                 css={[
                   tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
-                  cursor-pointer dark:text-white text-grey-1`,
+                  cursor-pointer dark:text-white text-grey-1 text-regular`,
                   modeOfOperation === ModeOfOperation.DEPOSIT && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.DEPOSIT))}
               >
                 Deposit
-              </div>
-              <div
+              </h6>
+              <h6
                 css={[
                   tw`h-8.75 w-[100px] sm:w-[50%] z-10 flex items-center justify-center 
-                  cursor-pointer dark:text-white text-grey-1`,
+                  cursor-pointer dark:text-white text-grey-1 text-regular`,
                   modeOfOperation === ModeOfOperation.WITHDRAW && tw`!text-white`
                 ]}
                 onClick={() => (operationPending ? null : setModeOfOperation(ModeOfOperation.WITHDRAW))}
               >
                 Withdraw
-              </div>
+              </h6>
             </div>
           </>
         )}
@@ -522,7 +522,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     ? setDepositAmount(userTokenBalance ? '0.01' : '0')
                     : setWithdrawAmount(userDepositedAmount ? '0.01' : '0')
                 }
-                tw="font-semibold text-grey-1 dark:text-grey-2 ml-3 cursor-pointer"
+                tw="font-bold text-regular text-grey-1 dark:text-grey-2 ml-3 cursor-pointer"
               >
                 Min
               </div>
@@ -532,7 +532,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                     ? setDepositAmount(userTokenBalance ? String(userTokenBalance) : '0')
                     : setWithdrawAmount(userDepositedAmount ? userDepositInUSD : '0')
                 }
-                tw="font-semibold text-grey-1 dark:text-grey-2 ml-2 cursor-pointer"
+                tw="font-bold text-regular text-grey-1 dark:text-grey-2 ml-2 cursor-pointer"
               >
                 Max
               </div>
@@ -547,7 +547,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 placeholder={`0.00`}
                 value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
                 css={[
-                  tw` relative !text-regular font-semibold outline-none border-none 
+                  tw` relative !text-regular outline-none border-none
                   dark:text-white text-black-4`,
                   isExpanded
                     ? tw`w-[100%] h-8.75  dark:bg-black-1 bg-grey-5 p-1 pl-[100px] text-right`
@@ -556,7 +556,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 type="number"
                 key={modeOfOperation}
               />
-              <div css={[tw`font-semibold text-grey-1 dark:text-grey-2 text-[14px] pr-3`]}>{coin?.token}</div>
+              <div css={[tw`text-regular text-grey-1 dark:text-grey-2 text-[14px] pr-3`]}>{coin?.token}</div>
             </>
           )}
         </div>
@@ -569,7 +569,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
                   disabled={isButtonLoading || disableActionButton}
                   cssStyle={tw`duration-500 w-[195px] mr-[5px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
-                    !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
+                    !text-white font-bold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={
                     modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
                       ? () => {
@@ -589,7 +589,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                   <CLAIM onClick={() => openActionModal('claim')}>
                     <div
                       tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
-                    items-center justify-center dark:text-white text-black-4 text-tiny font-bold"
+                    items-center justify-center dark:text-white text-black-4 text-regular font-bold"
                     >
                       Claim {claimableReward?.toFixed(4)} {coin?.token}
                     </div>
@@ -597,7 +597,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 ) : (
                   <div
                     tw="h-8.75 w-[195px] rounded-circle flex items-center border-solid
-                    text-tiny cursor-pointer ml-2 p-[3px] border-[1.5px] border-grey-1 
+                    text-regular cursor-pointer ml-2 p-[3px] border-[1.5px] border-grey-1
                     cursor-not-allowed justify-center text-grey-1 font-bold sm:w-full sm:mt-3.75 sm:ml-0"
                   >
                     No Claimable Rewards

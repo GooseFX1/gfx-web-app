@@ -31,7 +31,6 @@ const WRAPPER = styled.div`
     background-clip: text;
   }
   .disclaimerText {
-    font-family: 'Montserrat';
     font-style: normal;
     font-weight: 500;
     line-height: 20px;

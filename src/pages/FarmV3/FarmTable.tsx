@@ -244,15 +244,13 @@ export const FarmTable: FC = () => {
           tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
         />
         <div tw="flex flex-col">
-          <div
+          <h2
             tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize 
             sm:text-average sm:mb-0 sm:leading-[22px]"
           >
             {pool.name} Pools
-          </div>
-          <div tw="text-regular font-medium text-grey-1 dark:text-grey-2 mt-[-4px] sm:text-tiny sm:leading-5">
-            {pool.desc}
-          </div>
+          </h2>
+          <p tw="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">{pool.desc}</p>
         </div>
       </div>
       <div tw="flex items-center">
@@ -270,37 +268,37 @@ export const FarmTable: FC = () => {
             ]}
             tw="h-[35px] bg-blue-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
           ></div>
-          <div
+          <h4
             css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.all))}
           >
             All Pools
-          </div>
-          <div
+          </h4>
+          <h4
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.stable))}
           >
             Stable
-          </div>
-          <div
+          </h4>
+          <h4
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[24%] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.primary))}
           >
             Primary
-          </div>
-          <div
+          </h4>
+          <h4
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
             sm:w-[24%] w-[95px] text-regular"
             onClick={() => (operationPending ? null : setPool(poolType.hyper))}
           >
             Hyper
-          </div>
+          </h4>
         </div>
         {breakpoint.isDesktop && (
           <div tw="flex items-center w-full">
@@ -364,7 +362,7 @@ export const FarmTable: FC = () => {
               </th>
               <th tw="!flex !flex-row !justify-center !items-center sm:!w-[31vw]">
                 <Tooltip
-                  color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                  color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                   title={
                     <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                       APY is calculated based on 7D fees
@@ -389,7 +387,7 @@ export const FarmTable: FC = () => {
               {!checkMobile() && (
                 <th tw="!flex !justify-center">
                   <Tooltip
-                    color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                     title={
                       <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                         24H Volume is calculated since 10P.M UTC on a daily basis
@@ -420,7 +418,7 @@ export const FarmTable: FC = () => {
                 </th>
               )}
               <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
-                <div tw="items-center flex">{`Pools: ${poolSize}`}</div>
+                <h4 tw="items-center flex">{`Pools: ${poolSize}`}</h4>
               </th>
             </tr>
           </thead>
@@ -566,11 +564,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
-          <div tw="ml-2.5">{coin?.token}</div>
+          <h4 tw="ml-2.5">{coin?.token}</h4>
           {depositPercentage ? (
             <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
               <Tooltip
-                color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                     Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
@@ -598,15 +596,23 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
             <></>
           )}
         </td>
-        <td>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</td>
+        <td>
+          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
+        </td>
         {!checkMobile() && (
-          <td>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</td>
+          <td>
+            <h4>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</h4>
+          </td>
         )}
-        {!checkMobile() && <td>${truncateBigNumber(formattedapiSslData?.volume)}</td>}
+        {!checkMobile() && (
+          <td>
+            <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
+          </td>
+        )}
         {!checkMobile() && (
           <td>
             <Tooltip
-              color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}
+              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
               title={
                 <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                   {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
@@ -617,18 +623,22 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
               overlayInnerStyle={{ borderRadius: '8px' }}
             >
               {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                <span tw="flex justify-center items-center font-semibold">
+                <h4 tw="flex justify-center items-center font-semibold">
                   ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
-                </span>
+                </h4>
               ) : (
-                <span tw="flex justify-center items-center font-semibold">$00.00</span>
+                <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
               )}
             </Tooltip>
           </td>
         )}
         {!checkMobile() && (
           <td>
-            {userDepositedAmount ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals) : '00.00'}
+            <h4>
+              {userDepositedAmount
+                ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)
+                : '00.00'}
+            </h4>
           </td>
         )}
         <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">

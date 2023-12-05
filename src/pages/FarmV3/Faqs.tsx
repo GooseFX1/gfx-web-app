@@ -44,14 +44,14 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row mt-10">
+    <div tw="flex flex-row my-10">
       <h2 tw="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">FAQs</h2>
       <a
-        tw="w-[140px] h-[35px] bg-blue-1 cursor-pointer text-white font-semibold
+        tw="w-[140px] h-[35px] bg-blue-1 cursor-pointer text-white font-bold
          text-regular flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
-        href="https://docs.goosefx.io/features/farm/single-sided-liquidity-pools"
+        href="https://docs.goosefx.io/features/farm"
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
       >
         Go To Docs
       </a>
@@ -76,15 +76,15 @@ export const FaqRow: FC<{ item: Faq; index: number }> = ({ item, index }) => {
           setIsFaqOpen((prev) => !prev)
         }}
       >
-        <div tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:leading-[25px] sm:text-regular">
+        <h4 tw="mr-auto font-semibold text-average dark:text-grey-5 text-black-4 sm:leading-[25px] sm:text-regular">
           {item.question}
-        </div>
+        </h4>
         <CircularArrow cssStyle={tw`h-5 w-5 dark:opacity-90 max-w-none`} invert={isFaqOpen} />
       </div>
 
       <div
         css={[
-          tw`duration-300 text-tiny px-3.75 `,
+          tw`duration-300 text-regular px-3.75 `,
           isFaqOpen
             ? tw`h-[fit] font-medium dark:text-grey-2 text-grey-1 border pb-3.75 sm:mt-0.5
             border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`

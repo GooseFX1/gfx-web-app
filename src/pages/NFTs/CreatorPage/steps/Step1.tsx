@@ -45,7 +45,7 @@ const WRAPPER = styled.div`
   }
   .ant-tag-checkable-checked {
     background-color: ${({ theme }) => theme.primary3};
-    color: #eeeeee;
+    color: #f7f0fd;
   }
   .ant-tag-checkable:not(.ant-tag-checkable-checked):hover {
     color: ${({ theme }) => theme.primary3};
@@ -81,7 +81,13 @@ export const Step1: FC = () => {
   }, [creatorData])
 
   useEffect(() => {
-    if (projectName.length > 0 && collectionName.length > 0 && description.length > 0 && tagIndex > -1 && tagIndex < 2)
+    if (
+      projectName.length > 0 &&
+      collectionName.length > 0 &&
+      description.length > 0 &&
+      tagIndex > -1 &&
+      tagIndex < 2
+    )
       setNextButtonActive(true)
     else setNextButtonActive(false)
   }, [projectName, collectionName, description, tagIndex])
@@ -100,8 +106,8 @@ export const Step1: FC = () => {
         <Col span={12}>
           <Row>
             <div className="legal-question">
-              1. Is the artwork in your collection and banner either original work or do you have legal permission to
-              use, distribute, and sell?
+              1. Is the artwork in your collection and banner either original work or do you have legal permission
+              to use, distribute, and sell?
             </div>
           </Row>
           <Row className="margin-40">

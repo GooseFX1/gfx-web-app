@@ -177,7 +177,7 @@ export const StatsModal: FC<{
       <WRAPPER>
         <div tw="flex flex-row items-center">
           <Tooltip
-            color={mode === 'dark' ? '#EEEEEE' : '#131313'}
+            color={mode === 'dark' ? '#F7F0FD' : '#131313'}
             title={
               <span tw="dark:text-grey-1 text-grey-2 font-semibold text-tiny">
                 This chart shows the historical performance of deposits in our SSL pools vs simply holding the

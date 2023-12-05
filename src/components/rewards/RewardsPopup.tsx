@@ -43,10 +43,7 @@ export const RewardsButton: FC = () => {
         />
 
         {hasRewards && (
-          <img
-            css={tw`absolute top-[5px] min-md:top-[1px] right-0`}
-            src={'/img/assets/red-notification-circle.svg'}
-          />
+          <div tw="absolute rounded-[50%] top-[1px] right-[-3px] sm:right-0 sm:top-[3px] h-2 w-2 bg-gradient-1" />
         )}
       </div>
     ),
@@ -67,13 +64,13 @@ export const RewardsButton: FC = () => {
       css={[
         tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
             bg-grey-5 dark:bg-black-1 px-2.25 flex flex-row items-center gap-1.75 cursor-pointer
-            text-tiny font-semibold text-black-4 dark:text-white leading-normal
+            text-regular  text-black-4 dark:text-white leading-normal
        `,
         breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px]` : tw`h-[30px]`
       ]}
     >
       {riveComponent}
-      <span>Rewards</span>
+      <span css={[tw`font-bold`]}>Rewards</span>
     </div>
   )
 }
@@ -92,7 +89,6 @@ const REWARD_REDIRECT = styled.div<{ $index: number }>`
 
 const Wrapper = styled.div`
   ${tw`h-full min-md:min-h-[500px] w-full flex flex-row sm:flex-col-reverse rounded-t-bigger`}
-  font-family: Montserrat !important;
   background-color: ${({ theme }) => theme.bg9};
 `
 
