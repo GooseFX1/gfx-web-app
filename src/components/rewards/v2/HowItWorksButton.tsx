@@ -10,8 +10,8 @@ function HowItWorksButton({ link, children, cssClasses }: HowItWorksButtonProps)
   return (
     <Button
       cssClasses={[
-        tw`border-1 border-solid dark:border-white border-blue-1 text-blue-1 dark:text-white font-semibold
-                 text-tiny`
+        tw`border-1 border-solid dark:border-white border-blue-1 
+        text-blue-1 dark:text-white font-semibold text-tiny px-[12px]`
       ]
         .concat(cssClasses ?? [])
         .flat()}

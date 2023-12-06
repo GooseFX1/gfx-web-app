@@ -46,7 +46,7 @@ export default function RewardsWalletBalanceAndBuyGofx({
         onClick={() => window.open('https://jup.ag/swap/USDC-GOFX', '_blank')}
         cssClasses={[
           tw`ml-auto h-[40px] font-bold bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 text-white
-      min-w-[122px] min-md:py-2.5 py-1.875 px-2.5 min-md:px-1.5 box-border`
+      min-w-[122px] min-md:py-2.5 py-1.875 px-3 min-md:px-[12px] box-border`
         ]}
       >
         Buy GOFX now!
