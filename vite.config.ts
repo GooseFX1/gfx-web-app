@@ -77,6 +77,8 @@ export default defineConfig(({ mode }) => ({
   css: {
     preprocessorOptions: {
       less: {
+        math: 'always',
+        relativeUrls: true,
         modifyVars: getThemeVariables({
           dark: true
           // compact: true,
