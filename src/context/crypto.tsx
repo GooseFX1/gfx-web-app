@@ -82,9 +82,10 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //     return { set: pairSet, isDevnet: isDevnet }
   //   }
   // }
+  const { connection, blacklisted } = useConnectionConfig()
   const getInitialPairAndNetwork = () => {
     let pairSet = pairsToset[0]
-    let isDevnet = false
+    let isDevnet = blacklisted
     if (isDevnet) {
       pairSet = devnetPairs[0]
       isDevnet = true
@@ -93,7 +94,6 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const [isDevnet, setIsDevnet] = useState<boolean>(getInitialPairAndNetwork().isDevnet)
   const [selectedCrypto, setSelectedCrypto] = useState<ICrypto>(getInitialPairAndNetwork().set)
-  const { connection } = useConnectionConfig()
 
   useEffect(() => {
     const pairsToset = isDevnet ? MARKET_PAIRS_DEVNET : MARKET_PAIRS
