@@ -8,7 +8,6 @@ import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
-import { Snackbar } from '../../components'
 
 const CARD_GRADIENT = styled.div`
   ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
