@@ -13,6 +13,7 @@ interface UseTimerProps {
   offsetToFuture?: boolean
   isUtc?: boolean
   updateInterval?: number
+  isDoneByDefault?: boolean
 }
 
 /**
@@ -28,13 +29,14 @@ export default function useTimer({
   format = 'HH:mm:ss',
   offsetToFuture = true,
   isUtc = true,
-  updateInterval = 1000
+  updateInterval = 1000,
+  isDoneByDefault = false
 }: UseTimerProps): {
   time: string
   isDone: boolean
 } {
   const [time, setTime] = useState<string>('')
-  const [isDone, setIsDone] = useState(false)
+  const [isDone, setIsDone] = useState(isDoneByDefault)
   const getUtcTime = useCallback(
     (d: dayjs.Dayjs) => {
       if (!isUtc) return d
@@ -45,14 +47,14 @@ export default function useTimer({
   const target = useMemo(() => {
     let newTarget: dayjs.Dayjs
     if (typeof targetTime == 'number') {
-      newTarget = dayjs(targetTime)
+      newTarget = getUtcTime(dayjs(targetTime))
     } else {
-      newTarget = dayjs()
+      newTarget = getUtcTime(dayjs())
       Object.keys(targetTime).forEach((k) => {
         newTarget = newTarget.set(k as UnitType, targetTime[k])
       })
     }
-    newTarget = getUtcTime(newTarget)
+
     if (newTarget.isBefore(getUtcTime(dayjs())) && offsetToFuture) {
       // If it has passed, calculate the time for tomorrow
       newTarget = newTarget.add(1, 'day')
@@ -63,14 +65,33 @@ export default function useTimer({
     const currentTime = getUtcTime(dayjs())
 
     const offset = target.diff(currentTime)
-    const offsetDayjs = getUtcTime(dayjs(offset))
+    const year = Math.floor(offset / (1000 * 60 * 60 * 24 * 30 * 12))
+    const month = Math.floor(offset / (1000 * 60 * 60 * 24 * 30))
+    const days = Math.floor(offset / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((offset % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((offset % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((offset % (1000 * 60)) / 1000)
+    const milliseconds = Math.floor((offset % 1000) / 100)
 
-    setTime(offsetDayjs.format(format))
-    const done = offsetDayjs.hour() == 0 && offsetDayjs.minute() == 0 && offsetDayjs.second() == 0
-    setIsDone(done)
+    setTime(
+      getFormattedDate(
+        {
+          year,
+          month,
+          days,
+          hours,
+          minutes,
+          seconds,
+          milliseconds
+        },
+        format
+      )
+    )
+    setIsDone(offset <= 0)
   }, [target, format, isUtc])
 
   useEffect(() => {
+    calculateTime()
     const id = setInterval(calculateTime, updateInterval)
     return () => clearInterval(id)
   }, [calculateTime, updateInterval])
@@ -78,5 +99,68 @@ export default function useTimer({
   return {
     time,
     isDone
+  }
+}
+
+function getFormattedDate(data, format): string {
+  const newFormat = format
+    .replace(/\b(?:yyyy|m|dd|hh|mm|ss|sss)\b/gi, (match) => data[getMappedMatch(match)])
+    .replace(/(?:\[|])/gi, '')
+  return newFormat
+}
+
+function getMappedMatch(match) {
+  switch (match) {
+    case 'yyyy':
+    case 'YYYY':
+    case 'year':
+    case 'YEAR':
+    case 'years':
+    case 'YEARS':
+      return 'year'
+    case 'm':
+    case 'M':
+    case 'month':
+    case 'MONTH':
+    case 'months':
+    case 'MONTHS':
+      return 'month'
+    case 'dd':
+    case 'DD':
+    case 'day':
+    case 'DAY':
+    case 'days':
+    case 'DAYS':
+      return 'days'
+    case 'hh':
+    case 'HH':
+    case 'hour':
+    case 'HOUR':
+    case 'hours':
+    case 'HOURS':
+      return 'hours'
+    case 'mm':
+    case 'MM':
+    case 'minute':
+    case 'MINUTE':
+    case 'minutes':
+    case 'MINUTES':
+      return 'minutes'
+    case 'ss':
+    case 'SS':
+    case 'second':
+    case 'SECOND':
+    case 'seconds':
+    case 'SECONDS':
+      return 'seconds'
+    case 'sss':
+    case 'SSS':
+    case 'millisecond':
+    case 'MILLISECOND':
+    case 'milliseconds':
+    case 'MILLISECONDS':
+      return 'milliseconds'
+    default:
+      return match
   }
 }

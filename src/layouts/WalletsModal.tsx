@@ -11,13 +11,17 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 
 const DETECTED_NAME = styled.div`
-  ${tw`text-regular font-semibold`}
+  ${tw`text-regular font-semibold dark:text-grey-6 text-black-4`}
 `
 
 const WALLET_DETECTED = styled(SpaceBetweenDiv)`
-  ${tw`h-[46px] rounded-[100px] flex border-2 cursor-pointer mb-3.75`}
-  background-color: ${({ theme }) => theme.timePanelBackground};
-  border: 1px solid #636363;
+  ${tw`h-[46px] rounded-[100px] flex dark:bg-black-1 bg-white 
+  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2`}
+
+  img {
+    ${tw`h-[30px] w-[30px] mr-2.5 ml-2 rounded-half !bg-black-1`}
+  }
+
   &:hover {
     border: 1px solid ${({ theme }) => theme.text30};
   }
@@ -134,13 +138,7 @@ export const WalletsModal: FC = () => {
         {detectedWallets.map((wallet, index) => (
           <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
             <div tw="flex items-center">
-              <img
-                src={wallet.adapter.icon}
-                alt="wallet-icon"
-                height={'30px'}
-                width={'30px'}
-                tw="mr-2.5 ml-2 rounded-half"
-              />
+              <img src={wallet.adapter.icon} alt="wallet-icon" height={'30px'} width={'30px'} />
               <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
             </div>
             <div className="textDetected">Detected</div>

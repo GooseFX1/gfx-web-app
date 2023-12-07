@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 // port over to plugin-react-swc once we no longer need babel
 import react from '@vitejs/plugin-react'
+import eslint from 'vite-plugin-eslint'
 import macrosPlugin from 'vite-plugin-babel-macros'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import wasm from 'vite-plugin-wasm'
@@ -8,17 +9,22 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import requireTransform from 'vite-plugin-require-transform'
 import viteCompression from 'vite-plugin-compression'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { getThemeVariables } from 'antd/dist/theme'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
+    nodePolyfills(),
+    tsconfigPaths(),
     react({
+      include: /.(jsx|tsx)$/,
       babel: {
-        plugins: ['babel-plugin-macros', 'babel-plugin-styled-components']
+        plugins: ['babel-plugin-macros', 'styled-components']
       }
     }),
+    eslint(),
     macrosPlugin(),
-    nodePolyfills(),
     wasm(),
     topLevelAwait(),
     requireTransform({}),
@@ -71,11 +77,20 @@ export default defineConfig(({ mode }) => ({
   css: {
     preprocessorOptions: {
       less: {
+        math: 'always',
+        relativeUrls: true,
+        modifyVars: getThemeVariables({
+          dark: true
+          // compact: true,
+        }),
         javascriptEnabled: true
       }
     }
   },
   server: {
+    port: 3000
+  },
+  preview: {
     port: 3000
   },
   esbuild: {
@@ -95,5 +110,8 @@ export default defineConfig(({ mode }) => ({
       sourcemap: false,
       maxParallelFileOps: 1
     }
+  },
+  resolve: {
+    alias: [{ find: /^~/, replacement: '' }]
   }
 }))

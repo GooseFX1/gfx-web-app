@@ -5,11 +5,13 @@ const borders = require('./config.borders')
 const typography = require('./config.typography')
 const screens = require('./config.screen')
 const colors = require('./config.colors')
+const responsive = require('./config.responsive')
 module.exports = {
   ...screens,
   ...colors,
   ...animations,
   ...dimensions,
   ...borders,
-  ...typography
+  ...typography,
+  ...responsive
 }
