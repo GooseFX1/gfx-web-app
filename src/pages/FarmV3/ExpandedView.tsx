@@ -178,9 +178,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // or withdraw mode with zero user deposited amount or no withdraw amount
   const disableActionButton = useMemo(
     () =>
-      !liquidity ||
-      !coin?.cappedDeposit ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
+      // !liquidity ||
+      // !coin?.cappedDeposit ||
+      // (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT &&
         (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW &&
@@ -191,7 +191,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
-      if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
+      // if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
       if (depositAmount) return modeOfOperation
