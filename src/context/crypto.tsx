@@ -85,10 +85,9 @@ export const CryptoProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection, blacklisted } = useConnectionConfig()
   const getInitialPairAndNetwork = () => {
     let pairSet = pairsToset[0]
-    let isDevnet = blacklisted
+    const isDevnet = blacklisted
     if (isDevnet) {
       pairSet = devnetPairs[0]
-      isDevnet = true
     }
     return { set: pairSet, isDevnet: isDevnet }
   }
