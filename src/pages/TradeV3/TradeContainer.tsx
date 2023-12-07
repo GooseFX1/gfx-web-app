@@ -437,10 +437,11 @@ const CryptoContent: FC = () => {
       return <div key={i}>{/* <span className="text">{i}</span> */}</div>
     })
 
-  const onLayoutChange = (layout) => {
-    localStorage.setItem('lg', JSON.stringify(layout))
-    localStorage.setItem('md', JSON.stringify(layout))
-    setLayout({ lg: layout, md: layout })
+  const onLayoutChange = (newLayout) => {
+    if (JSON.stringify(layout) === JSON.stringify(newLayout)) return
+    localStorage.setItem('lg', JSON.stringify(newLayout))
+    localStorage.setItem('md', JSON.stringify(newLayout))
+    setLayout({ lg: newLayout, md: newLayout })
   }
 
   const resetLayout = () => {

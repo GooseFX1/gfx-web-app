@@ -78,7 +78,7 @@ const INPUT = styled.input`
 
 const SetButton = styled.button`
   ${tw`h-[40px] w-[44px] flex justify-center items-center font-semibold 
-      text-regular bg-blue-1 cursor-pointer border-transparent rounded-r-full`}
+      text-regular !bg-blue-1 cursor-pointer border-transparent rounded-r-full`}
 `
 
 const Overlay = () => {
@@ -94,10 +94,16 @@ const Overlay = () => {
       return
     }
 
-    if (nodeURL.length === 0 || nodeURL === ' ' || !nodeURL.startsWith('https://') || nodeURL === endpoint) return
+    if (
+      nodeURL.length === 0 ||
+      nodeURL === ' ' ||
+      !(nodeURL.startsWith('https://') || nodeURL.startsWith('http://')) ||
+      nodeURL === endpoint
+    )
+      return
     const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
-    window.localStorage.setItem(
+    localStorage.setItem(
       'gfx-user-cache',
       JSON.stringify({
         ...existingUserCache,

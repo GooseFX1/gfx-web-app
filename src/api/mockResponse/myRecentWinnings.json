@@ -1,0 +1,89 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "transactionId": "TXN987654321",
+      "date": "August 27, 2023",
+      "amount": 2000,
+      "currency": "USDC",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN123456789",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN1029384756",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "GOFX",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN5647382910",
+      "date": "August 27, 2023",
+      "amount": 50000,
+      "currency": "BONK",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN0192837465",
+      "date": "August 27, 2023",
+      "amount": 2000,
+      "currency": "USDC",
+      "transactionType": "winning"
+    },
+    {
+      "transactionId": "TXN1122334455",
+      "date": "August 27, 2023",
+      "amount": 100000,
+      "currency": "GOFX",
+      "transactionType": "winning"
+    }
+  ]
+}

@@ -25,7 +25,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
-      <div css={[tw`sm:absolute bottom-0 left-0`]}>
+      <div css={[tw`sm:absolute bottom-0 left-0 sm:animate-slideInBottom`]}>
         <div
           css={tw`px-[33px] py-[20px] min-md:px-[54px] flex flex-col w-screen min-md:w-[628px] h-[338px] rounded-[22px]
       bg-white dark:bg-black-2 relative`}
@@ -45,7 +45,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
             Once the cooldown starts, the process cannot be undone, and you will need to re-stake your GOFX
           </p>
           <button
-            css={tw`h-[56px] w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
+            css={tw`h-10 w-full rounded-[100px] bg-red-2 text-white text-[18px] leading-[22px] text-center
           font-semibold border-0 mt-5`}
             onClick={onClose}
           >
@@ -53,7 +53,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
           </button>
           <button
             css={tw`bg-transparent hover:bg-transparent focus:bg-transparent focus:bg-transparent underline
-          dark:text-grey-5 text-blue-1 text-[18px] leading-[22px] text-center font-semibold mt-[17px] border-0
+          dark:text-grey-5 text-blue-1 text-[18px] h-10 leading-[22px] text-center font-semibold border-0
         `}
             onClick={handleStakeConfirmation}
             disabled={!(totalStaked >= amount)}

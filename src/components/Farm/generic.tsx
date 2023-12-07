@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, MutableRefObject, ReactElement } from 'react'
+import { FC, useCallback, useEffect, MutableRefObject, ReactElement, useState } from 'react'
 import { Skeleton } from 'antd'
 import { Tooltip } from '../../components'
 import { useDarkMode } from '../../context'
@@ -66,14 +66,15 @@ export const useAnimateButtonSlide = (
   index?: number,
   customCallback?: (index: number, buttonRef: AnimateButtonRefType, sliderRef: HTMLDivElement) => void
 ): useAnimateButtonSlideReturnType => {
+  const [localIndex, setLocalIndex] = useState<number>(index ?? 0)
   useEffect(() => {
-    if (!slideRef.current || !buttonRefs.current.length) return
-    if (index !== undefined) {
-      handleSlide(index)
-    } else {
-      handleSlide(0)
+    if (!slideRef.current || !buttonRefs.current.length) {
+      console.log('Warning: SlideRef or ButtonRefs not set', { slideRef, buttonRefs })
+      return
     }
-  }, [slideRef, buttonRefs, index])
+    handleSlide(localIndex)
+  }, [slideRef.current, buttonRefs.current, localIndex, index])
+
   const handleSlide = useCallback(
     (index) => {
       if (!slideRef.current || !buttonRefs.current.length) {
@@ -84,39 +85,58 @@ export const useAnimateButtonSlide = (
         console.log('Warning: ButtonRefs not set')
         return
       }
+      setLocalIndex(index)
       if (customCallback) {
         customCallback(index, buttonRefs.current[index], slideRef.current)
+        console.log('handling custom callback')
         return
       }
+
       const left = `${buttonRefs.current[index].offsetLeft}px`
       const width = `${buttonRefs.current[index].offsetWidth}px`
-      // const top = `${buttonRefs.current[index].offsetTop}px`
+      const top = `${buttonRefs.current[index].offsetTop}px`
+
       if (slideRef.current.style.left !== left) {
         slideRef.current.style.left = left
       }
-      if (slideRef.current.style.width !== width) {
+      if (slideRef.current.style.width !== width && buttonRefs.current[index].offsetWidth !== 0) {
         slideRef.current.style.width = width
       }
-      // if (slideRef.current.style.top !== top) {
-      //   slideRef.current.style.top = top
-      // }
+      if (slideRef.current.style.top !== top) {
+        slideRef.current.style.top = top
+      }
     },
-    [slideRef.current, buttonRefs.current, customCallback, index]
+    [slideRef.current, buttonRefs.current, customCallback, localIndex]
   )
   useEffect(() => {
     // weird behaviour where resizing has buttons too big or too small
-    window.addEventListener('resize', () => handleSlide(index ?? 0))
-    return () => window.removeEventListener('resize', () => handleSlide(index ?? 0))
-  }, [index])
+    window.addEventListener('resize', () => handleSlide(localIndex))
+    return () => window.removeEventListener('resize', () => handleSlide(localIndex))
+  }, [localIndex])
 
   const setButtonRef = useCallback(
     (ref: AnimateButtonRefType) => {
-      if (!buttonRefs.current.includes(ref)) {
+      if (!ref) return //fixes bug where refs get set recursively blaoting mem
+      const r = buttonRefs.current.findIndex((r) => {
+        if (!r) return false
+        return r.innerHTML === ref.innerHTML || r.outerHTML === ref.outerHTML
+      })
+
+      if (r == -1) {
         buttonRefs.current.push(ref)
+      } else {
+        buttonRefs.current[r] = ref
+      }
+      if (r == localIndex) {
+        // slides to index being passed in, or first
+        handleSlide(r)
+      } else {
+        handleSlide(0)
       }
     },
-    [buttonRefs.current]
+    [buttonRefs.current, localIndex]
   )
+
   return {
     handleSlide,
     setButtonRef
