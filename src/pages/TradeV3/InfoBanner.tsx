@@ -12,7 +12,7 @@ import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip } from '../../components'
 
-const SETTING_MODAL = styled(PopupCustom)`
+export const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
   background-color: ${({ theme }) => theme.bg25};
 
@@ -178,7 +178,7 @@ const WRAPPER = styled.div`
 
 const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
-const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
+export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
   setTradeType,
   tradeType
 }) => {
