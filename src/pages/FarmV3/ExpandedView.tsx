@@ -18,7 +18,7 @@ import {
   sslErrorMessage,
   SSLToken
 } from './constants'
-import { notify, truncateBigNumber, truncateBigString } from '../../utils'
+import { notify, truncateBigNumber, truncateBigString, commafy } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
@@ -130,10 +130,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
   )
 
-  const claimableReward = useMemo(
-    () => rewards[tokenMintAddress]?.toNumber() / Math.pow(10, coin?.mintDecimals),
-    [rewards, tokenMintAddress, isTxnSuccessfull, coin]
-  )
+  const claimableReward: number = useMemo(() => 500000000, [rewards, tokenMintAddress, isTxnSuccessfull, coin])
 
   const totalEarnedInUSD = useMemo(
     () =>
@@ -453,8 +450,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 claimableReward > 0 ? (
                   <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    <div>{claimableReward?.toFixed(4)}</div>
-                    <div tw="dark:text-grey-1 text-grey-2">(${claimableRewardInUSD?.toFixed(2)} USD)</div>
+                    <div>{commafy(claimableReward, 4)}</div>
+                    <div tw="dark:text-grey-1 text-grey-2">(${commafy(claimableRewardInUSD, 2)} USD)</div>
                   </div>
                 ) : (
                   renderStatsAsZero(coin?.token)
@@ -585,13 +582,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 >
                   {actionButtonText}
                 </Button>
-                {claimableReward && +claimableReward.toFixed(4) > 0 ? (
+                {claimableReward > 0 ? (
                   <CLAIM onClick={() => openActionModal('claim')}>
                     <div
                       tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                     items-center justify-center dark:text-white text-black-4 text-regular font-bold"
                     >
-                      Claim {claimableReward?.toFixed(4)} {coin?.token}
+                      Claim {commafy(claimableReward, 2)} {coin?.token}
                     </div>
                   </CLAIM>
                 ) : (
@@ -620,7 +617,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               totalEarned ? (
                 <div tw="text-right">
                   <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                    {`${totalEarned?.toFixed(4)} ($${totalEarnedInUSD?.toFixed(2)} USD)`}
+                    {`${commafy(totalEarned, 4)} ($${commafy(totalEarnedInUSD, 2)} USD)`}
                   </span>
                 </div>
               ) : (
@@ -640,7 +637,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
-                      {`${claimableReward?.toFixed(4)} ($${claimableRewardInUSD?.toFixed(2)} USD)`}
+                      {`${commafy(claimableReward, 4)} ($${commafy(claimableRewardInUSD, 2)} USD)`}
                     </span>
                   </div>
                 ) : (
