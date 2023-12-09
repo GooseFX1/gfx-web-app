@@ -5,6 +5,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button } from '../../components'
 import { SSLToken } from './constants'
+import { commafy } from '../../utils'
 
 const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content {
@@ -107,10 +108,10 @@ export const ActionModal: FC<{
             <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
               actionType === 'deposit'
                 ? depositAmount
-                  ? depositAmount
+                  ? commafy(+depositAmount, 4)
                   : '00.00'
                 : withdrawAmount
-                ? withdrawAmount
+                ? commafy(+withdrawAmount, 4)
                 : '00.00'
             } ${token?.token}`}</div>
           </div>
@@ -118,7 +119,7 @@ export const ActionModal: FC<{
         <div tw="flex flex-row items-center justify-between mb-3.75">
           <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable rewards</div>
           <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-            claimAmount ? claimAmount + ' ' + token?.token : '00.00 ' + token?.token
+            claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`
           }`}</div>
         </div>
         <Button
@@ -136,10 +137,10 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${depositAmount} ${token?.token} + Claim rewards`
+              ? `Deposit ${commafy(depositAmount, 4)} ${token?.token} + Claim rewards`
               : actionType === 'withdraw'
-              ? `Withdraw ${+withdrawAmount + claimAmount} ${token?.token}`
-              : `${claimAmount ? claimAmount + token?.token : '00.00 ' + token?.token}`
+              ? `Withdraw ${commafy(+withdrawAmount + claimAmount, 4)} ${token?.token}`
+              : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`
           }`}
         </Button>
         <div
