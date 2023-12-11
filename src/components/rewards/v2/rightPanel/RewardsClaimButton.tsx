@@ -14,8 +14,8 @@ function RewardsClaimButton(): JSX.Element {
   const [isClaiming, setIsClaiming] = useBoolean(false)
   const { isDone, time } = useTimer({
     targetTime: {
-      hour: 9,
-      minute: 30,
+      hour: 10,
+      minute: 0,
       second: 0
     },
     format: '[Claim In:] hh[H] mm[Min]'
