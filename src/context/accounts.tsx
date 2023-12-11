@@ -175,7 +175,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         setDevnetBalances(accounts)
       } catch (e: any) {
-        await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
+        // await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
       }
 
       setFetching(false)
