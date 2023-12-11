@@ -9,9 +9,10 @@ import {
   SSLTableData,
   GET_24_CHANGES,
   // IS_WHITELIST,
-  TOTAL_VOLUME,
-  TOTAL_FEES
+  TOTAL_VOLUME
+  // TOTAL_FEES
 } from '../pages/FarmV3/constants'
+import axios from 'axios'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
@@ -84,10 +85,16 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const getTotalFees = async () => {
     try {
-      const res = await httpClient('api-services').post(`${TOTAL_FEES}`, {
-        devnet: false
-      })
-      const data = res?.data?.data
+      const res = await axios.post(
+        'http://localhost:4000/ssl-apis/getTotalFeesSSL',
+        JSON.stringify({ devnet: false }),
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      const data = res?.data
       setSslTotalFees(data)
     } catch (e) {
       setSslTotalFees(null)

@@ -143,7 +143,8 @@ export const FarmTable: FC = () => {
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
-      if (amountInNative && amountInNative !== '0') {
+      const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
+      if (amountInUSD && amountInUSD !== '0.00') {
         return accumulator + 1
       }
       return accumulator
@@ -266,7 +267,7 @@ export const FarmTable: FC = () => {
                 ? tw`ml-[190px] sm:ml-[48%]`
                 : tw`ml-[285px] sm:ml-[72%]`
             ]}
-            tw="h-[35px] bg-blue-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
+            tw="h-[35px] bg-gradient-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
           ></div>
           <h4
             css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
@@ -560,7 +561,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative sm:!w-[41%]">
-          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
+          {userDepositedAmountUI !== '0.00' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />

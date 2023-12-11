@@ -343,9 +343,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       const usdString =
         userDepositedAmount?.toString().substring(0, nativeStringLen - coin?.mintDecimals) +
         '.' +
-        userDepositedAmount
-          ?.toString()
-          ?.substring(nativeStringLen - coin?.mintDecimals, nativeStringLen - coin?.mintDecimals + 2)
+        userDepositedAmount?.toString()?.substring(nativeStringLen - coin?.mintDecimals)
       return usdString
     }
   }, [userDepositedAmount, coin?.mintDecimals])
@@ -468,7 +466,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <div tw="flex font-semibold duration-500 relative sm:my-1 sm:mb-[15px]">
               <div
                 css={[
-                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
+                  tw`bg-gradient-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
                     ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
