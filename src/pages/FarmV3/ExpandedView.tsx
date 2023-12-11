@@ -130,7 +130,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
   )
 
-  const claimableReward: number = useMemo(() => 500000000, [rewards, tokenMintAddress, isTxnSuccessfull, coin])
+  const claimableReward = useMemo(
+    () => rewards[tokenMintAddress]?.toNumber() / Math.pow(10, coin?.mintDecimals),
+    [rewards, tokenMintAddress, isTxnSuccessfull, coin]
+  )
 
   const totalEarnedInUSD = useMemo(
     () =>
