@@ -34,7 +34,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
   }
   .next-btn {
     ${tw`text-white text-regular font-semibold cursor-pointer bg-black-4 
-      w-[150px] h-9 rounded-half bottom-6 text-regular font-semibold 
+      w-[150px] h-9 rounded-half bottom-6 text-regular font-semibold sm:bottom-16
         cursor-pointer z-10 !flex flex-row justify-center items-center absolute sm:w-2/5`}
     right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 76px)' : '10px')};
     background: ${({ currentSlide, userAnswer }) =>
@@ -57,7 +57,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
   .prev-btn {
     ${tw`dark:text-white text-blue-1 text-regular font-semibold cursor-pointer 
     text-regular font-semibold cursor-pointer z-10 left-2.5 bottom-8 underline
-    !flex flex-row justify-center items-center absolute sm:w-2/5`}
+    !flex flex-row justify-center items-center absolute sm:w-2/5 sm:bottom-[69px]`}
   }
   .slide {
     * {

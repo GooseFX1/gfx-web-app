@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
-import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+// import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { checkMobile, commafy, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
@@ -12,19 +12,19 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Tooltip } from 'antd'
 
 const CARD_GRADIENT = styled.div`
-  ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+  ${tw`h-15 sm:h-12.5 w-[140px] sm:w-[115px] p-px mr-3.75 rounded-tiny`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1 px-2.5 `}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center sm:px-1 px-2.5 `}
 `
 
-const POOL_CARD = styled.div`
-  ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border border-solid dark:border-grey-2
-   border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
-`
+// const POOL_CARD = styled.div`
+//   ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border border-solid dark:border-grey-2
+//    border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
+// `
 
 const HEADER_WRAPPER = styled.div`
   ${tw`flex flex-row justify-start relative mb-5`}
@@ -36,19 +36,19 @@ const HEADER_WRAPPER = styled.div`
   scrollbar-width: none;
 `
 
-const POOL_CARD_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-between mb-7 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
-  overflow-x: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+// const POOL_CARD_WRAPPER = styled.div`
+//   ${tw`flex flex-row justify-between mb-7 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
+//   overflow-x: scroll;
+//   ::-webkit-scrollbar {
+//     display: none;
+//   }
+//   -ms-overflow-style: none;
+//   scrollbar-width: none;
 
-  > span {
-    ${tw`w-full`}
-  }
-`
+//   > span {
+//     ${tw`w-full`}
+//   }
+// `
 
 export const FarmHeader: FC = () => {
   const [poolSelection, setPoolSelection] = useState<boolean>(false)
@@ -59,12 +59,12 @@ export const FarmHeader: FC = () => {
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
 
-  const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
-    const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
-    const apy = Number(sslTableData?.[tokenName]?.apy)
-    const apyObj = { ...data, apy: apy }
-    return apyObj
-  })
+  // const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
+  //   const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
+  //   const apy = Number(sslTableData?.[tokenName]?.apy)
+  //   const apyObj = { ...data, apy: apy }
+  //   return apyObj
+  // })
 
   const getTooltipText = (index: number) => {
     let tooltipText = ''
@@ -203,20 +203,20 @@ export const FarmHeader: FC = () => {
   const infoCards = wallet?.adapter?.publicKey
     ? [
         { name: 'My Earnings', value: totalEarnings },
-        { name: 'GooseFX TVL', value: TVL },
+        { name: 'TVL', value: TVL },
         { name: 'Volume', value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded },
         { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
       ]
     : [
-        { name: 'GooseFX TVL', value: TVL },
+        { name: 'TVL', value: TVL },
         { name: 'Volume', value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded },
         { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
       ]
 
   return (
     <>
-      <div tw="flex items-center mb-3.75">
-        <div tw="flex cursor-pointer relative sm:w-full">
+      <div tw="flex items-center mb-3.75 sm:relative">
+        <div tw="flex cursor-pointer relative sm:w-3/4">
           <div
             css={[
               tw`duration-500`,
@@ -248,18 +248,16 @@ export const FarmHeader: FC = () => {
             All
           </h4>
         </div>
-        {!checkMobile() && (
-          <div tw="cursor-pointer ml-auto">
-            <span
-              tw="font-bold text-regular dark:text-white text-blue-1 underline"
-              onClick={() => {
-                setPoolSelection(true)
-              }}
-            >
-              Can’t Choose A Pool?
-            </span>
-          </div>
-        )}
+        <div tw="cursor-pointer ml-auto mr-[14px] sm:absolute right-[15px]">
+          <span
+            tw="font-bold text-regular dark:text-white text-blue-1 underline"
+            onClick={() => {
+              setPoolSelection(true)
+            }}
+          >
+            Can't Choose {checkMobile() && <br />} <span tw="sm:block text-right">a pool?</span>
+          </span>
+        </div>
       </div>
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
@@ -268,6 +266,7 @@ export const FarmHeader: FC = () => {
             <CARD_GRADIENT key={card?.name}>
               <INFO_CARD>
                 <div tw="flex flex-row">
+                  <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</h4>
                   <Tooltip
                     color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                     title={getTooltipText(wallet?.adapter?.publicKey ? index : index + 1)}
@@ -278,12 +277,11 @@ export const FarmHeader: FC = () => {
                     <img
                       src={`/img/assets/farm-tooltip-${mode}.svg`}
                       alt="deposit-cap"
-                      tw="mr-[5px] max-w-none cursor-pointer"
+                      tw="ml-[5px] max-w-none cursor-pointer"
                       height={16}
                       width={checkMobile() ? 12 : 16}
                     />
                   </Tooltip>
-                  <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</h4>
                 </div>
                 <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
                   {card?.value}
@@ -294,7 +292,7 @@ export const FarmHeader: FC = () => {
         ))}
       </HEADER_WRAPPER>
 
-      <div tw="flex flex-row items-center justify-between">
+      {/* <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <h2 tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Single Asset Pools
@@ -315,8 +313,9 @@ export const FarmHeader: FC = () => {
             </span>
             <img src="/img/assets/questionMark.svg" alt="question-icon" height={25} width={25} />
           </div>
-        )} */}
-      </div>
+        )}
+      </div> 
+      /*}
       <POOL_CARD_WRAPPER>
         {allPoolDataWithApy?.length
           ? allPoolDataWithApy
@@ -370,7 +369,7 @@ export const FarmHeader: FC = () => {
                 style={checkMobile() && { marginRight: '15px' }}
               />
             ))}
-      </POOL_CARD_WRAPPER>
+      </POOL_CARD_WRAPPER> */}
     </>
   )
 }
