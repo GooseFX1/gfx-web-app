@@ -215,6 +215,7 @@ export const executeWithdraw = async (
     eventEmitter: getEventEmitterAccount(),
     tokenProgram: TOKEN_PROGRAM_ID
   }
+  console.log('withdraw accounts', withdrawInstructionAccount)
   const withdrawIX: TransactionInstruction = await program.instruction.withdraw(new BN(amountInNative), {
     accounts: withdrawInstructionAccount
   })
@@ -226,8 +227,8 @@ export const executeWithdraw = async (
   }
   let signature
   try {
-    signature = await wallet.sendTransaction(withdrawTX, connection)
-    console.log(signature)
+    signature = await wallet.sendTransaction(withdrawTX, connection, { skipPreflight: true })
+    console.log('withdraw signature', signature)
     const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
