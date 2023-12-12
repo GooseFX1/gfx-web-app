@@ -2,39 +2,45 @@ import { useDarkMode } from '../../../../context'
 import tw from 'twin.macro'
 import { Tooltip } from '../../../Tooltip'
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
-import { numberFormatter } from '../../../../utils'
+// import Skeleton from 'react-loading-skeleton'
+// import { numberFormatter } from '../../../../utils'
 interface RewardsBottomBarProps {
   calculating: boolean
   approxRewardAmount: number
 }
-export default function RewardsStakeBottomBar({
-  calculating,
-  approxRewardAmount
-}: RewardsBottomBarProps): JSX.Element {
+export default function RewardsStakeBottomBar({}: // calculating,
+// approxRewardAmount
+RewardsBottomBarProps): JSX.Element {
   const { mode } = useDarkMode()
+  // ADD min-md:mt-auto min-md:bg-gradient-to-r | back when the approxRewardAmount is added in
   return (
     <div
       css={[
-        tw`mt-3 min-md:mt-auto flex min-md:p-2.5 min-md:bg-gradient-to-r
+        tw`mt-3 flex min-md:p-2.5
         from-green-gradient-3 text-regular min-md:text-average
     to-green-gradient-4 bg-none rounded-t-tiny  min-md:text-tiny font-semibold text-grey-1
      dark:text-grey-2  min-md:text-grey-5 min-md:max-w-[342px]
-        min-md:dark:text-grey-5 items-center flex-col min-md:flex-row w-full max-w-[580px]`
+        min-md:dark:text-grey-5 items-center justify-center flex-col min-md:flex-row w-full max-w-[580px]`
       ]}
     >
-      <div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>
-        <p css={[tw`mb-0 whitespace-nowrap`]}>Daily Rewards</p>
-        <p css={[tw` mb-0 text-black-4 dark:text-grey-5 min-md:text-grey-5`]}>
-          {calculating ? (
-            <Skeleton height={'15px'} width={'60px'} borderRadius={'1rem'} highlightColor={'#37BB7D'} />
-          ) : (
-            `≈ ${numberFormatter(approxRewardAmount)} USDC`
-          )}
-        </p>
-      </div>
-      <div css={[tw`hidden min-md:block border-1 border-solid border-divider rounded-tiny mx-2.5 h-full`]} />
-      <div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>
+      {/*<div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>*/}
+      {/*  <p css={[tw`mb-0 whitespace-nowrap`]}>Daily Rewards</p>*/}
+      {/*  <p css={[tw` mb-0 text-black-4 dark:text-grey-5 min-md:text-grey-5`]}>*/}
+      {/*    {calculating ? (*/}
+      {/*      <Skeleton height={'15px'} width={'60px'} borderRadius={'1rem'} highlightColor={'#37BB7D'} />*/}
+      {/*    ) : (*/}
+      {/*      `≈ ${numberFormatter(approxRewardAmount)} USDC`*/}
+      {/*    )}*/}
+      {/*  </p>*/}
+      {/*</div>*/}
+      {/*<div css={[tw`hidden min-md:block border-1 border-solid border-divider rounded-tiny mx-2.5 h-full`]} />*/}
+      {/*PLEASE ENSURE THE CENTER IS REMOVED WHEN THE ABOVE IS ADDED IN & REMOVED items-center */}
+      <div
+        css={[
+          tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-center
+        items-center w-full`
+        ]}
+      >
         <p css={[tw`mb-0 flex items-center gap-1`]}>
           Cooldown Period{' '}
           <Tooltip
