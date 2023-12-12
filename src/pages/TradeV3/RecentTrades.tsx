@@ -1,6 +1,7 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { httpClient } from '../../api/'
+import { RotatingLoader } from '../../components/RotatingLoader'
 import { useCrypto } from '../../context'
 
 const HEADER = styled.div`
@@ -59,6 +60,9 @@ const TRADES = styled.div`
     .ask {
       ${tw`text-red-500`}
     }
+    .loaderContainer {
+      ${tw`flex justify-center items-center`}
+    }
   }
 `
 
@@ -81,18 +85,56 @@ export interface ITradesHistory {
 export const RecentTrades: FC = () => {
   const { isDevnet } = useCrypto()
   const [tradeHistory, setTradeHistory] = useState<ITradesHistory[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [page, setPage] = useState(1)
 
-  const getTradeHistory = async (isDevnet: boolean) => {
-    const res = await httpClient('api-services').post(`${GET_TRADE_HISTORY}`, {
-      devnet: isDevnet,
-      pairName: 'SOL-PERP'
-    })
-    setTradeHistory(res.data.data)
-  }
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    const getTradeHistory = async (isDevnet: boolean) => {
+      setIsLoading(true)
+      const res = await httpClient('api-services').post(`${GET_TRADE_HISTORY}`, {
+        devnet: isDevnet,
+        pairName: 'SOL-PERP',
+        page,
+        limit: 50
+      })
+      setTradeHistory(res.data.data)
+      setIsLoading(false)
+    }
     getTradeHistory(isDevnet)
   }, [isDevnet])
+
+  const fetchTrades = useCallback(async () => {
+    if (isLoading) return
+
+    setIsLoading(true)
+
+    const res = await httpClient('api-services').post(`${GET_TRADE_HISTORY}`, {
+      devnet: isDevnet,
+      pairName: 'SOL-PERP',
+      page: page + 1,
+      limit: 50
+    })
+    setTradeHistory((prevItems) => [...prevItems, ...res.data.data])
+    setPage((prevPage) => prevPage + 1)
+
+    setIsLoading(false)
+  }, [page, isLoading])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = wrapperRef.current
+      if (scrollTop + clientHeight >= scrollHeight - 20) {
+        fetchTrades()
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [fetchTrades])
 
   // time in the array of trades returned is a unix timestamp
   // this converts it into the hh:mm::ss format for display
@@ -104,8 +146,9 @@ export const RecentTrades: FC = () => {
 
     return `${hours}:${minutes}:${seconds}`
   }
+
   return (
-    <WRAPPER>
+    <WRAPPER ref={wrapperRef}>
       <HEADER>
         <div>
           <span> Price (USDC)</span>
@@ -121,6 +164,7 @@ export const RecentTrades: FC = () => {
             <span>{unixTimestampToHHMMSS(trade.time)}</span>
           </div>
         ))}
+        {isLoading && <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />}
       </TRADES>
     </WRAPPER>
   )
