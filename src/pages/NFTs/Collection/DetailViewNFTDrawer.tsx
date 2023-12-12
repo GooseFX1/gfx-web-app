@@ -362,7 +362,7 @@ export const ButtonContainer = (): ReactElement => {
               <span tw="text-regular font-semibold text-white">Remove Listing </span>
             </Button>
           )}
-          <Button
+          {/* <Button
             height="44px"
             loading={isLoading}
             disabled={isLoading}
@@ -374,7 +374,7 @@ export const ButtonContainer = (): ReactElement => {
             }}
           >
             <span tw="text-regular font-semibold text-white">{ask ? 'Modify Listing' : 'List Item'}</span>
-          </Button>
+          </Button> */}
         </>
       ) : (
         <>
@@ -392,7 +392,7 @@ export const ButtonContainer = (): ReactElement => {
           )}
 
           {/* show bid only if from our market place should not show for tensor and ME listings */}
-          {showBid && (
+          {/* {showBid && (
             <Button
               height="44px"
               loading={isLoading}
@@ -415,7 +415,7 @@ export const ButtonContainer = (): ReactElement => {
             >
               <span tw="text-regular font-semibold text-white">Buy Now</span>
             </Button>
-          )}
+          )} */}
         </>
       )}
     </div>

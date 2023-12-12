@@ -588,7 +588,6 @@ export const SellNFTModal: FC<{
               {checkMobile() && <br />}
               {general?.collection_name && (
                 <>
-                  {' '}
                   by{' '}
                   <GenericTooltip text={general?.collection_name}>
                     <strong>{minimizeTheString(general?.collection_name, checkMobile() ? 12 : 16)}</strong>
@@ -679,7 +678,7 @@ export const SellNFTModal: FC<{
 
         {checkMobile() && <BorderBottom />}
         <div className="buyBtnContainer">
-          <Button
+          {/* <Button
             disabled={
               askPrice <= 0 ||
               askPrice === null ||
@@ -690,7 +689,7 @@ export const SellNFTModal: FC<{
             loading={isLoading}
           >
             <span tw="font-semibold">{ask ? 'Modify Price' : 'List Item'}</span>
-          </Button>
+          </Button> */}
         </div>
         <div tw="bottom-0 left-[calc(50% - 160px)] sm:absolute sm:w-[auto] absolute sm:right-auto">
           <TermsTextNFT string={ask ? 'List' : 'Modify '} bottom={true} />
