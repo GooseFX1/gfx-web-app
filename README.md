@@ -9,21 +9,19 @@
     <a href="https://discord.com/channels/833693973687173121/833742620371058688">Discord</a>
     <span> | </span>
     <a href="https://www.t.me/goosefx">Telegram</a>
-    <span> | </span>
-    <a href="https://medium.com/goosefx">Medium</a>
   </h4>
   <br />
   <br />
 </div>
 
-GooseFX is a full suite DeFi platform built on the Solana blockchain and Serum DEX, offering a variety of unique decentralized peer-to-peer financial products. We aim to be a complete DeFi experience where you can trade cryptocurrencies, futures, NFTs all through one interface while utilizing your capital across all features seamlessly.
+Your Solana DeFi Destination. Trade Perps, Earn Yield in SSL Pools, Stake GOFX & Get Rewarded!
 
 Key Features of GooseFX:
 
-- Our concentrated liquidity market maker (CLMM) swap
-- Goose Nest NFT Exchange - An NFT exchange built on the Auction House contract with a launchpad
 - First ever single sided liquidity pools on Solana
+- Our concentrated liquidity market maker (CLMM) swap
 - Decentralized trading of defi derivatives and perps
+- Stake GOFX to earn rewards
 
 For in-depth details, visit the [technical documentation](https://docs.goosefx.io) that elaborates on our tokenomics, features, and roadmap.
 
