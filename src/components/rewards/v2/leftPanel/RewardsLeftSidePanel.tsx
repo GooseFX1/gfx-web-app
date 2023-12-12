@@ -150,9 +150,9 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       />
       <CombinedRewardsTopLinks>
         {/*<TopLinks />*/}
-        <HowItWorksButton cssClasses={[tw`ml-auto`]} />
+        <HowItWorksButton />
       </CombinedRewardsTopLinks>
-      <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:my-7.5`]}>
+      <div css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:mt-[30px] `]}>
         <RewardsLeftPanelHeading />
         <div css={[tw`flex w-full flex-col gap-3 min-md:gap-5 mt-3 min-md:mt-2.5`]}>
           <div css={[tw`flex flex-1 w-full flex-row flex-wrap gap-3 min-md:gap-y-5`]}>
@@ -226,12 +226,14 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
             </Button>
           )}
         </div>
+        <div css={[tw`mt-[20px] w-full`]}>
+          {isStakeSelected ? (
+            <RewardsStakeBottomBar calculating={calculating || apy == 0} approxRewardAmount={approxRewardAmount} />
+          ) : (
+            <RewardsUnstakeBottomBar />
+          )}
+        </div>
       </div>
-      {isStakeSelected ? (
-        <RewardsStakeBottomBar calculating={calculating || apy == 0} approxRewardAmount={approxRewardAmount} />
-      ) : (
-        <RewardsUnstakeBottomBar />
-      )}
     </RewardsLeftLayout>
   )
 }
