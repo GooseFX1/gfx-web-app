@@ -247,7 +247,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </h3>
           </MARGIN_VERTICAL>
           <MainButton
-            height={'60px'}
+            height={'40px'}
             width="100%"
             status="action"
             onClick={handleWithdrawEscrowBalance}
@@ -282,18 +282,18 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
     () => getUIAmount(WRAPPED_SOL_MINT.toString()),
     [wallet?.adapter, wallet?.adapter?.publicKey]
   )
-  const isProfileComplete = useMemo(() => {
-    if (
-      currentUserProfile?.bio &&
-      currentUserProfile?.discord_profile &&
-      currentUserProfile?.twitter_link &&
-      currentUserProfile?.nickname &&
-      currentUserProfile?.website_link &&
-      currentUserProfile?.telegram_link
-    )
-      return true
-    return false
-  }, [currentUserProfile])
+  // const isProfileComplete = useMemo(() => {
+  //   if (
+  //     currentUserProfile?.bio &&
+  //     currentUserProfile?.discord_profile &&
+  //     currentUserProfile?.twitter_link &&
+  //     currentUserProfile?.nickname &&
+  //     currentUserProfile?.website_link &&
+  //     currentUserProfile?.telegram_link
+  //   )
+  //     return true
+  //   return false
+  // }, [currentUserProfile])
 
   const completeButtonClicked = useCallback(async () => {
     await signAndUpdateDetails(wallet, isSessionUser, setProfileModal)
@@ -474,7 +474,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
         <div tw="absolute bottom-0 right-[22px] flex">
           {isSessionUser && connected && publicKey && (
             <Button
-              height={'44px'}
+              height={'35px'}
               width={'200px'}
               cssStyle={tw`bg-purple-1 mr-[12px]`}
               onClick={() => setSettleBalanceModal(true)}
@@ -487,7 +487,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             </Button>
           )}
 
-          {isSessionUser && connected && !isProfileComplete && publicKey && (
+          {/* {isSessionUser && connected && !isProfileComplete && publicKey && (
             <Button
               height={'44px'}
               cssStyle={tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2 px-4`}
@@ -495,7 +495,7 @@ export const HeaderProfile: FC<Props> = ({ isSessionUser }: Props): JSX.Element 
             >
               <span tw="font-semibold text-regular text-white">Complete Profile</span>
             </Button>
-          )}
+          )} */}
           {/* {isSessionUser && connected && publicKey && (
             <button className="btn-create" onClick={() => history.push('/NFTs/create')}>
               <span>Create</span>

@@ -17,7 +17,7 @@ const SNACKBAR = styled.div<{
   $height: string
   $width: string
 }>`
-  ${tw`flex justify-center items-center rounded px-5 py-1 border-solid border-1 sm:px-2`}
+  ${tw`flex justify-center items-center rounded px-5 py-1 border-solid border-1 sm:px-2 flex-wrap`}
   ${({ $cssStyle }) => $cssStyle};
   height: ${({ $height }) => $height};
   width: ${({ $width }) => $width};

@@ -57,7 +57,7 @@ export const NFTTab: FC<Props> = ({ tabPanes, defaultActiveKey = '1' }): ReactEl
         displayIndex={displayIndex}
         setDisplayIndex={setDisplayIndex}
       />
-      {tabPanes[displayIndex].component}
+      {tabPanes && tabPanes[displayIndex] && tabPanes[displayIndex].component}
     </GRID_CONTAINER>
   )
 }
