@@ -16,7 +16,8 @@ import {
   //invalidWithdrawErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage,
-  SSLToken
+  SSLToken,
+  BONK_TREASURY
 } from './constants'
 import { notify, truncateBigNumber, truncateBigString, commafy } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -170,6 +171,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   //   window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
   // }
 
+  const enableBonkTreasury = useMemo(() => {
+    if (userPublicKey?.toBase58() === BONK_TREASURY && coin?.token === 'BONK') return true
+    else return false
+  }, [userPublicKey, coin])
+
   const openActionModal = (actionValue: string) => {
     if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
     setActionType(actionValue)
@@ -178,19 +184,24 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
   // or withdraw mode with zero user deposited amount or no withdraw amount
-  const disableActionButton = useMemo(
-    () =>
-      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT &&
-        (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
-      (modeOfOperation === ModeOfOperation.WITHDRAW &&
-        (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0)),
-    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
-  )
+  const disableActionButton = useMemo(() => {
+    if (enableBonkTreasury) return false
+    else {
+      return (
+        (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
+        (modeOfOperation === ModeOfOperation.DEPOSIT &&
+          (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
+        (modeOfOperation === ModeOfOperation.WITHDRAW &&
+          (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0))
+      )
+    }
+  }, [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity])
 
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (enableBonkTreasury && depositAmount) return modeOfOperation
+      if (enableBonkTreasury && (!depositAmount || +depositAmount <= 0)) return `Enter Amount`
       if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
