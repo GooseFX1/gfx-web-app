@@ -1,4 +1,4 @@
-import { SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
+import { SuccessClaimMessage, SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -297,6 +297,10 @@ export const sslSuccessfulMessage = (
   wallet_name: string
 ): Message => ({
   message: <SuccessSSLMessage operation={operation} amount={price} token={name} wallet_name={wallet_name} />
+})
+
+export const successClaimMessage = (token: string): Message => ({
+  message: <SuccessClaimMessage token={token} />
 })
 
 export const sslErrorMessage = (): Message => ({

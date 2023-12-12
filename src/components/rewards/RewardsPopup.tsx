@@ -67,8 +67,7 @@ export const RewardsButton: FC = () => {
 }
 
 export const RewardsPopup: FC = () => {
-  const { rewardToggle } = useRewardToggle()
-  const { panelIndex } = useRewardToggle()
+  const { rewardToggle, panelIndex } = useRewardToggle()
   return (
     <CryptoProvider>
       <RewardsProvider>

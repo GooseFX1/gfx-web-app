@@ -56,7 +56,7 @@ const PastTopPrizesPopup: FC<{
            `
           ]}
         >
-          <h2 tw="h-8 font-semibold text-average mb-0">Past Top Prizes</h2>
+          <h2 tw="h-8 font-semibold text-average mb-0">Past Top Prizes (Dummy Data)</h2>
           <img
             css={[tw`w-4.5 h-4.5 cursor-pointer`]}
             onClick={setShowPastPrize}

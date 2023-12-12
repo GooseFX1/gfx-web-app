@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { localhost } from '../analytics'
 import { GET_LATEST_CONTEST, GET_USER_RAFFLE_PRIZES } from '../../pages/TradeV3/perps/perpsConstants'
+import { httpClient } from '..'
 
 export const getUserRafflePrizes = async (wallet: string): Promise<any> => {
   if (!wallet) throw new Error('Wallet is required')
@@ -15,7 +16,7 @@ export const getUserRafflePrizes = async (wallet: string): Promise<any> => {
 
 export const getRaffleDetails = async (): Promise<any> => {
   try {
-    const { data } = await axios.get(localhost + GET_LATEST_CONTEST)
+    const { data } = await httpClient('api-services').get(GET_LATEST_CONTEST)
     return data
   } catch (err) {
     console.log(err)

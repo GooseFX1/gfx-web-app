@@ -7,8 +7,23 @@ export interface RaffleContest {
   contestClaimPrizeEnabled: boolean
   contestRafflePointsWeights: ContestRafflePointsWeights
   contestPrizes: IContestPrizes
-  contestWinners?: ContestWinner[]
 }
+interface ContestPrizes {
+  numPrizes: number
+  tokenName: string
+  tokenMint: string
+  prizeSplit: number[]
+  totalFixedPrize: number
+  tokenDecimals?: number // Optional since it's not present in all objects
+}
+
+export interface PastContestPrizes {
+  contestId: number
+  contestName?: string // Optional since it's not present in all objects
+  contestPrizes: ContestPrizes
+}
+
+export type Contests = PastContestPrizes[]
 
 interface IContestResults {
   contestPoints: number
@@ -44,6 +59,7 @@ export interface IFixedPrizes {
   tokenMint: string
   prizeSplit: number[]
   totalFixedPrize: string
+  tokenDecimals: number
 }
 
 interface RafflePrizes {
@@ -53,7 +69,7 @@ interface RafflePrizes {
   totalRafflePrize: string
 }
 
-interface ContestWinner {
+export interface ContestWinner {
   walletAddress: string
   contestPoints: string
   totalPoints: string

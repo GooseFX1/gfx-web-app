@@ -15,6 +15,7 @@ import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
+import { ADDRESSES, SSLToken } from '../pages/FarmV3/constants'
 
 const SECONDS_30 = 30 * 1000
 const COMMITMENT_LEVELS = ['processed', 'confirmed', 'finalized']
@@ -251,13 +252,9 @@ export const getPriceObject = (str: string): string => {
   return `${str}/USDC`
 }
 
-export const getTokenNameFromMintAddress = (mintAddress: string): string => {
-  switch (mintAddress) {
-    case 'GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD':
-      return 'GFX'
-    case 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v':
-      return 'USDC'
-    case 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263':
-      return 'BONK'
-  }
+export const getAddressMapping = (token: string | PublicKey): SSLToken => {
+  const address = ADDRESSES['mainnet-beta'].filter(
+    (address) => address.name === token || address.address === token
+  )
+  return address[0]
 }

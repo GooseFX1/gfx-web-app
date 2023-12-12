@@ -141,6 +141,26 @@ export const SuccessSSLMessage: FC<{
   )
 }
 
+export const SuccessClaimMessage: FC<{
+  token?: string
+}> = ({ token }) => (
+  <MESSAGE>
+    <div tw="flex items-center justify-between">
+      <div tw="text-[15px]">Success</div>
+      <div>
+        <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+      </div>
+    </div>
+
+    <div tw="font-semibold text-[13px]">
+      <div tw="font-semibold text-[13px]">
+        {`Congratulations, 
+          You’ve won ${token} from our Raffle.`}
+      </div>
+    </div>
+  </MESSAGE>
+)
+
 export const TransactionErrorMsgSSL: FC = () => (
   <MESSAGE>
     <div tw="flex items-center justify-between">

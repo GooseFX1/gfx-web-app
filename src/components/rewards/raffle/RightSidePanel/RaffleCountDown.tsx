@@ -1,33 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, useEffect, useMemo, useState } from 'react'
-import useTimer from '../../../../hooks/useTimer'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import tw from 'twin.macro'
 import Button from '../../../twComponents/Button'
 import useBoolean from '../../../../hooks/useBoolean'
 import { Loader } from '../../../Loader'
-import { useConnectionConfig } from '../../../../context'
-import { BONK_MINT_PUBKEY, claimPrize, getClaimProgram, getUserClaimableAmount } from './claimPrize'
+import { claimPrize } from './claimPrize'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { notify } from '../../../../utils'
+import { successClaimMessage } from '../../../../pages/FarmV3/constants'
+import { genericErrMsg } from '../../../Farm/generic'
+import { useRaffleContext } from '../../../../context/raffle_context'
+import { Connect } from '../../../../layouts'
+import * as anchor from '@coral-xyz/anchor'
+import { getAddressMapping } from '../../../../web3'
 
-const Countdown: FC<{ endTimeStamp: number; showRevealModal }> = ({ endTimeStamp, showRevealModal }) => {
+const Countdown: FC<{
+  endTimeStamp: number
+  showRevealModal
+  prizeClaimable
+  program: anchor.Program
+}> = ({ endTimeStamp, showRevealModal, prizeClaimable, program }) => {
   const [isLoading, setIsLoading] = useBoolean(false)
   const raffleEnded = useMemo(() => endTimeStamp < Date.now() / 1000, [endTimeStamp])
-  const [buttonDisabled, setButtonDisabled] = useBoolean(false)
-  const [prizeClaimable, setPrizeClaimable] = useState(null)
+  const [buttonDisabled, setButtonDisabled] = useBoolean(true)
   const { wallet } = useWallet()
-  const wal = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const { connection } = useConnectionConfig()
-  const program = getClaimProgram(connection, wal)
-
-  useEffect(() => {
-    ;(async () => {
-      const prize = await getUserClaimableAmount(publicKey, BONK_MINT_PUBKEY, program)
-      setPrizeClaimable(prize)
-    })()
-  }, [publicKey])
-
   const [timeLeft, setTimeLeft] = useState('')
+  const { fetchUpdatedUserStats, raffleDetails } = useRaffleContext()
+  const prizeToken = useMemo(() => raffleDetails?.contestPrizes?.fixedPrizes?.tokenName, [raffleDetails])
+
+  const callPrizeClaimable = useCallback(() => {
+    setTimeout(() => {
+      fetchUpdatedUserStats()
+    }, 3000)
+  }, [])
+  // TODO: Create a util function
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime()
@@ -48,24 +55,43 @@ const Countdown: FC<{ endTimeStamp: number; showRevealModal }> = ({ endTimeStamp
     return () => clearInterval(interval)
   }, [endTimeStamp])
 
-  const fakeLoad = () => {
+  const fakeLoad = async () => {
     setIsLoading.on()
-    // CHANGE BONK_MINT_PUBKEY
-    claimPrize(program, publicKey, BONK_MINT_PUBKEY)
     setTimeout(setIsLoading.off, 2000)
     showRevealModal.on()
+
+    try {
+      const mintAddrPubKey = getAddressMapping(prizeToken)
+      const claim = await claimPrize(program, publicKey, mintAddrPubKey.address)
+      if (claim === true) {
+        notify(successClaimMessage(prizeToken))
+        callPrizeClaimable()
+      } else {
+        notify(genericErrMsg(claim.toString()))
+        showRevealModal.off()
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const buttonText = useMemo(() => {
     if (endTimeStamp > Date.now() / 1000) return timeLeft
+    if (!raffleDetails?.contestClaimPrizeEnabled) {
+      setButtonDisabled.on()
+      return 'We are Selecting Prizes'
+    }
     if (prizeClaimable === null) return 'Better Luck Next Time'
     if (prizeClaimable === 0) {
       setButtonDisabled.on()
       return 'Claimed'
     }
-    if (prizeClaimable > 0 && raffleEnded) return 'Reveal the Prize'
+    if (prizeClaimable > 0 && raffleEnded) {
+      setButtonDisabled.off()
+      return 'Reveal the Prize'
+    }
     return 'Enter Raffle'
-  }, [endTimeStamp, raffleEnded, timeLeft, prizeClaimable])
+  }, [endTimeStamp, raffleEnded, timeLeft, prizeClaimable, raffleDetails])
 
   useEffect(() => {
     if (prizeClaimable > 0) {
@@ -74,6 +100,7 @@ const Countdown: FC<{ endTimeStamp: number; showRevealModal }> = ({ endTimeStamp
       setButtonDisabled.on()
     }
   }, [prizeClaimable, raffleEnded])
+  if (!publicKey && raffleEnded) return <Connect customButtonStyle={[tw`sm:w-[80vw] w-[320px] h-10`]} />
 
   return (
     <Button

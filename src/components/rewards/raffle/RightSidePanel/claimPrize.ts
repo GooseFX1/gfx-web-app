@@ -15,7 +15,6 @@ export const USDC_MINT_PUBKEY = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wE
 export const BONK_MINT_PUBKEY = new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
 export const GOFX_MINT_PUBKEY = new PublicKey('GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD')
 export const CLAIM_PROGRAM_AUTHORITY = new PublicKey('kiraF71MNVhsqLn6aygKLWka98v2u1vffo7PvLeTyho')
-// CHANGE
 
 export const globalTreasurySignerPDA = PublicKey.findProgramAddressSync(
   [Buffer.from(GLOBAL_TREASURY_SIGNER_SEED), CLAIM_PROGRAM_AUTHORITY.toBuffer()],
@@ -54,9 +53,13 @@ export const getUserClaimableAmount = async (
   }
 }
 
-export const claimPrize = async (program: any, pubKey: PublicKey, mintAddress: PublicKey): Promise<void> => {
+export const claimPrize = async (
+  program: anchor.Program,
+  pubKey: PublicKey,
+  mintAddress: PublicKey
+): Promise<string | boolean> => {
   try {
-    const signature = await program.methods
+    await program.methods
       .claimRewards()
       .accounts({
         user: pubKey,
@@ -69,9 +72,10 @@ export const claimPrize = async (program: any, pubKey: PublicKey, mintAddress: P
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID
       })
-      .rpc()
-    console.log(`https://solscan.io/tx/${signature}`)
+      .rpc({ commitment: 'processed' })
+    return true
   } catch (err) {
     console.log(err)
+    return err
   }
 }
