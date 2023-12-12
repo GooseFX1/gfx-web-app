@@ -1,7 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import React, { FC, useState, ReactNode, createContext, useContext, useMemo, useEffect, useCallback } from 'react'
 import {
-  BONK_MINT_PUBKEY,
   getClaimProgram,
   getUserClaimPDA,
   getUserClaimableAmount
@@ -10,6 +9,7 @@ import { useConnectionConfig } from './settings'
 import { getAddressMapping } from '../web3'
 import { PastContestPrizes, RaffleContest } from '../types/raffle_details'
 import { getRaffleDetails } from '../api/rewards'
+import { toPublicKey } from '@metaplex-foundation/js'
 interface IRaffleToggleConfig {
   prizeClaimable: number
   fetchUpdatedUserStats: () => void
@@ -30,17 +30,21 @@ export const RaffleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [userRecentPrizes, setUserRecentPrizes] = useState(null)
   const [raffleDetails, setRaffleDetails] = useState<RaffleContest>()
   const [pastTopPrizes, setPastTopPrizes] = useState<PastContestPrizes[]>([])
+  const prizeTokenMint = useMemo(
+    () => (raffleDetails ? toPublicKey(raffleDetails?.contestPrizes?.fixedPrizes?.tokenMint) : null),
+    [raffleDetails]
+  )
 
   const fetchUpdatedUserStats = useCallback(async () => {
     getWalletAddressPastPrizes()
-    const prize = await getUserClaimableAmount(publicKey, BONK_MINT_PUBKEY, program)
+    const prize = await getUserClaimableAmount(publicKey, prizeTokenMint, program)
     setPrizeClaimable(prize)
   }, [publicKey, connection])
 
   const getWalletAddressPastPrizes = useCallback(async () => {
     try {
       const pastPrizes = []
-      const userPDA = getUserClaimPDA(publicKey, BONK_MINT_PUBKEY) // TODO Find other tokens as well
+      const userPDA = getUserClaimPDA(publicKey, prizeTokenMint) // TODO Find other tokens as well
       const transactionList = await connection.getSignaturesForAddress(userPDA)
       const signatureList = transactionList.map((transaction) => transaction.signature)
       const transactionDetails = await connection.getParsedTransactions(signatureList, {
