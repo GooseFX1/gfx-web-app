@@ -45,6 +45,7 @@ import 'styled-components/macro'
 import { minimizeTheString } from '../../../web3/nfts/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import debounce from 'lodash.debounce'
+import { Snackbar } from '../../../components'
 
 const NFT_AGG_WRAP = styled.div<{ $currency }>`
   height: 100%;
@@ -656,14 +657,17 @@ const NFTLandingPageV2 = (): ReactElement => {
         onClick={handleTopScroll}
       />
       {handleWelcomeModal()}
-      {!checkMobile() && (
-        <>
-          <BannerContainer showBanner={showBanner}>
-            <StatsContainer showBanner={showBanner} setShowBanner={setShowBanner} />
-            <NFTBanners showBanner={showBanner} />
-          </BannerContainer>
-        </>
-      )}
+
+      <div tw="m-[24px]">
+        <Snackbar
+          cssStyle={tw`dark:border-white border-black-1 dark:text-white text-black-1 text-h3 justify-start`}
+        >
+          Please note, we are deprecating our NFT marketplace to focus on our DeFi products. Please delist your
+          NFTs as soon as possible at
+          <span tw="ml-1 dark:text-secondary-gradient-1 text-blue-1">/nfts/profile/your-address.</span> We will be
+          removing all listings soon.
+        </Snackbar>
+      </div>
       <FiltersContainer />
       <NFTCollectionsTable showBanner={showBanner} />
     </NFT_AGG_WRAP>
