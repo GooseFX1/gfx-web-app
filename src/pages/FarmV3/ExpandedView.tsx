@@ -18,7 +18,7 @@ import {
   sslErrorMessage,
   SSLToken
 } from './constants'
-import { notify, truncateBigNumber, truncateBigString, commafy } from '../../utils'
+import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
@@ -335,18 +335,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
   }
 
-  const userDepositInUSD = useMemo(() => {
-    if (!userDepositedAmount || userDepositedAmount === null || userDepositedAmount?.toString() === '0')
-      return '00.00'
-    else {
-      const nativeStringLen = userDepositedAmount?.toString().length
-      const usdString =
-        userDepositedAmount?.toString().substring(0, nativeStringLen - coin?.mintDecimals) +
-        '.' +
-        userDepositedAmount?.toString()?.substring(nativeStringLen - coin?.mintDecimals)
-      return usdString
-    }
-  }, [userDepositedAmount, coin?.mintDecimals])
+  const userDepositInUSD = useMemo(
+    () => withdrawBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
+    [userDepositedAmount, coin?.mintDecimals]
+  )
 
   const renderStatsAsZero = useCallback(
     (token: string | undefined) => (

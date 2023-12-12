@@ -355,3 +355,26 @@ export const formatUserBalance = (nativeBN: string, mintDecimals: number): any =
     afterDecimalBN
   }
 }
+
+export const withdrawBigString = (nativeString: string, mintDecimals: number): string => {
+  if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
+    return '0.00'
+
+  let usdString = ''
+  const nativeStringLen = nativeString.length
+  if (nativeStringLen > mintDecimals) {
+    usdString =
+      nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeString.substring(nativeStringLen - mintDecimals)
+  } else {
+    let i = 0
+    let result = '0.'
+    while (i < mintDecimals - nativeStringLen) {
+      result += '0'
+      i++
+    }
+    usdString = result + nativeString
+  }
+  return usdString
+}
