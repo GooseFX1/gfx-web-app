@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useMemo, FC } from 'react'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
-import CollectionV2 from './Collection/CollectionV2'
-import NFTLandingPageV2 from './Home/NFTLandingPageV2'
+import { Route, Switch } from 'react-router-dom'
+// import CollectionV2 from './Collection/CollectionV2'
+// import NFTLandingPageV2 from './Home/NFTLandingPageV2'
 import { Profile } from './Profile'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
@@ -27,7 +27,7 @@ const BODY_NFT = styled.div`
   }
 `
 const NFTAgg: FC = (): ReactElement => {
-  const { path } = useRouteMatch()
+  // const { path } = useRouteMatch()
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const { wallet } = useWallet()
@@ -39,9 +39,8 @@ const NFTAgg: FC = (): ReactElement => {
   }, [])
 
   useEffect(() => {
-    if (checkMobile()) logData('NFT_agg_mobile')
-    else logData('NFT_agg_web')
-  }, [])
+    if (window.location.pathname === '/nfts') history.push(`/nfts/profile}`)
+  }, [window.location.pathname])
 
   useEffect(() => {
     if (publicKey) {
@@ -83,12 +82,12 @@ const NFTAgg: FC = (): ReactElement => {
       <NFTAggFiltersProvider>
         <NFTAMMProvider>
           <Switch>
-            <Route exact path={path}>
+            {/* <Route exact path={path}>
               <NFTLandingPageV2 />
-            </Route>
-            <Route exact path="/nfts/collection/:collectionName">
+            </Route> */}
+            {/* <Route exact path="/nfts/collection/:collectionName">
               <CollectionV2 />
-            </Route>
+            </Route> */}
             <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
               <Profile />
             </Route>

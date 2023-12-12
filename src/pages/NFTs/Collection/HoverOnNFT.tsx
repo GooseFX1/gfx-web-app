@@ -141,71 +141,37 @@ export const HoverOnNFT: FC<{
           />
         </div>
       )}
-      <span className="hoverButtons">
-        {buttonType === 'Sell' && (
+
+      {buttonType === 'Modify' && (
+        <span className="hoverButtons">
           <Button
             loading={isLoading}
             disabled={isLoading}
-            cssStyle={tw`bg-red-2 h-[35px] w-[80px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
-            onClick={(e) => goToDetailsForModal(e, 'sell')}
+            cssStyle={tw`bg-red-2 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 `}
+            onClick={(e) => goToDetailsForModal(e, 'delist')}
           >
-            List Item
+            Delist
           </Button>
-        )}
-        {buttonType === 'Modify' && (
-          <>
-            <Button
-              loading={isLoading}
-              disabled={isLoading}
-              cssStyle={tw`bg-red-2 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 `}
-              onClick={(e) => goToDetailsForModal(e, 'delist')}
-            >
-              Delist
-            </Button>
-            <Button
+          {/* <Button
               loading={isLoading}
               disabled={isLoading}
               cssStyle={tw`bg-blue-1 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold  sm:ml-1 `}
               onClick={(e) => goToDetailsForModal(e, 'sell')}
             >
               Modify
-            </Button>
-          </>
-        )}
-        {buttonType !== 'Modify' && buttonType !== 'Sell' && myBidToNFT.length > 0 && (
-          <Button
-            loading={isLoading}
-            disabled={isLoading}
-            cssStyle={tw`bg-red-2  h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
-            onClick={(e) => goToDetailsForModal(e, 'cancel')}
-          >
-            Cancel
-          </Button>
-        )}
-
-        {showBidBtn && (
-          <Button
-            loading={isLoading}
-            disabled={isLoading}
-            cssStyle={tw`bg-[#5855ff]   h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
-            onClick={(e) => goToDetailsForModal(e, 'bid')}
-          >
-            Bid
-          </Button>
-        )}
-
-        {ask && (
-          <Button
-            className="pinkGradient"
-            loading={isLoading}
-            disabled={isLoading}
-            cssStyle={tw`text-[13px] font-semibold h-[35px] sm:h-[30px] w-[80px] sm:w-[75px]  sm:ml-1 sm:text-[13px] `}
-            onClick={(e) => goToDetailsForModal(e, 'buy')}
-          >
-            Buy now
-          </Button>
-        )}
-      </span>
+            </Button> */}
+        </span>
+      )}
+      {buttonType !== 'Modify' && myBidToNFT.length > 0 && (
+        <Button
+          loading={isLoading}
+          disabled={isLoading}
+          cssStyle={tw`bg-red-2  h-[35px] w-[75px] mr-[5px] text-[13px] font-semibold `}
+          onClick={(e) => goToDetailsForModal(e, 'cancel')}
+        >
+          Cancel
+        </Button>
+      )}
     </div>
   )
 }
