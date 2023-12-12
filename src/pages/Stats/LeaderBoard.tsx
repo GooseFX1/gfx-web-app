@@ -39,7 +39,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   .slider {
     ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px] sm:w-[90px]`}
-    left: ${({ $index }) => (checkMobile() ? $index * 90 + 'px' : $index * 80 + 'px')};
+    left: ${({ $index }) => (checkMobile() ? $index * 90 + 'px' : $index * 80 + 35 + 'px')};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -148,39 +148,15 @@ const CARD = styled.div`
       rounded-small flex flex-row items-center px-3.75 sm:mb-[15px] sm:w-full`}
 `
 
-const transformObject = (original, index) => ({
-  id: index + 1,
-  address: original.walletAddress,
-  boost: original.boost,
-  loyalty: original.loyalty,
-  pnl: undefined, // You may need to provide logic to set this value
-  dailyPoints: undefined, // You may need to provide logic to set this value
-  weeklyPoints: original.rafflePoints, // You may need to provide logic to set this value
-  // You may need to provide logic to set this value - prevWeekPoints
-  prevWeekPoints: original.prevRafflePoints[original.prevRafflePoints.length - 1],
-  totalPoints: original.totalPoints ? original.totalPoints.toString() : undefined
-})
-
 const LeaderBoard: FC = () => {
   const [screenType, setScreenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
-  const { users, nftUsers } = useStats()
-  const displayUsers = useMemo(() => {
-    if (screenType === 2) {
-      // initially when the new raffle starts all the users will have 0 points, so we will display the top 5 users
-      let transformedObjectUser = nftUsers.map((nftUser, index) => transformObject(nftUser, index))
-      transformedObjectUser = transformedObjectUser.filter((user) => user.weeklyPoints > 0)
-      return transformObject.length === 0
-        ? nftUsers.filter((user, index) => user && index < 5)
-        : transformedObjectUser
-    } else {
-      return users
-    }
-  }, [nftUsers, users, screenType])
+  const { users } = useStats()
+  const displayUsers = useMemo(() => users, [users, screenType])
 
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
+  const leaderboardScreens = ['Perps', 'Devnet']
 
   return (
     <WRAPPER $isCollapsed={true} $index={screenType}>
@@ -305,9 +281,11 @@ const LeaderBoard: FC = () => {
             />
             <div tw="flex flex-col mr-auto">
               <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
-                {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
+                {user?.domainName
+                  ? getFormattedDomainName(user.domainName)
+                  : user?.address && truncateAddress(user?.address)}
               </div>
-              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}</div>
+              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.contestPoints}</div>
             </div>
             <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
               {user?.boost}x Boost
@@ -317,51 +295,29 @@ const LeaderBoard: FC = () => {
       </div>
       <table>
         <thead className="tableHeader">
-          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
+          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
         </thead>
         <tbody>
-          {displayUsers
-            .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
-            .map((user: User, index: number) => (
-              <TABLE_ROW key={index}>
-                {checkMobile() ? (
-                  <ColumnMobile user={user} />
+          {displayUsers?.length &&
+            displayUsers
+              .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
+              .map((user: User, index: number) => (
+                <TABLE_ROW key={index}>
+                  {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} connectedUser={true} />}
+                </TABLE_ROW>
+              ))}
+          {displayUsers &&
+            displayUsers
+              .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
+              .map((user: User, index: number) =>
+                user?.totalPoints ? (
+                  <TABLE_ROW key={index}>
+                    {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
+                  </TABLE_ROW>
                 ) : (
-                  <ColumnWeb user={user} screenType={screenType} connectedUser={true} />
-                )}
-              </TABLE_ROW>
-            ))}
-          {screenType !== 2
-            ? displayUsers
-                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-                .map((user: User, index: number) =>
-                  user?.weeklyPoints ? (
-                    <TABLE_ROW key={index}>
-                      {checkMobile() ? (
-                        <ColumnMobile user={user} />
-                      ) : (
-                        <ColumnWeb user={user} screenType={screenType} />
-                      )}
-                    </TABLE_ROW>
-                  ) : (
-                    <></>
-                  )
+                  <></>
                 )
-            : displayUsers
-                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-                .map((user, index: number) =>
-                  user?.totalPoints ? (
-                    <TABLE_ROW key={index}>
-                      {checkMobile() ? (
-                        <ColumnMobile user={user} />
-                      ) : (
-                        <ColumnWeb user={user} screenType={screenType} />
-                      )}
-                    </TABLE_ROW>
-                  ) : (
-                    <></>
-                  )
-                )}
+              )}
         </tbody>
       </table>
     </WRAPPER>
