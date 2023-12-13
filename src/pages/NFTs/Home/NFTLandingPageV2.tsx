@@ -663,9 +663,7 @@ const NFTLandingPageV2 = (): ReactElement => {
           cssStyle={tw`dark:border-white border-black-1 dark:text-white text-black-1 text-h3 justify-start`}
         >
           Please note, we are deprecating our NFT marketplace to focus on our DeFi products. Please delist your
-          NFTs as soon as possible at
-          <span tw="ml-1 dark:text-secondary-gradient-1 text-blue-1">/nfts/profile/your-address.</span> We will be
-          removing all listings soon.
+          NFTs as soon as possible on your profile page. We will be removing all listings soon.
         </Snackbar>
       </div>
       <FiltersContainer />
