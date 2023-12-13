@@ -660,6 +660,8 @@ const NFTLandingPageV2 = (): ReactElement => {
 
       <div tw="m-[24px]">
         <Snackbar
+          height="auto"
+          width="100%"
           cssStyle={tw`dark:border-white border-black-1 dark:text-white text-black-1 text-h3 justify-start`}
         >
           Please note, we are deprecating our NFT marketplace to focus on our DeFi products. Please delist your
