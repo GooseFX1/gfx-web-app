@@ -68,7 +68,6 @@ export const FarmHeader: FC = () => {
 
   const getTooltipText = (index: number) => {
     let tooltipText = ''
-    // eslint-disable-next-line max-len
     if (index === 0)
       tooltipText = 'Total rewards earned by the user by providing liquidty in our SSL Pools, displayed in USD.'
     else if (index === 1) tooltipText = 'TVL represents the total USD value of all assets locked in our SSL Pools.'
@@ -101,7 +100,6 @@ export const FarmHeader: FC = () => {
 
     const totalEarned = allPoolSslData
       .map((token: SSLToken) => {
-        // eslint-disable-next-line max-len
         const totalEarnedInNative =
           filteredLiquidityAccounts?.[token?.mint?.toBase58()]?.totalEarned?.toNumber() /
           Math.pow(10, token?.mintDecimals)
@@ -255,7 +253,7 @@ export const FarmHeader: FC = () => {
               setPoolSelection(true)
             }}
           >
-            Can't Choose {checkMobile() && <br />} <span tw="sm:block text-right">a pool?</span>
+            Can't Choose {checkMobile() && <br />} <span tw="sm:block text-right">A Pool?</span>
           </span>
         </div>
       </div>
