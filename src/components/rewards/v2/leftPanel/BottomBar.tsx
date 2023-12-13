@@ -19,9 +19,9 @@ RewardsBottomBarProps): JSX.Element {
       css={[
         tw`mt-3 flex min-md:p-2.5 min-md:mt-0
         from-green-gradient-3 text-regular min-md:text-average
-    to-green-gradient-4 bg-none rounded-t-tiny  min-md:text-tiny font-semibold text-grey-1
-     dark:text-grey-2  min-md:text-grey-5
-        min-md:dark:text-grey-5 items-center justify-center flex-col min-md:flex-row w-full max-w-[580px]`
+        to-green-gradient-4 bg-none rounded-t-tiny min-md:text-tiny font-semibold text-grey-1
+        dark:text-grey-2 min-md:text-grey-5 min-md:dark:text-grey-5 items-center justify-center 
+        flex-col min-md:flex-row w-full max-w-[580px]`
       ]}
     >
       {/*<div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>*/}
