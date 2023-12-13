@@ -53,6 +53,7 @@ export const Tooltip: FC<{
   const { mode } = useDarkMode()
 
   const icon = `/img/assets/tooltip_${dark ? 'dark' : lite ? 'lite' : mode}_mode_icon.svg`
+
   return (
     <ANTDTooltip
       arrowPointAtCenter

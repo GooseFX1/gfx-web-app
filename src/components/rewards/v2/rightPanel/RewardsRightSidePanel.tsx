@@ -14,6 +14,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
 
   const totalEarnedString = numberFormatter(totalEarned, 2)
   const stakeRatio = numberFormatter(userStakeRatio, 2)
+
   return (
     <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 `]}>
       <h1 css={[tw`text-h2 min-md:text-h1 font-semibold !mb-0`]}>
@@ -35,12 +36,12 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
           </p>
           <p css={[tw`mb-0 text-regular min-sm:text-average text-white`]}>Past USDC Earnings</p>
         </div>
-        <div css={[tw`flex flex-col items-center`]}>
+        <div css={[tw`flex flex-col items-center `]}>
           <p css={[tw`mb-0 text-regular min-sm:text-average text-white flex items-center gap-1.25`]}>
             Total Staked&nbsp;
             <Tooltip
               title={
-                <div css={[tw`flex flex-col gap-1.25 [&>p]:mb-0 text-tiny font-semibold `]}>
+                <div css={[tw`flex flex-col my-auto [&>p]:mb-0 [&>p]:text-tiny [&>p]:font-semibold `]}>
                   <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>Global Staked GOFX</p>
                   <p css={[mode == 'dark' ? tw`text-black-4` : tw`text-grey-5`]}>
                     ≈ {numberFormatter(totalStakedGlobally, 2)}
@@ -51,10 +52,10 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
                   </p>
                 </div>
               }
-              className={'!inline-flex !m-0 !my-auto'}
-              overlayClassName={'rewards-tooltip small'}
+              className={'!inline-flex !m-0 !my-auto !w-5 !h-5 min-md:!w-4.5 min-md:!h-4.5 relative'}
+              overlayClassName={'rewards-tooltip small '}
               color={mode == 'dark' ? '#FFF' : '#1C1C1C'}
-              tooltipIconClassName={'!ml-0 !w-5 !h-5 min-sm:!w-4.5 min-sm:!h-4.5'}
+              tooltipIconClassName={' !ml-0 !w-5 !h-5 min-sm:!w-4.5 min-sm:!h-4.5'}
               useTextWrapper={false}
               showArrow={false}
               overrideIcon={'/img/assets/tooltip_holo.svg'}
