@@ -4,10 +4,13 @@ import { Tooltip } from '../../../Tooltip'
 import React from 'react'
 // import Skeleton from 'react-loading-skeleton'
 // import { numberFormatter } from '../../../../utils'
+
 interface RewardsBottomBarProps {
   calculating: boolean
   approxRewardAmount: number
 }
+
+// eslint-disable-next-line no-empty-pattern
 export default function RewardsStakeBottomBar({}: // calculating,
 // approxRewardAmount
 RewardsBottomBarProps): JSX.Element {
