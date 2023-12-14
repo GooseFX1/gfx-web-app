@@ -228,7 +228,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
             </Button>
           )}
         </div>
-        <div css={[tw`min-md:mt-2.5 w-full`]}>
+        <div css={[tw` w-full`]}>
           {isStakeSelected ? (
             <RewardsStakeBottomBar calculating={calculating || apy == 0} approxRewardAmount={approxRewardAmount} />
           ) : (

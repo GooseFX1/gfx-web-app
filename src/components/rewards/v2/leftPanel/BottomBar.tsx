@@ -20,7 +20,7 @@ RewardsBottomBarProps): JSX.Element {
   return (
     <div
       css={[
-        tw`flex min-md:p-2.5 min-md:mt-0
+        tw`min-md:mt-2.5 flex min-md:p-2.5 min-md:mt-0
         from-green-gradient-3 text-regular min-md:text-average
         to-green-gradient-4 bg-none rounded-t-tiny min-md:text-tiny font-semibold text-grey-1
         dark:text-grey-2 min-md:text-grey-1 min-md:dark:text-grey-5 items-center justify-center
