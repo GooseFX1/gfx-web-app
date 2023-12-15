@@ -19,7 +19,7 @@
     "outDir": "./bundle",
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/types/custom.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["node_modules", "bin/setupTests.ts", "bin/swap.ts"]
 }

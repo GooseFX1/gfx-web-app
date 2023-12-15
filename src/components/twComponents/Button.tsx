@@ -13,7 +13,7 @@ function Button({ onClick, children, iconLeft, iconRight, cssClasses, ...rest }:
       onClick={onClick}
       css={[
         tw`rounded-full px-1.5 py-1.25 flex items-center gap-1.5 h-7.5 text-regular font-semibold
-       whitespace-nowrap overflow-visible justify-center items-center text-grey-1
+       whitespace-nowrap overflow-visible justify-center items-center text-grey-1 box-border
       `
       ]
         .concat(cssClasses ?? [])
