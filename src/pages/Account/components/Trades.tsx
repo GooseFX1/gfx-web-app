@@ -12,6 +12,7 @@ import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
 import { httpClient } from '../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
+import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -42,9 +43,14 @@ const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
   border-top: none;
+  height: calc(100vh - 180px);
+
+  .history-items-root-container {
+    height: 100%;
+  }
 
   .history-items-container {
-    height: 450px;
+    height: calc(100% - 40px);
     overflow: auto;
   }
   .pair-container {
@@ -54,7 +60,9 @@ const HISTORY = styled.div`
     height: 24px;
     width: 24px;
   }
-
+  .pagination-container {
+    height: 40px;
+  }
   .history-item {
     ${tw`grid grid-cols-8  items-center w-full`}
     padding: 10px;
@@ -63,6 +71,10 @@ const HISTORY = styled.div`
   }
   .history-item span:first-child {
     ${tw`pl-1`}
+  }
+
+  .history-item:last-child {
+    border-bottom: none;
   }
   .no-trades-found {
     max-width: 155px;
@@ -79,21 +91,6 @@ const HISTORY = styled.div`
     color: #636363;
     font-size: 15px;
     font-weight: 600;
-  }
-
-  .pagination-container {
-    display: flex;
-    justify-content: flex-end;
-    border-top: 1px solid #3c3c3c;
-  }
-  .pagination-container > div {
-    display: flex;
-    flex-wrap: nowrap;
-  }
-
-  .pagination-container .icons-container {
-    display: flex;
-    flex-direction: row;
   }
 
   .deposit {
@@ -155,8 +152,13 @@ const Trades: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFilledTrades()
     }
-    console.log(setPagination)
   }, [connected, publicKey, traderInfo])
+
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFilledTrades()
+    }
+  }, [connected, publicKey, traderInfo, pagination])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)
@@ -195,7 +197,7 @@ const Trades: FC = () => {
       </ACCOUNTHEADER>
       <HISTORY>
         {filledTrades.length ? (
-          <div>
+          <div className="history-items-root-container">
             <div className="history-items-container">
               {filledTrades.map((trade) => (
                 <div key={trade._id} className="history-item">
@@ -213,38 +215,14 @@ const Trades: FC = () => {
                 </div>
               ))}
             </div>
-            {/* <div className="pagination-container"> */}
-            {/*   <div> */}
-            {/*     <p>1 of 20 Transactions</p> */}
-            {/*     <div className="icons-container"> */}
-            {/*       <img */}
-            {/*         src={ */}
-            {/*           mode === 'lite' */}
-            {/*             ? '/img/assets/arrow-circle-down-light-mode.svg' */}
-            {/*             : '/img/assets/arrow-circle-down.svg' */}
-            {/*         } */}
-            {/*         alt="arrow-icon" */}
-            {/*         height="16" */}
-            {/*         width="16" */}
-            {/*       /> */}
-            {/*       <img */}
-            {/*         src={ */}
-            {/*           mode === 'lite' */}
-            {/*             ? '/img/assets/arrow-circle-down-light-mode.svg' */}
-            {/*             : '/img/assets/arrow-circle-down.svg' */}
-            {/*         } */}
-            {/*         alt="arrow-icon" */}
-            {/*         height="16" */}
-            {/*         width="16" */}
-            {/*       /> */}
-            {/*     </div> */}
-            {/*   </div> */}
-            {/* </div> */}
+            <div className="pagination-container">
+              <Pagination pagination={pagination} setPagination={setPagination} />
+            </div>
           </div>
         ) : (
           <div className="no-trades-found">
             <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-            <p>No deposits Found</p>
+            <p>No Trades Found</p>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">

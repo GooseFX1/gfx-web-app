@@ -2,16 +2,16 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../context'
-import { Connect } from '../../../layouts/Connect'
+import { useCrypto, useDarkMode } from '../../../../context'
+import { Connect } from '../../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
+import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
 
-import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
-import { httpClient } from '../../../api'
-import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
-import { useTraderConfig } from '../../../context/trader_risk_group'
+import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
+import { httpClient } from '../../../../api'
+import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
+import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
@@ -22,36 +22,9 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTVALUESFLEX = styled.div`
-  ${tw`flex flex-row gap-x-4`}
-`
-
-const ACCOUNTVALUESCONTAINER = styled.div`
-  ${tw`w-[190px] rounded-[5px] p-[1px]`}
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-`
-
-const ACCOUNTVALUE = styled.div`
-  ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text28};
-  background: #131313;
-  padding: 5px;
-  p {
-    margin: 0px;
-    font-size: 13px;
-  }
-  p:last-child {
-    color: #636363;
-    font-size: 15px;
-  }
-`
-
 const ACCOUNTHEADER = styled.div`
-    /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
-
-    ${tw`grid grid-cols-5  items-center w-full`}
+    ${tw`grid grid-cols-8  items-center w-full`}
     border: 1px solid #3C3C3C;
-    border-bottom: none;
     margin-top: 10px;
     span {
         padding-top:10px;
@@ -69,7 +42,8 @@ const ACCOUNTHEADER = styled.div`
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
-  height: calc(100vh - 222px);
+  border-top: none;
+  height: calc(100vh - 180px);
 
   .history-items-root-container {
     height: 100%;
@@ -86,9 +60,11 @@ const HISTORY = styled.div`
     height: 24px;
     width: 24px;
   }
-
+  .pagination-container {
+    height: 40px;
+  }
   .history-item {
-    ${tw`grid grid-cols-5  items-center w-full`}
+    ${tw`grid grid-cols-8  items-center w-full`}
     padding: 10px;
     font-size: 13px;
     border-bottom: 1px solid #3c3c3c;
@@ -97,13 +73,10 @@ const HISTORY = styled.div`
     ${tw`pl-1`}
   }
 
-  .pagination-container {
-    height: 40px;
-  }
   .history-item:last-child {
     border-bottom: none;
   }
-  .no-funding-found {
+  .no-trades-found {
     max-width: 155px;
     display: flex;
     margin: auto;
@@ -111,7 +84,7 @@ const HISTORY = styled.div`
     justify-content: center;
     align-items: center;
   }
-  .no-funding-found > p {
+  .no-trades-found > p {
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -138,24 +111,23 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Market', 'Direction', 'Position Size', 'Payment', 'Date']
+const columns = ['Market', 'Direction', 'Size', 'Notional', 'Entry Price', 'Fee', 'Status', 'Date']
+
 type Pagination = {
   page: number
   limit: number
 }
-const FundingHistory: FC = () => {
+const Trades: FC = () => {
   const { mode } = useDarkMode()
 
   const { connected, publicKey } = useWallet()
-
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [tradeType, setTradeType] = useState<string>('deposit')
-
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
-  const [fundingHistory, setFundingHistory] = useState([])
+  const [filledTrades, setFilledTrades] = useState([])
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -163,6 +135,31 @@ const FundingHistory: FC = () => {
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
+  const fetchFilledTrades = async () => {
+    const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
+      params: {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        devnet: isDevnet,
+        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+        page: pagination.page,
+        limit: pagination.limit
+      }
+    })
+    setFilledTrades(res.data.data)
+  }
+
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFilledTrades()
+    }
+  }, [connected, publicKey, traderInfo])
+
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFilledTrades()
+    }
+  }, [connected, publicKey, traderInfo, pagination])
+
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)
     const date = new Date(unixTimestamp * 1000)
@@ -172,26 +169,6 @@ const FundingHistory: FC = () => {
 
     return formattedDate
   }
-  const fetchFundingHistory = async () => {
-    const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFundingHistory(res.data.data)
-  }
-
-  useEffect(() => {
-    if (traderInfo.traderRiskGroupKey !== null) {
-      fetchFundingHistory()
-    }
-    console.log(setPagination)
-  }, [connected, publicKey, traderInfo])
-
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -212,41 +189,29 @@ const FundingHistory: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <h1>Funding</h1>
-      <ACCOUNTVALUESFLEX>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>Cumulative Funding:</p>
-            <p>
-              $
-              {Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())}
-            </p>
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-      </ACCOUNTVALUESFLEX>
+      <h1>Trades</h1>
       <ACCOUNTHEADER>
         {columns.map((item, index) => (
           <span key={index}>{item}</span>
         ))}
       </ACCOUNTHEADER>
       <HISTORY>
-        {fundingHistory.length ? (
+        {filledTrades.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
-              {fundingHistory.map((item) => (
-                <div key={item._id} className="history-item">
+              {filledTrades.map((trade) => (
+                <div key={trade._id} className="history-item">
                   <div className="pair-container">
                     <img src={`${assetIcon}`} alt="SOL icon" />
                     <span>{selectedCrypto.pair}</span>
                   </div>
-                  <span className={item.averagePosition.side}>
-                    {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
-                    {item.averagePosition.side === undefined && ''}
-                  </span>
-                  <span>{item.averagePosition.quantity} SOL</span>
-                  <span>{(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}</span>
-                  <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
+                  <span className={trade.side}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
+                  <span>{trade.qty.toFixed(3)} SOL</span>
+                  <span>${(trade.qty * trade.price).toFixed(2)}</span>
+                  <span>${trade.price.toFixed(2)}</span>
+                  <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
+                  <span className="filled">Filled</span>
+                  <span>{convertUnixTimestampToFormattedDate(trade.time)}</span>
                 </div>
               ))}
             </div>
@@ -255,9 +220,9 @@ const FundingHistory: FC = () => {
             </div>
           </div>
         ) : (
-          <div className="no-funding-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <p>No Funding Found</p>
+          <div className="no-trades-found">
+            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
+            <p>No Trades Found</p>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
@@ -271,4 +236,4 @@ const FundingHistory: FC = () => {
   )
 }
 
-export default FundingHistory
+export default Trades
