@@ -2,13 +2,13 @@ import { FC, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode, useOrderBook } from '../../../context'
-import { Connect } from '../../../layouts/Connect'
+import { useCrypto, useDarkMode, useOrderBook } from '../../../../context'
+import { Connect } from '../../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
-import { useTraderConfig } from '../../../context/trader_risk_group'
-import { getPerpsPrice } from '../../TradeV3/perps/utils'
+import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
+import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
+import { useTraderConfig } from '../../../../context/trader_risk_group'
+import { getPerpsPrice } from '../../../TradeV3/perps/utils'
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
   margin: 15px;
@@ -135,7 +135,7 @@ const HISTORY = styled.div`
 `
 
 const columns = ['Asset', 'Balance', 'USD Value', 'Liq.Price']
-const AccountOverview: FC = () => {
+const MobileAccountOverview: FC = () => {
   const { mode } = useDarkMode()
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -278,4 +278,4 @@ const AccountOverview: FC = () => {
   )
 }
 
-export default AccountOverview
+export default MobileAccountOverview

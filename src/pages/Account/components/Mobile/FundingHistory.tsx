@@ -2,16 +2,16 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../context'
-import { Connect } from '../../../layouts/Connect'
+import { useCrypto, useDarkMode } from '../../../../context'
+import { Connect } from '../../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
+import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
 
-import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
-import { httpClient } from '../../../api'
-import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
-import { useTraderConfig } from '../../../context/trader_risk_group'
+import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
+import { httpClient } from '../../../../api'
+import { GET_USER_FUNDING_HISTORY } from '../../../TradeV3/perps/perpsConstants'
+import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
