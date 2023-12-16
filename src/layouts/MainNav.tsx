@@ -260,6 +260,21 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
           text={'trade'}
           path={'/trade'}
+          hasDropdown={true} // Renable when added
+          options={[
+            {
+              text: 'Trade',
+              onClick: () => history.push('/trade'),
+              //onClick: () => null,
+              isActive: pathname.includes('trade')
+            },
+            {
+              text: 'Account',
+              onClick: () => history.push('/account'),
+              //onClick: () => null,
+              isActive: pathname.includes('account')
+            }
+          ]}
         />
         <NavItem
           // animation={'farm'}
