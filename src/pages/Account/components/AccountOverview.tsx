@@ -147,9 +147,8 @@ const AccountOverview: FC = () => {
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const { connected } = useWallet()
-  const { isDevnet } = useCrypto()
 
-  const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
+  const { selectedCrypto, isDevnet, getAskSymbolFromPair } = useCrypto()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
