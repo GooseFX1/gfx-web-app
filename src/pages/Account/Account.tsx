@@ -10,15 +10,20 @@ import FundingHistory from './components/FundingHistory'
 import Liquidations from './components/Liquidations'
 import { checkMobile } from '../../utils'
 import { MobileNav } from './components/Mobile/MobileNav'
+import MobileAccountOverview from './components/Mobile/AccountOverview'
+import MobileDepositWithdrawHistory from './components/Mobile/DepositWithdaw'
+import MobileTrades from './components/Mobile/Trades'
+import MobileFundingHistory from './components/Mobile/FundingHistory'
 
 const DESKTOPWRAPPER = styled.div`
   ${tw`flex flex-row flex-nowrap`}
 `
 const MOBILEWRAPPER = styled.div`
-  ${tw`flex flex-row flex-nowrap`}
+  ${tw`flex flex-col `}
 `
 const Account: FC = () => {
   const [selected, setSelected] = useState(0)
+  const [selectedMenuItem, setSelectedMenuItem] = useState<'Deposits' | 'Trades' | 'Funding'>('Deposits')
   return !checkMobile() ? (
     <DESKTOPWRAPPER>
       <Sidebar selected={selected} setSelected={setSelected} />
@@ -30,9 +35,17 @@ const Account: FC = () => {
     </DESKTOPWRAPPER>
   ) : (
     <MOBILEWRAPPER>
-      <MobileNav selected={selected} setSelected={setSelected} />
+      <MobileNav
+        selected={selected}
+        setSelected={setSelected}
+        selectedMenuItem={selectedMenuItem}
+        setSelectedMenuItem={setSelectedMenuItem}
+      />
+      {selected === 0 && <MobileAccountOverview />}
+      {selected == 1 && selectedMenuItem === 'Deposits' && <MobileDepositWithdrawHistory />}
+      {selected == 1 && selectedMenuItem === 'Trades' && <MobileTrades />}
+      {selected == 1 && selectedMenuItem === 'Funding' && <MobileFundingHistory />}
     </MOBILEWRAPPER>
   )
 }
-
 export default Account

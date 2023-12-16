@@ -16,73 +16,58 @@ import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
-  margin: 15px;
+  padding: 5px;
   h1 {
     font-size: 18px;
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-8  items-center w-full`}
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
-  border-top: none;
-  height: calc(100vh - 180px);
-
-  .history-items-root-container {
-    height: 100%;
-  }
+  ${tw`flex flex-col w-full h-full mt-[15px]`}
 
   .history-items-container {
-    height: calc(100% - 40px);
-    overflow: auto;
+    ${tw`flex flex-col`}
+  }
+
+  .history-items-container div:last-child {
+    border-bottom: none;
+  }
+
+  .history-item {
+    ${tw`flex flex-col w-full justify-between`}
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    height: 170px;
+  }
+  .history-item:first-child {
+    border-top: 1px solid #3c3c3c;
+    border-radius: 5px 5px 0px 0px;
+  }
+
+  .history-item:last-child {
+    border-radius: 0px 0px 5px 5px;
   }
   .pair-container {
     ${tw`flex gap-x-1 items-center`}
   }
   .pair-container img {
-    height: 24px;
-    width: 24px;
+    height: 18px;
+    width: 18px;
   }
   .pagination-container {
     height: 40px;
   }
-  .history-item {
-    ${tw`grid grid-cols-8  items-center w-full`}
-    padding: 10px;
-    font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
-  }
-  .history-item span:first-child {
-    ${tw`pl-1`}
-  }
-
-  .history-item:last-child {
-    border-bottom: none;
-  }
   .no-trades-found {
-    max-width: 155px;
     display: flex;
     margin: auto;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 1px solid #3c3c3c;
+    width: 100%;
+    height: calc(100vh - 160px);
   }
   .no-trades-found > p {
     margin: 0;
@@ -111,13 +96,11 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Market', 'Direction', 'Size', 'Notional', 'Entry Price', 'Fee', 'Status', 'Date']
-
 type Pagination = {
   page: number
   limit: number
 }
-const Trades: FC = () => {
+const MobileTrades: FC = () => {
   const { mode } = useDarkMode()
 
   const { connected, publicKey } = useWallet()
@@ -190,28 +173,47 @@ const Trades: FC = () => {
         </SETTING_MODAL>
       )}
       <h1>Trades</h1>
-      <ACCOUNTHEADER>
-        {columns.map((item, index) => (
-          <span key={index}>{item}</span>
-        ))}
-      </ACCOUNTHEADER>
       <HISTORY>
         {filledTrades.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {filledTrades.map((trade) => (
                 <div key={trade._id} className="history-item">
-                  <div className="pair-container">
-                    <img src={`${assetIcon}`} alt="SOL icon" />
-                    <span>{selectedCrypto.pair}</span>
+                  <div className="flex">
+                    <span>Market</span>
+                    <div className="pair-container ml-auto">
+                      <img src={`${assetIcon}`} alt="SOL icon" />
+                      <span>{selectedCrypto.pair}</span>
+                    </div>
                   </div>
-                  <span className={trade.side}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
-                  <span>{trade.qty.toFixed(3)} SOL</span>
-                  <span>${(trade.qty * trade.price).toFixed(2)}</span>
-                  <span>${trade.price.toFixed(2)}</span>
-                  <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
-                  <span className="filled">Filled</span>
-                  <span>{convertUnixTimestampToFormattedDate(trade.time)}</span>
+                  <div className="flex">
+                    <span>Direction</span>
+                    <span className={`${trade.side} ml-auto`}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
+                  </div>
+                  <div className="flex">
+                    <span>Size</span>
+                    <span className="ml-auto">{trade.qty.toFixed(3)} SOL</span>
+                  </div>
+                  <div className="flex">
+                    <span>Notional</span>
+                    <span className="ml-auto">${(trade.qty * trade.price).toFixed(2)}</span>
+                  </div>
+                  <div className="flex">
+                    <span>Entry Price</span>
+                    <span className="ml-auto">${trade.price.toFixed(2)}</span>
+                  </div>
+                  <div className="flex">
+                    <span>Fee</span>
+                    <span className="ml-auto">${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
+                  </div>
+                  <div className="flex">
+                    <span>Status</span>
+                    <span className="filled ml-auto">Filled</span>
+                  </div>
+                  <div className="flex">
+                    <span>Date</span>
+                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(trade.time)}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -236,4 +238,4 @@ const Trades: FC = () => {
   )
 }
 
-export default Trades
+export default MobileTrades

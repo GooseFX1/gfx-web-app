@@ -130,7 +130,6 @@ const DepositWithdrawHistory: FC = () => {
   }
   useEffect(() => {
     fetchFundTransfers()
-    console.log(setPagination)
   }, [connected, publicKey])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {

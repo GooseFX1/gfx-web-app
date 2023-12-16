@@ -16,7 +16,7 @@ import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
-  margin: 15px;
+  padding: 5px;
   h1 {
     font-size: 18px;
   }
@@ -46,38 +46,32 @@ const ACCOUNTVALUE = styled.div`
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
-
-    ${tw`grid grid-cols-5  items-center w-full`}
-    border: 1px solid #3C3C3C;
-    border-bottom: none;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
-  height: calc(100vh - 222px);
-
-  .history-items-root-container {
-    height: 100%;
-  }
+  ${tw`flex flex-col w-full h-full mt-[15px]`}
 
   .history-items-container {
-    height: calc(100% - 40px);
-    overflow: auto;
+    ${tw`flex flex-col`}
+  }
+
+  .history-items-container div:last-child {
+    border-bottom: none;
+  }
+
+  .history-item {
+    ${tw`flex flex-col w-full justify-between`}
+    padding: 10px;
+    font-size: 13px;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    height: 170px;
+  }
+  .history-item:first-child {
+    border-top: 1px solid #3c3c3c;
+    border-radius: 5px 5px 0px 0px;
+  }
+
+  .history-item:last-child {
+    border-radius: 0px 0px 5px 5px;
   }
   .pair-container {
     ${tw`flex gap-x-1 items-center`}
@@ -87,16 +81,6 @@ const HISTORY = styled.div`
     width: 24px;
   }
 
-  .history-item {
-    ${tw`grid grid-cols-5  items-center w-full`}
-    padding: 10px;
-    font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
-  }
-  .history-item span:first-child {
-    ${tw`pl-1`}
-  }
-
   .pagination-container {
     height: 40px;
   }
@@ -104,12 +88,16 @@ const HISTORY = styled.div`
     border-bottom: none;
   }
   .no-funding-found {
-    max-width: 155px;
     display: flex;
     margin: auto;
+    margin-top: 5px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 1px solid #3c3c3c;
+    border-radius: 5px;
+    width: 100%;
+    height: calc(100vh - 205px);
   }
   .no-funding-found > p {
     margin: 0;
@@ -138,12 +126,11 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Market', 'Direction', 'Position Size', 'Payment', 'Date']
 type Pagination = {
   page: number
   limit: number
 }
-const FundingHistory: FC = () => {
+const MobileFundingHistory: FC = () => {
   const { mode } = useDarkMode()
 
   const { connected, publicKey } = useWallet()
@@ -189,7 +176,6 @@ const FundingHistory: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFundingHistory()
     }
-    console.log(setPagination)
   }, [connected, publicKey, traderInfo])
 
   return (
@@ -219,34 +205,48 @@ const FundingHistory: FC = () => {
             <p>Cumulative Funding:</p>
             <p>
               $
-              {Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())}
+              {traderInfo.traderRiskGroup !== null
+                ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                  10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())
+                : 0}
             </p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
       </ACCOUNTVALUESFLEX>
-      <ACCOUNTHEADER>
-        {columns.map((item, index) => (
-          <span key={index}>{item}</span>
-        ))}
-      </ACCOUNTHEADER>
       <HISTORY>
         {fundingHistory.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundingHistory.map((item) => (
                 <div key={item._id} className="history-item">
-                  <div className="pair-container">
-                    <img src={`${assetIcon}`} alt="SOL icon" />
-                    <span>{selectedCrypto.pair}</span>
+                  <div className="flex">
+                    <span>Market</span>
+                    <div className="pair-container ml-auto">
+                      <img src={`${assetIcon}`} alt="SOL icon" />
+                      <span>{selectedCrypto.pair}</span>
+                    </div>
                   </div>
-                  <span className={item.averagePosition.side}>
-                    {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
-                    {item.averagePosition.side === undefined && ''}
-                  </span>
-                  <span>{item.averagePosition.quantity} SOL</span>
-                  <span>{(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}</span>
-                  <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
+                  <div className="flex">
+                    <span>Direction</span>
+                    <span className={`${item.averagePosition.side} ml-auto`}>
+                      {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+                      {item.averagePosition.side === undefined && ''}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span>Position Size</span>
+                    <span className="ml-auto">{item.averagePosition.quantity} SOL</span>
+                  </div>
+                  <div className="flex">
+                    <span>Payment</span>
+                    <span className="ml-auto">
+                      {(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span>Date</span>
+                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(item.time)}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -271,4 +271,4 @@ const FundingHistory: FC = () => {
   )
 }
 
-export default FundingHistory
+export default MobileFundingHistory

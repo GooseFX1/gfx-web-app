@@ -152,12 +152,6 @@ const Trades: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFilledTrades()
     }
-  }, [connected, publicKey, traderInfo])
-
-  useEffect(() => {
-    if (traderInfo.traderRiskGroupKey !== null) {
-      fetchFilledTrades()
-    }
   }, [connected, publicKey, traderInfo, pagination])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {

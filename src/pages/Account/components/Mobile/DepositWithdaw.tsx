@@ -13,41 +13,20 @@ import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
-  margin: 15px;
+  padding: 5px;
   h1 {
     font-size: 18px;
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
-  border-top: none;
-  height: calc(100vh - 180px);
+  ${tw`flex w-full h-full mt-[15px]`}
 
   .history-items-root-container {
-    height: 100%;
+    ${tw`w-full h-full overflow-auto`}
   }
   .history-items-container {
-    height: calc(100% - 40px);
-    overflow: auto;
+    ${tw`flex flex-col`}
   }
 
   .history-items-container div:last-child {
@@ -55,21 +34,31 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
+    ${tw`flex flex-col w-full justify-between`}
     padding: 10px;
     font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
+    border: 1px solid #3c3c3c;
+    border-top: none;
+    height: 130px;
   }
-  .history-item span:first-child {
-    ${tw`pl-1`}
+  .history-item:first-child {
+    border-top: 1px solid #3c3c3c;
+    border-radius: 5px 5px 0px 0px;
+  }
+
+  .history-item:last-child {
+    border-radius: 0px 0px 5px 5px;
   }
   .no-deposits-found {
-    max-width: 155px;
     display: flex;
     margin: auto;
+    border-radius: 5px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 1px solid #3c3c3c;
+    width: 100%;
+    height: calc(100vh - 160px);
   }
   .no-deposits-found > p {
     margin: 0;
@@ -98,12 +87,11 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Amount', 'Notional', 'Type', 'Date']
 type Pagination = {
   page: number
   limit: number
 }
-const DepositWithdrawHistory: FC = () => {
+const MobileDepositWithdrawHistory: FC = () => {
   const { mode } = useDarkMode()
 
   const { connected, publicKey } = useWallet()
@@ -120,8 +108,8 @@ const DepositWithdrawHistory: FC = () => {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        // walletAddress: publicKey.toString(),
-        walletAddress: 'Hwix1jZD2WF9SQP57bpcjSAUzuJ956HDwgdNJbm6Tt1P',
+        walletAddress: publicKey.toString(),
+        // walletAddress: 'Hwix1jZD2WF9SQP57bpcjSAUzuJ956HDwgdNJbm6Tt1P',
         page: pagination.page,
         limit: pagination.limit
       }
@@ -130,7 +118,6 @@ const DepositWithdrawHistory: FC = () => {
   }
   useEffect(() => {
     fetchFundTransfers()
-    console.log(setPagination)
   }, [connected, publicKey])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
@@ -163,23 +150,30 @@ const DepositWithdrawHistory: FC = () => {
         </SETTING_MODAL>
       )}
       <h1>Deposits/Withdrawals</h1>
-      <ACCOUNTHEADER>
-        {columns.map((item, index) => (
-          <span key={index}>{item}</span>
-        ))}
-      </ACCOUNTHEADER>
       <HISTORY>
         {fundTransfers.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundTransfers.map((transfer) => (
                 <div key={transfer._id} className="history-item">
-                  <span>{transfer.amount.toFixed(2)} USDC</span>
-                  <span>${transfer.amount.toFixed(2)}</span>
-                  <span className={`${transfer.type}-type`}>
-                    {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
-                  </span>
-                  <span>{convertUnixTimestampToFormattedDate(transfer.time)}</span>
+                  <div className="flex">
+                    <span>Amount</span>
+                    <span className="ml-auto">{transfer.amount.toFixed(2)} USDC</span>
+                  </div>
+                  <div className="flex">
+                    <span>Notional</span>
+                    <span className="ml-auto">${transfer.amount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex">
+                    <span>Type</span>
+                    <span className={`${transfer.type}-type ml-auto`}>
+                      {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex">
+                    <span>Date</span>
+                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(transfer.time)}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -204,4 +198,4 @@ const DepositWithdrawHistory: FC = () => {
   )
 }
 
-export default DepositWithdrawHistory
+export default MobileDepositWithdrawHistory
