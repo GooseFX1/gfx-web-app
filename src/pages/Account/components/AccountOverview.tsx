@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -9,6 +9,8 @@ import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
 import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { getPerpsPrice } from '../../TradeV3/perps/utils'
+import { httpClient } from '../../../api'
+import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
   margin: 15px;
@@ -137,6 +139,7 @@ const HISTORY = styled.div`
 const columns = ['Asset', 'Balance', 'USD Value', 'Liq.Price']
 const AccountOverview: FC = () => {
   const { mode } = useDarkMode()
+  const [dayVolume, setDayVolume] = useState<number>(0)
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
@@ -144,6 +147,7 @@ const AccountOverview: FC = () => {
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const { connected } = useWallet()
+  const { isDevnet } = useCrypto()
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
@@ -195,6 +199,23 @@ const AccountOverview: FC = () => {
       </div>
     )
   }
+
+  const fetchDayVolume = async () => {
+    const res = await httpClient('api-services').get(`${GET_TRADER_DAY_VOLUME}`, {
+      params: {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        devnet: isDevnet,
+        taker: traderInfo.traderRiskGroupKey.toString()
+      }
+    })
+    setDayVolume(res.data.volume)
+  }
+
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchDayVolume()
+    }
+  }, [connected, traderInfo])
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -226,7 +247,7 @@ const AccountOverview: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My 24h Trading Volume:</p>
-            <p>$0.00</p>
+            <p>${dayVolume.toFixed(2)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
