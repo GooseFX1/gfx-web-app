@@ -10,18 +10,14 @@ import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { getPerpsPrice } from '../../../TradeV3/perps/utils'
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
-  margin: 15px;
+  ${tw`flex flex-col w-full h-full px-1.5`}
+
   h1 {
+    ${tw`flex flex-col w-full`}
     font-size: 18px;
   }
-`
-
-const ACCOUNTVALUESFLEX = styled.div`
-  ${tw`flex flex-row flex-wrap gap-x-4`}
   .health-container {
-    ${tw`flex items-center`}
-    margin-left: auto;
+    ${tw`flex items-center mt-4`}
   }
 
   .health-icon {
@@ -45,8 +41,19 @@ const ACCOUNTVALUESFLEX = styled.div`
   }
 `
 
+const ACCOUNTVALUESFLEX = styled.div`
+  ${tw`flex flex-row flex-nowrap overflow-auto gap-x-4 w-full h-[53px]`}
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`
+
 const ACCOUNTVALUESCONTAINER = styled.div`
-  ${tw`w-[190px] rounded-[5px] p-[1px]`}
+  ${tw`w-[190px] h-full rounded-[5px] p-[1px] flex-shrink-0`}
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -65,55 +72,33 @@ const ACCOUNTVALUE = styled.div`
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    border: 1px solid #3C3C3C;
-    border-bottom: none;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex w-full h-full`}
-  border:1px solid #3C3C3C;
+  ${tw`flex w-full h-full mt-4`}
+  height: calc(100vh - 250px);
 
   .no-balances-found {
-    max-width: 155px;
     display: flex;
     margin: auto;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 1px solid #3c3c3c;
+    width: 100%;
+    height: 100%;
   }
 
-  .positions {
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    height: 30px;
-    .pair-container {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-    div:first-child {
-      ${tw`flex gap-x-1 items-center`}
-    }
-
+  .position {
+    ${tw`flex flex-col w-full`}
+    padding: 5px 10px 10px 10px;
+    border: 1px solid #3c3c3c;
     img {
-      height: 24px;
-      width: 24px;
+      height: 18px;
+      width: 18px;
     }
+  }
+
+  .positions-container {
+    ${tw`w-full`}
   }
 
   .no-balances-found > p {
@@ -134,7 +119,6 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Asset', 'Balance', 'USD Value', 'Liq.Price']
 const MobileAccountOverview: FC = () => {
   const { mode } = useDarkMode()
 
@@ -235,31 +219,42 @@ const MobileAccountOverview: FC = () => {
             <p>${userVolume}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
-        <div className="health-container">
-          <div className="health-icon">
-            <span className="key">Health</span>
-            <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
-            {getHealthData()}
-          </div>
-        </div>
       </ACCOUNTVALUESFLEX>
-      <ACCOUNTHEADER>
-        {columns.map((item, index) => (
-          <span key={index}>{item}</span>
-        ))}
-      </ACCOUNTHEADER>
+      <div className="health-container">
+        <div className="health-icon">
+          <span className="key">Health</span>
+          <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
+          {getHealthData()}
+        </div>
+      </div>
       <HISTORY>
         {traderInfo.averagePosition.side && Number(roundedSize) ? (
-          <div className="positions">
-            <div className="pair-container">
-              <img src={`${assetIcon}`} alt="SOL icon" />
-              <span>{selectedCrypto.pair}</span>
+          <div className="positions-container">
+            <div className="position">
+              <div className="flex w-full">
+                <span>Asset</span>
+                <div className="flex flex-nowrap items-center ml-auto">
+                  <img src={`${assetIcon}`} alt="SOL icon" />
+                  <span>{selectedCrypto.pair}</span>
+                </div>
+              </div>
+              <div className="flex w-full">
+                <span>Balance</span>
+                <span className="ml-auto">{roundedSize} SOL</span>
+              </div>
+              <div className="flex w-full">
+                <span>USD Value</span>
+                <span className="ml-auto">${Number(notionalSize).toFixed(2)}</span>
+              </div>
+              <div className="flex w-full">
+                <span>Liq. Price</span>
+                <span className="ml-auto">
+                  {Number(traderInfo.liquidationPrice) == 0
+                    ? 'None'
+                    : Number(traderInfo.liquidationPrice).toFixed(2)}
+                </span>
+              </div>
             </div>
-            <span>{roundedSize} SOL</span>
-            <span>${Number(notionalSize).toFixed(2)}</span>
-            <span>
-              {Number(traderInfo.liquidationPrice) == 0 ? 'None' : Number(traderInfo.liquidationPrice).toFixed(2)}
-            </span>
           </div>
         ) : (
           <div className="no-balances-found">

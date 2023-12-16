@@ -189,7 +189,6 @@ const FundingHistory: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFundingHistory()
     }
-    console.log(setPagination)
   }, [connected, publicKey, traderInfo])
 
   return (
@@ -219,8 +218,10 @@ const FundingHistory: FC = () => {
             <p>Cumulative Funding:</p>
             <p>
               $
-              {Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())}
+              {traderInfo.traderRiskGroup !== null
+                ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                  10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())
+                : 0}
             </p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
