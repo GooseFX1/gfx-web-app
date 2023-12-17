@@ -9,7 +9,7 @@ import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } 
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
-import { SSLToken, poolType } from './constants'
+import { SSLToken, poolType, Pool } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
@@ -126,8 +126,16 @@ export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
-  const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts, sslTableData, liquidityAmount } =
-    useSSLContext()
+  const {
+    operationPending,
+    pool,
+    setPool,
+    sslData,
+    filteredLiquidityAccounts,
+    sslTableData,
+    liquidityAmount,
+    setIsFirstPoolOpen
+  } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
@@ -219,6 +227,7 @@ export const FarmTable: FC = () => {
   }
 
   const initiateGlobalSearch = (value: string) => {
+    setIsFirstPoolOpen(false)
     setPool(poolType.all)
     setSearchTokens(value)
   }
@@ -234,6 +243,16 @@ export const FarmTable: FC = () => {
     })
     setSort((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'))
     setSortType(sortValue)
+  }
+
+  const handleToggle = (pooltype: Pool) => {
+    setPool(pooltype)
+    setIsFirstPoolOpen(false)
+  }
+
+  const handleShowDepositedToggle = () => {
+    setShowDeposited((prev) => !prev)
+    setIsFirstPoolOpen(false)
   }
 
   return (
@@ -273,7 +292,7 @@ export const FarmTable: FC = () => {
             css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.all))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.all))}
           >
             All Pools
           </h4>
@@ -281,14 +300,14 @@ export const FarmTable: FC = () => {
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.stable))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.stable))}
           >
             Stable
           </h4>
           <h4
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[24%] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.primary))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.primary))}
           >
             Primary
           </h4>
@@ -296,7 +315,7 @@ export const FarmTable: FC = () => {
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
             sm:w-[24%] w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.hyper))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.hyper))}
           >
             Hyper
           </h4>
@@ -314,7 +333,7 @@ export const FarmTable: FC = () => {
             />
             {pubKey && (
               <div tw="ml-auto flex items-center mr-2">
-                <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+                <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                 <div
                   tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
                font-semibold mt-[-4px] ml-2.5"
@@ -341,7 +360,7 @@ export const FarmTable: FC = () => {
           />
           {pubKey && (
             <div tw="ml-auto flex items-center mr-2">
-              <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+              <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
               <div
                 tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
                           font-semibold mt-[-4px] ml-2.5 sm:ml-2"
@@ -425,8 +444,8 @@ export const FarmTable: FC = () => {
           </thead>
           <tbody>
             {filteredTokens?.length
-              ? filteredTokens.map((coin: SSLToken) => (
-                  <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} />
+              ? filteredTokens.map((coin: SSLToken, index: number) => (
+                  <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} index={index} />
                 ))
               : initialLoad && <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />}
             {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
@@ -484,8 +503,13 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   )
 }
 
-const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
-  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
+const FarmTokenContent: FC<{
+  coin: SSLToken
+  showDeposited: boolean
+  index: number
+}> = ({ coin, showDeposited, index }) => {
+  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData, isFirstPoolOpen } =
+    useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
@@ -501,6 +525,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     () => truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
     [userDepositedAmount, coin]
   )
+
+  useEffect(() => {
+    if (index === 0 && isFirstPoolOpen) setIsExpanded(true)
+    else if (index === 0 && !isFirstPoolOpen) setIsExpanded(false)
+  }, [index, isFirstPoolOpen])
 
   const liquidity = useMemo(
     () =>

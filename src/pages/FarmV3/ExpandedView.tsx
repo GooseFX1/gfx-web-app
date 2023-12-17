@@ -180,6 +180,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // or withdraw mode with zero user deposited amount or no withdraw amount
   const disableActionButton = useMemo(
     () =>
+      !liquidity ||
+      !coin?.cappedDeposit ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT &&
         (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||

@@ -36,6 +36,8 @@ interface SSLData {
   sslTotalFees: string
   // isWhitelisted: boolean
   rewards: any
+  isFirstPoolOpen: boolean
+  setIsFirstPoolOpen: Dispatch<SetStateAction<boolean>>
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -56,6 +58,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
   const [sslAllVolume, setSslAllVolume] = useState<any>(null)
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
+  const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const getSSLTableData = async () => {
@@ -267,7 +270,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         sslAllVolume: sslAllVolume,
         sslTotalFees: sslTotalFees,
         // isWhitelisted: isWhitelisted,
-        rewards: rewards
+        rewards: rewards,
+        isFirstPoolOpen: isFirstPoolOpen,
+        setIsFirstPoolOpen: setIsFirstPoolOpen
       }}
     >
       {children}

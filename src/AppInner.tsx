@@ -18,6 +18,7 @@ export default function AppInner(): JSX.Element {
         JSON.stringify({
           hasDexOnboarded: false,
           hasAggOnboarded: false,
+          hasFarmOnboarded: false,
           hasSignedTC: false,
           endpointName: null,
           endpoint: null,
