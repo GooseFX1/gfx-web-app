@@ -219,8 +219,10 @@ const FundingHistory: FC = () => {
             <p>
               $
               {traderInfo.traderRiskGroup !== null
-                ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                  10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())
+                ? (
+                    Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                    10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+                  ).toFixed(2)
                 : 0}
             </p>
           </ACCOUNTVALUE>
@@ -246,7 +248,9 @@ const FundingHistory: FC = () => {
                     {item.averagePosition.side === undefined && ''}
                   </span>
                   <span>{item.averagePosition.quantity} SOL</span>
-                  <span>{(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}</span>
+                  <span>
+                    {(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)).toFixed(4)}
+                  </span>
                   <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
                 </div>
               ))}
