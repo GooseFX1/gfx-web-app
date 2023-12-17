@@ -16,7 +16,7 @@ import { Pagination } from './Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
-  margin: 15px;
+  padding: 15px;
   h1 {
     font-size: 18px;
   }

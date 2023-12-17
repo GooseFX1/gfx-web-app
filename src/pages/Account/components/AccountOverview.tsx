@@ -13,7 +13,7 @@ import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
-  margin: 15px;
+  padding: 15px;
   h1 {
     font-size: 18px;
   }
