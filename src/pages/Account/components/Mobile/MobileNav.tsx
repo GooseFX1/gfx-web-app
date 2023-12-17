@@ -94,23 +94,29 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
               className="absolute flex flex-col border-solid
             border-1 border-grey-1 justify-center items-center w-full rounded-md"
             >
-              <Menu.Item
-                onClick={() => handleMenuItemClick('Deposits')}
-                className={selectedMenuItem == 'Deposits' ? 'active-menu-item' : 'menu-item'}
-              >
-                <span>Deposits</span>
+              <Menu.Item>
+                <span
+                  className={selectedMenuItem == 'Deposits' ? 'active-menu-item' : 'menu-item'}
+                  onClick={() => handleMenuItemClick('Deposits')}
+                >
+                  Deposits
+                </span>
               </Menu.Item>
-              <Menu.Item
-                onClick={() => handleMenuItemClick('Trades')}
-                className={selectedMenuItem == 'Trades' ? 'active-menu-item' : 'menu-item'}
-              >
-                <span>Trades</span>
+              <Menu.Item>
+                <span
+                  onClick={() => handleMenuItemClick('Trades')}
+                  className={selectedMenuItem == 'Trades' ? 'active-menu-item' : 'menu-item'}
+                >
+                  Trades
+                </span>
               </Menu.Item>
-              <Menu.Item
-                onClick={() => handleMenuItemClick('Funding')}
-                className={selectedMenuItem == 'Funding' ? 'active-menu-item' : 'menu-item'}
-              >
-                <span>Funding</span>
+              <Menu.Item>
+                <span
+                  onClick={() => handleMenuItemClick('Funding')}
+                  className={selectedMenuItem == 'Funding' ? 'active-menu-item' : 'menu-item'}
+                >
+                  Funding
+                </span>
               </Menu.Item>
             </Menu.Items>
           </Transition>

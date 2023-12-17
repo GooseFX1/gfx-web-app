@@ -206,8 +206,10 @@ const MobileFundingHistory: FC = () => {
             <p>
               $
               {traderInfo.traderRiskGroup !== null
-                ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                  10 ** Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString())
+                ? (
+                    Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                    10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+                  ).toFixed(2)
                 : 0}
             </p>
           </ACCOUNTVALUE>
@@ -240,7 +242,7 @@ const MobileFundingHistory: FC = () => {
                   <div className="flex">
                     <span>Payment</span>
                     <span className="ml-auto">
-                      {(item.fundingBalanceDifference / item.fundingBalance.exp).toFixed(4)}
+                      {(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)).toFixed(4)}
                     </span>
                   </div>
                   <div className="flex">
