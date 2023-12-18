@@ -43,7 +43,7 @@ export const Modal: FC<{
   style?: any
   large?: boolean
   centerTitle?: boolean
-  wrapClassName: string
+  wrapClassName?: string
   onCancel?: () => void
   [x: string]: any
 }> = ({
