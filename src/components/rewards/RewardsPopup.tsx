@@ -24,7 +24,7 @@ export const RewardsButton: FC = () => {
       <div css={[tw`relative`]}>
         <img
           css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
-          src={`/img/mainnav/rewards-${mode}.svg`}
+          src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
         />
 
         {hasRewards && (

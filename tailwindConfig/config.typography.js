@@ -1,5 +1,5 @@
 const fontFamily = {
-  display: ['Monserrat']
+  display: ['Nunito', 'sans-serif']
 }
 
 const fontSize = {

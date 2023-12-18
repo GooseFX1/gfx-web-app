@@ -11,12 +11,14 @@ import viteCompression from 'vite-plugin-compression'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { getThemeVariables } from 'antd/dist/theme'
+import svgr from 'vite-plugin-svgr'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
     nodePolyfills(),
     tsconfigPaths(),
+    svgr(),
     react({
       include: /.(jsx|tsx)$/,
       babel: {

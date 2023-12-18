@@ -64,7 +64,7 @@ export default function RewardsInput({
         <p
           onClick={handleHalf}
           css={[
-            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1`,
+            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1 font-bold`,
             userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
           ]}
         >
@@ -73,7 +73,7 @@ export default function RewardsInput({
         <p
           onClick={handleMax}
           css={[
-            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1`,
+            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1 font-bold`,
             userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
           ]}
         >
@@ -83,7 +83,7 @@ export default function RewardsInput({
 
       <input
         css={[
-          tw`text-lg h-10  w-full rounded-[100px] bg-grey-5 text-black-4
+          tw`text-lg h-10  w-full rounded-[100px] bg-grey-5 text-black-4 font-semibold
             placeholder-grey-1  border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
             dark:bg-black-1 dark:text-grey-5 focus:dark:border-grey-2 active:dark:border-grey-2
             hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2 h-10 text-right
