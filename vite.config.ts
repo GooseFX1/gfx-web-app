@@ -18,6 +18,8 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     nodePolyfills(),
     tsconfigPaths(),
+    wasm(),
+    topLevelAwait(),
     svgr(),
     react({
       include: /.(jsx|tsx)$/,
@@ -27,8 +29,6 @@ export default defineConfig(({ mode }) => ({
     }),
     eslint(),
     macrosPlugin(),
-    wasm(),
-    topLevelAwait(),
     requireTransform({}),
     ViteImageOptimizer({
       svg: {
@@ -101,6 +101,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'build',
+    target: ['firefox78', 'chrome87'],
     commonjsOptions: {
       transformMixedEsModules: true
     },
