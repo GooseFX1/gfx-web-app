@@ -307,19 +307,19 @@ export const InfoBanner: FC<{
       <div className="spot-toggle">
         <span
           className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
-          css={[tw`text-regular font-bold`]}
+          css={[tw`text-2xl font-bold`]}
           key="spot"
           onClick={() => handleToggle('perps')}
         >
-          MAINNET
+          Mainnet
         </span>
         <span
           className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
-          css={[tw`text-regular font-bold`]}
+          css={[tw`text-2xl font-bold`]}
           key="perps"
           onClick={blacklisted ? null : () => handleToggle('spot')}
         >
-          DEVNET
+          Devnet
         </span>
       </div>
 
