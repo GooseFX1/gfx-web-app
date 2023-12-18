@@ -25,7 +25,7 @@ const Account: FC = () => {
   const [selected, setSelected] = useState(0)
   const [selectedMenuItem, setSelectedMenuItem] = useState<'Deposits' | 'Trades' | 'Funding'>('Deposits')
   return !checkMobile() ? (
-    <DESKTOPWRAPPER>
+    <DESKTOPWRAPPER className="no-scrollbar">
       <Sidebar selected={selected} setSelected={setSelected} />
       {selected === 0 && <AccountOverview />}
       {selected === 2 && <DepositWithdrawHistory />}
