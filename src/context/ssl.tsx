@@ -196,13 +196,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [liquidityAccounts])
 
-  function isEmpty(obj) {
-    for (const prop in obj) {
-      if (Object.hasOwn(obj, prop)) {
-        return false
-      }
-    }
-    return true
+  function isEmpty(obj: Record<string, unknown>) {
+    if (!obj) return true
+    return Object.keys(obj).length == 0
   }
 
   useEffect(() => {

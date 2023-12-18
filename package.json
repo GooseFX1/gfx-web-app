@@ -108,7 +108,9 @@
   "browserslist": [
     ">0.2%",
     "not dead",
-    "not op_mini all"
+    "not op_mini all",
+    "not firefox < 78",
+    "not chrome < 83"
   ],
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
