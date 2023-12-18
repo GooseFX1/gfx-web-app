@@ -83,10 +83,10 @@ const STYLED_POPUP = styled(PopupCustom)<{
     }
     .option-cnt-active {
       ${tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2
-         w-[460px] h-[58px] cursor-pointer rounded-average p-px sm:w-full sm:h-12.5`}
+         w-[460px] h-[58px] cursor-pointer rounded-tiny p-px sm:w-full sm:h-12.5`}
     }
     .option-cnt {
-      ${tw`w-[460px] h-[58px] cursor-pointer rounded-average mb-2.5 sm:w-full sm:h-12.5`}
+      ${tw`w-[460px] h-[58px] cursor-pointer rounded-tiny mb-2.5 sm:w-full sm:h-12.5`}
     }
     .active {
       ${tw`dark:text-grey-8 text-black-4`}
@@ -99,7 +99,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
 `
 
 const OPTION = styled.div`
-  ${tw`h-full w-full cursor-pointer rounded-average dark:bg-black-1 bg-grey-5 
+  ${tw`h-full w-full cursor-pointer rounded-tiny dark:bg-black-1 bg-grey-5 
   !text-left px-3.75 pt-3.75 text-average font-semibold dark:text-grey-2 text-grey-1 mb-3.75
   sm:w-full sm:h-12.5 sm:text-regular`}
 `
@@ -263,7 +263,7 @@ export const ChoosePool: FC<{
           </div>
           <div className="question">What are your risk preferences?</div>
           <div className={userAnswer?.answerOne === 'stable' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerOne === 'stable' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -276,7 +276,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerOne === 'primary' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerOne === 'primary' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -290,7 +290,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerOne === 'hyper' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerOne === 'hyper' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -311,7 +311,7 @@ export const ChoosePool: FC<{
           </div>
           <div className="question">What is your desired timeframe?</div>
           <div className={userAnswer?.answerTwo === 'stable' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerTwo === 'stable' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -324,7 +324,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerTwo === 'primary' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerTwo === 'primary' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -338,7 +338,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerTwo === 'hyper' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerTwo === 'hyper' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -359,7 +359,7 @@ export const ChoosePool: FC<{
           </div>
           <div className="question">How do you manage your portfolio?</div>
           <div className={userAnswer?.answerThree === 'stable' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerThree === 'stable' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -372,7 +372,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerThree === 'primary' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerThree === 'primary' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {
@@ -386,7 +386,7 @@ export const ChoosePool: FC<{
             </div>
           </div>
           <div className={userAnswer?.answerThree === 'hyper' ? 'option-cnt-active option-cnt' : 'option-cnt'}>
-            <div tw="dark:bg-black-1 bg-grey-5 rounded-average h-full w-full">
+            <div tw="dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full">
               <OPTION
                 className={userAnswer?.answerThree === 'hyper' ? 'active' : isError === true ? 'error' : ''}
                 onClick={() => {

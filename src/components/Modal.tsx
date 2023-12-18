@@ -43,6 +43,7 @@ export const Modal: FC<{
   style?: any
   large?: boolean
   centerTitle?: boolean
+  wrapClassName: string
   onCancel?: () => void
   [x: string]: any
 }> = ({
@@ -55,6 +56,7 @@ export const Modal: FC<{
   style,
   bigTitle,
   centerTitle,
+  wrapClassName,
   ...props
 }) => {
   const { mode } = useDarkMode()
@@ -77,7 +79,7 @@ export const Modal: FC<{
       maskClosable
       visible={visible}
       width={large ? '50vw' : 350}
-      wrapClassName={mode === 'dark' ? 'dark' : ''}
+      wrapClassName={mode === 'dark' ? `${wrapClassName} dark` : `${wrapClassName}`}
       {...props}
     >
       <HEADER style={centerTitle && { justifyContent: 'center' }}>

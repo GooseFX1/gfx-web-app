@@ -385,7 +385,7 @@ export const FarmTable: FC = () => {
                   color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                   title={
                     <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                      APY is calculated based on 7D fees
+                      APY is calculated on a 7D rolling basis based on TVL/Fees. See FAQ below for more info
                     </span>
                   }
                   placement="topLeft"
@@ -432,9 +432,21 @@ export const FarmTable: FC = () => {
               )}
               {!checkMobile() && (
                 <th tw="!flex !justify-center">
-                  <div className="sort" onClick={() => handleColumnSort('balance')}>
-                    {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
-                  </div>
+                  <Tooltip
+                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                    title={
+                      <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                        Values are displayed in native token
+                      </span>
+                    }
+                    placement="topLeft"
+                    overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                    overlayInnerStyle={{ borderRadius: '8px' }}
+                  >
+                    <div className="sort" onClick={() => handleColumnSort('volume')}>
+                      {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
+                    </div>
+                  </Tooltip>
                 </th>
               )}
               <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
@@ -602,7 +614,7 @@ const FarmTokenContent: FC<{
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                     Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}.
+                    {truncateBigNumber(coin?.cappedDeposit)}
                   </span>
                 }
                 placement="topRight"
@@ -664,11 +676,7 @@ const FarmTokenContent: FC<{
         )}
         {!checkMobile() && (
           <td>
-            <h4>
-              {userDepositedAmount
-                ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)
-                : '00.00'}
-            </h4>
+            <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
           </td>
         )}
         <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">

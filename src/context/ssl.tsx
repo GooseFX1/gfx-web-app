@@ -38,6 +38,7 @@ interface SSLData {
   rewards: any
   isFirstPoolOpen: boolean
   setIsFirstPoolOpen: Dispatch<SetStateAction<boolean>>
+  allPoolFilteredLiquidityAcc: any
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -49,6 +50,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
+  const [allPoolLiquidityAcc, setAllPoolLiquidityAcc] = useState([])
+  const [allPoolFilteredLiquidityAcc, setAllPoolFilteredLiquidityAcc] = useState({})
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
   const [rewards, setRewards] = useState({})
   const [liquidityAmount, setLiquidityAmount] = useState({})
@@ -171,6 +174,48 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
 
+  useEffect(() => {
+    ;(async () => {
+      if (SSLProgram) {
+        const liquidityData = []
+        for (const token of allPoolSslData) {
+          try {
+            const liquidityAccountKey = await getLiquidityAccountKey(wallet?.adapter?.publicKey, token?.mint)
+            const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
+            liquidityData.push(liquidityAccount)
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        setAllPoolLiquidityAcc(liquidityData)
+      }
+    })()
+  }, [wallet?.adapter?.publicKey, allPoolSslData, isTxnSuccessfull])
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (allPoolLiquidityAcc) {
+          const filteredData = {}
+          ADDRESSES[network].forEach((pool: any) => {
+            let found = false
+            for (let i = 0; i < allPoolLiquidityAcc.length; i++) {
+              const account = allPoolLiquidityAcc[i]
+              if (account?.mint.toBase58() === pool.address.toBase58()) {
+                filteredData[pool.address] = account
+                found = true
+              }
+            }
+            if (!found) filteredData[pool.address] = null
+          })
+          setAllPoolFilteredLiquidityAcc(filteredData)
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    })()
+  }, [allPoolLiquidityAcc])
+
   // useEffect(() => {
   //   if (wallet?.adapter?.publicKey) isWhitelistApi()
   // }, [wallet?.adapter?.publicKey])
@@ -272,7 +317,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         // isWhitelisted: isWhitelisted,
         rewards: rewards,
         isFirstPoolOpen: isFirstPoolOpen,
-        setIsFirstPoolOpen: setIsFirstPoolOpen
+        setIsFirstPoolOpen: setIsFirstPoolOpen,
+        allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc
       }}
     >
       {children}
