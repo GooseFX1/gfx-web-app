@@ -128,6 +128,7 @@ const Trades: FC = () => {
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [filledTrades, setFilledTrades] = useState([])
+  const [totalItemsCount, setTotalItemsCount] = useState(0)
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -146,13 +147,16 @@ const Trades: FC = () => {
       }
     })
     setFilledTrades(res.data.data)
+    setTotalItemsCount(res.data.totalCount)
   }
 
   useEffect(() => {
-    if (traderInfo.traderRiskGroupKey !== null) {
+    if (publicKey && traderInfo.traderRiskGroupKey !== null) {
       fetchFilledTrades()
+    } else {
+      setFilledTrades([])
     }
-  }, [connected, publicKey, traderInfo, pagination])
+  }, [connected, publicKey, pagination, traderInfo.traderRiskGroupKey])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)
@@ -210,7 +214,11 @@ const Trades: FC = () => {
               ))}
             </div>
             <div className="pagination-container">
-              <Pagination pagination={pagination} setPagination={setPagination} />
+              <Pagination
+                pagination={pagination}
+                setPagination={setPagination}
+                totalItemsCount={totalItemsCount}
+              />
             </div>
           </div>
         ) : (
