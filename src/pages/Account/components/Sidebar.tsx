@@ -2,6 +2,7 @@ import { FC, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { useDarkMode } from '../../../context'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col px-5  w-36`}
@@ -46,6 +47,10 @@ const SPAN = styled.span`
     border-radius: 5px;
     color: #fff;
   }
+  img:last-child {
+    height: 16px;
+    width: 16px;
+  }
 `
 
 type SidebarProps = {
@@ -57,6 +62,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
   const handleClick = (num: number) => {
     setSelected(num)
   }
+  const { mode } = useDarkMode()
   const handleHistoryClick = () => {
     setHistorySelected(!historySelected)
   }
@@ -76,8 +82,13 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
         />
         History
         <img
-          src={historySelected ? '/img/assets/arrow-circle-up.svg' : '/img/assets/arrow-circle-down-black.svg'}
+          src={
+            mode === 'lite'
+              ? '/img/assets/Aggregator/circularArrowlite.svg'
+              : '/img/assets/Aggregator/circularArrowdark.svg'
+          }
           alt="dropdown icon"
+          style={historySelected ? { transform: 'rotate(180deg)' } : {}}
         />
       </SPAN>
       <div className={historySelected && 'show-history'}>
