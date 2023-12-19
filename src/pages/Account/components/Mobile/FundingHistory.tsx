@@ -12,7 +12,7 @@ import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
 import { httpClient } from '../../../../api'
 import { GET_USER_FUNDING_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
-import { Pagination } from './Pagination'
+import { Pagination } from '../Pagination'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -142,6 +142,7 @@ const MobileFundingHistory: FC = () => {
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
+  const [totalItemsCount, setTotalItemsCount] = useState(0)
   const [fundingHistory, setFundingHistory] = useState([])
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
@@ -170,13 +171,14 @@ const MobileFundingHistory: FC = () => {
       }
     })
     setFundingHistory(res.data.data)
+    setTotalItemsCount(res.data.totalCount)
   }
 
   useEffect(() => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFundingHistory()
     }
-  }, [connected, publicKey, traderInfo])
+  }, [connected, publicKey, traderInfo.traderRiskGroupKey, pagination])
 
   return (
     <WRAPPER>
@@ -253,7 +255,11 @@ const MobileFundingHistory: FC = () => {
               ))}
             </div>
             <div className="pagination-container">
-              <Pagination pagination={pagination} setPagination={setPagination} />
+              <Pagination
+                pagination={pagination}
+                setPagination={setPagination}
+                totalItemsCount={totalItemsCount}
+              />
             </div>
           </div>
         ) : (

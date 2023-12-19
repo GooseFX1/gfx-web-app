@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { Menu, Transition } from '@headlessui/react'
+import { useDarkMode } from '../../../../context'
 
 const WRAPPER = styled.div`
   ${tw`flex mx-1 mt-4`}
@@ -37,6 +38,9 @@ const NAVITEM = styled.div`
   ${tw`flex items-center rounded-[5px] justify-center gap-1`}
   background: none;
   color: ${({ theme }) => theme.text17};
+  .svg-to-grey {
+    filter: invert(70%);
+  }
 `
 
 type SidebarProps = {
@@ -46,6 +50,7 @@ type SidebarProps = {
   setSelectedMenuItem: React.Dispatch<React.SetStateAction<'Deposits' | 'Trades' | 'Funding'>>
 }
 export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMenuItem, setSelectedMenuItem }) => {
+  const { mode } = useDarkMode()
   const handleClick = (num: number) => {
     setSelected(num)
   }
@@ -75,9 +80,13 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
                 History
                 <img
                   src={
-                    selected == 1 ? '/img/assets/arrow-circle-up.svg' : '/img/assets/arrow-circle-down-black.svg'
+                    mode === 'lite'
+                      ? '/img/assets/Aggregator/circularArrowlite.svg'
+                      : '/img/assets/Aggregator/circularArrowdark.svg'
                   }
                   alt="dropdown icon"
+                  className={mode != 'lite' && selected != 1 ? 'svg-to-grey' : undefined}
+                  style={selected == 1 ? { transform: 'rotate(180deg)' } : {}}
                 />
               </NAVITEM>
             </NAVITEMCONTAINER>
