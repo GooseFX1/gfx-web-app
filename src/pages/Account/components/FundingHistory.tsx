@@ -127,13 +127,13 @@ const HISTORY = styled.div`
     font-size: 15px;
     font-weight: 600;
   }
-  .Bid {
+  .buy {
     color: #80ce00;
   }
   .filled {
     color: #80ce00;
   }
-  .Ask {
+  .sell {
     color: #f35355;
   }
 `
@@ -156,6 +156,7 @@ const FundingHistory: FC = () => {
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [fundingHistory, setFundingHistory] = useState([])
+  const [totalItemsCount, setTotalItemsCount] = useState(0)
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -183,13 +184,14 @@ const FundingHistory: FC = () => {
       }
     })
     setFundingHistory(res.data.data)
+    setTotalItemsCount(res.data.totalCount)
   }
 
   useEffect(() => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchFundingHistory()
     }
-  }, [connected, publicKey, traderInfo])
+  }, [connected, publicKey, traderInfo.traderRiskGroupKey, pagination])
 
   return (
     <WRAPPER>
@@ -256,7 +258,11 @@ const FundingHistory: FC = () => {
               ))}
             </div>
             <div className="pagination-container">
-              <Pagination pagination={pagination} setPagination={setPagination} />
+              <Pagination
+                pagination={pagination}
+                setPagination={setPagination}
+                totalItemsCount={totalItemsCount}
+              />
             </div>
           </div>
         ) : (

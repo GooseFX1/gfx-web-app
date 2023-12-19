@@ -51,6 +51,9 @@ const SPAN = styled.span`
     height: 16px;
     width: 16px;
   }
+  .svg-to-grey {
+    filter: invert(70%);
+  }
 `
 
 type SidebarProps = {
@@ -68,7 +71,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
   }
   return (
     <WRAPPER>
-      <SPAN className={selected == 0 && 'selected'} onClick={() => handleClick(0)}>
+      <SPAN className={selected == 0 ? 'selected' : undefined} onClick={() => handleClick(0)}>
         <img
           src={selected == 0 ? '/img/assets/account-overview.svg' : '/img/assets/account-overview-dark.svg'}
           alt="account overview icon"
@@ -88,17 +91,18 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
               : '/img/assets/Aggregator/circularArrowdark.svg'
           }
           alt="dropdown icon"
+          className={mode != 'lite' && !historySelected ? 'svg-to-grey' : undefined}
           style={historySelected ? { transform: 'rotate(180deg)' } : {}}
         />
       </SPAN>
-      <div className={historySelected && 'show-history'}>
-        <SPAN className={selected == 2 && 'selected'} onClick={() => handleClick(2)}>
+      <div className={historySelected ? 'show-history' : undefined}>
+        <SPAN className={selected == 2 ? 'selected' : undefined} onClick={() => handleClick(2)}>
           Deposits
         </SPAN>
-        <SPAN className={selected == 3 && 'selected'} onClick={() => handleClick(3)}>
+        <SPAN className={selected == 3 ? 'selected' : undefined} onClick={() => handleClick(3)}>
           Trades
         </SPAN>
-        <SPAN className={selected == 4 && 'selected'} onClick={() => handleClick(4)}>
+        <SPAN className={selected == 4 ? 'selected' : undefined} onClick={() => handleClick(4)}>
           Funding
         </SPAN>
         {/* <SPAN className={selected == 5 && 'selected'} onClick={() => handleClick(5)}> */}

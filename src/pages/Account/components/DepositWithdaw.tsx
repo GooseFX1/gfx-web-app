@@ -114,22 +114,25 @@ const DepositWithdrawHistory: FC = () => {
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [fundTransfers, setFundTransfers] = useState([])
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
+  const [totalItemsCount, setTotalItemsCount] = useState(0)
 
   const fetchFundTransfers = async () => {
     const res = await httpClient('api-services').get(`${GET_USER_FUND_TRANSFERS}`, {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        walletAddress: publicKey.toString(),
+        // walletAddress: publicKey.toString(),
+        walletAddress: 'Hwix1jZD2WF9SQP57bpcjSAUzuJ956HDwgdNJbm6Tt1P',
         page: pagination.page,
         limit: pagination.limit
       }
     })
     setFundTransfers(res.data.data)
+    setTotalItemsCount(res.data.totalCount)
   }
   useEffect(() => {
     fetchFundTransfers()
-  }, [connected, publicKey])
+  }, [connected, publicKey, pagination])
 
   function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
     // Create a new Date object using the Unix timestamp (in milliseconds)
@@ -182,7 +185,11 @@ const DepositWithdrawHistory: FC = () => {
               ))}
             </div>
             <div className="pagination-container">
-              <Pagination pagination={pagination} setPagination={setPagination} />
+              <Pagination
+                pagination={pagination}
+                setPagination={setPagination}
+                totalItemsCount={totalItemsCount}
+              />
             </div>
           </div>
         ) : (
