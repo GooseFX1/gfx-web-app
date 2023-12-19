@@ -109,8 +109,7 @@ const MobileDepositWithdrawHistory: FC = () => {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        // walletAddress: publicKey.toString(),
-        walletAddress: 'Hwix1jZD2WF9SQP57bpcjSAUzuJ956HDwgdNJbm6Tt1P',
+        walletAddress: publicKey.toString(),
         page: pagination.page,
         limit: pagination.limit
       }
