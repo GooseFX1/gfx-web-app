@@ -12,12 +12,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Tooltip } from 'antd'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 
-const CARD_GRADIENT = styled.div<{ hasToggle: boolean; isMobile: boolean }>`
-  ${tw`h-15 sm:h-[70px] p-px mr-3.75 rounded-tiny`}
+const CARD_GRADIENT = styled.div<{ isMobile: boolean }>`
+  ${tw`h-16.25 w-[130px] p-px mr-3.75 rounded-tiny`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
-  width: ${({ hasToggle, isMobile }) =>
-    !isMobile ? (hasToggle ? '243px' : '140px') : hasToggle ? '290px' : '150px'};
 `
 
 const INFO_CARD = styled.div`
@@ -55,8 +53,7 @@ const POOL_CARD_WRAPPER = styled.div`
 `
 
 export const FarmHeader: FC = () => {
-  const [volumeRange, setVolumeRange] = useState<number>(0)
-  const [feesRange, setFeesRange] = useState<number>(0)
+  const [range, setRange] = useState<number>(0)
   const {
     allPoolSslData,
     sslTableData,
@@ -209,178 +206,113 @@ export const FarmHeader: FC = () => {
 
   const infoCards = userPubKey
     ? [
-        { name: 'My Earnings', value: totalEarnings, hasToggle: false },
-        { name: 'TVL', value: TVL, hasToggle: false },
+        { name: 'My Earnings', value: totalEarnings },
+        { name: 'TVL', value: TVL },
         {
           name: 'Volume',
-          value: volumeRange === 0 ? V24H : volumeRange === 1 ? V7D : totalVolumeTraded,
-          hasToggle: true
+          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
         },
-        { name: 'Fees', value: feesRange === 0 ? F24H : feesRange === 1 ? F7D : totalFees, hasToggle: true }
+        { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
       ]
     : [
-        { name: 'TVL', value: TVL, hasToggle: false },
+        { name: 'TVL', value: TVL },
         {
           name: 'Volume',
-          value: volumeRange === 0 ? V24H : volumeRange === 1 ? V7D : totalVolumeTraded,
-          hasToggle: true
+          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
         },
-        { name: 'Fees', value: feesRange === 0 ? F24H : feesRange === 1 ? F7D : totalFees, hasToggle: true }
+        { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
       ]
 
   return (
     <>
       {checkMobile() && (
-        <div
-          tw="font-bold text-regular dark:text-white text-blue-1 underline mb-2.5"
+        <button
+          tw="block mr-3.75 mb-2.5 ml-auto"
           onClick={() => {
             setPoolSelection(true)
           }}
         >
-          Can't Choose a Pool?
-        </div>
+          <img src="/img/assets/question-icn.svg" alt="?-icon" />
+        </button>
       )}
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
-        {infoCards?.map((card, index) => (
-          <span key={card?.name}>
-            <CARD_GRADIENT key={card?.name} hasToggle={card?.hasToggle} isMobile={checkMobile()}>
-              <INFO_CARD>
-                <div tw="flex flex-row">
-                  <div tw="flex flex-row mr-auto justify-center items-center">
-                    <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
-                    <Tooltip
-                      color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                      title={getTooltipText(userPubKey ? index : index + 1)}
-                      placement="topRight"
-                      overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                      overlayInnerStyle={{ borderRadius: '8px' }}
-                    >
-                      <img
-                        src={`/img/assets/farm-tooltip-${mode}.svg`}
-                        alt="deposit-cap"
-                        tw="ml-[5px] max-w-none cursor-pointer"
-                        height={16}
-                        width={16}
-                      />
-                    </Tooltip>
-                  </div>
-                  {card?.hasToggle && (
-                    <div tw="flex cursor-pointer w-[114px] sm:w-[150px]">
-                      <div
-                        css={[
-                          tw`duration-500`,
-                          userPubKey
-                            ? (volumeRange === 0 && index === 2) || (feesRange === 0 && index === 3)
-                              ? tw`ml-0`
-                              : (volumeRange === 1 && index === 2) || (feesRange === 1 && index === 3)
-                              ? tw`ml-[38px] sm:ml-[50px]`
-                              : tw`ml-[76px] sm:ml-[100px]`
-                            : (volumeRange === 0 && index === 1) || (feesRange === 0 && index === 2)
-                            ? tw`ml-0`
-                            : (volumeRange === 1 && index === 1) || (feesRange === 1 && index === 2)
-                            ? tw`ml-[38px] sm:ml-[50px]`
-                            : tw`ml-[76px] sm:ml-[100px]`
-                        ]}
-                        tw="h-5 bg-gradient-1 w-[38px] absolute rounded-[100px] sm:w-[50px] sm:h-[25px]"
-                      ></div>
-                      <h4
-                        css={[
-                          userPubKey
-                            ? (volumeRange === 0 && index === 2) || (feesRange === 0 && index === 3)
-                              ? tw`!text-white`
-                              : tw`text-grey-1`
-                            : (volumeRange === 0 && index === 1) || (feesRange === 0 && index === 2)
-                            ? tw`!text-white`
-                            : tw`text-grey-1`
-                        ]}
-                        tw="h-5 duration-500 flex items-center z-[100] justify-center font-bold 
-                            w-[38px] text-tiny sm:w-[50px] sm:h-[25px]"
-                        onClick={() =>
-                          userPubKey
-                            ? index === 2
-                              ? setVolumeRange(0)
-                              : setFeesRange(0)
-                            : index === 1
-                            ? setVolumeRange(0)
-                            : setFeesRange(0)
-                        }
-                      >
-                        24H
-                      </h4>
-                      <h4
-                        css={[
-                          userPubKey
-                            ? (volumeRange === 1 && index === 2) || (feesRange === 1 && index === 3)
-                              ? tw`!text-white`
-                              : tw`text-grey-1`
-                            : (volumeRange === 1 && index === 1) || (feesRange === 1 && index === 2)
-                            ? tw`!text-white`
-                            : tw`text-grey-1`
-                        ]}
-                        tw="h-5 duration-500 flex items-center z-[100] justify-center 
-                            font-bold w-[38px] text-tiny sm:w-[50px] sm:h-[25px]"
-                        onClick={() =>
-                          userPubKey
-                            ? index === 2
-                              ? setVolumeRange(1)
-                              : setFeesRange(1)
-                            : index === 1
-                            ? setVolumeRange(1)
-                            : setFeesRange(1)
-                        }
-                      >
-                        7D
-                      </h4>
-                      <h4
-                        css={[
-                          userPubKey
-                            ? (volumeRange === 2 && index === 2) || (feesRange === 2 && index === 3)
-                              ? tw`!text-white`
-                              : tw`text-grey-1`
-                            : (volumeRange === 2 && index === 1) || (feesRange === 2 && index === 2)
-                            ? tw`!text-white`
-                            : tw`text-grey-1`
-                        ]}
-                        tw="h-5 flex items-center justify-center z-[10] font-bold 
-                            w-[38px] text-tiny sm:w-[50px] sm:h-[25px]"
-                        onClick={() =>
-                          userPubKey
-                            ? index === 2
-                              ? setVolumeRange(2)
-                              : setFeesRange(2)
-                            : index === 1
-                            ? setVolumeRange(2)
-                            : setFeesRange(2)
-                        }
-                      >
-                        All
-                      </h4>
-                    </div>
-                  )}
-                </div>
-                <div tw="text-lg font-bold text-black-4 dark:text-grey-5 sm:text-average sm:leading-[18px]">
-                  {card?.value}
-                </div>
-              </INFO_CARD>
-            </CARD_GRADIENT>
-          </span>
-        ))}
-        {!checkMobile() && (
-          <div tw="cursor-pointer ml-auto mr-[14px] right-[15px]">
-            <span
-              tw="font-bold text-regular dark:text-white text-blue-1 underline"
-              onClick={() => {
-                setPoolSelection(true)
-              }}
+        <div tw="flex flex-col cursor-pointer w-15 mr-2.5 sm:w-12.5 sm:h-15">
+          <div
+            css={[tw`duration-500`, range === 0 ? tw`mt-0` : range === 1 ? tw`mt-5` : tw`mt-10 sm:mt-[35px]`]}
+            tw="h-5 bg-gradient-1 w-15 absolute rounded-[100px] sm:w-12.5 sm:h-[25px]"
+          ></div>
+          <h4
+            css={[range === 0 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-5 duration-500 flex items-center z-[100] justify-center font-bold 
+                            w-15 text-tiny sm:w-12.5 sm:h-[25px] sm:mb-2.5"
+            onClick={() => setRange(0)}
+          >
+            24H
+          </h4>
+          {!checkMobile() && (
+            <h4
+              css={[range === 1 ? tw`!text-white` : tw`text-grey-1`]}
+              tw="h-5 duration-500 flex items-center z-[100] justify-center 
+                  font-bold w-15 text-tiny"
+              onClick={() => setRange(1)}
             >
-              Can't Choose <br />
-              <span tw="block text-right font-bold text-regular dark:text-white text-blue-1">a Pool?</span>
-            </span>
-          </div>
+              7D
+            </h4>
+          )}
+          <h4
+            css={[range === 2 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-5 flex items-center justify-center z-[10] font-bold 
+                            w-15 text-tiny sm:w-12.5 sm:h-[25px]"
+            onClick={() => setRange(2)}
+          >
+            All
+          </h4>
+        </div>
+        <div tw="flex flex-row">
+          {infoCards?.map((card, index) => (
+            <div key={card?.name}>
+              <CARD_GRADIENT key={card?.name} isMobile={checkMobile()}>
+                <INFO_CARD>
+                  <div tw="flex flex-row">
+                    <div tw="flex flex-row mr-auto justify-center items-center">
+                      <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
+                      <Tooltip
+                        color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                        title={getTooltipText(userPubKey ? index : index + 1)}
+                        placement="topRight"
+                        overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                        overlayInnerStyle={{ borderRadius: '8px' }}
+                      >
+                        <img
+                          src={`/img/assets/farm-tooltip-${mode}.svg`}
+                          alt="deposit-cap"
+                          tw="ml-[5px] max-w-none cursor-pointer"
+                          height={16}
+                          width={16}
+                        />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div tw="text-lg font-bold text-black-4 dark:text-grey-5 sm:text-average sm:leading-[18px]">
+                    {card?.value}
+                  </div>
+                </INFO_CARD>
+              </CARD_GRADIENT>
+            </div>
+          ))}
+        </div>
+        {!checkMobile() && (
+          <button
+            tw="cursor-pointer ml-auto"
+            onClick={() => {
+              setPoolSelection(true)
+            }}
+          >
+            <img src="/img/assets/question-icn.svg" alt="?-icon" tw="sm:h-[30px] sm:w-[30px] max-w-[30px]" />
+          </button>
         )}
       </HEADER_WRAPPER>
-
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <h2 tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">

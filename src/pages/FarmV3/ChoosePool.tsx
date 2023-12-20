@@ -13,6 +13,7 @@ import { USER_CONFIG_CACHE } from '../../types/app_params'
 const STYLED_POPUP = styled(PopupCustom)<{
   currentSlide: number
   userAnswer: any
+  mode: string
 }>`
   .ant-modal-content {
     ${tw`h-full dark:bg-black-2 bg-white rounded-bigger`}
@@ -34,18 +35,34 @@ const STYLED_POPUP = styled(PopupCustom)<{
     }
   }
   .next-btn {
-    ${tw`text-white text-regular font-semibold cursor-pointer bg-black-4 
+    ${tw`text-regular font-semibold cursor-pointer bg-black-4 
       w-[150px] h-9 rounded-half bottom-[-2px] text-regular font-semibold sm:bottom-3
         cursor-pointer z-10 !flex flex-row justify-center items-center absolute sm:w-2/5`}
     right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 76px)' : '10px')};
-    background: ${({ currentSlide, userAnswer }) =>
+    background: ${({ currentSlide, userAnswer, mode }) =>
       currentSlide === 1 && userAnswer.answerOne === null
-        ? '#131313'
+        ? mode === 'dark'
+          ? '#131313'
+          : '#F7F0FD'
         : currentSlide === 2 && userAnswer?.answerTwo === null
-        ? '#131313'
+        ? mode === 'dark'
+          ? '#131313'
+          : '#F7F0FD'
         : currentSlide === 3 && userAnswer?.answerThree === null
-        ? '#131313'
+        ? mode === 'dark'
+          ? '#131313'
+          : '#F7F0FD'
         : '#5855FF'};
+    color: ${({ currentSlide, userAnswer }) =>
+      currentSlide === 1 && userAnswer.answerOne !== null
+        ? '#FFFFFF'
+        : currentSlide === 2 && userAnswer?.answerTwo !== null
+        ? '#FFFFFF'
+        : currentSlide === 3 && userAnswer?.answerThree !== null
+        ? '#FFFFFF'
+        : currentSlide === 0
+        ? '#FFFFFF'
+        : '#636363'};
     cursor: ${({ currentSlide, userAnswer }) =>
       currentSlide === 1 && userAnswer?.answerOne === null
         ? 'not-allowed'
@@ -241,6 +258,7 @@ export const ChoosePool: FC<{
       footer={null}
       currentSlide={currentSlide}
       userAnswer={userAnswer}
+      mode={mode}
     >
       <Slider {...settings} ref={sliderRef}>
         <div className="slide">
@@ -404,7 +422,6 @@ export const ChoosePool: FC<{
         <div className="slide">
           <h2>Our Recommendation</h2>
           <img
-            // eslint-disable-next-line max-len
             src={`/img/assets/${
               userSelection === 'stable' ? 'Stable' : userSelection === 'hyper' ? 'Hyper' : 'Primary'
             }_pool_choose_${mode}.svg`}

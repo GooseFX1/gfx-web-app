@@ -44,10 +44,10 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row mt-10 mb-5">
+    <div tw="flex flex-row mt-10 mb-5 items-center">
       <h2 tw="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">FAQs</h2>
       <a
-        tw="font-bold text-regular dark:text-white text-blue-1 underline sm:text-tiny"
+        tw="font-bold text-regular dark:text-white text-blue-1 underline"
         href="https://docs.goosefx.io/features/farm"
         target="_blank"
         rel="noopener noreferrer"
