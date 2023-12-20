@@ -57,7 +57,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     }
     const t2 = setInterval(refreshOpenOrders, 500)
     return () => clearInterval(t2) // clear
-  }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo, wallet.connected])
+  }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo.traderRiskGroupKey, wallet.connected])
 
   useEffect(() => {
     const refreshOrderbook = async () => {
