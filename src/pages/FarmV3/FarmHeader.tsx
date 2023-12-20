@@ -225,16 +225,6 @@ export const FarmHeader: FC = () => {
 
   return (
     <>
-      {checkMobile() && (
-        <button
-          tw="block mr-3.75 mb-2.5 ml-auto"
-          onClick={() => {
-            setPoolSelection(true)
-          }}
-        >
-          <img src="/img/assets/question-icn.svg" alt="?-icon" />
-        </button>
-      )}
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
         <div tw="flex flex-col cursor-pointer w-15 mr-2.5 sm:w-12.5 sm:h-15">
@@ -302,16 +292,18 @@ export const FarmHeader: FC = () => {
             </div>
           ))}
         </div>
-        {!checkMobile() && (
-          <button
-            tw="cursor-pointer ml-auto"
-            onClick={() => {
-              setPoolSelection(true)
-            }}
-          >
-            <img src="/img/assets/question-icn.svg" alt="?-icon" tw="sm:h-[30px] sm:w-[30px] max-w-[30px]" />
-          </button>
-        )}
+        <button
+          tw="cursor-pointer ml-auto"
+          onClick={() => {
+            setPoolSelection(true)
+          }}
+        >
+          <img
+            src="/img/assets/question-icn.svg"
+            alt="?-icon"
+            tw="sm:h-[30px] sm:w-[30px] sm:max-w-[30px] sm:mr-2.5"
+          />
+        </button>
       </HEADER_WRAPPER>
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
