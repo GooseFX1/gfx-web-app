@@ -304,7 +304,7 @@ export const InfoBanner: FC<{
         </SETTING_MODAL>
       )}
 
-      <div className="spot-toggle">
+      {/*<div className="spot-toggle">
         <span
           className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
           css={[tw`text-2xl font-bold`]}
@@ -321,7 +321,7 @@ export const InfoBanner: FC<{
         >
           Devnet
         </span>
-      </div>
+      </div>*/}
 
       <DropdownPairs />
       {

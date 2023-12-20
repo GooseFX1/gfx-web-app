@@ -214,7 +214,7 @@ const AccountOverview: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchDayVolume()
     }
-  }, [connected, traderInfo])
+  }, [connected, traderInfo.traderRiskGroupKey])
   return (
     <WRAPPER>
       {depositWithdrawModal && (

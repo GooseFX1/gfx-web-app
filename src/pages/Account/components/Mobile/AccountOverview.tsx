@@ -197,7 +197,7 @@ const MobileAccountOverview: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchDayVolume()
     }
-  }, [connected, traderInfo])
+  }, [connected, traderInfo.traderRiskGroupKey])
 
   return (
     <WRAPPER>
