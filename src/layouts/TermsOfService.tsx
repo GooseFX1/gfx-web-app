@@ -136,6 +136,7 @@ export const TermsOfService: FC<{
       centered={true}
       large={true}
       maskClosable={false}
+      wrapClassName="tos-modal-wrapper"
     >
       <TEXT_AREA>
         {/* <div className={'text-area-inner'} onScroll={confirmReading}> */}

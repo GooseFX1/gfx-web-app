@@ -1,11 +1,13 @@
-import { Dispatch, FC, SetStateAction } from 'react'
-import { checkMobile } from '../../utils'
+import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button } from '../../components'
 import { SSLToken } from './constants'
 import { commafy } from '../../utils'
+import { Drawer } from 'antd'
+import useBreakPoint from '../../hooks/useBreakPoint'
+import { useDarkMode } from '../../context'
 
 const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content {
@@ -18,15 +20,6 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .ant-modal-body {
     ${tw`p-5 sm:p-[15px]`}
-  }
-`
-
-const WRAPPER = styled.div`
-  .header {
-    ${tw`dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center sm:text-average`}
-  }
-  .sub-header {
-    ${tw`dark:text-grey-2 text-grey-1 text-regular font-semibold text-center mb-3 sm:text-tiny`}
   }
 `
 
@@ -55,49 +48,35 @@ export const ActionModal: FC<{
   actionType,
   token
 }) => {
+  const { mode } = useDarkMode()
+  const breakpoint = useBreakPoint()
+  const elem = document.getElementById('farm-container')
+
   const handleUserAction = () => {
     if (actionType === 'deposit') handleDeposit()
     else if (actionType === 'withdraw') handleWithdraw()
     else handleClaim()
   }
 
-  return (
-    <STYLED_POPUP
-      height={
-        checkMobile()
-          ? actionType === 'withdraw'
-            ? '320px'
-            : actionType === 'claim'
-            ? '250px'
-            : '275px'
-          : actionType === 'claim'
-          ? '250px'
-          : '295px'
-      }
-      width={checkMobile() ? '95%' : '560px'}
-      title={null}
-      centered={true}
-      visible={actionModal ? true : false}
-      onCancel={() => setActionModal(false)}
-      footer={null}
-    >
-      <WRAPPER>
-        <div>
+  const Content = useCallback(
+    () => (
+      <div>
+        <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center sm:text-average">
           {actionType === 'withdraw' ? (
-            <div className="header">Are you sure you want to {checkMobile() && <br />} withdraw?</div>
+            <div>Are you sure you want to {breakpoint.isMobile && <br />} withdraw?</div>
           ) : actionType === 'deposit' ? (
-            <div className="header">Deposit {token?.token} </div>
+            <div>Deposit {token?.token} </div>
           ) : (
-            <div className="header">Claim {token?.token}</div>
+            <div>Claim {token?.token}</div>
           )}
         </div>
-        <div>
+        <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold text-center mb-3 sm:text-tiny">
           {actionType === 'withdraw' ? (
-            <div className="sub-header">By withdrawing, you will claim any pending yield available.</div>
+            <div>By withdrawing, you will claim any pending yield available.</div>
           ) : actionType === 'deposit' ? (
-            <div className="sub-header">By depositing, you will claim any pending yield available.</div>
+            <div>By depositing, you will claim any pending yield available.</div>
           ) : (
-            <div className="sub-header">By claiming, you will get all pending yield available. </div>
+            <div>By claiming, you will get all pending yield available. </div>
           )}
         </div>
         {actionType !== 'claim' && (
@@ -117,7 +96,7 @@ export const ActionModal: FC<{
           </div>
         )}
         <div tw="flex flex-row items-center justify-between mb-3.75">
-          <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable rewards</div>
+          <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
           <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
             claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`
           }`}</div>
@@ -137,7 +116,7 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim rewards`
+              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim yield`
               : actionType === 'withdraw'
               ? `Withdraw ${commafy(+withdrawAmount + claimAmount, 4)} ${token?.token}`
               : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`
@@ -152,7 +131,47 @@ export const ActionModal: FC<{
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By withdrawing, you agree to our Terms of Service.
         </div>
-      </WRAPPER>
+      </div>
+    ),
+    [breakpoint, mode]
+  )
+
+  return breakpoint.isMobile ? (
+    <Drawer
+      title={null}
+      placement="bottom"
+      closable={false}
+      key="bottom"
+      open={actionModal}
+      getContainer={elem}
+      maskClosable={true}
+      height="auto"
+      destroyOnClose={true}
+      className={'gfx-drawer'}
+    >
+      {Content()}
+    </Drawer>
+  ) : (
+    <STYLED_POPUP
+      height={
+        breakpoint.isMobile
+          ? actionType === 'withdraw'
+            ? '320px'
+            : actionType === 'claim'
+            ? '250px'
+            : '275px'
+          : actionType === 'claim'
+          ? '250px'
+          : '295px'
+      }
+      width={'560px'}
+      title={null}
+      centered={true}
+      visible={actionModal ? true : false}
+      onCancel={() => setActionModal(false)}
+      footer={null}
+    >
+      {Content()}
     </STYLED_POPUP>
   )
 }

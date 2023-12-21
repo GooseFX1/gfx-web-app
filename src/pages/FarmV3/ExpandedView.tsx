@@ -18,7 +18,7 @@ import {
   sslErrorMessage,
   SSLToken
 } from './constants'
-import { notify, truncateBigNumber, truncateBigString, commafy } from '../../utils'
+import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { toPublicKey } from '@metaplex-foundation/js'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
@@ -180,6 +180,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   // or withdraw mode with zero user deposited amount or no withdraw amount
   const disableActionButton = useMemo(
     () =>
+      !liquidity ||
+      !coin?.cappedDeposit ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT &&
         (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
@@ -335,20 +337,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     }
   }
 
-  const userDepositInUSD = useMemo(() => {
-    if (!userDepositedAmount || userDepositedAmount === null || userDepositedAmount?.toString() === '0')
-      return '00.00'
-    else {
-      const nativeStringLen = userDepositedAmount?.toString().length
-      const usdString =
-        userDepositedAmount?.toString().substring(0, nativeStringLen - coin?.mintDecimals) +
-        '.' +
-        userDepositedAmount
-          ?.toString()
-          ?.substring(nativeStringLen - coin?.mintDecimals, nativeStringLen - coin?.mintDecimals + 2)
-      return usdString
-    }
-  }, [userDepositedAmount, coin?.mintDecimals])
+  const userDepositInUSD = useMemo(
+    () => withdrawBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
+    [userDepositedAmount, coin?.mintDecimals]
+  )
 
   const renderStatsAsZero = useCallback(
     (token: string | undefined) => (
@@ -468,7 +460,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <div tw="flex font-semibold duration-500 relative sm:my-1 sm:mb-[15px]">
               <div
                 css={[
-                  tw`bg-blue-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
+                  tw`bg-gradient-1 h-8.75 w-[100px] sm:w-[50%] rounded-full`,
                   modeOfOperation === ModeOfOperation.WITHDRAW
                     ? tw`absolute ml-[100px] sm:ml-[50%] duration-500`
                     : tw`absolute ml-0 duration-500`
@@ -591,7 +583,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                       tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                     items-center justify-center dark:text-white text-black-4 text-regular font-bold"
                     >
-                      Claim {commafy(claimableReward, 2)} {coin?.token}
+                      Claim {commafy(claimableReward, 4)} {coin?.token}
                     </div>
                   </CLAIM>
                 ) : (

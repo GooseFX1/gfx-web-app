@@ -105,11 +105,8 @@ export const TokenToggleNFT: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, 
   )
 }
 
-export const ShowDepositedToggle: FC<{ enabled: boolean; setEnable: Dispatch<SetStateAction<boolean>> }> = ({
-  enabled,
-  setEnable
-}) => (
-  <TOGGLE_WRAPPER position={enabled ? 1 : 0} onClick={() => setEnable((prev) => !prev)}>
+export const ShowDepositedToggle: FC<{ enabled: boolean; setEnable: any }> = ({ enabled, setEnable }) => (
+  <TOGGLE_WRAPPER position={enabled ? 1 : 0} onClick={() => setEnable()}>
     <div
       tw="!rounded-[35px] !w-[75px] sm:!w-[70px] !h-8.75 
        sm:ml-0 ml-10 duration-500 dark:bg-black-3 bg-grey-4"

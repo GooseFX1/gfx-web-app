@@ -257,6 +257,15 @@ export const faqs = [
         BONK you need at least 1 BONK in your wallet to withdraw successfully.
       </div>
     )
+  },
+  {
+    question: 'Why do rewards change for SSL Pools?',
+    answer: (
+      <div>
+        If a user comes in and deposits a large amount of liquidity, it leads to dilution of rewards further
+        lowering your current rewards by a bit. We recommend claiming rewards at least once a day!
+      </div>
+    )
   }
 ]
 

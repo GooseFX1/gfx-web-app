@@ -25,7 +25,7 @@ const FAQ_WRAPPER = styled.div`
     ${tw`!border-0`}
   }
   a:hover {
-    ${tw`text-white`}
+    ${tw`text-white underline`}
   }
   .invertArrow {
     transform: rotate(180deg);
@@ -44,11 +44,10 @@ const FAQ_WRAPPER = styled.div`
 
 export const Faqs: FC = () => (
   <FAQ_WRAPPER>
-    <div tw="flex flex-row mt-10 mb-5">
+    <div tw="flex flex-row mt-10 mb-5 items-center">
       <h2 tw="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">FAQs</h2>
       <a
-        tw="w-[140px] h-[35px] bg-blue-1 cursor-pointer text-white font-bold
-         text-regular flex flex-row justify-center items-center rounded-circle sm:w-1/3 sm:text-tiny"
+        tw="font-bold text-regular dark:text-white text-blue-1 underline"
         href="https://docs.goosefx.io/features/farm"
         target="_blank"
         rel="noopener noreferrer"

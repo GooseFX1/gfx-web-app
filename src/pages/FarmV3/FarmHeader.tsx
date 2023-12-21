@@ -4,19 +4,23 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
-import { checkMobile, truncateBigNumber, truncateBigString } from '../../utils'
+import { checkMobile, commafy, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { Tooltip } from 'antd'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 
-const CARD_GRADIENT = styled.div`
-  ${tw`h-[56px] sm:h-11 w-[180px] p-px mr-3.75 rounded-tiny sm:w-[165px]`}
+const CARD_GRADIENT = styled.div<{ isMobile: boolean }>`
+  ${tw`h-16.25 w-[130px] p-px mr-3.75 rounded-tiny`}
   background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   flex-shrink: 0;
 `
 
 const INFO_CARD = styled.div`
-  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center py-[7px] sm:px-1 px-2.5 `}
+  ${tw`dark:bg-black-1 bg-grey-5 rounded-tiny h-full w-full flex flex-col justify-center 
+    sm:justify-evenly sm:px-1 px-[7px]`}
 `
 
 const POOL_CARD = styled.div`
@@ -25,7 +29,7 @@ const POOL_CARD = styled.div`
 `
 
 const HEADER_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-start relative mb-5`}
+  ${tw`flex flex-row relative mb-5 items-center`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -49,10 +53,21 @@ const POOL_CARD_WRAPPER = styled.div`
 `
 
 export const FarmHeader: FC = () => {
-  const [poolSelection, setPoolSelection] = useState<boolean>(false)
-  const { allPoolSslData, sslTableData, liquidityAmount, sslAllVolume, sslTotalFees } = useSSLContext()
+  const [range, setRange] = useState<number>(0)
+  const {
+    allPoolSslData,
+    sslTableData,
+    liquidityAmount,
+    sslAllVolume,
+    sslTotalFees,
+    allPoolFilteredLiquidityAcc
+  } = useSSLContext()
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [poolSelection, setPoolSelection] = useState<boolean>(!existingUserCache.hasFarmOnboarded)
+  const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
     const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
@@ -61,18 +76,47 @@ export const FarmHeader: FC = () => {
     return apyObj
   })
 
+  const getTooltipText = (index: number) => {
+    let tooltipText = ''
+    if (index === 0)
+      tooltipText = 'Total rewards earned by the user by providing liquidty in our SSL Pools, displayed in USD'
+    else if (index === 1) tooltipText = 'TVL represents the total USD value of all assets locked in our SSL Pools'
+    else if (index === 2)
+      tooltipText = 'Volume generated between different time intervals. Volume is rest everyday at 10PM UTC'
+    else if (index === 3)
+      tooltipText = 'Fees earned by the pools between different time intervals. Fees is rest everyday at 10PM UTC'
+    return <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">{tooltipText}</span>
+  }
+
   const TVL = useMemo(() => {
     if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$00.00`
 
     const totalLiquidity = allPoolSslData
       .map((token: SSLToken) => {
         const nativeLiquidity = liquidityAmount[token?.mint?.toBase58()]
-        return prices[getPriceObject(token?.token)]?.current * nativeLiquidity
+        return prices?.[getPriceObject(token?.token)]?.current * nativeLiquidity
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
     return '$' + truncateBigNumber(totalLiquidity)
   }, [allPoolSslData, liquidityAmount, prices])
+
+  const totalEarnings = useMemo(() => {
+    if (!allPoolSslData || !allPoolFilteredLiquidityAcc) return `$00.00`
+
+    const totalEarned = allPoolSslData
+      .map((token: SSLToken) => {
+        const totalEarnedInNative =
+          allPoolFilteredLiquidityAcc?.[token?.mint?.toBase58()]?.totalEarned?.toNumber() /
+          Math.pow(10, token?.mintDecimals)
+        return totalEarnedInNative ? prices?.[getPriceObject(token?.token)]?.current * totalEarnedInNative : 0
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
+    if (!totalEarned) return `$00.00`
+
+    return '$' + commafy(totalEarned, 2)
+  }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, userPubKey])
 
   const V24H = useMemo(() => {
     if (allPoolSslData == null) return `$00.00`
@@ -116,77 +160,157 @@ export const FarmHeader: FC = () => {
     return '$' + truncateBigNumber(totalVolume)
   }, [allPoolSslData, sslAllVolume])
 
+  const F24H = useMemo(() => {
+    if (allPoolSslData == null) return `$00.00`
+
+    const totalFees = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const fee = sslTableData?.[key]?.fee
+        const feeInNative = fee / 10 ** token.mintDecimals
+        const fees = feeInNative * prices?.[getPriceObject(token?.token)]?.current
+        return fees
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
+    return '$' + truncateBigNumber(totalFees)
+  }, [allPoolSslData, sslTableData])
+
+  const F7D = useMemo(() => {
+    if (allPoolSslData == null || !sslTotalFees) return `$00.00`
+
+    const totalWeeklyFees = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const fees = sslTotalFees?.[key]?.fees7D
+        return fees / 1_000_00 // As fees is coming with 5 decimal places
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
+
+    return '$' + truncateBigNumber(totalWeeklyFees)
+  }, [allPoolSslData, sslTotalFees])
+
   const totalFees = useMemo(() => {
-    if (allPoolSslData == null || isEmpty(prices) || !sslTotalFees) return `$00.00`
+    if (allPoolSslData == null || !sslTotalFees) return `$00.00`
 
-    const feesWithoutDecimals = sslTotalFees?.replace('.', '')
-    return '$' + truncateBigString(feesWithoutDecimals, 5) // As fees is coming with 5 decimal places
-  }, [allPoolSslData, sslTotalFees, prices])
+    const totalFees = allPoolSslData
+      .map((token: SSLToken) => {
+        const key = token.token === 'SOL' ? 'WSOL' : token.token
+        const fees = sslTotalFees?.[key]?.totalTokenFees
+        return fees / 1_000_00 // As fees is coming with 5 decimal places
+      })
+      .reduce((acc, curValue) => acc + curValue, 0)
 
-  const infoCards = [
-    { name: 'GooseFX TVL', value: TVL },
-    { name: 'Total Volume Traded', value: totalVolumeTraded },
-    { name: '24H Volume', value: V24H },
-    { name: '7D Volume', value: V7D },
-    { name: 'Total Fees', value: totalFees }
-  ]
+    return '$' + truncateBigNumber(totalFees)
+  }, [allPoolSslData, sslTotalFees])
+
+  const infoCards = userPubKey
+    ? [
+        { name: 'My Earnings', value: totalEarnings },
+        { name: 'TVL', value: TVL },
+        {
+          name: 'Volume',
+          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
+        },
+        { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
+      ]
+    : [
+        { name: 'TVL', value: TVL },
+        {
+          name: 'Volume',
+          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
+        },
+        { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
+      ]
 
   return (
     <>
       <HEADER_WRAPPER>
         {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
-        {infoCards?.map((card) => (
-          <span key={card?.name}>
-            <CARD_GRADIENT key={card?.name}>
-              <INFO_CARD>
-                <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}</h4>
-                <div tw="text-lg font-semibold text-black-4 dark:text-grey-5 sm:text-regular sm:leading-[18px]">
-                  {card?.value}
-                </div>
-              </INFO_CARD>
-            </CARD_GRADIENT>
-          </span>
-        ))}
-        {/* {
+        <div tw="flex flex-col cursor-pointer w-15 mr-2.5 sm:w-12.5 sm:h-15">
           <div
-            tw="absolute right-0 border border-solid border-grey-1 w-[207px] h-10 rounded-[100px] cursor-pointer
-                py-0.5 pl-1.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-2 sm:right-0"
+            css={[tw`duration-500`, range === 0 ? tw`mt-0` : range === 1 ? tw`mt-5` : tw`mt-10 sm:mt-[35px]`]}
+            tw="h-5 bg-gradient-1 w-15 absolute rounded-[100px] sm:w-12.5 sm:h-[25px]"
+          ></div>
+          <h4
+            css={[range === 0 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-5 duration-500 flex items-center z-[100] justify-center font-bold 
+                            w-15 text-tiny sm:w-12.5 sm:h-[25px] sm:mb-2.5"
+            onClick={() => setRange(0)}
           >
-            <span
-              tw="mr-1.25 font-semibold text-regular dark:text-grey-5 text-black-4"
-              onClick={() => {
-                setPoolSelection(true)
-              }}
+            24H
+          </h4>
+          {!checkMobile() && (
+            <h4
+              css={[range === 1 ? tw`!text-white` : tw`text-grey-1`]}
+              tw="h-5 duration-500 flex items-center z-[100] justify-center 
+                  font-bold w-15 text-tiny"
+              onClick={() => setRange(1)}
             >
-              Can’t Choose A Pool
-            </span>
-            <img src="/img/assets/questionMark.svg" alt="question-icon" />
-          </div>
-        } */}
+              7D
+            </h4>
+          )}
+          <h4
+            css={[range === 2 ? tw`!text-white` : tw`text-grey-1`]}
+            tw="h-5 flex items-center justify-center z-[10] font-bold 
+                            w-15 text-tiny sm:w-12.5 sm:h-[25px]"
+            onClick={() => setRange(2)}
+          >
+            All
+          </h4>
+        </div>
+        <div tw="flex flex-row">
+          {infoCards?.map((card, index) => (
+            <div key={card?.name}>
+              <CARD_GRADIENT key={card?.name} isMobile={checkMobile()}>
+                <INFO_CARD>
+                  <div tw="flex flex-row">
+                    <div tw="flex flex-row mr-auto justify-center items-center">
+                      <h4 tw="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
+                      <Tooltip
+                        color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                        title={getTooltipText(userPubKey ? index : index + 1)}
+                        placement="topRight"
+                        overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                        overlayInnerStyle={{ borderRadius: '8px' }}
+                      >
+                        <img
+                          src={`/img/assets/farm-tooltip-${mode}.svg`}
+                          alt="deposit-cap"
+                          tw="ml-[5px] max-w-none cursor-pointer"
+                          height={16}
+                          width={16}
+                        />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div tw="text-lg font-bold text-black-4 dark:text-grey-5 sm:text-average sm:leading-[18px]">
+                    {card?.value}
+                  </div>
+                </INFO_CARD>
+              </CARD_GRADIENT>
+            </div>
+          ))}
+        </div>
+        <button
+          tw="cursor-pointer ml-auto"
+          onClick={() => {
+            setPoolSelection(true)
+          }}
+        >
+          <img
+            src="/img/assets/question-icn.svg"
+            alt="?-icon"
+            tw="sm:h-[30px] sm:w-[30px] sm:max-w-[30px] sm:mr-2.5"
+          />
+        </button>
       </HEADER_WRAPPER>
-
       <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <h2 tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Single Asset Pools
           </h2>
         </div>
-        {/* {checkMobile() && (
-          <div
-            tw="border border-solid border-grey-1 w-[180px] h-10 rounded-[100px] dark:bg-black-2
-               flex flex-row items-center justify-center bg-white mr-2.5"
-          >
-            <span
-              tw="font-semibold dark:text-grey-5 text-black-4 text-tiny mr-1"
-              onClick={() => {
-                setPoolSelection(true)
-              }}
-            >
-              Can’t Choose A Pool
-            </span>
-            <img src="/img/assets/questionMark.svg" alt="question-icon" height={25} width={25} />
-          </div>
-        )} */}
       </div>
       <POOL_CARD_WRAPPER>
         {allPoolDataWithApy?.length
@@ -207,7 +331,7 @@ export const FarmHeader: FC = () => {
                       {card?.token}
                     </h2>
                     <div
-                      tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center 
+                      tw="flex flex-row h-[30px] w-[110px] flex flex-row justify-center items-center
                       rounded-circle dark:bg-black-2 bg-grey-4 sm:w-[100px]"
                     >
                       <img

@@ -201,6 +201,12 @@ export const parseUnixTimestamp = (unixTime: string): string => {
 
 export const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max)
 
+/*
+  It takes a number as an argument, converts it into a string in the truncated form & returns it.
+  If the number is greater than 1 billion, it formats the number to a string with 2 digits after 
+  the decimal. For example 1230000000 -> 1.23B. It handles thousands, millions in the same way.
+  If the number is less than 1000, it simply returns it upto 2 decimal places.
+*/
 export const truncateBigNumber = (bigNumber: number): string | number => {
   if (!bigNumber || bigNumber === null) return '00.00'
 
@@ -235,6 +241,14 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
   }
 }
 
+/*
+  It takes a string as an argument(which is a BN converted to string) and simply adds decimal in the
+  string as BN does not supports decimals. It places the decimal by calculating the length of the string
+  and the number of decimals present in the token mint.
+  If the string is greater than 1 billion, it formats the number to a string with 2 digits after 
+  the decimal. For example 1230000000 -> 1.23B. It handles thousands, millions in the same way.
+  If the number is less than 1000, it simply returns it upto 2 decimal places.
+*/
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
   // eslint-disable-next-line max-len
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
@@ -283,6 +297,17 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   }
 }
 
+/*
+  It takes the user input amount to deposit/withdraw as a string and converts it into native value 
+  by removing the decimals in the string and appending or prefixing '0' depending upon the length of
+  the user input string and the mint decimals of the token. There is an if/else block which checks whether
+  the user input string has a decimal or not. If the user input string has a decimal if block will run, otherwise 
+  else block will run.
+  For example: For 1.24 SOL input, the if block will run and append (9-2-1 = 6) zeroes to the input string where:
+  9 -> mintDecimals, 2 -> afterdecimal length(24), 1(less than sign, so the while loop won't iterate for the 7th time).
+  If there are no decimals, then simply append mint - 1 zeroes. For example: For 1 SOL input, the else block will 
+  run and append (9 - 1) = 8 zeroes.
+*/
 export const convertToNativeValue = (value: string, decimals: number): string => {
   try {
     const decimalIndex = value.indexOf('.')
@@ -320,6 +345,12 @@ export const convertToNativeValue = (value: string, decimals: number): string =>
   }
 }
 
+/*
+  It takes the user deposited amount as an argument and formats the deposited native amount into a non-native
+  string and then calculates the beforeDecimal and afterDecimal part of the user deposited amount. It is then used for 
+  sorting the BN balances on clicking the sorting arrow on ui. It is done this way because the values on ui are strings
+  and we can sort string only after converting into numbers (BN in this case).
+*/
 export const formatUserBalance = (nativeBN: string, mintDecimals: number): any => {
   if (!nativeBN || nativeBN === null || nativeBN === '0') return null
 
@@ -354,4 +385,33 @@ export const formatUserBalance = (nativeBN: string, mintDecimals: number): any =
     beforeDecimalBN,
     afterDecimalBN
   }
+}
+
+/*
+  It is exactly as same as the first function, the only difference is that it does not return the string in the
+  truncated form(B,M,K). It returns the entire amount deposited by the user without any caps to decimal places. 
+  It is used to show entire deposited value when the user clicks 'Max' in 'withdraw' mode. This is to make sure that 
+  the user can see the entire deposited amount and then withdraw the cryto dust as well.
+*/
+export const withdrawBigString = (nativeString: string, mintDecimals: number): string => {
+  if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
+    return '0.00'
+
+  let usdString = ''
+  const nativeStringLen = nativeString.length
+  if (nativeStringLen > mintDecimals) {
+    usdString =
+      nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeString.substring(nativeStringLen - mintDecimals)
+  } else {
+    let i = 0
+    let result = '0.'
+    while (i < mintDecimals - nativeStringLen) {
+      result += '0'
+      i++
+    }
+    usdString = result + nativeString
+  }
+  return usdString
 }

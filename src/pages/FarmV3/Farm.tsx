@@ -20,6 +20,13 @@ const WRAPPER = styled.div`
   }
 
   ${({ theme }) => theme.customScrollBar('0px')};
+
+  .ant-drawer-content-wrapper {
+    ${tw`rounded-tl-half rounded-tr-half`}
+  }
+  .ant-drawer-content {
+    ${tw`rounded-tl-half rounded-tr-half dark:bg-black-2 bg-white`}
+  }
 `
 
 const Farm: FC = () => {
@@ -32,7 +39,7 @@ const Farm: FC = () => {
 
   return (
     <SSLProvider>
-      <WRAPPER>
+      <WRAPPER id="farm-container">
         <FarmHeader />
         <FarmTable />
         <Faqs />

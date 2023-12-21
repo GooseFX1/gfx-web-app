@@ -9,7 +9,7 @@ import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } 
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
-import { SSLToken, poolType } from './constants'
+import { SSLToken, poolType, Pool } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
@@ -126,8 +126,16 @@ export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
-  const { operationPending, pool, setPool, sslData, filteredLiquidityAccounts, sslTableData, liquidityAmount } =
-    useSSLContext()
+  const {
+    operationPending,
+    pool,
+    setPool,
+    sslData,
+    filteredLiquidityAccounts,
+    sslTableData,
+    liquidityAmount,
+    setIsFirstPoolOpen
+  } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(false)
@@ -143,7 +151,8 @@ export const FarmTable: FC = () => {
   const numberOfCoinsDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
-      if (amountInNative && amountInNative !== '0') {
+      const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
+      if (amountInUSD && amountInUSD !== '0.00') {
         return accumulator + 1
       }
       return accumulator
@@ -218,6 +227,7 @@ export const FarmTable: FC = () => {
   }
 
   const initiateGlobalSearch = (value: string) => {
+    setIsFirstPoolOpen(false)
     setPool(poolType.all)
     setSearchTokens(value)
   }
@@ -233,6 +243,16 @@ export const FarmTable: FC = () => {
     })
     setSort((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'))
     setSortType(sortValue)
+  }
+
+  const handleToggle = (pooltype: Pool) => {
+    setPool(pooltype)
+    setIsFirstPoolOpen(false)
+  }
+
+  const handleShowDepositedToggle = () => {
+    setShowDeposited((prev) => !prev)
+    setIsFirstPoolOpen(false)
   }
 
   return (
@@ -266,13 +286,13 @@ export const FarmTable: FC = () => {
                 ? tw`ml-[190px] sm:ml-[48%]`
                 : tw`ml-[285px] sm:ml-[72%]`
             ]}
-            tw="h-[35px] bg-blue-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
+            tw="h-[35px] bg-gradient-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
           ></div>
           <h4
             css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.all))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.all))}
           >
             All Pools
           </h4>
@@ -280,14 +300,14 @@ export const FarmTable: FC = () => {
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
             font-semibold w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.stable))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.stable))}
           >
             Stable
           </h4>
           <h4
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[24%] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.primary))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.primary))}
           >
             Primary
           </h4>
@@ -295,7 +315,7 @@ export const FarmTable: FC = () => {
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
             tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
             sm:w-[24%] w-[95px] text-regular"
-            onClick={() => (operationPending ? null : setPool(poolType.hyper))}
+            onClick={() => (operationPending ? null : handleToggle(poolType.hyper))}
           >
             Hyper
           </h4>
@@ -313,7 +333,7 @@ export const FarmTable: FC = () => {
             />
             {pubKey && (
               <div tw="ml-auto flex items-center mr-2">
-                <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+                <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                 <div
                   tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
                font-semibold mt-[-4px] ml-2.5"
@@ -340,7 +360,7 @@ export const FarmTable: FC = () => {
           />
           {pubKey && (
             <div tw="ml-auto flex items-center mr-2">
-              <ShowDepositedToggle enabled={showDeposited} setEnable={setShowDeposited} />
+              <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
               <div
                 tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
                           font-semibold mt-[-4px] ml-2.5 sm:ml-2"
@@ -365,7 +385,7 @@ export const FarmTable: FC = () => {
                   color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                   title={
                     <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                      APY is calculated based on 7D fees
+                      APY is calculated on a 7D rolling basis based on TVL/Fees. See FAQ below for more info
                     </span>
                   }
                   placement="topLeft"
@@ -412,9 +432,21 @@ export const FarmTable: FC = () => {
               )}
               {!checkMobile() && (
                 <th tw="!flex !justify-center">
-                  <div className="sort" onClick={() => handleColumnSort('balance')}>
-                    {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
-                  </div>
+                  <Tooltip
+                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                    title={
+                      <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                        Values are displayed in native token
+                      </span>
+                    }
+                    placement="topLeft"
+                    overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                    overlayInnerStyle={{ borderRadius: '8px' }}
+                  >
+                    <div className="sort" onClick={() => handleColumnSort('volume')}>
+                      {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
+                    </div>
+                  </Tooltip>
                 </th>
               )}
               <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
@@ -424,8 +456,8 @@ export const FarmTable: FC = () => {
           </thead>
           <tbody>
             {filteredTokens?.length
-              ? filteredTokens.map((coin: SSLToken) => (
-                  <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} />
+              ? filteredTokens.map((coin: SSLToken, index: number) => (
+                  <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} index={index} />
                 ))
               : initialLoad && <SkeletonCommon height="100px" style={{ marginTop: '15px' }} />}
             {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
@@ -483,8 +515,13 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   )
 }
 
-const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin, showDeposited }) => {
-  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData } = useSSLContext()
+const FarmTokenContent: FC<{
+  coin: SSLToken
+  showDeposited: boolean
+  index: number
+}> = ({ coin, showDeposited, index }) => {
+  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData, isFirstPoolOpen } =
+    useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
@@ -500,6 +537,11 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
     () => truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
     [userDepositedAmount, coin]
   )
+
+  useEffect(() => {
+    if (index === 0 && isFirstPoolOpen) setIsExpanded(true)
+    else if (index === 0 && !isFirstPoolOpen) setIsExpanded(false)
+  }, [index, isFirstPoolOpen])
 
   const liquidity = useMemo(
     () =>
@@ -560,7 +602,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         onClick={() => setIsExpanded((prev) => !prev)}
       >
         <td tw="!justify-start relative sm:!w-[41%]">
-          {userDepositedAmount && userDepositedAmount?.toString() !== '0' && (
+          {userDepositedAmountUI !== '0.00' && (
             <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
           )}
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
@@ -572,7 +614,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
                     Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}.
+                    {truncateBigNumber(coin?.cappedDeposit)}
                   </span>
                 }
                 placement="topRight"
@@ -634,11 +676,7 @@ const FarmTokenContent: FC<{ coin: SSLToken; showDeposited: boolean }> = ({ coin
         )}
         {!checkMobile() && (
           <td>
-            <h4>
-              {userDepositedAmount
-                ? truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)
-                : '00.00'}
-            </h4>
+            <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
           </td>
         )}
         <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
