@@ -16,6 +16,7 @@ const WRAPPER = styled.div`
   padding: 5px;
   h1 {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
 `
 
@@ -36,6 +37,7 @@ const HISTORY = styled.div`
   .history-item {
     ${tw`flex flex-col w-full justify-between`}
     padding: 10px;
+    color: ${({ theme }) => theme.text2};
     font-size: 13px;
     border: 1px solid #3c3c3c;
     border-top: none;
@@ -64,7 +66,7 @@ const HISTORY = styled.div`
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
-    color: #636363;
+    color: ${({ theme }) => theme.text2};
     font-size: 15px;
     font-weight: 600;
   }

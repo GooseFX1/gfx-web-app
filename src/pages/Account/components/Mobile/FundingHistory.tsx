@@ -19,6 +19,7 @@ const WRAPPER = styled.div`
   padding: 5px;
   h1 {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
 `
 
@@ -33,15 +34,14 @@ const ACCOUNTVALUESCONTAINER = styled.div`
 
 const ACCOUNTVALUE = styled.div`
   ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text28};
-  background: #131313;
+  color: ${({ theme }) => theme.text2};
+  background: ${({ theme }) => theme.bg2};
   padding: 5px;
   p {
     margin: 0px;
     font-size: 13px;
   }
   p:last-child {
-    color: #636363;
     font-size: 15px;
   }
 `
@@ -61,6 +61,7 @@ const HISTORY = styled.div`
     ${tw`flex flex-col w-full justify-between`}
     padding: 10px;
     font-size: 13px;
+    color: ${({ theme }) => theme.text2};
     border: 1px solid #3c3c3c;
     border-top: none;
     height: 170px;
@@ -103,7 +104,7 @@ const HISTORY = styled.div`
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
-    color: #636363;
+    color: ${({ theme }) => theme.text2};
     font-size: 15px;
     font-weight: 600;
   }

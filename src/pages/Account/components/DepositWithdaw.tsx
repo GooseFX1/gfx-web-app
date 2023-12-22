@@ -16,6 +16,7 @@ const WRAPPER = styled.div`
   padding: 15px;
   h1 {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
 `
 
@@ -24,6 +25,7 @@ const ACCOUNTHEADER = styled.div`
     border: 1px solid #3C3C3C;
     margin-top: 10px;
     span {
+        color: ${({ theme }) => theme.text2};
         padding-top:10px;
         padding-bottom:10px;
     }
@@ -48,6 +50,7 @@ const HISTORY = styled.div`
   .history-items-container {
     height: calc(100% - 40px);
     overflow: auto;
+    color: ${({ theme }) => theme.text2};
   }
 
   .history-items-container div:last-child {

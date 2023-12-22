@@ -138,6 +138,12 @@ const HEADER = styled.div`
   .headers.SOL-Unsettled-P-L > span {
     ${tw`w-1/3`}
   }
+
+  .headers.SOL-Unsettled-P-L {
+    span:first-child {
+      ${tw`pl-3`}
+    }
+  }
 `
 const POSITIONS = styled.div`
   ${tw`w-full`}

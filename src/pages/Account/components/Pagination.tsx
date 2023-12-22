@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -7,6 +7,7 @@ import { useDarkMode } from '../../../context'
 const WRAPPER = styled.div`
   ${tw`flex flex-row w-full items-center justify-end h-full`}
   border-top: 1px solid #3c3c3c;
+  color: ${({ theme }) => theme.text2};
   height: 100%;
   .imagesContainer {
     ${tw`flex items-center justify-center px-2`}
@@ -28,16 +29,13 @@ export const Pagination: FC<{
   setPagination: React.Dispatch<React.SetStateAction<Pagination>>
   totalItemsCount: number
 }> = ({ pagination, setPagination, totalItemsCount }) => {
-  const [lastClicked, setLastClicked] = useState<'back' | 'next'>('next')
   const { mode } = useDarkMode()
   const totalAlreadyFetched = pagination.page * pagination.limit >= totalItemsCount
   const handleArrowClick = (side: 'back' | 'next') => {
     if (side == 'back' && pagination.page !== 1) {
       setPagination({ page: pagination.page - 1, limit: pagination.limit })
-      setLastClicked('back')
     } else if (side == 'next' && !totalAlreadyFetched) {
       setPagination({ page: pagination.page + 1, limit: pagination.limit })
-      setLastClicked('next')
     }
   }
   return (
@@ -63,7 +61,7 @@ export const Pagination: FC<{
           }
           alt="arrow left"
           style={{ transform: 'rotate(90deg)' }}
-          className={mode != 'lite' && lastClicked === 'next' ? 'svg-to-grey' : ''}
+          className={mode != 'lite' && pagination.page == 1 ? 'svg-to-grey' : ''}
           onClick={() => handleArrowClick('back')}
         />
         <img
@@ -74,7 +72,7 @@ export const Pagination: FC<{
           }
           alt="arrow right"
           style={{ transform: 'rotate(270deg)' }}
-          className={mode != 'lite' && lastClicked === 'back' ? 'svg-to-grey' : ''}
+          className={mode != 'lite' && pagination.page * pagination.limit >= totalItemsCount ? 'svg-to-grey' : ''}
           onClick={() => handleArrowClick('next')}
         />
       </div>

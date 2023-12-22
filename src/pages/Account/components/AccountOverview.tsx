@@ -16,6 +16,7 @@ const WRAPPER = styled.div`
   padding: 15px;
   h1 {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
 `
 
@@ -28,6 +29,9 @@ const ACCOUNTVALUESFLEX = styled.div`
 
   .health-icon {
     ${tw`flex items-center gap-x-2`}
+    span {
+      color: ${({ theme }) => theme.text2};
+    }
   }
 
   .bar-holder {
@@ -54,15 +58,14 @@ const ACCOUNTVALUESCONTAINER = styled.div`
 
 const ACCOUNTVALUE = styled.div`
   ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text28};
-  background: #131313;
+  color: ${({ theme }) => theme.text2};
+  background: ${({ theme }) => theme.bg2};
   padding: 5px;
   p {
     margin: 0px;
     font-size: 13px;
   }
   p:last-child {
-    color: #636363;
     font-size: 15px;
   }
 `
@@ -71,6 +74,7 @@ const ACCOUNTHEADER = styled.div`
     /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
     ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
     border: 1px solid #3C3C3C;
+    color: ${({ theme }) => theme.text2};
     border-bottom: none;
     margin-top: 10px;
     span {
@@ -89,6 +93,7 @@ const ACCOUNTHEADER = styled.div`
 const HISTORY = styled.div`
   ${tw`flex w-full h-full`}
   border:1px solid #3C3C3C;
+  color: ${({ theme }) => theme.text2};
 
   .no-balances-found {
     max-width: 155px;
@@ -122,7 +127,7 @@ const HISTORY = styled.div`
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
-    color: #636363;
+    color: ${({ theme }) => theme.text2};
     font-size: 15px;
     font-weight: 600;
   }
@@ -144,7 +149,7 @@ const AccountOverview: FC = () => {
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [tradeType, setTradeType] = useState<string>('deposit')
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, portfolioValue } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const { connected } = useWallet()
 
@@ -240,7 +245,7 @@ const AccountOverview: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Portfolio Value:</p>
-            <p>${(Number(notionalSize) + Number(traderInfo.collateralAvailable)).toFixed(2)}</p>
+            <p>${Number(portfolioValue).toFixed(2)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
@@ -276,7 +281,7 @@ const AccountOverview: FC = () => {
               <span>{selectedCrypto.pair}</span>
             </div>
             <span>{roundedSize} SOL</span>
-            <span>${Number(notionalSize).toFixed(2)}</span>
+            <span>${notionalSize}</span>
             <span>
               {Number(traderInfo.liquidationPrice) == 0 ? 'None' : Number(traderInfo.liquidationPrice).toFixed(2)}
             </span>

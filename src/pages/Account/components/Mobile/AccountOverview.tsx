@@ -17,6 +17,7 @@ const WRAPPER = styled.div`
   h1 {
     ${tw`flex flex-col w-full`}
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
   .health-container {
     ${tw`flex items-center mt-4`}
@@ -24,6 +25,7 @@ const WRAPPER = styled.div`
 
   .health-icon {
     ${tw`flex items-center gap-x-2`}
+    color: ${({ theme }) => theme.text2};
   }
 
   .bar-holder {
@@ -61,15 +63,14 @@ const ACCOUNTVALUESCONTAINER = styled.div`
 
 const ACCOUNTVALUE = styled.div`
   ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text28};
-  background: #131313;
+  color: ${({ theme }) => theme.text2};
+  background: ${({ theme }) => theme.bg2};
   padding: 5px;
   p {
     margin: 0px;
     font-size: 13px;
   }
   p:last-child {
-    color: #636363;
     font-size: 15px;
   }
 `
@@ -92,10 +93,12 @@ const HISTORY = styled.div`
   .position {
     ${tw`flex flex-col w-full`}
     padding: 5px 10px 10px 10px;
+    color: ${({ theme }) => theme.text2};
     border: 1px solid #3c3c3c;
     img {
       height: 18px;
       width: 18px;
+      margin-right: 5px;
     }
   }
 
@@ -107,7 +110,7 @@ const HISTORY = styled.div`
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
-    color: #636363;
+    color: ${({ theme }) => theme.text28};
     font-size: 15px;
     font-weight: 600;
   }
@@ -127,7 +130,7 @@ const MobileAccountOverview: FC = () => {
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [tradeType, setTradeType] = useState<string>('deposit')
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, portfolioValue } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const { connected } = useWallet()
 
@@ -224,7 +227,7 @@ const MobileAccountOverview: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Portfolio Value:</p>
-            <p>${(Number(notionalSize) + Number(traderInfo.collateralAvailable)).toFixed(2)}</p>
+            <p>${portfolioValue.toFixed(2)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>

@@ -25,7 +25,8 @@ const WRAPPER = styled.div`
     text-align: center;
     width: 100%;
     background: ${({ theme }) => theme.themeToggleButton};
-    color: #636363;
+    color: ${({ theme }) => theme.text2};
+    /*color: #636363;*/
     font-weight: 600;
   }
 `
@@ -37,7 +38,7 @@ const NAVITEMCONTAINER = styled.div`
 const NAVITEM = styled.div`
   ${tw`flex items-center rounded-[5px] justify-center gap-1`}
   background: none;
-  color: ${({ theme }) => theme.text17};
+  color: ${({ theme }) => theme.text2};
   .svg-to-grey {
     filter: invert(70%);
   }
@@ -62,7 +63,7 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
       <NAVITEMCONTAINER className={selected == 0 && 'selected'}>
         <NAVITEM onClick={() => handleClick(0)}>
           <img
-            src={selected == 0 ? '/img/assets/account-overview.svg' : '/img/assets/account-overview-dark.svg'}
+            src={mode != 'lite' ? '/img/assets/account-overview.svg' : '/img/assets/account-overview-dark.svg'}
             alt="account overview icon"
           />
           Overview
@@ -74,7 +75,9 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
             <NAVITEMCONTAINER className={selected == 1 && 'selected'}>
               <NAVITEM>
                 <img
-                  src={selected == 1 ? '/img/assets/account-history-white.svg' : '/img/assets/account-history.svg'}
+                  src={
+                    mode != 'lite' ? '/img/assets/account-history-white.svg' : '/img/assets/account-history.svg'
+                  }
                   alt="account history icon"
                 />
                 History
@@ -85,7 +88,6 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
                       : '/img/assets/Aggregator/circularArrowdark.svg'
                   }
                   alt="dropdown icon"
-                  className={mode != 'lite' && selected != 1 ? 'svg-to-grey' : undefined}
                   style={selected == 1 ? { transform: 'rotate(180deg)' } : {}}
                 />
               </NAVITEM>

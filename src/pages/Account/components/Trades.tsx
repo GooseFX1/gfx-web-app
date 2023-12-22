@@ -19,11 +19,13 @@ const WRAPPER = styled.div`
   padding: 15px;
   h1 {
     font-size: 18px;
+    color: ${({ theme }) => theme.text2};
   }
 `
 
 const ACCOUNTHEADER = styled.div`
     ${tw`grid grid-cols-8  items-center w-full`}
+    color: ${({ theme }) => theme.text2};
     border: 1px solid #3C3C3C;
     margin-top: 10px;
     span {
@@ -51,6 +53,7 @@ const HISTORY = styled.div`
 
   .history-items-container {
     height: calc(100% - 40px);
+    color: ${({ theme }) => theme.text2};
     overflow: auto;
   }
   .pair-container {
@@ -88,7 +91,7 @@ const HISTORY = styled.div`
     margin: 0;
     margin-top: 15px;
     margin-bottom: 15px;
-    color: #636363;
+    color: ${({ theme }) => theme.text2};
     font-size: 15px;
     font-weight: 600;
   }
