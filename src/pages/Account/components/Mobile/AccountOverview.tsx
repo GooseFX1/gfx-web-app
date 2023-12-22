@@ -8,7 +8,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
 import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
-import { getPerpsPrice } from '../../../TradeV3/perps/utils'
+import { formatNumberInThousands, getPerpsPrice } from '../../../TradeV3/perps/utils'
 import { httpClient } from '../../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../../TradeV3/perps/perpsConstants'
 const WRAPPER = styled.div`
@@ -227,19 +227,19 @@ const MobileAccountOverview: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Portfolio Value:</p>
-            <p>${portfolioValue.toFixed(2)}</p>
+            <p>${formatNumberInThousands(portfolioValue)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My 24h Trading Volume:</p>
-            <p>${dayVolume.toFixed(2)}</p>
+            <p>${formatNumberInThousands(dayVolume)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Total Trading Volume:</p>
-            <p>${userVolume}</p>
+            <p>${formatNumberInThousands(Number(userVolume))}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
       </ACCOUNTVALUESFLEX>
@@ -267,7 +267,7 @@ const MobileAccountOverview: FC = () => {
               </div>
               <div className="flex w-full">
                 <span>USD Value</span>
-                <span className="ml-auto">${Number(notionalSize).toFixed(2)}</span>
+                <span className="ml-auto">${formatNumberInThousands(Number(notionalSize))}</span>
               </div>
               <div className="flex w-full">
                 <span>Liq. Price</span>
@@ -295,5 +295,4 @@ const MobileAccountOverview: FC = () => {
     </WRAPPER>
   )
 }
-
 export default MobileAccountOverview

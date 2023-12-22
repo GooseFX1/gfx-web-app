@@ -8,7 +8,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
 import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
 import { useTraderConfig } from '../../../context/trader_risk_group'
-import { getPerpsPrice } from '../../TradeV3/perps/utils'
+import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/utils'
 import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 const WRAPPER = styled.div`
@@ -245,19 +245,19 @@ const AccountOverview: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Portfolio Value:</p>
-            <p>${Number(portfolioValue).toFixed(2)}</p>
+            <p>${formatNumberInThousands(Number(portfolioValue))}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My 24h Trading Volume:</p>
-            <p>${dayVolume.toFixed(2)}</p>
+            <p>${formatNumberInThousands(dayVolume)}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>My Total Trading Volume:</p>
-            <p>${userVolume}</p>
+            <p>${formatNumberInThousands(Number(userVolume))}</p>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
         <div className="health-container">
@@ -281,7 +281,7 @@ const AccountOverview: FC = () => {
               <span>{selectedCrypto.pair}</span>
             </div>
             <span>{roundedSize} SOL</span>
-            <span>${notionalSize}</span>
+            <span>${formatNumberInThousands(Number(notionalSize))}</span>
             <span>
               {Number(traderInfo.liquidationPrice) == 0 ? 'None' : Number(traderInfo.liquidationPrice).toFixed(2)}
             </span>
