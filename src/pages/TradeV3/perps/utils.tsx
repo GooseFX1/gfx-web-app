@@ -584,3 +584,9 @@ export const getProfitAmount = (side: OrderSide, price: string | number, percent
   const profitAmount = pr * percentage
   return side === 'buy' ? pr + profitAmount : pr - profitAmount
 }
+
+export const formatNumberInThousands = (number: number, minimumFractionDigits = 2, maximumFractionDigits = 2) =>
+  number.toLocaleString('en-US', {
+    minimumFractionDigits,
+    maximumFractionDigits
+  })

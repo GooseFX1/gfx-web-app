@@ -8,6 +8,7 @@ import { PERPS_FEES } from '../perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useCrypto, useDarkMode } from '../../../../context'
 import useWindowSize from '../../../../utils/useWindowSize'
+import { formatNumberInThousands } from '../utils'
 
 const TABS_WRAPPER = styled.div<{ $isLocked: boolean }>`
   .header-wrapper {
@@ -174,7 +175,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
     const isNegative = traderInfo.pnl[0] === '-'
     return (
       <span className={isNegative ? 'redText' : 'greenText'}>
-        {(!isNegative ? '+' : '') + Number(traderInfo.pnl).toFixed(2)} $
+        {(!isNegative ? '+' : '') + formatNumberInThousands(Number(traderInfo.pnl))} $
       </span>
     )
   }, [traderInfo])
@@ -266,7 +267,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
             chances of receiving rewards in the competition{' '}
           </Tooltip>
         </div>
-        <span className="value">{userVolume} $</span>
+        <span className="value">{formatNumberInThousands(Number(userVolume))} $</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
@@ -277,7 +278,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
             than the amount deposited.{' '}
           </Tooltip>
         </div>
-        <span className="value">{Number(traderInfo.collateralAvailable).toFixed(2)} $</span>
+        <span className="value">{formatNumberInThousands(Number(traderInfo.collateralAvailable))} $</span>
       </ACCOUNT_ROW>
       <ACCOUNT_ROW $height={height}>
         <div className="tooltip-row">
@@ -288,7 +289,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
             requirements for the specific assets you are trading{' '}
           </Tooltip>
         </div>
-        <span className="value">{Number(traderInfo.marginAvailable).toFixed(2)} $</span>
+        <span className="value">{formatNumberInThousands(Number(traderInfo.marginAvailable))} $</span>
       </ACCOUNT_ROW>
       {isSolAccount && (
         <ACCOUNT_ROW $height={height}>
@@ -301,7 +302,7 @@ const Accounts: FC<{ isSolAccount: boolean }> = ({ isSolAccount }) => {
               assets you are trading.{' '}
             </Tooltip>
           </div>
-          <span className="value">{Number(traderInfo.liquidationPrice).toFixed(2)} $</span>
+          <span className="value">{formatNumberInThousands(Number(traderInfo.liquidationPrice))} $</span>
         </ACCOUNT_ROW>
       )}
     </WRAPPER>

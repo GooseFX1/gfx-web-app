@@ -1,18 +1,20 @@
 /* eslint-disable */
 import { Button } from 'antd'
-import React, { useState, FC, useMemo } from 'react'
+import React, { useState, FC, useMemo, useEffect } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import { getPerpsPrice } from './perps/utils'
+import { formatNumberInThousands, getPerpsPrice } from './perps/utils'
 import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { httpClient } from '../../api'
+import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
 
-const tabs = ['Positions', 'Open Orders', 'Trade History', 'SOL Unsettled P&L']
+const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 const END_MODAL = styled(PopupCustom)`
   ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
@@ -37,7 +39,10 @@ const columns = [
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
   },
   {
-    'Trade History': ['Side', 'Size', 'Price', 'USD Value']
+    Trades: ['Side', 'Size', 'Price', 'USD Value']
+  },
+  {
+    'Funding History': ['Market', 'Direction', 'Position', 'Payment', 'Time']
   },
   {
     'SOL Unsettled P&L': ['Market', 'Size', 'Amount USDC']
@@ -126,13 +131,20 @@ const HEADER = styled.div`
   .headers.Open-Orders > span {
     ${tw`w-1/5`}
   }
-  .headers.Trade-History {
+  .headers.Trades {
     ${tw`pl-1`}
     span:first-child {
       ${tw`pl-3`}
     }
     > span {
       ${tw`w-1/4`}
+    }
+  }
+
+  .headers.Funding-History {
+    ${tw`grid grid-cols-5  items-center w-full`}
+    span:first-child {
+      ${tw`pl-3`}
     }
   }
   .headers.SOL-Unsettled-P-L > span {
@@ -223,6 +235,77 @@ const TRADE_HISTORY = styled.div`
     .Liquidation {
       ${tw`text-[#f06565] text-tiny pl-3`}
     }
+  }
+`
+
+const FUNDING_HISTORY = styled.div`
+  ${tw`flex flex-col w-full h-full`}
+
+  .history-items-root-container {
+    height: 100%;
+  }
+
+  .history-items-container {
+    height: calc(100% - 57px);
+    overflow: auto;
+    color: ${({ theme }) => theme.text2};
+  }
+  .pair-container {
+    ${tw`flex gap-x-1 items-center`}
+  }
+  .pair-container img {
+    height: 24px;
+    width: 24px;
+  }
+
+  .history-item {
+    ${tw`grid grid-cols-5  items-center w-full`}
+    padding: 10px;
+    font-size: 13px;
+    border-bottom: 1px solid #3c3c3c;
+  }
+  .history-item span:first-child {
+    ${tw`pl-1`}
+  }
+
+  .pagination-container {
+    height: 40px;
+  }
+  .history-item:last-child {
+    border-bottom: none;
+  }
+  .no-funding-found {
+    max-width: 155px;
+    display: flex;
+    margin: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .no-funding-found > p {
+    margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: ${({ theme }) => theme.text2};
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .deposit {
+    background: linear-gradient(97deg, #f7931a 4.25%, #ac1cc7 97.61%);
+    border-radius: 70px;
+    padding: 3px 18px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .buy {
+    color: #80ce00;
+  }
+  .filled {
+    color: #80ce00;
+  }
+  .sell {
+    color: #f35355;
   }
 `
 
@@ -355,6 +438,83 @@ const TradeHistoryComponent: FC = () => {
             ))}
         </TRADE_HISTORY>
       )}
+    </>
+  )
+}
+
+const FundingHistoryComponent: FC = () => {
+  const { connected, publicKey } = useWallet()
+  const { mode } = useDarkMode()
+
+  const { isDevnet } = useCrypto()
+  const { traderInfo } = useTraderConfig()
+  const [fundingHistory, setFundingHistory] = useState([])
+
+  const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
+  const symbol = useMemo(
+    () => getAskSymbolFromPair(selectedCrypto.pair),
+    [getAskSymbolFromPair, selectedCrypto.pair]
+  )
+  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
+  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
+    // Create a new Date object using the Unix timestamp (in milliseconds)
+    const date = new Date(unixTimestamp * 1000)
+
+    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
+    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
+
+    return formattedDate
+  }
+  const fetchFundingHistory = async () => {
+    const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
+      params: {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        devnet: isDevnet,
+        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+        page: 1,
+        limit: 20
+      }
+    })
+    setFundingHistory(res.data.data)
+  }
+  useEffect(() => {
+    if (traderInfo.traderRiskGroupKey !== null) {
+      fetchFundingHistory()
+    }
+  }, [connected, publicKey, traderInfo.traderRiskGroupKey])
+
+  return (
+    <>
+      <FUNDING_HISTORY>
+        {fundingHistory.length ? (
+          <div className="history-items-root-container">
+            <div className="history-items-container">
+              {fundingHistory.map((item) => (
+                <div key={item._id} className="history-item">
+                  <div className="pair-container">
+                    <img src={`${assetIcon}`} alt="SOL icon" />
+                    <span>{selectedCrypto.pair}</span>
+                  </div>
+                  <span className={item.averagePosition.side}>
+                    {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+                    {item.averagePosition.side === undefined && ''}
+                  </span>
+                  <span>{item.averagePosition.quantity} SOL</span>
+                  <span>
+                    {(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)).toFixed(4)}
+                  </span>
+                  <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="no-positions-found">
+            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
+            <div>No Funding History</div>
+          </div>
+        )}
+      </FUNDING_HISTORY>
     </>
   )
 }
@@ -534,7 +694,7 @@ export const HistoryPanel: FC = () => {
                   <span>${traderInfo.averagePosition.price}</span>
                   <span>{roundedSize}</span>
                   <span>${perpsPrice}</span>
-                  <span>${notionalSize}</span>
+                  <span>${formatNumberInThousands(Number(notionalSize))}</span>
                   <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
                   <span className={pnl <= 0 ? 'short' : 'long'}>
                     $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
@@ -554,7 +714,7 @@ export const HistoryPanel: FC = () => {
         ) : activeTab === 2 ? (
           <TradeHistoryComponent />
         ) : activeTab === 3 ? (
-          <></>
+          <FundingHistoryComponent />
         ) : null}
       </WRAPPER>
     </>
