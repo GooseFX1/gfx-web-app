@@ -16,7 +16,6 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress } from '../web3'
-import { notify } from '../utils'
 
 export type IAccount = {
   amount: string
@@ -103,7 +102,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
         setBalances(accounts)
       } catch (e: any) {
-        // await notify({ type: 'error', message: `Error fetching accounts`, icon: 'error' }, e)
+        console.log('check account fetch')
       }
 
       setFetching(false)
