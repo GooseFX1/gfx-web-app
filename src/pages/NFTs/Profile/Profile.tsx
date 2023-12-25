@@ -72,7 +72,7 @@ export const Profile: FC = (): JSX.Element => {
   )
   const isSessionUser = useMemo(
     () => (publicKey !== null ? params.userAddress === publicKey?.toBase58() : false),
-    [publicKey]
+    [publicKey, params.userAddress]
   )
 
   useEffect(() => {
@@ -107,12 +107,14 @@ export const Profile: FC = (): JSX.Element => {
     setRandomBackground(randomImage)
   }, [])
 
-  return (
-    isSessionUser !== undefined && (
-      <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
-        <HeaderProfile isSessionUser={isSessionUser} />
-        <ContentProfile isSessionUser={isSessionUser} />
-      </PROFILE_CONTAINER>
-    )
+  return isSessionUser ? (
+    <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
+      <HeaderProfile isSessionUser={true} />
+      <ContentProfile isSessionUser={true} />
+    </PROFILE_CONTAINER>
+  ) : (
+    <div tw="h-full w-full flex justify-center items-center">
+      <h1 tw="text-lg dark:text-white text-black-1">Connect Wallet To Delist</h1>
+    </div>
   )
 }

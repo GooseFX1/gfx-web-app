@@ -5,12 +5,13 @@ import { Route, Switch } from 'react-router-dom'
 import { Profile } from './Profile'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
-import { logData } from '../../api/analytics'
+// import { logData } from '../../api/analytics'
 import styled from 'styled-components'
-import { checkMobile } from '../../utils'
+// import { checkMobile } from '../../utils'
 import { dailyVisitData } from '../../api/NFTs'
 import tw from 'twin.macro'
 import { NFTAMMProvider } from '../../context/nft_amm'
+import { useHistory } from 'react-router-dom'
 
 const BODY_NFT = styled.div`
   position: relative;
@@ -28,6 +29,7 @@ const BODY_NFT = styled.div`
 `
 const NFTAgg: FC = (): ReactElement => {
   // const { path } = useRouteMatch()
+  const history = useHistory()
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const { wallet } = useWallet()
@@ -39,8 +41,9 @@ const NFTAgg: FC = (): ReactElement => {
   }, [])
 
   useEffect(() => {
-    if (window.location.pathname === '/nfts') history.push(`/nfts/profile}`)
-  }, [window.location.pathname])
+    if (window.location.pathname === '/nfts')
+      history.push(`/nfts/profile${publicKey ? `/${publicKey.toBase58()}` : ''}`)
+  }, [window.location.pathname, publicKey])
 
   useEffect(() => {
     if (publicKey) {
