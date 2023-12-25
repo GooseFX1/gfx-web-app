@@ -30,7 +30,7 @@ import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
   AUCTION_HOUSE_PROGRAM_ID,
-  AUCTION_HOUSE_AUTHORITY,
+  OLD_AUCTION_HOUSE_AUTHORITY,
   TREASURY_MINT,
   toPublicKey,
   getMetadata,
@@ -478,7 +478,9 @@ export const SellNFTModal: FC<{
         escrowPaymentAccount: escrowPaymentAccount[0],
         sellerPaymentReceiptAccount: wallet?.adapter?.publicKey,
         buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-        authority: new PublicKey(isAcceptingBid ? highestBid?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+        authority: new PublicKey(
+          isAcceptingBid ? highestBid?.auction_house_authority : OLD_AUCTION_HOUSE_AUTHORITY
+        ),
         auctionHouse: new PublicKey(isAcceptingBid ? highestBid?.auction_house_key : AUCTION_HOUSE),
         auctionHouseFeeAccount: new PublicKey(
           isAcceptingBid ? highestBid?.auction_house_fee_account : AH_FEE_ACCT

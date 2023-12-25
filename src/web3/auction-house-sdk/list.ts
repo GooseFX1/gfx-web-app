@@ -19,7 +19,7 @@ import {
   SYSVAR_INSTRUCTIONS_PUBKEY,
   TransactionInstruction
 } from '@solana/web3.js'
-import { AUCTION_HOUSE, AUCTION_HOUSE_AUTHORITY } from '../ids'
+import { AUCTION_HOUSE, OLD_AUCTION_HOUSE_AUTHORITY } from '../ids'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL_NUMBER } from '../../constants'
 import { createSellInstruction, SellInstructionAccounts } from '@metaplex-foundation/mpl-auction-house'
@@ -97,7 +97,7 @@ export const constructListInstruction = async (
     wallet: seller,
     tokenAccount: tokenAccount,
     metadata: toPublicKey(metadataAccount),
-    authority: toPublicKey(AUCTION_HOUSE_AUTHORITY),
+    authority: toPublicKey(OLD_AUCTION_HOUSE_AUTHORITY),
     auctionHouse: auctionHouse.address,
     auctionHouseFeeAccount: auctionHouse.feeAccountAddress,
     sellerTradeState,

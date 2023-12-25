@@ -10,7 +10,6 @@ import { isValidSolanaAddress } from '../../../web3'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { logData } from '../../../api/analytics'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
@@ -64,7 +63,6 @@ export const Profile: FC = (): JSX.Element => {
     setNonSessionUserParsedAccounts
   } = useNFTProfile()
   const { wallet } = useWallet()
-  const [prevWallet, setPrevWallet] = useState<string>(null)
 
   const publicKey = useMemo(
     () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
@@ -76,13 +74,12 @@ export const Profile: FC = (): JSX.Element => {
   )
 
   useEffect(() => {
-    if (prevWallet !== publicKey?.toString()) {
-      if (sessionUser && publicKey) {
-        history.push(`/nfts/profile/${publicKey.toString()}`)
-      }
-      setPrevWallet(publicKey ? publicKey?.toString() : null)
+    if (sessionUser && publicKey) {
+      history.push(`/nfts/profile/${publicKey.toString()}`)
+    } else {
+      history.push(`/nfts/profile`)
     }
-  }, [prevWallet, publicKey, sessionUser])
+  }, [publicKey, sessionUser, params.userAddress])
 
   useEffect(() => {
     // asserts there is no wallet connection and no session user
