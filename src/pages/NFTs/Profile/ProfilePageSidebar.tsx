@@ -1,19 +1,12 @@
-import { FC, memo, ReactElement, useCallback, useMemo, useState } from 'react'
+import { FC, memo, ReactElement, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { useAccounts, useDarkMode, useNFTProfile } from '../../../context'
-import { checkMobile, notify, truncateAddress } from '../../../utils'
-import { PopupProfile } from './PopupProfile'
-import { Share } from '../Share'
-import { generateTinyURL } from '../../../api/tinyUrl'
-import { formatNumber } from '../../../web3/utils_launchpad'
+import { useDarkMode, useNFTProfile } from '../../../context'
+import { checkMobile, truncateAddress } from '../../../utils'
 import { IAppParams } from '../../../types/app_params'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { copyToClipboard, signAndUpdateDetails } from '../../../web3/nfts/utils'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
-const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112')
+
 const PROFILE = styled.div`
 ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
   border-top-right-radius: 20px;
@@ -125,32 +118,6 @@ ${tw`w-[23vw] bg-grey-6 dark:bg-black-1`}
 }
 `
 
-const SOL = styled.div`
-  ${tw`font-semibold text-[20px] w-[90%] text-grey-1 dark:text-grey-5`}
-  margin: 0 auto;
-
-  > div {
-    margin-bottom: 12px;
-  }
-
-  > span {
-    font-weight: 600;
-    font-size: 30px;
-  }
-
-  .sol {
-    font-size: 18px;
-    margin-left: 10px;
-  }
-
-  > img {
-    height: 20px;
-    width: 20px;
-    margin-left: 7px;
-    margin-top: -8px;
-  }
-`
-
 type Props = {
   isSessionUser: boolean
 }
@@ -167,100 +134,13 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
     }
   }, [isSessionUser, sessionUser, nonSessionProfile])
 
-  const [profileModal, setProfileModal] = useState(false)
-  const [shareModal, setShareModal] = useState(false)
-  const handleCancel = () => setProfileModal(false)
-  const { getUIAmount } = useAccounts()
-  const { wallet } = useWallet()
-  const solAmount = getUIAmount(WRAPPED_SOL_MINT.toBase58())
-  const userSol = formatNumber.format(solAmount)
-  const [twitterHover, setTwitterHover] = useState<boolean>(false)
-  const [telegramHover, setTelegramHover] = useState<boolean>(false)
-  const [discordHover, setDiscordHover] = useState<boolean>(false)
-  const [websiteHover, setWebsiteHover] = useState<boolean>(false)
   const params = useParams<IAppParams>()
-  const { mode } = useDarkMode()
-
-  const publicKey = useMemo(
-    () => (wallet?.adapter ? wallet?.adapter?.publicKey : null),
-    [wallet?.adapter?.publicKey, wallet?.adapter]
-  )
-
-  const handleModal = useCallback(() => {
-    if (profileModal) {
-      return <PopupProfile visible={profileModal} setVisible={setProfileModal} handleCancel={handleCancel} />
-    } else if (shareModal) {
-      return (
-        <Share
-          visible={shareModal}
-          handleCancel={() => setShareModal(false)}
-          socials={['twitter', 'telegram', 'facebook', 'copy link']}
-          handleShare={onShare}
-        />
-      )
-    } else {
-      return false
-    }
-  }, [profileModal, shareModal])
-
-  const validExternalLink = (url: string): string => {
-    if (url.includes('https://') || url.includes('http://')) {
-      return url
-    } else {
-      return `https://${url}`
-    }
-  }
-  const onShare = async (social: string) => {
-    if (social === 'copy link') {
-      return
-    }
-
-    const res = await generateTinyURL(
-      `https://${process.env.NODE_ENV !== 'production' ? 'app.staging.goosefx.io' : window.location.host}${
-        window.location.pathname
-      }`,
-      ['gfx', 'nest-exchange', 'user-profile', social]
-    )
-
-    if (res.status !== 200) {
-      notify({ type: 'error', message: 'Error creating sharing url' })
-      return
-    }
-
-    const tinyURL = res.data.data.tiny_url
-
-    switch (social) {
-      case 'twitter':
-        window.open(
-          `https://twitter.com/intent/tweet?text=Check%20out%20${currentUserProfile.nickname}s
-          %20collection%20on%20Nest%20NFT%20Exchange%20&url=${tinyURL}&via=GooseFX1&
-          original_referer=${window.location.host}${window.location.pathname}`
-        )
-        break
-      case 'telegram':
-        window.open(
-          `https://t.me/share/url?url=${tinyURL}&text=Check%20out%20${currentUserProfile.nickname}s
-          %20collection%20on%20Nest%20NFT%20Exchange%20`
-        )
-        break
-      case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${tinyURL}`)
-        break
-      default:
-        break
-    }
-  }
 
   let profilePic = currentUserProfile?.profile_pic_link
   if (profilePic === 'https://gfx-nest-image-resources.s3.amazonaws.com/avatar.png') profilePic = null
 
-  const editButtonClicked = useCallback(async () => {
-    await signAndUpdateDetails(wallet, isSessionUser, setProfileModal)
-  }, [publicKey, isSessionUser, setProfileModal, wallet?.adapter])
-
   return (
     <PROFILE>
-      {handleModal()}
       <div className="profile-pic">
         {!checkMobile() && (
           <div className="avatar-profile-wrap">
@@ -275,120 +155,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
             ) : (
               <WalletProfilePicture />
             )}
-            {isSessionUser && currentUserProfile && (
-              <img
-                className="icon"
-                src={profilePic ? `/img/assets/Aggregator/editBtn.svg` : `/img/assets/addImage.svg`}
-                alt="edit-image"
-                onClick={editButtonClicked}
-              />
-            )}
-          </div>
-        )}
-        {currentUserProfile &&
-        (currentUserProfile?.twitter_link ||
-          currentUserProfile?.discord_profile ||
-          currentUserProfile?.website_link ||
-          currentUserProfile?.telegram_link) ? (
-          <div className="social-list">
-            {currentUserProfile?.twitter_link && (
-              <a
-                className="social-item"
-                target={'_blank'}
-                rel="noreferrer"
-                onMouseEnter={() => {
-                  setTwitterHover(true)
-                }}
-                onMouseLeave={() => {
-                  setTwitterHover(false)
-                }}
-                href={validExternalLink(
-                  currentUserProfile?.twitter_link.includes('twitter.com/')
-                    ? currentUserProfile?.twitter_link
-                    : 'twitter.com/' + currentUserProfile?.twitter_link
-                )}
-              >
-                <img
-                  className={twitterHover ? 'social-icon' : 'social-icon'}
-                  src={'/img/assets/Aggregator/twitterNew.svg'}
-                  alt=""
-                />
-              </a>
-            )}
-            {currentUserProfile?.discord_profile && (
-              <a
-                className="social-item"
-                target={'_blank'}
-                rel="noreferrer"
-                onMouseEnter={() => {
-                  setDiscordHover(true)
-                }}
-                onMouseLeave={() => {
-                  setDiscordHover(false)
-                }}
-                href={validExternalLink(
-                  currentUserProfile?.discord_profile.includes('discordapp.com/users/')
-                    ? currentUserProfile?.discord_profile
-                    : `discordapp.com/users/` + currentUserProfile?.discord_profile
-                )}
-              >
-                <img
-                  className={discordHover ? 'social-icon height' : 'social-icon'}
-                  src={discordHover ? '/img/assets/discordHover.svg' : '/img/assets/Aggregator/discordNew.svg'}
-                  alt=""
-                />
-              </a>
-            )}
-            {currentUserProfile?.website_link && (
-              <a
-                className="social-item"
-                target={'_blank'}
-                rel="noreferrer"
-                onMouseEnter={() => {
-                  setWebsiteHover(true)
-                }}
-                onMouseLeave={() => {
-                  setWebsiteHover(false)
-                }}
-                href={validExternalLink(currentUserProfile?.website_link)}
-              >
-                <img
-                  className={websiteHover ? 'social-icon height' : 'social-icon'}
-                  src={websiteHover ? '/img/assets/website-hover.svg' : '/img/assets/Aggregator/website.svg'}
-                  alt=""
-                />
-              </a>
-            )}
-
-            {currentUserProfile?.telegram_link && (
-              <a
-                className="social-item"
-                target={'_blank'}
-                rel={'noreferrer'}
-                onMouseEnter={() => {
-                  setTelegramHover(true)
-                }}
-                onMouseLeave={() => {
-                  setTelegramHover(false)
-                }}
-                href={validExternalLink(
-                  currentUserProfile?.telegram_link.includes('t.me/')
-                    ? currentUserProfile?.telegram_link
-                    : 't.me/' + currentUserProfile?.telegram_link
-                )}
-              >
-                <img
-                  className={telegramHover ? 'social-icon height' : 'social-icon'}
-                  src={telegramHover ? '/img/assets/telegramHover.svg' : '/img/assets/Aggregator/telegramNew.svg'}
-                  alt=""
-                />
-              </a>
-            )}
-          </div>
-        ) : (
-          <div className="no-socials-msg">
-            No Socials <br />
-            Connected
           </div>
         )}
       </div>
@@ -413,9 +179,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
                   tw="h-[40px] w-[40px] rounded cursor-pointer"
                 />
               </a>
-              <div onClick={copyToClipboard} tw="h-[40px] w-[40px] cursor-pointer">
-                <img tw="cursor-pointer !mr-6" src="/img/assets/shareBlue.svg" height="40px" width="40px" />
-              </div>
             </div>
           </div>
         )}
@@ -426,7 +189,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
           <div className="bio">
             {sessionUser ? (
               <>
-                {' '}
                 Add your bio and share with <br /> the world who you are!
               </>
             ) : (
@@ -434,35 +196,6 @@ const ProfilePageSidebar: FC<Props> = ({ isSessionUser }: Props): JSX.Element =>
             )}
           </div>
         )}
-        <div>
-          <img
-            src={`/img/assets/Aggregator/profileGraphic${mode}.png`}
-            alt="profile-graphic"
-            className="graphic-img"
-          />
-        </div>
-        <div className="portfolio">
-          <span>Portfolio Value</span>{' '}
-          <div tw="inline-block">
-            <span tw="text-[#b5b5b5] text-[15px] font-semibold ">(Coming soon)</span>
-          </div>
-          <div className="track-portfolio">
-            Track your collection portfolio like <br /> never before!
-          </div>
-        </div>
-
-        {isSessionUser ? (
-          <SOL>
-            <div>Wallet Ballance</div>
-            <div tw="flex">
-              <span tw="dark:text-grey-5 text-black-4">{userSol ? userSol : '0.00'} SOL</span>
-              <img src="/img/crypto/SOL.png" alt="sol-icon" tw="ml-2 h-6 w-6" />
-            </div>
-          </SOL>
-        ) : (
-          <div tw="h-20"> </div>
-        )}
-        <div tw="h-14"></div>
       </div>
     </PROFILE>
   )

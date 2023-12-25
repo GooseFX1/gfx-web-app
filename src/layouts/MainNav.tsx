@@ -13,7 +13,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
 import { RewardsProvider } from '../context/rewardsContext'
-import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
@@ -72,7 +71,6 @@ export const MainNav: FC = () => {
             <RewardsButton />
           </RewardsProvider>
           <Connect />
-          <MyNFTBag />
           {/* <NotificationButton /> */}
           <More />
           <MobileNav />
