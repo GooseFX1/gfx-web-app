@@ -289,7 +289,7 @@ export const successBidRemovedMsg = (signature: string, nftMetadata: INFTMetadat
 //     wallet: publicKey,
 //     tokenAccount: new PublicKey(general.token_account),
 //     tokenMint: new PublicKey(general.mint_address),
-//     authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
+//     authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : OLD_AUCTION_HOUSE_AUTHORITY),
 //     auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
 //     auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
 //     tradeState: buyerTradeState[0]

@@ -1,17 +1,13 @@
 import React, { ReactElement, useEffect, useMemo, FC } from 'react'
-import { Route, Switch } from 'react-router-dom'
-// import CollectionV2 from './Collection/CollectionV2'
-// import NFTLandingPageV2 from './Home/NFTLandingPageV2'
+import { Route, Switch, useHistory } from 'react-router-dom'
 import { Profile } from './Profile'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
-// import { logData } from '../../api/analytics'
 import styled from 'styled-components'
-// import { checkMobile } from '../../utils'
 import { dailyVisitData } from '../../api/NFTs'
 import tw from 'twin.macro'
 import { NFTAMMProvider } from '../../context/nft_amm'
-import { useHistory } from 'react-router-dom'
+// import { IAppParams } from '../../../types/app_params'
 
 const BODY_NFT = styled.div`
   position: relative;
@@ -35,14 +31,16 @@ const NFTAgg: FC = (): ReactElement => {
   const { wallet } = useWallet()
   const { sessionUser, setSessionUser, fetchSessionUser, setParsedAccounts } = useNFTProfile()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  // const params = useParams<IAppParams>()
 
   useEffect(() => {
     refreshTokenData()
   }, [])
 
   useEffect(() => {
-    if (window.location.pathname === '/nfts')
-      history.push(`/nfts/profile${publicKey ? `/${publicKey.toBase58()}` : ''}`)
+    if (window.location.pathname === '/nfts') {
+      history.push(`/nfts/profile`)
+    }
   }, [window.location.pathname, publicKey])
 
   useEffect(() => {
@@ -85,12 +83,6 @@ const NFTAgg: FC = (): ReactElement => {
       <NFTAggFiltersProvider>
         <NFTAMMProvider>
           <Switch>
-            {/* <Route exact path={path}>
-              <NFTLandingPageV2 />
-            </Route> */}
-            {/* <Route exact path="/nfts/collection/:collectionName">
-              <CollectionV2 />
-            </Route> */}
             <Route exact path={['/nfts/profile', '/nfts/profile/:userAddress']}>
               <Profile />
             </Route>

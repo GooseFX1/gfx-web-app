@@ -13,7 +13,7 @@ import { NFT_API_BASE, NFT_API_ENDPOINTS } from '../../api/NFTs'
 import {
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE,
-  AUCTION_HOUSE_AUTHORITY,
+  OLD_AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PROGRAM_ID,
   TREASURY_MINT,
   AH_FEE_ACCT,
@@ -122,7 +122,7 @@ export const getSellInstructionAccounts = (
   wallet: publicKey,
   tokenAccount: new PublicKey(general.token_account),
   metadata: new PublicKey(metaDataAccount),
-  authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+  authority: new PublicKey(OLD_AUCTION_HOUSE_AUTHORITY),
   auctionHouse: new PublicKey(AUCTION_HOUSE),
   auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
   sellerTradeState: sTradeState,
@@ -144,7 +144,7 @@ export const getBuyInstructionAccounts = (
   tokenAccount: new PublicKey(general.token_account),
   metadata: new PublicKey(metaDataAccount),
   escrowPaymentAccount: escrowPaymentAccount,
-  authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+  authority: new PublicKey(OLD_AUCTION_HOUSE_AUTHORITY),
   auctionHouse: new PublicKey(AUCTION_HOUSE),
   auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
   buyerTradeState: buyerTradeState
@@ -169,7 +169,7 @@ export const callCancelInstruction = async (
     wallet: wallet.publicKey,
     tokenAccount: new PublicKey(general.token_account),
     tokenMint: new PublicKey(general.mint_address),
-    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+    authority: new PublicKey(OLD_AUCTION_HOUSE_AUTHORITY),
     auctionHouse: new PublicKey(AUCTION_HOUSE),
     auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT),
     tradeState: tradeState[0]
@@ -206,7 +206,7 @@ export const callWithdrawInstruction = async (
     receiptAccount: wallet,
     escrowPaymentAccount: escrow[0],
     treasuryMint: new PublicKey(TREASURY_MINT),
-    authority: new PublicKey(AUCTION_HOUSE_AUTHORITY),
+    authority: new PublicKey(OLD_AUCTION_HOUSE_AUTHORITY),
     auctionHouse: new PublicKey(AUCTION_HOUSE),
     auctionHouseFeeAccount: new PublicKey(AH_FEE_ACCT)
   }
