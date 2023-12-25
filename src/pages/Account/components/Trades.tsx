@@ -13,6 +13,7 @@ import { httpClient } from '../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
+import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -161,15 +162,6 @@ const Trades: FC = () => {
     }
   }, [connected, publicKey, pagination, traderInfo.traderRiskGroupKey])
 
-  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
-    // Create a new Date object using the Unix timestamp (in milliseconds)
-    const date = new Date(unixTimestamp * 1000)
-
-    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
-    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
-
-    return formattedDate
-  }
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -212,7 +204,7 @@ const Trades: FC = () => {
                   <span>${trade.price.toFixed(2)}</span>
                   <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
                   <span className="filled">Filled</span>
-                  <span>{convertUnixTimestampToFormattedDate(trade.time)}</span>
+                  <span>{convertUnixTimestampToFormattedDate(trade.time * 1000)}</span>
                 </div>
               ))}
             </div>

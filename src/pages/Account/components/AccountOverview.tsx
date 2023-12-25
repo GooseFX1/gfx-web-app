@@ -141,7 +141,7 @@ const HISTORY = styled.div`
   }
 `
 
-const columns = ['Asset', 'Balance', 'USD Value', 'Liq.Price']
+const columns = ['Asset', 'Balance', 'USD Value', 'Liq Price']
 const AccountOverview: FC = () => {
   const { mode } = useDarkMode()
   const [dayVolume, setDayVolume] = useState<number>(0)
@@ -282,14 +282,12 @@ const AccountOverview: FC = () => {
             </div>
             <span>{roundedSize} SOL</span>
             <span>${formatNumberInThousands(Number(notionalSize))}</span>
-            <span>
-              {Number(traderInfo.liquidationPrice) == 0 ? 'None' : Number(traderInfo.liquidationPrice).toFixed(2)}
-            </span>
+            <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
           </div>
         ) : (
           <div className="no-balances-found">
             <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" />
-            <p>No Balances Found</p>
+            <p>No Active Positions</p>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">

@@ -78,6 +78,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
           alt="account history icon"
         />
         History
+        {/*
         <img
           src={
             mode === 'lite'
@@ -86,9 +87,9 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
           }
           alt="dropdown icon"
           style={historySelected ? { transform: 'rotate(180deg)' } : {}}
-        />
+        />*/}
       </SPAN>
-      <div className={historySelected ? 'show-history' : undefined}>
+      <div className={'show-history'}>
         <SPAN className={selected == 2 ? 'selected' : undefined} onClick={() => handleClick(2)}>
           Deposits
         </SPAN>

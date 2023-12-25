@@ -270,19 +270,15 @@ const MobileAccountOverview: FC = () => {
                 <span className="ml-auto">${formatNumberInThousands(Number(notionalSize))}</span>
               </div>
               <div className="flex w-full">
-                <span>Liq. Price</span>
-                <span className="ml-auto">
-                  {Number(traderInfo.liquidationPrice) == 0
-                    ? 'None'
-                    : Number(traderInfo.liquidationPrice).toFixed(2)}
-                </span>
+                <span>Liq Price</span>
+                <span className="ml-auto">${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
               </div>
             </div>
           </div>
         ) : (
           <div className="no-balances-found">
             <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" />
-            <p>No Balances Found</p>
+            <p>No Active Positions</p>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">

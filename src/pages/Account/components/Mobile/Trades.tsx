@@ -13,6 +13,7 @@ import { httpClient } from '../../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
+import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -141,15 +142,6 @@ const MobileTrades: FC = () => {
     }
   }, [connected, publicKey, traderInfo.traderRiskGroupKey, pagination])
 
-  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
-    // Create a new Date object using the Unix timestamp (in milliseconds)
-    const date = new Date(unixTimestamp * 1000)
-
-    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
-    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
-
-    return formattedDate
-  }
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -210,7 +202,7 @@ const MobileTrades: FC = () => {
                   </div>
                   <div className="flex">
                     <span>Date</span>
-                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(trade.time)}</span>
+                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(trade.time * 1000)}</span>
                   </div>
                 </div>
               ))}
