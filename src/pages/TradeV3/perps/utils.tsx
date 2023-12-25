@@ -590,3 +590,13 @@ export const formatNumberInThousands = (number: number, minimumFractionDigits = 
     minimumFractionDigits,
     maximumFractionDigits
   })
+
+export function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
+  // Create a new Date object using the Unix timestamp (in milliseconds)
+  const date = new Date(unixTimestamp)
+
+  // Format the date as "MM/DD/YYYY hh:mmAM/PM"
+  const formattedDate = `${date.toLocaleDateString('en-US')} ${date.toLocaleTimeString('en-US')}`
+
+  return formattedDate
+}

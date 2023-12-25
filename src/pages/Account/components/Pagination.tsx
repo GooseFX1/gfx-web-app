@@ -38,20 +38,16 @@ export const Pagination: FC<{
       setPagination({ page: pagination.page + 1, limit: pagination.limit })
     }
   }
+  function roundUpIfDecimal(number: number) {
+    if (number % 1 !== 0) {
+      return Math.ceil(number)
+    } else {
+      return number
+    }
+  }
   return (
     <WRAPPER>
-      <p>
-        {pagination.page == 1
-          ? 1
-          : pagination.page * pagination.limit >= totalItemsCount
-          ? totalItemsCount - pagination.limit * (pagination.page - 1)
-          : pagination.limit}{' '}
-        of{' '}
-        {pagination.page * pagination.limit >= totalItemsCount
-          ? totalItemsCount
-          : pagination.page * pagination.limit}{' '}
-        transactions
-      </p>
+      <p>{`Page ${pagination.page} of ${roundUpIfDecimal(totalItemsCount / pagination.limit)}`} </p>
       <div className="imagesContainer">
         <img
           src={

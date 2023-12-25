@@ -10,6 +10,7 @@ import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
 import { GET_USER_FUND_TRANSFERS } from '../../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../../api'
 import { Pagination } from '../Pagination'
+import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -123,15 +124,6 @@ const MobileDepositWithdrawHistory: FC = () => {
     fetchFundTransfers()
   }, [connected, publicKey, pagination])
 
-  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
-    // Create a new Date object using the Unix timestamp (in milliseconds)
-    const date = new Date(unixTimestamp)
-
-    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
-    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
-
-    return formattedDate
-  }
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -191,7 +183,7 @@ const MobileDepositWithdrawHistory: FC = () => {
         ) : (
           <div className="no-deposits-found">
             <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-deposits-found" />
-            <p>No deposits Found</p>
+            <p>No Deposits Found</p>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">

@@ -13,6 +13,7 @@ import { httpClient } from '../../../../api'
 import { GET_USER_FUNDING_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
+import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -152,15 +153,7 @@ const MobileFundingHistory: FC = () => {
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
-  function convertUnixTimestampToFormattedDate(unixTimestamp: number) {
-    // Create a new Date object using the Unix timestamp (in milliseconds)
-    const date = new Date(unixTimestamp * 1000)
 
-    // Format the date as "MM/DD/YYYY hh:mmAM/PM"
-    const formattedDate = `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-US')}`
-
-    return formattedDate
-  }
   const fetchFundingHistory = async () => {
     const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
       params: {
@@ -250,7 +243,7 @@ const MobileFundingHistory: FC = () => {
                   </div>
                   <div className="flex">
                     <span>Date</span>
-                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(item.time)}</span>
+                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(item.time * 1000)}</span>
                   </div>
                 </div>
               ))}
