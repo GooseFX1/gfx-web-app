@@ -12,7 +12,7 @@ import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip } from '../../components'
 
-const SETTING_MODAL = styled(PopupCustom)`
+export const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
   background-color: ${({ theme }) => theme.bg25};
 
@@ -178,7 +178,7 @@ const WRAPPER = styled.div`
 
 const Loader: FC = () => <Skeleton.Button active size="small" style={{ display: 'flex', height: '12px' }} />
 
-const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
+export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: string }> = ({
   setTradeType,
   tradeType
 }) => {
@@ -304,24 +304,24 @@ export const InfoBanner: FC<{
         </SETTING_MODAL>
       )}
 
-      <div className="spot-toggle">
+      {/*<div className="spot-toggle">
         <span
           className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
-          css={[tw`text-regular font-bold`]}
+          css={[tw`text-2xl font-bold`]}
           key="spot"
           onClick={() => handleToggle('perps')}
         >
-          MAINNET
+          Mainnet
         </span>
         <span
           className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
-          css={[tw`text-regular font-bold`]}
+          css={[tw`text-2xl font-bold`]}
           key="perps"
           onClick={blacklisted ? null : () => handleToggle('spot')}
         >
-          DEVNET
+          Devnet
         </span>
-      </div>
+      </div>*/}
 
       <DropdownPairs />
       {

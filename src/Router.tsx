@@ -34,6 +34,7 @@ import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { IS_UNDER_MAINTENANCE } from './constants'
+const Account = lazy(() => import('./pages/Account/Account'))
 
 function PageLoader() {
   const { mode } = useDarkMode()
@@ -139,6 +140,17 @@ export const Router: FC = () => (
                           </Route>
                           <Route exact path="/analytics/ssl">
                             <SSLAnalyticsDashboard />
+                          </Route>
+                          <Route exact path="/account">
+                            <PriceFeedProvider>
+                              <OrderProvider>
+                                <TraderProvider>
+                                  <OrderBookProvider>
+                                    <Account />
+                                  </OrderBookProvider>
+                                </TraderProvider>
+                              </OrderProvider>
+                            </PriceFeedProvider>
                           </Route>
                           <Route>
                             <GenericNotFound />

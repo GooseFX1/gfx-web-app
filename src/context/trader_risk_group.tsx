@@ -155,6 +155,7 @@ interface IPerpsInfo {
   loading: boolean
   collateralInfo: ICollateralInfo
   setOrderBook: Dispatch<SetStateAction<OrderBook>>
+  portfolioValue: number
 }
 
 export interface IActiveProduct {
@@ -195,7 +196,8 @@ export function useTraderConfig() {
     setFocused,
     loading,
     collateralInfo,
-    setOrderBook
+    setOrderBook,
+    portfolioValue
   } = context
   return {
     traderInfo,
@@ -213,7 +215,8 @@ export function useTraderConfig() {
     setFocused,
     loading,
     collateralInfo,
-    setOrderBook
+    setOrderBook,
+    portfolioValue
   }
 }
 
@@ -251,6 +254,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [onChainPrice, setOnChainPrice] = useState<string>('0')
   const [openInterests, setOpenInterests] = useState<string>('0')
   const [accountHealth, setAccountHealth] = useState<string>('100')
+  const [portfolioValue, setPortfolioValue] = useState<number>(0)
   const [fundingRate, setFundingRate] = useState<string>('0')
   const [maxWithdrawable, setMaxWithdrawable] = useState<string>('0')
   const [traderVolume, setTraderVolume] = useState<string>('0')
@@ -431,6 +435,18 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           }
         } catch (e) {
           //console.log('health error:', e)
+        }
+
+        try {
+          const re = wasm.get_portfolio_value(mpg.data, trg.data)
+          const re2 = new Fractional({
+            m: new anchor.BN(re.m.toString()),
+            exp: new anchor.BN(Number(re.exp.toString()) + 5)
+          })
+          const portValue = Number(displayFractional(re2))
+          setPortfolioValue(portValue)
+        } catch (e) {
+          console.log(e)
         }
       }
     }
@@ -923,7 +939,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setOrder: setOrder,
         setFocused: setFocused,
         loading: loading,
-        collateralInfo: collateralInfo
+        collateralInfo: collateralInfo,
+        portfolioValue
       }}
     >
       {children}
