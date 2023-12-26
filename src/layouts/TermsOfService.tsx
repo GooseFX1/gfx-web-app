@@ -50,7 +50,7 @@ const TOS_MODAL = styled(Modal)`
 `
 
 const CONFIRM = styled.div`
-  ${tw`flex p-2 mt-2.5 sm:pb-0`}
+  ${tw`flex items-center p-2 mt-2.5 sm:pb-0`}
 `
 
 const MAINBUTTON = styled.button<{ checked }>`
@@ -61,7 +61,7 @@ const MAINBUTTON = styled.button<{ checked }>`
 `
 
 const TOS_CHECKBOX = styled(Checkbox)`
-  ${tw`items-center`}
+  ${tw`flex items-start`}
 
   .ant-checkbox-inner {
     ${tw`h-[20px] w-[20px]`}
