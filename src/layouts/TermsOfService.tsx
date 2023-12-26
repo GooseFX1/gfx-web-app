@@ -14,8 +14,7 @@ const TEXT_AREA = styled.div`
   flex-grow: 0;
 
   .text-area-inner {
-    ${tw`h-[450px] sm:h-[372px] w-full p-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
-    ${({ theme }) => theme.customScrollBar('4px')}
+    ${tw`h-[450px] sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
   }
 
   h3 {
@@ -39,7 +38,7 @@ const TEXT_AREA = styled.div`
 // `
 
 const TOS_MODAL = styled(Modal)`
-  ${tw`w-[600px]! sm:w-full! p-0!`}
+  ${tw`w-[600px]! sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
   &.ant-modal {
     ${tw`!rounded-bigger`}
   }
@@ -119,17 +118,9 @@ export const TermsOfService: FC<{
     setVisible?.(state)
   }
 
-  // const confirmReading = (e) => {
-  //   const scrollHeight = e.target.scrollHeight
-  //   const scrollTop = e.target.scrollTop
-  //   if (scrollTop + 500 > scrollHeight) {
-  //     setRead(true)
-  //   }
-  // }
-
   return (
     <TOS_MODAL
-      title={<span tw="text-average font-semibold">GooseFX Terms of Service</span>}
+      title={<h1 tw="text-average font-semibold">GooseFX Terms of Service</h1>}
       centerTitle
       setVisible={changeTOSState}
       visible={toShow}
@@ -139,8 +130,7 @@ export const TermsOfService: FC<{
       wrapClassName="tos-modal-wrapper"
     >
       <TEXT_AREA>
-        {/* <div className={'text-area-inner'} onScroll={confirmReading}> */}
-        <div className={'text-area-inner'}>
+        <div className={'text-area-inner no-scrollbar'}>
           <span>
             <h3>General</h3>
             <p>
@@ -466,7 +456,7 @@ export const TermsOfService: FC<{
           I agree to GooseFX terms and conditions and protocol disclaimer.
         </TOS_CHECKBOX>
         <MAINBUTTON onClick={accept} disabled={!checked} checked={checked}>
-          <span>Continue</span>
+          <span tw="text-average font-semibold">Continue</span>
         </MAINBUTTON>
       </CONFIRM>
     </TOS_MODAL>
