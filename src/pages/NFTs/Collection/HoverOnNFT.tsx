@@ -1,15 +1,9 @@
 import { Dispatch, FC, ReactElement, SetStateAction, useCallback, useMemo } from 'react'
 import { Button } from '../../../components'
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { PriceWithToken } from '../../../components/common/PriceWithToken'
 import { useNFTAggregator, useNFTProfile, useWalletModal } from '../../../context'
 import { BaseNFT, INFTAsk, INFTBid } from '../../../types/nft_details'
-import { formatSOLDisplay } from '../../../utils'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { removeNFTFromBag } from '../../../web3/nfts/utils'
-import { NFT_MARKETS } from '../../../api/NFTs'
 
 export const HoverOnNFT: FC<{
   mintAddress?: string
@@ -23,40 +17,11 @@ export const HoverOnNFT: FC<{
   setNFTDetails: () => void
   setHover?: Dispatch<SetStateAction<boolean>>
   setIsLoadingBeforeRelocate: Dispatch<SetStateAction<boolean>>
-}> = ({
-  item,
-  ask,
-  setNFTDetails,
-  buttonType,
-  myBidToNFT,
-  showBid,
-  setHover,
-  addNftToBag,
-  setIsLoadingBeforeRelocate
-}): ReactElement => {
+}> = ({ item, ask, setNFTDetails, buttonType, setHover, setIsLoadingBeforeRelocate }): ReactElement => {
   const { sessionUser } = useNFTProfile()
-  const {
-    setBidNow,
-    setBuyNow,
-    setSellNFT,
-    setOpenJustModal,
-    setCancelBidClicked,
-    setDelistNFT,
-    operatingNFT,
-    nftInBag,
-    setNftInBag
-  } = useNFTAggregator()
+  const { setBidNow, setBuyNow, setSellNFT, setOpenJustModal, setCancelBidClicked, setDelistNFT, operatingNFT } =
+    useNFTAggregator()
   const { setVisible } = useWalletModal()
-
-  const showBidBtn = useMemo(
-    () =>
-      buttonType !== 'Modify' &&
-      buttonType !== 'Sell' &&
-      myBidToNFT.length === 0 &&
-      (showBid || (ask && !ask.marketplace_name)),
-    [ask, buttonType, myBidToNFT, showBid]
-  )
-
   const isLoading: boolean = useMemo(() => operatingNFT.has(item?.mint_address), [operatingNFT])
 
   const goToDetailsForModal = useCallback(
@@ -93,42 +58,26 @@ export const HoverOnNFT: FC<{
     },
     [sessionUser, ask, setNFTDetails, setHover, item]
   )
-  const shouldShowImage = useMemo(
-    () =>
-      addNftToBag &&
-      ask &&
-      !nftInBag[item?.mint_address] &&
-      (ask?.marketplace_name === NFT_MARKETS.MAGIC_EDEN ||
-        ask.marketplace_name === NFT_MARKETS.TENSOR ||
-        ask.marketplace_name === NFT_MARKETS.GOOSE ||
-        !ask.marketplace_name),
-    [ask, nftInBag, item, addNftToBag]
-  )
-
-  const addedToBagImg = useMemo(
-    () => addNftToBag && ask && nftInBag[item?.mint_address] !== undefined,
-    [ask, nftInBag, item, addNftToBag]
-  )
 
   return (
     <div className="hoverNFT">
-      {shouldShowImage && (
+      {/* {shouldShowImage && (
         <img
           className="hoverAddToBag"
           src={`/img/assets/Aggregator/addToBag.svg`}
           alt=""
           onClick={(e) => addNftToBag(e, item, ask)}
         />
-      )}
-      {addedToBagImg && (
+      )} */}
+      {/* {addedToBagImg && (
         <img
           className="hoverAddToBag"
           src={`/img/assets/Aggregator/addedToBag.svg`}
           alt=""
           onClick={(e) => removeNFTFromBag(item?.mint_address, setNftInBag, e)}
         />
-      )}
-      {myBidToNFT.length > 0 && (
+      )} */}
+      {/* {myBidToNFT.length > 0 && (
         <div
           tw="flex absolute dark:text-grey-5 bottom-[50px] text-black-4 left-[30px] font-semibold
            !text-[15px] items-center"
@@ -140,14 +89,14 @@ export const HoverOnNFT: FC<{
             cssStyle={tw`h-5 w-5 !text-black-4 dark:!text-grey-5 ml-1`}
           />
         </div>
-      )}
+      )} */}
 
       {buttonType === 'Modify' && (
         <span className="hoverButtons">
           <Button
             loading={isLoading}
             disabled={isLoading}
-            cssStyle={tw`bg-red-2 h-[35px] w-[75px] text-[13px] sm:w-[70px] font-semibold mr-2 sm:ml-1 `}
+            cssStyle={tw`bg-red-2 h-[35px] w-[90%] text-[13px] sm:w-[70px] font-semibold sm:ml-1 `}
             onClick={(e) => goToDetailsForModal(e, 'delist')}
           >
             Delist
@@ -162,7 +111,7 @@ export const HoverOnNFT: FC<{
             </Button> */}
         </span>
       )}
-      {buttonType !== 'Modify' && myBidToNFT.length > 0 && (
+      {/* {buttonType !== 'Modify' && myBidToNFT.length > 0 && (
         <Button
           loading={isLoading}
           disabled={isLoading}
@@ -171,7 +120,7 @@ export const HoverOnNFT: FC<{
         >
           Cancel
         </Button>
-      )}
+      )} */}
     </div>
   )
 }

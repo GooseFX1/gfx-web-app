@@ -1,12 +1,8 @@
-import React, { Dispatch, SetStateAction, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { Dispatch, SetStateAction } from 'react'
 import { useDarkMode } from '../../../context'
 import styled from 'styled-components'
 import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { Connect } from '../../../layouts'
-import { checkMobile } from '../../../utils'
 
 const NO_CONTENT = styled.div<{ $cssStyle?: TwStyle }>`
   ${tw`flex items-center justify-center h-[calc(100vh - 260px)] mt-[-80px] sm:h-[calc(100vh - 100px)]
@@ -52,65 +48,29 @@ interface Props {
 
 const options = {
   collected: {
-    mainText: 'No Collection',
-    subText: 'Start adding NFTs to your collection',
+    mainText: 'No Supported Collection Items',
+    subText: '',
     textButton: 'Explore NFT’s',
     bgButton: '#5855ff'
   },
   bids: {
     mainText: 'No Bids',
-    subText: 'Bids you make or receive \n will be shown here'
+    subText: ''
   },
   ammBids: {
     mainText: 'No Bids',
-    subText: 'Bids you make will be shown here'
-  },
-  noItems: {
-    mainText: 'No Items',
-    subText: `Start buying or bidding ${
-      checkMobile() && '\n'
-    } for items in this collection \n to see your items here.`,
-    textButton: 'See Listed Items',
-    bgButton: '#5855ff'
-  },
-  favorited: {
-    mainText: 'No Items Liked',
-    subText: 'Explore and like your most favorite ones.\n Coming soon',
-    textButton: 'Explore NFT’s',
-    bgButton: '#5855ff'
+    subText: ''
   },
   activity: {
     mainText: 'No Recent Activity',
-    subText: 'Buy, Create or Sell and NFT to see activity.',
+    subText: '',
     textButton: ''
   }
 }
 
-const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
-  const history = useHistory()
+const NoContent = ({ type, cssStyle }: Props) => {
   const obj = options[type]
   const { mode } = useDarkMode()
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
-
-  const handleNoContentClick = () => {
-    switch (type) {
-      case 'collected':
-        history.push('/nfts')
-        break
-      case 'created':
-        history.push('/NFTs/create')
-        break
-      case 'favorited':
-        history.push('/nfts')
-        break
-      case 'noItems':
-        setDisplayIndex(0)
-        break
-      default:
-        console.error('Profile button issue')
-    }
-  }
 
   const subText = obj.subText
   const imageType = type === 'ammBids' ? 'bids' : type
@@ -130,18 +90,6 @@ const NoContent = ({ type, setDisplayIndex, cssStyle }: Props) => {
             </div>
           ))}
         </div>
-
-        {!publicKey && type === 'noItems' ? (
-          <div tw="ml-[200px] mt-8">
-            <Connect customButtonStyle={[tw`w-[150px] min-md:w-[150px]`]} />
-          </div>
-        ) : (
-          obj.textButton && (
-            <button className="btn" style={{ background: obj.bgButton }} onClick={handleNoContentClick}>
-              {obj.textButton}
-            </button>
-          )
-        )}
       </div>
     </NO_CONTENT>
   )

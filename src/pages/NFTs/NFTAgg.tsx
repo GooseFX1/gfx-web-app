@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useMemo, FC } from 'react'
-import { Route, Switch, useHistory } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import { Profile } from './Profile'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useNFTProfile, useConnectionConfig, usePriceFeedFarm, NFTAggFiltersProvider } from '../../context'
@@ -25,7 +25,6 @@ const BODY_NFT = styled.div`
 `
 const NFTAgg: FC = (): ReactElement => {
   // const { path } = useRouteMatch()
-  const history = useHistory()
   const { prices, refreshTokenData } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const { wallet } = useWallet()
@@ -36,12 +35,6 @@ const NFTAgg: FC = (): ReactElement => {
   useEffect(() => {
     refreshTokenData()
   }, [])
-
-  useEffect(() => {
-    if (window.location.pathname === '/nfts') {
-      history.push(`/nfts/profile`)
-    }
-  }, [window.location.pathname, publicKey])
 
   useEffect(() => {
     if (publicKey) {
