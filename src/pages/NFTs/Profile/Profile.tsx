@@ -10,6 +10,7 @@ import { isValidSolanaAddress } from '../../../web3'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { Connect } from '../../../layouts'
 
 //#region styles
 const PROFILE_CONTAINER = styled.div<{ background?: string }>`
@@ -105,7 +106,15 @@ export const Profile: FC = (): JSX.Element => {
     </PROFILE_CONTAINER>
   ) : (
     <div tw="h-full w-full flex justify-center items-center">
-      <h1 tw="text-lg dark:text-white text-black-1">Connect Wallet To Delist</h1>
+      <div tw="text-center dark:text-white text-black-1">
+        <h1 tw="text-lg m-5">Connect Wallet To Delist</h1>
+        <p tw="max-w-[35vw] sm:max-w-[90vw]">
+          Please note, we are deprecating our NFT marketplace to focus on our DeFi products. Please delist your
+          NFTs as soon as possible on your profile page. We will be removing all listings soon.
+        </p>
+        <br />
+        <Connect />
+      </div>
     </div>
   )
 }
