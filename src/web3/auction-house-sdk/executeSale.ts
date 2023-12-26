@@ -4,7 +4,7 @@ import { Metaplex, PublicKey, walletAdapterIdentity } from '@metaplex-foundation
 import {
   AH_FEE_ACCT,
   AUCTION_HOUSE,
-  OLD_AUCTION_HOUSE_AUTHORITY,
+  AUCTION_HOUSE_AUTHORITY,
   AUCTION_HOUSE_PREFIX,
   AUCTION_HOUSE_PROGRAM_ID,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
@@ -157,7 +157,7 @@ export const callExecuteSaleInstruction = async (
     metadata: new PublicKey(metaDataAccount),
     escrowPaymentAccount: escrowPaymentAccount[0],
     authority: new PublicKey(
-      isBuyingNow ? ask?.auction_house_authority ?? OLD_AUCTION_HOUSE_AUTHORITY : OLD_AUCTION_HOUSE_AUTHORITY
+      isBuyingNow ? ask?.auction_house_authority ?? AUCTION_HOUSE_AUTHORITY : AUCTION_HOUSE_AUTHORITY
     ),
     auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
     auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
@@ -219,7 +219,7 @@ export const callExecuteSaleInstruction = async (
       escrowPaymentAccount: escrowPaymentAccount[0],
       sellerPaymentReceiptAccount: new PublicKey(ask?.wallet_key),
       buyerReceiptTokenAccount: buyerReceiptTokenAccount[0],
-      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : OLD_AUCTION_HOUSE_AUTHORITY),
+      authority: new PublicKey(isBuyingNow ? ask?.auction_house_authority : AUCTION_HOUSE_AUTHORITY),
       auctionHouse: new PublicKey(isBuyingNow ? ask?.auction_house_key : AUCTION_HOUSE),
       auctionHouseFeeAccount: new PublicKey(isBuyingNow ? ask?.auction_house_fee_account : AH_FEE_ACCT),
       auctionHouseTreasury: auctionHouseTreasuryAddress[0],
