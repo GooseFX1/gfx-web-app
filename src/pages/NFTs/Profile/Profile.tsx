@@ -73,13 +73,7 @@ export const Profile: FC = (): JSX.Element => {
     [publicKey, params.userAddress]
   )
 
-  useEffect(() => {
-    if (sessionUser && publicKey) {
-      history.push(`/nfts/profile/${publicKey.toString()}`)
-    } else {
-      history.push(`/nfts/profile`)
-    }
-  }, [publicKey, sessionUser, params.userAddress])
+  useEffect(() => history.push(`/nfts/profile${publicKey ? `/${publicKey.toBase58()}` : ''}`), [publicKey])
 
   useEffect(() => {
     // asserts there is no wallet connection and no session user
@@ -104,7 +98,7 @@ export const Profile: FC = (): JSX.Element => {
     setRandomBackground(randomImage)
   }, [])
 
-  return isSessionUser ? (
+  return params.userAddress ? (
     <PROFILE_CONTAINER id="nft-profile-container" background={randomBackground}>
       <HeaderProfile isSessionUser={true} />
       <ContentProfile isSessionUser={true} />

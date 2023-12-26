@@ -353,16 +353,16 @@ export const ButtonContainer = (): ReactElement => {
               height="44px"
               loading={isLoading}
               disabled={isLoading}
-              width={ask ? (checkMobile() ? '170px' : '190px') : '100%'}
+              width={'100%'}
               cssStyle={tw`bg-red-2 mr-2 sm:mr-0 sm:!ml-0`}
               onClick={() => {
                 setDelistNFT(true)
               }}
             >
-              <span tw="text-regular font-semibold text-white">Remove Listing </span>
+              <span tw="text-regular font-semibold text-white">Remove Listing</span>
             </Button>
           )}
-          {/* <Button
+          {/* <Buttonh
             height="44px"
             loading={isLoading}
             disabled={isLoading}
@@ -374,7 +374,7 @@ export const ButtonContainer = (): ReactElement => {
             }}
           >
             <span tw="text-regular font-semibold text-white">{ask ? 'Modify Listing' : 'List Item'}</span>
-          </Button> */}
+          </Buttonh> */}
         </>
       ) : (
         <>

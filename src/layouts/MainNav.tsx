@@ -135,7 +135,7 @@ const MobileNav: FC = () => {
           // animation: 'aggregator',
           // stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
           text: 'NFTs',
-          path: '/nfts'
+          path: '/nfts/profile'
         })
         break
       case pathname.includes('farm'):
@@ -285,7 +285,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
           text={'NFTs'}
           iconBase={'nfts'}
-          path={'/nfts'}
+          path={'/nfts/profile'}
         />
         <NavItem
           // animation={'stats'}
@@ -521,7 +521,7 @@ const DesktopNav: FC = () => {
         iconBase={'nfts'}
         // riveAnimation={'aggregator'}
         // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        path={'/nfts'}
+        path={'/nfts/profile'}
       />
       <NavItem
         text={'More'}

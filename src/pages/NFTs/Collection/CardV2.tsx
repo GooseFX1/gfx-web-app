@@ -303,11 +303,7 @@ const CardV2: FC<ICardV2> = ({ singleNFT, nftDetails, setGfxAppraisal }) => {
               {(localBids?.length > 0 || localAsk !== null) && (
                 <div tw="absolute left-[16px] top-[14px]">
                   <Tag loading={false}>
-                    <span tw="font-semibold">
-                      {localAsk?.buyer_price && 'Listed'}
-                      {localAsk?.buyer_price && localBids.length > 0 && ' / '}
-                      {localBids?.length > 0 && `${localBids.length} Bid${localBids.length === 1 ? '' : 's'}`}
-                    </span>
+                    <span tw="font-semibold">{localAsk?.buyer_price && 'Listed'}</span>
                   </Tag>
                 </div>
               )}
