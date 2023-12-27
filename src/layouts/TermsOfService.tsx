@@ -60,7 +60,7 @@ const MAINBUTTON = styled.button<{ checked }>`
 `
 
 const TOS_CHECKBOX = styled(Checkbox)`
-  ${tw`flex items-start`}
+  ${tw`flex !items-start`}
 
   .ant-checkbox-inner {
     ${tw`h-[20px] w-[20px]`}
