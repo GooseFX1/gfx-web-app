@@ -232,6 +232,7 @@ export const DepositWithdraw: FC<{
     } else {
       if (
         !tokenAmount ||
+        isLoading ||
         !tokenAmount.uiAmountString ||
         +tokenAmount.uiAmountString < +amount ||
         !amount ||
