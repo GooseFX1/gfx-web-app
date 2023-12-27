@@ -158,16 +158,3 @@ export const TransactionErrorMsgSSL: FC = () => (
     </div>
   </MESSAGE>
 )
-export const SuccessfulNFTBidAMM: FC<{ collectionName: string }> = ({ collectionName }) => (
-  <MESSAGE>
-    <div tw="flex items-center justify-between">
-      <div tw="text-regular text-white">Congratulations!</div>
-      <div>
-        <img className="mIcon" src={`/img/assets/close-circle.svg`} alt="" />
-      </div>
-    </div>
-    <div tw="text-[13px] font-semibold">
-      Please bear{collectionName} with us and try again, or if the error continues{' '}
-    </div>
-  </MESSAGE>
-)

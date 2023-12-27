@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, FC, useMemo, useCallback, SetStateAction, Dispatch } from 'react'
+import { useState, FC } from 'react'
 import { CenteredImg, SpaceBetweenDiv, CenteredDiv } from '../styles'
-import { useNFTAggregator } from '../context'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -85,23 +83,6 @@ export const TokenToggle: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, ico
 
       {icons ? <ICON>{tokenB}</ICON> : <LABEL>{tokenB}</LABEL>}
     </WRAPPER>
-  )
-}
-
-export const TokenToggleNFT: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, icons }: ITokenToggle) => {
-  const { currencyView } = useNFTAggregator()
-
-  const handleToggle = useCallback(() => {
-    toggleToken()
-  }, [currencyView])
-
-  const position = useMemo(() => (currencyView === 'SOL' ? 0 : 1), [currencyView])
-  return (
-    <TOGGLE_WRAPPER position={position} onClick={handleToggle}>
-      <div className="background">
-        <img src={`/img/crypto/${currencyView}.svg`} className="tokenImg" />
-      </div>
-    </TOGGLE_WRAPPER>
   )
 }
 

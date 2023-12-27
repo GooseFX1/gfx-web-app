@@ -1,6 +1,6 @@
 import { FC, useState, Dispatch, SetStateAction, useRef, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
-import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'

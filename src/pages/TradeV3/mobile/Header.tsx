@@ -7,7 +7,7 @@ import { getPerpsPrice } from '../perps/utils'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
-import { SkeletonCommon } from '../../NFTs/Skeleton/SkeletonCommon'
+import { SkeletonCommon } from '../../../components'
 
 const HEADER = styled.div`
   ${tw`flex flex-row justify-between m-2.5 flex-wrap gap-y-2`}

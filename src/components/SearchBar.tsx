@@ -70,8 +70,7 @@ export const SearchBar: FC<{
   width?: string
   className?: string
   cssStyle?: TwStyle
-  isFarm?: boolean
-}> = ({ placeholder, setSearchFilter, filter, bgColor, shouldFocus, width, cssStyle, isFarm, ...rest }) => {
+}> = ({ placeholder, setSearchFilter, filter, bgColor, shouldFocus, width, cssStyle, ...rest }) => {
   const { mode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -92,17 +91,12 @@ export const SearchBar: FC<{
 
   return (
     <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} $cssStyle={cssStyle} {...rest}>
-      <input
-        placeholder={placeholder || 'Search by nft name'}
-        ref={inputRef}
-        value={filter ?? ''}
-        onChange={handleInputValue}
-      />
+      <input placeholder={placeholder} ref={inputRef} value={filter ?? ''} onChange={handleInputValue} />
       <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />
       {filter && (
         <img
-          className={isFarm ? 'ant-image-clear-farm' : 'ant-image-clear'}
-          src={!isFarm ? `/img/assets/Aggregator/removeSearch${mode}.svg` : `/img/assets/search_farm_${mode}.svg`}
+          className={'ant-image-clear-farm'}
+          src={`/img/assets/search_farm_${mode}.svg`}
           onClick={() => handleCloseClick()}
           alt="clear-search"
         />

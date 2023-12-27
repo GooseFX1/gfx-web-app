@@ -3,7 +3,7 @@ import Slider from 'react-slick'
 import { useDarkMode } from '../../context'
 import { checkMobile, truncateAddressForSixChar } from '../../utils'
 import tw, { styled } from 'twin.macro'
-import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import { Link } from 'react-router-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -157,19 +157,7 @@ export const ColumnHeadersWeb: FC<{ screenType: number }> = ({ screenType }) => 
         </th>
       )}
       <th tw="w-[10%]">
-        <Tooltip
-          color={mode === 'dark' ? '#F7F0FD' : '#3C3C3C'}
-          title={
-            <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-              Hold an SMB NFT and earn loyalty for more points.
-            </span>
-          }
-          overlayClassName={mode === 'dark' ? 'dark leaderboard-tooltip' : 'leaderboard-tooltip'}
-          overlayInnerStyle={{ borderRadius: '8px' }}
-          placement="topLeft"
-        >
-          <span tw="font-semibold text-regular text-black-4 dark:text-grey-5 underline">Boost</span>
-        </Tooltip>
+        <span tw="font-semibold text-regular text-black-4 dark:text-grey-5 underline">Boost</span>
       </th>
       <th tw="w-1/6">
         <Tooltip
@@ -329,15 +317,8 @@ export const HowToEarn: FC<{
                 width={checkMobile() && '205px'}
               />
               <div className="subText">
-                {screenType === 2 ? (
-                  <div className={mode === 'lite' ? 'space' : ''}>
-                    Purchase NFTs directly on GooseFX to earn points, more closer to the floor, more points you
-                    earn.
-                  </div>
-                ) : (
-                  'Earn points with each trade. The more loyal you are and the higher your PnL%, ' +
-                  'the more points you earn.'
-                )}
+                Earn points with each trade. The more loyal you are and the higher your PnL%, the more points you
+                earn.
               </div>
               <LearnMore screenType={screenType} />
               {screenType === 2 && (
@@ -374,12 +355,7 @@ export const HowToEarn: FC<{
                     'way to the top for the main reward.'}
               </div>
               <LearnMore screenType={screenType} />
-              <Link
-                to={screenType !== 2 ? '/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/' : '/nfts'}
-                target="_blank"
-                rel="noreferrer"
-                tw="block w-1/2 mx-auto my-0 sm:w-full"
-              >
+              <Link to={'/trade'} target="_blank" rel="noreferrer" tw="block w-1/2 mx-auto my-0 sm:w-full">
                 <div className="explore" css={[tw`!text-regular !font-bold`]}>
                   Trade Now
                 </div>

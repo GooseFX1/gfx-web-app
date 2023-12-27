@@ -9,7 +9,6 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { useLocation } from 'react-router-dom'
 import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey } from '@solana/web3.js'
@@ -43,7 +42,6 @@ interface IAccountsConfig {
 const AccountsContext = createContext<IAccountsConfig | null>(null)
 
 export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { pathname } = useLocation()
   const { connection, perpsDevnetConnection: devnetConnection } = useConnectionConfig()
   const { tokens: tokenRegistry } = useTokenRegistry()
   const { wallet } = useWallet()
@@ -195,8 +193,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     let cancelled = false
-    const subscriptions: number[] =
-      !cancelled && wallet?.adapter?.publicKey && pathname.split('/')[1] !== 'nfts' ? fetchAccountsDevnet() : []
+    const subscriptions: number[] = !cancelled && wallet?.adapter?.publicKey ? fetchAccountsDevnet() : []
 
     return () => {
       cancelled = true

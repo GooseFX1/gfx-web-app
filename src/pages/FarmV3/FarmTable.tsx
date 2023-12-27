@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { SearchBar, ShowDepositedToggle } from '../../components'
+import { SearchBar, ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } from '../../utils'
@@ -15,7 +15,6 @@ import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
 import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 import { getPriceObject } from '../../web3/utils'
-import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
 import BN from 'bn.js'
@@ -329,7 +328,6 @@ export const FarmTable: FC = () => {
               setSearchFilter={initiateGlobalSearch}
               placeholder="Search by token symbol"
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-              isFarm={true}
             />
             {pubKey && (
               <div tw="ml-auto flex items-center mr-2">
@@ -356,7 +354,6 @@ export const FarmTable: FC = () => {
             placeholder="Search by token"
             bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             //filter={searchTokens}
-            isFarm={true}
           />
           {pubKey && (
             <div tw="ml-auto flex items-center mr-2">

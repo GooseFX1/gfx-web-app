@@ -20,10 +20,9 @@ import { Input } from 'antd'
 import { removeFloatingPointError } from '../../utils'
 import { Checkbox, Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ArrowDropdown } from '../../components'
+import { ArrowDropdown, PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { getPerpsPrice, getProfitAmount } from './perps/utils'
-import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { TradeConfirmation } from './TradeConfirmation'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
@@ -1182,7 +1181,7 @@ const SELECTOR = styled.div`
   }
   .selected {
     ${tw`dark:bg-black-1 bg-grey-5`}
-    border: 1px solid ${({ theme }) => theme.borderForNFTCard};
+    border: 1px solid ${({ theme }) => theme.borderForCard};
     > span {
       background: linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%);
       -webkit-background-clip: text;

@@ -6,7 +6,7 @@ import { useCrypto, useDarkMode, useOrderBook, usePriceFeed } from '../../../con
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { getPerpsPrice } from '../perps/utils'
 import { CollateralPanelMobi } from './CollateralPanelMobi'
-import { PopupCustom } from '../../NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../../../components'
 import { DepositWithdraw } from '../perps/DepositWithdraw'
 import { ClosePosition } from '../ClosePosition'
 import { RotatingLoader } from '../../../components/RotatingLoader'

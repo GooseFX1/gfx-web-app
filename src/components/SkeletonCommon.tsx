@@ -1,5 +1,5 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
-import { useDarkMode } from '../../../context'
+import { useDarkMode } from '../context'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { FC } from 'react'
 

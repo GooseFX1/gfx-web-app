@@ -1,5 +1,4 @@
 import React, { FC, ReactElement, useEffect } from 'react'
-// import { PopupCustom } from '../../../pages/NFTs/Popup/PopupCustom'
 import useBreakPoint from '../../../hooks/useBreakPoint'
 // import styled from 'styled-components'
 import tw from 'twin.macro'

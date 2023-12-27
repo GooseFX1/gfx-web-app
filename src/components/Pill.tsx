@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import 'twin.macro'
 import 'styled-components/macro'
-import { SkeletonCommon } from '../pages/NFTs/Skeleton/SkeletonCommon'
+import { SkeletonCommon } from './SkeletonCommon'
 
 interface IProps {
   label: string

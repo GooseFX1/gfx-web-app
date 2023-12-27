@@ -196,7 +196,7 @@ const TradeAnalyticsWrapper: FC = () => {
   return !connected ? (
     <CONNECT_WALLET_WRAPPER>
       <img className="gooseLogo" src="/img/crypto/GOFX.svg" alt="Goose" />
-      <div className="first-line">Welcome to NFT Analytics page!</div>
+      <div className="first-line">Welcome to Analytics page!</div>
       <div className="connectWallet">
         <Connect />
       </div>
