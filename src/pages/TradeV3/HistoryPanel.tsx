@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { Button } from 'antd'
 import React, { useState, FC, useMemo, useEffect } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
@@ -13,7 +12,7 @@ import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
-
+import { Button } from '../../components'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 const END_MODAL = styled(PopupCustom)`
@@ -209,7 +208,7 @@ const OPEN_ORDER = styled.div`
     }
   }
   .cancelButton {
-    ${tw`bg-[#f06565]`}
+    ${tw`bg-red-1 h-7`}
   }
 `
 
@@ -335,12 +334,15 @@ const OpenOrdersComponent: FC = () => {
   const { mode } = useDarkMode()
   const [removedOrderIds, setremoved] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [perpsOrderId, setPerpsOrderId] = useState<string>('')
 
   const openOrderUI = isDevnet ? perpsOpenOrders : perpsOpenOrders
 
   const cancelOrderFn = async (orderId: string) => {
     setLoading(true)
+    setPerpsOrderId(orderId)
     const res = await perpsCancelOrder(orderId)
+    setPerpsOrderId('')
     setLoading(false)
     const arr = removedOrderIds
     if (res && res.txid) {
@@ -367,7 +369,13 @@ const OpenOrdersComponent: FC = () => {
                     loading={false}
                     onClick={() => cancelOrderFn(order.order.orderId)}
                   >
-                    {loading ? <RotatingLoader text="" textSize={8} iconSize={16} /> : 'Cancel'}
+                    {loading && perpsOrderId === order.order.orderId ? (
+                      <div tw="!ml-[25%]">
+                        <RotatingLoader text="" textSize={8} iconSize={16} />
+                      </div>
+                    ) : (
+                      'Cancel'
+                    )}
                   </Button>
                 </span>
               </div>

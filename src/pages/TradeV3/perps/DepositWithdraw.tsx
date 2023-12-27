@@ -9,6 +9,8 @@ import { PERPS_COLLATERAL } from './perpsConstants'
 import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDevnet'
 import 'styled-components/macro'
 import { checkMobile } from '../../../utils'
+import useBoolean from '../../../hooks/useBoolean'
+import { Button } from '../../../components'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -34,7 +36,7 @@ const WRAPPER = styled.div`
   }
 
   .submit-btn {
-    ${tw`block h-12.5 w-[222px] rounded-circle mx-auto my-3.5 font-semibold 
+    ${tw`block h-12.5 w-[222px] flex items-center rounded-circle mx-auto my-3.5 font-semibold 
       text-average border-0 border-none bg-blue-1 sm:h-[45px] sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
@@ -99,7 +101,7 @@ const LABEL = styled.div`
 `
 
 const INPUT = styled.div`
-  ${tw`w-[280px] rounded-circle py-2.5 px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
+  ${tw`w-[280px] rounded-circle flex items-center px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
   background: ${({ theme }) => theme.bg22};
 
   .input-amt {
@@ -133,6 +135,7 @@ export const DepositWithdraw: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
   const { devnetBalances: devnetbalances, balances: mainnetBalances, fetchAccounts } = useAccounts()
+  const [isLoading, setIsLoading] = useBoolean(false)
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
@@ -199,12 +202,23 @@ export const DepositWithdraw: FC<{
   const handleSubmit = async () => {
     try {
       const answer = convertToFractional(amount)
+      setIsLoading.on()
       const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
+      if (response === null) {
+        setIsLoading.off()
+        return
+      }
+
       // this will update balances
       fetchAccounts()
-      if (response && response.txid) setDepositWithdrawModal(false)
+
+      if (response && response.txid) {
+        setDepositWithdrawModal(false)
+        setIsLoading.off()
+      }
     } catch (e) {
       console.log(e)
+      setIsLoading.off()
     }
   }
   const checkDisabled = () => {
@@ -300,14 +314,16 @@ export const DepositWithdraw: FC<{
           ))}
         </div>
       </div>
-      {/* todo: add loading animation here */}
-      <button
+
+      <Button
         className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}
+        loading={isLoading}
         disabled={checkDisabled()}
+        cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
-      </button>
+      </Button>
     </WRAPPER>
   )
 }

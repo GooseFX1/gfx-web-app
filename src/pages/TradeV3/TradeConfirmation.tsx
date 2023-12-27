@@ -5,6 +5,7 @@ import { Button } from '../../components'
 import { useCrypto, useOrder } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { checkMobile } from '../../utils'
+import useBoolean from '../../hooks/useBoolean'
 
 const WRAPPER = styled.div``
 
@@ -28,6 +29,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
   const { order } = useOrder()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { newOrder, newOrderTakeProfit } = useTraderConfig()
+  const [isLoading, setIsLoading] = useBoolean(false)
 
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
@@ -52,14 +54,17 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
 
   const handleClick = async () => {
     try {
+      setIsLoading.on()
       if (takeProfit) {
         await newOrderTakeProfit(takeProfit.toString())
       } else {
         await newOrder()
       }
       setVisibility(false)
+      setIsLoading.off()
     } catch (error) {
       setVisibility(false)
+      setIsLoading.off()
     }
   }
 
@@ -115,6 +120,8 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
       <Button
         onClick={() => handleClick()}
         width="100%"
+        loading={isLoading}
+        disabled={isLoading}
         height={checkMobile() ? '45px' : '50px'}
         cssStyle={cssStyle}
       >
