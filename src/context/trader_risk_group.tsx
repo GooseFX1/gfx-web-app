@@ -822,11 +822,22 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //      }
       //    }
       //  }
-      const response = traderRiskGroup
-        ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
-        : await initTrgDepositIx(depositFundsAccounts, { quantity: amount }, wallet, connection, newTrg, isDevnet)
-      traderRiskGroup ? refreshTraderRiskGroup() : fetchTrgAcc()
-      return response
+      try {
+        const response = traderRiskGroup
+          ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
+          : await initTrgDepositIx(
+              depositFundsAccounts,
+              { quantity: amount },
+              wallet,
+              connection,
+              newTrg,
+              isDevnet
+            )
+        traderRiskGroup ? refreshTraderRiskGroup() : fetchTrgAcc()
+        return response
+      } catch (err) {
+        return null
+      }
     },
     [traderRiskGroup, marketProductGroup, wallet]
   )

@@ -15,7 +15,6 @@ import {
 } from './perps/utils'
 import { Fractional } from './perps/dexterity/types'
 import * as anchor from '@project-serum/anchor'
-import { RotatingLoader } from '../../components/RotatingLoader'
 import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`
@@ -310,18 +309,16 @@ export const ClosePosition: FC<{
       </div>
       <Button
         onClick={closePositionFn}
-        height="50px"
+        height="35px"
+        disabled={loading}
+        loading={loading}
         width="100%"
         cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
       >
         <span>
-          {loading ? (
-            <RotatingLoader text="" textSize={12} iconSize={30} iconColor="white" />
-          ) : percentDetails[percentageIndex]?.display ? (
-            `Close ${percentDetails[percentageIndex].display}% of the position`
-          ) : (
-            'Close Position'
-          )}
+          {percentDetails[percentageIndex]?.display
+            ? `Close ${percentDetails[percentageIndex].display}% of the position`
+            : 'Close Position'}
         </span>
       </Button>
     </WRAPPER>
