@@ -178,40 +178,45 @@ export const sendPerpsTransaction = async (
     //}
   }
 
-  const signature = await wallet.wallet.adapter.sendTransaction(transaction, connection)
-  console.log('singature: ', signature)
-  if (messages && messages.progressMessage) {
-    perpsNotify({
-      message: messages.progressMessage.header,
-      description: messages.progressMessage.description,
-      action: 'open',
-      key,
-      styles: {}
-    })
-  }
-  const response = await confirmTransaction(connection, signature, 'processed')
-  const slot = 0
-  if (response.value.err !== null) {
-    perpsNotify({
-      message: messages.errorMessage.header,
-      description: messages.errorMessage.description,
-      action: 'close',
-      key,
-      styles: {}
-    })
-    throw new Error('Timed out awaiting confirmation on transaction')
-  }
+  try {
+    const signature = await wallet.wallet.adapter.sendTransaction(transaction, connection)
+    console.log('signature: ', signature)
+    if (messages && messages.progressMessage) {
+      perpsNotify({
+        message: messages.progressMessage.header,
+        description: messages.progressMessage.description,
+        action: 'open',
+        key,
+        styles: {}
+      })
+    }
+    const response = await confirmTransaction(connection, signature, 'processed')
+    const slot = 0
+    if (response.value.err !== null) {
+      perpsNotify({
+        message: messages.errorMessage.header,
+        description: messages.errorMessage.description,
+        action: 'close',
+        key,
+        styles: {}
+      })
+      throw new Error('Timed out awaiting confirmation on transaction')
+    }
 
-  if (messages && messages.endMessage) {
-    perpsNotify({
-      message: messages.endMessage.header,
-      description: messages.endMessage.description,
-      action: 'close',
-      key,
-      styles: {}
-    })
+    if (messages && messages.endMessage) {
+      perpsNotify({
+        message: messages.endMessage.header,
+        description: messages.endMessage.description,
+        action: 'close',
+        key,
+        styles: {}
+      })
+    }
+    return { txid: signature, slot }
+  } catch (e) {
+    console.log('error: ', e)
+    return null
   }
-  return { txid: signature, slot }
 }
 
 export const buildTransaction = async (
