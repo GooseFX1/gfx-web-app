@@ -150,7 +150,8 @@ export const sendPerpsTransaction = async (
       description: messages.startMessage.description,
       action: 'open',
       key,
-      styles: {}
+      styles: {},
+      duration: 120
     })
   }
   if (instructions instanceof Transaction) {
@@ -187,7 +188,8 @@ export const sendPerpsTransaction = async (
         description: messages.progressMessage.description,
         action: 'open',
         key,
-        styles: {}
+        styles: {},
+        duration: 60
       })
     }
     const response = await confirmTransaction(connection, signature, 'processed')
@@ -215,6 +217,16 @@ export const sendPerpsTransaction = async (
     return { txid: signature, slot }
   } catch (e) {
     console.log('error: ', e)
+    perpsNotify({
+      message: messages.errorMessage.header,
+      description: messages.errorMessage.description,
+      action: 'close',
+      key,
+      duration: 3,
+      styles: {
+        backgroundColor: '#F24244'
+      }
+    })
     return null
   }
 }

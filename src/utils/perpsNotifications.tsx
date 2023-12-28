@@ -27,8 +27,8 @@ const MESSAGE = styled.div`
   align-items: center;
 
   span {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 600 !important;
   }
 `
 
@@ -36,10 +36,12 @@ const DESCRIPTION = styled(MESSAGE)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 16px;
+  margin-top: 4px;
 
   > span {
     width: 100%;
+    font-size: 12px !important;
+    font-weight: 500 !important;
   }
 `
 
@@ -73,27 +75,41 @@ interface INotifyParams {
 const NOTIFICATION_TIMER = 5 * 1000
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const perpsNotify = async ({ action, message, description, styles, key }) => {
+export const perpsNotify = async ({
+  action,
+  message,
+  description,
+  styles,
+  key,
+  duration = 10,
+  loading = false
+}) => {
   const openNotification = () => {
     notification.open({
       closeIcon: <CLOSE />,
-      description: description,
+      description: (
+        <DESCRIPTION>
+          <span>{description}</span>
+        </DESCRIPTION>
+      ),
       icon: <div style={{ display: 'none' }} />,
       key,
-      duration: 10,
+      duration: duration,
       message:
         typeof message === 'string' ? (
           <MESSAGE>
             <span>{message}</span>
           </MESSAGE>
         ) : (
-          message
+          <MESSAGE>
+            <span>{message}</span>
+          </MESSAGE>
         ),
       onClick: () => notification.close(key),
       placement: 'bottomLeft',
       style: {
-        backgroundColor: '#3735bb',
-        borderRadius: '20px',
+        backgroundColor: '#5855FF',
+        borderRadius: '10px',
         padding: '32px 16px',
         minWidth: '320px',
         ...styles
