@@ -2,7 +2,6 @@ import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 import { SSLToken } from '../pages/FarmV3/constants'
-import { StringPublicKey } from './metaplex'
 
 export const SYNTH_DEFAULT_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
@@ -467,7 +466,7 @@ export const ADDRESSES: {
 
 export class LazyAccountInfoProxy<T> {
   executable = false
-  owner: StringPublicKey = ''
+  owner = ''
   lamports = 0
 
   get data(): any {
@@ -478,7 +477,7 @@ export class LazyAccountInfoProxy<T> {
 
 export interface LazyAccountInfo {
   executable: boolean
-  owner: StringPublicKey
+  owner: string
   lamports: number
   data: [string, string]
 }
@@ -521,13 +520,13 @@ export const BPF_UPGRADE_LOADER_ID = new PublicKey('BPFLoaderUpgradeab1e11111111
 
 export const MEMO_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')
 
-export const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s' as StringPublicKey
+export const METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s' as string
 
-export const VAULT_ID = 'vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn' as StringPublicKey
+export const VAULT_ID = 'vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn' as string
 
-export const AUCTION_ID = 'auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8' as StringPublicKey
+export const AUCTION_ID = 'auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8' as string
 
-export const METAPLEX_ID = 'p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98' as StringPublicKey
+export const METAPLEX_ID = 'p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98' as string
 
 export const PACK_CREATE_ID = new PublicKey('packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6pvNsw2BLu')
 
@@ -554,29 +553,29 @@ export const SSL_POOL_SIGNER_PREFIX = 'ssl_pool'
 
 export const PT_MINT_PREFIX = 'GFX-SSL-PTMINT'
 
-export const STAKE_PROGRAM_ID: StringPublicKey = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
+export const STAKE_PROGRAM_ID = '8KJx48PYGHVC9fxzRRtYp4x4CM2HyYCm2EjVuAP4vvrx'
 
 // AUCTION HOUSE CONSTANTS
 export const AUCTION_HOUSE_PREFIX = 'auction_house'
 export const TREASURY_PREFIX = 'treasury'
-export const AUCTION_HOUSE_PROGRAM_ID: StringPublicKey = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
+export const AUCTION_HOUSE_PROGRAM_ID = 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
 
 export const MAGIC_EDEN_AUCTION_HOUSE = 'E8cU1WiRWjanGxmn96ewBgk9vPTcL6AEZ1t6F6fkgUWe'
 
-export const AUCTION_HOUSE: StringPublicKey = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
-export const OLD_AUCTION_HOUSE: StringPublicKey = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
-// export const AUCTION_HOUSE: StringPublicKey = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
+export const AUCTION_HOUSE = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
+export const OLD_AUCTION_HOUSE = '5GtAPDZWwnWRDjaTgjHDnvpiGBi9TbLVqRrggLH5Ztuv'
+// export const AUCTION_HOUSE: string = '4T5iWwyTWXP6nyEKymGpAAEy57Sn1GPE2GaNmLsJVPqi'
 
-export const TREASURY_MINT: StringPublicKey = 'So11111111111111111111111111111111111111112'
+export const TREASURY_MINT = 'So11111111111111111111111111111111111111112'
 
 // Current Authority
-export const AUCTION_HOUSE_AUTHORITY: StringPublicKey = 'CeU4mJ3piGG59rd48iDV7jbPu3zijir6dBcD5xzrwp37'
-export const OLD_AUCTION_HOUSE_AUTHORITY: StringPublicKey = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
-export const TEMP_AUCTION_HOUSE_AUTHORITY: StringPublicKey = '3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'
+export const AUCTION_HOUSE_AUTHORITY = 'CeU4mJ3piGG59rd48iDV7jbPu3zijir6dBcD5xzrwp37'
+export const OLD_AUCTION_HOUSE_AUTHORITY = '4puafxtL1437aibBy4pCteADWjja9aQvygD9LhkwRMG5'
+export const TEMP_AUCTION_HOUSE_AUTHORITY = '3hrfavXTqLNJt2rvuYP3vKEg7Ks2MQbnBRkXjqHPC93Z'
 
-export const AH_FEE_ACCT: StringPublicKey = '7PQhSEPvLM87Kdd1cbydhaMGPxKf2J1fzU65VALvK6J2'
+export const AH_FEE_ACCT = '7PQhSEPvLM87Kdd1cbydhaMGPxKf2J1fzU65VALvK6J2'
 
-export const TREASURY_ACCT: StringPublicKey = 'Crh7HNLeizFgSNBjfxj6jf7NcmwPuN53a93NBi2fa8h'
+export const TREASURY_ACCT = 'Crh7HNLeizFgSNBjfxj6jf7NcmwPuN53a93NBi2fa8h'
 
 export const FEE_PAYER_BAL_GENESIS = 0
 

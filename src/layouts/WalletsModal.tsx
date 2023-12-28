@@ -6,7 +6,7 @@ import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
 import { SpaceBetweenDiv } from '../styles'
-import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../components'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 

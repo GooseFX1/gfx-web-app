@@ -1,5 +1,5 @@
 import { FC, Dispatch, SetStateAction, useState, useEffect, useMemo } from 'react'
-import { PopupCustom } from '../NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../../components'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'

@@ -8,8 +8,7 @@
 // import { SwapButton } from './SwapButton'
 // import { SwapFrom } from './SwapFrom'
 // import { SwapTo } from './SwapTo'
-// import { Modal, Tooltip, SwapTokenToggle } from '../../components'
-// import { SkeletonCommon } from '../NFTs/Skeleton/SkeletonCommon'
+// import { Modal, Tooltip, SwapTokenToggle,SkeletonCommon } from '../../components'
 // import {
 //   useDarkMode,
 //   useSwap,
@@ -23,7 +22,6 @@
 // import { JupiterProvider, useJupiter } from '@jup-ag/react-hook'
 // import { PublicKey } from '@solana/web3.js'
 // import { useWallet } from '@solana/wallet-adapter-react'
-// import { ILocationState } from '../../types/app_params.d'
 // import { notify, moneyFormatter, nFormatter, checkMobile, clamp, aborter } from '../../utils'
 // import { useParams } from 'react-router-dom'
 // import { logData } from '../../api/analytics'
@@ -383,7 +381,6 @@
 //   refreshed: boolean
 // }> = ({ exchange, setRefreshed, refreshed }) => {
 //   const { wallet } = useWallet()
-//   const location = useLocation<ILocationState>()
 //   const { setEndpointName, network } = useConnectionConfig()
 //   const { mode } = useDarkMode()
 //   const { amountPool, setFocused, switchTokens, setClickNo, setRoutes, tokenA, tokenB, inTokenAmount } = useSwap()

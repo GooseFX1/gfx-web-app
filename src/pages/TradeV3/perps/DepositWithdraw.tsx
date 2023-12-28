@@ -134,7 +134,7 @@ export const DepositWithdraw: FC<{
   tradeType: string
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
-  const { devnetBalances: devnetbalances, balances: mainnetBalances, fetchAccounts } = useAccounts()
+  const { balances: mainnetBalances, fetchAccounts } = useAccounts()
   const [isLoading, setIsLoading] = useBoolean(false)
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
@@ -150,7 +150,7 @@ export const DepositWithdraw: FC<{
     `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
   const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
   const symbol = perpToken.token
-  const balances = useMemo(() => (isDevnet ? devnetbalances : mainnetBalances), [isDevnet])
+  const balances = useMemo(() => mainnetBalances, [isDevnet])
   const tokenAmount = balances[perpToken.marketAddress]
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
 

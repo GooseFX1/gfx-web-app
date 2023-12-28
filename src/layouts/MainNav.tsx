@@ -13,7 +13,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES } from '../constants'
 import { RewardsProvider } from '../context/rewardsContext'
-import { MyNFTBag } from '../pages/NFTs/MyNFTBag'
 
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
@@ -72,7 +71,6 @@ export const MainNav: FC = () => {
             <RewardsButton />
           </RewardsProvider>
           <Connect />
-          <MyNFTBag />
           {/* <NotificationButton /> */}
           <More />
           <MobileNav />
@@ -88,25 +86,6 @@ export const MainNav: FC = () => {
 //     <div css={[tw` cursor-pointer`]}>
 //       <img css={[tw`h-7.5 w-7.5`]} src={`/img/mainnav/notification-${mode}.svg`} />
 //     </div>
-//   )
-// }
-
-// const NFTProfileButton: FC = () => {
-//   console.log('NFTProfileButton')
-//   return (
-//     <button
-//       css={[
-//         tw`border-1 border-solid border-grey-1 dark:border-grey-2 p-1.25 rounded-full
-//      bg-white dark:bg-black-2 flex items-center
-//      `
-//       ]}
-//     >
-//       <img
-//         css={[tw`h-6 w-6 rounded-full object-cover border-1 border-solid border-grey-1 dark:border-grey-2`]}
-//         src={`/img/mainnav/nft-profile.svg`}
-//       />
-//       <p css={[tw`mb-0 text-tiny font-semibold text-black-4 dark:text-white ml-1.25`]}>My Profile</p>
-//     </button>
 //   )
 // }
 
@@ -131,14 +110,6 @@ const MobileNav: FC = () => {
           text: 'trade',
           path: '/trade'
         }))
-        break
-      case pathname.includes('nfts'):
-        setCurrentPage({
-          // animation: 'aggregator',
-          // stateMachine: RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName,
-          text: 'NFTs',
-          path: '/nfts'
-        })
         break
       case pathname.includes('farm'):
         setCurrentPage({
@@ -281,13 +252,6 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
           text={'farm'}
           path={'/farm'}
-        />
-        <NavItem
-          // animation={'aggregator'}
-          // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-          text={'NFTs'}
-          iconBase={'nfts'}
-          path={'/nfts'}
         />
         <NavItem
           // animation={'stats'}
@@ -517,13 +481,6 @@ const DesktopNav: FC = () => {
         // riveAnimation={'farm'}
         // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
         path={'/farm'}
-      />
-      <NavItem
-        text={'NFTs'}
-        iconBase={'nfts'}
-        // riveAnimation={'aggregator'}
-        // stateMachine={RIVE_ANIMATION.aggregator.stateMachines.AggregatorInteractions.stateMachineName}
-        path={'/nfts'}
       />
       <NavItem
         text={'More'}

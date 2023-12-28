@@ -17,7 +17,6 @@ export default function AppInner(): JSX.Element {
         'gfx-user-cache',
         JSON.stringify({
           hasDexOnboarded: false,
-          hasAggOnboarded: false,
           hasFarmOnboarded: false,
           hasSignedTC: false,
           endpointName: null,

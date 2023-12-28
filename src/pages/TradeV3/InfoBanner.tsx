@@ -5,12 +5,11 @@ import tw from 'twin.macro'
 import { useCrypto, usePriceFeed, useDarkMode, useOrderBook, useConnectionConfig } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdraw } from './perps/DepositWithdraw'
-import { PopupCustom } from '../NFTs/Popup/PopupCustom'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
-import { Tooltip } from '../../components'
+import { Tooltip, PopupCustom } from '../../components'
 
 export const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}

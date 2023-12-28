@@ -6,8 +6,7 @@ const FLOATING_ACTION_BTN = styled.button<{ $height: number; $background: string
   width: ${({ $height }) => $height}px;
   border: none;
   border-radius: 50%;
-  background-color: ${({ theme, $background }) =>
-    $background.length > 0 ? $background : theme.bgForNFTCollection};
+  background-color: ${({ theme, $background }) => ($background.length > 0 ? $background : theme.anotherBG)};
   cursor: pointer;
   transition: box-shadow ${({ theme }) => theme.mainTransitionTime} ease-in-out;
   ${({ theme }) => theme.smallShadow}

@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react'
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../utils'
@@ -83,20 +83,6 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
 `
 
-const BANNER_TXT_MOBILE = styled.div`
-  ${tw`absolute bottom-0 font-semibold text-[30px] leading-[35px]`}
-  left: 50%;
-  background: -webkit-linear-gradient(#e0b5ff, #9e1aff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`
-
-const BANNER_WRAPPER = styled.div`
-  ${tw`relative h-[134px] w-full border border-solid dark:border-grey-2 border-grey-1 
-  mx-auto mb-3.75 rounded-tiny pt-5 px-10`}
-  width: calc(100% - 40px);
-`
-
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
   background: ${({ $mode }) => `url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')`};
@@ -118,69 +104,18 @@ export const TABLE_ROW = styled.tr`
   }
 `
 
-const BANNER_BTN = styled.div`
-  ${tw`absolute bottom-[25px] text-lg text-grey-5 w-[200px] h-10 rounded-[36px] cursor-pointer
-  text-white flex flex-row items-center justify-center sm:bottom-auto sm:mb-2.5`}
-  left: calc(50% - 100px);
-  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
-  > a {
-    ${tw`text-white font-semibold`}
-  }
-  > a:hover {
-    ${tw`text-white font-semibold`}
-  }
-`
-
-const BANNER_TXT_1 = styled.div`
-  ${tw`text-[55px] leading-[50px] font-semibold`}
-  background: -webkit-linear-gradient(#e0b5ff, #9e1aff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`
-
-const BANNER_TXT_2 = styled.span`
-  ${tw`absolute text-[30px] font-semibold leading-none text-black-4 dark:text-grey-5`}
-  left: calc(50% - 90px);
-`
-
 const CARD = styled.div`
   ${tw`h-[90px] w-[32%] dark:bg-black-1 bg-white border border-solid dark:border-grey-2 border-grey-1
       rounded-small flex flex-row items-center px-3.75 sm:mb-[15px] sm:w-full`}
 `
 
-const transformObject = (original, index) => ({
-  id: index + 1,
-  address: original.walletAddress,
-  boost: original.boost,
-  loyalty: original.loyalty,
-  pnl: undefined, // You may need to provide logic to set this value
-  dailyPoints: undefined, // You may need to provide logic to set this value
-  weeklyPoints: original.rafflePoints, // You may need to provide logic to set this value
-  // You may need to provide logic to set this value - prevWeekPoints
-  prevWeekPoints: original.prevRafflePoints[original.prevRafflePoints.length - 1],
-  totalPoints: original.totalPoints ? original.totalPoints.toString() : undefined
-})
-
 const LeaderBoard: FC = () => {
-  const [screenType, setScreenType] = useState<number>(0)
+  const [screenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
-  const { users, nftUsers } = useStats()
-  const displayUsers = useMemo(() => {
-    if (screenType === 2) {
-      // initially when the new raffle starts all the users will have 0 points, so we will display the top 5 users
-      let transformedObjectUser = nftUsers.map((nftUser, index) => transformObject(nftUser, index))
-      transformedObjectUser = transformedObjectUser.filter((user) => user.weeklyPoints > 0)
-      return transformObject.length === 0
-        ? nftUsers.filter((user, index) => user && index < 5)
-        : transformedObjectUser
-    } else {
-      return users
-    }
-  }, [nftUsers, users, screenType])
+  const { users } = useStats()
 
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const leaderboardScreens = ['Perps', 'Devnet', 'NFTs']
 
   return (
     <WRAPPER $isCollapsed={true} $index={screenType}>
@@ -190,22 +125,6 @@ const LeaderBoard: FC = () => {
           <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
         )}
         <div tw="relative sm:justify-start relative z-0">
-          <div tw="w-[240px] mx-auto flex flex-row justify-center relative sm:w-[270px]">
-            <div className="slider"></div>
-            {leaderboardScreens.map((pool, index) => (
-              <div
-                tw="w-[90px] h-10 flex justify-center items-center cursor-pointer font-bold
-                text-regular text-grey-2"
-                key={index}
-                onClick={() => {
-                  index === 1 ? null : setScreenType(index)
-                }}
-                className={index === 1 ? 'disable' : index === screenType ? 'active' : ''}
-              >
-                {pool}
-              </div>
-            ))}
-          </div>
           {!checkMobile() && (
             <div
               tw="absolute right-5 top-0 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
@@ -222,13 +141,7 @@ const LeaderBoard: FC = () => {
           )}
         </div>
         <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
-          <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">
-            {screenType === 1 ? (
-              <div tw="sm:text-left">Paper Trade {checkMobile() && <br />}Season 1</div>
-            ) : (
-              'Season 1'
-            )}
-          </div>
+          <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">Season 1</div>
           {checkMobile() && (
             <div
               tw="border border-solid border-grey-1 w-[45%] h-10 rounded-[100px]
@@ -258,42 +171,9 @@ const LeaderBoard: FC = () => {
           )}
         </div>
       </HEADER>
-      {checkMobile() ? (
-        <div
-          tw="relative h-[213px] w-11/12 border border-solid dark:border-grey-2 border-grey-1 
-            mx-auto my-3.75 rounded-tiny pt-5 px-10"
-        >
-          <div tw="text-center text-lg font-semibold mb-3 dark:text-grey-5 text-black-4">MonkeDAO</div>
-          <BANNER_BTN>
-            <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
-          </BANNER_BTN>
-          <img
-            src="/img/assets/Leaderboard/mobile_banner.png"
-            alt="nft-banner"
-            height="98px"
-            width="120px"
-            className="banner-mobile"
-          />
-          <BANNER_TXT_MOBILE>
-            1.5x <br /> Boost
-          </BANNER_TXT_MOBILE>
-        </div>
-      ) : (
-        <BANNER_WRAPPER>
-          <div tw="flex flex-row">
-            <img src="/img/assets/Leaderboard/Banner.png" alt="nft-banner" width={134} height={110} />
-            <BANNER_TXT_1>
-              1.5x <br /> Boost
-            </BANNER_TXT_1>
-            <BANNER_BTN>
-              <a href="https://app.goosefx.io/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/">Trade Now</a>
-            </BANNER_BTN>
-            <BANNER_TXT_2>MonkeDAO</BANNER_TXT_2>
-          </div>
-        </BANNER_WRAPPER>
-      )}
+
       <div tw="flex flex-row justify-between relative px-5 sm:block sm:px-[15px] sm:mb-0">
-        {displayUsers?.slice(0, 3).map((user: User, index: number) => (
+        {users?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
             <img
@@ -320,7 +200,7 @@ const LeaderBoard: FC = () => {
           <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
         </thead>
         <tbody>
-          {displayUsers
+          {users
             .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
             .map((user: User, index: number) => (
               <TABLE_ROW key={index}>
@@ -332,7 +212,7 @@ const LeaderBoard: FC = () => {
               </TABLE_ROW>
             ))}
           {screenType !== 2
-            ? displayUsers
+            ? users
                 .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
                 .map((user: User, index: number) =>
                   user?.weeklyPoints ? (
@@ -347,7 +227,7 @@ const LeaderBoard: FC = () => {
                     <></>
                   )
                 )
-            : displayUsers
+            : users
                 .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
                 .map((user, index: number) =>
                   user?.totalPoints ? (

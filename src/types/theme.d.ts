@@ -57,7 +57,7 @@ export interface Colors {
   tableBorder: Color
   borderBottom: Color
   multiplierBorder: Color
-  bgForNFTCollection: Color
+  anotherBG: Color
   dropdownBackground: Color
   themeToggleButton: Color
   themeToggleContainer: Color
@@ -212,7 +212,7 @@ export interface Colors {
   filterArrowDown: Color
   tableHeader: Color
   cellBackground: Color
-  borderForNFTCard: Color
+  borderForCard: Color
 
   // secondary
   secondary1: Color

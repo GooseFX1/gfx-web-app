@@ -18,13 +18,10 @@ const BuddyLinkReferral: FC = () => {
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
-  const { perpsDevnetConnection, perpsConnection } = useConnectionConfig()
+  const { perpsConnection } = useConnectionConfig()
   const { isDevnet } = useCrypto()
 
-  const connection = useMemo(() => {
-    if (isDevnet) return perpsDevnetConnection
-    return perpsConnection
-  }, [isDevnet])
+  const connection = useMemo(() => perpsConnection, [isDevnet])
 
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
 

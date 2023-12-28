@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useWallet } from '@solana/wallet-adapter-react'
 import { AccountInfo, PublicKey, SystemProgram } from '@solana/web3.js'
 import React, {
@@ -77,7 +75,6 @@ import { OrderInput, useOrder, IOrder, OrderSide } from './order'
 import { notify, removeFloatingPointError } from '../utils'
 import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
-import { adminCreateMarket, adminInitialiseMPG, updateFeesIx } from '../pages/TradeV3/perps/adminUtils'
 import { httpClient } from '../api'
 
 export const AVAILABLE_ORDERS_PERPS = [
@@ -176,48 +173,11 @@ export interface ITraderHistory {
 
 const TraderContext = React.createContext<IPerpsInfo | null>(null)
 
-export function useTraderConfig() {
+export const useTraderConfig = (): IPerpsInfo => {
   const context = useContext(TraderContext)
 
   if (!context) throw new Error('Missing Trader Context')
-  const {
-    traderInfo,
-    marketProductGroup,
-    marketProductGroupKey,
-    newOrder,
-    newOrderTakeProfit,
-    closePosition,
-    cancelOrder,
-    depositFunds,
-    withdrawFunds,
-    activeProduct,
-    order,
-    setOrder,
-    setFocused,
-    loading,
-    collateralInfo,
-    setOrderBook,
-    portfolioValue
-  } = context
-  return {
-    traderInfo,
-    marketProductGroup,
-    marketProductGroupKey,
-    newOrder,
-    newOrderTakeProfit,
-    closePosition,
-    cancelOrder,
-    depositFunds,
-    withdrawFunds,
-    activeProduct,
-    order,
-    setOrder,
-    setFocused,
-    loading,
-    collateralInfo,
-    setOrderBook,
-    portfolioValue
-  }
+  return context
 }
 
 export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -267,7 +227,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const prevCountRef = useRef<boolean>()
 
   const wallet = useWallet()
-  const { perpsConnection: mainnetConnection, perpsDevnetConnection: devnetConnection } = useConnectionConfig()
+  const { perpsConnection: mainnetConnection } = useConnectionConfig()
   const MPG_ID = useMemo(() => (isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID), [isDevnet])
   const FEE_OUTPUT_REGISTER = useMemo(
     () => (isDevnet ? DEVNET_FEE_OUTPUT_REGISTER : MAINNET_FEE_OUTPUT_REGISTER),
@@ -285,7 +245,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const MPs = useMemo(() => (isDevnet ? DEVNET_MPs : MAINNET_MPs), [isDevnet])
 
   const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
-  const connection = useMemo(() => (isDevnet ? devnetConnection : mainnetConnection), [isDevnet])
+  const connection = useMemo(() => mainnetConnection, [])
   const refreshTraderRiskGroup = async () => {
     if (wallet.connected) {
       const trgFetch = currentTRG

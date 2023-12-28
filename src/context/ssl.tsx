@@ -1,5 +1,15 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction, useEffect } from 'react'
+import {
+  FC,
+  useState,
+  ReactNode,
+  createContext,
+  useContext,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo
+} from 'react'
 import { usePriceFeedFarm } from '.'
 import {
   ADDRESSES,
@@ -15,6 +25,7 @@ import {
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
+import { PublicKey } from '@solana/web3.js'
 
 interface SSLData {
   pool: Pool
@@ -64,6 +75,11 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
+  const publicKey: PublicKey | null = useMemo(
+    () => (wallet && wallet?.adapter ? wallet?.adapter?.publicKey : null),
+    [wallet, wallet?.adapter, wallet?.adapter?.publicKey]
+  )
+
   const getSSLTableData = async () => {
     try {
       const res = await httpClient('api-services').post(`${GET_24_CHANGES}`, {
@@ -102,7 +118,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   // const isWhitelistApi = async () => {
   //   try {
-  //     const walletAddress = wallet?.adapter?.publicKey
+  //     const walletAddress = publicKey
   //     if (walletAddress) {
   //       const res = await httpClient('api-services').post(`${IS_WHITELIST}`, {
   //         walletAddress: walletAddress?.toBase58()
@@ -125,7 +141,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
           const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
           sslPool.entries.forEach((token: any) =>
             ADDRESSES[network].forEach((farm) => {
-              if (token?.mint.toBase58() === farm.address.toBase58()) {
+              if (token?.mint?.toBase58() === farm?.address?.toBase58()) {
                 const sslToken = {
                   ...token,
                   token: farm.token,
@@ -160,37 +176,41 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ;(async () => {
       if (SSLProgram) {
         const liquidityData = []
-        for (const token of sslData) {
-          try {
-            const liquidityAccountKey = await getLiquidityAccountKey(wallet?.adapter?.publicKey, token?.mint)
-            const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-            liquidityData.push(liquidityAccount)
-          } catch (e) {
-            console.error(e)
+        if (publicKey !== null) {
+          for (const token of sslData) {
+            try {
+              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
+              const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
+              liquidityData.push(liquidityAccount)
+            } catch (e) {
+              console.error('SetLiquidityAccounts', e)
+            }
           }
         }
         setLiquidityAccounts(liquidityData)
       }
     })()
-  }, [wallet?.adapter?.publicKey, sslData, isTxnSuccessfull])
+  }, [publicKey, sslData, isTxnSuccessfull])
 
   useEffect(() => {
     ;(async () => {
       if (SSLProgram) {
         const liquidityData = []
-        for (const token of allPoolSslData) {
-          try {
-            const liquidityAccountKey = await getLiquidityAccountKey(wallet?.adapter?.publicKey, token?.mint)
-            const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-            liquidityData.push(liquidityAccount)
-          } catch (e) {
-            console.error(e)
+        if (publicKey !== null) {
+          for (const token of allPoolSslData) {
+            try {
+              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
+              const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
+              liquidityData.push(liquidityAccount)
+            } catch (e) {
+              console.error('SetAllPoolLiquidityAcc', e)
+            }
           }
         }
         setAllPoolLiquidityAcc(liquidityData)
       }
     })()
-  }, [wallet?.adapter?.publicKey, allPoolSslData, isTxnSuccessfull])
+  }, [publicKey, allPoolSslData, isTxnSuccessfull])
 
   useEffect(() => {
     ;(async () => {
@@ -201,7 +221,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             let found = false
             for (let i = 0; i < allPoolLiquidityAcc.length; i++) {
               const account = allPoolLiquidityAcc[i]
-              if (account?.mint.toBase58() === pool.address.toBase58()) {
+              if (account?.mint?.toBase58() === pool?.address?.toBase58()) {
                 filteredData[pool.address] = account
                 found = true
               }
@@ -217,8 +237,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [allPoolLiquidityAcc])
 
   // useEffect(() => {
-  //   if (wallet?.adapter?.publicKey) isWhitelistApi()
-  // }, [wallet?.adapter?.publicKey])
+  //   if (publicKey) isWhitelistApi()
+  // }, [publicKey])
 
   useEffect(() => {
     ;(async () => {
@@ -229,7 +249,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             let found = false
             for (let i = 0; i < liquidityAccounts.length; i++) {
               const account = liquidityAccounts[i]
-              if (account?.mint.toBase58() === pool.address.toBase58()) {
+              if (account?.mint?.toBase58() === pool?.address?.toBase58()) {
                 filteredData[pool.address] = account
                 found = true
               }
@@ -253,7 +273,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (filteredLiquidityAccounts && !isEmpty(filteredLiquidityAccounts) && sslData && sslData.length) {
       const tempRewards = {}
       for (let i = 0; i < sslData.length; i++) {
-        const mint = sslData[i].mint.toBase58()
+        const mint = sslData[i]?.mint?.toBase58()
         const liqForMint = filteredLiquidityAccounts[mint]
         if (!filteredLiquidityAccounts[mint]) {
           tempRewards[mint] = null
