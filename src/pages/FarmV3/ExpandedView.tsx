@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, SkeletonCommon } from '../../components'
 import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
-import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
+import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, toPublicKey } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -20,7 +20,6 @@ import {
 } from './constants'
 import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { toPublicKey } from '@metaplex-foundation/js'
 import { ActionModal } from './ActionModal'
 import BN from 'bn.js'
 

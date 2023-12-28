@@ -141,13 +141,7 @@ const LeaderBoard: FC = () => {
           )}
         </div>
         <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
-          <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">
-            {screenType === 1 ? (
-              <div tw="sm:text-left">Paper Trade {checkMobile() && <br />}Season 1</div>
-            ) : (
-              'Season 1'
-            )}
-          </div>
+          <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">Season 1</div>
           {checkMobile() && (
             <div
               tw="border border-solid border-grey-1 w-[45%] h-10 rounded-[100px]

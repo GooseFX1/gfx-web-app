@@ -47,7 +47,6 @@ interface ISettingsConfig {
   chainId: ENV
   connection: Connection
   perpsConnection: Connection
-  perpsDevnetConnection: Connection
   endpoint: string
   endpointName: string
   network: WalletAdapterNetwork
@@ -124,21 +123,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }, [endpointName, endpoint])
 
-  const perpsDevnetConnection = useMemo(
-    () =>
-      // sets rpc info to cache
-      // creates connection - temp ws url
-      new Connection(
-        'https://omniscient-frequent-wish.solana-devnet.quiknode.pro/8b6a255ef55a6dbe95332ebe4f6d1545eae4d128/',
-        {
-          commitment: 'processed',
-          httpAgent: false,
-          disableRetryOnRateLimit: true
-        }
-      ),
-    []
-  )
-
   const connection = useMemo(() => {
     // sets rpc info to cache
     window.localStorage.setItem(
@@ -186,7 +170,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage: (val: number) => setSlippage(val),
         slippage: slippage,
         perpsConnection,
-        perpsDevnetConnection,
         blacklisted
       }}
     >

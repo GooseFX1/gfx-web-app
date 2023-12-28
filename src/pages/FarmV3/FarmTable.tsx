@@ -688,6 +688,6 @@ const FarmTokenContent: FC<{
       <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
     </>
   ) : (
-    <></>
+    <tr></tr>
   )
 }
