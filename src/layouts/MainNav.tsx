@@ -306,8 +306,13 @@ const DropDownControls: FC<DesktopControlsProps> = ({
 }) => {
   const selfRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef(null)
+  const timeout = useRef<NodeJS.Timeout>(null)
   const localOnHover = useCallback(
     (e: BaseSyntheticEvent) => {
+      if (timeout.current) {
+        clearTimeout(timeout.current)
+        timeout.current = null
+      }
       console.log(isOpen, 'click')
       if (!isOpen) {
         e.currentTarget.click()
@@ -316,17 +321,25 @@ const DropDownControls: FC<DesktopControlsProps> = ({
     },
     [onHover, isOpen]
   )
-
+  const localOnClose = useCallback(() => {
+    if (!timeout.current) {
+      timeout.current = setTimeout(onClose, 150)
+    }
+  }, [onClose])
   const handleMove = useCallback(
     (e: MouseEvent) => {
       if (isOpen) {
+        if (timeout.current) {
+          clearTimeout(timeout.current)
+          timeout.current = null
+        }
         if (!selfRef.current.contains(e.target as HTMLElement)) {
-          buttonRef.current.click()
-          onClose()
+          // buttonRef.current.click()
+          localOnClose()
         }
       }
     },
-    [onClose, isOpen]
+    [localOnClose, isOpen]
   )
   useEffect(() => {
     window.addEventListener('mousemove', handleMove)
@@ -357,9 +370,14 @@ const DropDownControls: FC<DesktopControlsProps> = ({
     },
     [onClose]
   )
+
   return (
-    <div css={tw`relative inline-block text-left z-20 `} ref={selfRef}>
-      <span css={tw`absolute top-[44px] right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
+    <div css={[tw`relative inline-block text-left z-20 `]} ref={selfRef}>
+      <span
+        id={'spacer'}
+        css={[tw`absolute top-[44px] left-0 h-6 w-full z-[0]`]}
+        style={{ minWidth: '-webkit-fill-available' }}
+      />
       <Menu>
         {() => (
           <>
