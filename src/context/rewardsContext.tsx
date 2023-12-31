@@ -24,13 +24,14 @@ import { BN, Wallet } from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
 import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { confirmTransaction } from '../web3'
+import { confirmTransaction, createAssociatedTokenAccountIx } from '../web3'
 import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
 import useSolSub, { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
+import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 
 const cg = new CoinGecko()
 
@@ -562,10 +563,23 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const unstake = useCallback(
     async (amount: number) => {
+      const gofxMint = rewardAddresses[stakeRewards.network].GOFX_MINT
+      const account = await connection.getTokenAccountsByOwner(walletContext.publicKey, { mint: gofxMint })
+      const TX = new Transaction()
+      if (!account || !account.value.length) {
+        const ata = await getAssociatedTokenAddress(
+          gofxMint, // mint
+          walletContext.publicKey, // owner
+          false
+        )
+        const tx = createAssociatedTokenAccountIx(gofxMint, ata, walletContext.publicKey)
+        TX.add(tx)
+      }
       const unstakeAmount = new anchor.BN(amount * 1e9)
       const txn = await checkForUserAccount(async () =>
         stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
+      TX.add(txn)
       //const proposedEndDate = moment().add(7, 'days').calendar()
       const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
         console.log(err)
