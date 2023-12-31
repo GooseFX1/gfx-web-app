@@ -581,7 +581,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       TX.add(txn)
       //const proposedEndDate = moment().add(7, 'days').calendar()
-      const txnSig = await walletContext.sendTransaction(new Transaction().add(txn), connection).catch((err) => {
+      const txnSig = await walletContext.sendTransaction(TX, connection).catch((err) => {
         console.log(err)
         return ''
       })
