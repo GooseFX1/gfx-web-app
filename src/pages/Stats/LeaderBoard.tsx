@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useCallback, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../utils'
@@ -8,6 +8,7 @@ import {
   ColumnHeadersWeb,
   ColumnMobile,
   ColumnWeb,
+  formatNumberToHumanReadable,
   getFormattedDomainName,
   HowToEarn
 } from './Columns'
@@ -16,6 +17,8 @@ import { useDarkMode } from '../../context'
 import { getClassNameForBoost } from './Columns'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { useHistory } from 'react-router-dom'
+import { GradientText } from '../../components'
 
 const WRAPPER = styled.div<{ $index: number }>`
   height: calc(100vh - 56px);
@@ -39,7 +42,6 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   .slider {
     ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px] sm:w-[90px]`}
-    left: ${({ $index }) => (checkMobile() ? $index * 90 + 'px' : $index * 80 + 'px')};
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -78,9 +80,14 @@ const WRAPPER = styled.div<{ $index: number }>`
     ${tw`text-right pr-2.5`}
   }
   .banner-mobile {
-    ${tw`absolute bottom-0`}
-    left: calc(50% - 110px)
+    ${tw`absolute bottom-0 `}
   }
+`
+
+const BANNER_WRAPPER = styled.div`
+  ${tw`relative h-[134px] w-full border border-solid dark:border-grey-2 border-grey-1 
+  mx-auto mb-3.75 rounded-tiny px-10`}
+  width: calc(100% - 40px);
 `
 
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
@@ -113,9 +120,16 @@ const LeaderBoard: FC = () => {
   const [screenType] = useState<number>(0)
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const { users } = useStats()
+  const displayUsers = useMemo(() => users, [users, screenType])
+  const leaderboardScreens = ['Perps']
 
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
+  const history = useHistory()
+
+  const redirectToTrade = useCallback(() => {
+    history.push('/trade')
+  }, [])
 
   return (
     <WRAPPER $isCollapsed={true} $index={screenType}>
@@ -125,19 +139,34 @@ const LeaderBoard: FC = () => {
           <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
         )}
         <div tw="relative sm:justify-start relative z-0">
+          <div tw="w-[240px] mx-auto flex flex-row justify-center relative sm:w-[270px]">
+            <div className="slider"></div>
+            {leaderboardScreens.map((pool, index) => (
+              <div
+                tw="w-[90px] h-10 flex justify-center items-center cursor-pointer font-bold
+                text-regular text-grey-2"
+                key={index}
+                className={'active'}
+              >
+                {pool}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div tw="relative sm:justify-start relative z-0">
           {!checkMobile() && (
-            <div
+            <a
+              href="https://docs.goosefx.io/earn/perps-leaderboard?utm_source=perps_leaderboard"
+              target="_blank"
+              rel="noreferrer"
               tw="absolute right-5 top-0 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
                 py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
-              onClick={() => {
-                setHowToEarn(true)
-              }}
             >
               <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
                 How to earn
               </span>
               <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
-            </div>
+            </a>
           )}
         </div>
         <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
@@ -171,6 +200,33 @@ const LeaderBoard: FC = () => {
           )}
         </div>
       </HEADER>
+      {checkMobile() ? (
+        <div
+          onClick={redirectToTrade}
+          tw="relative h-[213px] w-11/12 border border-solid dark:border-grey-2 border-grey-1 
+            mx-auto my-3.75 rounded-tiny pt-3 flex items-center flex-col px-10 gap-2"
+        >
+          <div>
+            <GradientText text={'SOL-PERP'} fontSize={33} fontWeight={600} />
+          </div>
+          <div tw="flex items-center">
+            <img src={`/img/crypto/BONK.svg`} alt="nft-banner" height="77px" width="77px" />
+            <div tw="text-[25px] font-semibold dark:text-white text-black-4 ml-4 text-left">
+              +1.5x <br />
+              Boost
+            </div>
+          </div>
+          <div tw="text-[25px] font-semibold dark:text-white text-black-4 ml-4 mt-4">Hold 1M+ BONK</div>
+        </div>
+      ) : (
+        <BANNER_WRAPPER onClick={redirectToTrade}>
+          <div tw="flex flex-row items-center h-full cursor-pointer">
+            <img src={`img/crypto/BONK.svg`} alt="nft-banner" tw="mr-4" width={74} height={74} />
+            <GradientText text={'SOL-PERP'} fontSize={55} fontWeight={600} />
+            <div tw="text-[30px] ml-auto dark:text-white text-black-4">Get +1.5x Boost by holding 1M+ BONK</div>
+          </div>
+        </BANNER_WRAPPER>
+      )}
 
       <div tw="flex flex-row justify-between relative px-5 sm:block sm:px-[15px] sm:mb-0">
         {users?.slice(0, 3).map((user: User, index: number) => (
@@ -185,9 +241,13 @@ const LeaderBoard: FC = () => {
             />
             <div tw="flex flex-col mr-auto">
               <div tw="dark:text-grey-2 text-grey-1 font-semibold text-regular">
-                {user?.domainName ? getFormattedDomainName(user.domainName) : truncateAddress(user?.address)}
+                {user?.domainName
+                  ? getFormattedDomainName(user.domainName)
+                  : user?.address && truncateAddress(user?.address)}
               </div>
-              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">{user.weeklyPoints}</div>
+              <div tw="dark:text-grey-5 text-black-4 font-semibold text-lg">
+                {formatNumberToHumanReadable(user?.totalPoints)}
+              </div>
             </div>
             <div tw="font-semibold text-regular" className={getClassNameForBoost(user?.boost)}>
               {user?.boost}x Boost
@@ -197,51 +257,29 @@ const LeaderBoard: FC = () => {
       </div>
       <table>
         <thead className="tableHeader">
-          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb screenType={screenType} />}</tr>
+          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
         </thead>
         <tbody>
-          {users
-            .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
-            .map((user: User, index: number) => (
-              <TABLE_ROW key={index}>
-                {checkMobile() ? (
-                  <ColumnMobile user={user} />
+          {displayUsers?.length &&
+            displayUsers
+              .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
+              .map((user: User, index: number) => (
+                <TABLE_ROW key={index}>
+                  {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} connectedUser={true} />}
+                </TABLE_ROW>
+              ))}
+          {displayUsers &&
+            displayUsers
+              .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
+              .map((user: User, index: number) =>
+                user?.totalPoints && index < 100 ? (
+                  <TABLE_ROW key={index}>
+                    {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
+                  </TABLE_ROW>
                 ) : (
-                  <ColumnWeb user={user} screenType={screenType} connectedUser={true} />
-                )}
-              </TABLE_ROW>
-            ))}
-          {screenType !== 2
-            ? users
-                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-                .map((user: User, index: number) =>
-                  user?.weeklyPoints ? (
-                    <TABLE_ROW key={index}>
-                      {checkMobile() ? (
-                        <ColumnMobile user={user} />
-                      ) : (
-                        <ColumnWeb user={user} screenType={screenType} />
-                      )}
-                    </TABLE_ROW>
-                  ) : (
-                    <></>
-                  )
+                  <></>
                 )
-            : users
-                .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
-                .map((user, index: number) =>
-                  user?.totalPoints ? (
-                    <TABLE_ROW key={index}>
-                      {checkMobile() ? (
-                        <ColumnMobile user={user} />
-                      ) : (
-                        <ColumnWeb user={user} screenType={screenType} />
-                      )}
-                    </TABLE_ROW>
-                  ) : (
-                    <></>
-                  )
-                )}
+              )}
         </tbody>
       </table>
     </WRAPPER>
