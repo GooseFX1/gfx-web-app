@@ -105,7 +105,7 @@ export const Connect: FC<MenuItemProps> = ({
 
   return (
     <div css={[tw`relative inline-block text-left z-20 `].concat(containerStyle ?? [])} ref={selfRef}>
-      <span css={tw`absolute -bottom-4 right-0 h-4 z-10`} style={{ width: '-webkit-fill-available' }} />
+      <span css={[tw`absolute -bottom-4 right-0 h-4 z-10 w-full`]} style={{ width: '-webkit-fill-available' }} />
       <Menu>
         <GenericTooltip
           text={`We are sorry, ${
