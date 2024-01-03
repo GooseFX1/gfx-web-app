@@ -43,8 +43,8 @@ export const Footer: FC = () => {
     <WRAPPER>
       {isModalOpen && <ReleaseNotes isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
       {checkMobile() && (
-        <div tw="flex flex-row items-center justify-between mb-3.75">
-          <div>
+        <div tw="mb-3.75">
+          {/* <div>
             <span className="tags" tw="mr-1.5" onClick={() => setIsModalOpen(true)}>
               Release Notes
             </span>
@@ -56,8 +56,14 @@ export const Footer: FC = () => {
                 <NEW>New</NEW>
               </div>
             </div>
-          </div>
-          <a className="tags" href="https://www.goosefx.io/risks-and-disclaimers" target="_blank" rel="noreferrer">
+          </div> */}
+          <a
+            className="tags"
+            href="https://www.goosefx.io/risks-and-disclaimers"
+            target="_blank"
+            rel="noreferrer"
+            tw="mr-10"
+          >
             Risk & Disclaimers
           </a>
           <a className="tags" href="https://www.goosefx.io/terms" target="_blank" rel="noreferrer">
@@ -73,8 +79,8 @@ export const Footer: FC = () => {
         </a>
       </span>
       {!checkMobile() && (
-        <div tw="flex flex-row items-center justify-between w-[30%] ml-auto">
-          <div>
+        <div tw="ml-auto">
+          {/* <div>
             <span className="tags" tw="mr-1.5" onClick={() => setIsModalOpen(true)}>
               Release Notes
             </span>
@@ -86,8 +92,14 @@ export const Footer: FC = () => {
                 <NEW>New</NEW>
               </div>
             </div>
-          </div>
-          <a className="tags" href="https://www.goosefx.io/risks-and-disclaimers" target="_blank" rel="noreferrer">
+          </div> */}
+          <a
+            className="tags"
+            href="https://www.goosefx.io/risks-and-disclaimers"
+            target="_blank"
+            rel="noreferrer"
+            tw="mr-10"
+          >
             Risk & Disclaimers
           </a>
           <a className="tags" href="https://www.goosefx.io/terms" target="_blank" rel="noreferrer">
