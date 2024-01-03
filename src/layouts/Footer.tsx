@@ -1,7 +1,7 @@
 import { FC, useState, Dispatch, SetStateAction } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useDarkMode } from '../context'
-import { PopupCustom } from '../pages/NFTs/Popup/PopupCustom'
+import { PopupCustom } from '../components/popups/PopupCustom'
 import { checkMobile } from '../utils'
 
 const STYLED_POPUP = styled(PopupCustom)<{
