@@ -16,7 +16,6 @@ import HowItWorksButton from './v2/HowItWorksButton'
 import TopLinks from './v2/TopLinks'
 
 const Refer: FC = () => {
-  console.log('BLEH')
   return (
     <>
       <RewardsLeftLayout>
@@ -26,7 +25,7 @@ const Refer: FC = () => {
         </CombinedRewardsTopLinks>
         <ReferAndEarn />
       </RewardsLeftLayout>
-      <RewardsRightLayout>
+      <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r to-secondary-gradient-3 from-secondary-gradient-1 `]}>
         <ReferRightPanel />
       </RewardsRightLayout>
     </>
