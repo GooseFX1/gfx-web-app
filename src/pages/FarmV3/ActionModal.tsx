@@ -115,7 +115,7 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim yield`
+              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim Yield`
               : actionType === 'withdraw'
               ? `Withdraw ${commafy(+withdrawAmount + claimAmount, 4)} ${token?.token}`
               : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`

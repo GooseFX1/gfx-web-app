@@ -176,17 +176,17 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   // Disable action button when deposit mode with zero user balance or no deposit amount,
   // or withdraw mode with zero user deposited amount or no withdraw amount
-  const disableActionButton = useMemo(
-    () =>
-      !liquidity ||
-      !coin?.cappedDeposit ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
-      (modeOfOperation === ModeOfOperation.DEPOSIT &&
-        (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
-      (modeOfOperation === ModeOfOperation.WITHDRAW &&
-        (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0)),
-    [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
-  )
+  // const disableActionButton = useMemo(
+  //   () =>
+  //     !liquidity ||
+  //     !coin?.cappedDeposit ||
+  //     (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
+  //     (modeOfOperation === ModeOfOperation.DEPOSIT &&
+  //       (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
+  //     (modeOfOperation === ModeOfOperation.WITHDRAW &&
+  //       (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0)),
+  //   [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
+  // )
 
   // Deposit mode and user has not token balance OR has not yet given input OR Withdraw has not deposited anything
   const actionButtonText = useMemo(() => {
@@ -557,7 +557,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 <Button
                   height="35px"
                   disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
-                  disabled={isButtonLoading || disableActionButton}
+                  // disabled={isButtonLoading || disableActionButton}
                   cssStyle={tw`duration-500 w-[195px] mr-[5px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-bold rounded-[50px] flex items-center justify-center outline-none`}
                   onClick={

@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import tw from 'twin.macro'
 import styled from 'styled-components'
 import { MainNav } from './MainNav'
+import { Footer } from './Footer'
 import { useRewardToggle, useDarkMode } from '../context'
 import { TermsOfService } from './TermsOfService'
 import 'styled-components/macro'
@@ -23,6 +24,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <div css={[tw`min-2xl:w-[2500px] m-auto mt-14`]} id="gfx-app-layout">
         {children}
       </div>
+      <Footer />
     </Wrapper>
   )
 }
