@@ -9,14 +9,39 @@ import { Treasury } from '@ladderlabs/buddy-sdk'
 import { useConnectionConfig } from '../../context'
 import { Transaction } from '@solana/web3.js'
 import { notify } from '../../utils'
+import RewardsRightLayout from './layout/RewardsRightLayout'
+import RewardsLeftLayout from './layout/RewardsLeftLayout'
+import CombinedRewardsTopLinks from './v2/CombinedRewardsTopLinks'
+import HowItWorksButton from './v2/HowItWorksButton'
+import TopLinks from './v2/TopLinks'
 
-const ReferAndEarn: FC = () => (
-  <div css={tw`flex flex-col gap-4 font-semibold mb-[25px] h-full leading-normal`}>
+const Refer: FC = () => {
+  console.log('BLEH')
+  return (
+    <>
+      <RewardsLeftLayout>
+        <CombinedRewardsTopLinks>
+          <TopLinks />
+          <HowItWorksButton />
+        </CombinedRewardsTopLinks>
+        <ReferAndEarn />
+      </RewardsLeftLayout>
+      <RewardsRightLayout>
+        <ReferRightPanel />
+      </RewardsRightLayout>
+    </>
+  )
+}
+export default Refer
+export const ReferAndEarn: FC = () => (
+  <div css={[tw`flex flex-col gap-4 font-semibold mb-[25px] h-full leading-normal`]}>
     <BuddyLinkReferral />
     <p
-      css={tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-medium text-justify
-    max-w-[579px]
-    `}
+      css={[
+        tw`mb-0 text-tiny min-md:text-regular text-grey-3 dark:text-grey-2 font-medium text-justify
+      max-w-[579px]
+      `
+      ]}
     >
       To generate a referral link, first connect your wallet and create a trader account at
       <a
@@ -57,7 +82,6 @@ const ReferAndEarn: FC = () => (
     </div>
   </div>
 )
-export default ReferAndEarn
 
 export const ReferRightPanel: FC = () => {
   const breakpoints = useBreakPoint()
@@ -120,8 +144,13 @@ export const ReferRightPanel: FC = () => {
       })
   }, [isReady])
   return (
-    <div css={tw`flex flex-col h-full pt-3.75 pb-2.5 min-md:pb-0 min-md:pt-[26px] w-full items-center `}>
-      <p css={tw`mb-0 text-lg font-semibold font-semibold leading-normal`}>
+    <div
+      css={[
+        tw`flex flex-col h-full pt-3.75 pb-2.5
+        min-md:pb-0 min-md:pt-[26px] w-full items-center `
+      ]}
+    >
+      <p css={[tw`mb-0 text-lg font-semibold font-semibold leading-normal`]}>
         Total Referred: {totalFriends} Friends
       </p>
       {!(breakpoints.isMobile || breakpoints.isTablet) && <ReferFriendSegment />}
@@ -131,8 +160,8 @@ export const ReferRightPanel: FC = () => {
           totalEarned <= 0.0 ? tw`min-md:opacity-60` : tw`opacity-100`
         ]}
       >
-        <p css={tw`text-2xl min-md:text-4xl mb-0 font-semibold leading-10`}>{totalEarned.toFixed(2)}</p>
-        <p css={tw`text-regular min-md:text-lg mb-0 font-semibold`}>
+        <p css={[tw`text-2xl min-md: text-4xl mb-0 font-semibold leading-10`]}>{totalEarned.toFixed(2)}</p>
+        <p css={[tw`text-regular min-md: text-lg mb-0 font-semibold`]}>
           {breakpoints.isMobile || breakpoints.isTablet ? 'Total USDC Earned' : 'USDC Total Earned'}
         </p>
       </div>
@@ -169,7 +198,7 @@ export const ReferFriendSegment = (): JSX.Element => {
   }, [isReady])
 
   return (
-    <div css={tw`flex flex-col items-center justify-center w-full`}>
+    <div css={[tw`flex flex-col items-center justify-center w-full`]}>
       <a
         href={''}
         target={'_blank'}

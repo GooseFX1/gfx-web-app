@@ -23,6 +23,12 @@ function TopLinks(): JSX.Element {
       >
         Win
       </Button>
+      <Button
+        cssClasses={[tw`h-[35px] !px-5 !py-1.875`, panelIndex == 2 && tw`dark:text-white text-blue-1`]}
+        onClick={() => changePanel(2)}
+      >
+        Refer
+      </Button>
     </AnimatedButtonGroup>
   )
 }
