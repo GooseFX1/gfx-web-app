@@ -11,6 +11,7 @@ import Button from '../twComponents/Button'
 
 import Rewards from './v2/Rewards'
 import Raffle from './raffle/Raffle'
+import Refer from './Refer'
 
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
@@ -88,6 +89,7 @@ export const RewardsPopup: FC = () => {
           </Button>
           {panelIndex == 0 && <Rewards />}
           {panelIndex == 1 && <Raffle />}
+          {panelIndex == 2 && <Refer />}
         </div>
       </RewardsProvider>
     </CryptoProvider>
