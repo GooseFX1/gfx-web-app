@@ -15,22 +15,21 @@ import CombinedRewardsTopLinks from './v2/CombinedRewardsTopLinks'
 import HowItWorksButton from './v2/HowItWorksButton'
 import TopLinks from './v2/TopLinks'
 
-const Refer: FC = () => {
-  return (
-    <>
-      <RewardsLeftLayout>
-        <CombinedRewardsTopLinks>
-          <TopLinks />
-          <HowItWorksButton />
-        </CombinedRewardsTopLinks>
-        <ReferAndEarn />
-      </RewardsLeftLayout>
-      <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r to-secondary-gradient-3 from-secondary-gradient-1 `]}>
-        <ReferRightPanel />
-      </RewardsRightLayout>
-    </>
-  )
-}
+const Refer: FC = () => (
+  <>
+    <RewardsLeftLayout>
+      <CombinedRewardsTopLinks>
+        <TopLinks />
+        <HowItWorksButton />
+      </CombinedRewardsTopLinks>
+      <ReferAndEarn />
+    </RewardsLeftLayout>
+    <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r to-secondary-gradient-3 from-secondary-gradient-1 `]}>
+      <ReferRightPanel />
+    </RewardsRightLayout>
+  </>
+)
+
 export default Refer
 export const ReferAndEarn: FC = () => (
   <div css={[tw`flex flex-col gap-4 font-semibold mb-[25px] h-full leading-normal`]}>
