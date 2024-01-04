@@ -72,8 +72,8 @@ export const Footer: FC = () => {
         </div>
       )}
       <div tw="text-smallest font-bold text-grey-1">
-        Copyright 2023 GOOSEFX, All rights reserved. Please trade at your discretion and according to the laws and
-        regulations of your location, security audits by{' '}
+        Copyright {new Date()?.getFullYear()} GOOSEFX, All rights reserved. Please trade at your discretion and
+        according to the laws and regulations of your location, security audits by{' '}
         <a href="https://osec.io/" target="_blank" rel="noreferrer" tw="!text-blue-1 dark:!text-white !font-bold">
           OtterSec.
         </a>
