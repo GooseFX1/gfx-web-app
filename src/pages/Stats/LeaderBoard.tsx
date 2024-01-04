@@ -21,7 +21,7 @@ import { useHistory } from 'react-router-dom'
 import { GradientText } from '../../components'
 
 const WRAPPER = styled.div<{ $index: number }>`
-  height: calc(100vh - 56px);
+  height: auto;
   &::-webkit-scrollbar {
     display: none;
   }

@@ -5,7 +5,7 @@ import 'styled-components/macro'
 import { CircularArrow } from '../../components/common/Arrow'
 
 const FAQ_WRAPPER = styled.div`
-  ${tw`sm:w-[calc(100% - 15px)] mb-7.5`}
+  ${tw`sm:w-[calc(100% - 15px)] mb-3.75`}
   .faqs {
     ${tw`flex flex-row cursor-pointer items-center h-[52px] sm:h-auto sm:py-3 px-3.75 w-full
      border border-solid dark:border-black-4 border-grey-4 border-r-0 border-t-0 border-l-0`}

@@ -8,8 +8,8 @@ import { TermsOfService } from './TermsOfService'
 import 'styled-components/macro'
 
 const Wrapper = styled.div<{ $rewardModal: boolean }>`
-  ${tw`overflow-x-hidden min-w-vw min-h-vh sm:max-h-vh`}
-  overflow: ${({ $rewardModal }) => ($rewardModal ? 'hidden' : 'auto')};
+  ${tw`overflow-x-hidden min-w-vw sm:max-h-vh`}
+  overflow: ${({ $rewardModal }) => ($rewardModal ? 'hidden' : 'scroll')};
   background: ${({ theme }) => theme.bg2};
 `
 

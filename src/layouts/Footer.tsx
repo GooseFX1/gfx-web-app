@@ -24,7 +24,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
 
 const WRAPPER = styled.div`
   ${tw`flex flex-row items-center h-9 border-t border-solid dark:border-black-4 border-[#E9DEF1] 
-    py-3.5 px-5 fixed bottom-0 w-full bg-grey-5 dark:bg-black-1 z-[1000] sm:block sm:h-[100px]`}
+    pt-3.75 px-5 bg-grey-5 dark:bg-black-1 z-[1000] sm:block sm:h-24 sm:px-2.5 sm:py-3.75`}
 
   .tags {
     ${tw`font-bold text-12 underline dark:text-white text-blue-1 cursor-pointer`}
@@ -64,20 +64,20 @@ export const Footer: FC = () => {
             rel="noreferrer"
             tw="mr-10"
           >
-            Risk & Disclaimers
+            Disclaimers
           </a>
           <a className="tags" href="https://www.goosefx.io/terms" target="_blank" rel="noreferrer">
             Terms of Service
           </a>
         </div>
       )}
-      <span tw="text-smallest font-bold text-grey-1">
+      <div tw="text-smallest font-bold text-grey-1">
         Copyright 2023 GOOSEFX, All rights reserved. Please trade at your discretion and according to the laws and
         regulations of your location, security audits by{' '}
         <a href="https://osec.io/" target="_blank" rel="noreferrer" tw="!text-blue-1 dark:!text-white !font-bold">
           OtterSec.
         </a>
-      </span>
+      </div>
       {!checkMobile() && (
         <div tw="ml-auto">
           {/* <div>
@@ -100,7 +100,7 @@ export const Footer: FC = () => {
             rel="noreferrer"
             tw="mr-10"
           >
-            Risk & Disclaimers
+            Disclaimers
           </a>
           <a className="tags" href="https://www.goosefx.io/terms" target="_blank" rel="noreferrer">
             Terms of Service
