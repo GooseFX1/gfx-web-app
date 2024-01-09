@@ -46,7 +46,6 @@ const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
   border-top: none;
-  height: calc(100vh - 180px);
 
   .history-items-root-container {
     height: 100%;
@@ -81,20 +80,24 @@ const HISTORY = styled.div`
     border-bottom: none;
   }
   .no-trades-found {
-    max-width: 155px;
     display: flex;
-    margin: auto;
+    height: 70vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
-  .no-trades-found > p {
-    margin: 0;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    color: ${({ theme }) => theme.text2};
-    font-size: 15px;
-    font-weight: 600;
+
+    img {
+      max-width: 155px;
+    }
+
+    p {
+      margin: 0;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      color: ${({ theme }) => theme.text2};
+      font-size: 15px;
+      font-weight: 600;
+    }
   }
 
   .deposit {
@@ -189,7 +192,7 @@ const Trades: FC = () => {
         ))}
       </ACCOUNTHEADER>
       <HISTORY>
-        {filledTrades.length ? (
+        {filledTrades.length === 0 ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {filledTrades.map((trade) => (

@@ -5,10 +5,10 @@ import 'styled-components/macro'
 import { useDarkMode } from '../../../context'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col px-5  w-36`}
+  ${tw`px-5  w-36`}
   border-right: 1px solid #3C3C3C;
   color: ${({ theme }) => theme.text2};
-  height: calc(100vh - 52px);
+
   div {
     opacity: 0;
     transform: translateY(20px);

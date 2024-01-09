@@ -43,7 +43,6 @@ const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
   border: 1px solid #3c3c3c;
   border-top: none;
-  height: calc(100vh - 180px);
 
   .history-items-root-container {
     height: 100%;
@@ -68,22 +67,25 @@ const HISTORY = styled.div`
     ${tw`pl-1`}
   }
   .no-deposits-found {
-    max-width: 155px;
     display: flex;
-    margin: auto;
+    height: 70vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
-  .no-deposits-found > p {
-    margin: 0;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    color: #636363;
-    font-size: 15px;
-    font-weight: 600;
-  }
 
+    img {
+      max-width: 155px;
+    }
+
+    p {
+      margin: 0;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      color: ${({ theme }) => theme.text2};
+      font-size: 15px;
+      font-weight: 600;
+    }
+  }
   .pagination-container {
     height: 40px;
   }

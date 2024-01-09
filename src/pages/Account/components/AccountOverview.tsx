@@ -11,14 +11,6 @@ import { useTraderConfig } from '../../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/utils'
 import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
-const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
-  padding: 15px;
-  h1 {
-    font-size: 18px;
-    color: ${({ theme }) => theme.text2};
-  }
-`
 
 const ACCOUNTVALUESFLEX = styled.div`
   ${tw`flex flex-row flex-wrap gap-x-4`}
@@ -221,7 +213,7 @@ const AccountOverview: FC = () => {
     }
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
-    <WRAPPER>
+    <div tw="flex flex-col w-full h-full p-[15px]">
       {depositWithdrawModal && (
         <SETTING_MODAL
           visible={true}
@@ -240,7 +232,7 @@ const AccountOverview: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <h1>Account Overview</h1>
+      <h1 tw="text-average dark:text-white text-black-1">Account Overview</h1>
       <ACCOUNTVALUESFLEX>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
@@ -297,7 +289,7 @@ const AccountOverview: FC = () => {
           </div>
         )}
       </HISTORY>
-    </WRAPPER>
+    </div>
   )
 }
 

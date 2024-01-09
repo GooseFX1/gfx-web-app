@@ -27,11 +27,13 @@ const Account: FC = () => {
   return !checkMobile() ? (
     <DESKTOPWRAPPER className="no-scrollbar">
       <Sidebar selected={selected} setSelected={setSelected} />
-      {selected === 0 && <AccountOverview />}
-      {selected === 2 && <DepositWithdrawHistory />}
-      {selected === 3 && <Trades />}
-      {selected === 4 && <FundingHistory />}
-      {selected === 5 && <Liquidations />}
+      <div tw="min-h-[calc(100vh - 112px)] w-full overflow-y-scroll p-0">
+        {selected === 0 && <AccountOverview />}
+        {selected === 2 && <DepositWithdrawHistory />}
+        {selected === 3 && <Trades />}
+        {selected === 4 && <FundingHistory />}
+        {selected === 5 && <Liquidations />}
+      </div>
     </DESKTOPWRAPPER>
   ) : (
     <MOBILEWRAPPER>

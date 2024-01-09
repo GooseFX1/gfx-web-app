@@ -27,7 +27,7 @@ const componentDimensionsLg = [
     x: 0,
     y: 0,
     i: '0',
-    h: 17.5,
+    h: 19,
     w: 4,
     autoSize: true
   },
@@ -35,7 +35,7 @@ const componentDimensionsLg = [
     x: 4,
     y: 0,
     i: '1',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -43,7 +43,7 @@ const componentDimensionsLg = [
     x: 6,
     y: 0,
     i: '2',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -70,7 +70,7 @@ const componentDimensionsMd = [
     x: 0,
     y: 0,
     i: '0',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -78,7 +78,7 @@ const componentDimensionsMd = [
     x: 0,
     y: 2,
     i: '1',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -86,7 +86,7 @@ const componentDimensionsMd = [
     x: 2,
     y: 20,
     i: '2',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -94,7 +94,7 @@ const componentDimensionsMd = [
     x: 2,
     y: 20,
     i: '4',
-    h: 17.5,
+    h: 19,
     w: 2,
     autoSize: true
   },
@@ -113,7 +113,7 @@ const componentDimensionsMd = [
 //     x: 0,
 //     y: 0,
 //     i: '0',
-//     h: 17.5,
+//     h: 19,
 //     w: 4,
 //     autoSize: true
 //   },
@@ -121,7 +121,7 @@ const componentDimensionsMd = [
 //     x: 4,
 //     y: 0,
 //     i: '1',
-//     h: 17.5,
+//     h: 19,
 //     w: 2,
 //     autoSize: true
 //   },
@@ -129,7 +129,7 @@ const componentDimensionsMd = [
 //     x: 6,
 //     y: 0,
 //     i: '2',
-//     h: 17.5,
+//     h: 19,
 //     w: 2,
 //     autoSize: true
 //   },
@@ -152,7 +152,7 @@ const componentDimensionsMd = [
 // ]
 
 const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
-  ${tw`relative flex w-full h-full flex-col pt-[24px] overflow-y-scroll overflow-x-hidden`}
+  ${tw`relative flex w-full flex-col pt-[24px] overflow-y-scroll overflow-x-hidden`}
 
   .layout {
     ${tw`w-[99%] mt-5 mx-auto mb-0 relative`}

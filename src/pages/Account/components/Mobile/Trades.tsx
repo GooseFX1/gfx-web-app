@@ -64,21 +64,23 @@ const HISTORY = styled.div`
   }
   .no-trades-found {
     display: flex;
-    margin: auto;
+    height: 70vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #3c3c3c;
-    width: 100%;
-    height: calc(100vh - 160px);
-  }
-  .no-trades-found > p {
-    margin: 0;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    color: ${({ theme }) => theme.text2};
-    font-size: 15px;
-    font-weight: 600;
+
+    img {
+      max-width: 155px;
+    }
+
+    p {
+      margin: 0;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      color: ${({ theme }) => theme.text2};
+      font-size: 15px;
+      font-weight: 600;
+    }
   }
 
   .deposit {
