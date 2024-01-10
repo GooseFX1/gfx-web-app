@@ -2,7 +2,13 @@ import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DropdownPairs } from '../DropdownPairs'
-import { useCrypto, useOrderBook, usePriceFeed, useConnectionConfig } from '../../../context'
+import {
+  useCrypto,
+  useOrderBook,
+  usePriceFeed
+  // uncomment this only when testing with devnet in your local environment
+  // useConnectionConfig
+} from '../../../context'
 import { getPerpsPrice } from '../perps/utils'
 import 'styled-components/macro'
 import { Drawer } from 'antd'
@@ -10,7 +16,7 @@ import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../../components'
 
 const HEADER = styled.div`
-  ${tw`flex flex-row justify-between m-2.5 flex-wrap gap-y-2`}
+  ${tw`flex flex-row m-2.5 flex-wrap gap-y-2`}
   .up24h {
     ${tw`text-green-3`}
   }
@@ -51,14 +57,20 @@ const HEADER = styled.div`
 
 export const Header: FC = () => {
   const { connected, wallet } = useWallet()
-  const { selectedCrypto, isDevnet, setIsDevnet } = useCrypto()
+  const {
+    selectedCrypto,
+    isDevnet
+    // uncomment this only when testing with devnet in your local environment
+    //setIsDevnet
+  } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const {
     // prices
     tokenInfo
   } = usePriceFeed()
 
-  const { blacklisted } = useConnectionConfig()
+  // uncomment this only when testing with devnet in your local environment
+  // const { blacklisted } = useConnectionConfig()
   const [userProfile, setUserProfile] = useState<boolean>(false)
   // const marketData = useMemo(() => prices[selectedCrypto.pair], [prices, selectedCrypto.pair])
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
@@ -82,10 +94,11 @@ export const Header: FC = () => {
     }
   }, [isDevnet, selectedCrypto, orderBook])
 
-  const handleToggle = (e) => {
-    if (e === 'spot') setIsDevnet(true)
-    else setIsDevnet(false)
-  }
+  // uncomment this block only when testing in local environment with devnet
+  // const handleToggle = (e) => {
+  //   if (e === 'spot') setIsDevnet(true)
+  //   else setIsDevnet(false)
+  // }
 
   return (
     <HEADER>
@@ -127,6 +140,8 @@ export const Header: FC = () => {
           </div>
 
           <DropdownPairs />
+          {/*
+          // uncomment this block only when testing in local environment with devnet
           <div className="spot-toggle">
             <span
               className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
@@ -143,7 +158,8 @@ export const Header: FC = () => {
               DEVNET
             </span>
           </div>
-          <div tw="flex flex-col">
+          */}
+          <div tw="flex flex-col ml-auto">
             <span tw="text-lg dark:text-grey-5 text-black-4 font-semibold">$ {tokenPrice}</span>
             <div tw="flex flex-row items-center">
               {classNameChange === 'up24h' ? (
