@@ -333,7 +333,6 @@ const DropDownControls: FC<DesktopControlsProps> = ({
         clearTimeout(timeout.current)
         timeout.current = null
       }
-      console.log(isOpen, 'click')
       if (!isOpen) {
         e.currentTarget.click()
         onHover(e)
