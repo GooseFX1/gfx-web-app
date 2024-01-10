@@ -175,6 +175,8 @@ export const displayFractional = (val: Fractional): string => {
     return '-0.' + '0'.repeat(decimals - base.length + 1) + base.slice(1, base.length)
   else if (base.length === decimals) return '0.' + base
   else if (base.length < decimals) return '0.' + '0'.repeat(decimals - base.length) + base
+  else if (base.length > decimals && base[0] === '-')
+    return base.slice(0, base.length - decimals) + '.' + base.slice(-decimals)
   return base.slice(0, -decimals) + '.' + base.slice(-decimals)
 }
 

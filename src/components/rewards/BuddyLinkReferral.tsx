@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useReferrals from '../../hooks/useReferrals'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig, useCrypto } from '../../context'
+import { useConnectionConfig } from '../../context'
 import { getTraderRiskGroupAccount } from '../../pages/TradeV3/perps/utils'
 import { notify } from '../../utils'
 import { Notification } from '../../context/rewardsContext'
@@ -10,6 +10,8 @@ import { Connect } from '../../layouts'
 import { Loader } from '../Loader'
 import tw from 'twin.macro'
 import 'styled-components/macro'
+import { sendPerpsTransaction } from '../../web3/connection'
+
 const BuddyLinkReferral: FC = () => {
   const [isCopied, setIsCopied] = useState(false)
   const [name, setName] = useState('')
@@ -18,16 +20,13 @@ const BuddyLinkReferral: FC = () => {
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
-  const { perpsConnection } = useConnectionConfig()
-  const { isDevnet } = useCrypto()
-
-  const connection = useMemo(() => perpsConnection, [isDevnet])
-
+  const { perpsConnection: connection } = useConnectionConfig()
+  console.log('is ready: ', isReady)
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
 
   useMemo(() => {
-    if (connection && wallet.publicKey)
-      getTraderRiskGroupAccount(wallet.publicKey, connection).then((result) => {
+    if (connection && wallet?.wallet.adapter?.connected)
+      getTraderRiskGroupAccount(wallet?.wallet.adapter?.publicKey, connection).then((result) => {
         setRiskGroup(result)
       })
   }, [connection, wallet])
@@ -54,16 +53,18 @@ const BuddyLinkReferral: FC = () => {
         // No referrer here because we can't attach it to the TraderRiskGroup
         transaction.add(...(await createRandomBuddy('')))
 
-        await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
-          notify({
-            message: Notification(
-              'Success!',
-              false,
-              'Your personal link has been generated. Share this magic link with others to start earning!'
-            ),
-            type: 'success'
-          })
+        //await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
+        const res = await sendPerpsTransaction(connection, wallet, transaction, [], null)
+        console.log('res: ', res)
+        notify({
+          message: Notification(
+            'Success!',
+            false,
+            'Your personal link has been generated. Share this magic link with others to start earning!'
+          ),
+          type: 'success'
         })
+
         setName((await getName()) || '')
       } catch (e) {
         console.log(e)
