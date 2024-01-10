@@ -536,7 +536,7 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
 }
 
 export const UserProfile = ({ setUserProfile }) => {
-  const tabs = ['Positions', 'Open Orders', 'Trade History', 'Sol Unsettled']
+  const tabs = ['Positions', 'Open Orders', 'Trades', 'Sol Unsettled']
   const { isDevnet } = useCrypto()
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const [activeTab, setActiveTab] = useState(0)

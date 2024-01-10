@@ -859,7 +859,11 @@ export const PlaceOrderMobi = () => {
             </div>
             <img
               className="arrow-icon"
-              src={mode === 'dark' ? `/img/assets/arrow-down.svg` : `/img/assets/arrow.svg`}
+              src={
+                mode === 'dark'
+                  ? `/img/assets/Aggregator/circularArrowdark.svg`
+                  : `/img/assets/Aggregator/circularArrowlite.svg`
+              }
               alt="arrow"
               onClick={() => setShowMarketDrawer(true)}
             />
@@ -872,7 +876,7 @@ export const PlaceOrderMobi = () => {
           >
             <div className="holder">
               <div className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}>
-                {'Buy'}
+                {'Long'}
               </div>
             </div>
           </div>
@@ -882,7 +886,7 @@ export const PlaceOrderMobi = () => {
           >
             <div className="holder">
               <div className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}>
-                {'Sell'}
+                {'Short'}
               </div>
             </div>
           </div>
@@ -947,7 +951,11 @@ export const PlaceOrderMobi = () => {
               {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
               <span tw="text-regular font-semibold text-grey-5">25%</span>*/}
               <img
-                src={mode === 'dark' ? `/img/assets/arrow-down.svg` : `/img/assets/arrow.svg`}
+                src={
+                  mode === 'dark'
+                    ? `/img/assets/Aggregator/circularArrowdark.svg`
+                    : `/img/assets/Aggregator/circularArrowlite.svg`
+                }
                 className="arrow-icon"
                 alt="arrow"
               />
