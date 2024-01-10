@@ -21,15 +21,18 @@ const BuddyLinkReferral: FC = () => {
   const { createRandomBuddy, getName, isReady } = useReferrals()
   const wallet = useWallet()
   const { perpsConnection: connection } = useConnectionConfig()
-  console.log('is ready: ', isReady)
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
 
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const connected = useMemo(() => wallet?.adapter?.connected, [wallet?.adapter, wallet?.adapter?.connected])
+
   useMemo(() => {
-    if (connection && wallet?.wallet.adapter?.connected)
-      getTraderRiskGroupAccount(wallet?.wallet.adapter?.publicKey, connection).then((result) => {
+    if (connection && connected) {
+      getTraderRiskGroupAccount(publicKey, connection).then((result) => {
         setRiskGroup(result)
       })
-  }, [connection, wallet])
+    }
+  }, [connection, publicKey])
 
   const copyToClipboard = useCallback(() => {
     if (!name || !name.trim()) return
@@ -160,25 +163,23 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div css={tw`flex flex-col gap-5 min-h-[40px] min-md:mt-2.5 items-center relative justify-center`}>
+    <div css={tw`flex flex-col gap-5 min-h-[40px] min-md:mt-5 items-center relative justify-center `}>
       {!initialFetch ? (
-        <>
-          <div
-            onClick={copyToClipboard}
-            css={[
-              tw`border-[1.5px] dark:border-grey-1 border-grey-2  border-dashed cursor-pointer
-  flex flex-row  justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] relative h-10`,
-              !name.trim() ? tw`cursor-default` : tw`cursor-pointer`
-            ]}
-          >
-            {!name ? generateLink : copyLink}
-          </div>
-        </>
-      ) : !wallet.connected ? (
-        <Connect
-          customButtonStyle={[
-            tw`px-7.5 min-md:px-8 text-regular leading-normal text-white font-semibold w-[330px] min-md:w-[265px] h-10`
+        <div
+          onClick={copyToClipboard}
+          css={[
+            tw`border-[1.5px] dark:border-grey-1 border-grey-2 border-dashed cursor-pointer mt-5
+              flex flex-row justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] 
+              relative h-10`,
+            !name.trim() ? tw`cursor-default` : tw`cursor-pointer`
           ]}
+        >
+          {!name ? generateLink : copyLink}
+        </div>
+      ) : !publicKey && !connected ? (
+        <Connect
+          containerStyle={[tw`w-full min-md:w-full h-[40px] rounded-[100px] mt-5`]}
+          customButtonStyle={[tw`w-full min-md:w-full max-w-full h-[40px] min-md:h-[40px]`]}
         />
       ) : (
         <div css={[tw`absolute`]}>
