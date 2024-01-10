@@ -8,7 +8,7 @@ const CONTAINER = styled.div`
   }
 
   #MAYAN_SWAP_PV_ROOT * {
-    font-family: Montserrat !important;
+    font-family: Poppins !important;
     letter-spacing: normal !important;
     border-radius: 10px;
 
@@ -18,7 +18,18 @@ const CONTAINER = styled.div`
   }
 
   #MAYAN_SWAP_PV_ROOT button {
+    font-weight: 500;
+    font-family: Nunito Sans !important;
     border-radius: 50px !important;
+  }
+
+  .MuiTypography-body1,
+  .MuiTypography-body1Bold {
+    font-weight: 600;
+  }
+
+  .MuiDialogContent-root {
+    padding: 12px;
   }
 `
 
@@ -27,7 +38,7 @@ const Bridge: FC = () => {
     () => ({
       appIdentity: {
         name: 'Bridge',
-        icon: '/img/mainnav/g-logo.svg',
+        icon: '/img/mainnav/Icon.svg',
         uri: 'https://goosefx.io'
       },
       referrerAddress: 'F6zoE2sU5jCCWpDGMUasxcCEwCa8dc1y7Q6f5LHkjELy',
