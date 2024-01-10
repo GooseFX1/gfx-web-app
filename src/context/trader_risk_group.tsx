@@ -488,7 +488,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
-    const t2 = setInterval(refreshMpg, 1000)
+    const t2 = setInterval(refreshMpg, 2000)
     return () => clearInterval(t2)
   }, [currentMPG])
 
