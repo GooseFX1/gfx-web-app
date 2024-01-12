@@ -8,7 +8,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   twitter: 'https://www.twitter.com/GooseFX1'
 }
 
-export const IS_UNDER_MAINTENANCE = true
+export const IS_UNDER_MAINTENANCE = false
 export const APP_DEFAULT_ROUTE = '/farm'
 export const SOLSCAN_BASE = 'https://api.solscan.io'
 

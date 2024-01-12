@@ -579,7 +579,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           : order.type === 'ioc'
           ? new ImmediateOrCancel().toEncodable()
           : new PostOnly().toEncodable(),
-      limitPrice: convertToFractional(order.price.toString())
+      limitPrice: convertToFractional(order.price.toString()),
+      callbackId: 101
     }
   }
 
@@ -597,7 +598,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       selfTradeBehavior: new DecrementTake().toEncodable(),
       matchLimit: new anchor.BN(10),
       orderType: new Limit().toEncodable(),
-      limitPrice: convertToFractional(profitPrice)
+      limitPrice: convertToFractional(profitPrice),
+      callbackId: 101
     }
   }
 
@@ -709,7 +711,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             selfTradeBehavior: new DecrementTake().toEncodable(),
             matchLimit: new anchor.BN(10),
             orderType: { market: {} },
-            limitPrice: convertToFractional(priceToExit.toString())
+            limitPrice: convertToFractional(priceToExit.toString()),
+            callbackId: 101
           }
         const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
         refreshTraderRiskGroup()

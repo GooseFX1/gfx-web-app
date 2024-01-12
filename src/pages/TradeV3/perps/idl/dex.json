@@ -2115,6 +2115,10 @@
             "type": {
               "defined": "Fractional"
             }
+          },
+          {
+            "name": "callbackId",
+            "type": "u32"
           }
         ]
       }
