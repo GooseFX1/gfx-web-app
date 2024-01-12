@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import BN from 'bn.js'
 import { Orderbook, Market } from 'openbook-ts/serum'
 import { useConnectionConfig } from './settings'
@@ -35,7 +35,8 @@ interface IOrderbookType {
 }
 
 export const DEFAULT_ORDER_BOOK = { asks: [], bids: [] }
-
+const ONE_SECOND = 1000
+const HALF_SECOND = 500
 const OrderBookContext = createContext<IOrderBookConfig | null>(null)
 
 export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -44,20 +45,36 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [orderBook, setOrderBook] = useState<OrderBook>(DEFAULT_ORDER_BOOK)
   const [openOrders, setOpenOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
+  const [lastApiCall, setLastApiCall] = useState(+new Date())
   const wallet = useWallet()
   const { activeProduct, marketProductGroup, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
 
+  const [curTimer, setCurTimer] = useState(+new Date())
+
+  if (+new Date() - curTimer > ONE_SECOND) {
+    setCurTimer(+new Date())
+  }
+
+  const refreshOpenOrders = useCallback(async () => {
+    if (+new Date() - lastApiCall < HALF_SECOND) return
+    setLastApiCall(+new Date())
+    await fetchPerpsOpenOrders()
+  }, [lastApiCall, perpsOpenOrders])
+
   useEffect(() => {
-    const refreshOpenOrders = async () => {
-      if (wallet.connected && traderInfo.traderRiskGroupKey) {
-        await fetchPerpsOpenOrders()
-      } else {
-        setPerpsOpenOrders([])
-      }
+    if (wallet.connected && traderInfo.traderRiskGroupKey) refreshOpenOrders()
+    else {
+      setPerpsOpenOrders([])
     }
-    const t2 = setInterval(refreshOpenOrders, 500)
-    return () => clearInterval(t2) // clear
-  }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo.traderRiskGroupKey, wallet.connected])
+  }, [
+    selectedCrypto.pair,
+    isDevnet,
+    selectedCrypto.type,
+    traderInfo.traderRiskGroupKey,
+    wallet.connected,
+    curTimer,
+    perpsOpenOrders
+  ])
 
   useEffect(() => {
     const refreshOrderbook = async () => {
