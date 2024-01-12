@@ -380,7 +380,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="Liquidity"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                   {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="100%" />}
                 </span>
               }
@@ -388,7 +388,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="24H Volume"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                   ${truncateBigNumber(formattedapiSslData?.volume)}
                 </span>
               }
@@ -396,7 +396,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="24H Fees"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                   ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
                 </span>
               }
@@ -405,7 +405,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="My Balance"
               value={
                 userDepositedAmount && userDepositedAmount.toNumber() > 0 ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                     {truncateBigString(userDepositedAmount.toString(), coin?.mintDecimals)}
                   </span>
                 ) : (
@@ -417,7 +417,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Wallet Balance"
               value={
                 userTokenBalance > 0 ? (
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                     {truncateBigNumber(userTokenBalance)} {coin?.token}
                   </span>
                 ) : (
@@ -429,7 +429,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Total Earned"
               value={
                 totalEarned > 0 ? (
-                  <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  <div tw="text-right dark:text-grey-8 text-black-4 font-semibold text-regular">
                     <div>{totalEarned.toFixed(4)}</div>
                     <div tw="dark:text-grey-1 text-grey-2">(${totalEarnedInUSD?.toFixed(2)} USD)</div>
                   </div>
@@ -442,7 +442,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               keyStr="Pending Rewards"
               value={
                 claimableReward > 0 ? (
-                  <div tw="text-right dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  <div tw="text-right dark:text-grey-8 text-black-4 font-semibold text-regular">
                     <div>{commafy(claimableReward, 4)}</div>
                     <div tw="dark:text-grey-1 text-grey-2">(${commafy(claimableRewardInUSD, 2)} USD)</div>
                   </div>
@@ -492,7 +492,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             <FarmStats
               keyStr="Wallet Balance"
               value={
-                <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                   {truncateBigNumber(userTokenBalance)} {coin?.token} (${truncateBigNumber(userTokenBalanceInUSD)}{' '}
                   USD)
                 </span>
@@ -609,7 +609,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
             value={
               totalEarned ? (
                 <div tw="text-right">
-                  <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                  <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                     {`${commafy(totalEarned, 4)} ($${commafy(totalEarnedInUSD, 2)} USD)`}
                   </span>
                 </div>
@@ -629,7 +629,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 claimableReward > 0 ? (
                   <div tw="text-right">
-                    <span tw="dark:text-grey-5 text-black-4 font-semibold text-regular">
+                    <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
                       {`${commafy(claimableReward, 4)} ($${commafy(claimableRewardInUSD, 2)} USD)`}
                     </span>
                   </div>

@@ -98,7 +98,7 @@ const WRAPPER = styled.div`
 
     td {
       ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center
-       dark:text-grey-5 text-black-4`}
+       dark:text-grey-8 text-black-4`}
       >span {
         ${tw`w-1/2`}
       }
