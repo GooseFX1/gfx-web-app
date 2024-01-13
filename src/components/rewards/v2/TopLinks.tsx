@@ -17,15 +17,15 @@ function TopLinks(): JSX.Element {
       >
         Earn
       </Button>
-      <Button
+      {/* <Button
         cssClasses={[tw`font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`]}
         onClick={() => changePanel(1)}
       >
         Win
-      </Button>
+      </Button> */}
       <Button
         cssClasses={[tw`font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`]}
-        onClick={() => changePanel(2)}
+        onClick={() => changePanel(1)}
       >
         Refer
       </Button>
