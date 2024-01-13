@@ -19,7 +19,8 @@ const BuddyLinkReferral: FC = () => {
   const [riskGroup, setRiskGroup] = useState(null)
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
-  const wallet = useWallet()
+  const { wallet } = useWallet()
+  const wal = useWallet()
   const { perpsConnection: connection } = useConnectionConfig()
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
 
@@ -57,7 +58,7 @@ const BuddyLinkReferral: FC = () => {
         transaction.add(...(await createRandomBuddy('')))
 
         //await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
-        const res = await sendPerpsTransaction(connection, wallet, transaction, [], null)
+        const res = await sendPerpsTransaction(connection, wal, transaction, [], null)
         console.log('res: ', res)
         notify({
           message: Notification(
