@@ -9,7 +9,7 @@ function RewardsRightLayout({ children, cssStyles }: RewardsRightLayoutProps): J
     <div
       css={[
         tw`pt-0 py-2.5 min-md:py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 leading-normal
-        font-semibold  flex-1 flex-basis[40%] items-center`
+        font-semibold flex-[1 1 247px] min-md:flex-[1 1 40%] items-center`
       ]
         .concat(cssStyles ?? [])
         .flat()}
