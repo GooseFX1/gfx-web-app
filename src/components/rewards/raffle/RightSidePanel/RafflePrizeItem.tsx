@@ -19,9 +19,9 @@ const PrizeItem: FC<PrizeItemProps> = ({ prizeAmount, tokenImage, position }) =>
         />
       </div>
       <div css={[tw`flex min-md:flex-col items-center`]}>
-        <p tw="text-white text-regular font-semibold ">{numberFormatter(prizeAmount)}</p>
+        <h3 tw="text-white  font-semibold ">{numberFormatter(prizeAmount)}</h3>
         {isMobile || isTablet ? <>&nbsp;</> : null}
-        <p tw="text-white text-regular font-semibold">{'GOFX'}</p>
+        <h3 tw="text-white  font-semibold">{'GOFX'}</h3>
       </div>
     </div>
   )

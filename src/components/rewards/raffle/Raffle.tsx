@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'styled-components/macro'
 import { getMyRecentWinnings } from '../../../api/rewards'
 import RaffleForWalletNotConnected from './RaffleForWalletConnected'
@@ -13,23 +13,9 @@ import RewardsRightLayout from '../layout/RewardsRightLayout'
 import RaffleRightPanel from './RightSidePanel/RaffleRightSidePanel'
 import tw from 'twin.macro'
 import useBreakPoint from '../../../hooks/useBreakPoint'
-// import styled from 'styled-components'
-// import tw from "twin.macro";
-//
-// const Wrapper = styled.div`
-//   .hideScrollbar {
-//     scrollbar-width: none;
-//     -ms-overflow-style: none;
-//
-//     ::-webkit-scrollbar {
-//       display: none;
-//     }
-//   }
-// `
 
 function Raffle(): JSX.Element {
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const { connected } = useWallet()
   const [myRecentWinnings, setMyRecentWinnings] = useState()
   const { isMobile, isTablet } = useBreakPoint()
   useEffect(() => {
@@ -38,28 +24,28 @@ function Raffle(): JSX.Element {
       const myRecentWinnings = await getMyRecentWinnings()
       setMyRecentWinnings(myRecentWinnings)
     })()
-  }, [publicKey])
+  }, [connected])
 
   const noPrizesSoFar = false
 
   return (
     <>
-      <RewardsLeftLayout className={'no-scrollbar '}>
+      <RewardsLeftLayout className={'no-scrollbar'} cssStyles={[tw`pb-0`]}>
         <CombinedRewardsTopLinks>
           <TopLinks />
           <div css={[tw`flex gap-4 items-center`]}>
-            <p css={[tw`hidden min-md:block`]}>Points:&nbsp;0</p>
+            {connected && <p css={[tw`hidden min-md:block`]}>Points:&nbsp;0</p>}
             <HowItWorksButton
               link={'linkToWinDocs'}
               cssClasses={[(isMobile || isTablet) && tw`rounded-full w-[35px] h-[35px] text-lg font-bold`]}
-            >
-              {isMobile || isTablet ? '?' : 'How it works'}
-            </HowItWorksButton>
+            />
           </div>
         </CombinedRewardsTopLinks>
 
-        {!publicKey && <RaffleForWalletNotConnected />}
-        {noPrizesSoFar ? <NoPrizesSoFar /> : <MyRecentWinnings myRecentWinnings={myRecentWinnings} />}
+        <div css={[tw`flex flex-col max-h-[367px] min-md:max-h-[382px] w-full overflow-scroll`]}>
+          {!connected && <RaffleForWalletNotConnected />}
+          {noPrizesSoFar ? <NoPrizesSoFar /> : <MyRecentWinnings myRecentWinnings={myRecentWinnings} />}
+        </div>
       </RewardsLeftLayout>
       <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r to-blue-gradient-1 from-primary-gradient-2 `]}>
         <RaffleRightPanel />

@@ -17,7 +17,11 @@
     "jsx": "react-jsx",
     "isolatedModules": true,
     "outDir": "./bundle",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src", "src/types/custom.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],

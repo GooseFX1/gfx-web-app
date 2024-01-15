@@ -61,7 +61,7 @@ const RaffleRightPanel = (): ReactElement => {
   return (
     <div tw="flex flex-col flex-1  gap-2.5 min-md:gap-7.5">
       {showModals}
-      <p tw="text-average font-semibold flex items-center justify-center">{raffleDetails?.contestName}</p>
+      <h3 tw="font-semibold mx-auto">{raffleDetails?.contestName}</h3>
       <div css={[tw`flex flex-col gap-2.5 min-md:gap-7.5`]}>
         <div tw="flex flex-1 flex-wrap  items-center w-full justify-around ">
           <PrizeItem position={'first'} prizeAmount={firstPrize} tokenImage={`/img/crypto/${prizeToken}.svg`} />
@@ -73,16 +73,17 @@ const RaffleRightPanel = (): ReactElement => {
           And 20,000 GOFX Distributed to <br /> winners from #4 to #20!
         </p>
 
-        <p tw="text-white font-semibold text-average flex justify-center">Next Raffle Starts In:</p>
-
-        <Countdown timestamp={raffleDetails?.contestStartTimestamp} />
-        <Button
-          onClick={setShowPastPrize.on}
-          cssStyle={tw`underline text-white font-semibold text-regular  flex
-        justify-center cursor-pointer`}
-        >
-          See Past Top Prices
-        </Button>
+        <div css={[tw`flex flex-col gap-2.5`]}>
+          <p tw="text-white font-semibold text-average flex justify-center">Next Raffle Starts In:</p>
+          <Countdown timestamp={raffleDetails?.contestStartTimestamp} />
+          <Button
+            onClick={setShowPastPrize.on}
+            cssStyle={tw`underline text-white font-semibold text-regular  flex
+        justify-center cursor-pointer px-1.5 py-1`}
+          >
+            See Past Top Prices
+          </Button>
+        </div>
       </div>
     </div>
   )
