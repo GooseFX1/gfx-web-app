@@ -45,6 +45,32 @@ const ACCOUNTVALUE = styled.div`
   p:last-child {
     font-size: 15px;
   }
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+  }
 `
 
 const HISTORY = styled.div`
@@ -199,7 +225,7 @@ const MobileFundingHistory: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>Cumulative Funding:</p>
-            <p>
+            <div className="tooltip">
               $
               {traderInfo.traderRiskGroup !== null
                 ? (
@@ -207,7 +233,13 @@ const MobileFundingHistory: FC = () => {
                     10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
                   ).toFixed(2)
                 : 0}
-            </p>
+              <span className="tooltip-text">
+                {traderInfo.traderRiskGroup !== null
+                  ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                    10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+                  : 0}
+              </span>
+            </div>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
       </ACCOUNTVALUESFLEX>
@@ -238,7 +270,10 @@ const MobileFundingHistory: FC = () => {
                   <div className="flex">
                     <span>Payment</span>
                     <span className="ml-auto">
-                      {(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)).toFixed(4)}
+                      {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) <
+                      0.0001
+                        ? '< 0.0001'
+                        : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
                     </span>
                   </div>
                   <div className="flex">
