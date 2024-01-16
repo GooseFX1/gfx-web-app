@@ -1,101 +1,90 @@
-import { useEffect, useMemo, useRef, FC } from 'react'
-import mayanLoader from './mayanLoader'
+import { useEffect, useMemo, FC, useRef } from 'react'
+// import debridgeLoader from './debridgeLoader'
 import styled from 'styled-components'
+import { useDarkMode } from '../../context'
 
 const CONTAINER = styled.div`
-  #MAYAN_SWAP_PV_ROOT {
-    margin: 84px auto;
-  }
-
-  #MAYAN_SWAP_PV_ROOT * {
-    font-family: Poppins !important;
-    letter-spacing: normal !important;
-    border-radius: 10px;
-
-    [role='dialog'] {
-      padding: 0;
+  #debridgeWidget {
+    * > {
+      font-family: 'Nunito Sans';
     }
-  }
-
-  #MAYAN_SWAP_PV_ROOT button {
-    font-weight: 500;
-    font-family: Nunito Sans !important;
-    border-radius: 50px !important;
-  }
-
-  .MuiTypography-body1,
-  .MuiTypography-body1Bold {
-    font-weight: 600;
-  }
-
-  .MuiDialogContent-root {
-    padding: 12px;
+    .debridge-widget-iframe {
+      margin: 84px auto;
+    }
   }
 `
 
 const Bridge: FC = () => {
-  const config = useMemo(
-    () => ({
-      appIdentity: {
-        name: 'Bridge',
-        icon: '/img/mainnav/Icon.svg',
-        uri: 'https://goosefx.io'
-      },
-      referrerAddress: 'F6zoE2sU5jCCWpDGMUasxcCEwCa8dc1y7Q6f5LHkjELy',
-      colors: {
-        N000: '#131313',
-        N100: '#131313',
-        N300: '#1F1F1F',
-        N500: '#1E1E1E',
-        N600: '#7D7D7D',
-        N700: '#E2E2E2',
-        green: '#50BB35',
-        lightGreen: '#80CE00',
-        red: '#F06565',
-        primary: '#A934FF',
-        primaryGradient: '#131313',
-        mainBox: '#131313',
-        background: '#131313',
-        darkPrimary: '#131313',
-        alwaysWhite: '#fff',
-        tableBg: '#1F1F1F',
-        transparentBg: '#131313',
-        transparentBgDark: '#131313',
-        buttonBackground: '#A934FF',
-        toastBgRed: '#F06565',
-        toastBgGreen: '#50BB35'
-        // tLightBlue: 'string',
-        // toastBgNatural: 'string',
-        // lightRed: 'string',
-        // lightYellow: 'string',
-      }
-    }),
-    []
-  )
+  const { mode } = useDarkMode()
+  const scriptId = 'uniqueScriptId'
+  const scriptRef = useRef(null)
+  const deBridgeRef = useRef(null)
 
-  const mayan = useRef(null)
+  const config = useMemo(() => {
+    const stylesString = JSON.stringify({
+      appBackground: mode === 'dark' ? '#131313' : '#F7F0FD',
+      appAccentBg: '#000',
+      chartBg: '#F7F0FD',
+      primary: '#A934FF',
+      secondary: '#9625AE',
+      badge: '#000',
+      borderColor: '#000',
+      borderRadius: 5,
+      fontColor: mode === 'dark' ? '#fff' : '#000',
+      fontColorAccent: mode === 'dark' ? '#fff' : '#000',
+      fontFamily: 'Nunito Sans'
+    })
+    const base64Styles = btoa(stylesString)
+
+    return JSON.stringify({
+      element: 'debridgeWidget',
+      v: '1',
+      title: 'Bridge',
+      width: '600',
+      height: '800',
+      inputChain: '56',
+      outputChain: '1',
+      inputCurrency: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+      outputCurrency: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+      address: '0x64023dEcf09f20bA403305F5A2946b5b33d1933B',
+      amount: '10',
+      lang: 'en',
+      mode: 'deswap',
+      styles: `${base64Styles}`,
+      theme: mode,
+      r: '3981'
+    })
+  }, [mode])
 
   useEffect(() => {
-    ;(async function () {
-      const mayanInstance = await mayanLoader()
-      if (mayanInstance) {
-        mayan.current = mayanInstance
-        if (mayan.current) {
-          mayan.current.init('mayanContainer', config)
-        }
-      }
-    })()
+    // Create a new script element
+    const script = document.createElement('script')
+    // Assign a unique id to the script
+    script.id = scriptId
+    // Set the script content or source URL
+    script.textContent = `deBridge.widget(${config})`
+    // Append the script to the document's head
+    document.body.appendChild(script)
+    // Save a reference to the script for later use
+    scriptRef.current = script
 
+    scriptRef.current.textContent = `deBridge.widget(${config})`
+
+    // Cleanup function to remove the script when the component unmounts
     return () => {
-      if (mayan.current && mayan.current.destroy) {
-        mayan.current.destroy()
+      if (scriptRef.current) {
+        document.body.removeChild(scriptRef.current)
+      }
+
+      if (deBridgeRef.current && deBridgeRef.current.childNodes.length > 0) {
+        deBridgeRef.current.removeChild(deBridgeRef.current.firstChild)
       }
     }
-  }, [])
+  }, [config])
 
   return (
     <CONTAINER>
-      <div id="mayanContainer" />
+      <div id="debridgeWidget" ref={deBridgeRef} />
     </CONTAINER>
   )
 }
