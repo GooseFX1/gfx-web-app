@@ -200,6 +200,16 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
       </div>
+      <div
+        className={tradeType === 'account' ? 'active cta' : 'cta'}
+        onClick={() => {
+          if (!isDevnet) setTradeType('account')
+        }}
+      >
+        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+          <div className={tradeType === 'account' ? 'gradient-bg btn' : 'btn'}>Account</div>
+        </div>
+      </div>
       {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
     </HEADER>
   )
