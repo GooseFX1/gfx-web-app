@@ -9,7 +9,6 @@ import { PERPS_COLLATERAL } from './perpsConstants'
 import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDevnet'
 import 'styled-components/macro'
 import { checkMobile } from '../../../utils'
-import useBoolean from '../../../hooks/useBoolean'
 import { Button } from '../../../components'
 
 const WRAPPER = styled.div`
@@ -135,7 +134,7 @@ export const DepositWithdraw: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
   const { balances: mainnetBalances, fetchAccounts } = useAccounts()
-  const [isLoading, setIsLoading] = useBoolean(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
@@ -202,10 +201,10 @@ export const DepositWithdraw: FC<{
   const handleSubmit = async () => {
     try {
       const answer = convertToFractional(amount)
-      setIsLoading.on()
+      setIsLoading(true)
       const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
       if (response === null) {
-        setIsLoading.off()
+        setIsLoading(false)
         return
       }
 
@@ -214,11 +213,11 @@ export const DepositWithdraw: FC<{
 
       if (response && response.txid) {
         setDepositWithdrawModal(false)
-        setIsLoading.off()
+        setIsLoading(false)
       }
     } catch (e) {
       console.log(e)
-      setIsLoading.off()
+      setIsLoading(false)
     }
   }
   const checkDisabled = () => {
