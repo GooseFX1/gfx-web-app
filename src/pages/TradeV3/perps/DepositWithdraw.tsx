@@ -164,7 +164,7 @@ export const DepositWithdraw: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ tradeType, setDepositWithdrawModal }) => {
   const { balances: mainnetBalances, fetchAccounts } = useAccounts()
-  const [isLoading, setIsLoading] = useBoolean(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const { mode } = useDarkMode()
@@ -231,10 +231,10 @@ export const DepositWithdraw: FC<{
   const handleSubmit = async () => {
     try {
       const answer = convertToFractional(amount)
-      setIsLoading.on()
+      setIsLoading(true)
       const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
       if (response === null) {
-        setIsLoading.off()
+        setIsLoading(false)
         return
       }
 
@@ -243,11 +243,11 @@ export const DepositWithdraw: FC<{
 
       if (response && response.txid) {
         setDepositWithdrawModal(false)
-        setIsLoading.off()
+        setIsLoading(false)
       }
     } catch (e) {
       console.log(e)
-      setIsLoading.off()
+      setIsLoading(false)
     }
   }
   const checkDisabled = () => {

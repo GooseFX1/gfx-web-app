@@ -72,6 +72,7 @@ import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
 import { httpClient } from '../api'
 import { Perp, Product, Trader } from 'gfx-perp-sdk'
+const MAX_RETRIES = 3
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -249,31 +250,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
   const connection = useMemo(() => mainnetConnection, [])
-  const refreshTraderRiskGroup = async () => {
-    if (wallet.connected) {
-      const trgFetch = currentTRG
-      if (trgFetch) {
-        const trg = await TraderRiskGroup.fetch(connection, trgFetch)
-        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-      }
-    } else {
-      setDefaults()
-    }
-  }
 
   const setMPGDetails = async () => {
     const mpgRes = await MarketProductGroup.fetch(connection, currentMPG)
     mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
     mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
-  }
-
-  const setTRGDetails = async () => {
-    currentTRG &&
-      TraderRiskGroup.fetch(connection, currentTRG).then((trg) => {
-        trg ? setTraderRiskGroup(trg[0]) : setTraderRiskGroup(null)
-        trg && setRawData((prevState) => ({ ...prevState, trg: trg[1] }))
-      })
   }
 
   const setCollateralPrice = async () => {
@@ -501,13 +482,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTraderVolume('0')
   }
 
-  const refreshTrg = useCallback(async () => {
-    await setTRGDetails()
-  }, [setTRGDetails, rawData.trg])
-
   const refreshMpg = useCallback(async () => {
     await setMPGDetails()
   }, [setMPGDetails, rawData.mpg])
+
+  const updateTRGDetails = (traderRiskGroup, rawData) => {
+    setTraderRiskGroup(traderRiskGroup)
+    if (traderRiskGroup) {
+      setRawData((prevState) => ({ ...prevState, trg: rawData }))
+    }
+  }
 
   useEffect(() => {
     perpsWasm()
@@ -519,11 +503,41 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentMPG])
 
   useEffect(() => {
-    if (wallet.connected) {
-      const t2 = setInterval(refreshTrg, 1000)
-      return () => clearInterval(t2)
-    } else {
-      setDefaults()
+    ;(async () => {
+      if (!currentTRG) return
+      const trgData = await TraderRiskGroup.fetch(connection, currentTRG)
+      updateTRGDetails(trgData ? trgData[0] : null, trgData ? trgData[1] : null)
+    })()
+  }, [currentTRG])
+
+  useEffect(() => {
+    let id = null
+    let retryCount = 0
+
+    const subscribe = async () => {
+      try {
+        if (currentTRG) {
+          id = connection.onAccountChange(currentTRG, async (info) => {
+            const trg = await TraderRiskGroup.decode(info.data)
+            updateTRGDetails(trg, trg ? info : null)
+          })
+        } else {
+          setDefaults()
+        }
+      } catch (e) {
+        if (retryCount < MAX_RETRIES) {
+          retryCount++
+          subscribe()
+        } else {
+          console.log('Max retries reached. Giving up.')
+        }
+      }
+    }
+
+    subscribe()
+
+    return () => {
+      if (id) connection.removeAccountChangeListener(id)
     }
   }, [currentTRG, wallet.connected])
 
@@ -637,7 +651,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       traderInstanceSdk,
       perpProductInstanceSdk
     )
-    refreshTraderRiskGroup()
     return response
   }, [traderRiskGroup, order, marketProductGroup])
 
@@ -674,7 +687,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         wallet,
         connection
       )
-      refreshTraderRiskGroup()
       return response
     },
     [traderRiskGroup, order, marketProductGroup]
@@ -707,7 +719,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           traderInstanceSdk,
           perpProductInstanceSdk
         )
-        refreshTraderRiskGroup()
         return response
       } else {
         notify({
@@ -729,7 +740,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         traderInstanceSdk,
         perpProductInstanceSdk
       )
-      refreshTraderRiskGroup()
       return response
     },
     [traderRiskGroup, marketProductGroup]
@@ -780,7 +790,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
               newTrg,
               isDevnet
             )
-        traderRiskGroup ? refreshTraderRiskGroup() : fetchTrgAcc()
+        !traderRiskGroup && fetchTrgAcc()
         return response
       } catch (err) {
         return null
@@ -792,7 +802,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const withdrawFunds = useCallback(
     async (amount: Fractional) => {
       const response = await withdrawFundsIx({ quantity: amount }, wallet, connection, traderInstanceSdk)
-      refreshTraderRiskGroup()
       return response
     },
     [traderRiskGroup, marketProductGroup, currentTRG, traderInstanceSdk]
