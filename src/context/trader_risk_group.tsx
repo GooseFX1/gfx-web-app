@@ -251,10 +251,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
   const connection = useMemo(() => mainnetConnection, [])
 
-  const setMPGDetails = async () => {
-    const mpgRes = await MarketProductGroup.fetch(connection, currentMPG)
-    mpgRes ? setMarketProductGroup(mpgRes[0]) : setMarketProductGroup(null)
-    mpgRes && setRawData((prevState) => ({ ...prevState, mpg: mpgRes[1] }))
+  const updateMPGDetails = async (mpgData, mpgRawData) => {
+    mpgData ? setMarketProductGroup(mpgData) : setMarketProductGroup(null)
+    mpgRawData && setRawData((prevState) => ({ ...prevState, mpg: mpgRawData }))
   }
 
   const setCollateralPrice = async () => {
@@ -482,10 +481,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTraderVolume('0')
   }
 
-  const refreshMpg = useCallback(async () => {
-    await setMPGDetails()
-  }, [setMPGDetails, rawData.mpg])
-
   const updateTRGDetails = (traderRiskGroup, rawData) => {
     setTraderRiskGroup(traderRiskGroup)
     if (traderRiskGroup) {
@@ -498,9 +493,43 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
-    const t2 = setInterval(refreshMpg, 2000)
-    return () => clearInterval(t2)
-  }, [currentMPG])
+    ;(async () => {
+      if (!currentMPG) return
+      const mpgData = await MarketProductGroup.fetch(connection, currentMPG)
+      updateMPGDetails(mpgData ? mpgData[0] : null, mpgData ? mpgData[1] : null)
+    })()
+  }, [currentMPG, connection])
+
+  useEffect(() => {
+    let id = null
+    let retryCount = 0
+
+    const subscribe = async () => {
+      try {
+        if (currentMPG) {
+          id = connection.onAccountChange(currentMPG, async (info) => {
+            const trg = await MarketProductGroup.decode(info.data)
+            updateMPGDetails(trg, trg ? info : null)
+          })
+        } else {
+          setDefaults()
+        }
+      } catch (e) {
+        if (retryCount < MAX_RETRIES) {
+          retryCount++
+          subscribe()
+        } else {
+          console.log('Max retries reached MPG. Giving up.')
+        }
+      }
+    }
+
+    subscribe()
+
+    return () => {
+      if (id) connection.removeAccountChangeListener(id)
+    }
+  }, [currentMPG, wallet.connected])
 
   useEffect(() => {
     ;(async () => {
@@ -509,6 +538,37 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTRGDetails(trgData ? trgData[0] : null, trgData ? trgData[1] : null)
     })()
   }, [currentTRG])
+
+  useEffect(() => {
+    let id = null
+    let retryCount = 0
+
+    const subscribe = async () => {
+      try {
+        if (currentTRG) {
+          id = connection.onAccountChange(currentTRG, async (info) => {
+            const trg = await TraderRiskGroup.decode(info.data)
+            updateTRGDetails(trg, trg ? info : null)
+          })
+        } else {
+          setDefaults()
+        }
+      } catch (e) {
+        if (retryCount < MAX_RETRIES) {
+          retryCount++
+          subscribe()
+        } else {
+          console.log('Max retries reached. Giving up.')
+        }
+      }
+    }
+
+    subscribe()
+
+    return () => {
+      if (id) connection.removeAccountChangeListener(id)
+    }
+  }, [currentTRG, wallet.connected])
 
   useEffect(() => {
     let id = null
