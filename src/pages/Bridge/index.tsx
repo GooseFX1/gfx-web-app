@@ -1,62 +1,93 @@
-import { useEffect, useMemo, FC, useRef } from 'react'
-// import debridgeLoader from './debridgeLoader'
-import styled from 'styled-components'
+import { useLayoutEffect, useMemo, FC, useRef } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
+import { styled } from 'twin.macro'
 
 const CONTAINER = styled.div`
-  #debridgeWidget {
-    * > {
-      font-family: 'Nunito Sans';
-    }
-    .debridge-widget-iframe {
-      margin: 84px auto;
-    }
+  .debridge-widget-iframe {
+    margin: 0px auto;
+  }
+
+  .dropdown-menu.cdk-virtual-dropdown-menu {
+    border-radius: 8px;
   }
 `
 
 const Bridge: FC = () => {
   const { mode } = useDarkMode()
+  const breakpoint = useBreakPoint()
   const scriptId = 'uniqueScriptId'
   const scriptRef = useRef(null)
   const deBridgeRef = useRef(null)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   const config = useMemo(() => {
+    const bg = mode === 'dark' ? '#131313' : '#F7F0FD'
+
     const stylesString = JSON.stringify({
-      appBackground: mode === 'dark' ? '#131313' : '#F7F0FD',
-      appAccentBg: '#000',
-      chartBg: '#F7F0FD',
-      primary: '#A934FF',
-      secondary: '#9625AE',
-      badge: '#000',
-      borderColor: '#000',
-      borderRadius: 5,
-      fontColor: mode === 'dark' ? '#fff' : '#000',
-      fontColorAccent: mode === 'dark' ? '#fff' : '#000',
+      appBackground: bg,
+      appAccentBg: bg,
+      chartBg: bg,
+      badge: '#cacaca',
+      borderRadius: 4,
+      tooltipBg: '#cacaca',
+      formControlBg: mode === 'dark' ? '#000' : '#ffffff',
+      formControlBgAccent: '#000',
+      dropdownBg: mode === 'dark' ? '#000' : '#ffffff',
+      primary: '#a934ff',
+      secondary: '#5855ff',
+      light: '#f7f0fd',
+      success: '#8ade75',
+      error: '#f06565',
+      warning: '#f0a30b',
+      iconColor: mode === 'dark' ? '#ffffff' : '#5855ff',
+      fontColorAccent: '#5855ff',
+      primaryBtnText: '#ffffff',
+      secondaryBtnText: '#ffffff',
+      lightBtnText: '#000',
+      borderRadius: 50,
       fontFamily: 'Nunito Sans'
     })
+
     const base64Styles = btoa(stylesString)
 
     return JSON.stringify({
-      element: 'debridgeWidget',
       v: '1',
+      element: 'debridgeWidget',
       title: 'Bridge',
-      width: '600',
-      height: '800',
-      inputChain: '56',
-      outputChain: '1',
-      inputCurrency: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
-      outputCurrency: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-      address: '0x64023dEcf09f20bA403305F5A2946b5b33d1933B',
-      amount: '10',
+      width: breakpoint.isMobile ? '372' : '600',
+      height: '792',
+      inputChain: '1',
+      outputChain: '7565164',
+      address: publicKey ? publicKey.toBase58() : '',
+      supportedChains: {
+        inputChains: {
+          '1': 'all',
+          '10': 'all',
+          '56': 'all',
+          '137': 'all',
+          '8453': 'all',
+          '42161': 'all',
+          '43114': 'all',
+          '59144': 'all',
+          '7565164': 'all'
+        },
+        outputChains: { '7565164': 'all' }
+      },
+      amount: '0',
       lang: 'en',
+      isHideLogo: true,
+      showSwapTransfer: false,
       mode: 'deswap',
       styles: `${base64Styles}`,
-      theme: mode,
+      theme: `${mode === 'dark' ? mode : 'light'}`,
       r: '3981'
     })
-  }, [mode])
+  }, [mode, publicKey])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Create a new script element
     const script = document.createElement('script')
     // Assign a unique id to the script
@@ -67,8 +98,6 @@ const Bridge: FC = () => {
     document.body.appendChild(script)
     // Save a reference to the script for later use
     scriptRef.current = script
-
-    scriptRef.current.textContent = `deBridge.widget(${config})`
 
     // Cleanup function to remove the script when the component unmounts
     return () => {
