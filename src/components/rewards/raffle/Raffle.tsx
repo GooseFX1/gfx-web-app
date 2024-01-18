@@ -36,7 +36,7 @@ function Raffle(): JSX.Element {
           <div css={[tw`flex gap-4 items-center`]}>
             {connected && <p css={[tw`hidden min-md:block`]}>Points:&nbsp;0</p>}
             <HowItWorksButton
-              link={'linkToWinDocs'}
+              link={'https://docs.goosefx.io/earn/referral-program'}
               cssClasses={[(isMobile || isTablet) && tw`rounded-full w-[35px] h-[35px] text-lg font-bold`]}
             />
           </div>
