@@ -17,9 +17,7 @@ function HowItWorksButton({ link, children, cssClasses }: HowItWorksButtonProps)
       ]
         .concat(cssClasses ?? [])
         .flat()}
-      onClick={() =>
-        window.open(link ?? 'https://docs.goosefx.io/tokenomics/stake-rewards-and-fee-share', '_blank')
-      }
+      onClick={() => window.open(link, '_blank')}
     >
       {children ?? (isMobile || isTablet ? '?' : 'How it works')}
     </Button>

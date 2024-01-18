@@ -19,7 +19,7 @@ const Refer: FC = () => (
     <RewardsLeftLayout>
       <CombinedRewardsTopLinks>
         <TopLinks />
-        <HowItWorksButton />
+        <HowItWorksButton link={'https://docs.goosefx.io/earn/referral-program'} />
       </CombinedRewardsTopLinks>
       <ReferAndEarn />
     </RewardsLeftLayout>
@@ -33,7 +33,7 @@ export default Refer
 export const ReferAndEarn: FC = () => {
   const { mode } = useDarkMode()
   return (
-    <div css={[tw`flex flex-col gap-4 font-semibold h-full leading-normal`]}>
+    <div css={[tw`flex flex-col gap-4 font-semibold h-full leading-normal max-w-[580px]`]}>
       <div css={[tw`flex items-center gap-5`]}>
         <img src={`/img/assets/referral_${mode}.svg`} css={[tw`w-[89px] h-[97px] hidden min-md:block`]} />
         <h2 css={[tw``]}>Refer friends and earn 20% of their taker fees!</h2>

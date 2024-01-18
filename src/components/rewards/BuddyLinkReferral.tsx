@@ -179,7 +179,7 @@ const BuddyLinkReferral: FC = () => {
         </div>
       ) : !publicKey && !connected ? (
         <Connect
-          containerStyle={[tw`w-full min-md:w-full h-[40px] rounded-[100px] mt-5`]}
+          containerStyle={[tw`w-full min-md:w-full h-[40px] rounded-[100px]`]}
           customButtonStyle={[tw`w-full min-md:w-full max-w-full h-[40px] min-md:h-[40px]`]}
         />
       ) : (
