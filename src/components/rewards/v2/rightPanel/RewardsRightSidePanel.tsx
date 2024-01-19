@@ -16,7 +16,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
   const stakeRatio = numberFormatter(userStakeRatio, 2)
 
   return (
-    <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r from-green-gradient-3 to-green-gradient-4 `]}>
+    <RewardsRightLayout cssStyles={[tw`bg-gradient-to-br from-green-gradient-3 to-green-gradient-4 `]}>
       <h1 css={[tw`text-h2 min-md:text-h1 font-semibold !mb-0`]}>
         {apy == 0 ? (
           <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />
@@ -24,20 +24,20 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
           `${apy}% APY`
         )}
       </h1>
-      <div css={[tw`flex flex-col gap-2 flex-1 max-w-[300px] w-full justify-center`]}>
+      <div css={[tw`flex flex-col gap-1.25 flex-1 max-w-[300px] w-full justify-center`]}>
         <div css={[tw`flex flex-col gap-2 items-center`]}>
           <p
             css={[
-              tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-[1]`,
+              tw`mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-[1] font-sans`,
               totalEarned > 0 && tw`opacity-100`
             ]}
           >
             {totalEarnedString == '0.00' ? (totalEarned > 0 ? '< 0.00' : '0.00') : totalEarnedString}
           </p>
-          <p css={[tw`mb-0 text-regular min-sm:text-average text-white`]}>Past USDC Earnings</p>
+          <p css={[tw`mb-0 text-regular min-sm:text-average text-white font-semibold`]}>Past USDC Earnings</p>
         </div>
         <div css={[tw`flex flex-col items-center `]}>
-          <p css={[tw`mb-0 text-regular min-sm:text-average text-white flex items-center gap-1.25`]}>
+          <p css={[tw`mb-0 text-regular min-sm:text-average text-white flex items-center gap-1.25 font-semibold`]}>
             Total Staked&nbsp;
             <Tooltip
               title={
@@ -66,7 +66,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
 
           <p
             css={[
-              tw`mb-0 text-regular min-sm:text-average opacity-60 text-white`,
+              tw`mb-0 text-regular min-sm:text-average opacity-60 text-white font-semibold`,
               totalStaked > 0 && tw`opacity-100`
             ]}
           >

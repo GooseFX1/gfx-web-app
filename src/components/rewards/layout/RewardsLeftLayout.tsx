@@ -10,8 +10,8 @@ function RewardsLeftLayout({ children, cssStyles, className }: RewardsLeftLayout
     <div
       className={className}
       css={[
-        tw`flex flex-col flex-1 flex-basis[60%] items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
-      leading-normal overflow-y-auto
+        tw`flex flex-col items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
+      leading-normal overflow-y-auto  flex-[1 1 389px]  min-md:flex-[1 1 60%]
     `
       ]
         .concat(cssStyles ?? [])

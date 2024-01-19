@@ -1,5 +1,5 @@
 const fontFamily = {
-  display: ['Nunito', 'Poppins', 'sans-serif'],
+  display: ['Nunito Sans', 'Poppins', 'sans-serif'],
   sans: ['Poppins', 'sans-serif']
 }
 

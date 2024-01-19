@@ -151,11 +151,9 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       />
       <CombinedRewardsTopLinks>
         <TopLinks />
-        <HowItWorksButton />
+        <HowItWorksButton link={'https://docs.goosefx.io/tokenomics/stake-rewards-and-fee-share'} />
       </CombinedRewardsTopLinks>
-      <div
-        css={[tw`flex w-full flex-col max-w-[580px] items-center mt-3 mb-0 min-md:mt-[30px] gap-3 min-md:gap-2.5`]}
-      >
+      <div css={[tw`flex w-full flex-col max-w-[580px] items-center mb-0 gap-3 min-md:gap-2.5`]}>
         <RewardsLeftPanelHeading />
         <div css={[tw`flex w-full flex-col gap-3 min-md:gap-5 `]}>
           <div css={[tw`flex flex-1 w-full flex-row flex-wrap gap-3 min-md:gap-y-5`]}>

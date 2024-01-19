@@ -19,26 +19,38 @@
     "import/no-cycle": "off",
     "object-curly-newline": "off",
     "implicit-arrow-linebreak": "off",
-    "@typescript-eslint/no-explicit-any": "off", //main remvoals, the rest warning will be turned to errors later on
+    "@typescript-eslint/no-explicit-any": "off",
+    //main remvoals, the rest warning will be turned to errors later on
     "no-console": "off",
-    "import/no-unresolved": "off", // change to "error"
-    "max-len": ["error", { "code": 120 }],
+    "import/no-unresolved": "off",
+    // change to "error"
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ],
     "comma-dangle": "warn",
     "no-unused-vars": "off",
-    "arrow-body-style": "error", //change to error
+    "arrow-body-style": "error",
+    //change to error
     "no-new": "warn",
-    "no-param-reassign": "error", // change to "error"
+    "no-param-reassign": "error",
+    // change to "error"
     "@typescript-eslint/no-inferrable-types": "warn",
     "@typescript-eslint/ban-ts-comment": "error",
-    "no-empty": "error", // change to "error"
+    "no-empty": "error",
+    // change to "error"
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/no-this-alias": "error",
     "@typescript-eslint/ban-types": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/explicit-module-boundary-types": "error",
-    "no-var": "error", // change to "error"
+    "no-var": "error",
+    // change to "error"
     "no-prototype-builtins": "warn",
-    "prefer-const": "error", // change to "error"
+    "prefer-const": "error",
+    // change to "error"
     "react/prop-types": "error",
     "no-async-promise-executor": "warn",
     "@typescript-eslint/no-empty-function": "error",
@@ -55,15 +67,30 @@
   },
   "settings": {
     "react": {
-      "version": "detect" // React version. "detect" automatically picks the version you have installed.
+      "version": "detect"
+      // React version. "detect" automatically picks the version you have installed.
     },
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+        "alwaysTryTypes": true
+        // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["perps_wasm/*.js", "perps_wasm/*.ts"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "prefer-const": "off",
+        "no-param-reassign": "off",
+        "no-var": "off",
+        "max-len": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["perps-wasm/gfx_perps_wasm_bg.js", "perps-wasm/gfx_perps_wasm.js\n"] // <<< ignore all files in test folder
 }

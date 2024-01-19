@@ -12,6 +12,7 @@ import Button from '../twComponents/Button'
 import Rewards from './v2/Rewards'
 // import Raffle from './raffle/Raffle'
 import Refer from './Refer'
+import Raffle from './raffle/Raffle'
 
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
@@ -80,16 +81,22 @@ export const RewardsPopup: FC = () => {
            rounded-t-[10px]
            [&>div:first-child]:min-md:rounded-tl-[10px] [&>div:first-child]:min-md:rounded-tr-[0px]
            [&>div:last-child]:min-md:rounded-tr-[10px]
-           [& * p:not([data-tw*="mb-"])]:mb-0
+           [& * p:not([data-tw*="mb-"])]:mb-0 
            `
           ]}
         >
-          <Button onClick={() => rewardToggle(false)} cssClasses={[tw`absolute p-[inherit] right-2 top-2`]}>
-            <img css={[tw`h-8.75 w-8.75`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
+          <Button
+            onClick={() => rewardToggle(false)}
+            cssClasses={[
+              tw`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+                   min-md:top-5`
+            ]}
+          >
+            <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
           </Button>
           {panelIndex == 0 && <Rewards />}
-          {/* {panelIndex == 1 && <Raffle />} */}
           {panelIndex == 1 && <Refer />}
+          {panelIndex == 2 && <Raffle />}
         </div>
       </RewardsProvider>
     </CryptoProvider>

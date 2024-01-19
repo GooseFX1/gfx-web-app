@@ -2,7 +2,7 @@ import React, { FC, ReactNode, createContext, useContext } from 'react'
 import { useLocalStorageState } from '../utils'
 
 interface IDarkModeConfig {
-  mode: string
+  mode: 'dark' | 'lite'
   toggleMode: () => void
 }
 
