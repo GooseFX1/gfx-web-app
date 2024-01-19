@@ -3,8 +3,8 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { Button, SkeletonCommon } from '../../components'
-import { useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
-import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, toPublicKey } from '../../web3'
+import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
+import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
 import {
@@ -48,7 +48,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     filteredLiquidityAccounts,
     liquidityAmount,
     sslTableData,
-    rewards
+    rewards,
+    depositedBalanceConnection,
+    connectionId
   } = useSSLContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
@@ -61,21 +63,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [userTokenBalance, setUserTokenBalance] = useState<number>()
   const [actionModal, setActionModal] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>(null)
+  const { getUIAmount } = useAccounts()
 
   useEffect(() => {
-    ;(async () => {
-      if (wallet?.adapter?.publicKey) {
-        const account = await connection.getTokenAccountsByOwner(wallet?.adapter?.publicKey, {
-          mint: toPublicKey(tokenMintAddress)
-        })
-        if (account.value[0]) {
-          const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-          setUserTokenBalance(balance?.value?.uiAmount)
-        }
-        if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
-      }
-    })()
-  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance])
+    if (wallet?.adapter?.publicKey) {
+      setUserTokenBalance(getUIAmount(tokenMintAddress))
+      if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
+    }
+  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
 
   useEffect(() => {
     ;(async () => {
@@ -243,6 +238,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
+      depositedBalanceConnection(connection, userPublicKey, coin)
       setIsTxnSuccessfull(false)
       const confirm = executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
       confirm.then((con) => {
@@ -255,12 +251,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
+          connection.removeAccountChangeListener(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }
       })
     } catch (error) {
+      connection.removeAccountChangeListener(connectionId)
       setOperationPending(false)
       setIsButtonLoading(false)
       notify(genericErrMsg(error))
@@ -272,6 +270,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
+      depositedBalanceConnection(connection, userPublicKey, coin)
       setIsTxnSuccessfull(false)
       executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
@@ -283,12 +282,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
+          connection.removeAccountChangeListener(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }
       })
     } catch (err) {
+      connection.removeAccountChangeListener(connectionId)
       setIsButtonLoading(false)
       setOperationPending(false)
       notify(genericErrMsg(err))
