@@ -8,10 +8,6 @@ const CONTAINER = styled.div`
   .debridge-widget-iframe {
     margin: 0px auto;
   }
-
-  .dropdown-menu.cdk-virtual-dropdown-menu {
-    border-radius: 8px;
-  }
 `
 
 const Bridge: FC = () => {
@@ -31,7 +27,6 @@ const Bridge: FC = () => {
       appAccentBg: bg,
       chartBg: bg,
       badge: '#cacaca',
-      borderRadius: 4,
       tooltipBg: '#cacaca',
       formControlBg: mode === 'dark' ? '#000' : '#ffffff',
       formControlBgAccent: '#000',
@@ -58,7 +53,7 @@ const Bridge: FC = () => {
       element: 'debridgeWidget',
       title: 'Bridge',
       width: breakpoint.isMobile ? '372' : '600',
-      height: '792',
+      height: '920',
       inputChain: '1',
       outputChain: '7565164',
       address: publicKey ? publicKey.toBase58() : '',
