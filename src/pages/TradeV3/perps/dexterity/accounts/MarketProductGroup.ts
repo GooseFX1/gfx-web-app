@@ -174,7 +174,7 @@ export class MarketProductGroup {
 
   static async fetch(c: Connection, address: PublicKey): Promise<[MarketProductGroup, any] | null> {
     const info = await c.getAccountInfo(address, 'processed')
-
+    console.log('mpg fetch')
     if (info === null) {
       return null
     }

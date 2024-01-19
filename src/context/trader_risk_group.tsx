@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
 import { AccountInfo, PublicKey, SystemProgram } from '@solana/web3.js'
 import React, {
@@ -396,27 +397,34 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
-    const fetchPerpsInstanceFromSdk = async () => {
+    const initSdk = async () => {
+      if (!wallet.connected) return
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
       const perp = new Perp(connection, 'mainnet', wallet)
       await perp.init()
       const product = new Product(perp)
       product.initByIndex(0)
-      if (wallet.connected) {
+      setPerpInstanceSdk(perp)
+      setPerpProductInstanceSdk(product)
+    }
+    initSdk()
+  }, [wallet, connection])
+
+  useEffect(() => {
+    const fetchPerpsInstanceFromSdk = async () => {
+      if (wallet.connected && perpInstanceSdk) {
         try {
-          const trader = new Trader(perp)
+          const trader = new Trader(perpInstanceSdk)
           await trader.init()
           setTraderInstanceSdk(trader)
         } catch (e) {
           //
         }
       }
-      setPerpInstanceSdk(perp)
-      setPerpProductInstanceSdk(product)
     }
     fetchPerpsInstanceFromSdk()
-  }, [wallet, connection, traderRiskGroup, perpInstanceSdk])
+  }, [wallet, connection, perpInstanceSdk])
 
   useEffect(() => {
     const current = Number(currentLeverage)
@@ -492,114 +500,83 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     perpsWasm()
   }, [rawData.mpg, rawData.trg])
 
-  useEffect(() => {
-    ;(async () => {
-      if (!currentMPG) return
-      const mpgData = await MarketProductGroup.fetch(connection, currentMPG)
-      updateMPGDetails(mpgData ? mpgData[0] : null, mpgData ? mpgData[1] : null)
-    })()
-  }, [currentMPG, connection])
+  // useEffect(() => {
+  //   ;(async () => {
+  //     if (!currentMPG) return
+  //     const mpgData = await MarketProductGroup.fetch(connection, currentMPG)
+  //     updateMPGDetails(mpgData ? mpgData[0] : null, mpgData ? mpgData[1] : null)
+  //   })()
+  // }, [currentMPG, connection])
 
-  useEffect(() => {
-    let id = null
-    let retryCount = 0
+  // useEffect(() => {
+  //   let id = null
+  //   let retryCount = 0
 
-    const subscribe = async () => {
-      try {
-        if (currentMPG) {
-          id = connection.onAccountChange(currentMPG, async (info) => {
-            const trg = await MarketProductGroup.decode(info.data)
-            updateMPGDetails(trg, trg ? info : null)
-          })
-        } else {
-          setDefaults()
-        }
-      } catch (e) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++
-          subscribe()
-        } else {
-          console.log('Max retries reached MPG. Giving up.')
-        }
-      }
-    }
+  //   const subscribe = async () => {
+  //     try {
+  //       if (currentMPG) {
+  //         id = connection.onAccountChange(currentMPG, async (info) => {
+  //           const trg = await MarketProductGroup.decode(info.data)
+  //           updateMPGDetails(trg, trg ? info : null)
+  //         })
+  //       } else {
+  //         setDefaults()
+  //       }
+  //     } catch (e) {
+  //       if (retryCount < MAX_RETRIES) {
+  //         retryCount++
+  //         subscribe()
+  //       } else {
+  //         console.log('Max retries reached MPG. Giving up.')
+  //       }
+  //     }
+  //   }
 
-    subscribe()
+  //   subscribe()
 
-    return () => {
-      if (id) connection.removeAccountChangeListener(id)
-    }
-  }, [currentMPG, wallet.connected])
+  //   return () => {
+  //     if (id) connection.removeAccountChangeListener(id)
+  //   }
+  // }, [currentMPG, wallet.connected])
 
-  useEffect(() => {
-    ;(async () => {
-      if (!currentTRG) return
-      const trgData = await TraderRiskGroup.fetch(connection, currentTRG)
-      updateTRGDetails(trgData ? trgData[0] : null, trgData ? trgData[1] : null)
-    })()
-  }, [currentTRG])
+  // useEffect(() => {
+  //   ;(async () => {
+  //     if (!currentTRG) return
+  //     const trgData = await TraderRiskGroup.fetch(connection, currentTRG)
+  //     updateTRGDetails(trgData ? trgData[0] : null, trgData ? trgData[1] : null)
+  //   })()
+  // }, [currentTRG])
 
-  useEffect(() => {
-    let id = null
-    let retryCount = 0
+  // useEffect(() => {
+  //   let id = null
+  //   let retryCount = 0
 
-    const subscribe = async () => {
-      try {
-        if (currentTRG) {
-          id = connection.onAccountChange(currentTRG, async (info) => {
-            const trg = await TraderRiskGroup.decode(info.data)
-            updateTRGDetails(trg, trg ? info : null)
-          })
-        } else {
-          setDefaults()
-        }
-      } catch (e) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++
-          subscribe()
-        } else {
-          console.log('Max retries reached. Giving up.')
-        }
-      }
-    }
+  //   const subscribe = async () => {
+  //     try {
+  //       if (currentTRG) {
+  //         id = connection.onAccountChange(currentTRG, async (info) => {
+  //           const trg = await TraderRiskGroup.decode(info.data)
+  //           updateTRGDetails(trg, trg ? info : null)
+  //         })
+  //       } else {
+  //         setDefaults()
+  //       }
+  //     } catch (e) {
+  //       if (retryCount < MAX_RETRIES) {
+  //         retryCount++
+  //         subscribe()
+  //       } else {
+  //         console.log('Max retries reached. Giving up.')
+  //       }
+  //     }
+  //   }
 
-    subscribe()
+  //   subscribe()
 
-    return () => {
-      if (id) connection.removeAccountChangeListener(id)
-    }
-  }, [currentTRG, wallet.connected])
-
-  useEffect(() => {
-    let id = null
-    let retryCount = 0
-
-    const subscribe = async () => {
-      try {
-        if (currentTRG) {
-          id = connection.onAccountChange(currentTRG, async (info) => {
-            const trg = await TraderRiskGroup.decode(info.data)
-            updateTRGDetails(trg, trg ? info : null)
-          })
-        } else {
-          setDefaults()
-        }
-      } catch (e) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++
-          subscribe()
-        } else {
-          console.log('Max retries reached. Giving up.')
-        }
-      }
-    }
-
-    subscribe()
-
-    return () => {
-      if (id) connection.removeAccountChangeListener(id)
-    }
-  }, [currentTRG, wallet.connected])
+  //   return () => {
+  //     if (id) connection.removeAccountChangeListener(id)
+  //   }
+  // }, [currentTRG, wallet.connected])
 
   const fetchTrgAcc = async () => {
     const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)

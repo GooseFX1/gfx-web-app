@@ -146,6 +146,7 @@ export class TraderRiskGroup {
 
   static async fetch(c: Connection, address: PublicKey): Promise<[TraderRiskGroup, any] | null> {
     const info = await c.getAccountInfo(address, 'processed')
+    console.log('trg fetch')
 
     if (info === null) {
       return null
@@ -176,6 +177,7 @@ export class TraderRiskGroup {
     if (!data.slice(0, 8).equals(TraderRiskGroup.discriminator)) {
       throw new Error('invalid account discriminator')
     }
+    console.log('calling decode trg')
 
     const dec = TraderRiskGroup.layout.decode(data.slice(8))
 
