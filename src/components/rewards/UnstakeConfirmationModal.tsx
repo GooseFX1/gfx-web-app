@@ -70,7 +70,7 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
           `
               ]}
             >
-              Once the cooldown starts, the process cannot be un-done, and you will need to re-stake your GOFX
+              Once the cooldown starts, the process cannot be undone. You will need to restake your GOFX
             </p>
             <div
               css={[

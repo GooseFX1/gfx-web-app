@@ -82,9 +82,10 @@ export const FarmHeader: FC = () => {
       tooltipText = 'Total rewards earned by the user by providing liquidty in our SSL Pools, displayed in USD'
     else if (index === 1) tooltipText = 'TVL represents the total USD value of all assets locked in our SSL Pools'
     else if (index === 2)
-      tooltipText = 'Volume generated between different time intervals. Volume is rest everyday at 10PM UTC'
+      tooltipText = 'Volume generated between different time intervals. Volume is reset everyday at 10PM UTC'
     else if (index === 3)
-      tooltipText = 'Fees earned by the pools between different time intervals. Fees is rest everyday at 10PM UTC'
+      tooltipText =
+        'Fees earned by the pools between different time intervals. Fees are reset everyday at 10PM UTC'
     return <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">{tooltipText}</span>
   }
 
