@@ -1,8 +1,9 @@
-import { useLayoutEffect, useMemo, FC, useRef } from 'react'
+import { useLayoutEffect, useMemo, FC, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { styled } from 'twin.macro'
+import PageLoader from '../../components/common/PageLoader'
 
 const CONTAINER = styled.div`
   .debridge-widget-iframe {
@@ -13,6 +14,8 @@ const CONTAINER = styled.div`
 const Bridge: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   const scriptId = 'uniqueScriptId'
   const scriptRef = useRef(null)
   const deBridgeRef = useRef(null)
@@ -42,7 +45,7 @@ const Bridge: FC = () => {
       primaryBtnText: '#ffffff',
       secondaryBtnText: '#ffffff',
       lightBtnText: '#000',
-      borderRadius: 50,
+      borderRadius: 4,
       fontFamily: 'Nunito Sans'
     })
 
@@ -57,6 +60,8 @@ const Bridge: FC = () => {
       inputChain: '1',
       outputChain: '7565164',
       address: publicKey ? publicKey.toBase58() : '',
+      affiliateFeePercent: 1,
+      affiliateFeeRecipient: '0x7557b857C2257ccd4Bd90bC56f90C067911d0019',
       supportedChains: {
         inputChains: {
           '1': 'all',
@@ -78,7 +83,7 @@ const Bridge: FC = () => {
       mode: 'deswap',
       styles: `${base64Styles}`,
       theme: `${mode === 'dark' ? mode : 'light'}`,
-      r: '3981'
+      r: ''
     })
   }, [mode, publicKey])
 
@@ -93,6 +98,7 @@ const Bridge: FC = () => {
     document.body.appendChild(script)
     // Save a reference to the script for later use
     scriptRef.current = script
+    setTimeout(() => setIsLoading(false), 3500)
 
     // Cleanup function to remove the script when the component unmounts
     return () => {
@@ -101,6 +107,7 @@ const Bridge: FC = () => {
       }
 
       if (deBridgeRef.current && deBridgeRef.current.childNodes.length > 0) {
+        setIsLoading(true)
         deBridgeRef.current.removeChild(deBridgeRef.current.firstChild)
       }
     }
@@ -108,6 +115,7 @@ const Bridge: FC = () => {
 
   return (
     <CONTAINER>
+      {isLoading && <PageLoader />}
       <div id="debridgeWidget" ref={deBridgeRef} />
     </CONTAINER>
   )
