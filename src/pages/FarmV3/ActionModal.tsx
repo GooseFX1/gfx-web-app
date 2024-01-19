@@ -60,6 +60,16 @@ export const ActionModal: FC<{
   const Content = useCallback(
     () => (
       <div>
+        {breakpoint.isMobile && (
+          <div
+            tw="absolute right-[25px] text-[25px] cursor-pointer"
+            onClick={() => {
+              setActionModal(false)
+            }}
+          >
+            <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
+          </div>
+        )}
         <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center sm:text-average">
           {actionType === 'withdraw' ? (
             <div>Are you sure you want to {breakpoint.isMobile && <br />} withdraw?</div>
@@ -96,9 +106,9 @@ export const ActionModal: FC<{
         )}
         <div tw="flex flex-row items-center justify-between mb-3.75">
           <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
-          <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-            claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`
-          }`}</div>
+          <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
+            {`${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`}`}
+          </div>
         </div>
         <Button
           height="35px"
@@ -115,7 +125,7 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim yield`
+              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim Yield`
               : actionType === 'withdraw'
               ? `Withdraw ${commafy(+withdrawAmount + claimAmount, 4)} ${token?.token}`
               : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`
@@ -132,7 +142,7 @@ export const ActionModal: FC<{
         </div>
       </div>
     ),
-    [breakpoint, mode]
+    [breakpoint, mode, isButtonLoading]
   )
 
   return breakpoint.isMobile ? (

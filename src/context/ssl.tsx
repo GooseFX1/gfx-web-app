@@ -25,7 +25,7 @@ import {
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
-import { PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 
 interface SSLData {
   pool: Pool
@@ -50,6 +50,8 @@ interface SSLData {
   isFirstPoolOpen: boolean
   setIsFirstPoolOpen: Dispatch<SetStateAction<boolean>>
   allPoolFilteredLiquidityAcc: any
+  depositedBalanceConnection: any
+  connectionId: number
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -73,6 +75,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslAllVolume, setSslAllVolume] = useState<any>(null)
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
   const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
+  const [connectionId, setConnectionId] = useState<number>()
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const publicKey: PublicKey | null = useMemo(
@@ -190,7 +193,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setLiquidityAccounts(liquidityData)
       }
     })()
-  }, [publicKey, sslData, isTxnSuccessfull])
+  }, [publicKey, sslData])
 
   useEffect(() => {
     ;(async () => {
@@ -314,6 +317,22 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [allPoolSslData, isTxnSuccessfull])
 
+  const depositedBalanceConnection = async (connection: Connection, userPublicKey: PublicKey, coin: SSLToken) => {
+    let id = null
+    const liquidityAcc = await getLiquidityAccountKey(userPublicKey, coin?.mint)
+    id = await connection.onAccountChange(liquidityAcc, async (info) => {
+      const updatedLiqAcc = await SSLProgram.coder.accounts.decode('LiquidityAccount', info.data)
+      const mintAddress = coin.mint.toBase58()
+      const updatedFilteredLiqAcc = {
+        ...filteredLiquidityAccounts,
+        [mintAddress]: updatedLiqAcc
+      }
+      setFilteredLiquidityAccounts(updatedFilteredLiqAcc)
+      connection.removeAccountChangeListener(id)
+    })
+    setConnectionId(id)
+  }
+
   return (
     <SSLContext.Provider
       value={{
@@ -338,7 +357,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         rewards: rewards,
         isFirstPoolOpen: isFirstPoolOpen,
         setIsFirstPoolOpen: setIsFirstPoolOpen,
-        allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc
+        allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc,
+        depositedBalanceConnection: depositedBalanceConnection,
+        connectionId: connectionId
       }}
     >
       {children}

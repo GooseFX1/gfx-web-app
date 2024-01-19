@@ -549,7 +549,7 @@ const FarmTokenContent: FC<{
   const userDepositedAmount: BN = useMemo(() => {
     const account = filteredLiquidityAccounts?.[tokenMintAddress]
     return account?.amountDeposited
-  }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin])
+  }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull])
 
   const userDepositedAmountUI: string = useMemo(
     () => truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
