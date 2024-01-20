@@ -510,7 +510,7 @@ const FundingHistoryComponent: FC = () => {
                   <span>{item.averagePosition.quantity} SOL</span>
                   <span>
                     {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) < 0.0001
-                      ? '-0.0001'
+                      ? '< 0.0001'
                       : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
                   </span>
                   <span>{convertUnixTimestampToFormattedDate(item.time)}</span>
