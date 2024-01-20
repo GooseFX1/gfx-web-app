@@ -14,6 +14,7 @@ import { GET_USER_FUNDING_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
+import { Tooltip } from '../../../../components'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -44,32 +45,6 @@ const ACCOUNTVALUE = styled.div`
   }
   p:last-child {
     font-size: 15px;
-  }
-
-  .tooltip {
-    position: relative;
-    display: inline-block;
-  }
-
-  .tooltip .tooltip-text {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -60px;
-  }
-
-  .tooltip:hover .tooltip-text {
-    visibility: visible;
   }
 `
 
@@ -225,21 +200,25 @@ const MobileFundingHistory: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>Cumulative Funding:</p>
-            <div className="tooltip">
-              $
-              {traderInfo.traderRiskGroup !== null
-                ? (
-                    Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                    10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
-                  ).toFixed(2)
-                : 0}
-              <span className="tooltip-text">
-                {traderInfo.traderRiskGroup !== null
+            <Tooltip
+              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+              infoIcon={false}
+              title={
+                traderInfo.traderRiskGroup !== null
                   ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
                     10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+                  : 0
+              }
+            >
+              <span>
+                {traderInfo.traderRiskGroup !== null
+                  ? (
+                      Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+                      10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+                    ).toFixed(2)
                   : 0}
               </span>
-            </div>
+            </Tooltip>
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
       </ACCOUNTVALUESFLEX>
