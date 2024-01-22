@@ -25,8 +25,12 @@ const PageLoader: FC = () => {
         height: 'calc(100dvh - 56px)'
       }}
     >
-      <div style={{ width: '500px', height: '500px' }}>
-        <RiveComponent width={'500px'} height={'500px'} />
+      <div style={{ verticalAlign: 'center', width: '500px', height: '500px' }}>
+        <RiveComponent
+          width={'500px'}
+          height={'500px'}
+          style={{ verticalAlign: 'center', width: '500px', height: '500px' }}
+        />
       </div>
     </div>
   )
