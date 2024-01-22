@@ -247,7 +247,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
               isActive: pathname.includes('account')
             },
             {
-              text: 'Referrals',
+              text: 'Refer',
               onClick: () => {
                 toggleSettingsDrawer()
                 changePanel(1)
@@ -505,7 +505,7 @@ const DesktopNav: FC = () => {
             isActive: pathname.includes('account')
           },
           {
-            text: 'Referrals',
+            text: 'Refer',
             onClick: () => {
               changePanel(1)
               rewardToggle(!rewardModal)
