@@ -212,8 +212,8 @@ export const DepositWithdraw: FC<{
       fetchAccounts()
 
       if (response && response.txid) {
-        setDepositWithdrawModal(false)
         setIsLoading(false)
+        setDepositWithdrawModal(false)
       }
     } catch (e) {
       console.log(e)

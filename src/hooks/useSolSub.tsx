@@ -14,7 +14,7 @@ interface PubKeyAndRetrieval {
 }
 
 interface BaseSub {
-  callback: () => void
+  callback: (info?: any) => void
   SubType: SubType
   id: string
 }
