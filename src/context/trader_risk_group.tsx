@@ -77,7 +77,9 @@ import { notify, removeFloatingPointError } from '../utils'
 import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
 import { httpClient } from '../api'
+import useSolSub, { SubType } from '../hooks/useSolSub'
 const MAX_RETRIES = 3
+const ONE_MINUTE = 1000 * 60
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -227,6 +229,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { order, setOrder } = useOrder()
   const { isDevnet } = useCrypto()
   const prevCountRef = useRef<boolean>()
+  const { on, off } = useSolSub()
 
   const wallet = useWallet()
   const { perpsConnection: mainnetConnection } = useConnectionConfig()
@@ -250,7 +253,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const connection = useMemo(() => mainnetConnection, [])
 
   const updateMPGDetails = async (mpgData, mpgRawData) => {
-    console.log('MPG updated')
     mpgData ? setMarketProductGroup(mpgData) : setMarketProductGroup(null)
     mpgRawData && setRawData((prevState) => ({ ...prevState, mpg: mpgRawData }))
   }
@@ -464,6 +466,17 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
+  const closeOnAccountChangeListener = useCallback(
+    (id: number) => {
+      try {
+        connection.removeAccountChangeListener(id)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    [connection]
+  )
+
   useEffect(() => {
     perpsWasm()
   }, [rawData.mpg, rawData.trg])
@@ -477,33 +490,23 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentMPG, connection])
 
   useEffect(() => {
-    let id = null
-    let retryCount = 0
-
-    const subscribeMPG = async () => {
-      try {
-        if (currentMPG) {
-          id = connection.onAccountChange(currentMPG, async (info) => {
-            const trg = await MarketProductGroup.decode(info.data)
-            updateMPGDetails(trg, trg ? info : null)
-          })
-        } else {
-          setDefaults()
-        }
-      } catch (e) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++
-          subscribeMPG()
-        } else {
-          console.log('Max retries reached MPG. Giving up.')
-        }
-      }
-    }
-
-    subscribeMPG()
-
+    if (!currentMPG || !wallet.connected) return
+    const id = 'market-product-group'
+    on({
+      SubType: SubType.AccountChange,
+      id,
+      callback: async (info) => {
+        const trg = await MarketProductGroup.decode(info.data)
+        updateMPGDetails(trg, trg ? info : null)
+      },
+      publicKey: currentMPG
+    })
+    setTimeout(() => {
+      off(id)
+    }, 15 * ONE_MINUTE)
     return () => {
-      if (id) connection.removeAccountChangeListener(id)
+      off(id)
+      return undefined
     }
   }, [currentMPG, wallet.connected])
 
@@ -516,32 +519,24 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentTRG])
 
   useEffect(() => {
-    let id = null
-    let retryCount = 0
-
-    const subscribeTRG = async () => {
-      try {
-        if (currentTRG) {
-          id = connection.onAccountChange(currentTRG, async (info) => {
-            const trg = await TraderRiskGroup.decode(info.data)
-            updateTRGDetails(trg, trg ? info : null)
-          })
-        } else {
-          setDefaults()
-        }
-      } catch (e) {
-        if (retryCount < MAX_RETRIES) {
-          retryCount++
-          subscribeTRG()
-        } else {
-          console.log('Max retries reached. Giving up.')
-        }
-      }
-    }
-    subscribeTRG()
+    if (!currentTRG || !wallet.connected) return
+    const id = 'user-trader-wallet-balance'
+    on({
+      SubType: SubType.AccountChange,
+      id,
+      callback: async (info) => {
+        const trg = await TraderRiskGroup.decode(info.data)
+        updateTRGDetails(trg ?? null, trg ? info : null)
+      },
+      publicKey: currentTRG
+    })
+    setTimeout(() => {
+      off(id)
+    }, 15 * ONE_MINUTE)
 
     return () => {
-      if (id) connection.removeAccountChangeListener(id)
+      off(id)
+      return undefined
     }
   }, [currentTRG, wallet.connected])
 
