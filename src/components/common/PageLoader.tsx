@@ -26,7 +26,7 @@ const PageLoader: FC = () => {
       }}
     >
       <div style={{ width: '500px', height: '500px' }}>
-        <RiveComponent />
+        <RiveComponent width={'500px'} height={'500px'} />
       </div>
     </div>
   )
