@@ -174,8 +174,8 @@ const MobileNav: FC = () => {
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <span ref={outsideRef}>
-      <div css={tw`flex w-full items-center mr-auto cursor-pointer`} onClick={toggleSettingsDrawer}>
-        <img css={tw`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} />
+      <div css={[tw`flex w-full items-center mr-auto cursor-pointer`]} onClick={toggleSettingsDrawer}>
+        <img css={[tw`h-[35px]`]} src={`/img/mainnav/menu-${mode}.svg`} />
       </div>
       <MobileSettingsDrawer
         isOpen={isOpen}
@@ -199,6 +199,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
 }) => {
   const { mode } = useDarkMode()
   const { pathname } = useLocation()
+  const { rewardToggle, changePanel, rewardModal } = useRewardToggle()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   return (
@@ -244,6 +245,16 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
               onClick: () => history.push('/account'),
               //onClick: () => null,
               isActive: pathname.includes('account')
+            },
+            {
+              text: 'Referrals',
+              onClick: () => {
+                toggleSettingsDrawer()
+                changePanel(1)
+                rewardToggle(!rewardModal)
+              },
+              //onClick: () => null,
+              isActive: false
             }
           ]}
         />
@@ -372,7 +383,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
   )
 
   return (
-    <div css={[tw`relative inline-block text-left z-20 `]} ref={selfRef}>
+    <div css={[tw`relative inline-block text-left z-0 `, isOpen && tw`z-[20]`]} ref={selfRef}>
       <span
         id={'spacer'}
         css={[tw`absolute top-[44px] left-0 h-6 w-full z-[0]`]}
@@ -464,9 +475,10 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
+  const { rewardToggle, changePanel, rewardModal } = useRewardToggle()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
-    <div css={tw`flex items-center gap-6 mx-auto`}>
+    <div css={[tw`flex items-center gap-6 mx-auto`]}>
       {/* <NavItem
         text={'swap'}
         riveAnimation={'swap'}
@@ -491,6 +503,15 @@ const DesktopNav: FC = () => {
             onClick: () => history.push('/account'),
             //onClick: () => null,
             isActive: pathname.includes('account')
+          },
+          {
+            text: 'Referrals',
+            onClick: () => {
+              changePanel(1)
+              rewardToggle(!rewardModal)
+            },
+            //onClick: () => null,
+            isActive: false
           }
         ]}
       />
