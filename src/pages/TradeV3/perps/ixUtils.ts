@@ -1,77 +1,40 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
 import {
   INewOrderAccounts,
   IDepositFundsAccounts,
   IDepositFundsParams,
-  IWithdrawFundsAccounts,
   IWithdrawFundsParams,
-  IConsumeOB,
-  ICancelOrderAccounts
+  IConsumeOB
 } from '../../../types/dexterity_instructions'
 import { buildTransaction, sendPerpsTransaction, sendPerpsTransactions } from '../../../web3/connection'
-import { getDexProgram, getFeeModelConfigAcct, getMarketSigner, getRiskSigner, getTraderFeeAcct } from './utils'
+import { getDexProgram, getRiskSigner, getTraderFeeAcct } from './utils'
 import * as anchor from '@project-serum/anchor'
-import {
-  DEX_ID,
-  FEES_ID,
-  MPG_ID as MAINNET_MPG_ID,
-  RISK_ID,
-  VAULT_MINT as MAINNET_VAULT_MINT
-} from './perpsConstants'
-import { VAULT_MINT as DEVNET_VAULT_MINT, MPG_ID as DEVNET_MPG_ID } from './perpsConstantsDevnet'
-import { findAssociatedTokenAddress } from '../../../web3'
-import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
+import { FEES_ID, MPG_ID as MAINNET_MPG_ID, RISK_ID } from './perpsConstants'
+import { MPG_ID as DEVNET_MPG_ID } from './perpsConstantsDevnet'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
-import { createRandom, getProgramId, getRemainingAccountsForTransfer } from '../../../hooks/useReferrals'
-import { TraderRiskGroup } from './dexterity/accounts'
+import { createRandom } from '../../../hooks/useReferrals'
+import { Trader, Product, Perp } from 'gfx-perp-sdk'
 
 export const newOrderIx = async (
-  newOrderAccounts: INewOrderAccounts,
   newOrderParams,
   wallet,
-  connection: Connection
+  connection: Connection,
+  traderInstanceSdk: Trader,
+  productInstanceSdk: Product
 ) => {
-  const instructions = []
-  const dexProgram = await getDexProgram(connection, wallet)
-
-  //instructions.push(await consumeOBIx(wallet, connection, consumeAccounts))
-  instructions.push(
-    await dexProgram.instruction.newOrder(newOrderParams, {
-      accounts: {
-        user: wallet.publicKey,
-        traderRiskGroup: newOrderAccounts.traderRiskGroup,
-        marketProductGroup: newOrderAccounts.marketProductGroup,
-        product: newOrderAccounts.product,
-        aaobProgram: newOrderAccounts.aaobProgram,
-        orderbook: newOrderAccounts.orderbook,
-        marketSigner: newOrderAccounts.marketSigner,
-        eventQueue: newOrderAccounts.eventQueue,
-        bids: newOrderAccounts.bids,
-        asks: newOrderAccounts.asks,
-        systemProgram: newOrderAccounts.systemProgram,
-        feeModelProgram: newOrderAccounts.feeModelProgram,
-        feeModelConfigurationAcct: newOrderAccounts.feeModelConfigurationAcct,
-        traderFeeStateAcct: newOrderAccounts.traderFeeStateAcct,
-        feeOutputRegister: newOrderAccounts.feeOutputRegister,
-        riskEngineProgram: newOrderAccounts.riskEngineProgram,
-        riskModelConfigurationAcct: newOrderAccounts.riskModelConfigurationAcct,
-        riskOutputRegister: newOrderAccounts.riskOutputRegister,
-        traderRiskStateAcct: newOrderAccounts.traderRiskStateAcct,
-        riskAndFeeSigner: newOrderAccounts.riskAndFeeSigner
-      }
-    })
-  )
   try {
-    //perpsNotify({
-    //  action: 'open',
-    //  message: 'placing order hehehe',
-    //  key: 12,
-    //  styles: {}
-    //})
+    const ix = await traderInstanceSdk.newOrderIx(
+      newOrderParams.maxBaseQty,
+      newOrderParams.limitPrice,
+      newOrderParams.side,
+      newOrderParams.orderType,
+      productInstanceSdk
+    )
+    const instructions = []
+    instructions.push(ix)
+
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
       startMessage: {
         header: 'New Order',
@@ -199,36 +162,16 @@ export const newTakeProfitOrderIx = async (
 }
 
 export const cancelOrderIx = async (
-  cancelOrderAccounts: ICancelOrderAccounts,
   cancelOrderParams,
   wallet,
-  connection: Connection
+  connection: Connection,
+  traderInstanceSdk: Trader,
+  productInstanceSdk: Product
 ) => {
-  const instructions = []
-  const dexProgram = await getDexProgram(connection, wallet)
-  instructions.push(
-    await dexProgram.instruction.cancelOrder(cancelOrderParams, {
-      accounts: {
-        user: wallet.publicKey,
-        traderRiskGroup: cancelOrderAccounts.traderRiskGroup,
-        marketProductGroup: cancelOrderAccounts.marketProductGroup,
-        product: cancelOrderAccounts.product,
-        aaobProgram: cancelOrderAccounts.aaobProgram,
-        orderbook: cancelOrderAccounts.orderbook,
-        marketSigner: cancelOrderAccounts.marketSigner,
-        eventQueue: cancelOrderAccounts.eventQueue,
-        bids: cancelOrderAccounts.bids,
-        asks: cancelOrderAccounts.asks,
-        systemProgram: cancelOrderAccounts.systemProgram,
-        riskEngineProgram: cancelOrderAccounts.riskEngineProgram,
-        riskModelConfigurationAcct: cancelOrderAccounts.riskModelConfigurationAcct,
-        riskOutputRegister: cancelOrderAccounts.riskOutputRegister,
-        traderRiskStateAcct: cancelOrderAccounts.traderRiskStateAcct,
-        riskSigner: cancelOrderAccounts.riskAndFeeSigner
-      }
-    })
-  )
   try {
+    const instructions = []
+    const ix = await traderInstanceSdk.cancelOrderIx(cancelOrderParams.orderId, productInstanceSdk)
+    instructions.push(ix)
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
       startMessage: {
         header: 'Cancel Order',
@@ -259,26 +202,16 @@ export const cancelOrderIx = async (
 }
 
 export const depositFundsIx = async (
-  depositFundsAccounts: IDepositFundsAccounts,
   depositFundsParams: IDepositFundsParams,
   wallet: any,
-  connection: Connection
+  connection: Connection,
+  traderInstanceSdk: Trader
 ) => {
-  const instructions = []
-  const dexProgram = await getDexProgram(connection, wallet)
-  instructions.push(
-    await dexProgram.instruction.depositFunds(depositFundsParams, {
-      accounts: {
-        tokenProgram: TOKEN_PROGRAM_ID,
-        user: wallet.publicKey,
-        userTokenAccount: depositFundsAccounts.userTokenAccount,
-        traderRiskGroup: depositFundsAccounts.traderRiskGroup,
-        marketProductGroup: depositFundsAccounts.marketProductGroup,
-        marketProductGroupVault: depositFundsAccounts.marketProductGroupVault
-      }
-    })
-  )
   try {
+    await traderInstanceSdk.init()
+    const ix = await traderInstanceSdk.depositFundsIx(depositFundsParams.quantity)
+    const instructions = []
+    instructions.push(ix)
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
       startMessage: {
         header: 'Deposit funds',
@@ -303,6 +236,7 @@ export const depositFundsIx = async (
     //  message: 'Deposit of ' + displayFractional(depositFundsParams.quantity) + ' failed',
     //  type: 'error'
     //})
+    console.log(e)
     return e
   }
 }
@@ -312,90 +246,69 @@ export const initTrgDepositIx = async (
   depositFundsParams: IDepositFundsParams,
   wallet: any,
   connection: Connection,
+  perpInstanceSdk: Perp,
   trg?: Keypair,
   isDevnet?: boolean
 ) => {
-  const [instructions, buddyInstructions, signers] = await initTrgIx(connection, wallet, trg, isDevnet)
-  const buddyTransaction = isDevnet ? null : await buildTransaction(connection, wallet, buddyInstructions, [])
-  const dexProgram = await getDexProgram(connection, wallet)
-  instructions.push(
-    await dexProgram.instruction.depositFunds(depositFundsParams, {
-      accounts: {
-        tokenProgram: TOKEN_PROGRAM_ID,
-        user: wallet.publicKey,
-        userTokenAccount: depositFundsAccounts.userTokenAccount,
-        traderRiskGroup: depositFundsAccounts.traderRiskGroup,
-        marketProductGroup: depositFundsAccounts.marketProductGroup,
-        marketProductGroupVault: depositFundsAccounts.marketProductGroupVault
+  try {
+    const [instructions, buddyInstructions, signers, trader] = await initTrgIx(
+      connection,
+      wallet,
+      trg,
+      isDevnet,
+      perpInstanceSdk
+    )
+    const buddyTransaction = isDevnet ? null : await buildTransaction(connection, wallet, buddyInstructions, [])
+    //traderRiskGroup address is created in sdk, we need to use the signers returned by sdk
+    depositFundsAccounts.traderRiskGroup = signers[0].publicKey
+    const ix = await trader.depositFundsIx(depositFundsParams.quantity, depositFundsAccounts)
+    instructions.push(ix)
+
+    const transaction = await buildTransaction(connection, wallet, instructions, signers)
+    const response = await sendPerpsTransactions(
+      connection,
+      wallet,
+      buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction],
+      {
+        startMessage: {
+          header: 'Deposit funds',
+          description: 'Sign the transaction to deposit funds!'
+        },
+        progressMessage: {
+          header: 'Deposit funds',
+          description: 'Depositing funds to your account..'
+        },
+        endMessage: {
+          header: 'Deposit funds',
+          description: 'Funds successfully deposited'
+        },
+        errorMessage: {
+          header: 'Deposit funds',
+          description: 'There was an error in depositing the funds'
+        }
       }
-    })
-  )
+    )
 
-  const transaction = await buildTransaction(connection, wallet, instructions, signers)
-  const response = await sendPerpsTransactions(
-    connection,
-    wallet,
-    buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction],
-    {
-      startMessage: {
-        header: 'Deposit funds',
-        description: 'Sign the transaction to deposit funds!'
-      },
-      progressMessage: {
-        header: 'Deposit funds',
-        description: 'Depositing funds to your account..'
-      },
-      endMessage: {
-        header: 'Deposit funds',
-        description: 'Funds successfully deposited'
-      },
-      errorMessage: {
-        header: 'Deposit funds',
-        description: 'There was an error in depositing the funds'
-      }
-    }
-  )
+    localStorage.removeItem('referrer')
 
-  localStorage.removeItem('referrer')
-
-  // Only return trgIx reponse
-  return response[0]
+    // Only return trgIx reponse
+    return response[0]
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 export const withdrawFundsIx = async (
-  withdrawFundsAccounts: IWithdrawFundsAccounts,
   withdrawFundsParams: IWithdrawFundsParams,
   wallet: any,
   connection: Connection,
-  referral: PublicKey
+  traderInstanceSdk: Trader
 ) => {
-  const instructions = []
-  const dexProgram = await getDexProgram(connection, wallet)
-
-  const buddyProgramId = getProgramId(connection, wallet.publicKey)
-
-  const remainingAccounts = await getRemainingAccountsForTransfer(connection, wallet.publicKey, referral)
-
-  instructions.push(
-    await dexProgram.instruction.withdrawFunds(withdrawFundsParams, {
-      accounts: {
-        tokenProgram: TOKEN_PROGRAM_ID,
-        bubdyLinkProgram: buddyProgramId,
-        user: wallet.publicKey,
-        userTokenAccount: withdrawFundsAccounts.userTokenAccount,
-        traderRiskGroup: withdrawFundsAccounts.traderRiskGroup,
-        marketProductGroup: withdrawFundsAccounts.marketProductGroup,
-        marketProductGroupVault: withdrawFundsAccounts.marketProductGroupVault,
-        riskEngineProgram: withdrawFundsAccounts.riskEngineProgram,
-        riskModelConfigurationAcct: withdrawFundsAccounts.riskModelConfigurationAcct,
-        riskOutputRegister: withdrawFundsAccounts.riskOutputRegister,
-        traderRiskStateAcct: withdrawFundsAccounts.traderRiskStateAcct,
-        riskSigner: withdrawFundsAccounts.riskSigner
-      },
-      remainingAccounts: remainingAccounts
-    })
-  )
   try {
+    const instructions = []
+    const ix = await traderInstanceSdk.withdrawFundsIx(withdrawFundsParams.quantity)
+    instructions.push(ix)
+
     const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
       startMessage: {
         header: 'Withdraw funds',
@@ -485,72 +398,30 @@ export const initializeTraderFeeAcctIx = (args) => {
   })
 }
 
-export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Keypair, isDevnet?: boolean) => {
+export const initTrgIx = async (
+  connection: Connection,
+  wallet: any,
+  trgKey?: Keypair,
+  isDevnet?: boolean,
+  perpInstanceSdk?: Perp
+): Promise<[TransactionInstruction[], TransactionInstruction[], Keypair[], Trader]> => {
   const instructions = []
   const riskStateAccount = anchor.web3.Keypair.generate()
   const traderRiskGroup = trgKey ?? anchor.web3.Keypair.generate()
   const traderFeeAcct = getTraderFeeAcct(traderRiskGroup.publicKey, isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID)
   const riskSigner = getRiskSigner(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID)
   const referrer = localStorage.getItem('referrer') || ''
-  const mint = new PublicKey(isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT)
-  const associatedTokenAddress = await findAssociatedTokenAddress(wallet.publicKey, mint)
-  const res = await connection.getAccountInfo(associatedTokenAddress)
-  if (!res) {
-    instructions.push(
-      createAssociatedTokenAccountInstruction(
-        wallet.publicKey, // payer
-        associatedTokenAddress, // ata
-        wallet.publicKey, // owner
-        mint,
-        TOKEN_PROGRAM_ID // mint
-      )
-    )
-    //const res = await sendPerpsTransaction(connection, wallet, instructions, [])
-    //console.log(res)
-  }
-  //instructions = []
-  instructions.push(
-    initializeTraderFeeAcctIx({
-      payer: wallet.publicKey,
-      traderFeeAcct: traderFeeAcct,
-      traderRiskGroup: traderRiskGroup,
-      feeModelConfigAcct: getFeeModelConfigAcct(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
-      MPG_ID: isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID
-    })
-  )
-
-  instructions.push(
-    SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: traderRiskGroup.publicKey,
-      lamports: 96600000, //Need to change
-      space: 13744, //Need to change
-      programId: new PublicKey(DEX_ID)
-    })
-  )
 
   const dexProgram = await getDexProgram(connection, wallet)
   if (!isDevnet) {
     const createBuddy = await createRandom(connection, wallet.publicKey, referrer)
     const referralKey = createBuddy.memberPDA
     const buddyInstructions = [...createBuddy.instructions]
-
-    const ix = await dexProgram.instruction.initializeTraderRiskGroup({
-      accounts: {
-        owner: wallet.publicKey,
-        traderRiskGroup: traderRiskGroup.publicKey,
-        marketProductGroup: new PublicKey(isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID),
-        riskSigner: riskSigner,
-        traderRiskStateAcct: riskStateAccount.publicKey,
-        traderFeeStateAcct: traderFeeAcct,
-        riskEngineProgram: new PublicKey(RISK_ID),
-        systemProgram: SystemProgram.programId,
-        referralKey: referralKey
-      }
-    })
-    instructions.push(ix)
-
-    return [instructions, buddyInstructions, [riskStateAccount, traderRiskGroup]]
+    await perpInstanceSdk.init()
+    const trader = new Trader(perpInstanceSdk, referralKey)
+    const [ixs, signers] = await trader.createTraderAccountIxs()
+    instructions.push(...ixs)
+    return [instructions, buddyInstructions, signers, trader]
   } else {
     const ix = await dexProgram.instruction.initializeTraderRiskGroup({
       accounts: {
@@ -567,7 +438,7 @@ export const initTrgIx = async (connection: Connection, wallet: any, trgKey?: Ke
     })
     instructions.push(ix)
 
-    return [instructions, null, [riskStateAccount, traderRiskGroup]]
+    return [instructions, null, [riskStateAccount, traderRiskGroup], null]
   }
 }
 
