@@ -175,6 +175,12 @@ const MobileFundingHistory: FC = () => {
     }
   }, [connected, publicKey, traderInfo.traderRiskGroupKey, pagination])
 
+  const getCumulativeFunding = (): number =>
+    traderInfo.traderRiskGroup !== null
+      ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+        10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+      : 0
+
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -200,25 +206,17 @@ const MobileFundingHistory: FC = () => {
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>
             <p>Cumulative Funding:</p>
-            <Tooltip
-              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-              infoIcon={false}
-              title={
-                traderInfo.traderRiskGroup !== null
-                  ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                    10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
-                  : 0
-              }
-            >
-              <span>
-                {traderInfo.traderRiskGroup !== null
-                  ? (
-                      Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-                      10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
-                    ).toFixed(2)
-                  : 0}
-              </span>
-            </Tooltip>
+            {getCumulativeFunding().toString().indexOf('.') != -1 ? (
+              <Tooltip
+                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                infoIcon={false}
+                title={getCumulativeFunding()}
+              >
+                <span>{getCumulativeFunding().toFixed(2)}</span>
+              </Tooltip>
+            ) : (
+              <span>{getCumulativeFunding()}</span>
+            )}
           </ACCOUNTVALUE>
         </ACCOUNTVALUESCONTAINER>
       </ACCOUNTVALUESFLEX>
