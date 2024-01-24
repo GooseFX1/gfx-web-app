@@ -319,7 +319,7 @@ export const DepositWithdraw: FC<{
         className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
         onClick={handleSubmit}
         loading={isLoading}
-        disabled={checkDisabled()}
+        disabled={checkDisabled() || isLoading}
         cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
       >
         {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}

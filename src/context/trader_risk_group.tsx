@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useWallet } from '@solana/wallet-adapter-react'
+import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
 import { AccountInfo, PublicKey, SystemProgram } from '@solana/web3.js'
 import React, {
   Dispatch,
@@ -51,17 +50,11 @@ import {
   mulFractionals,
   tradeHistoryInfo
 } from '../pages/TradeV3/perps/utils'
-import {
-  INewOrderAccounts,
-  IDepositFundsAccounts,
-  IWithdrawFundsAccounts,
-  ICancelOrderAccounts,
-  ITraderBalances
-} from '../types/dexterity_instructions'
+import { INewOrderAccounts, IDepositFundsAccounts, ITraderBalances } from '../types/dexterity_instructions'
 import { useConnectionConfig } from './settings'
 import * as anchor from '@project-serum/anchor'
 import { Bid, Ask } from '../pages/TradeV3/perps/dexterity/types/Side'
-import { ImmediateOrCancel, Limit, PostOnly } from '../pages/TradeV3/perps/dexterity/types/OrderType'
+import { Limit } from '../pages/TradeV3/perps/dexterity/types/OrderType'
 import { DecrementTake } from '../pages/TradeV3/perps/dexterity/types/SelfTradeBehavior'
 import { findAssociatedTokenAddress } from '../web3'
 import {
@@ -78,8 +71,8 @@ import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
 import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
-const MAX_RETRIES = 3
 const ONE_MINUTE = 1000 * 60
+import { Perp, Product, Trader } from 'gfx-perp-sdk'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -157,6 +150,9 @@ interface IPerpsInfo {
   collateralInfo: ICollateralInfo
   setOrderBook: Dispatch<SetStateAction<OrderBook>>
   portfolioValue: number
+  perpInstanceSdk: Perp
+  perpProductInstanceSdk: Product
+  traderInstanceSdk: Trader
 }
 
 export interface IActiveProduct {
@@ -222,7 +218,9 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [fundingRate, setFundingRate] = useState<string>('0')
   const [maxWithdrawable, setMaxWithdrawable] = useState<string>('0')
   const [traderVolume, setTraderVolume] = useState<string>('0')
-
+  const [perpInstanceSdk, setPerpInstanceSdk] = useState<Perp>(null)
+  const [perpProductInstanceSdk, setPerpProductInstanceSdk] = useState<Product>(null)
+  const [traderInstanceSdk, setTraderInstanceSdk] = useState<Trader>(null)
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
 
@@ -231,7 +229,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const prevCountRef = useRef<boolean>()
   const { on, off } = useSolSub()
 
-  const wallet = useWallet()
+  const wallet: WalletContextState = useWallet()
+
   const { perpsConnection: mainnetConnection } = useConnectionConfig()
   const MPG_ID = useMemo(() => (isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID), [isDevnet])
   const FEE_OUTPUT_REGISTER = useMemo(
@@ -397,6 +396,36 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [rawData.mpg, rawData.trg])
 
   useEffect(() => {
+    const initSdk = async () => {
+      if (!wallet.connected) return
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      const perp = new Perp(connection, 'mainnet', wallet)
+      await perp.init()
+      const product = new Product(perp)
+      product.initByIndex(0)
+      setPerpInstanceSdk(perp)
+      setPerpProductInstanceSdk(product)
+    }
+    initSdk()
+  }, [wallet, connection])
+
+  useEffect(() => {
+    const fetchPerpsInstanceFromSdk = async () => {
+      if (wallet.connected && perpInstanceSdk) {
+        try {
+          const trader = new Trader(perpInstanceSdk)
+          await trader.init()
+          setTraderInstanceSdk(trader)
+        } catch (e) {
+          //
+        }
+      }
+    }
+    fetchPerpsInstanceFromSdk()
+  }, [wallet, connection, perpInstanceSdk])
+
+  useEffect(() => {
     const current = Number(currentLeverage)
     if (Number.isNaN(current)) setAvailLeverage('0')
     return setAvailLeverage((10 - current).toString())
@@ -465,17 +494,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setRawData((prevState) => ({ ...prevState, trg: rawData }))
     }
   }
-
-  const closeOnAccountChangeListener = useCallback(
-    (id: number) => {
-      try {
-        connection.removeAccountChangeListener(id)
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    [connection]
-  )
 
   useEffect(() => {
     perpsWasm()
@@ -607,19 +625,18 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     return {
       maxBaseQty: decimalAdjustedQty,
-      side: order.side === 'buy' ? new Bid().toEncodable() : new Ask().toEncodable(),
+      side: order.side === 'buy' ? 'buy' : 'sell',
       selfTradeBehavior: new DecrementTake().toEncodable(),
       matchLimit: new anchor.BN(10),
       orderType:
         order.display === 'market'
-          ? { market: {} }
+          ? 'market'
           : order.type === 'limit'
-          ? new Limit().toEncodable()
+          ? 'limit'
           : order.type === 'ioc'
-          ? new ImmediateOrCancel().toEncodable()
-          : new PostOnly().toEncodable(),
-      limitPrice: convertToFractional(order.price.toString()),
-      callbackId: 101
+          ? 'immediateOrCancel'
+          : 'postOnly',
+      limitPrice: convertToFractional(order.price.toString())
     }
   }
 
@@ -643,30 +660,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const newOrder = useCallback(async () => {
-    const newOrderAccounts: INewOrderAccounts = {
-        user: wallet.publicKey,
-        traderRiskGroup: currentTRG,
-        marketProductGroup: currentMPG,
-        product: new PublicKey(activeProduct.id),
-        aaobProgram: new PublicKey(ORDERBOOK_P_ID),
-        orderbook: new PublicKey(activeProduct.orderbook_id),
-        marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
-        eventQueue: new PublicKey(activeProduct.event_queue),
-        bids: new PublicKey(activeProduct.bids),
-        asks: new PublicKey(activeProduct.asks),
-        systemProgram: SystemProgram.programId,
-        feeModelProgram: new PublicKey(FEES_ID),
-        feeModelConfigurationAcct: getFeeConfigAcct(new PublicKey(MPG_ID)),
-        traderFeeStateAcct: traderRiskGroup.feeStateAccount,
-        feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
-        riskEngineProgram: new PublicKey(RISK_ID),
-        riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
-        riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
-        traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-        riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
-      },
-      newOrderParams = getNewOrderParams()
-    const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
+    const newOrderParams = getNewOrderParams()
+    const response = await newOrderIx(
+      newOrderParams,
+      wallet,
+      connection,
+      traderInstanceSdk,
+      perpProductInstanceSdk
+    )
     return response
   }, [traderRiskGroup, order, marketProductGroup])
 
@@ -713,45 +714,28 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const priceToExit = getClosePositionPrice(displayFractional(qtyToExit), orderbook)
       let qty = mulFractionals(qtyToExit, new Fractional({ m: new anchor.BN('100000'), exp: new anchor.BN(0) }))
       if (qtyToExit && priceToExit) {
-        let orderSide: any = new Ask().toEncodable()
+        let orderSide: 'sell' | 'buy' = 'sell'
         if (qty.m.toString()[0] === '-') {
-          orderSide = new Bid().toEncodable()
+          orderSide = 'buy'
           qty = mulFractionals(qty, new Fractional({ m: new anchor.BN(-1), exp: new anchor.BN(0) }))
         }
         const finalQty = displayFractional(qty)
         const qq = convertToFractional(finalQty)
-        const newOrderAccounts: INewOrderAccounts = {
-            user: wallet.publicKey,
-            traderRiskGroup: currentTRG,
-            marketProductGroup: currentMPG,
-            product: new PublicKey(activeProduct.id),
-            aaobProgram: new PublicKey(ORDERBOOK_P_ID),
-            orderbook: new PublicKey(activeProduct.orderbook_id),
-            marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
-            eventQueue: new PublicKey(activeProduct.event_queue),
-            bids: new PublicKey(activeProduct.bids),
-            asks: new PublicKey(activeProduct.asks),
-            systemProgram: SystemProgram.programId,
-            feeModelProgram: new PublicKey(FEES_ID),
-            feeModelConfigurationAcct: getFeeConfigAcct(new PublicKey(MPG_ID)),
-            traderFeeStateAcct: traderRiskGroup.feeStateAccount,
-            feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
-            riskEngineProgram: new PublicKey(RISK_ID),
-            riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
-            riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
-            traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-            riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
-          },
-          newOrderParams = {
-            maxBaseQty: qq,
-            side: orderSide,
-            selfTradeBehavior: new DecrementTake().toEncodable(),
-            matchLimit: new anchor.BN(10),
-            orderType: { market: {} },
-            limitPrice: convertToFractional(priceToExit.toString()),
-            callbackId: 101
-          }
-        const response = await newOrderIx(newOrderAccounts, newOrderParams, wallet, connection)
+        const newOrderParams = {
+          maxBaseQty: qq,
+          side: orderSide,
+          selfTradeBehavior: new DecrementTake().toEncodable(),
+          matchLimit: new anchor.BN(10),
+          orderType: 'market',
+          limitPrice: convertToFractional(priceToExit.toString())
+        }
+        const response = await newOrderIx(
+          newOrderParams,
+          wallet,
+          connection,
+          traderInstanceSdk,
+          perpProductInstanceSdk
+        )
         return response
       } else {
         notify({
@@ -766,29 +750,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const cancelOrder = useCallback(
     async (orderId: string) => {
-      const cancelOrderAccounts: ICancelOrderAccounts = {
-        user: wallet.publicKey,
-        traderRiskGroup: currentTRG,
-        marketProductGroup: currentMPG,
-        product: new PublicKey(activeProduct.id),
-        aaobProgram: new PublicKey(ORDERBOOK_P_ID),
-        orderbook: new PublicKey(activeProduct.orderbook_id),
-        marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
-        eventQueue: new PublicKey(activeProduct.event_queue),
-        bids: new PublicKey(activeProduct.bids),
-        asks: new PublicKey(activeProduct.asks),
-        systemProgram: SystemProgram.programId,
-        riskEngineProgram: new PublicKey(RISK_ID),
-        riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
-        riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
-        traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-        riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
-      }
       const response = await cancelOrderIx(
-        cancelOrderAccounts,
-        { orderId: new anchor.BN(orderId) },
+        { orderId: orderId },
         wallet,
-        connection
+        connection,
+        traderInstanceSdk,
+        perpProductInstanceSdk
       )
       return response
     },
@@ -797,6 +764,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const depositFunds = useCallback(
     async (amount: Fractional) => {
+      // not removed this because we need it for initTrgDepositIx
       const newTrg = anchor.web3.Keypair.generate()
       const depositFundsAccounts: IDepositFundsAccounts = {
         userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
@@ -822,12 +790,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //  }
       try {
         const response = traderRiskGroup
-          ? await depositFundsIx(depositFundsAccounts, { quantity: amount }, wallet, connection)
+          ? await depositFundsIx({ quantity: amount }, wallet, connection, traderInstanceSdk)
           : await initTrgDepositIx(
               depositFundsAccounts,
               { quantity: amount },
               wallet,
               connection,
+              perpInstanceSdk,
               newTrg,
               isDevnet
             )
@@ -837,35 +806,15 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return null
       }
     },
-    [traderRiskGroup, marketProductGroup, wallet]
+    [traderRiskGroup, marketProductGroup, wallet, traderInstanceSdk]
   )
 
   const withdrawFunds = useCallback(
     async (amount: Fractional) => {
-      const withdrawFundsAccounts: IWithdrawFundsAccounts = {
-        userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
-        traderRiskGroup: currentTRG,
-        marketProductGroup: new PublicKey(MPG_ID),
-        marketProductGroupVault: anchor.web3.PublicKey.findProgramAddressSync(
-          [Buffer.from(VAULT_SEED), new PublicKey(MPG_ID).toBuffer()],
-          new PublicKey(DEX_ID)
-        )[0],
-        riskEngineProgram: new PublicKey(RISK_ID),
-        riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
-        riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
-        traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-        riskSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
-      }
-      const response = await withdrawFundsIx(
-        withdrawFundsAccounts,
-        { quantity: amount },
-        wallet,
-        connection,
-        traderRiskGroup.referral
-      )
+      const response = await withdrawFundsIx({ quantity: amount }, wallet, connection, traderInstanceSdk)
       return response
     },
-    [traderRiskGroup, marketProductGroup, currentTRG]
+    [traderRiskGroup, marketProductGroup, currentTRG, traderInstanceSdk]
   )
 
   useEffect(() => {
@@ -948,7 +897,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setFocused: setFocused,
         loading: loading,
         collateralInfo: collateralInfo,
-        portfolioValue
+        portfolioValue,
+        perpInstanceSdk: perpInstanceSdk,
+        perpProductInstanceSdk: perpProductInstanceSdk,
+        traderInstanceSdk: traderInstanceSdk
       }}
     >
       {children}
