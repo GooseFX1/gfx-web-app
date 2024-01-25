@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button } from '../../components'
-import { useCrypto, useOrder } from '../../context'
+import { useCrypto, useOrder, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { checkMobile } from '../../utils'
 import useBoolean from '../../hooks/useBoolean'
@@ -27,6 +27,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
   takeProfit
 }) => {
   const { order } = useOrder()
+  const { orderBook } = useOrderBook()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { newOrder, newOrderTakeProfit } = useTraderConfig()
   const [isLoading, setIsLoading] = useBoolean(false)
@@ -51,6 +52,29 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
       return (Number(notionalValue) + Number(fee)).toFixed(2)
     else return '-'
   }, [notionalValue, fee])
+
+  function calculatePriceImpact(orderBook, orderQuantity) {
+    // Extract bid and ask arrays from the order book
+    const bids = orderBook.bids
+    const asks = orderBook.asks
+
+    // Calculate total quantity at and above the order price for both bids and asks
+    const totalBidQuantity = bids.reduce((total, bid) => total + bid[1], 0)
+    const totalAskQuantity = asks.reduce((total, ask) => total + ask[1], 0)
+
+    // Calculate the percentage of order quantity relative to total bid and ask quantity
+    const bidPercentage = orderQuantity / totalBidQuantity
+    const askPercentage = orderQuantity / totalAskQuantity
+
+    // Calculate the price impact in percentage
+    const bidImpact = bidPercentage * bids[0][0] // Assuming the order is a market buy
+    const askImpact = askPercentage * asks[0][0] // Assuming the order is a market sell
+
+    // Total price impact
+    const totalImpact = bidImpact + askImpact
+
+    return totalImpact
+  }
 
   const handleClick = async () => {
     try {
@@ -83,7 +107,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
         <ROW>
           <span>Trade Size</span>
           <span className="value spacing">
-            {order.size} {symbol}
+            {Number(order.size).toFixed(5)} {symbol}
           </span>
         </ROW>
         <ROW>
@@ -92,7 +116,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
         </ROW>
         <ROW>
           <span>Est. Price Impact</span>
-          <span className="value">0.0000%</span>
+          <span className="value">{calculatePriceImpact(orderBook, Number(order.size)).toFixed(2)}%</span>
         </ROW>
         <ROW>
           <span>Slippage Tolerance</span>
