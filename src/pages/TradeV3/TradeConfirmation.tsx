@@ -54,7 +54,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
   }, [notionalValue, fee])
 
   const totalPriceImpact = useMemo(() => {
-    const orderQuantity = Number(order.size).toFixed(2)
+    const orderQuantity = Number(order.size)
     // Extract bid and ask arrays from the order book
     const bids = orderBook.bids
     const asks = orderBook.asks
