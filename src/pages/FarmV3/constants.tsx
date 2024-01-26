@@ -101,7 +101,7 @@ export const ADDRESSES: {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 1000000
+      cappedDeposit: 3000000
     },
     {
       token: 'MSOL',
@@ -139,7 +139,7 @@ export const ADDRESSES: {
       token: 'SOL',
       name: 'Solana',
       address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 1000000
+      cappedDeposit: 3000000
     },
     {
       token: 'MSOL',
