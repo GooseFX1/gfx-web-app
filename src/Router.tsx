@@ -26,6 +26,7 @@ import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { IS_UNDER_MAINTENANCE } from './constants'
+import { CoinGeckoPairs } from './pages/Analytics/ssl/coinGeckoPairs'
 const Account = lazy(() => import('./pages/Account/Account'))
 
 function PageLoader() {
@@ -108,6 +109,11 @@ export const Router: FC = () => (
                       </Route>
                       <Route exact path="/analytics/ssl">
                         <SSLAnalyticsDashboard />
+                      </Route>
+                      <Route exact path="/analytics/ssl/pairdata">
+                        <PriceFeedFarmProvider>
+                          <CoinGeckoPairs />
+                        </PriceFeedFarmProvider>
                       </Route>
                       <Route exact path="/account">
                         <PriceFeedProvider>
