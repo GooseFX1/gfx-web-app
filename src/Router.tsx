@@ -26,7 +26,7 @@ import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { IS_UNDER_MAINTENANCE } from './constants'
-import { CoinGeckoPairs } from './pages/Analytics/ssl/coinGeckoPairs'
+const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/coinGeckoPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
 
 function PageLoader() {
