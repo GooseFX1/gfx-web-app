@@ -75,7 +75,7 @@ const WRAPPER = styled.div`
       }
     }
 `
-export const CoinGeckoPairs = (): any => {
+const CoinGeckoPairs = (): any => {
   const [data, setData] = useState([])
 
   const getPairData = async () => {
@@ -182,3 +182,5 @@ const PairData: FC<{
     </tr>
   )
 }
+
+export default CoinGeckoPairs
