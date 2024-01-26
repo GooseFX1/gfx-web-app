@@ -53,7 +53,8 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
     else return '-'
   }, [notionalValue, fee])
 
-  function calculatePriceImpact(orderBook, orderQuantity) {
+  const totalPriceImpact = useMemo(() => {
+    const orderQuantity = Number(order.size).toFixed(2)
     // Extract bid and ask arrays from the order book
     const bids = orderBook.bids
     const asks = orderBook.asks
@@ -74,7 +75,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
     const totalImpact = bidImpact + askImpact
 
     return totalImpact
-  }
+  }, [orderBook.bids, orderBook.asks])
 
   const handleClick = async () => {
     try {
@@ -116,7 +117,7 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
         </ROW>
         <ROW>
           <span>Est. Price Impact</span>
-          <span className="value">{calculatePriceImpact(orderBook, Number(order.size)).toFixed(2)}%</span>
+          <span className="value">{totalPriceImpact.toFixed(4)}%</span>
         </ROW>
         <ROW>
           <span>Slippage Tolerance</span>
