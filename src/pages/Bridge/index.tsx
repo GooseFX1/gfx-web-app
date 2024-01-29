@@ -61,7 +61,7 @@ const Bridge: FC = () => {
       outputChain: '7565164',
       address: publicKey ? publicKey.toBase58() : '',
       affiliateFeePercent: 1,
-      affiliateFeeRecipient: '0x7557b857C2257ccd4Bd90bC56f90C067911d0019',
+      affiliateFeeRecipient: '0x2e7964cf9f8166235f24d1f5d025ed04b7bfcab6',
       supportedChains: {
         inputChains: {
           '1': 'all',
@@ -83,7 +83,7 @@ const Bridge: FC = () => {
       mode: 'deswap',
       styles: `${base64Styles}`,
       theme: `${mode === 'dark' ? mode : 'light'}`,
-      r: ''
+      r: '6087'
     })
   }, [mode, publicKey])
 
