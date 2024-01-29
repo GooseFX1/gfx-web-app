@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -9,18 +9,6 @@ const WRAPPER = styled.div`
   border-right: 1px solid #3C3C3C;
   color: ${({ theme }) => theme.text2};
   height: calc(100vh - 52px);
-  div {
-    opacity: 0;
-    transform: translateY(20px);
-    visibility: hidden;
-    transition: opacity 0.5s, transform 0.5s, visibility 0s 0.5s;
-  }
-  .show-history {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    transition: opacity 0.5s, transform 0.5s, visibility 0s;
-  }
 `
 
 const SPAN = styled.span`
@@ -38,9 +26,6 @@ const SPAN = styled.span`
     border: 1px solid #f7931a;
     background: linear-gradient(97deg, rgba(247, 147, 26, 0.3) 4.25%, rgba(172, 28, 199, 0.3) 97.61%);
   }
-  &.history-selected {
-    border-radius: 5px;
-  }
   img:last-child {
     height: 16px;
     width: 16px;
@@ -55,14 +40,10 @@ type SidebarProps = {
   setSelected: React.Dispatch<React.SetStateAction<number>>
 }
 const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
-  const [historySelected, setHistorySelected] = useState(false)
   const handleClick = (num: number) => {
     setSelected(num)
   }
   const { mode } = useDarkMode()
-  const handleHistoryClick = () => {
-    setHistorySelected(!historySelected)
-  }
   return (
     <WRAPPER>
       <SPAN className={selected == 0 ? 'selected' : undefined} onClick={() => handleClick(0)}>
@@ -72,24 +53,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
         />
         Overview
       </SPAN>
-      <SPAN className={historySelected && 'history-selected'} onClick={handleHistoryClick}>
-        <img
-          src={mode != 'lite' ? '/img/assets/account-history-white.svg' : '/img/assets/account-history.svg'}
-          alt="account history icon"
-        />
-        History
-        {/*
-        <img
-          src={
-            mode === 'lite'
-              ? '/img/assets/Aggregator/circularArrowlite.svg'
-              : '/img/assets/Aggregator/circularArrowdark.svg'
-          }
-          alt="dropdown icon"
-          style={historySelected ? { transform: 'rotate(180deg)' } : {}}
-        />*/}
-      </SPAN>
-      <div className={'show-history'}>
+      <div>
         <SPAN className={selected == 2 ? 'selected' : undefined} onClick={() => handleClick(2)}>
           Deposits
         </SPAN>
