@@ -115,8 +115,9 @@ const Bridge: FC = () => {
 
   return (
     <CONTAINER>
-      {isLoading && <PageLoader />}
-      <div id="debridgeWidget" ref={deBridgeRef} />
+      {!isLoading && <PageLoader />}
+      {/* <PageLoader /> */}
+      {/* <div id="debridgeWidget" ref={deBridgeRef} /> */}
     </CONTAINER>
   )
 }
