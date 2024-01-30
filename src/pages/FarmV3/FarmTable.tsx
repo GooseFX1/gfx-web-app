@@ -24,7 +24,6 @@ import { getPriceObject } from '../../web3/utils'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
 import BN from 'bn.js'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -130,7 +129,7 @@ const WRAPPER = styled.div`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
   const {

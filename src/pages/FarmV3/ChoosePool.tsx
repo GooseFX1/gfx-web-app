@@ -8,7 +8,6 @@ import { poolType, Pool } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 
 const STYLED_POPUP = styled(PopupCustom)<{
   currentSlide: number
@@ -176,7 +175,7 @@ export const ChoosePool: FC<{
   const [isError, setIsError] = useState<boolean>(false)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
 
   const [userAnswer, setUserAnswer] = useState<any>({
     answerOne: null,

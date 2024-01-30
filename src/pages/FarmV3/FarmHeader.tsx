@@ -10,7 +10,6 @@ import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Tooltip } from 'antd'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 
 const CARD_GRADIENT = styled.div<{ isMobile: boolean }>`
   ${tw`h-16.25 w-[130px] p-px mr-3.75 rounded-tiny`}
@@ -65,7 +64,7 @@ export const FarmHeader: FC = () => {
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
   const [hasFarmOnboarded, setHasFarmOnboarded] = useState<boolean>(existingUserCache.farm.hasFarmOnboarded)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
