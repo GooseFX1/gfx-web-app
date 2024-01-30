@@ -16,17 +16,17 @@ import svgr from 'vite-plugin-svgr'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
-    nodePolyfills(),
     tsconfigPaths(),
-    wasm(),
-    topLevelAwait(),
-    svgr(),
+    nodePolyfills(),
     react({
       include: /.(jsx|tsx)$/,
       babel: {
         plugins: ['babel-plugin-macros', 'styled-components']
       }
     }),
+    wasm(),
+    topLevelAwait(),
+    svgr(),
     eslint(),
     macrosPlugin(),
     requireTransform({}),
