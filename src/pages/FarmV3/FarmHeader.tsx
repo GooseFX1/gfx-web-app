@@ -65,7 +65,7 @@ export const FarmHeader: FC = () => {
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const [existingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
   const [hasFarmOnboarded, setHasFarmOnboarded] = useState<boolean>(existingUserCache.farm.hasFarmOnboarded)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
@@ -299,6 +299,10 @@ export const FarmHeader: FC = () => {
           tw="cursor-pointer ml-auto"
           onClick={() => {
             setHasFarmOnboarded(true)
+            setExistingUserCache({
+              ...existingUserCache,
+              farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+            })
           }}
         >
           <img

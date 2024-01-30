@@ -242,6 +242,7 @@ export const ChoosePool: FC<{
       ...existingUserCache,
       farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
     })
+    setHasFarmOnboarded(true)
   }, [])
 
   const handlePoolSelection = () => {
