@@ -11,17 +11,19 @@ export default function AppInner(): JSX.Element {
   const [init, setInit] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (existingUserCache === null || existingUserCache?.jwtToken === undefined) {
+    if (existingUserCache === null || existingUserCache.farm === undefined) {
       setInit(true)
       window.localStorage.setItem(
         'gfx-user-cache',
         JSON.stringify({
           hasDexOnboarded: false,
-          hasFarmOnboarded: false,
+          farm: {
+            hasFarmOnboarded: false,
+            showDepositedFilter: false
+          },
           hasSignedTC: false,
           endpointName: null,
-          endpoint: null,
-          jwtToken: null
+          endpoint: null
         })
       )
     }

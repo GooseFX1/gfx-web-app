@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../../components'
-import { checkMobile, commafy, truncateBigNumber } from '../../utils'
+import { checkMobile, commafy, truncateBigNumber, useLocalStorageState } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
@@ -65,8 +65,8 @@ export const FarmHeader: FC = () => {
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [poolSelection, setPoolSelection] = useState<boolean>(!existingUserCache.hasFarmOnboarded)
+  const [existingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
+  const [hasFarmOnboarded, setHasFarmOnboarded] = useState<boolean>(existingUserCache.farm.hasFarmOnboarded)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
@@ -227,7 +227,9 @@ export const FarmHeader: FC = () => {
   return (
     <>
       <HEADER_WRAPPER>
-        {poolSelection && <ChoosePool poolSelection={poolSelection} setPoolSelection={setPoolSelection} />}
+        {!hasFarmOnboarded && (
+          <ChoosePool hasFarmOnboarded={hasFarmOnboarded} setHasFarmOnboarded={setHasFarmOnboarded} />
+        )}
         <div tw="flex flex-col cursor-pointer w-15 mr-2.5 sm:w-12.5 sm:h-15">
           <div
             css={[tw`duration-500`, range === 0 ? tw`mt-0` : range === 1 ? tw`mt-5` : tw`mt-10 sm:mt-[35px]`]}
@@ -296,7 +298,7 @@ export const FarmHeader: FC = () => {
         <button
           tw="cursor-pointer ml-auto"
           onClick={() => {
-            setPoolSelection(true)
+            setHasFarmOnboarded(true)
           }}
         >
           <img

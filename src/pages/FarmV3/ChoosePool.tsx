@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
-import { checkMobile } from '../../utils'
+import { checkMobile, useLocalStorageState } from '../../utils'
 import { poolType, Pool } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
 import 'slick-carousel/slick/slick.css'
@@ -167,16 +167,16 @@ const PrevArrow: FC<{
   )
 
 export const ChoosePool: FC<{
-  poolSelection: boolean
-  setPoolSelection: Dispatch<SetStateAction<boolean>>
-}> = ({ poolSelection, setPoolSelection }): JSX.Element => {
+  hasFarmOnboarded: boolean
+  setHasFarmOnboarded: Dispatch<SetStateAction<boolean>>
+}> = ({ hasFarmOnboarded, setHasFarmOnboarded }): JSX.Element => {
   const { setPool, setIsFirstPoolOpen } = useSSLContext()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [userPool, setUserPool] = useState<Pool>(null)
   const [isError, setIsError] = useState<boolean>(false)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
 
   const [userAnswer, setUserAnswer] = useState<any>({
     answerOne: null,
@@ -238,14 +238,19 @@ export const ChoosePool: FC<{
   }
 
   useEffect(() => {
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        hasFarmOnboarded: true
-      })
-    )
+    setExistingUserCache({
+      ...existingUserCache,
+      farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+    })
   }, [])
+
+  const handlePoolSelection = () => {
+    setExistingUserCache({
+      ...existingUserCache,
+      farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+    })
+    setHasFarmOnboarded(true)
+  }
 
   return (
     <STYLED_POPUP
@@ -253,8 +258,8 @@ export const ChoosePool: FC<{
       width={checkMobile() ? '95%' : '500px'}
       title={null}
       centered={true}
-      visible={poolSelection}
-      onCancel={() => setPoolSelection(false)}
+      visible={!hasFarmOnboarded}
+      onCancel={() => handlePoolSelection()}
       footer={null}
       currentSlide={currentSlide}
       userAnswer={userAnswer}
@@ -456,8 +461,12 @@ export const ChoosePool: FC<{
           <div
             className="cta"
             onClick={() => {
-              setPoolSelection(false)
+              setHasFarmOnboarded(true)
               setPool(userPool)
+              setExistingUserCache({
+                ...existingUserCache,
+                farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+              })
               setTimeout(() => setIsFirstPoolOpen(true), 500)
             }}
           >

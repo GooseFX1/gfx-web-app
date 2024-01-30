@@ -5,7 +5,13 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } from '../../utils'
+import {
+  checkMobile,
+  formatUserBalance,
+  truncateBigNumber,
+  truncateBigString,
+  useLocalStorageState
+} from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -18,6 +24,7 @@ import { getPriceObject } from '../../web3/utils'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
 import BN from 'bn.js'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -123,6 +130,7 @@ const WRAPPER = styled.div`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
+  const [existingUserCache, setExistingUserCache] = useLocalStorageState<USER_CONFIG_CACHE>('gfx-user-cache')
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
   const {
@@ -137,7 +145,7 @@ export const FarmTable: FC = () => {
   } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
-  const [showDeposited, setShowDeposited] = useState<boolean>(false)
+  const [showDeposited, setShowDeposited] = useState<boolean>(existingUserCache.farm.showDepositedFilter)
   const [sort, setSort] = useState<string>('ASC')
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
@@ -200,7 +208,14 @@ export const FarmTable: FC = () => {
   )
 
   useEffect(() => {
-    if (pubKey === null) setShowDeposited(false)
+    if (pubKey === null)
+      setShowDeposited(() => {
+        setExistingUserCache({
+          ...existingUserCache,
+          farm: { ...existingUserCache.farm, showDepositedFilter: false }
+        })
+        return false
+      })
   }, [pubKey])
 
   useEffect(() => {
@@ -250,7 +265,13 @@ export const FarmTable: FC = () => {
   }
 
   const handleShowDepositedToggle = () => {
-    setShowDeposited((prev) => !prev)
+    setShowDeposited((prev) => {
+      setExistingUserCache({
+        ...existingUserCache,
+        farm: { ...existingUserCache.farm, showDepositedFilter: !prev }
+      })
+      return !prev
+    })
     setIsFirstPoolOpen(false)
   }
 
