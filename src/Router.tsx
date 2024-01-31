@@ -15,6 +15,7 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
+
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const CryptoContent = lazy(() => import('./pages/TradeV3/TradeContainer'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
@@ -26,6 +27,7 @@ import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { IS_UNDER_MAINTENANCE } from './constants'
+
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
 
@@ -60,20 +62,20 @@ function PageLoader() {
 }
 
 export const Router: FC = () => (
-  <BrowserRouter>
-    {window.location.pathname === '/' && (
-      <Redirect from="/" to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }} />
-    )}
-    <TokenRegistryProvider>
-      <AccountsProvider>
-        <RewardToggleProvider>
-          <CryptoProvider>
-            <NavCollapseProvider>
-              <AppLayout>
-                {IS_UNDER_MAINTENANCE ? (
-                  <Maintenance />
-                ) : (
-                  <Suspense fallback={<PageLoader />}>
+  <Suspense fallback={<PageLoader />}>
+    <BrowserRouter>
+      {window.location.pathname === '/' && (
+        <Redirect from="/" to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }} />
+      )}
+      <TokenRegistryProvider>
+        <AccountsProvider>
+          <RewardToggleProvider>
+            <CryptoProvider>
+              <NavCollapseProvider>
+                <AppLayout>
+                  {IS_UNDER_MAINTENANCE ? (
+                    <Maintenance />
+                  ) : (
                     <Switch>
                       {/* 
                             <Route exact path="/swap/:tradePair?">
@@ -130,13 +132,13 @@ export const Router: FC = () => (
                         <GenericNotFound />
                       </Route>
                     </Switch>
-                  </Suspense>
-                )}
-              </AppLayout>
-            </NavCollapseProvider>
-          </CryptoProvider>
-        </RewardToggleProvider>
-      </AccountsProvider>
-    </TokenRegistryProvider>
-  </BrowserRouter>
+                  )}
+                </AppLayout>
+              </NavCollapseProvider>
+            </CryptoProvider>
+          </RewardToggleProvider>
+        </AccountsProvider>
+      </TokenRegistryProvider>
+    </BrowserRouter>
+  </Suspense>
 )
