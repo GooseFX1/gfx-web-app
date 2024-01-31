@@ -98,7 +98,7 @@ const Bridge: FC = () => {
     document.body.appendChild(script)
     // Save a reference to the script for later use
     scriptRef.current = script
-    setTimeout(() => setIsLoading(false), 3500)
+    setTimeout(() => setIsLoading(false), 3300)
 
     // Cleanup function to remove the script when the component unmounts
     return () => {
@@ -115,9 +115,8 @@ const Bridge: FC = () => {
 
   return (
     <CONTAINER>
-      {!isLoading && <PageLoader />}
-      {/* <PageLoader /> */}
-      {/* <div id="debridgeWidget" ref={deBridgeRef} /> */}
+      {isLoading && <PageLoader />}
+      <div id="debridgeWidget" ref={deBridgeRef} />
     </CONTAINER>
   )
 }
