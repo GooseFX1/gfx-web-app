@@ -53,12 +53,7 @@ function PageLoader() {
       }}
     >
       <div style={{ width: '500px', height: '500px' }}>
-        <RiveComponent
-          style={{
-            width: '500px !important',
-            height: '500px !important'
-          }}
-        />
+        <RiveComponent />
       </div>
     </div>
   )

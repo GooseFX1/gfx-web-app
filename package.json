@@ -27,7 +27,7 @@
     "@project-serum/borsh": "^0.2.5",
     "@project-serum/sol-wallet-adapter": "^0.2.6",
     "@pythnetwork/client": "^2.2.0",
-    "@rive-app/react-canvas": "^4.7.1",
+    "@rive-app/react-canvas": "4.2.1",
     "@solana-mobile/wallet-adapter-mobile": "^2.0.1",
     "@solana/buffer-layout": "^4.0.0",
     "@solana/spl-name-service": "^0.1.3",

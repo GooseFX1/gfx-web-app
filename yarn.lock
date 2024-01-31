@@ -1527,17 +1527,17 @@
   dependencies:
     merge-options "^3.0.4"
 
-"@rive-app/canvas@2.9.2":
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/@rive-app/canvas/-/canvas-2.9.2.tgz#a6b980241268afb8502cf178d4aa8ae43e3917e9"
-  integrity sha512-XkrAjhiPl+qf+Tqnl31zICnTmrjpgAz91QEYNk/f52M5quEzU59MR9H2xZRd7+Hm8eJSYezInYYcqxFoTsGVaQ==
+"@rive-app/canvas@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@rive-app/canvas/-/canvas-2.3.1.tgz#ab660b509851b747a2ad01952e6aacbc113c74ee"
+  integrity sha512-WI4gNUkxPoYCMEHWx9nRSOz2/OijRn+RO0DZHqv/cO60Amak9laKErdvRL4tWgbAkW1KkmCmm063/gi5gaS6lA==
 
-"@rive-app/react-canvas@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@rive-app/react-canvas/-/react-canvas-4.7.1.tgz#a248e6a4b17e0c9c970627e45af9d066850bd053"
-  integrity sha512-96Bbn0sgcPUYcjGJfw11tImefk52FJTPK4X78WHF4wLMI+xVHhbSv5aDO58eFkcZLF/60eqL08EnyszOOfa6JA==
+"@rive-app/react-canvas@4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@rive-app/react-canvas/-/react-canvas-4.2.1.tgz#d37ba947c49463f525918fba343304f76800f9e7"
+  integrity sha512-E8vLj9xx0Iut70Ya3/RiQxeEQGQawPIYM47H6if6Em5O5WY2xiBECYVsGwYCI2NbYDXf2U6Yp984G6u1e4jU0w==
   dependencies:
-    "@rive-app/canvas" "2.9.2"
+    "@rive-app/canvas" "2.3.1"
 
 "@rollup/plugin-inject@^5.0.4", "@rollup/plugin-inject@^5.0.5":
   version "5.0.5"
