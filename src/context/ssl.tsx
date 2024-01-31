@@ -322,7 +322,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const depositedBalanceConnection = useCallback(
     async (userPublicKey: PublicKey, coin: SSLToken) => {
-      const id = `deposit-${coin.name}`
+      const id = `deposit-${coin?.name}`
       const liquidityAcc = await getLiquidityAccountKey(userPublicKey, coin?.mint)
       on({
         SubType: SubType.AccountChange,
