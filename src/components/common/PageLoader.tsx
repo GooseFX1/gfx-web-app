@@ -5,7 +5,7 @@ import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 const PageLoader: FC = () => {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
-    src: `/rive/pageLoader_${mode}.riv`,
+    src: `https://media.goosefx.io/webapp/pageLoader_${mode}.riv`,
     autoplay: true,
     stateMachines: ['State Machine 1'],
     layout: new Layout({
