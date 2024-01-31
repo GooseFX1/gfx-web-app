@@ -22,6 +22,7 @@ import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigStrin
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { ActionModal } from './ActionModal'
 import BN from 'bn.js'
+import useSolSub from '../../hooks/useSolSub'
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[195px] rounded-circle flex items-center justify-center text-white cursor-pointer 
@@ -64,6 +65,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [actionModal, setActionModal] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>(null)
   const { getUIAmount } = useAccounts()
+  const { off } = useSolSub()
 
   useEffect(() => {
     if (wallet?.adapter?.publicKey) {
@@ -238,7 +240,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      depositedBalanceConnection(connection, userPublicKey, coin)
+      depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
       const confirm = executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
       confirm.then((con) => {
@@ -251,14 +253,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
-          connection.removeAccountChangeListener(connectionId)
+          off(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }
       })
     } catch (error) {
-      connection.removeAccountChangeListener(connectionId)
+      off(connectionId)
       setOperationPending(false)
       setIsButtonLoading(false)
       notify(genericErrMsg(error))
@@ -270,7 +272,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
-      depositedBalanceConnection(connection, userPublicKey, coin)
+      depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
       executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
@@ -282,14 +284,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
-          connection.removeAccountChangeListener(connectionId)
+          off(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
           return
         }
       })
     } catch (err) {
-      connection.removeAccountChangeListener(connectionId)
+      off(connectionId)
       setIsButtonLoading(false)
       setOperationPending(false)
       notify(genericErrMsg(err))
