@@ -8,7 +8,8 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
-  useMemo
+  useMemo,
+  useCallback
 } from 'react'
 import { usePriceFeedFarm } from '.'
 import {
@@ -25,7 +26,8 @@ import {
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
+import useSolSub, { SubType } from '../hooks/useSolSub'
 
 interface SSLData {
   pool: Pool
@@ -51,7 +53,7 @@ interface SSLData {
   setIsFirstPoolOpen: Dispatch<SetStateAction<boolean>>
   allPoolFilteredLiquidityAcc: any
   depositedBalanceConnection: any
-  connectionId: number
+  connectionId: string
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -75,7 +77,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslAllVolume, setSslAllVolume] = useState<any>(null)
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
   const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
-  const [connectionId, setConnectionId] = useState<number>()
+  const [connectionId, setConnectionId] = useState<string>()
+  const { on, off } = useSolSub()
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const publicKey: PublicKey | null = useMemo(
@@ -317,21 +320,29 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [allPoolSslData, isTxnSuccessfull])
 
-  const depositedBalanceConnection = async (connection: Connection, userPublicKey: PublicKey, coin: SSLToken) => {
-    let id = null
-    const liquidityAcc = await getLiquidityAccountKey(userPublicKey, coin?.mint)
-    id = await connection.onAccountChange(liquidityAcc, async (info) => {
-      const updatedLiqAcc = await SSLProgram.coder.accounts.decode('LiquidityAccount', info.data)
-      const mintAddress = coin.mint.toBase58()
-      const updatedFilteredLiqAcc = {
-        ...filteredLiquidityAccounts,
-        [mintAddress]: updatedLiqAcc
-      }
-      setFilteredLiquidityAccounts(updatedFilteredLiqAcc)
-      connection.removeAccountChangeListener(id)
-    })
-    setConnectionId(id)
-  }
+  const depositedBalanceConnection = useCallback(
+    async (userPublicKey: PublicKey, coin: SSLToken) => {
+      const id = `deposit-${coin.name}`
+      const liquidityAcc = await getLiquidityAccountKey(userPublicKey, coin?.mint)
+      on({
+        SubType: SubType.AccountChange,
+        id,
+        callback: async (info) => {
+          const updatedLiqAcc = await SSLProgram.coder.accounts.decode('LiquidityAccount', info.data)
+          const mintAddress = coin.mint.toBase58()
+          setConnectionId(id)
+          const updatedFilteredLiqAcc = {
+            ...filteredLiquidityAccounts,
+            [mintAddress]: updatedLiqAcc
+          }
+          setFilteredLiquidityAccounts(updatedFilteredLiqAcc)
+          off(id)
+        },
+        publicKey: liquidityAcc
+      })
+    },
+    [on, SSLProgram, getLiquidityAccountKey]
+  )
 
   return (
     <SSLContext.Provider
