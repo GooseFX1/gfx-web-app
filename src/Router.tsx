@@ -30,13 +30,13 @@ import { IS_UNDER_MAINTENANCE } from './constants'
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
-
+function RiveWrapper() {}
 function PageLoader() {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
     src: `/rive/pageLoader_${mode}.riv`,
     autoplay: true,
-    stateMachines: ['State Machine 1'],
+    stateMachines: 'State Machine 1',
     layout: new Layout({
       fit: Fit.Cover,
       alignment: Alignment.Center
