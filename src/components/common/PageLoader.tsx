@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useDarkMode } from '../../context'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 
@@ -13,6 +13,10 @@ const PageLoader: FC = () => {
       alignment: Alignment.Center
     })
   })
+
+  useEffect(() => {
+    console.log(mode)
+  }, [mode])
 
   return (
     <div
