@@ -5,13 +5,7 @@ import 'styled-components/macro'
 import { SearchBar, ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
-import {
-  checkMobile,
-  formatUserBalance,
-  truncateBigNumber,
-  truncateBigString,
-  useLocalStorageState
-} from '../../utils'
+import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
 import { ExpandedView } from './ExpandedView'
@@ -129,7 +123,8 @@ const WRAPPER = styled.div`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
+  const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
   const {
@@ -209,10 +204,13 @@ export const FarmTable: FC = () => {
   useEffect(() => {
     if (pubKey === null)
       setShowDeposited(() => {
-        setExistingUserCache({
-          ...existingUserCache,
-          farm: { ...existingUserCache.farm, showDepositedFilter: false }
-        })
+        window.localStorage.setItem(
+          'gfx-user-cache',
+          JSON.stringify({
+            ...existingUserCache,
+            farm: { ...existingUserCache.farm, showDepositedFilter: false }
+          })
+        )
         return false
       })
   }, [pubKey])
@@ -265,10 +263,13 @@ export const FarmTable: FC = () => {
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
-      setExistingUserCache({
-        ...existingUserCache,
-        farm: { ...existingUserCache.farm, showDepositedFilter: !prev }
-      })
+      window.localStorage.setItem(
+        'gfx-user-cache',
+        JSON.stringify({
+          ...existingUserCache,
+          farm: { ...existingUserCache.farm, showDepositedFilter: !prev }
+        })
+      )
       return !prev
     })
     setIsFirstPoolOpen(false)

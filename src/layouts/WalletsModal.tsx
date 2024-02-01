@@ -82,8 +82,8 @@ initializeWhenDetected()
 export const WalletsModal: FC = () => {
   const { wallets, select } = useWallet()
   const { setVisible, visible } = useWalletModal()
-  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
 
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {

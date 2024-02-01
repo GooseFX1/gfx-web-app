@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../../components'
-import { checkMobile, commafy, truncateBigNumber, useLocalStorageState } from '../../utils'
+import { checkMobile, commafy, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
@@ -64,7 +64,8 @@ export const FarmHeader: FC = () => {
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
+  const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+
   const [hasFarmOnboarded, setHasFarmOnboarded] = useState<boolean>(existingUserCache.farm.hasFarmOnboarded)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
@@ -298,10 +299,10 @@ export const FarmHeader: FC = () => {
           tw="cursor-pointer ml-auto"
           onClick={() => {
             setHasFarmOnboarded(true)
-            setExistingUserCache({
-              ...existingUserCache,
-              farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-            })
+            window.localStorage.setItem(
+              'gfx-user-cache',
+              JSON.stringify({ ...existingUserCache, farm: { ...existingUserCache.farm, hasFarmOnboarded: true } })
+            )
           }}
         >
           <img

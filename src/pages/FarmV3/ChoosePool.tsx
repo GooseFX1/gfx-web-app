@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
-import { checkMobile, useLocalStorageState } from '../../utils'
+import { checkMobile } from '../../utils'
 import { poolType, Pool } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
 import 'slick-carousel/slick/slick.css'
@@ -175,7 +175,7 @@ export const ChoosePool: FC<{
   const [isError, setIsError] = useState<boolean>(false)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const [existingUserCache, setExistingUserCache] = useLocalStorageState('gfx-user-cache')
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   const [userAnswer, setUserAnswer] = useState<any>({
     answerOne: null,
@@ -237,18 +237,17 @@ export const ChoosePool: FC<{
   }
 
   useEffect(() => {
-    setExistingUserCache({
-      ...existingUserCache,
-      farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-    })
-    setHasFarmOnboarded(true)
+    console.log('hasFarmOnboarded', hasFarmOnboarded)
   }, [])
 
   const handlePoolSelection = () => {
-    setExistingUserCache({
-      ...existingUserCache,
-      farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-    })
+    window.localStorage.setItem(
+      'gfx-user-cache',
+      JSON.stringify({
+        ...existingUserCache,
+        farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+      })
+    )
     setHasFarmOnboarded(true)
   }
 
@@ -463,10 +462,13 @@ export const ChoosePool: FC<{
             onClick={() => {
               setHasFarmOnboarded(true)
               setPool(userPool)
-              setExistingUserCache({
-                ...existingUserCache,
-                farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-              })
+              window.localStorage.setItem(
+                'gfx-user-cache',
+                JSON.stringify({
+                  ...existingUserCache,
+                  farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+                })
+              )
               setTimeout(() => setIsFirstPoolOpen(true), 500)
             }}
           >
