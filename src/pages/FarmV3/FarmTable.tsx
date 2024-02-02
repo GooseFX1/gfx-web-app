@@ -17,6 +17,7 @@ import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 import { getPriceObject } from '../../web3/utils'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
 
 const WRAPPER = styled.div`

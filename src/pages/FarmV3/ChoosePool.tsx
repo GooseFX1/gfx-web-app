@@ -6,6 +6,7 @@ import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
 import { poolType, Pool } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
