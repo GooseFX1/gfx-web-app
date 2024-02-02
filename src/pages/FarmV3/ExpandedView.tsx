@@ -68,20 +68,23 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const { off } = useSolSub()
 
   useEffect(() => {
-    if (wallet?.adapter?.publicKey) {
+    if (userPublicKey) {
       setUserTokenBalance(getUIAmount(tokenMintAddress))
       if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
     }
-  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
+  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount, filteredLiquidityAccounts])
 
   useEffect(() => {
     ;(async () => {
-      if (wallet?.adapter?.publicKey) {
-        const solAmount = await connection.getBalance(wallet?.adapter?.publicKey)
+      if (userPublicKey) {
+        const solAmount = await connection.getBalance(userPublicKey)
         setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
+      } else {
+        setDepositAmount(null)
+        setWithdrawAmount(null)
       }
     })()
-  }, [wallet?.adapter?.publicKey, isTxnSuccessfull])
+  }, [userPublicKey, isTxnSuccessfull])
 
   const liquidity = useMemo(
     () =>
@@ -555,7 +558,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         </div>
         {isExpanded && (
           <div tw="mt-4">
-            {wallet?.adapter?.publicKey ? (
+            {userPublicKey ? (
               <div tw="flex flex-row sm:flex-col">
                 <Button
                   height="35px"
