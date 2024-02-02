@@ -9,6 +9,7 @@ import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
 import { Tooltip } from 'antd'
 
 const CARD_GRADIENT = styled.div<{ isMobile: boolean }>`
