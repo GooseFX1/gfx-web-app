@@ -16,6 +16,7 @@ import {
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
 import { WalletConnectWalletAdapter } from '@solana/wallet-adapter-walletconnect'
+import { MoongateWalletAdapter } from '@moongate/moongate-adapter'
 
 export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[] => [
   new SolanaMobileWalletAdapter({
@@ -44,6 +45,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
       }
     }
   }),
+  new MoongateWalletAdapter({ position: 'bottom-right' }),
   new LedgerWalletAdapter(),
   new TorusWalletAdapter(),
   new MathWalletAdapter(),
