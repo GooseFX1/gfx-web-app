@@ -13,10 +13,12 @@ import Rewards from './v2/Rewards'
 // import Raffle from './raffle/Raffle'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
-
+export const REWARD_PANEL_INDEX = 0
+export const REFER_PANEL_INDEX = 1
+export const RAFFLE_PANEL_INDEX = 2
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
-  const { rewardToggle } = useRewardToggle()
+  const { rewardToggle, changePanel } = useRewardToggle()
   const breakpoint = useBreakPoint()
 
   const { hasRewards } = useRewards()
@@ -42,7 +44,10 @@ export const RewardsButton: FC = () => {
     ),
     [mode, breakpoint, hasRewards]
   )
-  const handleClick = useCallback(() => rewardToggle(true), [])
+  const handleClick = useCallback(() => {
+    rewardToggle(true)
+    changePanel(REWARD_PANEL_INDEX)
+  }, [])
 
   if (breakpoint.isMobile || breakpoint.isTablet) {
     return (
@@ -94,9 +99,9 @@ export const RewardsPopup: FC = () => {
           >
             <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
           </Button>
-          {panelIndex == 0 && <Rewards />}
-          {panelIndex == 1 && <Refer />}
-          {panelIndex == 2 && <Raffle />}
+          {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
+          {panelIndex == REFER_PANEL_INDEX && <Refer />}
+          {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
         </div>
       </RewardsProvider>
     </CryptoProvider>
