@@ -346,7 +346,7 @@ const Fees = () => {
 export const CollateralPanel: FC = (): JSX.Element => {
   const { wallet } = useWallet()
   const tabs = ['SOL Account', 'All Accounts', 'Fees']
-  const [activeTab, setActiveTab] = useState(0)
+  const [activeTab, setActiveTab] = useState<number>(0)
 
   return (
     <>
@@ -355,8 +355,8 @@ export const CollateralPanel: FC = (): JSX.Element => {
           {tabs.map((item, index) => (
             <div
               key={index}
-              className={index === activeTab ? 'active tab' : index === 1 ? 'tab disable' : 'tab'}
-              onClick={index === 1 ? null : () => setActiveTab(index)}
+              className={index === activeTab ? 'active tab' : index !== 0 ? 'tab disable' : 'tab'}
+              onClick={index !== 0 ? null : () => setActiveTab(index)}
             >
               <div className="white-background">
                 <div
