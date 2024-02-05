@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { checkMobile, truncateAddress } from '../../utils'
+import { truncateAddress } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   ColumnHeadersMobile,
@@ -19,6 +19,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { useHistory } from 'react-router-dom'
 import { GradientText } from '../../components'
+import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div<{ $index: number }>`
   height: calc(100vh - 56px);
@@ -32,7 +33,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   ${tw`dark:bg-black-1 bg-grey-5`}
   table {
-    ${tw`w-full dark:bg-black-1 px-5 bg-grey-5 border-separate sm:px-[15px]`}
+    ${tw`w-full max-w-[1440px] mx-auto dark:bg-black-1 px-5 bg-grey-5 border-separate sm:px-[15px]`}
     border-spacing: 0 15px;
   }
   .tableHeader {
@@ -84,16 +85,14 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
 `
 
-const BANNER_WRAPPER = styled.div`
-  ${tw`relative h-[134px] w-full border border-solid dark:border-grey-2 border-grey-1 
-  mx-auto mb-3.75 rounded-tiny px-10`}
-  width: calc(100% - 40px);
-`
-
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
   ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
-  background: ${({ $mode }) => `url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')`};
+  background: ${({ $mode }) => `
+    url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')
+  `};
+
   background-repeat: no-repeat;
+  mask-image: ${({ $isMobile }) => ($isMobile ? '' : 'linear-gradient(to bottom, black, transparent)')};
   background-size: ${({ $isMobile }) => ($isMobile ? 'auto' : '100%')};
 
   .active {
@@ -121,8 +120,8 @@ const LeaderBoard: FC = () => {
   const [howToEarn, setHowToEarn] = useState<boolean>(false)
   const { users } = useStats()
   const displayUsers = useMemo(() => users, [users, screenType])
-  const leaderboardScreens = ['Perps']
-
+  // const leaderboardScreens = ['Perps']
+  const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
   const history = useHistory()
@@ -134,11 +133,11 @@ const LeaderBoard: FC = () => {
   return (
     <WRAPPER $isCollapsed={true} $index={screenType}>
       {howToEarn && <HowToEarn howToEarn={howToEarn} setHowToEarn={setHowToEarn} screenType={screenType} />}
-      <HEADER $mode={mode} $isMobile={checkMobile()}>
-        {checkMobile() && (
+      <HEADER $mode={mode} $isMobile={breakpoint.isMobile}>
+        {breakpoint.isMobile && (
           <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
         )}
-        <div tw="relative sm:justify-start relative z-0">
+        {/* <div tw="relative sm:justify-start relative z-0">
           <div tw="w-[240px] mx-auto flex flex-row justify-center relative sm:w-[270px]">
             <div className="slider"></div>
             {leaderboardScreens.map((pool, index) => (
@@ -152,55 +151,38 @@ const LeaderBoard: FC = () => {
               </div>
             ))}
           </div>
-        </div>
-        <div tw="relative sm:justify-start relative z-0">
-          {!checkMobile() && (
-            <a
-              href="https://docs.goosefx.io/earn/perps-leaderboard?utm_source=perps_leaderboard"
-              target="_blank"
-              rel="noreferrer"
-              tw="absolute right-5 top-0 border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] cursor-pointer
-                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-center bg-white dark:bg-black-1 sm:right-0"
-            >
-              <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
-                How to earn
-              </span>
-              <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
-            </a>
-          )}
-        </div>
-        <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center">
+        </div> */}
+
+        <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center relative">
           <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">Season 1</div>
-          {checkMobile() && (
-            <div
-              tw="border border-solid border-grey-1 w-[45%] h-10 rounded-[100px]
-                py-0.5 pl-2.5 pr-0.5 flex flex-row items-center justify-around bg-white dark:bg-black-1"
-            >
-              <span
-                tw="mr-[5px] font-semibold text-regular dark:text-grey-5 text-black-4"
-                onClick={() => {
-                  setHowToEarn(true)
-                }}
-              >
-                How to earn
-              </span>
-              <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
-            </div>
-          )}
+          <a
+            href="https://docs.goosefx.io/earn/perps-leaderboard?utm_source=perps_leaderboard"
+            target="_blank"
+            rel="noreferrer noopener"
+            css={[
+              !breakpoint.isMobile && tw`absolute right-5 top-0`,
+              tw`border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] 
+                cursor-pointer py-0.5 pl-5 pr-1 flex flex-row items-center justify-between bg-white dark:bg-black-1 
+                sm:right-0`
+            ]}
+          >
+            <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
+              How to earn
+            </span>
+            <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+          </a>
         </div>
         <div tw="relative">
-          <div tw="dark:text-grey-2 text-black-4 font-medium text-regular text-center sm:text-tiny sm:mb-0">
-            Trade smart, climb the leaderboard, and be among {!checkMobile() && <br />}
+          <div tw="text-grey-5 font-medium text-regular text-center sm:text-tiny sm:mb-0">
+            Trade smart, climb the leaderboard, and be among {!breakpoint.isMobile && <br />}
             the top to win exciting rewards!{' '}
           </div>
-          {!checkMobile() && (
-            <div tw="absolute right-5 top-5 dark:text-grey-5 font-semibold text-regular text-black-4">
-              Updates At 12am UTC
-            </div>
+          {!breakpoint.isMobile && (
+            <div tw="absolute right-5 top-5 text-grey-5 font-semibold text-regular">Updates At 12am UTC</div>
           )}
         </div>
       </HEADER>
-      {checkMobile() ? (
+      {breakpoint.isMobile ? (
         <div
           onClick={redirectToTrade}
           tw="relative h-[213px] w-11/12 border border-solid dark:border-grey-2 border-grey-1 
@@ -219,16 +201,23 @@ const LeaderBoard: FC = () => {
           <div tw="text-[25px] font-semibold dark:text-white text-black-4 ml-4 mt-4">Hold 1M+ BONK</div>
         </div>
       ) : (
-        <BANNER_WRAPPER onClick={redirectToTrade}>
-          <div tw="flex flex-row items-center h-full cursor-pointer">
+        <div
+          tw="relative h-[134px] w-full max-w-[1440px] 
+              mx-auto my-3.75 px-5"
+          onClick={redirectToTrade}
+        >
+          <div
+            tw="flex flex-row items-center h-full cursor-pointer border border-solid 
+                  dark:border-grey-2 border-grey-1 rounded-tiny px-5"
+          >
             <img src={`img/crypto/BONK.svg`} alt="nft-banner" tw="mr-4" width={74} height={74} />
             <GradientText text={'SOL-PERP'} fontSize={55} fontWeight={600} />
             <div tw="text-[30px] ml-auto dark:text-white text-black-4">Get +1.5x Boost by holding 1M+ BONK</div>
           </div>
-        </BANNER_WRAPPER>
+        </div>
       )}
 
-      <div tw="flex flex-row justify-between relative px-5 sm:block sm:px-[15px] sm:mb-0">
+      <div tw="flex flex-row justify-between relative px-5 max-w-[1440px] mx-auto sm:block sm:px-[15px] sm:mb-0">
         {users?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>
@@ -257,7 +246,7 @@ const LeaderBoard: FC = () => {
       </div>
       <table>
         <thead className="tableHeader">
-          <tr>{checkMobile() ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
+          <tr>{breakpoint.isMobile ? <ColumnHeadersMobile /> : <ColumnHeadersWeb />}</tr>
         </thead>
         <tbody>
           {displayUsers?.length &&
@@ -265,7 +254,11 @@ const LeaderBoard: FC = () => {
               .filter((user: User) => user.address === wallet?.adapter?.publicKey?.toString())
               .map((user: User, index: number) => (
                 <TABLE_ROW key={index}>
-                  {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} connectedUser={true} />}
+                  {breakpoint.isMobile ? (
+                    <ColumnMobile user={user} />
+                  ) : (
+                    <ColumnWeb user={user} connectedUser={true} />
+                  )}
                 </TABLE_ROW>
               ))}
           {displayUsers &&
@@ -274,7 +267,7 @@ const LeaderBoard: FC = () => {
               .map((user: User, index: number) =>
                 user?.totalPoints && index < 100 ? (
                   <TABLE_ROW key={index}>
-                    {checkMobile() ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
+                    {breakpoint.isMobile ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
                   </TABLE_ROW>
                 ) : (
                   <></>
