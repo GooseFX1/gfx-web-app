@@ -124,7 +124,7 @@ const WRAPPER = styled.div`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const existingUserCache = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
@@ -612,104 +612,106 @@ const FarmTokenContent: FC<{
   //   setStatsModal(true)
   // }
 
-  return showToggleFilteredTokens ? (
-    <>
-      {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-      <tr
-        css={[tw`duration-500`]}
-        className={isExpanded && 'tableRowGradient'}
-        onClick={() => setIsExpanded((prev) => !prev)}
-      >
-        <td tw="!justify-start relative sm:!w-[41%]">
-          {userDepositedAmountUI !== '0.00' && (
-            <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
+  return (
+    showToggleFilteredTokens && (
+      <>
+        {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+        <tr
+          css={[tw`duration-500`]}
+          className={isExpanded && 'tableRowGradient'}
+          onClick={() => setIsExpanded((prev) => !prev)}
+        >
+          <td tw="!justify-start relative sm:!w-[41%]">
+            {userDepositedAmountUI !== '0.00' && (
+              <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
+            )}
+            <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
+            <h4 tw="ml-2.5">{coin?.token}</h4>
+            {depositPercentage ? (
+              <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
+                <Tooltip
+                  color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                  title={
+                    <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                      Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                      {truncateBigNumber(coin?.cappedDeposit)}
+                    </span>
+                  }
+                  placement="topRight"
+                  overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                  overlayInnerStyle={{ borderRadius: '8px' }}
+                >
+                  <img
+                    src={
+                      +depositPercentage?.toFixed(2) >= 100
+                        ? '/img/assets/farm_cap_red.svg'
+                        : '/img/assets/farm_cap_green.svg'
+                    }
+                    alt="deposit-cap"
+                    tw="ml-2.5 sm:ml-1.25 max-w-none"
+                    height={20}
+                    width={20}
+                  />
+                </Tooltip>
+              </div>
+            ) : (
+              <></>
+            )}
+          </td>
+          <td>
+            <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
+          </td>
+          {!checkMobile() && (
+            <td>
+              <h4>
+                {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}
+              </h4>
+            </td>
           )}
-          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
-          <h4 tw="ml-2.5">{coin?.token}</h4>
-          {depositPercentage ? (
-            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
+          {!checkMobile() && (
+            <td>
+              <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
+            </td>
+          )}
+          {!checkMobile() && (
+            <td>
               <Tooltip
                 color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}
+                    {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
                   </span>
                 }
                 placement="topRight"
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
-                <img
-                  src={
-                    +depositPercentage?.toFixed(2) >= 100
-                      ? '/img/assets/farm_cap_red.svg'
-                      : '/img/assets/farm_cap_green.svg'
-                  }
-                  alt="deposit-cap"
-                  tw="ml-2.5 sm:ml-1.25 max-w-none"
-                  height={20}
-                  width={20}
-                />
+                {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
+                  <h4 tw="flex justify-center items-center font-semibold">
+                    ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+                  </h4>
+                ) : (
+                  <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
+                )}
               </Tooltip>
-            </div>
-          ) : (
-            <></>
+            </td>
           )}
-        </td>
-        <td>
-          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
-        </td>
-        {!checkMobile() && (
-          <td>
-            <h4>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</h4>
-          </td>
-        )}
-        {!checkMobile() && (
-          <td>
-            <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
-          </td>
-        )}
-        {!checkMobile() && (
-          <td>
-            <Tooltip
-              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-              title={
-                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                  {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
-                </span>
-              }
-              placement="topRight"
-              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-              overlayInnerStyle={{ borderRadius: '8px' }}
-            >
-              {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                <h4 tw="flex justify-center items-center font-semibold">
-                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
-                </h4>
-              ) : (
-                <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
-              )}
-            </Tooltip>
-          </td>
-        )}
-        {!checkMobile() && (
-          <td>
-            <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
-          </td>
-        )}
-        <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
-          {/* {!checkMobile() && (
+          {!checkMobile() && (
+            <td>
+              <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
+            </td>
+          )}
+          <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
+            {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
-          <div tw="ml-auto sm:mr-2">
-            <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
-          </div>
-        </td>
-      </tr>
-      <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
-    </>
-  ) : (
-    <tr></tr>
+            <div tw="ml-auto sm:mr-2">
+              <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
+            </div>
+          </td>
+        </tr>
+        <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
+      </>
+    )
   )
 }
