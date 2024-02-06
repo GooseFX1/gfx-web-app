@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { SkeletonCommon } from '../../components'
-import { checkMobile, commafy, truncateBigNumber } from '../../utils'
+import { checkMobile, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
@@ -77,7 +77,7 @@ export const FarmHeader: FC = () => {
   const getTooltipText = (index: number) => {
     let tooltipText = ''
     if (index === 0)
-      tooltipText = 'Total rewards earned by the user by providing liquidty in our SSL Pools, displayed in USD'
+      tooltipText = 'Total rewards earned by the user by providing liquidity in our SSL Pools, displayed in USD'
     else if (index === 1) tooltipText = 'TVL represents the total USD value of all assets locked in our SSL Pools'
     else if (index === 2)
       tooltipText = 'Volume generated between different time intervals. Volume is reset everyday at 10PM UTC'
@@ -114,7 +114,7 @@ export const FarmHeader: FC = () => {
 
     if (!totalEarned) return `$00.00`
 
-    return '$' + commafy(totalEarned, 2)
+    return '$' + truncateBigNumber(totalEarned)
   }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, userPubKey])
 
   const V24H = useMemo(() => {

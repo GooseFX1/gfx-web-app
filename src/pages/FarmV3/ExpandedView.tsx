@@ -587,7 +587,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                       tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                     items-center justify-center dark:text-white text-black-4 text-regular font-bold"
                     >
-                      Claim {commafy(claimableReward, 4)} {coin?.token}
+                      Claim {truncateBigNumber(claimableReward)} {coin?.token}
                     </div>
                   </CLAIM>
                 ) : (
