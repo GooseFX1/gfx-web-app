@@ -586,9 +586,7 @@ const NavItem: FC<MainNavIconProps> = ({
   // useRiveThemeToggle(rive.rive, riveAnimation, stateMachine)
   // const { stateInput } = useRiveStateToggle(rive.rive, riveAnimation, stateMachine, path)
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const navigateToPath = useCallback(() => {
-    history.push(path)
-  }, [history, path])
+  const navigateToPath = useCallback(() => history.push(path), [history, path])
 
   const onHover = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -607,7 +605,9 @@ const NavItem: FC<MainNavIconProps> = ({
     //   stateInput.value = false
     // }
   }, [pathname, path])
+
   const onOpen = useCallback(() => setIsOpen(true), [])
+
   const component = useMemo(() => {
     // isOpened or on page
     const hasActiveItems = options && options.filter((option) => option.isActive).length > 0
@@ -622,11 +622,7 @@ const NavItem: FC<MainNavIconProps> = ({
         gap-2.5 min-md:gap-0.25 leading-[1]
         `
         ]}
-        onClick={() => {
-          if (!hasDropdown) {
-            navigateToPath()
-          }
-        }}
+        onClick={() => (hasDropdown ? null : navigateToPath())}
       >
         <div css={[tw`flex gap-2.5 min-md:gap-0.25 items-center justify-start`]}>
           {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
@@ -674,6 +670,7 @@ const NavItem: FC<MainNavIconProps> = ({
       </div>
     )
   }, [mode, pathname, navigateToPath, isOpen, hasDropdown])
+
   return hasDropdown ? (
     <DropDownControls
       customMenuStyle={customMenuStyle}

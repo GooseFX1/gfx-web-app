@@ -82,11 +82,7 @@ export const MobileNav: FC<SidebarProps> = ({ selected, setSelected, selectedMen
                 />
                 History
                 <img
-                  src={
-                    mode === 'lite'
-                      ? '/img/assets/Aggregator/circularArrowlite.svg'
-                      : '/img/assets/Aggregator/circularArrowdark.svg'
-                  }
+                  src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
                   alt="dropdown icon"
                   style={selected == 1 ? { transform: 'rotate(180deg)' } : {}}
                 />

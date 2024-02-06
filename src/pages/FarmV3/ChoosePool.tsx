@@ -167,9 +167,9 @@ const PrevArrow: FC<{
   )
 
 export const ChoosePool: FC<{
-  hasFarmOnboarded: boolean
-  setHasFarmOnboarded: Dispatch<SetStateAction<boolean>>
-}> = ({ hasFarmOnboarded, setHasFarmOnboarded }): JSX.Element => {
+  poolSelectionModal: boolean
+  setPoolSelectionModal: Dispatch<SetStateAction<boolean>>
+}> = ({ poolSelectionModal, setPoolSelectionModal }): JSX.Element => {
   const { setPool, setIsFirstPoolOpen } = useSSLContext()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [userPool, setUserPool] = useState<Pool>(null)
@@ -238,19 +238,16 @@ export const ChoosePool: FC<{
   }
 
   useEffect(() => {
-    console.log('hasFarmOnboarded', hasFarmOnboarded)
+    if (!existingUserCache.farm.hasFarmOnboarded) {
+      window.localStorage.setItem(
+        'gfx-user-cache',
+        JSON.stringify({
+          ...existingUserCache,
+          farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
+        })
+      )
+    }
   }, [])
-
-  const handlePoolSelection = () => {
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-      })
-    )
-    setHasFarmOnboarded(true)
-  }
 
   return (
     <STYLED_POPUP
@@ -258,8 +255,8 @@ export const ChoosePool: FC<{
       width={checkMobile() ? '95%' : '500px'}
       title={null}
       centered={true}
-      visible={!hasFarmOnboarded}
-      onCancel={() => handlePoolSelection()}
+      visible={poolSelectionModal}
+      onCancel={() => setPoolSelectionModal(false)}
       footer={null}
       currentSlide={currentSlide}
       userAnswer={userAnswer}
@@ -461,15 +458,8 @@ export const ChoosePool: FC<{
           <div
             className="cta"
             onClick={() => {
-              setHasFarmOnboarded(true)
+              setPoolSelectionModal(false)
               setPool(userPool)
-              window.localStorage.setItem(
-                'gfx-user-cache',
-                JSON.stringify({
-                  ...existingUserCache,
-                  farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-                })
-              )
               setTimeout(() => setIsFirstPoolOpen(true), 500)
             }}
           >

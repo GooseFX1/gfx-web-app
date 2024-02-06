@@ -859,11 +859,7 @@ export const PlaceOrderMobi = () => {
             </div>
             <img
               className="arrow-icon"
-              src={
-                mode === 'dark'
-                  ? `/img/assets/Aggregator/circularArrowdark.svg`
-                  : `/img/assets/Aggregator/circularArrowlite.svg`
-              }
+              src={mode === 'dark' ? `/img/assets/circularArrowdark.svg` : `/img/assets/circularArrowlite.svg`}
               alt="arrow"
               onClick={() => setShowMarketDrawer(true)}
             />
@@ -951,11 +947,7 @@ export const PlaceOrderMobi = () => {
               {/*<span tw="text-regular font-semibold text-grey-5 mr-1">/</span>
               <span tw="text-regular font-semibold text-grey-5">25%</span>*/}
               <img
-                src={
-                  mode === 'dark'
-                    ? `/img/assets/Aggregator/circularArrowdark.svg`
-                    : `/img/assets/Aggregator/circularArrowlite.svg`
-                }
+                src={mode === 'dark' ? `/img/assets/circularArrowdark.svg` : `/img/assets/circularArrowlite.svg`}
                 className="arrow-icon"
                 alt="arrow"
               />

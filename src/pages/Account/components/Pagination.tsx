@@ -50,22 +50,14 @@ export const Pagination: FC<{
       <p>{`Page ${pagination.page} of ${roundUpIfDecimal(totalItemsCount / pagination.limit)}`} </p>
       <div className="imagesContainer">
         <img
-          src={
-            mode === 'lite'
-              ? '/img/assets/Aggregator/circularArrowlite.svg'
-              : '/img/assets/Aggregator/circularArrowdark.svg'
-          }
+          src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
           alt="arrow left"
           style={{ transform: 'rotate(90deg)' }}
           className={mode != 'lite' && pagination.page == 1 ? 'svg-to-grey' : ''}
           onClick={() => handleArrowClick('back')}
         />
         <img
-          src={
-            mode === 'lite'
-              ? '/img/assets/Aggregator/circularArrowlite.svg'
-              : '/img/assets/Aggregator/circularArrowdark.svg'
-          }
+          src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
           alt="arrow right"
           style={{ transform: 'rotate(270deg)' }}
           className={mode != 'lite' && pagination.page * pagination.limit >= totalItemsCount ? 'svg-to-grey' : ''}

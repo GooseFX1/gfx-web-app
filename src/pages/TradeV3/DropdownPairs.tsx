@@ -313,11 +313,7 @@ export const DropdownPairs: FC = () => {
               <img className="asset-icon" src={assetIcon} alt="asset-icon" />
               {displayPair}
               <img
-                src={
-                  mode === 'lite'
-                    ? '/img/assets/Aggregator/circularArrowlite.svg'
-                    : '/img/assets/Aggregator/circularArrowdark.svg'
-                }
+                src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
                 style={showModal ? { transform: 'rotate(180deg)' } : {}}
                 alt="arrow-icon"
                 height="7"

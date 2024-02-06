@@ -266,7 +266,7 @@ const LeaderBoard: FC = () => {
               .filter((user: User) => user.address !== wallet?.adapter?.publicKey?.toString())
               .map((user: User, index: number) =>
                 user?.totalPoints && index < 100 ? (
-                  <TABLE_ROW key={index}>
+                  <TABLE_ROW key={index + 10}>
                     {breakpoint.isMobile ? <ColumnMobile user={user} /> : <ColumnWeb user={user} />}
                   </TABLE_ROW>
                 ) : (

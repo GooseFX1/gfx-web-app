@@ -9,7 +9,6 @@ import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 import { Tooltip } from 'antd'
 
 const CARD_GRADIENT = styled.div<{ isMobile: boolean }>`
@@ -65,9 +64,7 @@ export const FarmHeader: FC = () => {
   const { prices } = usePriceFeedFarm()
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
-  const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-
-  const [hasFarmOnboarded, setHasFarmOnboarded] = useState<boolean>(existingUserCache.farm.hasFarmOnboarded)
+  const [poolSelectionModal, setPoolSelectionModal] = useState<boolean>(false)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
@@ -228,8 +225,8 @@ export const FarmHeader: FC = () => {
   return (
     <>
       <HEADER_WRAPPER>
-        {!hasFarmOnboarded && (
-          <ChoosePool hasFarmOnboarded={hasFarmOnboarded} setHasFarmOnboarded={setHasFarmOnboarded} />
+        {poolSelectionModal && (
+          <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal} />
         )}
         <div tw="flex flex-col cursor-pointer w-15 mr-2.5 sm:w-12.5 sm:h-15">
           <div
@@ -296,16 +293,7 @@ export const FarmHeader: FC = () => {
             </div>
           ))}
         </div>
-        <button
-          tw="cursor-pointer ml-auto"
-          onClick={() => {
-            setHasFarmOnboarded(true)
-            window.localStorage.setItem(
-              'gfx-user-cache',
-              JSON.stringify({ ...existingUserCache, farm: { ...existingUserCache.farm, hasFarmOnboarded: true } })
-            )
-          }}
-        >
+        <button tw="cursor-pointer ml-auto" onClick={() => setPoolSelectionModal(true)}>
           <img
             src="/img/assets/question-icn.svg"
             alt="?-icon"

@@ -32,7 +32,7 @@ export const Arrow: FC<{
 // pass height and width
 export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle }> = ({ cssStyle, invert }) => {
   const { mode } = useDarkMode()
-  const circularArrow = `/img/assets/Aggregator/circularArrow${mode}.svg`
+  const circularArrow = `/img/assets/circularArrow${mode}.svg`
   return (
     <>
       <ARROW $cssStyle={cssStyle} $invert={!!invert}>

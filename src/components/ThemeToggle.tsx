@@ -30,19 +30,13 @@ const Toggle = styled(CenteredDiv)<{ $mode: boolean }>`
     
 `
 
-const MODE_ICON = styled(CenteredImg)<{ $mode: boolean }>`
-  ${tw`h-[16px] w-[16px]`}
-
-  img {
-    filter: ${({ $mode }) => ($mode ? 'invert(100%)' : 'opacity(0.4)')};
-  }
-
+const MODE_ICON = styled(CenteredImg)`
   .moon-image {
-    ${tw`h-[16px] w-[16px] sm:h-[24px] sm:w-[24px] mr-[8px]`}
+    ${tw`h-[22px] w-[22px] sm:h-[24px] sm:w-[24px] mr-[8px]`}
   }
 
   .brightnessImage {
-    ${tw`h-[19px] w-[19px] sm:h-[26px] sm:w-[26px]`}
+    ${tw`h-[22px] w-[22px] sm:h-[26px] sm:w-[26px]`}
   }
 `
 
@@ -51,16 +45,16 @@ export const ThemeToggle: FC = () => {
 
   return (
     <WRAPPER>
-      <MODE_ICON $mode={mode === 'dark'}>
-        <img className="moon-image" src={`/img/assets/lite_mode.svg`} alt="" />
+      <MODE_ICON>
+        <img className="moon-image" src={`/img/mainnav/moon_${mode}_mode.svg`} alt="moon" />
       </MODE_ICON>
 
       <Toggle $mode={mode === 'dark'} onClick={toggleMode}>
         <div />
       </Toggle>
 
-      <MODE_ICON $mode={mode === 'dark'}>
-        <img className="brightnessImage" src={`/img/assets/dark_mode.svg`} alt="" />
+      <MODE_ICON>
+        <img className="brightnessImage" src={`/img/mainnav/sun_${mode}_mode.svg`} alt="sun" />
       </MODE_ICON>
     </WRAPPER>
   )

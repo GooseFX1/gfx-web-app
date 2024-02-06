@@ -69,7 +69,7 @@ export const ArrowDropdown: FC<{
     <Row align="middle" wrap={false}>
       {children}
       <ARROW_CLICKER $arrowRotation={arrowRotation} $measurements={measurements}>
-        <SVGToWhite src={`/img/assets/Aggregator/circularArrowlite.svg`} alt="arrow" className={'arrow-icon'} />
+        <SVGToWhite src={`/img/assets/circularArrowlite.svg`} alt="arrow" className={'arrow-icon'} />
       </ARROW_CLICKER>
     </Row>
   </Dropdown>

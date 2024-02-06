@@ -13,7 +13,7 @@ const RecentWinningRow: FC<{ winning }> = ({ winning }): ReactElement => (
       <p tw="text-grey-1 text-xs text-regular font-semibold dark:text-grey-2 text-grey-1 ">{winning.date}</p>
     </div>
 
-    <img src="/img/assets/Aggregator/Solscan.svg" className="solscan" css={[tw`ml-auto`]} />
+    <img src="/img/assets/Solscan.svg" className="solscan" css={[tw`ml-auto`]} />
   </div>
 )
 export default RecentWinningRow
