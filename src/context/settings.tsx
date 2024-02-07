@@ -90,19 +90,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
   const network = useMemo(() => APP_RPC.network, [endpointName])
 
-  const endpoint = useMemo(() => {
-    if (existingUserCache.endpoint !== null) {
-      return existingUserCache.endpoint
-    } else {
-      // asserts 'Custom' is cached with a null enpoint value - results in default reset
-      if (endpointName === 'Custom') {
-        setEndpointName(APP_RPC.name)
-        return APP_RPC.endpoint
-      } else {
-        return APP_RPC.endpoint
-      }
-    }
-  }, [endpointName])
+  const endpoint = useMemo(
+    () => 'https://omniscient-frequent-wish.solana-devnet.quiknode.pro/94f987a0b2e2936be10a5f9d3eb81058c60681b9/',
+    [endpointName]
+  )
 
   const perpsConnection = useMemo(() => {
     // sets rpc info to cache

@@ -39,8 +39,8 @@ export const FIND_FEES_DISCRIMINANT = 0
 export const FIND_FEES_DISCRIMINANT_LEN = 1
 export const MINT_DECIMALS = 6
 
-//export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
-export const VAULT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+export const VAULT_MINT = 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
+//export const VAULT_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 export const FEE_COLLECTOR = '6YxEQCvytma1a5w9FdeLtUE8gcsRheJsfcLeiBkkjBZ8'
 
 //export const MPG_ID = '7EUw8KH3KHoNNtMrKGswab3gWwM5tBqBbHKZ8eUiSQWP'
@@ -54,11 +54,11 @@ export const FEE_COLLECTOR = '6YxEQCvytma1a5w9FdeLtUE8gcsRheJsfcLeiBkkjBZ8'
 // export const FEE_OUTPUT_REGISTER = '8wca9RPSqBURHo2VU2gDaz5pmnYpj2dXPkS88mVdfoTy'
 // export const RISK_MODEL_CONFIG_ACCT = '9uEGTZRoDwZa4N1asf1p1pnF4HEuUtG2BZBVY26feBDM'
 
-export const MPG_ID = 'E9xDgYChJ6QP5xGRwoU6FtjWDXsnmoYu3DWECUU2fXAp'
+export const MPG_ID = 'GSiRLUGwJsPn3RVozE6auGyTMZ8cg9c7HnAtTKzeb4Z8'
 
-export const RISK_OUTPUT_REGISTER = 'Dkf3R6Q1LDLdxBrn6hvpafuX9xUcRnuYDjX75SYVxmmc'
-export const FEE_OUTPUT_REGISTER = 'HaGFeaU28JkhBR1hJkwtqr5NuraPCiy6AwADVqnMgM2p'
-export const RISK_MODEL_CONFIG_ACCT = 'GgbsFnvJJYvrEMde6vFkj2txxpEkPmFyo3iHVFPjsPDc'
+export const RISK_OUTPUT_REGISTER = '6X8XzsPEjTaeEG5k7BocWvHvdff3CVVj3zCGFuTxja3K'
+export const FEE_OUTPUT_REGISTER = '5Cc5xpQqipk2T1FvS6sh1MhDU6DxWVXGYo6ZE8i7DCVA'
+export const RISK_MODEL_CONFIG_ACCT = 'EjnNrnJhMQAsMP5WyKsJ2bFePKrMGX5ZCgSEYNq5wxWH'
 
 export const MPG_ACCOUNT_SIZE = 143864
 export const OUT_REGISTER_SIZE = 432
@@ -103,13 +103,26 @@ export const PERPS_COLLATERAL = [
 //  }
 //]
 
+//export const MPs = [
+//  {
+//    id: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
+//    orderbook_id: 'Ggw9mU8vfP3NucANaPJBZSZMRSiMPrsvFmxj5wM3qvn3',
+//    bids: 'DmB2CBjeLAh6awvWvySuygSom1JHdT95ZVEQmZF4TBXD',
+//    asks: 'FPTSdA4vPQRz4KyjKi5YYdNNq9EbKDSgKMNyadrbVhG8',
+//    event_queue: '2Kv94KZTX8yePkdNZT1zXpzDaTpLYLpeiv7Gp8vLA6kL',
+//    tick_size: 100,
+//    decimals: 5,
+//    pairName: 'SOL-PERP'
+//  }
+//]
+
 export const MPs = [
   {
-    id: 'ExyWP65F2zsALQkC2wSQKfR7vrXyPWAG4SLWExVzgbaW',
-    orderbook_id: 'Ggw9mU8vfP3NucANaPJBZSZMRSiMPrsvFmxj5wM3qvn3',
-    bids: 'DmB2CBjeLAh6awvWvySuygSom1JHdT95ZVEQmZF4TBXD',
-    asks: 'FPTSdA4vPQRz4KyjKi5YYdNNq9EbKDSgKMNyadrbVhG8',
-    event_queue: '2Kv94KZTX8yePkdNZT1zXpzDaTpLYLpeiv7Gp8vLA6kL',
+    id: 'DUCFhVbomXJHZFJPdgYEQVtBGfADon9qDMTE2hbnzi26',
+    orderbook_id: '7xiz1kHfapP65m5dYjgt2uVV7RqBFcFa3kxvqrRTGjz3',
+    bids: 'DP5fvyaV8bDGTTntrqFjZ2Z1xek21z16x8KfhBsrCTBb',
+    asks: 'DJkXtHhwzRiwpz3oDu3SJbj3VPHTHhiLjqqBQM5FtSBj',
+    event_queue: 'Aj7T65BVGVHSfcKv3A52ZG8y6FQiEMUSipgyCHbosAZN',
     tick_size: 100,
     decimals: 5,
     pairName: 'SOL-PERP'
