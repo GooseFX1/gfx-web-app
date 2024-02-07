@@ -30,12 +30,16 @@ export const Arrow: FC<{
   )
 }
 // pass height and width
-export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle }> = ({ cssStyle, invert }) => {
+export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle; [x: string]: any }> = ({
+  cssStyle,
+  invert,
+  ...props
+}) => {
   const { mode } = useDarkMode()
   const circularArrow = `/img/assets/circularArrow${mode}.svg`
   return (
     <>
-      <ARROW $cssStyle={cssStyle} $invert={!!invert}>
+      <ARROW $cssStyle={cssStyle} $invert={!!invert} {...props}>
         <img src={circularArrow} css={[cssStyle]} alt="Circular Arrow" />
       </ARROW>
     </>

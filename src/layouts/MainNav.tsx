@@ -11,8 +11,9 @@ import { More } from './More'
 import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
-import { MODAL_TYPES } from '../constants'
+import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
 import { RewardsProvider } from '../context/rewardsContext'
+import { CircularArrow } from '../components/common/Arrow'
 
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
@@ -24,7 +25,7 @@ export const MainNav: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
-  const navigateHome = useCallback(() => window.location.reload(), [history])
+  const navigateHome = useCallback(() => history.push(APP_DEFAULT_ROUTE), [history])
   const { rewardModal, rewardToggle } = useRewardToggle()
   const location = useLocation()
   const query = new URLSearchParams(location.search)
@@ -269,7 +270,7 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
           // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
           text={'more'}
           path={'/leaderboard'}
-          iconBase={'stats'}
+          iconBase={'more'}
           hasDropdown={true}
           menuPosition={'center'}
           customMenuStyle={{
@@ -525,9 +526,9 @@ const DesktopNav: FC = () => {
         text={'More'}
         // riveAnimation={'stats'}
         // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-        path={'/stats'}
+        path={'/more'}
         hasDropdown={true} // Renable when added
-        iconBase={'stats'}
+        iconBase={'more'}
         options={[
           {
             text: 'Leaderboard',
@@ -611,7 +612,6 @@ const NavItem: FC<MainNavIconProps> = ({
   const component = useMemo(() => {
     // isOpened or on page
     const hasActiveItems = options && options.filter((option) => option.isActive).length > 0
-    const activeDropdown: string = isOpen ? 'selected' : hasDropdown && hasActiveItems ? 'active' : 'inactive'
     const curRoute: boolean = pathname.startsWith(path) || hasActiveItems
     return (
       <div
@@ -636,7 +636,7 @@ const NavItem: FC<MainNavIconProps> = ({
           <div css={[tw`flex gap-2.5`]}>
             <h5
               css={[
-                tw`mb-0 text-average min-md:text-tiny uppercase font-semibold tracking-wider
+                tw`mb-0 text-average min-md:text-tiny capitalize font-semibold tracking-wider
             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
                 curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
               ]}
@@ -647,17 +647,16 @@ const NavItem: FC<MainNavIconProps> = ({
               {text}
             </h5>
             {hasDropdown && (
-              <img
-                css={[tw`w-3.5 min-md:w-2.25`]}
-                src={`/img/assets/chevron-${mode}-${activeDropdown}.svg`}
-                loading={'eager'}
+              <CircularArrow
+                invert={isOpen}
+                css={[tw`w-3.5 min-md:w-2.25 opacity-[0.6]`, curRoute || isOpen ? tw`opacity-[1]` : tw``]}
               />
             )}
           </div>
         </div>
         <h6
           css={[
-            tw`mb-0 text-smallest uppercase font-semibold tracking-wider
+            tw`mb-0 text-smallest capitalize font-semibold tracking-wider
             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-1 hidden min-md:block`,
             curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
           ]}
