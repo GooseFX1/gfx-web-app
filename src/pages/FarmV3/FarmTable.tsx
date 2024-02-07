@@ -404,7 +404,7 @@ export const FarmTable: FC = () => {
                   color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                   title={
                     <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                      APY is calculated on a 7D rolling basis based on TVL/Fees. See FAQ below for more info
+                      APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info
                     </span>
                   }
                   placement="topLeft"
