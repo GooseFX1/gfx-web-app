@@ -11,6 +11,7 @@ import { DepositWithdraw } from '../perps/DepositWithdraw'
 import { ClosePosition } from '../ClosePosition'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { PerpsEndModal } from '../PerpsEndModal'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const WRAPPER = styled.div`
   .no-positions-found {
@@ -26,7 +27,7 @@ const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[415px] !w-11/12 rounded-half dark:bg-black-2 bg-grey-5`}
 
   .ant-modal-header {
-    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[25px] pt-4 pb-0 border-b-0`}
+    ${tw`rounded-t-half rounded-tl-half rounded-tr-half px-[15px] pt-4 pb-0 border-b-0`}
     background-color: ${({ theme }) => theme.bg25};
   }
   .ant-modal-content {
@@ -161,7 +162,7 @@ const HEADER = styled.div`
   ${tw`flex items-center`}
 
   .cta {
-    ${tw`rounded-bigger w-[120px] h-10 mr-[13px]`}
+    ${tw`rounded-bigger w-[90px] h-10 mr-[13px]`}
 
     .btn {
       ${tw`flex items-center justify-center text-regular font-semibold w-full h-full`}
@@ -519,6 +520,8 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
   tradeType
 }) => {
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   return (
     <HEADER>
       <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
@@ -531,6 +534,13 @@ const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeType: st
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
       </div>
+      {publicKey && (
+        <div className={tradeType === 'account' ? 'active cta' : 'cta'} onClick={() => setTradeType('account')}>
+          <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+            <div className={tradeType === 'account' ? 'gradient-bg btn' : 'btn'}>Account</div>
+          </div>
+        </div>
+      )}
     </HEADER>
   )
 }

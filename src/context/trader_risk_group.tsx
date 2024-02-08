@@ -59,6 +59,7 @@ import { DecrementTake } from '../pages/TradeV3/perps/dexterity/types/SelfTradeB
 import { findAssociatedTokenAddress } from '../web3'
 import {
   cancelOrderIx,
+  closeTraderAccountIx,
   depositFundsIx,
   initTrgDepositIx,
   newOrderIx,
@@ -142,6 +143,7 @@ interface IPerpsInfo {
   cancelOrder: (orderId: string) => Promise<DepositIx | void>
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<DepositIx | void>
+  closeTraderAccount: () => Promise<DepositIx | void>
   activeProduct: IActiveProduct
   order: IOrder
   setOrder: Dispatch<SetStateAction<IOrder>>
@@ -762,6 +764,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [traderRiskGroup, marketProductGroup]
   )
 
+  const closeTraderAccount = useCallback(async () => {
+    if (wallet.connected) {
+      const res = await closeTraderAccountIx(wallet, connection, traderInstanceSdk)
+      return res
+    }
+  }, [traderInstanceSdk, wallet, connection])
+
   const depositFunds = useCallback(
     async (amount: Fractional) => {
       // not removed this because we need it for initTrgDepositIx
@@ -891,6 +900,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         cancelOrder: cancelOrder,
         depositFunds: depositFunds,
         withdrawFunds: withdrawFunds,
+        closeTraderAccount: closeTraderAccount,
         activeProduct: activeProduct,
         order: order,
         setOrder: setOrder,
