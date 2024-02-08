@@ -341,7 +341,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         publicKey: liquidityAcc
       })
     },
-    [on, SSLProgram, getLiquidityAccountKey]
+    [on, SSLProgram, filteredLiquidityAccounts, getLiquidityAccountKey]
   )
 
   return (
