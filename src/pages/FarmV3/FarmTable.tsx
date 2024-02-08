@@ -124,7 +124,7 @@ const WRAPPER = styled.div`
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const existingUserCache = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
 
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
