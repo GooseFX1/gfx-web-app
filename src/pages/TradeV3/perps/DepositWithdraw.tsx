@@ -421,13 +421,11 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
       if (!traderInstanceSdk) return
       try {
         const addresses = await traderInstanceSdk?.getAllTraderAddresses()
-        console.log(addresses, 'addresses')
         setTraderAddresses(addresses)
       } catch (e) {
         console.error('Error fetching trader addresses:', e)
       }
     }
-    console.log(traderInstanceSdk, 'traderInstanceSdk address')
 
     if (traderInstanceSdk) {
       fetchTraderAddresses()
@@ -479,7 +477,7 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
         </SELECTED_COIN>
       </Dropdown>
 
-      <div tw="flex flex-row items-center justify-between mt-2">
+      <div tw="flex flex-row items-center justify-between mt-2 sm:mt-5">
         <LABEL tw="!text-tiny font-semibold !mt-0 !mb-0">In order to close your account: </LABEL>
       </div>
       <CLOSE_ACCOUNT_CONDITIONS>
@@ -494,7 +492,7 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
             <Checkbox onChange={() => setCheckboxChecked((prev) => !prev)} />
           )}
         </div>
-        <div tw="ml-2 dark:text-grey-2 text-grey-1 font-semibold !text-tiny">
+        <div tw="ml-2 dark:text-grey-2 text-grey-1 font-semibold !text-tiny sm:mt-5">
           I agree that my account closure is permanent and erases all the data. In addition you will <br />
           reclaim the SOL rent fee paid when creating the account.
         </div>
@@ -513,7 +511,7 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          tw="w-[240px] h-8.75 mt-2"
+          tw="w-[240px] h-8.75 mt-2 sm:mt-3"
         >
           Close Account
         </Button>
