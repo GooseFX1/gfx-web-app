@@ -342,6 +342,37 @@ export const withdrawFundsIx = async (
     return null
   }
 }
+export const closeTraderAccountIx = async (wallet: any, connection: Connection, traderInstanceSdk: Trader) => {
+  try {
+    const instructions = []
+    const ix = await traderInstanceSdk.closetrgIx()
+    instructions.push(ix)
+
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
+      startMessage: {
+        header: 'Close Trader Account',
+        description: 'Sign the transaction to Close Trader Account!'
+      },
+      progressMessage: {
+        header: 'Close Trader Account',
+        description: 'Closing Trader Account..'
+      },
+      endMessage: {
+        header: 'Close Trader Account',
+        description: 'Trader Account closed successfully'
+      },
+      errorMessage: {
+        header: 'Close Trader Account',
+        description: 'There was an error in Closing Trader Account'
+      }
+    })
+
+    return response
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
 
 function createFirstInstructionData() {
   const aa = u8('instruction')

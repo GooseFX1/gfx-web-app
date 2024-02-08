@@ -10,6 +10,7 @@ import { useTraderConfig } from '../../context/trader_risk_group'
 import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip, PopupCustom } from '../../components'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 export const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -182,6 +183,9 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
   tradeType
 }) => {
   const { mode } = useDarkMode()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+
   const { isDevnet } = useCrypto()
   return (
     <HEADER>
@@ -200,6 +204,18 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
           <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
         </div>
       </div>
+      {publicKey && (
+        <div
+          className={tradeType === 'account' ? 'active cta' : 'cta'}
+          onClick={() => {
+            if (!isDevnet) setTradeType('account')
+          }}
+        >
+          <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
+            <div className={tradeType === 'account' ? 'gradient-bg btn' : 'btn'}>Account</div>
+          </div>
+        </div>
+      )}
       {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
     </HEADER>
   )
