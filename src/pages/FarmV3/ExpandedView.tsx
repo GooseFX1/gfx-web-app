@@ -94,7 +94,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     const slotDiff = currentSlot - depositSlot
     // console.log("slotDiff", slotDiff);
     if (slotDiff < 216000) {
-      const decayingFactor = (((216000 - slotDiff) / 216000) ** 2 * 2) / 100
+      const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
       const withdrawalFee = decayingFactor * +withdrawAmount
       setEarlyWithdrawFee(withdrawalFee)
     } else {
