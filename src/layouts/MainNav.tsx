@@ -648,7 +648,7 @@ const NavItem: FC<MainNavIconProps> = ({
             </h5>
             {hasDropdown && (
               <CircularArrow
-                cssStyle={tw`w-3.5 min-md:w-2.25`}
+                cssStyle={tw`w-[12px]`}
                 invert={isOpen}
                 css={[curRoute || isOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
