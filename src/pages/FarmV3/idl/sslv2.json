@@ -819,9 +819,13 @@
             "type": "i64"
           },
           {
+            "name": "lastDepositAt",
+            "type": "u64"
+          },
+          {
             "name": "space",
             "type": {
-              "array": ["u8", 128]
+              "array": ["u8", 120]
             }
           }
         ]

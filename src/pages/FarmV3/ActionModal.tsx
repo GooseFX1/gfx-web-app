@@ -34,6 +34,7 @@ export const ActionModal: FC<{
   claimAmount: number
   actionType: string
   token: SSLToken
+  earlyWithdrawFee: number
 }> = ({
   actionModal,
   setActionModal,
@@ -45,7 +46,8 @@ export const ActionModal: FC<{
   depositAmount,
   claimAmount,
   actionType,
-  token
+  token,
+  earlyWithdrawFee
 }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
@@ -53,7 +55,7 @@ export const ActionModal: FC<{
 
   const handleUserAction = () => {
     if (actionType === 'deposit') handleDeposit()
-    else if (actionType === 'withdraw') handleWithdraw()
+    else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
     else handleClaim()
   }
 
@@ -110,6 +112,14 @@ export const ActionModal: FC<{
             {`${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`}`}
           </div>
         </div>
+        {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
+          <div tw="flex flex-row items-center justify-between mb-3.75">
+            <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
+            <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
+              {earlyWithdrawFee ? earlyWithdrawFee + ' ' + token?.token : 0}
+            </div>
+          </div>
+        )}
         <Button
           height="35px"
           cssStyle={tw`duration-500 w-[530px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none mx-auto my-3.75
@@ -127,7 +137,7 @@ export const ActionModal: FC<{
             actionType === 'deposit'
               ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim Yield`
               : actionType === 'withdraw'
-              ? `Withdraw ${commafy(+withdrawAmount + claimAmount, 4)} ${token?.token}`
+              ? `Withdraw ${commafy(+withdrawAmount + claimAmount - earlyWithdrawFee, 4)} ${token?.token}`
               : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`
           }`}
         </Button>
@@ -171,6 +181,8 @@ export const ActionModal: FC<{
             : '275px'
           : actionType === 'claim'
           ? '250px'
+          : actionType === 'withdraw' && earlyWithdrawFee > 0
+          ? '330px'
           : '295px'
       }
       width={'560px'}

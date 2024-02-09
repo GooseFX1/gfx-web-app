@@ -64,6 +64,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [userTokenBalance, setUserTokenBalance] = useState<number>()
   const [actionModal, setActionModal] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>(null)
+  const [currentSlot, setCurrentSlot] = useState<number>(0)
+  const [earlyWithdrawFee, setEarlyWithdrawFee] = useState<number>(0)
   const { getUIAmount } = useAccounts()
   const { off } = useSolSub()
 
@@ -72,7 +74,33 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setUserTokenBalance(getUIAmount(tokenMintAddress))
       if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
     }
-  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount, filteredLiquidityAccounts])
+  }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const slot = await connection.getSlot()
+        setCurrentSlot(slot)
+      } catch (error) {
+        console.error('Error getting current slot:', error)
+        setCurrentSlot(0)
+      }
+    })()
+  }, [connection, actionModal])
+
+  const calculateEarlyWithdrawalPenalty = (actionValue: string) => {
+    if (actionValue !== 'withdraw') return
+    const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt?.toNumber()
+    const slotDiff = currentSlot - depositSlot
+    // console.log("slotDiff", slotDiff);
+    if (slotDiff < 216000) {
+      const decayingFactor = (((216000 - slotDiff) / 216000) ** 2 * 2) / 100
+      const withdrawalFee = decayingFactor * +withdrawAmount
+      setEarlyWithdrawFee(withdrawalFee)
+    } else {
+      setEarlyWithdrawFee(0)
+    }
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -170,6 +198,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   const openActionModal = (actionValue: string) => {
     if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
+    calculateEarlyWithdrawalPenalty(actionValue)
     setActionType(actionValue)
     setActionModal(true)
   }
@@ -270,19 +299,19 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setIsTxnSuccessfull(false)
     }
   }
-  const handleWithdraw = (): void => {
+  const handleWithdraw = (withdrawAmount: number): void => {
     if (checkConditionsForDepositWithdraw(false)) return
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
-      executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, coin, String(withdrawAmount), userPublicKey).then((con) => {
         setIsButtonLoading(false)
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('withdrawn', withdrawAmount, coin?.token, walletName))
+          notify(sslSuccessfulMessage('withdrawn', String(withdrawAmount), coin?.token, walletName))
           setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
@@ -378,6 +407,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           claimAmount={claimableReward}
           actionType={actionType}
           token={coin}
+          earlyWithdrawFee={earlyWithdrawFee}
         />
       )}
       <div tw="flex flex-col">
