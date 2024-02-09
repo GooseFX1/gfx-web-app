@@ -90,8 +90,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   const calculateEarlyWithdrawalPenalty = (actionValue: string) => {
     if (actionValue !== 'withdraw') return
-    const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt?.toNumber()
-    const slotDiff = currentSlot - depositSlot
+    const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt
+    const slotDiff = new BN(currentSlot).sub(depositSlot)?.toNumber()
     // console.log("slotDiff", slotDiff);
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
