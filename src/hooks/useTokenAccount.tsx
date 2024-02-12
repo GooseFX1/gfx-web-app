@@ -18,7 +18,7 @@ interface UseTokenAccountReturn {
     tokenAccount: PublicKey
   }>
 }
-
+// eslint-disable-line @typescript-eslint/no-unused-vars
 export default function useTokenAccount(): UseTokenAccountReturn {
   const walletContext = useWallet()
   const { connection } = useConnection()

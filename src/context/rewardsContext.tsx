@@ -32,7 +32,6 @@ import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } fr
 import useSolSub, { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
-import useTokenAccount from '@/hooks/useTokenAccount'
 
 const cg = new CoinGecko()
 
