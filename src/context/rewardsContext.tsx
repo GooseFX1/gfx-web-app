@@ -32,6 +32,7 @@ import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } fr
 import useSolSub, { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
+import useTokenAccount from '@/hooks/useTokenAccount'
 
 const cg = new CoinGecko()
 
@@ -344,6 +345,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     fetchGofxValue()
   }, [])
+
   useEffect(() => {
     if (!walletContext?.publicKey || !stakeRewards) {
       return
@@ -353,22 +355,24 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
   }, [walletContext.publicKey, updateStakeDetails, stakeRewards])
+
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       if (!stakeRewards) {
         console.warn('stake rewards not loaded')
       }
 
-      const [userMetadata, usdcAddress] = await Promise.all([
+      const [userMetadata, usdcAddress, gofxAddress] = await Promise.all([
         stakeRewards.getUserMetaData(walletContext.publicKey).catch((err) => {
           console.log('get-user-metadata-failed', err)
           return null
         }),
-        getAssociatedTokenAddress(ADDRESSES[getNetwork()].USDC_MINT, walletContext.publicKey)
+        getAssociatedTokenAddress(ADDRESSES[getNetwork()].USDC_MINT, walletContext.publicKey),
+        getAssociatedTokenAddress(ADDRESSES[getNetwork()].GOFX_MINT, walletContext.publicKey)
       ])
       const usdcAccount = await connection.getAccountInfo(usdcAddress)
       const txnForUserAccountRequirements = new Transaction()
-      let res = userMetadata != null && usdcAccount != null
+      let res = userMetadata != null && usdcAccount != null && gofxAddress != null
       if (!usdcAccount) {
         const txn = createAssociatedTokenAccountInstruction(
           walletContext.publicKey,
@@ -385,6 +389,15 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         //const ix = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
         //console.log('init user account', ix)
         //txn.add(ix)
+      }
+      if (gofxAddress === null) {
+        const txn = createAssociatedTokenAccountInstruction(
+          walletContext.publicKey,
+          gofxAddress,
+          walletContext.publicKey,
+          ADDRESSES[getNetwork()].GOFX_MINT
+        )
+        txnForUserAccountRequirements.add(txn)
       }
       if (txnForUserAccountRequirements.instructions.length > 0) {
         const txnSig = await walletContext
