@@ -16,7 +16,8 @@ import {
   //invalidWithdrawErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage,
-  SSLToken
+  SSLToken,
+  depositCapError
 } from './constants'
 import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -204,6 +205,10 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const openActionModal = (actionValue: string) => {
     if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
     calculateEarlyWithdrawalPenalty(actionValue)
+    if (actionValue === 'deposit' && +depositAmount + liquidity > coin?.cappedDeposit) {
+      notify(depositCapError(coin, liquidity))
+      return
+    }
     setActionType(actionValue)
     setActionModal(true)
   }

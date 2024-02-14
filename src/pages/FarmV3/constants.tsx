@@ -3,6 +3,7 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import { GFX_LINK } from '../../styles'
+import { truncateBigNumber } from '../../utils'
 
 interface Message {
   type?: string
@@ -297,6 +298,12 @@ export const invalidInputErrMsg = (name: string): Message => ({
 export const genericErrMsg = (error: string): Message => ({
   type: 'error',
   message: error
+})
+
+export const depositCapError = (token: SSLToken, liquidity: number): Message => ({
+  type: 'error',
+  message: `You cannot deposit more than $${truncateBigNumber(token?.cappedDeposit - liquidity)} 
+  ${token.token} because ${token.token} pool is capped at $${truncateBigNumber(token?.cappedDeposit)}!`
 })
 
 export const sslSuccessfulMessage = (
