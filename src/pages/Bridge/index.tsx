@@ -1,5 +1,4 @@
 import { useLayoutEffect, useMemo, FC, useRef, useState } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { styled } from 'twin.macro'
@@ -19,8 +18,6 @@ const Bridge: FC = () => {
   const scriptId = 'uniqueScriptId'
   const scriptRef = useRef(null)
   const deBridgeRef = useRef(null)
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   const config = useMemo(() => {
     const bg = mode === 'dark' ? '#131313' : '#F7F0FD'
@@ -59,33 +56,18 @@ const Bridge: FC = () => {
       height: '920',
       inputChain: '1',
       outputChain: '7565164',
-      address: publicKey ? publicKey.toBase58() : '',
       affiliateFeePercent: 1,
       affiliateFeeRecipient: '0x2e7964cf9f8166235f24d1f5d025ed04b7bfcab6',
-      supportedChains: {
-        inputChains: {
-          '1': 'all',
-          '10': 'all',
-          '56': 'all',
-          '137': 'all',
-          '8453': 'all',
-          '42161': 'all',
-          '43114': 'all',
-          '59144': 'all',
-          '7565164': 'all'
-        },
-        outputChains: { '7565164': 'all' }
-      },
       amount: '0',
       lang: 'en',
       isHideLogo: true,
-      showSwapTransfer: false,
+      showSwapTransfer: true,
       mode: 'deswap',
       styles: `${base64Styles}`,
       theme: `${mode === 'dark' ? mode : 'light'}`,
       r: '6087'
     })
-  }, [mode, publicKey])
+  }, [mode, breakpoint.isMobile])
 
   useLayoutEffect(() => {
     // Create a new script element
