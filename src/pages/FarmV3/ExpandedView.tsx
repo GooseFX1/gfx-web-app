@@ -65,6 +65,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const [actionModal, setActionModal] = useState<boolean>(false)
   const [actionType, setActionType] = useState<string>(null)
   const [currentSlot, setCurrentSlot] = useState<number>(0)
+  const [diffTimer, setDiffTimer] = useState<number>(0)
   const [earlyWithdrawFee, setEarlyWithdrawFee] = useState<number>(0)
   const { getUIAmount } = useAccounts()
   const { off } = useSolSub()
@@ -91,11 +92,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const calculateEarlyWithdrawalPenalty = (actionValue: string) => {
     if (actionValue !== 'withdraw') return
     const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt
-    const slotDiff = new BN(currentSlot).sub(depositSlot)?.toNumber()
-    // console.log("slotDiff", slotDiff);
+    const slotDiff = currentSlot - depositSlot
+    //const slotDiff = 117000;
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
       const withdrawalFee = decayingFactor * +withdrawAmount
+      const diffInSeconds = slotDiff * 0.4
+      const countdownUI = 86400 - diffInSeconds
+      setDiffTimer(countdownUI)
       setEarlyWithdrawFee(withdrawalFee)
     } else {
       setEarlyWithdrawFee(0)
@@ -408,6 +412,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           actionType={actionType}
           token={coin}
           earlyWithdrawFee={earlyWithdrawFee}
+          diffTimer={diffTimer}
+          setDiffTimer={setDiffTimer}
         />
       )}
       <div tw="flex flex-col">
