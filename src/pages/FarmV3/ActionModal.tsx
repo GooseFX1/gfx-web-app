@@ -1,12 +1,13 @@
-import { Dispatch, FC, SetStateAction, useCallback } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
 import { SSLToken } from './constants'
-import { commafy } from '../../utils'
+import { commafy, truncateBigNumber } from '../../utils'
 import { Drawer } from 'antd'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
+import { Tooltip } from 'antd'
 
 const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content {
@@ -19,6 +20,9 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .ant-modal-body {
     ${tw`p-5 sm:p-[15px]`}
+  }
+  .tooltipIcon {
+    ${tw`h-4 w-4 max-w-none ml-0`}
   }
 `
 
@@ -35,6 +39,8 @@ export const ActionModal: FC<{
   actionType: string
   token: SSLToken
   earlyWithdrawFee: number
+  diffTimer: number
+  setDiffTimer: Dispatch<SetStateAction<number>>
 }> = ({
   actionModal,
   setActionModal,
@@ -47,7 +53,9 @@ export const ActionModal: FC<{
   claimAmount,
   actionType,
   token,
-  earlyWithdrawFee
+  earlyWithdrawFee,
+  diffTimer,
+  setDiffTimer
 }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
@@ -58,6 +66,23 @@ export const ActionModal: FC<{
     else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
     else handleClaim()
   }
+
+  const getTimerCountdown = useMemo(() => {
+    const sec = diffTimer % 60
+    const min = ((diffTimer - sec) / 60) % 60
+    const hr = Math.floor(diffTimer / 3600)
+    return (
+      <span tw="text-red-2 font-semibold text-tiny">
+        {`${hr}H:${min ? (min < 10 ? `0${min}` : min) : '00'}M:${sec ? (sec < 10 ? `0${sec}` : sec) : '00'}S`}
+      </span>
+    )
+  }, [diffTimer])
+
+  useEffect(() => {
+    setInterval(() => {
+      setDiffTimer((prev) => prev - 1)
+    }, 1000)
+  }, [])
 
   const Content = useCallback(
     () => (
@@ -98,10 +123,10 @@ export const ActionModal: FC<{
             <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
               actionType === 'deposit'
                 ? depositAmount
-                  ? commafy(+depositAmount, 4)
+                  ? truncateBigNumber(+depositAmount)
                   : '00.00'
                 : withdrawAmount
-                ? commafy(+withdrawAmount, 4)
+                ? truncateBigNumber(+withdrawAmount)
                 : '00.00'
             } ${token?.token}`}</div>
           </div>
@@ -109,14 +134,36 @@ export const ActionModal: FC<{
         <div tw="flex flex-row items-center justify-between mb-3.75">
           <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
           <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
-            {`${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : `00.00 ${token?.token}`}`}
+            {`${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : `00.00 ${token?.token}`}`}
           </div>
         </div>
         {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
           <div tw="flex flex-row items-center justify-between mb-3.75">
-            <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
+            <div tw="flex flex-row">
+              <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
+              <Tooltip
+                color={mode === 'dark' ? '#FFF' : '#1C1C1C'}
+                title={
+                  <span tw="dark:text-black-4 text-grey-8 font-semibold text-tiny">
+                    The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait
+                    for another {getTimerCountdown} to avoid paying the fee.
+                  </span>
+                }
+                placement="rightBottom"
+                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                overlayInnerStyle={{ borderRadius: '8px' }}
+              >
+                <img
+                  src={mode === 'dark' ? '/img/assets/tooltip_holo.svg' : '/img/assets/tooltip_blue.svg'}
+                  alt="deposit-cap"
+                  tw="ml-2.5 sm:ml-1.25 max-w-none cursor-pointer"
+                  height={20}
+                  width={20}
+                />
+              </Tooltip>
+            </div>
             <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
-              {earlyWithdrawFee ? earlyWithdrawFee + ' ' + token?.token : 0}
+              {earlyWithdrawFee ? truncateBigNumber(earlyWithdrawFee) + ' ' + token?.token : 0}
             </div>
           </div>
         )}
@@ -152,7 +199,7 @@ export const ActionModal: FC<{
         </div>
       </div>
     ),
-    [breakpoint, mode, isButtonLoading]
+    [breakpoint, mode, isButtonLoading, diffTimer]
   )
 
   return breakpoint.isMobile ? (
