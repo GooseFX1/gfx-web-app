@@ -303,14 +303,14 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setIsTxnSuccessfull(false)
     }
   }
-  const handleWithdraw = (withdrawAmount: number): void => {
+  const handleWithdraw = (): void => {
     if (checkConditionsForDepositWithdraw(false)) return
     try {
       setIsButtonLoading(true)
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
-      executeWithdraw(SSLProgram, wal, connection, coin, String(withdrawAmount), userPublicKey).then((con) => {
+      executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey).then((con) => {
         setIsButtonLoading(false)
         setOperationPending(false)
         const { confirm } = con

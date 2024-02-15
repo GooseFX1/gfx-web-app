@@ -63,7 +63,7 @@ export const ActionModal: FC<{
 
   const handleUserAction = () => {
     if (actionType === 'deposit') handleDeposit()
-    else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
+    else if (actionType === 'withdraw') handleWithdraw()
     else handleClaim()
   }
 
