@@ -180,6 +180,8 @@ export const DepositWithdraw: FC<{
   const balances = useMemo(() => mainnetBalances, [isDevnet])
   const tokenAmount = balances[perpToken.marketAddress]
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     if (!isDevnet) {
@@ -249,6 +251,7 @@ export const DepositWithdraw: FC<{
     }
   }
   const checkDisabled = () => {
+    if (!publicKey) return true
     if (isDevnet) {
       if (!traderInfo.traderRiskGroup) return false
       if (traderInfo.traderRiskGroup.totalDeposited.toJSON().m !== '0') return true
