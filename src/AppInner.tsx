@@ -9,7 +9,6 @@ import queryString from 'query-string'
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [init, setInit] = useState<boolean | null>(null)
-  console.log(existingUserCache)
 
   useEffect(() => {
     if (existingUserCache === null || existingUserCache.farm === undefined) {

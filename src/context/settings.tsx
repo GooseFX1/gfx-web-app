@@ -4,6 +4,8 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { Connection } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
+import { fetchIsUnderMaintenance } from '../api/config'
+import { ENVS } from '../constants'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -52,6 +54,7 @@ interface ISettingsConfig {
   network: WalletAdapterNetwork
   setEndpointName: Dispatch<SetStateAction<string>>
   blacklisted: boolean
+  isUnderMaintenance: boolean
   setSlippage?: Dispatch<SetStateAction<number>>
   slippage?: number
 }
@@ -83,9 +86,20 @@ export function useConnectionConfig(): ISettingsConfig {
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
-
+  const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [endpointName, setEndpointName] = useState<string | null>(null)
+
+  const curEnv: string = useMemo(() => {
+    const host = window.location.hostname
+    if (host.includes(ENVS.STAGING)) {
+      return ENVS.STAGING
+    } else if (process.env.NODE_ENV === ENVS.PROD) {
+      return ENVS.PROD
+    } else {
+      return ENVS.DEV
+    }
+  }, [])
 
   const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
   const network = useMemo(() => APP_RPC.network, [endpointName])
@@ -148,13 +162,19 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
       )
     }
+  }, [])
 
-    if (process.env.NODE_ENV === 'production') {
+  useEffect(() => {
+    if (curEnv === ENVS.PROD) {
+      // sets geo country code
       fetchBrowserCountryCode().then((countryCode: null | string) => {
         if (countryCode) {
           setBlacklisted(banned_countries.includes(countryCode))
         }
       })
+
+      // sets isUnderMaintenance flag
+      fetchIsUnderMaintenance().then((maintenanceStatus: boolean) => setIsUnderMaintenance(maintenanceStatus))
     }
   }, [])
 
@@ -170,7 +190,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSlippage: (val: number) => setSlippage(val),
         slippage: slippage,
         perpsConnection,
-        blacklisted
+        blacklisted,
+        isUnderMaintenance
       }}
     >
       {children}
