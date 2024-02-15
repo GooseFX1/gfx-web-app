@@ -55,7 +55,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
         setPerpsOpenOrders([])
       }
     }
-    const t2 = setInterval(refreshOpenOrders, 500)
+    const t2 = setInterval(refreshOpenOrders, 1000)
     return () => clearInterval(t2) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo.traderRiskGroupKey, wallet.connected])
 
@@ -63,7 +63,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const refreshOrderbook = async () => {
       await fetchPerpsOrderBook()
     }
-    const t3 = setInterval(refreshOrderbook, 500)
+    const t3 = setInterval(refreshOrderbook, 1000)
     return () => clearInterval(t3) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type])
 
