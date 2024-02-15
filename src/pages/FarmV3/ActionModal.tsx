@@ -63,7 +63,7 @@ export const ActionModal: FC<{
 
   const handleUserAction = () => {
     if (actionType === 'deposit') handleDeposit()
-    else if (actionType === 'withdraw') handleWithdraw()
+    else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
     else handleClaim()
   }
 
@@ -79,9 +79,13 @@ export const ActionModal: FC<{
   }, [diffTimer])
 
   useEffect(() => {
-    setInterval(() => {
+    const interval = setInterval(() => {
       setDiffTimer((prev) => prev - 1)
     }, 1000)
+
+    if (diffTimer === 0) clearInterval(interval)
+
+    return () => clearInterval(interval)
   }, [])
 
   const Content = useCallback(
@@ -145,8 +149,8 @@ export const ActionModal: FC<{
                 color={mode === 'dark' ? '#FFF' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-8 font-semibold text-tiny">
-                    The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait
-                    for another {getTimerCountdown} to avoid paying the fee.
+                    The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait{' '}
+                    {getTimerCountdown} to avoid paying the fee.
                   </span>
                 }
                 placement="rightBottom"
@@ -182,10 +186,10 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${commafy(+depositAmount, 4)} ${token?.token} + Claim Yield`
+              ? `Deposit ${commafy(+depositAmount, 2)} ${token?.token} + Claim Yield`
               : actionType === 'withdraw'
-              ? `Withdraw ${commafy(+withdrawAmount + claimAmount - earlyWithdrawFee, 4)} ${token?.token}`
-              : `${claimAmount ? `${commafy(claimAmount, 4)} ${token?.token}` : '00.00 ' + token?.token}`
+              ? `Withdraw ${commafy(+withdrawAmount + claimAmount - earlyWithdrawFee, 2)} ${token?.token}`
+              : `${claimAmount ? `${commafy(claimAmount, 2)} ${token?.token}` : '00.00 ' + token?.token}`
           }`}
         </Button>
         <div
