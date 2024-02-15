@@ -92,13 +92,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const calculateEarlyWithdrawalPenalty = (actionValue: string) => {
     if (actionValue !== 'withdraw') return
     const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt
-    const slotDiff = currentSlot - depositSlot
+    const slotDiff = new BN(currentSlot).sub(depositSlot)?.toNumber()
     //const slotDiff = 117000;
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
       const withdrawalFee = decayingFactor * +withdrawAmount
       const diffInSeconds = slotDiff * 0.4
-      const countdownUI = 86400 - diffInSeconds
+      const countdownUI = Math.floor(86400 - diffInSeconds)
       setDiffTimer(countdownUI)
       setEarlyWithdrawFee(withdrawalFee)
     } else {
@@ -303,7 +303,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       setIsTxnSuccessfull(false)
     }
   }
-  const handleWithdraw = (): void => {
+  const handleWithdraw = (amount: number): void => {
     if (checkConditionsForDepositWithdraw(false)) return
     try {
       setIsButtonLoading(true)
@@ -315,7 +315,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(sslSuccessfulMessage('withdrawn', String(withdrawAmount), coin?.token, walletName))
+          notify(sslSuccessfulMessage('withdrawn', String(amount), coin?.token, walletName))
           setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
