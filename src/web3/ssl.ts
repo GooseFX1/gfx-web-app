@@ -29,8 +29,14 @@ import {
   confirmTransaction
 } from './utils'
 import { SSL_PREFIX, LIQUIDITY_ACCOUNT_PREFIX, toPublicKey, ADDRESSES, PT_MINT_PREFIX } from '../web3'
-import { TOKEN_NAMES } from '../constants'
 import { TxnReturn } from './stake'
+export const TOKEN_NAMES = {
+  SOL: 'SOL',
+  GOFX: 'GOFX',
+  GMT: 'GMT',
+  USDT: 'USDT',
+  USDC: 'USDC'
+}
 export interface Account {
   /** Address of the account */
   address: PublicKey

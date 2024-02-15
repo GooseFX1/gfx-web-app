@@ -313,14 +313,6 @@ export const sslErrorMessage = (): Message => ({
   message: <TransactionErrorMsgSSL />
 })
 
-export const TOKEN_NAMES = {
-  SOL: 'SOL',
-  GOFX: 'GOFX',
-  GMT: 'GMT',
-  USDT: 'USDT',
-  USDC: 'USDC'
-}
-
 export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
 export const TOTAL_VOLUME = 'ssl-apis/getTotalVolumeSSL'
 export const TOTAL_FEES = 'ssl-apis/getTotalFeesSSL'

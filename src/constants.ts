@@ -8,9 +8,14 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   twitter: 'https://www.twitter.com/GooseFX1'
 }
 
-export const IS_UNDER_MAINTENANCE = false
 export const APP_DEFAULT_ROUTE = '/farm'
 export const SOLSCAN_BASE = 'https://api.solscan.io'
+
+export const ENVS = {
+  DEV: 'development',
+  STAGING: 'staging',
+  PROD: 'production'
+}
 
 export const SOL_TX_STATUS = {
   FINALIZED: 'finalized',
@@ -32,13 +37,6 @@ export const NETWORK_CONSTANTS = {
   MAINNET: 'mainnet-beta',
   DEVNET_SDK: 'DEVNET',
   MAINNET_SDK: 'MAINNET'
-}
-export const TOKEN_NAMES = {
-  SOL: 'SOL',
-  GOFX: 'GOFX',
-  GMT: 'GMT',
-  USDT: 'USDT',
-  USDC: 'USDC'
 }
 
 export const TOKEN_BLACKLIST = new Set(['APTtJyaRX5yGTsJU522N4VYWg3vCvSb65eam5GrPT5Rt'])
@@ -138,8 +136,6 @@ export const SUPPORTED_TOKEN_LIST = new Set([
   'GENE'
 ])
 
-export const NQ_GOFX_PRICE = 500
-export const NQ_SOL_PRICE = 1
 export const LAMPORTS_PER_SOL = BigInt(1000000000)
 export const LAMPORTS_PER_SOL_NUMBER = 1000000000
 export const ZERO = BigInt(0)
