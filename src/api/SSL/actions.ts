@@ -3,6 +3,7 @@ import { getDateInISOFormat } from '../../utils'
 import { SSL_API_ENDPOINTS } from './constants'
 import axios from 'axios'
 import { PublicKey } from '@solana/web3.js'
+import { customClient } from '..'
 
 export type VolumeAprRecord = Record<string, VolumeApr>
 
@@ -28,8 +29,7 @@ export type TotalVolumeRes = {
 
 export const fetchTotalVolumeTrade = async (): Promise<TotalVolumeRes> => {
   try {
-    const res = await axios.get(`${ANALYTICS_BASE}${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`)
-    // const res = await axios.get('http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE)
+    const res = await customClient(`${ANALYTICS_BASE}${SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE}`).get('')
     return res.data.data
   } catch (err) {
     return err
@@ -38,12 +38,10 @@ export const fetchTotalVolumeTrade = async (): Promise<TotalVolumeRes> => {
 
 export const fetchTotalVolumeTradeChart = async (walletAddress: PublicKey): Promise<any> => {
   try {
-    const res = await axios.get(
+    const res = await customClient(
       ANALYTICS_BASE + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE_CHART + '?wallet=' + walletAddress
-    )
-    // const res = await axios.get(
-    //   'http://localhost:4000' + SSL_API_ENDPOINTS.TOTAL_VOLUME_TRADE_CHART + '?wallet=' + walletAddress
-    // )
+    ).get('')
+
     return res.data
   } catch (err) {
     return err

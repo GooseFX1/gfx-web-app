@@ -12,6 +12,7 @@ import { AlertOutlined, CheckCircleOutlined } from '@ant-design/icons'
 import _ from 'lodash'
 import styled from 'styled-components'
 import { Button, Spin } from 'antd'
+import { customClient } from '../../../api/index'
 
 const WRAPPER = styled.div`
   height: 100%;
@@ -94,7 +95,7 @@ const SSLPairWrapper: FC = () => {
     for (let i = 0; i < PAIRS.length; i++) {
       const pair = PAIRS[i]
       const urlGet = url + pair
-      const response = await axios.get(urlGet)
+      const response = await customClient(urlGet).get('')
       apiData.push(response.data.data)
     }
     setApiResponse(apiData)
