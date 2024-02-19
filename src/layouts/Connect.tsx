@@ -5,7 +5,6 @@ import { Loader } from '../components'
 import { truncateAddress } from '../utils'
 import tw, { TwStyle } from 'twin.macro'
 import 'styled-components/macro'
-import { logData } from '../api/analytics'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 import { useConnectionConfig } from '../context'
 import { Menu, Transition } from '@headlessui/react'
@@ -47,10 +46,6 @@ export const Connect: FC<MenuItemProps> = ({
     }
   }, [isOpen])
   useMoveOutside(selfRef, handleMoveOutside)
-
-  useEffect(() => {
-    if (connected) logData('wallet_connected')
-  }, [connected])
 
   const connectLabel = useMemo(() => {
     if (!canConnect) {

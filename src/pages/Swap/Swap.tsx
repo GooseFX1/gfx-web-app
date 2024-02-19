@@ -24,7 +24,6 @@
 // import { useWallet } from '@solana/wallet-adapter-react'
 // import { notify, moneyFormatter, nFormatter, checkMobile, clamp, aborter } from '../../utils'
 // import { useParams } from 'react-router-dom'
-// import { logData } from '../../api/analytics'
 // import JSBI from 'jsbi'
 // import tw from 'twin.macro'
 // import 'styled-components/macro'
@@ -391,7 +390,6 @@
 //   const [wrapModalVisible, setWrapModalVisible] = useState<boolean>(false)
 //   const timeoutRef = useRef<NodeJS.Timeout>(null)
 //   useEffect(() => {
-//     logData('swap_page')
 //
 //     if (network === 'devnet') {
 //       setEndpointName(APP_RPC.name)

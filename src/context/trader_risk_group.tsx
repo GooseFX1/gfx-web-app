@@ -662,6 +662,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const newOrder = useCallback(async () => {
+    console.log(traderInstanceSdk, 'traderInstanceSdk 12')
     const newOrderParams = getNewOrderParams()
     const response = await newOrderIx(
       newOrderParams,
@@ -671,7 +672,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       perpProductInstanceSdk
     )
     return response
-  }, [traderRiskGroup, order, marketProductGroup])
+  }, [traderRiskGroup, order, marketProductGroup, traderInstanceSdk, perpProductInstanceSdk])
 
   const newOrderTakeProfit = useCallback(
     async (price: string) => {
@@ -747,7 +748,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
       return null
     },
-    [traderRiskGroup, traderBalances, marketProductGroup]
+    [traderRiskGroup, traderBalances, marketProductGroup, traderInstanceSdk, perpProductInstanceSdk]
   )
 
   const cancelOrder = useCallback(

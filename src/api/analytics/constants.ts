@@ -7,7 +7,6 @@ export enum ANALYTICS_ENDPOINTS {
   GFX_WALLET = 'GFXSwpZBSU9LF1gHRpRv2u967ACKKncFnfy3VKyQqwhp',
   META_DATA = '/meta?token=',
   GET_LIQUIDITY = '/getLiquidityData',
-  LOG_DATA = '/logData',
   GET_ALL_LAUNCHES = '/nft-launchpad/getAllLaunches',
   GET_SELECTED_LAUNCH = '/nft-launchpad/getOneLaunch',
   IS_CREATOR_ALLOWED = '/nft-launchpad/isUserAllowed',
