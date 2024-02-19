@@ -8,7 +8,6 @@ import React, {
   Dispatch,
   SetStateAction
 } from 'react'
-import { logData } from '../api/analytics'
 
 interface INavCollapseConfig {
   isCollapsed: boolean
@@ -26,7 +25,6 @@ export const NavCollapseProvider: FC<{ children: ReactNode }> = ({ children }) =
   const handleCollapse = useCallback(
     (bool: boolean) => {
       setMode(bool)
-      logData(`main-nav-${bool ? 'collapsed' : 'uncollapsed'}`)
     },
     [mode, setMode]
   )

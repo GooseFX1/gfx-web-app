@@ -4,8 +4,6 @@ import { useHistory } from 'react-router-dom'
 import { useDarkMode } from '../../context'
 import { SVGDynamicReverseMode } from '../../styles'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { logData } from '../../api/analytics'
-import { checkMobile } from '../../utils'
 
 const WRAPPER = styled.div`
   width: 100%;
@@ -170,10 +168,6 @@ export const CircularMenu: FC<{
   const [rotationClass, setRotationClass] = useState('carousel')
   const [indexClass, setIndexClass] = useState<'active' | 'inactive'>()
   const history = useHistory()
-
-  useEffect(() => {
-    logData(checkMobile() ? 'menu_clicked_mobile' : 'menu_clicked_desktop')
-  }, [])
 
   useEffect(() => {
     setRotationClass(rotateClicked === 'left' ? 'rotateLeft' : 'rotateRight')

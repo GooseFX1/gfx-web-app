@@ -14,7 +14,6 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useWindowSize from '../../utils/useWindowSize'
-import { logData } from '../../api/analytics'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { checkMobile } from '../../utils'
@@ -304,10 +303,6 @@ const CryptoContent: FC = () => {
   const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
   const isInitialRender = useRef(true)
-
-  useEffect(() => {
-    logData('trade_page')
-  }, [])
 
   useEffect(() => {
     setChartContainer(<TVChartContainer visible={true} />)
