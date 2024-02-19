@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL, Connection } from '@solana/web3.js'
 import { Button, SkeletonCommon } from '../../components'
-import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
+import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext, APP_RPC } from '../../context'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -38,7 +38,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const { wallet } = useWallet()
   const wal = useWallet()
   const { connection } = useConnectionConfig()
-  const slotConnection = new Connection('https://rpc-proxy.goosefx.workers.dev', 'finalized')
+  console.log('answer', APP_RPC.endpoint)
+  const slotConnection = new Connection(APP_RPC.endpoint, 'finalized')
   const breakpoint = useBreakPoint()
   const { prices, SSLProgram } = usePriceFeedFarm()
   const {
