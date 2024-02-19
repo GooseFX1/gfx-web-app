@@ -38,7 +38,6 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const { wallet } = useWallet()
   const wal = useWallet()
   const { connection } = useConnectionConfig()
-  console.log('answer', APP_RPC.endpoint)
   const slotConnection = new Connection(APP_RPC.endpoint, 'finalized')
   const breakpoint = useBreakPoint()
   const { prices, SSLProgram } = usePriceFeedFarm()
