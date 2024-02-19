@@ -1,7 +1,7 @@
 import { FC, useMemo, useState, useEffect, useCallback } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { LAMPORTS_PER_SOL, Connection } from '@solana/web3.js'
 import { Button, SkeletonCommon } from '../../components'
 import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '../../context'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
@@ -38,6 +38,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const { wallet } = useWallet()
   const wal = useWallet()
   const { connection } = useConnectionConfig()
+  const slotConnection = new Connection('https://rpc-proxy.goosefx.workers.dev', 'finalized')
   const breakpoint = useBreakPoint()
   const { prices, SSLProgram } = usePriceFeedFarm()
   const {
@@ -80,7 +81,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   useEffect(() => {
     ;(async () => {
       try {
-        const slot = await connection.getSlot()
+        const slot = await slotConnection.getSlot()
         setCurrentSlot(slot)
       } catch (error) {
         console.error('Error getting current slot:', error)
@@ -97,7 +98,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
       const withdrawalFee = decayingFactor * +withdrawAmount
-      const diffInSeconds = slotDiff * 0.4
+      const diffInSeconds = slotDiff * 0.42
       const countdownUI = Math.floor(86400 - diffInSeconds)
       setDiffTimer(countdownUI)
       setEarlyWithdrawFee(withdrawalFee)
