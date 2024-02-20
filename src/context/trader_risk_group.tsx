@@ -400,7 +400,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (!wallet.connected) return
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-ignore
-      const perp = new Perp(connection, 'mainnet', wallet)
+      const perp = new Perp(connection, 'devnet', wallet)
       await perp.init()
       const product = new Product(perp)
       product.initByIndex(0)

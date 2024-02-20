@@ -6075,9 +6075,9 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-"gfx-perp-sdk@git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented":
+"gfx-perp-sdk@git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented-devnet":
   version "1.2.1"
-  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#e432fdfd2138c2a94aa767704ac80c692043b53b"
+  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#ff1fc2fbfb19826160836e4f3bf75931feb4c1c0"
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     "@project-serum/borsh" "^0.2.5"

@@ -68,22 +68,22 @@ export const PYTH_MAINNET = 'H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG'
 export const PYTH_DEVNET = 'J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix'
 
 export const PERPS_COLLATERAL = [
-  {
-    token: 'USDC',
-    type: 'perps' as MarketType,
-    marketAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    pythProduct: 'Crypto.USDT/USD'
-  }
+  //{
+  //  token: 'USDC',
+  //  type: 'perps' as MarketType,
+  //  marketAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  //  pythProduct: 'Crypto.USDT/USD'
+  //}
   // {
   //   token: 'ETH',
   //   type: 'perps' as MarketType,
   //   marketAddress: 'HovQMDrbAgAYPCmHVSrezcSmkMtXSSUsLDFANExrZh2J'
   // },
-  // {
-  //   token: 'GOFX',
-  //   type: 'perps' as MarketType,
-  //   marketAddress: 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
-  // },
+  {
+    token: 'GOFX',
+    type: 'perps' as MarketType,
+    marketAddress: 'Bg2f3jstf2Co4Hkrxsn7evzvRwLbWYmuzaLUPGnjCwAA'
+  }
   // {
   //   token: 'USDC',
   //   type: 'perps' as MarketType,
