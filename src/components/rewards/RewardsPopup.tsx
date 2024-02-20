@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback } from 'react'
 import { useRewardToggle } from '../../context/reward_toggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
