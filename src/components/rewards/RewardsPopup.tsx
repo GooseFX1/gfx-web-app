@@ -23,26 +23,23 @@ export const RewardsButton: FC = () => {
 
   const { hasRewards } = useRewards()
 
-  const riveComponent = useMemo(
-    () => (
-      <div css={[tw`relative`]}>
-        <img
-          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
-          src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
-        />
+  const riveComponent = (
+    <div css={[tw`relative`]}>
+      <img
+        css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
+        src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
+      />
 
-        {hasRewards && (
-          <img
-            css={[
-              tw`absolute top-[5px]
+      {hasRewards && (
+        <img
+          css={[
+            tw`absolute top-[5px]
               min-md:top-[1px] right-0`
-            ]}
-            src={'/img/assets/red-notification-circle.svg'}
-          />
-        )}
-      </div>
-    ),
-    [mode, breakpoint, hasRewards]
+          ]}
+          src={'/img/assets/red-notification-circle.svg'}
+        />
+      )}
+    </div>
   )
   const handleClick = useCallback(() => {
     rewardToggle(true)
