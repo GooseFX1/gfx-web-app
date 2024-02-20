@@ -13,7 +13,13 @@ import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
 import { CircularArrow } from '../components/common/Arrow'
-
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from 'gfx-component-lib'
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
 // import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
@@ -95,20 +101,12 @@ const MobileNav: FC = () => {
   const [currentPage, setCurrentPage] = useState({
     // animation: 'swap',
     // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-    text: 'Farm',
-    path: APP_DEFAULT_ROUTE
+    text: 'Swap',
+    path: '/swap'
   })
   useEffect(() => setIsOpen(false), [pathname])
   useEffect(() => {
     switch (true) {
-      case pathname.includes('bridge'):
-        setCurrentPage({
-          // animation: 'swap',
-          // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'bridge',
-          path: '/bridge'
-        })
-        break
       case pathname.includes('trade'):
         setCurrentPage(() => ({
           // animation: 'dex',
@@ -227,12 +225,12 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
         <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
       </button>
       <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
-        <NavItem
-          // animation={'swap'}
-          // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-          text={'bridge'}
-          path={'/bridge'}
-        />
+        {/* <NavItem
+          animation={'swap'}
+          stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+          text={'swap'}
+          path={'/swap'}
+        /> */}
         <NavItem
           // animation={'dex'}
           // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
@@ -330,6 +328,7 @@ const DropDownControls: FC<DesktopControlsProps> = ({
         clearTimeout(timeout.current)
         timeout.current = null
       }
+      console.log(isOpen, 'click')
       if (!isOpen) {
         e.currentTarget.click()
         onHover(e)
@@ -480,76 +479,63 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
-  const { rewardToggle, changePanel, rewardModal } = useRewardToggle()
+  const { rewardToggle } = useRewardToggle()
+  console.log(rewardToggle)
+  const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
-    <div css={tw`flex items-center gap-6 mx-auto`}>
-      <NavItem
-        text={'bridge'}
-        // riveAnimation={'swap'}
-        // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        path={'/bridge'}
-      />
-      <NavItem
-        text={'trade'}
-        // riveAnimation={'stats'}
-        // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-        path={'/trade'}
-        hasDropdown={true} // Renable when added
-        options={[
-          {
-            text: 'Trade',
-            onClick: () => history.push('/trade'),
-            //onClick: () => null,
-            isActive: pathname.includes('trade')
-          },
-          {
-            text: 'Account',
-            onClick: () => history.push('/account'),
-            //onClick: () => null,
-            isActive: pathname.includes('account')
-          },
-          {
-            text: 'Refer',
-            onClick: () => {
-              changePanel(1)
-              rewardToggle(!rewardModal)
-            },
-            //onClick: () => null,
-            isActive: false
-          }
-        ]}
-      />
-      <NavItem
-        text={'farm'}
-        // riveAnimation={'farm'}
-        // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-        path={'/farm'}
-      />
-      <NavItem
-        text={'More'}
-        // riveAnimation={'stats'}
-        // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-        path={'/more'}
-        hasDropdown={true} // Renable when added
-        iconBase={'more'}
-        options={[
-          {
-            text: 'Leaderboard',
-            onClick: () => history.push('/leaderboard'),
-            //onClick: () => null,
-            isActive: pathname.includes('leaderboard')
-          }
-          // {
-          //   text: 'Leaderboard',
-          //   onClick: () => console.log('something here'),
-          //   isActive: false
-          // }
-        ]}
-      />
+    <div css={[tw`flex items-center gap-6 mx-auto`]}>
+      {/* <NavItem
+        text={'swap'}
+        riveAnimation={'swap'}
+        stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
+        path={'/swap'}
+      /> */}
+      <Button variant={'ghost'} as={'a'} size={'sm'} href={'/farm'} className={'p-0 text-center'}>
+        <img src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`} alt="dark" />
+        Farm
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={'ghost'} className={'p-0 text-center justify-center items-center'}>
+            <img src={`/img/mainnav/trade-${mode}${pathname.includes('trade') ? '-active' : ''}.svg`} alt="dark" />
+            Trade
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Trade</DropdownMenuItem>
+          <DropdownMenuItem>Account</DropdownMenuItem>
+          <DropdownMenuItem>Referrals</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={'ghost'}
+            className={'p-0 flex-col text-center justify-center items-center [&>span]:inline-flex gap-0'}
+          >
+            <span css={[tw`inline-flex`]}>
+              <img
+                src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              <CircularArrow
+                cssStyle={tw`w-[12px]`}
+                invert={false}
+                css={[pathname.includes('leaderboard') || false ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+              />
+            </span>
+            More
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Leaderboard</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
+
 interface MainNavIconProps {
   text: string
   iconBase?: string
@@ -561,6 +547,7 @@ interface MainNavIconProps {
   menuPosition?: string
   customMenuStyle?: CustomMenuStyle
 }
+
 type CustomMenuStyle = {
   button?: TwStyle[]
   menuItems?: TwStyle[]
