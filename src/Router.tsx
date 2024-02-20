@@ -84,7 +84,7 @@ export const Router: FC = () => {
                                 <Swap />
                               </Route> 
                             */}
-                        <Route exact path="/swap">
+                        <Route exact path="/bridge">
                           <Bridge />
                         </Route>
                         <Route path="/trade">

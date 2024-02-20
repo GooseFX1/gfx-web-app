@@ -488,10 +488,10 @@ const DesktopNav: FC = () => {
   return (
     <div css={tw`flex items-center gap-6 mx-auto`}>
       <NavItem
-        text={'swap'}
+        text={'bridge'}
         // riveAnimation={'swap'}
         // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        path={'/swap'}
+        path={'/bridge'}
       />
       <NavItem
         text={'trade'}
