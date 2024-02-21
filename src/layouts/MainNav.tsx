@@ -21,6 +21,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from 'gfx-component-lib'
+import useBoolean from '../hooks/useBoolean'
+import { cn } from 'gfx-component-lib'
 // import { RIVE_ANIMATION } from '../constants'
 // import useRiveAnimations, { RiveAnimationWrapper } from '../hooks/useRiveAnimations'
 // import useRiveThemeToggle from '../hooks/useRiveThemeToggle'
@@ -47,7 +49,7 @@ export const MainNav: FC = () => {
     <div
       css={[
         tw`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
-        fixed top-0 z-[998]
+        fixed top-0 z-[998] h-[56px]
        `
       ]}
     >
@@ -482,57 +484,87 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
-  const { rewardToggle } = useRewardToggle()
+  const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
+  const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
+  const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
+
   console.log(rewardToggle)
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
+  const tradeActive =
+    pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
   return (
     <div css={[tw`flex items-center gap-6 mx-auto`]}>
-      {/* <NavItem
-        text={'swap'}
-        riveAnimation={'swap'}
-        stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-        path={'/swap'}
-      /> */}
-      <Button variant={'ghost'} as={'a'} size={'sm'} href={'/farm'} className={'p-0 text-center'}>
+      <Button
+        variant={'ghost'}
+        size={'sm'}
+        onClick={() => history.push('/farm')}
+        className={cn(
+          `flex-col gap-0 p-0 text-center text-h5 font-semibold `,
+          pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
         <img src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`} alt="dark" />
         Farm
       </Button>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant={'ghost'} className={'p-0 text-center justify-center items-center'}>
-            <img src={`/img/mainnav/trade-${mode}${pathname.includes('trade') ? '-active' : ''}.svg`} alt="dark" />
+      <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
+        <DropdownMenuTrigger asChild={true}>
+          <Button
+            variant={'ghost'}
+            className={cn(
+              `flex-col gap-0 p-0 text-center justify-center items-center  font-semibold `,
+              tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+            )}
+          >
+            <span css={[tw`inline-flex justify-center items-center`]}>
+              <img src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`} alt="dark" />
+              <CircularArrow
+                cssStyle={tw`w-[14px] h-[14px]`}
+                invert={isTradeOpen}
+                css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+              />
+            </span>
             Trade
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem>Trade</DropdownMenuItem>
-          <DropdownMenuItem>Account</DropdownMenuItem>
-          <DropdownMenuItem>Referrals</DropdownMenuItem>
+        <DropdownMenuContent portal={false} className={'mt-3'}>
+          <DropdownMenuItem onClick={() => history.push('/trade')}>Trade</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => history.push('/account')}>Account</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              changePanel(1)
+              rewardToggle(!rewardModal)
+            }}
+          >
+            Referrals
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+      <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
+        <DropdownMenuTrigger asChild={true}>
           <Button
             variant={'ghost'}
-            className={'p-0 flex-col text-center justify-center items-center [&>span]:inline-flex gap-0'}
+            className={cn(
+              `p-0 flex-col text-center justify-center items-center [&>span]:inline-flex gap-0`,
+              pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+            )}
           >
-            <span css={[tw`inline-flex`]}>
+            <span css={[tw`inline-flex justify-center items-center`]}>
               <img
                 src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
                 alt="dark"
               />
               <CircularArrow
-                cssStyle={tw`w-[12px]`}
-                invert={false}
-                css={[pathname.includes('leaderboard') || false ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                cssStyle={tw`w-[14px] h-[14px]`}
+                invert={isLeaderboardOpen}
+                css={[pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
             </span>
             More
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem>Leaderboard</DropdownMenuItem>
+        <DropdownMenuContent portal={false} className={'mt-3'}>
+          <DropdownMenuItem onClick={() => history.push('/leaderboard')}>Leaderboard</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
