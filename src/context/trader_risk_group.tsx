@@ -589,7 +589,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getFundingRate = async () => {
     const res = await httpClient('api-services').post(`${GET_FUNDING_RATE}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-      pairName: 'SOL-PERP'
+      pairName: 'SOL-PERP',
+      devnet: isDevnet
     })
     setFundingRate(res.data.fundingRate)
   }
