@@ -7,8 +7,7 @@ import { useDarkMode } from '../../context'
 import useRewards from '../../context/rewardsContext'
 // import PanelSelector from './RewardPanelSelector'
 // import AnimatedButtonGroup from "../twComponents/AnimatedButtonGroup";
-import Button from '../twComponents/Button'
-
+import { Button } from 'gfx-component-lib'
 import Rewards from './v2/Rewards'
 // import Raffle from './raffle/Raffle'
 import Refer from './Refer'
@@ -21,14 +20,15 @@ export const RewardsButton: FC = () => {
   const { rewardToggle, changePanel } = useRewardToggle()
   const breakpoint = useBreakPoint()
 
-  const { hasRewards, claimable, unstakeableTickets } = useRewards()
-  console.log('hasRewards', hasRewards, claimable, unstakeableTickets)
-  const riveComponent = (
-    <div css={[tw`relative`]}>
-      <img
-        css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
-        src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
-      />
+  const { hasRewards } = useRewards()
+
+  const riveComponent =
+    () => (
+      <div css={[tw`relative`]}>
+        <img
+          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
+          src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
+        />
 
       {hasRewards && (
         <img
@@ -40,7 +40,7 @@ export const RewardsButton: FC = () => {
         />
       )}
     </div>
-  )
+  );
   const handleClick = useCallback(() => {
     rewardToggle(true)
     changePanel(REWARD_PANEL_INDEX)
@@ -48,25 +48,21 @@ export const RewardsButton: FC = () => {
 
   if (breakpoint.isMobile || breakpoint.isTablet) {
     return (
-      <div onClick={handleClick} css={[tw`cursor-pointer`]}>
+      <Button onClick={handleClick} variant={'ghost'}>
         {riveComponent}
-      </div>
+      </Button>
     )
   }
   return (
-    <div
+    <Button
       onClick={handleClick}
-      css={[
-        tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
-            bg-grey-5 dark:bg-black-1 px-2.25 flex flex-row items-center gap-1.75 cursor-pointer
-            text-regular  text-black-4 dark:text-white leading-normal
-       `,
-        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px]` : tw`h-[30px]`
-      ]}
+      variant={'outline'}
+      size={'sm'}
+      className={'border-background-blue dark:border-white'}
     >
       {riveComponent}
       <span css={[tw`font-bold`]}>Rewards</span>
-    </div>
+    </Button>
   )
 }
 
@@ -83,21 +79,20 @@ export const RewardsPopup: FC = () => {
            [&>div:last-child]:min-md:rounded-tr-[10px]
            [& * p:not([data-tw*="mb-"])]:mb-0 
            `
-      ]}
-    >
-      <Button
-        onClick={() => rewardToggle(false)}
-        cssClasses={[
-          tw`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
-                   min-md:top-5`
-        ]}
-      >
-        <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
-      </Button>
-      {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
-      {panelIndex == REFER_PANEL_INDEX && <Refer />}
-      {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
-    </div>
+          ]}
+        >
+          <Button
+            onClick={() => rewardToggle(false)}
+            className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+                   min-md:top-5`}
+            size={'sm'}
+          >
+            <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
+          </Button>
+          {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
+          {panelIndex == REFER_PANEL_INDEX && <Refer />}
+          {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
+        </div>
   )
 }
 export default RewardsPopup
