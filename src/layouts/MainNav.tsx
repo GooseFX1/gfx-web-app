@@ -86,15 +86,6 @@ export const MainNav: FC = () => {
     </div>
   )
 }
-// TODO: Add notification back in
-// const NotificationButton: FC = () => {
-//   const { mode } = useDarkMode()
-//   return (
-//     <div css={[tw` cursor-pointer`]}>
-//       <img css={[tw`h-7.5 w-7.5`]} src={`/img/mainnav/notification-${mode}.svg`} />
-//     </div>
-//   )
-// }
 
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
@@ -123,7 +114,7 @@ const MobileNav: FC = () => {
               <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
             </DialogClose>
           </DialogHeader>
-          <DialogBody className={'justify-center items-center flex flex-col'}>
+          <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
@@ -142,22 +133,30 @@ const MobileNav: FC = () => {
                   />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent portal={false} className={'mt-3'}>
+              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
                     history.push('/trade')
                   }}
+                  isActive={pathname.includes('trade')}
                 >
-                  Trade
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
+                    <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
+                  </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
                     history.push('/account')
                   }}
+                  isActive={pathname.includes('account')}
                 >
-                  Account
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
+                    <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
+                  </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
@@ -165,8 +164,12 @@ const MobileNav: FC = () => {
                     changePanel(1)
                     rewardToggle(!rewardModal)
                   }}
+                  isActive={panelIndex == 1}
                 >
-                  Referrals
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>
+                    <p className={'text-b3'}>Refer your friends to earn a share of their fees</p>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -210,19 +213,23 @@ const MobileNav: FC = () => {
                   />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent portal={false} className={'mt-3'}>
+              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
                     history.push('/leaderboard')
                   }}
+                  isActive={pathname.includes('leaderboard')}
                 >
-                  Leaderboard
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Leaderboard</h4>
+                    <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </DialogBody>
-          <DialogFooter className={'w-full flex-1 justify-center h-min'}>
+          <DialogFooter className={'w-full flex-1 justify-center items-center mt-auto mb-3.75 h-min'}>
             <ThemeToggle />
           </DialogFooter>
         </DialogContent>
@@ -230,291 +237,6 @@ const MobileNav: FC = () => {
     </>
   )
 }
-
-// interface MobileSettingsDrawerProps {
-//   isOpen: boolean
-//   playCloseAnimation: boolean
-//   toggleSettingsDrawer: () => void
-// }
-//
-// const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
-//   isOpen,
-//   playCloseAnimation,
-//   toggleSettingsDrawer
-// }) => {
-//   const { mode } = useDarkMode()
-//   const { pathname } = useLocation()
-//   const { rewardToggle, changePanel, rewardModal } = useRewardToggle()
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   const history = useHistory()
-//   return (
-//     <div
-//       css={[
-//         tw`fixed top-0 right-0 left-0 h-screen w-screen dark:bg-black-1 bg-grey-5 items-center flex flex-col
-//         dark:text-grey-5 rounded-b-bigger block justify-center z-[999]`,
-//         isOpen ? tw`flex animate-slideInTop` : tw`hidden `,
-//         playCloseAnimation ? tw`animate-slideOutTop` : tw``
-//       ]}
-//     >
-//       <div tw={'absolute top-3.75 left-0 w-full flex justify-center items-center'}>
-//         <ThemeToggle />
-//       </div>
-//       <button
-//         onClick={toggleSettingsDrawer}
-//         css={[tw`absolute top-2 right-2 bg-transparent border-none h-[35px]`]}
-//       >
-//         <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
-//       </button>
-//       <div css={[tw`h-[70vh] flex flex-col gap-5`]}>
-//         {/* <NavItem
-//           animation={'swap'}
-//           stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-//           text={'swap'}
-//           path={'/swap'}
-//         /> */}
-//         <NavItem
-//           // animation={'dex'}
-//           // stateMachine={RIVE_ANIMATION.dex.stateMachines.DEXInteractions.stateMachineName}
-//           text={'trade'}
-//           path={'/trade'}
-//           hasDropdown={true} // Renable when added
-//           options={[
-//             {
-//               text: 'Trade',
-//               onClick: () => history.push('/trade'),
-//               //onClick: () => null,
-//               isActive: pathname.includes('trade')
-//             },
-//             {
-//               text: 'Account',
-//               onClick: () => history.push('/account'),
-//               //onClick: () => null,
-//               isActive: pathname.includes('account')
-//             },
-//             {
-//               text: 'Refer',
-//               onClick: () => {
-//                 toggleSettingsDrawer()
-//                 changePanel(1)
-//                 rewardToggle(!rewardModal)
-//               },
-//               //onClick: () => null,
-//               isActive: false
-//             }
-//           ]}
-//         />
-//         <NavItem
-//           // animation={'farm'}
-//           // stateMachine={RIVE_ANIMATION.farm.stateMachines.FarmInteractions.stateMachineName}
-//           text={'farm'}
-//           path={'/farm'}
-//         />
-//         <NavItem
-//           // animation={'stats'}
-//           // stateMachine={RIVE_ANIMATION.stats.stateMachines.StatsInteractions.stateMachineName}
-//           text={'more'}
-//           path={'/leaderboard'}
-//           iconBase={'more'}
-//           hasDropdown={true}
-//           menuPosition={'center'}
-//           customMenuStyle={{
-//             menuItems: [tw`w-42`]
-//           }}
-//           options={[
-//             {
-//               text: 'Leaderboard',
-//               onClick: () => history.push('/leaderboard'),
-//               //onClick: () => null,
-//               isActive: pathname.includes('leaderboard')
-//             }
-//           ]}
-//         />
-//       </div>
-//       {/* TODO: add notifications */}
-//       {/* <div css={[tw`flex items-center gap-3.25`]}>
-//         <NotificationButton />
-//         <p css={[tw`mb-0 text-average font-semibold text-grey-1 dark:text-white`]}>Notifications</p>
-//       </div> */}
-//     </div>
-//   )
-// }
-
-// interface DesktopControlsProps {
-//   children: ReactNode
-//   options: Controls[]
-//   isOpen: boolean
-//   onHover: (e: BaseSyntheticEvent) => void
-//   onClose: () => void
-//   onOpen?: () => void
-//   menuPosition?: string
-//   customMenuStyle?: CustomMenuStyle
-// }
-
-// const DropDownControls: FC<DesktopControlsProps> = ({
-//   children,
-//   options,
-//   onHover,
-//   isOpen,
-//   onClose,
-//   menuPosition = 'right',
-//   onOpen,
-//   customMenuStyle
-// }) => {
-//   const selfRef = useRef<HTMLDivElement>(null)
-//   const buttonRef = useRef(null)
-//   const timeout = useRef<NodeJS.Timeout>(null)
-//   const localOnHover = useCallback(
-//     (e: BaseSyntheticEvent) => {
-//       if (timeout.current) {
-//         clearTimeout(timeout.current)
-//         timeout.current = null
-//       }
-//       console.log(isOpen, 'click')
-//       if (!isOpen) {
-//         e.currentTarget.click()
-//         onHover(e)
-//       }
-//     },
-//     [onHover, isOpen]
-//   )
-//   const localOnClose = useCallback(() => {
-//     if (!timeout.current) {
-//       timeout.current = setTimeout(onClose, 150)
-//     }
-//   }, [onClose])
-//   const handleMove = useCallback(
-//     (e: MouseEvent) => {
-//       if (isOpen) {
-//         if (timeout.current) {
-//           clearTimeout(timeout.current)
-//           timeout.current = null
-//         }
-//         if (!selfRef.current.contains(e.target as HTMLElement)) {
-//           // buttonRef.current.click()
-//           localOnClose()
-//         }
-//       }
-//     },
-//     [localOnClose, isOpen]
-//   )
-//   useEffect(() => {
-//     window.addEventListener('mousemove', handleMove)
-//     return () => {
-//       window.removeEventListener('mousemove', handleMove)
-//     }
-//   }, [handleMove])
-//   const menuPositionStyle = useMemo(() => {
-//     switch (menuPosition) {
-//       case 'center':
-//         return {
-//           left: '50%',
-//           transform: 'translateX(-50%)'
-//         }
-//       default:
-//         return {
-//           left: 0
-//         }
-//     }
-//   }, [menuPosition])
-//   const breakpoints = useBreakPoint()
-//   const handleMenuButtonClick = useCallback(() => (isOpen ? onClose() : onOpen()), [isOpen, onOpen, onClose])
-//   const handleOptionClick = useCallback(
-//     (callback: (...args: any[]) => any) => () => {
-//       onClose()
-//       buttonRef?.current?.click()
-//       callback()
-//     },
-//     [onClose]
-//   )
-//
-//   return (
-//     <div css={[tw`relative inline-block text-left z-0 `, isOpen && tw`z-[20]`]} ref={selfRef}>
-//       <span
-//         id={'spacer'}
-//         css={[tw`absolute top-[44px] left-0 h-6 w-full z-[0]`]}
-//         style={{ minWidth: '-webkit-fill-available' }}
-//       />
-//       <Menu>
-//         {() => (
-//           <>
-//             <Menu.Button
-//               css={[
-//                 tw`bg-transparent border-0 outline-none focus-visible:outline-none active:outline-none
-//                 focus:outline-none focus-visible:border-0 active:border-0
-//                 focus:border-0 p-0`
-//               ].concat(customMenuStyle?.button ?? [])}
-//               onMouseEnter={breakpoints.isMobile ? () => null : localOnHover}
-//               onClick={handleMenuButtonClick}
-//               ref={buttonRef}
-//             >
-//               {children}
-//             </Menu.Button>
-//             <Transition
-//               show={isOpen}
-//               as={'div'}
-//               enter="transition ease-out duration-100"
-//               enterFrom="transform opacity-0 scale-95"
-//               enterTo="transform opacity-100 scale-100"
-//               leave="transition ease-in duration-75"
-//               leaveFrom="transform opacity-100 scale-100"
-//               leaveTo="transform opacity-0 scale-95"
-//               beforeLeave={onClose}
-//             >
-//               <Menu.Items
-//                 static
-//                 css={[
-//                   tw`absolute w-56 min-md:w-max mt-1.75 origin-top
-//         border-1 border-solid border-black-1 dark:border-white rounded-tiny
-//         outline-none focus-visible:outline-none active:outline-none
-//         focus:outline-none
-//         z-50
-//         `
-//                 ].concat(customMenuStyle?.menuItems ?? [])}
-//                 style={menuPositionStyle}
-//               >
-//                 {options.map((option, i) => (
-//                   <Menu.Item
-//                     key={option?.key ?? option.text}
-//                     as={'div'}
-//                     css={[
-//                       tw`flex items-center w-full bg-white dark:bg-black-2  px-2.5 py-0.5`,
-//                       option.isActive ? tw`bg-grey-5 dark:bg-black-1` : tw``,
-//                       i === 0 ? tw`rounded-tiny` : tw``,
-//                       i === options.length - 1 ? tw`rounded-b-tiny` : tw``
-//                     ].concat(customMenuStyle?.menuItem ?? [])}
-//                   >
-//                     <p
-//                       css={[
-//                         tw`mb-0 text-average min-md:text-regular font-semibold min-md:font-medium text-grey-1
-//                          dark:text-grey-1 cursor-pointer hover:text-transparent hover:bg-gradient-1
-//                          hover:bg-clip-text`,
-//                         option.isActive ? tw`bg-clip-text bg-gradient-1` : tw``
-//                       ].concat(customMenuStyle?.menuItemText ?? [])}
-//                       style={{
-//                         WebkitBackgroundClip: option.isActive ? 'text' : '',
-//                         WebkitTextFillColor: option.isActive ? 'transparent' : ''
-//                       }}
-//                       onClick={handleOptionClick(option.onClick)}
-//                     >
-//                       {option.text}
-//                     </p>
-//                   </Menu.Item>
-//                 ))}
-//               </Menu.Items>
-//             </Transition>
-//           </>
-//         )}
-//       </Menu>
-//     </div>
-//   )
-// }
-
-// interface Controls {
-//   key?: string
-//   text: string
-//   onClick: () => void
-//   isActive: boolean
-// }
 
 const DesktopNav: FC = () => {
   const breakpoint = useBreakPoint()
@@ -563,16 +285,30 @@ const DesktopNav: FC = () => {
             Trade
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent portal={false} className={'mt-3'}>
-          <DropdownMenuItem onClick={() => history.push('/trade')}>Trade</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => history.push('/account')}>Account</DropdownMenuItem>
+        <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
+          <DropdownMenuItem onClick={() => history.push('/trade')} isActive={pathname.includes('trade')}>
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
+              <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => history.push('/account')} isActive={pathname.includes('account')}>
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
+              <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               changePanel(1)
               rewardToggle(!rewardModal)
             }}
+            isActive={panelIndex == 1}
           >
-            Referrals
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>
+              <p className={'text-b3'}>Refer your friends to earn a share of their fees</p>
+            </div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -599,153 +335,18 @@ const DesktopNav: FC = () => {
             More
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent portal={false} className={'mt-3'}>
-          <DropdownMenuItem onClick={() => history.push('/leaderboard')}>Leaderboard</DropdownMenuItem>
+        <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
+          <DropdownMenuItem
+            onClick={() => history.push('/leaderboard')}
+            isActive={pathname.includes('leaderboard')}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Leaderboard</h4>
+              <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
+            </div>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
   )
 }
-
-// interface MainNavIconProps {
-//   text: string
-//   iconBase?: string
-//   path: string
-//   hasDropdown?: boolean
-//   options?: Controls[]
-//   riveAnimation?: string
-//   stateMachine?: string
-//   menuPosition?: string
-//   customMenuStyle?: CustomMenuStyle
-// }
-//
-// type CustomMenuStyle = {
-//   button?: TwStyle[]
-//   menuItems?: TwStyle[]
-//   menuItem?: TwStyle[]
-//   menuItemText?: TwStyle[]
-// }
-// const NavItem: FC<MainNavIconProps> = ({
-//   // riveAnimation,
-//   text,
-//   iconBase,
-//   // stateMachine,
-//   path,
-//   hasDropdown,
-//   options,
-//   menuPosition,
-//   customMenuStyle
-// }) => {
-//   const { mode } = useDarkMode()
-//   const { pathname } = useLocation()
-//   const history = useHistory()
-//   //const breakpoint = useBreakPoint()
-//   // const rive = useRiveAnimations({
-//   //   animation: riveAnimation,
-//   //   autoplay: true,
-//   //   canvasWidth: 24,
-//   //   canvasHeight: 24
-//   // })
-//   // useRiveThemeToggle(rive.rive, riveAnimation, stateMachine)
-//   // const { stateInput } = useRiveStateToggle(rive.rive, riveAnimation, stateMachine, path)
-//   const [isOpen, setIsOpen] = useState<boolean>(false)
-//   const navigateToPath = useCallback(() => history.push(path), [history, path])
-//
-//   const onHover = useCallback(
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     (e: BaseSyntheticEvent) => {
-//       // if (stateInput && !pathname.startsWith(path)) {
-//       //   stateInput.value = !stateInput.value
-//       // }
-//       setIsOpen(true)
-//     },
-//     [pathname, path]
-//   )
-//
-//   const onClose = useCallback(() => {
-//     setIsOpen(false)
-//     // if (stateInput && !pathname.startsWith(path)) {
-//     //   stateInput.value = false
-//     // }
-//   }, [pathname, path])
-//
-//   const onOpen = useCallback(() => setIsOpen(true), [])
-//
-//   const component = useMemo(() => {
-//     // isOpened or on page
-//     const hasActiveItems = options && options.filter((option) => option.isActive).length > 0
-//     const curRoute: boolean = pathname.startsWith(path) || hasActiveItems
-//     return (
-//       <div
-//         css={[
-//           tw`flex min-md:flex-col items-center justify-center h-full cursor-pointer
-//         px-4.5 py-1.25 min-md:p-0 rounded-full min-md:rounded-none h-12.5 min-md:h-auto
-//         w-42 min-md:w-auto bg-white dark:bg-black-2 min-md:bg-transparent dark:min-md:bg-transparent
-//         gap-2.5 min-md:gap-0.25 leading-[1]
-//         `
-//         ]}
-//         onClick={() => (hasDropdown ? null : navigateToPath())}
-//       >
-//         <div css={[tw`flex gap-2.5 min-md:gap-0.25 items-center justify-start`]}>
-//           {/* <RiveAnimationWrapper setContainerRef={rive.setContainerRef} width={28} height={28}>
-//             <rive.RiveComponent />
-//           </RiveAnimationWrapper> */}
-//           <img
-//             css={[tw`h-[40px] w-[40px] min-md:h-[26px] min-md:w-[26px]`]}
-//             src={`/img/mainnav/${iconBase ?? text}-${mode}${curRoute || isOpen ? '-active' : ''}.svg`}
-//             alt={text}
-//           />
-//           <div css={[tw`flex gap-2.5`]}>
-//             <h5
-//               css={[
-//                 tw`mb-0 text-average min-md:text-tiny capitalize font-semibold tracking-wider
-//             text-grey-1 dark:text-grey-2  min-md:mt-0.5 min-md:h-4 block min-md:hidden `,
-//                 curRoute || isOpen ? tw`text-black-4 dark:text-grey-5` : tw``
-//               ]}
-//               // style={{
-//               //   opacity: curRoute ? 1 : 0.5
-//               // }}
-//             >
-//               {text}
-//             </h5>
-//             {hasDropdown && (
-//               <CircularArrow
-//                 cssStyle={tw`w-[12px]`}
-//                 invert={isOpen}
-//                 css={[curRoute || isOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
-//               />
-//             )}
-//           </div>
-//         </div>
-//         <h6
-//           css={[
-//             tw`mb-0 text-smallest capitalize font-semibold tracking-wider
-//             text-grey-1 dark:text-grey-2 dark:text-white min-md:mt-1 hidden min-md:block`,
-//             curRoute || isOpen ? tw`text-black-4 dark:text-grey-5 min-md:opacity-100` : tw`min-md:opacity-50`
-//           ]}
-//           // style={{
-//           //   opacity: curRoute ? 1 : 0.5
-//           // }}
-//         >
-//           {text}
-//         </h6>
-//       </div>
-//     )
-//   }, [mode, pathname, navigateToPath, isOpen, hasDropdown])
-//
-//   return hasDropdown ? (
-//     <DropDownControls
-//       customMenuStyle={customMenuStyle}
-//       onOpen={onOpen}
-//       menuPosition={menuPosition}
-//       options={options}
-//       isOpen={isOpen}
-//       onHover={onHover}
-//       onClose={onClose}
-//     >
-//       {component}
-//     </DropDownControls>
-//   ) : (
-//     component
-//   )
-// }
