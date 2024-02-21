@@ -14,11 +14,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
 import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
-import { getPriceObject } from '../../web3/utils'
+import { getPriceObject } from '../../web3'
 import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
+import { AllClaimModal } from './AllClaimModal'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -117,6 +118,12 @@ const WRAPPER = styled.div`
   }
 `
 
+const CLAIM = styled.div`
+  ${tw`h-8.75 w-[85px] rounded-circle flex items-center justify-center text-white cursor-pointer 
+    ml-auto mr-3.75 p-[1.5px] sm:w-full sm:mt-3.75 sm:ml-0`};
+  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+`
+
 // const STATS = styled.div`
 //   ${tw`h-[30px] w-[90px] rounded-circle flex items-center justify-center text-white`};
 //   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
@@ -136,7 +143,9 @@ export const FarmTable: FC = () => {
     filteredLiquidityAccounts,
     sslTableData,
     liquidityAmount,
-    setIsFirstPoolOpen
+    setIsFirstPoolOpen,
+    rewards,
+    allPoolSslData
   } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
@@ -144,6 +153,7 @@ export const FarmTable: FC = () => {
   const [sort, setSort] = useState<string>('ASC')
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
+  const [allClaimModal, setAllClaimModal] = useState<boolean>(false)
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -276,8 +286,39 @@ export const FarmTable: FC = () => {
     setIsFirstPoolOpen(false)
   }
 
+  const isClaimable = useMemo(() => {
+    const claimCount = allPoolSslData.reduce((accumulator, current) => {
+      const tokenMintAddress = current?.mint?.toBase58()
+      const reward = rewards[tokenMintAddress]?.toNumber() / Math.pow(10, current?.mintDecimals)
+      if (reward) return accumulator + 1
+      return accumulator
+    }, 0)
+    return claimCount
+  }, [allPoolSslData, rewards])
+
+  const claimableRewardArray = useMemo(() => {
+    const claimableRewardObj = allPoolSslData.map((token) => {
+      const tokenName = token?.token
+      const tokenMintAddress = token?.mint?.toBase58()
+      const reward = rewards[tokenMintAddress]?.toNumber() / Math.pow(10, token?.mintDecimals)
+      if (reward > 0) {
+        const rewardUSD =
+          prices[getPriceObject(token?.token)]?.current && prices[getPriceObject(token?.token)]?.current * reward
+        return { tokenName, rewardUSD }
+      }
+    })
+    return claimableRewardObj
+  }, [allPoolSslData, rewards])
+
   return (
     <WRAPPER>
+      {allClaimModal && (
+        <AllClaimModal
+          allClaimModal={allClaimModal}
+          setAllClaimModal={setAllClaimModal}
+          rewardsArray={claimableRewardArray}
+        />
+      )}
       <div tw="flex flex-row items-center mb-3.75 sm:pr-4">
         <img
           src={`/img/assets/${pool.name}_pools_${mode}.svg`}
@@ -351,12 +392,24 @@ export const FarmTable: FC = () => {
               placeholder="Search by token symbol"
               bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
             />
+            {isClaimable && pubKey ? (
+              <CLAIM onClick={() => setAllClaimModal(true)}>
+                <div
+                  tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
+                items-center justify-center dark:text-white text-black-4 text-regular font-bold"
+                >
+                  Claim All
+                </div>
+              </CLAIM>
+            ) : (
+              <></>
+            )}
             {pubKey && (
-              <div tw="ml-auto flex items-center mr-2">
+              <div tw="flex items-center mr-2">
                 <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                 <div
                   tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
-               font-semibold mt-[-4px] ml-2.5"
+               font-semibold mt-[-4px] ml-3.75"
                 >
                   Show <br /> Deposited
                 </div>
@@ -539,7 +592,7 @@ const FarmTokenContent: FC<{
   showDeposited: boolean
   index: number
 }> = ({ coin, showDeposited, index }) => {
-  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData, isFirstPoolOpen } =
+  const { filteredLiquidityAccounts, isTxnSuccessfull, liquidityAmount, sslTableData, isFirstPoolOpen, rewards } =
     useSSLContext()
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -612,97 +665,97 @@ const FarmTokenContent: FC<{
   //   setStatsModal(true)
   // }
 
-  return (
-    showToggleFilteredTokens && (
-      <>
-        {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-        <tr
-          css={[tw`duration-500`]}
-          className={isExpanded && 'tableRowGradient'}
-          onClick={() => setIsExpanded((prev) => !prev)}
-        >
-          <td tw="!justify-start relative sm:!w-[41%]">
-            {userDepositedAmountUI !== '0.00' && (
-              <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-gradient-1" />
-            )}
-            <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
-            <h4 tw="ml-2.5">{coin?.token}</h4>
-            {depositPercentage ? (
-              <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
-                <Tooltip
-                  color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                  title={
-                    <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                      Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                      {truncateBigNumber(coin?.cappedDeposit)}
-                    </span>
-                  }
-                  placement="topRight"
-                  overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                  overlayInnerStyle={{ borderRadius: '8px' }}
-                >
-                  <img
-                    src={
-                      +depositPercentage?.toFixed(2) >= 100
-                        ? '/img/assets/farm_cap_red.svg'
-                        : '/img/assets/farm_cap_green.svg'
-                    }
-                    alt="deposit-cap"
-                    tw="ml-2.5 sm:ml-1.25 max-w-none"
-                    height={20}
-                    width={20}
-                  />
-                </Tooltip>
-              </div>
-            ) : (
-              <></>
-            )}
-          </td>
-          <td>
-            <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
-          </td>
-          {!checkMobile() && (
-            <td>
-              <h4>
-                {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}
-              </h4>
-            </td>
-          )}
-          {!checkMobile() && (
-            <td>
-              <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
-            </td>
-          )}
-          {!checkMobile() && (
-            <td>
+  const claimableReward = useMemo(
+    () => rewards[tokenMintAddress]?.toNumber() / Math.pow(10, coin?.mintDecimals),
+    [rewards, tokenMintAddress, isTxnSuccessfull, coin]
+  )
+
+  return showToggleFilteredTokens ? (
+    <>
+      {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+      <tr
+        css={[tw`duration-500`]}
+        className={isExpanded && 'tableRowGradient'}
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
+        <td tw="!justify-start relative sm:!w-[41%]">
+          {claimableReward > 0 && <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-red-2" />}
+          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
+          <h4 tw="ml-2.5">{coin?.token}</h4>
+          {depositPercentage ? (
+            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
               <Tooltip
                 color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                 title={
                   <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
+                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                    {truncateBigNumber(coin?.cappedDeposit)}
                   </span>
                 }
                 placement="topRight"
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
-                {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                  <h4 tw="flex justify-center items-center font-semibold">
-                    ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
-                  </h4>
-                ) : (
-                  <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
-                )}
+                <img
+                  src={
+                    +depositPercentage?.toFixed(2) >= 100
+                      ? '/img/assets/farm_cap_red.svg'
+                      : '/img/assets/farm_cap_green.svg'
+                  }
+                  alt="deposit-cap"
+                  tw="ml-2.5 sm:ml-1.25 max-w-none"
+                  height={20}
+                  width={20}
+                />
               </Tooltip>
-            </td>
+            </div>
+          ) : (
+            <></>
           )}
-          {!checkMobile() && (
-            <td>
-              <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
-            </td>
-          )}
-          <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
-            {/* {!checkMobile() && (
+        </td>
+        <td>
+          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
+        </td>
+        {!checkMobile() && (
+          <td>
+            <h4>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</h4>
+          </td>
+        )}
+        {!checkMobile() && (
+          <td>
+            <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
+          </td>
+        )}
+        {!checkMobile() && (
+          <td>
+            <Tooltip
+              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+              title={
+                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
+                  {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
+                </span>
+              }
+              placement="topRight"
+              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+              overlayInnerStyle={{ borderRadius: '8px' }}
+            >
+              {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
+                <h4 tw="flex justify-center items-center font-semibold">
+                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+                </h4>
+              ) : (
+                <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
+              )}
+            </Tooltip>
+          </td>
+        )}
+        {!checkMobile() && (
+          <td>
+            <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
+          </td>
+        )}
+        <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
+          {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
             <div tw="ml-auto sm:mr-2">
@@ -711,7 +764,6 @@ const FarmTokenContent: FC<{
           </td>
         </tr>
         <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
-      </>
-    )
-  )
+    </>
+    ) : <></>
 }

@@ -199,7 +199,8 @@ export const ActionModal: FC<{
           Cancel
         </div>
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
-          By withdrawing, you agree to our Terms of Service.
+          By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
+          you agree to our Terms of Service.
         </div>
       </div>
     ),

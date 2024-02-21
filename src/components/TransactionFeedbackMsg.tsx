@@ -141,6 +141,24 @@ export const SuccessSSLMessage: FC<{
   )
 }
 
+export const SuccessClaimAll: FC = () => (
+  <MESSAGE>
+    <div tw="flex items-center justify-between">
+      <div tw="text-[15px]">Success</div>
+      <div>
+        <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+      </div>
+    </div>
+
+    <div tw="font-semibold text-[13px]">
+      <div tw="font-semibold text-[13px]">
+        Congratulations! You have successfully claimed all your pending rewards. Remember the more you deposit the
+        more you can earn!
+      </div>
+    </div>
+  </MESSAGE>
+)
+
 export const TransactionErrorMsgSSL: FC = () => (
   <MESSAGE>
     <div tw="flex items-center justify-between">

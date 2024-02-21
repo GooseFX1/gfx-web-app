@@ -1,4 +1,4 @@
-import { SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
+import { SuccessSSLMessage, TransactionErrorMsgSSL, SuccessClaimAll } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -303,7 +303,11 @@ export const genericErrMsg = (error: string): Message => ({
 export const depositCapError = (token: SSLToken, liquidity: number): Message => ({
   type: 'error',
   message: `You cannot deposit more than $${truncateBigNumber(token?.cappedDeposit - liquidity)} 
-  ${token.token} because ${token.token} pool is capped at $${truncateBigNumber(token?.cappedDeposit)}!`
+  ${token.token} because the ${token.token} pool is capped at $${truncateBigNumber(token?.cappedDeposit)}!`
+})
+
+export const claimAllSuccess = (): Message => ({
+  message: <SuccessClaimAll />
 })
 
 export const sslSuccessfulMessage = (
