@@ -73,6 +73,7 @@ import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
 const ONE_MINUTE = 1000 * 60
 import { Perp, Product, Trader } from 'gfx-perp-sdk'
+import { sendPerpsTransaction } from '../web3/connection'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -587,7 +588,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const getFundingRate = async () => {
     const res = await httpClient('api-services').post(`${GET_FUNDING_RATE}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-      pairName: 'SOL-PERP'
+      pairName: 'SOL-PERP',
+      devnet: true
     })
     setFundingRate(res.data.fundingRate)
   }
@@ -759,7 +761,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       return response
     },
-    [traderRiskGroup, marketProductGroup]
+    [traderRiskGroup, marketProductGroup, traderInstanceSdk, perpProductInstanceSdk]
   )
 
   const depositFunds = useCallback(
@@ -789,6 +791,22 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //    }
       //  }
       try {
+        if (!traderRiskGroup) {
+          const trader = new Trader(perpInstanceSdk)
+          const [ixs, signers] = await trader.createTraderAccountIxs()
+          const res = await sendPerpsTransaction(connection, wallet, ixs, signers)
+          console.log(res)
+          const tryTraderInit = async () => {
+            try {
+              trader.init()
+              // await sleep(1000);
+            } catch (e) {
+              tryTraderInit()
+            }
+          }
+          tryTraderInit()
+          return await depositFundsIx({ quantity: amount }, wallet, connection, trader)
+        }
         const response = traderRiskGroup
           ? await depositFundsIx({ quantity: amount }, wallet, connection, traderInstanceSdk)
           : await initTrgDepositIx(
@@ -806,7 +824,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return null
       }
     },
-    [traderRiskGroup, marketProductGroup, wallet, traderInstanceSdk]
+    [traderRiskGroup, marketProductGroup, wallet, traderInstanceSdk, perpInstanceSdk]
   )
 
   const withdrawFunds = useCallback(

@@ -37,8 +37,8 @@ export type RPC = {
 export const APP_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'GooseFX',
-  endpoint: `https://rpc-proxy.goosefx.workers.dev`,
-  network: WalletAdapterNetwork.Mainnet
+  endpoint: `https://devnet.helius-rpc.com/?api-key=ad9cec67-1aba-4b5f-bdef-7a8c8eeceaa4`,
+  network: WalletAdapterNetwork.Devnet
 }
 
 type IRPC_CACHE = null | USER_CONFIG_CACHE

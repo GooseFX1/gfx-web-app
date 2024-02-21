@@ -55,7 +55,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
         setPerpsOpenOrders([])
       }
     }
-    const t2 = setInterval(refreshOpenOrders, 500)
+    const t2 = setInterval(refreshOpenOrders, 1000)
     return () => clearInterval(t2) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type, traderInfo.traderRiskGroupKey, wallet.connected])
 
@@ -63,7 +63,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const refreshOrderbook = async () => {
       await fetchPerpsOrderBook()
     }
-    const t3 = setInterval(refreshOrderbook, 500)
+    const t3 = setInterval(refreshOrderbook, 1000)
     return () => clearInterval(t3) // clear
   }, [selectedCrypto.pair, isDevnet, selectedCrypto.type])
 
@@ -131,7 +131,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const res = await httpClient('api-services').post(`${GET_ORDERBOOK}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
       pairName: activeProduct.pairName,
-      devnet: isDevnet
+      devnet: true
     })
     const orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
     const orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
@@ -146,7 +146,7 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
     const res = await httpClient('api-services').post(`${GET_OPEN_ORDERS}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
       pairName: activeProduct.pairName,
-      devnet: isDevnet
+      devnet: true
     })
 
     const perpsOrders = []
