@@ -1,3 +1,5 @@
+const { twConfigColors } = require('gfx-component-lib')
+
 const colors = {
   'black-1': '#131313',
   'black-2': '#1C1C1C',
@@ -35,10 +37,12 @@ const colors = {
   'gray-1': '#9A9A9A',
   'gray-2': '#636363',
   'gray-3': '#969696',
-  divider: 'rgba(248, 255, 253, 0.20)'
+  divider: 'rgba(248, 255, 253, 0.20)',
+  ...twConfigColors.colors
 }
 const backgroundImage = {
-  'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)'
+  'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)',
+  ...twConfigColors.backgroundImage
 }
 
 module.exports = { colors, backgroundImage }
