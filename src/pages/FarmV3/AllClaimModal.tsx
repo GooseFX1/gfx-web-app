@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
@@ -7,7 +7,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode, usePriceFeedFarm, useConnectionConfig } from '../../context'
 import { executeAllPoolClaim } from '../../web3'
 import { claimAllSuccess, sslErrorMessage, genericErrMsg } from './constants'
-import { notify } from '../../utils'
+import { notify, truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 
@@ -21,14 +21,17 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
   }
   .ant-modal-body {
-    ${tw`p-5 sm:p-[15px]`}
+    ${tw`p-2.5 sm:p-[15px]`}
+  }
+  .tos {
+    ${tw`text-tiny font-semibold underline dark:text-white text-blue-1`}
   }
 `
 
 export const AllClaimModal: FC<{
   allClaimModal: boolean
   setAllClaimModal: Dispatch<SetStateAction<boolean>>
-  rewardsArray: Array<{ tokenName: string; rewardUSD: number }>
+  rewardsArray: Array<{ tokenName: string; reward: number }>
 }> = ({ allClaimModal, setAllClaimModal, rewardsArray }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
@@ -37,6 +40,7 @@ export const AllClaimModal: FC<{
   const wal = useWallet()
   const { SSLProgram } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -45,16 +49,21 @@ export const AllClaimModal: FC<{
 
   const handleAllClaim = () => {
     try {
+      setIsLoading(true)
       executeAllPoolClaim(SSLProgram, wal, connection, pubKey).then((con) => {
         const { confirm } = con
+        setIsLoading(false)
         if (confirm && confirm?.value && confirm.value.err === null) {
           notify(claimAllSuccess())
+          setAllClaimModal(false)
         } else {
           notify(sslErrorMessage())
+          setAllClaimModal(false)
           return
         }
       })
     } catch (err) {
+      setIsLoading(false)
       notify(genericErrMsg(err))
     }
   }
@@ -72,14 +81,19 @@ export const AllClaimModal: FC<{
             <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
           </div>
         )}
-        <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 sm:text-average">Claim all yield</div>
+        <div tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75">Claim all yield</div>
+        <div tw="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-3.75">
+          By claiming, you will get all pending yield available.
+        </div>
         {rewardsArray &&
           rewardsArray.map((item, index) => {
-            if (item) {
+            if (item && item?.reward && item?.tokenName) {
               return (
                 <div key={index} tw="flex flex-row justify-between mb-2.5">
-                  <span>{item?.tokenName}</span>
-                  <span>{item?.rewardUSD}</span>
+                  <span tw="text-regular font-semibold text-grey-1 dark:text-grey-2">{item?.tokenName} Pool</span>
+                  <span tw="text-regular font-semibold text-black-4 dark:text-grey-8">
+                    {truncateBigNumber(item?.reward) + ' ' + item?.tokenName}
+                  </span>
                 </div>
               )
             }
@@ -89,11 +103,11 @@ export const AllClaimModal: FC<{
           cssStyle={tw`duration-500 w-[380px] sm:w-[100%] !h-10 bg-blue-1 text-regular border-none mx-auto my-3.75
                     !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
           onClick={handleAllClaim}
-          loading={false}
+          loading={isLoading}
           disabled={rewardsArray && !rewardsArray?.length}
           disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
         >
-          Claim All
+          <span tw="font-bold text-regular"> Claim All </span>
         </Button>
         <div
           tw="text-center text-red-2 font-bold text-regular cursor-pointer mb-2.5"
@@ -102,11 +116,15 @@ export const AllClaimModal: FC<{
           Cancel
         </div>
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
-          By claiming, you agree to our Terms of Service.
+          By claiming, you agree to our{' '}
+          <a href="https://www.goosefx.io/terms" target={'_blank'} rel={'noreferrer'} className="tos">
+            Terms of Service
+          </a>
+          .
         </div>
       </div>
     ),
-    [breakpoint, mode]
+    [breakpoint, mode, isLoading]
   )
 
   return breakpoint.isMobile ? (
@@ -130,6 +148,7 @@ export const AllClaimModal: FC<{
       width={'400px'}
       title={null}
       centered={true}
+      closeIcon={<img key={`close-mobile-button`} src={`/img/assets/close-${mode}.svg`} alt="close-icon" />}
       visible={allClaimModal ? true : false}
       onCancel={() => setAllClaimModal(false)}
       footer={null}

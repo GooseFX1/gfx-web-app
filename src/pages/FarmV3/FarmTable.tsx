@@ -301,11 +301,7 @@ export const FarmTable: FC = () => {
       const tokenName = token?.token
       const tokenMintAddress = token?.mint?.toBase58()
       const reward = rewards[tokenMintAddress]?.toNumber() / Math.pow(10, token?.mintDecimals)
-      if (reward > 0) {
-        const rewardUSD =
-          prices[getPriceObject(token?.token)]?.current && prices[getPriceObject(token?.token)]?.current * reward
-        return { tokenName, rewardUSD }
-      }
+      return { tokenName, reward }
     })
     return claimableRewardObj
   }, [allPoolSslData, rewards])
@@ -405,7 +401,7 @@ export const FarmTable: FC = () => {
               <></>
             )}
             {pubKey && (
-              <div tw="flex items-center mr-2">
+              <div tw="flex items-center mr-2" css={[isClaimable ? tw`ml-0` : tw`ml-auto`]}>
                 <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                 <div
                   tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
@@ -758,12 +754,14 @@ const FarmTokenContent: FC<{
           {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
-            <div tw="ml-auto sm:mr-2">
-              <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
-            </div>
-          </td>
-        </tr>
-        <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
+          <div tw="ml-auto sm:mr-2">
+            <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
+          </div>
+        </td>
+      </tr>
+      <ExpandedView isExpanded={isExpanded} coin={coin} userDepositedAmount={userDepositedAmount} />
     </>
-    ) : <></>
+  ) : (
+    <></>
+  )
 }

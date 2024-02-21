@@ -24,6 +24,9 @@ const STYLED_POPUP = styled(PopupCustom)`
   .tooltipIcon {
     ${tw`h-4 w-4 max-w-none ml-0`}
   }
+  .tos {
+    ${tw`text-tiny font-semibold underline dark:text-white text-blue-1`}
+  }
 `
 
 export const ActionModal: FC<{
@@ -200,7 +203,11 @@ export const ActionModal: FC<{
         </div>
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
-          you agree to our Terms of Service.
+          you agree to our{' '}
+          <a href="https://www.goosefx.io/terms" target={'_blank'} rel={'noreferrer'} className="tos">
+            Terms of Service
+          </a>
+          .
         </div>
       </div>
     ),
