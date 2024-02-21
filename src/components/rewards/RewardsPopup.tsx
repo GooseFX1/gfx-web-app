@@ -21,8 +21,8 @@ export const RewardsButton: FC = () => {
   const { rewardToggle, changePanel } = useRewardToggle()
   const breakpoint = useBreakPoint()
 
-  const { hasRewards } = useRewards()
-
+  const { hasRewards, claimable, unstakeableTickets } = useRewards()
+  console.log('REWARDS ICON', hasRewards, claimable, unstakeableTickets)
   const riveComponent = (
     <div css={[tw`relative`]}>
       <img

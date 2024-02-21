@@ -353,7 +353,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-  }, [walletContext.publicKey, updateStakeDetails, stakeRewards])
+  }, [walletContext.publicKey, walletContext.wallet.adapter.publicKey, updateStakeDetails, stakeRewards])
 
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
@@ -654,8 +654,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
             </>
           )
         })
-        const v = await fetchUserRewardsHoldingAmount(stakeRewards, walletContext.publicKey)
-        setClaimable(Number(v))
+        setTimeout(async () => {
+          const v = await fetchUserRewardsHoldingAmount(stakeRewards, walletContext.publicKey)
+          setClaimable(Number(v))
+        }, 2000)
       })
       .catch((err) => {
         console.log('CLAIM_FAILED', err)
