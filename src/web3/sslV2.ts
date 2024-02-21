@@ -22,7 +22,7 @@ import {
   SSL_POOL_SIGNER_PREFIX
 } from '../web3'
 import { TxnReturn } from './stake'
-import { SSLToken } from '../pages/FarmV3/constants'
+import { SSLToken, ADDRESSES } from '../pages/FarmV3/constants'
 import { convertToNativeValue } from '../utils'
 export interface Account {
   /** Address of the account */
@@ -277,7 +277,58 @@ export const executeClaimRewards = async (
   let signature
   try {
     signature = await wallet.sendTransaction(claimTX, connection)
-    console.log('SIGN', signature)
+    const confirm = await confirmTransaction(connection, signature, 'processed')
+    return { confirm, signature }
+  } catch (error) {
+    console.log(error, 'claim rewards error\n', signature)
+    return { error, signature }
+  }
+}
+
+export const executeAllPoolClaim = async (
+  program: Program<Idl>,
+  wallet: WalletContextState,
+  connection: Connection,
+  walletPublicKey: PublicKey
+): Promise<TxnReturn> => {
+  const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
+
+  const claimTX: Transaction = new Transaction()
+
+  for (let i = 0; i < ADDRESSES['mainnet-beta'].length; i++) {
+    const token = ADDRESSES['mainnet-beta'][i]
+    const tokenMintAddress = token?.address
+    const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+    const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
+    const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
+
+    const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+    const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
+    if (createTokenAccIX) claimTX.add(createTokenAccIX)
+
+    const claimIxAcc = {
+      poolRegistry: poolRegistryAccountKey,
+      owner: walletPublicKey,
+      sslFeeVault: feeVaultAccount,
+      ownerAta: userAta,
+      liquidityAccount: liquidityAccountKey,
+      eventEmitter: getEventEmitterAccount(),
+      tokenProgram: TOKEN_PROGRAM_ID
+    }
+    const claimIX: TransactionInstruction = await program.instruction.claimFees({
+      accounts: claimIxAcc
+    })
+    claimTX.add(claimIX)
+
+    if (token?.token === 'SOL') {
+      const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
+      claimTX.add(tr)
+    }
+  }
+
+  let signature
+  try {
+    signature = await wallet.sendTransaction(claimTX, connection)
     const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
