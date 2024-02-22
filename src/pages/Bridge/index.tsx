@@ -3,6 +3,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { styled } from 'twin.macro'
 import PageLoader from '../../components/common/PageLoader'
+import { Tooltip } from '../../components/Tooltip'
 
 const CONTAINER = styled.div`
   .debridge-widget-iframe {
@@ -98,6 +99,28 @@ const Bridge: FC = () => {
   return (
     <CONTAINER>
       {isLoading && <PageLoader />}
+      <div tw="w-[600px] m-auto relative">
+        <div tw="absolute left-[18px] top-[14px] z-[100]">
+          <Tooltip
+            title="The bridge module requires a wallet connection for the source chain separate from the 
+            the GooseFX dApp. The destiation address for your funds must be pasted below"
+            infoIcon={false}
+            placement="bottomLeft"
+            color={mode === 'dark' ? '#ffffff' : '#000'}
+          >
+            <div
+              tw="border border-solid border-grey-1 w-[149px] h-8 rounded-[100px] 
+              cursor-pointer py-0.5 pl-5 pr-1 flex flex-row items-center 
+              justify-between bg-grey-5 dark:bg-black-1 sm:right-0"
+            >
+              <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
+                Wallet FAQ
+              </span>
+              <img tw="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+            </div>
+          </Tooltip>
+        </div>
+      </div>
       <div id="debridgeWidget" ref={deBridgeRef} />
     </CONTAINER>
   )
