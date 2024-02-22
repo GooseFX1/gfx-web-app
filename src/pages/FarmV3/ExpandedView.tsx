@@ -638,7 +638,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 )}
               </div>
             ) : (
-              <Connect customButtonStyle={[tw`sm:w-[80vw] w-[400px] !h-8.75`]} />
+              <Connect customButtonStyle={`sm:w-[80vw] w-[400px] !h-8.75`} />
             )}
           </div>
         )}

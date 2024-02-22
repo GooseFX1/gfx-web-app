@@ -7,8 +7,7 @@ import { CryptoProvider, useDarkMode } from '../../context'
 import useRewards, { RewardsProvider } from '../../context/rewardsContext'
 // import PanelSelector from './RewardPanelSelector'
 // import AnimatedButtonGroup from "../twComponents/AnimatedButtonGroup";
-import Button from '../twComponents/Button'
-
+import { Button } from 'gfx-component-lib'
 import Rewards from './v2/Rewards'
 // import Raffle from './raffle/Raffle'
 import Refer from './Refer'
@@ -51,25 +50,21 @@ export const RewardsButton: FC = () => {
 
   if (breakpoint.isMobile || breakpoint.isTablet) {
     return (
-      <div onClick={handleClick} css={[tw`cursor-pointer`]}>
+      <Button onClick={handleClick} variant={'ghost'}>
         {riveComponent}
-      </div>
+      </Button>
     )
   }
   return (
-    <div
+    <Button
       onClick={handleClick}
-      css={[
-        tw`w-28 border-1 border-solid border-grey-1 dark:border-white rounded-full
-            bg-grey-5 dark:bg-black-1 px-2.25 flex flex-row items-center gap-1.75 cursor-pointer
-            text-regular  text-black-4 dark:text-white leading-normal
-       `,
-        breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px]` : tw`h-[30px]`
-      ]}
+      variant={'outline'}
+      size={'sm'}
+      className={'border-background-blue dark:border-white'}
     >
       {riveComponent}
       <span css={[tw`font-bold`]}>Rewards</span>
-    </div>
+    </Button>
   )
 }
 
@@ -92,10 +87,9 @@ export const RewardsPopup: FC = () => {
         >
           <Button
             onClick={() => rewardToggle(false)}
-            cssClasses={[
-              tw`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
-                   min-md:top-5`
-            ]}
+            className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+                   min-md:top-5`}
+            size={'sm'}
           >
             <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
           </Button>

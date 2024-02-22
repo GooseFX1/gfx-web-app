@@ -10,7 +10,12 @@ const DarkModeContext = createContext<IDarkModeConfig | null>(null)
 
 export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useLocalStorageState('darkMode', 'dark')
-
+  const root = document.getElementsByTagName('body')[0]
+  if (mode === 'dark') {
+    root.classList.add('dark')
+  } else {
+    root.classList.remove('dark')
+  }
   const handleToggleMode = useCallback(() => setMode(mode === 'dark' ? 'lite' : 'dark'), [mode, setMode])
 
   return (
