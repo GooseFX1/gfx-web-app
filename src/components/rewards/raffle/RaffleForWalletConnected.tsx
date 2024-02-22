@@ -14,7 +14,7 @@ const RaffleForWalletNotConnected = (): ReactElement => {
         </div>
       </div>
       <div tw="mt-5">
-        <Connect customButtonStyle={[tw`w-[520px] !max-w-[520px] !h-[40px]`]} />
+        <Connect customButtonStyle={`w-[520px] !max-w-[520px] !h-[40px]`} />
       </div>
       <div tw="mt-5 text-regular dark:text-grey-2 text-grey-1 font-semibold">
         To generate points start by trading on our perps platform. The more transactions you do, the more chances
