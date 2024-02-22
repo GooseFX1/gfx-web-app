@@ -118,6 +118,22 @@ const MobileNav: FC = () => {
             </DialogClose>
           </DialogHeader>
           <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              onClick={() => history.push('/bridge')}
+              className={cn(
+                `text-center text-h3 font-semibold  `,
+                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+            >
+              <img
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                alt="dark"
+                className={'h-6 w-6'}
+              />
+              Bridge
+            </Button>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
@@ -256,6 +272,22 @@ const DesktopNav: FC = () => {
     pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
   return (
     <div css={[tw`flex items-center gap-6 mx-auto`]}>
+      <Button
+        variant={'ghost'}
+        size={'sm'}
+        onClick={() => history.push('/bridge')}
+        className={cn(
+          `flex-col gap-0 p-0 text-center text-h5 font-semibold `,
+          pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
+        <img
+          src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+          alt="dark"
+          className={'w-6 h-6'}
+        />
+        Bridge
+      </Button>
       <Button
         variant={'ghost'}
         size={'sm'}
