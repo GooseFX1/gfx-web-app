@@ -116,15 +116,57 @@ const MobileNav: FC = () => {
           </DialogHeader>
           <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
+              <Button
+                variant={'ghost'}
+                size={'sm'}
+                onClick={() => {
+                  setIsOpen.off()
+                  history.push('/bridge')
+                }}
+                className={cn(
+                  `text-center text-h3 font-semibold font-poppins`,
+                  pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                )}
+              >
+                <img
+                  className="h-[40px]"
+                  src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                  alt="dark"
+                />
+                Bridge
+              </Button>
+              <Button
+                variant={'ghost'}
+                size={'sm'}
+                onClick={() => {
+                  setIsOpen.off()
+                  history.push('/farm')
+                }}
+                className={cn(
+                  `text-center text-h3 font-semibold font-poppins`,
+                  pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                )}
+              >
+                <img
+                  className="h-[40px]"
+                  src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                  alt="dark"
+                />
+                Farm
+              </Button>
               <DropdownMenuTrigger asChild={true}>
                 <Button
                   variant={'ghost'}
                   className={cn(
-                    `text-h3 text-center justify-center items-center  font-semibold `,
+                    `text-h3 text-center justify-center items-center  font-semibold font-poppins`,
                     tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
                   )}
                 >
-                  <img src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`} alt="dark" />
+                  <img
+                    className="h-[40px]"
+                    src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
+                    alt="dark"
+                  />
                   Trade
                   <CircularArrow
                     cssStyle={tw`w-[16px] h-[16px]`}
@@ -173,21 +215,6 @@ const MobileNav: FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              variant={'ghost'}
-              size={'sm'}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/farm')
-              }}
-              className={cn(
-                `text-center text-h3 font-semibold `,
-                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-            >
-              <img src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`} alt="dark" />
-              Farm
-            </Button>
             <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
@@ -200,6 +227,7 @@ const MobileNav: FC = () => {
                   )}
                 >
                   <img
+                    className="h-[40px]"
                     src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
                     alt="dark"
                   />
@@ -255,14 +283,32 @@ const DesktopNav: FC = () => {
     <div css={[tw`flex items-center gap-6 mx-auto`]}>
       <Button
         variant={'ghost'}
-        size={'sm'}
+        onClick={() => history.push('/bridge')}
+        className={cn(
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
+        <img
+          className="h-[26px] mb-0.5"
+          src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+          alt="dark"
+        />
+        Bridge
+      </Button>
+      <Button
+        variant={'ghost'}
         onClick={() => history.push('/farm')}
         className={cn(
-          `flex-col gap-0 p-0 text-center text-h5 font-semibold `,
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
-        <img src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`} alt="dark" />
+        <img
+          className="h-[26px] mb-0.5"
+          src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+          alt="dark"
+        />
         Farm
       </Button>
       <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
@@ -270,14 +316,19 @@ const DesktopNav: FC = () => {
           <Button
             variant={'ghost'}
             className={cn(
-              `flex-col gap-0 p-0 text-center justify-center items-center  font-semibold `,
+              `tracking-wider flex-col gap-0 p-0 text-center justify-center items-center 
+              text-h6 font-semibold font-poppins`,
               tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span css={[tw`inline-flex justify-center items-center`]}>
-              <img src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`} alt="dark" />
+              <img
+                className="h-[26px] mb-0.5"
+                src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
+                alt="dark"
+              />
               <CircularArrow
-                cssStyle={tw`w-[14px] h-[14px]`}
+                cssStyle={tw`w-[12px] h-[12px]`}
                 invert={isTradeOpen}
                 css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
@@ -317,17 +368,18 @@ const DesktopNav: FC = () => {
           <Button
             variant={'ghost'}
             className={cn(
-              `p-0 flex-col text-center justify-center items-center [&>span]:inline-flex gap-0`,
+              `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
               pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span css={[tw`inline-flex justify-center items-center`]}>
               <img
+                className="h-[26px] mb-0.5"
                 src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
                 alt="dark"
               />
               <CircularArrow
-                cssStyle={tw`w-[14px] h-[14px]`}
+                cssStyle={tw`w-[12px] h-[12px]`}
                 invert={isLeaderboardOpen}
                 css={[pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
