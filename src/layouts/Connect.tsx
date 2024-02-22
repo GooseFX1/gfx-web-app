@@ -3,23 +3,30 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
 import { truncateAddress } from '../utils'
-import tw, { TwStyle } from 'twin.macro'
-import 'styled-components/macro'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 import { useConnectionConfig } from '../context'
-import { Menu, Transition } from '@headlessui/react'
-import 'styled-components/macro'
 import { useDarkMode, useWalletModal } from '../context'
 import useMoveOutside from '../hooks/useMoveOutside'
 import { useLocation } from 'react-router-dom'
-import { GenericTooltip } from '../utils/GenericDegsin'
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  cn
+} from 'gfx-component-lib'
 
 interface MenuItemProps {
-  containerStyle?: TwStyle[]
-  customMenuListItemStyle?: TwStyle[]
-  customMenuListItemsContainerStyle?: TwStyle[]
-  customButtonStyle?: TwStyle[]
+  containerStyle?: string
+  customMenuListItemStyle?: string
+  customMenuListItemsContainerStyle?: string
+  customButtonStyle?: string
 }
+
 export const Connect: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
@@ -47,6 +54,10 @@ export const Connect: FC<MenuItemProps> = ({
   }, [isOpen])
   useMoveOutside(selfRef, handleMoveOutside)
 
+  // useEffect(() => {
+  //   if (connected) logData('wallet_connected')
+  // }, [connected])
+
   const connectLabel = useMemo(() => {
     if (!canConnect) {
       return 'Georestricted'
@@ -55,7 +66,7 @@ export const Connect: FC<MenuItemProps> = ({
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
       return (
-        <div css={[tw`absolute`]}>
+        <div className={'absolute'}>
           <Loader zIndex={1} />
         </div>
       )
@@ -71,7 +82,6 @@ export const Connect: FC<MenuItemProps> = ({
     }
   }, [disconnect, canConnect])
 
-  const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
   const onClose = useCallback(() => setIsOpen(false), [])
   const handleDisconnect = useCallback(
     (e) => {
@@ -97,151 +107,104 @@ export const Connect: FC<MenuItemProps> = ({
   const handleConnect = useCallback(() => {
     setWalletModalVisible(true)
   }, [])
-
+  // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
-    <div css={[tw`relative inline-block text-left z-20 `].concat(containerStyle ?? [])} ref={selfRef}>
-      <span css={[tw`absolute -bottom-4 right-0 h-4 z-10 w-full`]} style={{ width: '-webkit-fill-available' }} />
-      <Menu>
-        <GenericTooltip
-          text={`We are sorry, ${
-            pathname.includes('trade') ? 'Trade' : 'Farm'
-          } is currently unavailable in your location`}
-          tooltipMode={true}
-          active={!canConnect}
-        >
-          <Menu.Button
-            as={'button'}
-            css={[
-              tw`border-0 flex min-md:min-w-[143px] cursor-pointer relative bg-purple-1 text-white items-center
-              justify-center text-regular font-bold h-[35px] min-md:h-[30px] min-w-[122px] rounded-circle gap-1.75
-              px-[5px] py-[3.5px] min-md:py-[4px]
-              `,
-              !canConnect
-                ? tw`dark:bg-black-4 bg-grey-4 text-grey-1 dark:text-grey-2`
-                : connected
-                ? tw`bg-gradient-to-r from-blue-1 to-primary-gradient-2 justify-between`
-                : tw``
-            ].concat(customButtonStyle ?? [])}
-            disabled={!canConnect}
-            onClick={connected ? toggleOpen : handleConnect}
-          >
-            {connected && (
-              <div
-                css={[
-                  tw`flex items-center justify-center border-2 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`
-                ]}
+    <div className={cn(`relative inline-block text-left z-20 `, containerStyle)} ref={selfRef}>
+      <span className={'absolute -bottom-4 right-0 h-4 z-10 w-full'} style={{ width: '-webkit-fill-available' }} />
+      <DropdownMenu>
+        <Tooltip>
+          <DropdownMenuTrigger asChild>
+            <TooltipTrigger className={cn(customButtonStyle)}>
+              <Button
+                colorScheme={!connected ? 'purple' : 'primaryGradient'}
+                size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
+                disabled={!canConnect}
+                className={cn(`min-w-[129px] min-md:min-w-[143px] px-2.5 py-1.75`, customButtonStyle)}
+                onClick={() => !connected && handleConnect()}
               >
-                <img
-                  css={[
-                    breakpoint.isMobile || breakpoint.isTablet
-                      ? tw`h-[20px] w-[20px] rounded-lg`
-                      : tw`h-[14px] w-[14px] rounded-lg`
-                  ]}
-                  src={wallet?.adapter?.icon}
-                  alt={`${wallet?.adapter?.name}_icon`}
-                />
-              </div>
-            )}
-            {connectLabel}
-            {connected && (
+                {connected && (
+                  <div
+                    className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`}
+                  >
+                    <img
+                      className={cn(
+                        'h-[14px] w-[14px] rounded-lg',
+                        breakpoint.isMobile || breakpoint.isTablet ? 'h-[20px] w-[20px]' : ''
+                      )}
+                      src={wallet?.adapter?.icon}
+                      alt={`${wallet?.adapter?.name}_icon`}
+                    />
+                  </div>
+                )}
+                {connectLabel}
+                {connected && (
+                  <img
+                    style={{
+                      transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                      transition: 'transform 0.2s ease-in-out'
+                    }}
+                    src={`/img/mainnav/connect-chevron.svg`}
+                    alt={'connect-chevron'}
+                  />
+                )}
+              </Button>
+            </TooltipTrigger>
+          </DropdownMenuTrigger>
+          <TooltipContent hidden={canConnect}>
+            We are sorry, {pathname.includes('trade') ? 'Trade' : 'Farm'} is currently unavailable in your location
+          </TooltipContent>
+        </Tooltip>
+        {connected && (
+          <DropdownMenuContent className={cn('mt-3.75', customMenuListItemsContainerStyle)} portal={false}>
+            <DropdownMenuItem onClick={copyAddress} className={cn('group', customMenuListItemStyle)}>
+              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+                Copy Address
+              </p>
               <img
-                style={{
-                  transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
-                  transition: 'transform 0.2s ease-in-out'
-                }}
-                src={`/img/mainnav/connect-chevron.svg`}
-                alt={'connect-chevron'}
+                className={'block group-hover:hidden h-6 w-6 '}
+                src={`/img/mainnav/copy-${mode}.svg`}
+                alt={'copy'}
               />
-            )}
-          </Menu.Button>
-          <Transition
-            show={isOpen}
-            as={'div'}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-            beforeLeave={onClose}
-          >
-            <Menu.Items
-              static
-              style={{
-                transform: 'translateY(5px)'
-              }}
-              css={[
-                tw`w-full rounded-small border-1 border-solid border-grey-2 dark:border-grey-1
-          bg-white dark:bg-black-1 text-grey-1 dark:text-grey-2 text-tiny font-semibold origin-top
-          absolute gap-2 flex flex-col px-2 py-2 min-md:px-1.25
-          `
-              ].concat(customMenuListItemsContainerStyle ?? [])}
-            >
-              <Menu.Item
-                as={'div'}
-                css={[tw`flex justify-between cursor-pointer items-center`].concat(customMenuListItemStyle ?? [])}
-                onClick={copyAddress}
-                className={'group'}
-              >
-                <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
-                  Copy Address
-                </p>
-                <img
-                  css={[tw`block group-hover:hidden h-6 w-6 `]}
-                  src={`/img/mainnav/copy-${mode}.svg`}
-                  alt={'copy'}
-                />
-                <img
-                  css={[tw`hidden group-hover:block h-6 w-6`]}
-                  src={`/img/mainnav/copy-${mode}-active.svg`}
-                  alt={'copy'}
-                />
-              </Menu.Item>
-              <Menu.Item
-                as={'div'}
-                className={'group'}
-                css={[tw`flex justify-between cursor-pointer items-center `].concat(customMenuListItemStyle ?? [])}
-                onClick={handleWalletChange}
-              >
-                <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
-                  Change Wallet
-                </p>
-                <img
-                  css={[tw`block group-hover:hidden h-6 w-6`]}
-                  src={`/img/mainnav/changeWallet-${mode}.svg`}
-                  alt={'change address'}
-                />
-                <img
-                  css={[tw`hidden group-hover:block h-6 w-6`]}
-                  src={`/img/mainnav/changeWallet-${mode}-active.svg`}
-                  alt={'change address'}
-                />
-              </Menu.Item>
-              <Menu.Item
-                as={'div'}
-                className={'group'}
-                css={[tw`flex justify-between cursor-pointer items-center`].concat(customMenuListItemStyle ?? [])}
-                onClick={handleDisconnect}
-              >
-                <p css={[tw`mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2`]}>
-                  Disconnect
-                </p>
-                <img
-                  css={[tw`block group-hover:hidden h-6 w-6`]}
-                  src={`/img/mainnav/disconnect-${mode}.svg`}
-                  alt={'disconnect'}
-                />
-                <img
-                  css={[tw`hidden group-hover:block h-6 w-6`]}
-                  src={`/img/mainnav/disconnect-${mode}-active.svg`}
-                  alt={'disconnect'}
-                />
-              </Menu.Item>
-            </Menu.Items>
-          </Transition>
-        </GenericTooltip>
-      </Menu>
+              <img
+                className={'hidden group-hover:block h-6 w-6'}
+                src={`/img/mainnav/copy-${mode}-active.svg`}
+                alt={'copy'}
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleWalletChange} className={cn('group gap-2', customMenuListItemStyle)}>
+              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+                Change Wallet
+              </p>
+              <img
+                className={'block group-hover:hidden h-6 w-6'}
+                src={`/img/mainnav/changeWallet-${mode}.svg`}
+                alt={'change address'}
+              />
+              <img
+                className={'hidden group-hover:block h-6 w-6'}
+                src={`/img/mainnav/changeWallet-${mode}-active.svg`}
+                alt={'change address'}
+              />
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDisconnect} className={cn('group', customMenuListItemStyle)}>
+              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+                Disconnect
+              </p>
+              <img
+                className={'block group-hover:hidden h-6 w-6'}
+                src={`/img/mainnav/disconnect-${mode}.svg`}
+                alt={'disconnect'}
+              />
+              <img
+                className={'hidden group-hover:block h-6 w-6'}
+                src={`/img/mainnav/disconnect-${mode}-active.svg`}
+                alt={'disconnect'}
+              />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        )}
+      </DropdownMenu>
     </div>
   )
 }
