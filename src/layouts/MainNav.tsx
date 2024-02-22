@@ -104,12 +104,12 @@ const MobileNav: FC = () => {
   useEffect(() => setIsOpen(false), [pathname])
   useEffect(() => {
     switch (true) {
-      case pathname.includes('swap'):
+      case pathname.includes('bridge'):
         setCurrentPage({
           // animation: 'swap',
           // stateMachine: RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName,
-          text: 'Swap',
-          path: '/swap'
+          text: 'bridge',
+          path: '/bridge'
         })
         break
       case pathname.includes('trade'):
@@ -233,8 +233,8 @@ const MobileSettingsDrawer: FC<MobileSettingsDrawerProps> = ({
         <NavItem
           // animation={'swap'}
           // stateMachine={RIVE_ANIMATION.swap.stateMachines.SwapInteractions.stateMachineName}
-          text={'swap'}
-          path={'/swap'}
+          text={'bridge'}
+          path={'/bridge'}
         />
         <NavItem
           // animation={'dex'}
