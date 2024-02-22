@@ -16,6 +16,7 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
+const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const CryptoContent = lazy(() => import('./pages/TradeV3/TradeContainer'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
@@ -83,6 +84,9 @@ export const Router: FC = () => {
                                 <Swap />
                               </Route> 
                             */}
+                        <Route exact path="/bridge">
+                          <Bridge />
+                        </Route>
                         <Route path="/trade">
                           <PriceFeedProvider>
                             <OrderProvider>
