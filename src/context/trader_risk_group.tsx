@@ -763,7 +763,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       return response
     },
-    [traderRiskGroup, marketProductGroup]
+    [traderRiskGroup, marketProductGroup, traderInstanceSdk, perpProductInstanceSdk]
   )
 
   const closeTraderAccount = useCallback(async () => {
