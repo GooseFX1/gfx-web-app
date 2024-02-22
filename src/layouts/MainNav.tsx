@@ -115,45 +115,45 @@ const MobileNav: FC = () => {
             </DialogClose>
           </DialogHeader>
           <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/bridge')
+              }}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins`,
+                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+            >
+              <img
+                className="h-[40px]"
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              Bridge
+            </Button>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/farm')
+              }}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins`,
+                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+            >
+              <img
+                className="h-[40px]"
+                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              Farm
+            </Button>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
-              <Button
-                variant={'ghost'}
-                size={'sm'}
-                onClick={() => {
-                  setIsOpen.off()
-                  history.push('/bridge')
-                }}
-                className={cn(
-                  `text-center text-h3 font-semibold font-poppins`,
-                  pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                )}
-              >
-                <img
-                  className="h-[40px]"
-                  src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-                Bridge
-              </Button>
-              <Button
-                variant={'ghost'}
-                size={'sm'}
-                onClick={() => {
-                  setIsOpen.off()
-                  history.push('/farm')
-                }}
-                className={cn(
-                  `text-center text-h3 font-semibold font-poppins`,
-                  pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                )}
-              >
-                <img
-                  className="h-[40px]"
-                  src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-                Farm
-              </Button>
               <DropdownMenuTrigger asChild={true}>
                 <Button
                   variant={'ghost'}
@@ -215,21 +215,6 @@ const MobileNav: FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              variant={'ghost'}
-              size={'sm'}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/farm')
-              }}
-              className={cn(
-                `text-center text-h3 font-semibold `,
-                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-            >
-              <img src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`} alt="dark" />
-              Farm
-            </Button>
             <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button

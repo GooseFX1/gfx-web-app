@@ -62,13 +62,11 @@ export const More: FC = () => {
   return (
     <DropdownMenu onOpenChange={setIsActive.toggle}>
       <DropdownMenuTrigger>
-        <Button>
-          <Icon
-            key={`${mode}-more-button`}
-            src={`/img/mainnav/settings-${mode}-${isActive ? 'active' : 'inactive'}.svg`}
-            alt="more"
-          />
-        </Button>
+        <Icon
+          key={`${mode}-more-button`}
+          src={`/img/mainnav/settings-${mode}-${isActive ? 'active' : 'inactive'}.svg`}
+          alt="more"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent className={'flex flex-col gap-3.5 p-2.5 mt-3'} portal={false}>
         <DropdownMenuItem
