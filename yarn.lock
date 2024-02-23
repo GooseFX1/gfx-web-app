@@ -6077,7 +6077,7 @@ get-tsconfig@^4.5.0:
 
 "gfx-perp-sdk@git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented-devnet":
   version "1.2.1"
-  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#f05c6648798fd3640e26b6cb487679cf4e4407fd"
+  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#46c9c26f19c8716ae297a24b58c3dde010ce7903"
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     "@project-serum/borsh" "^0.2.5"
