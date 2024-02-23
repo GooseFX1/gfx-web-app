@@ -68,6 +68,7 @@ export const ActionModal: FC<{
   const elem = document.getElementById('farm-container')
 
   const handleUserAction = () => {
+    console.log('handle user action', actionType)
     if (actionType === 'deposit') handleDeposit()
     else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
     else handleClaim()
@@ -87,10 +88,7 @@ export const ActionModal: FC<{
       setDiffTimer((prev) => prev - 300)
     }, TIMER)
 
-    if (diffTimer === 0) {
-      clearTimeout(interval)
-      setActionModal(false)
-    }
+    if (diffTimer === 0) clearTimeout(interval)
 
     return () => clearInterval(interval)
   }, [diffTimer])
