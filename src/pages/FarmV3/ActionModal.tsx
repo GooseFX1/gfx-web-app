@@ -9,6 +9,9 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { Tooltip } from 'antd'
 
+//milliseconds in 5 minutes to be used to update the countdown every 5 minutes
+const TIMER = 300 * 1000
+
 const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content {
     ${tw`h-full dark:bg-black-2 bg-white rounded-bigger`}
@@ -75,21 +78,22 @@ export const ActionModal: FC<{
     const min = ((diffTimer - sec) / 60) % 60
     const hr = Math.floor(diffTimer / 3600)
     return (
-      <span tw="text-red-2 font-semibold text-tiny">
-        {`${hr}H:${min ? (min < 10 ? `0${min}` : min) : '00'}M:${sec ? (sec < 10 ? `0${sec}` : sec) : '00'}S`}
-      </span>
+      <span tw="text-red-2 font-semibold text-tiny">{`${hr}H:${min ? (min < 10 ? `0${min}` : min) : '00'}M`}</span>
     )
   }, [diffTimer])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDiffTimer((prev) => prev - 1)
-    }, 1000)
+    const interval = setTimeout(() => {
+      setDiffTimer((prev) => prev - 300)
+    }, TIMER)
 
-    if (diffTimer === 0) clearInterval(interval)
+    if (diffTimer === 0) {
+      clearTimeout(interval)
+      setActionModal(false)
+    }
 
     return () => clearInterval(interval)
-  }, [])
+  }, [diffTimer])
 
   const Content = useCallback(
     () => (
