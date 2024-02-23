@@ -91,20 +91,20 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     })()
   }, [connection, actionModal])
 
-  const calculateEarlyWithdrawalPenalty = (actionValue: string) => {
-    if (actionValue !== 'withdraw') return
+  const calculateEarlyWithdrawalPenalty = () => {
     const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt
     const slotDiff = new BN(currentSlot).sub(depositSlot)?.toNumber()
     //const slotDiff = 117000;
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
       const withdrawalFee = decayingFactor * +withdrawAmount
-      const diffInSeconds = slotDiff * 0.42
-      const countdownUI = Math.floor(86400 - diffInSeconds)
-      setDiffTimer(countdownUI)
+      const countdownUI = Math.floor((216000 - slotDiff) * 0.4)
+      const countDownFiveMin = Math.ceil(countdownUI / 300) * 300
+      setDiffTimer(countDownFiveMin)
       setEarlyWithdrawFee(withdrawalFee)
     } else {
       setEarlyWithdrawFee(0)
+      setDiffTimer(0)
     }
   }
 
@@ -198,17 +198,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
     return true
   }
 
-  // const goToTwitter = () => {
-  //   window.open('https://twitter.com/GooseFX1/status/1719447919437533535', '_blank')
-  // }
-
   const openActionModal = (actionValue: string) => {
     if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
-    calculateEarlyWithdrawalPenalty(actionValue)
     if (actionValue === 'deposit' && +depositAmount + liquidity > coin?.cappedDeposit) {
       notify(depositCapError(coin, liquidity))
       return
     }
+    if (actionValue === 'withdraw') calculateEarlyWithdrawalPenalty()
     setActionType(actionValue)
     setActionModal(true)
   }
