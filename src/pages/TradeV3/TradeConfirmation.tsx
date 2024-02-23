@@ -85,8 +85,8 @@ export const TradeConfirmation: FC<{ setVisibility: (bool: boolean) => any; take
       } else {
         await newOrder()
       }
-      setVisibility(false)
       setIsLoading.off()
+      setVisibility(false)
     } catch (error) {
       setVisibility(false)
       setIsLoading.off()

@@ -663,7 +663,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const newOrder = useCallback(async () => {
-    console.log(traderInstanceSdk, 'traderInstanceSdk 12')
     const newOrderParams = getNewOrderParams()
     const response = await newOrderIx(
       newOrderParams,
