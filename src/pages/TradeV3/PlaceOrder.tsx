@@ -29,6 +29,8 @@ import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
 import { DepositWithdraw } from './perps/DepositWithdraw'
+const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
+const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
 enum ButtonState {
   Connect = 0,
@@ -502,6 +504,9 @@ export const PlaceOrder: FC = () => {
   const { height } = useWindowSize()
   const [loading, setLoading] = useState<boolean>(false)
   const { blacklisted } = useConnectionConfig()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+
   //Take profit state:
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
@@ -511,6 +516,7 @@ export const PlaceOrder: FC = () => {
   const [profits, setProfits] = useState<any>(['', '', '', ''])
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const [tradeType, setTradeType] = useState<string>('deposit')
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
 
   const TAKE_PROFIT_ARRAY = [
     {
@@ -540,6 +546,10 @@ export const PlaceOrder: FC = () => {
           key: 3
         }
   ]
+
+  useEffect(() => {
+    setOrder((prevState) => ({ ...prevState, size: '' }))
+  }, [Number(traderInfo.currentLeverage).toFixed(1), publicKey])
 
   useEffect(() => {
     const obj = []
@@ -619,19 +629,29 @@ export const PlaceOrder: FC = () => {
       setSelectedTotal(null)
     }
   }
+  function isValidDecimal(input) {
+    const num = Number(input)
+    const scaled = num * 1000
+
+    if (scaled === Math.round(scaled)) {
+      return true
+    } else {
+      return false
+    }
+  }
 
   const numberCheck = (input: string, source: string) => {
     if (!isNaN(+input)) {
       setSelectedTotal(null)
       switch (source) {
         case 'size':
-          setOrder((prev) => ({ ...prev, size: input }))
+          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, size: input }))
           break
         case 'total':
-          setOrder((prev) => ({ ...prev, total: input }))
+          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, total: input }))
           break
         case 'price':
-          setOrder((prev) => ({ ...prev, price: input }))
+          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, price: input }))
           break
       }
     }
@@ -667,6 +687,14 @@ export const PlaceOrder: FC = () => {
     }
   }
 
+  useEffect(() => {
+    if (firstLoad && traderInfo.onChainPrice !== '0') {
+      setOrder((prev) => ({ ...prev, price: traderInfo.onChainPrice, size: '' }))
+      setFirstLoad(false)
+      handleSliderChange(0)
+    }
+  }, [traderInfo.onChainPrice, firstLoad])
+
   const handleSliderChange = async (e) => {
     if (!order.price || order.price === '0') {
       setFocused('price')
@@ -682,10 +710,15 @@ export const PlaceOrder: FC = () => {
     setFocused('size')
     const availLeverage = Number(traderInfo.availableLeverage)
     const maxQty = Number(traderInfo.maxQuantity)
-    const percentage2 = (newLev / availLeverage) * maxQty
+    const percentage1 = (newLev / availLeverage) * maxQty
+    const percentage2 = Number(percentage1.toFixed(3))
     if (newLev > availLeverage) return
-    if (percentage2 > 1) setOrder((prev) => ({ ...prev, size: Math.floor(percentage2) }))
-    else setOrder((prev) => ({ ...prev, size: percentage2 }))
+    if (isNaN(percentage2)) {
+      setOrder((prev) => ({ ...prev, size: 0 }))
+      return
+    }
+    if (percentage2 < maxQty) setOrder((prev) => ({ ...prev, size: percentage2 }))
+    // if (percentage2 > 1) setOrder((prev) => ({ ...prev, size: Math.floor(percentage2) }))
     //} else {
     //  const initLeverage = Number(traderInfo.currentLeverage)
     //  let newLev = newE - initLeverage
@@ -822,6 +855,7 @@ export const PlaceOrder: FC = () => {
   }
 
   const sliderValue = useMemo(() => {
+    if (!publicKey) return 0
     const initLeverage = Number(traderInfo.currentLeverage)
     const availLeverage = Number(traderInfo.availableLeverage)
     const qty = maxQtyNum
@@ -835,13 +869,23 @@ export const PlaceOrder: FC = () => {
     percentage = (Number(orderSize) / qty) * availLeverage
 
     //else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
+    if (isNaN(Number((initLeverage + percentage).toFixed(2)))) return 0
     return Number((initLeverage + percentage).toFixed(2))
     //return Number(initLeverage.toFixed(2))
-  }, [maxQtyNum, order.size])
+  }, [maxQtyNum, order.size, publicKey, traderInfo.currentLeverage, traderInfo.availableLeverage])
 
   const displayPair = useMemo(() => {
     return selectedCrypto.display
   }, [selectedCrypto.pair, selectedCrypto.type])
+
+  useEffect(() => {
+    // Check if the slider is at its maximum value
+    // Calculate adjusted size based on maximum quantity so that we get 2 decimal places
+    if (sliderValue > MAX_SLIDER_THRESHOLD) {
+      const adjustedSize = Math.floor(maxQtyNum * DECIMAL_ADJUSTMENT_FACTOR) / DECIMAL_ADJUSTMENT_FACTOR
+      setOrder((prevState) => ({ ...prevState, size: adjustedSize }))
+    }
+  }, [sliderValue, maxQtyNum])
 
   return (
     <WRAPPER>
@@ -987,7 +1031,7 @@ export const PlaceOrder: FC = () => {
                   onFocus={() => setFocused('size')}
                   maxLength={15}
                   onBlur={() => setFocused(undefined)}
-                  value={order.size ? order.size : ''}
+                  value={order.size ?? ''}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                 />
               </div>
