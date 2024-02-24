@@ -1,6 +1,7 @@
 import tw from 'twin.macro'
 
 export const LITEPAPER_ADDRESS = 'https://docs.goosefx.io'
+export const TERMS_OF_SERVICE = 'https://www.goosefx.io/terms'
 export const SOCIAL_MEDIAS: { [key: string]: string } = {
   discord: 'https://discord.gg/cDEPXpY26q',
   medium: 'https://medium.com/goosefx',

@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
@@ -10,16 +10,21 @@ import { claimAllSuccess, sslErrorMessage, genericErrMsg } from './constants'
 import { notify, truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
+import { TERMS_OF_SERVICE } from '../../constants'
 
 const STYLED_POPUP = styled(PopupCustom)`
   .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger`}
+    ${tw`h-full dark:bg-black-2 bg-white rounded-[10px]`}
   }
-  .ant-modal-close-x {
-    > img {
-      ${tw`sm:!h-4 sm:!w-4 absolute bottom-2 opacity-60`}
+
+  .ant-modal-close {
+    ${tw`right-[10px] top-[10px]`}
+
+    .ant-modal-close-x {
+      ${tw`!h-[18px] !w-[18px] sm:!h-4 sm:!w-4`}
     }
   }
+
   .ant-modal-body {
     ${tw`p-2.5 sm:p-[15px]`}
   }
@@ -68,7 +73,7 @@ export const AllClaimModal: FC<{
     }
   }
 
-  const Content = useCallback(
+  const Content = useMemo(
     () => (
       <div>
         {breakpoint.isMobile && (
@@ -81,8 +86,8 @@ export const AllClaimModal: FC<{
             <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
           </div>
         )}
-        <div tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75">Claim all yield</div>
-        <div tw="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-3.75">
+        <h5 tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5">Claim all yield</h5>
+        <div tw="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-4 font-sans">
           By claiming, you will get all pending yield available.
         </div>
         {rewardsArray &&
@@ -117,7 +122,7 @@ export const AllClaimModal: FC<{
         </div>
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By claiming, you agree to our{' '}
-          <a href="https://www.goosefx.io/terms" target={'_blank'} rel={'noreferrer'} className="tos">
+          <a href={TERMS_OF_SERVICE} target={'_blank'} rel={'noreferrer'} className="tos">
             Terms of Service
           </a>
           .
@@ -140,7 +145,7 @@ export const AllClaimModal: FC<{
       destroyOnClose={true}
       className={'gfx-drawer'}
     >
-      {Content()}
+      {Content}
     </Drawer>
   ) : (
     <STYLED_POPUP
@@ -153,7 +158,7 @@ export const AllClaimModal: FC<{
       onCancel={() => setAllClaimModal(false)}
       footer={null}
     >
-      {Content()}
+      {Content}
     </STYLED_POPUP>
   )
 }
