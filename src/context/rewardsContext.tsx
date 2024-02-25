@@ -353,7 +353,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-  }, [walletContext.publicKey, walletContext.wallet.adapter.publicKey, updateStakeDetails, stakeRewards])
+  }, [walletContext.publicKey, walletContext?.wallet?.adapter?.publicKey, updateStakeDetails, stakeRewards])
 
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
