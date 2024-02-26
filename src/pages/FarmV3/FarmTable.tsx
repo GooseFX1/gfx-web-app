@@ -120,7 +120,7 @@ const WRAPPER = styled.div`
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[85px] rounded-circle flex items-center justify-center text-white cursor-pointer 
-    ml-auto mr-3.75 p-[1.5px] sm:w-full sm:mt-3.75 sm:ml-0`};
+    ml-auto mr-3.75 sm:w-full sm:mt-3.75 sm:ml-0`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -391,7 +391,7 @@ export const FarmTable: FC = () => {
             {isClaimable && pubKey ? (
               <CLAIM onClick={() => setAllClaimModal(true)}>
                 <div
-                  tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
+                  tw="h-[33px] w-[83px] dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                 items-center justify-center dark:text-white text-black-4 text-regular font-bold"
                 >
                   Claim All
