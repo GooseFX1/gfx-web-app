@@ -28,7 +28,7 @@ const INFO_CARD = styled.div`
 // `
 
 const HEADER_WRAPPER = styled.div`
-  ${tw`flex flex-row relative mb-5 items-center`}
+  ${tw`flex flex-row relative mb-8 items-center`}
   overflow-x: scroll;
   ::-webkit-scrollbar {
     display: none;
