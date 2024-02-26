@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { ChoosePool } from './ChoosePool'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
-import { SkeletonCommon } from '../../components'
+//import { SkeletonCommon } from '../../components'
 import { checkMobile, truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
@@ -22,10 +22,10 @@ const INFO_CARD = styled.div`
     sm:justify-evenly sm:px-1 px-[7px]`}
 `
 
-const POOL_CARD = styled.div`
-  ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border border-solid dark:border-grey-2
-   border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
-`
+// const POOL_CARD = styled.div`
+//   ${tw`h-[97px] w-[24%] dark:bg-black-1 bg-grey-5 rounded-small border border-solid dark:border-grey-2
+//    border-grey-1 p-2.5 sm:w-[257px] sm:mr-3.75 flex-shrink-0`}
+// `
 
 const HEADER_WRAPPER = styled.div`
   ${tw`flex flex-row relative mb-5 items-center`}
@@ -37,19 +37,19 @@ const HEADER_WRAPPER = styled.div`
   scrollbar-width: none;
 `
 
-const POOL_CARD_WRAPPER = styled.div`
-  ${tw`flex flex-row justify-between mb-7 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
-  overflow-x: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+// const POOL_CARD_WRAPPER = styled.div`
+//   ${tw`flex flex-row justify-between mb-7 sm:my-3.5 sm:ml-[-10px] sm:pl-2.5`}
+//   overflow-x: scroll;
+//   ::-webkit-scrollbar {
+//     display: none;
+//   }
+//   -ms-overflow-style: none;
+//   scrollbar-width: none;
 
-  > span {
-    ${tw`w-full`}
-  }
-`
+//   > span {
+//     ${tw`w-full`}
+//   }
+// `
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
@@ -67,12 +67,12 @@ export const FarmHeader: FC = () => {
   const [poolSelectionModal, setPoolSelectionModal] = useState<boolean>(false)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
-  const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
-    const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
-    const apy = Number(sslTableData?.[tokenName]?.apy)
-    const apyObj = { ...data, apy: apy }
-    return apyObj
-  })
+  // const allPoolDataWithApy = allPoolSslData.map((data: SSLToken) => {
+  //   const tokenName = data?.token === 'SOL' ? 'WSOL' : data?.token
+  //   const apy = Number(sslTableData?.[tokenName]?.apy)
+  //   const apyObj = { ...data, apy: apy }
+  //   return apyObj
+  // })
 
   const getTooltipText = (index: number) => {
     let tooltipText = ''
@@ -301,7 +301,7 @@ export const FarmHeader: FC = () => {
           />
         </button>
       </HEADER_WRAPPER>
-      <div tw="flex flex-row items-center justify-between">
+      {/* <div tw="flex flex-row items-center justify-between">
         <div tw="flex flex-col">
           <h2 tw="dark:text-grey-5 text-lg font-semibold leading-3 text-black-4 mb-3.75 sm:mb-0 leading-[25px]">
             Top Single Asset Pools
@@ -361,7 +361,7 @@ export const FarmHeader: FC = () => {
                 style={checkMobile() && { marginRight: '15px' }}
               />
             ))}
-      </POOL_CARD_WRAPPER>
+          </POOL_CARD_WRAPPER> */}
     </>
   )
 }
