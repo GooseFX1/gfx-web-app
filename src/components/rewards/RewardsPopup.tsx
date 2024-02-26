@@ -21,14 +21,12 @@ export const RewardsButton: FC = () => {
   const breakpoint = useBreakPoint()
 
   const { hasRewards } = useRewards()
-
-  const riveComponent =
-    () => (
-      <div css={[tw`relative`]}>
-        <img
-          css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
-          src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
-        />
+  const riveComponent = (
+    <div css={[tw`relative`]}>
+      <img
+        css={[breakpoint.isMobile || breakpoint.isTablet ? tw`h-[30px] w-[32px]` : tw`h-[22px] w-[20px]`]}
+        src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
+      />
 
       {hasRewards && (
         <img

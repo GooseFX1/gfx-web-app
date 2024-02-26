@@ -16,8 +16,8 @@ import {
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
-const Bridge = lazy(() => import('./pages/Bridge'))
 
+const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
 const CryptoContent = lazy(() => import('./pages/TradeV3/TradeContainer'))
 const AnalyticsWrapper = lazy(() => import('./pages/Analytics/AnalyticsWrapper'))
@@ -28,6 +28,8 @@ const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
+import { RewardsProvider } from '@/context/rewardsContext'
+
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
 
