@@ -3,8 +3,8 @@ import { useRewardToggle } from '../../context/reward_toggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { CryptoProvider, useDarkMode } from '../../context'
-import useRewards, { RewardsProvider } from '../../context/rewardsContext'
+import { useDarkMode } from '../../context'
+import useRewards from '../../context/rewardsContext'
 // import PanelSelector from './RewardPanelSelector'
 // import AnimatedButtonGroup from "../twComponents/AnimatedButtonGroup";
 import Button from '../twComponents/Button'
@@ -21,8 +21,7 @@ export const RewardsButton: FC = () => {
   const { rewardToggle, changePanel } = useRewardToggle()
   const breakpoint = useBreakPoint()
 
-  const { hasRewards, claimable, unstakeableTickets } = useRewards()
-  console.log('REWARDS ICON', hasRewards, claimable, unstakeableTickets)
+  const { hasRewards } = useRewards()
   const riveComponent = (
     <div css={[tw`relative`]}>
       <img
@@ -74,34 +73,30 @@ export const RewardsPopup: FC = () => {
   const { rewardToggle } = useRewardToggle()
   const { panelIndex } = useRewardToggle()
   return (
-    <CryptoProvider>
-      <RewardsProvider>
-        <div
-          css={[
-            tw`mt-auto  min-md:min-h-[441px] w-full flex flex-row md:flex-col
+    <div
+      css={[
+        tw`mt-auto  min-md:min-h-[441px] w-full flex flex-row md:flex-col
            rounded-t-bigger max-h-[100dvh] bg-white dark:bg-black-2 relative
            rounded-t-[10px]
            [&>div:first-child]:min-md:rounded-tl-[10px] [&>div:first-child]:min-md:rounded-tr-[0px]
            [&>div:last-child]:min-md:rounded-tr-[10px]
            [& * p:not([data-tw*="mb-"])]:mb-0 
            `
-          ]}
-        >
-          <Button
-            onClick={() => rewardToggle(false)}
-            cssClasses={[
-              tw`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+      ]}
+    >
+      <Button
+        onClick={() => rewardToggle(false)}
+        cssClasses={[
+          tw`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
                    min-md:top-5`
-            ]}
-          >
-            <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
-          </Button>
-          {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
-          {panelIndex == REFER_PANEL_INDEX && <Refer />}
-          {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
-        </div>
-      </RewardsProvider>
-    </CryptoProvider>
+        ]}
+      >
+        <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
+      </Button>
+      {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
+      {panelIndex == REFER_PANEL_INDEX && <Refer />}
+      {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
+    </div>
   )
 }
 export default RewardsPopup

@@ -211,10 +211,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const [hasRewards, setHasRewards] = useState(false)
   const [userStakeRatio, setUserStakeRatio] = useState<number>(0)
-  const walletContext = useWallet()
-  const { network, connection } = useConnectionConfig()
+
   const [gofxValue, setGofxValue] = useState<number>(0)
   const [totalStakedGlobally, setTotalStakedGlobally] = useState<number>(0)
+  const walletContext = useWallet()
+  const { network, connection } = useConnectionConfig()
   const getNetwork = useCallback(
     () => (network == 'mainnet-beta' || network == 'testnet' ? 'MAINNET' : 'DEVNET'),
     [network]
@@ -224,9 +225,24 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
   const { on, off } = useSolSub()
+  const resetStakeRewards = useCallback(() => {
+    setStakePool(initialState.stakePool)
+    setGofxVault(initialState.gofxVault)
+    setUserMetaData(initialState.user.staking.userMetadata)
+    setClaimable(initialState.user.staking.claimable)
+    setTotalStaked(initialState.user.staking.totalStaked)
+    setTotalEarned(initialState.user.staking.totalEarned)
+    setUnstakeableTickets(initialState.user.staking.unstakeableTickets)
+    setActiveUnstakingTickets(initialState.user.staking.activeUnstakingTickets)
+    setHasRewards(false)
+    setUserStakeRatio(0)
+  }, [])
   useEffect(() => {
     const process = async () => {
-      if (!walletContext.publicKey || !stakeRewards) return
+      if (!walletContext.publicKey || !stakeRewards) {
+        resetStakeRewards()
+        return
+      }
       const [vault, userHoldingsAccount, userMetadata] = await Promise.all([
         stakeRewards.getGoFxVault(),
         stakeRewards.getUserRewardsHoldingAccount(walletContext.publicKey),
@@ -243,7 +259,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
     process()
-  }, [stakeRewards, walletContext.publicKey])
+  }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
   useEffect(() => {
     const gfxPoolId = 'gofx-pool-staking'
     const userMetadataId = 'user-metadata-staking'
@@ -302,8 +318,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [pubKeys, stakeRewards])
 
   useEffect(() => {
-    console.log(claimable, unstakeableTickets)
-    setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+    console.log('USE_E', claimable, unstakeableTickets)
+    const num = typeof claimable === 'number' ? claimable : Number(claimable)
+    setHasRewards(num > 0 || unstakeableTickets.length > 0)
   }, [claimable, unstakeableTickets])
   useEffect(() => {
     const s = stakeRewards
@@ -325,10 +342,12 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTotalStaked(newTotalStaked)
     setStakePool(data.stakePool)
     setGofxVault(data.gofxVault)
-    setHasRewards(data.unstakeableTickets.length > 0 || Number(data.claimable) > 0)
+    const num = typeof data.claimable === 'number' ? data.claimable : Number(data.claimable)
+    setHasRewards(data.unstakeableTickets.length > 0 || num > 0)
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
     setUserStakeRatio((Number(newTotalStaked) / gfxVaultVal) * 100)
+    // console.log("updateStakeDetails",claimable, data.unstakeableTickets.length)
   }, [stakeRewards, walletContext.publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
