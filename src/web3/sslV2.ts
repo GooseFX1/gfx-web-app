@@ -22,7 +22,7 @@ import {
   SSL_POOL_SIGNER_PREFIX
 } from '../web3'
 import { TxnReturn } from './stake'
-import { SSLToken, ADDRESSES } from '../pages/FarmV3/constants'
+import { SSLToken } from '../pages/FarmV3/constants'
 import { convertToNativeValue } from '../utils'
 export interface Account {
   /** Address of the account */
@@ -285,24 +285,37 @@ export const executeClaimRewards = async (
   }
 }
 
+const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLToken) => {
+  if (rewards && token) {
+    const reward = rewards[token?.mint?.toBase58()]?.toNumber() / Math.pow(10, token?.mintDecimals)
+    if (reward) return true
+    else return false
+  } else {
+    return false
+  }
+}
+
 export const executeAllPoolClaim = async (
   program: Program<Idl>,
   wallet: WalletContextState,
   connection: Connection,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  rewards: { [key: string]: PublicKey }[],
+  allPoolSslData: SSLToken[]
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
   const claimTX: Transaction = new Transaction()
 
-  for (let i = 0; i < ADDRESSES['mainnet-beta'].length; i++) {
-    const token = ADDRESSES['mainnet-beta'][i]
-    const tokenMintAddress = token?.address
+  for (let i = 0; i < allPoolSslData.length; i++) {
+    const token = allPoolSslData[i]
+    const tokenMintAddress = token?.mint
     const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
     const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
     const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
-    const isLiquidityAcc = await connection.getAccountInfo(liquidityAccountKey)
-    if (!isLiquidityAcc) continue
+    const claimableReward = isPendingRewards(rewards, token)
+
+    if (!claimableReward) continue
 
     const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
     const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)

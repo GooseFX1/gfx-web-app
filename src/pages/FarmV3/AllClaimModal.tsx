@@ -4,7 +4,7 @@ import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
 import { Drawer } from 'antd'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { useDarkMode, usePriceFeedFarm, useConnectionConfig } from '../../context'
+import { useDarkMode, usePriceFeedFarm, useConnectionConfig, useSSLContext } from '../../context'
 import { executeAllPoolClaim } from '../../web3'
 import { claimAllSuccess, sslErrorMessage, genericErrMsg } from './constants'
 import { notify, truncateBigNumber } from '../../utils'
@@ -46,6 +46,7 @@ export const AllClaimModal: FC<{
   const { SSLProgram } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { rewards, allPoolSslData } = useSSLContext()
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -55,7 +56,7 @@ export const AllClaimModal: FC<{
   const handleAllClaim = () => {
     try {
       setIsLoading(true)
-      executeAllPoolClaim(SSLProgram, wal, connection, pubKey).then((con) => {
+      executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData).then((con) => {
         const { confirm } = con
         setIsLoading(false)
         if (confirm && confirm?.value && confirm.value.err === null) {
