@@ -87,7 +87,7 @@ export const AllClaimModal: FC<{
             <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
           </div>
         )}
-        <h5 tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5">Claim all yield</h5>
+        <h5 tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5">Claim All Yield</h5>
         <div tw="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-4 font-sans">
           By claiming, you will get all pending yield available.
         </div>
