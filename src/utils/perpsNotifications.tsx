@@ -2,23 +2,11 @@
 import React, { FC, ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
+import { IntemediaryToast, OpenSolScanLink, OpenToastLink, cn } from 'gfx-component-lib'
+import { toast } from 'sonner'
 
 const CLOSE = styled.div`
   background-color: red;
-`
-
-const CONTENT_ICON = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 16px;
-  width: 16px;
-
-  > img {
-    height: inherit;
-    width: inherit;
-    object-fit: contain;
-  }
 `
 
 const MESSAGE = styled.div`
@@ -57,6 +45,11 @@ const TX_LINK = styled.a`
     color: white !important;
   }
 `
+
+interface SuccessResponse {
+  txid: string
+  slot: number
+}
 
 type IStyles = {
   [x: string]: string
@@ -132,4 +125,28 @@ export const perpsNotify = async ({
   //    notification.close(key)
   //  }, NOTIFICATION_TIMER)
   //  ;(notification as any)['info']()
+}
+
+export const perpsNotifyNew = async (promise: Promise<unknown>): Promise<void> => {
+  toast.promise(promise, {
+    loading: (
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'loading'} title={'Loading please wait...'}>
+        <p>Best things in life arrive for those who wait, your transaction is in progress...</p>
+      </IntemediaryToast>
+    ),
+    success: (response: SuccessResponse) => (
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'success'} title={'Horray!'}>
+        <p className={cn(`pt-1`)}>Your transaction was successful!</p>
+        <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
+      </IntemediaryToast>
+    ),
+    error: () => (
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'error'} title={'Unexpected Problem...'}>
+        <p>Please bear with us and try again.</p>
+        <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+          Contact Us
+        </OpenToastLink>
+      </IntemediaryToast>
+    )
+  })
 }
