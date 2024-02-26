@@ -301,6 +301,8 @@ export const executeAllPoolClaim = async (
     const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
     const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
     const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
+    const isLiquidityAcc = await connection.getAccountInfo(liquidityAccountKey)
+    if (!isLiquidityAcc) continue
 
     const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
     const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
@@ -332,7 +334,7 @@ export const executeAllPoolClaim = async (
     const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
-    console.log(error, 'claim rewards error\n', signature)
+    console.log(error, 'Error in claiming all rewards', signature)
     return { error, signature }
   }
 }
