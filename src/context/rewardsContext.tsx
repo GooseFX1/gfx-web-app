@@ -236,6 +236,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setActiveUnstakingTickets(initialState.user.staking.activeUnstakingTickets)
     setHasRewards(false)
     setUserStakeRatio(0)
+    console.log('calling reset')
   }, [])
   useEffect(() => {
     const process = async () => {
@@ -342,13 +343,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTotalStaked(newTotalStaked)
     setStakePool(data.stakePool)
     setGofxVault(data.gofxVault)
-    const num = typeof data.claimable === 'number' ? data.claimable : Number(data.claimable)
-    setHasRewards(data.unstakeableTickets.length > 0 || num > 0)
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
     setUserStakeRatio((Number(newTotalStaked) / gfxVaultVal) * 100)
-    // console.log("updateStakeDetails",claimable, data.unstakeableTickets.length)
-  }, [stakeRewards, walletContext.publicKey])
+  }, [stakeRewards, walletContext.publicKey, walletContext?.wallet?.adapter?.publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
       const res = await cg.coins.fetch('goosefx', {}).catch((err) => {
