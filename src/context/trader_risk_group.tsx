@@ -816,7 +816,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return null
       }
     },
-    [traderRiskGroup, marketProductGroup, wallet, traderInstanceSdk]
+    [traderRiskGroup, marketProductGroup, wallet, traderInstanceSdk, perpInstanceSdk, connection, isDevnet]
   )
 
   const withdrawFunds = useCallback(
