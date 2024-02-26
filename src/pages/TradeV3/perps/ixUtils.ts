@@ -35,24 +35,7 @@ export const newOrderIx = async (
     const instructions = []
     instructions.push(ix)
 
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'New Order',
-        description: 'Sign the transaction to place a new order!'
-      },
-      progressMessage: {
-        header: 'New Order',
-        description: 'Submitting new order on the network..'
-      },
-      endMessage: {
-        header: 'New Order',
-        description: 'New order successfully placed'
-      },
-      errorMessage: {
-        header: 'New Order',
-        description: 'There was an error in placing the order'
-      }
-    })
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     if (response && response.txid) {
       //  perpsNotify({
       //    action: 'close',
@@ -136,24 +119,7 @@ export const newTakeProfitOrderIx = async (
     })
   )
   try {
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'New Order',
-        description: 'Sign the transaction to place a new order!'
-      },
-      progressMessage: {
-        header: 'New Order',
-        description: 'Submitting new order on the network..'
-      },
-      endMessage: {
-        header: 'New Order',
-        description: 'New order successfully placed'
-      },
-      errorMessage: {
-        header: 'New Order',
-        description: 'There was an error in placeing the order'
-      }
-    })
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     return response
   } catch (e) {
     console.log(e)
@@ -172,24 +138,7 @@ export const cancelOrderIx = async (
     const instructions = []
     const ix = await traderInstanceSdk.cancelOrderIx(cancelOrderParams.orderId, productInstanceSdk)
     instructions.push(ix)
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'Cancel Order',
-        description: 'Sign the transaction to cancel the order!'
-      },
-      progressMessage: {
-        header: 'Cancel Order',
-        description: 'Cancelling order on the network..'
-      },
-      endMessage: {
-        header: 'Cancel Order',
-        description: 'Order cancelled'
-      },
-      errorMessage: {
-        header: 'Cancel Order',
-        description: 'There was an error in cancelling the order'
-      }
-    })
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     return response
   } catch (e) {
     console.log(e)
@@ -212,24 +161,7 @@ export const depositFundsIx = async (
     const ix = await traderInstanceSdk.depositFundsIx(depositFundsParams.quantity)
     const instructions = []
     instructions.push(ix)
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'Deposit funds',
-        description: 'Sign the transaction to deposit funds!'
-      },
-      progressMessage: {
-        header: 'Deposit funds',
-        description: 'Depositing funds to your account..'
-      },
-      endMessage: {
-        header: 'Deposit funds',
-        description: 'Funds successfully deposited'
-      },
-      errorMessage: {
-        header: 'Deposit funds',
-        description: 'There was an error in depositing the funds'
-      }
-    })
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     return response
   } catch (e) {
     //notify({
@@ -268,31 +200,13 @@ export const initTrgDepositIx = async (
     const response = await sendPerpsTransactions(
       connection,
       wallet,
-      buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction],
-      {
-        startMessage: {
-          header: 'Deposit funds',
-          description: 'Sign the transaction to deposit funds!'
-        },
-        progressMessage: {
-          header: 'Deposit funds',
-          description: 'Depositing funds to your account..'
-        },
-        endMessage: {
-          header: 'Deposit funds',
-          description: 'Funds successfully deposited'
-        },
-        errorMessage: {
-          header: 'Deposit funds',
-          description: 'There was an error in depositing the funds'
-        }
-      }
+      buddyTransaction && !isDevnet ? [transaction, buddyTransaction] : [transaction]
     )
 
     localStorage.removeItem('referrer')
 
     // Only return trgIx reponse
-    return response[0]
+    return response[0] ?? response
   } catch (e) {
     console.log(e)
   }
@@ -309,24 +223,7 @@ export const withdrawFundsIx = async (
     const ix = await traderInstanceSdk.withdrawFundsIx(withdrawFundsParams.quantity)
     instructions.push(ix)
 
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'Withdraw funds',
-        description: 'Sign the transaction to withdraw funds!'
-      },
-      progressMessage: {
-        header: 'Withdraw funds',
-        description: 'Withdrawing funds to your account..'
-      },
-      endMessage: {
-        header: 'Withdraw funds',
-        description: 'Funds successfully withdrawn'
-      },
-      errorMessage: {
-        header: 'Withdraw funds',
-        description: 'There was an error in withdrawing the funds'
-      }
-    })
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     //if (response && response.txid) {
     //  notify({
     //    message: 'Funds withdrawn Successfully!'
@@ -347,26 +244,7 @@ export const closeTraderAccountIx = async (wallet: any, connection: Connection, 
     const instructions = []
     const ix = await traderInstanceSdk.closetrgIx()
     instructions.push(ix)
-
-    const response = await sendPerpsTransaction(connection, wallet, instructions, [], {
-      startMessage: {
-        header: 'Close Trader Account',
-        description: 'Sign the transaction to Close Trader Account!'
-      },
-      progressMessage: {
-        header: 'Close Trader Account',
-        description: 'Closing Trader Account..'
-      },
-      endMessage: {
-        header: 'Close Trader Account',
-        description: 'Trader Account closed successfully'
-      },
-      errorMessage: {
-        header: 'Close Trader Account',
-        description: 'There was an error in Closing Trader Account'
-      }
-    })
-
+    const response = await sendPerpsTransaction(connection, wallet, instructions, [])
     return response
   } catch (e) {
     console.log(e)

@@ -12,7 +12,7 @@ import {
 } from '@solana/web3.js'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { perpsNotify } from '../utils/perpsNotifications'
+import { perpsNotify, perpsNotifyNew } from '../utils/perpsNotifications'
 import { confirmTransaction } from './index'
 
 interface BlockhashAndFeeCalculator {
@@ -117,43 +117,13 @@ export const sendPerpsTransaction = async (
   connection: Connection,
   wallet: WalletContextState,
   instructions: TransactionInstruction[] | Transaction,
-  signers: Keypair[],
-  messages?: {
-    startMessage?: {
-      header: string
-      description: string
-    }
-    endMessage?: {
-      header: string
-      description: string
-    }
-    progressMessage?: {
-      header: string
-      description: string
-    }
-    errorMessage?: {
-      header: string
-      description: string
-    }
-  }
+  signers: Keypair[]
 ): Promise<{ txid: string; slot: number }> => {
   const commitment: Commitment = 'processed',
     includesFeePayer = false
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
   let transaction: Transaction
-  const key = Math.floor(Math.random() * 100).toString()
-
-  if (messages && messages.startMessage) {
-    perpsNotify({
-      message: messages.startMessage.header,
-      description: messages.startMessage.description,
-      action: 'open',
-      key,
-      styles: {},
-      duration: 120
-    })
-  }
   if (instructions instanceof Transaction) {
     transaction = instructions
   } else {
@@ -179,54 +149,40 @@ export const sendPerpsTransaction = async (
     //}
   }
 
-  try {
-    const signature = await wallet.wallet.adapter.sendTransaction(transaction, connection)
-    console.log('signature: ', signature)
-    if (messages && messages.progressMessage) {
-      perpsNotify({
-        message: messages.progressMessage.header,
-        description: messages.progressMessage.description,
-        action: 'open',
-        key,
-        styles: {},
-        duration: 60
-      })
-    }
-    const response = await confirmTransaction(connection, signature, 'processed')
-    const slot = 0
-    if (response.value.err !== null) {
-      perpsNotify({
-        message: messages.errorMessage.header,
-        description: messages.errorMessage.description,
-        action: 'close',
-        key,
-        styles: {}
-      })
-      throw new Error('Timed out awaiting confirmation on transaction')
-    }
+  const executeOperation = async (): Promise<{ txid: string; slot: number }> => {
+    try {
+      const signature = await wallet.wallet.adapter.sendTransaction(transaction, connection)
+      console.log('signature: ', signature)
+      const response = await confirmTransaction(connection, signature, 'processed')
 
-    if (messages && messages.endMessage) {
-      perpsNotify({
-        message: messages.endMessage.header,
-        description: messages.endMessage.description,
-        action: 'close',
-        key,
-        styles: {}
-      })
+      if (response.value.err !== null) {
+        throw new Error(`Transaction failed: ${signature}`)
+      }
+      return { txid: signature, slot: response.value?.slot || 0 }
+    } catch (err) {
+      console.error('error: ', err)
+      throw new Error(`Timed out awaiting confirmation on transaction: ${err.message || err}`)
     }
-    return { txid: signature, slot }
+  }
+
+  try {
+    let txid = ''
+    const promise = new Promise((resolve, reject) => {
+      executeOperation()
+        .then((res) => {
+          txid = res.txid
+          resolve(res)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+    perpsNotifyNew(promise)
+    await promise
+
+    return { txid: txid, slot: 1 }
   } catch (e) {
     console.log('error: ', e)
-    perpsNotify({
-      message: messages.errorMessage.header,
-      description: messages.errorMessage.description,
-      action: 'close',
-      key,
-      duration: 3,
-      styles: {
-        backgroundColor: '#F24244'
-      }
-    })
     return null
   }
 }
@@ -258,122 +214,76 @@ export const buildTransaction = async (
 export const sendPerpsTransactions = async (
   connection: Connection,
   wallet: WalletContextState,
-  transactions: Transaction[],
-  messages?: {
-    startMessage?: {
-      header: string
-      description: string
-    }
-    endMessage?: {
-      header: string
-      description: string
-    }
-    progressMessage?: {
-      header: string
-      description: string
-    }
-    errorMessage?: {
-      header: string
-      description: string
-    }
-  }
+  transactions: Transaction[]
 ): Promise<{ txid: string; slot: number }[]> => {
   const commitment: Commitment = 'processed',
     awaitConfirmation = true
   if (!wallet.publicKey) throw new WalletNotConnectedError()
 
-  const key = Math.floor(Math.random() * 100).toString()
-
-  if (messages && messages.startMessage) {
-    perpsNotify({
-      message: messages.startMessage.header,
-      description: messages.startMessage.description,
-      action: 'open',
-      key,
-      styles: {}
-    })
-  }
-
-  const builtTxs = []
-  for (const transaction of transactions) {
-    builtTxs.push(transaction)
-  }
-
-  const signedTxs = await wallet.signAllTransactions(builtTxs)
-
-  const sentTxs = []
-  for (const transaction of signedTxs) {
-    const rawTransaction = transaction.serialize()
-    const options = {
-      skipPreflight: true,
-      commitment
+  const executeSignOperation = async () => {
+    const builtTxs = []
+    for (const transaction of transactions) {
+      builtTxs.push(transaction)
     }
-    sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
-  }
 
-  const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
-    txid: id,
-    slot: 0
-  }))
+    const signedTxs = await wallet.signAllTransactions(builtTxs)
 
-  for (const [key, response] of ixResponse.entries()) {
-    if (awaitConfirmation) {
-      if (messages && messages.progressMessage) {
-        perpsNotify({
-          message: messages.progressMessage.header,
-          description: messages.progressMessage.description,
-          action: 'open',
-          key,
-          styles: {}
-        })
+    const sentTxs = []
+    for (const transaction of signedTxs) {
+      const rawTransaction = transaction.serialize()
+      const options = {
+        skipPreflight: true,
+        commitment
       }
-      const confirmation = await confirmTransaction(connection, response.txid, 'processed')
+      sentTxs.push(connection.sendRawTransaction(rawTransaction, options))
+    }
 
-      if (!confirmation) {
-        console.log('in error notifier')
-        perpsNotify({
-          message: messages.errorMessage.header,
-          description: messages.errorMessage.description,
-          action: 'close',
-          key,
-          styles: {}
-        })
-        throw new Error('Timed out awaiting confirmation on transaction')
-      }
-      ixResponse[key] = {
-        ...ixResponse[key],
-        slot: confirmation?.slot || 0
-      }
+    const ixResponse = (await Promise.all(sentTxs)).map((id) => ({
+      txid: id,
+      slot: 0
+    }))
 
-      if (confirmation?.err) {
-        const errors = await getErrorForTransaction(connection, response.txid)
+    for (const [key, response] of ixResponse.entries()) {
+      if (awaitConfirmation) {
+        const confirmation = await confirmTransaction(connection, response.txid, 'processed')
 
-        console.log(errors)
-        if (messages && messages.errorMessage) {
-          perpsNotify({
-            message: messages.errorMessage.header,
-            description: messages.errorMessage.description,
-            action: 'close',
-            key,
-            styles: {}
-          })
+        if (!confirmation) {
+          console.log('in error notifier')
+          throw new Error('Timed out awaiting confirmation on transaction')
         }
-        throw new Error(`Raw transaction ${response.txid} failed`)
+        ixResponse[key] = {
+          ...ixResponse[key],
+          slot: confirmation?.slot || 0
+        }
+
+        if (confirmation?.err) {
+          const errors = await getErrorForTransaction(connection, response.txid)
+          console.log(errors)
+          throw new Error(`Raw transaction ${response.txid} failed`)
+        }
       }
     }
+    return ixResponse
   }
-
-  if (messages && messages.endMessage) {
-    perpsNotify({
-      message: messages.endMessage.header,
-      description: messages.endMessage.description,
-      action: 'close',
-      key,
-      styles: {}
+  try {
+    let ixResponse
+    const promise = new Promise((resolve, reject) => {
+      executeSignOperation()
+        .then((res) => {
+          ixResponse = res
+          resolve(res[0])
+        })
+        .catch((err) => {
+          reject(err)
+        })
     })
+    perpsNotifyNew(promise)
+    await promise
+    return ixResponse
+  } catch (e) {
+    console.log('error: ', e)
+    return null
   }
-
-  return ixResponse
 }
 
 async function simulateTransaction(

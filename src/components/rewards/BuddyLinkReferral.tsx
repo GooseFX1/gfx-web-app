@@ -58,7 +58,7 @@ const BuddyLinkReferral: FC = () => {
         transaction.add(...(await createRandomBuddy('')))
 
         //await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
-        const res = await sendPerpsTransaction(connection, wal, transaction, [], null)
+        const res = await sendPerpsTransaction(connection, wal, transaction, [])
         console.log('res: ', res)
         notify({
           message: Notification(
