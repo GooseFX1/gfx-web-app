@@ -135,7 +135,7 @@ export const perpsNotifyNew = async (promise: Promise<unknown>): Promise<void> =
       </IntemediaryToast>
     ),
     success: (response: SuccessResponse) => (
-      <IntemediaryToast className={cn(`w-[290px]`)} stage={'success'} title={'Horray!'}>
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'success'} title={'Hooray!'}>
         <p className={cn(`pt-1`)}>Your transaction was successful!</p>
         <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
       </IntemediaryToast>
