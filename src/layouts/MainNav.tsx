@@ -68,9 +68,7 @@ export const MainNav: FC = () => {
 
         <DesktopNav />
         <div css={[tw`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`]}>
-          <RewardsProvider>
-            <RewardsButton />
-          </RewardsProvider>
+          <RewardsButton />
           <Connect />
           {/* <NotificationButton /> */}
           <More />
