@@ -12,7 +12,6 @@ import useClickOutside from '../hooks/useClickOutside'
 import { Menu, Transition } from '@headlessui/react'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
-import { RewardsProvider } from '../context/rewardsContext'
 import { CircularArrow } from '../components/common/Arrow'
 
 // import { RIVE_ANIMATION } from '../constants'
