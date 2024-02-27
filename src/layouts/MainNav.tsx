@@ -23,11 +23,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon
+  Icon,
+  cn,
+  Dialog
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
-import { cn } from 'gfx-component-lib'
-import { Dialog } from 'gfx-component-lib'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
