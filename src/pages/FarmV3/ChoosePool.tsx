@@ -36,7 +36,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
   }
   .next-btn {
     ${tw`text-regular font-semibold cursor-pointer bg-black-4 
-      w-[150px] h-9 rounded-half bottom-[-2px] text-regular font-semibold sm:bottom-3
+      w-[150px] h-9 rounded-half bottom-[-2px] text-regular font-semibold
         cursor-pointer z-10 !flex flex-row justify-center items-center absolute sm:w-2/5`}
     right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 76px)' : '10px')};
     background: ${({ currentSlide, userAnswer, mode }) =>
@@ -220,7 +220,7 @@ export const ChoosePool: FC<{
   }
 
   //If user selects 2 or more answer for a specific pool type (True case of above function)
-  //then toggle to that pool else toggle to stable
+  //then toggle to that pool else toggle to stable & show none case
   const calculateUserRisk = () => {
     if (checkUserSelection('stable')) {
       setUserSelection('stable')
@@ -232,7 +232,7 @@ export const ChoosePool: FC<{
       setUserSelection('hyper')
       setUserPool(poolType.hyper)
     } else {
-      setUserSelection('stable')
+      setUserSelection('none')
       setUserPool(poolType.stable)
     }
   }
@@ -422,10 +422,16 @@ export const ChoosePool: FC<{
           {isError && <Error />}
         </div>
         <div className="slide">
-          <h2>Our Recommendation</h2>
+          <h2>{userSelection === 'none' ? 'No Recommendation' : 'Our Recommendation'}</h2>
           <img
             src={`/img/assets/${
-              userSelection === 'stable' ? 'Stable' : userSelection === 'hyper' ? 'Hyper' : 'Primary'
+              userSelection === 'stable'
+                ? 'Stable'
+                : userSelection === 'hyper'
+                ? 'Hyper'
+                : userSelection === 'primary'
+                ? 'Primary'
+                : 'none'
             }_pool_choose_${mode}.svg`}
             alt="choose-pool"
             tw="mx-auto"
@@ -446,13 +452,17 @@ export const ChoosePool: FC<{
                 <div tw="text-tiny font-medium dark:text-grey-2 text-grey-1">*Not financial advice</div>
               )}
             </div>
-          ) : (
+          ) : userSelection === 'hyper' ? (
             <div className="subText">
               <span tw="text-purple-3">Hyper Pools</span> are the ideal choice for you, <br /> with stable returns
               and balanced risk.
               {checkMobile() && (
                 <div tw="text-tiny font-medium dark:text-grey-2 text-grey-1">*Not financial advice</div>
               )}
+            </div>
+          ) : (
+            <div className="subText">
+              Oops, currently we could not find any recommendation based on you selection. Please try again.
             </div>
           )}
           <div
