@@ -317,11 +317,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
+          console.log('withdraw successfull', confirm)
           notify(sslSuccessfulMessage('withdrawn', String(amount), coin?.token, walletName))
           setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
+          console.log('withdraw is not successfull', confirm)
           off(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
