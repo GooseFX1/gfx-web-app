@@ -120,8 +120,14 @@ const WRAPPER = styled.div`
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[85px] rounded-circle flex items-center justify-center text-white cursor-pointer 
-    ml-auto mr-3.75 sm:w-full sm:mt-3.75 sm:ml-0`};
+    ml-auto mr-3.75 sm:w-[22%] sm:m-0`};
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
+
+  .claim-inner {
+    ${tw`h-[33px] dark:bg-black-2 bg-white rounded-circle flex items-center 
+    justify-center dark:text-white text-black-4 text-tiny font-bold`}
+    width: calc(100% - 2px);
+  }
 `
 
 // const STATS = styled.div`
@@ -315,21 +321,30 @@ export const FarmTable: FC = () => {
           rewardsArray={claimableRewardArray}
         />
       )}
-      <div tw="flex flex-row items-center mb-3.75 sm:pr-4">
-        <img
-          src={`/img/assets/${pool.name}_pools_${mode}.svg`}
-          alt="pool-icon"
-          tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
-        />
-        <div tw="flex flex-col">
-          <h2
-            tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize 
-            sm:text-average sm:mb-0 sm:leading-[22px]"
-          >
-            {pool.name} Pools
-          </h2>
-          <p tw="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">{pool.desc}</p>
+      <div tw="flex flex-row justify-between items-center mb-3.75 sm:pr-4">
+        <div tw="flex flex-row items-center">
+          <img
+            src={`/img/assets/${pool.name}_pools_${mode}.svg`}
+            alt="pool-icon"
+            tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
+          />
+          <div tw="flex flex-col">
+            <h2
+              tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize
+              sm:text-average sm:mb-0 sm:leading-[22px]"
+            >
+              {pool.name} Pools
+            </h2>
+            <p tw="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">{pool.desc}</p>
+          </div>
         </div>
+        {checkMobile() && isClaimable && pubKey ? (
+          <CLAIM onClick={() => setAllClaimModal(true)}>
+            <div className="claim-inner">Claim All</div>
+          </CLAIM>
+        ) : (
+          <></>
+        )}
       </div>
       <div tw="flex items-center">
         <div tw="flex cursor-pointer relative sm:w-full">

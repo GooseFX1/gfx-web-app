@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
 import { SSLToken } from './constants'
-import { commafy, truncateBigNumber } from '../../utils'
+import { checkMobile, commafy, truncateBigNumber } from '../../utils'
 import { Drawer } from 'antd'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
@@ -26,9 +26,6 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .tooltipIcon {
     ${tw`h-4 w-4 max-w-none ml-0`}
-  }
-  .tos {
-    ${tw`text-tiny font-semibold underline dark:text-white text-blue-1`}
   }
 `
 
@@ -106,16 +103,16 @@ export const ActionModal: FC<{
             <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
           </div>
         )}
-        <div tw="dark:text-grey-5 text-grey-1 text-lg font-semibold mb-3.75 text-center sm:text-average">
+        <div tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 sm:text-average">
           {actionType === 'withdraw' ? (
-            <div>Are you sure you want to {breakpoint.isMobile && <br />} withdraw?</div>
+            <div>Withdraw</div>
           ) : actionType === 'deposit' ? (
-            <div>Deposit {token?.token} </div>
+            <div>Deposit </div>
           ) : (
-            <div>Claim {token?.token}</div>
+            <div>Claim</div>
           )}
         </div>
-        <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold text-center mb-3 sm:text-tiny">
+        <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">
           {actionType === 'withdraw' ? (
             <div>By withdrawing, you will claim any pending yield available.</div>
           ) : actionType === 'deposit' ? (
@@ -158,7 +155,7 @@ export const ActionModal: FC<{
                     {getTimerCountdown} to avoid paying the fee.
                   </span>
                 }
-                placement="rightBottom"
+                placement={checkMobile() ? 'leftBottom' : 'rightBottom'}
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >
@@ -206,7 +203,12 @@ export const ActionModal: FC<{
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
           you agree to our{' '}
-          <a href="https://www.goosefx.io/terms" target={'_blank'} rel={'noreferrer'} className="tos">
+          <a
+            href="https://www.goosefx.io/terms"
+            target={'_blank'}
+            rel={'noreferrer'}
+            tw="text-tiny font-semibold underline dark:text-white text-blue-1"
+          >
             Terms of Service
           </a>
           .

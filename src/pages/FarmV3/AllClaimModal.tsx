@@ -123,7 +123,12 @@ export const AllClaimModal: FC<{
         </div>
         <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By claiming, you agree to our{' '}
-          <a href={TERMS_OF_SERVICE} target={'_blank'} rel={'noreferrer'} className="tos">
+          <a
+            href={TERMS_OF_SERVICE}
+            tw="text-tiny font-semibold underline dark:text-white text-blue-1"
+            target={'_blank'}
+            rel={'noreferrer'}
+          >
             Terms of Service
           </a>
           .

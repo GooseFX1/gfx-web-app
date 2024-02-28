@@ -276,23 +276,28 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    if (filteredLiquidityAccounts && !isEmpty(filteredLiquidityAccounts) && sslData && sslData.length) {
+    if (
+      allPoolFilteredLiquidityAcc &&
+      !isEmpty(allPoolFilteredLiquidityAcc) &&
+      allPoolSslData &&
+      allPoolSslData.length
+    ) {
       const tempRewards = {}
-      for (let i = 0; i < sslData.length; i++) {
-        const mint = sslData[i]?.mint?.toBase58()
-        const liqForMint = filteredLiquidityAccounts[mint]
-        if (!filteredLiquidityAccounts[mint]) {
+      for (let i = 0; i < allPoolSslData.length; i++) {
+        const mint = allPoolSslData[i]?.mint?.toBase58()
+        const liqForMint = allPoolFilteredLiquidityAcc[mint]
+        if (!allPoolFilteredLiquidityAcc[mint]) {
           tempRewards[mint] = null
         } else {
-          const diff = sslData[i].totalAccumulatedLpReward.sub(liqForMint.lastObservedTap)
+          const diff = allPoolSslData[i].totalAccumulatedLpReward.sub(liqForMint.lastObservedTap)
           const numerator = diff.mul(liqForMint.amountDeposited)
-          const answer = numerator.div(sslData[i].totalLiquidityDeposits)
+          const answer = numerator.div(allPoolSslData[i].totalLiquidityDeposits)
           tempRewards[mint] = answer
         }
       }
       setRewards(tempRewards)
     } else setRewards({})
-  }, [filteredLiquidityAccounts])
+  }, [allPoolFilteredLiquidityAcc])
 
   //Call API to get ssl table data. Need to run only once
   useEffect(() => {
