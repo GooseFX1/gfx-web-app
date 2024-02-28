@@ -88,63 +88,63 @@ export const Router: FC = () => {
                                 <Swap />
                               </Route> 
                             */}
-                        <Route exact path="/bridge">
-                          <Bridge />
-                        </Route>
-                        <Route path="/trade">
-                          <PriceFeedProvider>
-                            <OrderProvider>
-                              <TraderProvider>
-                                <OrderBookProvider>
-                                  <CryptoContent />
-                                </OrderBookProvider>
-                              </TraderProvider>
-                            </OrderProvider>
-                          </PriceFeedProvider>
-                        </Route>
-                        <Route exact path="/leaderboard">
-                          <StatsProvider>
-                            <LeaderBoard />
-                          </StatsProvider>
-                        </Route>
-                        <Route exact path={['/farm', '/farm/temp-withdraw']}>
-                          <PriceFeedFarmProvider>
-                            <Farm />
-                          </PriceFeedFarmProvider>
-                        </Route>
-                        <Route exact path="/analytics">
-                          <AnalyticsWrapper />
-                        </Route>
-                        <Route exact path="/analytics/trade">
-                          <TradeAnalyticsWrapper />
-                        </Route>
-                        <Route exact path="/analytics/ssl">
-                          <SSLAnalyticsDashboard />
-                        </Route>
-                        <Route exact path="/analytics/ssl/pairdata">
-                          <PriceFeedFarmProvider>
-                            <CoinGeckoPairs />
-                          </PriceFeedFarmProvider>
-                        </Route>
-                        <Route exact path="/account">
-                          <PriceFeedProvider>
-                            <OrderProvider>
-                              <TraderProvider>
-                                <OrderBookProvider>
-                                  <Account />
-                                </OrderBookProvider>
-                              </TraderProvider>
-                            </OrderProvider>
-                          </PriceFeedProvider>
-                        </Route>
-                        <Route>
-                          <GenericNotFound />
-                        </Route>
-                      </Switch>
-                    </Suspense>
-                  )}
-                </AppLayout>
-              </RewardsProvider>
+                          <Route exact path="/bridge">
+                            <Bridge />
+                          </Route>
+                          <Route path="/trade">
+                            <PriceFeedProvider>
+                              <OrderProvider>
+                                <TraderProvider>
+                                  <OrderBookProvider>
+                                    <CryptoContent />
+                                  </OrderBookProvider>
+                                </TraderProvider>
+                              </OrderProvider>
+                            </PriceFeedProvider>
+                          </Route>
+                          <Route exact path="/leaderboard">
+                            <StatsProvider>
+                              <LeaderBoard />
+                            </StatsProvider>
+                          </Route>
+                          <Route exact path={['/farm', '/farm/temp-withdraw']}>
+                            <PriceFeedFarmProvider>
+                              <Farm />
+                            </PriceFeedFarmProvider>
+                          </Route>
+                          <Route exact path="/analytics">
+                            <AnalyticsWrapper />
+                          </Route>
+                          <Route exact path="/analytics/trade">
+                            <TradeAnalyticsWrapper />
+                          </Route>
+                          <Route exact path="/analytics/ssl">
+                            <SSLAnalyticsDashboard />
+                          </Route>
+                          <Route exact path="/analytics/ssl/pairdata">
+                            <PriceFeedFarmProvider>
+                              <CoinGeckoPairs />
+                            </PriceFeedFarmProvider>
+                          </Route>
+                          <Route exact path="/account">
+                            <PriceFeedProvider>
+                              <OrderProvider>
+                                <TraderProvider>
+                                  <OrderBookProvider>
+                                    <Account />
+                                  </OrderBookProvider>
+                                </TraderProvider>
+                              </OrderProvider>
+                            </PriceFeedProvider>
+                          </Route>
+                          <Route>
+                            <GenericNotFound />
+                          </Route>
+                        </Switch>
+                      </Suspense>
+                    )}
+                  </AppLayout>
+                </RewardsProvider>
               </NavCollapseProvider>
             </CryptoProvider>
           </RewardToggleProvider>
