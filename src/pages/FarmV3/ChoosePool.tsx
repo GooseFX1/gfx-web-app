@@ -35,7 +35,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
     }
   }
   .next-btn {
-    ${tw`text-regular font-semibold cursor-pointer bg-black-4 
+    ${tw`text-regular font-semibold cursor-pointer bg-black-4 sm:bottom-3
       w-[150px] h-9 rounded-half bottom-[-2px] text-regular font-semibold
         cursor-pointer z-10 !flex flex-row justify-center items-center absolute sm:w-2/5`}
     right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 76px)' : '10px')};
