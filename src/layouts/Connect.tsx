@@ -17,8 +17,10 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  cn
+  cn,
+  Icon
 } from 'gfx-component-lib'
+import useWalletBalance from '@/hooks/useWalletBalance'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -38,6 +40,7 @@ export const Connect: FC<MenuItemProps> = ({
   const [isOpen, setIsOpen] = useState(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
+  const { balance } = useWalletBalance()
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
@@ -157,10 +160,29 @@ export const Connect: FC<MenuItemProps> = ({
         </Tooltip>
         {connected && (
           <DropdownMenuContent className={cn('mt-3.75', customMenuListItemsContainerStyle)} portal={false}>
-            <DropdownMenuItem onClick={copyAddress} className={cn('group', customMenuListItemStyle)}>
-              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
-                Copy Address
-              </p>
+            <div
+              className={cn(`flex flex-row gap-2 items-center border-b border-solid pb-2 mb-2
+              border-border-darkmode-primary
+            `)}
+            >
+              <div
+                className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`}
+              >
+                <Icon size={'sm'} src={wallet?.adapter?.icon} />
+              </div>
+              <div>
+                <h4>~ {balance.sol.uiAmountString} SOL</h4>
+                <p className={'text-b3 cursor-pointer'} onClick={copyAddress}>
+                  {base58PublicKey && truncateAddress(base58PublicKey, 5)}
+                </p>
+              </div>
+            </div>
+
+            <DropdownMenuItem
+              onClick={copyAddress}
+              className={cn('group gap-2 cursor-pointer', customMenuListItemStyle)}
+            >
               <img
                 className={'block group-hover:hidden h-6 w-6 '}
                 src={`/img/mainnav/copy-${mode}.svg`}
@@ -171,11 +193,23 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/copy-${mode}-active.svg`}
                 alt={'copy'}
               />
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleWalletChange} className={cn('group gap-2', customMenuListItemStyle)}>
               <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
-                Change Wallet
+                Copy Address
               </p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={copyAddress}
+              className={cn('group gap-2 cursor-pointer', customMenuListItemStyle)}
+            >
+              <Icon className={'h-6 w-6'} src={`/img/assets/solscan.png`} alt={'solscan'} />
+              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+                View Solscan
+              </p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleWalletChange}
+              className={cn('group gap-2 cursor-pointer', customMenuListItemStyle)}
+            >
               <img
                 className={'block group-hover:hidden h-6 w-6'}
                 src={`/img/mainnav/changeWallet-${mode}.svg`}
@@ -186,11 +220,14 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/changeWallet-${mode}-active.svg`}
                 alt={'change address'}
               />
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDisconnect} className={cn('group', customMenuListItemStyle)}>
               <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
-                Disconnect
+                Change Wallet
               </p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDisconnect}
+              className={cn('group gap-2 cursor-pointer', customMenuListItemStyle)}
+            >
               <img
                 className={'block group-hover:hidden h-6 w-6'}
                 src={`/img/mainnav/disconnect-${mode}.svg`}
@@ -201,6 +238,9 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/disconnect-${mode}-active.svg`}
                 alt={'disconnect'}
               />
+              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+                Disconnect
+              </p>
             </DropdownMenuItem>
           </DropdownMenuContent>
         )}
