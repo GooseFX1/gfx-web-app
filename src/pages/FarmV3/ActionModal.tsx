@@ -155,7 +155,7 @@ export const ActionModal: FC<{
                     {getTimerCountdown} to avoid paying the fee.
                   </span>
                 }
-                placement={checkMobile() ? 'leftBottom' : 'rightBottom'}
+                placement={checkMobile() ? 'topRight' : 'rightBottom'}
                 overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
                 overlayInnerStyle={{ borderRadius: '8px' }}
               >

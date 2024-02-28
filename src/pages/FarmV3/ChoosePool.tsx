@@ -207,6 +207,21 @@ export const ChoosePool: FC<{
     }
   }
 
+  const handleClick = () => {
+    if (userSelection !== 'none') {
+      setPoolSelectionModal(false)
+      setPool(userPool)
+      setTimeout(() => setIsFirstPoolOpen(true), 500)
+    } else {
+      sliderRef.current.slickGoTo(0)
+      setUserAnswer({
+        answerOne: null,
+        answerTwo: null,
+        answerThree: null
+      })
+    }
+  }
+
   //If 2 or more answers are for a specific pool type then return true else false
   const checkUserSelection = (value: string): boolean => {
     if (
@@ -465,15 +480,8 @@ export const ChoosePool: FC<{
               Oops, currently we could not find any recommendation based on you selection. Please try again.
             </div>
           )}
-          <div
-            className="cta"
-            onClick={() => {
-              setPoolSelectionModal(false)
-              setPool(userPool)
-              setTimeout(() => setIsFirstPoolOpen(true), 500)
-            }}
-          >
-            Start Earning
+          <div className="cta" onClick={handleClick}>
+            {userSelection === 'none' ? 'Try again' : 'Start Earning'}
           </div>
         </div>
       </Slider>
