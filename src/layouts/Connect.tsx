@@ -110,19 +110,27 @@ export const Connect: FC<MenuItemProps> = ({
   const handleConnect = useCallback(() => {
     setWalletModalVisible(true)
   }, [])
+  const openSolScan = useCallback(() => {
+    window.open(`https://solscan.io/account/${base58PublicKey}`, '_blank')
+  }, [publicKey])
   // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
-    <div className={cn(`relative inline-block text-left z-20 `, containerStyle)} ref={selfRef}>
-      <span className={'absolute -bottom-4 right-0 h-4 z-10 w-full'} style={{ width: '-webkit-fill-available' }} />
+    <div
+      className={cn(`relative inline-block text-left z-20 focus-visible:outline-none`, containerStyle)}
+      ref={selfRef}
+    >
       <DropdownMenu>
         <Tooltip>
-          <DropdownMenuTrigger asChild>
-            <TooltipTrigger className={cn(customButtonStyle)}>
+          <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+            <TooltipTrigger className={cn('focus-visible:outline-none', customButtonStyle)}>
               <Button
                 colorScheme={!connected ? 'purple' : 'primaryGradient'}
                 size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
                 disabled={!canConnect}
-                className={cn(`min-w-[129px] min-md:min-w-[143px] px-2.5 py-1.75`, customButtonStyle)}
+                className={cn(
+                  `min-w-[129px] min-md:min-w-[143px] px-2.5 py-1.75 focus-visible:outline-none`,
+                  customButtonStyle
+                )}
                 onClick={() => !connected && handleConnect()}
               >
                 {connected && (
@@ -172,8 +180,20 @@ export const Connect: FC<MenuItemProps> = ({
                 <Icon size={'sm'} src={wallet?.adapter?.icon} />
               </div>
               <div>
-                <h4>~ {balance.sol.uiAmountString} SOL</h4>
-                <p className={'text-b3 cursor-pointer'} onClick={copyAddress}>
+                <h4
+                  className={`
+                  text-text-lightmode-primary dark:text-text-darkmode-primary font-semibold
+                `}
+                >
+                  ~ {balance.sol.uiAmountString} SOL
+                </h4>
+                <p
+                  className={`
+                text-b3 cursor-pointer text-text-lightmode-tertiary dark:text-text-darkmode-tertiary font-semibold
+    
+                `}
+                  onClick={copyAddress}
+                >
                   {base58PublicKey && truncateAddress(base58PublicKey, 5)}
                 </p>
               </div>
@@ -193,16 +213,24 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/copy-${mode}-active.svg`}
                 alt={'copy'}
               />
-              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+              <p
+                className={
+                  'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2 font-bold'
+                }
+              >
                 Copy Address
               </p>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={copyAddress}
+              onClick={openSolScan}
               className={cn('group gap-2 cursor-pointer', customMenuListItemStyle)}
             >
               <Icon className={'h-6 w-6'} src={`/img/assets/solscan.png`} alt={'solscan'} />
-              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+              <p
+                className={
+                  'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2 font-bold'
+                }
+              >
                 View Solscan
               </p>
             </DropdownMenuItem>
@@ -220,7 +248,11 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/changeWallet-${mode}-active.svg`}
                 alt={'change address'}
               />
-              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+              <p
+                className={
+                  'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2 font-bold'
+                }
+              >
                 Change Wallet
               </p>
             </DropdownMenuItem>
@@ -238,7 +270,11 @@ export const Connect: FC<MenuItemProps> = ({
                 src={`/img/mainnav/disconnect-${mode}-active.svg`}
                 alt={'disconnect'}
               />
-              <p className={'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2'}>
+              <p
+                className={
+                  'mb-0 w-full break-words group-hover:text-black-4 group-hover:dark:text-grey-2 font-bold'
+                }
+              >
                 Disconnect
               </p>
             </DropdownMenuItem>
