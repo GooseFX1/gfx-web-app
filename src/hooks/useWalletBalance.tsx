@@ -37,8 +37,7 @@ const initialState: InitalState = {
 
 function useWalletBalance(): UseWalletBalanceReturn {
   const { wallet } = useWallet()
-  const { adapter = null } = wallet
-  const { publicKey = null } = adapter
+  const publicKey = wallet?.adapter?.publicKey
   const { network, connection } = useConnectionConfig()
   const { on, off } = useSolSub()
   const [balance, setBalance] = useState<InitalState>(initialState)
