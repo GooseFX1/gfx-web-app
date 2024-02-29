@@ -19,7 +19,7 @@ export const RewardsButton: FC = () => {
 
   const { hasRewards } = useRewards()
 
-  const riveComponent = () => (
+  const riveComponent = (
     <div css={[tw`relative`]}>
       <img
         className={cn(breakpoint.isMobile || breakpoint.isTablet ? `h-[30px] w-[32px]` : `h-[22px] w-[20px]`)}
@@ -35,6 +35,7 @@ export const RewardsButton: FC = () => {
       )}
     </div>
   )
+
   const handleClick = useCallback(() => {
     rewardToggle(true)
     changePanel(REWARD_PANEL_INDEX)
