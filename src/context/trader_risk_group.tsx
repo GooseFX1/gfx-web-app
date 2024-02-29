@@ -548,6 +548,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (!currentTRG || !wallet.connected || !isCurrentTabActive) return
     const id = 'user-trader-wallet-balance'
+    console.log('opening web socket logger for test')
     on({
       SubType: SubType.AccountChange,
       id,
@@ -559,6 +560,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
     setTimeout(() => {
       setIsCurrentTabActive(false)
+      console.log('as this page is not active closing web socket logger for test')
       off(id)
     }, 15 * ONE_MINUTE)
 
