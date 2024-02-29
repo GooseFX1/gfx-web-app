@@ -74,6 +74,7 @@ import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
 const ONE_MINUTE = 1000 * 60
 import { Perp, Product, Trader } from 'gfx-perp-sdk'
+import useMousePosition from '../hooks/useMousePosition.tsx'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -225,6 +226,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [traderInstanceSdk, setTraderInstanceSdk] = useState<Trader>(null)
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
+  const mousePosition = useMousePosition()
+  const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 
   const { order, setOrder } = useOrder()
   const { isDevnet } = useCrypto()
@@ -265,6 +268,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       name: 'Crypto.USDC/USD'
     })
   }
+
+  useEffect(() => {
+    setIsCurrentTabActive(true)
+  }, [mousePosition.x, mousePosition.y])
 
   const perpsWasm = useCallback(async () => {
     const wasm = await import('perps-wasm')
@@ -510,7 +517,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentMPG, connection])
 
   useEffect(() => {
-    if (!currentMPG || !wallet.connected) return
+    if (!currentMPG || !wallet.connected || !isCurrentTabActive) return
     const id = 'market-product-group'
     on({
       SubType: SubType.AccountChange,
@@ -522,13 +529,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       publicKey: currentMPG
     })
     setTimeout(() => {
+      setIsCurrentTabActive(false)
       off(id)
     }, 15 * ONE_MINUTE)
     return () => {
       off(id)
       return undefined
     }
-  }, [currentMPG, wallet.connected])
+  }, [currentMPG, wallet.connected, isCurrentTabActive])
 
   useEffect(() => {
     ;(async () => {
@@ -539,7 +547,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentTRG])
 
   useEffect(() => {
-    if (!currentTRG || !wallet.connected) return
+    if (!currentTRG || !wallet.connected || !isCurrentTabActive) return
     const id = 'user-trader-wallet-balance'
     on({
       SubType: SubType.AccountChange,
@@ -551,6 +559,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       publicKey: currentTRG
     })
     setTimeout(() => {
+      setIsCurrentTabActive(false)
       off(id)
     }, 15 * ONE_MINUTE)
 
@@ -558,7 +567,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       off(id)
       return undefined
     }
-  }, [currentTRG, wallet.connected])
+  }, [currentTRG, wallet.connected, isCurrentTabActive])
 
   const fetchTrgAcc = async () => {
     const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
