@@ -117,7 +117,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: [
       { find: /^~/, replacement: '' },
-      { find: /^@\//, replacement: '/src' }
+      { find: /^@\//, replacement: '/src/' }
     ]
   }
 }))

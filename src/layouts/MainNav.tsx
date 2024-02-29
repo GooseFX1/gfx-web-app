@@ -10,7 +10,6 @@ import { Connect } from './Connect'
 import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
-import { RewardsProvider } from '../context/rewardsContext'
 import { CircularArrow } from '../components/common/Arrow'
 import {
   Button,
@@ -24,11 +23,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Icon
+  Icon,
+  cn,
+  Dialog
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
-import { cn } from 'gfx-component-lib'
-import { Dialog } from 'gfx-component-lib'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -48,11 +47,8 @@ export const MainNav: FC = () => {
 
   return (
     <div
-      css={[
-        tw`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
-        fixed top-0 z-[998] h-[56px]
-       `
-      ]}
+      className={`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
+        fixed top-0 z-[998] h-[56px]`}
     >
       {rewardModal && (
         <ModalSlide
@@ -62,24 +58,19 @@ export const MainNav: FC = () => {
         />
       )}
       <div
-        css={[
-          tw`h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
-        relative
-        `
-        ]}
+        className={`h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
+        relative`}
       >
-        <div css={[tw`flex items-center gap-1.5 absolute cursor-pointer`]} onClick={navigateHome}>
-          <img css={breakpoint.isMobile ? [tw`h-[28px]`] : [tw`h-[22px]`]} src={`/img/mainnav/Icon.svg`} />
+        <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
+          <img css={cn(breakpoint.isMobile ? 'h-[28[x' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img css={[tw`h-[15px]`]} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
         </div>
 
         <DesktopNav />
-        <div css={[tw`flex items-center gap-2 absolute right-0 mr-2.5`]}>
-          <RewardsProvider>
-            <RewardsButton />
-          </RewardsProvider>
+        <div className={`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0`}>
+          <RewardsButton />
           <Connect />
           {/* <NotificationButton /> */}
           <More />
@@ -109,7 +100,7 @@ const MobileNav: FC = () => {
     <>
       <Dialog open={isOpen}>
         <DialogTrigger onClick={setIsOpen.on}>
-          <img css={[tw`h-[35px]`]} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
+          <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
         <DialogContent fullScreen={true} className={'z-[999]'}>
           <DialogHeader>
@@ -118,45 +109,45 @@ const MobileNav: FC = () => {
             </DialogClose>
           </DialogHeader>
           <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/bridge')
+              }}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins`,
+                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+            >
+              <img
+                className="h-[40px]"
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              Bridge
+            </Button>
+            <Button
+              variant={'ghost'}
+              size={'sm'}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/farm')
+              }}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins`,
+                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+            >
+              <img
+                className="h-[40px]"
+                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              Farm
+            </Button>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
-              <Button
-                variant={'ghost'}
-                size={'sm'}
-                onClick={() => {
-                  setIsOpen.off()
-                  history.push('/bridge')
-                }}
-                className={cn(
-                  `text-center text-h3 font-semibold font-poppins`,
-                  pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                )}
-              >
-                <img
-                  className="h-[40px]"
-                  src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-                Bridge
-              </Button>
-              <Button
-                variant={'ghost'}
-                size={'sm'}
-                onClick={() => {
-                  setIsOpen.off()
-                  history.push('/farm')
-                }}
-                className={cn(
-                  `text-center text-h3 font-semibold font-poppins`,
-                  pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                )}
-              >
-                <img
-                  className="h-[40px]"
-                  src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-                Farm
-              </Button>
               <DropdownMenuTrigger asChild={true}>
                 <Button
                   variant={'ghost'}
@@ -283,7 +274,7 @@ const DesktopNav: FC = () => {
   const tradeActive =
     pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
   return (
-    <div css={[tw`flex items-center gap-6 mx-auto`]}>
+    <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
         onClick={() => history.push('/bridge')}
@@ -324,7 +315,7 @@ const DesktopNav: FC = () => {
               tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
-            <span css={[tw`inline-flex justify-center items-center`]}>
+            <span className={`inline-flex justify-center items-center`}>
               <img
                 className="h-[26px] mb-0.5"
                 src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
@@ -375,7 +366,7 @@ const DesktopNav: FC = () => {
               pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
-            <span css={[tw`inline-flex justify-center items-center`]}>
+            <span className={`inline-flex justify-center items-center`}>
               <img
                 className="h-[26px] mb-0.5"
                 src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}

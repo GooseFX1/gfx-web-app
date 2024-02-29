@@ -224,7 +224,24 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
   const { on, off } = useSolSub()
+  const resetStakeRewards = useCallback(() => {
+    setStakePool(initialState.stakePool)
+    setGofxVault(initialState.gofxVault)
+    setUserMetaData(initialState.user.staking.userMetadata)
+    setClaimable(initialState.user.staking.claimable)
+    setTotalStaked(initialState.user.staking.totalStaked)
+    setTotalEarned(initialState.user.staking.totalEarned)
+    setUnstakeableTickets(initialState.user.staking.unstakeableTickets)
+    setActiveUnstakingTickets(initialState.user.staking.activeUnstakingTickets)
+    setHasRewards(false)
+    setUserStakeRatio(0)
+    console.log('calling reset')
+  }, [])
   useEffect(() => {
+    if (!walletContext.publicKey || !stakeRewards) {
+      resetStakeRewards()
+      return
+    }
     const process = async () => {
       if (!walletContext.publicKey || !stakeRewards) return
       const [vault, userHoldingsAccount, userMetadata] = await Promise.all([
@@ -243,7 +260,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
     process()
-  }, [stakeRewards, walletContext.publicKey])
+  }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
   useEffect(() => {
     const gfxPoolId = 'gofx-pool-staking'
     const userMetadataId = 'user-metadata-staking'
@@ -303,7 +320,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     console.log(claimable, unstakeableTickets)
-    setHasRewards(Number(claimable) > 0 || unstakeableTickets.length > 0)
+    const num = typeof claimable === 'number' ? claimable : Number(claimable)
+    setHasRewards(num > 0 || unstakeableTickets.length > 0)
   }, [claimable, unstakeableTickets])
   useEffect(() => {
     const s = stakeRewards
@@ -329,7 +347,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
     setUserStakeRatio((Number(newTotalStaked) / gfxVaultVal) * 100)
-  }, [stakeRewards, walletContext.publicKey])
+  }, [stakeRewards, walletContext.publicKey, walletContext?.wallet?.adapter?.publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
       const res = await cg.coins.fetch('goosefx', {}).catch((err) => {
@@ -353,8 +371,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateStakeDetails().catch((err) => {
       console.warn('fetch-all-reward-data-failed', err)
     })
-  }, [walletContext.publicKey, updateStakeDetails, stakeRewards])
-
+  }, [walletContext.publicKey, walletContext?.wallet?.adapter?.publicKey, updateStakeDetails, stakeRewards])
   const checkForUserAccount = useCallback(
     async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
       if (!stakeRewards) {
