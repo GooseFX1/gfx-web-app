@@ -29,9 +29,10 @@ import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
-import useSolSub, { SubType } from '../hooks/useSolSub'
+import { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
+import useSolSubActivity from '@/hooks/useSolSubActivity'
 
 const cg = new CoinGecko()
 
@@ -223,7 +224,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
-  const { on, off } = useSolSub()
+
   const resetStakeRewards = useCallback(() => {
     setStakePool(initialState.stakePool)
     setGofxVault(initialState.gofxVault)
@@ -261,62 +262,47 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     process()
   }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
-  useEffect(() => {
-    const gfxPoolId = 'gofx-pool-staking'
-    const userMetadataId = 'user-metadata-staking'
-    const usdcId = 'usdc-claimable-staking'
-    if (pubKeys.gofxVault) {
-      on({
-        SubType: SubType.AccountChange,
-        id: gfxPoolId,
-        publicKey: pubKeys.gofxVault,
-        callback: async () => {
-          const t = await stakeRewards.getGoFxVault()
-          console.log('goFxVault changed', t)
-          if (!t) return
-          const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
-          setTotalStakedGlobally(gfxVaultVal)
-          setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
-          setGofxVault(t)
-        }
-      })
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'gofx-pool-staking',
+    publicKey: pubKeys.gofxVault,
+    callback: async () => {
+      const t = await stakeRewards.getGoFxVault()
+      console.log('goFxVault changed', t)
+      if (!t) return
+      const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
+      setTotalStakedGlobally(gfxVaultVal)
+      setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
+      setGofxVault(t)
     }
-    if (pubKeys.userMetadata) {
-      on({
-        SubType: SubType.AccountChange,
-        id: userMetadataId,
-        publicKey: pubKeys.userMetadata,
-        callback: async () => {
-          const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
-          const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
-          setUserMetaData(newUserMetaData)
-          setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
-          setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
-          setUnstakeableTickets(newUnstakaebleTicekts)
-          setActiveUnstakingTickets(
-            newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
-          )
-          console.log('user meta data update', newUserMetaData)
-        }
-      })
+  })
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'user-metadata-staking',
+    publicKey: pubKeys.userMetadata,
+    callback: async () => {
+      const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+      const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
+      setUserMetaData(newUserMetaData)
+      setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
+      setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
+      setUnstakeableTickets(newUnstakaebleTicekts)
+      setActiveUnstakingTickets(
+        newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+      )
+      console.log('user meta data update', newUserMetaData)
     }
-    if (pubKeys.userHoldingsAccount) {
-      on({
-        SubType: SubType.AccountChange,
-        id: usdcId,
-        publicKey: pubKeys.userHoldingsAccount,
-        callback: async () => {
-          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
-          setClaimable(Number(newClaimable))
-          console.log('FOUND NEW CLAIMABLE')
-        }
-      })
+  })
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'usdc-claimable-staking',
+    publicKey: pubKeys.userHoldingsAccount,
+    callback: async () => {
+      const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+      setClaimable(Number(newClaimable))
+      console.log('FOUND NEW CLAIMABLE')
     }
-    return () => {
-      off([gfxPoolId, userMetadataId, usdcId])
-      return undefined
-    }
-  }, [pubKeys, stakeRewards])
+  })
 
   useEffect(() => {
     console.log(claimable, unstakeableTickets)

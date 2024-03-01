@@ -1,12 +1,13 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useEffect, useState } from 'react'
-import useSolSub, { SubType } from '@/hooks/useSolSub'
+import { SubType } from '@/hooks/useSolSub'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import { useConnectionConfig } from '@/context'
 import { TokenAmount } from '@solana/web3.js'
+import useSolSubActivity from '@/hooks/useSolSubActivity'
 
 type InitalState = Record<string, TokenAmount>
 
@@ -39,96 +40,67 @@ function useWalletBalance(): UseWalletBalanceReturn {
   const { wallet } = useWallet()
   const publicKey = wallet?.adapter?.publicKey
   const { network, connection } = useConnectionConfig()
-  const { on, off } = useSolSub()
   const [balance, setBalance] = useState<InitalState>(initialState)
-
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'user-gofx-balance',
+    callback: async () => {
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+      const [address] = findProgramAddressSync(
+        [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+      const balance = await connection.getTokenAccountBalance(address, 'confirmed')
+      setBalance((prev) => ({ ...prev, gofx: balance.value }))
+    },
+    pubKeyRetrieval: () => {
+      if (!publicKey) return null
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+      const [address] = findProgramAddressSync(
+        [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+      return address
+    }
+  })
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'user-usdc-balance',
+    callback: async () => {
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+      const [address] = findProgramAddressSync(
+        [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), rewardAddresses[currentNetwork].USDC_MINT.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+      const balance = await connection.getTokenAccountBalance(address, 'confirmed')
+      setBalance((prev) => ({ ...prev, usdc: balance.value }))
+    },
+    pubKeyRetrieval: () => {
+      if (!publicKey) return null
+      const currentNetwork =
+        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
+      const [address] = findProgramAddressSync(
+        [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), rewardAddresses[currentNetwork].USDC_MINT.toBuffer()],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+      return address
+    }
+  })
+  useSolSubActivity({
+    SubType: SubType.AccountChange,
+    id: 'user-sol-balance',
+    callback: async () => {
+      const balance = await connection.getBalance(publicKey, 'confirmed')
+      setBalance((prev) => ({ ...prev, sol: formatSolBalance(balance) }))
+    },
+    pubKeyRetrieval: () => publicKey
+  })
   useEffect(() => {
     if (!publicKey) return
     getInitialBalance()
-    // subs
-    const gofxId = 'user-gofx-balance'
-    on({
-      SubType: SubType.AccountChange,
-      id: gofxId,
-      callback: async () => {
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        const balance = await connection.getTokenAccountBalance(address, 'confirmed')
-        setBalance((prev) => ({ ...prev, gofx: balance.value }))
-      },
-      pubKeyRetrieval: () => {
-        if (!publicKey) return null
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        return address
-      }
-    })
-    const usdcId = 'user-usdc-balance'
-    on({
-      SubType: SubType.AccountChange,
-      id: usdcId,
-      callback: async () => {
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].USDC_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        const balance = await connection.getTokenAccountBalance(address, 'confirmed')
-        setBalance((prev) => ({ ...prev, usdc: balance.value }))
-      },
-      pubKeyRetrieval: () => {
-        if (!publicKey) return null
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].USDC_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        return address
-      }
-    })
-
-    const solId = 'user-sol-balance'
-    on({
-      SubType: SubType.AccountChange,
-      id: solId,
-      callback: async () => {
-        const balance = await connection.getBalance(publicKey, 'confirmed')
-        setBalance((prev) => ({ ...prev, sol: formatSolBalance(balance) }))
-      },
-      pubKeyRetrieval: () => publicKey
-    })
-    return () => {
-      off(gofxId)
-      off(usdcId)
-      off(solId)
-      return
-    }
   }, [connection, network, publicKey])
   function formatSolBalance(balance: number) {
     return {
