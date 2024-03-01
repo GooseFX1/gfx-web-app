@@ -78,14 +78,14 @@ export const Router: FC = () => {
             <CryptoProvider>
               <NavCollapseProvider>
                 <RewardsProvider>
-                <AppLayout>
-                  <Toaster />
-                  {isUnderMaintenance ? (
-                    <Maintenance />
-                  ) : (
-                    <Suspense fallback={<PageLoader />}>
-                      <Switch>
-                        {/* 
+                  <AppLayout>
+                    <Toaster />
+                    {isUnderMaintenance ? (
+                      <Maintenance />
+                    ) : (
+                      <Suspense fallback={<PageLoader />}>
+                        <Switch>
+                          {/* 
                               <Route exact path="/swap/:tradePair?">
                                 <Swap />
                               </Route> 
