@@ -121,8 +121,7 @@ export const Connect: FC<MenuItemProps> = ({
         </p>
       </div>,
       {
-        id: 'copyAddress',
-        duration: 9000000
+        id: 'copyAddress'
       }
     )
     onClose()
