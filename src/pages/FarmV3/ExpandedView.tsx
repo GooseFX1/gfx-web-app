@@ -200,7 +200,9 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
 
   const openActionModal = (actionValue: string) => {
     if (actionValue === 'deposit' && window.location.pathname === '/farm/temp-withdraw') return
-    if (actionValue === 'deposit' && +depositAmount + liquidity > coin?.cappedDeposit) {
+    const depositAmountInUSD =
+      prices[getPriceObject(coin?.token)]?.current && prices[getPriceObject(coin?.token)]?.current * +depositAmount
+    if (actionValue === 'deposit' && depositAmountInUSD + liquidity > coin?.cappedDeposit) {
       notify(depositCapError(coin, liquidity))
       return
     }
@@ -317,13 +319,11 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         setOperationPending(false)
         const { confirm } = con
         if (confirm && confirm?.value && confirm.value.err === null) {
-          console.log('withdraw successfull', confirm)
           notify(sslSuccessfulMessage('withdrawn', String(amount), coin?.token, walletName))
           setTimeout(() => setWithdrawAmount('0'), 500)
           setActionModal(false)
           setIsTxnSuccessfull(true)
         } else {
-          console.log('withdraw is not successfull', confirm)
           off(connectionId)
           notify(sslErrorMessage())
           setIsTxnSuccessfull(false)
