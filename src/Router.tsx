@@ -28,6 +28,7 @@ const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 import { TraderProvider } from './context/trader_risk_group'
 import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
+import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
@@ -78,12 +79,13 @@ export const Router: FC = () => {
               <NavCollapseProvider>
                 <RewardsProvider>
                   <AppLayout>
+                    <Toaster />
                     {isUnderMaintenance ? (
                       <Maintenance />
                     ) : (
                       <Suspense fallback={<PageLoader />}>
                         <Switch>
-                          {/*
+                          {/* 
                               <Route exact path="/swap/:tradePair?">
                                 <Swap />
                               </Route> 

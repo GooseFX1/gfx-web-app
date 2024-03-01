@@ -62,7 +62,7 @@ export const MainNav: FC = () => {
         relative`}
       >
         <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
-          <img css={cn(breakpoint.isMobile ? 'h-[28[x' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
+          <img className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
             <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
