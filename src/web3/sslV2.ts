@@ -197,8 +197,6 @@ export const executeWithdraw = async (
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
-  console.log('withdrawing', walletPublicKey.toBase58(), amountInNative)
-
   const withdrawTX: Transaction = new Transaction()
 
   const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
@@ -228,8 +226,8 @@ export const executeWithdraw = async (
   }
   let signature
   try {
-    signature = await wallet.sendTransaction(withdrawTX, connection, { skipPreflight: true })
-    console.log('signature of withdraw txn: ', signature)
+    signature = await wallet.sendTransaction(withdrawTX, connection)
+    console.log('signature', signature)
     const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
