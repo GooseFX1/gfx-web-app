@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState, useEffect, useRef } from 'react'
+import React, { FC, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
@@ -6,7 +6,6 @@ import { truncateAddress } from '../utils'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 import { useConnectionConfig } from '../context'
 import { useDarkMode, useWalletModal } from '../context'
-import useMoveOutside from '../hooks/useMoveOutside'
 import { useLocation } from 'react-router-dom'
 import {
   Button,
@@ -24,6 +23,7 @@ import {
 import useWalletBalance from '@/hooks/useWalletBalance'
 import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
+import useBoolean from '@/hooks/useBoolean'
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
@@ -39,7 +39,7 @@ export const Connect: FC<MenuItemProps> = ({
 }) => {
   const { wallet, connected, publicKey, disconnect } = useWallet()
   const { blacklisted } = useConnectionConfig()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useBoolean(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
   const { balance } = useWalletBalance()
@@ -51,13 +51,6 @@ export const Connect: FC<MenuItemProps> = ({
     () => !blacklisted || (blacklisted && pathname === '/farm/temp-withdraw'),
     [blacklisted, pathname]
   )
-
-  const handleMoveOutside = useCallback(() => {
-    if (isOpen) {
-      onClose()
-    }
-  }, [isOpen])
-  useMoveOutside(selfRef, handleMoveOutside)
 
   // useEffect(() => {
   //   if (connected) logData('wallet_connected')
@@ -87,7 +80,6 @@ export const Connect: FC<MenuItemProps> = ({
     }
   }, [disconnect, canConnect])
 
-  const onClose = useCallback(() => setIsOpen(false), [])
   const handleDisconnect = useCallback(
     (e) => {
       e.preventDefault()
@@ -96,14 +88,14 @@ export const Connect: FC<MenuItemProps> = ({
           console.warn('disconnect failed', err)
         })
         .finally(() => {
-          onClose()
+          setIsOpen.off()
         })
     },
     [disconnect]
   )
   const handleWalletChange = useCallback(() => {
     setWalletModalVisible(true)
-    onClose()
+    setIsOpen.off()
   }, [setWalletModalVisible])
   const copyAddress = useCallback(() => {
     navigator.clipboard.writeText(base58PublicKey)
@@ -124,10 +116,11 @@ export const Connect: FC<MenuItemProps> = ({
         id: 'copyAddress'
       }
     )
-    onClose()
+    setIsOpen.off()
   }, [base58PublicKey])
   const handleConnect = useCallback(() => {
     setWalletModalVisible(true)
+    setIsOpen.off()
   }, [])
   const openSolScan = useCallback(() => {
     window.open(`https://solscan.io/account/${base58PublicKey}`, '_blank')
@@ -138,7 +131,7 @@ export const Connect: FC<MenuItemProps> = ({
       className={cn(`relative inline-block text-left z-20 focus-visible:outline-none`, containerStyle)}
       ref={selfRef}
     >
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <Tooltip>
           <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
             <TooltipTrigger className={cn('focus-visible:outline-none', customButtonStyle)}>
