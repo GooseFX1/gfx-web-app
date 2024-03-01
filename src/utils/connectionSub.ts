@@ -48,6 +48,9 @@ class SolanaSub {
     this.connection.removeProgramAccountChangeListener(item.id)
     this.subs.delete(id)
   }
+  updateConnection = (connection: Connection) => {
+    this.connection = connection
+  }
 }
 
 const SolanaSubscriber = new SolanaSub()

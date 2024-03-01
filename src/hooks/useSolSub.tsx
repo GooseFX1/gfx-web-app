@@ -36,7 +36,8 @@ function useSolSub(): {
   on: (sub: SolsSubs) => Promise<void>
   off: (id: string | string[]) => Promise<void>
 } {
-  const { endpoint } = useConnectionConfig()
+  const { endpoint, connection } = useConnectionConfig()
+  SolanaSubscriber.updateConnection(connection)
   useEffect(() => SolanaSubscriber.changeConnection(endpoint), [endpoint])
   const on = useCallback(async (sub: SolsSubs) => {
     console.log('ON SUB', sub)
