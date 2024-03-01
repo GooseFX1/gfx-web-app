@@ -18,10 +18,12 @@ import {
   TooltipTrigger,
   TooltipContent,
   cn,
-  Icon
+  Icon,
+  ToastTitle
 } from 'gfx-component-lib'
 import useWalletBalance from '@/hooks/useWalletBalance'
-
+import { toast } from 'sonner'
+import SuccessIcon from '@/assets/Success-icon.svg?react'
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
@@ -105,6 +107,24 @@ export const Connect: FC<MenuItemProps> = ({
   }, [setWalletModalVisible])
   const copyAddress = useCallback(() => {
     navigator.clipboard.writeText(base58PublicKey)
+
+    toast(
+      <div>
+        <ToastTitle
+          className={'items-center'}
+          iconLeft={<SuccessIcon className={'stroke-background-green h-4 w-4'} />}
+        >
+          <h4 className={'text-h4 text-text-green'}>Success</h4>
+        </ToastTitle>
+        <p className={'text-text-lightmode-secondary dark:text-text-darkmode-secondary text-b3'}>
+          Wallet address copied successfully!
+        </p>
+      </div>,
+      {
+        id: 'copyAddress',
+        duration: 9000000
+      }
+    )
     onClose()
   }, [base58PublicKey])
   const handleConnect = useCallback(() => {
