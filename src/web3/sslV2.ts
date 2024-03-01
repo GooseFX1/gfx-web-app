@@ -227,7 +227,7 @@ export const executeWithdraw = async (
   let signature
   try {
     signature = await wallet.sendTransaction(withdrawTX, connection)
-    console.log('signature', signature)
+    console.log(signature)
     const confirm = await confirmTransaction(connection, signature, 'processed')
     return { confirm, signature }
   } catch (error) {
