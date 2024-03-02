@@ -279,7 +279,7 @@ const DesktopNav: FC = () => {
         variant={'ghost'}
         onClick={() => history.push('/bridge')}
         className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          `h-[38px] tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
@@ -294,7 +294,7 @@ const DesktopNav: FC = () => {
         variant={'ghost'}
         onClick={() => history.push('/farm')}
         className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          `h-[38px] tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
@@ -310,7 +310,7 @@ const DesktopNav: FC = () => {
           <Button
             variant={'ghost'}
             className={cn(
-              `tracking-wider flex-col gap-0 p-0 text-center justify-center items-center 
+              `h-[38px] tracking-wider flex-col gap-0 p-0 text-center justify-center items-center 
               text-h6 font-semibold font-poppins`,
               tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
@@ -362,7 +362,8 @@ const DesktopNav: FC = () => {
           <Button
             variant={'ghost'}
             className={cn(
-              `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
+              `h-[38px] tracking-wider p-0 flex-col text-center justify-center items-center text-h6 
+              [&>span]:inline-flex gap-0`,
               pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
