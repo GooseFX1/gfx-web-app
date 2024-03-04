@@ -96,8 +96,7 @@ export default defineConfig(({ mode }) => ({
     port: 3000
   },
   esbuild: {
-    drop: mode == 'development' ? [] : ['console', 'debugger'],
-    pure: mode === 'production' ? ['console.log'] : []
+    drop: mode == 'development' ? [] : ['console', 'debugger']
   },
   build: {
     outDir: 'build',
