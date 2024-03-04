@@ -227,7 +227,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
   useActivityTracker({
-    callback: () => setIsCurrentTabActive(false)
+    callbackOff: () => setIsCurrentTabActive(false),
+    callbackOn: () => setIsCurrentTabActive(true)
   })
   const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 

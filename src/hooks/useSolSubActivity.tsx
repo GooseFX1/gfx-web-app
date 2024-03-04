@@ -1,9 +1,8 @@
 import useSolSub, { SolsSubs, SubType } from '@/hooks/useSolSub'
-import { useEffect } from 'react'
-import useActivityTracker, { useActivityTrackerManual, UseActivityTrackerProps } from '@/hooks/useActivityTracker'
+import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivityTracker'
 import { PublicKey } from '@solana/web3.js'
 
-type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callback'>
+type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 
 /**
  * This hook is used to automatically control the subscription to a solana account and automates the removal
@@ -17,19 +16,20 @@ function useSolSubActivity({ callback, id, SubType, publicKey, lifeTime }: UseSo
   const { on, off } = useSolSub()
   useActivityTracker({
     lifeTime,
-    callback: () => off(id)
+    callbackOff: () => off(id),
+    callbackOn: () => on({ callback, id, SubType, publicKey })
   })
-  useEffect(() => {
-    if (publicKey && callback) {
-      console.log('TRACKING SOL SUB', id)
-      on({ callback, id, SubType, publicKey })
-    }
-
-    return () => {
-      console.log('REMOVING TRACKING SOL SUB', id)
-      off(id)
-    }
-  }, [callback, id, SubType, publicKey, on, off])
+  // useEffect(() => {
+  //   if (publicKey && callback) {
+  //     console.log('TRACKING SOL SUB', id)
+  //     on({ callback, id, SubType, publicKey })
+  //   }
+  //
+  //   return () => {
+  //     console.log('REMOVING TRACKING SOL SUB', id)
+  //     off(id)
+  //   }
+  // }, [callback, id, SubType, publicKey, on, off])
 }
 
 export default useSolSubActivity
@@ -40,31 +40,46 @@ export default useSolSubActivity
  */
 interface UseSolSubActivityMultiProps {
   subType: SubType
-  publicKeys: { publicKey: PublicKey; callback: () => void }[]
+  publicKeys: { publicKey: PublicKey; callback: () => void; subType?: SubType }[]
 }
 function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiProps): void {
   const { on: hookOn, off: hookOff } = useSolSub()
-  useActivityTracker()
-  const { startTracking, stopTracking } = useActivityTrackerManual()
-
-  useEffect(() => {
-    const ids: string[] = []
-    if (publicKeys.length) {
-      publicKeys.forEach(({ publicKey, callback }) => {
-        const id = `${subType}-${publicKey.toBase58()}`
-        ids.push(id)
-        console.log('TRACKING SOL SUB', id)
-        hookOn({ callback: callback, id, SubType: subType, publicKey })
+  useActivityTracker({
+    callbackOff: () => {
+      publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
+        hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
+      })
+    },
+    callbackOn: () => {
+      publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
+        hookOn({
+          callback,
+          id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
+          SubType: individualSubType ?? subType,
+          publicKey
+        })
       })
     }
+  })
 
-    return () => {
-      ids.forEach((id) => {
-        console.log('REMOVING TRACKING SOL SUB', id)
-        hookOff(id)
-      })
-    }
-  }, [startTracking, stopTracking])
+  // useEffect(() => {
+  //   const ids: string[] = []
+  //   if (publicKeys.length) {
+  //     publicKeys.forEach(({ publicKey, callback }) => {
+  //       const id = `${subType}-${publicKey.toBase58()}`
+  //       ids.push(id)
+  //       console.log('TRACKING SOL SUB', id)
+  //       hookOn({ callback: callback, id, SubType: subType, publicKey })
+  //     })
+  //   }
+  //
+  //   return () => {
+  //     ids.forEach((id) => {
+  //       console.log('REMOVING TRACKING SOL SUB', id)
+  //       hookOff(id)
+  //     })
+  //   }
+  // }, [subType, publicKeys])
 }
 
 export { useSolSubActivityMulti }
