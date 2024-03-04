@@ -98,7 +98,7 @@ const MobileNav: FC = () => {
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <>
-      <Dialog open={isOpen}>
+      <Dialog open={isOpen} modal={false}>
         <DialogTrigger onClick={setIsOpen.on}>
           <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
