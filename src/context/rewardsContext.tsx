@@ -32,7 +32,7 @@ import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } fr
 import { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
-import useSolSubActivity from '@/hooks/useSolSubActivity'
+import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
 
 const cg = new CoinGecko()
 
@@ -262,46 +262,45 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     process()
   }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
-  useSolSubActivity({
-    SubType: SubType.AccountChange,
-    id: 'gofx-pool-staking',
-    publicKey: pubKeys.gofxVault,
-    callback: async () => {
-      const t = await stakeRewards.getGoFxVault()
-      console.log('goFxVault changed', t)
-      if (!t) return
-      const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
-      setTotalStakedGlobally(gfxVaultVal)
-      setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
-      setGofxVault(t)
-    }
-  })
-  useSolSubActivity({
-    SubType: SubType.AccountChange,
-    id: 'user-metadata-staking',
-    publicKey: pubKeys.userMetadata,
-    callback: async () => {
-      const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
-      const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
-      setUserMetaData(newUserMetaData)
-      setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
-      setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
-      setUnstakeableTickets(newUnstakaebleTicekts)
-      setActiveUnstakingTickets(
-        newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
-      )
-      console.log('user meta data update', newUserMetaData)
-    }
-  })
-  useSolSubActivity({
-    SubType: SubType.AccountChange,
-    id: 'usdc-claimable-staking',
-    publicKey: pubKeys.userHoldingsAccount,
-    callback: async () => {
-      const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
-      setClaimable(Number(newClaimable))
-      console.log('FOUND NEW CLAIMABLE')
-    }
+  useSolSubActivityMulti({
+    subType: SubType.AccountChange,
+    publicKeys: [
+      {
+        publicKey: pubKeys.gofxVault,
+        callback: async () => {
+          const t = await stakeRewards.getGoFxVault()
+          console.log('goFxVault changed', t)
+          if (!t) return
+          const gfxVaultVal = Number(((t as any)?.amount ?? BigInt(0)) / BigInt(1e9))
+          setTotalStakedGlobally(gfxVaultVal)
+          setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
+          setGofxVault(t)
+        }
+      },
+      {
+        publicKey: pubKeys.userMetadata,
+        callback: async () => {
+          const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+          const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
+          setUserMetaData(newUserMetaData)
+          setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
+          setTotalStaked(getUiAmount(newUserMetaData.totalStaked))
+          setUnstakeableTickets(newUnstakaebleTicekts)
+          setActiveUnstakingTickets(
+            newUserMetaData.unstakingTickets.filter((ticket) => ticket.createdAt.toString() !== '0')
+          )
+          console.log('user meta data update', newUserMetaData)
+        }
+      },
+      {
+        publicKey: pubKeys.userHoldingsAccount,
+        callback: async () => {
+          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+          setClaimable(Number(newClaimable))
+          console.log('FOUND NEW CLAIMABLE')
+        }
+      }
+    ]
   })
 
   useEffect(() => {
