@@ -20,10 +20,10 @@ import {
   Icon,
   ToastTitle
 } from 'gfx-component-lib'
-import useWalletBalance from '@/hooks/useWalletBalance'
 import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
@@ -42,7 +42,6 @@ export const Connect: FC<MenuItemProps> = ({
   const [isOpen, setIsOpen] = useBoolean(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
-  const { balance } = useWalletBalance()
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
@@ -51,7 +50,7 @@ export const Connect: FC<MenuItemProps> = ({
     () => !blacklisted || (blacklisted && pathname === '/farm/temp-withdraw'),
     [blacklisted, pathname]
   )
-
+  const { balance } = useWalletBalance()
   // useEffect(() => {
   //   if (connected) logData('wallet_connected')
   // }, [connected])
@@ -197,7 +196,7 @@ export const Connect: FC<MenuItemProps> = ({
                   text-text-lightmode-primary dark:text-text-darkmode-primary font-semibold
                 `}
                 >
-                  ~ {balance.sol.uiAmountString} SOL
+                  ~ {balance.SOL.tokenAmount.uiAmountString} SOL
                 </h4>
                 <p
                   className={`
