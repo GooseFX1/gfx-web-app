@@ -127,22 +127,22 @@ export const perpsNotify = async ({
   //  ;(notification as any)['info']()
 }
 
-export const perpsNotifyNew = async (promise: Promise<unknown>): Promise<void> => {
+export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<void> => {
   toast.promise(promise, {
     loading: (
-      <IntemediaryToast className={cn(`w-[290px]`)} stage={'loading'} title={'Loading please wait...'}>
-        <p>Best things in life arrive for those who wait, your transaction is in progress...</p>
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'loading'} title={'Loading...'}>
+        <p>Please wait a few moments for the transaction to confirm...</p>
       </IntemediaryToast>
     ),
     success: (response: SuccessResponse) => (
-      <IntemediaryToast className={cn(`w-[290px]`)} stage={'success'} title={'Hooray!'}>
-        <p className={cn(`pt-1`)}>Your transaction was successful!</p>
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'success'} title={'Success!'}>
+        <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
         <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
       </IntemediaryToast>
     ),
     error: () => (
-      <IntemediaryToast className={cn(`w-[290px]`)} stage={'error'} title={'Unexpected Problem...'}>
-        <p>Please bear with us and try again.</p>
+      <IntemediaryToast className={cn(`w-[290px]`)} stage={'error'} title={'Error!'}>
+        <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
         <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
           Contact Us
         </OpenToastLink>

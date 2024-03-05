@@ -12,7 +12,7 @@ import {
 } from '@solana/web3.js'
 import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { perpsNotify, perpsNotifyNew } from '../utils/perpsNotifications'
+import { perpsNotify, notifyUsingPromise } from '../utils/perpsNotifications'
 import { confirmTransaction } from './index'
 
 interface BlockhashAndFeeCalculator {
@@ -177,7 +177,7 @@ export const sendPerpsTransaction = async (
           reject(err)
         })
     })
-    perpsNotifyNew(promise)
+    notifyUsingPromise(promise)
     await promise
 
     return { txid: txid, slot: 1 }
@@ -277,7 +277,7 @@ export const sendPerpsTransactions = async (
           reject(err)
         })
     })
-    perpsNotifyNew(promise)
+    notifyUsingPromise(promise)
     await promise
     return ixResponse
   } catch (e) {
