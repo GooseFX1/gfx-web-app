@@ -1,6 +1,7 @@
 import useSolSub, { SolsSubs, SubType } from '@/hooks/useSolSub'
 import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivityTracker'
 import { PublicKey } from '@solana/web3.js'
+import { useEffect } from 'react'
 
 type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 
@@ -19,17 +20,17 @@ function useSolSubActivity({ callback, id, SubType, publicKey, lifeTime }: UseSo
     callbackOff: () => off(id),
     callbackOn: () => on({ callback, id, SubType, publicKey })
   })
-  // useEffect(() => {
-  //   if (publicKey && callback) {
-  //     console.log('TRACKING SOL SUB', id)
-  //     on({ callback, id, SubType, publicKey })
-  //   }
-  //
-  //   return () => {
-  //     console.log('REMOVING TRACKING SOL SUB', id)
-  //     off(id)
-  //   }
-  // }, [callback, id, SubType, publicKey, on, off])
+  useEffect(() => {
+    if (publicKey && callback) {
+      console.log('TRACKING SOL SUB', id)
+      on({ callback, id, SubType, publicKey })
+    }
+
+    return () => {
+      console.log('REMOVING TRACKING SOL SUB', id)
+      off(id)
+    }
+  }, [callback, id, SubType, publicKey, on, off])
 }
 
 export default useSolSubActivity
@@ -47,39 +48,45 @@ function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiP
   useActivityTracker({
     callbackOff: () => {
       publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
-        hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
+        if (publicKey) {
+          hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
+        }
       })
     },
     callbackOn: () => {
       publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
-        hookOn({
-          callback,
-          id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
-          SubType: individualSubType ?? subType,
-          publicKey
-        })
+        if (publicKey) {
+          hookOn({
+            callback,
+            id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
+            SubType: individualSubType ?? subType,
+            publicKey
+          })
+        }
       })
     }
   })
 
-  // useEffect(() => {
-  //   const ids: string[] = []
-  //   if (publicKeys.length) {
-  //     publicKeys.forEach(({ publicKey, callback }) => {
-  //       const id = `${subType}-${publicKey.toBase58()}`
-  //       ids.push(id)
-  //       console.log('TRACKING SOL SUB', id)
-  //       hookOn({ callback: callback, id, SubType: subType, publicKey })
-  //     })
-  //   }
-  //
-  //   return () => {
-  //     ids.forEach((id) => {
-  //       console.log('REMOVING TRACKING SOL SUB', id)
-  //       hookOff(id)
-  //     })
-  //   }
-  // }, [subType, publicKeys])
+  useEffect(() => {
+    const ids: string[] = []
+    if (publicKeys.length) {
+      publicKeys.forEach(({ publicKey, callback }) => {
+        if (publicKey) {
+          const id = `${subType}-${publicKey.toBase58()}`
+          ids.push(id)
+          console.log('TRACKING SOL SUB', id)
+          hookOn({ callback: callback, id, SubType: subType, publicKey })
+        }
+      })
+    }
+
+    return () => {
+      ids.forEach((id) => {
+        console.log('REMOVING TRACKING SOL SUB', id)
+        hookOff(id)
+      })
+    }
+  }, [subType, publicKeys])
 }
 
 export { useSolSubActivityMulti }
