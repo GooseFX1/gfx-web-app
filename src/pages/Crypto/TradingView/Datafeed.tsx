@@ -30,7 +30,9 @@ const makeDataFeed = () => {
         return responseJson.success ? responseJson.data : responseJson ? responseJson : null
       }
     } catch (err) {
+      const retry = url.replace('trade-view', 'trading-view')
       console.log(`Error fetching from Chart API ${url}: ${err}`)
+      return apiFetchHandler(retry)
     }
     return null
   }
