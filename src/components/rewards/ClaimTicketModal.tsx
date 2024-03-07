@@ -1,56 +1,46 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useRewards from '../../context/rewardsContext'
-import Modal from '../common/Modal'
-import tw from 'twin.macro'
-import 'styled-components/macro'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment/moment'
 import { Loader } from '../Loader'
 import { numberFormatter } from '../../utils'
-
+import { Button, cn, Dialog, DialogBody, DialogContent, DialogHeader, DialogOverlay } from 'gfx-component-lib'
+import useBreakPoint from '@/hooks/useBreakPoint'
+import CloseLite from '@/assets/close-lite.svg?react'
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
   onClose: () => void
 }
 const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, onClose }) => {
   const { activeUnstakingTickets } = useRewards()
+  const { isMobile } = useBreakPoint()
   return (
-    <Modal isOpen={isOpen} onClose={onClose} zIndex={300}>
-      <div
-        css={[
-          tw`flex flex-col items-center justify-center w-screen min-md:w-[598px] h-[380px] min-md:h-[263px]
-        absolute min-md:static bottom-0 left-0 sm:animate-slideInBottom
-      `
-        ]}
-      >
-        <div
-          css={[
-            tw`rounded-t-[10px] min-md:mt-[50%] min-md:mt-0 w-full flex flex-col
-           justify-center items-center text-white text-lg font-semibold py-[10px] gap-[10px]`
-          ]}
-          style={{ background: 'linear-gradient(67deg, #22A668 0%, #194A5E 100%)' }}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogOverlay className={'z-[961]'} />
+      <DialogContent className={'z-[962] w-full pt-3'} placement={isMobile ? 'bottom' : 'default'}>
+        <DialogHeader
+          className={`flex flex-col w-full h-full justify-between px-2.5 pb-1.25 border-b-1 border-solid
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
         >
-          <div css={[tw`flex w-full h-full justify-between px-[10px]`]}>
-            <p css={[tw`mb-0 text-[20px] leading-[24px] font-semibold`]}>All Active Cooldowns</p>
-            <img
-              css={[tw`w-[18px] h-[18px] cursor-pointer min-md:mr-[15px]`]}
+          <div className={'w-full flex flex-row justify-between items-center'}>
+            <p className={`mb-0 text-[20px] leading-[24px] font-semibold`}>All Active Cooldowns</p>
+            <CloseLite
+              className={`w-[18px] h-[18px] cursor-pointer min-md:mr-[15px] 
+              stroke-border-lightmode-primary dark:stroke-border-darkmode-primary
+              `}
               onClick={onClose}
-              src={`${window.origin}/img/assets/cross-white.svg`}
-              alt="copy_address"
             />
           </div>
-          <div css={[tw`flex w-full h-full justify-between px-[10px]  `]}>
-            <p css={[tw`mb-0 text-[18px] leading-[22px] font-semibold`]}>Unstake Amount</p>
-            <p css={[tw`mb-0 text-[18px] leading-[22px] font-semibold`]}>Days Remaining</p>
+          <div className={`flex w-full h-full justify-between `}>
+            <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Unstake Amount</p>
+            <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Days Remaining</p>
           </div>
-        </div>
-        <div
-          css={[
-            tw`flex flex-col w-full h-[210px] min-md:h-full py-[10px] px-[10px]
+        </DialogHeader>
+        <DialogBody
+          className={`flex flex-col w-full h-[210px] min-md:h-full 
             min-md:mb-[20px] min-md:rounded-b-[10px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
-            min-md:gap-5
-      `
-          ]}
+            min-md:gap-5 p-2.5
+      `}
         >
           {activeUnstakingTickets.length > 0 ? (
             activeUnstakingTickets
@@ -58,18 +48,16 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
               .map((ticket) => <UnstakingTicketLineItem key={ticket.createdAt.toString()} ticket={ticket} />)
           ) : (
             <p
-              css={[
-                tw`
-              font-semibold text-lg text-grey-1
-            `
-              ]}
+              className={`
+              font-semibold text-lg text-grey-1 text-center
+            `}
             >
               No Tickets To Claim
             </p>
           )}
-        </div>
-      </div>
-    </Modal>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
 const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
@@ -115,34 +103,32 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
     return null
   }
   return (
-    <div css={[tw`flex w-full justify-between items-center`]}>
-      <p css={[tw`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`]}>
+    <div className={`flex w-full justify-between items-center`}>
+      <p className={`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
         {numberFormatter(uiUnstakeAmount, uiUnstakeAmount <= 0.1 && uiUnstakeAmount >= 0.0 ? 4 : 2)} GOFX
       </p>
 
-      <button
-        css={[
-          tw`py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 text-[15px] leading-normal
+      <Button
+        className={cn(
+          `py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 leading-normal
       font-bold h-10 w-[160px] min-md:w-[207px] border-0 cursor-not-allowed whitespace-nowrap text-regular
       relative flex items-center justify-center`,
-          oneDayLeft && !canClaim && tw`text-red-2`,
-          canClaim && tw` text-white cursor-pointer`,
-          isClaiming && tw`cursor-not-allowed `
-        ]}
+          oneDayLeft && !canClaim && `text-red-2`,
+          canClaim && ` text-white cursor-pointer`,
+          isClaiming && `cursor-not-allowed `
+        )}
         disabled={!canClaim}
-        style={{
-          background: canClaim ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)' : ''
-        }}
+        colorScheme={canClaim ? 'primaryGradient' : 'default'}
         onClick={unstakeGoFX}
       >
         {isClaiming ? (
-          <div css={[tw`absolute`]}>
+          <div className={`absolute`}>
             <Loader zIndex={2} />
           </div>
         ) : (
           claimButtonText
         )}
-      </button>
+      </Button>
     </div>
   )
 }

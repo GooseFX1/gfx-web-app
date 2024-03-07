@@ -23,8 +23,8 @@ import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
 import HowItWorksButton from '../HowItWorksButton'
 import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
 import TopLinks from '../TopLinks'
-import { Button, cn, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
-cn
+import { Button, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
+
 export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
   const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
     amount: '0.0',

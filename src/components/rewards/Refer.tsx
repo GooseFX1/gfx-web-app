@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
-import 'styled-components/macro'
 import BuddyLinkReferral from './BuddyLinkReferral'
 import useReferrals from '../../hooks/useReferrals'
 import { useWallet } from '@solana/wallet-adapter-react'

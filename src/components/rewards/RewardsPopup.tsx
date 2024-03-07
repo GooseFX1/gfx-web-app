@@ -1,6 +1,5 @@
 import React, { FC, useCallback } from 'react'
 import { useRewardToggle } from '../../context/reward_toggle'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
@@ -21,7 +20,7 @@ export const RewardsButton: FC = () => {
   const { hasRewards } = useRewards()
 
   const riveComponent = (
-    <div css={[tw`relative`]}>
+    <div className={`relative`}>
       <img
         className={cn(breakpoint.isMobile || breakpoint.isTablet ? `h-[30px] w-[32px]` : `h-[22px] w-[20px]`)}
         src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
@@ -68,12 +67,7 @@ export const RewardsPopup: FC = () => {
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
   return (
-    <Dialog
-      open={rewardModal}
-      onOpenChange={rewardToggle}
-      // className={`mt-auto  min-md:min-h-[441px] w-full flex flex-row md:flex-col
-      //      max-h-[100dvh] bg-white dark:bg-black-2 relative
-    >
+    <Dialog open={rewardModal} onOpenChange={rewardToggle}>
       <DialogOverlay />
       <DialogContent
         className={'w-full min-md:h-[377px] max-h-[calc(100dvh-55px)] z-[960]'}

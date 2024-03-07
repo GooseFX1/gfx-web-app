@@ -1,5 +1,4 @@
 import { useDarkMode } from '../../../../context'
-import tw from 'twin.macro'
 import { Tooltip } from '../../../Tooltip'
 import React from 'react'
 // import Skeleton from 'react-loading-skeleton'
@@ -19,13 +18,11 @@ RewardsBottomBarProps): JSX.Element {
   // remove min-md:mt-0
   return (
     <div
-      css={[
-        tw`min-md:mt-2.5 flex  min-md:mt-0
+      className={`flex min-md:mt-0
         from-green-gradient-3 text-regular min-md:text-average
         to-green-gradient-4 bg-none rounded-t-tiny min-md:text-tiny font-semibold text-grey-1
         dark:text-grey-2 min-md:text-grey-1 min-md:dark:text-grey-5 items-center justify-center
-        flex-col min-md:flex-row w-full max-w-[580px]`
-      ]}
+        flex-col min-md:flex-row w-full max-w-[580px]`}
     >
       {/*<div css={[tw`flex flex-wrap min-md:flex-col min-md:gap-1.25 justify-between min-md:justify-start w-full`]}>*/}
       {/*  <p css={[tw`mb-0 whitespace-nowrap`]}>Daily Rewards</p>*/}
@@ -41,12 +38,10 @@ RewardsBottomBarProps): JSX.Element {
       {/*PLEASE ENSURE THE CENTER IS REMOVED WHEN THE ABOVE IS ADDED IN & REMOVED items-center|min-md:justify-between
        add min-md:flex-col|min-md:justify-center*/}
       <div
-        css={[
-          tw`flex flex-wrap  min-md:gap-1.25 justify-between min-md:justify-between
-        items-center w-full`
-        ]}
+        className={`flex flex-wrap  min-md:gap-1.25 justify-between min-md:justify-between
+        items-center w-full`}
       >
-        <p css={[tw`mb-0 flex items-center gap-1 min-md:text-regular`]}>
+        <p className={`mb-0 flex items-center gap-1 min-md:text-regular`}>
           Cooldown Period{' '}
           <Tooltip
             title={'You must wait 7 days after unstaking to reclaim your GOFX.'}
@@ -61,7 +56,7 @@ RewardsBottomBarProps): JSX.Element {
             <></>
           </Tooltip>
         </p>
-        <p css={[tw`mb-0 text-black-4 dark:text-grey-5 min-md:text-black-4`]}>7 Days</p>
+        <p className={`mb-0 text-black-4 dark:text-grey-5 min-md:text-black-4`}>7 Days</p>
       </div>
     </div>
   )
