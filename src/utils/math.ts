@@ -99,8 +99,12 @@ export const numberFormatter = (num: number, digits = 2): string => {
   const splitOnDecimal = numCalc.toString().split('.')
   //accuracy fix
   if (splitOnDecimal.length === 1) return `${numCalc.toFixed(digits)}${unit ?? ''}`
-  const decimal = splitOnDecimal[1].slice(0, digits)
+  const currentDecimals = splitOnDecimal[1]
+  const decimal = currentDecimals.slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
+  if (splitOnDecimal[0] == '0' && decimal.length > 0) {
+    return `<0.${'0'.repeat(digits - 1)}1`
+  }
   return `${accurateResult}${unit ?? ''}`
 }
 export const getAccurateNumber = (num: number, digits = 2): number => {

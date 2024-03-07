@@ -165,7 +165,7 @@ export const ReferRightPanel: FC = () => {
   return (
     <div className={`flex flex-col h-full w-full items-center gap-2.5 min-md:gap-3.75 `}>
       <div className={`flex flex-col gap-2.5 min-md:gap-0`}>
-        <h2 className={`mb-0 min-md:text-h2 text-h3 font-semibold leading-normal`}>
+        <h2 className={`mb-0 min-md:text-h2 text-h3 font-semibold leading-normal text-white`}>
           Total Referred: {totalFriends} Friends
         </h2>
         <ReferFriendSegment />
@@ -173,7 +173,9 @@ export const ReferRightPanel: FC = () => {
 
       <div
         className={cn(
-          `flex flex-col justify-center h-[99px] min-md:h-[130px] min-md:gap-1 items-center min-md:justify-end`,
+          `flex flex-col justify-center h-[99px] min-md:h-[130px] min-md:gap-1 items-center min-md:justify-end
+          text-white
+          `,
           totalEarned <= 0.0 ? `opacity-60` : `opacity-100`
         )}
       >
@@ -184,7 +186,7 @@ export const ReferRightPanel: FC = () => {
       </div>
       <Button
         variant={'outline'}
-        className={'w-full max-w-[300px]'}
+        className={'w-full max-w-[300px] text-white'}
         onClick={handleClaim}
         disabled={totalEarned <= 0.0}
       >

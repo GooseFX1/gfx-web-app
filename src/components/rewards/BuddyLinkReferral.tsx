@@ -9,7 +9,7 @@ import { Transaction } from '@solana/web3.js'
 import { Connect } from '../../layouts'
 import { Loader } from '../Loader'
 import { sendPerpsTransaction } from '../../web3/connection'
-import { cn } from 'gfx-component-lib'
+import { Button, cn } from 'gfx-component-lib'
 
 const BuddyLinkReferral: FC = () => {
   const [isCopied, setIsCopied] = useState(false)
@@ -145,11 +145,12 @@ const BuddyLinkReferral: FC = () => {
           app.goosefx.io/?r={name}
         </p>
 
-        <button
+        <Button
+          variant={'ghost'}
           className={cn(
-            `border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
+            `border-0  rounded-[72px] p-0  font-semibold`,
             referLink
-              ? `bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+              ? `text-text-blue dark:text-white`
               : isCopied
               ? `text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
               : ``
@@ -157,7 +158,7 @@ const BuddyLinkReferral: FC = () => {
           disabled={!referLink}
         >
           {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
-        </button>
+        </Button>
       </>
     ),
     [isCopied, referLink, name]
@@ -169,8 +170,8 @@ const BuddyLinkReferral: FC = () => {
         <div
           onClick={copyToClipboard}
           className={cn(
-            `border-[1.5px] dark:border-grey-1 border-grey-2 border-dashed cursor-pointer
-              flex flex-row justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] 
+            `border-[1.5px] dark:border-grey-1 border-grey-2 border-solid cursor-pointer
+              flex flex-row justify-between p-[5px] px-2.5 items-center w-full rounded-[3px] 
               relative h-10`,
             !name.trim() ? `cursor-default` : `cursor-pointer`
           )}
