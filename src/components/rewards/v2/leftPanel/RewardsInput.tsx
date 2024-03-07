@@ -2,7 +2,7 @@ import { TokenAmount } from '@solana/web3.js'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import useRewards from '../../../../context/rewardsContext'
 import { getAccurateNumber } from '../../../../utils'
-import tw from 'twin.macro'
+import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup } from 'gfx-component-lib'
 
 interface RewardsInputProps {
   userGoFxBalance: TokenAmount
@@ -46,49 +46,50 @@ export default function RewardsInput({
     onInputChange(inputValue)
   }, [inputValue])
   return (
-    <div
+    <InputGroup
       onClick={focusInput}
-      css={[
-        tw`order-3 flex-1 min-md:flex-basis[calc(66% - 20px)]
-        relative rounded-[100px] h-[40px] w-full min-md:min-w-[200px] bg-grey-5 dark:bg-black-1
-          dark:border-black-1 items-center flex justify-center
-        `
-      ]}
+      className={cn('flex-grow flex-shrink min-sm:order-1')}
+      leftItem={
+        <InputElementLeft>
+          <Button
+            variant={'ghost'}
+            onClick={handleHalf}
+            className={cn(
+              `p-1.5`,
+              userGoFxBalance.uiAmount > 0.0 && `text-text-blue dark:text-text-darkmode-primary`
+            )}
+            size={'sm'}
+            disabled={userGoFxBalance.uiAmount <= 0.0}
+          >
+            Half
+          </Button>
+          <Button
+            variant={'ghost'}
+            onClick={handleMax}
+            className={cn(
+              `p-1.5`,
+              userGoFxBalance.uiAmount > 0.0 && `text-text-blue dark:text-text-darkmode-primary`
+            )}
+            size={'sm'}
+            disabled={userGoFxBalance.uiAmount <= 0.0}
+          >
+            Max
+          </Button>
+        </InputElementLeft>
+      }
+      rightItem={
+        <InputElementRight
+          className={cn(
+            inputValue > 0.0
+              ? 'text-text-blue dark:text-text-darkmode-primary'
+              : `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+          )}
+        >
+          GOFX
+        </InputElementRight>
+      }
     >
-      <div
-        css={[
-          tw`text-regular absolute font-bold  left-[15px] z-[1] flex flex-row gap-[15px]
-            `
-        ]}
-      >
-        <p
-          onClick={handleHalf}
-          css={[
-            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1 font-bold`,
-            userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
-          ]}
-        >
-          Half
-        </p>
-        <p
-          onClick={handleMax}
-          css={[
-            tw`mb-0 text-grey-1 cursor-not-allowed dark:text-grey-1 font-bold`,
-            userGoFxBalance.uiAmount > 0.0 ? tw`cursor-pointer text-primary-gradient-1 dark:text-grey-5` : tw``
-          ]}
-        >
-          Max
-        </p>
-      </div>
-
-      <input
-        css={[
-          tw`text-lg h-10  w-full rounded-[100px] bg-grey-5 text-black-4 font-semibold
-            placeholder-grey-1  border-transparent active:border-grey-1 hover:border-grey-1  focus:border-grey-1
-            dark:bg-black-1 dark:text-grey-5 focus:dark:border-grey-2 active:dark:border-grey-2
-            hover:dark:border-grey-2 pr-[80px] dark:placeholder-grey-2 h-10 text-right
-            `
-        ]}
+      <Input
         ref={inputRef}
         maxLength={12}
         pattern="\d+(\.\d+)?"
@@ -96,16 +97,8 @@ export default function RewardsInput({
         onChange={handleInputChange}
         type={'number'}
         value={inputValue > 0.0 ? inputValue : ''}
+        className={'text-right'}
       />
-      <p
-        css={[
-          tw`mb-0 text-lg absolute right-[15px] z-[1] text-grey-1
-            dark:text-grey-2 font-semibold
-            `
-        ]}
-      >
-        GOFX
-      </p>
-    </div>
+    </InputGroup>
   )
 }

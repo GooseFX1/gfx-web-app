@@ -11,9 +11,7 @@ function CombinedRewardsTopLinks({ containerStyles, children }: CombinedRewardsT
   const { rewardToggle } = useRewardToggle()
 
   return (
-    <div
-      css={[tw`flex gap-4 w-full items-center justify-between  mb-2.5 min-md:mb-6`].concat(containerStyles ?? [])}
-    >
+    <div css={[tw`flex gap-4 w-full items-center justify-between `].concat(containerStyles ?? [])}>
       <div css={[tw`flex gap-4 w-full items-center justify-between`]}>{children}</div>
       <Button onClick={() => rewardToggle(false)} cssClasses={[tw`min-md:hidden`]}>
         <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />

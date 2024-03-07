@@ -30,7 +30,7 @@ function Raffle(): JSX.Element {
 
   return (
     <>
-      <RewardsLeftLayout className={'no-scrollbar'} cssStyles={[tw`pb-0`]}>
+      <RewardsLeftLayout className={'no-scrollbar pb-0'}>
         <CombinedRewardsTopLinks>
           <TopLinks />
           <div css={[tw`flex gap-4 items-center`]}>
@@ -47,7 +47,7 @@ function Raffle(): JSX.Element {
           {noPrizesSoFar ? <NoPrizesSoFar /> : <MyRecentWinnings myRecentWinnings={myRecentWinnings} />}
         </div>
       </RewardsLeftLayout>
-      <RewardsRightLayout cssStyles={[tw`bg-gradient-to-r to-blue-gradient-1 from-primary-gradient-2 `]}>
+      <RewardsRightLayout className={`bg-gradient-to-r to-blue-gradient-1 from-primary-gradient-2 `}>
         <RaffleRightPanel />
       </RewardsRightLayout>
     </>

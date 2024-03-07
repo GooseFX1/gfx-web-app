@@ -16,7 +16,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
   const stakeRatio = numberFormatter(userStakeRatio, 2)
 
   return (
-    <RewardsRightLayout cssStyles={[tw`bg-gradient-to-br from-green-gradient-3 to-green-gradient-4 `]}>
+    <RewardsRightLayout className={`bg-gradient-to-br from-green-gradient-3 to-green-gradient-4`}>
       <h1 css={[tw`text-h2 min-md:text-h1 font-semibold !mb-0`]}>
         {apy == 0 ? (
           <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />

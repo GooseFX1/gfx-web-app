@@ -1,21 +1,20 @@
 import { ReactNode } from 'react'
-import tw, { TwStyle } from 'twin.macro'
+import { cn } from 'gfx-component-lib'
 interface RewardsLeftLayoutProps {
   children: ReactNode | ReactNode[]
-  cssStyles?: TwStyle[]
   className?: string
 }
-function RewardsLeftLayout({ children, cssStyles, className }: RewardsLeftLayoutProps): JSX.Element {
+//basis-[389px] min-md:
+function RewardsLeftLayout({ children, className }: RewardsLeftLayoutProps): JSX.Element {
   return (
     <div
-      className={className}
-      css={[
-        tw`flex flex-col items-center py-2.5 min-md:pb-0 px-3.75 min-md:px-7.5
-      leading-normal overflow-y-auto  flex-[1 1 389px]  min-md:flex-[1 1 60%]
-    `
-      ]
-        .concat(cssStyles ?? [])
-        .flat()}
+      className={cn(
+        `flex flex-col items-center p-2.5 min-md:p-3.75
+      leading-normal overflow-y-auto grow shrink basis-[350px] min-md:basis-3/5 min-md:max-h-full
+      gap-2 min-md:gap-3.75
+    `,
+        className
+      )}
     >
       {children}
     </div>
