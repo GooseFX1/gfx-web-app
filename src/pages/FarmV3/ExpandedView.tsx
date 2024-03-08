@@ -13,13 +13,12 @@ import {
   invalidDepositErrMsg,
   invalidInputErrMsg,
   genericErrMsg,
-  //invalidWithdrawErrMsg,
   sslSuccessfulMessage,
   sslErrorMessage,
   SSLToken,
   depositCapError
 } from './constants'
-import { notify, truncateBigNumber, truncateBigString, commafy, withdrawBigString } from '../../utils'
+import { notify, truncateBigNumber, truncateBigString, withdrawBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { ActionModal } from './ActionModal'
 import BN from 'bn.js'
@@ -387,7 +386,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
   const renderStatsAsZero = useCallback(
     (token: string | undefined) => (
       <div tw="text-right dark:text-grey-1 text-grey-2 font-semibold text-regular">
-        <div>0.00 {token}</div>
+        <div>00.00 {token}</div>
       </div>
     ),
     []
@@ -477,8 +476,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 totalEarned > 0 ? (
                   <div tw="text-right dark:text-grey-8 text-black-4 font-semibold text-regular">
-                    <div>{totalEarned.toFixed(4)}</div>
-                    <div tw="dark:text-grey-1 text-grey-2">(${totalEarnedInUSD?.toFixed(2)} USD)</div>
+                    <div>{truncateBigNumber(totalEarned)}</div>
+                    <div tw="dark:text-grey-1 text-grey-2">(${truncateBigNumber(totalEarnedInUSD)} USD)</div>
                   </div>
                 ) : (
                   renderStatsAsZero(coin?.token)
@@ -490,8 +489,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               value={
                 claimableReward > 0 ? (
                   <div tw="text-right dark:text-grey-8 text-black-4 font-semibold text-regular">
-                    <div>{commafy(claimableReward, 4)}</div>
-                    <div tw="dark:text-grey-1 text-grey-2">(${commafy(claimableRewardInUSD, 2)} USD)</div>
+                    <div>{truncateBigNumber(claimableReward)}</div>
+                    <div tw="dark:text-grey-1 text-grey-2">(${truncateBigNumber(claimableRewardInUSD)} USD)</div>
                   </div>
                 ) : (
                   renderStatsAsZero(coin?.token)
@@ -556,8 +555,8 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? '0.01' : '0')
-                    : setWithdrawAmount(userDepositedAmount ? '0.01' : '0')
+                    ? setDepositAmount(userTokenBalance ? '00.01' : '0')
+                    : setWithdrawAmount(userDepositedAmount ? '00.01' : '0')
                 }
                 tw="font-bold text-regular text-grey-1 dark:text-grey-2 ml-3 cursor-pointer"
               >
@@ -657,7 +656,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               totalEarned ? (
                 <div tw="text-right">
                   <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
-                    {`${commafy(totalEarned, 4)} ($${commafy(totalEarnedInUSD, 2)} USD)`}
+                    {`${truncateBigNumber(totalEarned)} ($${truncateBigNumber(totalEarnedInUSD)} USD)`}
                   </span>
                 </div>
               ) : (
@@ -677,13 +676,13 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
                 claimableReward > 0 ? (
                   <div tw="text-right">
                     <span tw="dark:text-grey-8 text-black-4 font-semibold text-regular">
-                      {`${commafy(claimableReward, 4)} ($${commafy(claimableRewardInUSD, 2)} USD)`}
+                      {`${truncateBigNumber(claimableReward)} ($${truncateBigNumber(claimableRewardInUSD)} USD)`}
                     </span>
                   </div>
                 ) : (
                   <div tw="text-right">
                     <span tw="dark:text-grey-1 text-grey-2 font-semibold text-regular">
-                      0.00 {coin?.token} ($0.00 USD)
+                      00.00 {coin?.token} ($00.00 USD)
                     </span>
                   </div>
                 )
