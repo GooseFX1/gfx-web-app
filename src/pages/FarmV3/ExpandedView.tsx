@@ -555,7 +555,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
-                    ? setDepositAmount(userTokenBalance ? '00.01' : '0')
+                    ? setDepositAmount(userTokenBalance ? '00.01' : '0.0')
                     : setWithdrawAmount(userDepositedAmount ? '00.01' : '0')
                 }
                 tw="font-bold text-regular text-grey-1 dark:text-grey-2 ml-3 cursor-pointer"
