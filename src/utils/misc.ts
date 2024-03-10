@@ -213,29 +213,43 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
   try {
     if (bigNumber >= 1000000000) {
       const nArray = (bigNumber / 1000000000).toString().split('.')
-      const beforeDecimal = nArray[0]
+      let beforeDecimal = nArray[0]
+      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'B'
     }
     if (bigNumber >= 1000000) {
       const nArray = (bigNumber / 1000000).toString().split('.')
-      const beforeDecimal = nArray[0]
+      let beforeDecimal = nArray[0]
+      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
     }
     if (bigNumber >= 1000) {
       const nArray = (bigNumber / 1000).toString().split('.')
-      const beforeDecimal = nArray[0]
+      let beforeDecimal = nArray[0]
+      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
       let afterDecimal = nArray[1]
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
+    } else {
+      const nArray = bigNumber.toString().split('.')
+      let beforeDecimal = nArray[0]
+      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
+      let afterDecimal = nArray.length > 1 ? nArray[1] : null
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '')
     }
-    return Number(bigNumber.toFixed(2))
   } catch (error) {
     console.log('BIG NUM ERROR', bigNumber)
   }
@@ -252,24 +266,26 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
   // eslint-disable-next-line max-len
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
-    return '0.00'
+    return '00.00'
 
   let usdString = ''
+  let before = ''
   const nativeStringLen = nativeString.length
   if (nativeStringLen > mintDecimals) {
+    if (nativeStringLen - mintDecimals === 1)
+      before = '0' + nativeString.substring(0, nativeStringLen - mintDecimals)
+    else before = nativeString.substring(0, nativeStringLen - mintDecimals)
     usdString =
-      nativeString.substring(0, nativeStringLen - mintDecimals) +
-      '.' +
-      nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+      before + '.' + nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
   } else {
     let i = 0
-    let result = '0.'
+    let result = '00.'
     while (i < mintDecimals - nativeStringLen) {
       result += '0'
       i++
     }
     usdString = result + nativeString
-    usdString = usdString?.substring(0, 4)
+    usdString = usdString?.substring(0, 5)
   }
   const decimalIndex = usdString?.indexOf('.')
   const beforeDecimal = usdString?.substring(0, decimalIndex)
@@ -277,18 +293,22 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
 
   try {
     if (length > 9) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 9) + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
+      if (length - 9 === 1) before = '0' + beforeDecimal.substring(0, length - 9)
+      else before = beforeDecimal.substring(0, length - 9)
+      const resultStr = before + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
       return resultStr + 'B'
     }
     if (length > 6) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 6) + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
+      if (length - 6 === 1) before = '0' + beforeDecimal.substring(0, length - 6)
+      else before = beforeDecimal.substring(0, length - 6)
+      const resultStr = before + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
       return resultStr + 'M'
     }
     if (length > 3) {
-      const resultStr =
-        beforeDecimal.substring(0, length - 3) + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
+      let before = ''
+      if (length - 3 === 1) before = '0' + beforeDecimal.substring(0, length - 3)
+      else before = beforeDecimal.substring(0, length - 3)
+      const resultStr = before + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
       return resultStr + 'K'
     }
     return usdString
@@ -304,7 +324,8 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   the user input string has a decimal or not. If the user input string has a decimal if block will run, otherwise 
   else block will run.
   For example: For 1.24 SOL input, the if block will run and append (9-2-1 = 6) zeroes to the input string where:
-  9 -> mintDecimals, 2 -> afterdecimal length(24), 1(less than sign, so the while loop won't iterate for the 7th time).
+  9 -> mintDecimals, 2 -> afterdecimal length(24 -> length is 2), 1(less than sign, so the while loop 
+  won't iterate for the 7th time).
   If there are no decimals, then simply append mint - 1 zeroes. For example: For 1 SOL input, the else block will 
   run and append (9 - 1) = 8 zeroes.
 */

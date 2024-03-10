@@ -170,7 +170,7 @@ export const FarmTable: FC = () => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
       const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
-      if (amountInUSD && amountInUSD !== '0.00') {
+      if (amountInUSD && amountInUSD !== '00.00') {
         return accumulator + 1
       }
       return accumulator
@@ -311,6 +311,8 @@ export const FarmTable: FC = () => {
     })
     return claimableRewardObj
   }, [allPoolSslData, rewards])
+
+  console.log('show values', numberOfCoinsDeposited, showDeposited, searchTokens?.length, filteredTokens)
 
   return (
     <WRAPPER>
@@ -667,8 +669,8 @@ const FarmTokenContent: FC<{
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && userDepositedAmountUI !== '0.00') return true
-    else if (showDeposited && userDepositedAmountUI === '0.00') return false
+    else if (showDeposited && userDepositedAmountUI !== '00.00') return true
+    else if (showDeposited && userDepositedAmountUI === '00.00') return false
   }, [showDeposited, userDepositedAmount])
 
   // const openStatsModal = (e) => {
