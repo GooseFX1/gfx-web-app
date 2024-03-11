@@ -100,7 +100,7 @@ const Bridge: FC = () => {
     <CONTAINER>
       {isLoading && <PageLoader />}
       <div tw="w-[600px] m-auto relative">
-        <div tw="absolute left-[18px] top-[14px] z-[100]">
+        <div tw="absolute left-[18px] top-[14px] z-[1]">
           <Tooltip
             title="The bridge module requires a wallet connection for the source chain separate from the 
             the GooseFX dApp. The destiation address for your funds must be pasted below"
