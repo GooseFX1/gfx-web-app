@@ -104,13 +104,13 @@ const HISTORY = styled.div`
     font-size: 15px;
     font-weight: 600;
   }
-  .Bid {
+  .Long {
     color: #80ce00;
   }
   .filled {
     color: #80ce00;
   }
-  .Ask {
+  .Short {
     color: #f35355;
   }
 `
@@ -162,6 +162,15 @@ const Trades: FC = () => {
     }
   }, [connected, publicKey, pagination, traderInfo.traderRiskGroupKey])
 
+  // if the trader is the maker side displayed should be the opposite
+  const getDisplayTradeSide = (trade: any) => {
+    if (trade.taker == traderInfo.traderRiskGroupKey.toString()) {
+      return trade.side === 'Bid' ? 'Long' : 'Short'
+    } else {
+      return trade.side === 'Ask' ? 'Long' : 'Short'
+    }
+  }
+
   return (
     <WRAPPER>
       {depositWithdrawModal && (
@@ -198,7 +207,7 @@ const Trades: FC = () => {
                     <img src={`${assetIcon}`} alt="SOL icon" />
                     <span>{selectedCrypto.pair}</span>
                   </div>
-                  <span className={trade.side}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
+                  <span className={getDisplayTradeSide(trade)}>{getDisplayTradeSide(trade)}</span>
                   <span>{trade.qty.toFixed(3)} SOL</span>
                   <span>${(trade.qty * trade.price).toFixed(2)}</span>
                   <span>${trade.price.toFixed(2)}</span>
