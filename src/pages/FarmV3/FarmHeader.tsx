@@ -235,7 +235,7 @@ export const FarmHeader: FC = () => {
           ></div>
           <h4
             css={[range === 0 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-5 duration-500 flex items-center z-[100] justify-center font-bold 
+            tw="h-5 duration-500 flex items-center z-[1] justify-center font-bold
                             w-15 text-tiny sm:w-12.5 sm:h-[25px] sm:mb-2.5"
             onClick={() => setRange(0)}
           >
@@ -244,7 +244,7 @@ export const FarmHeader: FC = () => {
           {!checkMobile() && (
             <h4
               css={[range === 1 ? tw`!text-white` : tw`text-grey-1`]}
-              tw="h-5 duration-500 flex items-center z-[100] justify-center 
+              tw="h-5 duration-500 flex items-center z-[1] justify-center
                   font-bold w-15 text-tiny"
               onClick={() => setRange(1)}
             >
@@ -253,7 +253,7 @@ export const FarmHeader: FC = () => {
           )}
           <h4
             css={[range === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-5 flex items-center justify-center z-[10] font-bold 
+            tw="h-5 flex items-center justify-center z-[1] font-bold
                             w-15 text-tiny sm:w-12.5 sm:h-[25px]"
             onClick={() => setRange(2)}
           >
