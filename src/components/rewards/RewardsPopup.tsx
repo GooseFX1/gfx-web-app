@@ -8,7 +8,7 @@ import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay } from 'gf
 import Rewards from './v2/Rewards'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
-
+import RewardsClose from '@/assets/rewards_close.svg?react'
 export const REWARD_PANEL_INDEX = 0
 export const REFER_PANEL_INDEX = 1
 export const RAFFLE_PANEL_INDEX = 2
@@ -53,7 +53,7 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       variant={'outline'}
       size={'sm'}
-      className={'border-background-blue dark:border-white'}
+      className={'border-background-blue dark:border-white max-w-[108px]'}
     >
       {riveComponent}
       <span className={`font-bold`}>Rewards</span>
@@ -76,11 +76,15 @@ export const RewardsPopup: FC = () => {
       >
         <Button
           onClick={() => rewardToggle(false)}
+          variant={'ghost'}
           className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
-                   min-md:top-5`}
+                   min-md:top-5 z-[1] w-max p-0`}
           size={'sm'}
         >
-          <img className={`h-7.5 w-7.5`} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
+          <RewardsClose
+            className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
+          min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
+          />
         </Button>
         <DialogBody
           className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]

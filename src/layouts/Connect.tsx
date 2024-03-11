@@ -148,7 +148,7 @@ export const Connect: FC<MenuItemProps> = ({
                 {connected && (
                   <div
                     className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`}
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px] w-5 h-5 `}
                   >
                     <img
                       className={cn(
