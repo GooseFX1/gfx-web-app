@@ -164,7 +164,7 @@ export const ReferRightPanel: FC = () => {
   }, [isReady])
 
   return (
-    <div className={`flex flex-col h-full w-full items-center gap-2.5 min-md:gap-3.75 `}>
+    <div className={`flex flex-col h-full w-full items-center gap-2.5 min-md:gap-0 `}>
       <div className={`flex flex-col gap-2.5 min-md:gap-0`}>
         <h2 className={`mb-0 min-md:text-h2 text-h3 font-semibold leading-normal text-white`}>
           Total Referred: {totalFriends} Friends
@@ -174,8 +174,8 @@ export const ReferRightPanel: FC = () => {
 
       <div
         className={cn(
-          `flex flex-col justify-center h-[99px] min-md:h-[130px] min-md:gap-1 items-center min-md:justify-end
-          text-white
+          `flex flex-col justify-center min-md:gap-1 items-center min-md:justify-end
+          text-white w-full mt-4 min-md:my-auto
           `,
           totalEarned <= 0.0 ? `opacity-60` : `opacity-100`
         )}
@@ -184,15 +184,15 @@ export const ReferRightPanel: FC = () => {
           {totalEarned.toFixed(2)}
         </p>
         <p className={`text-regular min-md: text-lg font-semibold `}>Total USDC Earned</p>
+        <Button
+          variant={'outline'}
+          className={'w-full max-w-[300px] text-white'}
+          onClick={handleClaim}
+          disabled={totalEarned <= 0.0}
+        >
+          {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} USDC` : 'No USDC Claimable'}
+        </Button>
       </div>
-      <Button
-        variant={'outline'}
-        className={'w-full max-w-[300px] text-white'}
-        onClick={handleClaim}
-        disabled={totalEarned <= 0.0}
-      >
-        {totalEarned > 0.0 ? `Claim  ${totalEarned.toFixed(2)} USDC` : 'No USDC Claimable'}
-      </Button>
     </div>
   )
 }
