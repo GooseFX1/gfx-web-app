@@ -15,11 +15,15 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   const { activeUnstakingTickets } = useRewards()
   const { isMobile } = useBreakPoint()
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={true || isOpen} onOpenChange={onClose}>
       <DialogOverlay className={'z-[961]'} />
-      <DialogContent className={'z-[962] w-full pt-3'} placement={isMobile ? 'bottom' : 'default'}>
+      <DialogContent
+        className={cn('z-[962] min-md:w-[400px] h-[310px] pt-3')}
+        fullScreen={isMobile}
+        placement={isMobile ? 'bottom' : 'default'}
+      >
         <DialogHeader
-          className={`flex flex-col w-full h-full justify-between px-2.5 pb-1.25 border-b-1 border-solid
+          className={`flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
         >
           <div className={'w-full flex flex-row justify-between items-center'}>
@@ -31,7 +35,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
               onClick={onClose}
             />
           </div>
-          <div className={`flex w-full h-full justify-between `}>
+          <div className={`flex w-full justify-between `}>
             <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Unstake Amount</p>
             <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Days Remaining</p>
           </div>
