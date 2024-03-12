@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { GetProgramAccountsFilter, ParsedAccountData, PublicKey, TokenAmount } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
@@ -33,16 +33,25 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
   const config = new UtlConfig({ connection })
   const utl = new Client(config)
-
+  const cachedTokenAccounts = useMemo(
+    () =>
+      tokenAccounts.map((account) => {
+        const callback = async () => {
+          console.log('Setting balance for', account.symbol)
+          const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
+          setBalanceBySymbol(account.symbol, t.value)
+        }
+        callback()
+        return {
+          publicKey: account.pda,
+          callback
+        }
+      }),
+    [tokenAccounts, connection]
+  )
   useSolSubActivityMulti({
     subType: SubType.AccountChange,
-    publicKeys: tokenAccounts.map((account) => ({
-      publicKey: account.pda,
-      callback: async () => {
-        const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-        setBalanceBySymbol(account.symbol, t.value)
-      }
-    }))
+    publicKeys: cachedTokenAccounts
   })
 
   useEffect(() => {
