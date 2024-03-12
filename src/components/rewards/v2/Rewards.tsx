@@ -13,7 +13,8 @@ function Rewards(): JSX.Element {
     []
   )
   useEffect(() => {
-    const id = setInterval(fetchApy, 10000)
+    fetchApy()
+    const id = setInterval(fetchApy, 60000)
     return () => clearInterval(id)
   }, [fetchApy])
   return (
