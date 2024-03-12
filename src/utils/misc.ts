@@ -208,13 +208,12 @@ export const clamp = (num: number, min: number, max: number): number => Math.min
   If the number is less than 1000, it simply returns it upto 2 decimal places.
 */
 export const truncateBigNumber = (bigNumber: number): string | number => {
-  if (!bigNumber || bigNumber === null) return '00.00'
+  if (!bigNumber || bigNumber === null) return '0.00'
 
   try {
     if (bigNumber >= 1000000000) {
       const nArray = (bigNumber / 1000000000).toString().split('.')
-      let beforeDecimal = nArray[0]
-      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
+      const beforeDecimal = nArray[0]
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
       if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
       else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
@@ -223,8 +222,7 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
     }
     if (bigNumber >= 1000000) {
       const nArray = (bigNumber / 1000000).toString().split('.')
-      let beforeDecimal = nArray[0]
-      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
+      const beforeDecimal = nArray[0]
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
       if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
       else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
@@ -233,8 +231,7 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
     }
     if (bigNumber >= 1000) {
       const nArray = (bigNumber / 1000).toString().split('.')
-      let beforeDecimal = nArray[0]
-      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
+      const beforeDecimal = nArray[0]
       let afterDecimal = nArray[1]
       if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
       else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
@@ -242,8 +239,7 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
     } else {
       const nArray = bigNumber.toString().split('.')
-      let beforeDecimal = nArray[0]
-      if (beforeDecimal.length === 1) beforeDecimal = '0' + beforeDecimal
+      const beforeDecimal = nArray[0]
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
       if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
       else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
@@ -266,26 +262,24 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
   // eslint-disable-next-line max-len
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
-    return '00.00'
+    return '0.00'
 
   let usdString = ''
-  let before = ''
   const nativeStringLen = nativeString.length
   if (nativeStringLen > mintDecimals) {
-    if (nativeStringLen - mintDecimals === 1)
-      before = '0' + nativeString.substring(0, nativeStringLen - mintDecimals)
-    else before = nativeString.substring(0, nativeStringLen - mintDecimals)
     usdString =
-      before + '.' + nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
+      nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
   } else {
     let i = 0
-    let result = '00.'
+    let result = '0.'
     while (i < mintDecimals - nativeStringLen) {
       result += '0'
       i++
     }
     usdString = result + nativeString
-    usdString = usdString?.substring(0, 5)
+    usdString = usdString?.substring(0, 4)
   }
   const decimalIndex = usdString?.indexOf('.')
   const beforeDecimal = usdString?.substring(0, decimalIndex)
@@ -293,22 +287,18 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
 
   try {
     if (length > 9) {
-      if (length - 9 === 1) before = '0' + beforeDecimal.substring(0, length - 9)
-      else before = beforeDecimal.substring(0, length - 9)
-      const resultStr = before + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
+      const resultStr =
+        beforeDecimal.substring(0, length - 9) + '.' + beforeDecimal.substring(length - 9, length - 9 + 2)
       return resultStr + 'B'
     }
     if (length > 6) {
-      if (length - 6 === 1) before = '0' + beforeDecimal.substring(0, length - 6)
-      else before = beforeDecimal.substring(0, length - 6)
-      const resultStr = before + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
+      const resultStr =
+        beforeDecimal.substring(0, length - 6) + '.' + beforeDecimal.substring(length - 6, length - 6 + 2)
       return resultStr + 'M'
     }
     if (length > 3) {
-      let before = ''
-      if (length - 3 === 1) before = '0' + beforeDecimal.substring(0, length - 3)
-      else before = beforeDecimal.substring(0, length - 3)
-      const resultStr = before + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
+      const resultStr =
+        beforeDecimal.substring(0, length - 3) + '.' + beforeDecimal.substring(length - 3, length - 3 + 2)
       return resultStr + 'K'
     }
     return usdString

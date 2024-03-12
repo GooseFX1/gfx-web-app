@@ -170,7 +170,7 @@ export const FarmTable: FC = () => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
       const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
-      if (amountInUSD && amountInUSD !== '00.00') {
+      if (amountInUSD && amountInUSD !== '0.00') {
         return accumulator + 1
       }
       return accumulator
@@ -669,8 +669,8 @@ const FarmTokenContent: FC<{
 
   const showToggleFilteredTokens: boolean = useMemo(() => {
     if (!showDeposited) return true
-    else if (showDeposited && userDepositedAmountUI !== '00.00') return true
-    else if (showDeposited && userDepositedAmountUI === '00.00') return false
+    else if (showDeposited && userDepositedAmountUI !== '0.00') return true
+    else if (showDeposited && userDepositedAmountUI === '0.00') return false
   }, [showDeposited, userDepositedAmount])
 
   // const openStatsModal = (e) => {
@@ -727,7 +727,7 @@ const FarmTokenContent: FC<{
           )}
         </td>
         <td>
-          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
+          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '0.00'}%</h4>
         </td>
         {!checkMobile() && (
           <td>
@@ -757,7 +757,7 @@ const FarmTokenContent: FC<{
                   ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
                 </h4>
               ) : (
-                <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
+                <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
               )}
             </Tooltip>
           </td>
