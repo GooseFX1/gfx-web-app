@@ -3,7 +3,7 @@ import { SUPPORTED_TOKEN_LIST } from '../../../constants'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
 import { sleep, getUnixTs, aborter } from '../../../utils'
 
-const URL_SERVER = 'https://trading-view.goosefx.io/tradingview/'
+const URL_SERVER = 'https://trade-view.goosefx.io/tradingview/'
 
 export const DataFeedWrapper = (): any => {
   const { selectedCrypto, isDevnet } = useCrypto()
@@ -30,7 +30,9 @@ const makeDataFeed = () => {
         return responseJson.success ? responseJson.data : responseJson ? responseJson : null
       }
     } catch (err) {
+      const retry = url.replace('trade-view', 'trading-view')
       console.log(`Error fetching from Chart API ${url}: ${err}`)
+      return apiFetchHandler(retry)
     }
     return null
   }

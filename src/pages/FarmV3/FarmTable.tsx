@@ -312,6 +312,8 @@ export const FarmTable: FC = () => {
     return claimableRewardObj
   }, [allPoolSslData, rewards])
 
+  console.log('show values', numberOfCoinsDeposited, showDeposited, searchTokens?.length, filteredTokens)
+
   return (
     <WRAPPER>
       {allClaimModal && (
@@ -725,7 +727,7 @@ const FarmTokenContent: FC<{
           )}
         </td>
         <td>
-          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '00.00'}%</h4>
+          <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '0.00'}%</h4>
         </td>
         {!checkMobile() && (
           <td>
@@ -755,7 +757,7 @@ const FarmTokenContent: FC<{
                   ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
                 </h4>
               ) : (
-                <h4 tw="flex justify-center items-center font-semibold">$00.00</h4>
+                <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
               )}
             </Tooltip>
           </td>

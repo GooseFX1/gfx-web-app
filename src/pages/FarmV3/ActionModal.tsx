@@ -3,7 +3,7 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { Button, PopupCustom } from '../../components'
 import { SSLToken } from './constants'
-import { checkMobile, commafy, truncateBigNumber } from '../../utils'
+import { checkMobile, truncateBigNumber } from '../../utils'
 import { Drawer } from 'antd'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
@@ -188,10 +188,10 @@ export const ActionModal: FC<{
         >
           {`${
             actionType === 'deposit'
-              ? `Deposit ${commafy(+depositAmount, 2)} ${token?.token} + Claim Yield`
+              ? `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
               : actionType === 'withdraw'
-              ? `Withdraw ${commafy(+withdrawAmount + claimAmount - earlyWithdrawFee, 2)} ${token?.token}`
-              : `${claimAmount ? `${commafy(claimAmount, 2)} ${token?.token}` : '00.00 ' + token?.token}`
+              ? `Withdraw ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
+              : `${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token}`
           }`}
         </Button>
         <div

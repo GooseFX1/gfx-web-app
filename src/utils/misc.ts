@@ -208,34 +208,44 @@ export const clamp = (num: number, min: number, max: number): number => Math.min
   If the number is less than 1000, it simply returns it upto 2 decimal places.
 */
 export const truncateBigNumber = (bigNumber: number): string | number => {
-  if (!bigNumber || bigNumber === null) return '00.00'
+  if (!bigNumber || bigNumber === null) return '0.00'
 
   try {
     if (bigNumber >= 1000000000) {
       const nArray = (bigNumber / 1000000000).toString().split('.')
       const beforeDecimal = nArray[0]
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'B'
     }
     if (bigNumber >= 1000000) {
       const nArray = (bigNumber / 1000000).toString().split('.')
       const beforeDecimal = nArray[0]
       let afterDecimal = nArray.length > 1 ? nArray[1] : null
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'M'
     }
     if (bigNumber >= 1000) {
       const nArray = (bigNumber / 1000).toString().split('.')
       const beforeDecimal = nArray[0]
       let afterDecimal = nArray[1]
-      if (!afterDecimal || afterDecimal === '0') afterDecimal = null
-      else if (afterDecimal.length > 2) afterDecimal = afterDecimal.slice(0, 2)
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
       return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '') + 'K'
+    } else {
+      const nArray = bigNumber.toString().split('.')
+      const beforeDecimal = nArray[0]
+      let afterDecimal = nArray.length > 1 ? nArray[1] : null
+      if (!afterDecimal || afterDecimal === '0') afterDecimal = '00'
+      else if (afterDecimal.length >= 2) afterDecimal = afterDecimal.slice(0, 2)
+      else if (afterDecimal.length < 2) afterDecimal = afterDecimal + '0'
+      return beforeDecimal + (afterDecimal ? '.' + afterDecimal : '')
     }
-    return Number(bigNumber.toFixed(2))
   } catch (error) {
     console.log('BIG NUM ERROR', bigNumber)
   }
@@ -304,7 +314,8 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   the user input string has a decimal or not. If the user input string has a decimal if block will run, otherwise 
   else block will run.
   For example: For 1.24 SOL input, the if block will run and append (9-2-1 = 6) zeroes to the input string where:
-  9 -> mintDecimals, 2 -> afterdecimal length(24), 1(less than sign, so the while loop won't iterate for the 7th time).
+  9 -> mintDecimals, 2 -> afterdecimal length(24 -> length is 2), 1(less than sign, so the while loop 
+  won't iterate for the 7th time).
   If there are no decimals, then simply append mint - 1 zeroes. For example: For 1 SOL input, the else block will 
   run and append (9 - 1) = 8 zeroes.
 */
