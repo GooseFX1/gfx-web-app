@@ -165,14 +165,14 @@ const BuddyLinkReferral: FC = () => {
   )
 
   return (
-    <div className={`flex flex-col gap-5 min-h-[40px] items-center relative justify-center `}>
+    <div className={`flex flex-col gap-5  items-center relative justify-center `}>
       {!initialFetch ? (
         <div
           onClick={copyToClipboard}
           className={cn(
             `border-[1.5px] dark:border-grey-1 border-grey-2 border-solid cursor-pointer
               flex flex-row justify-between p-[5px] px-2.5 items-center w-full rounded-[3px] 
-              relative h-10`,
+              relative h-8.75`,
             !name.trim() ? `cursor-default` : `cursor-pointer`
           )}
         >
@@ -180,7 +180,7 @@ const BuddyLinkReferral: FC = () => {
         </div>
       ) : !publicKey && !connected ? (
         <Connect
-          containerStyle={`w-full min-md:w-full h-[40px] rounded-[100px]`}
+          containerStyle={`w-full min-md:w-full rounded-[100px]`}
           customButtonStyle={`w-full min-md:w-full max-w-full h-[40px] min-md:h-[40px]`}
         />
       ) : (

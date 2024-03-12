@@ -50,16 +50,17 @@ export const ReferAndEarn: FC = () => {
         font-display min-md:font-sans text-b2
       `}
           >
-            In order to generate you referral link, first go to
+            In order to generate you referral link, first go to{' '}
+            <a
+              href={'https://app.goosefx.io/trade'}
+              target={'_blank'}
+              rel={'noreferrer'}
+              className={`font-semibold underline text-blue-1 dark:text-white mx-1`}
+            >
+              app.goosefx.io/trade
+            </a>
           </p>
-          <a
-            href={'https://app.goosefx.io/trade'}
-            target={'_blank'}
-            rel={'noreferrer'}
-            className={`font-semibold underline text-blue-1 dark:text-white mx-1`}
-          >
-            app.goosefx.io/trade
-          </a>
+
           <p
             className={`mb-0 text-grey-3 dark:text-grey-2 text-h4
         font-display min-md:font-sans  text-b2
