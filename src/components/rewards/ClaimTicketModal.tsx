@@ -15,7 +15,7 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   const { activeUnstakingTickets } = useRewards()
   const { isMobile } = useBreakPoint()
   return (
-    <Dialog open={true || isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className={'z-[961]'} />
       <DialogContent
         className={cn('z-[962] min-md:w-[400px] h-[310px] pt-3')}
