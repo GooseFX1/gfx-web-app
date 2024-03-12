@@ -88,7 +88,7 @@ export const FarmHeader: FC = () => {
   }
 
   const TVL = useMemo(() => {
-    if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$00.00`
+    if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
 
     const totalLiquidity = allPoolSslData
       .map((token: SSLToken) => {
@@ -101,7 +101,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, liquidityAmount, prices])
 
   const totalEarnings = useMemo(() => {
-    if (!allPoolSslData || !allPoolFilteredLiquidityAcc) return `$00.00`
+    if (!allPoolSslData || !allPoolFilteredLiquidityAcc) return `$0.00`
 
     const totalEarned = allPoolSslData
       .map((token: SSLToken) => {
@@ -112,13 +112,13 @@ export const FarmHeader: FC = () => {
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
-    if (!totalEarned) return `$00.00`
+    if (!totalEarned) return `$0.00`
 
     return '$' + truncateBigNumber(totalEarned)
   }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, userPubKey])
 
   const V24H = useMemo(() => {
-    if (allPoolSslData == null) return `$00.00`
+    if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
       .map((token: SSLToken) => {
@@ -132,7 +132,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, sslTableData])
 
   const V7D = useMemo(() => {
-    if (allPoolSslData == null) return `$00.00`
+    if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
       .map((token: SSLToken) => {
@@ -146,7 +146,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, sslAllVolume])
 
   const totalVolumeTraded = useMemo(() => {
-    if (allPoolSslData == null) return `$00.00`
+    if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
       .map((token: SSLToken) => {
@@ -160,7 +160,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, sslAllVolume])
 
   const F24H = useMemo(() => {
-    if (allPoolSslData == null) return `$00.00`
+    if (allPoolSslData == null) return `$0.00`
 
     const totalFees = allPoolSslData
       .map((token: SSLToken) => {
@@ -176,7 +176,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, sslTableData])
 
   const F7D = useMemo(() => {
-    if (allPoolSslData == null || !sslTotalFees) return `$00.00`
+    if (allPoolSslData == null || !sslTotalFees) return `$0.00`
 
     const totalWeeklyFees = allPoolSslData
       .map((token: SSLToken) => {
@@ -190,7 +190,7 @@ export const FarmHeader: FC = () => {
   }, [allPoolSslData, sslTotalFees])
 
   const totalFees = useMemo(() => {
-    if (allPoolSslData == null || !sslTotalFees) return `$00.00`
+    if (allPoolSslData == null || !sslTotalFees) return `$0.00`
 
     const totalFees = allPoolSslData
       .map((token: SSLToken) => {
