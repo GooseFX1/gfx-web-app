@@ -18,16 +18,16 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className={'z-[961]'} />
       <DialogContent
-        className={cn('z-[962] min-md:w-[400px] h-[310px] pt-3')}
+        className={cn('z-[962] min-md:w-[400px] h-[310px] pt-3 flex flex-col gap-0')}
         fullScreen={isMobile}
         placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogHeader
-          className={`flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
+          className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
         >
           <div className={'w-full flex flex-row justify-between items-center'}>
-            <p className={`mb-0 text-[20px] leading-[24px] font-semibold`}>All Active Cooldowns</p>
+            <h3 className={`mb-0 text-h3 `}>All Active Cooldowns</h3>
             <CloseLite
               className={`w-[18px] h-[18px] cursor-pointer min-md:mr-[15px] 
               stroke-border-lightmode-primary dark:stroke-border-darkmode-primary
@@ -36,8 +36,8 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
             />
           </div>
           <div className={`flex w-full justify-between `}>
-            <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Unstake Amount</p>
-            <p className={`mb-0 text-[18px] leading-[22px] font-semibold`}>Days Remaining</p>
+            <h5 className={`mb-0 text-h5 `}>Unstake Amount</h5>
+            <h5 className={`mb-0 text-h5 `}>Days Remaining</h5>
           </div>
         </DialogHeader>
         <DialogBody
@@ -84,7 +84,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
         return
       }
 
-      setClaimButtonText(`${momentTime.days()}d: ${momentTime.hours()}h: ${momentTime.minutes()}min`)
+      setClaimButtonText(`${momentTime.days()}D: ${momentTime.hours()}H: ${momentTime.minutes()}Min`)
     },
     [ticket.createdAt]
   )
@@ -114,14 +114,13 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
 
       <Button
         className={cn(
-          `py-[9px] px-[32px] rounded-[28px] bg-grey-5 dark:bg-black-1 text-grey-1 leading-normal
-      font-bold h-10 w-[160px] min-md:w-[207px] border-0 cursor-not-allowed whitespace-nowrap text-regular
-      relative flex items-center justify-center`,
-          oneDayLeft && !canClaim && `text-red-2`,
-          canClaim && ` text-white cursor-pointer`,
+          `h-10 w-[130px] border-0 cursor-not-allowed whitespace-nowrap 
+      relative items-center justify-center`,
+          !oneDayLeft && canClaim && `text-red-2`,
+          canClaim && ` text-white`,
           isClaiming && `cursor-not-allowed `
         )}
-        disabled={!canClaim}
+        disabled={!canClaim || isClaiming}
         colorScheme={canClaim ? 'primaryGradient' : 'default'}
         onClick={unstakeGoFX}
       >

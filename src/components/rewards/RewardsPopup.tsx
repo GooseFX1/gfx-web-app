@@ -53,7 +53,7 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       variant={'outline'}
       size={'sm'}
-      className={'border-background-blue dark:border-white max-w-[108px]'}
+      className={'border-background-blue dark:border-white '}
     >
       {riveComponent}
       <span className={`font-bold`}>Rewards</span>
