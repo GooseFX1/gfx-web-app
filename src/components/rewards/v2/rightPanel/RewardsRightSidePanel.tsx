@@ -26,14 +26,14 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
       </h1>
       <div className={`flex flex-col gap-1.25 flex-1 max-w-[300px] w-full justify-center`}>
         <div className={`flex flex-col gap-2 items-center`}>
-          <p
+          <h1
             className={cn(
               `mb-0 text-45 min-sm:text-3xl text-white opacity-60 leading-[1] font-sans`,
               totalEarned > 0 && `opacity-100`
             )}
           >
             {totalEarnedString == '0.00' ? (totalEarned > 0 ? '< 0.00' : '0.00') : totalEarnedString}
-          </p>
+          </h1>
           <p className={cn(`mb-0 text-regular min-sm:text-average text-white font-semibold`)}>
             Past USDC Earnings
           </p>
