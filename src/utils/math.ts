@@ -102,7 +102,8 @@ export const numberFormatter = (num: number, digits = 2): string => {
   const currentDecimals = splitOnDecimal[1]
   const decimal = currentDecimals.slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
-  if (splitOnDecimal[0] == '0' && decimal.length > 0) {
+
+  if (splitOnDecimal[0] == '0' && decimal.length > digits) {
     return `<0.${'0'.repeat(digits - 1)}1`
   }
   return `${accurateResult}${unit ?? ''}`
