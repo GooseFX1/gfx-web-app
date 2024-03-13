@@ -29,7 +29,7 @@ function RewardsClaimButton(): JSX.Element {
       disabled={buttonDisabled || isClaiming}
       onClick={handleClaim}
       variant={'outline'}
-      className={cn('text-white', claimable > 0 && `opacity-100`)}
+      className={cn('text-white bg-background-darkmode-primary', claimable > 0 && `opacity-100`)}
     >
       {isClaiming ? (
         <Loader zIndex={2} color={'blue-1'} />
