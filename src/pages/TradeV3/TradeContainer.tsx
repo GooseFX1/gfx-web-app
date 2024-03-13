@@ -419,13 +419,6 @@ const CryptoContent: FC = () => {
                 />
                 <span>Drag to Reposition</span>
               </UNLOCKED_OVERLAY>
-            ) : !wallet && isLocked ? (
-              <UNLOCKED_OVERLAY>
-                <div className="overlay-text">
-                  See all our <br /> amazing features!
-                </div>
-                <Connect />
-              </UNLOCKED_OVERLAY>
             ) : null}
           </div>
         )
