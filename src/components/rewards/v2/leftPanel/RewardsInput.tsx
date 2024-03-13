@@ -77,17 +77,7 @@ export default function RewardsInput({
           </Button>
         </InputElementLeft>
       }
-      rightItem={
-        <InputElementRight
-          className={cn(
-            inputValue > 0.0
-              ? 'text-text-blue dark:text-text-darkmode-primary'
-              : `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
-          )}
-        >
-          GOFX
-        </InputElementRight>
-      }
+      rightItem={<InputElementRight>GOFX</InputElementRight>}
     >
       <Input
         ref={inputRef}
