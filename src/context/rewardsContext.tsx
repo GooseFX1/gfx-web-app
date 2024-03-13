@@ -33,6 +33,7 @@ import { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const cg = new CoinGecko()
 
@@ -224,7 +225,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
-
+  const { connectedWalletPublicKey } = useWalletBalance()
   const resetStakeRewards = useCallback(() => {
     setStakePool(initialState.stakePool)
     setGofxVault(initialState.gofxVault)
@@ -262,9 +263,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     process()
   }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
-  useSolSubActivityMulti({
-    subType: SubType.AccountChange,
-    publicKeys: [
+  const cachedRetrievalKeys = useMemo(
+    () => [
       {
         publicKey: pubKeys.gofxVault,
         callback: async () => {
@@ -280,7 +280,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       {
         publicKey: pubKeys.userMetadata,
         callback: async () => {
-          const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+          const newUserMetaData = await stakeRewards.getUserMetaData(connectedWalletPublicKey)
           const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
           setUserMetaData(newUserMetaData)
           setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
@@ -295,12 +295,17 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       {
         publicKey: pubKeys.userHoldingsAccount,
         callback: async () => {
-          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(connectedWalletPublicKey)
           setClaimable(Number(newClaimable))
           console.log('FOUND NEW CLAIMABLE')
         }
       }
-    ]
+    ],
+    [pubKeys, stakeRewards, connectedWalletPublicKey]
+  )
+  useSolSubActivityMulti({
+    subType: SubType.AccountChange,
+    publicKeys: cachedRetrievalKeys
   })
 
   useEffect(() => {

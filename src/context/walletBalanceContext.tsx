@@ -21,6 +21,7 @@ interface UserTokenAccounts {
 type Balance = Record<string, UserTokenAccounts>
 interface IWalletBalanceContext {
   balance: Balance
+  connectedWalletPublicKey?: PublicKey
 }
 
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
@@ -162,7 +163,9 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
   const balanceProxy = new Proxy(balance, balanceProxyHandler)
   return (
-    <WalletBalanceContext.Provider value={{ balance: balanceProxy }}>{children}</WalletBalanceContext.Provider>
+    <WalletBalanceContext.Provider value={{ balance: balanceProxy, connectedWalletPublicKey: publicKey }}>
+      {children}
+    </WalletBalanceContext.Provider>
   )
 }
 export default WalletBalanceProvider
