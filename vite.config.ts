@@ -101,7 +101,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: 'build',
-    target: ['firefox78', 'chrome87', 'esnext'],
+    target: ['esnext', 'firefox78', 'chrome87'],
     commonjsOptions: {
       transformMixedEsModules: true
     },
