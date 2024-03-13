@@ -187,7 +187,6 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
           ) : (
             <Button
               className={'w-full'}
-              variant={'secondary'}
               colorScheme={'blue'}
               onClick={handleStakeUnstake}
               disabled={disabledStakeButton || isStakeLoading}
