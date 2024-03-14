@@ -11,10 +11,15 @@ export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
   <div className={cn('h-full dark:bg-black-2 bg-white border-solid')}>{children}</div>
 )
 
-export const TitleLabel: FC<{ children: ReactNode; whiteText: boolean }> = ({ children, whiteText }) => (
+export const ContentLabel: FC<{ children: ReactNode }> = ({ children }) => (
+  <div>
+    <h5 className={cn('text-grey-1 dark:text-grey-2')}>{children}</h5>
+  </div>
+)
+export const TitleLabel: FC<{ children: ReactNode; whiteText?: boolean }> = ({ children, whiteText }) => (
   <div>
     <h5
-      className={cn(`dark:text-grey-1 text-grey-9 duration-500
+      className={cn(`dark:text-grey-1 text-grey-9 duration-200
   ${whiteText && `!text-white`}`)}
     >
       {children}
