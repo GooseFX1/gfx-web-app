@@ -103,7 +103,7 @@ export const AVAILABLE_ORDERS_PERPS = [
   }
 ]
 
-interface ITraderRiskGroup {
+export interface ITraderRiskGroup {
   traderRiskGroup: TraderRiskGroup
   traderRiskGroupKey: PublicKey
   collateralAvailable: string
