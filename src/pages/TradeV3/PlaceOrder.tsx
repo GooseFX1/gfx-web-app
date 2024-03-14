@@ -40,6 +40,7 @@ import {
   Slider
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
+import { CircularArrow } from '@/components/common/Arrow'
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -528,6 +529,7 @@ export const PlaceOrder: FC = () => {
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useBoolean(false)
 
   const TAKE_PROFIT_ARRAY = [
     {
@@ -659,6 +661,7 @@ export const PlaceOrder: FC = () => {
           if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, size: input }))
           break
         case 'total':
+          console.log(input, 'shri')
           if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, total: input }))
           break
         case 'price':
@@ -1230,84 +1233,130 @@ export const PlaceOrder: FC = () => {
     <div className={cn('pb-1 h-full')}>
       <PerpsLayout>
         <LongShortTitleLayout handleOrderSide={handleOrderSide} />
-        <LeverageRatioTile />
-        <TransactionInputArea sliderValue={sliderValue} handleSliderChange={handleSliderChange} />
+        <LeverageRatioTile sliderValue={sliderValue} />
+
+        <div className={cn('px-2.5')}>
+          <div className={cn('flex mb-2')}>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <InfoLabel>Order type</InfoLabel>
+              {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
+              <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
+                <DropdownMenuTrigger asChild={true}>
+                  <Button variant="outline" onClick={setIsOpen.on} className={cn('max-content mr-2 h-[30px]')}>
+                    <h4 className={cn('w-[70px]')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
+                    <img
+                      style={{
+                        transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                        transition: 'transform 0.2s ease-in-out'
+                      }}
+                      src={`/img/mainnav/connect-chevron.svg`}
+                      alt={'connect-chevron'}
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent asChild>
+                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>
+                    <DropdownMenuItem
+                      variant={'default'}
+                      onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
+                    >
+                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Limit</p>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}>
+                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Market</p>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <InfoLabel>Price</InfoLabel>
+              <div className={cn('w-full flex')}>
+                <Input
+                  placeholder={'0.00 USD'}
+                  value={order.price ?? ''}
+                  onChange={(e) => numberCheck(e.target.value, 'price')}
+                  disabled={order.display === 'market'}
+                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.price && `pr-12`)}
+                />
+                {order.price && <p className={cn('mt-1 right-3 absolute mr-1')}>USD</p>}
+              </div>
+            </div>
+          </div>
+          {/* Shata */}
+          <div className={cn('flex mb-2')}>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <InfoLabel>Size</InfoLabel>
+              <div className={cn('w-full flex')}>
+                <Input
+                  placeholder={'0.00 SOL'}
+                  value={order.size ?? ''}
+                  onChange={(e) => numberCheck(e.target.value, 'size')}
+                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.size && `pr-12`)}
+                />
+                {Number(order.size) !== 0 && <p className={cn('mt-[4.5px] right-3 absolute mr-1')}>SOL</p>}
+              </div>
+            </div>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <InfoLabel>Amount</InfoLabel>
+              <div className={cn('w-full flex')}>
+                <Input
+                  placeholder={'0.00 USD'}
+                  value={order.total !== 0 ? order.total : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'total')}
+                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.total && `pr-12`)}
+                />
+                {Number(order.total) !== 0 && <p className={cn('mt-[4.5px] right-[25px] absolute')}>USD</p>}
+              </div>
+            </div>
+          </div>
+
+          <div className={cn('flex mb-2 flex-col')}>
+            <InfoLabel>Take Profit</InfoLabel>
+            <Input className={cn('w-auto min-w-[100px] mr-2')} />
+          </div>
+          <div className={cn('flex mb-2 flex-col')}>
+            <InfoLabel>Leverage</InfoLabel>
+            <div className={cn('mt-2.5')}>
+              <Slider
+                max={10}
+                value={[sliderValue]}
+                onValueChange={(e) => handleSliderChange(e)}
+                step={0.1}
+                min={0}
+              >
+                {sliderValue}
+              </Slider>
+              <div className={cn('h-5 w-full flex items-center justify-center mt-3')}>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 2X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 4X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 8X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 10X</TitleLabel>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </PerpsLayout>
     </div>
   )
 }
 
-const TransactionInputArea: FC<{ sliderValue; handleSliderChange }> = ({ sliderValue, handleSliderChange }) => {
-  const [isOpen, setIsOpen] = useBoolean(false)
-  const { order, setOrder } = useOrder()
-  const { mode } = useDarkMode()
-  return (
-    <div className={cn('px-2.5')}>
-      <div className={cn('flex mb-2')}>
-        <div className={cn('flex w-1/2 flex-col')}>
-          <InfoLabel>Order type</InfoLabel>
-          {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild={true}>
-              <Button variant="outline" onClick={setIsOpen.on} className={cn('max-content mr-2')}>
-                {order.display === 'limit' ? 'Limit ' : 'Market '}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent asChild>
-              <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>
-                <DropdownMenuItem
-                  variant={'default'}
-                  onClick={() => setOrder((prev) => ({ ...prev, type: 'limit' }))}
-                >
-                  <p className={cn('font-bold w-[90px] cursor-pointer')}>Limit</p>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setOrder((prev) => ({ ...prev, type: 'market' }))}>
-                  <p className={cn('font-bold w-[90px] cursor-pointer')}>Market</p>
-                </DropdownMenuItem>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className={cn('flex w-1/2 flex-col')}>
-          <InfoLabel>Price</InfoLabel>
-          <Input className={cn('w-auto min-w-[100px] mr-2')} />
-        </div>
-      </div>
-      <div className={cn('flex mb-2')}>
-        <div className={cn('flex w-1/2 flex-col')}>
-          <InfoLabel>Size</InfoLabel>
-          <Input className={cn('w-auto min-w-[100px] mr-2')} />
-        </div>
-        <div className={cn('flex w-1/2 flex-col')}>
-          <InfoLabel>Amount</InfoLabel>
-          <Input className={cn('w-auto min-w-[100px] mr-2')} />
-        </div>
-      </div>
-
-      <div className={cn('flex mb-2 flex-col')}>
-        <InfoLabel>Take Profit</InfoLabel>
-        <Input className={cn('w-auto min-w-[100px] mr-2')} />
-      </div>
-      <div className={cn('flex mb-2 flex-col')}>
-        <InfoLabel>Leverage</InfoLabel>
-        <div className={cn('mt-2.5')}>
-          <Slider max={10} onChange={(e) => handleSliderChange(e)} step={0.01} min={0}>
-            {sliderValue}
-          </Slider>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const LeverageRatioTile: FC = () => (
+const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
   <div className={cn('p-2.5')}>
     <div className={cn('h-8.75 flex items-center justify-between')}>
       <div className={cn('flex items-center')}>
         <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} />
         <InfoLabel> SOL-PERP </InfoLabel>
       </div>
-      <div>Multiplier</div>
+      <div>{sliderValue}</div>
     </div>
   </div>
 )

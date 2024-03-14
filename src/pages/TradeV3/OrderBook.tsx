@@ -5,6 +5,8 @@ import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
+import { cn } from 'gfx-component-lib'
+import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
@@ -87,7 +89,7 @@ const ORDER_BUY = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin: ${({ theme }) => theme.margin(0.5)} 0;
+  margin: ${({ theme }) => theme.margin(1)} 0;
   height: 20px;
   span {
     flex: 1;
@@ -171,13 +173,13 @@ const ORDER_SELL = styled.div`
 `
 
 const SIZE_BUY = styled.span`
-  ${tw`dark:bg-[#58ce3b] bg-[#71c25d]`}
+  ${tw`bg-green-4 `}
   position: absolute;
   right: 0;
   height: 100%;
 `
 const SIZE_SELL = styled.span`
-  ${tw`dark:bg-[#f24244] bg-[#f06565]`}
+  ${tw`bg-red-2`}
   position: absolute;
   left: 0;
   height: 100%;
@@ -192,9 +194,11 @@ const WRAPPER = styled.div`
 const ORDERBOOK_CONTAINER = styled.div`
   width: 100%;
   display: flex;
+  overflow-y: auto;
   align-items: baseline;
   justify-content: center;
   padding: 0px 10px;
+  height: 100%;
   span {
     width: 50%;
   }
@@ -430,6 +434,104 @@ export const OrderBook: FC = () => {
     </Menu>
   )
 
+  return (
+    <div className={cn('h-full')}>
+      {!checkMobile() && (
+        <div className={cn('flex p-2.5 h-[38px] items-center justify-between')}>
+          <div>
+            <InfoLabel>
+              {'Spread:'} {spreadAbsolute[1]}%
+            </InfoLabel>
+          </div>
+          <div>
+            {
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']} overlayClassName={`spread-dropdown ${mode}`}>
+                <div className="spreadDropdown">
+                  {SPREADS[spreadIndex]}
+                  <DownOutlined />
+                </div>
+              </Dropdown>
+            }
+          </div>
+        </div>
+      )}
+      <div className={cn('px-2.5')}>
+        <div className={cn('flex items-center justify-between overflow-auto')}>
+          <InfoLabel>Size ({ask})</InfoLabel>
+          <InfoLabel> Price ({bid})</InfoLabel>
+          <InfoLabel>Size ({ask})</InfoLabel>
+        </div>
+      </div>
+
+      <ORDERS $visible={order.isHidden || (!orderBook.bids.length && !orderBook.asks.length)}>
+        {!orderBook.bids.length && !orderBook.asks.length ? (
+          <Loader />
+        ) : (
+          <ORDERBOOK_CONTAINER>
+            <span>
+              {
+                slicedOrderBookBids.reduce(
+                  (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
+                    const value = price * size
+                    acc.totalValue += value
+                    acc.nodes.push(
+                      <ORDER_BUY key={index}>
+                        <span onClick={() => handleSetSize(size)}>
+                          <ContentLabel>{removeFloatingPointError(size)}</ContentLabel>
+                        </span>
+                        <span onClick={() => handleSetPrice(price)}>
+                          <InfoLabel>${removeFloatingPointError(price)}</InfoLabel>
+                        </span>
+
+                        <SIZE_BUY
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueBids) * 100}%`,
+                            opacity: neworders.bids.includes(index) ? '1' : '0.4'
+                          }}
+                        />
+                      </ORDER_BUY>
+                    )
+                    return acc
+                  },
+                  { nodes: [], totalValue: 0 }
+                ).nodes
+              }
+            </span>
+            <span>
+              {
+                slicedOrderBookAsks.reduce(
+                  (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
+                    const value = price * size
+                    acc.totalValue += value
+                    acc.nodes.push(
+                      <ORDER_SELL key={index}>
+                        <span onClick={() => handleSetPrice(price)}>
+                          <InfoLabel>${removeFloatingPointError(price)}</InfoLabel>
+                        </span>
+                        <span onClick={() => handleSetSize(size)}>
+                          <ContentLabel>{removeFloatingPointError(size)}</ContentLabel>
+                        </span>
+
+                        <div
+                          className={cn('bg-red-2 absolute left-0 h-full')}
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%`,
+                            opacity: neworders.asks.includes(index) ? '1' : '0.4'
+                          }}
+                        />
+                      </ORDER_SELL>
+                    )
+                    return acc
+                  },
+                  { nodes: [], totalValue: 0 }
+                ).nodes
+              }
+            </span>
+          </ORDERBOOK_CONTAINER>
+        )}
+      </ORDERS>
+    </div>
+  )
   return (
     <WRAPPER>
       <HEADER>
