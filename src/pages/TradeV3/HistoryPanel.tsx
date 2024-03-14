@@ -2,7 +2,7 @@
 import React, { useState, FC, useMemo, useEffect } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
-import { useTraderConfig } from '../../context/trader_risk_group'
+import { ITraderRiskGroup, useTraderConfig } from '../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from './perps/utils'
 import { ClosePosition } from './ClosePosition'
 import { PopupCustom } from '../../components'
@@ -12,8 +12,26 @@ import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
-import { Button } from '../../components'
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
+import { OrderBook } from './OrderBook'
+import { InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
+
+type TabColumnsDisplayProps = {
+  activeTab: number
+}
+
+type PositionDetailsProps = {
+  traderInfo: ITraderRiskGroup
+  selectedCrypto: {
+    pair: string
+  }
+  roundedSize: number | string
+  perpsPrice: number
+  notionalSize: number | string
+  pnl: number
+  handleClosePosition: () => void
+}
 
 const END_MODAL = styled(PopupCustom)`
   ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
@@ -32,7 +50,7 @@ const END_MODAL = styled(PopupCustom)`
 
 const columns = [
   {
-    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'PNL']
+    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'State']
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
@@ -598,135 +616,241 @@ export const HistoryPanel: FC = () => {
     } else return 0
   }, [traderInfo.averagePosition, traderInfo.averagePosition.quantity, wallet.connected])
 
+  // return (
+  //   <>
+  //     <WRAPPER>
+  //       <HEADER>
+  //         {closePositionModal && (
+  //           <>
+  //             <SETTING_MODAL
+  //               visible={true}
+  //               centered={true}
+  //               footer={null}
+  //               title={
+  //                 <div tw="flex items-center">
+  //                   <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
+  //                 </div>
+  //               }
+  //               closeIcon={
+  //                 <img
+  //                   src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //                   height="20px"
+  //                   width="20px"
+  //                   onClick={() => setClosePositionModal(false)}
+  //                 />
+  //               }
+  //             >
+  //               <ClosePosition
+  //                 setVisibleState={setClosePositionModal}
+  //                 setSummaryData={setSummaryData}
+  //                 setPerpsEndModal={setPerpsEndModal}
+  //               />
+  //             </SETTING_MODAL>
+  //           </>
+  //         )}
+  //         {perpsEndModal && (
+  //           <>
+  //             <END_MODAL
+  //               visible={true}
+  //               centered={true}
+  //               footer={null}
+  //               title={
+  //                 <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
+  //                   {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
+  //                 </span>
+  //               }
+  //               closeIcon={
+  //                 <img
+  //                   src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //                   height="20px"
+  //                   width="20px"
+  //                   onClick={() => setPerpsEndModal(false)}
+  //                 />
+  //               }
+  //             >
+  //               <PerpsEndModal
+  //                 profit={summaryData.profit}
+  //                 side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+  //                 entryPrice={summaryData.entryPrice}
+  //                 currentPrice={summaryData.exitPrice}
+  //                 leverage={summaryData.leverage}
+  //                 pnlAmount={summaryData.pnl}
+  //                 percentageChange={summaryData.percentageChange}
+  //               />
+  //             </END_MODAL>
+  //           </>
+  //         )}
+  //         <div className="header-wrapper">
+  //           {/* {tabs.map((item, index) => (
+  //             <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
+  //               <div className="white-background">
+  //                 <div
+  //                   className={index === activeTab ? 'active tab' : 'tab'}
+  //                   onClick={() => setActiveTab(index)}
+  //                   css={[tw`!text-regular !font-bold`]}
+  //                 >
+  //                   {index === 1 ? (
+  //                     <div className="open-order-header">
+  //                       <div>{item}</div>
+  //                       {!isDevnet && (
+  //                         <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
+  //                       )}
+  //                     </div>
+  //                   ) : (
+  //                     item
+  //                   )}
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           ))} */}
+  //         </div>
+  //         <div className={`${tabs[activeTab].replaceAll(' ', '-').replaceAll('&', '-')} headers`}>
+  //           {columns[activeTab][tabs[activeTab]].map((item, index) => (
+  //             <span key={index}>{item}</span>
+  //           ))}
+  //         </div>
+  //       </HEADER>
+  //       {activeTab === 0 ? (
+  //         <>
+  //           <POSITIONS>
+  //             {traderInfo.averagePosition.side && Number(roundedSize) ? (
+  //               <div className="positions">
+  //                 <span>{selectedCrypto.pair}</span>
+  //                 <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
+  //                   {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+  //                 </span>
+  //                 <span>${traderInfo.averagePosition.price}</span>
+  //                 <span>{roundedSize}</span>
+  //                 <span>${perpsPrice}</span>
+  //                 <span>${formatNumberInThousands(Number(notionalSize))}</span>
+  //                 <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
+  //                 <span className={pnl <= 0 ? 'short' : 'long'}>
+  //                   $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
+  //                 </span>
+  //                 <button onClick={handleClosePosition}>Close</button>
+  //               </div>
+  //             ) : (
+  //               <div className="no-positions-found">
+  //                 <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+  //                 <div>No Positions Found</div>
+  //               </div>
+  //             )}
+  //           </POSITIONS>
+  //         </>
+  //       ) : activeTab === 1 ? (
+  //         <OpenOrdersComponent />
+  //       ) : activeTab === 2 ? (
+  //         <TradeHistoryComponent />
+  //       ) : activeTab === 3 ? (
+  //         <FundingHistoryComponent />
+  //       ) : null}
+  //     </WRAPPER>
+  //   </>
+  // )
+  return (
+    <Tabs className="p-[0px] mb-2 h-full" defaultValue="0">
+      {activeTab}
+      <TabsList>
+        {tabs.map((item, index) => (
+          <TabsTrigger
+            className={cn('w-[20%]')}
+            size="xl"
+            value={index.toString()}
+            onClick={() => setActiveTab(index)}
+            variant="primary"
+          >
+            <TitleLabel whiteText={activeTab === index}>{item}</TitleLabel>
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      <TabsContent className={cn('h-[100%]')} value="0">
+        <>
+          <TabColumnsDisplay activeTab={activeTab} />
+          <PositionDetails
+            traderInfo={traderInfo}
+            selectedCrypto={selectedCrypto}
+            roundedSize={roundedSize}
+            perpsPrice={perpsPrice}
+            notionalSize={notionalSize}
+            pnl={pnl}
+            handleClosePosition={handleClosePosition}
+          />
+        </>
+      </TabsContent>
+      <TabsContent value="1">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <OpenOrdersComponent />
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+const TabColumnsDisplay: React.FC<TabColumnsDisplayProps> = ({ activeTab }) => {
+  const length = useMemo(() => {
+    const items = columns[activeTab][tabs[activeTab]]
+    return items ? 100 / items.length : 0
+  }, [columns, activeTab, tabs])
+
+  return (
+    <div className={cn('px-2.5 py-2 flex')}>
+      {columns[activeTab][tabs[activeTab]].map((item, index) => (
+        <div style={{ width: `${length}%` }} key={item.id || index}>
+          <InfoLabel>{item}</InfoLabel>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const PositionDetails: React.FC<PositionDetailsProps> = ({
+  traderInfo,
+  selectedCrypto,
+  roundedSize,
+  perpsPrice,
+  notionalSize,
+  pnl,
+  handleClosePosition
+}) => {
+  const { mode } = useDarkMode()
   return (
     <>
-      <WRAPPER>
-        <HEADER>
-          {closePositionModal && (
-            <>
-              <SETTING_MODAL
-                visible={true}
-                centered={true}
-                footer={null}
-                title={
-                  <div tw="flex items-center">
-                    <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                  </div>
-                }
-                closeIcon={
-                  <img
-                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                    height="20px"
-                    width="20px"
-                    onClick={() => setClosePositionModal(false)}
-                  />
-                }
-              >
-                <ClosePosition
-                  setVisibleState={setClosePositionModal}
-                  setSummaryData={setSummaryData}
-                  setPerpsEndModal={setPerpsEndModal}
-                />
-              </SETTING_MODAL>
-            </>
-          )}
-          {perpsEndModal && (
-            <>
-              <END_MODAL
-                visible={true}
-                centered={true}
-                footer={null}
-                title={
-                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
-                    {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
-                  </span>
-                }
-                closeIcon={
-                  <img
-                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                    height="20px"
-                    width="20px"
-                    onClick={() => setPerpsEndModal(false)}
-                  />
-                }
-              >
-                <PerpsEndModal
-                  profit={summaryData.profit}
-                  side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
-                  entryPrice={summaryData.entryPrice}
-                  currentPrice={summaryData.exitPrice}
-                  leverage={summaryData.leverage}
-                  pnlAmount={summaryData.pnl}
-                  percentageChange={summaryData.percentageChange}
-                />
-              </END_MODAL>
-            </>
-          )}
-          <div className="header-wrapper">
-            {tabs.map((item, index) => (
-              <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
-                <div className="white-background">
-                  <div
-                    className={index === activeTab ? 'active tab' : 'tab'}
-                    onClick={() => setActiveTab(index)}
-                    css={[tw`!text-regular !font-bold`]}
-                  >
-                    {index === 1 ? (
-                      <div className="open-order-header">
-                        <div>{item}</div>
-                        {!isDevnet && (
-                          <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
-                        )}
-                      </div>
-                    ) : (
-                      item
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+      {traderInfo.averagePosition.side && Number(roundedSize) ? (
+        <div className={cn('flex px-2.5')}>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>{selectedCrypto.pair} </InfoLabel>{' '}
           </div>
-          <div className={`${tabs[activeTab].replaceAll(' ', '-').replaceAll('&', '-')} headers`}>
-            {columns[activeTab][tabs[activeTab]].map((item, index) => (
-              <span key={index}>{item}</span>
-            ))}
+          <div
+            className={cn(
+              `w-[12.5%] ${traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`
+            )}
+          >
+            <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
           </div>
-        </HEADER>
-        {activeTab === 0 ? (
-          <>
-            <POSITIONS>
-              {traderInfo.averagePosition.side && Number(roundedSize) ? (
-                <div className="positions">
-                  <span>{selectedCrypto.pair}</span>
-                  <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
-                    {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
-                  </span>
-                  <span>${traderInfo.averagePosition.price}</span>
-                  <span>{roundedSize}</span>
-                  <span>${perpsPrice}</span>
-                  <span>${formatNumberInThousands(Number(notionalSize))}</span>
-                  <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
-                  <span className={pnl <= 0 ? 'short' : 'long'}>
-                    $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
-                  </span>
-                  <button onClick={handleClosePosition}>Close</button>
-                </div>
-              ) : (
-                <div className="no-positions-found">
-                  <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-                  <div>No Positions Found</div>
-                </div>
-              )}
-            </POSITIONS>
-          </>
-        ) : activeTab === 1 ? (
-          <OpenOrdersComponent />
-        ) : activeTab === 2 ? (
-          <TradeHistoryComponent />
-        ) : activeTab === 3 ? (
-          <FundingHistoryComponent />
-        ) : null}
-      </WRAPPER>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>{roundedSize} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>{perpsPrice} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>{' '}
+          </div>
+          <div>
+            <Button onClick={handleClosePosition}>Close</Button>
+          </div>
+        </div>
+      ) : (
+        <div className="no-positions-found">
+          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+          <div>No Positions Found</div>
+        </div>
+      )}
     </>
   )
 }
