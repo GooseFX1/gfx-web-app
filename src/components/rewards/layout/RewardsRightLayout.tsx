@@ -1,18 +1,19 @@
 import React from 'react'
-import tw, { TwStyle } from 'twin.macro'
+import { cn } from 'gfx-component-lib'
 interface RewardsRightLayoutProps {
   children: React.ReactNode | React.ReactNode[]
-  cssStyles?: TwStyle[]
+  className?: string
 }
-function RewardsRightLayout({ children, cssStyles }: RewardsRightLayoutProps): JSX.Element {
+//basis-[247px] min-md:
+function RewardsRightLayout({ children, className }: RewardsRightLayoutProps): JSX.Element {
   return (
     <div
-      css={[
-        tw`pt-0 py-2.5 min-md:py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 leading-normal
-        font-semibold flex-[1 1 247px] min-md:flex-[1 1 40%] items-center max-h-[247px] min-md:max-h-[447px]`
-      ]
-        .concat(cssStyles ?? [])
-        .flat()}
+      className={cn(
+        `pt-0 py-2.5 min-md:py-2.5 min-sm:pb-5 px-7.5 flex flex-col gap-2 leading-normal
+        font-semibold grow shrink-0 items-center basis-[287px] min-md:basis-[512px]
+        min-md:rounded-tr-[10px]`,
+        className
+      )}
     >
       {children}
     </div>

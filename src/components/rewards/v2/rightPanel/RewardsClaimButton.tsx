@@ -1,12 +1,11 @@
 import React, { useCallback } from 'react'
-import Button from '../../../twComponents/Button'
-import tw from 'twin.macro'
 import useRewards from '../../../../context/rewardsContext'
 import useTimer from '../../../../hooks/useTimer'
 import { numberFormatter } from '../../../../utils'
 import { Loader } from '../../../Loader'
 import useBoolean from '../../../../hooks/useBoolean'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { Button, cn } from 'gfx-component-lib'
 
 function RewardsClaimButton(): JSX.Element {
   const { claimable, claimFees } = useRewards()
@@ -29,10 +28,11 @@ function RewardsClaimButton(): JSX.Element {
     <Button
       disabled={buttonDisabled || isClaiming}
       onClick={handleClaim}
-      cssClasses={[
-        tw`py-2.5 text-blue-1 bg-white opacity-50 font-bold max-w-[300px] w-full text-center h-10`,
-        claimable > 0 && tw`opacity-100`
-      ]}
+      variant={'outline'}
+      className={cn(
+        'text-white bg-button-darkmode-primary disabled:bg-button-darkmode-disabled-primary ',
+        claimable > 0 && `opacity-100`
+      )}
     >
       {isClaiming ? (
         <Loader zIndex={2} color={'blue-1'} />

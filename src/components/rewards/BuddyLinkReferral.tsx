@@ -8,9 +8,8 @@ import { Notification } from '../../context/rewardsContext'
 import { Transaction } from '@solana/web3.js'
 import { Connect } from '../../layouts'
 import { Loader } from '../Loader'
-import tw from 'twin.macro'
-import 'styled-components/macro'
 import { sendPerpsTransaction } from '../../web3/connection'
+import { Button, cn } from 'gfx-component-lib'
 
 const BuddyLinkReferral: FC = () => {
   const [isCopied, setIsCopied] = useState(false)
@@ -78,7 +77,12 @@ const BuddyLinkReferral: FC = () => {
             true,
             <div>
               Please bear with us and try again, or if the error continues
-              <a css={[tw`mx-1 underline`]} href={'https://docs.goosefx.io/'} target={'_blank'} rel={'noreferrer'}>
+              <a
+                className={`mx-1 underline`}
+                href={'https://docs.goosefx.io/'}
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
                 go to docs
               </a>
             </div>
@@ -109,20 +113,18 @@ const BuddyLinkReferral: FC = () => {
     () => (
       <>
         <p
-          css={[
-            tw`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
-     dark:text-grey-5`
-          ]}
+          className={`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
+     dark:text-grey-5`}
         >
           Generate your referral link
         </p>
         <button
-          css={[
-            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
+          className={cn(
+            `border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
             riskGroup
-              ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
-              : tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
-          ]}
+              ? `bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+              : `text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+          )}
           onClick={handleCreateBuddy}
           disabled={!riskGroup}
         >
@@ -137,53 +139,52 @@ const BuddyLinkReferral: FC = () => {
     () => (
       <>
         <p
-          css={[
-            tw`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
-     dark:text-grey-5`
-          ]}
+          className={`text-sm mb-0 text-[13px] leading-[16px] min-md:text-[18px] min-md:leading-[22px] text-black-1
+     dark:text-grey-5`}
         >
           app.goosefx.io/?r={name}
         </p>
 
-        <button
-          css={[
-            tw`border-0 bg-grey-4 dark:bg-black-1 rounded-[72px] h-[30px] w-[94px] text-grey-2 font-semibold`,
+        <Button
+          variant={'ghost'}
+          className={cn(
+            `border-0  rounded-[72px] p-0  font-semibold`,
             referLink
-              ? tw`bg-blue-1 dark:bg-blue-1 text-white dark:text-white`
+              ? `text-text-blue dark:text-white`
               : isCopied
-              ? tw`text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
-              : tw``
-          ]}
+              ? `text-grey-2 dark:text-grey-2 bg-grey-4 dark:bg-black-1`
+              : ``
+          )}
           disabled={!referLink}
         >
           {referLink ? `${isCopied ? 'Copied' : 'Copy'}` : 'Save'}
-        </button>
+        </Button>
       </>
     ),
     [isCopied, referLink, name]
   )
 
   return (
-    <div css={[tw`flex flex-col gap-5 min-h-[40px] items-center relative justify-center `]}>
+    <div className={`flex flex-col gap-5  items-center relative justify-center `}>
       {!initialFetch ? (
         <div
           onClick={copyToClipboard}
-          css={[
-            tw`border-[1.5px] dark:border-grey-1 border-grey-2 border-dashed cursor-pointer
-              flex flex-row justify-between p-[5px] pl-[15px] items-center w-full rounded-[100px] 
-              relative h-10`,
-            !name.trim() ? tw`cursor-default` : tw`cursor-pointer`
-          ]}
+          className={cn(
+            `border-[1.5px] dark:border-grey-1 border-grey-2 border-solid cursor-pointer
+              flex flex-row justify-between p-[5px] px-2.5 items-center w-full rounded-[3px] 
+              relative h-8.75`,
+            !name.trim() ? `cursor-default` : `cursor-pointer`
+          )}
         >
           {!name ? generateLink : copyLink}
         </div>
       ) : !publicKey && !connected ? (
         <Connect
-          containerStyle={`w-full min-md:w-full h-[40px] rounded-[100px]`}
+          containerStyle={`w-full min-md:w-full rounded-[100px]`}
           customButtonStyle={`w-full min-md:w-full max-w-full h-[40px] min-md:h-[40px]`}
         />
       ) : (
-        <div css={[tw`absolute`]}>
+        <div className={`absolute`}>
           <Loader zIndex={1} />
         </div>
       )}

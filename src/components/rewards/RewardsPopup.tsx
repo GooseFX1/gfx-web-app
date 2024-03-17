@@ -1,14 +1,14 @@
 import React, { FC, useCallback } from 'react'
 import { useRewardToggle } from '../../context/reward_toggle'
-import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import useRewards from '../../context/rewardsContext'
-import { Button, cn } from 'gfx-component-lib'
+import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay } from 'gfx-component-lib'
 import Rewards from './v2/Rewards'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
+import RewardsClose from '@/assets/rewards_close.svg?react'
 export const REWARD_PANEL_INDEX = 0
 export const REFER_PANEL_INDEX = 1
 export const RAFFLE_PANEL_INDEX = 2
@@ -20,7 +20,7 @@ export const RewardsButton: FC = () => {
   const { hasRewards } = useRewards()
 
   const riveComponent = (
-    <div css={[tw`relative`]}>
+    <div className={`relative`}>
       <img
         className={cn(breakpoint.isMobile || breakpoint.isTablet ? `h-[30px] w-[32px]` : `h-[22px] w-[20px]`)}
         src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
@@ -53,7 +53,7 @@ export const RewardsButton: FC = () => {
       onClick={handleClick}
       variant={'outline'}
       size={'sm'}
-      className={'border-background-blue dark:border-white'}
+      className={'border-background-blue dark:border-white '}
     >
       {riveComponent}
       <span className={`font-bold`}>Rewards</span>
@@ -62,29 +62,40 @@ export const RewardsButton: FC = () => {
 }
 
 export const RewardsPopup: FC = () => {
-  const { rewardToggle } = useRewardToggle()
+  const { rewardToggle, rewardModal } = useRewardToggle()
   const { panelIndex } = useRewardToggle()
+  const breakpoint = useBreakPoint()
+  const isMobile = breakpoint.isMobile || breakpoint.isTablet
   return (
-    <div
-      className={`mt-auto  min-md:min-h-[441px] w-full flex flex-row md:flex-col
-           max-h-[100dvh] bg-white dark:bg-black-2 relative
-           rounded-t-[10px]
-           [&>div:first-child]:min-md:rounded-tl-[10px] [&>div:first-child]:min-md:rounded-tr-[0px]
-           [&>div:last-child]:min-md:rounded-tr-[10px]
-           [& * p:not([data-tw*="mb-"])]:mb-0 `}
-    >
-      <Button
-        onClick={() => rewardToggle(false)}
-        className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
-                   min-md:top-5`}
-        size={'sm'}
+    <Dialog open={rewardModal} onOpenChange={rewardToggle}>
+      <DialogOverlay />
+      <DialogContent
+        className={'w-full h-max max-h-[calc(100dvh-55px)] z-[960]'}
+        fullScreen={!isMobile}
+        placement={'bottom'}
       >
-        <img className={`h-7.5 w-7.5`} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
-      </Button>
-      {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
-      {panelIndex == REFER_PANEL_INDEX && <Refer />}
-      {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
-    </div>
+        <Button
+          onClick={() => rewardToggle(false)}
+          variant={'ghost'}
+          className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
+                   min-md:top-5 z-[1] w-max p-0`}
+          size={'sm'}
+        >
+          <RewardsClose
+            className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
+          min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
+          />
+        </Button>
+        <DialogBody
+          className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
+         w-full flex flex-row md:flex-col rounded-t-[10px]`}
+        >
+          {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
+          {panelIndex == REFER_PANEL_INDEX && <Refer />}
+          {panelIndex == RAFFLE_PANEL_INDEX && <Raffle />}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
 export default RewardsPopup
