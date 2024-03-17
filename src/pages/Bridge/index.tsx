@@ -110,7 +110,7 @@ const Bridge: FC = () => {
             color={mode === 'dark' ? '#ffffff' : '#000'}
           >
             <div
-              tw="border border-solid border-grey-1 w-[160px] h-8 rounded-[100px] 
+              tw="border border-solid border-grey-1 w-[178px] sm:w-[160px] h-8 rounded-[100px] 
               cursor-pointer py-0.5 pl-2.5 pr-1 flex flex-row items-center 
               justify-between bg-grey-5 dark:bg-black-1 sm:right-0"
             >
