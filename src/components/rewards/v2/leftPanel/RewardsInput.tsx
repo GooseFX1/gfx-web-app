@@ -45,6 +45,7 @@ export default function RewardsInput({
   useEffect(() => {
     onInputChange(inputValue)
   }, [inputValue])
+  const disabled = isStakeSelected ? userGoFxBalance.uiAmount <= 0.0 : totalStaked <= 0.0
   return (
     <InputGroup
       onClick={focusInput}
@@ -54,24 +55,18 @@ export default function RewardsInput({
           <Button
             variant={'ghost'}
             onClick={handleHalf}
-            className={cn(
-              `p-1.5`,
-              userGoFxBalance.uiAmount > 0.0 && `text-text-blue dark:text-text-darkmode-primary`
-            )}
+            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
             size={'sm'}
-            disabled={userGoFxBalance.uiAmount <= 0.0}
+            disabled={disabled}
           >
             Half
           </Button>
           <Button
             variant={'ghost'}
             onClick={handleMax}
-            className={cn(
-              `p-1.5`,
-              userGoFxBalance.uiAmount > 0.0 && `text-text-blue dark:text-text-darkmode-primary`
-            )}
+            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
             size={'sm'}
-            disabled={userGoFxBalance.uiAmount <= 0.0}
+            disabled={disabled}
           >
             Max
           </Button>
