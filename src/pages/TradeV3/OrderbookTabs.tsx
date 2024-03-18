@@ -23,28 +23,26 @@ const WRAPPER = styled.div`
 
 const HEADER_WRAPPER = styled.div`
   ${tw`w-full flex flex-row`}
-  .tabGroup {
-    ${tw`w-full flex`}
-    //antd classes
+  //antd classes
     .ant-radio-button-wrapper-disabled {
-      cursor: default;
-      background: ${({ theme }) => theme.bg2} !important;
-      color: ${({ theme }) => theme.text1} !important;
+    cursor: default;
+    background: ${({ theme }) => theme.bg2} !important;
+    color: ${({ theme }) => theme.text1} !important;
+  }
+  .ant-radio-button-wrapper {
+    > span {
+      ${tw`text-regular font-bold`}
     }
-    .ant-radio-button-wrapper {
-      > span {
-        ${tw`text-regular font-bold`}
-      }
-    }
-    .ant-radio-button-wrapper:last-child {
-      border-radius: 0 !important;
-    }
-    .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper {
-      position: relative;
-      color: ${({ theme }) => theme.text1} !important;
-      .ant-radio-button.ant-radio-button-checked {
-        //top: 1px;
-        //left: 1px;
+  }
+  .ant-radio-button-wrapper:last-child {
+    border-radius: 0 !important;
+  }
+  .ant-radio-button-wrapper-checked:not([class*=' ant-radio-button-wrapper-disabled']).ant-radio-button-wrapper {
+    position: relative;
+    color: ${({ theme }) => theme.text1} !important;
+    .ant-radio-button.ant-radio-button-checked {
+      //top: 1px;
+      //left: 1px;
 
         ${tw`flex justify-center items-center absolute`}
       }
@@ -73,6 +71,28 @@ const HEADER_WRAPPER = styled.div`
       ${tw`p-[2px]`}
       background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
     }
+  }
+  .individualTabs {
+    ${tw`w-full text-center h-full flex justify-center items-center dark:text-[#B5B5B5] text-[#636363]`}
+    background: ${({ theme }) => theme.bg20};
+  }
+  .activeTab {
+    border: none;
+    background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 50%);
+  }
+  .inactiveTab {
+    ${tw`h-full !bg-grey-5 dark:!bg-black-1`}
+    border: 1px solid ${({ theme }) => theme.tokenBorder};
+  }
+  .priceTab {
+    ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
+  }
+  .container {
+    ${tw`h-8 !w-full`}
+  }
+  .active-field {
+    ${tw`p-[2px] w-full border border-solid`}
+    background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
   }
 `
 const BODY_WRAPPER = styled.div`
