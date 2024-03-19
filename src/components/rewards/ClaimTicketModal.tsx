@@ -16,9 +16,9 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
   const { isMobile } = useBreakPoint()
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay className={'z-[961]'} />
+      <DialogOverlay className={''} />
       <DialogContent
-        className={cn('z-[962] min-md:w-[400px] h-[310px] pt-3 flex flex-col gap-0')}
+        className={cn(' min-md:w-[400px] h-[310px] pt-3 flex flex-col gap-0')}
         fullScreen={isMobile}
         placement={isMobile ? 'bottom' : 'default'}
       >
@@ -106,6 +106,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null
   }
+  console.log(oneDayLeft, canClaim, oneDayLeft && !canClaim)
   return (
     <div className={`flex w-full justify-between items-center`}>
       <p className={`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
@@ -116,7 +117,9 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
         className={cn(
           `h-10 w-[130px] border-0 cursor-not-allowed whitespace-nowrap 
       relative items-center justify-center`,
-          !oneDayLeft && canClaim && `text-red-2`,
+          oneDayLeft &&
+            !canClaim &&
+            `disabled:text-text-red disabled:dark:text-text-red opacity-100 dark:opacity-100`,
           canClaim && ` text-white`,
           isClaiming && `cursor-not-allowed `
         )}
