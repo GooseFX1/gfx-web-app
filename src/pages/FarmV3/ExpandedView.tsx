@@ -3,7 +3,14 @@ import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { LAMPORTS_PER_SOL, Connection } from '@solana/web3.js'
 import { Button, SkeletonCommon } from '../../components'
-import { useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext, APP_RPC } from '../../context'
+import {
+  useAccounts,
+  useConnectionConfig,
+  usePriceFeedFarm,
+  useSSLContext,
+  APP_RPC,
+  useDarkMode
+} from '../../context'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '../../web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../layouts'
@@ -398,7 +405,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
         tw`dark:bg-black-2 bg-white mx-3.75 sm:mx-3 rounded-[0 0 15px 15px] duration-300 
             flex justify-between sm:flex-col sm:justify-around sm:w-[calc(100vw - 50px)] `,
         isExpanded
-          ? tw`h-[115px] visible p-3.5 sm:h-auto sm:p-4`
+          ? tw`h-[150px] visible p-3.5 sm:h-auto sm:p-4`
           : tw`!h-0 invisible p-0 opacity-0 w-0 sm:h-[366px]`
       ]}
     >
@@ -597,53 +604,56 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
           )}
         </div>
         {isExpanded && (
-          <div tw="mt-4">
-            {userPublicKey ? (
-              <div tw="flex flex-row sm:flex-col">
-                <Button
-                  height="35px"
-                  disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
-                  disabled={isButtonLoading || disableActionButton}
-                  cssStyle={tw`duration-500 w-[195px] mr-[5px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
+          <>
+            <div tw="mt-4 mb-3.75">
+              {userPublicKey ? (
+                <div tw="flex flex-row sm:flex-col">
+                  <Button
+                    height="35px"
+                    disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
+                    disabled={isButtonLoading || disableActionButton}
+                    cssStyle={tw`duration-500 w-[195px] mr-[5px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none
                     !text-white font-bold rounded-[50px] flex items-center justify-center outline-none`}
-                  onClick={
-                    modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
-                      ? () => {
-                          openActionModal('withdraw')
-                        }
-                      : modeOfOperation === ModeOfOperation.DEPOSIT
-                      ? () => {
-                          openActionModal('deposit')
-                        }
-                      : null
-                  }
-                  loading={actionModal ? false : isButtonLoading ? true : false}
-                >
-                  {actionButtonText}
-                </Button>
-                {claimableReward > 0 ? (
-                  <CLAIM onClick={() => openActionModal('claim')}>
-                    <div
-                      tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
+                    onClick={
+                      modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
+                        ? () => {
+                            openActionModal('withdraw')
+                          }
+                        : modeOfOperation === ModeOfOperation.DEPOSIT
+                        ? () => {
+                            openActionModal('deposit')
+                          }
+                        : null
+                    }
+                    loading={actionModal ? false : isButtonLoading ? true : false}
+                  >
+                    {actionButtonText}
+                  </Button>
+                  {claimableReward > 0 ? (
+                    <CLAIM onClick={() => openActionModal('claim')}>
+                      <div
+                        tw="h-full w-full dark:bg-black-2 bg-white rounded-circle flex sm:w-full
                     items-center justify-center dark:text-white text-black-4 text-regular font-bold"
-                    >
-                      Claim {truncateBigNumber(claimableReward)} {coin?.token}
-                    </div>
-                  </CLAIM>
-                ) : (
-                  <div
-                    tw="h-8.75 w-[195px] rounded-circle flex items-center border-solid
+                      >
+                        Claim {truncateBigNumber(claimableReward)} {coin?.token}
+                      </div>
+                    </CLAIM>
+                  ) : (
+                    <div
+                      tw="h-8.75 w-[195px] rounded-circle flex items-center border-solid
                     text-regular cursor-pointer ml-2 p-[3px] border-[1.5px] border-grey-1
                     cursor-not-allowed justify-center text-grey-1 font-bold sm:w-full sm:mt-3.75 sm:ml-0"
-                  >
-                    No Claimable Rewards
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Connect customButtonStyle={`sm:w-[80vw] w-[400px] !h-8.75`} />
-            )}
-          </div>
+                    >
+                      No Claimable Rewards
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Connect customButtonStyle={`sm:w-[80vw] w-[400px] !h-8.75`} />
+              )}
+            </div>
+            <OracleIcon token={coin} />
+          </>
         )}
       </div>
 
@@ -712,3 +722,22 @@ const FarmStats: FC<{
     <div>{value}</div>
   </div>
 )
+
+const OracleIcon: FC<{
+  token: SSLToken
+}> = ({ token }) => {
+  const { mode } = useDarkMode()
+  return token?.token === 'MSOL' || token?.token === 'JITOSOL' ? (
+    <a href="https://switchboard.xyz/" target={'_blank'} rel="noreferrer" className="oracle-icon">
+      Powered by
+      <img src={`/img/assets/switchboard_${mode}.svg`} alt="switchboard-logo" tw="mx-1.25" />
+      <span tw="dark:text-grey-1 text-purple-4 font-bold">Switchboard</span>
+    </a>
+  ) : (
+    <a href="https://pyth.network/" target={'_blank'} rel="noreferrer" className="oracle-icon">
+      Powered by
+      <img src={`/img/assets/pyth_${mode}.svg`} alt="pyth-logo" tw="mx-1.25" />
+      <span tw="dark:text-grey-1 text-purple-4 font-bold">PYTH</span>
+    </a>
+  )
+}
