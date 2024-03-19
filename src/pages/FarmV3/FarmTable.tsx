@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
-import { SearchBar, ShowDepositedToggle, SkeletonCommon } from '../../components'
+import { ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { TableHeaderTitle } from '../../utils/GenericDegsin'
 import { checkMobile, formatUserBalance, truncateBigNumber, truncateBigString } from '../../utils'
@@ -15,11 +15,25 @@ import Lottie from 'lottie-react'
 import NoResultFarmdark from '../../animations/NoResultFarmdark.json'
 import NoResultFarmlite from '../../animations/NoResultFarmlite.json'
 import { getPriceObject } from '../../web3'
-import { Tooltip } from 'antd'
 import { StatsModal } from './StatsModal'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
 import { AllClaimModal } from './AllClaimModal'
+import {
+  cn,
+  Icon,
+  Input,
+  InputElementLeft,
+  InputElementRight,
+  InputGroup,
+  RadioGroup,
+  RadioGroupItem,
+  RoundedGradientInner,
+  RoundedGradientWrapper,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from 'gfx-component-lib'
 
 const WRAPPER = styled.div`
   input::-webkit-outer-spin-button,
@@ -27,6 +41,7 @@ const WRAPPER = styled.div`
     -webkit-appearance: none;
     margin: 0;
   }
+
   input[type='number'] {
     -moz-appearance: textfield;
   }
@@ -34,9 +49,11 @@ const WRAPPER = styled.div`
   .searchBarContainer {
     ${tw`sm:w-[95vw]`}
   }
+
   .tableRowGradient {
     background: linear-gradient(111deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
   }
+
   table {
     ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden`}
     border-radius: 20px 20px 0 0;
@@ -55,6 +72,7 @@ const WRAPPER = styled.div`
 
   tr {
     display: flex;
+
     > * {
       flex: 1;
     }
@@ -69,14 +87,12 @@ const WRAPPER = styled.div`
   thead {
     ${tw`text-base font-semibold bg-grey-5 dark:bg-black-1 
     sm:h-[52px] rounded-[20px 20px 5px 5px] text-regular`}
-
     tr {
       ${tw`h-10 sm:h-full`}
       border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
 
       th {
         ${tw`h-full dark:text-grey-2 text-grey-1 text-center`}
-
         & > div {
           ${tw`h-full`}
         }
@@ -101,7 +117,7 @@ const WRAPPER = styled.div`
     td {
       ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center
        dark:text-grey-8 text-black-4`}
-      >span {
+      > span {
         ${tw`w-1/2`}
       }
     }
@@ -121,24 +137,7 @@ const WRAPPER = styled.div`
     ${tw`flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center`}
   }
 `
-
-const CLAIM = styled.div`
-  ${tw`h-8.75 w-[85px] rounded-circle flex items-center justify-center text-white cursor-pointer 
-    ml-auto mr-3.75 sm:w-[22%] sm:m-0`};
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-
-  .claim-inner {
-    ${tw`h-[33px] dark:bg-black-2 bg-white rounded-circle flex items-center 
-    justify-center dark:text-white text-black-4 text-tiny font-bold`}
-    width: calc(100% - 2px);
-  }
-`
-
-// const STATS = styled.div`
-//   ${tw`h-[30px] w-[90px] rounded-circle flex items-center justify-center text-white`};
-//   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-//`
-
+console.log(WRAPPER)
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
@@ -315,9 +314,8 @@ export const FarmTable: FC = () => {
     })
     return claimableRewardObj
   }, [allPoolSslData, rewards])
-
   return (
-    <WRAPPER>
+    <div className={''}>
       {allClaimModal && (
         <AllClaimModal
           allClaimModal={allClaimModal}
@@ -325,105 +323,97 @@ export const FarmTable: FC = () => {
           rewardsArray={claimableRewardArray}
         />
       )}
-      <div tw="flex flex-row justify-between items-center mb-3.75 sm:pr-4">
-        <div tw="flex flex-row items-center">
+      <div className="flex flex-row justify-between items-center mb-3.75 sm:pr-4">
+        <div className="flex flex-row items-center">
           <img
             src={`/img/assets/${pool.name}_pools_${mode}.svg`}
             alt="pool-icon"
-            tw="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
+            className="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
           />
-          <div tw="flex flex-col">
+          <div className="flex flex-col">
             <h2
-              tw="text-average font-semibold dark:text-grey-5 text-black-4 capitalize
+              className="text-average font-semibold dark:text-grey-5 text-black-4 capitalize
               sm:text-average sm:mb-0 sm:leading-[22px]"
             >
               {pool.name} Pools
             </h2>
-            <p tw="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">{pool.desc}</p>
+            <p className="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">
+              {pool.desc}
+            </p>
           </div>
         </div>
-        {checkMobile() && isClaimable && pubKey ? (
-          <CLAIM onClick={() => setAllClaimModal(true)}>
-            <div className="claim-inner">Claim All</div>
-          </CLAIM>
-        ) : (
-          <></>
+        {checkMobile() && isClaimable && pubKey && (
+          <RoundedGradientWrapper className={'cursor-pointer'} onClick={() => setAllClaimModal(true)} animated>
+            <RoundedGradientInner>Claim All</RoundedGradientInner>
+          </RoundedGradientWrapper>
         )}
       </div>
-      <div tw="flex items-center">
-        <div tw="flex cursor-pointer relative sm:w-full">
-          <div
-            css={[
-              tw`duration-500`,
-              pool.index === 4
-                ? tw`ml-0`
-                : pool.index === 3
-                ? tw`ml-[95px] sm:ml-[24%]`
-                : pool.index === 1
-                ? tw`ml-[190px] sm:ml-[48%]`
-                : tw`ml-[285px] sm:ml-[72%]`
-            ]}
-            tw="h-[35px] bg-gradient-1 w-[95px] sm:w-[24%] absolute rounded-[100px]"
-          ></div>
-          <h4
-            css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[1] sm:w-[24%] justify-center
-            font-semibold w-[95px] text-regular"
+      <div className="flex items-center">
+        <RadioGroup defaultValue={'all_pools'} className={'w-full min-md:w-max gap-1.25'}>
+          <RadioGroupItem
+            value={'all_pools'}
+            variant={'primary'}
+            size={'lg'}
+            className={` min-md:w-[85px]`}
             onClick={() => (operationPending ? null : handleToggle(poolType.all))}
           >
             All Pools
-          </h4>
-          <h4
-            css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[1] sm:w-[24%] justify-center
-            font-semibold w-[95px] text-regular"
+          </RadioGroupItem>
+          <RadioGroupItem
+            value={'Stable'}
+            variant={'primary'}
+            size={'lg'}
+            className={`min-md:w-[85px]`}
             onClick={() => (operationPending ? null : handleToggle(poolType.stable))}
           >
             Stable
-          </h4>
-          <h4
-            css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[1] font-semibold w-[95px] sm:w-[24%] text-regular"
+          </RadioGroupItem>
+          <RadioGroupItem
+            value={'Primary'}
+            variant={'primary'}
+            size={'lg'}
+            className={` min-md:w-[85px]`}
             onClick={() => (operationPending ? null : handleToggle(poolType.primary))}
           >
             Primary
-          </h4>
-          <h4
-            css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[1] justify-center font-semibold
-            sm:w-[24%] w-[95px] text-regular"
+          </RadioGroupItem>
+          <RadioGroupItem
+            value={'Hyper'}
+            variant={'primary'}
+            size={'lg'}
+            className={` min-md:w-[85px]`}
             onClick={() => (operationPending ? null : handleToggle(poolType.hyper))}
           >
             Hyper
-          </h4>
-        </div>
+          </RadioGroupItem>
+        </RadioGroup>
         {breakpoint.isDesktop && (
-          <div tw="flex items-center w-full">
-            <SearchBar
-              width="400px"
-              filter={searchTokens}
-              cssStyle={tw`h-8.75`}
-              setSearchFilter={initiateGlobalSearch}
-              placeholder="Search by token symbol"
-              bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
+          <div className="flex items-center w-full">
+            <FarmSearch
+              initiateGlobalSearch={initiateGlobalSearch}
+              setSearchTokens={setSearchTokens}
+              searchTokens={searchTokens}
             />
-            {isClaimable && pubKey ? (
-              <CLAIM onClick={() => setAllClaimModal(true)}>
-                <div
-                  tw="h-[33px] w-[83px] dark:bg-black-2 bg-white rounded-circle flex sm:w-full
-                items-center justify-center dark:text-white text-black-4 text-regular font-bold"
+            {isClaimable && pubKey && (
+              <RoundedGradientWrapper
+                className={'h-[33px] w-[83px] cursor-pointer'}
+                onClick={() => setAllClaimModal(true)}
+                animated
+              >
+                <RoundedGradientInner
+                  className={`dark:bg-black-2 bg-white rounded-circle flex 
+                sm:w-full items-center justify-center dark:text-white text-black-4 text-regular font-bold`}
+                  borderWidth={'1.5'}
                 >
                   Claim All
-                </div>
-              </CLAIM>
-            ) : (
-              <></>
+                </RoundedGradientInner>
+              </RoundedGradientWrapper>
             )}
             {pubKey && (
-              <div tw="flex items-center mr-2" css={[isClaimable ? tw`ml-0` : tw`ml-auto`]}>
+              <div className={cn('flex items-center mr-2', isClaimable ? `ml-0` : `ml-auto`)}>
                 <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                 <div
-                  tw="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
+                  className="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
                font-semibold mt-[-4px] ml-3.75"
                 >
                   Show <br /> Deposited
@@ -434,23 +424,19 @@ export const FarmTable: FC = () => {
         )}
       </div>
       {breakpoint.isMobile && (
-        <div tw="flex flex-row mt-4">
-          <SearchBar
-            filter={searchTokens}
-            width={pubKey ? '55%' : '95%'}
-            className="searchBarContainer"
-            cssStyle={tw`h-8.75`}
-            setSearchFilter={initiateGlobalSearch}
-            placeholder="Search by token"
-            bgColor={mode === 'dark' ? '#1f1f1f' : '#fff'}
-            //filter={searchTokens}
+        <div className="flex flex-row mt-4">
+          <FarmSearch
+            className={pubKey ? 'w-[55%]' : 'w-[95%]'}
+            initiateGlobalSearch={initiateGlobalSearch}
+            setSearchTokens={setSearchTokens}
+            searchTokens={searchTokens}
           />
           {pubKey && (
-            <div tw="ml-auto flex items-center mr-2">
+            <div className="ml-auto flex items-center mr-2">
               <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
               <div
-                tw="h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 text-grey-1
-                          font-semibold mt-[-4px] ml-2.5 sm:ml-2"
+                className={`h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 
+                text-grey-1 font-semibold mt-[-4px] ml-2.5 sm:ml-2`}
               >
                 Show <br /> Deposited
               </div>
@@ -459,89 +445,89 @@ export const FarmTable: FC = () => {
         </div>
       )}
       <div>
-        <table tw="mt-4">
-          <thead>
+        <table
+          className={`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden
+        rounded-t-[20px] sm:sticky sm:mt-[0px] sm:w-[calc(100vw - 30px)]
+        [&_thead]:block [&_tbody]:block [&_td]:block [&_th]:block [&_tr]:flex [&_tr>_*]:flex-1 
+        [&_tr>:nth-child(1)]:flex-2 [&_address>a]:text-white 
+        `}
+        >
+          <thead
+            className={cn(`text-base font-semibold bg-grey-5 dark:bg-black-1 sm:h-[52px] 
+          rounded-[20px 20px 5px 5px] text-regular [&_tr]:h-10 [&_tr]:sm:h-full [&_tr]:border-b-1 [&_tr]:border-solid
+          [&_tr]:border-border-lightmode-secondary [&_tr]:dark:border-border-darkmode-tertiary
+          [&_th]:h-full [&_th]:dark:text-grey-2 [&_th]:text-grey-1 [&_th]:text-center
+          [&_th>div]:h-full
+          `)}
+          >
             <tr>
-              <th tw="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[41%]">
+              <th className="!text-left !justify-start sm:pl-0 pl-2 !flex sm:!w-[41%]">
                 <div className="sort" onClick={() => handleColumnSort('token')}>
                   {TableHeaderTitle('Pool', null, true, sort === 'DESC' && sortType === 'token')}{' '}
                 </div>
               </th>
-              <th tw="!flex !flex-row !justify-center !items-center sm:!w-[31vw]">
-                <Tooltip
-                  color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                  title={
-                    <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                      APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info
-                    </span>
-                  }
-                  placement="topLeft"
-                  overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                  overlayInnerStyle={{ borderRadius: '8px' }}
-                >
-                  <div className="sort" onClick={() => handleColumnSort('apy')}>
+              <th className="!flex !flex-row !justify-center !items-center sm:!w-[31vw]">
+                <Tooltip>
+                  <TooltipTrigger className="sort" onClick={() => handleColumnSort('apy')}>
                     {TableHeaderTitle('APY', null, true, sort === 'DESC' && sortType === 'apy')}{' '}
-                  </div>
+                  </TooltipTrigger>
+                  <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
+                    APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info
+                  </TooltipContent>
                 </Tooltip>
               </th>
               {!checkMobile() && (
-                <th tw="!flex !justify-center">
+                <th className="!flex !justify-center">
                   <div className="sort" onClick={() => handleColumnSort('liquidity')}>
-                    {TableHeaderTitle('Liquidity', null, true, sort === 'DESC' && sortType === 'liquidity')}{' '}
+                    {TableHeaderTitle('Liquidity', null, true, sort === 'DESC' && sortType === 'liquidity')}&nbsp;
                   </div>
                 </th>
               )}
               {!checkMobile() && (
-                <th tw="!flex !justify-center">
-                  <Tooltip
-                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                    title={
-                      <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                        24H Volume is calculated since 10P.M UTC on a daily basis
-                      </span>
-                    }
-                    placement="topLeft"
-                    overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                    overlayInnerStyle={{ borderRadius: '8px' }}
-                  >
-                    <div className="sort" onClick={() => handleColumnSort('volume')}>
-                      {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}{' '}
-                    </div>
+                <th className="!flex !justify-center">
+                  <Tooltip>
+                    <TooltipTrigger onClick={() => handleColumnSort('volume')}>
+                      {TableHeaderTitle('24H Volume', null, true, sort === 'DESC' && sortType === 'volume')}&nbsp;
+                    </TooltipTrigger>
+                    <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
+                      24H Volume is calculated since 10P.M UTC on a daily basis
+                    </TooltipContent>
                   </Tooltip>
                 </th>
               )}
               {!checkMobile() && (
-                <th tw="!flex !justify-center">
+                <th className="!flex !justify-center">
                   <div className="sort" onClick={() => handleColumnSort('fee')}>
-                    {TableHeaderTitle('24H Fees', null, true, sort === 'DESC' && sortType === 'fee')}{' '}
+                    {TableHeaderTitle('24H Fees', null, true, sort === 'DESC' && sortType === 'fee')}&nbsp;
                   </div>
                 </th>
               )}
               {!checkMobile() && (
-                <th tw="!flex !justify-center">
-                  <Tooltip
-                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                    title={
-                      <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                        Values are displayed in native token
-                      </span>
-                    }
-                    placement="topLeft"
-                    overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                    overlayInnerStyle={{ borderRadius: '8px' }}
-                  >
-                    <div className="sort" onClick={() => handleColumnSort('volume')}>
+                <th className="!flex !justify-center">
+                  <Tooltip>
+                    <TooltipTrigger className="sort" onClick={() => handleColumnSort('volume')}>
                       {TableHeaderTitle('My Balance', null, true, sort === 'DESC' && sortType === 'balance')}{' '}
-                    </div>
+                    </TooltipTrigger>
+                    <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
+                      Values are displayed in native token
+                    </TooltipContent>
                   </Tooltip>
                 </th>
               )}
-              <th tw="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
-                <h4 tw="items-center flex">{`Pools: ${poolSize}`}</h4>
+              <th className="!text-right !justify-end !flex sm:text-right !w-[10%] sm:!w-[25%] font-semibold">
+                <h4 className="items-center flex">{`Pools: ${poolSize}`}</h4>
               </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            className={cn(`dark:bg-black-1 bg-grey-5 overflow-hidden
+          [&_tr]:dark:bg-black-2 [&_tr]:bg-white [&_tr]:mt-[15px] [&_tr]:dark:border-black-2 [&_tr]:border-white
+          [&_tr]:sm:mb-0 [&_tr]:rounded-small [&_tr]:cursor-pointer [&_tr]:h-[60px] [&_tr]:sm:h-[70px] 
+          [&_tr]:after:content-[''] [&_tr]:after:display-block [&_tr]:after:visibility-hidden [&_tr]:after:clear-both
+          [&_td]:h-[100%] [&_td]:flex [&_td]:items-center [&_td]:justify-center [&_td]:text-[15px] [&_td]:font-semibold 
+          [&_td]:text-center [&_td]:dark:text-grey-8 [&_td]:text-black-4
+          `)}
+          >
             {filteredTokens?.length
               ? filteredTokens.map((coin: SSLToken, index: number) => (
                   <FarmTokenContent key={coin?.token} coin={coin} showDeposited={showDeposited} index={index} />
@@ -563,7 +549,7 @@ export const FarmTable: FC = () => {
           </tbody>
         </table>
       </div>
-    </WRAPPER>
+    </div>
   )
 }
 
@@ -574,25 +560,25 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
 }) => {
   const { mode } = useDarkMode()
   return (
-    <div css={[requestPool ? tw`h-[258px]` : tw`h-[208px]`]} tw=" flex flex-col mt-[30px] sm:mt-0">
+    <div css={cn(` flex flex-col mt-[30px] sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
       <div
         tw="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold 
           dark:text-white text-black"
       >
         <Lottie
           animationData={mode === 'dark' ? NoResultFarmdark : NoResultFarmlite}
-          tw="h-[97px] sm:h-[81px] w-[168px]"
+          className="h-[97px] sm:h-[81px] w-[168px]"
         />
       </div>
-      <div tw="flex items-center flex-col">
-        <div tw="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
-        <div tw="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
+      <div className="flex items-center flex-col">
+        <div className="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
+        <div className="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
         {requestPool && (
           <address
-            tw="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular 
+            className="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular
             rounded-[30px] font-semibold bg-gradient-1"
           >
-            <a href="https://discord.gg/cDEPXpY26q" tw="font-semibold" target="_blank" rel="noreferrer">
+            <a href="https://discord.gg/cDEPXpY26q" className="font-semibold" target="_blank" rel="noreferrer">
               Request Pool
             </a>
           </address>
@@ -612,7 +598,6 @@ const FarmTokenContent: FC<{
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
   const { prices } = usePriceFeedFarm()
-  const { mode } = useDarkMode()
   const [statsModal, setStatsModal] = useState<boolean>(false)
 
   const userDepositedAmount: BN = useMemo(() => {
@@ -689,39 +674,40 @@ const FarmTokenContent: FC<{
     <>
       {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
       <tr
-        css={[tw`duration-500`]}
-        className={isExpanded && 'tableRowGradient'}
+        className={cn('duration-500', isExpanded && 'tableRowGradient')}
         onClick={() => setIsExpanded((prev) => !prev)}
       >
-        <td tw="!justify-start relative sm:!w-[41%]">
-          {claimableReward > 0 && <div tw="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-red-2" />}
-          <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
-          <h4 tw="ml-2.5">{coin?.token}</h4>
+        <td className="!justify-start relative sm:!w-[41%]">
+          {claimableReward > 0 && (
+            <div className="absolute rounded-[50%] mt-[-25px] ml-3.5 sm:ml-1.5 h-3 w-3 bg-red-2" />
+          )}
+          <Icon
+            size={'lg'}
+            className=" sm:ml-2"
+            src={`/img/crypto/${coin?.token}.svg`}
+            alt={`${coin?.token} logo`}
+          />
+          <h4 className="ml-2.5">{coin?.token}</h4>
           {depositPercentage ? (
-            <div tw="" onClick={(e) => e.stopPropagation()}>
-              <Tooltip
-                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                title={
-                  <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}
-                  </span>
-                }
-                placement="topRight"
-                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                overlayInnerStyle={{ borderRadius: '8px' }}
-              >
-                <img
-                  src={
-                    +depositPercentage?.toFixed(2) >= 100
-                      ? '/img/assets/farm_cap_red.svg'
-                      : '/img/assets/farm_cap_green.svg'
-                  }
-                  alt="deposit-cap"
-                  tw="ml-2.5 sm:ml-1.25 max-w-none"
-                  height={20}
-                  width={20}
-                />
+            <div className="" onClick={(e) => e.stopPropagation()}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <img
+                    src={
+                      +depositPercentage?.toFixed(2) >= 100
+                        ? '/img/assets/farm_cap_red.svg'
+                        : '/img/assets/farm_cap_green.svg'
+                    }
+                    alt="deposit-cap"
+                    className="ml-2.5 sm:ml-1.25 max-w-none"
+                    height={20}
+                    width={20}
+                  />
+                </TooltipTrigger>
+                <TooltipContent className={'dark:text-black-4 text-grey-5 font-medium text-tiny'}>
+                  Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+                  {truncateBigNumber(coin?.cappedDeposit)}
+                </TooltipContent>
               </Tooltip>
             </div>
           ) : (
@@ -732,48 +718,45 @@ const FarmTokenContent: FC<{
           <h4>{formattedapiSslData?.apy ? Number(formattedapiSslData?.apy)?.toFixed(2) : '0.00'}%</h4>
         </td>
         {!checkMobile() && (
-          <td>
-            <h4>{liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}</h4>
-          </td>
+          <>
+            <td>
+              <h4>
+                {liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}
+              </h4>
+            </td>
+            <td>
+              <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
+            </td>
+            <td>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
+                    <h4 tw="flex justify-center items-center font-semibold">
+                      $
+                      {truncateBigNumber(
+                        formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current
+                      )}
+                    </h4>
+                  ) : (
+                    <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
+                  )}
+                </TooltipTrigger>
+                <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
+                  {truncateBigNumber(formattedapiSslData?.fee)}&nbsp;{coin?.token}
+                </TooltipContent>
+              </Tooltip>
+            </td>
+            <td>
+              <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
+            </td>
+          </>
         )}
-        {!checkMobile() && (
-          <td>
-            <h4>${truncateBigNumber(formattedapiSslData?.volume)}</h4>
-          </td>
-        )}
-        {!checkMobile() && (
-          <td>
-            <Tooltip
-              color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-              title={
-                <span tw="dark:text-black-4 text-grey-5 font-medium text-tiny">
-                  {truncateBigNumber(formattedapiSslData?.fee)} {coin?.token}
-                </span>
-              }
-              placement="topRight"
-              overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-              overlayInnerStyle={{ borderRadius: '8px' }}
-            >
-              {truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                <h4 tw="flex justify-center items-center font-semibold">
-                  ${truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
-                </h4>
-              ) : (
-                <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
-              )}
-            </Tooltip>
-          </td>
-        )}
-        {!checkMobile() && (
-          <td>
-            <h4>{userDepositedAmountUI ? userDepositedAmountUI : '0.00'}</h4>
-          </td>
-        )}
-        <td tw="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
+
+        <td className="!w-[10%] pr-3 sm:!w-[25%] sm:pr-0">
           {/* {!checkMobile() && (
               <STATS onClick={(e: React.MouseEvent<HTMLButtonElement>) => openStatsModal(e)}>Stats</STATS>
             )} */}
-          <div tw="ml-auto sm:mr-2">
+          <div className="ml-auto sm:mr-2">
             <CircularArrow cssStyle={tw`h-5 w-5`} invert={isExpanded} />
           </div>
         </td>
@@ -782,5 +765,45 @@ const FarmTokenContent: FC<{
     </>
   ) : (
     <></>
+  )
+}
+
+const FarmSearch = ({
+  setSearchTokens,
+  searchTokens,
+  initiateGlobalSearch,
+  className
+}: {
+  setSearchTokens: (string) => void
+  searchTokens: string
+  initiateGlobalSearch: (string) => void
+  className?: string
+}) => {
+  const { mode } = useDarkMode()
+  return (
+    <InputGroup
+      leftItem={
+        <InputElementLeft>
+          <Icon size={'sm'} src={`/img/assets/search_${mode}.svg`} alt="search-icon" />
+        </InputElementLeft>
+      }
+      rightItem={
+        <InputElementRight onClick={() => setSearchTokens('')} show={searchTokens.trim().length > 0}>
+          <Icon
+            size={'sm'}
+            src={`/img/assets/search_farm_${mode}.svg`}
+            alt="search-icon"
+            className={'cursor-pointer'}
+          />
+        </InputElementRight>
+      }
+    >
+      <Input
+        value={searchTokens}
+        className={cn('w-[400px]', className)}
+        placeholder={'Search by token symbol'}
+        onChange={(e) => initiateGlobalSearch(e.target.value)}
+      />
+    </InputGroup>
   )
 }
