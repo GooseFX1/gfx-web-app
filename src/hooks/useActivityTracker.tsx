@@ -14,7 +14,7 @@ const fifteenMinutes = 1000 * 60 * 15
  * @param {Options} [props]
  */
 function useActivityTracker(props?: UseActivityTrackerProps): void {
-  const { lifeTime, callbackOff, callbackOn, callOnMount = true } = props ?? {}
+  const { lifeTime, callbackOff, callbackOn, callOnMount = false } = props ?? {}
   const [isOff, setIsOff] = useBoolean(false)
   useEffect(() => {
     let timer: NodeJS.Timeout | null
