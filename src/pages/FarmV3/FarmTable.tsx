@@ -116,6 +116,10 @@ const WRAPPER = styled.div`
   .sort {
     ${tw`flex flex-row items-center justify-center`}
   }
+
+  .oracle-icon {
+    ${tw`flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center`}
+  }
 `
 
 const CLAIM = styled.div`
@@ -311,8 +315,6 @@ export const FarmTable: FC = () => {
     })
     return claimableRewardObj
   }, [allPoolSslData, rewards])
-
-  console.log('show values', numberOfCoinsDeposited, showDeposited, searchTokens?.length, filteredTokens)
 
   return (
     <WRAPPER>
