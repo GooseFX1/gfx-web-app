@@ -37,9 +37,9 @@ const UnstakeConfirmationModal: FC<UnstakeConfirmationModalProps> = ({
   const { isMobile } = useBreakPoint()
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay className={'z-[961]'} />
+      <DialogOverlay className={''} />
       <DialogContent
-        className={cn('z-[962] w-[400px] h-[270px] p-2.5', isMobile && 'w-full')}
+        className={cn(' w-[400px] h-[270px] p-2.5', isMobile && 'w-full')}
         placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogHeader className={'flex flex-row justify-between items-center'}>
