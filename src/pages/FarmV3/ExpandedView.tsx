@@ -30,6 +30,7 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { ActionModal } from './ActionModal'
 import BN from 'bn.js'
 import useSolSub from '../../hooks/useSolSub'
+import { cn } from 'gfx-component-lib'
 
 const CLAIM = styled.div`
   ${tw`h-8.75 w-[195px] rounded-circle flex items-center justify-center text-white cursor-pointer 
@@ -711,14 +712,10 @@ const FarmStats: FC<{
   alignRight?: boolean
 }> = ({ keyStr, value, alignRight }) => (
   <div
-    css={[
-      tw`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between items-center 
-  leading-[18px] sm:mb-2`
-    ]}
+    className={`font-semibold duration-500 sm:flex sm:w-[100%] sm:justify-between items-center 
+  leading-[18px] sm:mb-2`}
   >
-    <div tw="dark:text-grey-2 text-grey-1" css={[!!alignRight && tw`text-right`]}>
-      {keyStr}
-    </div>
+    <div className={cn('dark:text-grey-2 text-grey-1', !!alignRight && `text-right`)}>{keyStr}</div>
     <div>{value}</div>
   </div>
 )
@@ -728,16 +725,26 @@ const OracleIcon: FC<{
 }> = ({ token }) => {
   const { mode } = useDarkMode()
   return token?.token === 'MSOL' || token?.token === 'JITOSOL' ? (
-    <a href="https://switchboard.xyz/" target={'_blank'} rel="noreferrer" className="oracle-icon">
+    <a
+      href="https://switchboard.xyz/"
+      target={'_blank'}
+      rel="noreferrer"
+      className="flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center"
+    >
       Powered by
-      <img src={`/img/assets/switchboard_${mode}.svg`} alt="switchboard-logo" tw="mx-1.25" />
-      <span tw="dark:text-grey-1 text-purple-4 font-bold">Switchboard</span>
+      <img src={`/img/assets/switchboard_${mode}.svg`} alt="switchboard-logo" className="mx-1.25" />
+      <span className="dark:text-grey-1 text-purple-4 font-bold">Switchboard</span>
     </a>
   ) : (
-    <a href="https://pyth.network/" target={'_blank'} rel="noreferrer" className="oracle-icon">
+    <a
+      href="https://pyth.network/"
+      target={'_blank'}
+      rel="noreferrer"
+      className="flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center"
+    >
       Powered by
-      <img src={`/img/assets/pyth_${mode}.svg`} alt="pyth-logo" tw="mx-1.25" />
-      <span tw="dark:text-grey-1 text-purple-4 font-bold">PYTH</span>
+      <img src={`/img/assets/pyth_${mode}.svg`} alt="pyth-logo" className="mx-1.25" />
+      <span className="dark:text-grey-1 text-purple-4 font-bold">PYTH</span>
     </a>
   )
 }
