@@ -48,7 +48,7 @@ export const MainNav: FC = () => {
   return (
     <div
       className={`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
-        sticky top-0 h-[56px]`}
+        fixed top-0 z-[1] h-[56px]`}
     >
       {rewardModal && (
         <ModalSlide
