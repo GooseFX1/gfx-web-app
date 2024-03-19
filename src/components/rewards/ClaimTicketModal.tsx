@@ -106,7 +106,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
   if (ticket.createdAt.toNumber() === 0 || ticket.totalUnstaked.toString() === '0') {
     return null
   }
-  console.log(oneDayLeft, canClaim, oneDayLeft && !canClaim)
+
   return (
     <div className={`flex w-full justify-between items-center`}>
       <p className={`text-[18px] leading-[22px] mb-0 text-grey-1 dark:text-grey-2 font-semibold`}>
