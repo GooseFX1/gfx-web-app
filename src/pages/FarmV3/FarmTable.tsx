@@ -116,6 +116,10 @@ const WRAPPER = styled.div`
   .sort {
     ${tw`flex flex-row items-center justify-center`}
   }
+
+  .oracle-icon {
+    ${tw`flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center`}
+  }
 `
 
 const CLAIM = styled.div`
@@ -312,8 +316,6 @@ export const FarmTable: FC = () => {
     return claimableRewardObj
   }, [allPoolSslData, rewards])
 
-  console.log('show values', numberOfCoinsDeposited, showDeposited, searchTokens?.length, filteredTokens)
-
   return (
     <WRAPPER>
       {allClaimModal && (
@@ -365,7 +367,7 @@ export const FarmTable: FC = () => {
           ></div>
           <h4
             css={[pool.index === 4 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
+            tw="h-[35px] duration-500 flex items-center z-[1] sm:w-[24%] justify-center
             font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : handleToggle(poolType.all))}
           >
@@ -373,7 +375,7 @@ export const FarmTable: FC = () => {
           </h4>
           <h4
             css={[pool.index === 3 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] sm:w-[24%] justify-center 
+            tw="h-[35px] duration-500 flex items-center z-[1] sm:w-[24%] justify-center
             font-semibold w-[95px] text-regular"
             onClick={() => (operationPending ? null : handleToggle(poolType.stable))}
           >
@@ -381,14 +383,14 @@ export const FarmTable: FC = () => {
           </h4>
           <h4
             css={[pool.index === 1 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] flex items-center justify-center z-[100] font-semibold w-[95px] sm:w-[24%] text-regular"
+            tw="h-[35px] flex items-center justify-center z-[1] font-semibold w-[95px] sm:w-[24%] text-regular"
             onClick={() => (operationPending ? null : handleToggle(poolType.primary))}
           >
             Primary
           </h4>
           <h4
             css={[pool.index === 2 ? tw`!text-white` : tw`text-grey-1`]}
-            tw="h-[35px] duration-500 flex items-center z-[100] justify-center font-semibold 
+            tw="h-[35px] duration-500 flex items-center z-[1] justify-center font-semibold
             sm:w-[24%] w-[95px] text-regular"
             onClick={() => (operationPending ? null : handleToggle(poolType.hyper))}
           >
@@ -696,7 +698,7 @@ const FarmTokenContent: FC<{
           <img tw="h-10 w-10 ml-4 sm:ml-2" src={`/img/crypto/${coin?.token}.svg`} alt={`${coin?.token} logo`} />
           <h4 tw="ml-2.5">{coin?.token}</h4>
           {depositPercentage ? (
-            <div tw="z-[990]" onClick={(e) => e.stopPropagation()}>
+            <div tw="" onClick={(e) => e.stopPropagation()}>
               <Tooltip
                 color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                 title={

@@ -1,22 +1,28 @@
 import React, { ReactNode } from 'react'
-import tw, { TwStyle } from 'twin.macro'
-import Button from '../../twComponents/Button'
 import { useRewardToggle } from '../../../context'
+import RewardsClose from '@/assets/rewards_close.svg?react'
+import { Button, cn } from 'gfx-component-lib'
 
 interface CombinedRewardsTopLinks {
-  containerStyles?: TwStyle[]
+  containerStyles?: string
   children?: ReactNode | ReactNode[]
 }
 function CombinedRewardsTopLinks({ containerStyles, children }: CombinedRewardsTopLinks): JSX.Element {
   const { rewardToggle } = useRewardToggle()
 
   return (
-    <div
-      css={[tw`flex gap-4 w-full items-center justify-between  mb-2.5 min-md:mb-6`].concat(containerStyles ?? [])}
-    >
-      <div css={[tw`flex gap-4 w-full items-center justify-between`]}>{children}</div>
-      <Button onClick={() => rewardToggle(false)} cssClasses={[tw`min-md:hidden`]}>
-        <img css={[tw`h-7.5 w-7.5`]} src={'/img/assets/close_button.svg'} alt={'rewards-close-button'} />
+    <div className={cn(`flex gap-4 w-full items-center justify-between `, containerStyles)}>
+      <div className={`flex gap-4 w-full items-center justify-between`}>{children}</div>
+      <Button
+        onClick={() => rewardToggle(false)}
+        variant={'ghost'}
+        className={`min-md:hidden w-max p-0`}
+        size={'sm'}
+      >
+        <RewardsClose
+          className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
+          min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
+        />
       </Button>
     </div>
   )

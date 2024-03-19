@@ -376,9 +376,13 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         getAssociatedTokenAddress(ADDRESSES[getNetwork()].USDC_MINT, walletContext.publicKey),
         getAssociatedTokenAddress(ADDRESSES[getNetwork()].GOFX_MINT, walletContext.publicKey)
       ])
-      const usdcAccount = await connection.getAccountInfo(usdcAddress)
+      const [usdcAccount, gofxAccount] = await Promise.all([
+        connection.getAccountInfo(usdcAddress),
+        connection.getAccountInfo(gofxAddress)
+      ])
+
       const txnForUserAccountRequirements = new Transaction()
-      let res = userMetadata != null && usdcAccount != null && gofxAddress != null
+      let res = userMetadata != null && usdcAccount != null && gofxAccount != null
       if (!usdcAccount) {
         const txn = createAssociatedTokenAccountInstruction(
           walletContext.publicKey,
@@ -396,7 +400,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         //console.log('init user account', ix)
         //txn.add(ix)
       }
-      if (gofxAddress === null) {
+
+      if (gofxAccount === null) {
         const txn = createAssociatedTokenAccountInstruction(
           walletContext.publicKey,
           gofxAddress,
@@ -451,7 +456,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txn.add(await callback())
       return txn
     },
-    [stakeRewards, walletContext, getNetwork]
+    [stakeRewards, walletContext, getNetwork, connection]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {

@@ -4,6 +4,7 @@ import { useDarkMode } from '../../context'
 import { styled } from 'twin.macro'
 import PageLoader from '../../components/common/PageLoader'
 import { Tooltip } from '../../components/Tooltip'
+import useWindowSize from '../../utils/useWindowSize'
 
 const CONTAINER = styled.div`
   .debridge-widget-iframe {
@@ -15,6 +16,7 @@ const Bridge: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { width } = useWindowSize()
 
   const scriptId = 'uniqueScriptId'
   const scriptRef = useRef(null)
@@ -52,8 +54,7 @@ const Bridge: FC = () => {
     return JSON.stringify({
       v: '1',
       element: 'debridgeWidget',
-      title: 'Bridge',
-      width: breakpoint.isMobile ? '372' : '600',
+      width: breakpoint.isMobile ? width : '600',
       height: '920',
       inputChain: '1',
       outputChain: '7565164',
@@ -68,7 +69,7 @@ const Bridge: FC = () => {
       theme: `${mode === 'dark' ? mode : 'light'}`,
       r: '6087'
     })
-  }, [mode, breakpoint.isMobile])
+  }, [mode, breakpoint.isMobile, width])
 
   useLayoutEffect(() => {
     // Create a new script element
@@ -100,7 +101,7 @@ const Bridge: FC = () => {
     <CONTAINER>
       {isLoading && <PageLoader />}
       <div tw="w-[600px] m-auto relative">
-        <div tw="absolute left-[18px] top-[14px] z-[100]">
+        <div tw="absolute left-[18px] top-[14px] z-[1]">
           <Tooltip
             title="The bridge module requires a wallet connection for the source chain separate from the 
             the GooseFX dApp. The destiation address for your funds must be pasted below"
@@ -109,12 +110,12 @@ const Bridge: FC = () => {
             color={mode === 'dark' ? '#ffffff' : '#000'}
           >
             <div
-              tw="border border-solid border-grey-1 w-[149px] h-8 rounded-[100px] 
-              cursor-pointer py-0.5 pl-5 pr-1 flex flex-row items-center 
+              tw="border border-solid border-grey-1 w-[178px] sm:w-[160px] h-8 rounded-[100px] 
+              cursor-pointer py-0.5 pl-2.5 pr-1 flex flex-row items-center 
               justify-between bg-grey-5 dark:bg-black-1 sm:right-0"
             >
               <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
-                Wallet FAQ
+                Bridge Wallet FAQ
               </span>
               <img tw="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
             </div>

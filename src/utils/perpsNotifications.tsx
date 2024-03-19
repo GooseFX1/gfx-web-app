@@ -136,7 +136,6 @@ export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<voi
       </IntemediaryToast>
     ),
     success: (response: SuccessResponse) => (
-
       <IntemediaryToast className={cn(`w-[290px]`)}>
         <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
         <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
