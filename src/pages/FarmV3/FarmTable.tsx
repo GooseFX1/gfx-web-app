@@ -20,8 +20,14 @@ import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
 import { AllClaimModal } from './AllClaimModal'
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
   cn,
   Icon,
+  IconTooltip,
   Input,
   InputElementLeft,
   InputElementRight,
@@ -549,6 +555,7 @@ export const FarmTable: FC = () => {
           </tbody>
         </table>
       </div>
+      <NewFarm />
     </div>
   )
 }
@@ -767,7 +774,201 @@ const FarmTokenContent: FC<{
     <></>
   )
 }
-
+const FarmItemHead = ({
+  icon,
+  canClaim,
+  token,
+  tooltip,
+  apy,
+  liquidity,
+  volume,
+  fees,
+  balance
+}: {
+  icon: string
+  canClaim: boolean
+  token: string
+  tooltip: string
+  apy: string
+  liquidity: string
+  volume: string
+  fees: string
+  balance: string
+}) => {
+  const { isMobile, isTablet } = useBreakPoint()
+  return (
+    <AccordionTrigger
+      className={cn('grid grid-cols-7', isMobile && `grid-cols-3`, isTablet && `grid-cols-4`)}
+      indicator={<></>}
+      variant={'secondary'}
+    >
+      <div className={'flex flex-row items-center gap-2.5'}>
+        <div className={'relative'}>
+          <Icon src={icon} size={'lg'} />
+          {canClaim && <span className={'absolute rounded-full bg-background-red w-3 h-3 top-0 right-0'} />}
+        </div>
+        <h4 className={'text-start'}>{token}</h4>
+        <IconTooltip tooltipType={'outline'}>{tooltip}</IconTooltip>
+      </div>
+      <h4 className={'text-center'}>{apy}</h4>
+      {!isMobile && (
+        <>
+          {!isTablet && (
+            <>
+              <h4 className={'text-center'}>{liquidity}</h4>
+              <h4 className={'text-center'}>{volume}</h4>
+              <h4 className={'text-center'}>{fees}</h4>
+            </>
+          )}
+          <h4 className={'text-center'}>{balance}</h4>
+        </>
+      )}
+      <Icon size={'sm'} className={'ml-auto'} src={'/img/mainnav/connect-chevron.svg'} />
+    </AccordionTrigger>
+  )
+}
+const FarmRowItem = ({
+  title,
+  onClick,
+  className
+}: {
+  title: string
+  onClick: () => void
+  className?: string
+}) => (
+  <Button
+    variant={'default'}
+    onClick={onClick}
+    className={cn('justify-center p-0 break-words', className)}
+    iconRight={<Icon size={'sm'} src={'/img/mainnav/connect-chevron.svg'} />}
+  >
+    <h4 className={'whitespace-pre-wrap text-center'}>{title}</h4>
+  </Button>
+)
+const FarmFilter = () => {
+  const { isMobile, isTablet } = useBreakPoint()
+  return (
+    <div
+      className={cn(
+        `grid grid-cols-7 border-b-1 border-solid border-border-lightmode-secondary 
+      dark:border-border-darkmode-tertiary h-10 mb-3.75 px-2 items-center`,
+        isMobile && `grid-cols-3`,
+        isTablet && `grid-cols-4`
+      )}
+    >
+      <FarmRowItem title={'Pool'} onClick={() => console.log('click')} className={'justify-start'} />
+      <FarmRowItem title={'APY'} onClick={() => console.log('click')} />
+      {!isMobile && (
+        <>
+          {!isTablet && (
+            <>
+              <FarmRowItem title={'Liquidity'} onClick={() => console.log('click')} />
+              <FarmRowItem title={'24H Volume'} onClick={() => console.log('click')} />
+              <FarmRowItem title={'24H Fees'} onClick={() => console.log('click')} />
+            </>
+          )}
+          <FarmRowItem title={'My Balance'} onClick={() => console.log('click')} />
+        </>
+      )}
+      <h4 className={'text-end self-center'}>Pools: {4}</h4>
+    </div>
+  )
+}
+const NewFarm = () => {
+  console.log('')
+  return (
+    <div>
+      <FarmFilter />
+      <Accordion type={'single'} collapsible={true} variant={'secondary'}>
+        <AccordionItem value={'usdc'} variant={'secondary'}>
+          <FarmItemHead
+            icon={'/img/crypto/BONK.svg'}
+            canClaim={false}
+            token={'BONK'}
+            tooltip={'Deposits...'}
+            apy={'0.58%'}
+            liquidity={'$6.78M'}
+            volume={'$1.61k'}
+            fees={'$0.87'}
+            balance={'274k'}
+          />
+          <AccordionContent variant={'secondary'}>
+            <div className={'flex flex-col gap-3.75'}>
+              <div className={'flex justify-between'}>
+                <RadioGroup orientation={'horizontal'} defaultValue={'deposit'}>
+                  <RadioGroupItem value={'deposit'} variant={'primary'} size={'xl'} className={'w-[85px] text-h5'}>
+                    Deposit
+                  </RadioGroupItem>
+                  <RadioGroupItem
+                    value={'withdraw'}
+                    variant={'primary'}
+                    size={'xl'}
+                    className={'w-[85px] text-h5'}
+                  >
+                    Withdraw
+                  </RadioGroupItem>
+                </RadioGroup>
+                <InputGroup
+                  leftItem={
+                    <InputElementLeft>
+                      <Button className={'p-1.5'} variant={'ghost'} size={'sm'}>
+                        Min
+                      </Button>
+                      <Button className={'p-1.5'} variant={'ghost'} size={'sm'}>
+                        Max
+                      </Button>
+                    </InputElementLeft>
+                  }
+                  rightItem={<InputElementRight>USDC</InputElementRight>}
+                >
+                  <Input />
+                </InputGroup>
+                <div className={'justify-end'}>
+                  <h4 className={'text-end'}>Total Earned:</h4>
+                  <p
+                    className={
+                      'text-b2 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                    }
+                  >
+                    0.0SOL ($0.0 USD)
+                  </p>
+                </div>
+              </div>
+              <div className={'flex justify-between'}>
+                <div className={'justify-start'}>
+                  <h4 className={''}>Wallet Balance:</h4>
+                  <p
+                    className={
+                      'text-b2 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                    }
+                  >
+                    0.0SOL ($0.0 USD)
+                  </p>
+                </div>
+                <div>
+                  <Button colorScheme={'purple'}>Connect Wallet</Button>
+                  <Button variant={'outline'} colorScheme={'blue'}>
+                    Claim 8.55 USDC
+                  </Button>
+                </div>
+                <div className={'justify-end'}>
+                  <h4 className={'text-end'}>Pending Rewards:</h4>
+                  <p
+                    className={
+                      'text-b2 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'
+                    }
+                  >
+                    0.0SOL ($0.0 USD)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  )
+}
 const FarmSearch = ({
   setSearchTokens,
   searchTokens,
