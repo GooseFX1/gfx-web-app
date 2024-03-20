@@ -4,13 +4,34 @@ import React, { FC, useMemo, useState } from 'react'
 import tw from 'twin.macro'
 import { useCrypto, usePriceFeed, useDarkMode, useOrderBook, useConnectionConfig } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
-import { DepositWithdraw } from './perps/DepositWithdraw'
+import { DepositWithdrawDialog } from './perps/DepositWithdraw'
+import { DepositWithdraw } from './perps/DepositWithdrawNew'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
 import { Tooltip, PopupCustom } from '../../components'
 import { useWallet } from '@solana/wallet-adapter-react'
+import {
+  Button,
+  Container,
+  ContainerTitle,
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogCloseDefault,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTrigger,
+  IconTooltip,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  cn
+} from 'gfx-component-lib'
+import { InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 
 export const SETTING_MODAL = styled(PopupCustom)`
   ${tw`!h-[356px] !w-[628px] rounded-half`}
@@ -94,25 +115,22 @@ const LOCK_LAYOUT_CTN = styled.div`
   ${tw`h-10 w-[65px] ml-3.75 rounded-[36px] text-center cursor-pointer p-0.5`}
   height: 40px;
   width: 65px;
-  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   margin-left: 15px;
 
   .white-background {
     ${tw`h-full w-full rounded-[36px]`}
-    background: ${({ theme }) => theme.bg20};
   }
 `
 
 const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   ${tw`w-[63px] leading-[38px] rounded-[36px] text-center h-full flex items-center justify-center`}
-  background: linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%);
+  /* background: linear-gradient(90deg, rgba(247, 147, 26, 0.3) 12.88%, rgba(220, 31, 255, 0.3) 100%); */
   img {
     ${tw`relative bottom-0.5`}
   }
 `
 const DEPOSIT_WRAPPER = styled.div<{ $isLocked: boolean }>`
   ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto sm:ml-0`}
-  background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
   margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '15px')};
 
   .white-background {
@@ -149,10 +167,6 @@ const HEADER = styled.div`
     }
   }
 
-  .background-container {
-    ${tw`h-full w-full rounded-bigger`}
-  }
-
   .active {
     ${tw`p-0.5 cursor-auto`}
     background: linear-gradient(113deg, #f7931a 0%, #dc1fff 132%);
@@ -182,42 +196,46 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
   setTradeType,
   tradeType
 }) => {
-  const { mode } = useDarkMode()
   const { wallet } = useWallet()
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   const { isDevnet } = useCrypto()
   return (
-    <HEADER>
-      <div className={tradeType === 'deposit' ? 'active cta' : 'cta'} onClick={() => setTradeType('deposit')}>
-        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
-          <div className={tradeType === 'deposit' ? 'gradient-bg btn' : 'btn'}>Deposit</div>
-        </div>
-      </div>
-      <div
-        className={tradeType === 'withdraw' ? 'active cta' : 'cta'}
-        onClick={() => {
-          if (!isDevnet) setTradeType('withdraw')
-        }}
-      >
-        <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
-          <div className={tradeType === 'withdraw' ? 'gradient-bg btn' : 'btn'}>Withdraw</div>
-        </div>
-      </div>
-      {publicKey && (
-        <div
-          className={tradeType === 'account' ? 'active cta' : 'cta'}
-          onClick={() => {
-            if (!isDevnet) setTradeType('account')
-          }}
-        >
-          <div className={mode !== 'dark' ? 'white-background background-container' : 'background-container'}>
-            <div className={tradeType === 'account' ? 'gradient-bg btn' : 'btn'}>Account</div>
-          </div>
-        </div>
-      )}
-      {/*<img src="/img/assets/refresh.svg" alt="refresh-icon" />*/}
-    </HEADER>
+    <div className={cn('h-10 w-full p-2.5')}>
+      <Tabs className="p-[0px] mb-2 h-full" defaultValue="1">
+        <TabsList>
+          <TabsTrigger
+            className={cn('w-[85px] h-8.75')}
+            size="xl"
+            value="1"
+            variant="primary"
+            onClick={() => setTradeType('deposit')}
+          >
+            <TitleLabel whiteText={tradeType === 'deposit'}>Deposit</TitleLabel>
+          </TabsTrigger>
+          <TabsTrigger
+            className={cn('w-[85px] h-8.75')}
+            size="xl"
+            value="2"
+            variant="primary"
+            onClick={() => !isDevnet && setTradeType('withdraw')}
+          >
+            <TitleLabel whiteText={tradeType === 'withdraw'}>Withdraw</TitleLabel>
+          </TabsTrigger>
+          {publicKey && (
+            <TabsTrigger
+              className={cn('w-[85px] h-8.75')}
+              size="xl"
+              value="3"
+              variant="primary"
+              onClick={() => !isDevnet && setTradeType('account')}
+            >
+              <TitleLabel whiteText={tradeType === 'account'}>Account</TitleLabel>
+            </TabsTrigger>
+          )}
+        </TabsList>
+      </Tabs>
+    </div>
   )
 }
 
@@ -293,6 +311,12 @@ export const InfoBanner: FC<{
     return !oPrice ? <Loader /> : <span>$ {oPrice}</span>
   }, [isDevnet, selectedCrypto, orderBook])
 
+  const tokenPriceChange = useMemo(() => {
+    const oPrice = getPerpsPrice(orderBook)
+    const changeValue = tokenInfos ? Number(tokenInfos.change.substring(1)) : 0
+    return !oPrice ? <Loader /> : <span>$ {(oPrice * (changeValue / 100)).toFixed(2)}</span>
+  }, [isDevnet, selectedCrypto, orderBook, tokenInfos])
+
   const handleToggle = (e) => {
     if (e === 'spot') setIsDevnet(true)
     else setIsDevnet(false)
@@ -300,24 +324,10 @@ export const InfoBanner: FC<{
 
   return (
     <INFO_WRAPPER>
-      {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
-      )}
+      <DepositWithdrawDialog
+        depositWithdrawModal={depositWithdrawModal}
+        setDepositWithdrawModal={setDepositWithdrawModal}
+      />
 
       {/*<div className="spot-toggle">
         <span
@@ -341,15 +351,34 @@ export const InfoBanner: FC<{
       <DropdownPairs />
       {
         <>
-          <INFO_STATS>
-            <>
-              <h4 className="price">Price</h4>
-              <div>
-                {tokenPrice}
+          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[110px] ml-4">
+            <ContainerTitle>
+              <h6>Market Price:&nbsp;</h6>
+              {/* TODO Placement bottom */}
+              <IconTooltip tooltipType={'outline'}>
+                <p>This is some content here</p>
+              </IconTooltip>
+            </ContainerTitle>
+            <InfoLabel>
+              <h4>{tokenPrice}</h4>
+            </InfoLabel>
+          </Container>
+          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[125px] ml-4">
+            <ContainerTitle>
+              <h6>24H Change:&nbsp;</h6>
+              {/* TODO Placement bottom */}
+              <IconTooltip tooltipType={'outline'}>
+                <p>This is some content here</p>
+              </IconTooltip>
+            </ContainerTitle>
+            <InfoLabel>
+              <h4>
+                {tokenPriceChange}
                 <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
-              </div>
-            </>
-          </INFO_STATS>
+              </h4>
+            </InfoLabel>
+          </Container>
+
           {/* <INFO_STATS>
             <>
               <div>24H Volume</div>
@@ -376,7 +405,7 @@ export const InfoBanner: FC<{
           )}
         </>
          </INFO_STATS> */}
-      {width > 1400 && (
+      {/* {width > 1400 && (
         <INFO_STATS>
           <h4>Daily Range</h4>
           {!range ? (
@@ -386,6 +415,7 @@ export const InfoBanner: FC<{
               <span>$ {range.min}</span>
               <span className="barContainer">
                 {[0, 1, 2, 3, 4, 5].map((item, index) => {
+                  //@ts-ignore
                   if (item < bars) return <div key={index} className="verticalLines coloured"></div>
                   else return <div key={index} className="verticalLines grey"></div>
                 })}
@@ -394,16 +424,22 @@ export const InfoBanner: FC<{
             </div>
           )}
         </INFO_STATS>
-      )}
+      )} */}
       {
-        <INFO_STATS>
-          <>
-            <h4>Open Interest</h4>
-            {!traderInfo.openInterests ? <Loader /> : <div> {openInterestFormatted} SOL</div>}
-          </>
-        </INFO_STATS>
+        <>
+          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[115px] ml-4">
+            <ContainerTitle>
+              <h6>Open Interest:&nbsp;</h6>
+              {/* TODO Placement bottom */}
+              <IconTooltip tooltipType={'outline'}>
+                <p>This is some content here</p>
+              </IconTooltip>
+            </ContainerTitle>
+            <InfoLabel>{!traderInfo.openInterests ? <Loader /> : <h4> {openInterestFormatted} SOL</h4>}</InfoLabel>
+          </Container>
+        </>
       }
-      {
+      {/* {
         <INFO_STATS>
           <>
             <div tw="flex flex-row">
@@ -443,7 +479,7 @@ export const InfoBanner: FC<{
             )}
           </>
         </INFO_STATS>
-      }
+      } */}
       {isDevnet && blacklisted && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
@@ -455,19 +491,31 @@ export const InfoBanner: FC<{
       {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
       {
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
-          <div className="white-background">
+          {/* <div className="white-background">
             <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
-          </div>
+          </div> */}
+          <Button
+            variant="default"
+            className={cn('h-[30px]')}
+            colorScheme="blue"
+            onClick={() => setDepositWithdrawModal(true)}
+          >
+            Deposit / Withdraw
+          </Button>
         </DEPOSIT_WRAPPER>
       }
       {
-        <LOCK_LAYOUT_CTN onClick={() => setIsLocked(!isLocked)}>
+        <div onClick={() => setIsLocked(!isLocked)}>
           <div className="white-background">
-            <LOCK_LAYOUT $isLocked={isLocked} onClick={() => setIsLocked(!isLocked)}>
-              <img src={isLocked ? `/img/assets/${mode}_lock.svg` : `/img/assets/${mode}_unlock.svg`} alt="lock" />
-            </LOCK_LAYOUT>
+            <div onClick={() => setIsLocked(!isLocked)}>
+              <img
+                className={cn('h-10 w-10 mx-2')}
+                src={isLocked ? `/img/assets/${mode}Lock.svg` : `/img/assets/${mode}Unlock.svg`}
+                alt="lock"
+              />
+            </div>
           </div>
-        </LOCK_LAYOUT_CTN>
+        </div>
       }
     </INFO_WRAPPER>
   )

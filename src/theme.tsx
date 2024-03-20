@@ -250,7 +250,7 @@ export function colors(mode: string): Colors {
     borderColorTabBidFooter: mode === 'dark' ? '#131313' : '#EAEAEA',
 
     // trading history tab content
-    tradingHistoryTabContentBackground: mode === 'dark' ? '#141414' : '#fff',
+    tradingHistoryTabContentBackground: mode === 'dark' ? '#1C1C1C' : '#fff',
 
     // hover tr table
     hoverTrTableBackground: mode === 'dark' ? '#262626' : 'rgba(64, 64, 64, 0.2)',

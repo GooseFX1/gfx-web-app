@@ -7,7 +7,7 @@ import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
 
-import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
+import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
