@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { TokenAmount } from '@solana/web3.js'
-
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBoolean from '../../../../hooks/useBoolean'
 import RewardsLeftPanelHeading from './RewardsHeading'
@@ -8,12 +6,7 @@ import RewardsWalletBalanceAndBuyGofx from './BalanceAndBuy'
 import RewardsInput from './RewardsInput'
 import { Connect } from '../../../../layouts'
 import RewardsStakeBottomBar from './BottomBar'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import { useConnectionConfig } from '../../../../context'
-import useSolSub, { SubType } from '../../../../hooks/useSolSub'
-import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import useRewards from '../../../../context/rewardsContext'
 import RewardsUnstakeBottomBar from './UnstakeBottomBar'
 import { numberFormatter } from '../../../../utils'
@@ -24,79 +17,21 @@ import HowItWorksButton from '../HowItWorksButton'
 import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
 import TopLinks from '../TopLinks'
 import { Button, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
-  const [userGoFxBalance, setUserGoFxBalance] = useState<TokenAmount>(() => ({
-    amount: '0.0',
-    decimals: 0,
-    uiAmount: 0.0,
-    uiAmountString: '0.0'
-  }))
+  const { balance } = useWalletBalance()
+  const userGoFxBalance = balance['GOFX'].tokenAmount
+  console.log(balance)
   const [isStakeSelected, setIsStakeSelected] = useBoolean(true)
   const { connected, publicKey } = useWallet()
-  const { network, connection } = useConnectionConfig()
+  const { connection } = useConnectionConfig()
   const [approxRewardAmount, setApproxRewardAmount] = useState<number>(0)
   const [calculating, setCalculating] = useBoolean(false)
   const { totalStakedInUSD, gofxValue, totalStaked, stake, unstakeableTickets } = useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [isStakeLoading, setIsStakeLoading] = useBoolean(false)
   const [proposedStakeAmount, setProposedStakeAmount] = useState<number>(0)
-  const { on, off } = useSolSub()
-  useEffect(() => {
-    const id = 'user-gofx-balance-staking'
-    on({
-      SubType: SubType.AccountChange,
-      id,
-      callback: async () => {
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        const balance = await connection.getTokenAccountBalance(address, 'confirmed')
-        setUserGoFxBalance(balance.value)
-      },
-      pubKeyRetrieval: () => {
-        if (!publicKey) return null
-        const currentNetwork =
-          network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-        const [address] = findProgramAddressSync(
-          [
-            publicKey.toBuffer(),
-            TOKEN_PROGRAM_ID.toBuffer(),
-            rewardAddresses[currentNetwork].GOFX_MINT.toBuffer()
-          ],
-          ASSOCIATED_TOKEN_PROGRAM_ID
-        )
-        return address
-      }
-    })
-    return () => {
-      off(id)
-      return
-    }
-  }, [connection, network, publicKey])
-  useEffect(() => {
-    if (!publicKey) return
-    const getData = async () => {
-      const currentNetwork =
-        network == WalletAdapterNetwork.Mainnet || network == WalletAdapterNetwork.Testnet ? 'MAINNET' : 'DEVNET'
-
-      const gofxMint = rewardAddresses[currentNetwork].GOFX_MINT
-      const account = await connection.getTokenAccountsByOwner(publicKey, { mint: gofxMint })
-      if (!account || !account.value.length) return
-
-      const balance = await connection.getTokenAccountBalance(account.value[0].pubkey, 'confirmed')
-
-      setUserGoFxBalance(balance.value)
-    }
-    void getData()
-  }, [publicKey, connection, network])
 
   const adjustedStakeAmountInUSD = useMemo(() => proposedStakeAmount * gofxValue, [proposedStakeAmount, gofxValue])
   useEffect(() => {

@@ -19,7 +19,7 @@ interface BaseSub {
   id: string
 }
 
-type SolsSubs = (PubKeyButNoRetrieval | PubKeyAndRetrieval) & BaseSub
+export type SolsSubs = (PubKeyButNoRetrieval | PubKeyAndRetrieval) & BaseSub
 
 export enum SubType {
   AccountChange = 'AccountChange',
@@ -52,7 +52,7 @@ function useSolSub(): {
         await SolanaSubscriber.subscribeAccountChange(pubkey, sub.id, sub.callback)
         break
       case SubType.ProgramAccountChange:
-        await SolanaSubscriber.subscribeAccountChange(pubkey, sub.id, sub.callback)
+        await SolanaSubscriber.subscribeProgramAccountChange(pubkey, sub.id, sub.callback)
         break
       default:
         console.warn('unkown option passed for sub')

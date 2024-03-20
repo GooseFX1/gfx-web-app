@@ -29,9 +29,11 @@ import { notify } from '../utils'
 import { Col, Row } from 'antd'
 import styled from 'styled-components'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
-import useSolSub, { SubType } from '../hooks/useSolSub'
+import { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
+import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const cg = new CoinGecko()
 
@@ -223,7 +225,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     () => new GfxStakeRewards(connection, getNetwork(), new Wallet(Keypair.generate()))
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
-  const { on, off } = useSolSub()
+  const { connectedWalletPublicKey } = useWalletBalance()
   const resetStakeRewards = useCallback(() => {
     setStakePool(initialState.stakePool)
     setGofxVault(initialState.gofxVault)
@@ -261,14 +263,9 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     process()
   }, [stakeRewards, walletContext.publicKey, resetStakeRewards])
-  useEffect(() => {
-    const gfxPoolId = 'gofx-pool-staking'
-    const userMetadataId = 'user-metadata-staking'
-    const usdcId = 'usdc-claimable-staking'
-    if (pubKeys.gofxVault) {
-      on({
-        SubType: SubType.AccountChange,
-        id: gfxPoolId,
+  const cachedRetrievalKeys = useMemo(
+    () => [
+      {
         publicKey: pubKeys.gofxVault,
         callback: async () => {
           const t = await stakeRewards.getGoFxVault()
@@ -279,15 +276,11 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           setUserStakeRatio((Number(totalStaked) / gfxVaultVal) * 100)
           setGofxVault(t)
         }
-      })
-    }
-    if (pubKeys.userMetadata) {
-      on({
-        SubType: SubType.AccountChange,
-        id: userMetadataId,
+      },
+      {
         publicKey: pubKeys.userMetadata,
         callback: async () => {
-          const newUserMetaData = await stakeRewards.getUserMetaData(walletContext.publicKey)
+          const newUserMetaData = await stakeRewards.getUserMetaData(connectedWalletPublicKey)
           const newUnstakaebleTicekts = stakeRewards.getUnstakeableTickets(newUserMetaData.unstakingTickets)
           setUserMetaData(newUserMetaData)
           setTotalEarned(getUiAmount(newUserMetaData.totalEarned, true))
@@ -298,25 +291,22 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           )
           console.log('user meta data update', newUserMetaData)
         }
-      })
-    }
-    if (pubKeys.userHoldingsAccount) {
-      on({
-        SubType: SubType.AccountChange,
-        id: usdcId,
+      },
+      {
         publicKey: pubKeys.userHoldingsAccount,
         callback: async () => {
-          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(walletContext.publicKey)
+          const newClaimable = await stakeRewards.getUserRewardsHoldingAmount(connectedWalletPublicKey)
           setClaimable(Number(newClaimable))
           console.log('FOUND NEW CLAIMABLE')
         }
-      })
-    }
-    return () => {
-      off([gfxPoolId, userMetadataId, usdcId])
-      return undefined
-    }
-  }, [pubKeys, stakeRewards])
+      }
+    ],
+    [pubKeys, stakeRewards, connectedWalletPublicKey]
+  )
+  useSolSubActivityMulti({
+    subType: SubType.AccountChange,
+    publicKeys: cachedRetrievalKeys
+  })
 
   useEffect(() => {
     console.log(claimable, unstakeableTickets)

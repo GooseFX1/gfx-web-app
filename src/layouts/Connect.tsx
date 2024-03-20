@@ -20,10 +20,10 @@ import {
   Icon,
   ToastTitle
 } from 'gfx-component-lib'
-import useWalletBalance from '@/hooks/useWalletBalance'
 import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
@@ -42,7 +42,6 @@ export const Connect: FC<MenuItemProps> = ({
   const [isOpen, setIsOpen] = useBoolean(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
-  const { balance } = useWalletBalance()
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
@@ -51,7 +50,7 @@ export const Connect: FC<MenuItemProps> = ({
     () => !blacklisted || (blacklisted && pathname === '/farm/temp-withdraw'),
     [blacklisted, pathname]
   )
-
+  const { balance } = useWalletBalance()
   // useEffect(() => {
   //   if (connected) logData('wallet_connected')
   // }, [connected])
@@ -140,21 +139,19 @@ export const Connect: FC<MenuItemProps> = ({
                 size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
                 disabled={!canConnect}
                 className={cn(
-                  `min-w-[129px] min-md:min-w-[143px] px-2.5 py-1.75 focus-visible:outline-none`,
+                  `min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none 
+                  flex justify-center`,
                   customButtonStyle
                 )}
                 onClick={() => !connected && handleConnect()}
               >
                 {connected && (
                   <div
-                    className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px] w-5 h-5 `}
+                    className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] mr-1 overflow-hidden`}
                   >
                     <img
-                      className={cn(
-                        'h-[14px] w-[14px] rounded-lg',
-                        breakpoint.isMobile || breakpoint.isTablet ? 'h-[20px] w-[20px]' : ''
-                      )}
+                      className={'w-auto rounded-lg'}
                       src={wallet?.adapter?.icon}
                       alt={`${wallet?.adapter?.name}_icon`}
                     />
@@ -167,6 +164,7 @@ export const Connect: FC<MenuItemProps> = ({
                       transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
                       transition: 'transform 0.2s ease-in-out'
                     }}
+                    className={`ml-1`}
                     src={`/img/mainnav/connect-chevron.svg`}
                     alt={'connect-chevron'}
                   />
@@ -197,7 +195,7 @@ export const Connect: FC<MenuItemProps> = ({
                   text-text-lightmode-primary dark:text-text-darkmode-primary font-semibold
                 `}
                 >
-                  ~ {balance.sol.uiAmountString} SOL
+                  ~ {balance.SOL.tokenAmount.uiAmountString} SOL
                 </h4>
                 <p
                   className={`

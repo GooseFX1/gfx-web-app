@@ -558,7 +558,7 @@ export const ExpandedView: FC<{ isExpanded: boolean; coin: SSLToken; userDeposit
       <div>
         <div tw="flex relative w-[400px] sm:w-[100%] dark:bg-black-1 bg-grey-5 rounded-[50px] items-center">
           {isExpanded && (
-            <div tw="flex z-[100]">
+            <div tw="flex">
               <div
                 onClick={() =>
                   modeOfOperation === ModeOfOperation.DEPOSIT
