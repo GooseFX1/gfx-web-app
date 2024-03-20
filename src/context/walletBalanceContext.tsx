@@ -105,7 +105,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const { network, connection } = useConnectionConfig()
   const [balance, setBalance] = useState<Balance>({})
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
-  console.log('TOKEN ACCS', tokenAccounts)
+
   useSolSubActivityMulti({
     subType: SubType.AccountChange,
     publicKeys: tokenAccounts.map((account) => {
