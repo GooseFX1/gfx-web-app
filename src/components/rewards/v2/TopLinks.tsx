@@ -10,7 +10,7 @@ function TopLinks(): JSX.Element {
       <RadioGroupItem
         value={'earn'}
         variant={'primary'}
-        size={'xl'}
+        size={'lg'}
         // className={cn(
         //   `font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`,
         //   panelIndex !== 0 && `dark:text-white text-black`
@@ -22,7 +22,7 @@ function TopLinks(): JSX.Element {
       <RadioGroupItem
         value={'refer'}
         variant={'primary'}
-        size={'xl'}
+        size={'lg'}
         // className={cn(`font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`,
         //   panelIndex !== 1 && `dark:text-white text-black`
         // )}

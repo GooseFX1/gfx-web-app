@@ -16,6 +16,7 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
+
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
 interface UserTokenAccounts {
@@ -27,8 +28,10 @@ interface UserTokenAccounts {
   pda: PublicKey
   tokenAmount: TokenAmount
 }
+
 type Balance = Record<string, UserTokenAccounts>
 type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
+
 interface IWalletBalanceContext {
   balance: Balance
   connectedWalletPublicKey?: PublicKey
@@ -130,6 +133,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
     getTokenAccounts()
   }, [connection, network, publicKey])
+
   function setBalanceBySymbol(symbol: string, amount: TokenAmount) {
     setBalance((prev) => ({
       ...prev,
@@ -139,6 +143,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       }
     }))
   }
+
   async function getTokenAccounts() {
     if (!publicKey) return
     const filters: GetProgramAccountsFilter[] = [
@@ -175,7 +180,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const solBalance = await connection.getBalance(publicKey)
     const solUIAmount = solBalance / 10 ** 9
 
-    tokenAccounts[NATIVE_MINT.toBase58()] = {
+    tokenAccounts['SOL'] = {
       ...SUPPORTED_TOKENS[NATIVE_MINT.toBase58()],
       mint: NATIVE_MINT,
       pda: publicKey,
@@ -189,12 +194,15 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
   }
+
   function createTokenAccountInstruction(data: CreateTokenAccountParams) {
     return createAssociatedTokenAccountInstruction(publicKey, data.pda, publicKey, data.mint)
   }
+
   function createTokenAccountInstructions(data: CreateTokenAccountParams[]) {
     return data.map((d) => createTokenAccountInstruction(d))
   }
+
   async function createTokenAccount(data: CreateTokenAccountParams) {
     const txnInstruction = createTokenAccountInstruction(data)
     const txn = new Transaction().add(txnInstruction)
@@ -206,6 +214,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       .then(() => toast.success('Token account created!'))
       .catch(() => toast.error('Error creating token account!'))
   }
+
   async function createTokenAccounts(data: CreateTokenAccountParams[]) {
     const txnInstruction = createTokenAccountInstructions(data)
     const txn = new Transaction().add(...txnInstruction)
@@ -217,10 +226,15 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       .then(() => toast.success('Token account(s) created!'))
       .catch(() => toast.error('Error creating token account(s)!'))
   }
+
   const balanceProxyHandler = {
     get: function (target: Balance, prop: string) {
       if (prop in target) {
         return target[prop]
+      } else if (prop.toLowerCase() in target) {
+        return target[prop.toLowerCase()]
+      } else if (prop.toUpperCase() in target) {
+        return target[prop.toUpperCase()]
       }
       return {
         sumbol: '',
@@ -254,6 +268,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     </WalletBalanceContext.Provider>
   )
 }
+
 export default WalletBalanceProvider
 const useWalletBalance = (): IWalletBalanceContext => useContext(WalletBalanceContext)
 
