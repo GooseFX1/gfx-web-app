@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import {
   GetProgramAccountsFilter,
   ParsedAccountData,
@@ -13,7 +13,7 @@ import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
 
@@ -105,24 +105,30 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const { network, connection } = useConnectionConfig()
   const [balance, setBalance] = useState<Balance>({})
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
-  const cachedTokenAccounts = useMemo(
-    () =>
-      tokenAccounts.map((account) => {
-        const callback = async () => {
-          console.log('Setting balance for', account.symbol)
-          const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-          setBalanceBySymbol(account.symbol, t.value)
-        }
-        return {
-          publicKey: account.pda,
-          callback
-        }
-      }),
-    [tokenAccounts, connection]
-  )
+  console.log('TOKEN ACCS', tokenAccounts)
   useSolSubActivityMulti({
     subType: SubType.AccountChange,
-    publicKeys: cachedTokenAccounts
+    publicKeys: tokenAccounts.map((account) => {
+      const callback = async () => {
+        console.log('Setting balance for', account.symbol)
+        if (account.symbol == 'SOL') {
+          const t = await connection.getBalance(account.pda)
+          setBalanceBySymbol(account.symbol, {
+            amount: t.toString(),
+            decimals: 9,
+            uiAmount: t / 10 ** 9,
+            uiAmountString: (t / 10 ** 9).toFixed(2)
+          })
+          return
+        }
+        const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
+        setBalanceBySymbol(account.symbol, t.value)
+      }
+      return {
+        publicKey: account.pda,
+        callback
+      }
+    })
   })
 
   useEffect(() => {
@@ -171,8 +177,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           ...data.parsed.info,
           ...supportedToken,
           pda: findProgramAddressSync(
-            [publicKey.toBuffer(), new PublicKey(data.parsed.info.mint).toBuffer()],
-            TOKEN_PROGRAM_ID
+            [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(data.parsed.info.mint).toBuffer()],
+            ASSOCIATED_TOKEN_PROGRAM_ID
           )[0]
         }
       }

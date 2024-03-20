@@ -69,16 +69,14 @@ function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiP
 
   useEffect(() => {
     const ids: string[] = []
-    if (publicKeys.length) {
-      publicKeys.forEach(({ publicKey, callback }) => {
-        if (publicKey) {
-          const id = `${subType}-${publicKey.toBase58()}`
-          ids.push(id)
-          console.log('TRACKING SOL SUB', id)
-          hookOn({ callback: callback, id, SubType: subType, publicKey })
-        }
-      })
-    }
+    publicKeys.forEach(({ publicKey, callback }) => {
+      if (publicKey) {
+        const id = `${subType}-${publicKey.toBase58()}`
+        ids.push(id)
+        console.log('TRACKING SOL SUB', id)
+        hookOn({ callback: callback, id, SubType: subType, publicKey })
+      }
+    })
 
     return () => {
       ids.forEach((id) => {
