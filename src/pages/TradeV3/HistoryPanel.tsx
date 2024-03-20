@@ -14,7 +14,7 @@ import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
 import { OrderBook } from './OrderBook'
-import { InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 type TabColumnsDisplayProps = {
@@ -29,7 +29,6 @@ type PositionDetailsProps = {
   roundedSize: number | string
   perpsPrice: number
   notionalSize: number | string
-  pnl: number
   handleClosePosition: () => void
 }
 
@@ -371,17 +370,19 @@ const OpenOrdersComponent: FC = () => {
 
   const content = useMemo(
     () => (
-      <OPEN_ORDER>
+      <div className={cn('w-full px-2.5 overflow-auto border border-solid')}>
         {openOrderUI &&
           openOrderUI.length > 0 &&
-          openOrderUI.map((order, index) =>
+          [...openOrderUI].map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
-              <div key={index}>
-                <span className={order.order.side}>{order.order.side}</span>
-                <span>{order.order.size}</span>
-                <span>${order.order.price}</span>
-                <span>{(order.order.size * order.order.price).toFixed(2)}</span>
-                <span>
+              <div key={index} className={cn('flex items-center')}>
+                <div className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
+                  {order.order.side}
+                </div>
+                <div className={cn('w-[20%]')}>{order.order.size}</div>
+                <div className={cn('w-[20%]')}>${order.order.price}</div>
+                <div className={cn('w-[20%]')}>{(order.order.size * order.order.price).toFixed(2)}</div>
+                <div className={cn('w-[20%]')}>
                   <Button
                     className="cancelButton"
                     loading={false}
@@ -395,20 +396,19 @@ const OpenOrdersComponent: FC = () => {
                       'Cancel'
                     )}
                   </Button>
-                </span>
+                </div>
               </div>
             ) : null
           )}
-      </OPEN_ORDER>
+      </div>
     ),
     [formatPair, perpsOpenOrders, isDevnet]
   )
   return (
     <>
       {!openOrderUI.length ? (
-        <div className="no-positions-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-          <div>No Open Orders</div>
+        <div className={cn('flex items-center justify-center h-[80%]')}>
+          <h4 className="text-grey-1"> No Open Orders</h4>
         </div>
       ) : (
         content
@@ -748,8 +748,7 @@ export const HistoryPanel: FC = () => {
   //   </>
   // )
   return (
-    <Tabs className="p-[0px] mb-2 h-full" defaultValue="0">
-      {activeTab}
+    <Tabs className="p-[0px] mb-2 h-[calc(100%)] " defaultValue="0">
       <TabsList>
         {tabs.map((item, index) => (
           <TabsTrigger
@@ -772,12 +771,11 @@ export const HistoryPanel: FC = () => {
             roundedSize={roundedSize}
             perpsPrice={perpsPrice}
             notionalSize={notionalSize}
-            pnl={pnl}
             handleClosePosition={handleClosePosition}
           />
         </>
       </TabsContent>
-      <TabsContent value="1">
+      <TabsContent className={cn('h-[100%]')} value="1">
         <TabColumnsDisplay activeTab={activeTab} />
         <OpenOrdersComponent />
       </TabsContent>
@@ -792,7 +790,7 @@ const TabColumnsDisplay: React.FC<TabColumnsDisplayProps> = ({ activeTab }) => {
   }, [columns, activeTab, tabs])
 
   return (
-    <div className={cn('px-2.5 py-2 flex')}>
+    <div className={cn('px-2.5 py-2 flex border-b border-solid dark:border-black-4 border-grey-4')}>
       {columns[activeTab][tabs[activeTab]].map((item, index) => (
         <div style={{ width: `${length}%` }} key={item.id || index}>
           <InfoLabel>{item}</InfoLabel>
@@ -808,7 +806,6 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
   roundedSize,
   perpsPrice,
   notionalSize,
-  pnl,
   handleClosePosition
 }) => {
   const { mode } = useDarkMode()
@@ -826,29 +823,30 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
           >
             <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
           </div>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[12.5%] flex items-center ')}>
             <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>{' '}
           </div>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[12.5%] flex items-center')}>
             <InfoLabel>{roundedSize} </InfoLabel>{' '}
           </div>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[12.5%] flex items-center')}>
             <InfoLabel>{perpsPrice} </InfoLabel>{' '}
           </div>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[12.5%] flex items-center')}>
             <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>{' '}
           </div>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[12.5%] flex items-center')}>
             <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>{' '}
           </div>
           <div>
-            <Button onClick={handleClosePosition}>Close</Button>
+            <Button variant="outline" colorScheme="red" className={cn(`h-[30px]`)} onClick={handleClosePosition}>
+              Close
+            </Button>
           </div>
         </div>
       ) : (
-        <div className="no-positions-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-          <div>No Positions Found</div>
+        <div className={cn('flex items-center justify-center h-[80%]')}>
+          <h4 className="text-grey-1"> No Positions Found</h4>
         </div>
       )}
     </>

@@ -17,7 +17,7 @@ import {
   useConnectionConfig
 } from '../../context'
 import { removeFloatingPointError } from '../../utils'
-import { Checkbox, Dropdown } from 'antd'
+import { Dropdown } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -27,20 +27,30 @@ import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
-import { DepositWithdraw } from './perps/DepositWithdraw'
-import { InfoLabel, PerpsLayout, TitleLabel } from './perps/components/PerpsGenericComp'
+import { DepositWithdraw } from './perps/DepositWithdrawNew'
+import {
+  ContentLabel,
+  GradientButtonWithBorder,
+  InfoLabel,
+  PerpsLayout,
+  TitleLabel
+} from './perps/components/PerpsGenericComp'
 import {
   Button,
+  Checkbox,
   cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
+  InputElementRight,
+  InputGroup,
   Slider
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
 import { CircularArrow } from '@/components/common/Arrow'
+import { Connect } from '../../layouts/Connect'
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -661,7 +671,6 @@ export const PlaceOrder: FC = () => {
           if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, size: input }))
           break
         case 'total':
-          console.log(input, 'shri')
           if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, total: input }))
           break
         case 'price':
@@ -795,32 +804,68 @@ export const PlaceOrder: FC = () => {
 
   const getTakeProfitItems = () => {
     let items = []
+
     items = TAKE_PROFIT_ARRAY.map((item, index) => {
       const html = (
-        <DROPDOWN_ITEMS
-          tw="mb-1 flex flex-row p-[5px] w-[90%] mx-auto rounded-[3px]"
-          onClick={() => calcTakeProfit(item.value, index)}
-          className={takeProfitIndex === index ? 'selected' : ''}
-        >
-          <span
-            tw="mr-2 font-semibold text-regular dark:text-grey-2 text-grey-1"
-            className={takeProfitIndex === index ? 'span-selected' : ''}
-          >
-            {item.display}
-          </span>
-          <span
-            tw="font-semibold text-regular mr-auto dark:text-grey-2 text-grey-1"
-            className={takeProfitIndex === index ? 'span-selected' : ''}
-          >
-            {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
-          </span>
-        </DROPDOWN_ITEMS>
+        // <DROPDOWN_ITEMS
+        //   tw="mb-1 flex flex-row p-[5px] w-[90%] mx-auto rounded-[3px]"
+        //   onClick={() => calcTakeProfit(item.value, index)}
+        //   className={takeProfitIndex === index ? 'selected' : ''}
+        // >
+        //   <span
+        //     tw="mr-2 font-semibold text-regular dark:text-grey-2 text-grey-1"
+        //     className={takeProfitIndex === index ? 'span-selected' : ''}
+        //   >
+        //     {item.display}
+        //   </span>
+        //   <span
+        //     tw="font-semibold text-regular mr-auto dark:text-grey-2 text-grey-1"
+        //     className={takeProfitIndex === index ? 'span-selected' : ''}
+        //   >
+        //     {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
+        //   </span>
+        // </DROPDOWN_ITEMS>
+        <DropdownMenuItem variant={'default'} onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}>
+          <ContentLabel>
+            <div className="flex w-[200px]" onClick={() => calcTakeProfit(item.value, index)}>
+              <p className={cn('font-bold cursor-pointer mr-1')}>{item.display}</p>
+              <p className={cn('font-bold cursor-pointer')}>
+                {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
+              </p>
+            </div>
+          </ContentLabel>
+        </DropdownMenuItem>
       )
-      return {
-        label: html,
-        key: index
-      }
+
+      return html
     })
+
+    const saveHtml = (
+      <DropdownMenuItem variant={'blank'} onSelect={(e) => e.preventDefault()}>
+        <InputGroup
+          rightItem={
+            <InputElementRight>
+              <Button
+                variant={'ghost'}
+                disabled={checkDisabled()}
+                className={cn('cursor-pointer')}
+                onClick={!checkDisabled() && handleSave}
+              >
+                Save
+              </Button>
+            </InputElementRight>
+          }
+        >
+          <Input
+            onChange={handleDropdownInput}
+            className={'dark:border-border-darkmode-secondary'}
+            placeholder={'Set custom price'}
+          />
+        </InputGroup>
+      </DropdownMenuItem>
+    )
+
+    return [...items, saveHtml]
     const inputHTML = (
       <DROPDOWN_INPUT>
         <input
@@ -1230,12 +1275,17 @@ export const PlaceOrder: FC = () => {
   //   </WRAPPER>
   // )
   return (
-    <div className={cn('pb-1 h-full')}>
+    <div className={cn('h-full')}>
       <PerpsLayout>
         <LongShortTitleLayout handleOrderSide={handleOrderSide} />
         <LeverageRatioTile sliderValue={sliderValue} />
+        <TradeConfirmation
+          open={confirmationModal}
+          setVisibility={setConfirmationModal}
+          takeProfit={getTakeProfitParam()}
+        />
 
-        <div className={cn('px-2.5')}>
+        <div className={cn('px-2.5 flex flex-col')}>
           <div className={cn('flex mb-2')}>
             <div className={cn('flex w-1/2 flex-col')}>
               <InfoLabel>Order type</InfoLabel>
@@ -1283,7 +1333,6 @@ export const PlaceOrder: FC = () => {
               </div>
             </div>
           </div>
-          {/* Shata */}
           <div className={cn('flex mb-2')}>
             <div className={cn('flex w-1/2 flex-col')}>
               <InfoLabel>Size</InfoLabel>
@@ -1312,8 +1361,35 @@ export const PlaceOrder: FC = () => {
           </div>
 
           <div className={cn('flex mb-2 flex-col')}>
-            <InfoLabel>Take Profit</InfoLabel>
-            <Input className={cn('w-auto min-w-[100px] mr-2')} />
+            <InfoLabel>Take Profit {takeProfitVisible} </InfoLabel>
+            <DropdownMenu open={takeProfitVisible} onOpenChange={setTakeProfitVisible}>
+              <DropdownMenuTrigger asChild={true}>
+                <Button
+                  variant="outline"
+                  onClick={() => setTakeProfitVisible(true)}
+                  className={cn('max-content mr-2 h-[30px]')}
+                >
+                  {takeProfitIndex === 0
+                    ? 'None'
+                    : takeProfitIndex !== null
+                    ? profits[takeProfitIndex]
+                      ? '$' + profits[takeProfitIndex]
+                      : '(-)'
+                    : '$' + takeProfitAmount}
+                  <img
+                    style={{
+                      transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                      transition: 'transform 0.2s ease-in-out'
+                    }}
+                    src={`/img/mainnav/connect-chevron.svg`}
+                    alt={'connect-chevron'}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent asChild>
+                <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>{getTakeProfitItems()}</div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className={cn('flex mb-2 flex-col')}>
             <InfoLabel>Leverage</InfoLabel>
@@ -1343,6 +1419,39 @@ export const PlaceOrder: FC = () => {
               </div>
             </div>
           </div>
+          <div className={cn('flex items-center mt-auto')}>
+            {ORDER_CATEGORY_TYPE.map((item) => (
+              <div key={item.id} className={cn('flex mr-2 items-center')}>
+                <Checkbox
+                  checked={order.type === item.id}
+                  onCheckedChange={(checked: boolean) => {
+                    checked
+                      ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+                      : setOrder((prev) => ({ ...prev, type: 'limit' }))
+                  }}
+                />
+                <div className="ml-1">
+                  <InfoLabel>{item.display}</InfoLabel>
+                </div>
+              </div>
+            ))}
+            <div className={cn('ml-auto w-full')}>
+              {publicKey ? (
+                <Button
+                  className={cn('min-w-[170px] w-full h-[30px]')}
+                  variant="default"
+                  colorScheme="blue"
+                  size="lg"
+                  onClick={() => handlePlaceOrder()}
+                  disabled={buttonState !== ButtonState.CanPlaceOrder}
+                >
+                  <h4>{buttonText}</h4>
+                </Button>
+              ) : (
+                <Connect containerStyle="!w-[100%] ml-10" />
+              )}
+            </div>
+          </div>
         </div>
       </PerpsLayout>
     </div>
@@ -1356,7 +1465,13 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
         <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} />
         <InfoLabel> SOL-PERP </InfoLabel>
       </div>
-      <div>{sliderValue}</div>
+      <div className="w-[43px] h-[23px]">
+        <GradientButtonWithBorder radius={5} height={23}>
+          <InfoLabel>
+            <h5 className={'!dark:text-white'}> {sliderValue}x </h5>
+          </InfoLabel>
+        </GradientButtonWithBorder>
+      </div>
     </div>
   </div>
 )

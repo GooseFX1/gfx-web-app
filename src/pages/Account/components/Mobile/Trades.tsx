@@ -8,7 +8,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 
 import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
 
-import { DepositWithdraw } from '../../../TradeV3/perps/DepositWithdraw'
+import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
