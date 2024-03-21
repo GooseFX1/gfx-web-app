@@ -469,7 +469,9 @@ const FarmItemHead = ({
           <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{balance}</h4>
         </>
       )}
-      <CircularArrow className={`h-5 w-5`} />
+      <div className={'w-5  ml-auto'}>
+        <CircularArrow className={`h-5 w-5`} />
+      </div>
     </AccordionTrigger>
   )
 }
