@@ -24,18 +24,21 @@ import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
   customMenuListItemsContainerStyle?: string
   customButtonStyle?: string
+  customButtonWrapperStyle?: string
 }
 
 export const Connect: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
-  customMenuListItemStyle
+  customMenuListItemStyle,
+  customButtonWrapperStyle
 }) => {
   const { wallet, connected, publicKey, disconnect } = useWallet()
   const { blacklisted } = useConnectionConfig()
@@ -133,7 +136,9 @@ export const Connect: FC<MenuItemProps> = ({
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <Tooltip>
           <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-            <TooltipTrigger className={cn('focus-visible:outline-none', customButtonStyle)}>
+            <TooltipTrigger
+              className={cn('focus-visible:outline-none', customButtonStyle, customButtonWrapperStyle)}
+            >
               <Button
                 colorScheme={!connected ? 'purple' : 'primaryGradient'}
                 size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}

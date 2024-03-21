@@ -6,8 +6,9 @@ import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, Container, ContainerTitle, IconTooltip, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
+import { Button, Container, ContainerTitle, IconTooltip } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 
 const getTooltipText = (index: number) => {
   let tooltipText = ''
@@ -181,34 +182,29 @@ export const FarmHeader: FC = () => {
       {poolSelectionModal && (
         <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal} />
       )}
-      <RadioGroup defaultValue={'24h'} orientation={'vertical'}>
-        <RadioGroupItem
-          value={'24h'}
-          variant={'primary'}
-          size={isMobile ? 'lg' : 'sm'}
-          onClick={() => setRange(0)}
-        >
-          24H
-        </RadioGroupItem>
-        {!isMobile && (
-          <RadioGroupItem
-            value={'7D'}
-            variant={'primary'}
-            size={isMobile ? 'lg' : 'sm'}
-            onClick={() => setRange(1)}
-          >
-            7D
-          </RadioGroupItem>
-        )}
-        <RadioGroupItem
-          value={'all'}
-          variant={'primary'}
-          size={isMobile ? 'lg' : 'sm'}
-          onClick={() => setRange(2)}
-        >
-          All
-        </RadioGroupItem>
-      </RadioGroup>
+      <RadioOptionGroup
+        optionSize={isMobile ? 'lg' : 'sm'}
+        defaultValue={'24h'}
+        orientation={'vertical'}
+        className={'gap-0'}
+        options={[
+          {
+            value: '24h',
+            label: '24H',
+            onClick: () => setRange(0)
+          },
+          {
+            value: '7D',
+            label: '7D',
+            onClick: () => setRange(1)
+          },
+          {
+            value: 'all',
+            label: 'All',
+            onClick: () => setRange(2)
+          }
+        ]}
+      />
 
       <div className="flex flex-row gap-2.5">
         {infoCards?.map((card, index) => (
