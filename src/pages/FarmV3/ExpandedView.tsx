@@ -748,3 +748,5 @@ const OracleIcon: FC<{
     </a>
   )
 }
+
+export { OracleIcon }
