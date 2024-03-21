@@ -440,7 +440,7 @@ const FarmItemHead = ({
   const { isMobile, isTablet } = useBreakPoint()
   return (
     <AccordionTrigger
-      className={cn('grid grid-cols-7', isMobile && `grid-cols-3`, isTablet && `grid-cols-4`)}
+      className={cn(`grid grid-cols-7 `, isMobile && `grid-cols-3`, isTablet && `grid-cols-4`)}
       indicator={<></>}
       variant={'secondary'}
     >
@@ -449,31 +449,27 @@ const FarmItemHead = ({
           <Icon src={icon} size={'lg'} />
           {canClaim && <span className={'absolute rounded-full bg-background-red w-3 h-3 top-0 right-0'} />}
         </div>
-        <h4 className={'text-start text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>{token}</h4>
+        <h4 className={'text-start dark:text-text-darkmode-primary text-text-lightmode-primary'}>{token}</h4>
         <IconTooltip tooltipType={'outline'}>{tooltip}</IconTooltip>
       </div>
-      <h4 className={'text-center text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>{apy}</h4>
+      <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{apy}</h4>
       {!isMobile && (
         <>
           {!isTablet && (
             <>
-              <h4 className={'text-center text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>
+              <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>
                 {liquidity}
               </h4>
-              <h4 className={'text-center text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>
+              <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>
                 {volume}
               </h4>
-              <h4 className={'text-center text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>
-                {fees}
-              </h4>
+              <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{fees}</h4>
             </>
           )}
-          <h4 className={'text-center text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>
-            {balance}
-          </h4>
+          <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{balance}</h4>
         </>
       )}
-      <Icon size={'sm'} className={'ml-auto'} src={'/img/mainnav/connect-chevron.svg'} />
+      <CircularArrow className={`h-5 w-5`} />
     </AccordionTrigger>
   )
 }
