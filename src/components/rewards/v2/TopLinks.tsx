@@ -6,11 +6,11 @@ const mappedValues = ['earn', 'refer', 'win']
 function TopLinks(): JSX.Element {
   const { panelIndex, changePanel } = useRewardToggle()
   return (
-    <RadioGroup defaultValue={'earn'} value={mappedValues[panelIndex]}>
+    <RadioGroup defaultValue={'earn'} value={mappedValues[panelIndex]} className={'w-[168px]'}>
       <RadioGroupItem
         value={'earn'}
         variant={'primary'}
-        size={'lg'}
+        size={'xl'}
         // className={cn(
         //   `font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`,
         //   panelIndex !== 0 && `dark:text-white text-black`
@@ -22,7 +22,7 @@ function TopLinks(): JSX.Element {
       <RadioGroupItem
         value={'refer'}
         variant={'primary'}
-        size={'lg'}
+        size={'xl'}
         // className={cn(`font-sans h-[35px] !px-5 !py-1.875 font-semibold text-white`,
         //   panelIndex !== 1 && `dark:text-white text-black`
         // )}
