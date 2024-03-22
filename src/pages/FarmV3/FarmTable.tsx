@@ -3,7 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { ShowDepositedToggle, SkeletonCommon } from '../../components'
+import { Loader, ShowDepositedToggle, SkeletonCommon } from '../../components'
 import {
   APP_RPC,
   useAccounts,
@@ -16,6 +16,7 @@ import {
   checkMobile,
   formatUserBalance,
   notify,
+  numberFormatter,
   truncateBigNumber,
   truncateBigString,
   withdrawBigString
@@ -66,6 +67,7 @@ import TokenInput from '@/components/common/TokenInput'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import useSolSub from '@/hooks/useSolSub'
+import { ActionModal } from '@/pages/FarmV3/ActionModal'
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
@@ -495,7 +497,7 @@ const FarmRowItem = ({
     `,
       className
     )}
-    iconRight={<CircularArrow className={`h-5 w-5`} invert={invert} />}
+    iconRight={<CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
   >
     {title}
   </Button>
@@ -514,7 +516,7 @@ const FarmFilter = ({
     <div
       className={cn(
         `grid grid-cols-7 border-b-1 border-solid border-border-lightmode-secondary 
-      dark:border-border-darkmode-tertiary h-10 mb-3.75 px-2 items-center`,
+      dark:border-border-darkmode-secondary h-10 mb-3.75 px-2 items-center`,
         isMobile && `grid-cols-3`,
         isTablet && `grid-cols-4`
       )}
@@ -567,17 +569,35 @@ const FarmFilter = ({
 const FarmBalanceItem = ({
   title,
   value,
-  titlePosition = 'text-end'
+  titlePosition = 'text-start',
+  asZero,
+  includeUSD,
+  token
 }: {
   title: string
-  value: string
+  value: React.ReactNode
   titlePosition?: 'text-end' | 'text-start'
+  asZero?: boolean
+  includeUSD?: boolean
+  token?: string
 }) => (
-  <div className={cn('flex flex-row min-md:flex-col min-md:w-max justify-between min-md:justify-normal')}>
-    <h4 className={titlePosition}>{title}</h4>
-    <p className={'text-b2 font-semibold text-text-lightmode-tertiary dark:text-text-darkmode-tertiary'}>
-      {value}
-    </p>
+  <div className={cn('flex flex-row md-xl:flex-col md-xl:w-max justify-between md-xl:justify-normal')}>
+    <h4 className={cn(`dark:text-grey-8 text-black-4 font-semibold text-regular`, titlePosition)}>{title}</h4>
+    {asZero ? (
+      <div className={'flex flex-col text-right dark:text-grey-1 text-grey-2 font-semibold text-regular'}>
+        0.00 {token}
+        {includeUSD && <span>($0.00 USD)</span>}
+      </div>
+    ) : (
+      <div
+        className={cn(
+          'text-b2 font-semibold dark:text-grey-8 text-black-4 text-end',
+          asZero && `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
+        )}
+      >
+        {value}
+      </div>
+    )}
   </div>
 )
 const NewFarm = ({ tokens }: { tokens: SSLToken[] }) => {
@@ -690,14 +710,14 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
-  const [userSolBalance, setUserSOLBalance] = useState<number>()
-  const [depositAmount, setDepositAmount] = useState<string>()
-  const [withdrawAmount, setWithdrawAmount] = useState<string>()
+  const [userSolBalance, setUserSOLBalance] = useState<number>(0)
+  const [depositAmount, setDepositAmount] = useState<string>('')
+  const [withdrawAmount, setWithdrawAmount] = useState<string>('')
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
-  const [userTokenBalance, setUserTokenBalance] = useState<number>()
+  const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
   const [actionModal, setActionModal] = useState<boolean>(false)
-  const [actionType, setActionType] = useState<string>(null)
+  const [actionType, setActionType] = useState<string>('')
   const [currentSlot, setCurrentSlot] = useState<number>(0)
   const [diffTimer, setDiffTimer] = useState<number>(0)
   const [earlyWithdrawFee, setEarlyWithdrawFee] = useState<number>(0)
@@ -708,7 +728,6 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
     const account = filteredLiquidityAccounts?.[tokenMintAddress]
     return account?.amountDeposited
   }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull])
-  const [depositSelected, setDepositSelected] = useBoolean()
   useEffect(() => {
     if (userPublicKey) {
       setUserTokenBalance(getUIAmount(tokenMintAddress))
@@ -1030,80 +1049,223 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
     []
   )
   const canClaim = claimableReward > 0
+  const liquidityItem = (
+    <FarmBalanceItem
+      title={'Liquidity:'}
+      asZero={liquidity === 0}
+      value={liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="100%" />}
+    />
+  )
+  const volumeItem = (
+    <FarmBalanceItem
+      title={'24H Volume:'}
+      asZero={formattedapiSslData?.volume === 0}
+      value={'$' + truncateBigNumber(formattedapiSslData?.volume)}
+    />
+  )
+  const feeItem = (
+    <FarmBalanceItem
+      title={'24H Fees:'}
+      asZero={formattedapiSslData?.fee === 0}
+      value={'$' + truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+    />
+  )
+  const balanceItem = (
+    <FarmBalanceItem
+      title={'My Balance:'}
+      asZero={userDepositedAmount?.toNumber() == 0}
+      value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
+    />
+  )
+  const walletBalance = (
+    <FarmBalanceItem
+      title={'Wallet Balance:'}
+      asZero={userTokenBalance === 0}
+      value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals) + ' ' + coin?.token}
+    />
+  )
+  const totalEarnings = (
+    <FarmBalanceItem
+      title={'Total Earnings:'}
+      asZero={totalEarned === 0}
+      includeUSD
+      titlePosition={isTablet ? 'text-start' : 'text-end'}
+      value={
+        <div className={`md-xl:items-end flex flex-col md-xl:flex-row gap-1`}>
+          {truncateBigNumber(totalEarned)} {coin?.token}
+          <div className={'text-end'}>(${truncateBigNumber(totalEarnedInUSD)} USD)</div>
+        </div>
+      }
+    />
+  )
+  const pendingRewards = (
+    <FarmBalanceItem
+      title={'Pending Rewards:'}
+      asZero={claimableReward === 0}
+      includeUSD
+      titlePosition={isTablet ? 'text-start' : 'text-end'}
+      value={
+        <div className={`md-xl:items-end flex flex-col md-xl:flex-row gap-1`}>
+          {truncateBigNumber(claimableReward)} {coin?.token}
+          <div className={'text-end'}>(${truncateBigNumber(claimableRewardInUSD)} USD)</div>
+        </div>
+      }
+    />
+  )
+  const radioGroupItems = (
+    <RadioOptionGroup
+      defaultValue={'deposit'}
+      value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
+      className={`w-full  md-xl:w-[190px]`}
+      optionClassName={`w-full md-xl:w-[85px]`}
+      options={[
+        {
+          value: 'deposit',
+          label: 'Deposit',
+          onClick: () => (operationPending ? null : setModeOfOperation(ModeOfOperation.DEPOSIT))
+        },
+        {
+          value: 'withdraw',
+          label: 'Withdraw',
+          onClick: () => (operationPending ? null : setModeOfOperation(ModeOfOperation.WITHDRAW))
+        }
+      ]}
+    />
+  )
+  const tokenInput = (
+    <TokenInput
+      handleHalf={() =>
+        modeOfOperation === ModeOfOperation.DEPOSIT
+          ? setDepositAmount(userTokenBalance ? numberFormatter(userTokenBalance / 2) : '0')
+          : setWithdrawAmount(userDepositedAmount ? numberFormatter(userDepositedAmount?.toNumber() / 2) : '0')
+      }
+      handleMax={() =>
+        modeOfOperation === ModeOfOperation.DEPOSIT
+          ? setDepositAmount(userTokenBalance ? String(userTokenBalance) : '0')
+          : setWithdrawAmount(userDepositedAmount ? userDepositInUSD : '0')
+      }
+      value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
+      onChange={(e) => handleInputChange(e.target.value)}
+      tokenSymbol={coin.token}
+    />
+  )
+  const connectButtonClaimCombo = (
+    <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
+      {connected ? (
+        <Button
+          colorScheme={'blue'}
+          className={'basis-1/2'}
+          disabled={disableActionButton}
+          onClick={
+            modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
+              ? () => {
+                  openActionModal('withdraw')
+                }
+              : modeOfOperation === ModeOfOperation.DEPOSIT
+              ? () => {
+                  openActionModal('deposit')
+                }
+              : null
+          }
+          loading={actionModal ? false : isButtonLoading}
+        >
+          {actionButtonText}
+        </Button>
+      ) : (
+        <Connect containerStyle={'inline-flex basis-1/2'} customButtonStyle={'h-[35px] w-full'} />
+      )}
+      <RoundedGradientWrapper
+        className={cn('min-h-[35px] cursor-pointer basis-1/2', !canClaim && 'bg-white grayscale')}
+        onClick={handleClaim}
+        animated={canClaim && !isButtonLoading}
+        isDisabled={isButtonLoading}
+      >
+        <RoundedGradientInner
+          className={`rounded-circle flex
+                items-center justify-center dark:text-white text-text-lightmode-primary
+                font-bold`}
+          borderWidth={'1.5'}
+        >
+          {isButtonLoading ? (
+            <Loader />
+          ) : canClaim ? (
+            `Claim ${numberFormatter(claimableReward)} ${coin?.token}`
+          ) : (
+            'No Claimable Rewards'
+          )}
+        </RoundedGradientInner>
+      </RoundedGradientWrapper>
+    </div>
+  )
+  const oracleItem = <OracleIcon token={coin} />
   return (
     <AccordionContent variant={'secondary'}>
-      <div className={'grid grid-cols-1 min-md:grid-cols-3 md-lg:grid-cols-2'}>
-        <div className={'flex flex-col gap-3.75'}>
-          <RadioOptionGroup
-            defaultValue={'deposit'}
-            value={depositSelected ? 'deposit' : 'withdraw'}
-            className={`w-full min-md:w-[190px]`}
-            optionClassName={`w-full min-md:w-[85px]`}
-            options={[
-              { value: 'deposit', label: 'Deposit', onClick: setDepositSelected.on },
-              { value: 'withdraw', label: 'Withdraw', onClick: setDepositSelected.off }
-            ]}
+      <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75 '}>
+        {actionModal && (
+          <ActionModal
+            actionModal={actionModal}
+            setActionModal={setActionModal}
+            handleWithdraw={handleWithdraw}
+            handleDeposit={handleDeposit}
+            handleClaim={handleClaim}
+            isButtonLoading={isButtonLoading}
+            withdrawAmount={withdrawAmount}
+            depositAmount={depositAmount}
+            claimAmount={claimableReward}
+            actionType={actionType}
+            token={coin}
+            earlyWithdrawFee={earlyWithdrawFee}
+            diffTimer={diffTimer}
+            setDiffTimer={setDiffTimer}
           />
-
-          <FarmBalanceItem titlePosition={'text-start'} title={'Wallet Balance:'} value={'0.0 SOL ($0.0 USD)'} />
-
-          <div className={'flex-grow flex-col gap-2.5 hidden md-lg:flex'}>
-            <FarmBalanceItem titlePosition={'text-start'} title={'Total Earned:'} value={'0.0 SOL ($0.0 USD)'} />
-            <FarmBalanceItem
-              titlePosition={'text-start'}
-              title={'Pending Rewards:'}
-              value={'0.0 SOL ($0.0 USD)'}
-            />
-          </div>
-        </div>
-        <div className={'flex flex-col gap-3.75 w-full min-lg:w-[400px]'}>
-          <TokenInput
-            handleHalf={() =>
-              modeOfOperation === ModeOfOperation.DEPOSIT
-                ? setDepositAmount(userTokenBalance ? '0.01' : '0')
-                : setWithdrawAmount(userDepositedAmount ? '0.01' : '0')
-            }
-            handleMax={() =>
-              modeOfOperation === ModeOfOperation.DEPOSIT
-                ? setDepositAmount(userTokenBalance ? String(userTokenBalance) : '0')
-                : setWithdrawAmount(userDepositedAmount ? userDepositInUSD : '0')
-            }
-            value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
-            onChange={(e) => handleInputChange(e.target.value)}
-            tokenSymbol={coin.token}
-          />
-
-          <div className={'flex flex-col min-lg:flex-row flex-grow gap-2.5 '}>
-            {connected ? (
-              <Button colorScheme={'blue'} className={'basis-1/2'} disabled={disableActionButton}>
-                {actionButtonText}
-              </Button>
-            ) : (
-              <Connect containerStyle={'inline-flex basis-1/2'} customButtonStyle={'h-[35px] w-full'} />
-            )}
-            <RoundedGradientWrapper
-              className={cn('min-h-[35px] cursor-pointer basis-1/2', !canClaim && 'bg-white grayscale')}
-              onClick={handleClaim}
-              animated={canClaim}
-            >
-              <RoundedGradientInner
-                className={`dark:bg-background-darkmode-primary bg-background-lightmode-primary rounded-circle flex
-                sm:w-full items-center justify-center dark:text-white text-text-lightmode-primary
-                font-bold`}
-                borderWidth={'1.5'}
-              >
-                {canClaim ? 'Claim All' : 'No Claimable Rewards'}
-              </RoundedGradientInner>
-            </RoundedGradientWrapper>
-          </div>
-          <OracleIcon token={coin} />
-        </div>
-        {(!isMobile || !isTablet) && (
-          <div className={'flex flex-grow flex-col gap-2.5 ml-auto md:hidden md-lg:hidden'}>
-            <FarmBalanceItem title={'Total Earned:'} value={'0.0 SOL ($0.0 USD)'} />
-            <FarmBalanceItem title={'Pending Rewards:'} value={'0.0 SOL ($0.0 USD)'} />
-          </div>
         )}
+        {isMobile ? (
+          <>
+            {liquidityItem}
+            {volumeItem}
+            {feeItem}
+            {balanceItem}
+            {walletBalance}
+            {totalEarnings}
+            {pendingRewards}
+            {radioGroupItems}
+            {tokenInput}
+            {connectButtonClaimCombo}
+          </>
+        ) : isTablet ? (
+          <>
+            <div className={'flex flex-col gap-3.75'}>
+              {radioGroupItems}
+              {tokenInput}
+              {connectButtonClaimCombo}
+            </div>
+            <div className={'flex flex-col gap-3.75'}>
+              {liquidityItem}
+              {volumeItem}
+              {feeItem}
+              {balanceItem}
+              {walletBalance}
+              {totalEarnings}
+              {pendingRewards}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className={'flex flex-col gap-3.75'}>
+              {radioGroupItems}
+              {walletBalance}
+            </div>
+            <div className={'flex flex-col gap-3.75'}>
+              {tokenInput}
+              {connectButtonClaimCombo}
+            </div>
+            <div className={'flex flex-col gap-3.75 items-end'}>
+              {totalEarnings}
+              {pendingRewards}
+            </div>
+          </>
+        )}
+        <div className={'col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>{oracleItem}</div>
       </div>
     </AccordionContent>
   )

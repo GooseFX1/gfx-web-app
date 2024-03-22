@@ -1,4 +1,12 @@
-import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup } from 'gfx-component-lib'
+import {
+  Button,
+  cn,
+  Input,
+  InputElementLeft,
+  InputElementRight,
+  InputGroup,
+  ShadButtonProps
+} from 'gfx-component-lib'
 import { ChangeEvent } from 'react'
 
 interface TokenInputProps {
@@ -8,6 +16,7 @@ interface TokenInputProps {
   tokenSymbol?: string
   disabled?: boolean
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+  outlineColorScheme?: Pick<ShadButtonProps, 'colorScheme'>
 }
 const TokenInput = ({
   value,
@@ -15,25 +24,28 @@ const TokenInput = ({
   handleMax,
   tokenSymbol,
   disabled,
-  onChange
+  onChange,
+  outlineColorScheme
 }: TokenInputProps): JSX.Element => (
   <InputGroup
     leftItem={
       <InputElementLeft>
         <Button
-          variant={'ghost'}
+          variant={'outline'}
           onClick={handleHalf}
+          colorScheme={outlineColorScheme ?? 'blue'}
           className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-          size={'sm'}
+          size={'xs'}
           disabled={disabled}
         >
           Half
         </Button>
         <Button
-          variant={'ghost'}
+          variant={'outline'}
           onClick={handleMax}
           className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-          size={'sm'}
+          size={'xs'}
+          colorScheme={outlineColorScheme ?? 'blue'}
           disabled={disabled}
         >
           Max
