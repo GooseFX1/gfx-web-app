@@ -6,7 +6,7 @@ import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, Container, ContainerTitle, IconTooltip } from 'gfx-component-lib'
+import { Button, Container, ContainerTitle, Icon, IconTooltip } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 
@@ -208,7 +208,12 @@ export const FarmHeader: FC = () => {
 
       <div className="flex flex-row gap-2.5">
         {infoCards?.map((card, index) => (
-          <Container key={card?.name} className={'w-[130px]'} colorScheme={'secondaryGradient'} size={'lg'}>
+          <Container
+            key={card?.name}
+            className={'w-[130px] justify-center'}
+            colorScheme={'secondaryGradient'}
+            size={'lg'}
+          >
             <ContainerTitle>
               <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
               &nbsp;
@@ -218,12 +223,12 @@ export const FarmHeader: FC = () => {
           </Container>
         ))}
       </div>
-      <Button className="cursor-pointer ml-2.5 p-0" variant={'ghost'} onClick={() => setPoolSelectionModal(true)}>
-        <img
-          src="/img/assets/question-icn.svg"
-          alt="?-icon"
-          className="sm:h-[30px] sm:w-[30px] sm:max-w-[30px] sm:mr-2.5"
-        />
+      <Button
+        className="cursor-pointer ml-auto p-0 min-w-7.5"
+        variant={'ghost'}
+        onClick={() => setPoolSelectionModal(true)}
+      >
+        <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="sm:mr-2.5" />
       </Button>
     </div>
   )
