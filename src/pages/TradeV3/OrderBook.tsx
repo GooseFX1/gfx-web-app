@@ -133,7 +133,7 @@ const ORDER_SELL = styled.div`
   align-items: center;
   width: 100%;
   height: 20px;
-  margin: ${({ theme }) => theme.margin(0.5)} 0;
+  margin: ${({ theme }) => theme.margin(1)} 0;
 
   span {
     flex: 1;
