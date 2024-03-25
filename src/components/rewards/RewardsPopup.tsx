@@ -70,7 +70,7 @@ export const RewardsPopup: FC = () => {
     <Dialog open={rewardModal} onOpenChange={rewardToggle}>
       <DialogOverlay />
       <DialogContent
-        className={'w-full h-max max-h-[calc(100dvh-55px)]'}
+        className={'w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none'}
         fullScreen={!isMobile}
         placement={'bottom'}
       >
