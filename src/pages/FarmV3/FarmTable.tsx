@@ -1,8 +1,6 @@
 /* eslint-disable */
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
-import tw from 'twin.macro'
-import 'styled-components/macro'
 import { Loader, ShowDepositedToggle, SkeletonCommon } from '../../components'
 import {
   APP_RPC,
@@ -23,7 +21,7 @@ import {
 } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { CircularArrow } from '../../components/common/Arrow'
-import { ExpandedView, OracleIcon } from './ExpandedView'
+import { OracleIcon } from './ExpandedView'
 import {
   SSLToken,
   poolType,
@@ -57,12 +55,12 @@ import {
   IconTooltip,
   RoundedGradientInner,
   RoundedGradientWrapper,
+  Switch,
   Tooltip,
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
 import { Connect } from '@/layouts'
-import useBoolean from '@/hooks/useBoolean'
 import TokenInput from '@/components/common/TokenInput'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
@@ -248,7 +246,7 @@ export const FarmTable: FC = () => {
     [allPoolSslData, rewards]
   )
   return (
-    <div className={''}>
+    <div className={'flex flex-col gap-3.75'}>
       {allClaimModal && (
         <AllClaimModal
           allClaimModal={allClaimModal}
@@ -317,7 +315,7 @@ export const FarmTable: FC = () => {
         />
 
         {breakpoint.isDesktop && (
-          <div className="flex items-center w-full">
+          <div className="flex items-center w-full gap-3.75">
             <SearchBar
               onChange={(e) => initiateGlobalSearch(e.target.value)}
               onClear={() => setSearchTokens('')}
@@ -365,7 +363,7 @@ export const FarmTable: FC = () => {
           />
           {pubKey && (
             <div className="ml-auto flex items-center mr-2">
-              <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
+              <Switch variant={'default'} onClick={handleShowDepositedToggle} />
               <div
                 className={`h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 
                 text-grey-1 font-semibold mt-[-4px] ml-2.5 sm:ml-2`}
@@ -516,7 +514,7 @@ const FarmFilter = ({
     <div
       className={cn(
         `grid grid-cols-7 border-b-1 border-solid border-border-lightmode-secondary 
-      dark:border-border-darkmode-secondary h-10 mb-3.75 px-2 items-center`,
+      dark:border-border-darkmode-secondary h-10 px-2 items-center`,
         isMobile && `grid-cols-3`,
         isTablet && `grid-cols-4`
       )}
@@ -603,6 +601,7 @@ const FarmBalanceItem = ({
 const NewFarm = ({ tokens }: { tokens: SSLToken[] }) => {
   const { rewards, liquidityAmount, sslTableData } = useSSLContext()
   const { prices } = usePriceFeedFarm()
+  const [statsModal, setStatsModal] = useState<boolean>(false)
   const getApiSslData = (coin: SSLToken) => {
     try {
       if (sslTableData) {
@@ -639,6 +638,7 @@ const NewFarm = ({ tokens }: { tokens: SSLToken[] }) => {
             const apiSslData = getApiSslData(coin)
             return (
               <AccordionItem value={coin?.token} variant={'secondary'}>
+                {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
                 <FarmItemHead
                   icon={`/img/crypto/${coin?.token}.svg`}
                   canClaim={claimable > 0}
