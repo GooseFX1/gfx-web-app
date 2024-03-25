@@ -415,7 +415,13 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
     () => withdrawBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
     [userDepositedAmount, coin?.mintDecimals]
   )
-
+  const disabled =
+    !connected ||
+    operationPending ||
+    isButtonLoading ||
+    (modeOfOperation === ModeOfOperation.DEPOSIT
+      ? parseFloat(depositAmount) == 0
+      : parseFloat(withdrawAmount) == 0)
   const canClaim = claimableReward > 0
   const liquidityItem = (
     <FarmBalanceItem
@@ -518,15 +524,17 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
       onChange={(e) => handleInputChange(e.target.value)}
       tokenSymbol={coin.token}
+      disabled={disabled}
     />
   )
+
   const connectButtonClaimCombo = (
     <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
       {connected ? (
         <Button
           colorScheme={'blue'}
           className={'basis-1/2'}
-          disabled={disableActionButton}
+          disabled={disableActionButton || disabled}
           onClick={
             modeOfOperation === ModeOfOperation.WITHDRAW && userDepositedAmount
               ? () => {
@@ -546,15 +554,18 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
         <Connect containerStyle={'inline-flex basis-1/2'} customButtonStyle={'h-[35px] w-full'} />
       )}
       <RoundedGradientWrapper
-        className={cn('min-h-[35px] cursor-pointer basis-1/2', !canClaim && 'bg-white grayscale')}
+        className={cn('max-h-[35px] cursor-pointer basis-1/2', !canClaim && 'bg-white grayscale')}
         onClick={handleClaim}
         animated={canClaim && !isButtonLoading}
-        isDisabled={isButtonLoading}
+        isDisabled={isButtonLoading || disabled || !canClaim}
       >
         <RoundedGradientInner
-          className={`rounded-circle flex
+          className={cn(
+            `rounded-circle flex
                 items-center justify-center dark:text-white text-text-lightmode-primary
-                font-bold`}
+                font-bold `,
+            isButtonLoading || disabled || (!canClaim && 'cursor-not-allowed')
+          )}
           borderWidth={'1.5'}
         >
           {isButtonLoading ? (

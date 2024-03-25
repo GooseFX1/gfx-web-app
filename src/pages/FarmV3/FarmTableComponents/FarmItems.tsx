@@ -4,6 +4,8 @@ import { Accordion, AccordionItem } from 'gfx-component-lib'
 import { StatsModal } from '@/pages/FarmV3/StatsModal'
 import NoResultsFound from '@/pages/FarmV3/FarmTableComponents/NoResultsFound'
 import FarmContent from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
+import { useSSLContext } from '@/context'
+import { truncateBigString } from '@/utils'
 
 const FarmItems: FC<{
   tokens: SSLToken[]
@@ -12,7 +14,7 @@ const FarmItems: FC<{
   showDeposited: boolean
 }> = ({ tokens, numberOfCoinsDeposited, searchTokens, showDeposited }) => {
   const [statsModal, setStatsModal] = useState<boolean>(false)
-
+  const { filteredLiquidityAccounts } = useSSLContext()
   return (
     <div className={''}>
       {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
@@ -29,12 +31,21 @@ const FarmItems: FC<{
         />
       )}
       <Accordion type={'single'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
-        {tokens.map((coin) => (
-          <AccordionItem value={coin?.token} variant={'secondary'} key={coin?.token}>
-            {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-            <FarmContent coin={coin} />
-          </AccordionItem>
-        ))}
+        {tokens.map((coin) => {
+          const userDepositedAmount = truncateBigString(
+            filteredLiquidityAccounts?.[coin?.mint?.toBase58()]?.amountDeposited?.toString(),
+            coin?.mintDecimals
+          )
+
+          const show =
+            (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
+          return show ? (
+            <AccordionItem value={coin?.token} variant={'secondary'} key={coin?.token}>
+              {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+              <FarmContent coin={coin} />
+            </AccordionItem>
+          ) : null
+        })}
       </Accordion>
     </div>
   )
