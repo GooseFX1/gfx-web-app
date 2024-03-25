@@ -314,7 +314,7 @@ export const FarmTable: FC = () => {
           />
           {pubKey && (
             <div className="ml-auto flex items-center mr-2">
-              <Switch variant={'default'} onClick={handleShowDepositedToggle} />
+              <Switch variant={'default'} checked={showDeposited} onClick={handleShowDepositedToggle} />
               <div
                 className={`h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 
                 text-grey-1 font-semibold mt-[-4px] ml-2.5 sm:ml-2`}

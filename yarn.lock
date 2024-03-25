@@ -6654,10 +6654,10 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-gfx-component-lib@^1.7.14:
-  version "1.7.14"
-  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.7.14.tgz#c69b4aeb4ff1d35f5295a3de083ffd2a046c3812"
-  integrity sha512-uoLtSoml8KNdx54MKd3RcGmovorgGsWrbj82I90EA2cVv/+B89GkKqWWV2D/DVcae/4HFJR/jeQNSMCoQE+svw==
+gfx-component-lib@^1.7.16:
+  version "1.7.16"
+  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.7.16.tgz#8ad4b144f483f09641bc6623680617b27d2b8afc"
+  integrity sha512-0pdtJDxy00wvoXfgxXjarVqG6yUJ4zPOfDmDsxmQtAKchzX6xzdLpQxuoLBZvQUCYu7lx3u7wErYx/ZxHtWhGg==
   dependencies:
     "@radix-ui/react-accordion" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.0.4"
