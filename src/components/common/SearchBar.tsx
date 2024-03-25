@@ -11,7 +11,7 @@ const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX
   const { mode } = useDarkMode()
   return (
     <InputGroup
-      className={cn('w-[400px]', className)}
+      className={cn('min-w-[200px] w-full max-w-[400px]', className)}
       leftItem={
         <InputElementLeft>
           <Icon size={'sm'} src={`/img/assets/search_${mode}.svg`} alt="search-icon" />
@@ -33,7 +33,7 @@ const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX
     >
       <Input
         value={value}
-        className={cn('w-[400px]', className)}
+        className={cn('min-w-[200px] w-full max-w-[400px]', className)}
         placeholder={'Search by token symbol'}
         onChange={onChange}
       />
