@@ -492,27 +492,39 @@ const FarmRowItem = ({
   title,
   onClick,
   className,
-  invert
+  invert,
+  tooltip
 }: {
   title: string
   onClick: () => void
   className?: string
   invert?: boolean
-}) => (
-  <Button
-    variant={'default'}
-    onClick={onClick}
-    className={cn(
-      `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
+  tooltip?: React.ReactNode
+}) => {
+  const Comp = (
+    <Button
+      variant={'default'}
+      onClick={onClick}
+      className={cn(
+        `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
       dark:text-text-darkmode-secondary
     `,
-      className
-    )}
-    iconRight={<CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
-  >
-    {title}
-  </Button>
-)
+        className
+      )}
+      iconRight={<CircularArrow className={`min-h-5 min-w-5`} invert={invert} />}
+    >
+      {title}
+    </Button>
+  )
+  return tooltip ? (
+    <Tooltip>
+      <TooltipTrigger>{Comp}</TooltipTrigger>
+      <TooltipContent>{tooltip}</TooltipContent>
+    </Tooltip>
+  ) : (
+    Comp
+  )
+}
 const FarmFilter = ({
   sort,
   sortType,
@@ -542,6 +554,7 @@ const FarmFilter = ({
       />
       <FarmRowItem
         title={'APY'}
+        tooltip={'APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info'}
         onClick={() => handleColumnSort('apy')}
         invert={sort == 'DESC' && sortType == 'apy'}
       />
@@ -556,6 +569,7 @@ const FarmFilter = ({
               />
               <FarmRowItem
                 title={'24H Volume'}
+                tooltip={'24H Volume is calculated since 10P.M UTC on a daily basis'}
                 onClick={() => handleColumnSort('volume')}
                 invert={sort == 'DESC' && sortType == 'volume'}
               />
@@ -568,6 +582,7 @@ const FarmFilter = ({
           )}
           <FarmRowItem
             title={'My Balance'}
+            tooltip={'Values are displayed in native token'}
             onClick={() => handleColumnSort('balance')}
             invert={sort == 'DESC' && sortType == 'balance'}
           />
@@ -602,14 +617,7 @@ const FarmBalanceItem = ({
         {includeUSD && <span>($0.00 USD)</span>}
       </div>
     ) : (
-      <div
-        className={cn(
-          'text-b2 font-semibold dark:text-grey-8 text-black-4 text-end',
-          asZero && `text-text-lightmode-tertiary dark:text-text-darkmode-tertiary`
-        )}
-      >
-        {value}
-      </div>
+      <div className={cn('text-b2 font-semibold dark:text-grey-8 text-black-4 text-end')}>{value}</div>
     )}
   </div>
 )
@@ -624,29 +632,8 @@ const NewFarm = ({
   searchTokens: string
   showDeposited: boolean
 }) => {
-  const { rewards, liquidityAmount, sslTableData } = useSSLContext()
-  const { prices } = usePriceFeedFarm()
   const [statsModal, setStatsModal] = useState<boolean>(false)
-  const getApiSslData = (coin: SSLToken) => {
-    try {
-      if (sslTableData) {
-        const key = coin.token === 'SOL' ? 'WSOL' : coin.token
-        const decimal = coin.mintDecimals
-        return {
-          apy: sslTableData[key]?.apy,
-          fee: sslTableData[key]?.fee / 10 ** decimal,
-          volume: sslTableData[key]?.volume / 1_000_000
-        }
-      } else
-        return {
-          apy: 0,
-          fee: 0,
-          volume: 0
-        }
-    } catch (e) {
-      console.log('error in ssl api data: ', e)
-    }
-  }
+
   return (
     <div className={''}>
       {numberOfCoinsDeposited === 0 && showDeposited && searchTokens?.length === 0 && (
@@ -663,60 +650,12 @@ const NewFarm = ({
         />
       )}
       <Accordion type={'single'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
-        {tokens.map((coin) => {
-          console.log(rewards, prices, coin)
-          const claimable = rewards[coin?.mint?.toBase58()]?.toNumber() / Math.pow(10, coin?.mintDecimals)
-          const liquidity =
-            prices[getPriceObject(coin?.token)]?.current &&
-            prices[getPriceObject(coin?.token)]?.current * liquidityAmount?.[coin?.mint?.toBase58()]
-          const depositPercentage = (liquidity / coin?.cappedDeposit) * 100
-          const apiSslData = getApiSslData(coin)
-          return (
-            <AccordionItem value={coin?.token} variant={'secondary'}>
-              {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-              <FarmItemHead
-                icon={`/img/crypto/${coin?.token}.svg`}
-                canClaim={claimable > 0}
-                token={coin?.token}
-                tooltip={
-                  <>
-                    Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
-                    {truncateBigNumber(coin?.cappedDeposit)}
-                  </>
-                }
-                apy={`${apiSslData?.apy ? Number(apiSslData?.apy)?.toFixed(2) : '0.00'}%`}
-                liquidity={
-                  liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />
-                }
-                volume={<>${truncateBigNumber(apiSslData?.volume)}</>}
-                fees={
-                  truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                    <>${truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}</>
-                  ) : (
-                    `$0.00`
-                  )
-                }
-                balance={
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      {truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                        <h4 tw="flex justify-center items-center font-semibold">
-                          ${truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
-                        </h4>
-                      ) : (
-                        <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
-                      )}
-                    </TooltipTrigger>
-                    <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
-                      {truncateBigNumber(apiSslData?.fee)}&nbsp;{coin?.token}
-                    </TooltipContent>
-                  </Tooltip>
-                }
-              />
-              <NewFarmTokenContent coin={coin} />
-            </AccordionItem>
-          )
-        })}
+        {tokens.map((coin) => (
+          <AccordionItem value={coin?.token} variant={'secondary'} key={coin?.token}>
+            {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+            <NewFarmTokenContent coin={coin} />
+          </AccordionItem>
+        ))}
       </Accordion>
     </div>
   )
@@ -1108,7 +1047,7 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
       title={'Wallet Balance:'}
       asZero={userTokenBalance === 0}
       value={
-        `$${truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}  ${coin?.token}` +
+        `$${truncateBigString(userTokenBalance?.toString(), coin?.mintDecimals)}  ${coin?.token}` +
         ` (${truncateBigNumber(userTokenBalanceInUSD)} USD)`
       }
     />
@@ -1227,48 +1166,68 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
     </div>
   )
   const oracleItem = <OracleIcon token={coin} />
+  const claimable = rewards[coin?.mint?.toBase58()]?.toNumber() / Math.pow(10, coin?.mintDecimals)
+
+  const depositPercentage = (liquidity / coin?.cappedDeposit) * 100
   return (
-    <AccordionContent variant={'secondary'}>
-      <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75 '}>
-        {actionModal && (
-          <ActionModal
-            actionModal={actionModal}
-            setActionModal={setActionModal}
-            handleWithdraw={handleWithdraw}
-            handleDeposit={handleDeposit}
-            handleClaim={handleClaim}
-            isButtonLoading={isButtonLoading}
-            withdrawAmount={withdrawAmount}
-            depositAmount={depositAmount}
-            claimAmount={claimableReward}
-            actionType={actionType}
-            token={coin}
-            earlyWithdrawFee={earlyWithdrawFee}
-            diffTimer={diffTimer}
-            setDiffTimer={setDiffTimer}
-          />
-        )}
-        {isMobile ? (
+    <>
+      <FarmItemHead
+        icon={`/img/crypto/${coin?.token}.svg`}
+        canClaim={claimable > 0}
+        token={coin?.token}
+        tooltip={
           <>
-            {liquidityItem}
-            {volumeItem}
-            {feeItem}
-            {balanceItem}
-            {walletBalance}
-            {totalEarnings}
-            {pendingRewards}
-            {radioGroupItems}
-            {tokenInput}
-            {connectButtonClaimCombo}
+            Deposits are at {depositPercentage?.toFixed(2)}% capacity, the current cap is $
+            {truncateBigNumber(coin?.cappedDeposit)}
           </>
-        ) : isTablet ? (
-          <>
-            <div className={'flex flex-col gap-3.75'}>
-              {radioGroupItems}
-              {tokenInput}
-              {connectButtonClaimCombo}
-            </div>
-            <div className={'flex flex-col gap-3.75'}>
+        }
+        apy={`${apiSslData?.apy ? Number(apiSslData?.apy)?.toFixed(2) : '0.00'}%`}
+        liquidity={liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="75%" width="75%" />}
+        volume={<>${truncateBigNumber(apiSslData?.volume)}</>}
+        fees={
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
+                <h4 tw="flex justify-center items-center font-semibold">
+                  ${truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+                </h4>
+              ) : (
+                <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
+              )}
+            </TooltipTrigger>
+            <TooltipContent className={`dark:text-black-4 text-grey-5 font-medium text-tiny`}>
+              {truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
+                <>${truncateBigNumber(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}</>
+              ) : (
+                `$0.00`
+              )}
+            </TooltipContent>
+          </Tooltip>
+        }
+        balance={<>{numberFormatter(parseFloat(userDepositInUSD))}</>}
+      />
+      <AccordionContent variant={'secondary'}>
+        <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75 '}>
+          {actionModal && (
+            <ActionModal
+              actionModal={actionModal}
+              setActionModal={setActionModal}
+              handleWithdraw={handleWithdraw}
+              handleDeposit={handleDeposit}
+              handleClaim={handleClaim}
+              isButtonLoading={isButtonLoading}
+              withdrawAmount={withdrawAmount}
+              depositAmount={depositAmount}
+              claimAmount={claimableReward}
+              actionType={actionType}
+              token={coin}
+              earlyWithdrawFee={earlyWithdrawFee}
+              diffTimer={diffTimer}
+              setDiffTimer={setDiffTimer}
+            />
+          )}
+          {isMobile ? (
+            <>
               {liquidityItem}
               {volumeItem}
               {feeItem}
@@ -1276,26 +1235,46 @@ const NewFarmTokenContent = ({ coin }: { coin: SSLToken }) => {
               {walletBalance}
               {totalEarnings}
               {pendingRewards}
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={'flex flex-col gap-3.75'}>
               {radioGroupItems}
-              {walletBalance}
-            </div>
-            <div className={'flex flex-col gap-3.75'}>
               {tokenInput}
               {connectButtonClaimCombo}
-            </div>
-            <div className={'flex flex-col gap-3.75 items-end'}>
-              {totalEarnings}
-              {pendingRewards}
-            </div>
-          </>
-        )}
-        <div className={'col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>{oracleItem}</div>
-      </div>
-    </AccordionContent>
+            </>
+          ) : isTablet ? (
+            <>
+              <div className={'flex flex-col gap-3.75'}>
+                {radioGroupItems}
+                {tokenInput}
+                {connectButtonClaimCombo}
+              </div>
+              <div className={'flex flex-col gap-3.75'}>
+                {liquidityItem}
+                {volumeItem}
+                {feeItem}
+                {balanceItem}
+                {walletBalance}
+                {totalEarnings}
+                {pendingRewards}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={'flex flex-col gap-3.75'}>
+                {radioGroupItems}
+                {walletBalance}
+              </div>
+              <div className={'flex flex-col gap-3.75'}>
+                {tokenInput}
+                {connectButtonClaimCombo}
+              </div>
+              <div className={'flex flex-col gap-3.75 items-end'}>
+                {totalEarnings}
+                {pendingRewards}
+              </div>
+            </>
+          )}
+          <div className={'col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>{oracleItem}</div>
+        </div>
+      </AccordionContent>
+    </>
   )
 }
