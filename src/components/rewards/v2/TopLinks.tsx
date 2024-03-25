@@ -6,7 +6,7 @@ const mappedValues = ['earn', 'refer', 'win']
 function TopLinks(): JSX.Element {
   const { panelIndex, changePanel } = useRewardToggle()
   return (
-    <RadioGroup defaultValue={'earn'} value={mappedValues[panelIndex]}>
+    <RadioGroup defaultValue={'earn'} value={mappedValues[panelIndex]} className={'w-[168px]'}>
       <RadioGroupItem
         value={'earn'}
         variant={'primary'}

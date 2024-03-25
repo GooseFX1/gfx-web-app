@@ -65,7 +65,7 @@ const HEADER_WRAPPER = styled.div`
       ${tw`h-7 w-2/12 flex justify-center items-center text-xs`}
     }
     .container {
-      ${tw`h-8 w-full pt-px`}
+      ${tw`h-8 w-full pt-px px-0`}
     }
     .active-field {
       ${tw`p-[2px]`}

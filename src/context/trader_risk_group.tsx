@@ -74,7 +74,7 @@ import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
 const ONE_MINUTE = 1000 * 60
 import { Perp, Product, Trader } from 'gfx-perp-sdk'
-import useMousePosition from '../hooks/useMousePosition.tsx'
+import useActivityTracker from '@/hooks/useActivityTracker'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -226,7 +226,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [traderInstanceSdk, setTraderInstanceSdk] = useState<Trader>(null)
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
-  const mousePosition = useMousePosition()
+  useActivityTracker({
+    callbackOff: () => setIsCurrentTabActive(false),
+    callbackOn: () => setIsCurrentTabActive(true)
+  })
   const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 
   const { order, setOrder } = useOrder()
@@ -268,10 +271,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       name: 'Crypto.USDC/USD'
     })
   }
-
-  useEffect(() => {
-    setIsCurrentTabActive(true)
-  }, [mousePosition.x, mousePosition.y])
 
   const perpsWasm = useCallback(async () => {
     const wasm = await import('perps-wasm')

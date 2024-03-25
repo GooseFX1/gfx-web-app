@@ -48,7 +48,8 @@ export default function RewardsWalletBalanceAndBuyGofx({
          text-white min-w-[122px] min-md:py-2.5 py-1.875 px-2.5 min-md:px-1.5 box-border`}
         size={'lg'}
       >
-        Buy GOFX now!
+        <img src="/img/crypto/GOFX.svg" alt="gofx-tooken" className="h-[26px]" />
+        Buy GOFX
       </Button>
     </div>
   )

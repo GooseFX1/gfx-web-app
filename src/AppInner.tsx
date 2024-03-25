@@ -4,6 +4,7 @@ import { DarkModeProvider, SettingsProvider, WalletProvider } from './context'
 import ThemeProvider from './theme'
 import { USER_CONFIG_CACHE } from './types/app_params'
 import queryString from 'query-string'
+import WalletBalanceProvider from '@/context/walletBalanceContext'
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [init, setInit] = useState<boolean | null>(null)
@@ -48,7 +49,9 @@ export default function AppInner(): JSX.Element {
         <ThemeProvider>
           <SettingsProvider>
             <WalletProvider>
-              <Router />
+              <WalletBalanceProvider>
+                <Router />
+              </WalletBalanceProvider>
             </WalletProvider>
           </SettingsProvider>
         </ThemeProvider>
