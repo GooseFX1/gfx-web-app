@@ -8,6 +8,7 @@ import {
   ShadButtonProps
 } from 'gfx-component-lib'
 import { ChangeEvent } from 'react'
+import { useDarkMode } from '@/context'
 
 interface TokenInputProps {
   value?: number | string
@@ -26,35 +27,39 @@ const TokenInput = ({
   disabled,
   onChange,
   outlineColorScheme
-}: TokenInputProps): JSX.Element => (
-  <InputGroup
-    leftItem={
-      <InputElementLeft>
-        <Button
-          variant={'outline'}
-          onClick={handleHalf}
-          colorScheme={outlineColorScheme ?? 'blue'}
-          className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-          size={'xs'}
-          disabled={disabled}
-        >
-          Half
-        </Button>
-        <Button
-          variant={'outline'}
-          onClick={handleMax}
-          className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-          size={'xs'}
-          colorScheme={outlineColorScheme ?? 'blue'}
-          disabled={disabled}
-        >
-          Max
-        </Button>
-      </InputElementLeft>
-    }
-    rightItem={<InputElementRight>{tokenSymbol}</InputElementRight>}
-  >
-    <Input value={value > 0 ? value : ''} placeholder={'0.00'} className={'text-right'} onChange={onChange} />
-  </InputGroup>
-)
+}: TokenInputProps): JSX.Element => {
+  const { mode } = useDarkMode()
+  const isDarkMode = mode === 'dark'
+  return (
+    <InputGroup
+      leftItem={
+        <InputElementLeft>
+          <Button
+            variant={'outline'}
+            onClick={handleHalf}
+            colorScheme={outlineColorScheme ?? isDarkMode ? 'white' : 'blue'}
+            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
+            size={'xs'}
+            disabled={disabled}
+          >
+            Half
+          </Button>
+          <Button
+            variant={'outline'}
+            onClick={handleMax}
+            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
+            size={'xs'}
+            colorScheme={outlineColorScheme ?? isDarkMode ? 'white' : 'blue'}
+            disabled={disabled}
+          >
+            Max
+          </Button>
+        </InputElementLeft>
+      }
+      rightItem={<InputElementRight>{tokenSymbol}</InputElementRight>}
+    >
+      <Input value={value > 0 ? value : ''} placeholder={'0.00'} className={'text-right'} onChange={onChange} />
+    </InputGroup>
+  )
+}
 export default TokenInput
