@@ -587,6 +587,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
     <>
       <FarmItemHead
         icon={`/img/crypto/${coin?.token}.svg`}
+        depositPercentage={depositPercentage}
         canClaim={claimable > 0}
         token={coin?.token}
         tooltip={
