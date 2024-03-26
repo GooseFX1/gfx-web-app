@@ -5,6 +5,7 @@ import { CircularArrow } from '@/components/common/Arrow'
 
 const FarmItemHead: FC<{
   icon: string
+  depositPercentage: number
   canClaim: boolean
   token: React.ReactNode
   tooltip: React.ReactNode
@@ -13,8 +14,9 @@ const FarmItemHead: FC<{
   volume: React.ReactNode
   fees: React.ReactNode
   balance: React.ReactNode
-}> = ({ icon, canClaim, token, tooltip, apy, liquidity, volume, fees, balance }) => {
+}> = ({ icon, depositPercentage, canClaim, token, tooltip, apy, liquidity, volume, fees, balance }) => {
   const { isMobile, isTablet } = useBreakPoint()
+
   return (
     <AccordionTrigger
       className={cn(`grid grid-cols-7 `, isMobile && `grid-cols-3`, isTablet && `grid-cols-4`)}
@@ -27,7 +29,16 @@ const FarmItemHead: FC<{
           {canClaim && <span className={'absolute rounded-full bg-background-red w-3 h-3 top-0 right-0'} />}
         </div>
         <h4 className={'text-start dark:text-text-darkmode-primary text-text-lightmode-primary'}>{token}</h4>
-        <IconTooltip tooltipType={'outline'}>{tooltip}</IconTooltip>
+        <IconTooltip
+          tooltipType={'outline'}
+          tooltipClassName={
+            depositPercentage >= 100
+              ? 'stroke-background-red dark:stroke-background-red'
+              : 'stroke-background-green dark:stroke-background-green'
+          }
+        >
+          {tooltip}
+        </IconTooltip>
       </div>
       <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{apy}</h4>
       {!isMobile && (
