@@ -230,8 +230,7 @@ const OPEN_ORDER = styled.div`
 `
 
 const TRADE_HISTORY = styled.div`
-  ${tw`w-full`}
-  height: calc(100% - 57px);
+  ${tw`w-full h-full`}
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -370,7 +369,7 @@ const OpenOrdersComponent: FC = () => {
 
   const content = useMemo(
     () => (
-      <div className={cn('w-full px-2.5 overflow-auto border border-solid')}>
+      <div className={cn('w-full px-2.5 overflow-auto')}>
         {openOrderUI &&
           openOrderUI.length > 0 &&
           [...openOrderUI].map((order, index) =>
@@ -456,10 +455,23 @@ const TradeHistoryComponent: FC = () => {
             historyData.length > 0 &&
             historyData.map((order, index) => (
               <div key={index}>
-                <span className={order.side}>{order.side}</span>
-                <span>{order.size}</span>
-                <span>${order.price}</span>
-                <span>{(order.size * order.price).toFixed(2)}</span>
+                <span>
+                  <InfoLabel>
+                    <span className={cn(order.side === 'Long' ? 'text-green-4 ml-2' : 'text-red-2 ml-2')}>
+                      {order.side}
+                    </span>
+                  </InfoLabel>
+                </span>
+
+                <span>
+                  <InfoLabel>{order.size}</InfoLabel>
+                </span>
+                <span>
+                  <InfoLabel>${order.price} </InfoLabel>
+                </span>
+                <span>
+                  <InfoLabel>{(order.size * order.price).toFixed(2)}</InfoLabel>{' '}
+                </span>
               </div>
             ))}
         </TRADE_HISTORY>
@@ -748,7 +760,7 @@ export const HistoryPanel: FC = () => {
   //   </>
   // )
   return (
-    <Tabs className="p-[0px] mb-2 h-[calc(100%)] " defaultValue="0">
+    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] " defaultValue="0">
       <TabsList>
         {tabs.map((item, index) => (
           <TabsTrigger
@@ -762,7 +774,7 @@ export const HistoryPanel: FC = () => {
           </TabsTrigger>
         ))}
       </TabsList>
-      <TabsContent className={cn('h-[100%]')} value="0">
+      <TabsContent className={cn('h-full')} value="0">
         <>
           <TabColumnsDisplay activeTab={activeTab} />
           <PositionDetails
@@ -778,6 +790,10 @@ export const HistoryPanel: FC = () => {
       <TabsContent className={cn('h-[100%]')} value="1">
         <TabColumnsDisplay activeTab={activeTab} />
         <OpenOrdersComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[calc(100%)]')} value="2">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <TradeHistoryComponent />
       </TabsContent>
     </Tabs>
   )
@@ -810,7 +826,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
 }) => {
   const { mode } = useDarkMode()
   return (
-    <>
+    <div className={cn('mt-1.5')}>
       {traderInfo.averagePosition.side && Number(roundedSize) ? (
         <div className={cn('flex px-2.5')}>
           <div className={cn('w-[12.5%]')}>
@@ -849,6 +865,6 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
           <h4 className="text-grey-1"> No Positions Found</h4>
         </div>
       )}
-    </>
+    </div>
   )
 }
