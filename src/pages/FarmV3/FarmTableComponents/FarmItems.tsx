@@ -42,7 +42,7 @@ const FarmItems: FC<{
           return show ? (
             <AccordionItem value={coin?.token} variant={'secondary'} key={coin?.token}>
               {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
-              <FarmContent coin={coin} />
+              <FarmContent coin={coin} key={`content-${coin?.token}`} />
             </AccordionItem>
           ) : null
         })}
