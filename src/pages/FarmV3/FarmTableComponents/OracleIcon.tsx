@@ -11,7 +11,8 @@ const OracleIcon: FC<{
       href="https://switchboard.xyz/"
       target={'_blank'}
       rel="noreferrer"
-      className="flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center"
+      className={`flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center hover:text-regular 
+      hover:dark:text-grey-1`}
     >
       Powered by
       <img src={`/img/assets/switchboard_${mode}.svg`} alt="switchboard-logo" className="mx-1.25" />
@@ -22,7 +23,8 @@ const OracleIcon: FC<{
       href="https://pyth.network/"
       target={'_blank'}
       rel="noreferrer"
-      className="flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center"
+      className={`flex text-regular dark:text-grey-1 text-purple-4 font-bold justify-center  hover:text-purple-4 
+      hover:dark:text-grey-1`}
     >
       Powered by
       <img src={`/img/assets/pyth_${mode}.svg`} alt="pyth-logo" className="mx-1.25" />

@@ -30,7 +30,7 @@ const FarmItems: FC<{
           subText="Don’t worry, there are more pools coming soon..."
         />
       )}
-      <Accordion type={'single'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
+      <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
         {tokens.map((coin) => {
           const userDepositedAmount = truncateBigString(
             filteredLiquidityAccounts?.[coin?.mint?.toBase58()]?.amountDeposited?.toString(),
