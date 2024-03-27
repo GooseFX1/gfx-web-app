@@ -1279,11 +1279,13 @@ export const PlaceOrder: FC = () => {
       <PerpsLayout>
         <LongShortTitleLayout handleOrderSide={handleOrderSide} />
         <LeverageRatioTile sliderValue={sliderValue} />
-        <TradeConfirmation
-          open={confirmationModal}
-          setVisibility={setConfirmationModal}
-          takeProfit={getTakeProfitParam()}
-        />
+        {confirmationModal && (
+          <TradeConfirmation
+            open={confirmationModal}
+            setVisibility={setConfirmationModal}
+            takeProfit={getTakeProfitParam()}
+          />
+        )}
 
         <div className={cn('px-2.5 flex flex-col')}>
           <div className={cn('flex mb-2')}>
