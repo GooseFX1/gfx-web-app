@@ -41,26 +41,31 @@ const FarmBalanceItem = ({
   value,
   titlePosition = 'text-start',
   asZero,
-  includeUSD,
-  token
+  token,
+  earnedUSD
 }: {
   title: string
   value: React.ReactNode
   titlePosition?: 'text-end' | 'text-start'
   asZero?: boolean
-  includeUSD?: boolean
   token?: string
+  earnedUSD?: number | string
 }) => (
   <div className={cn('flex flex-row md-xl:flex-col md-xl:w-max justify-between md-xl:justify-normal')}>
     <h4 className={cn(`dark:text-grey-8 text-black-4 font-semibold text-regular`, titlePosition)}>{title}</h4>
-    {asZero ? (
-      <div className={'flex flex-col text-right dark:text-grey-1 text-grey-2 font-semibold text-regular'}>
-        0.00 {token}
-        {includeUSD && <span>($0.00 USD)</span>}
-      </div>
-    ) : (
-      <div className={cn('text-b2 font-semibold dark:text-grey-8 text-black-4 text-end')}>{value}</div>
-    )}
+    <div
+      className={cn(
+        `flex flex-col min-md:flex-row text-right dark:text-grey-1 text-grey-2 text-b2 font-semibold 
+    items-center gap-1
+    `,
+        !asZero && 'dark:text-grey-8 text-black-4 text-end'
+      )}
+    >
+      <span>
+        {value} {token}
+      </span>
+      {(earnedUSD || earnedUSD != 0) && <span>(${earnedUSD} USD)</span>}
+    </div>
   </div>
 )
 
@@ -429,6 +434,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       title={'Liquidity:'}
       asZero={liquidity === 0}
       value={liquidity ? '$' + truncateBigNumber(liquidity) : <SkeletonCommon height="100%" />}
+      token={coin?.token}
     />
   )
   const volumeItem = (
@@ -436,6 +442,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       title={'24H Volume:'}
       asZero={formattedapiSslData?.volume === 0}
       value={'$' + truncateBigNumber(formattedapiSslData?.volume)}
+      token={coin?.token}
     />
   )
   const feeItem = (
@@ -443,6 +450,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       title={'24H Fees:'}
       asZero={formattedapiSslData?.fee === 0}
       value={'$' + truncateBigNumber(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)}
+      token={coin?.token}
     />
   )
   const balanceItem = (
@@ -450,44 +458,36 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       title={'My Balance:'}
       asZero={userDepositedAmount?.toNumber() == 0}
       value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
+      token={coin?.token}
     />
   )
   const walletBalance = (
     <FarmBalanceItem
       title={'Wallet Balance:'}
       asZero={userTokenBalance === 0}
-      value={
-        `${numberFormatter(userTokenBalance / coin?.mintDecimals)}  ${coin?.token}` +
-        ` (${numberFormatter(userTokenBalanceInUSD, 2)} USD)`
-      }
+      earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
+      value={numberFormatter(userTokenBalance / coin?.mintDecimals)}
+      token={coin?.token}
     />
   )
   const totalEarnings = (
     <FarmBalanceItem
       title={'Total Earnings:'}
       asZero={totalEarned === 0}
-      includeUSD
       titlePosition={isTablet ? 'text-start' : 'text-end'}
-      value={
-        <div className={`md-xl:items-end flex flex-col md-xl:flex-row gap-1`}>
-          {truncateBigNumber(totalEarned)} {coin?.token}
-          <div className={'text-end'}>(${truncateBigNumber(totalEarnedInUSD)} USD)</div>
-        </div>
-      }
+      value={truncateBigNumber(totalEarned)}
+      earnedUSD={truncateBigNumber(totalEarnedInUSD)}
+      token={coin?.token}
     />
   )
   const pendingRewards = (
     <FarmBalanceItem
       title={'Pending Rewards:'}
       asZero={claimableReward === 0}
-      includeUSD
       titlePosition={isTablet ? 'text-start' : 'text-end'}
-      value={
-        <div className={`md-xl:items-end flex flex-col md-xl:flex-row gap-1`}>
-          {truncateBigNumber(claimableReward)} {coin?.token}
-          <div className={'text-end'}>(${truncateBigNumber(claimableRewardInUSD)} USD)</div>
-        </div>
-      }
+      value={truncateBigNumber(claimableReward)}
+      earnedUSD={truncateBigNumber(claimableRewardInUSD)}
+      token={coin?.token}
     />
   )
   const radioGroupItems = (
