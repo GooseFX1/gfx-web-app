@@ -21,7 +21,7 @@ import {
   SSLToken
 } from '@/pages/FarmV3/constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { APP_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
+import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '@/context'
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -66,6 +66,7 @@ const FarmBalanceItem = ({
 
 const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
   const { wallet, connected } = useWallet()
+  const { mode } = useDarkMode()
   const wal = useWallet()
   const { connection } = useConnectionConfig()
   const slotConnection = new Connection(APP_RPC.endpoint, 'finalized')
@@ -456,8 +457,8 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       title={'Wallet Balance:'}
       asZero={userTokenBalance === 0}
       value={
-        `$${truncateBigString(userTokenBalance?.toString(), coin?.mintDecimals)}  ${coin?.token}` +
-        ` (${truncateBigNumber(userTokenBalanceInUSD)} USD)`
+        `${numberFormatter(userTokenBalance / coin?.mintDecimals)}  ${coin?.token}` +
+        ` (${numberFormatter(userTokenBalanceInUSD, 2)} USD)`
       }
     />
   )
@@ -494,7 +495,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       defaultValue={'deposit'}
       value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
       className={`w-full  md-xl:w-[190px]`}
-      optionClassName={`w-full md-xl:w-[85px]`}
+      optionClassName={`w-full md-xl:w-[85px] text-h5`}
       options={[
         {
           value: 'deposit',
@@ -569,7 +570,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
           borderWidth={'1.5'}
         >
           {isButtonLoading ? (
-            <Loader />
+            <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
           ) : canClaim ? (
             `Claim ${numberFormatter(claimableReward)} ${coin?.token}`
           ) : (
