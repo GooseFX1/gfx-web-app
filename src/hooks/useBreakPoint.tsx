@@ -9,6 +9,7 @@ interface IUseBreakPoint {
 
 const MOBILE_BREAKPOINT = 500
 const TABLET_BREAKPOINT = 768
+//const LAPTOP_BREAKPOINT = 1024
 const DESKTOP_BREAKPOINT = 1200
 
 function useBreakPoint(): IUseBreakPoint {
