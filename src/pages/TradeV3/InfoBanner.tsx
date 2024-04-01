@@ -351,7 +351,13 @@ export const InfoBanner: FC<{
       <DropdownPairs />
       {
         <>
-          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[110px] ml-4">
+          <Container
+            variant="outline"
+            colorScheme="secondaryGradient"
+            size="sm"
+            className="max-w-[110px] min-h-[50px]
+           ml-4"
+          >
             <ContainerTitle>
               <h6>Market Price:&nbsp;</h6>
               {/* TODO Placement bottom */}
@@ -363,7 +369,12 @@ export const InfoBanner: FC<{
               <h4>{tokenPrice}</h4>
             </InfoLabel>
           </Container>
-          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[125px] ml-4">
+          <Container
+            variant="outline"
+            colorScheme="secondaryGradient"
+            size="sm"
+            className="max-w-[125px] min-h-[50px] ml-4"
+          >
             <ContainerTitle>
               <h6>24H Change:&nbsp;</h6>
               {/* TODO Placement bottom */}
@@ -427,7 +438,12 @@ export const InfoBanner: FC<{
       )} */}
       {
         <>
-          <Container variant="outline" colorScheme="secondaryGradient" size="sm" className="max-w-[115px] ml-4">
+          <Container
+            variant="outline"
+            colorScheme="secondaryGradient"
+            size="sm"
+            className="max-w-[115px] min-h-[50px] ml-4"
+          >
             <ContainerTitle>
               <h6>Open Interest:&nbsp;</h6>
               {/* TODO Placement bottom */}

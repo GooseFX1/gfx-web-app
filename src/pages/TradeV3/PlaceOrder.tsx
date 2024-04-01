@@ -43,6 +43,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  IconTooltip,
   Input,
   InputElementRight,
   InputGroup,
@@ -1295,15 +1296,25 @@ export const PlaceOrder: FC = () => {
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
                 <DropdownMenuTrigger asChild={true}>
                   <Button variant="outline" onClick={setIsOpen.on} className={cn('max-content mr-2 h-[30px]')}>
-                    <h4 className={cn('w-[70px]')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
-                    <img
-                      style={{
-                        transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
-                        transition: 'transform 0.2s ease-in-out'
-                      }}
-                      src={`/img/mainnav/connect-chevron.svg`}
-                      alt={'connect-chevron'}
-                    />
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex">
+                        <IconTooltip tooltipType={'outline'}>
+                          <p>Limit</p>
+                        </IconTooltip>
+                        <h4 className={cn('ml-1')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
+                      </div>
+
+                      <img
+                        style={{
+                          height: '18px',
+                          width: '18px',
+                          transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                          transition: 'transform 0.2s ease-in-out'
+                        }}
+                        src={`/img/mainnav/connect-chevron.svg`}
+                        alt={'connect-chevron'}
+                      />
+                    </div>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent asChild>
@@ -1371,21 +1382,23 @@ export const PlaceOrder: FC = () => {
                   onClick={() => setTakeProfitVisible(true)}
                   className={cn('max-content mr-2 h-[30px]')}
                 >
-                  {takeProfitIndex === 0
-                    ? 'None'
-                    : takeProfitIndex !== null
-                    ? profits[takeProfitIndex]
-                      ? '$' + profits[takeProfitIndex]
-                      : '(-)'
-                    : '$' + takeProfitAmount}
-                  <img
-                    style={{
-                      transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
-                      transition: 'transform 0.2s ease-in-out'
-                    }}
-                    src={`/img/mainnav/connect-chevron.svg`}
-                    alt={'connect-chevron'}
-                  />
+                  <div className="flex w-full justify-between">
+                    {takeProfitIndex === 0
+                      ? 'None'
+                      : takeProfitIndex !== null
+                      ? profits[takeProfitIndex]
+                        ? '$' + profits[takeProfitIndex]
+                        : '(-)'
+                      : '$' + takeProfitAmount}
+                    <img
+                      style={{
+                        transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                        transition: 'transform 0.2s ease-in-out'
+                      }}
+                      src={`/img/mainnav/connect-chevron.svg`}
+                      alt={'connect-chevron'}
+                    />
+                  </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent asChild>

@@ -230,7 +230,7 @@ const OPEN_ORDER = styled.div`
 `
 
 const TRADE_HISTORY = styled.div`
-  ${tw`w-full h-full`}
+  ${tw`w-full h-[calc(100% - 38px)]`}
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -374,26 +374,28 @@ const OpenOrdersComponent: FC = () => {
           openOrderUI.length > 0 &&
           [...openOrderUI].map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
-              <div key={index} className={cn('flex items-center')}>
-                <div className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
-                  {order.order.side}
+              <div key={index} className={cn('flex items-center my-1')}>
+                <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
+                  {order.order.side.toUpperCase()}
+                </h5>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>{order.order.size} </InfoLabel>
                 </div>
-                <div className={cn('w-[20%]')}>{order.order.size}</div>
-                <div className={cn('w-[20%]')}>${order.order.price}</div>
-                <div className={cn('w-[20%]')}>{(order.order.size * order.order.price).toFixed(2)}</div>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>${order.order.price} </InfoLabel>
+                </div>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>{(order.order.size * order.order.price).toFixed(2)}</InfoLabel>
+                </div>
                 <div className={cn('w-[20%]')}>
                   <Button
-                    className="cancelButton"
-                    loading={false}
+                    variant="outline"
+                    isLoading={loading && perpsOrderId === order.order.orderId}
+                    colorScheme="red"
+                    className={cn(`h-[30px]`)}
                     onClick={() => cancelOrderFn(order.order.orderId)}
                   >
-                    {loading && perpsOrderId === order.order.orderId ? (
-                      <div tw="!ml-[25%]">
-                        <RotatingLoader text="" textSize={8} iconSize={16} />
-                      </div>
-                    ) : (
-                      'Cancel'
-                    )}
+                    Close
                   </Button>
                 </div>
               </div>
@@ -445,9 +447,8 @@ const TradeHistoryComponent: FC = () => {
   return (
     <>
       {!historyData || !historyData.length ? (
-        <div className="no-positions-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-          <div>No Trade History</div>
+        <div className={cn('flex items-center justify-center h-[80%]')}>
+          <h4 className="text-grey-1"> No Trade History</h4>
         </div>
       ) : (
         <TRADE_HISTORY>
@@ -457,9 +458,9 @@ const TradeHistoryComponent: FC = () => {
               <div key={index}>
                 <span>
                   <InfoLabel>
-                    <span className={cn(order.side === 'Long' ? 'text-green-4 ml-2' : 'text-red-2 ml-2')}>
+                    <h5 className={cn(order.side === 'Long' ? 'text-green-4 ml-2' : 'text-red-2 ml-2')}>
                       {order.side}
-                    </span>
+                    </h5>
                   </InfoLabel>
                 </span>
 
@@ -533,10 +534,10 @@ const FundingHistoryComponent: FC = () => {
                     <img src={`${assetIcon}`} alt="SOL icon" />
                     <span>{selectedCrypto.pair}</span>
                   </div>
-                  <span className={item.averagePosition.side}>
+                  <h4 className={cn(`${item.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`)}>
                     {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                     {item.averagePosition.side === undefined && ''}
-                  </span>
+                  </h4>
                   <span>{item.averagePosition.quantity} SOL</span>
                   <span>
                     {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) < 0.0001
@@ -549,9 +550,8 @@ const FundingHistoryComponent: FC = () => {
             </div>
           </div>
         ) : (
-          <div className="no-positions-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <div>No Funding History</div>
+          <div className={cn('h-[80%] flex items-center justify-center')}>
+            <InfoLabel>No Funding History</InfoLabel>
           </div>
         )}
       </FUNDING_HISTORY>
@@ -791,9 +791,17 @@ export const HistoryPanel: FC = () => {
         <TabColumnsDisplay activeTab={activeTab} />
         <OpenOrdersComponent />
       </TabsContent>
-      <TabsContent className={cn('h-[calc(100%)]')} value="2">
+      <TabsContent className={cn('h-[100%]')} value="2">
         <TabColumnsDisplay activeTab={activeTab} />
         <TradeHistoryComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[100%]')} value="3">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <FundingHistoryComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[100%]')} value="4">
+        <TabColumnsDisplay activeTab={activeTab} />
+        {null}
       </TabsContent>
     </Tabs>
   )
@@ -826,9 +834,9 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
 }) => {
   const { mode } = useDarkMode()
   return (
-    <div className={cn('mt-1.5')}>
+    <>
       {traderInfo.averagePosition.side && Number(roundedSize) ? (
-        <div className={cn('flex px-2.5')}>
+        <div className={cn('flex px-2.5 mt-2.5')}>
           <div className={cn('w-[12.5%]')}>
             <InfoLabel>{selectedCrypto.pair} </InfoLabel>{' '}
           </div>
@@ -865,6 +873,6 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
           <h4 className="text-grey-1"> No Positions Found</h4>
         </div>
       )}
-    </div>
+    </>
   )
 }
