@@ -78,8 +78,8 @@ export const commafy = (num: number, decimal: number): string => {
 }
 export const currencyUnits = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
 
-export const numberFormatter = (num: number, digits = 2): string => {
-  if (isNaN(num)) return '0.'.padEnd(digits, '0')
+export const numberFormatter = (num: number, digits = 2, leadingDigits = 1): string => {
+  if (isNaN(num)) return `${'0'.repeat(leadingDigits)}.${'0'.repeat(digits)}`
   const exponentNum = num.toExponential(digits)
   const splitNum = exponentNum.toLowerCase().split('e')
   const exponent = Number(splitNum[1])
@@ -102,8 +102,12 @@ export const numberFormatter = (num: number, digits = 2): string => {
   const currentDecimals = splitOnDecimal[1]
   const decimal = currentDecimals.slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
-
-  if (splitOnDecimal[0] == '0' && currentDecimals.length > digits) {
+  const remainingDecimals = currentDecimals.slice(digits)
+  if (
+    splitOnDecimal[0] == '0' &&
+    decimal.split('').every((x) => x == '0') &&
+    !remainingDecimals.split('').every((x) => x == '0')
+  ) {
     return `<0.${'0'.repeat(digits - 1)}1`
   }
   return `${accurateResult}${unit ?? ''}`

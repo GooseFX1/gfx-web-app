@@ -35,6 +35,7 @@ export const ActionModal: FC<{
   handleWithdraw: any
   handleDeposit: any
   handleClaim: any
+  handleCancel: () => void
   isButtonLoading: boolean
   withdrawAmount: string
   depositAmount: string
@@ -50,6 +51,7 @@ export const ActionModal: FC<{
   handleWithdraw,
   handleDeposit,
   handleClaim,
+  handleCancel,
   isButtonLoading,
   withdrawAmount,
   depositAmount,
@@ -196,7 +198,10 @@ export const ActionModal: FC<{
         </Button>
         <div
           tw="text-center text-red-2 font-bold text-regular cursor-pointer mb-2.5"
-          onClick={() => setActionModal(false)}
+          onClick={() => {
+            handleCancel()
+            setActionModal(false)
+          }}
         >
           Cancel
         </div>

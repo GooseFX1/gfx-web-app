@@ -52,10 +52,10 @@ const FarmBalanceItem = ({
         !asZero && 'dark:text-grey-8 text-black-4 text-end'
       )}
     >
-      <span className={'font-semibold font-poppins'}>
+      <h4>
         {value} {token}
-      </span>
-      {(earnedUSD || earnedUSD != 0) && <span>(${earnedUSD} USD)</span>}
+      </h4>
+      {(earnedUSD || earnedUSD != 0) && <h4>(${earnedUSD} USD)</h4>}
     </div>
   </div>
 )
@@ -484,6 +484,10 @@ const CollapsibleContent: FC<{
       setIsTxnSuccessfull(false)
     }
   }, [SSLProgram, wal, connection, coin, userPublicKey, claimableReward, walletName])
+  const handleCancel = useCallback(() => {
+    setIsButtonLoading(false)
+    setOperationPending(false)
+  }, [])
   const handleInputChange = useCallback(
     (input: string) => {
       // handle if the user sends '' or undefined in input box
@@ -546,6 +550,7 @@ const CollapsibleContent: FC<{
             handleDeposit={handleDeposit}
             handleClaim={handleClaim}
             isButtonLoading={isButtonLoading}
+            handleCancel={handleCancel}
             withdrawAmount={withdrawAmount}
             depositAmount={depositAmount}
             claimAmount={claimableReward}
@@ -561,21 +566,21 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Liquidity:'}
               key={'liquidity'}
-              asZero={liquidity === 0}
+              asZero={liquidity === 0 || isNaN(liquidity)}
               value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'24H Volume:'}
               key={'24-h-volume'}
-              asZero={formattedapiSslData?.volume === 0}
+              asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
               value={'$' + numberFormatter(formattedapiSslData?.volume)}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'24H Fees:'}
               key={'24-h-fees'}
-              asZero={formattedapiSslData?.fee === 0}
+              asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
               value={
                 '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
               }
@@ -584,14 +589,14 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'My Balance:'}
               key={'my-balance'}
-              asZero={userDepositedAmount?.toNumber() == 0}
+              asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
               value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'Wallet Balance:'}
               key={'wallet-balance'}
-              asZero={userTokenBalance === 0}
+              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
               earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
               value={numberFormatter(userTokenBalance / coin?.mintDecimals)}
               token={coin?.token}
@@ -599,7 +604,7 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Total Earnings:'}
               key={'total-earnings'}
-              asZero={totalEarned === 0}
+              asZero={totalEarned === 0 || isNaN(totalEarned)}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
               value={numberFormatter(totalEarned)}
               earnedUSD={numberFormatter(totalEarnedInUSD)}
@@ -608,9 +613,9 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Pending Rewards:'}
               key={'pending-rewards'}
-              asZero={claimableReward === 0}
+              asZero={claimableReward === 0 || isNaN(claimableReward)}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(0.000000123456)}
+              value={numberFormatter(claimableReward)}
               earnedUSD={numberFormatter(claimableRewardInUSD)}
               token={coin?.token}
             />
@@ -675,21 +680,21 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Liquidity:'}
                 key={'liquidity'}
-                asZero={liquidity === 0}
+                asZero={liquidity === 0 || isNaN(liquidity)}
                 value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
                 token={coin?.token}
               />
               <FarmBalanceItem
                 title={'24H Volume:'}
                 key={'24-h-volume'}
-                asZero={formattedapiSslData?.volume === 0}
+                asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
                 value={'$' + numberFormatter(formattedapiSslData?.volume)}
                 token={coin?.token}
               />
               <FarmBalanceItem
                 title={'24H Fees:'}
                 key={'24-h-fees'}
-                asZero={formattedapiSslData?.fee === 0}
+                asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
                 value={
                   '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
                 }
@@ -698,14 +703,14 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'My Balance:'}
                 key={'my-balance'}
-                asZero={userDepositedAmount?.toNumber() == 0}
+                asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
                 value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
                 token={coin?.token}
               />
               <FarmBalanceItem
                 title={'Wallet Balance:'}
                 key={'wallet-balance'}
-                asZero={userTokenBalance === 0}
+                asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
                 earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
                 value={numberFormatter(userTokenBalance / coin?.mintDecimals)}
                 token={coin?.token}
@@ -713,7 +718,7 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Total Earnings:'}
                 key={'total-earnings'}
-                asZero={totalEarned === 0}
+                asZero={totalEarned === 0 || isNaN(totalEarned)}
                 titlePosition={isTablet ? 'text-start' : 'text-end'}
                 value={numberFormatter(totalEarned)}
                 earnedUSD={numberFormatter(totalEarnedInUSD)}
@@ -722,7 +727,7 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Pending Rewards:'}
                 key={'pending-rewards'}
-                asZero={claimableReward === 0}
+                asZero={claimableReward === 0 || isNaN(claimableReward)}
                 titlePosition={isTablet ? 'text-start' : 'text-end'}
                 value={numberFormatter(claimableReward)}
                 earnedUSD={numberFormatter(claimableRewardInUSD)}
@@ -742,7 +747,7 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Wallet Balance:'}
                 key={'wallet-balance'}
-                asZero={userTokenBalance === 0}
+                asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
                 earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
                 value={numberFormatter(userTokenBalance / coin?.mintDecimals)}
                 token={coin?.token}
@@ -774,7 +779,7 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Total Earnings:'}
                 key={'total-earnings'}
-                asZero={totalEarned === 0}
+                asZero={totalEarned === 0 || isNaN(totalEarned)}
                 titlePosition={isTablet ? 'text-start' : 'text-end'}
                 value={numberFormatter(totalEarned)}
                 earnedUSD={numberFormatter(totalEarnedInUSD)}
@@ -783,7 +788,7 @@ const CollapsibleContent: FC<{
               <FarmBalanceItem
                 title={'Pending Rewards:'}
                 key={'pending-rewards'}
-                asZero={claimableReward === 0}
+                asZero={claimableReward === 0 || isNaN(claimableReward)}
                 titlePosition={isTablet ? 'text-start' : 'text-end'}
                 value={numberFormatter(claimableReward)}
                 earnedUSD={numberFormatter(claimableRewardInUSD)}
