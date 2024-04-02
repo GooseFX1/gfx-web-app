@@ -1,14 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  AccordionContent,
-  Button,
-  cn,
-  RoundedGradientInner,
-  RoundedGradientWrapper,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from 'gfx-component-lib'
+import { AccordionContent, Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import {
   depositCapError,
   genericErrMsg,
@@ -42,7 +33,7 @@ const FarmBalanceItem = ({
   titlePosition = 'text-start',
   asZero,
   token,
-  earnedUSD
+  earnedUSD = 0
 }: {
   title: string
   value: React.ReactNode
@@ -61,7 +52,7 @@ const FarmBalanceItem = ({
         !asZero && 'dark:text-grey-8 text-black-4 text-end'
       )}
     >
-      <span>
+      <span className={'font-semibold font-poppins'}>
         {value} {token}
       </span>
       {(earnedUSD || earnedUSD != 0) && <span>(${earnedUSD} USD)</span>}
@@ -566,7 +557,7 @@ const CollapsibleContent: FC<{
           />
         )}
         {isMobile ? (
-          <>
+          <div className={'flex flex-col gap-1.25'}>
             <FarmBalanceItem
               title={'Liquidity:'}
               key={'liquidity'}
@@ -619,7 +610,7 @@ const CollapsibleContent: FC<{
               key={'pending-rewards'}
               asZero={claimableReward === 0}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(claimableReward)}
+              value={numberFormatter(0.000000123456)}
               earnedUSD={numberFormatter(claimableRewardInUSD)}
               token={coin?.token}
             />
@@ -649,10 +640,10 @@ const CollapsibleContent: FC<{
               disableActionButton={disableActionButton}
               isLoading={isButtonLoading}
             />
-          </>
+          </div>
         ) : isTablet ? (
           <>
-            <div className={'flex flex-col gap-3.75'}>
+            <div className={'flex flex-col gap-1.25'}>
               <DepositAndWithdrawToggle
                 key={'deposit-withdraw-toggle'}
                 value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
@@ -863,6 +854,7 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
 }) => {
   const { connected } = useWallet()
   const { mode } = useDarkMode()
+  const isDisabled = isLoading || disabled || !canClaim
   return (
     <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
       {connected ? (
@@ -878,30 +870,25 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
       ) : (
         <Connect containerStyle={'inline-flex basis-1/2'} customButtonStyle={'h-[35px] w-full'} />
       )}
-      <RoundedGradientWrapper
-        className={cn('max-h-[35px] cursor-pointer basis-1/2', !canClaim && 'bg-white grayscale')}
+      <Button
+        variant={'outline'}
+        colorScheme={isDisabled ? 'grey' : 'secondaryGradient'}
         onClick={handleClaim}
-        animated={canClaim && !isLoading}
-        isDisabled={isLoading || disabled || !canClaim}
+        className={cn(
+          'basis-1/2 duration-[2s]',
+          !canClaim && 'bg-white grayscale',
+          canClaim && !isLoading && 'before:animate-border-spin'
+        )}
+        disabled={isDisabled}
       >
-        <RoundedGradientInner
-          className={cn(
-            `rounded-circle flex
-                items-center justify-center dark:text-white text-text-lightmode-primary
-                font-bold `,
-            isLoading || disabled || (!canClaim && 'cursor-not-allowed')
-          )}
-          borderWidth={'1.5'}
-        >
-          {isLoading ? (
-            <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
-          ) : canClaim ? (
-            `Claim ${numberFormatter(claimableReward)} ${token}`
-          ) : (
-            'No Claimable Rewards'
-          )}
-        </RoundedGradientInner>
-      </RoundedGradientWrapper>
+        {isLoading ? (
+          <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
+        ) : canClaim ? (
+          `Claim ${numberFormatter(claimableReward)} ${token}`
+        ) : (
+          'No Claimable Rewards'
+        )}
+      </Button>
     </div>
   )
 }

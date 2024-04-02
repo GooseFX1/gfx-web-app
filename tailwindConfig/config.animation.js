@@ -1,3 +1,5 @@
+import { twConfigAnimations } from 'gfx-component-lib'
+
 const keyframes = {
   slideInBottom: {
     '0%': {
@@ -36,13 +38,15 @@ const keyframes = {
       animationTimingFunction: 'ease-in',
       opacity: 1
     }
-  }
+  },
+  ...twConfigAnimations.keyframes
 }
 
 const animation = {
   slideInBottom: 'slideInBottom 0.5s',
   slideInTop: 'slideInTop 0.5s',
-  slideOutTop: 'slideInTop 0.5s reverse'
+  slideOutTop: 'slideInTop 0.5s reverse',
+  ...twConfigAnimations.animation
 }
 
 module.exports = { keyframes, animation }

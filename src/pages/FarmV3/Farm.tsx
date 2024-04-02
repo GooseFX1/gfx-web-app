@@ -18,10 +18,10 @@ const Farm: FC = () => {
       <div
         id="farm-container"
         className={`dark:bg-black-1 bg-grey-5 h-[calc(100vh - 56px)] overflow-auto max-w-[1440px]
-       m-auto no-scrollbar`}
+       m-auto no-scrollbar gap-7.5`}
       >
         <FarmHeader />
-        <div className={'p-5 sm:px-2.5 sm:pb-3.75'}>
+        <div className={'gap-7.5 mt-7.5 p-5 sm:px-2.5 sm:pb-3.75 pt-0'}>
           <FarmTable />
           <Faqs />
         </div>

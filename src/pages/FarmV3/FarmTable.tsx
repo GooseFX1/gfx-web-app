@@ -12,7 +12,7 @@ import { getPriceObject } from '../../web3'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
 import { AllClaimModal } from './AllClaimModal'
-import { cn, RoundedGradientInner, RoundedGradientWrapper, Switch } from 'gfx-component-lib'
+import { Button, cn, Switch } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmFilter from '@/pages/FarmV3/FarmTableComponents/FarmFilter'
@@ -205,7 +205,7 @@ export const FarmTable: FC = () => {
           rewardsArray={claimableRewardArray}
         />
       )}
-      <div className="flex flex-row justify-between items-center mb-3.75 sm:pr-4">
+      <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row items-center">
           <img
             src={`/img/assets/${pool.name}_pools_${mode}.svg`}
@@ -225,21 +225,20 @@ export const FarmTable: FC = () => {
           </div>
         </div>
         {checkMobile() && isClaimable && pubKey && (
-          <RoundedGradientWrapper className={'cursor-pointer'} onClick={() => setAllClaimModal(true)} animated>
-            <RoundedGradientInner
-              className={`dark:bg-background-darkmode-primary bg-background-lightmode-primary
-             rounded-circle flex sm:w-full items-center justify-center dark:text-white text-text-lightmode-primary 
-              font-bold`}
-            >
-              Claim All
-            </RoundedGradientInner>
-          </RoundedGradientWrapper>
+          <Button
+            variant={'outline'}
+            colorScheme={'secondaryGradient'}
+            className={'before:animate-border-spin'}
+            onClick={() => setAllClaimModal(true)}
+          >
+            Claim All
+          </Button>
         )}
       </div>
       <div className="flex items-center gap-3.75">
         <RadioOptionGroup
           defaultValue={'all_pools'}
-          className={'w-full min-md:w-max gap-1.25 '}
+          className={'w-full min-md:w-max gap-1.25 sm:gap-0 sm:grid-cols-4'}
           optionClassName={`min-md:w-[85px]`}
           options={[
             {
@@ -265,36 +264,32 @@ export const FarmTable: FC = () => {
           ]}
         />
 
-        {breakpoint.isDesktop && (
+        {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
           <div className="flex items-center w-full gap-3.75">
             <SearchBar
               onChange={(e) => initiateGlobalSearch(e.target.value)}
               onClear={() => setSearchTokens('')}
               value={searchTokens}
+              className={'min-w-[100px]'}
             />
             <div className={'flex flex-row ml-auto gap-3.75'}>
               {isClaimable > 0 && pubKey != null && (
-                <RoundedGradientWrapper
-                  className={'h-[33px] w-[83px] cursor-pointer'}
+                <Button
+                  className={'h-[33px] cursor-pointer'}
+                  variant={'outline'}
+                  colorScheme={'secondaryGradient'}
                   onClick={() => setAllClaimModal(true)}
                   animated
                 >
-                  <RoundedGradientInner
-                    className={`dark:bg-background-darkmode-primary bg-background-lightmode-primary rounded-circle flex
-                sm:w-full items-center justify-center dark:text-white text-text-lightmode-primary 
-                font-bold`}
-                    borderWidth={'1.5'}
-                  >
-                    Claim All
-                  </RoundedGradientInner>
-                </RoundedGradientWrapper>
+                  Claim All Yield
+                </Button>
               )}
               {pubKey != null && (
                 <div className={cn('flex items-center mr-2', isClaimable ? `ml-0` : `ml-auto`)}>
                   <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
                   <div
                     className="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
-               font-semibold mt-[-4px] ml-3.75"
+               font-semibold mt-[-4px] ml-3.75 hidden min-lg:block"
                   >
                     Show <br /> Deposited
                   </div>
@@ -305,15 +300,15 @@ export const FarmTable: FC = () => {
         )}
       </div>
       {breakpoint.isMobile && (
-        <div className="flex flex-row mt-4">
+        <div className="flex flex-row">
           <SearchBar
-            className={pubKey ? 'w-[55%]' : 'w-[95%]'}
+            className={pubKey ? 'w-[55%]' : 'min-md:w-[95%]'}
             onChange={(e) => initiateGlobalSearch(e.target.value)}
             onClear={() => setSearchTokens('')}
             value={searchTokens}
           />
           {pubKey && (
-            <div className="ml-auto flex items-center mr-2">
+            <div className="ml-auto flex items-center">
               <Switch variant={'default'} checked={showDeposited} onClick={handleShowDepositedToggle} />
               <div
                 className={`h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 

@@ -176,14 +176,14 @@ export const FarmHeader: FC = () => {
   return (
     <div
       className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll
-      p-5 sm:pl-2.5 sm:pr-0 pb-3
+      p-5 pt-3.75 sm:pl-2.5 sm:pr-0 pb-0
       `}
     >
       {poolSelectionModal && (
         <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal} />
       )}
       <RadioOptionGroup
-        optionSize={isMobile ? 'lg' : 'sm'}
+        optionSize={isMobile ? 'xl' : 'sm'}
         defaultValue={'24h'}
         orientation={'vertical'}
         className={'gap-0'}
@@ -196,7 +196,8 @@ export const FarmHeader: FC = () => {
           {
             value: '7D',
             label: '7D',
-            onClick: () => setRange(1)
+            onClick: () => setRange(1),
+            className: 'hidden min-md:inline-block'
           },
           {
             value: 'all',
@@ -206,12 +207,12 @@ export const FarmHeader: FC = () => {
         ]}
       />
 
-      <div className="flex flex-row gap-2.5">
+      <div className="flex flex-row gap-2.5 self-stretch">
         {infoCards?.map((card, index) => (
           <Container
             key={card?.name}
-            className={'w-[130px] justify-center'}
-            colorScheme={'secondaryGradient'}
+            className={'w-[130px] justify-center h-full'}
+            colorScheme={'primaryGradient'}
             size={'lg'}
           >
             <ContainerTitle>

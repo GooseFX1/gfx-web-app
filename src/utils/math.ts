@@ -96,14 +96,14 @@ export const numberFormatter = (num: number, digits = 2): string => {
     numCalc = numExponented * Math.pow(10, differenceToNextUnit)
   }
 
-  const splitOnDecimal = numCalc.toString().split('.')
+  const splitOnDecimal = numCalc.toFixed(99).split('.')
   //accuracy fix
   if (splitOnDecimal.length === 1) return `${numCalc.toFixed(digits)}${unit ?? ''}`
   const currentDecimals = splitOnDecimal[1]
   const decimal = currentDecimals.slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
 
-  if (splitOnDecimal[0] == '0' && decimal.length > digits) {
+  if (splitOnDecimal[0] == '0' && currentDecimals.length > digits) {
     return `<0.${'0'.repeat(digits - 1)}1`
   }
   return `${accurateResult}${unit ?? ''}`

@@ -6,6 +6,7 @@ interface Option {
   label: string
   variant?: string
   onClick?: () => void
+  className?: string
 }
 
 interface RadioGroupOptionProps {
@@ -32,7 +33,7 @@ const RadioOptionGroup = ({
   <RadioGroup
     defaultValue={defaultValue}
     value={value}
-    className={cn('', className)}
+    className={cn('self-stretch', className)}
     onValueChange={onChange}
     orientation={orientation}
   >
@@ -43,7 +44,7 @@ const RadioOptionGroup = ({
         variant={option.variant ?? 'primary'}
         size={optionSize ?? 'xl'}
         onClick={option.onClick}
-        className={optionClassName}
+        className={cn('', optionClassName, option.className)}
       >
         {option.label}
       </RadioGroupItem>

@@ -58,7 +58,7 @@ const TokenInput = ({
       }
       rightItem={<InputElementRight>{tokenSymbol}</InputElementRight>}
     >
-      <Input value={value > 0 ? value : ''} placeholder={'0.00'} className={'text-right'} onChange={onChange} />
+      <Input value={value ?? ''} placeholder={'0.00'} className={'text-right'} onChange={onChange} />
     </InputGroup>
   )
 }
