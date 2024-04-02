@@ -1,4 +1,4 @@
-import { twConfigAnimations } from 'gfx-component-lib'
+const { twConfigAnimations } = require('gfx-component-lib')
 
 const keyframes = {
   slideInBottom: {
