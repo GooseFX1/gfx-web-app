@@ -17,7 +17,7 @@ export default function RewardsInput({
 }: RewardsInputProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null)
   const { totalStaked } = useRewards()
-  const [inputValue, setInputValue] = useState<number>(0.0)
+  const [inputValue, setInputValue] = useState<number>()
   const handleHalf = useCallback(async () => {
     let half: number
     if (isStakeSelected) {
@@ -40,7 +40,12 @@ export default function RewardsInput({
   }, [inputRef])
   const handleInputChange = useCallback((e) => {
     const value = parseFloat(e.target.value)
-    setInputValue(isNaN(value) ? 0.0 : value)
+    if (e.target.value == '') {
+      setInputValue(0)
+    }
+    if (!isNaN(value)) {
+      setInputValue(value)
+    }
   }, [])
   useEffect(() => {
     onInputChange(inputValue)
@@ -81,7 +86,6 @@ export default function RewardsInput({
         placeholder={'0'}
         onChange={handleInputChange}
         type={'number'}
-        value={inputValue > 0.0 ? inputValue : ''}
         className={'text-right'}
       />
     </InputGroup>
