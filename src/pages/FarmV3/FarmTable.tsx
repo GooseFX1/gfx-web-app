@@ -224,7 +224,7 @@ export const FarmTable: FC = () => {
             </p>
           </div>
         </div>
-        {checkMobile() && isClaimable && pubKey && (
+        {checkMobile() && isClaimable > 0 && pubKey && (
           <Button
             variant={'outline'}
             colorScheme={'secondaryGradient'}
@@ -275,7 +275,7 @@ export const FarmTable: FC = () => {
             <div className={'flex flex-row ml-auto gap-3.75'}>
               {isClaimable > 0 && pubKey != null && (
                 <Button
-                  className={'h-[33px] cursor-pointer'}
+                  className={'before:animate-border-spin'}
                   variant={'outline'}
                   colorScheme={'secondaryGradient'}
                   onClick={() => setAllClaimModal(true)}

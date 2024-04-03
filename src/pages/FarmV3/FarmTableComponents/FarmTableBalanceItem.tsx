@@ -52,10 +52,10 @@ const FarmBalanceItem = ({
         !asZero && 'dark:text-grey-8 text-black-4 text-end'
       )}
     >
-      <h4>
+      <h4 className={'font-nunito'}>
         {value} {token}
       </h4>
-      {(earnedUSD || earnedUSD != 0) && <h4>(${earnedUSD} USD)</h4>}
+      {(earnedUSD || earnedUSD != 0) && <h4 className={'font-nunito'}>(${earnedUSD} USD)</h4>}
     </div>
   </div>
 )
@@ -536,7 +536,7 @@ const CollapsibleContent: FC<{
     operationPending ||
     isButtonLoading ||
     (modeOfOperation === ModeOfOperation.DEPOSIT
-      ? parseFloat(depositAmount) == 0
+      ? parseFloat(depositAmount) == 0 || userTokenBalance == 0
       : parseFloat(withdrawAmount) == 0)
   const canClaim = claimableReward > 0
   return (
@@ -859,7 +859,6 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
 }) => {
   const { connected } = useWallet()
   const { mode } = useDarkMode()
-  const isDisabled = isLoading || disabled || !canClaim
   return (
     <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
       {connected ? (
@@ -877,14 +876,14 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
       )}
       <Button
         variant={'outline'}
-        colorScheme={isDisabled ? 'grey' : 'secondaryGradient'}
+        colorScheme={isLoading || !canClaim ? 'grey' : 'secondaryGradient'}
         onClick={handleClaim}
         className={cn(
           'basis-1/2 duration-[2s]',
           !canClaim && 'bg-white grayscale',
           canClaim && !isLoading && 'before:animate-border-spin'
         )}
-        disabled={isDisabled}
+        disabled={isLoading || !canClaim}
       >
         {isLoading ? (
           <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
