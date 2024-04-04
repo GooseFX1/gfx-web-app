@@ -520,16 +520,7 @@ const CollapsibleContent: FC<{
     [modeOfOperation, userTokenBalance, userDepositedAmount, userDepositInUSD]
   )
 
-  const depositWithdrawOnClick = useCallback(
-    () => () => {
-      if (modeOfOperation === ModeOfOperation.WITHDRAW) {
-        openActionModal('withdraw')
-      } else {
-        openActionModal('deposit')
-      }
-    },
-    [modeOfOperation]
-  )
+  const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
 
   const disabled =
     !connected ||
@@ -859,6 +850,8 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
 }) => {
   const { connected } = useWallet()
   const { mode } = useDarkMode()
+  console.log(disableActionButton, disabled)
+
   return (
     <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
       {connected ? (

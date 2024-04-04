@@ -94,129 +94,136 @@ export const ActionModal: FC<{
 
   const Content = useCallback(
     () => (
-      <div>
-        {breakpoint.isMobile && (
+      <div tw="h-full flex flex-col justify-between">
+        <div>
+          {breakpoint.isMobile && (
+            <div
+              tw="absolute right-[25px] text-[25px] cursor-pointer"
+              onClick={() => {
+                setActionModal(false)
+              }}
+            >
+              <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
+            </div>
+          )}
+          <div tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 sm:text-average">
+            {actionType === 'withdraw' ? (
+              <h3>Withdraw</h3>
+            ) : actionType === 'deposit' ? (
+              <h3>Deposit </h3>
+            ) : (
+              <h3>Claim</h3>
+            )}
+          </div>
+          <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">
+            <h5>
+              {' '}
+              By
+              {actionType === 'withdraw'
+                ? ' withdrawing, you will claim any '
+                : actionType === 'deposit'
+                ? ' depositing, you will claim any '
+                : ' claiming, you will get all '}
+              pending yield available
+            </h5>
+          </div>
+          {actionType !== 'claim' && (
+            <div tw="flex flex-row items-center justify-between mb-3.75">
+              <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">
+                {<div>{actionType === 'deposit' ? 'Deposit' : 'Withdraw'} Amount</div>}
+              </div>
+              <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
+                actionType === 'deposit'
+                  ? depositAmount
+                    ? truncateBigNumber(+depositAmount)
+                    : '00.00'
+                  : withdrawAmount
+                  ? truncateBigNumber(+withdrawAmount)
+                  : '00.00'
+              } ${token?.token}`}</div>
+            </div>
+          )}
+          <div tw="flex flex-row items-center justify-between mb-3.75">
+            <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
+            <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
+              {`${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : `00.00 ${token?.token}`}`}
+            </div>
+          </div>
+          {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
+            <div tw="flex flex-row items-center justify-between mb-3.75">
+              <div tw="flex flex-row">
+                <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
+                <Tooltip
+                  color={mode === 'dark' ? '#FFF' : '#1C1C1C'}
+                  title={
+                    <span tw="dark:text-black-4 text-grey-8 font-semibold text-tiny">
+                      The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait{' '}
+                      {getTimerCountdown} to avoid paying the fee.
+                    </span>
+                  }
+                  placement={checkMobile() ? 'topRight' : 'rightBottom'}
+                  overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
+                  overlayInnerStyle={{ borderRadius: '8px' }}
+                >
+                  <img
+                    src={mode === 'dark' ? '/img/assets/tooltip_holo.svg' : '/img/assets/tooltip_blue.svg'}
+                    alt="deposit-cap"
+                    tw="ml-2.5 sm:ml-1.25 max-w-none cursor-pointer"
+                    height={20}
+                    width={20}
+                  />
+                </Tooltip>
+              </div>
+              <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
+                {earlyWithdrawFee ? truncateBigNumber(earlyWithdrawFee) + ' ' + token?.token : 0}
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
+          <Button
+            height="35px"
+            cssStyle={tw`duration-500 w-full !h-8.75 bg-blue-1 text-regular border-none mx-auto mb-3.75
+                      !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
+            onClick={handleUserAction}
+            loading={isButtonLoading}
+            disabled={
+              (actionType === 'claim' && !claimAmount) ||
+              (actionType === 'deposit' && !depositAmount) ||
+              (actionType === 'withdraw' && !withdrawAmount)
+            }
+            disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
+          >
+            {`${
+              actionType === 'deposit'
+                ? `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
+                : actionType === 'withdraw'
+                ? `Withdraw ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
+                : `${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token}`
+            }`}
+          </Button>
           <div
-            tw="absolute right-[25px] text-[25px] cursor-pointer"
+            tw="text-center text-red-2 font-bold text-regular cursor-pointer mb-2.5"
             onClick={() => {
+              handleCancel()
               setActionModal(false)
             }}
           >
-            <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
+            Cancel
           </div>
-        )}
-        <div tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 sm:text-average">
-          {actionType === 'withdraw' ? (
-            <div>Withdraw</div>
-          ) : actionType === 'deposit' ? (
-            <div>Deposit </div>
-          ) : (
-            <div>Claim</div>
-          )}
-        </div>
-        <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">
-          {actionType === 'withdraw' ? (
-            <div>By withdrawing, you will claim any pending yield available.</div>
-          ) : actionType === 'deposit' ? (
-            <div>By depositing, you will claim any pending yield available.</div>
-          ) : (
-            <div>By claiming, you will get all pending yield available. </div>
-          )}
-        </div>
-        {actionType !== 'claim' && (
-          <div tw="flex flex-row items-center justify-between mb-3.75">
-            <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">
-              {<div>{actionType === 'deposit' ? 'Deposit' : 'Withdraw'} Amount</div>}
-            </div>
-            <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-              actionType === 'deposit'
-                ? depositAmount
-                  ? truncateBigNumber(+depositAmount)
-                  : '00.00'
-                : withdrawAmount
-                ? truncateBigNumber(+withdrawAmount)
-                : '00.00'
-            } ${token?.token}`}</div>
+          <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
+            By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
+            you agree to our{' '}
+            <a
+              href="https://www.goosefx.io/terms"
+              target={'_blank'}
+              rel={'noreferrer'}
+              tw="text-tiny font-semibold underline dark:text-white text-blue-1"
+            >
+              Terms of Service
+            </a>
+            .
           </div>
-        )}
-        <div tw="flex flex-row items-center justify-between mb-3.75">
-          <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
-          <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
-            {`${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : `00.00 ${token?.token}`}`}
-          </div>
-        </div>
-        {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
-          <div tw="flex flex-row items-center justify-between mb-3.75">
-            <div tw="flex flex-row">
-              <div tw="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
-              <Tooltip
-                color={mode === 'dark' ? '#FFF' : '#1C1C1C'}
-                title={
-                  <span tw="dark:text-black-4 text-grey-8 font-semibold text-tiny">
-                    The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait{' '}
-                    {getTimerCountdown} to avoid paying the fee.
-                  </span>
-                }
-                placement={checkMobile() ? 'topRight' : 'rightBottom'}
-                overlayClassName={mode === 'dark' ? 'farm-tooltip dark' : 'farm-tooltip'}
-                overlayInnerStyle={{ borderRadius: '8px' }}
-              >
-                <img
-                  src={mode === 'dark' ? '/img/assets/tooltip_holo.svg' : '/img/assets/tooltip_blue.svg'}
-                  alt="deposit-cap"
-                  tw="ml-2.5 sm:ml-1.25 max-w-none cursor-pointer"
-                  height={20}
-                  width={20}
-                />
-              </Tooltip>
-            </div>
-            <div tw="dark:text-grey-5 text-black-4 text-regular font-semibold">
-              {earlyWithdrawFee ? truncateBigNumber(earlyWithdrawFee) + ' ' + token?.token : 0}
-            </div>
-          </div>
-        )}
-        <Button
-          height="35px"
-          cssStyle={tw`duration-500 w-[530px] sm:w-[100%] !h-8.75 bg-blue-1 text-regular border-none mx-auto my-3.75
-                    !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
-          onClick={handleUserAction}
-          loading={isButtonLoading}
-          disabled={
-            (actionType === 'claim' && !claimAmount) ||
-            (actionType === 'deposit' && !depositAmount) ||
-            (actionType === 'withdraw' && !withdrawAmount)
-          }
-          disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
-        >
-          {`${
-            actionType === 'deposit'
-              ? `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
-              : actionType === 'withdraw'
-              ? `Withdraw ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
-              : `${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token}`
-          }`}
-        </Button>
-        <div
-          tw="text-center text-red-2 font-bold text-regular cursor-pointer mb-2.5"
-          onClick={() => {
-            handleCancel()
-            setActionModal(false)
-          }}
-        >
-          Cancel
-        </div>
-        <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
-          By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
-          you agree to our{' '}
-          <a
-            href="https://www.goosefx.io/terms"
-            target={'_blank'}
-            rel={'noreferrer'}
-            tw="text-tiny font-semibold underline dark:text-white text-blue-1"
-          >
-            Terms of Service
-          </a>
-          .
         </div>
       </div>
     ),
