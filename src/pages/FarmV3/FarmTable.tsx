@@ -281,7 +281,7 @@ export const FarmTable: FC = () => {
                   onClick={() => setAllClaimModal(true)}
                   animated
                 >
-                  Claim All Yield
+                  Claim All
                 </Button>
               )}
               {pubKey != null && (

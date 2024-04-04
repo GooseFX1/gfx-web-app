@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useDarkMode } from '@/context'
-import { cn } from 'gfx-component-lib'
+import { Button, cn } from 'gfx-component-lib'
 import Lottie from 'lottie-react'
 import NoResultFarmdark from '@/animations/NoResultFarmdark.json'
 import NoResultFarmlite from '@/animations/NoResultFarmlite.json'
@@ -26,19 +26,13 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
         <div className="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
         <div className="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
         {requestPool && (
-          <address
-            className="w-[219px] h-8.75 cursor-pointer flex items-center justify-center mt-4 text-regular
-            rounded-[30px] font-semibold bg-gradient-1 text-white"
+          <Button
+            colorScheme={'blue'}
+            className={'w-[219px] mt-3.75'}
+            onClick={() => window.open('https://discord.gg/cDEPXpY26q', '_blank')}
           >
-            <a
-              href="https://discord.gg/cDEPXpY26q"
-              className="font-semibold text-white"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Request Pool
-            </a>
-          </address>
+            Request Pool
+          </Button>
         )}
       </div>
     </div>
