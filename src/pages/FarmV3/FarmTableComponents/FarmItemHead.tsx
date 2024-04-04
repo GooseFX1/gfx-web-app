@@ -57,7 +57,7 @@ const FarmItemHead: FC<{
           <h4 className={'text-center dark:text-text-darkmode-primary text-text-lightmode-primary'}>{balance}</h4>
         </>
       )}
-      <div className={'w-5  ml-auto'}>
+      <div className={'transition-all w-5  ml-auto'}>
         <CircularArrow className={`h-5 w-5`} />
       </div>
     </AccordionTrigger>
