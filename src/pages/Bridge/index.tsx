@@ -1,16 +1,9 @@
 import { useLayoutEffect, useMemo, FC, useRef, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
-import { styled } from 'twin.macro'
 import PageLoader from '../../components/common/PageLoader'
-import { Tooltip } from '../../components/Tooltip'
 import useWindowSize from '../../utils/useWindowSize'
-
-const CONTAINER = styled.div`
-  .debridge-widget-iframe {
-    margin: 0px auto;
-  }
-`
+import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 
 const Bridge: FC = () => {
   const { mode } = useDarkMode()
@@ -98,32 +91,32 @@ const Bridge: FC = () => {
   }, [config])
 
   return (
-    <CONTAINER>
+    <div className={`[&_*.debridge-widget-iframe]:mx-auto [&_*.debridge-widget-iframe]:my-0`}>
       {isLoading && <PageLoader />}
-      <div tw="w-[600px] m-auto relative">
-        <div tw="absolute left-[18px] top-[14px] z-[1]">
-          <Tooltip
-            title="The bridge module requires a wallet connection for the source chain separate from the 
-            the GooseFX dApp. The destiation address for your funds must be pasted below"
-            infoIcon={false}
-            placement="bottomLeft"
-            color={mode === 'dark' ? '#ffffff' : '#000'}
-          >
-            <div
-              tw="border border-solid border-grey-1 w-[178px] sm:w-[160px] h-8 rounded-[100px] 
+      <div className="w-[600px] m-auto relative">
+        <div className="absolute left-[18px] top-[14px]">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className="border border-solid border-grey-1 w-[178px] sm:w-[160px] h-8 rounded-[100px]
               cursor-pointer py-0.5 pl-2.5 pr-1 flex flex-row items-center 
               justify-between bg-grey-5 dark:bg-black-1 sm:right-0"
-            >
-              <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
-                Bridge Wallet FAQ
-              </span>
-              <img tw="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
-            </div>
+              >
+                <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
+                  Bridge Wallet FAQ
+                </span>
+                <img className="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              The bridge module requires a wallet connection for the source chain separate from the the GooseFX
+              dApp. The destiation address for your funds must be pasted below
+            </TooltipContent>
           </Tooltip>
         </div>
       </div>
       <div id="debridgeWidget" ref={deBridgeRef} />
-    </CONTAINER>
+    </div>
   )
 }
 
