@@ -788,7 +788,7 @@ const CollapsibleContent: FC<{
             </div>
           </>
         )}
-        <div className={'col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>
+        <div className={'flex justify-center col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>
           <OracleIcon token={coin} />
         </div>
       </div>
@@ -850,7 +850,6 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
 }) => {
   const { connected } = useWallet()
   const { mode } = useDarkMode()
-  console.log(disableActionButton, disabled)
 
   return (
     <div className={'flex flex-col min-lg:flex-row  gap-2.5 '}>
