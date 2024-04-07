@@ -28,6 +28,7 @@ import {
   Dialog
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
+import { SOCIAL_MEDIAS } from '../constants'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -38,6 +39,7 @@ export const MainNav: FC = () => {
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const showRewardsModal = query.get('rewards')
+  const [isBannerActive] = useBoolean(true)
 
   useEffect(() => {
     if (showRewardsModal) {
@@ -46,10 +48,7 @@ export const MainNav: FC = () => {
   }, [location])
 
   return (
-    <div
-      className={`w-screen flex flex-col border-0 border-b-1 border-solid border-grey-2 dark:border-black-4
-        fixed top-0 z-[1] h-[56px]`}
-    >
+    <div className={`w-screen flex flex-col fixed top-0 z-[10]`}>
       {rewardModal && (
         <ModalSlide
           rewardModal={rewardModal}
@@ -57,9 +56,20 @@ export const MainNav: FC = () => {
           rewardToggle={!breakpoint.isMobile && rewardToggle}
         />
       )}
+      {isBannerActive && breakpoint.isDesktop && (
+        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>
+          Solana network is currently congested. Due to this some transactions may fail to confirm without retries
+          and volumes will be lower than usual. See our{' '}
+          <a href={SOCIAL_MEDIAS.twitter} target="_blank">
+            Twitter
+          </a>{' '}
+          for further updates.
+        </div>
+      )}
+
       <div
-        className={`h-14 px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
-        relative`}
+        className={`h-[56px] px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
+        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}
       >
         <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
           <img className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />

@@ -61,7 +61,7 @@ export const More: FC = () => {
   if (breakpoint.isMobile || breakpoint.isTablet) return null
   return (
     <DropdownMenu onOpenChange={setIsActive.toggle}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="mr-2">
         <Icon
           key={`${mode}-more-button`}
           src={`/img/mainnav/settings-${mode}-${isActive ? 'active' : 'inactive'}.svg`}
