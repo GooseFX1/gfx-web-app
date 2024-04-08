@@ -7,23 +7,6 @@ import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, IconToolt
 
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
-//
-// const STYLED_POPUP = styled(PopupCustom)`
-//   .ant-modal-content {
-//     ${tw`h-full dark:bg-black-2 bg-white rounded-bigger`}
-//   }
-//   .ant-modal-close-x {
-//     > img {
-//       ${tw`sm:!h-4 sm:!w-4 absolute bottom-2 opacity-60`}
-//     }
-//   }
-//   .ant-modal-body {
-//     ${tw`p-5 sm:p-[15px]`}
-//   }
-//   .tooltipIcon {
-//     ${tw`h-4 w-4 max-w-none ml-0`}
-//   }
-// `
 
 export const ActionModal: FC<{
   actionModal: boolean
@@ -170,7 +153,7 @@ export const ActionModal: FC<{
             colorScheme={'blue'}
             className={`duration-500`}
             onClick={handleUserAction}
-            loading={isButtonLoading}
+            isLoading={isButtonLoading}
             disabled={
               (actionType === 'claim' && !claimAmount) ||
               (actionType === 'deposit' && !depositAmount) ||

@@ -6672,10 +6672,10 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-gfx-component-lib@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.8.0.tgz#4882743d7936e2ab77c8a759f9bae1e6066d8ba4"
-  integrity sha512-2CEGBTxEpbswZ3PMo2MC5RIeF5/03g7Fd+sm6DhmmvTD/1EM01c2YOTcumQLhtNH3Sz+qarPrdeLnpoH3T+HzQ==
+gfx-component-lib@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.9.0.tgz#fce02f57d9152295b6bd1820c597fc5d7ea39396"
+  integrity sha512-Y8O0O6nMUMUyfNm5vKpqjNcAhSz49zfBVkL006Tx74GTGg0ZHNg9hQQhvoUM9JyQ5b4vhXd9juNNTVt3Uid0Cg==
   dependencies:
     "@radix-ui/react-accordion" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.0.4"
@@ -6696,6 +6696,7 @@ gfx-component-lib@^1.8.0:
     class-variance-authority "^0.7.0"
     clsx "^2.0.0"
     embla-carousel-react "^8.0.0"
+    lottie-react "^2.4.0"
     lucide-react "^0.294.0"
     next-themes "^0.2.1"
     react "^18.2.0"
@@ -8017,7 +8018,7 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lottie-react@^2.2.1:
+lottie-react@^2.2.1, lottie-react@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/lottie-react/-/lottie-react-2.4.0.tgz#f7249eee2b1deee70457a2d142194fdf2456e4bd"
   integrity sha512-pDJGj+AQlnlyHvOHFK7vLdsDcvbuqvwPZdMlJ360wrzGFurXeKPr8SiRCjLf3LrNYKANQtSsh5dz9UYQHuqx4w==

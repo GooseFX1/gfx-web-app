@@ -1,8 +1,4 @@
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
-import tw, { styled } from 'twin.macro'
-import 'styled-components/macro'
-import { Button, PopupCustom } from '../../components'
-import { Drawer } from 'antd'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode, usePriceFeedFarm, useConnectionConfig, useSSLContext } from '../../context'
 import { executeAllPoolClaim } from '../../web3'
@@ -11,27 +7,7 @@ import { notify, truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
-
-const STYLED_POPUP = styled(PopupCustom)`
-  .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-white rounded-[10px]`}
-  }
-
-  .ant-modal-close {
-    ${tw`right-[10px] top-[10px]`}
-
-    .ant-modal-close-x {
-      ${tw`!h-[18px] !w-[18px] sm:!h-4 sm:!w-4`}
-    }
-  }
-
-  .ant-modal-body {
-    ${tw`p-2.5 sm:p-[15px]`}
-  }
-  .tos {
-    ${tw`text-tiny font-semibold underline dark:text-white text-blue-1`}
-  }
-`
+import { Button, Dialog, DialogBody, DialogCloseDefault, DialogContent, DialogOverlay } from 'gfx-component-lib'
 
 export const AllClaimModal: FC<{
   allClaimModal: boolean
@@ -40,7 +16,6 @@ export const AllClaimModal: FC<{
 }> = ({ allClaimModal, setAllClaimModal, rewardsArray }) => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
-  const elem = document.getElementById('farm-container')
   const { wallet } = useWallet()
   const wal = useWallet()
   const { SSLProgram } = usePriceFeedFarm()
@@ -76,28 +51,20 @@ export const AllClaimModal: FC<{
 
   const Content = useMemo(
     () => (
-      <div>
-        {breakpoint.isMobile && (
-          <div
-            tw="absolute right-[25px] text-[25px] cursor-pointer"
-            onClick={() => {
-              setAllClaimModal(false)
-            }}
-          >
-            <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
-          </div>
-        )}
-        <h5 tw="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5">Claim All Yield</h5>
-        <div tw="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-4 font-sans">
+      <>
+        <h5 className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5">Claim All Yield</h5>
+        <div className="dark:text-grey-2 text-grey-1 text-tiny font-semibold mb-4 font-sans">
           By claiming, you will get all pending yield available.
         </div>
         {rewardsArray &&
           rewardsArray.map((item, index) => {
             if (item && item?.reward && item?.tokenName) {
               return (
-                <div key={index} tw="flex flex-row justify-between mb-2.5">
-                  <span tw="text-regular font-semibold text-grey-1 dark:text-grey-2">{item?.tokenName} Pool</span>
-                  <span tw="text-regular font-semibold text-black-4 dark:text-grey-8">
+                <div key={index} className="flex flex-row justify-between mb-2.5">
+                  <span className="text-regular font-semibold text-grey-1 dark:text-grey-2">
+                    {item?.tokenName} Pool
+                  </span>
+                  <span className="text-regular font-semibold text-black-4 dark:text-grey-8">
                     {truncateBigNumber(item?.reward) + ' ' + item?.tokenName}
                   </span>
                 </div>
@@ -105,27 +72,22 @@ export const AllClaimModal: FC<{
             }
           })}
         <Button
-          height="35px"
-          cssStyle={tw`duration-500 w-[380px] sm:w-[100%] !h-10 bg-blue-1 text-regular border-none mx-auto my-3.75
-                    !text-white font-semibold rounded-[50px] flex items-center justify-center outline-none`}
+          colorScheme={'blue'}
           onClick={handleAllClaim}
-          loading={isLoading}
-          disabled={rewardsArray && !rewardsArray?.length}
-          disabledColor={tw`dark:bg-black-1 bg-grey-5 !text-grey-1 opacity-70`}
+          isLoading={isLoading}
+          fullWidth
+          disabled={(rewardsArray && !rewardsArray?.length) || isLoading}
         >
-          <span tw="font-bold text-regular"> Claim All </span>
+          <span className="font-bold text-regular"> Claim All </span>
         </Button>
-        <div
-          tw="text-center text-red-2 font-bold text-regular cursor-pointer mb-2.5"
-          onClick={() => setAllClaimModal(false)}
-        >
+        <Button variant={'link'} colorScheme={'red'} fullWidth onClick={() => setAllClaimModal(false)}>
           Cancel
-        </div>
-        <div tw="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
+        </Button>
+        <div className="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
           By claiming, you agree to our{' '}
           <a
             href={TERMS_OF_SERVICE}
-            tw="text-tiny font-semibold underline dark:text-white text-blue-1"
+            className="text-tiny font-semibold underline dark:text-white text-blue-1"
             target={'_blank'}
             rel={'noreferrer'}
           >
@@ -133,38 +95,20 @@ export const AllClaimModal: FC<{
           </a>
           .
         </div>
-      </div>
+      </>
     ),
     [breakpoint, mode, isLoading]
   )
-
-  return breakpoint.isMobile ? (
-    <Drawer
-      title={null}
-      placement="bottom"
-      closable={false}
-      key="bottom"
-      open={allClaimModal}
-      getContainer={elem}
-      maskClosable={true}
-      height="auto"
-      destroyOnClose={true}
-      className={'gfx-drawer'}
-    >
-      {Content}
-    </Drawer>
-  ) : (
-    <STYLED_POPUP
-      height={'auto'}
-      width={'400px'}
-      title={null}
-      centered={true}
-      closeIcon={<img key={`close-mobile-button`} src={`/img/assets/close-${mode}.svg`} alt="close-icon" />}
-      visible={allClaimModal ? true : false}
-      onCancel={() => setAllClaimModal(false)}
-      footer={null}
-    >
-      {Content}
-    </STYLED_POPUP>
+  return (
+    <Dialog open={allClaimModal} onOpenChange={setAllClaimModal}>
+      <DialogOverlay />
+      <DialogContent
+        className={'min-md:w-[400px] p-2.5 w-full  sm:rounded-b-none'}
+        placement={breakpoint.isMobile ? 'bottom' : 'default'}
+      >
+        <DialogCloseDefault />
+        <DialogBody className={'w-full mx-auto flex-col'}>{Content}</DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
