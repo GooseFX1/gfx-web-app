@@ -238,26 +238,27 @@ export const FarmTable: FC = () => {
       <div className="flex items-center gap-3.75">
         <RadioOptionGroup
           defaultValue={'all_pools'}
+          value={pool.name}
           className={'w-full min-md:w-max gap-1.25 sm:gap-0 sm:grid-cols-4'}
           optionClassName={`min-md:w-[85px]`}
           options={[
             {
-              value: 'all_pools',
+              value: poolType.all.name,
               label: 'All Pools',
               onClick: () => (operationPending ? null : handleToggle(poolType.all))
             },
             {
-              value: 'Stable',
+              value: poolType.stable.name,
               label: 'Stable',
               onClick: () => (operationPending ? null : handleToggle(poolType.stable))
             },
             {
-              value: 'Primary',
+              value: poolType.primary.name,
               label: 'Primary',
               onClick: () => (operationPending ? null : handleToggle(poolType.primary))
             },
             {
-              value: 'Hyper',
+              value: poolType.hyper.name,
               label: 'Hyper',
               onClick: () => (operationPending ? null : handleToggle(poolType.hyper))
             }
