@@ -6,13 +6,15 @@ import { useConnectionConfig } from './settings'
 import { notify } from '../utils'
 import { serum } from '../web3'
 import { MarketSide, useCrypto } from './crypto'
-import { loadBidsSlab } from '../pages/TradeV3/perps/utils'
+import { loadSlab } from '../pages/TradeV3/perps/utils'
 import { useTraderConfig } from './trader_risk_group'
 import * as anchor from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { httpClient } from '../api'
 import { GET_OPEN_ORDERS, GET_ORDERBOOK } from '../pages/TradeV3/perps/perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
+
+const MILLISECONDS_IN_SECOND: number = 1000
 
 export type OrderBook = {
   [x in MarketSide]: [number, number, BN, BN, string?][]
@@ -133,8 +135,25 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
       pairName: activeProduct.pairName,
       devnet: isDevnet
     })
-    const orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
-    const orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
+    const lastUpdated = new Date(res.data?.updatedTime).getTime()
+    const currentTime = new Date().getTime()
+    const difference = currentTime - lastUpdated
+
+    let orderbookAsks
+    let orderbookBids
+    if (difference > 60 * MILLISECONDS_IN_SECOND) {
+      const { connection } = useConnectionConfig()
+      let [asks, bids] = await Promise.all([
+        loadSlab(connection, activeProduct.asks),
+        loadSlab(connection, activeProduct.bids)
+      ])
+      orderbookBids = [...bids.items(false)].map((bid) => [bid.leafNode.getPrice(), bid.leafNode.baseQuantity])
+      orderbookAsks = [...asks.items(false)].map((ask) => [ask.leafNode.getPrice(), ask.leafNode.baseQuantity])
+    } else {
+      orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
+      orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
+    }
+
     setOrderBook((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
     setOrderBookCopy((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
   }

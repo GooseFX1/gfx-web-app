@@ -476,12 +476,12 @@ export const convertToFractional = (amount: string): Fractional => {
   return new Fractional({ m: new anchor.BN(newM), exp: new anchor.BN(newdigitsAfterDecimal) })
 }
 
-export const loadBidsSlab = async (connection: Connection, bidAccount: string) => {
-  const bidsInfo = await connection.getAccountInfo(new PublicKey(bidAccount), 'finalized')
-  if (!bidsInfo?.data) {
-    throw new Error('Invalid asks account')
+export const loadSlab = async (connection: Connection, account: string) => {
+  const accountInfo = await connection.getAccountInfo(new PublicKey(account), 'finalized')
+  if (!accountInfo?.data) {
+    throw new Error('Invalid asks/bids account')
   }
-  return Slab.deserialize(bidsInfo.data, 40)
+  return Slab.deserialize(accountInfo.data, 40)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
