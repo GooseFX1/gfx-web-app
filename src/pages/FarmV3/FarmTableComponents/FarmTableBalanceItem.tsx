@@ -531,8 +531,12 @@ const CollapsibleContent: FC<{
   const handleHalf = useCallback(
     () =>
       modeOfOperation === ModeOfOperation.DEPOSIT
-        ? setDepositAmount(userTokenBalance ? numberFormatter(userTokenBalance / 2) : '0')
-        : setWithdrawAmount(userDepositedAmount ? numberFormatter(userDepositedAmount?.toNumber() / 2) : '0'),
+        ? setDepositAmount(userTokenBalance ? (userTokenBalance / 2).toString() : '0')
+        : setWithdrawAmount(
+            userDepositedAmount
+              ? (userDepositedAmount?.toNumber() / 2 / 10 ** coin.mintDecimals).toFixed(coin.mintDecimals)
+              : '0'
+          ),
     [modeOfOperation, userTokenBalance, userDepositedAmount]
   )
   const handleMax = useCallback(
@@ -544,13 +548,17 @@ const CollapsibleContent: FC<{
   )
 
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
-  const canDeposit = depositAmount && +depositAmount >= MIN_AMOUNT_DEPOSIT
-  const canWithdraw = withdrawAmount && +withdrawAmount >= MIN_AMOUNT_WITHDRAW
+  const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
+  const canWithdraw = userDepositedAmount?.toNumber() >= MIN_AMOUNT_WITHDRAW
+  const inputDepositDisabled = +depositAmount < MIN_AMOUNT_DEPOSIT
+  const inputWithdrawDisabled = +withdrawAmount < MIN_AMOUNT_WITHDRAW
   const disabled =
     !connected ||
     operationPending ||
     isButtonLoading ||
-    (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit || userTokenBalance == 0 : !canWithdraw)
+    (modeOfOperation === ModeOfOperation.DEPOSIT
+      ? !canDeposit || inputDepositDisabled
+      : !canWithdraw || inputWithdrawDisabled)
   const canClaim = claimableReward > 0
   return (
     <>

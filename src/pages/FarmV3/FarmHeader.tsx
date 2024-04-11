@@ -215,7 +215,7 @@ export const FarmHeader: FC = () => {
             colorScheme={'primaryGradient'}
             size={'lg'}
           >
-            <ContainerTitle>
+            <ContainerTitle className={'z-[1]'}>
               <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2">{card?.name}:</h4>
               &nbsp;
               <IconTooltip tooltipType={'outline'}>{getTooltipText(userPubKey ? index : index + 1)}</IconTooltip>

@@ -135,10 +135,10 @@ export const Connect: FC<MenuItemProps> = ({
     >
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <Tooltip>
-          <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-            <TooltipTrigger
-              className={cn('focus-visible:outline-none', customButtonStyle, customButtonWrapperStyle)}
-            >
+          <TooltipTrigger
+            className={cn('focus-visible:outline-none', customButtonStyle, customButtonWrapperStyle)}
+          >
+            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
               <Button
                 colorScheme={!connected ? 'purple' : 'primaryGradient'}
                 size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
@@ -175,8 +175,8 @@ export const Connect: FC<MenuItemProps> = ({
                   />
                 )}
               </Button>
-            </TooltipTrigger>
-          </DropdownMenuTrigger>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
           <TooltipContent hidden={canConnect}>
             We are sorry, {pathname.includes('trade') ? 'Trade' : 'Farm'} is currently unavailable in your location
           </TooltipContent>

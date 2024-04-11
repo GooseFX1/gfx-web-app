@@ -1799,6 +1799,28 @@
     "@radix-ui/react-use-previous" "1.0.1"
     "@radix-ui/react-visually-hidden" "1.0.3"
 
+"@radix-ui/react-popover@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-popover/-/react-popover-1.0.7.tgz#23eb7e3327330cb75ec7b4092d685398c1654e3c"
+  integrity sha512-shtvVnlsxT6faMnK/a7n0wptwBD23xc1Z5mdrtKLwVEfsEMXodS0r5s0/g5P0hX//EKYZS2sxUjqfzlg52ZSnQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/primitive" "1.0.1"
+    "@radix-ui/react-compose-refs" "1.0.1"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-dismissable-layer" "1.0.5"
+    "@radix-ui/react-focus-guards" "1.0.1"
+    "@radix-ui/react-focus-scope" "1.0.4"
+    "@radix-ui/react-id" "1.0.1"
+    "@radix-ui/react-popper" "1.1.3"
+    "@radix-ui/react-portal" "1.0.4"
+    "@radix-ui/react-presence" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+    "@radix-ui/react-slot" "1.0.2"
+    "@radix-ui/react-use-controllable-state" "1.0.1"
+    aria-hidden "^1.1.1"
+    react-remove-scroll "2.5.5"
+
 "@radix-ui/react-popper@1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-popper/-/react-popper-1.1.3.tgz#24c03f527e7ac348fabf18c89795d85d21b00b42"
@@ -6672,10 +6694,10 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-gfx-component-lib@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.9.0.tgz#fce02f57d9152295b6bd1820c597fc5d7ea39396"
-  integrity sha512-Y8O0O6nMUMUyfNm5vKpqjNcAhSz49zfBVkL006Tx74GTGg0ZHNg9hQQhvoUM9JyQ5b4vhXd9juNNTVt3Uid0Cg==
+gfx-component-lib@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.10.1.tgz#ca3d2b81cfc2c77b337075c0139375da2a98ca44"
+  integrity sha512-0jGnCyaumB1vMFpy2bxFtYee0wrZ/eP5n48YYjwznNxCNx3QN/ZXBfEXZuMHW3NjDlUZOdE29q5bfiBZTyhrZw==
   dependencies:
     "@radix-ui/react-accordion" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.0.4"
@@ -6684,6 +6706,7 @@ gfx-component-lib@^1.9.0:
     "@radix-ui/react-hover-card" "^1.0.7"
     "@radix-ui/react-label" "^2.0.2"
     "@radix-ui/react-navigation-menu" "^1.1.4"
+    "@radix-ui/react-popover" "^1.0.7"
     "@radix-ui/react-radio-group" "^1.1.3"
     "@radix-ui/react-scroll-area" "^1.0.5"
     "@radix-ui/react-select" "^2.0.0"
@@ -6702,7 +6725,7 @@ gfx-component-lib@^1.9.0:
     react "^18.2.0"
     react-dom "^18.2.0"
     react-resizable-panels "^2.0.3"
-    sonner "^1.3.1"
+    sonner "^1.4.41"
     tailwind-merge "^2.2.1"
     tailwindcss-animate "^1.0.7"
     tailwindcss-border-gradient-radius "^3.0.1"
@@ -10309,15 +10332,15 @@ sonic-boom@^2.2.1:
   dependencies:
     atomic-sleep "^1.0.0"
 
-sonner@^1.3.1:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.4.0.tgz#f71b0576909043f6b32f05ff796c86ef6b97350a"
-  integrity sha512-nvkTsIuOmi9e5Wz5If8ldasJjZNVfwiXYijBi2dbijvTQnQppvMcXTFNxL/NUFWlI2yJ1JX7TREDsg+gYm9WyA==
-
 sonner@^1.4.1:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.4.2.tgz#92740c293e9d911de726080995bd8a0cc677ccd1"
   integrity sha512-x3Kfzfhb56V/ErvUnH5dZcsu6QkZpyIlRAogO4vAbN+AkBsA/8CFqOV+5djqbE5pQCpejtO4JBWL1zRj2sO/Vg==
+
+sonner@^1.4.41:
+  version "1.4.41"
+  resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.4.41.tgz#ff085ae4f4244713daf294959beaa3e90f842d2c"
+  integrity sha512-uG511ggnnsw6gcn/X+YKkWPo5ep9il9wYi3QJxHsYe7yTZ4+cOd1wuodOUmOpFuXL+/RE3R04LczdNCDygTDgQ==
 
 source-map-js@^1.0.1, source-map-js@^1.0.2:
   version "1.0.2"
