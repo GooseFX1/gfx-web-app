@@ -5,7 +5,14 @@ import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
-import { cn } from 'gfx-component-lib'
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  cn
+} from 'gfx-component-lib'
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
@@ -95,6 +102,7 @@ const ORDER_BUY = styled.div`
     flex: 1;
     font-size: 13px;
     font-weight: 500;
+    border-radius: 2px 0 0 2px;
     color: ${({ theme }) => theme.text21};
 
     &:not(:last-child) {
@@ -197,7 +205,7 @@ const ORDERBOOK_CONTAINER = styled.div`
   overflow-y: auto;
   align-items: baseline;
   justify-content: center;
-  padding: 0px 10px;
+  padding: 0px 0px;
   height: 100%;
   span {
     width: 50%;
@@ -264,6 +272,7 @@ export const OrderBook: FC = () => {
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const [spreadIndex, setSpreadIndex] = useState<number>(0)
   const prevOrderBook: any = usePrevious(orderBook)
+  const [showSpread, setShowSpread] = useState<boolean>(false)
   const [neworders, setNewOrders] = useState<{ bids: number[]; asks: number[] }>({
     bids: [],
     asks: []
@@ -425,33 +434,58 @@ export const OrderBook: FC = () => {
   }
 
   const SPREAD_DROPDOWN = (
-    <Menu>
+    <>
       {SPREADS.map((item, index) => (
-        <Menu.Item key={index} onClick={() => setSpreadIndex(index)}>
+        <DropdownMenuItem key={index} className="w-full" onClick={() => setSpreadIndex(index)}>
           {item}
-        </Menu.Item>
+        </DropdownMenuItem>
       ))}
-    </Menu>
+    </>
   )
 
   return (
     <div className={cn('h-full')}>
       {!checkMobile() && (
-        <div className={cn('flex p-2.5 h-[38px] items-center justify-between')}>
+        <div className={cn('flex pl-2 h-[38px] items-center justify-between')}>
           <div>
             <InfoLabel>
               {'Spread:'} {spreadAbsolute[1]}%
             </InfoLabel>
           </div>
           <div>
-            {
+            {/* {
               <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']} overlayClassName={`spread-dropdown ${mode}`}>
                 <div className="spreadDropdown">
                   {SPREADS[spreadIndex]}
                   <DownOutlined />
                 </div>
               </Dropdown>
-            }
+            } */}
+            <DropdownMenu open={showSpread} onOpenChange={setShowSpread}>
+              <DropdownMenuTrigger asChild={true}>
+                <Button
+                  variant="outline"
+                  colorScheme="secondaryGradient"
+                  onClick={() => setShowSpread(true)}
+                  className={cn('max-content mr-2 h-[30px] w-[88px]')}
+                >
+                  <div className="flex w-full justify-between text-tiny">
+                    ${SPREADS[spreadIndex]}
+                    <img
+                      style={{
+                        transform: `rotate(${showSpread ? '0deg' : '180deg'})`,
+                        transition: 'transform 0.2s ease-in-out'
+                      }}
+                      src={`/img/mainnav/connect-chevron.svg`}
+                      alt={'connect-chevron'}
+                    />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent asChild>
+                <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>{SPREAD_DROPDOWN}</div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       )}
@@ -468,7 +502,10 @@ export const OrderBook: FC = () => {
           <Loader />
         ) : (
           <ORDERBOOK_CONTAINER>
-            <span>
+            <span
+              className="dark:border-t-black-4 dark:border-r-black-4 border-t-grey-4 border-r-grey-4 
+            dark:border-b-0 dark:border-l-0 border pl-2"
+            >
               {
                 slicedOrderBookBids.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
@@ -477,10 +514,14 @@ export const OrderBook: FC = () => {
                     acc.nodes.push(
                       <ORDER_BUY key={index}>
                         <span onClick={() => handleSetSize(size)}>
-                          <ContentLabel>{removeFloatingPointError(size)}</ContentLabel>
+                          <ContentLabel>
+                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                          </ContentLabel>
                         </span>
                         <span onClick={() => handleSetPrice(price)}>
-                          <InfoLabel>${removeFloatingPointError(price)}</InfoLabel>
+                          <InfoLabel>
+                            <p className="text-[13px]">${removeFloatingPointError(price)}</p>
+                          </InfoLabel>
                         </span>
 
                         <SIZE_BUY
@@ -497,7 +538,10 @@ export const OrderBook: FC = () => {
                 ).nodes
               }
             </span>
-            <span>
+            <span
+              className="dark:border-t-black-4 dark:border-r-0 border-t-grey-4 border-r-0 
+            dark:border-b-0 dark:border-l-0 border pr-2 h-full"
+            >
               {
                 slicedOrderBookAsks.reduce(
                   (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
@@ -506,14 +550,18 @@ export const OrderBook: FC = () => {
                     acc.nodes.push(
                       <ORDER_SELL key={index}>
                         <span onClick={() => handleSetPrice(price)}>
-                          <InfoLabel>${removeFloatingPointError(price)}</InfoLabel>
+                          <InfoLabel>
+                            <p className="text-[13px]">${removeFloatingPointError(price)}</p>
+                          </InfoLabel>
                         </span>
                         <span onClick={() => handleSetSize(size)}>
-                          <ContentLabel>{removeFloatingPointError(size)}</ContentLabel>
+                          <ContentLabel>
+                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                          </ContentLabel>
                         </span>
 
                         <div
-                          className={cn('bg-red-2 absolute left-0 h-full')}
+                          className={cn('bg-red-2 rounded-r-[2px] absolute left-0 h-full')}
                           style={{
                             width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%`,
                             opacity: neworders.asks.includes(index) ? '1' : '0.4'

@@ -637,6 +637,7 @@ export const PlaceOrder: FC = () => {
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Deposit!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
+    else if (buttonState === ButtonState.NullAmount) return 'Enter Amount'
 
     if (order.side === 'buy') return 'LONG ' + symbol
     else return 'SHORT ' + symbol
@@ -795,6 +796,7 @@ export const PlaceOrder: FC = () => {
     if (order.side === 'buy' && takeProfitInput < +order.price) return true
     if (order.side === 'sell' && takeProfitInput > +order.price) return true
     if (!takeProfitInput) return true
+    return false
   }
 
   const calcTakeProfit = (value, index) => {
@@ -849,7 +851,7 @@ export const PlaceOrder: FC = () => {
               <Button
                 variant={'ghost'}
                 disabled={checkDisabled()}
-                className={cn('cursor-pointer')}
+                className={cn(`cursor-pointer ${checkDisabled() ? '' : '!text-white'}`)}
                 onClick={!checkDisabled() && handleSave}
               >
                 Save
@@ -858,9 +860,12 @@ export const PlaceOrder: FC = () => {
           }
         >
           <Input
+            //  className={checkDisabled() ? 'save-disable' : 'save-enable ' + `${mode}`}
+            // onClick={!checkDisabled() && handleSave}
             onChange={handleDropdownInput}
+            type="number"
             className={'dark:border-border-darkmode-secondary'}
-            placeholder={'Set custom price'}
+            placeholder={'Enter custom price'}
           />
         </InputGroup>
       </DropdownMenuItem>
@@ -1416,7 +1421,7 @@ export const PlaceOrder: FC = () => {
                 step={0.1}
                 min={0}
               >
-                {sliderValue}
+                {sliderValue}x
               </Slider>
               <div className={cn('h-5 w-full flex items-center justify-center mt-3')}>
                 <div className={cn('flex w-full justify-center')}>
@@ -1453,7 +1458,7 @@ export const PlaceOrder: FC = () => {
             <div className={cn('ml-auto w-full')}>
               {publicKey ? (
                 <Button
-                  className={cn('min-w-[170px] w-full h-[30px]')}
+                  className={cn('min-w-[170px] !w-full h-[30px]')}
                   variant="default"
                   colorScheme="blue"
                   size="lg"
@@ -1463,7 +1468,7 @@ export const PlaceOrder: FC = () => {
                   <h4>{buttonText}</h4>
                 </Button>
               ) : (
-                <Connect containerStyle="!w-[100%] ml-10" />
+                <Connect customButtonStyle="!w-[100%]" containerStyle="!w-[100%]" />
               )}
             </div>
           </div>
@@ -1474,7 +1479,7 @@ export const PlaceOrder: FC = () => {
 }
 
 const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
-  <div className={cn('p-2.5')}>
+  <div className={cn('px-2.5 py-1')}>
     <div className={cn('h-8.75 flex items-center justify-between')}>
       <div className={cn('flex items-center')}>
         <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} />
@@ -1497,14 +1502,14 @@ const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handl
     <div className={cn('flex items-center')}>
       <div
         onClick={() => handleOrderSide('buy')}
-        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer
+        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]
        justify-center ${order.side === 'buy' && 'bg-green-4'}`)}
       >
         <TitleLabel whiteText={order.side === 'buy'}> Long </TitleLabel>
       </div>
       <div
         onClick={() => handleOrderSide('sell')}
-        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer
+        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]
       justify-center ${order.side === 'sell' && 'bg-red-1'}`)}
       >
         <TitleLabel whiteText={order.side === 'sell'}> Short </TitleLabel>
