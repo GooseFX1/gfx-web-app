@@ -25,7 +25,7 @@ import {
 import { GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SELECTED_PAIR_CTN = styled.div`
-  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5 mt-1`}
+  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5 mt-0`}
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -273,7 +273,7 @@ const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = 
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
-    <GradientBorder radius={50}>
+    <GradientBorder radius={3}>
       <div className="flex items-center h-full p-2">
         <img className="h-8 w-8" src={assetIcon} alt="" />
         <InfoLabel>

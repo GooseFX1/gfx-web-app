@@ -551,7 +551,10 @@ const FundingHistoryComponent: FC = () => {
           </div>
         ) : (
           <div className={cn('h-[80%] flex items-center justify-center')}>
-            <InfoLabel>No Funding History</InfoLabel>
+            <div className={cn('flex items-center justify-center h-[80%]')}>
+              <h4 className="text-grey-1"> No Funding History</h4>
+            </div>
+            {/* <InfoLabel>No Funding History</InfoLabel> */}
           </div>
         )}
       </FUNDING_HISTORY>
@@ -801,7 +804,12 @@ export const HistoryPanel: FC = () => {
       </TabsContent>
       <TabsContent className={cn('h-[100%]')} value="4">
         <TabColumnsDisplay activeTab={activeTab} />
-        {null}
+        <div className={cn('h-[80%] flex items-center justify-center')}>
+          <div className={cn('flex items-center justify-center h-[80%]')}>
+            <h4 className="text-grey-1"> No History</h4>
+          </div>
+          {/* <InfoLabel>No Funding History</InfoLabel> */}
+        </div>
       </TabsContent>
     </Tabs>
   )

@@ -35,7 +35,7 @@ const ConnectWalletLayout: FC = (): JSX.Element => {
   return (
     <div className={cn('h-[90%] flex flex-col items-center justify-center')}>
       <img src={`/img/assets/accountConnect${mode}.png`} className={cn('w-[127px] h-[84px]')} />
-      <h4 className={cn('m-2 dark:text-grey-1 text-grey-2')}>See your Account!</h4>
+      <h4 className={cn('m-2 dark:text-grey-1 text-grey-1')}>See your Account!</h4>
       <div>
         <Connect />
       </div>
@@ -101,6 +101,27 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
       </div>
     )
   }
+  const getBarsData = () => {
+    const accountHealth = 40
+    return (
+      <div className="h-[20px] w-[32px]">
+        <div className="flex">
+          {[0, 25, 50, 75].map((item, index) => (
+            <div
+              key={index}
+              className={
+                item <= accountHealth
+                  ? `h-[20px] w-[5px] mr-[2px] rounded-[5px] ${
+                      accountHealth > 75 ? `bg-green-2` : accountHealth >= 50 ? `bg-yellow-1` : `bg-red-2`
+                    }`
+                  : 'h-[20px] w-[5px] mr-[2px] bg-grey-5 rounded-[5px] px-[2px]'
+              }
+            ></div>
+          ))}
+        </div>
+      </div>
+    )
+  }
   return (
     <div tw="flex items-center justify-between mt-2">
       <div>
@@ -117,7 +138,10 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           </Tooltip>
         </div>
       </div>
-      <InfoLabel>{getHealthData()}</InfoLabel>
+      <div className="flex">
+        <div>{getBarsData()}</div>
+        <InfoLabel>{getHealthData()}</InfoLabel>
+      </div>
     </div>
   )
 }

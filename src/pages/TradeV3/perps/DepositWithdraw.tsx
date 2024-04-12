@@ -8,11 +8,12 @@ import { useTraderConfig } from '../../../context/trader_risk_group'
 import 'styled-components/macro'
 import { truncateAddress } from '../../../utils'
 import useBoolean from '../../../hooks/useBoolean'
-import { Button } from '../../../components'
+// import { Button } from '../../../components'
 import type { MenuProps } from 'antd'
 import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
+  Button,
   Dialog,
   DialogBody,
   DialogClose,
@@ -20,11 +21,15 @@ import {
   DialogContent,
   DialogOverlay,
   DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
   cn
 } from 'gfx-component-lib'
 import { ModalHeader } from '../InfoBanner'
 import { DepositWithdraw } from './DepositWithdrawNew'
 import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
+import { CircularArrow } from '@/components/common/Arrow'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -67,10 +72,10 @@ const CLOSE_ACCOUNT_CONDITIONS = styled.div`
     ${tw`mt-1 flex items-center`}
   }
   .approved {
-    ${tw`text-green-1 font-semibold h-6`}
+    ${tw`text-green-4 font-semibold h-6`}
   }
   .failed {
-    ${tw`text-red-1 font-semibold h-6`}
+    ${tw`text-red-2 font-semibold h-6`}
   }
 `
 
@@ -270,7 +275,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
         </InfoLabel>
       </div>
 
-      <Dropdown menu={{ items }} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
+      {/* <Dropdown menu={{ items }} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
         <SELECTED_COIN>
           <COIN_INFO>
             {
@@ -299,7 +304,84 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             </div>
           )}
         </SELECTED_COIN>
-      </Dropdown>
+      </Dropdown> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild={true}>
+          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 rounded-[100px]')}>
+            <div className={cn('flex w-full items-center')}>
+              {/* <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" /> */}
+              <InfoLabel>
+                {/* <h4 className={cn('ml-2 mr-1')}>{'symbol'}</h4>{' '} */}
+                {
+                  <h4 className="coin">
+                    {traderInstanceSdk === null
+                      ? 'No Accounts'
+                      : traderAddresses === null
+                      ? 'Loading...'
+                      : traderAddresses[0]
+                      ? ' Trader Account #1 '
+                      : 'No Accounts'}
+                  </h4>
+                }
+              </InfoLabel>
+
+              <ContentLabel>
+                <h4 className="ml-1">
+                  (
+                  {traderAddresses !== null &&
+                    traderAddresses[0] &&
+                    truncateAddress(traderAddresses[0]?.toString())}
+                  )
+                </h4>
+              </ContentLabel>
+              <div className={cn('ml-auto flex items-center')}>
+                <div className={cn('mr-2')}>
+                  {/* <InfoLabel>
+                    <h4>
+                      {tradeType === 'deposit'
+                        ? tokenAmount && tokenAmount.uiAmountString
+                          ? Number(tokenAmount.uiAmountString).toFixed(2)
+                          : '0.00'
+                        : traderInfo.maxWithdrawable
+                          ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                          : '0.00'}
+                    </h4>
+                  </InfoLabel> */}
+                </div>
+                <CircularArrow cssStyle={tw`h-5 w-5`} />
+              </div>
+            </div>
+
+            {/* <SELECTED_COIN>
+                  <COIN_INFO>
+                    <img className="asset-icon" src={assetIcon} alt="coin-icon" />
+                    <div className="coin">{symbol}</div>
+                    <div className="market-add">{trunMarketAddress}</div>
+                  </COIN_INFO>
+                  <div className="dropdown">
+                    <div className="available-bal">
+                      {tradeType === 'deposit'
+                        ? tokenAmount && tokenAmount.uiAmountString
+                          ? Number(tokenAmount.uiAmountString).toFixed(2)
+                          : '0.00'
+                        : traderInfo.maxWithdrawable
+                        ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                        : '0.00'}
+                    </div>
+                    <img
+                      src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
+                      alt="arrow-icon"
+                      height="8"
+                      width="16"
+                    />
+                  </div>
+                </SELECTED_COIN>{' '} */}
+          </Button>
+        </DropdownMenuTrigger>
+        {/* <DropdownMenuContent asChild className={cn('z-[1200]')}>
+          <div className={'flex flex-col gap-1.5 z-[1200] items-start w-[480px] max-w-[500px]'}>{}</div>
+        </DropdownMenuContent> */}
+      </DropdownMenu>
 
       <div tw="flex flex-row items-center justify-between mt-2 sm:mt-5">
         <InfoLabel>In order to close your account: </InfoLabel>
@@ -317,18 +399,19 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
           )}
         </div>
         <ContentLabel>
-          <h5 className={cn('h-14 px-2')}>
+          <p className={cn('text-tiny p-2.5')}>
             I agree that my account closure is permanent and erases all the data. In addition you will reclaim the
             SOL rent fee paid when creating the account.
-          </h5>
+          </p>
         </ContentLabel>
       </div>
 
       <div tw="flex items-center justify-center">
-        <Button
+        {/* <Button
           loading={isLoading}
           onClick={closeTraderAccountFn}
-          cssStyle={tw`bg-red-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
+          cssStyle={tw`bg-red-1 text-grey-5 
+           font-semibold border-0 rounded-circle text-average sm:text-regular`}
           disabled={
             !checkboxChecked ||
             isLoading ||
@@ -337,6 +420,31 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
+          tw="w-[240px] h-8.75 mt-2 sm:mt-3"
+        >
+          Close Account
+        </Button> */}
+        {/* className={cn('min-w-[170px] w-full h-[30px]')}
+                  variant="default"
+                  colorScheme="blue"
+                  size="lg"
+                  onClick={() => handlePlaceOrder()}
+                  disabled={buttonState !== ButtonState.CanPlaceOrder} */}
+        <Button
+          loading={isLoading}
+          disabled={
+            !checkboxChecked ||
+            isLoading ||
+            !fundsWithdrawn ||
+            !clearedAllOpenPositions ||
+            !openOrdersCleared ||
+            !traderAddresses[0]
+          }
+          className={cn('min-w-[170px] w-full h-[30px]')}
+          variant="default"
+          colorScheme="red"
+          size="lg"
+          onClick={closeTraderAccountFn}
           tw="w-[240px] h-8.75 mt-2 sm:mt-3"
         >
           Close Account

@@ -147,7 +147,6 @@ const DEPOSIT_BTN = styled.div`
 
 const RESET_LAYOUT_BUTTON = styled.div`
   ${tw`h-[38px] text-tiny text-center flex items-center text-regular font-bold underline cursor-pointer ml-auto`}
-  color: ${({ theme }) => theme.text11};
 `
 
 const HEADER = styled.div`
@@ -353,9 +352,9 @@ export const InfoBanner: FC<{
         <>
           <Container
             variant="outline"
-            colorScheme="secondaryGradient"
+            colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[110px] min-h-[50px]
+            className="max-w-[110px] min-h-[42px]
            ml-4"
           >
             <ContainerTitle>
@@ -371,9 +370,9 @@ export const InfoBanner: FC<{
           </Container>
           <Container
             variant="outline"
-            colorScheme="secondaryGradient"
+            colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[125px] min-h-[50px] ml-4"
+            className="max-w-[125px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
               <h6>24H Change:&nbsp;</h6>
@@ -440,9 +439,9 @@ export const InfoBanner: FC<{
         <>
           <Container
             variant="outline"
-            colorScheme="secondaryGradient"
+            colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[115px] min-h-[50px] ml-4"
+            className="max-w-[115px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
               <h6>Open Interest:&nbsp;</h6>
@@ -451,7 +450,15 @@ export const InfoBanner: FC<{
                 <p>This is some content here</p>
               </IconTooltip>
             </ContainerTitle>
-            <InfoLabel>{!traderInfo.openInterests ? <Loader /> : <h4> {openInterestFormatted} SOL</h4>}</InfoLabel>
+            <>
+              {!traderInfo.openInterests ? (
+                <Loader />
+              ) : (
+                <h4>
+                  <span>{openInterestFormatted} SOL</span>
+                </h4>
+              )}
+            </>
           </Container>
         </>
       }
@@ -504,7 +511,11 @@ export const InfoBanner: FC<{
           </div>
         </div>
       )}
-      {!isLocked && <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>Reset Layout</RESET_LAYOUT_BUTTON>}
+      {!isLocked && (
+        <RESET_LAYOUT_BUTTON onClick={() => resetLayout()}>
+          <p className="text-blue-1 dark:text-grey-8 text-regular underline">Reset Layout</p>
+        </RESET_LAYOUT_BUTTON>
+      )}
       {
         <DEPOSIT_WRAPPER $isLocked={isLocked}>
           {/* <div className="white-background">

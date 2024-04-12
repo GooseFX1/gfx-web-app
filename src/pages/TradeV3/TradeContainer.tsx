@@ -18,6 +18,8 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { checkMobile } from '../../utils'
 import { DexhomeMobi } from './mobile/DexhomeMobi'
+import { InfoLabel } from './perps/components/PerpsGenericComp'
+import { openLinkInNewTab } from '@/web3'
 
 const ReactGridLayout = WidthProvider(Responsive)
 
@@ -26,7 +28,7 @@ const componentDimensionsLg = [
     x: 0,
     y: 0,
     i: '0',
-    h: 17.5,
+    h: 18.5,
     w: 4,
     autoSize: true
   },
@@ -34,7 +36,7 @@ const componentDimensionsLg = [
     x: 4,
     y: 0,
     i: '1',
-    h: 17.5,
+    h: 18.5,
     w: 2,
     autoSize: true
   },
@@ -42,7 +44,7 @@ const componentDimensionsLg = [
     x: 6,
     y: 0,
     i: '2',
-    h: 17.5,
+    h: 18.5,
     w: 2,
     autoSize: true
   },
@@ -69,7 +71,7 @@ const componentDimensionsMd = [
     x: 0,
     y: 0,
     i: '0',
-    h: 17.5,
+    h: 18,
     w: 2,
     autoSize: true
   },
@@ -77,7 +79,7 @@ const componentDimensionsMd = [
     x: 0,
     y: 2,
     i: '1',
-    h: 17.5,
+    h: 18,
     w: 2,
     autoSize: true
   },
@@ -85,7 +87,7 @@ const componentDimensionsMd = [
     x: 2,
     y: 20,
     i: '2',
-    h: 17.5,
+    h: 18,
     w: 2,
     autoSize: true
   },
@@ -93,7 +95,7 @@ const componentDimensionsMd = [
     x: 2,
     y: 20,
     i: '4',
-    h: 17.5,
+    h: 18,
     w: 2,
     autoSize: true
   },
@@ -151,10 +153,10 @@ const componentDimensionsMd = [
 // ]
 
 const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
-  ${tw`relative flex w-full h-full flex-col pt-[24px] overflow-y-scroll overflow-x-hidden`}
+  ${tw`relative flex w-full h-[calc(100vh - 85px)] flex-col pt-[18px] overflow-y-scroll overflow-x-hidden`}
 
   .layout {
-    ${tw`w-[99%] mt-5 mx-auto mb-0 relative`}
+    ${tw`w-[99%] mt-2 mx-auto mb-0 relative !h-full`}
     .react-grid-item.react-draggable:nth-child(4) {
       //max-width: 350px;
     }
@@ -171,10 +173,13 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
     .react-resizable-handle-se {
       background: ${({ $mode }) =>
         $mode === 'dark'
-          ? 'url(/img/assets/resizeArrow_dark.svg) center no-repeat #F7F0FD'
-          : 'url(/img/assets/resizeArrow_lite.svg) center no-repeat, linear-gradient(92deg, #f7931a 0%, #ac1cc7 100%)'};
-      height: 20px;
-      width: 20px;
+          ? 'url(/img/assets/resizeArrow_dark.svg) center no-repeat'
+          : 'url(/img/assets/resizeArrow_lite.svg) center no-repeat'};
+      height: 26px;
+      width: -1px;
+      margin-left: 10px;
+      position: absolute;
+      padding-left: 10px;
       display: ${({ $isLocked }) => ($isLocked ? 'none' : 'block')};
 
       border-top-left-radius: 8px;
@@ -189,10 +194,10 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
     z-index: 100;
   }
   .space-cont {
-    ${tw`p-[2.5px]`}
+    ${tw`p-[5px]`}
   }
   #tv_chart_container {
-    border: 1px solid ${({ theme }) => theme.tokenBorder};
+    /* border: 1px solid ${({ theme }) => theme.tokenBorder}; */
   }
 
   &::-webkit-scrollbar {
@@ -206,22 +211,24 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
 `
 
 const UNLOCKED_OVERLAY = styled.div<{ $blacklisted?: boolean }>`
-  height: 100%;
-  width: 100%;
-  background: linear-gradient(101.33deg, rgba(247, 147, 26, 0.5) 7.41%, rgba(220, 31, 255, 0.3) 87.43%);
+  height: calc(100% - 4px);
+  width: calc(100% - 4px);
+  border: 1px solid ${({ theme }) => theme.tokenBorder};
+  background: linear-gradient(106deg, rgba(247, 147, 26, 0.5) 11.1%, rgba(220, 31, 255, 0.3) 89.17%);
+  /* background: linear-gradient(106deg, rgba(247, 147, 26, 0.5), 11.1%, rgba(220, 31, 255, 0.3) 89.17%), */
   position: absolute;
   top: 0;
   cursor: pointer;
   text-align: center;
+  border-radius: 3px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   .reposition {
     position: relative;
-    height: 45px;
-    width: 45px;
-    margin-bottom: 10px;
+    height: 30px;
+    width: 30px;
   }
   .geoblocked {
     position: relative;
@@ -339,12 +346,7 @@ const CryptoContent: FC = () => {
             {chartContainer}
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
-                <img
-                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
-                  alt="reposition"
-                  className="reposition"
-                />
-                <span>Drag to Reposition</span>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
               </UNLOCKED_OVERLAY>
             ) : null}
           </div>
@@ -356,12 +358,7 @@ const CryptoContent: FC = () => {
               <OrderbookTabs />
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
-                  <img
-                    src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
-                    alt="reposition"
-                    className="reposition"
-                  />
-                  <span>Drag to Reposition</span>
+                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
                 </UNLOCKED_OVERLAY>
               ) : null}
             </>
@@ -374,12 +371,7 @@ const CryptoContent: FC = () => {
               <PlaceOrder />
               {!isLocked ? (
                 <UNLOCKED_OVERLAY>
-                  <img
-                    src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
-                    alt="reposition"
-                    className="reposition"
-                  />
-                  <span>Drag to Reposition</span>
+                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
                 </UNLOCKED_OVERLAY>
               ) : null}
             </>
@@ -392,12 +384,7 @@ const CryptoContent: FC = () => {
             <HistoryPanel />
             {!isLocked ? (
               <UNLOCKED_OVERLAY>
-                <img
-                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
-                  alt="reposition"
-                  className="reposition"
-                />
-                <span>Drag to Reposition</span>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
               </UNLOCKED_OVERLAY>
             ) : null}
           </div>
@@ -412,12 +399,7 @@ const CryptoContent: FC = () => {
               </UNLOCKED_OVERLAY>
             ) : !isLocked ? (
               <UNLOCKED_OVERLAY>
-                <img
-                  src={mode === 'dark' ? `/img/assets/repositionWhite.svg` : `/img/assets/repositionBlack.svg`}
-                  alt="reposition"
-                  className="reposition"
-                />
-                <span>Drag to Reposition</span>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
               </UNLOCKED_OVERLAY>
             ) : null}
           </div>
@@ -437,20 +419,37 @@ const CryptoContent: FC = () => {
   }
   // useSuspense(isPageLoaded)
   return !checkMobile() ? (
-    <DEX_CONTAINER $isLocked={isLocked} $mode={mode}>
-      <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
-      <ReactGridLayout
-        compactType="vertical"
-        measureBeforeMount={true}
-        layouts={layout}
-        onLayoutChange={onLayoutChange}
-        useCSSTransforms={true}
-        resizeHandles={['se']}
-        {...defaultProps}
-      >
-        {generateDOM()}
-      </ReactGridLayout>
-    </DEX_CONTAINER>
+    <>
+      <DEX_CONTAINER $isLocked={isLocked} $mode={mode}>
+        <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
+        <ReactGridLayout
+          compactType="vertical"
+          measureBeforeMount={true}
+          layouts={layout}
+          onLayoutChange={onLayoutChange}
+          useCSSTransforms={true}
+          resizeHandles={['se']}
+          {...defaultProps}
+        >
+          {generateDOM()}
+        </ReactGridLayout>
+        <div className="flex items-center justify-between px-2 h-[26px] border-grey-4 dark:border-black-4 border-t-1">
+          <div>
+            <p className="text-[10px] items-center flex text-grey-1 ">
+              Copyright 2024 GOOSEFX, All rights reserved. Please trade at your discretion and according to the
+              laws and regulations of your location, security audits by
+              <span className="text-white ml-1" onClick={() => openLinkInNewTab('https://osec.io/')}>
+                OtterSec.
+              </span>
+            </p>
+          </div>
+          <div className="flex">
+            <p className="text-[10px] text-white items-center flex ml-1">Risk & Disclaimers</p>
+            <p className="text-[10px] text-white items-center flex ml-1">Terms of Service</p>
+          </div>
+        </div>
+      </DEX_CONTAINER>
+    </>
   ) : (
     <DexhomeMobi />
   )
