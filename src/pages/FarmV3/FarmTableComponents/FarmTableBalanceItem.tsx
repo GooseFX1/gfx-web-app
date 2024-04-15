@@ -29,7 +29,7 @@ import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01
-const MIN_AMOUNT_CLAIM = 0.01
+export const MIN_AMOUNT_CLAIM = 0.01
 const FarmBalanceItem = ({
   title,
   value,
@@ -388,7 +388,6 @@ const CollapsibleContent: FC<{
 
   const handleDeposit = useCallback((): void => {
     if (checkConditionsForDepositWithdraw(true)) return
-
     setIsButtonLoading(true)
     setOperationPending(true)
     depositedBalanceConnection(userPublicKey, coin)
@@ -434,7 +433,7 @@ const CollapsibleContent: FC<{
       setIsTxnSuccessfull(false)
       toast.promise(
         promiseBuilder<Awaited<ReturnType<typeof executeWithdraw>>>(
-          executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey)
+          executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey, true)
         ),
         {
           loading: <LoadingToast />,
@@ -480,7 +479,7 @@ const CollapsibleContent: FC<{
     setIsTxnSuccessfull(false)
     toast.promise(
       promiseBuilder<Awaited<ReturnType<typeof executeClaimRewards>>>(
-        executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey)
+        executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey, true)
       ),
       {
         loading: <LoadingToast />,
@@ -550,15 +549,13 @@ const CollapsibleContent: FC<{
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
   const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
   const canWithdraw = userDepositedAmount?.toNumber() >= MIN_AMOUNT_WITHDRAW
-  const inputDepositDisabled = +depositAmount < MIN_AMOUNT_DEPOSIT
-  const inputWithdrawDisabled = +withdrawAmount < MIN_AMOUNT_WITHDRAW
+  const minDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canDeposit
+  const maxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canDeposit
   const disabled =
     !connected ||
     operationPending ||
     isButtonLoading ||
-    (modeOfOperation === ModeOfOperation.DEPOSIT
-      ? !canDeposit || inputDepositDisabled
-      : !canWithdraw || inputWithdrawDisabled)
+    (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
   const canClaim = claimableReward > 0
   return (
     <>
@@ -654,6 +651,8 @@ const CollapsibleContent: FC<{
               onChange={(e) => handleInputChange(e.target.value)}
               tokenSymbol={coin.token}
               disabled={disabled}
+              minDisabled={minDisabled}
+              maxDisabled={maxDisabled}
             />
             <ConnectClaimCombo
               disabled={disabled}
@@ -684,6 +683,8 @@ const CollapsibleContent: FC<{
                 onChange={(e) => handleInputChange(e.target.value)}
                 tokenSymbol={coin.token}
                 disabled={disabled}
+                minDisabled={minDisabled}
+                maxDisabled={maxDisabled}
               />
               <ConnectClaimCombo
                 disabled={disabled}
@@ -783,6 +784,8 @@ const CollapsibleContent: FC<{
                 onChange={(e) => handleInputChange(e.target.value)}
                 tokenSymbol={coin.token}
                 disabled={disabled}
+                minDisabled={minDisabled}
+                maxDisabled={maxDisabled}
               />
               <ConnectClaimCombo
                 disabled={disabled}

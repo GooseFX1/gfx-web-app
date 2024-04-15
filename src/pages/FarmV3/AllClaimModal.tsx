@@ -1,13 +1,14 @@
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode, usePriceFeedFarm, useConnectionConfig, useSSLContext } from '../../context'
-import { executeAllPoolClaim } from '../../web3'
-import { claimAllSuccess, sslErrorMessage, genericErrMsg } from './constants'
-import { notify, truncateBigNumber } from '../../utils'
+import { executeAllPoolClaim, TxnReturn } from '../../web3'
+import { truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
 import { Button, Dialog, DialogBody, DialogCloseDefault, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import { toast } from 'sonner'
+import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
 
 export const AllClaimModal: FC<{
   allClaimModal: boolean
@@ -29,24 +30,27 @@ export const AllClaimModal: FC<{
   )
 
   const handleAllClaim = () => {
-    try {
-      setIsLoading(true)
-      executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData).then((con) => {
-        const { confirm } = con
-        setIsLoading(false)
-        if (confirm && confirm?.value && confirm.value.err === null) {
-          notify(claimAllSuccess())
+    setIsLoading(true)
+    toast.promise(
+      promiseBuilder<Awaited<ReturnType<typeof executeAllPoolClaim>>>(
+        executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData, true)
+      ),
+      {
+        loading: <LoadingToast />,
+        error: (err) => {
+          console.log(err)
           setAllClaimModal(false)
-        } else {
-          notify(sslErrorMessage())
+          setIsLoading(false)
+          return <ErrorToast />
+        },
+        success: (res: TxnReturn) => {
+          console.log(res)
           setAllClaimModal(false)
-          return
+          setIsLoading(false)
+          return <SuccessToast txId={res.signature} />
         }
-      })
-    } catch (err) {
-      setIsLoading(false)
-      notify(genericErrMsg(err))
-    }
+      }
+    )
   }
 
   const Content = useMemo(

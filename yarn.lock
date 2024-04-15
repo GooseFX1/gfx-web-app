@@ -6694,10 +6694,10 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-gfx-component-lib@^1.10.2:
-  version "1.10.2"
-  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.10.2.tgz#a0f104ed144de9dbe68146e05051a55ab9183071"
-  integrity sha512-Kb3RZ5N4uh5RHjxCRw4ivIJA11vxcf/32yqXXq+D8tOUUEenOqiP5afBntUgSrBAAMXTdyMr4xOIh2RA8gvsLA==
+gfx-component-lib@^1.10.3:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.10.3.tgz#46071f8480ed1a0f07265dffa9a14bfae2e3db46"
+  integrity sha512-pBC4WjAIPTcH7noL2K3PKOjuZ5vCP47WYB+BoWeTPRg4Y8o68M7EeJMIgumzwPMOSrU6QHiVbzc86nO2cNz4qQ==
   dependencies:
     "@radix-ui/react-accordion" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.0.4"
@@ -10331,11 +10331,6 @@ sonic-boom@^2.2.1:
   integrity sha512-kuonw1YOYYNOve5iHdSahXPOK49GqwA+LZhI6Wz/l0rP57iKyXXIHaRagOBHAPmGwJC6od2Z9zgvZ5loSgMlVg==
   dependencies:
     atomic-sleep "^1.0.0"
-
-sonner@^1.4.1:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.4.2.tgz#92740c293e9d911de726080995bd8a0cc677ccd1"
-  integrity sha512-x3Kfzfhb56V/ErvUnH5dZcsu6QkZpyIlRAogO4vAbN+AkBsA/8CFqOV+5djqbE5pQCpejtO4JBWL1zRj2sO/Vg==
 
 sonner@^1.4.41:
   version "1.4.41"

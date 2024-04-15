@@ -17,6 +17,7 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmFilter from '@/pages/FarmV3/FarmTableComponents/FarmFilter'
 import FarmItems from './FarmTableComponents/FarmItems'
+import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
@@ -180,7 +181,7 @@ export const FarmTable: FC = () => {
       allPoolSslData.reduce((accumulator, current) => {
         const tokenMintAddress = current?.mint?.toBase58()
         const reward = rewards[tokenMintAddress]?.toNumber() / Math.pow(10, current?.mintDecimals)
-        if (reward) return accumulator + 1
+        if (reward >= MIN_AMOUNT_CLAIM) return accumulator + 1
         return accumulator
       }, 0),
     [allPoolSslData, rewards]

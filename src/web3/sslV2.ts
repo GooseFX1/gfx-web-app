@@ -186,7 +186,8 @@ export const executeWithdraw = async (
   connection: Connection,
   token: SSLToken,
   amount: string,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow: boolean = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -232,6 +233,7 @@ export const executeWithdraw = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'withdraw error\n', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
@@ -241,7 +243,8 @@ export const executeClaimRewards = async (
   wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow: boolean = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -281,6 +284,7 @@ export const executeClaimRewards = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'claim rewards error\n', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
@@ -301,7 +305,8 @@ export const executeAllPoolClaim = async (
   connection: Connection,
   walletPublicKey: PublicKey,
   rewards: { [key: string]: PublicKey }[],
-  allPoolSslData: SSLToken[]
+  allPoolSslData: SSLToken[],
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
@@ -348,6 +353,7 @@ export const executeAllPoolClaim = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'Error in claiming all rewards', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
