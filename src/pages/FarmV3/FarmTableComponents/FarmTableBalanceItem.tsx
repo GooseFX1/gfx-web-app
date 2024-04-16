@@ -327,9 +327,9 @@ const CollapsibleContent: FC<{
       !coin?.cappedDeposit ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT &&
-        (userTokenBalance === 0 || !depositAmount || +depositAmount <= 0)) ||
+        (userTokenBalance === 0 || !depositAmount || +depositAmount < MIN_AMOUNT_DEPOSIT)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW &&
-        (!userDepositedAmount || !withdrawAmount || +withdrawAmount <= 0)),
+        (!userDepositedAmount || !withdrawAmount || +withdrawAmount < MIN_AMOUNT_WITHDRAW)),
     [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
   )
 
@@ -339,11 +339,12 @@ const CollapsibleContent: FC<{
       if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
       if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
       if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
+      if (!!depositAmount && +depositAmount < MIN_AMOUNT_DEPOSIT) return `${modeOfOperation} at least 0.01`
       if (depositAmount) return modeOfOperation
     }
     if (modeOfOperation === ModeOfOperation.WITHDRAW) {
-      if (userDepositedAmount) return modeOfOperation
       if (!userDepositedAmount) return `Insufficient ${coin?.token}`
+      if (!!withdrawAmount && +withdrawAmount < MIN_AMOUNT_DEPOSIT) return `${modeOfOperation} at least 0.01`
       if (!withdrawAmount || +withdrawAmount <= 0) return `Enter Amount`
       if (withdrawAmount) return modeOfOperation
     }
