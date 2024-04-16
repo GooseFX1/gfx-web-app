@@ -60,7 +60,7 @@ export const MainNav: FC = () => {
         <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>
           Solana network is currently congested. Due to this some transactions may fail to confirm without retries
           and volumes will be lower than usual. See our{' '}
-          <a href={SOCIAL_MEDIAS.twitter} target="_blank">
+          <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
             Twitter
           </a>{' '}
           for further updates.
