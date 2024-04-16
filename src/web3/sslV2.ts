@@ -187,7 +187,7 @@ export const executeWithdraw = async (
   token: SSLToken,
   amount: string,
   walletPublicKey: PublicKey,
-  shouldThrow: boolean = false
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -244,7 +244,7 @@ export const executeClaimRewards = async (
   connection: Connection,
   token: SSLToken,
   walletPublicKey: PublicKey,
-  shouldThrow: boolean = false
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -400,7 +400,7 @@ const depositAmount = async (
   tokenName: string,
   createLiquidityIX: TransactionInstruction | undefined,
   walletPublicKey: PublicKey,
-  shouldThrow: boolean = false
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
   const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
@@ -451,7 +451,7 @@ export const executeDeposit = async (
   amount: string,
   token: SSLToken,
   walletPublicKey: PublicKey,
-  shouldThrow: boolean = false
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const tokenMintAddress = token?.mint
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
