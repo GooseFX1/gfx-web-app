@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -41,6 +41,7 @@ const FarmFilter: FC<{
   poolSize: number
 }> = ({ sort, sortType, handleColumnSort, poolSize }) => {
   const { isMobile, isTablet } = useBreakPoint()
+  const handleSort = useCallback((col: string) => () => handleColumnSort(col), [handleColumnSort])
   return (
     <div
       className={cn(
@@ -52,14 +53,14 @@ const FarmFilter: FC<{
     >
       <FarmRowItem
         title={'Pool'}
-        onClick={() => handleColumnSort('token')}
+        onClick={handleSort('token')}
         className={'justify-start'}
         invert={sort == 'DESC' && sortType == 'token'}
       />
       <FarmRowItem
         title={'APY'}
         tooltip={'APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info'}
-        onClick={() => handleColumnSort('apy')}
+        onClick={handleSort('apy')}
         invert={sort == 'DESC' && sortType == 'apy'}
       />
       {!isMobile && (
@@ -68,18 +69,18 @@ const FarmFilter: FC<{
             <>
               <FarmRowItem
                 title={'Liquidity'}
-                onClick={() => handleColumnSort('liquidity')}
+                onClick={handleSort('liquidity')}
                 invert={sort == 'DESC' && sortType == 'liquidity'}
               />
               <FarmRowItem
                 title={'24H Volume'}
                 tooltip={'24H Volume is calculated since 10P.M UTC on a daily basis'}
-                onClick={() => handleColumnSort('volume')}
+                onClick={handleSort('volume')}
                 invert={sort == 'DESC' && sortType == 'volume'}
               />
               <FarmRowItem
                 title={'24H Fees'}
-                onClick={() => handleColumnSort('fee')}
+                onClick={handleSort('fee')}
                 invert={sort == 'DESC' && sortType == 'fee'}
               />
             </>
@@ -87,7 +88,7 @@ const FarmFilter: FC<{
           <FarmRowItem
             title={'My Balance'}
             tooltip={'Values are displayed in native token'}
-            onClick={() => handleColumnSort('balance')}
+            onClick={handleSort('balance')}
             invert={sort == 'DESC' && sortType == 'balance'}
           />
         </>

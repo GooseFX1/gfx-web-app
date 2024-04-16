@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import { useDarkMode } from '@/context'
 import { Button, cn } from 'gfx-component-lib'
 import Lottie from 'lottie-react'
@@ -11,6 +11,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   requestPool
 }) => {
   const { mode } = useDarkMode()
+  const navigateToDiscord = useCallback(() => window.open('https://discord.gg/cDEPXpY26q', '_blank'), [])
   return (
     <div css={cn(` flex flex-col mt-[30px] sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
       <div
@@ -26,11 +27,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
         <div className="text-[20px] font-semibold text-black-4 dark:text-grey-5 mt-3"> {str}</div>
         <div className="text-regular w-[214px] text-center mt-[15px] text-grey-1 dark:text-grey-2">{subText}</div>
         {requestPool && (
-          <Button
-            colorScheme={'blue'}
-            className={'w-[219px] mt-3.75'}
-            onClick={() => window.open('https://discord.gg/cDEPXpY26q', '_blank')}
-          >
+          <Button colorScheme={'blue'} className={'w-[219px] mt-3.75'} onClick={navigateToDiscord}>
             Request Pool
           </Button>
         )}

@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useMemo } from 'react'
 import { SSLToken } from './constants'
 import { truncateBigNumber } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -70,8 +70,35 @@ export const ActionModal: FC<{
     return () => clearInterval(interval)
   }, [diffTimer])
 
-  const Content = useCallback(
-    () => (
+  const Content = useMemo(() => {
+    let heading = 'Claim'
+    let description = ' claiming, you will get all '
+    let amount = 0.0
+    let actionText = `${
+      claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token
+    }`
+    let actionDisabled = !claimAmount
+    switch (actionType) {
+      case 'withdraw':
+        heading = 'Withdraw'
+        description = ' withdrawing, you will claim any '
+        amount = +withdrawAmount
+        actionText = `Withdraw 
+          ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
+        actionDisabled = !withdrawAmount
+        break
+      case 'deposit':
+        heading = 'Deposit'
+        description = ' depositing, you will claim any '
+        amount = +depositAmount
+        actionText = `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
+        actionDisabled = !depositAmount
+        break
+      default:
+        break
+    }
+
+    return (
       <div className="w-full h-full flex flex-col justify-between">
         <div>
           <div
@@ -84,23 +111,12 @@ export const ActionModal: FC<{
           </div>
 
           <div className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 sm:text-average">
-            {actionType === 'withdraw' ? (
-              <h3>Withdraw</h3>
-            ) : actionType === 'deposit' ? (
-              <h3>Deposit </h3>
-            ) : (
-              <h3>Claim</h3>
-            )}
+            <h3>{heading}</h3>
           </div>
           <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">
             <h5>
-              {' '}
               By
-              {actionType === 'withdraw'
-                ? ' withdrawing, you will claim any '
-                : actionType === 'deposit'
-                ? ' depositing, you will claim any '
-                : ' claiming, you will get all '}
+              {description}
               pending yield available
             </h5>
           </div>
@@ -110,31 +126,21 @@ export const ActionModal: FC<{
                 {<div>{actionType === 'deposit' ? 'Deposit' : 'Withdraw'} Amount</div>}
               </div>
               <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
-                actionType === 'deposit'
-                  ? depositAmount
-                    ? truncateBigNumber(+depositAmount)
-                    : '00.00'
-                  : withdrawAmount
-                  ? truncateBigNumber(+withdrawAmount)
-                  : '00.00'
+                amount ? truncateBigNumber(amount) : '00.00'
               } ${token?.token}`}</div>
             </div>
           )}
           <div className="flex flex-row items-center justify-between mb-3.75">
             <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
             <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">
-              {`${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : `00.00 ${token?.token}`}`}
+              {claimAmount ? `${truncateBigNumber(claimAmount)}` : `00.00`} {token?.token}
             </div>
           </div>
           {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
             <div className="flex flex-row items-center justify-between mb-3.75">
               <div className="flex flex-row">
                 <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
-                <IconTooltip
-                  tooltipType={'outline'}
-                  tooltipClassName={'h-4 w-4 max-w-none ml-1'}
-                  // color={mode === 'dark' ? '#FFF' : '#1C1C1C'}
-                >
+                <IconTooltip tooltipType={'outline'} tooltipClassName={'h-4 w-4 max-w-none ml-1'}>
                   <span className="dark:text-black-4 text-grey-8 font-semibold text-tiny">
                     The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait{' '}
                     {getTimerCountdown} to avoid paying the fee.
@@ -154,19 +160,9 @@ export const ActionModal: FC<{
             className={`duration-500`}
             onClick={handleUserAction}
             isLoading={isButtonLoading}
-            disabled={
-              (actionType === 'claim' && !claimAmount) ||
-              (actionType === 'deposit' && !depositAmount) ||
-              (actionType === 'withdraw' && !withdrawAmount)
-            }
+            disabled={actionDisabled}
           >
-            {`${
-              actionType === 'deposit'
-                ? `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
-                : actionType === 'withdraw'
-                ? `Withdraw ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
-                : `${claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token}`
-            }`}
+            {actionText}
           </Button>
           <Button
             variant={'link'}
@@ -194,9 +190,8 @@ export const ActionModal: FC<{
           </div>
         </div>
       </div>
-    ),
-    [breakpoint, mode, isButtonLoading, diffTimer]
-  )
+    )
+  }, [breakpoint, mode, isButtonLoading, diffTimer])
   return (
     <Dialog open={actionModal}>
       <DialogOverlay />
@@ -217,7 +212,7 @@ export const ActionModal: FC<{
         )}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
-        <DialogBody className={'w-full mx-auto'}>{Content()}</DialogBody>
+        <DialogBody className={'w-full mx-auto'}>{Content}</DialogBody>
       </DialogContent>
     </Dialog>
   )

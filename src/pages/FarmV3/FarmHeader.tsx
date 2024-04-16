@@ -9,6 +9,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Container, ContainerTitle, Icon, IconTooltip } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
+import useBoolean from '@/hooks/useBoolean'
 
 const getTooltipText = (index: number) => {
   let tooltipText = ''
@@ -34,7 +35,7 @@ export const FarmHeader: FC = () => {
   } = useSSLContext()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
-  const [poolSelectionModal, setPoolSelectionModal] = useState<boolean>(false)
+  const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
 
@@ -172,7 +173,27 @@ export const FarmHeader: FC = () => {
         },
         { name: 'Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
       ]
-
+  const options = useMemo(
+    () => [
+      {
+        value: '24h',
+        label: '24H',
+        onClick: () => setRange(0)
+      },
+      {
+        value: '7D',
+        label: '7D',
+        onClick: () => setRange(1),
+        className: 'hidden min-md:inline-block'
+      },
+      {
+        value: 'all',
+        label: 'All',
+        onClick: () => setRange(2)
+      }
+    ],
+    []
+  )
   return (
     <div
       className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll
@@ -180,31 +201,14 @@ export const FarmHeader: FC = () => {
       `}
     >
       {poolSelectionModal && (
-        <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal} />
+        <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal.set} />
       )}
       <RadioOptionGroup
         optionSize={isMobile ? 'xl' : 'sm'}
         defaultValue={'24h'}
         orientation={'vertical'}
         className={'gap-0'}
-        options={[
-          {
-            value: '24h',
-            label: '24H',
-            onClick: () => setRange(0)
-          },
-          {
-            value: '7D',
-            label: '7D',
-            onClick: () => setRange(1),
-            className: 'hidden min-md:inline-block'
-          },
-          {
-            value: 'all',
-            label: 'All',
-            onClick: () => setRange(2)
-          }
-        ]}
+        options={options}
       />
 
       <div className="flex flex-row gap-2.5 self-stretch">
@@ -227,7 +231,7 @@ export const FarmHeader: FC = () => {
       <Button
         className="cursor-pointer ml-auto p-0 min-w-7.5"
         variant={'ghost'}
-        onClick={() => setPoolSelectionModal(true)}
+        onClick={setPoolSelectionModal.on}
       >
         <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="sm:mr-2.5" />
       </Button>

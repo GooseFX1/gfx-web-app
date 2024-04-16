@@ -52,13 +52,3 @@ const RadioOptionGroup = ({
   </RadioGroup>
 )
 export default RadioOptionGroup
-// <RadioGroupItem value={'deposit'} size={'xl'} variant={'primary'} onClick={setDepositSelected.on}
-//                 className={'w-full min-md:w-[85px]'}
-// >
-//   Deposit
-// </RadioGroupItem>
-// <RadioGroupItem value={'withdraw'} size={'xl'} variant={'primary'} onClick={setDepositSelected.off}
-//                 className={'w-full min-md:w-[85px]'}
-// >
-//   Withdraw
-// </RadioGroupItem>

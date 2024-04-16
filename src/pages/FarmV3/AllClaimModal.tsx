@@ -9,6 +9,7 @@ import { TERMS_OF_SERVICE } from '../../constants'
 import { Button, Dialog, DialogBody, DialogCloseDefault, DialogContent, DialogOverlay } from 'gfx-component-lib'
 import { toast } from 'sonner'
 import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
+import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
 
 export const AllClaimModal: FC<{
   allClaimModal: boolean
@@ -62,14 +63,14 @@ export const AllClaimModal: FC<{
         </div>
         {rewardsArray &&
           rewardsArray.map((item, index) => {
-            if (item && item?.reward && item?.tokenName) {
+            if (item.reward > MIN_AMOUNT_CLAIM) {
               return (
                 <div key={index} className="flex flex-row justify-between mb-2.5">
                   <span className="text-regular font-semibold text-grey-1 dark:text-grey-2">
-                    {item?.tokenName} Pool
+                    {item.tokenName} Pool
                   </span>
                   <span className="text-regular font-semibold text-black-4 dark:text-grey-8">
-                    {truncateBigNumber(item?.reward) + ' ' + item?.tokenName}
+                    {truncateBigNumber(item.reward) + ' ' + item.tokenName}
                   </span>
                 </div>
               )
@@ -80,7 +81,7 @@ export const AllClaimModal: FC<{
           onClick={handleAllClaim}
           isLoading={isLoading}
           fullWidth
-          disabled={(rewardsArray && !rewardsArray?.length) || isLoading}
+          disabled={rewardsArray?.length == 0 || isLoading}
         >
           <span className="font-bold text-regular"> Claim All </span>
         </Button>
