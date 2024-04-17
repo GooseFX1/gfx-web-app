@@ -108,7 +108,7 @@ export const AllClaimModal: FC<{
     <Dialog open={allClaimModal} onOpenChange={setAllClaimModal}>
       <DialogOverlay />
       <DialogContent
-        className={'min-md:w-[400px] p-2.5 w-full  sm:rounded-b-none'}
+        className={'p-2.5 w-full  sm:rounded-b-none'}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
         <DialogCloseDefault />
