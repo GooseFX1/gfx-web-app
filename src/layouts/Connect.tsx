@@ -24,18 +24,21 @@ import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+
 interface MenuItemProps {
   containerStyle?: string
   customMenuListItemStyle?: string
   customMenuListItemsContainerStyle?: string
   customButtonStyle?: string
+  customButtonWrapperStyle?: string
 }
 
 export const Connect: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
-  customMenuListItemStyle
+  customMenuListItemStyle,
+  customButtonWrapperStyle
 }) => {
   const { wallet, connected, publicKey, disconnect } = useWallet()
   const { blacklisted } = useConnectionConfig()
@@ -132,8 +135,10 @@ export const Connect: FC<MenuItemProps> = ({
     >
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <Tooltip>
-          <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-            <TooltipTrigger className={cn('focus-visible:outline-none', customButtonStyle)}>
+          <TooltipTrigger
+            className={cn('focus-visible:outline-none', customButtonStyle, customButtonWrapperStyle)}
+          >
+            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
               <Button
                 colorScheme={!connected ? 'purple' : 'primaryGradient'}
                 size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
@@ -170,8 +175,8 @@ export const Connect: FC<MenuItemProps> = ({
                   />
                 )}
               </Button>
-            </TooltipTrigger>
-          </DropdownMenuTrigger>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
           <TooltipContent hidden={canConnect}>
             We are sorry, {pathname.includes('trade') ? 'Trade' : 'Farm'} is currently unavailable in your location
           </TooltipContent>

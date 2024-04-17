@@ -30,9 +30,10 @@ export const Arrow: FC<{
   )
 }
 // pass height and width
-export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle; [x: string]: any }> = ({
+export const CircularArrow: FC<{ invert?: boolean; cssStyle?: TwStyle; [x: string]: any; className?: string }> = ({
   cssStyle,
   invert,
+  className,
   ...props
 }) => {
   const { mode } = useDarkMode()
@@ -40,7 +41,7 @@ export const CircularArrow: FC<{ invert?: boolean; cssStyle: TwStyle; [x: string
   return (
     <>
       <ARROW $cssStyle={cssStyle} $invert={!!invert} {...props}>
-        <img src={circularArrow} css={[cssStyle]} alt="Circular Arrow" />
+        <img src={circularArrow} css={[cssStyle]} className={className} alt="Circular Arrow" />
       </ARROW>
     </>
   )

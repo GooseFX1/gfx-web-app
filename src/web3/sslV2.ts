@@ -186,7 +186,8 @@ export const executeWithdraw = async (
   connection: Connection,
   token: SSLToken,
   amount: string,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -232,6 +233,7 @@ export const executeWithdraw = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'withdraw error\n', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
@@ -241,7 +243,8 @@ export const executeClaimRewards = async (
   wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
@@ -281,6 +284,7 @@ export const executeClaimRewards = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'claim rewards error\n', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
@@ -301,7 +305,8 @@ export const executeAllPoolClaim = async (
   connection: Connection,
   walletPublicKey: PublicKey,
   rewards: { [key: string]: PublicKey }[],
-  allPoolSslData: SSLToken[]
+  allPoolSslData: SSLToken[],
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
@@ -348,6 +353,7 @@ export const executeAllPoolClaim = async (
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'Error in claiming all rewards', signature)
+    if (shouldThrow) throw error
     return { error, signature }
   }
 }
@@ -393,7 +399,8 @@ const depositAmount = async (
   tokenMintAddress: PublicKey,
   tokenName: string,
   createLiquidityIX: TransactionInstruction | undefined,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
   const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
@@ -426,9 +433,13 @@ const depositAmount = async (
     depositAmountTX.add(depositAmountIX)
     signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
     const confirm = await confirmTransaction(connection, signature, 'processed')
+    console.log('txn confirmed ', signature, confirm)
     return { confirm, signature }
   } catch (error) {
     console.log(error, 'deposit error\n', signature)
+    if (shouldThrow) {
+      throw error
+    }
     return { error, signature }
   }
 }
@@ -439,7 +450,8 @@ export const executeDeposit = async (
   connection: Connection,
   amount: string,
   token: SSLToken,
-  walletPublicKey: PublicKey
+  walletPublicKey: PublicKey,
+  shouldThrow = false
 ): Promise<TxnReturn> => {
   const tokenMintAddress = token?.mint
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
@@ -468,7 +480,8 @@ export const executeDeposit = async (
     tokenMintAddress,
     token?.token,
     createLiquidityIX,
-    walletPublicKey
+    walletPublicKey,
+    shouldThrow
   )
 }
 

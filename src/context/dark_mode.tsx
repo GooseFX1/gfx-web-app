@@ -4,6 +4,7 @@ import { useLocalStorageState } from '../utils'
 interface IDarkModeConfig {
   mode: 'dark' | 'lite'
   toggleMode: () => void
+  isDarkMode: boolean
 }
 
 const DarkModeContext = createContext<IDarkModeConfig | null>(null)
@@ -22,7 +23,8 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <DarkModeContext.Provider
       value={{
         mode,
-        toggleMode: handleToggleMode
+        toggleMode: handleToggleMode,
+        isDarkMode: mode === 'dark'
       }}
     >
       {children}

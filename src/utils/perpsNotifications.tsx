@@ -126,7 +126,33 @@ export const perpsNotify = async ({
   //  }, NOTIFICATION_TIMER)
   //  ;(notification as any)['info']()
 }
-
+export const LoadingToast: FC = () => (
+  <IntemediaryToast>
+    <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
+    <p>Please wait a few moments for the transaction to confirm...</p>
+  </IntemediaryToast>
+)
+export const ErrorToast: FC = () => (
+  <IntemediaryToast>
+    <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+    <p className={`break-words w-full`}>
+      Sorry, a problem occurred, please try again. If the issue persists contact support.
+    </p>
+    <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+      Contact Us
+    </OpenToastLink>
+  </IntemediaryToast>
+)
+export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
+  <IntemediaryToast>
+    <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
+    <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
+    <OpenSolScanLink link={`https://solscan.io/tx/${txId}`} />
+  </IntemediaryToast>
+)
+export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
+  return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
+}
 export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<void> => {
   toast.promise(promise, {
     loading: (
