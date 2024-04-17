@@ -6,7 +6,7 @@ import { MarketType, useAccounts, useConnectionConfig, useDarkMode, useOrderBook
 import { useMemo, FC, useState } from 'react'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import 'styled-components/macro'
-import { truncateAddress } from '../../../utils'
+import { checkMobile, truncateAddress } from '../../../utils'
 import useBoolean from '../../../hooks/useBoolean'
 // import { Button } from '../../../components'
 import type { MenuProps } from 'antd'
@@ -176,7 +176,10 @@ export const DepositWithdrawDialog: FC<{
     <Dialog open={depositWithdrawModal} onOpenChange={setDepositWithdrawModal}>
       <DialogOverlay />
       {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-      <DialogContent className={'z-[999] w-[500px] h-[356px]'}>
+      <DialogContent
+        placement={checkMobile() ? 'bottom' : 'default'}
+        className={'z-[999] w-[500px] h-[356px] sm:w-[100vw]'}
+      >
         <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
 
         <DialogCloseDefault onClick={() => setDepositWithdrawModal(false)} />

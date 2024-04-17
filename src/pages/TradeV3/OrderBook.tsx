@@ -73,6 +73,7 @@ const LOADER = styled(Skeleton.Input)`
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   height: calc(100% - 60px);
+  ${tw`sm:max-h-[242px]`}
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
@@ -200,13 +201,14 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
+  ${tw`sm:overflow-auto`}
   width: 100%;
   display: flex;
   overflow-y: auto;
   align-items: baseline;
   justify-content: center;
   padding: 0px 0px;
-  height: 100%;
+  /* height: 100%; */
   span {
     width: 50%;
   }
@@ -444,8 +446,8 @@ export const OrderBook: FC = () => {
   )
 
   return (
-    <div className={cn('h-full')}>
-      {!checkMobile() && (
+    <div className={cn('h-full sm:max-h-[300px]')}>
+      {
         <div className={cn('flex pl-2 h-[38px] items-center justify-between')}>
           <div>
             <InfoLabel>
@@ -488,7 +490,7 @@ export const OrderBook: FC = () => {
             </DropdownMenu>
           </div>
         </div>
-      )}
+      }
       <div className={cn('px-2.5')}>
         <div className={cn('flex items-center justify-between overflow-auto')}>
           <InfoLabel>Size ({ask})</InfoLabel>
@@ -502,9 +504,9 @@ export const OrderBook: FC = () => {
           <Loader />
         ) : (
           <ORDERBOOK_CONTAINER>
-            <span
+            <div
               className="dark:border-t-black-4 dark:border-r-black-4 border-t-grey-4 border-r-grey-4 
-            dark:border-b-0 dark:border-l-0 border pl-2"
+            dark:border-b-0 dark:border-l-0 pl-2 w-[50%] h-[40%] border"
             >
               {
                 slicedOrderBookBids.reduce(
@@ -537,7 +539,7 @@ export const OrderBook: FC = () => {
                   { nodes: [], totalValue: 0 }
                 ).nodes
               }
-            </span>
+            </div>
             <span
               className="dark:border-t-black-4 dark:border-r-0 border-t-grey-4 border-r-0 
             dark:border-b-0 dark:border-l-0 border pr-2 h-full"

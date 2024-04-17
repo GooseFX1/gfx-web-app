@@ -333,7 +333,7 @@ export const DepositWithdraw: FC<{
               onClick={handleSubmit}
               loading={isLoading}
               disabled={checkDisabled() || isLoading}
-              className={cn('w-[140px] mt-[35px] ml-[170px]')}
+              className={cn('w-[140px] sm:w-[full] mt-[35px] ml-[170px] sm:ml-[35`%]')}
             >
               {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
             </Button>

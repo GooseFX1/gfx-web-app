@@ -161,7 +161,10 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
   return (
     <Dialog open={open} onOpenChange={setVisibility}>
       <DialogOverlay className={'z-[961]'} />
-      <DialogContent className={cn('z-[962] min-md:w-[500px] h-[346px] pt-3 flex flex-col gap-0')}>
+      <DialogContent
+        placement={checkMobile() ? 'bottom' : 'default'}
+        className={cn('z-[962] sm:w-[100vw] min-md:w-[500px] sm:bottom-0 h-[346px] pt-3 flex flex-col gap-0')}
+      >
         <DialogHeader className={`space-y-0 w-full h-[58px] px-2.5 text-left `}>
           <div className={'flex items-center'}>
             <InfoLabel>
@@ -206,7 +209,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
   )
 }
 
-const InfoRow: FC<{ label; value }> = ({ label, value }) => (
+export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
   <div className="flex justify-between mb-[1px]">
     <ContentLabel>
       <p>{label}</p>

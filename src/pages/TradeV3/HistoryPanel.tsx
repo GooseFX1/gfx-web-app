@@ -4,7 +4,7 @@ import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, us
 import tw, { styled } from 'twin.macro'
 import { ITraderRiskGroup, useTraderConfig } from '../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from './perps/utils'
-import { ClosePosition } from './ClosePosition'
+import { ClosePositionDialog } from './ClosePosition'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
@@ -764,6 +764,14 @@ export const HistoryPanel: FC = () => {
   // )
   return (
     <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] " defaultValue="0">
+      {closePositionModal && (
+        <ClosePositionDialog
+          closePositionModal={closePositionModal}
+          setVisibleState={setClosePositionModal}
+          setSummaryData={setSummaryData}
+          setPerpsEndModal={setPerpsEndModal}
+        />
+      )}
       <TabsList>
         {tabs.map((item, index) => (
           <TabsTrigger

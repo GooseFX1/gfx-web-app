@@ -222,7 +222,7 @@ const AccountOverview: FC = () => {
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
     <WRAPPER>
-      account overview sd
+      account overview
       {depositWithdrawModal && (
         <SETTING_MODAL
           visible={true}
