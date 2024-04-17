@@ -87,7 +87,7 @@ export const RecentTrades: FC = () => {
   }
 
   return (
-    <div ref={wrapperRef} className={cn('overflow-auto h-full')}>
+    <div ref={wrapperRef} className={cn('overflow-auto h-full sm:max-h-[300px]')}>
       <div>
         <div className={cn('flex items-center px-2 my-1.5')}>
           <div className={cn('w-1/3')}>
@@ -120,7 +120,6 @@ export const RecentTrades: FC = () => {
         ))}
         {isLoading && <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />}
       </div>
-      <div></div>
     </div>
   )
 }

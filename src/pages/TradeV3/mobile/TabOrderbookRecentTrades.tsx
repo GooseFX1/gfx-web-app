@@ -8,8 +8,8 @@ const TabOrderbookRecentTrades = (): ReactElement => {
   const [selectedTab, setSelectedTab] = React.useState('chart')
   return (
     <div>
-      <Tabs className="p-[0px] mb-2 sm:max-h-[300px]" defaultValue="1">
-        <TabsList>
+      <Tabs className="p-[0px] mb-2 sm:max-h-[350px]" defaultValue="1">
+        <TabsList className=" sm:!bg-black-1">
           <TabsTrigger
             className={cn('w-[33%]')}
             size="xl"
@@ -38,13 +38,13 @@ const TabOrderbookRecentTrades = (): ReactElement => {
             <TitleLabel whiteText={selectedTab === 'trades'}>Recent Trades</TitleLabel>
           </TabsTrigger>
         </TabsList>
-        <TabsContent className={cn('h-[90%]')} value="1">
+        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="1">
           <OrderBook />
         </TabsContent>
-        <TabsContent className={cn('h-[90%]')} value="2">
+        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="2">
           <OrderBook />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] border border-solid')} value="3">
+        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="3">
           <div className={cn('w-full h-full')}>
             <RecentTrades />
           </div>
