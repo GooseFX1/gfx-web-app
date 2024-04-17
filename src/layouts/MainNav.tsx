@@ -39,13 +39,24 @@ export const MainNav: FC = () => {
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const showRewardsModal = query.get('rewards')
-  const [isBannerActive] = useBoolean(true)
+  const [isBannerActive] = useBoolean(false)
 
   useEffect(() => {
     if (showRewardsModal) {
       rewardToggle(true)
     }
   }, [location])
+
+  const bannerInfo = (
+    <div>
+      Solana network is currently congested. Due to this some transactions may fail to confirm without retries and
+      volumes will be lower than usual. See our{' '}
+      <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
+        Twitter
+      </a>{' '}
+      for further updates.
+    </div>
+  )
 
   return (
     <div className={`w-screen flex flex-col fixed top-0 z-[10]`}>
@@ -57,14 +68,7 @@ export const MainNav: FC = () => {
         />
       )}
       {isBannerActive && breakpoint.isDesktop && (
-        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>
-          Solana network is currently congested. Due to this some transactions may fail to confirm without retries
-          and volumes will be lower than usual. See our{' '}
-          <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
-            Twitter
-          </a>{' '}
-          for further updates.
-        </div>
+        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>{bannerInfo}</div>
       )}
 
       <div
