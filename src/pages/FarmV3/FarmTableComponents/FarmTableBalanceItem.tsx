@@ -550,14 +550,17 @@ const CollapsibleContent: FC<{
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
   const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
   const canWithdraw = userDepositedAmount?.toNumber() >= MIN_AMOUNT_WITHDRAW
-  const minDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canDeposit
-  const maxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canDeposit
+
+  const minDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
+  const maxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
+
   const disabled =
     !connected ||
     operationPending ||
     isButtonLoading ||
     (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
   const canClaim = claimableReward > 0
+
   return (
     <>
       <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75 '}>
