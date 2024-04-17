@@ -28,11 +28,11 @@ const FarmItems: FC<{
         {tokens.map((coin) => {
           if (!coin || !filteredLiquidityAccounts) return null
           const liqAcc = filteredLiquidityAccounts[coin.mint.toBase58()]
-          if (!liqAcc) return null
-          const userDepositedAmount = truncateBigString(liqAcc.amountDeposited.toString(), coin.mintDecimals)
+          const userDepositedAmount = truncateBigString(liqAcc?.amountDeposited.toString(), coin.mintDecimals)
 
           const show =
             (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
+
           return show ? (
             <AccordionItem value={coin.token} variant={'secondary'} key={coin.token}>
               {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
