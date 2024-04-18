@@ -1,7 +1,7 @@
 import { cn, Icon, IconProps } from 'gfx-component-lib'
 import { FC } from 'react'
 
-interface IconHoverProps extends Omit<IconProps, 'src'> {
+export interface IconHoverProps extends Omit<IconProps, 'src'> {
   initialSrc: string
   hoverSrc: string
 }

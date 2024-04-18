@@ -32,6 +32,8 @@ import { SOCIAL_MEDIAS } from '../constants'
 import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
 import PriorityFee from '@/components/footer/PriorityFee'
+import SocialLinks from '@/components/common/SocialLinks'
+import { NAV_LINKS, navigateTo } from '@/utils/requests'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -53,11 +55,11 @@ export const MainNav: FC = () => {
   const bannerInfo = (
     <div>
       Solana network is currently congested. Due to this some transactions may fail to confirm without retries and
-      volumes will be lower than usual. See our{' '}
+      volumes will be lower than usual. See our&nbsp;
       <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
         Twitter
-      </a>{' '}
-      for further updates.
+      </a>
+      &nbsp; for further updates.
     </div>
   )
 
@@ -329,7 +331,7 @@ const MobileNav: FC = () => {
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
-                    history.push('/leaderboard')
+                    history.push(NAV_LINKS.whatsnew)
                   }}
                 >
                   What's New
@@ -337,7 +339,7 @@ const MobileNav: FC = () => {
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
-                    history.push('/leaderboard')
+                    history.push(NAV_LINKS.blog)
                   }}
                 >
                   Blog
@@ -345,10 +347,13 @@ const MobileNav: FC = () => {
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
-                    history.push('/leaderboard')
+                    navigateTo(NAV_LINKS.docs, '_blank')
                   }}
                 >
                   Docs
+                </DropdownMenuItem>
+                <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5'}>
+                  <SocialLinks />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
