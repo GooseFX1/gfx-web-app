@@ -21,7 +21,7 @@ const FarmItems: FC<{
       {(numberOfCoinsDeposited === 0 && showDeposited) ||
         (tokens?.length === 0 && (
           <NoResultsFound
-            requestPool={!(numberOfCoinsDeposited === 0 && showDeposited) && Boolean(searchTokens)}
+            requestPool={Boolean(searchTokens) && !showDeposited}
             str="Oops, no pools deposited"
             subText="Don’t worry, explore our pools and start earning!"
           />
