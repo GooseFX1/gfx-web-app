@@ -15,25 +15,21 @@ export const RAFFLE_PANEL_INDEX = 2
 export const RewardsButton: FC = () => {
   const { mode } = useDarkMode()
   const { rewardToggle, changePanel } = useRewardToggle()
-  const breakpoint = useBreakPoint()
 
   const { hasRewards } = useRewards()
 
   const riveComponent = (
-    <div className={`relative`}>
-      <img
-        className={cn(breakpoint.isMobile || breakpoint.isTablet ? `h-[30px] w-[32px]` : `h-[22px] w-[20px]`)}
-        src={`/img/mainnav/rewards-${breakpoint.isMobile || breakpoint.isTablet ? 'mobile-' : ''}${mode}.svg`}
-      />
+    <>
+      <img className={cn(`min-h-[20px] min-w-[20px]`)} src={`/img/mainnav/rewards-${mode}.svg`} />
 
       {hasRewards && (
         <img
-          className={`absolute top-[5px]
-              min-md:top-[1px] right-0`}
+          className={`absolute top-[-1px] -left-0.5 border-1 border-solid border-background-lightmode-primary
+               dark:border-background-darkmode-primary rounded-full`}
           src={'/img/assets/red-notification-circle.svg'}
         />
       )}
-    </div>
+    </>
   )
 
   const handleClick = useCallback(() => {
@@ -41,22 +37,14 @@ export const RewardsButton: FC = () => {
     changePanel(REWARD_PANEL_INDEX)
   }, [])
 
-  if (breakpoint.isMobile || breakpoint.isTablet) {
-    return (
-      <Button onClick={handleClick} variant={'ghost'}>
-        {riveComponent}
-      </Button>
-    )
-  }
   return (
     <Button
       onClick={handleClick}
       variant={'outline'}
       size={'sm'}
-      className={'border-background-blue dark:border-white '}
+      className={'border-background-blue dark:border-white rounded-full w-[30px] relative'}
     >
       {riveComponent}
-      <span className={`font-bold`}>Rewards</span>
     </Button>
   )
 }

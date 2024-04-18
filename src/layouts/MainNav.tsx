@@ -16,7 +16,6 @@ import {
   DialogBody,
   DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTrigger,
   DropdownMenu,
@@ -25,10 +24,14 @@ import {
   DropdownMenuTrigger,
   Icon,
   cn,
-  Dialog
+  Dialog,
+  DialogFooter
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
 import { SOCIAL_MEDIAS } from '../constants'
+import NetworkStatus from '@/components/footer/NetworkStatus'
+import RPCToggle from '@/components/footer/RPCToggle'
+import PriorityFee from '@/components/footer/PriorityFee'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -105,7 +108,7 @@ const MobileNav: FC = () => {
   const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
   const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
   const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
-
+  const [isAboutOpen, setIsAboutOpen] = useBoolean(false)
   const tradeActive =
     pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
 
@@ -116,71 +119,91 @@ const MobileNav: FC = () => {
         <DialogTrigger onClick={setIsOpen.on}>
           <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
-        <DialogContent fullScreen={true} className={'z-[999]'}>
-          <DialogHeader>
+        <DialogContent fullScreen={true} className={'z-[999] flex flex-col gap-0'}>
+          <DialogHeader className={'items-center'}>
             <DialogClose className={'ml-auto mr-3.75 mt-3.75'} onClick={setIsOpen.off}>
               <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
             </DialogClose>
+            <ThemeToggle />
           </DialogHeader>
-          <DialogBody className={'mx-auto justify-center items-center flex flex-col flex-1 gap-5'}>
+          <DialogBody
+            className={
+              'mx-auto my-auto justify-center items-center flex flex-col flex-1 gap-[15px] w-full px-[15px]'
+            }
+          >
             <Button
-              variant={'ghost'}
-              size={'sm'}
+              variant={pathname.includes('bridge') ? 'outline' : 'ghost'}
+              colorScheme={pathname.includes('bridge') ? 'secondaryGradient' : 'none'}
+              size={'lg'}
+              fullWidth
               onClick={() => {
                 setIsOpen.off()
                 history.push('/bridge')
               }}
               className={cn(
-                `text-center text-h3 font-semibold font-poppins`,
+                `text-center text-h3 font-semibold font-poppins justify-start`,
                 pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
+              iconLeft={
+                <img
+                  className="h-[35px]"
+                  src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                  alt="dark"
+                />
+              }
             >
-              <img
-                className="h-[40px]"
-                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-                alt="dark"
-              />
               Bridge
             </Button>
             <Button
-              variant={'ghost'}
-              size={'sm'}
+              variant={pathname.includes('farm') ? 'outline' : 'ghost'}
+              colorScheme={pathname.includes('farm') ? 'secondaryGradient' : 'none'}
+              size={'lg'}
               onClick={() => {
                 setIsOpen.off()
                 history.push('/farm')
               }}
               className={cn(
-                `text-center text-h3 font-semibold font-poppins`,
+                `text-center text-h3 font-semibold font-poppins justify-start`,
                 pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
+              fullWidth
+              iconLeft={
+                <img
+                  className="h-[35px]"
+                  src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                  alt="dark"
+                />
+              }
             >
-              <img
-                className="h-[40px]"
-                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-                alt="dark"
-              />
               Farm
             </Button>
             <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
-                  variant={'ghost'}
+                  variant={pathname.includes('trade') || isTradeOpen ? 'outline' : 'ghost'}
+                  colorScheme={pathname.includes('trade') || isTradeOpen ? 'secondaryGradient' : 'none'}
                   className={cn(
-                    `text-h3 text-center justify-center items-center  font-semibold font-poppins`,
+                    `text-h3 text-center font-semibold font-poppins`,
                     tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
                   )}
+                  size={'lg'}
+                  fullWidth
+                  iconLeft={
+                    <img
+                      className="h-[35px]"
+                      src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
+                      alt="dark"
+                    />
+                  }
+                  iconRight={
+                    <CircularArrow
+                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
+                      invert={isTradeOpen}
+                      css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                    />
+                  }
                 >
-                  <img
-                    className="h-[40px]"
-                    src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
-                    alt="dark"
-                  />
                   Trade
-                  <CircularArrow
-                    cssStyle={tw`w-[16px] h-[16px]`}
-                    invert={isTradeOpen}
-                    css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
-                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
@@ -226,27 +249,36 @@ const MobileNav: FC = () => {
             <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
-                  variant={'ghost'}
+                  variant={pathname.includes('leaderboard') || isLeaderboardOpen ? 'outline' : 'ghost'}
+                  colorScheme={
+                    pathname.includes('leaderboard') || isLeaderboardOpen ? 'secondaryGradient' : 'none'
+                  }
                   className={cn(
                     `text-h3 text-center justify-center items-center [&>span]:inline-flex `,
                     pathname.includes('leaderboard')
                       ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
                       : ''
                   )}
+                  fullWidth
+                  size={'lg'}
+                  iconLeft={
+                    <img
+                      className="h-[35px]"
+                      src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
+                      alt="dark"
+                    />
+                  }
+                  iconRight={
+                    <CircularArrow
+                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
+                      invert={isLeaderboardOpen}
+                      css={[
+                        pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`
+                      ]}
+                    />
+                  }
                 >
-                  <img
-                    className="h-[40px]"
-                    src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
-                    alt="dark"
-                  />
                   More
-                  <CircularArrow
-                    cssStyle={tw`w-[16px] h-[16px]`}
-                    invert={isLeaderboardOpen}
-                    css={[
-                      pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`
-                    ]}
-                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
@@ -264,9 +296,70 @@ const MobileNav: FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <DropdownMenu onOpenChange={setIsAboutOpen.toggle}>
+              <DropdownMenuTrigger asChild={true}>
+                <Button
+                  variant={isAboutOpen ? 'outline' : 'ghost'}
+                  colorScheme={isAboutOpen ? 'secondaryGradient' : 'none'}
+                  className={cn(
+                    `text-h3 text-center justify-center items-center [&>span]:inline-flex `,
+                    isAboutOpen ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                  )}
+                  fullWidth
+                  size={'lg'}
+                  iconLeft={
+                    <img
+                      className="h-[35px]"
+                      src={`/img/mainnav/about-${isAboutOpen ? 'active' : 'inactive'}-${mode}.svg`}
+                      alt="dark"
+                    />
+                  }
+                  iconRight={
+                    <CircularArrow
+                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
+                      invert={isAboutOpen}
+                      css={[isAboutOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                    />
+                  }
+                >
+                  About
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsOpen.off()
+                    history.push('/leaderboard')
+                  }}
+                >
+                  What's New
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsOpen.off()
+                    history.push('/leaderboard')
+                  }}
+                >
+                  Blog
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsOpen.off()
+                    history.push('/leaderboard')
+                  }}
+                >
+                  Docs
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </DialogBody>
-          <DialogFooter className={'w-full flex-1 justify-center items-center mt-auto mb-3.75 h-min'}>
-            <ThemeToggle />
+          <DialogFooter
+            className={`border-t-1 border-solid border-t-border-lightmode-secondary 
+          dark:border-t-border-darkmode-secondary h-[75px] items-center justify-center`}
+          >
+            <NetworkStatus />
+            <RPCToggle />
+            <PriorityFee />
           </DialogFooter>
         </DialogContent>
       </Dialog>
