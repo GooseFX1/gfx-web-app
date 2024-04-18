@@ -15,15 +15,21 @@ const FarmItems: FC<{
 }> = ({ tokens, numberOfCoinsDeposited, showDeposited, searchTokens }) => {
   const [statsModal, setStatsModal] = useState<boolean>(false)
   const { filteredLiquidityAccounts } = useSSLContext()
-  console.log({ numberOfCoinsDeposited, showDeposited, searchTokens, tokens })
+
+  const noResultsTitle =
+    Boolean(searchTokens) && !showDeposited ? 'Oops, no pools found' : 'Oops, no pools deposited'
+  const noResultsSubText =
+    Boolean(searchTokens) && !showDeposited
+      ? 'Don’t worry, there are more pools coming soon...'
+      : 'Don’t worry, explore our pools and start earning!'
   return (
     <div className={''}>
       {(numberOfCoinsDeposited === 0 && showDeposited) ||
         (tokens?.length === 0 && (
           <NoResultsFound
             requestPool={Boolean(searchTokens) && !showDeposited}
-            str="Oops, no pools deposited"
-            subText="Don’t worry, explore our pools and start earning!"
+            str={noResultsTitle}
+            subText={noResultsSubText}
           />
         ))}
       <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
