@@ -114,7 +114,7 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       <FarmItemHead
         icon={`/img/crypto/${coin?.token}.svg`}
         depositPercentage={depositPercentage}
-        canClaim={claimable > 0}
+        canClaim={claimable >= MIN_AMOUNT_CLAIM}
         token={coin?.token}
         tooltip={
           <>
@@ -552,7 +552,7 @@ const CollapsibleContent: FC<{
     operationPending ||
     isButtonLoading ||
     (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
-  const canClaim = claimableReward > 0
+  const canClaim = claimableReward > MIN_AMOUNT_CLAIM
 
   return (
     <>
