@@ -26,11 +26,7 @@ const FarmItems: FC<{
   return (
     <div className={''}>
       {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (
-        <NoResultsFound
-          requestPool={Boolean(searchTokens) && !showDeposited}
-          str={noResultsTitle}
-          subText={noResultsSubText}
-        />
+        <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       )}
       <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
         {tokens.map((coin) => {
