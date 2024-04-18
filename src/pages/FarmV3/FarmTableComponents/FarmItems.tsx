@@ -22,16 +22,16 @@ const FarmItems: FC<{
     Boolean(searchTokens) && !showDeposited
       ? 'Don’t worry, there are more pools coming soon...'
       : 'Don’t worry, explore our pools and start earning!'
+  console.log(numberOfCoinsDeposited, showDeposited, tokens, numberOfCoinsDeposited === 0 && showDeposited)
   return (
     <div className={''}>
-      {(numberOfCoinsDeposited === 0 && showDeposited) ||
-        (tokens?.length === 0 && (
-          <NoResultsFound
-            requestPool={Boolean(searchTokens) && !showDeposited}
-            str={noResultsTitle}
-            subText={noResultsSubText}
-          />
-        ))}
+      {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (
+        <NoResultsFound
+          requestPool={Boolean(searchTokens) && !showDeposited}
+          str={noResultsTitle}
+          subText={noResultsSubText}
+        />
+      )}
       <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
         {tokens.map((coin) => {
           if (!coin || !filteredLiquidityAccounts) return null

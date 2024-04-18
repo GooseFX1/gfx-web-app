@@ -15,7 +15,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   return (
     <div css={cn(` flex flex-col mt-[30px] sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
       <div
-        tw="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold
+        className="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold
           dark:text-white text-black"
       >
         <Lottie
