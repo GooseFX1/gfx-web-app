@@ -22,7 +22,7 @@ const FarmItems: FC<{
     Boolean(searchTokens) && !showDeposited
       ? 'Don’t worry, there are more pools coming soon...'
       : 'Don’t worry, explore our pools and start earning!'
-  console.log(numberOfCoinsDeposited, showDeposited, tokens, numberOfCoinsDeposited === 0 && showDeposited)
+
   return (
     <div className={''}>
       {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (

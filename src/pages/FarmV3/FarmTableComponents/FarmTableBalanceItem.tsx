@@ -555,93 +555,126 @@ const CollapsibleContent: FC<{
   const canClaim = claimableReward > MIN_AMOUNT_CLAIM
 
   return (
-    <>
-      <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75 '}>
-        {actionModal && (
-          <ActionModal
-            actionModal={actionModal}
-            setActionModal={setActionModal}
-            handleWithdraw={handleWithdraw}
-            handleDeposit={handleDeposit}
-            handleClaim={handleClaim}
-            isButtonLoading={isButtonLoading}
-            handleCancel={handleCancel}
-            withdrawAmount={withdrawAmount}
-            depositAmount={depositAmount}
-            claimAmount={claimableReward}
-            actionType={actionType}
-            token={coin}
-            earlyWithdrawFee={earlyWithdrawFee}
-            diffTimer={diffTimer}
-            setDiffTimer={setDiffTimer}
+    <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75'}>
+      {actionModal && (
+        <ActionModal
+          key={'action-modal'}
+          actionModal={actionModal}
+          setActionModal={setActionModal}
+          handleWithdraw={handleWithdraw}
+          handleDeposit={handleDeposit}
+          handleClaim={handleClaim}
+          isButtonLoading={isButtonLoading}
+          handleCancel={handleCancel}
+          withdrawAmount={withdrawAmount}
+          depositAmount={depositAmount}
+          claimAmount={claimableReward}
+          actionType={actionType}
+          token={coin}
+          earlyWithdrawFee={earlyWithdrawFee}
+          diffTimer={diffTimer}
+          setDiffTimer={setDiffTimer}
+        />
+      )}
+      {isMobile ? (
+        <div className={'flex flex-col gap-1.25'}>
+          <FarmBalanceItem
+            title={'Liquidity:'}
+            key={'mobile-liquidity'}
+            asZero={liquidity === 0 || isNaN(liquidity)}
+            value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
+            token={coin?.token}
           />
-        )}
-        {isMobile ? (
+          <FarmBalanceItem
+            title={'24H Volume:'}
+            key={'mobile-24-h-volume'}
+            asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
+            value={'$' + numberFormatter(formattedapiSslData?.volume)}
+            token={coin?.token}
+          />
+          <FarmBalanceItem
+            title={'24H Fees:'}
+            key={'mobile-24-h-fees'}
+            asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
+            value={
+              '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
+            }
+            token={coin?.token}
+          />
+          <FarmBalanceItem
+            title={'My Balance:'}
+            key={'mobile-my-balance'}
+            asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
+            value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
+            token={coin?.token}
+          />
+          <FarmBalanceItem
+            title={'Wallet Balance:'}
+            key={'mobile-wallet-balance'}
+            asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
+            earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
+            value={numberFormatter(userTokenBalance)}
+            token={coin?.token}
+          />
+          <FarmBalanceItem
+            title={'Total Earnings:'}
+            key={'mobile-total-earnings'}
+            asZero={totalEarned === 0 || isNaN(totalEarned)}
+            titlePosition={isTablet ? 'text-start' : 'text-end'}
+            value={numberFormatter(totalEarned)}
+            earnedUSD={numberFormatter(totalEarnedInUSD)}
+            token={coin?.token}
+          />
+          <FarmBalanceItem
+            title={'Pending Rewards:'}
+            key={'mobile-pending-rewards'}
+            asZero={claimableReward === 0 || isNaN(claimableReward)}
+            titlePosition={isTablet ? 'text-start' : 'text-end'}
+            value={numberFormatter(claimableReward)}
+            earnedUSD={numberFormatter(claimableRewardInUSD)}
+            token={coin?.token}
+          />
+          <DepositAndWithdrawToggle
+            key={'mobile-deposit-withdraw-toggle'}
+            value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
+            operationPending={operationPending}
+            setModeOfOperation={setModeOfOperation}
+          />
+          <TokenInput
+            key={'mobile-token-input'}
+            handleHalf={handleHalf}
+            handleMax={handleMax}
+            value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
+            onChange={(e) => handleInputChange(e.target.value)}
+            tokenSymbol={coin.token}
+            disabled={disabled}
+            minDisabled={minDisabled}
+            maxDisabled={maxDisabled}
+          />
+          <ConnectClaimCombo
+            key={'mobile-connect-claim-combo'}
+            disabled={disabled}
+            depositWithdrawOnClick={depositWithdrawOnClick}
+            token={coin?.token}
+            actionButtonText={actionButtonText}
+            canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
+            claimableReward={claimableReward}
+            handleClaim={handleClaim}
+            disableActionButton={disableActionButton}
+            isLoading={isButtonLoading}
+          />
+        </div>
+      ) : isTablet ? (
+        <>
           <div className={'flex flex-col gap-1.25'}>
-            <FarmBalanceItem
-              title={'Liquidity:'}
-              key={'liquidity'}
-              asZero={liquidity === 0 || isNaN(liquidity)}
-              value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'24H Volume:'}
-              key={'24-h-volume'}
-              asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
-              value={'$' + numberFormatter(formattedapiSslData?.volume)}
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'24H Fees:'}
-              key={'24-h-fees'}
-              asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
-              value={
-                '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
-              }
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'My Balance:'}
-              key={'my-balance'}
-              asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
-              value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'Wallet Balance:'}
-              key={'wallet-balance'}
-              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-              earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-              value={numberFormatter(userTokenBalance)}
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'Total Earnings:'}
-              key={'total-earnings'}
-              asZero={totalEarned === 0 || isNaN(totalEarned)}
-              titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(totalEarned)}
-              earnedUSD={numberFormatter(totalEarnedInUSD)}
-              token={coin?.token}
-            />
-            <FarmBalanceItem
-              title={'Pending Rewards:'}
-              key={'pending-rewards'}
-              asZero={claimableReward === 0 || isNaN(claimableReward)}
-              titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(claimableReward)}
-              earnedUSD={numberFormatter(claimableRewardInUSD)}
-              token={coin?.token}
-            />
             <DepositAndWithdrawToggle
-              key={'deposit-withdraw-toggle'}
+              key={'tablet-deposit-withdraw-toggle'}
               value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
               operationPending={operationPending}
               setModeOfOperation={setModeOfOperation}
             />
             <TokenInput
-              key={'token-input'}
+              key={'tablet-token-input'}
               handleHalf={handleHalf}
               handleMax={handleMax}
               value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
@@ -652,6 +685,7 @@ const CollapsibleContent: FC<{
               maxDisabled={maxDisabled}
             />
             <ConnectClaimCombo
+              key={'tablet-connect-claim-combo'}
               disabled={disabled}
               depositWithdrawOnClick={depositWithdrawOnClick}
               token={coin?.token}
@@ -663,166 +697,134 @@ const CollapsibleContent: FC<{
               isLoading={isButtonLoading}
             />
           </div>
-        ) : isTablet ? (
-          <>
-            <div className={'flex flex-col gap-1.25'}>
-              <DepositAndWithdrawToggle
-                key={'deposit-withdraw-toggle'}
-                value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
-                operationPending={operationPending}
-                setModeOfOperation={setModeOfOperation}
-              />
-              <TokenInput
-                key={'token-input'}
-                handleHalf={handleHalf}
-                handleMax={handleMax}
-                value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
-                onChange={(e) => handleInputChange(e.target.value)}
-                tokenSymbol={coin.token}
-                disabled={disabled}
-                minDisabled={minDisabled}
-                maxDisabled={maxDisabled}
-              />
-              <ConnectClaimCombo
-                disabled={disabled}
-                depositWithdrawOnClick={depositWithdrawOnClick}
-                token={coin?.token}
-                actionButtonText={actionButtonText}
-                canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
-                claimableReward={claimableReward}
-                handleClaim={handleClaim}
-                disableActionButton={disableActionButton}
-                isLoading={isButtonLoading}
-              />
-            </div>
-            <div className={'flex flex-col gap-3.75'}>
-              <FarmBalanceItem
-                title={'Liquidity:'}
-                key={'liquidity'}
-                asZero={liquidity === 0 || isNaN(liquidity)}
-                value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'24H Volume:'}
-                key={'24-h-volume'}
-                asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
-                value={'$' + numberFormatter(formattedapiSslData?.volume)}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'24H Fees:'}
-                key={'24-h-fees'}
-                asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
-                value={
-                  '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
-                }
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'My Balance:'}
-                key={'my-balance'}
-                asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
-                value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'Wallet Balance:'}
-                key={'wallet-balance'}
-                asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-                earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-                value={numberFormatter(userTokenBalance)}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'Total Earnings:'}
-                key={'total-earnings'}
-                asZero={totalEarned === 0 || isNaN(totalEarned)}
-                titlePosition={isTablet ? 'text-start' : 'text-end'}
-                value={numberFormatter(totalEarned)}
-                earnedUSD={numberFormatter(totalEarnedInUSD)}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'Pending Rewards:'}
-                key={'pending-rewards'}
-                asZero={claimableReward === 0 || isNaN(claimableReward)}
-                titlePosition={isTablet ? 'text-start' : 'text-end'}
-                value={numberFormatter(claimableReward)}
-                earnedUSD={numberFormatter(claimableRewardInUSD)}
-                token={coin?.token}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className={'flex flex-col gap-3.75'}>
-              <DepositAndWithdrawToggle
-                key={'deposit-withdraw-toggle'}
-                value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
-                operationPending={operationPending}
-                setModeOfOperation={setModeOfOperation}
-              />
-              <FarmBalanceItem
-                title={'Wallet Balance:'}
-                key={'wallet-balance'}
-                asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-                earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-                value={numberFormatter(userTokenBalance)}
-                token={coin?.token}
-              />
-            </div>
-            <div className={'flex flex-col gap-3.75'}>
-              <TokenInput
-                key={'token-input'}
-                handleHalf={handleHalf}
-                handleMax={handleMax}
-                value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
-                onChange={(e) => handleInputChange(e.target.value)}
-                tokenSymbol={coin.token}
-                disabled={disabled}
-                minDisabled={minDisabled}
-                maxDisabled={maxDisabled}
-              />
-              <ConnectClaimCombo
-                disabled={disabled}
-                depositWithdrawOnClick={depositWithdrawOnClick}
-                token={coin?.token}
-                actionButtonText={actionButtonText}
-                canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
-                claimableReward={claimableReward}
-                handleClaim={handleClaim}
-                disableActionButton={disableActionButton}
-                isLoading={isButtonLoading}
-              />
-            </div>
-            <div className={'flex flex-col gap-3.75 items-end'}>
-              <FarmBalanceItem
-                title={'Total Earnings:'}
-                key={'total-earnings'}
-                asZero={totalEarned === 0 || isNaN(totalEarned)}
-                titlePosition={isTablet ? 'text-start' : 'text-end'}
-                value={numberFormatter(totalEarned)}
-                earnedUSD={numberFormatter(totalEarnedInUSD)}
-                token={coin?.token}
-              />
-              <FarmBalanceItem
-                title={'Pending Rewards:'}
-                key={'pending-rewards'}
-                asZero={claimableReward === 0 || isNaN(claimableReward)}
-                titlePosition={isTablet ? 'text-start' : 'text-end'}
-                value={numberFormatter(claimableReward)}
-                earnedUSD={numberFormatter(claimableRewardInUSD)}
-                token={coin?.token}
-              />
-            </div>
-          </>
-        )}
-        <div className={'flex justify-center col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>
-          <OracleIcon token={coin} />
-        </div>
+          <div className={'flex flex-col gap-3.75'}>
+            <FarmBalanceItem
+              title={'Liquidity:'}
+              key={'tablet-liquidity'}
+              asZero={liquidity === 0 || isNaN(liquidity)}
+              value={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="100%" />}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'24H Volume:'}
+              key={'tablet-24-h-volume'}
+              asZero={formattedapiSslData?.volume === 0 || isNaN(formattedapiSslData?.volume)}
+              value={'$' + numberFormatter(formattedapiSslData?.volume)}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'24H Fees:'}
+              key={'tablet-24-h-fees'}
+              asZero={formattedapiSslData?.fee === 0 || isNaN(formattedapiSslData?.fee)}
+              value={
+                '$' + numberFormatter(formattedapiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current)
+              }
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'My Balance:'}
+              key={'tablet-my-balance'}
+              asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
+              value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'Wallet Balance:'}
+              key={'tablet-wallet-balance'}
+              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
+              earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
+              value={numberFormatter(userTokenBalance)}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'Total Earnings:'}
+              key={'tablet-total-earnings'}
+              asZero={totalEarned === 0 || isNaN(totalEarned)}
+              titlePosition={isTablet ? 'text-start' : 'text-end'}
+              value={numberFormatter(totalEarned)}
+              earnedUSD={numberFormatter(totalEarnedInUSD)}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'Pending Rewards:'}
+              key={'tablet-pending-rewards'}
+              asZero={claimableReward === 0 || isNaN(claimableReward)}
+              titlePosition={isTablet ? 'text-start' : 'text-end'}
+              value={numberFormatter(claimableReward)}
+              earnedUSD={numberFormatter(claimableRewardInUSD)}
+              token={coin?.token}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={'flex flex-col gap-3.75'}>
+            <DepositAndWithdrawToggle
+              key={'desktop-deposit-withdraw-toggle'}
+              value={modeOfOperation == ModeOfOperation.DEPOSIT ? 'deposit' : 'withdraw'}
+              operationPending={operationPending}
+              setModeOfOperation={setModeOfOperation}
+            />
+            <FarmBalanceItem
+              title={'Wallet Balance:'}
+              key={'desktop-wallet-balance'}
+              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
+              earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
+              value={numberFormatter(userTokenBalance)}
+              token={coin?.token}
+            />
+          </div>
+          <div className={'flex flex-col gap-3.75'}>
+            <TokenInput
+              key={'desktop-token-input'}
+              handleHalf={handleHalf}
+              handleMax={handleMax}
+              value={modeOfOperation === ModeOfOperation.DEPOSIT ? depositAmount ?? '' : withdrawAmount ?? ''}
+              onChange={(e) => handleInputChange(e.target.value)}
+              tokenSymbol={coin.token}
+              disabled={disabled}
+              minDisabled={minDisabled}
+              maxDisabled={maxDisabled}
+            />
+            <ConnectClaimCombo
+              key={'desktop-connect-claim-combo'}
+              disabled={disabled}
+              depositWithdrawOnClick={depositWithdrawOnClick}
+              token={coin?.token}
+              actionButtonText={actionButtonText}
+              canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
+              claimableReward={claimableReward}
+              handleClaim={handleClaim}
+              disableActionButton={disableActionButton}
+              isLoading={isButtonLoading}
+            />
+          </div>
+          <div className={'flex flex-col gap-3.75 items-end'}>
+            <FarmBalanceItem
+              title={'Total Earnings:'}
+              key={'desktop-total-earnings'}
+              asZero={totalEarned === 0 || isNaN(totalEarned)}
+              titlePosition={isTablet ? 'text-start' : 'text-end'}
+              value={numberFormatter(totalEarned)}
+              earnedUSD={numberFormatter(totalEarnedInUSD)}
+              token={coin?.token}
+            />
+            <FarmBalanceItem
+              title={'Pending Rewards:'}
+              key={'desktop-pending-rewards'}
+              asZero={claimableReward === 0 || isNaN(claimableReward)}
+              titlePosition={isTablet ? 'text-start' : 'text-end'}
+              value={numberFormatter(claimableReward)}
+              earnedUSD={numberFormatter(claimableRewardInUSD)}
+              token={coin?.token}
+            />
+          </div>
+        </>
+      )}
+      <div className={'flex justify-center col-span-1 md-xl:col-span-3 sm-lg:col-span-2'}>
+        <OracleIcon key={'orcale-icons'} token={coin} />
       </div>
-    </>
+    </div>
   )
 }
 export default FarmContent
