@@ -19,7 +19,7 @@ const FarmItemHead: FC<{
 
   return (
     <AccordionTrigger
-      className={cn(`grid grid-cols-7 `, isMobile && `grid-cols-3`, isTablet && `grid-cols-4`)}
+      className={cn(`grid grid-cols-7 `, isMobile && `grid-cols-3 p-4`, isTablet && `grid-cols-4`)}
       indicator={<></>}
       variant={'secondary'}
     >

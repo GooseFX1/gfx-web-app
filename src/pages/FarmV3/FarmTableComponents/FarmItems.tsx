@@ -15,9 +15,12 @@ const FarmItems: FC<{
 }> = ({ tokens, numberOfCoinsDeposited, showDeposited }) => {
   const [statsModal, setStatsModal] = useState<boolean>(false)
   const { filteredLiquidityAccounts } = useSSLContext()
+
+  console.log(numberOfCoinsDeposited, showDeposited, tokens?.length)
+
   return (
     <div className={''}>
-      {numberOfCoinsDeposited === 0 && showDeposited && tokens?.length === 0 && (
+      {numberOfCoinsDeposited === 0 && showDeposited && (
         <NoResultsFound
           requestPool={true}
           str="Oops, no pools deposited"
