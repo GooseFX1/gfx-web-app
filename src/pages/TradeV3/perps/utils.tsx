@@ -475,13 +475,19 @@ export const convertToFractional = (amount: string): Fractional => {
   const newM = Number(beforeDecimal + maxFour)
   return new Fractional({ m: new anchor.BN(newM), exp: new anchor.BN(newdigitsAfterDecimal) })
 }
+const SLAB_DESERIALIZATION_OFFSET = 40; 
 
 export const loadSlab = async (connection: Connection, account: string) => {
+  try {
   const accountInfo = await connection.getAccountInfo(new PublicKey(account), 'finalized')
-  if (!accountInfo?.data) {
-    throw new Error('Invalid asks/bids account')
+    if (!accountInfo?.data) {
+      throw new Error(`No data found for the account ${account}`);
+    }
+    return Slab.deserialize(accountInfo.data, SLAB_DESERIALIZATION_OFFSET);
+  } catch (error) {
+    console.error(`Failed to load or parse account ${account}:`, error);
+    throw new Error(`Failed to load or parse account ${account}`);
   }
-  return Slab.deserialize(accountInfo.data, 40)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

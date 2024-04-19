@@ -130,33 +130,44 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const fetchPerpsOrderBook = async () => {
-    const res = await httpClient('api-services').post(`${GET_ORDERBOOK}`, {
-      API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-      pairName: activeProduct.pairName,
-      devnet: isDevnet
-    })
-    const lastUpdated = new Date(res.data?.updatedTime).getTime()
-    const currentTime = new Date().getTime()
-    const difference = currentTime - lastUpdated
+    try {
+      const res = await httpClient('api-services').post(`${GET_ORDERBOOK}`, {
+        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+        pairName: activeProduct.pairName,
+        devnet: isDevnet
+      });
 
-    let orderbookAsks
-    let orderbookBids
-    if (difference > 60 * MILLISECONDS_IN_SECOND) {
-      const { connection } = useConnectionConfig()
-      let [asks, bids] = await Promise.all([
-        loadSlab(connection, activeProduct.asks),
-        loadSlab(connection, activeProduct.bids)
-      ])
-      orderbookBids = [...bids.items(false)].map((bid) => [bid.leafNode.getPrice(), bid.leafNode.baseQuantity])
-      orderbookAsks = [...asks.items(false)].map((ask) => [ask.leafNode.getPrice(), ask.leafNode.baseQuantity])
-    } else {
-      orderbookBids = res.data?.bids.map((item) => [item.price, item.size])
-      orderbookAsks = res.data?.asks.map((item) => [item.price, item.size])
+      if (!res.data) throw new Error("No data received from order book API");
+      const lastUpdated = new Date(res.data.updatedTime || 0).getTime();
+      const currentTime = new Date().getTime();
+      const difference = currentTime - lastUpdated;
+
+      let orderbookAsks, orderbookBids;
+
+      if (difference > 60 * MILLISECONDS_IN_SECOND) {
+        const { connection } = useConnectionConfig();
+        const [asks, bids] = await Promise.all([
+          loadSlab(connection, activeProduct.asks),
+          loadSlab(connection, activeProduct.bids)
+        ]).catch(error => { throw new Error("Failed to load slabs from blockchain") });
+
+        orderbookBids = [...bids.items(false)].map((bid) => [bid.leafNode.getPrice(), bid.leafNode.baseQuantity])
+        orderbookAsks = [...asks.items(false)].map((ask) => [ask.leafNode.getPrice(), ask.leafNode.baseQuantity])
+      } else {        
+        if (!Array.isArray(res.data.bids) || !Array.isArray(res.data.asks)) {
+          throw new Error("Invalid bid or ask format in API response");
+        }
+        orderbookBids = res.data.bids.map(item => [item.price, item.size]);
+        orderbookAsks = res.data.asks.map(item => [item.price, item.size]);
+      }
+
+      setOrderBook(prevState => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }));
+      setOrderBookCopy((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
+  } catch (error) {
+      console.error("Error fetching perpetual order book:", error);
     }
+  };
 
-    setOrderBook((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
-    setOrderBookCopy((prevState) => ({ ...prevState, asks: orderbookAsks, bids: orderbookBids }))
-  }
 
   const fetchPerpsOpenOrders = async () => {
     if (!(wallet.connected && traderInfo.traderRiskGroupKey)) {
