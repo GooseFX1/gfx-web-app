@@ -11,7 +11,14 @@ import {
   createCloseAccountInstruction
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import { Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js'
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+  SystemProgram,
+  ComputeBudgetProgram
+} from '@solana/web3.js'
 import { SYSTEM, SSL_PROGRAM_ID, EVENT_EMITTER } from './ids'
 import { findAssociatedTokenAddress, confirmTransaction } from './utils'
 import {
@@ -199,6 +206,11 @@ export const executeWithdraw = async (
   const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
   const withdrawTX: Transaction = new Transaction()
+  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: 250000
+  })
+
+  withdrawTX.add(addPriorityFee)
 
   const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
 
@@ -253,6 +265,7 @@ export const executeClaimRewards = async (
   const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
 
   const claimTX: Transaction = new Transaction()
+
   const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
 
   const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
@@ -311,6 +324,11 @@ export const executeAllPoolClaim = async (
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
   const claimTX: Transaction = new Transaction()
+  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: 250000
+  })
+
+  claimTX.add(addPriorityFee)
 
   for (let i = 0; i < allPoolSslData.length; i++) {
     const token = allPoolSslData[i]
@@ -361,6 +379,7 @@ export const executeAllPoolClaim = async (
 const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: string) => {
   try {
     const tx = new Transaction()
+
     const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
     const accountExists = await connection.getAccountInfo(associatedTokenAccount)
     // Create token account to hold your wrapped SOL
@@ -430,7 +449,12 @@ const depositAmount = async (
     if (createLiquidityIX !== undefined) {
       depositAmountTX.add(createLiquidityIX)
     }
-    depositAmountTX.add(depositAmountIX)
+
+    const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+      microLamports: 250000
+    })
+
+    depositAmountTX.add(addPriorityFee).add(depositAmountIX)
     signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
     const confirm = await confirmTransaction(connection, signature, 'processed')
     console.log('txn confirmed ', signature, confirm)
