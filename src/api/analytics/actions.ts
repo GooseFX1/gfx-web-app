@@ -22,6 +22,14 @@ export const getTotalLiquidityVolume = async (): Promise<any> => {
     return err
   }
 }
+export const getCronUpTimeData = async (): Promise<any> => {
+  try {
+    const { data } = await httpClient(ANALYTICS_SUBDOMAIN).get(ANALYTICS_ENDPOINTS.GET_CRON_UPTIME)
+    return data
+  } catch (err) {
+    return err
+  }
+}
 
 export const getWorkingRPCEndpoints = async (): Promise<any> => {
   try {
