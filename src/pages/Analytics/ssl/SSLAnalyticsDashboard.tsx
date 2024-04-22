@@ -15,6 +15,7 @@ import { Tabs } from 'antd'
 import type { TabsProps } from 'antd'
 import SSLHistoricCharts from './SSLHistoricCharts'
 import SSLPairWrapper from './SSLPairWrapper'
+import CronUpTime from './CronUpTime'
 
 const WRAPPER = styled.div`
   ${tw`flex justify-center mt-4 items-center flex-col h-screen`}
@@ -150,6 +151,7 @@ const SSLAnalyticsDashboard: FC = () => {
     </WRAPPER>
   ) : (
     <PAGE_WRAPPER>
+      <CronUpTime />
       <Tabs
         onChange={handleTabChange}
         items={[

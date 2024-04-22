@@ -185,6 +185,14 @@ export const getDateInISOFormat = (): string => {
 
   return yyyy + '-' + mm + '-' + dd
 }
+export const getTodaysDate = (): string => {
+  const today = new Date()
+  const dd = String(today.getDate()).padStart(2, '0')
+  const mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
+  const yyyy = today.getFullYear()
+
+  return dd + '-' + mm + '-' + yyyy
+}
 export const LOADING_ARR = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
 export const truncateAddress = (address: string, leftRightSize?: number): string =>
