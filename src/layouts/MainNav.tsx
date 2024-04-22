@@ -34,6 +34,7 @@ import RPCToggle from '@/components/footer/RPCToggle'
 import PriorityFee from '@/components/footer/PriorityFee'
 import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo } from '@/utils/requests'
+import { FooterDivider } from '@/layouts/Footer'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -110,10 +111,8 @@ const MobileNav: FC = () => {
   const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
   const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
   const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
-  const [isAboutOpen, setIsAboutOpen] = useBoolean(false)
   const tradeActive =
     pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
-
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <>
@@ -121,7 +120,7 @@ const MobileNav: FC = () => {
         <DialogTrigger onClick={setIsOpen.on}>
           <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
-        <DialogContent fullScreen={true} className={'z-[999] flex flex-col gap-0'}>
+        <DialogContent fullScreen={true} className={'flex flex-col gap-0'}>
           <DialogHeader className={'items-center'}>
             <DialogClose className={'ml-auto mr-3.75 mt-3.75'} onClick={setIsOpen.off}>
               <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
@@ -248,7 +247,7 @@ const MobileNav: FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
+            <DropdownMenu onOpenChange={setIsLeaderBoardOpen.set}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
                   variant={pathname.includes('leaderboard') || isLeaderboardOpen ? 'outline' : 'ghost'}
@@ -266,7 +265,9 @@ const MobileNav: FC = () => {
                   iconLeft={
                     <img
                       className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
+                      src={`/img/mainnav/more-${mode}${
+                        pathname.includes('leaderboard') || isLeaderboardOpen ? '-active' : ''
+                      }.svg`}
                       alt="dark"
                     />
                   }
@@ -296,53 +297,16 @@ const MobileNav: FC = () => {
                     <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
                   </div>
                 </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu onOpenChange={setIsAboutOpen.toggle}>
-              <DropdownMenuTrigger asChild={true}>
-                <Button
-                  variant={isAboutOpen ? 'outline' : 'ghost'}
-                  colorScheme={isAboutOpen ? 'secondaryGradient' : 'none'}
-                  className={cn(
-                    `text-h3 text-center justify-center items-center [&>span]:inline-flex `,
-                    isAboutOpen ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                  )}
-                  fullWidth
-                  size={'lg'}
-                  iconLeft={
-                    <img
-                      className="h-[35px]"
-                      src={`/img/mainnav/about-${isAboutOpen ? 'active' : 'inactive'}-${mode}.svg`}
-                      alt="dark"
-                    />
-                  }
-                  iconRight={
-                    <CircularArrow
-                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
-                      invert={isAboutOpen}
-                      css={[isAboutOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
-                    />
-                  }
-                >
-                  About
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
                 <DropdownMenuItem
                   onClick={() => {
                     setIsOpen.off()
-                    history.push(NAV_LINKS.whatsnew)
+                    navigateTo(NAV_LINKS.blog, '_blank')
                   }}
                 >
-                  What's New
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    history.push(NAV_LINKS.blog)
-                  }}
-                >
-                  Blog
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Blog</h4>
+                    <p className={'text-b3'}>Stay up to date with the latest updates and industry news!</p>
+                  </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
@@ -350,7 +314,10 @@ const MobileNav: FC = () => {
                     navigateTo(NAV_LINKS.docs, '_blank')
                   }}
                 >
-                  Docs
+                  <div>
+                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Docs</h4>
+                    <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
+                  </div>
                 </DropdownMenuItem>
                 <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5'}>
                   <SocialLinks />
@@ -359,11 +326,13 @@ const MobileNav: FC = () => {
             </DropdownMenu>
           </DialogBody>
           <DialogFooter
-            className={`border-t-1 border-solid border-t-border-lightmode-secondary 
-          dark:border-t-border-darkmode-secondary h-[75px] items-center justify-center`}
+            className={`border-t-1 border-solid border-t-border-lightmode-secondary px-3.75 py-2.5 
+          dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between`}
           >
             <NetworkStatus />
+            <FooterDivider className={'h-[30px]'} />
             <RPCToggle />
+            <FooterDivider className={'h-[30px]'} />
             <PriorityFee />
           </DialogFooter>
         </DialogContent>

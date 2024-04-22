@@ -28,10 +28,11 @@ const countries = [
 const banned_countries = countries.map((c) => c.code)
 
 export const DEFAULT_SLIPPAGE = 0.005
+export type EndPointName = 'Custom' | 'GooseFX' | 'Helius'
 
 export type RPC = {
   chainId: ENV
-  name: string
+  name: EndPointName
   endpoint: string
   network: WalletAdapterNetwork
 }
@@ -42,6 +43,23 @@ export const APP_RPC: RPC = {
   endpoint: `https://rpc-proxy.goosefx.workers.dev`,
   network: WalletAdapterNetwork.Mainnet
 }
+export const HELIUS_RPC: RPC = {
+  chainId: ENV.MainnetBeta,
+  name: 'Helius',
+  endpoint: `https://api.helius.network`,
+  network: WalletAdapterNetwork.Mainnet
+}
+const CUSTOM_RPC: RPC = {
+  chainId: ENV.MainnetBeta,
+  name: 'Custom',
+  endpoint: '',
+  network: WalletAdapterNetwork.Mainnet
+}
+export const RPCs = {
+  GooseFX: APP_RPC,
+  Helius: HELIUS_RPC,
+  Custom: CUSTOM_RPC
+}
 
 type IRPC_CACHE = null | USER_CONFIG_CACHE
 
@@ -50,9 +68,9 @@ interface ISettingsConfig {
   connection: Connection
   perpsConnection: Connection
   endpoint: string
-  endpointName: string
+  endpointName: EndPointName
   network: WalletAdapterNetwork
-  setEndpointName: Dispatch<SetStateAction<string>>
+  setEndpointName: Dispatch<SetStateAction<EndPointName>>
   blacklisted: boolean
   isUnderMaintenance: boolean
   setSlippage?: Dispatch<SetStateAction<number>>
@@ -82,13 +100,13 @@ export function useConnectionConfig(): ISettingsConfig {
 
   return context
 }
-
+export const USER_CACHE = 'gfx-user-cache' as const
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [endpointName, setEndpointName] = useState<string | null>(null)
+  const [endpointName, setEndpointName] = useState<EndPointName>('GooseFX')
 
   const curEnv: string = useMemo(() => {
     const host = window.location.hostname
@@ -121,7 +139,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const perpsConnection = useMemo(() => {
     // sets rpc info to cache
     window.localStorage.setItem(
-      'gfx-user-cache',
+      USER_CACHE,
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
@@ -140,7 +158,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const connection = useMemo(() => {
     // sets rpc info to cache
     window.localStorage.setItem(
-      'gfx-user-cache',
+      USER_CACHE,
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
