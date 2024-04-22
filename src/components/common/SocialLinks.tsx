@@ -35,9 +35,9 @@ const SocialLinks: FC = () => {
   const { mode } = useDarkMode()
   return (
     <>
-      <SocialLink social={'x'} link={NAV_LINKS.twitter} mode={mode} />
-      <SocialLink social={'discord'} link={NAV_LINKS.discord} mode={mode} />
-      <SocialLink social={'telegram'} link={NAV_LINKS.telegram} mode={mode} />
+      <SocialLink social={'x'} link={NAV_LINKS.twitter} mode={mode} shouldUseModeForHoverSrc={false} />
+      <SocialLink social={'discord'} link={NAV_LINKS.discord} mode={mode} shouldUseModeForHoverSrc={false} />
+      <SocialLink social={'telegram'} link={NAV_LINKS.telegram} mode={mode} shouldUseModeForHoverSrc={false} />
     </>
   )
 }

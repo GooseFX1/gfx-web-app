@@ -7,7 +7,7 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
-import { More } from './More'
+// import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
 import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
 import { CircularArrow } from '../components/common/Arrow'
@@ -93,7 +93,7 @@ export const MainNav: FC = () => {
           <RewardsButton />
           <Connect />
           {/* <NotificationButton /> */}
-          <More />
+          {/*<More />*/}
           <MobileNav />
         </div>
       </div>
@@ -319,7 +319,7 @@ const MobileNav: FC = () => {
                     <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5'}>
+                <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5 mt-1.5'}>
                   <SocialLinks />
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -471,6 +471,29 @@ const DesktopNav: FC = () => {
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Leaderboard</h4>
               <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
             </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              navigateTo(NAV_LINKS.blog, '_blank')
+            }}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Blog</h4>
+              <p className={'text-b3'}>Stay up to date with the latest updates and industry news!</p>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              navigateTo(NAV_LINKS.docs, '_blank')
+            }}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Docs</h4>
+              <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5 mt-1.5'}>
+            <SocialLinks />
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,7 +1,7 @@
 import React, { Dispatch, ReactNode, SetStateAction, useEffect, useContext, useMemo, useState, FC } from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
-import { Connection } from '@solana/web3.js'
+import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solana/web3.js'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance } from '../api/config'
@@ -75,6 +75,9 @@ interface ISettingsConfig {
   isUnderMaintenance: boolean
   setSlippage?: Dispatch<SetStateAction<number>>
   slippage?: number
+  priorityFee?: PriorityFeeName
+  priorityFeeInstruction?: TransactionInstruction
+  setPriorityFee?: Dispatch<SetStateAction<PriorityFeeName>>
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -100,6 +103,7 @@ export function useConnectionConfig(): ISettingsConfig {
 
   return context
 }
+export type PriorityFeeName = 'Default' | 'Fast' | 'Turbo'
 export const USER_CACHE = 'gfx-user-cache' as const
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
@@ -107,7 +111,21 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [endpointName, setEndpointName] = useState<EndPointName>('GooseFX')
-
+  const [priorityFee, setPriorityFee] = useState<PriorityFeeName>('Default')
+  const priorityFeeInstruction = useMemo(() => {
+    let fee = 0.0
+    switch (priorityFee) {
+      case 'Fast':
+        fee = 40000
+        break
+      case 'Turbo':
+        fee = 50000
+        break
+    }
+    return ComputeBudgetProgram.setComputeUnitPrice({
+      microLamports: fee
+    })
+  }, [priorityFee])
   const curEnv: string = useMemo(() => {
     const host = window.location.hostname
     if (host.includes(ENVS.STAGING)) {
@@ -209,7 +227,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         slippage: slippage,
         perpsConnection,
         blacklisted,
-        isUnderMaintenance
+        isUnderMaintenance,
+        priorityFee,
+        setPriorityFee,
+        priorityFeeInstruction
       }}
     >
       {children}
