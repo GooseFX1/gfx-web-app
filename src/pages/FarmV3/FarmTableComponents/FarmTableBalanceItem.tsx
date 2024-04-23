@@ -901,7 +901,7 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
           {actionButtonText}
         </Button>
       ) : (
-        <Connect containerStyle={'inline-flex basis-1/2'} customButtonStyle={'h-[35px] w-full'} />
+        <Connect containerStyle={'inline-flex basis-1/2 z-0'} customButtonStyle={'h-[35px] w-full'} />
       )}
       <Button
         variant={'outline'}
