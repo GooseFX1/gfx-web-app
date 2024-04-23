@@ -165,7 +165,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (curEnv === ENVS.PROD) {
+    if (curEnv === ENVS.PROD || curEnv === ENVS.DEV) {
       // sets geo country code
       fetchBrowserCountryCode().then((countryCode: null | string) => {
         if (countryCode) {
