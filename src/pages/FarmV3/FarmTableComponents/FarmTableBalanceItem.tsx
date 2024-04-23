@@ -527,7 +527,9 @@ const CollapsibleContent: FC<{
         ? setDepositAmount(userTokenBalance ? (userTokenBalance / 2).toString() : '0')
         : setWithdrawAmount(
             userDepositedAmount
-              ? (userDepositedAmount?.toNumber() / 2 / 10 ** coin.mintDecimals).toFixed(coin.mintDecimals)
+              ? !userDepositedAmount?.isZero()
+                ? userDepositedAmount?.div(new BN(2 * 10 ** coin?.mintDecimals))
+                : '0'
               : '0'
           ),
     [modeOfOperation, userTokenBalance, userDepositedAmount]
@@ -542,7 +544,10 @@ const CollapsibleContent: FC<{
 
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
   const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
-  const canWithdraw = userDepositedAmount?.toNumber() >= MIN_AMOUNT_WITHDRAW
+  console.log('userDepositedAmount', userDepositedAmount, userDepositedAmount?.toString())
+  const canWithdraw =
+    !userDepositedAmount?.isZero() &&
+    userDepositedAmount?.div(new BN(10 ** coin?.mintDecimals)).gte(new BN(MIN_AMOUNT_WITHDRAW))
 
   const minDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
   const maxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
@@ -604,7 +609,7 @@ const CollapsibleContent: FC<{
           <FarmBalanceItem
             title={'My Balance:'}
             key={'mobile-my-balance'}
-            asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
+            asZero={userDepositedAmount?.isZero()}
             value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
             token={coin?.token}
           />
@@ -724,7 +729,7 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'My Balance:'}
               key={'tablet-my-balance'}
-              asZero={userDepositedAmount?.toNumber() == 0 || isNaN(userDepositedAmount?.toNumber())}
+              asZero={userDepositedAmount?.isZero()}
               value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
               token={coin?.token}
             />
