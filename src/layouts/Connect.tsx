@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useMemo, useEffect, useRef } from 'react'
+/* eslint-disable */
+import React, { FC, useCallback, useMemo, useEffect, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
@@ -46,7 +47,7 @@ export const Connect: FC<MenuItemProps> = ({
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
-  const { setVisible: setWalletModalVisible } = useWalletModal()
+  const { visible, setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const canConnect = useMemo(
@@ -57,6 +58,11 @@ export const Connect: FC<MenuItemProps> = ({
   // useEffect(() => {
   //   if (connected) logData('wallet_connected')
   // }, [connected])
+
+  // useEffect(() => {
+  //   if(visible && !connected) setWalletModalVisible(true)
+  //   else if(visible)
+  // }, [connected, visible])
 
   const connectLabel = useMemo(() => {
     if (!canConnect) {

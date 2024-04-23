@@ -24,15 +24,14 @@ export const GeorestrictionModal: FC<{
         <div className="px-5">
           <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold mt-3.75 mb-6 font-nunito">
             Oops, It looks like you're trying to use GooseFX from a location where access is restricted according
-            to our
+            to our{' '}
             <a
-              href="https://media.goosefx.io/GFX_Ottersec_Audit.pdf"
+              href="https://www.goosefx.io/terms"
               target={'_blank'}
               rel="noreferrer"
               className="font-bold dark:text-white text-blue-1 underline 
                 hover:dark:text-white hover:text-blue-1 hover:underline"
             >
-              {' '}
               Terms and Conditions
             </a>
             .
@@ -49,7 +48,7 @@ export const GeorestrictionModal: FC<{
     <Dialog open={geoBlocked} onOpenChange={setGeoBlocked}>
       <DialogOverlay />
       <DialogContent
-        className={'p-3 w-[400px] h-[336px] sm:rounded-b-none'}
+        className={'p-3 w-[400px] h-[336px] sm:rounded-b-none sm:rounded-t-small sm:w-full'}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
         <DialogCloseDefault />
