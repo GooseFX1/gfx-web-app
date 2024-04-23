@@ -33,7 +33,7 @@ export const Footer: FC = () => (
       <PriorityFee />
       <FooterDivider />
 
-      <ThemeToggle />
+      <ThemeToggle colorScheme={'secondary'} />
     </div>
     <div className={'inline-flex ml-auto items-center'}>
       <Button
