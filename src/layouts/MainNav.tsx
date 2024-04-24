@@ -170,7 +170,7 @@ const MobileNav: FC = () => {
               variant={pathname.includes('bridge') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary`,
+                         dark:text-text-darkmode-tertiary h-[43px]`,
                 pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
               onClick={() => {
@@ -189,7 +189,7 @@ const MobileNav: FC = () => {
               variant={pathname.includes('farm') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary`,
+                         dark:text-text-darkmode-tertiary h-[43px]`,
                 pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
               onClick={() => {
