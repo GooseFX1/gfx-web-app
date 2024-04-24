@@ -17,7 +17,7 @@ dark:bg-border-darkmode-secondary h-4`,
 )
 export const Footer: FC = () => (
   <footer
-    className={`fixed bottom-0 inline-flex w-screen border-t-1 border-solid
+    className={`inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
      items-center px-3.75 py-1.5 sm:hidden
@@ -40,7 +40,7 @@ export const Footer: FC = () => (
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.terms, '_blank')}
         size={'sm'}
-        className={'dark:text-text-darkmode-primary text-text-lightmode-primary'}
+        className={'dark:text-text-darkmode-primary text-text-lightmode-primary text-h6'}
       >
         Terms Of Service
       </Button>
@@ -48,7 +48,7 @@ export const Footer: FC = () => (
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.risks, '_blank')}
         size={'sm'}
-        className={'dark:text-text-darkmode-primary text-text-lightmode-primary'}
+        className={'dark:text-text-darkmode-primary text-text-lightmode-primary text-h6'}
       >
         Risks & Disclaimers
       </Button>
