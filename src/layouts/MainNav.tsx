@@ -206,7 +206,7 @@ const MobileNav: FC = () => {
             </ListItem>
             <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
               <AccordionItem value={'trade'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={tradeActive} className={'text-h3'}>
+                <AccordionTrigger variant={'primary'} isSelected={tradeActive} className={'text-h3 px-2.5'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
@@ -250,7 +250,7 @@ const MobileNav: FC = () => {
             </Accordion>
             <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
               <AccordionItem value={'leaderboard'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3'}>
+                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-2.5'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
