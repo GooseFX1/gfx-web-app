@@ -99,7 +99,6 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
     const account = filteredLiquidityAccounts?.[tokenMintAddress]
     return account?.amountDeposited
   }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull])
-  console.log('userDepositedAmount', userDepositedAmount)
 
   const userDepositInUSD = useMemo(
     () => withdrawBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
@@ -522,7 +521,6 @@ const CollapsibleContent: FC<{
     [modeOfOperation]
   )
 
-  //BN.div(2)
   const handleHalf = useCallback(
     () =>
       modeOfOperation === ModeOfOperation.DEPOSIT
