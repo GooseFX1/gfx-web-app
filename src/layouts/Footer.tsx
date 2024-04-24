@@ -61,6 +61,7 @@ export const Footer: FC = () => (
           href={NAV_LINKS.securityAudit}
           target={'_blank'}
           className={'text-text-lightmode-primary dark:text-text-darkmode-primary text-h6 font-bold'}
+          rel="noreferrer"
         >
           Ottersec
         </a>

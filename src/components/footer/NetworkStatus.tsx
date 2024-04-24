@@ -1,9 +1,21 @@
 import { FC, useMemo } from 'react'
-import { cn, Popover, PopoverContent, PopoverTrigger } from 'gfx-component-lib'
+import {
+  cn,
+  Dialog,
+  DialogBody,
+  DialogCloseDefault,
+  DialogContent,
+  DialogOverlay,
+  DialogTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from 'gfx-component-lib'
 // import { Circle } from '@/components/common/Circle'
 import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { Circle } from '@/components/common/Circle'
 import useNetworkStatus from '@/hooks/useNetworkStatus'
+import useBreakPoint from '@/hooks/useBreakPoint'
 const STATUS = {
   CONGESTED: `The Solana network is very busy right now, your transactions might  take longer and sometimes they
    might not go through at all.`,
@@ -13,7 +25,7 @@ const STATUS = {
 }
 const NetworkStatus: FC = () => {
   const { status } = useNetworkStatus()
-
+  const { isMobile } = useBreakPoint()
   const { networkStatus, textColor, bgColor, description } = useMemo(() => {
     switch (status) {
       case 0:
@@ -46,31 +58,61 @@ const NetworkStatus: FC = () => {
         }
     }
   }, [status])
-  return (
-    <FooterItem title={'Network Status:'}>
+  const component = useMemo(() => {
+    const footerItemContent = (
+      <FooterItemContent>
+        <p className={cn('text-b3 font-bold', textColor)}>{networkStatus}</p>
+        <Circle className={bgColor} />
+      </FooterItemContent>
+    )
+    if (isMobile) {
+      return (
+        <Dialog>
+          <DialogOverlay />
+          <DialogTrigger>{footerItemContent}</DialogTrigger>
+          <DialogContent placement={'bottom'}>
+            <DialogCloseDefault className={'top-2'} />
+            <DialogBody
+              className={`border-1 border-solid border-border-lightmode-primary dark:border-border-darkmode-primary
+             rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+            >
+              <div className={'inline-flex items-center gap-1'}>
+                <p className={cn('text-h3 font-bold', textColor)}>{networkStatus}</p>
+                <Circle className={`${bgColor} w-2 h-2`} />
+              </div>
+              <p
+                className={
+                  'text-justify font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                }
+              >
+                {description}
+              </p>
+            </DialogBody>
+          </DialogContent>
+        </Dialog>
+      )
+    }
+
+    return (
       <Popover>
-        <PopoverTrigger>
-          <FooterItemContent>
-            <p className={cn('text-b3 font-bold', textColor)}>{networkStatus}</p>
-            <Circle className={bgColor} />
-          </FooterItemContent>
-        </PopoverTrigger>
+        <PopoverTrigger>{footerItemContent}</PopoverTrigger>
         <PopoverContent collisionPadding={15} className={'mb-[15px]'}>
-          <div className={'inline-flex items-center gap-1'}>
+          <div className={'inline-flex items-center '}>
             <p className={cn('text-b2 font-bold', textColor)}>{networkStatus}</p>
-            <Circle className={`bg-background-${status} w-2 h-2`} />
+            <Circle className={`${bgColor} w-2 h-2`} />
           </div>
           <p
             className={
-              'text-justify font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+              'text-justify font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary text-b2'
             }
           >
             {description}
           </p>
         </PopoverContent>
       </Popover>
-    </FooterItem>
-  )
+    )
+  }, [isMobile, networkStatus, textColor, bgColor, description])
+  return <FooterItem title={'Network Status:'}>{component}</FooterItem>
 }
 
 export default NetworkStatus

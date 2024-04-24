@@ -1,12 +1,29 @@
-import { FC, useMemo } from 'react'
-import { cn, Icon, IconTooltip, Popover, PopoverContent, PopoverTrigger } from 'gfx-component-lib'
+import React, { FC, useCallback, useMemo, useState } from 'react'
+import {
+  Button,
+  cn,
+  Dialog,
+  DialogBody,
+  DialogCloseDefault,
+  DialogContent,
+  DialogOverlay,
+  DialogTrigger,
+  Icon,
+  IconTooltip,
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from 'gfx-component-lib'
 import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { PriorityFeeName, useConnectionConfig, useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const PriorityFee: FC = () => {
   const { mode } = useDarkMode()
   const { priorityFee, setPriorityFee } = useConnectionConfig()
+  const [localPriorityFee, setLocalPriorityFee] = useState<PriorityFeeName>(priorityFee)
+  const { isMobile } = useBreakPoint()
   const { rotation } = useMemo(() => {
     if (priorityFee === 'Default') {
       return {
@@ -22,50 +39,80 @@ const PriorityFee: FC = () => {
       rotation: 'rotate-0'
     }
   }, [priorityFee])
-
-  return (
-    <FooterItem title={'Priority Fee:'}>
+  const saveDisabled = priorityFee === localPriorityFee
+  const handleSave = useCallback(() => {
+    if (priorityFee !== localPriorityFee) {
+      setPriorityFee(localPriorityFee)
+    }
+  }, [localPriorityFee, priorityFee])
+  const content = useMemo(() => {
+    const trigger = (
+      <FooterItemContent className={'gap-0 cursor-pointer'}>
+        {priorityFee}&nbsp;
+        <Icon
+          className={cn('transition-all duration-1000', rotation)}
+          src={`/img/mainnav/priority_fee_${mode}.svg`}
+        />
+      </FooterItemContent>
+    )
+    const renderContent = (
+      <>
+        <div className={'inline-flex gap-1'}>
+          <p>Priority Fee </p>
+          <IconTooltip tooltipType={'outline'} defaultOpen={false}>
+            Add an extra fee to your transaction, increasing its priority in queue, likely to be processed faster
+            by the network.
+          </IconTooltip>
+        </div>
+        <RadioOptionGroup
+          defaultValue={priorityFee}
+          onChange={(value) => setLocalPriorityFee(value as PriorityFeeName)}
+          optionClassName={`h-[44px]`}
+          options={[
+            {
+              label: <PriorityFeeItem title={'Default'} fee={0} />,
+              value: 'Default'
+            },
+            {
+              label: <PriorityFeeItem title={'Fast'} fee={0.04} />,
+              value: 'Fast'
+            },
+            {
+              label: <PriorityFeeItem title={'Turbo'} fee={0.05} />,
+              value: 'Turbo'
+            }
+          ]}
+        />
+        <Button fullWidth colorScheme={'blue'} disabled={saveDisabled} onClick={handleSave}>
+          Save
+        </Button>
+      </>
+    )
+    if (isMobile) {
+      return (
+        <Dialog>
+          <DialogOverlay />
+          <DialogTrigger>{trigger}</DialogTrigger>
+          <DialogContent placement={'bottom'}>
+            <DialogCloseDefault className={'top-2'} />
+            <DialogBody
+              className={`border-1 border-solid border-border-lightmode-primary 
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+            >
+              {renderContent}
+            </DialogBody>
+          </DialogContent>
+        </Dialog>
+      )
+    }
+    return (
       <Popover>
-        <PopoverTrigger>
-          <FooterItemContent className={'gap-0 cursor-pointer'}>
-            {priorityFee}{' '}
-            <Icon
-              className={cn('transition-all duration-1000', rotation)}
-              src={`/img/mainnav/priority_fee_${mode}.svg`}
-            />
-          </FooterItemContent>
-        </PopoverTrigger>
-        <PopoverContent className={'mb-3.75'}>
-          <div className={'inline-flex gap-1'}>
-            <p>Priority Fee </p>
-            <IconTooltip tooltipType={'outline'} defaultOpen={false}>
-              Add an extra fee to your transaction, increasing its priority in queue, likely to be processed faster
-              by the network.
-            </IconTooltip>
-          </div>
-          <RadioOptionGroup
-            defaultValue={priorityFee}
-            onChange={(value) => setPriorityFee(value as PriorityFeeName)}
-            optionClassName={`h-[44px]`}
-            options={[
-              {
-                label: <PriorityFeeItem title={'Default'} fee={0} />,
-                value: 'Default'
-              },
-              {
-                label: <PriorityFeeItem title={'Fast'} fee={0.04} />,
-                value: 'Fast'
-              },
-              {
-                label: <PriorityFeeItem title={'Turbo'} fee={0.05} />,
-                value: 'Turbo'
-              }
-            ]}
-          />
-        </PopoverContent>
+        <PopoverTrigger>{trigger}</PopoverTrigger>
+        <PopoverContent className={'mb-3.75'}>{renderContent}</PopoverContent>
       </Popover>
-    </FooterItem>
-  )
+    )
+  }, [isMobile, priorityFee, setPriorityFee, rotation, mode, saveDisabled, handleSave])
+  return <FooterItem title={'Priority Fee:'}>{content}</FooterItem>
 }
 export default PriorityFee
 

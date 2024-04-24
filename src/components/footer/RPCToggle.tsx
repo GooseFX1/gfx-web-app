@@ -1,6 +1,12 @@
 import React, { FC, useCallback, useMemo, useState } from 'react'
 import {
   Button,
+  Dialog,
+  DialogBody,
+  DialogCloseDefault,
+  DialogContent,
+  DialogOverlay,
+  DialogTrigger,
   Icon,
   IconTooltip,
   Input,
@@ -15,9 +21,11 @@ import { EndPointName, useConnectionConfig, useDarkMode, USER_CACHE } from '@/co
 import { Circle } from '@/components/common/Circle'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const RPCToggle: FC = () => {
   const { mode } = useDarkMode()
+  const { isMobile } = useBreakPoint()
   const { endpointName, setEndpointName } = useConnectionConfig()
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
   const [rpcUrl, setRpcUrl] = useState('')
@@ -52,84 +60,108 @@ const RPCToggle: FC = () => {
   const latency = 58
 
   const saveDisabled = endpointName == RPC || (RPC == 'Custom' && rpcUrl.trim() === '')
-  return (
-    <FooterItem title={'RPC:'}>
-      <Popover>
-        <PopoverTrigger>
-          <FooterItemContent className={'gap-0 cursor-pointer'}>
-            {endpointName} <Icon src={providerSrc} />
-          </FooterItemContent>
-        </PopoverTrigger>
-        <PopoverContent className={'mb-2 gap-3.5'}>
-          <div className={'inline-flex justify-between items-center text-b2 font-semibold'}>
-            <div className={'inline-flex gap-1 items-center'}>
-              <p>RPC Settings</p>
-              <IconTooltip tooltipType={'outline'}>
-                An RPC node, allows users of the RPC node to submit new transactions to be included in blocks.
-                Select your RPC or up to enter a custom one.
-              </IconTooltip>
-            </div>
-            <div className={'inline-flex gap-1 items-center'}>
-              <Circle className={'bg-background-green'} />
-              <p>{latency}ms</p>
-            </div>
+  const content = useMemo(() => {
+    const trigger = (
+      <FooterItemContent className={'gap-0 cursor-pointer'}>
+        {endpointName} <Icon src={providerSrc} />
+      </FooterItemContent>
+    )
+    const renderContent = (
+      <>
+        <div
+          className={'inline-flex gap-2 min-md:gap-0 min-md:justify-between items-center text-b2 font-semibold'}
+        >
+          <div className={'inline-flex gap-1 items-center'}>
+            <p>RPC Settings</p>
+            <IconTooltip tooltipType={'outline'}>
+              An RPC node, allows users of the RPC node to submit new transactions to be included in blocks. Select
+              your RPC or up to enter a custom one.
+            </IconTooltip>
           </div>
-          <RadioOptionGroup
-            defaultValue={RPC}
-            onChange={(v) => setRPC(v as EndPointName)}
-            options={[
-              {
-                label: <RPCLineItem title={'Default'} endpoint={'GooseFX'} />,
-                value: 'GooseFX'
-              },
-              {
-                label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
-                value: 'Helius'
-              },
-              {
-                label: <RPCLineItem title={'Custom'} endpoint={'Custom'} />,
-                value: 'Custom'
+          <div className={'inline-flex gap-1 items-center'}>
+            <Circle className={'bg-background-green'} />
+            <p>{latency}ms</p>
+          </div>
+        </div>
+        <RadioOptionGroup
+          defaultValue={RPC}
+          onChange={(v) => setRPC(v as EndPointName)}
+          options={[
+            {
+              label: <RPCLineItem title={'Default'} endpoint={'GooseFX'} />,
+              value: 'GooseFX'
+            },
+            {
+              label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
+              value: 'Helius'
+            }
+            // {
+            //   label: <RPCLineItem title={'Custom'} endpoint={'Custom'} />,
+            //   value: 'Custom'
+            // }
+          ]}
+        />
+        {RPC == 'Custom' && (
+          <>
+            <InputGroup
+              rightItem={
+                <InputElementRight show={Boolean(error)}>
+                  <Button variant={'ghost'} onClick={onCustomRPCClear}>
+                    <Icon
+                      size={'sm'}
+                      src={`/img/assets/search_farm_${mode}.svg`}
+                      alt="search-icon"
+                      className={'cursor-pointer'}
+                    />
+                  </Button>
+                </InputElementRight>
               }
-            ]}
-          />
-          {RPC == 'Custom' && (
-            <>
-              <InputGroup
-                rightItem={
-                  <InputElementRight show={Boolean(error)}>
-                    <Button variant={'ghost'} onClick={onCustomRPCClear}>
-                      <Icon
-                        size={'sm'}
-                        src={`/img/assets/search_farm_${mode}.svg`}
-                        alt="search-icon"
-                        className={'cursor-pointer'}
-                      />
-                    </Button>
-                  </InputElementRight>
-                }
-              >
-                <Input
-                  className={
-                    Boolean(error) &&
-                    `border-border-red focus:border-border-red dark:border-border-red 
+            >
+              <Input
+                className={
+                  Boolean(error) &&
+                  `border-border-red focus:border-border-red dark:border-border-red 
             dark:focus:border-border-red`
-                  }
-                  value={rpcUrl}
-                  placeholder={'Enter custom RPC'}
-                  onChange={(e) => setRpcUrl(e.target.value)}
-                />
-              </InputGroup>
-              {error && <p className={'text-red-500'}>{error}</p>}
-            </>
-          )}
+                }
+                value={rpcUrl}
+                placeholder={'Enter custom RPC'}
+                onChange={(e) => setRpcUrl(e.target.value)}
+              />
+            </InputGroup>
+            {error && <p className={'text-red-500'}>{error}</p>}
+          </>
+        )}
 
-          <Button fullWidth colorScheme={'blue'} disabled={saveDisabled} onClick={handleSave}>
-            Save
-          </Button>
-        </PopoverContent>
+        <Button fullWidth colorScheme={'blue'} disabled={saveDisabled} onClick={handleSave}>
+          Save
+        </Button>
+      </>
+    )
+    if (isMobile) {
+      return (
+        <Dialog>
+          <DialogOverlay />
+          <DialogTrigger>{trigger}</DialogTrigger>
+          <DialogContent placement={'bottom'}>
+            <DialogCloseDefault className={'top-2'} />
+            <DialogBody
+              className={`border-1 border-solid border-border-lightmode-primary 
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+            >
+              {renderContent}
+            </DialogBody>
+          </DialogContent>
+        </Dialog>
+      )
+    }
+    return (
+      <Popover>
+        <PopoverTrigger>{trigger}</PopoverTrigger>
+        <PopoverContent className={'mb-2 gap-3.5'}>{renderContent}</PopoverContent>
       </Popover>
-    </FooterItem>
-  )
+    )
+  }, [RPC, error, handleSave, providerSrc, saveDisabled, rpcUrl, onCustomRPCClear, isMobile, mode, latency])
+  return <FooterItem title={'RPC:'}>{content}</FooterItem>
 }
 
 export default RPCToggle
