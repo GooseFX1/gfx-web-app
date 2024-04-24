@@ -10,7 +10,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   top: 85%;
   height: 25%;
   width: 100%;
-  z-index: 100;
+  z-index: 1;
   border-radius: 25px 25px 0px 0px;
   transition: top 500ms ease-in-out;
   overflow: hidden;

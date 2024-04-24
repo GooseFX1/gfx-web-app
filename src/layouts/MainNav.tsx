@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useCallback } from 'react'
+import React, { FC, useEffect, useCallback, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useRewardToggle } from '../context'
@@ -25,7 +25,12 @@ import {
   Icon,
   cn,
   Dialog,
-  DialogFooter
+  DialogFooter,
+  ListItem,
+  Accordion,
+  AccordionItem,
+  AccordionContent,
+  AccordionTrigger
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
 import { SOCIAL_MEDIAS } from '../constants'
@@ -100,7 +105,31 @@ export const MainNav: FC = () => {
     </div>
   )
 }
-
+type MobileAccordionContentProps = {
+  title: string
+  description: string
+  onClick?: () => void
+  isActive?: boolean
+  className?: string
+}
+const MobileAccordionContent: FC<MobileAccordionContentProps> = ({
+  title,
+  description,
+  className,
+  isActive,
+  ...rest
+}) => (
+  <ListItem
+    className={cn('flex flex-col items-start px-2 py-1.5', className)}
+    variant={isActive && 'primary'}
+    {...rest}
+  >
+    <p className={`text-b2 font-bold text-text-lightmode-primary dark:text-text-darkmode-primary`}>{title}</p>
+    <p className={'text-b3 font-semibold text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>
+      {description}
+    </p>
+  </ListItem>
+)
 const MobileNav: FC = () => {
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
@@ -109,10 +138,16 @@ const MobileNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
-  const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
-  const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
+  // const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
+  // const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
+  const [accordionValue, setAccordionValue] = useState<string>('')
   const tradeActive =
-    pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
+    pathname.includes('trade') ||
+    (rewardModal && panelIndex == 1) ||
+    pathname.includes('account') ||
+    accordionValue == 'trade'
+  const isLeaderboardOpen = pathname.includes('leaderboard') || accordionValue == 'leaderboard'
+  console.log(accordionValue)
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <>
@@ -120,7 +155,7 @@ const MobileNav: FC = () => {
         <DialogTrigger onClick={setIsOpen.on}>
           <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
-        <DialogContent fullScreen={true} className={'flex flex-col gap-0'}>
+        <DialogContent fullScreen={true} className={'flex flex-col gap-0 '}>
           <DialogHeader className={'items-center'}>
             <DialogClose className={'ml-auto mr-3.75 mt-3.75'} onClick={setIsOpen.off}>
               <Icon src={`/img/assets/close-${mode}.svg`} size={'sm'} />
@@ -128,202 +163,132 @@ const MobileNav: FC = () => {
             <ThemeToggle />
           </DialogHeader>
           <DialogBody
-            className={
-              'mx-auto my-auto justify-center items-center flex flex-col flex-1 gap-[15px] w-full px-[15px]'
-            }
+            className={`mx-auto my-auto justify-center items-center flex flex-col flex-1 gap-[15px] w-full px-[15px]
+              overflow-y-scroll`}
           >
-            <Button
-              variant={pathname.includes('bridge') ? 'outline' : 'ghost'}
-              colorScheme={pathname.includes('bridge') ? 'secondaryGradient' : 'none'}
-              size={'lg'}
-              fullWidth
+            <ListItem
+              variant={pathname.includes('bridge') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary`,
+                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
               onClick={() => {
                 setIsOpen.off()
                 history.push('/bridge')
               }}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start`,
-                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              iconLeft={
-                <img
-                  className="h-[35px]"
-                  src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-              }
             >
-              Bridge
-            </Button>
-            <Button
-              variant={pathname.includes('farm') ? 'outline' : 'ghost'}
-              colorScheme={pathname.includes('farm') ? 'secondaryGradient' : 'none'}
-              size={'lg'}
+              <img
+                className="h-[35px]"
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              &nbsp;Bridge
+            </ListItem>
+            <ListItem
+              variant={pathname.includes('farm') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary`,
+                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
               onClick={() => {
                 setIsOpen.off()
                 history.push('/farm')
               }}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start`,
-                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              fullWidth
-              iconLeft={
-                <img
-                  className="h-[35px]"
-                  src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-                  alt="dark"
-                />
-              }
             >
-              Farm
-            </Button>
-            <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
-              <DropdownMenuTrigger asChild={true}>
-                <Button
-                  variant={pathname.includes('trade') || isTradeOpen ? 'outline' : 'ghost'}
-                  colorScheme={pathname.includes('trade') || isTradeOpen ? 'secondaryGradient' : 'none'}
-                  className={cn(
-                    `text-h3 text-center font-semibold font-poppins`,
-                    tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-                  )}
-                  size={'lg'}
-                  fullWidth
-                  iconLeft={
+              <img
+                className="h-[35px]"
+                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              &nbsp;Farm
+            </ListItem>
+            <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
+              <AccordionItem value={'trade'} variant={'unset'}>
+                <AccordionTrigger variant={'primary'} isSelected={tradeActive} className={'text-h3'}>
+                  <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
                       src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
                       alt="dark"
-                    />
-                  }
-                  iconRight={
-                    <CircularArrow
-                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
-                      invert={isTradeOpen}
-                      css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
-                    />
-                  }
-                >
-                  Trade
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    history.push('/trade')
-                  }}
-                  isActive={pathname.includes('trade')}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
-                    <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    history.push('/account')
-                  }}
-                  isActive={pathname.includes('account')}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
-                    <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    changePanel(1)
-                    rewardToggle(!rewardModal)
-                  }}
-                  isActive={panelIndex == 1}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>
-                    <p className={'text-b3'}>Refer your friends to earn a share of their fees</p>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu onOpenChange={setIsLeaderBoardOpen.set}>
-              <DropdownMenuTrigger asChild={true}>
-                <Button
-                  variant={pathname.includes('leaderboard') || isLeaderboardOpen ? 'outline' : 'ghost'}
-                  colorScheme={
-                    pathname.includes('leaderboard') || isLeaderboardOpen ? 'secondaryGradient' : 'none'
-                  }
-                  className={cn(
-                    `text-h3 text-center justify-center items-center [&>span]:inline-flex `,
-                    pathname.includes('leaderboard')
-                      ? 'text-text-lightmode-primary dark:text-text-darkmode-primary'
-                      : ''
-                  )}
-                  fullWidth
-                  size={'lg'}
-                  iconLeft={
+                    />{' '}
+                    &nbsp;Trade
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
+                  <MobileAccordionContent
+                    title={'Trade'}
+                    description={'Trade perps on the fastest and most liquid DEX with 10x leverage.'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      history.push('/trade')
+                    }}
+                    isActive={pathname.includes('trade')}
+                  />
+                  <MobileAccordionContent
+                    title={'Account'}
+                    description={'View your deposits, trade history, funding and more.'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      history.push('/account')
+                    }}
+                    isActive={pathname.includes('account')}
+                  />
+                  <MobileAccordionContent
+                    title={'Referrals'}
+                    description={'Refer your friends to earn a share of their fees.'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      changePanel(1)
+                      rewardToggle(!rewardModal)
+                    }}
+                    isActive={panelIndex == 1}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
+              <AccordionItem value={'leaderboard'} variant={'unset'}>
+                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3'}>
+                  <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${
-                        pathname.includes('leaderboard') || isLeaderboardOpen ? '-active' : ''
-                      }.svg`}
+                      src={`/img/mainnav/more-${mode}${isLeaderboardOpen ? '-active' : ''}.svg`}
                       alt="dark"
                     />
-                  }
-                  iconRight={
-                    <CircularArrow
-                      cssStyle={tw`ml-auto w-[16px] h-[16px]`}
-                      invert={isLeaderboardOpen}
-                      css={[
-                        pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`
-                      ]}
-                    />
-                  }
-                >
-                  More
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent portal={false} className={'mt-1 w-[300px]'}>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    history.push('/leaderboard')
-                  }}
-                  isActive={pathname.includes('leaderboard')}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Leaderboard</h4>
-                    <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    navigateTo(NAV_LINKS.blog, '_blank')
-                  }}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Blog</h4>
-                    <p className={'text-b3'}>Stay up to date with the latest updates and industry news!</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setIsOpen.off()
-                    navigateTo(NAV_LINKS.docs, '_blank')
-                  }}
-                >
-                  <div>
-                    <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Docs</h4>
-                    <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5 mt-1.5'}>
-                  <SocialLinks />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    &nbsp;More
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
+                  <MobileAccordionContent
+                    title={'Leaderboard'}
+                    description={'Trade smart and be among the top to win exciting rewards!'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      history.push('/leaderboard')
+                    }}
+                    isActive={pathname.includes('leaderboard')}
+                  />
+                  <MobileAccordionContent
+                    title={'Blog'}
+                    description={'Stay up to date with the latest updates and industry news!'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      navigateTo(NAV_LINKS.blog, '_blank')
+                    }}
+                  />
+                  <MobileAccordionContent
+                    title={'Docs'}
+                    description={'Learn about GOOSEFX and how we work in depth.'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      navigateTo(NAV_LINKS.docs, '_blank')
+                    }}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </DialogBody>
           <DialogFooter
             className={`border-t-1 border-solid border-t-border-lightmode-secondary px-3.75 py-2.5 
