@@ -7,7 +7,8 @@ const NAV_LINKS = {
   telegram: 'https://t.me/goosefx',
   terms: 'https://www.goosefx.io/terms',
   risks: 'https://www.goosefx.io/risks-and-disclaimers',
-  securityAudit: 'https://osec.io/'
+  securityAudit: 'https://media.goosefx.io/GFX_Ottersec_Audit.pdf',
+  securityAuditer: 'https://osec.io/'
 } as const
 
 function navigateTo(src: string, target = '_self', features = '') {
