@@ -22,6 +22,7 @@ import { Circle } from '@/components/common/Circle'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import useBoolean from '@/hooks/useBoolean'
 
 const RPCToggle: FC = () => {
   const { mode } = useDarkMode()
@@ -30,6 +31,7 @@ const RPCToggle: FC = () => {
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
   const [rpcUrl, setRpcUrl] = useState('')
   const [error, setError] = useState('')
+  const [isOpen, setIsOpen] = useBoolean(false)
   const providerSrc = useMemo(
     () => `/img/mainnav/provider_${endpointName.toLowerCase()}_${mode}.svg`,
     [endpointName, mode]
@@ -42,6 +44,7 @@ const RPCToggle: FC = () => {
           window.localStorage.setItem(USER_CACHE, JSON.stringify({ ...existingCache, endpoint: rpcUrl }))
           setEndpointName(RPC)
           setError('')
+          setIsOpen.off()
         } else {
           setError('Invalid RPC URL')
         }
@@ -50,6 +53,7 @@ const RPCToggle: FC = () => {
       return
     }
     setError('')
+    setIsOpen.off()
     setEndpointName(RPC)
   }, [RPC, setEndpointName, rpcUrl])
   const onCustomRPCClear = useCallback(() => {
@@ -72,7 +76,7 @@ const RPCToggle: FC = () => {
           className={'inline-flex gap-2 min-md:gap-0 min-md:justify-between items-center text-b2 font-semibold'}
         >
           <div className={'inline-flex gap-1 items-center'}>
-            <p>RPC Settings</p>
+            <p className={'sm:text-h3 text-h5'}>RPC Settings</p>
             <IconTooltip tooltipType={'outline'}>
               An RPC node, allows users of the RPC node to submit new transactions to be included in blocks. Select
               your RPC or up to enter a custom one.
@@ -94,11 +98,11 @@ const RPCToggle: FC = () => {
             {
               label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
               value: 'Helius'
+            },
+            {
+              label: <RPCLineItem title={'Custom'} endpoint={'Custom'} />,
+              value: 'Custom'
             }
-            // {
-            //   label: <RPCLineItem title={'Custom'} endpoint={'Custom'} />,
-            //   value: 'Custom'
-            // }
           ]}
         />
         {RPC == 'Custom' && (
@@ -139,14 +143,14 @@ const RPCToggle: FC = () => {
     )
     if (isMobile) {
       return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
           <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent placement={'bottom'}>
+          <DialogContent placement={'bottom'} className={'w-screen'}>
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
             >
               {renderContent}
             </DialogBody>
@@ -155,12 +159,24 @@ const RPCToggle: FC = () => {
       )
     }
     return (
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
         <PopoverContent className={'mb-2 gap-3.5'}>{renderContent}</PopoverContent>
       </Popover>
     )
-  }, [RPC, error, handleSave, providerSrc, saveDisabled, rpcUrl, onCustomRPCClear, isMobile, mode, latency])
+  }, [
+    RPC,
+    error,
+    handleSave,
+    providerSrc,
+    saveDisabled,
+    rpcUrl,
+    onCustomRPCClear,
+    isMobile,
+    mode,
+    latency,
+    isOpen
+  ])
   return <FooterItem title={'RPC:'}>{content}</FooterItem>
 }
 

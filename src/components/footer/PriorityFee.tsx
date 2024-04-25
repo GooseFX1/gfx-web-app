@@ -18,12 +18,14 @@ import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { PriorityFeeName, useConnectionConfig, useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import useBoolean from '@/hooks/useBoolean'
 
 const PriorityFee: FC = () => {
   const { mode } = useDarkMode()
   const { priorityFee, setPriorityFee } = useConnectionConfig()
   const [localPriorityFee, setLocalPriorityFee] = useState<PriorityFeeName>(priorityFee)
   const { isMobile } = useBreakPoint()
+  const [isOpen, setIsOpen] = useBoolean(false)
   const { rotation } = useMemo(() => {
     if (priorityFee === 'Default') {
       return {
@@ -41,6 +43,7 @@ const PriorityFee: FC = () => {
   }, [priorityFee])
   const saveDisabled = priorityFee === localPriorityFee
   const handleSave = useCallback(() => {
+    setIsOpen.off()
     if (priorityFee !== localPriorityFee) {
       setPriorityFee(localPriorityFee)
     }
@@ -58,7 +61,7 @@ const PriorityFee: FC = () => {
     const renderContent = (
       <>
         <div className={'inline-flex gap-1'}>
-          <p>Priority Fee </p>
+          <p className={'text-h5 sm:text-h3'}>Priority Fee </p>
           <IconTooltip tooltipType={'outline'} defaultOpen={false}>
             Add an extra fee to your transaction, increasing its priority in queue, likely to be processed faster
             by the network.
@@ -90,14 +93,14 @@ const PriorityFee: FC = () => {
     )
     if (isMobile) {
       return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
           <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent placement={'bottom'}>
+          <DialogContent placement={'bottom'} className={'w-screen'}>
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
             >
               {renderContent}
             </DialogBody>
@@ -106,12 +109,12 @@ const PriorityFee: FC = () => {
       )
     }
     return (
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
         <PopoverContent className={'mb-3.75'}>{renderContent}</PopoverContent>
       </Popover>
     )
-  }, [isMobile, priorityFee, setPriorityFee, rotation, mode, saveDisabled, handleSave])
+  }, [isMobile, priorityFee, setPriorityFee, rotation, mode, saveDisabled, handleSave, isOpen])
   return <FooterItem title={'Priority Fee:'}>{content}</FooterItem>
 }
 export default PriorityFee

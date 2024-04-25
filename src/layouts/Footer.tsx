@@ -20,10 +20,10 @@ export const Footer: FC = () => (
     className={`inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
-     items-center px-3.75 py-1.5 sm:hidden
+     items-center px-3.75 py-1.5
      `}
   >
-    <div className={'inline-flex mr-auto items-center gap-2'}>
+    <div className={'inline-flex mr-auto items-center gap-2 sm:hidden'}>
       <NetworkStatus />
       <FooterDivider />
 
@@ -35,12 +35,12 @@ export const Footer: FC = () => (
 
       <ThemeToggle colorScheme={'secondary'} />
     </div>
-    <div className={'inline-flex ml-auto items-center'}>
+    <div className={'inline-flex ml-auto items-center sm:flex-wrap sm:gap-3.75 sm:gap-y-2.5 sm:p-2.5'}>
       <Button
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.terms, '_blank')}
         size={'sm'}
-        className={'dark:text-text-darkmode-primary text-text-lightmode-primary text-h6'}
+        className={'sm:p-0 sm:text-h3 dark:text-text-darkmode-primary text-text-blue text-h6'}
       >
         Terms Of Service
       </Button>
@@ -48,7 +48,7 @@ export const Footer: FC = () => (
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.risks, '_blank')}
         size={'sm'}
-        className={'dark:text-text-darkmode-primary text-text-lightmode-primary text-h6'}
+        className={'sm:p-0 sm:text-h3 dark:text-text-darkmode-primary text-text-blue text-h6'}
       >
         Risks & Disclaimers
       </Button>
@@ -60,7 +60,7 @@ export const Footer: FC = () => (
         <a
           href={NAV_LINKS.securityAudit}
           target={'_blank'}
-          className={'text-text-lightmode-primary dark:text-text-darkmode-primary text-h6 font-bold'}
+          className={'text-text-blue dark:text-text-darkmode-primary text-h6 font-bold'}
           rel="noreferrer"
         >
           Ottersec

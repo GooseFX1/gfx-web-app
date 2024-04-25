@@ -197,7 +197,7 @@ export const ActionModal: FC<{
       <DialogOverlay />
       <DialogContent
         className={cn(
-          'w-full min-lg:w-[560px] min-lg:max-w-[560px] sm:rounded-b-none p-6',
+          'w-full min-lg:w-[560px] min-lg:max-w-[560px] sm:rounded-t-[10px] sm:rounded-b-none p-6',
           breakpoint.isMobile
             ? actionType === 'withdraw'
               ? 'h-[320px]'

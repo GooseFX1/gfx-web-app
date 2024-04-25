@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useCallback, useState } from 'react'
+import React, { FC, useEffect, useCallback } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useRewardToggle } from '../context'
@@ -140,14 +140,10 @@ const MobileNav: FC = () => {
   const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
   // const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
   // const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
-  const [accordionValue, setAccordionValue] = useState<string>('')
   const tradeActive =
-    pathname.includes('trade') ||
-    (rewardModal && panelIndex == 1) ||
-    pathname.includes('account') ||
-    accordionValue == 'trade'
-  const isLeaderboardOpen = pathname.includes('leaderboard') || accordionValue == 'leaderboard'
-  console.log(accordionValue)
+    pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
+  const isLeaderboardOpen = pathname.includes('leaderboard')
+
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
     <>
@@ -204,7 +200,7 @@ const MobileNav: FC = () => {
               />
               &nbsp;Farm
             </ListItem>
-            <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
+            <Accordion type={'single'} collapsible variant={'unset'}>
               <AccordionItem value={'trade'} variant={'unset'}>
                 <AccordionTrigger variant={'primary'} isSelected={tradeActive} className={'text-h3 px-2.5'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
@@ -248,7 +244,7 @@ const MobileNav: FC = () => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-            <Accordion type={'single'} collapsible variant={'unset'} onValueChange={(v) => setAccordionValue(v)}>
+            <Accordion type={'single'} collapsible variant={'unset'}>
               <AccordionItem value={'leaderboard'} variant={'unset'}>
                 <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-2.5'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
@@ -286,6 +282,9 @@ const MobileNav: FC = () => {
                       navigateTo(NAV_LINKS.docs, '_blank')
                     }}
                   />
+                  <div className={'inline-flex items-center justify-center gap-3.75 mt-1'}>
+                    <SocialLinks />
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             </Accordion>

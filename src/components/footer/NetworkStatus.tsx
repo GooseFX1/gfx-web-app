@@ -70,11 +70,11 @@ const NetworkStatus: FC = () => {
         <Dialog>
           <DialogOverlay />
           <DialogTrigger>{footerItemContent}</DialogTrigger>
-          <DialogContent placement={'bottom'}>
+          <DialogContent placement={'bottom'} className={'w-screen'}>
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary dark:border-border-darkmode-primary
-             rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5`}
+             rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
             >
               <div className={'inline-flex items-center gap-1'}>
                 <p className={cn('text-h3 font-bold', textColor)}>{networkStatus}</p>
@@ -98,7 +98,7 @@ const NetworkStatus: FC = () => {
         <PopoverTrigger>{footerItemContent}</PopoverTrigger>
         <PopoverContent collisionPadding={15} className={'mb-[15px]'}>
           <div className={'inline-flex items-center '}>
-            <p className={cn('text-b2 font-bold', textColor)}>{networkStatus}</p>
+            <p className={cn('text-h5 font-bold', textColor)}>{networkStatus}</p>
             <Circle className={`${bgColor} w-2 h-2`} />
           </div>
           <p
