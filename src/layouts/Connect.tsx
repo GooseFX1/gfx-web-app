@@ -47,7 +47,7 @@ export const Connect: FC<MenuItemProps> = ({
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
-  const { visible, setVisible: setWalletModalVisible } = useWalletModal()
+  const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const canConnect = useMemo(
@@ -59,10 +59,9 @@ export const Connect: FC<MenuItemProps> = ({
   //   if (connected) logData('wallet_connected')
   // }, [connected])
 
-  // useEffect(() => {
-  //   if(visible && !connected) setWalletModalVisible(true)
-  //   else if(visible)
-  // }, [connected, visible])
+  useEffect(() => {
+    if (geoBlocked || base58PublicKey) setWalletModalVisible(false)
+  }, [geoBlocked, base58PublicKey])
 
   const connectLabel = useMemo(() => {
     if (!canConnect) {

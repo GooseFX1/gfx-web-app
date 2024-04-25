@@ -94,7 +94,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const host = window.location.hostname
     if (host.includes(ENVS.STAGING)) {
       return ENVS.STAGING
-    } else if (process.env.NODE_ENV === ENVS.PROD) {
+    } else if (process.env.NODE_ENV) {
       return ENVS.PROD
     } else {
       return ENVS.DEV

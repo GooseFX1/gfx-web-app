@@ -5,18 +5,18 @@ import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standar
 import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
-import { SpaceBetweenDiv } from '../styles'
 import { PopupCustom } from '../components'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
+import { Button } from 'gfx-component-lib'
 
 const DETECTED_NAME = styled.div`
   ${tw`text-regular font-semibold dark:text-grey-6 text-black-4`}
 `
 
-const WALLET_DETECTED = styled(SpaceBetweenDiv)`
-  ${tw`h-[46px] rounded-[100px] flex dark:bg-black-1 bg-white 
-  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2`}
+const WALLET_DETECTED = styled(Button)`
+  ${tw`flex items-center h-[46px] px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`}
 
   img {
     ${tw`h-[30px] w-[30px] mr-2.5 ml-2 rounded-half !bg-black-1`}
@@ -80,10 +80,12 @@ const STYLED_POPUP = styled(PopupCustom)`
 initializeWhenDetected()
 
 export const WalletsModal: FC = () => {
-  const { wallets, select } = useWallet()
+  const { wallets, select, publicKey } = useWallet()
   const { setVisible, visible } = useWalletModal()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
+  const [selectedWallet, setSelectedWallet] = useState<string>('')
+  const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
 
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
@@ -92,19 +94,24 @@ export const WalletsModal: FC = () => {
     }
   }, [visible])
 
-  const handleCancel = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (!event.defaultPrevented) setVisible(false)
-    },
-    [setVisible]
-  )
+  useEffect(() => {
+    if (base58PublicKey || !visible) setSelectedWallet('')
+  }, [base58PublicKey, visible])
+
+  // const handleCancel = useCallback(
+  //   (event: React.MouseEvent<HTMLElement>) => {
+  //     if (!event.defaultPrevented) setVisible(false)
+  //   },
+  //   [setVisible]
+  //)
 
   const handleWalletClick = useCallback(
     (event: React.MouseEvent<HTMLElement>, walletName: WalletName<string>) => {
       select(walletName)
-      handleCancel(event)
+      // handleCancel(event)
+      setSelectedWallet(walletName)
     },
-    [select, handleCancel]
+    [select]
   )
 
   // filters detected wallets and de-duplicates
@@ -136,7 +143,14 @@ export const WalletsModal: FC = () => {
     >
       <div className="wallets-container">
         {detectedWallets.map((wallet, index) => (
-          <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+          <WALLET_DETECTED
+            key={index}
+            isLoading={!base58PublicKey && wallet.adapter.name === selectedWallet}
+            onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
+            className={
+              !base58PublicKey && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+            }
+          >
             <div tw="flex items-center">
               <img src={wallet.adapter.icon} alt="wallet-icon" height={'30px'} width={'30px'} />
               <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
@@ -151,7 +165,14 @@ export const WalletsModal: FC = () => {
               readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
           )
           .map((wallet, index) => (
-            <WALLET_DETECTED key={index} onClick={(event) => handleWalletClick(event, wallet.adapter.name)}>
+            <WALLET_DETECTED
+              key={index}
+              isLoading={!base58PublicKey && wallet.adapter.name === selectedWallet}
+              onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
+              className={
+                !base58PublicKey && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+              }
+            >
               <div tw="flex items-center">
                 <img
                   src={wallet.adapter.icon}
