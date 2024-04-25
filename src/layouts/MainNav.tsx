@@ -282,7 +282,7 @@ const MobileNav: FC = () => {
                       navigateTo(NAV_LINKS.docs, '_blank')
                     }}
                   />
-                  <div className={'inline-flex items-center justify-center gap-3.75 mt-1'}>
+                  <div className={'inline-flex items-center justify-center gap-8 mt-1'}>
                     <SocialLinks />
                   </div>
                 </AccordionContent>
@@ -456,7 +456,7 @@ const DesktopNav: FC = () => {
               <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-2.5 mt-1.5'}>
+          <DropdownMenuItem variant={'blank'} className={'flex items-center justify-center gap-8 mt-1.5 p-1.5'}>
             <SocialLinks />
           </DropdownMenuItem>
         </DropdownMenuContent>
