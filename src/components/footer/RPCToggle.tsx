@@ -27,7 +27,7 @@ import useBoolean from '@/hooks/useBoolean'
 const RPCToggle: FC = () => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
-  const { endpointName, setEndpointName } = useConnectionConfig()
+  const { endpointName, setEndpointName, latency } = useConnectionConfig()
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
   const [rpcUrl, setRpcUrl] = useState('')
   const [error, setError] = useState('')
@@ -60,8 +60,6 @@ const RPCToggle: FC = () => {
     setError('')
     setRpcUrl('')
   }, [])
-  //TODO: replace with actual latency
-  const latency = 58
 
   const saveDisabled = endpointName == RPC || (RPC == 'Custom' && rpcUrl.trim() === '')
   const content = useMemo(() => {

@@ -1,4 +1,14 @@
-import React, { Dispatch, ReactNode, SetStateAction, useEffect, useContext, useMemo, useState, FC } from 'react'
+import React, {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useContext,
+  useMemo,
+  useState,
+  FC,
+  useCallback
+} from 'react'
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solana/web3.js'
@@ -6,6 +16,8 @@ import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance } from '../api/config'
 import { ENVS } from '../constants'
+import useActivityTracker from '@/hooks/useActivityTracker'
+import { INTERVALS } from '@/utils/time'
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -46,7 +58,7 @@ export const APP_RPC: RPC = {
 export const HELIUS_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Helius',
-  endpoint: `https://api.helius.network`,
+  endpoint: `https://yearling-adorne-fast-mainnet.helius-rpc.com/`,
   network: WalletAdapterNetwork.Mainnet
 }
 const CUSTOM_RPC: RPC = {
@@ -78,6 +90,7 @@ interface ISettingsConfig {
   priorityFee?: PriorityFeeName
   priorityFeeInstruction?: TransactionInstruction
   setPriorityFee?: Dispatch<SetStateAction<PriorityFeeName>>
+  latency: number
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -112,6 +125,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [endpointName, setEndpointName] = useState<EndPointName>('GooseFX')
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>('Default')
+  const [latency, setLatency] = useState<number>(0)
+  const [shouldTrack, setShouldTrack] = useState<boolean>(true)
+
   const priorityFeeInstruction = useMemo(() => {
     let fee = 0.0
     switch (priorityFee) {
@@ -192,6 +208,33 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }, [endpointName, endpoint])
 
+  const getAndSetLatency = useCallback(async () => {
+    const start = Date.now()
+    await connection.getLatestBlockhashAndContext({
+      commitment: 'confirmed'
+    })
+    const end = Date.now()
+    const speedMs = end - start
+    console.log('[INFO] Latency:', speedMs)
+    setLatency(speedMs)
+  }, [connection])
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    getAndSetLatency()
+    if (shouldTrack) {
+      timer = setInterval(async () => {
+        getAndSetLatency()
+      }, INTERVALS.SECOND * 30)
+    }
+    return () => clearInterval(timer)
+  }, [shouldTrack, getAndSetLatency, endpoint, connection, endpointName])
+  useActivityTracker({
+    callbackOff: () => setShouldTrack(false),
+    callbackOn: () => {
+      setShouldTrack(true)
+      getAndSetLatency()
+    }
+  })
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
@@ -230,7 +273,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isUnderMaintenance,
         priorityFee,
         setPriorityFee,
-        priorityFeeInstruction
+        priorityFeeInstruction,
+        latency
       }}
     >
       {children}
