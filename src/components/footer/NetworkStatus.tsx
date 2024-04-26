@@ -70,7 +70,7 @@ const NetworkStatus: FC = () => {
         <Dialog>
           <DialogOverlay />
           <DialogTrigger>{footerItemContent}</DialogTrigger>
-          <DialogContent placement={'bottom'} className={'w-screen'}>
+          <DialogContent placement={'bottom'} className={'w-screen rounded-t-[10px]'}>
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary dark:border-border-darkmode-primary
