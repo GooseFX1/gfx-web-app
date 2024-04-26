@@ -20,7 +20,7 @@ export const Footer: FC = () => (
     className={`inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
-     items-center px-3.75 py-1.5
+     items-center px-3.75 py-1.5 mt-auto sm:p-2.5
      `}
   >
     <div className={'inline-flex mr-auto items-center gap-2 sm:hidden'}>
@@ -35,12 +35,12 @@ export const Footer: FC = () => (
 
       <ThemeToggle colorScheme={'secondary'} />
     </div>
-    <div className={'inline-flex ml-auto items-center sm:flex-wrap sm:gap-3.75 sm:gap-y-2.5 sm:p-2.5'}>
+    <div className={'inline-flex ml-auto items-center sm:flex-wrap sm:gap-3.75 sm:gap-y-2.5'}>
       <Button
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.terms, '_blank')}
         size={'sm'}
-        className={'sm:p-0 sm:text-h3 dark:text-text-darkmode-primary text-text-blue text-h6'}
+        className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
       >
         Terms Of Service
       </Button>
@@ -48,7 +48,7 @@ export const Footer: FC = () => (
         variant={'ghost'}
         onClick={navigateTo(NAV_LINKS.risks, '_blank')}
         size={'sm'}
-        className={'sm:p-0 sm:text-h3 dark:text-text-darkmode-primary text-text-blue text-h6'}
+        className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
       >
         Risks & Disclaimers
       </Button>

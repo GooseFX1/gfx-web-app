@@ -77,7 +77,7 @@ const NetworkStatus: FC = () => {
              rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
             >
               <div className={'inline-flex items-center gap-1'}>
-                <p className={cn('text-h3 font-bold', textColor)}>{networkStatus}</p>
+                <h3 className={cn('text-h3 font-bold', textColor)}>{networkStatus}</h3>
                 <Circle className={`${bgColor} w-2 h-2`} />
               </div>
               <p
@@ -98,7 +98,7 @@ const NetworkStatus: FC = () => {
         <PopoverTrigger>{footerItemContent}</PopoverTrigger>
         <PopoverContent collisionPadding={15} className={'mb-[15px]'}>
           <div className={'inline-flex items-center '}>
-            <p className={cn('text-h5 font-bold', textColor)}>{networkStatus}</p>
+            <h5 className={cn('text-h5 font-bold', textColor)}>{networkStatus}</h5>
             <Circle className={`${bgColor} w-2 h-2`} />
           </div>
           <p

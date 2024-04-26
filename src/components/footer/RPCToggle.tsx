@@ -74,7 +74,7 @@ const RPCToggle: FC = () => {
           className={'inline-flex gap-2 min-md:gap-0 min-md:justify-between items-center text-b2 font-semibold'}
         >
           <div className={'inline-flex gap-1 items-center'}>
-            <p className={'sm:text-h3 text-h5'}>RPC Settings</p>
+            <h5 className={'sm:text-h3 text-h5'}>RPC Settings</h5>
             <IconTooltip tooltipType={'outline'}>
               An RPC node, allows users of the RPC node to submit new transactions to be included in blocks. Select
               your RPC or up to enter a custom one.
