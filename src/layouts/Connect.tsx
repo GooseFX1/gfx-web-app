@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useMemo, useEffect, useRef } from 'react'
+/* eslint-disable */
+import React, { FC, useCallback, useMemo, useEffect, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
@@ -13,9 +14,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
   cn,
   Icon,
   ToastTitle
@@ -24,6 +22,8 @@ import { toast } from 'sonner'
 import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { ALLOWED_WALLETS } from '@/pages/FarmV3/constants'
+import { GeorestrictionModal } from './georestrictedModal'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -37,8 +37,7 @@ export const Connect: FC<MenuItemProps> = ({
   containerStyle,
   customButtonStyle,
   customMenuListItemsContainerStyle,
-  customMenuListItemStyle,
-  customButtonWrapperStyle
+  customMenuListItemStyle
 }) => {
   const { wallet, connected, publicKey, disconnect } = useWallet()
   const { blacklisted } = useConnectionConfig()
@@ -49,19 +48,27 @@ export const Connect: FC<MenuItemProps> = ({
   const { setVisible: setWalletModalVisible } = useWalletModal()
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
-  const canConnect = useMemo(
-    () => !blacklisted || (blacklisted && pathname === '/farm/temp-withdraw'),
-    [blacklisted, pathname]
-  )
+  const [geoBlocked, setGeoBlocked] = useState(false)
+  const canConnect = useMemo(() => {
+    if (!base58PublicKey) {
+      return true
+    }
+    return (
+      !blacklisted ||
+      (blacklisted && pathname === '/farm/temp-withdraw') ||
+      (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey))
+    )
+  }, [blacklisted, pathname, base58PublicKey])
   const { balance } = useWalletBalance()
   // useEffect(() => {
   //   if (connected) logData('wallet_connected')
   // }, [connected])
 
+  useEffect(() => {
+    if (geoBlocked || base58PublicKey) setWalletModalVisible(false)
+  }, [geoBlocked, base58PublicKey])
+
   const connectLabel = useMemo(() => {
-    if (!canConnect) {
-      return 'Georestricted'
-    }
     if (!wallet || (!base58PublicKey && wallet?.adapter?.name === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
@@ -79,6 +86,7 @@ export const Connect: FC<MenuItemProps> = ({
   useEffect(() => {
     if (!canConnect) {
       disconnect().catch((err) => console.log('disconnect failed', err))
+      setGeoBlocked(true)
     }
   }, [disconnect, canConnect])
 
@@ -133,54 +141,45 @@ export const Connect: FC<MenuItemProps> = ({
       className={cn(`relative inline-block text-left z-20 focus-visible:outline-none`, containerStyle)}
       ref={selfRef}
     >
+      {geoBlocked && <GeorestrictionModal geoBlocked={geoBlocked} setGeoBlocked={setGeoBlocked} />}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
-        <Tooltip>
-          <TooltipTrigger
-            className={cn('focus-visible:outline-none', customButtonStyle, customButtonWrapperStyle)}
-          >
-            <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-              <Button
-                colorScheme={!connected ? 'purple' : 'primaryGradient'}
-                size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
-                disabled={!canConnect}
-                className={cn(
-                  `min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none 
+        <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+          <Button
+            colorScheme={!connected ? 'purple' : 'primaryGradient'}
+            size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
+            className={cn(
+              `min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none 
                   flex justify-center`,
-                  customButtonStyle
-                )}
-                onClick={() => !connected && handleConnect()}
-              >
-                {connected && (
-                  <div
-                    className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
+              customButtonStyle
+            )}
+            onClick={() => !connected && handleConnect()}
+          >
+            {connected && (
+              <div
+                className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] mr-1 overflow-hidden`}
-                  >
-                    <img
-                      className={'w-auto rounded-lg'}
-                      src={wallet?.adapter?.icon}
-                      alt={`${wallet?.adapter?.name}_icon`}
-                    />
-                  </div>
-                )}
-                {connectLabel}
-                {connected && (
-                  <img
-                    style={{
-                      transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
-                      transition: 'transform 0.2s ease-in-out'
-                    }}
-                    className={`ml-1`}
-                    src={`/img/mainnav/connect-chevron.svg`}
-                    alt={'connect-chevron'}
-                  />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent hidden={canConnect}>
-            We are sorry, {pathname.includes('trade') ? 'Trade' : 'Farm'} is currently unavailable in your location
-          </TooltipContent>
-        </Tooltip>
+              >
+                <img
+                  className={'w-auto rounded-lg'}
+                  src={wallet?.adapter?.icon}
+                  alt={`${wallet?.adapter?.name}_icon`}
+                />
+              </div>
+            )}
+            {connectLabel}
+            {connected && (
+              <img
+                style={{
+                  transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                  transition: 'transform 0.2s ease-in-out'
+                }}
+                className={`ml-1`}
+                src={`/img/mainnav/connect-chevron.svg`}
+                alt={'connect-chevron'}
+              />
+            )}
+          </Button>
+        </DropdownMenuTrigger>
         {connected && (
           <DropdownMenuContent className={cn('mt-3.75', customMenuListItemsContainerStyle)} portal={false}>
             <div

@@ -13,8 +13,7 @@ import { useDarkMode } from '@/context'
 interface TokenInputProps {
   value?: number | string
   handleHalf?: () => void
-  minDisabled?: boolean
-  maxDisabled?: boolean
+  minMaxDisabled?: boolean
   handleMax?: () => void
   tokenSymbol?: string
   disabled?: boolean
@@ -24,8 +23,7 @@ interface TokenInputProps {
 const TokenInput = ({
   value,
   handleHalf,
-  minDisabled = false,
-  maxDisabled = false,
+  minMaxDisabled = false,
   handleMax,
   tokenSymbol,
   disabled,
@@ -44,7 +42,7 @@ const TokenInput = ({
             colorScheme={outlineColorScheme ?? isDarkMode ? 'white' : 'blue'}
             className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
             size={'xs'}
-            disabled={minDisabled}
+            disabled={minMaxDisabled}
           >
             Half
           </Button>
@@ -54,7 +52,7 @@ const TokenInput = ({
             className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
             size={'xs'}
             colorScheme={outlineColorScheme ?? isDarkMode ? 'white' : 'blue'}
-            disabled={maxDisabled}
+            disabled={minMaxDisabled}
           >
             Max
           </Button>
