@@ -331,3 +331,10 @@ export const IS_WHITELIST = '/wallet-apis/isWhitelist'
 export const SSL_CHARTS = '/ssl-apis/charts/prices/'
 export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
 export const ALL_PAIRS = 'ssl-apis/getSSLPairs'
+export const ALLOWED_WALLETS = [
+  'DXuH9hNWkL7ev2rw9fyC9xG9jBfUkp3HBWuAaSAu4oKV',
+  'HUko8TzqwEzhBceAKwHwKpoerUvYZ2zvLD88Rk3hF3uv',
+  'CrFs1vtZ2gAtVsXLUEoesLPruLkpkhNRxSLKNTYfdzuC',
+  'SmWd75HVb9tESGmvyAe7c1jGAB51SNtnQYMvA9Zs1X1',
+  '3UkKMebXhKsGavP62sMW6ERD3zXHCFiL6RcwwnpK6ggf'
+]

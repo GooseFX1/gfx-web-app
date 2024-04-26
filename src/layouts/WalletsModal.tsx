@@ -80,7 +80,7 @@ const STYLED_POPUP = styled(PopupCustom)`
 initializeWhenDetected()
 
 export const WalletsModal: FC = () => {
-  const { wallets, select, publicKey } = useWallet()
+  const { wallets, select, publicKey, connecting } = useWallet()
   const { setVisible, visible } = useWalletModal()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
@@ -145,11 +145,9 @@ export const WalletsModal: FC = () => {
         {detectedWallets.map((wallet, index) => (
           <WALLET_DETECTED
             key={index}
-            isLoading={!base58PublicKey && wallet.adapter.name === selectedWallet}
+            isLoading={connecting && wallet.adapter.name === selectedWallet}
             onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
-            className={
-              !base58PublicKey && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
-            }
+            className={connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'}
           >
             <div tw="flex items-center">
               <img src={wallet.adapter.icon} alt="wallet-icon" height={'30px'} width={'30px'} />
@@ -167,10 +165,10 @@ export const WalletsModal: FC = () => {
           .map((wallet, index) => (
             <WALLET_DETECTED
               key={index}
-              isLoading={!base58PublicKey && wallet.adapter.name === selectedWallet}
+              isLoading={connecting && wallet.adapter.name === selectedWallet}
               onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
               className={
-                !base58PublicKey && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+                connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
               }
             >
               <div tw="flex items-center">

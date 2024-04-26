@@ -544,7 +544,6 @@ const CollapsibleContent: FC<{
 
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
   const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
-  console.log('userDepositedAmount', userDepositedAmount, userDepositedAmount?.toString())
   const canWithdraw =
     !userDepositedAmount?.isZero() &&
     userDepositedAmount?.div(new BN(10 ** coin?.mintDecimals)).gte(new BN(MIN_AMOUNT_WITHDRAW))
