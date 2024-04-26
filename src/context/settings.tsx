@@ -94,7 +94,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const host = window.location.hostname
     if (host.includes(ENVS.STAGING)) {
       return ENVS.STAGING
-    } else if (process.env.NODE_ENV) {
+    } else if (process.env.NODE_ENV === ENVS.PROD) {
       return ENVS.PROD
     } else {
       return ENVS.DEV
@@ -165,7 +165,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    if (curEnv === ENVS.PROD || curEnv === ENVS.DEV) {
+    if (curEnv === ENVS.PROD) {
       // sets geo country code
       fetchBrowserCountryCode().then((countryCode: null | string) => {
         if (countryCode) {

@@ -548,8 +548,7 @@ const CollapsibleContent: FC<{
     !userDepositedAmount?.isZero() &&
     userDepositedAmount?.div(new BN(10 ** coin?.mintDecimals)).gte(new BN(MIN_AMOUNT_WITHDRAW))
 
-  const minDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
-  const maxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
+  const minMaxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
 
   const disabled =
     !connected ||
@@ -652,8 +651,7 @@ const CollapsibleContent: FC<{
             onChange={(e) => handleInputChange(e.target.value)}
             tokenSymbol={coin.token}
             disabled={disabled}
-            minDisabled={minDisabled}
-            maxDisabled={maxDisabled}
+            minMaxDisabled={minMaxDisabled}
           />
           <ConnectClaimCombo
             key={'mobile-connect-claim-combo'}
@@ -685,8 +683,7 @@ const CollapsibleContent: FC<{
               onChange={(e) => handleInputChange(e.target.value)}
               tokenSymbol={coin.token}
               disabled={disabled}
-              minDisabled={minDisabled}
-              maxDisabled={maxDisabled}
+              minMaxDisabled={minMaxDisabled}
             />
             <ConnectClaimCombo
               key={'tablet-connect-claim-combo'}
@@ -787,8 +784,7 @@ const CollapsibleContent: FC<{
               onChange={(e) => handleInputChange(e.target.value)}
               tokenSymbol={coin.token}
               disabled={disabled}
-              minDisabled={minDisabled}
-              maxDisabled={maxDisabled}
+              minMaxDisabled={minMaxDisabled}
             />
             <ConnectClaimCombo
               key={'desktop-connect-claim-combo'}
