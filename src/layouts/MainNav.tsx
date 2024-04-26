@@ -36,7 +36,7 @@ import useBoolean from '../hooks/useBoolean'
 import { SOCIAL_MEDIAS } from '../constants'
 import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
-import PriorityFee from '@/components/footer/PriorityFee'
+// import PriorityFee from '@/components/footer/PriorityFee'
 import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
@@ -294,10 +294,10 @@ const MobileNav: FC = () => {
           dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between`}
           >
             <NetworkStatus />
-            <FooterDivider className={'h-[30px]'} />
-            <RPCToggle />
-            <FooterDivider className={'h-[30px]'} />
-            <PriorityFee />
+            <FooterDivider className={'h-[30px] mx-auto'} />
+            <RPCToggle className={'mr-auto'} />
+            {/*<FooterDivider className={'h-[30px]'} />*/}
+            {/*<PriorityFee />*/}
           </DialogFooter>
         </DialogContent>
       </Dialog>

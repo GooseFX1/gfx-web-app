@@ -16,15 +16,15 @@ import {
   PopoverContent,
   PopoverTrigger
 } from 'gfx-component-lib'
-import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
+import { FooterItem, FooterItemContent, FooterItemProps } from '@/components/footer/FooterItem'
 import { EndPointName, useConnectionConfig, useDarkMode, USER_CACHE } from '@/context'
 import { Circle } from '@/components/common/Circle'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
-
-const RPCToggle: FC = () => {
+type RPCToggleProps = Omit<FooterItemProps, 'title'>
+const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
   const { endpointName, setEndpointName, latency } = useConnectionConfig()
@@ -65,7 +65,8 @@ const RPCToggle: FC = () => {
   const content = useMemo(() => {
     const trigger = (
       <FooterItemContent className={'gap-0 cursor-pointer'}>
-        {endpointName} <Icon src={providerSrc} />
+        {endpointName}&nbsp;
+        <Icon src={providerSrc} />
       </FooterItemContent>
     )
     const renderContent = (
@@ -175,7 +176,11 @@ const RPCToggle: FC = () => {
     latency,
     isOpen
   ])
-  return <FooterItem title={'RPC:'}>{content}</FooterItem>
+  return (
+    <FooterItem title={'RPC:'} {...rest}>
+      {content}
+    </FooterItem>
+  )
 }
 
 export default RPCToggle

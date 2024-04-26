@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
-import PriorityFee from '@/components/footer/PriorityFee'
+// import PriorityFee from '@/components/footer/PriorityFee'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { NAV_LINKS, navigateTo } from '@/utils/requests'
 import { Button, cn } from 'gfx-component-lib'
@@ -30,8 +30,8 @@ export const Footer: FC = () => (
       <RPCToggle />
       <FooterDivider />
 
-      <PriorityFee />
-      <FooterDivider />
+      {/*<PriorityFee />*/}
+      {/*<FooterDivider />*/}
 
       <ThemeToggle colorScheme={'secondary'} />
     </div>

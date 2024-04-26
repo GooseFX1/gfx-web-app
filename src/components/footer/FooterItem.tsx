@@ -1,6 +1,6 @@
 import { FC, HTMLAttributes } from 'react'
 import { cn } from 'gfx-component-lib'
-interface FooterItemProps extends HTMLAttributes<HTMLDivElement> {
+export interface FooterItemProps extends HTMLAttributes<HTMLDivElement> {
   title: string
 }
 export const FooterItem: FC<FooterItemProps> = ({ title, className, children, ...rest }) => (
