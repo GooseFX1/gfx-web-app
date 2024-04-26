@@ -15,7 +15,7 @@ const DETECTED_NAME = styled.div`
 `
 
 const WALLET_DETECTED = styled(Button)`
-  ${tw`flex items-center h-[46px] px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+  ${tw`flex items-center !h-[46px] px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
   border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`}
 
   img {
