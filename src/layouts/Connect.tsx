@@ -23,7 +23,7 @@ import SuccessIcon from '@/assets/Success-icon.svg?react'
 import useBoolean from '@/hooks/useBoolean'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { ALLOWED_WALLETS } from '@/pages/FarmV3/constants'
-import { GeorestrictionModal } from './georestrictedModal'
+import { GeorestrictionModal } from './GeorestrictionModal'
 
 interface MenuItemProps {
   containerStyle?: string
@@ -60,16 +60,16 @@ export const Connect: FC<MenuItemProps> = ({
     )
   }, [blacklisted, pathname, base58PublicKey])
   const { balance } = useWalletBalance()
-  // useEffect(() => {
-  //   if (connected) logData('wallet_connected')
-  // }, [connected])
+ 
+  const { adapter } = wallet || {};
+  const { name: adapterName, icon: adapterIcon} = adapter || {}
 
   useEffect(() => {
     if (geoBlocked || base58PublicKey) setWalletModalVisible(false)
   }, [geoBlocked, base58PublicKey])
 
   const connectLabel = useMemo(() => {
-    if (!wallet || (!base58PublicKey && wallet?.adapter?.name === SolanaMobileWalletAdapterWalletName)) {
+    if (!wallet || (!base58PublicKey && adapterName === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
       return (
@@ -80,7 +80,7 @@ export const Connect: FC<MenuItemProps> = ({
     }
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, canConnect, wallet?.adapter?.name, breakpoint])
+  }, [base58PublicKey, canConnect, adapterName, wallet, breakpoint])
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
@@ -161,8 +161,8 @@ export const Connect: FC<MenuItemProps> = ({
               >
                 <img
                   className={'w-auto rounded-lg'}
-                  src={wallet?.adapter?.icon}
-                  alt={`${wallet?.adapter?.name}_icon`}
+                  src={adapterIcon}
+                  alt={`${adapterName}_icon`}
                 />
               </div>
             )}
@@ -191,7 +191,7 @@ export const Connect: FC<MenuItemProps> = ({
                 className={`flex items-center justify-center border-2 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 p-[2px]`}
               >
-                <Icon size={'sm'} src={wallet?.adapter?.icon} />
+                <Icon size={'sm'} src={adapterIcon} />
               </div>
               <div>
                 <h4
