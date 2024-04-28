@@ -11,7 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger
 } from 'gfx-component-lib'
-// import { Circle } from '@/components/common/Circle'
 import { FooterItem, FooterItemContent } from '@/components/footer/FooterItem'
 import { Circle } from '@/components/common/Circle'
 import useNetworkStatus from '@/hooks/useNetworkStatus'

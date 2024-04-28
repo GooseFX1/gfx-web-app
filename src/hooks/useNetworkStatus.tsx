@@ -33,35 +33,31 @@ function useNetworkStatus(): NetworkStatusReturn {
   const [status, setStatus] = useState<NETWORK_STATUS>(-1)
   const { endpoint } = useConnectionConfig()
   const refetch = useCallback(async () => {
-    const res: HealthResponse = await fetch(`${endpoint ?? SOLANA_DEFAULT_ENDPOINT}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getHealth'
-      })
-    })
-      .then((r) => r.json())
-      .catch((e) => {
-        console.log('[Warning] Health Fetch Failed')
-        console.error(e)
-        return null
-      })
-    if (res == null) {
-      return
-    }
-    console.log('[Log] Health Response: ', res)
-    if (res.result) {
-      setStatus(0)
-    } else {
-      if (res.error && res.error.data.numSlotsBehind) {
-        setStatus(2)
+    try {
+      const res: HealthResponse = await fetch(`${endpoint ?? SOLANA_DEFAULT_ENDPOINT}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getHealth'
+        })
+      }).then((r) => r.json())
+      console.log('[Log] Health Response: ', res)
+      if (res.result) {
+        setStatus(0)
       } else {
-        setStatus(1)
+        if (res.error && res.error.data.numSlotsBehind) {
+          setStatus(2)
+        } else {
+          setStatus(1)
+        }
       }
+    } catch (e) {
+      console.error('[Error] Failed to fetch health status', e)
+      setStatus(-1)
     }
   }, [endpoint])
   const mappedStatus = useMemo(() => {

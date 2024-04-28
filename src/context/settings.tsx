@@ -215,7 +215,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
     const end = Date.now()
     const speedMs = end - start
-    console.log('[INFO] Latency:', speedMs)
     setLatency(speedMs)
   }, [connection])
   useEffect(() => {
