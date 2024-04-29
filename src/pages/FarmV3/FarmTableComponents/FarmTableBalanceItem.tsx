@@ -16,7 +16,7 @@ import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import BN from 'bn.js'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, TxnReturn } from '@/web3'
-import { numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
+import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
 import { Loader, SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import TokenInput from '@/components/common/TokenInput'
@@ -26,6 +26,7 @@ import OracleIcon from '@/pages/FarmV3/FarmTableComponents/OracleIcon'
 import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
 import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
+import BigNumber from 'bignumber.js'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01
@@ -200,7 +201,7 @@ const CollapsibleContent: FC<{
     })()
   }, [connection, actionModal])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
-  const [userTokenBalance, setUserTokenBalance] = useState<number>(0)
+  const [userTokenBalance, setUserTokenBalance] = useState<BigNumber>(new BigNumber(0))
 
   const walletName = useMemo(() => wallet?.adapter?.name, [wallet?.adapter, wallet?.adapter?.name])
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -214,8 +215,8 @@ const CollapsibleContent: FC<{
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
   useEffect(() => {
     if (userPublicKey) {
-      setUserTokenBalance(getUIAmount(tokenMintAddress))
-      if (coin.token === 'SOL') setUserTokenBalance(userSolBalance)
+      if (coin.token === 'SOL') setUserTokenBalance(new BigNumber(userSolBalance))
+      else setUserTokenBalance(new BigNumber(getUIAmount(tokenMintAddress)))
     }
   }, [tokenMintAddress, userPublicKey, isTxnSuccessfull, userSolBalance, getUIAmount])
 
@@ -239,38 +240,39 @@ const CollapsibleContent: FC<{
     [apiSslData]
   )
 
-  const totalEarned = useMemo(
-    () => filteredLiquidityAccounts[tokenMintAddress]?.totalEarned?.toNumber() / Math.pow(10, coin?.mintDecimals),
-    [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin]
-  )
+  const totalEarned = useMemo(() => {
+    if (!coin) return new BigNumber(0)
+    const liquidityAccount = filteredLiquidityAccounts[tokenMintAddress]
+    if (!liquidityAccount) return new BigNumber(0)
 
-  const claimableReward = useMemo(
-    () => rewards[tokenMintAddress]?.toNumber() / Math.pow(10, coin?.mintDecimals),
-    [rewards, tokenMintAddress, isTxnSuccessfull, coin]
-  )
-  const totalEarnedInUSD = useMemo(
-    () =>
-      prices[getPriceObject(coin?.token)]?.current
-        ? prices[getPriceObject(coin?.token)]?.current * totalEarned
-        : 0,
-    [totalEarned]
-  )
+    return new BigNumber(liquidityAccount.totalEarned.toString()).div(Math.pow(10, coin.mintDecimals))
+  }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull, coin])
 
-  const claimableRewardInUSD = useMemo(
-    () =>
-      prices[getPriceObject(coin?.token)]?.current
-        ? prices[getPriceObject(coin?.token)]?.current * claimableReward
-        : 0,
-    [claimableReward]
-  )
+  const claimableReward = useMemo(() => {
+    if (!coin) return new BigNumber(0)
+    if (!rewards[tokenMintAddress]) return new BigNumber(0)
+    return new BigNumber(rewards[tokenMintAddress].toString()).div(Math.pow(10, coin.mintDecimals))
+  }, [rewards, tokenMintAddress, isTxnSuccessfull, coin])
+  const totalEarnedInUSD = useMemo(() => {
+    if (!coin) return new BigNumber(0)
+    const priceObject = prices[getPriceObject(coin.token)]
+    if (!priceObject) return new BigNumber(0)
+    return totalEarned.multipliedBy(priceObject.current)
+  }, [totalEarned])
 
-  const userTokenBalanceInUSD = useMemo(
-    () =>
-      prices[getPriceObject(coin?.token)]?.current
-        ? prices[getPriceObject(coin?.token)]?.current * userTokenBalance
-        : 0,
-    [prices, coin, prices[getPriceObject(coin?.token)], userTokenBalance]
-  )
+  const claimableRewardInUSD = useMemo(() => {
+    if (!coin) return new BigNumber(0)
+    const priceObject = prices[getPriceObject(coin.token)]
+    if (!priceObject) return new BigNumber(0)
+    return claimableReward.multipliedBy(priceObject.current)
+  }, [claimableReward])
+
+  const userTokenBalanceInUSD = useMemo(() => {
+    if (!coin) return new BigNumber(0)
+    const priceObject = getPriceObject(coin.token)
+    if (!prices[priceObject]) return new BigNumber(0)
+    return userTokenBalance.multipliedBy(prices[priceObject].current)
+  }, [prices, coin, prices[getPriceObject(coin?.token)], userTokenBalance])
   const enoughSOLInWallet = useCallback((): boolean => {
     if (userSolBalance < 0.000001) {
       toast.error(insufficientSOLMsg())
@@ -320,7 +322,7 @@ const CollapsibleContent: FC<{
       !coin?.cappedDeposit ||
       (modeOfOperation === ModeOfOperation.DEPOSIT && liquidity > coin?.cappedDeposit) ||
       (modeOfOperation === ModeOfOperation.DEPOSIT &&
-        (userTokenBalance === 0 || !depositAmount || +depositAmount < MIN_AMOUNT_DEPOSIT)) ||
+        (userTokenBalance.isZero() || !depositAmount || +depositAmount < MIN_AMOUNT_DEPOSIT)) ||
       (modeOfOperation === ModeOfOperation.WITHDRAW &&
         (!userDepositedAmount || !withdrawAmount || +withdrawAmount < MIN_AMOUNT_WITHDRAW)),
     [userTokenBalance, modeOfOperation, pool, coin, depositAmount, withdrawAmount, liquidity]
@@ -330,7 +332,7 @@ const CollapsibleContent: FC<{
   const actionButtonText = useMemo(() => {
     if (modeOfOperation === ModeOfOperation.DEPOSIT) {
       if (liquidity > coin?.cappedDeposit) return `Pool at Max Capacity`
-      if (userTokenBalance === 0) return `Insufficient ${coin?.token}`
+      if (userTokenBalance.isZero()) return `Insufficient ${coin?.token}`
       if (!depositAmount || +depositAmount <= 0) return `Enter Amount`
       if (!!depositAmount && +depositAmount < MIN_AMOUNT_DEPOSIT) return `${modeOfOperation} at least 0.01`
       if (depositAmount) return modeOfOperation
@@ -347,16 +349,17 @@ const CollapsibleContent: FC<{
     (isDeposit: boolean) => {
       if (!enoughSOLInWallet()) return true
       if (isDeposit) {
+        const depBigNumber = new BigNumber(depositAmount)
         if (!userTokenBalance) {
           toast.error(genericErrMsg(`You have 0 ${coin.token} to deposit!`))
           setDepositAmount('0')
           return true
-        } else if (!depositAmount || +depositAmount < MIN_AMOUNT_DEPOSIT) {
+        } else if (depBigNumber.isNaN() || depBigNumber.lt(MIN_AMOUNT_DEPOSIT)) {
           toast.error(invalidInputErrMsg(coin?.token))
           setDepositAmount('0')
           return true
-        } else if (+depositAmount > userTokenBalance) {
-          toast.error(invalidDepositErrMsg(userTokenBalance, coin?.token))
+        } else if (userTokenBalance.lt(new BigNumber(depositAmount))) {
+          toast.error(invalidDepositErrMsg(userTokenBalance.toFixed(2), coin?.token))
           setDepositAmount('0')
           return true
         }
@@ -418,9 +421,9 @@ const CollapsibleContent: FC<{
     )
   }, [checkConditionsForDepositWithdraw, userPublicKey, SSLProgram, wal, connection, depositAmount, coin])
   const handleWithdraw = useCallback(
-    (amount: number): void => {
+    (amount: BigNumber): void => {
       if (checkConditionsForDepositWithdraw(false)) return
-      console.log('withdraw', amount)
+      console.log('withdraw', amount.toString())
       setIsButtonLoading(true)
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
@@ -524,7 +527,7 @@ const CollapsibleContent: FC<{
   const handleHalf = useCallback(
     () =>
       modeOfOperation === ModeOfOperation.DEPOSIT
-        ? setDepositAmount(userTokenBalance ? (userTokenBalance / 2).toString() : '0')
+        ? setDepositAmount(userTokenBalance ? new BigNumber(userTokenBalance).div(2).toString() : '0')
         : setWithdrawAmount(
             userDepositedAmount
               ? !userDepositedAmount?.isZero()
@@ -543,7 +546,7 @@ const CollapsibleContent: FC<{
   )
 
   const depositWithdrawOnClick = (): void => openActionModal(modeOfOperation.toLowerCase())
-  const canDeposit = userTokenBalance >= MIN_AMOUNT_DEPOSIT
+  const canDeposit = userTokenBalance.gte(MIN_AMOUNT_DEPOSIT)
   const canWithdraw =
     !userDepositedAmount?.isZero() &&
     userDepositedAmount?.div(new BN(10 ** coin?.mintDecimals)).gte(new BN(MIN_AMOUNT_WITHDRAW))
@@ -555,7 +558,7 @@ const CollapsibleContent: FC<{
     operationPending ||
     isButtonLoading ||
     (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
-  const canClaim = claimableReward > MIN_AMOUNT_CLAIM
+  const canClaim = claimableReward.gte(MIN_AMOUNT_CLAIM)
 
   return (
     <div className={'grid grid-cols-1 md-xl:grid-cols-3 sm-lg:grid-cols-2 gap-3.75'}>
@@ -614,27 +617,27 @@ const CollapsibleContent: FC<{
           <FarmBalanceItem
             title={'Wallet Balance:'}
             key={'mobile-wallet-balance'}
-            asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-            earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-            value={numberFormatter(userTokenBalance)}
+            asZero={userTokenBalance.isZero() || userTokenBalance.isNaN()}
+            earnedUSD={bigNumberFormatter(userTokenBalanceInUSD, 2)}
+            value={bigNumberFormatter(userTokenBalance)}
             token={coin?.token}
           />
           <FarmBalanceItem
             title={'Total Earnings:'}
             key={'mobile-total-earnings'}
-            asZero={totalEarned === 0 || isNaN(totalEarned)}
+            asZero={totalEarned.isZero() || totalEarned.isNaN()}
             titlePosition={isTablet ? 'text-start' : 'text-end'}
-            value={numberFormatter(totalEarned)}
-            earnedUSD={numberFormatter(totalEarnedInUSD)}
+            value={bigNumberFormatter(totalEarned)}
+            earnedUSD={bigNumberFormatter(totalEarnedInUSD)}
             token={coin?.token}
           />
           <FarmBalanceItem
             title={'Pending Rewards:'}
             key={'mobile-pending-rewards'}
-            asZero={claimableReward === 0 || isNaN(claimableReward)}
+            asZero={claimableReward.isZero() || claimableReward.isNaN()}
             titlePosition={isTablet ? 'text-start' : 'text-end'}
-            value={numberFormatter(claimableReward)}
-            earnedUSD={numberFormatter(claimableRewardInUSD)}
+            value={bigNumberFormatter(claimableReward)}
+            earnedUSD={bigNumberFormatter(claimableRewardInUSD)}
             token={coin?.token}
           />
           <DepositAndWithdrawToggle
@@ -659,7 +662,7 @@ const CollapsibleContent: FC<{
             depositWithdrawOnClick={depositWithdrawOnClick}
             token={coin?.token}
             actionButtonText={actionButtonText}
-            canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
+            canClaim={canClaim && claimableReward.gte(MIN_AMOUNT_CLAIM)}
             claimableReward={claimableReward}
             handleClaim={handleClaim}
             disableActionButton={disableActionButton}
@@ -691,7 +694,7 @@ const CollapsibleContent: FC<{
               depositWithdrawOnClick={depositWithdrawOnClick}
               token={coin?.token}
               actionButtonText={actionButtonText}
-              canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
+              canClaim={canClaim && claimableReward.gte(MIN_AMOUNT_CLAIM)}
               claimableReward={claimableReward}
               handleClaim={handleClaim}
               disableActionButton={disableActionButton}
@@ -732,27 +735,27 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Wallet Balance:'}
               key={'tablet-wallet-balance'}
-              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-              earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-              value={numberFormatter(userTokenBalance)}
+              asZero={userTokenBalance.isZero() || userTokenBalance.isNaN()}
+              earnedUSD={bigNumberFormatter(userTokenBalanceInUSD, 2)}
+              value={bigNumberFormatter(userTokenBalance)}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'Total Earnings:'}
               key={'tablet-total-earnings'}
-              asZero={totalEarned === 0 || isNaN(totalEarned)}
+              asZero={totalEarned.isZero() || totalEarned.isNaN()}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(totalEarned)}
-              earnedUSD={numberFormatter(totalEarnedInUSD)}
+              value={bigNumberFormatter(totalEarned)}
+              earnedUSD={bigNumberFormatter(totalEarnedInUSD)}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'Pending Rewards:'}
               key={'tablet-pending-rewards'}
-              asZero={claimableReward === 0 || isNaN(claimableReward)}
+              asZero={claimableReward.isZero() || claimableReward.isNaN()}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(claimableReward)}
-              earnedUSD={numberFormatter(claimableRewardInUSD)}
+              value={bigNumberFormatter(claimableReward)}
+              earnedUSD={bigNumberFormatter(claimableRewardInUSD)}
               token={coin?.token}
             />
           </div>
@@ -769,9 +772,9 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Wallet Balance:'}
               key={'desktop-wallet-balance'}
-              asZero={userTokenBalance === 0 || isNaN(userTokenBalance)}
-              earnedUSD={numberFormatter(userTokenBalanceInUSD, 2)}
-              value={numberFormatter(userTokenBalance)}
+              asZero={userTokenBalance.isZero() || userTokenBalance.isNaN()}
+              earnedUSD={bigNumberFormatter(userTokenBalanceInUSD, 2)}
+              value={bigNumberFormatter(userTokenBalance)}
               token={coin?.token}
             />
           </div>
@@ -792,7 +795,7 @@ const CollapsibleContent: FC<{
               depositWithdrawOnClick={depositWithdrawOnClick}
               token={coin?.token}
               actionButtonText={actionButtonText}
-              canClaim={canClaim && claimableReward >= MIN_AMOUNT_CLAIM}
+              canClaim={canClaim && claimableReward.gte(MIN_AMOUNT_CLAIM)}
               claimableReward={claimableReward}
               handleClaim={handleClaim}
               disableActionButton={disableActionButton}
@@ -803,19 +806,19 @@ const CollapsibleContent: FC<{
             <FarmBalanceItem
               title={'Total Earnings:'}
               key={'desktop-total-earnings'}
-              asZero={totalEarned === 0 || isNaN(totalEarned)}
+              asZero={totalEarned.isZero() || totalEarned.isNaN()}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(totalEarned)}
-              earnedUSD={numberFormatter(totalEarnedInUSD)}
+              value={bigNumberFormatter(totalEarned)}
+              earnedUSD={bigNumberFormatter(totalEarnedInUSD)}
               token={coin?.token}
             />
             <FarmBalanceItem
               title={'Pending Rewards:'}
               key={'desktop-pending-rewards'}
-              asZero={claimableReward === 0 || isNaN(claimableReward)}
+              asZero={claimableReward.isZero() || claimableReward.isNaN()}
               titlePosition={isTablet ? 'text-start' : 'text-end'}
-              value={numberFormatter(claimableReward)}
-              earnedUSD={numberFormatter(claimableRewardInUSD)}
+              value={bigNumberFormatter(claimableReward)}
+              earnedUSD={bigNumberFormatter(claimableRewardInUSD)}
               token={coin?.token}
             />
           </div>
@@ -865,7 +868,7 @@ type ConnectClaimComboProps = {
   actionButtonText: string
   canClaim: boolean
   handleClaim: () => void
-  claimableReward: number
+  claimableReward: BigNumber
   token: string
   disableActionButton: boolean
 }
@@ -912,7 +915,7 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
         {isLoading ? (
           <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
         ) : canClaim ? (
-          `Claim ${numberFormatter(claimableReward)} ${token}`
+          `Claim ${bigNumberFormatter(claimableReward)} ${token}`
         ) : (
           'No Claimable Rewards'
         )}

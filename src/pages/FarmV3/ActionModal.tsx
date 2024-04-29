@@ -1,9 +1,10 @@
 import { Dispatch, FC, SetStateAction, useEffect, useMemo } from 'react'
 import { SSLToken } from './constants'
-import { truncateBigNumber } from '../../utils'
+import { truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, IconTooltip } from 'gfx-component-lib'
+import BigNumber from 'bignumber.js'
 
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
@@ -11,14 +12,14 @@ const TIMER = 300 * 1000
 export const ActionModal: FC<{
   actionModal: boolean
   setActionModal: Dispatch<SetStateAction<boolean>>
-  handleWithdraw: any
-  handleDeposit: any
-  handleClaim: any
+  handleWithdraw: (BigNumber) => void
+  handleDeposit: () => void
+  handleClaim: () => void
   handleCancel: () => void
   isButtonLoading: boolean
   withdrawAmount: string
   depositAmount: string
-  claimAmount: number
+  claimAmount: BigNumber
   actionType: string
   token: SSLToken
   earlyWithdrawFee: number
@@ -47,7 +48,7 @@ export const ActionModal: FC<{
   const handleUserAction = () => {
     console.log('handle user action', actionType)
     if (actionType === 'deposit') handleDeposit()
-    else if (actionType === 'withdraw') handleWithdraw(+withdrawAmount - earlyWithdrawFee)
+    else if (actionType === 'withdraw') handleWithdraw(new BigNumber(withdrawAmount).minus(earlyWithdrawFee))
     else handleClaim()
   }
 
@@ -75,7 +76,9 @@ export const ActionModal: FC<{
     let description = ' claiming, you will get all '
     let amount = 0.0
     let actionText = `${
-      claimAmount ? `${truncateBigNumber(claimAmount)} ${token?.token}` : '00.00 ' + token?.token
+      claimAmount
+        ? `${truncateBigString(claimAmount.toString(), token.mintDecimals)} ${token.token}`
+        : '00.00 ' + token.token
     }`
     let actionDisabled = !claimAmount
     switch (actionType) {
@@ -84,14 +87,18 @@ export const ActionModal: FC<{
         description = ' withdrawing, you will claim any '
         amount = +withdrawAmount
         actionText = `Withdraw 
-          ${truncateBigNumber(+withdrawAmount + claimAmount - earlyWithdrawFee)} ${token?.token}`
+          ${truncateBigString(
+            claimAmount.plus(withdrawAmount).minus(earlyWithdrawFee).toString(),
+            token.mintDecimals
+          )}
+           ${token.token}`
         actionDisabled = !withdrawAmount
         break
       case 'deposit':
         heading = 'Deposit'
         description = ' depositing, you will claim any '
         amount = +depositAmount
-        actionText = `Deposit ${truncateBigNumber(+depositAmount)} ${token?.token} + Claim Yield`
+        actionText = `Deposit ${truncateBigString(depositAmount, token.mintDecimals)} ${token.token} + Claim Yield`
         actionDisabled = !depositAmount
         break
       default:
@@ -127,13 +134,14 @@ export const ActionModal: FC<{
               </div>
               <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">{`${
                 amount ? truncateBigNumber(amount) : '00.00'
-              } ${token?.token}`}</div>
+              } ${token.token}`}</div>
             </div>
           )}
           <div className="flex flex-row items-center justify-between mb-3.75">
             <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
             <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">
-              {claimAmount ? `${truncateBigNumber(claimAmount)}` : `00.00`} {token?.token}
+              {claimAmount ? `${truncateBigString(claimAmount.toString(), token.mintDecimals)}` : `00.00`}{' '}
+              {token.token}
             </div>
           </div>
           {actionType === 'withdraw' && earlyWithdrawFee > 0 && (
@@ -148,7 +156,7 @@ export const ActionModal: FC<{
                 </IconTooltip>
               </div>
               <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">
-                {earlyWithdrawFee ? truncateBigNumber(earlyWithdrawFee) + ' ' + token?.token : 0}
+                {earlyWithdrawFee ? truncateBigNumber(earlyWithdrawFee) + ' ' + token.token : 0}
               </div>
             </div>
           )}
