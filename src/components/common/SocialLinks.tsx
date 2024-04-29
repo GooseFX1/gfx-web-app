@@ -1,7 +1,8 @@
 import IconHover, { IconHoverProps } from '@/components/common/IconHover'
-import { NAV_LINKS, navigateTo } from '@/utils/requests'
+import { navigateTo } from '@/utils/requests'
 import { FC } from 'react'
 import { ThemeMode, useDarkMode } from '@/context'
+import { SOCIAL_MEDIAS } from '@/constants'
 // should match scheme for icon as in SocialLink - helps automate behavior
 export type Social = 'x' | 'discord' | 'telegram'
 
@@ -35,9 +36,9 @@ const SocialLinks: FC = () => {
   const { mode } = useDarkMode()
   return (
     <>
-      <SocialLink social={'x'} link={NAV_LINKS.twitter} mode={mode} shouldUseModeForHoverSrc={false} />
-      <SocialLink social={'discord'} link={NAV_LINKS.discord} mode={mode} shouldUseModeForHoverSrc={false} />
-      <SocialLink social={'telegram'} link={NAV_LINKS.telegram} mode={mode} shouldUseModeForHoverSrc={false} />
+      <SocialLink social={'x'} link={SOCIAL_MEDIAS.twitter} mode={mode} shouldUseModeForHoverSrc={false} />
+      <SocialLink social={'discord'} link={SOCIAL_MEDIAS.discord} mode={mode} shouldUseModeForHoverSrc={false} />
+      <SocialLink social={'telegram'} link={SOCIAL_MEDIAS.telegram} mode={mode} shouldUseModeForHoverSrc={false} />
     </>
   )
 }

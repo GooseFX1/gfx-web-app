@@ -108,7 +108,7 @@ export const MainNav: FC = () => {
 type MobileAccordionContentProps = {
   title: string
   description: string
-  onClick?: () => void
+  onClick?: (e) => void
   isActive?: boolean
   className?: string
 }
@@ -271,7 +271,7 @@ const MobileNav: FC = () => {
                     description={'Stay up to date with the latest updates and industry news!'}
                     onClick={() => {
                       setIsOpen.off()
-                      navigateTo(NAV_LINKS.blog, '_blank')
+                      navigateTo(NAV_LINKS.blog, '_blank')()
                     }}
                   />
                   <MobileAccordionContent
@@ -279,7 +279,7 @@ const MobileNav: FC = () => {
                     description={'Learn about GOOSEFX and how we work in depth.'}
                     onClick={() => {
                       setIsOpen.off()
-                      navigateTo(NAV_LINKS.docs, '_blank')
+                      navigateTo(NAV_LINKS.docs, '_blank')()
                     }}
                   />
                   <div className={'inline-flex items-center justify-center gap-8 mt-1'}>
