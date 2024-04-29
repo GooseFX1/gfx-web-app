@@ -13,7 +13,7 @@ const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX
   const [focus, setFocus] = useBoolean(false)
   return (
     <InputGroup
-      className={cn('min-w-[200px] w-full min-md:max-w-[400px]', className)}
+      className={cn('min-w-[200px] w-full min-md:max-w-[550px]', className)}
       leftItem={
         <InputElementLeft>
           <Icon size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`} alt="search-icon" />
