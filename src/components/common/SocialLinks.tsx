@@ -1,5 +1,5 @@
 import IconHover, { IconHoverProps } from '@/components/common/IconHover'
-import { navigateTo } from '@/utils/requests'
+import { navigateTo, navigateToCurried } from '@/utils/requests'
 import { FC } from 'react'
 import { ThemeMode, useDarkMode } from '@/context'
 import { SOCIAL_MEDIAS } from '@/constants'
@@ -27,7 +27,7 @@ const SocialLink: FC<SocialLinkProps> = ({
     initialSrc={`/img/mainnav/${social}-inactive${shouldUseModeForInitialSrc ? `-${mode}` : ''}.svg`}
     hoverSrc={`/img/mainnav/${social}-active${shouldUseModeForHoverSrc ? `-${mode}` : ''}.svg`}
     size={size ?? 'sm'}
-    onClick={navigateTo(link, '_blank')}
+    onClick={navigateToCurried(link, '_blank')}
     {...rest}
   />
 )

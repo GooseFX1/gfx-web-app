@@ -8,10 +8,12 @@ const NAV_LINKS = {
   securityAuditer: 'https://osec.io/'
 } as const
 
-function navigateTo(src: string, target = '_self', features = '') {
-  return (): Window => window.open(src, target, features)
+function navigateTo(src: string, target = '_self', features = ''): Window {
+  return window.open(src, target, features)
 }
-
+function navigateToCurried(src: string, target = '_self', features = '') {
+  return (): Window => navigateTo(src, target, features)
+}
 async function testRPC(rpc: string): Promise<boolean> {
   try {
     const res = await fetch(rpc, {
@@ -30,4 +32,4 @@ async function testRPC(rpc: string): Promise<boolean> {
   }
 }
 
-export { navigateTo, NAV_LINKS, testRPC }
+export { navigateTo, navigateToCurried, NAV_LINKS, testRPC }

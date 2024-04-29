@@ -38,7 +38,7 @@ import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
 // import PriorityFee from '@/components/footer/PriorityFee'
 import SocialLinks from '@/components/common/SocialLinks'
-import { NAV_LINKS, navigateTo } from '@/utils/requests'
+import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 
 export const MainNav: FC = () => {
@@ -271,7 +271,7 @@ const MobileNav: FC = () => {
                     description={'Stay up to date with the latest updates and industry news!'}
                     onClick={() => {
                       setIsOpen.off()
-                      navigateTo(NAV_LINKS.blog, '_blank')()
+                      navigateTo(NAV_LINKS.blog, '_blank')
                     }}
                   />
                   <MobileAccordionContent
@@ -279,7 +279,7 @@ const MobileNav: FC = () => {
                     description={'Learn about GOOSEFX and how we work in depth.'}
                     onClick={() => {
                       setIsOpen.off()
-                      navigateTo(NAV_LINKS.docs, '_blank')()
+                      navigateTo(NAV_LINKS.docs, '_blank')
                     }}
                   />
                   <div className={'inline-flex items-center justify-center gap-8 mt-1'}>
@@ -436,13 +436,13 @@ const DesktopNav: FC = () => {
               <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigateTo(NAV_LINKS.blog, '_blank')}>
+          <DropdownMenuItem onClick={navigateToCurried(NAV_LINKS.blog, '_blank')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Blog</h4>
               <p className={'text-b3'}>Stay up to date with the latest updates and industry news!</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={navigateTo(NAV_LINKS.docs, '_blank')}>
+          <DropdownMenuItem onClick={navigateToCurried(NAV_LINKS.docs, '_blank')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Docs</h4>
               <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>

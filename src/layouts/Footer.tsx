@@ -3,7 +3,7 @@ import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
 // import PriorityFee from '@/components/footer/PriorityFee'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { NAV_LINKS, navigateTo } from '@/utils/requests'
+import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { Button, cn } from 'gfx-component-lib'
 
 export const FooterDivider: FC<{ className?: string }> = ({ className }) => (
@@ -38,7 +38,7 @@ export const Footer: FC = () => (
     <div className={'inline-flex ml-auto items-center sm:flex-wrap sm:gap-3.75 sm:gap-y-2.5'}>
       <Button
         variant={'ghost'}
-        onClick={navigateTo(NAV_LINKS.terms, '_blank')}
+        onClick={navigateToCurried(NAV_LINKS.terms, '_blank')}
         size={'sm'}
         className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
       >
@@ -46,7 +46,7 @@ export const Footer: FC = () => (
       </Button>
       <Button
         variant={'ghost'}
-        onClick={navigateTo(NAV_LINKS.risks, '_blank')}
+        onClick={navigateToCurried(NAV_LINKS.risks, '_blank')}
         size={'sm'}
         className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
       >

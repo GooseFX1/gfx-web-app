@@ -5,7 +5,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Icon } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
 import IconHover from '@/components/common/IconHover'
-import { NAV_LINKS, navigateTo } from '@/utils/requests'
+import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import SocialLinks from '@/components/common/SocialLinks'
 
 export const More: FC = () => {
@@ -27,7 +27,7 @@ export const More: FC = () => {
         <DropdownMenuItem
           className={`group text-text-lightmode-primary dark:text-text-darkmode-primary 
         font-bold text-b2`}
-          onClick={navigateTo(NAV_LINKS.whatsnew, '_blank')}
+          onClick={navigateToCurried(NAV_LINKS.whatsnew, '_blank')}
         >
           <IconHover
             initialSrc={`/img/mainnav/whatsnew-inactive-${mode}.svg`}
@@ -39,7 +39,7 @@ export const More: FC = () => {
         <DropdownMenuItem
           className={`group text-text-lightmode-primary dark:text-text-darkmode-primary 
         font-bold text-b2`}
-          onClick={navigateTo(NAV_LINKS.blog, '_blank')}
+          onClick={navigateToCurried(NAV_LINKS.blog, '_blank')}
         >
           <IconHover
             initialSrc={`/img/mainnav/blog-inactive-${mode}.svg`}
@@ -51,7 +51,7 @@ export const More: FC = () => {
         <DropdownMenuItem
           className={`group text-text-lightmode-primary dark:text-text-darkmode-primary 
         font-bold text-b2`}
-          onClick={navigateTo(NAV_LINKS.docs, '_blank')}
+          onClick={navigateToCurried(NAV_LINKS.docs, '_blank')}
         >
           <IconHover
             initialSrc={`/img/mainnav/docs-inactive-${mode}.svg`}
