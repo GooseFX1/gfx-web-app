@@ -436,21 +436,13 @@ const DesktopNav: FC = () => {
               <p className={'text-b3'}>See how you rank against other traders and earn rewards</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              navigateTo(NAV_LINKS.blog, '_blank')
-            }}
-          >
+          <DropdownMenuItem onClick={() => navigateTo(NAV_LINKS.blog, '_blank')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Blog</h4>
               <p className={'text-b3'}>Stay up to date with the latest updates and industry news!</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              navigateTo(NAV_LINKS.docs, '_blank')
-            }}
-          >
+          <DropdownMenuItem onClick={navigateTo(NAV_LINKS.docs, '_blank')}>
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Docs</h4>
               <p className={'text-b3'}>Learn about GOOSEFX and how we work in depth.</p>
