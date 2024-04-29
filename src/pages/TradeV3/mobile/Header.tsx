@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -122,7 +123,7 @@ export const Header: FC = () => {
         </div>
       ) : (
         <>
-          <div tw="flex flex-row">
+          {/* <div tw="flex flex-row">
             {connected && publicKey && (
               <div
                 onClick={() => {
@@ -137,7 +138,7 @@ export const Header: FC = () => {
                 )}
               </div>
             )}
-          </div>
+          </div> */}
 
           <DropdownPairs />
           {/*
@@ -167,9 +168,9 @@ export const Header: FC = () => {
               ) : (
                 <img className="change-icn" src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
               )}
-              <span className={classNameChange} tw="text-tiny text-grey-5 font-semibold">
+              <h4 className={classNameChange} tw="text-tiny text-grey-5 font-semibold">
                 {' (' + changeValue + '%)'}
-              </span>
+              </h4>
             </div>
           </div>
         </>

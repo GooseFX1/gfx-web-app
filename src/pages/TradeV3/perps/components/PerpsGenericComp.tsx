@@ -2,6 +2,15 @@
 import { cn } from 'gfx-component-lib'
 import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 
+export const BlackGradientBg: FC<{ children: ReactNode }> = ({ children }) => (
+  <div
+    className="fixed bottom-0 left-0 w-full h-20  bg-gradient-2
+z-50 flex justify-center items-center"
+  >
+    {children}
+  </div>
+)
+
 export const InfoLabel: FC<{ children: ReactNode }> = ({ children }) => (
   <div>
     <h5 className={cn('text-black-4 dark:text-grey-8')}>{children}</h5>
@@ -52,7 +61,7 @@ export const GradientButtonWithBorder: FC<{ children: ReactNode; radius: number;
 }
 
 export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className={cn('h-full dark:bg-black-2 bg-white')}>{children}</div>
+  <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px]')}>{children}</div>
 )
 
 export const ContentLabel: FC<{ children: ReactNode }> = ({ children }) => (

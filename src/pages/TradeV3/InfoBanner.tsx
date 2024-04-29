@@ -354,35 +354,35 @@ export const InfoBanner: FC<{
             variant="outline"
             colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[110px] min-h-[42px]
+            className="max-w-[100px] min-h-[42px]
            ml-4"
           >
             <ContainerTitle>
               <h6>Market Price:&nbsp;</h6>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
-                <p>This is some content here</p>
+                <p>The current price at which a good or service can be purchased or sold.</p>
               </IconTooltip>
             </ContainerTitle>
             <InfoLabel>
-              <h4>{tokenPrice}</h4>
+              <h4 className="leading-4">{tokenPrice}</h4>
             </InfoLabel>
           </Container>
           <Container
             variant="outline"
             colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[125px] min-h-[42px] ml-4"
+            className="max-w-[115px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
               <h6>24H Change:&nbsp;</h6>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
-                <p>This is some content here</p>
+                <p>Volatility of the current asset selected in a time period of 24H.</p>
               </IconTooltip>
             </ContainerTitle>
             <InfoLabel>
-              <h4>
+              <h4 className="leading-4">
                 {tokenPriceChange}
                 <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
               </h4>
@@ -441,20 +441,20 @@ export const InfoBanner: FC<{
             variant="outline"
             colorScheme="primaryGradient"
             size="sm"
-            className="max-w-[115px] min-h-[42px] ml-4"
+            className="max-w-[105px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
               <h6>Open Interest:&nbsp;</h6>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
-                <p>This is some content here</p>
+                <p>The total number of outstanding derivative contracts for an asset.</p>
               </IconTooltip>
             </ContainerTitle>
             <>
               {!traderInfo.openInterests ? (
                 <Loader />
               ) : (
-                <h4>
+                <h4 className="leading-4">
                   <span>{openInterestFormatted} SOL</span>
                 </h4>
               )}

@@ -179,6 +179,8 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
       width: -1px;
       margin-left: 10px;
       position: absolute;
+      bottom: -5px !important;
+      right: -7.5px !important;
       padding-left: 10px;
       display: ${({ $isLocked }) => ($isLocked ? 'none' : 'block')};
 
@@ -433,7 +435,34 @@ const CryptoContent: FC = () => {
         >
           {generateDOM()}
         </ReactGridLayout>
-        <div className="flex items-center justify-between px-2 h-[26px] border-grey-4 dark:border-black-4 border-t-1">
+        <TermsOfService />
+      </DEX_CONTAINER>
+    </>
+  ) : (
+    <DexhomeMobi />
+  )
+}
+
+export const TermsOfService = () => {
+  return (
+    <div className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 sm:h-[70px] h-[26px] sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
+      <div>
+        {checkMobile() ? (
+          <div className="">
+            <div className="flex sm:gap-2 px-1">
+              <p className="text-[10px] text-white items-center flex ml-1 mt-2">Risk & Disclaimers</p>
+              <p className="text-[10px] text-white items-center flex ml-1 mt-2">Terms of Service</p>
+            </div>
+            <p>
+              <p className="text-[10px] items-center flex text-grey-1 px-2">
+                Copyright 2024 GOOSEFX, security audits by
+                <span className="text-white ml-1" onClick={() => openLinkInNewTab('https://osec.io/')}>
+                  OtterSec.
+                </span>
+              </p>
+            </p>
+          </div>
+        ) : (
           <div>
             <p className="text-[10px] items-center flex text-grey-1 ">
               Copyright 2024 GOOSEFX, All rights reserved. Please trade at your discretion and according to the
@@ -443,15 +472,9 @@ const CryptoContent: FC = () => {
               </span>
             </p>
           </div>
-          <div className="flex">
-            <p className="text-[10px] text-white items-center flex ml-1">Risk & Disclaimers</p>
-            <p className="text-[10px] text-white items-center flex ml-1">Terms of Service</p>
-          </div>
-        </div>
-      </DEX_CONTAINER>
-    </>
-  ) : (
-    <DexhomeMobi />
+        )}
+      </div>
+    </div>
   )
 }
 export default CryptoContent

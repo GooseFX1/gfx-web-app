@@ -46,6 +46,7 @@ const colors = {
 }
 const backgroundImage = {
   'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)',
+  'gradient-2': 'linear-gradient(0deg, #0F0F0F 0%, rgba(19, 19, 19, 0.00) 100%)',
   ...twConfigColors.backgroundImage
 }
 

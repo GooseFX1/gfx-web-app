@@ -16,7 +16,7 @@ import {
   useTokenRegistry,
   useConnectionConfig
 } from '../../context'
-import { removeFloatingPointError } from '../../utils'
+import { checkMobile, removeFloatingPointError } from '../../utils'
 import { Dropdown } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, PopupCustom } from '../../components'
@@ -29,6 +29,7 @@ import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
 import { DepositWithdraw } from './perps/DepositWithdrawNew'
 import {
+  BlackGradientBg,
   ContentLabel,
   GradientButtonWithBorder,
   InfoLabel,
@@ -1293,14 +1294,19 @@ export const PlaceOrder: FC = () => {
           />
         )}
 
-        <div className={cn('px-2.5 flex flex-col')}>
+        <div className="px-2.5 flex flex-col sm:pb-2.5 py-1 sm:h-auto h-[calc(100% - 80px)]">
           <div className={cn('flex mb-2')}>
             <div className={cn('flex w-1/2 flex-col')}>
               <InfoLabel>Order type</InfoLabel>
               {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
                 <DropdownMenuTrigger asChild={true}>
-                  <Button variant="outline" onClick={setIsOpen.on} className={cn('max-content mr-2 h-[30px]')}>
+                  <Button
+                    variant="outline"
+                    onClick={setIsOpen.on}
+                    colorScheme={mode === 'lite' ? 'blue' : 'white'}
+                    className={cn('max-content mr-2 h-[30px]')}
+                  >
                     <div className="flex w-full items-center justify-between">
                       <div className="flex">
                         <IconTooltip tooltipType={'outline'}>
@@ -1316,7 +1322,7 @@ export const PlaceOrder: FC = () => {
                           transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
                           transition: 'transform 0.2s ease-in-out'
                         }}
-                        src={`/img/mainnav/connect-chevron.svg`}
+                        src={`/img/mainnav/connect-chevron-${mode}.svg`}
                         alt={'connect-chevron'}
                       />
                     </div>
@@ -1347,7 +1353,14 @@ export const PlaceOrder: FC = () => {
                   disabled={order.display === 'market'}
                   className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.price && `pr-12`)}
                 />
-                {order.price && <p className={cn('mt-1 right-3 absolute mr-1')}>USD</p>}
+                {order.price && (
+                  <p className={cn('mt-1 right-3 absolute mr-1')}>
+                    <InfoLabel>
+                      {' '}
+                      <p>USD</p>{' '}
+                    </InfoLabel>
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1361,7 +1374,11 @@ export const PlaceOrder: FC = () => {
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                   className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.size && `pr-12`)}
                 />
-                {Number(order.size) !== 0 && <p className={cn('mt-[4.5px] right-3 absolute mr-1')}>SOL</p>}
+                {Number(order.size) !== 0 && (
+                  <InfoLabel>
+                    <p className={cn('mt-[3px] right-3 absolute mr-1')}>SOL</p>
+                  </InfoLabel>
+                )}
               </div>
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
@@ -1373,7 +1390,11 @@ export const PlaceOrder: FC = () => {
                   onChange={(e) => numberCheck(e.target.value, 'total')}
                   className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.total && `pr-12`)}
                 />
-                {Number(order.total) !== 0 && <p className={cn('mt-[4.5px] right-[25px] absolute')}>USD</p>}
+                {Number(order.total) !== 0 && (
+                  <InfoLabel>
+                    <p className={cn('mt-[3px] right-[25px] absolute')}>USD</p>
+                  </InfoLabel>
+                )}
               </div>
             </div>
           </div>
@@ -1383,6 +1404,7 @@ export const PlaceOrder: FC = () => {
             <DropdownMenu open={takeProfitVisible} onOpenChange={setTakeProfitVisible}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
+                  colorScheme={mode === 'lite' ? 'blue' : 'white'}
                   variant="outline"
                   onClick={() => setTakeProfitVisible(true)}
                   className={cn('max-content mr-2 h-[30px]')}
@@ -1397,10 +1419,10 @@ export const PlaceOrder: FC = () => {
                       : '$' + takeProfitAmount}
                     <img
                       style={{
-                        transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                        transform: `rotate(${takeProfitVisible ? '0deg' : '180deg'})`,
                         transition: 'transform 0.2s ease-in-out'
                       }}
-                      src={`/img/mainnav/connect-chevron.svg`}
+                      src={`/img/mainnav/connect-chevron-${mode}.svg`}
                       alt={'connect-chevron'}
                     />
                   </div>
@@ -1455,28 +1477,57 @@ export const PlaceOrder: FC = () => {
                 </div>
               </div>
             ))}
-            <div className={cn('ml-auto w-full')}>
-              {publicKey ? (
-                <Button
-                  className={cn('min-w-[170px] !w-full h-[30px]')}
-                  variant="default"
-                  colorScheme="blue"
-                  size="lg"
-                  onClick={() => handlePlaceOrder()}
-                  disabled={buttonState !== ButtonState.CanPlaceOrder}
-                >
-                  <h4>{buttonText}</h4>
-                </Button>
-              ) : (
-                <Connect customButtonStyle="!w-[100%]" containerStyle="!w-[100%]" />
-              )}
-            </div>
+            {!checkMobile() ? (
+              <div className={cn('ml-auto w-full')}>
+                {publicKey ? (
+                  <Button
+                    className={cn('min-w-[170px] !w-full h-[30px]')}
+                    variant="default"
+                    colorScheme="blue"
+                    size="lg"
+                    onClick={() => handlePlaceOrder()}
+                    disabled={buttonState !== ButtonState.CanPlaceOrder}
+                  >
+                    <h4>{buttonText}</h4>
+                  </Button>
+                ) : (
+                  <Connect customButtonStyle="!w-[100%]" containerStyle="!w-[100%]" />
+                )}
+              </div>
+            ) : (
+              <ButtonForMobile
+                buttonText={buttonText}
+                handlePlaceOrder={handlePlaceOrder}
+                buttonState={buttonState}
+              />
+            )}
           </div>
         </div>
       </PerpsLayout>
     </div>
   )
 }
+
+const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
+  buttonText,
+  handlePlaceOrder,
+  buttonState
+}) => (
+  <BlackGradientBg>
+    <div className={cn('w-full absolute flex items-center justify-center')}>
+      <Button
+        className={cn('min-w-[170px] !w-[90%] h-10 mb-2')}
+        variant="default"
+        colorScheme="blue"
+        size="lg"
+        onClick={() => handlePlaceOrder()}
+        disabled={buttonState !== ButtonState.CanPlaceOrder}
+      >
+        <h4>{buttonText}</h4>
+      </Button>
+    </div>
+  </BlackGradientBg>
+)
 
 const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
   <div className={cn('px-2.5 py-1')}>

@@ -19,7 +19,7 @@ export const CollateralPanel: FC = (): JSX.Element => {
 
   return (
     <PerpsLayout>
-      <div className={cn('p-2.5')}>
+      <div className={cn('p-2.5 sm:h-[300px]')}>
         <div tw="flex items-center">
           <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" />
           <InfoLabel>Sol Account</InfoLabel>
@@ -34,8 +34,11 @@ const ConnectWalletLayout: FC = (): JSX.Element => {
   const { mode } = useDarkMode()
   return (
     <div className={cn('h-[90%] flex flex-col items-center justify-center')}>
-      <img src={`/img/assets/accountConnect${mode}.png`} className={cn('w-[127px] h-[84px]')} />
-      <h4 className={cn('m-2 dark:text-grey-1 text-grey-1')}>See your Account!</h4>
+      <img src={`/img/assets/accountConnect${mode}.svg`} className={cn('w-[127px] h-[84px]')} />
+      <h4 className={cn('m-2 dark:text-grey-1 text-grey-1')}>
+        Connect your wallet to <br />
+        See your Account!
+      </h4>
       <div>
         <Connect />
       </div>
@@ -77,7 +80,8 @@ const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
   return (
     <div tw="py-1 flex items-center justify-between">
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr}</h5>
-      {pnl}
+
+      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
     </div>
   )
 }
@@ -114,7 +118,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
                   ? `h-[20px] w-[5px] mr-[2px] rounded-[5px] ${
                       accountHealth > 75 ? `bg-green-2` : accountHealth >= 50 ? `bg-yellow-1` : `bg-red-2`
                     }`
-                  : 'h-[20px] w-[5px] mr-[2px] bg-grey-5 rounded-[5px] px-[2px]'
+                  : 'h-[20px] w-[5px] mr-[2px] dark:bg-black-1 bg-grey-5 rounded-[5px] px-[2px]'
               }
             ></div>
           ))}
@@ -126,7 +130,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     <div tw="flex items-center justify-between mt-2">
       <div>
         <div tw="flex items-center">
-          <img src={`/img/assets/healthIcon${mode}.png`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
+          <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
           <InfoLabel>Health</InfoLabel>
           <Tooltip>
             <TooltipTrigger>

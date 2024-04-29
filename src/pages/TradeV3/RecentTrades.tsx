@@ -118,7 +118,11 @@ export const RecentTrades: FC = () => {
             </p>
           </div>
         ))}
-        {isLoading && <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />}
+        {isLoading && (
+          <div className="sm:h-[300px]">
+            <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />
+          </div>
+        )}
       </div>
     </div>
   )

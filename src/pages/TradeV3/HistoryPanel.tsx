@@ -15,6 +15,7 @@ import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
 import { OrderBook } from './OrderBook'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
+import { checkMobile } from '@/utils'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 type TabColumnsDisplayProps = {
@@ -374,7 +375,7 @@ const OpenOrdersComponent: FC = () => {
           openOrderUI.length > 0 &&
           [...openOrderUI].map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
-              <div key={index} className={cn('flex items-center my-1')}>
+              <div key={index} className={cn('flex items-center my-1 ')}>
                 <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
                   {order.order.side.toUpperCase()}
                 </h5>
@@ -405,10 +406,102 @@ const OpenOrdersComponent: FC = () => {
     ),
     [formatPair, perpsOpenOrders, isDevnet]
   )
+  if (checkMobile() && openOrderUI.length > 0) {
+    const mobileContent = useMemo(
+      () => (
+        <div className={cn('w-full px-2.5 overflow-auto max-h-[300px] dark:border-black-4 border border-b-0  ')}>
+          {openOrderUI &&
+            openOrderUI.length > 0 &&
+            [...openOrderUI].map((order, index) =>
+              !removedOrderIds.includes(order.order.orderId) ? (
+                <div
+                  key={index}
+                  className={cn(
+                    'flex flex-col px-2.5 h-[125px] border border-t-0 border-r-0 border-l-0 dark:border-black-4 '
+                  )}
+                >
+                  <div className="flex justify-between mt-1">
+                    <div>
+                      <InfoLabel> SOL-PERP </InfoLabel>
+                    </div>
+                    <div>
+                      <InfoLabel>
+                        <h5
+                          className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}
+                        >
+                          {order.order.side.toUpperCase()}
+                        </h5>
+                      </InfoLabel>
+                    </div>
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>Size</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p> {order.order.size} </p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>Price</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p> {(order.order.size * order.order.price).toFixed(2)} </p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>USD Value</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p>{(order.order.size * order.order.price).toFixed(2)}</p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={cn('w-full flex justify-end mt-2')}>
+                    <Button
+                      variant="outline"
+                      isLoading={loading && perpsOrderId === order.order.orderId}
+                      colorScheme="red"
+                      className={cn(`h-[30px]`)}
+                      onClick={() => cancelOrderFn(order.order.orderId)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              ) : null
+            )}
+        </div>
+      ),
+      [formatPair, perpsOpenOrders, isDevnet]
+    )
+    return mobileContent
+  }
   return (
     <>
       {!openOrderUI.length ? (
-        <div className={cn('flex items-center justify-center h-[80%]')}>
+        <div className={cn('flex items-center justify-center h-[80%] sm:h-[250px] rounded-b-[3px]')}>
           <h4 className="text-grey-1"> No Open Orders</h4>
         </div>
       ) : (
@@ -763,7 +856,7 @@ export const HistoryPanel: FC = () => {
   //   </>
   // )
   return (
-    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] " defaultValue="0">
+    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px] " defaultValue="0">
       {closePositionModal && (
         <ClosePositionDialog
           closePositionModal={closePositionModal}
@@ -772,22 +865,26 @@ export const HistoryPanel: FC = () => {
           setPerpsEndModal={setPerpsEndModal}
         />
       )}
-      <TabsList>
-        {tabs.map((item, index) => (
-          <TabsTrigger
-            className={cn('w-[20%]')}
-            size="xl"
-            value={index.toString()}
-            onClick={() => setActiveTab(index)}
-            variant="primary"
-          >
-            <TitleLabel whiteText={activeTab === index}>{item}</TitleLabel>
-          </TabsTrigger>
-        ))}
+      <TabsList className={cn('rounded-t-[3px]')}>
+        {tabs.map((item, index) => {
+          if (checkMobile() && index > 1) return null
+          return (
+            <TabsTrigger
+              className={cn('w-[20%] sm:w-[50%]')}
+              size="xl"
+              key={index}
+              value={index.toString()}
+              onClick={() => setActiveTab(index)}
+              variant="primary"
+            >
+              <TitleLabel whiteText={activeTab === index}>{item}</TitleLabel>
+            </TabsTrigger>
+          )
+        })}
       </TabsList>
-      <TabsContent className={cn('h-full')} value="0">
+      <TabsContent className={cn('h-full sm:min-h-[200px] rounded-b-[3px]')} value="0">
         <>
-          <TabColumnsDisplay activeTab={activeTab} />
+          {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
           <PositionDetails
             traderInfo={traderInfo}
             selectedCrypto={selectedCrypto}
@@ -798,23 +895,23 @@ export const HistoryPanel: FC = () => {
           />
         </>
       </TabsContent>
-      <TabsContent className={cn('h-[100%]')} value="1">
-        <TabColumnsDisplay activeTab={activeTab} />
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="1">
+        {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
         <OpenOrdersComponent />
       </TabsContent>
-      <TabsContent className={cn('h-[100%]')} value="2">
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="2">
         <TabColumnsDisplay activeTab={activeTab} />
         <TradeHistoryComponent />
       </TabsContent>
-      <TabsContent className={cn('h-[100%]')} value="3">
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="3">
         <TabColumnsDisplay activeTab={activeTab} />
         <FundingHistoryComponent />
       </TabsContent>
-      <TabsContent className={cn('h-[100%]')} value="4">
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="4">
         <TabColumnsDisplay activeTab={activeTab} />
         <div className={cn('h-[80%] flex items-center justify-center')}>
           <div className={cn('flex items-center justify-center h-[80%]')}>
-            <h4 className="text-grey-1"> No History</h4>
+            <h4 className="text-grey-1"> No unsettled P&L</h4>
           </div>
           {/* <InfoLabel>No Funding History</InfoLabel> */}
         </div>
@@ -849,6 +946,92 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
   handleClosePosition
 }) => {
   const { mode } = useDarkMode()
+  if (checkMobile())
+    return (
+      <>
+        {traderInfo.averagePosition.side && Number(roundedSize) ? (
+          <div
+            className={cn(
+              'flex flex-col px-2.5 mt-2.5 h-[125px] border border-r-none border-l-none dark:border-black-4 '
+            )}
+          >
+            <div className="flex justify-between w-full mt-1">
+              <div>
+                <InfoLabel>SOL-PERP </InfoLabel>{' '}
+              </div>
+              <div
+                className={cn(
+                  `w-[12.5%] ${traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`
+                )}
+              >
+                <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>Size</p>{' '}
+                  </ContentLabel>{' '}
+                </div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {roundedSize} </p>{' '}
+                  </InfoLabel>{' '}
+                </div>
+              </div>
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>Price</p>{' '}
+                  </ContentLabel>{' '}
+                </div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {traderInfo.averagePosition.price} </p>{' '}
+                  </InfoLabel>{' '}
+                </div>
+              </div>
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>USD Value</p>{' '}
+                  </ContentLabel>{' '}
+                </div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {perpsPrice} </p>{' '}
+                  </InfoLabel>{' '}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="w-full justify-end flex mt-2">
+                <Button
+                  variant="outline"
+                  colorScheme="red"
+                  className={cn(`h-[30px] ml-auto`)}
+                  onClick={handleClosePosition}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={cn('flex items-center justify-center h-[80%]')}>
+            <h4 className="text-grey-1"> No Positions Found</h4>
+          </div>
+        )}
+      </>
+    )
   return (
     <>
       {traderInfo.averagePosition.side && Number(roundedSize) ? (

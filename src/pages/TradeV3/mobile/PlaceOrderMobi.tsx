@@ -841,7 +841,7 @@ export const PlaceOrderMobi = () => {
               />
             }
           >
-            <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
+            {/* <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} /> */}
           </SETTING_MODAL>
         </>
       )}
