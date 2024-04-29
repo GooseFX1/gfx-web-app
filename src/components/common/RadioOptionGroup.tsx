@@ -1,9 +1,9 @@
 import { cn, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 interface Option {
   value: string
-  label: string
+  label: ReactNode
   variant?: string
   onClick?: () => void
   className?: string

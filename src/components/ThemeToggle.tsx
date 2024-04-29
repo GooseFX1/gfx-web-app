@@ -1,8 +1,12 @@
 import { FC } from 'react'
 import { useDarkMode } from '../context'
 import { Switch } from 'gfx-component-lib'
-
-export const ThemeToggle: FC = () => {
+type ThemeToggleProps = {
+  size?: 'sm' | 'md'
+  colorScheme?: 'unset' | 'primary' | 'secondary'
+  variant?: 'default' | 'secondary'
+}
+export const ThemeToggle: FC<ThemeToggleProps> = ({ size, colorScheme, variant = 'secondary' }) => {
   const { mode, toggleMode } = useDarkMode()
 
   return (
@@ -12,7 +16,13 @@ export const ThemeToggle: FC = () => {
         src={`/img/mainnav/moon_${mode}_mode.svg`}
         alt="moon"
       />
-      <Switch checked={mode != 'dark'} variant={'secondary'} onClick={toggleMode} />
+      <Switch
+        checked={mode != 'dark'}
+        variant={variant}
+        size={size}
+        colorScheme={colorScheme}
+        onClick={toggleMode}
+      />
       <img
         className="h-[22px] w-[22px] sm:h-[26px] sm:w-[26px]"
         src={`/img/mainnav/sun_${mode}_mode.svg`}

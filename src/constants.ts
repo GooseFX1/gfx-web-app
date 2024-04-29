@@ -7,7 +7,7 @@ export const SOCIAL_MEDIAS: { [key: string]: string } = {
   medium: 'https://medium.com/goosefx',
   telegram: 'https://www.t.me/goosefx',
   twitter: 'https://www.twitter.com/GooseFX1'
-}
+} as const
 
 export const APP_DEFAULT_ROUTE = '/farm'
 export const SOLSCAN_BASE = 'https://api.solscan.io'

@@ -1,8 +1,8 @@
 import React, { FC, ReactNode, createContext, useContext, useCallback } from 'react'
 import { useLocalStorageState } from '../utils'
-
+export type ThemeMode = 'dark' | 'lite'
 interface IDarkModeConfig {
-  mode: 'dark' | 'lite'
+  mode: ThemeMode
   toggleMode: () => void
   isDarkMode: boolean
 }
