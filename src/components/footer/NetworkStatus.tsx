@@ -97,7 +97,7 @@ const NetworkStatus: FC = () => {
         <PopoverTrigger>{footerItemContent}</PopoverTrigger>
         <PopoverContent collisionPadding={15} className={'mb-[15px]'}>
           <div className={'inline-flex items-center '}>
-            <h5 className={cn('text-h5 font-bold', textColor)}>{networkStatus}</h5>
+            <h5 className={cn('text-h5 font-bold mr-1', textColor)}>{networkStatus}</h5>
             <Circle className={`${bgColor} w-2 h-2`} />
           </div>
           <p
