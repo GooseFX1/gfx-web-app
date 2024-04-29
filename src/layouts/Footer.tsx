@@ -3,7 +3,7 @@ import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
 // import PriorityFee from '@/components/footer/PriorityFee'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
+import { NAV_LINKS, navigateToCurried } from '@/utils/requests'
 import { Button, cn } from 'gfx-component-lib'
 
 export const FooterDivider: FC<{ className?: string }> = ({ className }) => (

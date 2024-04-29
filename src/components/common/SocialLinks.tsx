@@ -1,5 +1,5 @@
 import IconHover, { IconHoverProps } from '@/components/common/IconHover'
-import { navigateTo, navigateToCurried } from '@/utils/requests'
+import { navigateToCurried } from '@/utils/requests'
 import { FC } from 'react'
 import { ThemeMode, useDarkMode } from '@/context'
 import { SOCIAL_MEDIAS } from '@/constants'
