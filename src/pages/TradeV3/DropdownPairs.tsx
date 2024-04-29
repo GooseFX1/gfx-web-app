@@ -3,7 +3,8 @@ import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
-import { Modal, SearchBar } from '../../components'
+import { Modal } from '../../components'
+import SearchBar from '../../components/common/SearchBar'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'
@@ -173,6 +174,7 @@ const SelectCryptoModal: FC<{
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const history = useHistory()
+  const [searchTokens, setSearchTokens] = useState<string>('')
 
   const handleSelection = (item) => {
     if (item.type === 'synth') {
@@ -206,14 +208,20 @@ const SelectCryptoModal: FC<{
           className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
         border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
         >
-          <InputGroup {...args} className={'w-11/12'}>
+          {/* <InputGroup {...args} className={'w-11/12'}>
             <Input
               className={'text-left w-full'}
               // TODO Fix the trading view bug
               // onChange={(e) => handleDropdownSearch(e.target.value)}
               placeholder="Search by Token symbol"
             />
-          </InputGroup>
+          </InputGroup> */}
+          <SearchBar
+            onChange={(e) => handleDropdownSearch(e.target.value)}
+            onClear={() => setSearchTokens('')}
+            value={searchTokens}
+            // className={'min-w-[100px] min-h-[40px] '}
+          />
         </DialogHeader>
         <DialogBody
           className={`flex flex-col w-full h-[210px] min-md:h-full 
@@ -285,15 +293,15 @@ const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = 
   )
 }
 
-const ModalHeader = ({ handleDropdownSearch }) => {
-  return (
-    <SearchBar
-      className="dropdown-modal-search"
-      placeholder="Search by name"
-      setSearchFilter={handleDropdownSearch}
-    />
-  )
-}
+// const ModalHeader = ({ handleDropdownSearch }) => {
+//   return (
+//     <SearchBar
+//       className="dropdown-modal-search"
+//       placeholder="Search by name"
+//       setSearchFilter={handleDropdownSearch}
+//     />
+//   )
+// }
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   // const { isDevnet, setIsDevnet } = useCrypto()
@@ -317,11 +325,11 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
           Perps
         </div>
       </MODAL_TITLE> */}
-      <SearchBar
+      {/* <SearchBar
         className="dropdown-modal-search"
         placeholder="Search by name"
         setSearchFilter={handleDropdownSearch}
-      />
+      /> */}
     </div>
   )
 }

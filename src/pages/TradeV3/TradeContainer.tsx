@@ -153,7 +153,7 @@ const componentDimensionsMd = [
 // ]
 
 const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
-  ${tw`relative flex w-full h-[calc(100vh - 85px)] flex-col pt-[18px] overflow-y-scroll overflow-x-hidden`}
+  ${tw`relative flex w-full h-[calc(100vh - 85px)] flex-col overflow-y-scroll overflow-x-hidden`}
 
   .layout {
     ${tw`w-[99%] mt-2 mx-auto mb-0 relative !h-full`}

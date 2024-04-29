@@ -174,7 +174,7 @@ export const Connect: FC<MenuItemProps> = ({
                   transition: 'transform 0.2s ease-in-out'
                 }}
                 className={`ml-1`}
-                src={`/img/mainnav/connect-chevron.svg`}
+                src={`/img/mainnav/connect-chevron-dark.svg`}
                 alt={'connect-chevron'}
               />
             )}

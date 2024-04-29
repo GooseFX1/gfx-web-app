@@ -48,7 +48,10 @@ import {
   Input,
   InputElementRight,
   InputGroup,
-  Slider
+  Slider,
+  Tabs,
+  TabsList,
+  TabsTrigger
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
 import { CircularArrow } from '@/components/common/Arrow'
@@ -535,7 +538,7 @@ export const PlaceOrder: FC = () => {
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
   const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(null)
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -545,24 +548,19 @@ export const PlaceOrder: FC = () => {
 
   const TAKE_PROFIT_ARRAY = [
     {
-      display: 'None',
-      value: 0,
-      key: 0
+      display: '10%',
+      value: 0.1,
+      key: 1
     },
     {
       display: '25%',
       value: 0.25,
-      key: 1
-    },
-    {
-      display: '50%',
-      value: 0.5,
       key: 2
     },
     order.side === 'buy'
       ? {
-          display: '100%',
-          value: 1,
+          display: '50%',
+          value: 0.5,
           key: 3
         }
       : {
@@ -581,13 +579,11 @@ export const PlaceOrder: FC = () => {
     TAKE_PROFIT_ARRAY.map((item, index) => {
       if (Number.isNaN(+order.price)) obj.push('')
       else {
-        if (index === 0) obj.push('')
-        else {
-          const profit = getProfitAmount(order.side, order.price, item.value)
-          obj.push(profit.toFixed(2))
-        }
+        const profit = getProfitAmount(order.side, order.price, item.value)
+        obj.push(profit.toFixed(2))
       }
     })
+    console.log(obj, 'shri')
     setProfits(obj)
   }, [order])
 
@@ -802,7 +798,6 @@ export const PlaceOrder: FC = () => {
 
   const calcTakeProfit = (value, index) => {
     setTakeProfitIndex(index)
-    setTakeProfitArrow(!takeProfitArrow)
     setTakeProfitInput(null)
   }
 
@@ -904,7 +899,6 @@ export const PlaceOrder: FC = () => {
   }
 
   const getTakeProfitParam = () => {
-    if (takeProfitIndex === 0) return null
     if (takeProfitIndex !== null) {
       const numPrice = +order.price
       if (Number.isNaN(numPrice)) return null
@@ -1353,14 +1347,15 @@ export const PlaceOrder: FC = () => {
                   disabled={order.display === 'market'}
                   className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.price && `pr-12`)}
                 />
-                {order.price && (
-                  <p className={cn('mt-1 right-3 absolute mr-1')}>
-                    <InfoLabel>
-                      {' '}
-                      <p>USD</p>{' '}
-                    </InfoLabel>
-                  </p>
-                )}
+                <div className="relative">
+                  {order.price && (
+                    <p className={cn('mt-[7px] right-3 absolute mr-1')}>
+                      <InfoLabel>
+                        <p>USD</p>{' '}
+                      </InfoLabel>
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1376,7 +1371,7 @@ export const PlaceOrder: FC = () => {
                 />
                 {Number(order.size) !== 0 && (
                   <InfoLabel>
-                    <p className={cn('mt-[3px] right-3 absolute mr-1')}>SOL</p>
+                    <p className={cn('mt-1.5 right-3 absolute mr-1')}>SOL</p>
                   </InfoLabel>
                 )}
               </div>
@@ -1392,7 +1387,7 @@ export const PlaceOrder: FC = () => {
                 />
                 {Number(order.total) !== 0 && (
                   <InfoLabel>
-                    <p className={cn('mt-[3px] right-[25px] absolute')}>USD</p>
+                    <p className={cn('mt-1.5 right-[25px] absolute')}>USD</p>
                   </InfoLabel>
                 )}
               </div>
@@ -1401,7 +1396,55 @@ export const PlaceOrder: FC = () => {
 
           <div className={cn('flex mb-2 flex-col')}>
             <InfoLabel>Take Profit {takeProfitVisible} </InfoLabel>
-            <DropdownMenu open={takeProfitVisible} onOpenChange={setTakeProfitVisible}>
+            <div className={cn('w-full flex')}>
+              <div className="w-1/2 flex">
+                <Input
+                  placeholder={'0.00 USD'}
+                  value={
+                    takeProfitIndex === null
+                      ? takeProfitAmount
+                        ? takeProfitAmount
+                        : ''
+                      : profits[takeProfitIndex]
+                      ? '$' + profits[takeProfitIndex] + ' USD'
+                      : '(-)'
+                  }
+                  onChange={(e) => {
+                    setTakeProfitIndex(null)
+                    setTakeProfitAmount(Number(e.target.value))
+                  }}
+                  className={cn(
+                    `mr-2 p-1 h-[30px] min-w-[100px] text-right`,
+                    (takeProfitIndex || takeProfitAmount) && `pr-1`
+                  )}
+                />
+                {/* {Number(takeProfitIndex) !== 0 || takeProfitAmount !== 0 && (
+                  <InfoLabel>
+                    <p className={cn('mt-1.5 right-[12px] absolute')}>USD</p>
+                  </InfoLabel>
+                )} */}
+              </div>
+              <div className="w-1/2">
+                <Tabs>
+                  {/* Shata */}
+                  <TabsList>
+                    {TAKE_PROFIT_ARRAY.map((elem, index) => (
+                      <TabsTrigger
+                        className={cn('w-[33%] h-[30px]')}
+                        size="xl"
+                        key={index}
+                        value={index.toString()}
+                        variant="primary"
+                        onClick={(e) => calcTakeProfit(elem.value, index)}
+                      >
+                        <TitleLabel whiteText={takeProfitIndex === index}>{elem.display}</TitleLabel>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
+              </div>
+            </div>
+            {/* <DropdownMenu open={takeProfitVisible} onOpenChange={setTakeProfitVisible}>
               <DropdownMenuTrigger asChild={true}>
                 <Button
                   colorScheme={mode === 'lite' ? 'blue' : 'white'}
@@ -1431,7 +1474,7 @@ export const PlaceOrder: FC = () => {
               <DropdownMenuContent asChild>
                 <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>{getTakeProfitItems()}</div>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </div>
           <div className={cn('flex mb-2 flex-col')}>
             <InfoLabel>Leverage</InfoLabel>
@@ -1539,7 +1582,7 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
       <div className="w-[43px] h-[23px]">
         <GradientButtonWithBorder radius={5} height={23}>
           <InfoLabel>
-            <h5 className={'!dark:text-white'}> {sliderValue}x </h5>
+            <h5 className={'!dark:text-white mt-0.5'}> {sliderValue}x </h5>
           </InfoLabel>
         </GradientButtonWithBorder>
       </div>

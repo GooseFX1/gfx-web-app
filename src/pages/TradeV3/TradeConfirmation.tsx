@@ -195,7 +195,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
             onClick={() => handleClick()}
             colorScheme={'blue'}
             variant={'default'}
-            className={cn('max-w-[178px] w-full h-10 mt-2 ml-auto mr-auto')}
+            className={cn('max-w-[178px] w-full h-10 mt-auto mb-2 ml-auto mr-auto ')}
             loading={isLoading}
             disabled={isLoading}
             height={checkMobile() ? '45px' : '40px'}
@@ -210,7 +210,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 }
 
 export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
-  <div className="flex justify-between mb-[1px]">
+  <div className="flex justify-between mb-[5px] leading-4">
     <ContentLabel>
       <p>{label}</p>
     </ContentLabel>
