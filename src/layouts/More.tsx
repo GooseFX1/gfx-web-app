@@ -5,7 +5,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Icon } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
 import IconHover from '@/components/common/IconHover'
-import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
+import { NAV_LINKS, navigateToCurried } from '@/utils/requests'
 import SocialLinks from '@/components/common/SocialLinks'
 
 export const More: FC = () => {
