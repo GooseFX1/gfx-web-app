@@ -1,0 +1,3 @@
+[submodule "src/tv_charting_lib"]
+	path = src/tv_charting_lib
+	url = git@github.com:GooseFX1/tradingview_chart_lib.git
