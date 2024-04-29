@@ -14,7 +14,6 @@ import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFar
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import BN from 'bn.js'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, TxnReturn } from '@/web3'
 import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
 import { Loader, SkeletonCommon } from '@/components'
@@ -96,9 +95,11 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
       console.log('error in ssl api data: ', e)
     }
   }, [coin, sslTableData])
-  const userDepositedAmount: BN = useMemo(() => {
-    const account = filteredLiquidityAccounts?.[tokenMintAddress]
-    return account?.amountDeposited
+  const userDepositedAmount: BigNumber = useMemo(() => {
+    if (!filteredLiquidityAccounts) return new BigNumber(0)
+    const account = filteredLiquidityAccounts[tokenMintAddress]
+    if (!account) return new BigNumber(0)
+    return new BigNumber(account.amountDeposited.toString())
   }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull])
 
   const userDepositInUSD = useMemo(
@@ -164,7 +165,7 @@ const CollapsibleContent: FC<{
   coin: SSLToken
   apiSslData: { apy: any; fee: number; volume: number }
   liquidity: number
-  userDepositedAmount
+  userDepositedAmount: BigNumber
   userDepositInUSD: string
 }> = ({ coin, apiSslData, liquidity, userDepositedAmount, userDepositInUSD }) => {
   const { getUIAmount } = useAccounts()
@@ -282,7 +283,7 @@ const CollapsibleContent: FC<{
   }, [userSolBalance])
   const calculateEarlyWithdrawalPenalty = useCallback(() => {
     const depositSlot = filteredLiquidityAccounts[tokenMintAddress]?.lastDepositAt
-    const slotDiff = new BN(currentSlot).sub(depositSlot)?.toNumber()
+    const slotDiff = new BigNumber(currentSlot).minus(new BigNumber(depositSlot.toString()))?.toNumber()
     //const slotDiff = 117000;
     if (slotDiff < 216000) {
       const decayingFactor = ((216000 - slotDiff) / 216000) ** 2 * (2 / 100)
@@ -531,7 +532,9 @@ const CollapsibleContent: FC<{
         : setWithdrawAmount(
             userDepositedAmount
               ? !userDepositedAmount?.isZero()
-                ? userDepositedAmount?.div(new BN(2 * 10 ** coin?.mintDecimals))
+                ? new BigNumber(userDepositedAmount.toString())
+                    .div(new BigNumber(2 * 10 ** coin.mintDecimals))
+                    .toString()
                 : '0'
               : '0'
           ),
@@ -549,7 +552,9 @@ const CollapsibleContent: FC<{
   const canDeposit = userTokenBalance.gte(MIN_AMOUNT_DEPOSIT)
   const canWithdraw =
     !userDepositedAmount?.isZero() &&
-    userDepositedAmount?.div(new BN(10 ** coin?.mintDecimals)).gte(new BN(MIN_AMOUNT_WITHDRAW))
+    new BigNumber(userDepositedAmount.toString())
+      .div(new BigNumber(10 ** coin?.mintDecimals))
+      .gte(new BigNumber(MIN_AMOUNT_WITHDRAW))
 
   const minMaxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
 
