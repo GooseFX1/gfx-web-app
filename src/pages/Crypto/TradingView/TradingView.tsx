@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import * as saveLoadAdapter from './save-load-adapter'
+//import * as saveLoadAdapter from './save-load-adapter'
 import { convertResolutionToApi, DataFeedWrapper } from './Datafeed'
-import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '../../../charting_library'
+import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '@/tv_charting_lib/charting_library'
 import { useCrypto, useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
 
@@ -27,7 +27,7 @@ export interface ChartContainerProps {
   fullscreen: ChartingLibraryWidgetOptions['fullscreen']
   autosize: ChartingLibraryWidgetOptions['autosize']
   studiesOverrides: ChartingLibraryWidgetOptions['studies_overrides']
-  containerId: ChartingLibraryWidgetOptions['container_id']
+  containerId: string
   theme?: string
   timeframe: ChartingLibraryWidgetOptions['timeframe']
 }
@@ -49,7 +49,7 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     interval: resolution ? resolution : '5',
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
-    libraryPath: '/charting_library/',
+    libraryPath: '../../../tv_charting_lib/charting_library',
     chartsStorageUrl: 'https://saveload.tradingview.com',
     chartsStorageApiVersion: '1.1',
     clientId: 'tradingview.com',
@@ -73,7 +73,7 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
       interval: defaultProps.interval as ChartingLibraryWidgetOptions['interval'],
       autosize: defaultProps.autosize,
       auto_save_delay: 5,
-      container_id: defaultProps.containerId as ChartingLibraryWidgetOptions['container_id'],
+      container: defaultProps.containerId as ChartingLibraryWidgetOptions['container'],
       client_id: defaultProps.clientId,
       user_id: defaultProps.userId,
       load_last_chart: true,
@@ -82,13 +82,13 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
         'use_localstorage_for_settings',
         'volume_force_overlay',
         'left_toolbar',
-        'show_logo_on_all_charts',
-        'caption_buttons_text_if_possible',
+        'show_symbol_logos', // 'show_logo_on_all_charts',
+        //'caption_buttons_text_if_possible',
         'header_settings',
         'header_compare',
-        'compare_symbol',
+        'show_symbol_logo_for_compare_studies', //'compare_symbol',
         'header_screenshot',
-        'header_widget_dom_node',
+        'header_widget', // 'header_widget_dom_node',
         'header_saveload',
         'header_undo_redo',
         'show_interval_dialog_on_key_press',
@@ -108,7 +108,7 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
         'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69'
       },
 
-      save_load_adapter: saveLoadAdapter,
+      //save_load_adapter: saveLoadAdapter,
       settings_adapter: {
         initialSettings: {
           'trading.orderPanelSettingsBroker': JSON.stringify({
@@ -135,8 +135,8 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
           localStorage.removeItem(key)
         }
       },
-      studies_overrides: defaultProps.studiesOverrides,
-      theme: mode === 'dark' ? 'Dark' : 'Light'
+      studies_overrides: defaultProps.studiesOverrides
+      //theme: mode === 'dark' ? 'dark' : 'light'
     }
 
     const tvWidget = new widget(widgetOptions)
