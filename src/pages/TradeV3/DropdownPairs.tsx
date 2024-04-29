@@ -197,8 +197,8 @@ const SelectCryptoModal: FC<{
       <DialogClose onClick={() => setShowModal(false)} />
 
       <DialogContent
-        className={cn('z-[962] min-md:w-[500px] h-[322px] pt-3 flex flex-col gap-0')}
-        placement={'default'}
+        className={cn('z-[962] min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
+        placement={checkMobile() ? 'bottom' : 'default'}
       >
         <DialogCloseDefault onClick={() => setShowModal(false)} />
 

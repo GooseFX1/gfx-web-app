@@ -201,7 +201,7 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
-  ${tw`sm:overflow-auto`}
+  ${tw`sm:overflow-auto sm:min-h-[300px]`}
   width: 100%;
   display: flex;
   overflow-y: auto;
@@ -478,7 +478,7 @@ export const OrderBook: FC = () => {
                         transform: `rotate(${showSpread ? '0deg' : '180deg'})`,
                         transition: 'transform 0.2s ease-in-out'
                       }}
-                      src={`/img/mainnav/connect-chevron.svg`}
+                      src={`/img/mainnav/connect-chevron-dark.svg`}
                       alt={'connect-chevron'}
                     />
                   </div>
