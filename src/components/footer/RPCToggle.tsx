@@ -92,8 +92,8 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           onChange={(v) => setRPC(v as EndPointName)}
           options={[
             {
-              label: <RPCLineItem title={'Default'} endpoint={'GooseFX'} />,
-              value: 'GooseFX'
+              label: <RPCLineItem title={'Default'} endpoint={'QuickNode'} />,
+              value: 'QuickNode'
             },
             {
               label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
