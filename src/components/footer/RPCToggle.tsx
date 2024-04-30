@@ -92,7 +92,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           onChange={(v) => setRPC(v as EndPointName)}
           options={[
             {
-              label: <RPCLineItem title={'Default'} endpoint={'QuickNode'} />,
+              label: <RPCLineItem title={'QuickNode'} endpoint={'QuickNode'} />,
               value: 'QuickNode'
             },
             {
@@ -168,7 +168,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
       <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
         <PopoverContent
-          className={'mb-2 gap-3.5'}
+          className={'w-["356px"] mb-2 gap-3.5'}
           onOpenAutoFocus={(event) => {
             event.preventDefault()
           }}
