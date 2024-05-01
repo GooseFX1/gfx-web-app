@@ -96,7 +96,13 @@ const PriorityFee: FC = () => {
         <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
           <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent placement={'bottom'} className={'w-screen rounded-t-[10px]'}>
+          <DialogContent
+            placement={'bottom'}
+            className={'w-screen rounded-t-[10px]'}
+            onOpenAutoFocus={(event) => {
+              event.preventDefault()
+            }}
+          >
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
@@ -111,7 +117,14 @@ const PriorityFee: FC = () => {
     return (
       <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
-        <PopoverContent className={'mb-3.75'}>{renderContent}</PopoverContent>
+        <PopoverContent
+          className={'mb-3.75'}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+          }}
+        >
+          {renderContent}
+        </PopoverContent>
       </Popover>
     )
   }, [isMobile, priorityFee, setPriorityFee, rotation, mode, saveDisabled, handleSave, isOpen])

@@ -23,6 +23,7 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
+
 type RPCToggleProps = Omit<FooterItemProps, 'title'>
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
@@ -76,7 +77,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
         >
           <div className={'inline-flex gap-1 items-center'}>
             <h5 className={'sm:text-h3 text-h5'}>RPC Settings</h5>
-            <IconTooltip tooltipType={'outline'}>
+            <IconTooltip tooltipType={'outline'} portal={false}>
               An RPC node, allows users of the RPC node to submit new transactions to be included in blocks. Select
               your RPC or up to enter a custom one.
             </IconTooltip>
@@ -91,8 +92,8 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           onChange={(v) => setRPC(v as EndPointName)}
           options={[
             {
-              label: <RPCLineItem title={'Default'} endpoint={'GooseFX'} />,
-              value: 'GooseFX'
+              label: <RPCLineItem title={'QuickNode'} endpoint={'QuickNode'} />,
+              value: 'QuickNode'
             },
             {
               label: <RPCLineItem title={'Helius'} endpoint={'Helius'} />,
@@ -145,7 +146,13 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
         <Dialog open={isOpen} onOpenChange={setIsOpen.set}>
           <DialogOverlay />
           <DialogTrigger>{trigger}</DialogTrigger>
-          <DialogContent placement={'bottom'} className={'w-screen rounded-t-[10px]'}>
+          <DialogContent
+            placement={'bottom'}
+            className={'w-screen rounded-t-[10px]'}
+            onOpenAutoFocus={(event) => {
+              event.preventDefault()
+            }}
+          >
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
@@ -160,7 +167,14 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     return (
       <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
-        <PopoverContent className={'mb-2 gap-3.5'}>{renderContent}</PopoverContent>
+        <PopoverContent
+          className={'w-["356px"] mb-2 gap-3.5'}
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+          }}
+        >
+          {renderContent}
+        </PopoverContent>
       </Popover>
     )
   }, [

@@ -40,7 +40,7 @@ const countries = [
 const banned_countries = countries.map((c) => c.code)
 
 export const DEFAULT_SLIPPAGE = 0.005
-export type EndPointName = 'Custom' | 'GooseFX' | 'Helius'
+export type EndPointName = 'Custom' | 'QuickNode' | 'Helius'
 
 export type RPC = {
   chainId: ENV
@@ -51,7 +51,7 @@ export type RPC = {
 
 export const APP_RPC: RPC = {
   chainId: ENV.MainnetBeta,
-  name: 'GooseFX',
+  name: 'QuickNode',
   endpoint: `https://rpc-proxy.goosefx.workers.dev`,
   network: WalletAdapterNetwork.Mainnet
 }
@@ -68,7 +68,7 @@ const CUSTOM_RPC: RPC = {
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
-  GooseFX: APP_RPC,
+  QuickNode: APP_RPC,
   Helius: HELIUS_RPC,
   Custom: CUSTOM_RPC
 }
@@ -123,7 +123,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [endpointName, setEndpointName] = useState<EndPointName>('GooseFX')
+  const [endpointName, setEndpointName] = useState<EndPointName>('QuickNode')
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>('Default')
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
