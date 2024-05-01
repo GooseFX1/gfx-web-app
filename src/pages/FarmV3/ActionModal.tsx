@@ -148,7 +148,7 @@ export const ActionModal: FC<{
               <div className="flex flex-row">
                 <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Early Withdraw Fee</div>
                 <IconTooltip tooltipType={'outline'} tooltipClassName={'h-4 w-4 max-w-none ml-1'}>
-                  <span className="dark:text-black-4 text-grey-8 font-semibold text-tiny">
+                  <span className=" font-semibold text-tiny">
                     The early withdrawal penalty fee is to prevent manipulation of our pools by LPs. Please wait{' '}
                     {getTimerCountdown} to avoid paying the fee.
                   </span>
@@ -160,7 +160,7 @@ export const ActionModal: FC<{
             </div>
           )}
         </div>
-        <div className={'flex flex-col flex-1'}>
+        <div className={'flex flex-col flex-1 gap-1'}>
           <Button
             fullWidth
             colorScheme={'blue'}
