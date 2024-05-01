@@ -44,6 +44,7 @@
     "@solflare-wallet/metamask-wallet-standard": "^1.0.7",
     "antd": "^4.21.6",
     "axios": "^0.24.0",
+    "bignumber.js": "^9.1.2",
     "bn.js": "^5.2.0",
     "borsh": "^0.6.0",
     "bs58": "^4.0.1",

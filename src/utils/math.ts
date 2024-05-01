@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 export function decimalModulo(a: number, b: number | undefined): number {
   const power = a.toString().length - (a.toString().indexOf('.') + 1)
   return (a * 10 ** power) % ((b || 1) * 10 ** power)
@@ -119,4 +121,38 @@ export const getAccurateNumber = (num: number, digits = 2): number => {
   const decimal = splitOnDecimal[1].slice(0, digits)
   const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
   return Number(accurateResult)
+}
+export const bigNumberFormatter = (num: BigNumber, digits = 2, leadingDigits = 1): string => {
+  if (num.isNaN() || num.isZero()) return `${'0'.repeat(leadingDigits)}.${'0'.repeat(digits)}`
+  const exponentNum = num.toExponential(digits)
+  const splitNum = exponentNum.toLowerCase().split('e')
+  const exponent = Number(splitNum[1])
+  let numExponented = new BigNumber(splitNum[0])
+  const unitIndex = Math.floor(exponent / 3)
+  const unit = currencyUnits[unitIndex]
+
+  let numCalc: BigNumber
+  if (splitNum[1].startsWith('-')) {
+    numCalc = numExponented.multipliedBy(Math.pow(10, exponent))
+  } else {
+    numExponented = num.div(Math.pow(10, exponent))
+    const differenceToNextUnit = exponent % 3
+    numCalc = numExponented.multipliedBy(Math.pow(10, differenceToNextUnit))
+  }
+
+  const splitOnDecimal = numCalc.toFixed(99).split('.')
+  //accuracy fix
+  if (splitOnDecimal.length === 1) return `${numCalc.toFixed(digits)}${unit ?? ''}`
+  const currentDecimals = splitOnDecimal[1]
+  const decimal = currentDecimals.slice(0, digits)
+  const accurateResult = splitOnDecimal[0] + (decimal ? '.' + decimal : ''.padStart(digits, '0'))
+  const remainingDecimals = currentDecimals.slice(digits)
+  if (
+    splitOnDecimal[0] == '0' &&
+    decimal.split('').every((x) => x == '0') &&
+    !remainingDecimals.split('').every((x) => x == '0')
+  ) {
+    return `<0.${'0'.repeat(digits - 1)}1`
+  }
+  return `${accurateResult}${unit ?? ''}`
 }
