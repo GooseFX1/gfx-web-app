@@ -168,7 +168,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
       <Popover open={isOpen} onOpenChange={setIsOpen.set}>
         <PopoverTrigger>{trigger}</PopoverTrigger>
         <PopoverContent
-          className={'w-["356px"] mb-2 gap-3.5'}
+          className={'w-auto mb-2 gap-3.5'}
           onOpenAutoFocus={(event) => {
             event.preventDefault()
           }}

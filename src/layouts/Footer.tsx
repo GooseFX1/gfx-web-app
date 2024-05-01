@@ -20,7 +20,7 @@ export const Footer: FC = () => (
     className={`inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
-     items-center px-3.75 py-0.25 mt-auto sm:p-2.5 min-lg:fixed min-lg:bottom-0
+     items-center px-3.75 py-1 mt-auto sm:p-2.5 min-lg:fixed min-lg:bottom-0
      `}
   >
     <div className={'inline-flex mr-auto items-center gap-2 sm:hidden'}>
