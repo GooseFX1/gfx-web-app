@@ -2,6 +2,17 @@ import { useEffect, useMemo } from 'react'
 import { SUPPORTED_TOKEN_LIST } from '../../../constants'
 import { AVAILABLE_MARKETS, useCrypto } from '../../../context'
 import { sleep, getUnixTs, aborter } from '../../../utils'
+import {
+  LibrarySymbolInfo,
+  ResolutionString,
+  PeriodParams,
+  HistoryCallback,
+  ErrorCallback,
+  OnReadyCallback,
+  ResolveCallback,
+  SubscribeBarsCallback,
+  SearchSymbolsCallback
+} from '@/tv_charting_lib/charting_library'
 
 const URL_SERVER = 'https://trade-view.goosefx.io/tradingview/'
 
@@ -38,29 +49,29 @@ const makeDataFeed = () => {
   }
 
   return {
-    onReady(callback) {
+    onReady(callback: OnReadyCallback) {
       setTimeout(
         () =>
           callback({
             supported_resolutions: [
-              '5',
-              '15',
-              '60',
-              '120',
-              '240',
-              '1D'
+              '5' as ResolutionString,
+              '15' as ResolutionString,
+              '60' as ResolutionString,
+              '120' as ResolutionString,
+              '240' as ResolutionString,
+              '1D' as ResolutionString
               //  '2D', '3D', '5D', '1W', '1M', '2M', '3M', '6M', '12M'
             ],
-            supports_group_request: false,
+            //supports_group_request: false,
             supports_marks: false,
-            supports_search: false,
+            //supports_search: false,
             supports_timescale_marks: false
           }),
         0
       )
     },
 
-    async resolveSymbol(symbolName, onSymboleResolvedCallback, onResolveErrorCallback) {
+    async resolveSymbol(symbolName: string, onResolve: ResolveCallback, onError: ErrorCallback): Promise<void> {
       let fromCustomMarket = false
       let customMarket = []
       try {
@@ -85,7 +96,7 @@ const makeDataFeed = () => {
       const result = await apiFetchHandler(`${URL_SERVER}symbols?symbol=${marketInfo.name.toString()}`)
 
       if (!result) {
-        onResolveErrorCallback()
+        onError('API returned null result')
         return
       }
       if (result.name !== marketInfo.name) {
@@ -107,9 +118,16 @@ const makeDataFeed = () => {
           }
         }
       }
-      onSymboleResolvedCallback(result)
+      onResolve(result)
     },
-    async getBars(symbolInfo, resolution, from, to, onHistoryCallback, onErrorCallback) {
+    async getBars(
+      symbolInfo: LibrarySymbolInfo,
+      resolution: ResolutionString,
+      periodParams: PeriodParams,
+      onHistoryCallback: HistoryCallback,
+      onErrorCallback: ErrorCallback
+    ): Promise<void> {
+      let { from, to } = periodParams
       //eslint-disable-next-line
       from = Math.floor(from)
       //eslint-disable-next-line
@@ -117,10 +135,10 @@ const makeDataFeed = () => {
 
       window.localStorage.setItem('resolution', resolution)
       //eslint-disable-next-line
-      resolution = convertResolutionToApi(resolution)
+      const apiResolution = convertResolutionToApi(resolution)
 
-      if (from < minTs(symbolInfo.out_count, resolution)) {
-        onHistoryCallback([], { nodeData: false })
+      if (from < minTs(symbolInfo.expiration_date, resolution)) {
+        onHistoryCallback([], { noData: false })
         return
       }
       //eslint-disable-next-line
@@ -129,13 +147,13 @@ const makeDataFeed = () => {
       const key = `${symbolInfo.name}--${resolution}`
 
       if (overTime[key] && overTime[key] > from) {
-        onHistoryCallback([], { nodeData: false })
+        onHistoryCallback([], { noData: false })
         return
       }
 
       try {
         const result = await apiFetchHandler(
-          `${URL_SERVER}history?symbol=${symbolInfo.name}&resolution=${resolution}&from=${from}&to=${to}`
+          `${URL_SERVER}history?symbol=${symbolInfo.name}&resolution=${apiResolution}&from=${from}&to=${to}`
         )
 
         if (result.close.length === 0) {
@@ -143,13 +161,18 @@ const makeDataFeed = () => {
         }
 
         onHistoryCallback(parseCandles(result), {
-          nodeData: result.length === 0
+          noData: result.length === 0
         })
       } catch (err) {
         onErrorCallback(err)
       }
     },
-    async subscribeBars(symbolInfo, resolution, onRealtimeCallback, subscriberUID) {
+    async subscribeBars(
+      symbolInfo: LibrarySymbolInfo,
+      resolution: ResolutionString,
+      onRealtimeCallback: SubscribeBarsCallback,
+      subscriberUID: string
+    ): Promise<void> {
       if (subscriptions[subscriberUID]) {
         subscriptions[subscriberUID].stop()
         delete subscriptions[subscriberUID]
@@ -195,12 +218,12 @@ const makeDataFeed = () => {
         }
       }
     },
-    unsubscribeBars(subscriberUID) {
+    unsubscribeBars(subscriberUID: string): void {
       subscriptions[subscriberUID].stop()
       delete subscriptions[subscriberUID]
     },
     //eslint-disable-next-line
-    async searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: Function) {
+    searchSymbols(userInput: string, exchange: string, symbolType: string, onResult: SearchSymbolsCallback): void {
       const marketList: any[] = AVAILABLE_MARKETS(SUPPORTED_TOKEN_LIST).filter(
         (item) => item.name.includes(userInput) && !item.deprecated
       )

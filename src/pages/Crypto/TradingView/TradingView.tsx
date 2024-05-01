@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-//import * as saveLoadAdapter from './save-load-adapter'
+import * as saveLoadAdapter from './save-load-adapter'
 import { convertResolutionToApi, DataFeedWrapper } from './Datafeed'
 import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '@/tv_charting_lib/charting_library'
 import { useCrypto, useDarkMode } from '../../../context'
@@ -49,7 +49,8 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     interval: resolution ? resolution : '5',
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
-    libraryPath: '../../../tv_charting_lib/charting_library',
+    libraryPath: 'src/tv_charting_lib/charting_library/',
+    //libraryPath: '../../../tv_charting_lib/charting_library',
     chartsStorageUrl: 'https://saveload.tradingview.com',
     chartsStorageApiVersion: '1.1',
     clientId: 'tradingview.com',
@@ -108,7 +109,7 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
         'mainSeriesProperties.candleStyle.wickDownColor': '#F23B69'
       },
 
-      //save_load_adapter: saveLoadAdapter,
+      save_load_adapter: saveLoadAdapter,
       settings_adapter: {
         initialSettings: {
           'trading.orderPanelSettingsBroker': JSON.stringify({
