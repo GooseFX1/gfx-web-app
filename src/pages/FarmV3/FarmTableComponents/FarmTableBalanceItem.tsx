@@ -138,11 +138,13 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
                 <h4 tw="flex justify-center items-center font-semibold">$0.00</h4>
               )}
             </TooltipTrigger>
-            <TooltipContent>
-              {numberFormatter(apiSslData?.fee * prices?.[getPriceObject(coin?.token)]?.current) ? (
-                <div className="text-center">{`${numberFormatter(apiSslData?.fee)} ${coin?.token}`}</div>
+            <TooltipContent className={'text-center'}>
+              {apiSslData?.fee ? (
+                <>
+                  {numberFormatter(apiSslData.fee)} {coin.token}
+                </>
               ) : (
-                `0 ${coin?.token}`
+                `0 ${coin.token}`
               )}
             </TooltipContent>
           </Tooltip>

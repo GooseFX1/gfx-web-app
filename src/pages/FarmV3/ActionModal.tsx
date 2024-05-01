@@ -31,7 +31,6 @@ export const ActionModal: FC<{
   handleWithdraw,
   handleDeposit,
   handleClaim,
-  handleCancel,
   isButtonLoading,
   withdrawAmount,
   depositAmount,
@@ -98,7 +97,7 @@ export const ActionModal: FC<{
         heading = 'Deposit'
         description = ' depositing, you will claim any '
         amount = +depositAmount
-        actionText = `Deposit ${truncateBigString(depositAmount, token.mintDecimals)} ${token.token} + Claim Yield`
+        actionText = `Deposit ${depositAmount} ${token.token} + Claim Yield`
         actionDisabled = !depositAmount
         break
       default:
@@ -161,27 +160,16 @@ export const ActionModal: FC<{
             </div>
           )}
         </div>
-        <div>
+        <div className={'flex flex-col flex-1'}>
           <Button
             fullWidth
             colorScheme={'blue'}
-            className={`duration-500`}
+            className={`duration-500 my-auto`}
             onClick={handleUserAction}
             isLoading={isButtonLoading}
             disabled={actionDisabled}
           >
             {actionText}
-          </Button>
-          <Button
-            variant={'link'}
-            colorScheme={'red'}
-            fullWidth
-            onClick={() => {
-              handleCancel()
-              setActionModal(false)
-            }}
-          >
-            Cancel
           </Button>
           <div className="text-regular dark:text-grey-2 text-grey-1 text-tiny font-semibold text-center">
             By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
@@ -204,19 +192,16 @@ export const ActionModal: FC<{
     <Dialog open={actionModal}>
       <DialogOverlay />
       <DialogContent
+        size={'md'}
         className={cn(
-          'w-full min-lg:w-[560px] min-lg:max-w-[560px] sm:rounded-t-[10px] sm:rounded-b-none p-6',
+          'w-full sm:rounded-t-[10px] sm:rounded-b-none p-6',
           breakpoint.isMobile
             ? actionType === 'withdraw'
               ? 'h-[320px]'
               : actionType === 'claim'
               ? 'h-[250px]'
               : 'h-[275px]'
-            : actionType === 'claim'
-            ? 'h-[250px]'
-            : actionType === 'withdraw' && earlyWithdrawFee > 0
-            ? 'h-[330px]'
-            : 'h-[295px]'
+            : 'h-[250px]'
         )}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
