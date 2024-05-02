@@ -50,7 +50,6 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
     libraryPath: 'src/tv_charting_lib/charting_library/',
-    //libraryPath: '../../../tv_charting_lib/charting_library',
     chartsStorageUrl: 'https://saveload.tradingview.com',
     chartsStorageApiVersion: '1.1',
     clientId: 'tradingview.com',
@@ -89,11 +88,12 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
         'header_compare',
         'show_symbol_logo_for_compare_studies', //'compare_symbol',
         'header_screenshot',
-        'header_widget', // 'header_widget_dom_node',
+        // 'header_widget_dom_node',
         'header_saveload',
         'header_undo_redo',
         'show_interval_dialog_on_key_press',
-        'header_symbol_search'
+        'header_symbol_search',
+        'hide_resolution_in_legend'
       ],
       enabled_features: ['study_templates'],
       fullscreen: defaultProps.fullscreen,
@@ -136,8 +136,8 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
           localStorage.removeItem(key)
         }
       },
-      studies_overrides: defaultProps.studiesOverrides
-      //theme: mode === 'dark' ? 'dark' : 'light'
+      studies_overrides: defaultProps.studiesOverrides,
+      theme: mode === 'dark' ? 'dark' : 'light'
     }
 
     const tvWidget = new widget(widgetOptions)
