@@ -277,7 +277,6 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   if (nativeStringLen > mintDecimals) {
     usdString =
       nativeString.substring(0, nativeStringLen - mintDecimals) +
-      '.' +
       nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
   } else {
     let i = 0

@@ -79,7 +79,7 @@ export const Router: FC = () => {
               <NavCollapseProvider>
                 <RewardsProvider>
                   <AppLayout>
-                    <Toaster />
+                    <Toaster duration={5000} />
                     {isUnderMaintenance ? (
                       <Maintenance />
                     ) : (
