@@ -41,7 +41,8 @@ export function getAllChartTemplates(): Promise<string[]> {
 export function saveChartTemplate(name: string, content: ChartTemplateContent): Promise<void> {
   let templates: SavedChartTemplate[] = JSON.parse(localStorage.getItem(CHART_TEMPLATES_KEY)) || []
   templates = templates.filter((study) => study.name !== name)
-  templates.push({ name, content })
+  const newTemplate: SavedChartTemplate = { name, content }
+  templates.push(newTemplate)
   localStorage.setItem(CHART_TEMPLATES_KEY, JSON.stringify(templates))
   localStorage.setItem(CHART_TEMPLATES_KEY + '.' + name, JSON.stringify(content))
   return new Promise((resolve) => resolve())
