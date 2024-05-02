@@ -54,7 +54,7 @@ export const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const INFO_WRAPPER = styled.div`
-  ${tw`py-0 px-3 flex flex-row sm:justify-center`}
+  ${tw`py-3 px-3 flex flex-row sm:justify-center`}
   .spot-toggle .perps {
     ${tw`cursor-pointer mr-5`}
   }

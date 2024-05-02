@@ -448,7 +448,7 @@ export const OrderBook: FC = () => {
   return (
     <div className={cn('h-full sm:max-h-[300px]')}>
       {
-        <div className={cn('flex pl-2 h-[38px] items-center justify-between')}>
+        <div className={cn('flex pl-2 h-[38px] items-center justify-between pb-1')}>
           <div>
             <InfoLabel>
               {'Spread:'} {spreadAbsolute[1]}%
@@ -492,7 +492,11 @@ export const OrderBook: FC = () => {
         </div>
       }
       <div className={cn('px-2.5')}>
-        <div className={cn('flex items-center justify-between overflow-auto')}>
+        <div
+          className="flex border h-8 border-t-0 border-l-0 pb-1
+        items-center justify-between overflow-auto dark:border-b-black-4 dark:border-r-0
+         border-b-grey-4"
+        >
           <InfoLabel>Size ({ask})</InfoLabel>
           <InfoLabel> Price ({bid})</InfoLabel>
           <InfoLabel>Size ({ask})</InfoLabel>
@@ -505,7 +509,7 @@ export const OrderBook: FC = () => {
         ) : (
           <ORDERBOOK_CONTAINER>
             <div
-              className="dark:border-t-black-4 dark:border-r-black-4 border-t-grey-4 border-r-grey-4 
+              className="dark:border-t-0 dark:border-r-black-4 border-t-0 border-r-grey-4 
             dark:border-b-0 dark:border-l-0 pl-2 w-[50%] h-[40%] border"
             >
               {
@@ -541,7 +545,7 @@ export const OrderBook: FC = () => {
               }
             </div>
             <span
-              className="dark:border-t-black-4 dark:border-r-0 border-t-grey-4 border-r-0 
+              className="dark:border-t-0 dark:border-r-0 border-t-0 border-r-0 
             dark:border-b-0 dark:border-l-0 border pr-2 h-full"
             >
               {

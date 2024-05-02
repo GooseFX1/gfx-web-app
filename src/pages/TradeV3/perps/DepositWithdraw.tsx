@@ -443,12 +443,12 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          className={cn('min-w-[170px] w-full h-[30px]')}
+          className={cn('min-w-[140px] w-full h-[30px]')}
           variant="default"
           colorScheme="red"
           size="lg"
           onClick={closeTraderAccountFn}
-          tw="w-[240px] h-8.75 mt-2 sm:mt-3"
+          tw="w-[140px] h-8.75 mt-2 sm:mt-3"
         >
           Close Account
         </Button>
