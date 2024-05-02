@@ -153,21 +153,25 @@ export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
 export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
   return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
 }
-export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<void> => {
-  toast.promise(promise, {
+export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<boolean> => {
+  let res = false
+  await toast.promise(promise, {
     loading: (
       <IntemediaryToast className={cn(`w-[290px]`)}>
         <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
         <p>Please wait a few moments for the transaction to confirm...</p>
       </IntemediaryToast>
     ),
-    success: (response: SuccessResponse) => (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
-        <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
-        <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
-      </IntemediaryToast>
-    ),
+    success: (response: SuccessResponse) => {
+      res = true
+      return (
+        <IntemediaryToast className={cn(`w-[290px]`)}>
+          <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
+          <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
+          <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
+        </IntemediaryToast>
+      )
+    },
     error: () => (
       <IntemediaryToast className={cn(`w-[290px]`)}>
         <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -178,4 +182,5 @@ export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<voi
       </IntemediaryToast>
     )
   })
+  return res
 }
