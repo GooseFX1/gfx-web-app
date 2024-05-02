@@ -219,6 +219,7 @@ const AccountOverview: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchDayVolume()
     }
+    return () => setTradeType('deposit')
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
     <WRAPPER>

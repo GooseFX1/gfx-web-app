@@ -179,8 +179,8 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
       width: -1px;
       margin-left: 10px;
       position: absolute;
-      bottom: -5px !important;
-      right: -7.5px !important;
+      bottom: -1px !important;
+      right: -3px !important;
       padding-left: 10px;
       display: ${({ $isLocked }) => ($isLocked ? 'none' : 'block')};
 
@@ -213,8 +213,8 @@ const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
 `
 
 const UNLOCKED_OVERLAY = styled.div<{ $blacklisted?: boolean }>`
-  height: calc(100% - 4px);
-  width: calc(100% - 4px);
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
   border: 1px solid ${({ theme }) => theme.tokenBorder};
   background: linear-gradient(106deg, rgba(247, 147, 26, 0.5) 11.1%, rgba(220, 31, 255, 0.3) 89.17%);
   /* background: linear-gradient(106deg, rgba(247, 147, 26, 0.5), 11.1%, rgba(220, 31, 255, 0.3) 89.17%), */
@@ -445,9 +445,9 @@ const CryptoContent: FC = () => {
 
 export const TermsOfService = () => {
   return (
-    <div className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 sm:h-[70px] h-[26px] sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
+    <div className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 sm:h-[70px] h-0 sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
       <div>
-        {checkMobile() ? (
+        {checkMobile() && (
           <div className="">
             <div className="flex sm:gap-2 px-1">
               <p className="text-[10px] text-white items-center flex ml-1 mt-2">Risk & Disclaimers</p>
@@ -460,16 +460,6 @@ export const TermsOfService = () => {
                   OtterSec.
                 </span>
               </p>
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p className="text-[10px] items-center flex text-grey-1 ">
-              Copyright 2024 GOOSEFX, All rights reserved. Please trade at your discretion and according to the
-              laws and regulations of your location, security audits by
-              <span className="text-white ml-1" onClick={() => openLinkInNewTab('https://osec.io/')}>
-                OtterSec.
-              </span>
             </p>
           </div>
         )}
