@@ -17,7 +17,7 @@ import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../../components'
 
 const HEADER = styled.div`
-  ${tw`flex flex-row m-2.5 flex-wrap gap-y-2`}
+  ${tw`flex flex-row p-4 flex-wrap gap-y-2`}
   .up24h {
     ${tw`text-green-3`}
   }

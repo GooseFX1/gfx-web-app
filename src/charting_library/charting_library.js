@@ -100,7 +100,7 @@
       }
       'Dark' === this._options.theme &&
         void 0 === this._options.loading_screen &&
-        (this._options.loading_screen = { backgroundColor: '#131313' }),
+        (this._options.loading_screen = { backgroundColor: '#1C1C1C' }),
         this._create()
     }
     return (
