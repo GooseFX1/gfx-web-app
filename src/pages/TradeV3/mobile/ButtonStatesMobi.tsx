@@ -17,16 +17,16 @@ const ButtonStatesMobi: FC<{
   if (!publicKey)
     return (
       <div
-        className="fixed bottom-0 left-0 w-full h-20  bg-gradient-2
+        className="fixed bottom-0 left-0 w-full h-20  gradient-lite-3 dark:bg-gradient-2
       z-50 flex justify-center items-center"
       >
         <Connect customButtonStyle={`sm:w-[80vw] w-[90%] !h-10`} />
       </div>
     )
-  if (selectedTab === tabs[1] || selectedTab === tabs[2])
+  else if (selectedTab === tabs[1] || selectedTab === tabs[2])
     return (
       <div
-        className="fixed bottom-0 left-0 w-full h-20  bg-gradient-2
+        className="fixed bottom-0 left-0 w-full h-20 gradient-lite-3 dark:bg-gradient-2
               z-50 flex justify-center items-center"
       >
         <Button

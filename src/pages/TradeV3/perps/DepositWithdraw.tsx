@@ -177,6 +177,7 @@ export const DepositWithdrawDialog: FC<{
       <DialogOverlay />
       {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
       <DialogContent
+        size="md"
         placement={checkMobile() ? 'bottom' : 'default'}
         className={'z-[999] w-[500px] h-[356px] sm:w-[100vw]'}
       >

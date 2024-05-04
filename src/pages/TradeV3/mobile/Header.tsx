@@ -17,7 +17,7 @@ import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../../components'
 
 const HEADER = styled.div`
-  ${tw`flex flex-row p-4 flex-wrap gap-y-2`}
+  ${tw`flex flex-row sm:mt-[15px] sm:!mb-0 flex-wrap gap-y-2`}
   .up24h {
     ${tw`text-green-3`}
   }
@@ -162,7 +162,7 @@ export const Header: FC = () => {
           */}
           <div tw="flex flex-col ml-auto">
             <span tw="text-lg dark:text-grey-5 text-black-4 font-semibold">$ {tokenPrice}</span>
-            <div tw="flex flex-row items-center">
+            <div tw="flex flex-row items-center ml-auto">
               {classNameChange === 'up24h' ? (
                 <img className="change-icn" src="/img/assets/24hourup.png" height="10" alt="up-icon" />
               ) : (

@@ -72,8 +72,8 @@ const LOADER = styled(Skeleton.Input)`
 
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
-  height: calc(100% - 60px);
-  ${tw`sm:max-h-[242px]`}
+  height: calc(100% - 70px);
+  ${tw`sm:max-h-[222px]`}
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
@@ -201,7 +201,7 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
-  ${tw`sm:overflow-auto sm:min-h-[300px]`}
+  ${tw`sm:overflow-auto sm:max-h-[150px]`}
   width: 100%;
   display: flex;
   overflow-y: auto;
@@ -446,7 +446,7 @@ export const OrderBook: FC = () => {
   )
 
   return (
-    <div className={cn('h-full sm:max-h-[300px]')}>
+    <div className={cn('h-full sm:max-h-[220px]')}>
       {
         <div className={cn('flex pl-2 h-[38px] items-center justify-between pb-1')}>
           <div>

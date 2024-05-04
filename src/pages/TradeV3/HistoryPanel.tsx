@@ -1026,7 +1026,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
             </div>
           </div>
         ) : (
-          <div className={cn('flex items-center justify-center h-[80%]')}>
+          <div className={cn('flex items-center justify-center sm:h-[250px] h-[80%]')}>
             <h4 className="text-grey-1"> No Positions Found</h4>
           </div>
         )}

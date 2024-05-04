@@ -17,11 +17,14 @@ dark:bg-border-darkmode-secondary h-4`,
 )
 export const Footer: FC = () => (
   <footer
-    className={`inline-flex w-screen border-t-1 border-solid
+    className={cn(
+      `inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
      items-center px-3.75 py-1 mt-auto sm:p-2.5 min-lg:fixed min-lg:bottom-0
-     `}
+     `,
+      window.location.pathname.includes('trade') && 'sm:mb-[65px]'
+    )}
   >
     <div className={'inline-flex mr-auto items-center gap-2 sm:hidden'}>
       <NetworkStatus />

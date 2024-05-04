@@ -124,7 +124,7 @@ export const OrderbookTabs: React.FC = () => {
   //   </WRAPPER>
   // )
   return (
-    <Tabs className="p-[0px] mb-2 h-full" defaultValue="1">
+    <Tabs className="p-[0px] h-full" defaultValue="1">
       <TabsList>
         <TabsTrigger
           className={cn('w-[50%]')}

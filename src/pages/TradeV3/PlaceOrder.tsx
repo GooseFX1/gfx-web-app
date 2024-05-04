@@ -583,7 +583,6 @@ export const PlaceOrder: FC = () => {
         obj.push(profit.toFixed(2))
       }
     })
-    console.log(obj, 'shri')
     setProfits(obj)
   }, [order])
 
@@ -1289,9 +1288,12 @@ export const PlaceOrder: FC = () => {
         )}
 
         <div className="px-2.5 flex flex-col sm:pb-2.5 py-1 sm:h-auto h-[calc(100% - 80px)]">
-          <div className={cn('flex mb-2')}>
+          <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col')}>
-              <InfoLabel>Order type</InfoLabel>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel> Order type</InfoLabel>
+              </div>
               {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
               <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
                 <DropdownMenuTrigger asChild={true}>
@@ -1299,7 +1301,7 @@ export const PlaceOrder: FC = () => {
                     variant="outline"
                     onClick={setIsOpen.on}
                     colorScheme={mode === 'lite' ? 'blue' : 'white'}
-                    className={cn('max-content mr-2 h-[30px]')}
+                    className={cn('max-content mr-2 h-[30px] sm:h-[35px]')}
                   >
                     <div className="flex w-full items-center justify-between">
                       <div className="flex">
@@ -1338,18 +1340,21 @@ export const PlaceOrder: FC = () => {
               </DropdownMenu>
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
-              <InfoLabel>Price</InfoLabel>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Price</InfoLabel>{' '}
+              </div>
               <div className={cn('w-full flex')}>
                 <Input
                   placeholder={'0.00 USD'}
                   value={order.price ?? ''}
                   onChange={(e) => numberCheck(e.target.value, 'price')}
                   disabled={order.display === 'market'}
-                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.price && `pr-12`)}
+                  className={cn(`mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`, order.price && `pr-12`)}
                 />
                 <div className="relative">
                   {order.price && (
-                    <p className={cn('mt-[7px] right-3 absolute mr-1')}>
+                    <p className={cn('mt-[9px] right-3 absolute mr-1')}>
                       <InfoLabel>
                         <p>USD</p>{' '}
                       </InfoLabel>
@@ -1359,43 +1364,59 @@ export const PlaceOrder: FC = () => {
               </div>
             </div>
           </div>
-          <div className={cn('flex mb-2')}>
+          <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col')}>
-              <InfoLabel>Size</InfoLabel>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Size</InfoLabel>{' '}
+              </div>
               <div className={cn('w-full flex')}>
                 <Input
                   placeholder={'0.00 SOL'}
                   value={order.size ?? ''}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
-                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.size && `pr-12`)}
+                  className={cn(`mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`, order.size && `pr-12`)}
                 />
-                {Number(order.size) !== 0 && (
-                  <InfoLabel>
-                    <p className={cn('mt-1.5 right-3 absolute mr-1')}>SOL</p>
-                  </InfoLabel>
-                )}
+                <div className="relative">
+                  {Number(order.size) !== 0 && (
+                    <InfoLabel>
+                      <p className={cn('mt-[9px] right-3 absolute mr-1')}>SOL</p>
+                    </InfoLabel>
+                  )}
+                </div>
               </div>
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
-              <InfoLabel>Amount</InfoLabel>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Amount</InfoLabel>{' '}
+              </div>
               <div className={cn('w-full flex')}>
                 <Input
                   placeholder={'0.00 USD'}
                   value={order.total !== 0 ? order.total : ''}
                   onChange={(e) => numberCheck(e.target.value, 'total')}
-                  className={cn(`mr-2 p-1 h-[30px] min-w-[100px] text-right`, order.total && `pr-12`)}
+                  className={cn(
+                    `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    order.total && `pr-12`
+                  )}
                 />
-                {Number(order.total) !== 0 && (
-                  <InfoLabel>
-                    <p className={cn('mt-1.5 right-[25px] absolute')}>USD</p>
-                  </InfoLabel>
-                )}
+                <div className="relative">
+                  {Number(order.total) !== 0 && (
+                    <InfoLabel>
+                      <p className={cn('mt-[9px] right-[15px] absolute')}>USD</p>
+                    </InfoLabel>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className={cn('flex mb-2 flex-col')}>
-            <InfoLabel>Take Profit {takeProfitVisible} </InfoLabel>
+          <div className={cn('flex mb-2.5 flex-col')}>
+            <div className="pb-1">
+              {' '}
+              <InfoLabel>Take Profit {takeProfitVisible} </InfoLabel>{' '}
+            </div>
             <div className={cn('w-full flex')}>
               <div className="w-1/2 flex">
                 <Input
@@ -1414,7 +1435,7 @@ export const PlaceOrder: FC = () => {
                     setTakeProfitAmount(Number(e.target.value))
                   }}
                   className={cn(
-                    `mr-2 p-1 h-[30px] min-w-[100px] text-right`,
+                    `mr-2 p-1 h-[30px] sm:h-8.75 min-w-[100px] text-right`,
                     (takeProfitIndex || takeProfitAmount) && `pr-1`
                   )}
                 />
@@ -1426,11 +1447,10 @@ export const PlaceOrder: FC = () => {
               </div>
               <div className="w-1/2">
                 <Tabs>
-                  {/* Shata */}
-                  <TabsList>
+                  <TabsList className="!p-0">
                     {TAKE_PROFIT_ARRAY.map((elem, index) => (
                       <TabsTrigger
-                        className={cn('w-[33%] h-[30px]')}
+                        className={cn('w-[33%] h-[35px]')}
                         size="xl"
                         key={index}
                         value={index.toString()}
@@ -1476,11 +1496,12 @@ export const PlaceOrder: FC = () => {
               </DropdownMenuContent>
             </DropdownMenu> */}
           </div>
-          <div className={cn('flex mb-2 flex-col')}>
+          <div className={cn('flex mb-2.5 flex-col')}>
             <InfoLabel>Leverage</InfoLabel>
             <div className={cn('mt-2.5')}>
               <Slider
                 max={10}
+                thumbSize="md"
                 value={[sliderValue]}
                 onValueChange={(e) => handleSliderChange(e)}
                 step={0.1}
@@ -1537,13 +1558,13 @@ export const PlaceOrder: FC = () => {
                   <Connect customButtonStyle="!w-[100%]" containerStyle="!w-[100%]" />
                 )}
               </div>
-            ) : (
+            ) : publicKey ? (
               <ButtonForMobile
                 buttonText={buttonText}
                 handlePlaceOrder={handlePlaceOrder}
                 buttonState={buttonState}
               />
-            )}
+            ) : null}
           </div>
         </div>
       </PerpsLayout>
@@ -1559,7 +1580,7 @@ const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
   <BlackGradientBg>
     <div className={cn('w-full absolute flex items-center justify-center')}>
       <Button
-        className={cn('min-w-[170px] !w-[90%] h-10 mb-2')}
+        className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-80')}
         variant="default"
         colorScheme="blue"
         size="lg"
@@ -1593,7 +1614,7 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
 const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handleOrderSide }) => {
   const { order } = useOrder()
   return (
-    <div className={cn('flex items-center')}>
+    <div className={cn('flex items-center sm:p-[5px]')}>
       <div
         onClick={() => handleOrderSide('buy')}
         className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]

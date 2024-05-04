@@ -16,7 +16,7 @@ import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useWindowSize from '../../utils/useWindowSize'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { checkMobile } from '../../utils'
+import { checkMobile, checkMobileDex } from '../../utils'
 import { DexhomeMobi } from './mobile/DexhomeMobi'
 import { InfoLabel } from './perps/components/PerpsGenericComp'
 import { openLinkInNewTab } from '@/web3'
@@ -420,7 +420,7 @@ const CryptoContent: FC = () => {
     setLayout({ lg: componentDimensionsLg, md: componentDimensionsMd })
   }
   // useSuspense(isPageLoaded)
-  return !checkMobile() ? (
+  return !checkMobileDex() ? (
     <>
       <DEX_CONTAINER $isLocked={isLocked} $mode={mode}>
         <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />

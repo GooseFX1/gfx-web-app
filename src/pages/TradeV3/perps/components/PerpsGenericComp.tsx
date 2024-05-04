@@ -72,7 +72,7 @@ export const ContentLabel: FC<{ children: ReactNode }> = ({ children }) => (
 export const TitleLabel: FC<{ children: ReactNode; whiteText?: boolean }> = ({ children, whiteText }) => (
   <div>
     <h5
-      className={cn(`dark:text-grey-1 text-grey-9 duration-200
+      className={cn(`dark:text-grey-1 text-grey-9 duration-200 sm:text-tiny
   ${whiteText && `!text-white`}`)}
     >
       {children}

@@ -12,7 +12,7 @@ import ButtonStatesMobi from './ButtonStatesMobi'
 import { TermsOfService } from '../TradeContainer'
 
 const WRAPPER = styled.div<{ isDevnet: boolean }>`
-  ${tw` overflow-hidden`}
+  ${tw` overflow-hidden sm:mx-2.5`}
   /* height: calc(100vh - 100px); */
 
   .ant-drawer-body {
@@ -50,7 +50,6 @@ export const DexhomeMobi: FC = () => {
       {/* <PlaceOrderMobi /> */}
       <TabOrderbookRecentTrades />
       <OrderAccountPositions tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-      <TermsOfService />
       <ButtonStatesMobi tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
       {/* <PlaceOrderMobiV2 /> */}

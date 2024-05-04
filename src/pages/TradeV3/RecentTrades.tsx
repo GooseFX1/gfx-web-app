@@ -101,7 +101,7 @@ export const RecentTrades: FC = () => {
           </div>
         </div>
       </div>
-      <div className={cn('overflow-auto h-full')}>
+      <div className={cn('overflow-auto h-full sm:max-h-[200px]')}>
         {tradeHistory.map((trade) => (
           <div key={trade._id} className={cn('flex items-center justify-between px-2')}>
             <p

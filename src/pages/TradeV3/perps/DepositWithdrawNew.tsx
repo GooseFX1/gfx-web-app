@@ -185,7 +185,7 @@ export const DepositWithdraw: FC<{
   }
 
   return (
-    <div className={cn('w-full p-2.5')}>
+    <div className={cn('w-full p-2.5 sm:px-2.5 sm:pb-2.5')}>
       {tradeType === 'account' ? (
         <CloseTradingAccount setDepositWithdrawModal={setDepositWithdrawModal} />
       ) : (
