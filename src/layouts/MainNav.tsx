@@ -329,7 +329,7 @@ const DesktopNav: FC = () => {
         )}
       >
         <img
-          className="h-[26px] mb-0.5"
+          className="w-[26px] h-[26px] mb-0.5"
           src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
           alt="dark"
         />
@@ -344,7 +344,7 @@ const DesktopNav: FC = () => {
         )}
       >
         <img
-          className="h-[26px] mb-0.5"
+          className="w-[26px] h-[26px] mb-0.5"
           src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
           alt="dark"
         />
@@ -362,7 +362,7 @@ const DesktopNav: FC = () => {
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
-                className="h-[26px] mb-0.5"
+                className="w-[26px] h-[26px] mb-0.5"
                 src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
                 alt="dark"
               />
@@ -413,7 +413,7 @@ const DesktopNav: FC = () => {
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
-                className="h-[26px] mb-0.5"
+                className="w-[26px] h-[26px] mb-0.5"
                 src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
                 alt="dark"
               />
