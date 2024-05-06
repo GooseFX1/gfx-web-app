@@ -1314,9 +1314,9 @@ export const PlaceOrder: FC = () => {
                   >
                     <div className="flex w-full items-center justify-between">
                       <div className="flex">
-                        <IconTooltip tooltipType={'outline'}>
+                        {/* <IconTooltip tooltipType={'outline'}>
                           <p>Limit</p>
-                        </IconTooltip>
+                        </IconTooltip> */}
                         <h4 className={cn('ml-1')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
                       </div>
 
@@ -1597,7 +1597,7 @@ const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
   <BlackGradientBg>
     <div className={cn('w-full absolute flex items-center justify-center')}>
       <Button
-        className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-80')}
+        className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-100')}
         variant="default"
         colorScheme="blue"
         size="lg"

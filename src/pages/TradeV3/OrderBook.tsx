@@ -478,7 +478,7 @@ export const OrderBook: FC = () => {
                         transform: `rotate(${showSpread ? '0deg' : '180deg'})`,
                         transition: 'transform 0.2s ease-in-out'
                       }}
-                      src={`/img/mainnav/connect-chevron-dark.svg`}
+                      src={`/img/mainnav/connect-chevron-${mode}.svg`}
                       alt={'connect-chevron'}
                     />
                   </div>
@@ -509,8 +509,8 @@ export const OrderBook: FC = () => {
         ) : (
           <ORDERBOOK_CONTAINER>
             <div
-              className="dark:border-t-0 dark:border-r-black-4 border-t-0 border-r-grey-4 
-            dark:border-b-0 dark:border-l-0 pl-2 w-[50%] h-[40%] border"
+              className="!border-t-0 dark:border-r-black-4 border-r-grey-4 
+            !border-b-0 !border-l-0 pl-2 w-[50%] h-[40%] border"
             >
               {
                 slicedOrderBookBids.reduce(
@@ -545,8 +545,8 @@ export const OrderBook: FC = () => {
               }
             </div>
             <span
-              className="dark:border-t-0 dark:border-r-0 border-t-0 border-r-0 
-            dark:border-b-0 dark:border-l-0 border pr-2 h-full"
+              className="border-t-0 border-r-0 
+            dark:border-b-0 border-l-0  pr-2 h-full"
             >
               {
                 slicedOrderBookAsks.reduce(

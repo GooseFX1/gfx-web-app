@@ -78,9 +78,8 @@ const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
     )
   }, [traderInfo])
   return (
-    <div tw="py-1 flex items-center justify-between">
+    <div tw="my-2.5 flex items-center justify-between">
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr}</h5>
-
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
     </div>
   )
@@ -127,7 +126,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     )
   }
   return (
-    <div tw="flex items-center justify-between mt-2">
+    <div tw="flex items-center justify-between my-2.5">
       <div>
         <div tw="flex items-center">
           <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
@@ -142,7 +141,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           </Tooltip>
         </div>
       </div>
-      <div className="flex">
+      <div className="flex items-center">
         <div>{getBarsData()}</div>
         <InfoLabel>{getHealthData()}</InfoLabel>
       </div>
@@ -151,7 +150,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
 }
 const AccountRow: FC<{ keyStr: string; value: string | number }> = ({ keyStr, value }) => {
   return (
-    <div tw="py-1 flex items-center justify-between">
+    <div tw=" flex items-center justify-between mb-[10px]">
       <InfoLabel>{keyStr}</InfoLabel>
       <InfoLabel>{value}</InfoLabel>
     </div>

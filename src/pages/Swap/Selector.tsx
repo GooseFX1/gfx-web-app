@@ -412,7 +412,7 @@ export const Selector: FC<{
           </MAGNIFYING_GLASS>
         </INPUT>
         <div>
-          <POP_TEXT>Most Popular hjb</POP_TEXT>
+          <POP_TEXT>Most Popular</POP_TEXT>
           <POPULAR>{popularTokenItems}</POPULAR>
         </div>
         <GFX_HR />

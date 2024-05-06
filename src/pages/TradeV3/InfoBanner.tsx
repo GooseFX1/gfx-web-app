@@ -350,10 +350,10 @@ export const InfoBanner: FC<{
       <DropdownPairs />
       {
         <>
-          <Container
-            variant="outline"
-            colorScheme="primaryGradient"
-            size="sm"
+          <div
+            //   variant="outline"
+            //   colorScheme="primaryGradient"
+            //   size="sm"
             className="max-w-[100px] min-h-[42px]
            ml-4"
           >
@@ -367,11 +367,11 @@ export const InfoBanner: FC<{
             <InfoLabel>
               <h4 className="leading-4">{tokenPrice}</h4>
             </InfoLabel>
-          </Container>
-          <Container
-            variant="outline"
-            colorScheme="primaryGradient"
-            size="sm"
+          </div>
+          <div
+            // variant="outline"
+            // colorScheme="primaryGradient"
+            // size="sm"
             className="max-w-[115px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
@@ -387,7 +387,7 @@ export const InfoBanner: FC<{
                 <span className={classNameChange}>{' (' + changeValue + '%)'}</span>
               </h4>
             </InfoLabel>
-          </Container>
+          </div>
 
           {/* <INFO_STATS>
             <>
@@ -437,10 +437,10 @@ export const InfoBanner: FC<{
       )} */}
       {
         <>
-          <Container
-            variant="outline"
-            colorScheme="primaryGradient"
-            size="sm"
+          <div
+            // variant="outline"
+            // colorScheme="primaryGradient"
+            // size="sm"
             className="max-w-[105px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
@@ -459,7 +459,7 @@ export const InfoBanner: FC<{
                 </h4>
               )}
             </>
-          </Container>
+          </div>
         </>
       }
       {/* {

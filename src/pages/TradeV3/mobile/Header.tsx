@@ -164,7 +164,7 @@ export const Header: FC = () => {
             <span tw="text-lg dark:text-grey-5 text-black-4 font-semibold">$ {tokenPrice}</span>
             <div tw="flex flex-row items-center ml-auto">
               {classNameChange === 'up24h' ? (
-                <img className="change-icn" src="/img/assets/24hourup.png" height="10" alt="up-icon" />
+                <img className="change-icn" src="/img/assets/24hourup.svg" height="10" alt="up-icon" />
               ) : (
                 <img className="change-icn" src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
               )}

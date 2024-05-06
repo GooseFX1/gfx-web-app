@@ -185,21 +185,23 @@ const SelectCryptoModal: FC<{
       setShowModal(false)
     }
   }
-  const args = {
-    // rightItem: (<InputElementRight>GOFX</InputElementRight>),
-    leftItem: (
-      <InputElementLeft>
-        <Search />
-      </InputElementLeft>
-    )
-  }
+  // TODO Fix the bug
+  // const args = {
+  //   // rightItem: (<InputElementRight>GOFX</InputElementRight>),
+  //   leftItem: (
+  //     <InputElementLeft>
+  //       <Search />
+  //     </InputElementLeft>
+  //   )
+  // }
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogOverlay className={'z-[961]'} />
+      <DialogOverlay />
       <DialogClose onClick={() => setShowModal(false)} />
 
       <DialogContent
-        className={cn('z-[962] min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
+        size="md"
+        className={cn(' min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
         placement={checkMobile() ? 'bottom' : 'default'}
       >
         <DialogCloseDefault onClick={() => setShowModal(false)} />

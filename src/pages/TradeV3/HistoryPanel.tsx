@@ -373,7 +373,7 @@ const OpenOrdersComponent: FC = () => {
       <div className={cn('w-full px-2.5 overflow-auto')}>
         {openOrderUI &&
           openOrderUI.length > 0 &&
-          [...openOrderUI].map((order, index) =>
+          openOrderUI.map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
               <div key={index} className={cn('flex items-center my-1 ')}>
                 <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
@@ -412,7 +412,7 @@ const OpenOrdersComponent: FC = () => {
         <div className={cn('w-full px-2.5 overflow-auto max-h-[300px] dark:border-black-4 border border-b-0  ')}>
           {openOrderUI &&
             openOrderUI.length > 0 &&
-            [...openOrderUI].map((order, index) =>
+            openOrderUI.map((order, index) =>
               !removedOrderIds.includes(order.order.orderId) ? (
                 <div
                   key={index}
@@ -483,7 +483,7 @@ const OpenOrdersComponent: FC = () => {
                       variant="outline"
                       isLoading={loading && perpsOrderId === order.order.orderId}
                       colorScheme="red"
-                      className={cn(`h-[30px]`)}
+                      size={'sm'}
                       onClick={() => cancelOrderFn(order.order.orderId)}
                     >
                       Close
@@ -1017,7 +1017,8 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
                 <Button
                   variant="outline"
                   colorScheme="red"
-                  className={cn(`h-[30px] ml-auto`)}
+                  size={'sm'}
+                  className={cn(` ml-auto`)}
                   onClick={handleClosePosition}
                 >
                   Close

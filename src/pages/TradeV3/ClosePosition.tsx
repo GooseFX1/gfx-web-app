@@ -107,10 +107,7 @@ export const ClosePositionDialog: FC<{
   <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-    <DialogContent
-      placement={checkMobile() ? 'bottom' : 'default'}
-      className={'z-[999] w-[500px] h-[356px] sm:w-[100vw]'}
-    >
+    <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'w-[500px] h-[356px]'}>
       <DialogCloseDefault onClick={() => setVisibleState(false)} />
 
       <DialogBody>

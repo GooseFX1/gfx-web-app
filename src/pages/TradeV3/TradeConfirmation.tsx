@@ -160,7 +160,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
   // )
   return (
     <Dialog open={open} onOpenChange={setVisibility}>
-      <DialogOverlay className={'z-[961]'} />
+      <DialogOverlay />
       <DialogContent
         size="md"
         placement={checkMobile() ? 'bottom' : 'default'}
