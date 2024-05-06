@@ -661,6 +661,15 @@ export const PlaceOrder: FC = () => {
     }
   }
 
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 8) {
+      const adjustedSize = Math.floor(maxQtyNum * DECIMAL_ADJUSTMENT_FACTOR) / DECIMAL_ADJUSTMENT_FACTOR
+      if (order.size === adjustedSize) {
+        setOrder((prev) => ({ ...prev, size: '' }))
+      }
+    }
+  }
+
   const numberCheck = (input: string, source: string) => {
     if (!isNaN(+input)) {
       setSelectedTotal(null)
@@ -1354,7 +1363,7 @@ export const PlaceOrder: FC = () => {
                 />
                 <div className="relative">
                   {order.price && (
-                    <p className={cn('mt-[9px] right-3 absolute mr-1')}>
+                    <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
                       <InfoLabel>
                         <p>USD</p>{' '}
                       </InfoLabel>
@@ -1372,15 +1381,21 @@ export const PlaceOrder: FC = () => {
               </div>
               <div className={cn('w-full flex')}>
                 <Input
+                  onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 SOL'}
-                  value={order.size ?? ''}
+                  onFocus={() => setFocused('size')}
+                  value={Number(order.size) !== 0 ? order.size : ''}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
-                  className={cn(`mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`, order.size && `pr-12`)}
+                  className={cn(
+                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    Number(order.size) !== 0 && `pr-12`
+                  )}
                 />
                 <div className="relative">
                   {Number(order.size) !== 0 && (
                     <InfoLabel>
-                      <p className={cn('mt-[9px] right-3 absolute mr-1')}>SOL</p>
+                      {/* {order.size } */}
+                      <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
                     </InfoLabel>
                   )}
                 </div>
@@ -1393,7 +1408,9 @@ export const PlaceOrder: FC = () => {
               </div>
               <div className={cn('w-full flex')}>
                 <Input
+                  onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 USD'}
+                  onFocus={() => setFocused('total')}
                   value={order.total !== 0 ? order.total : ''}
                   onChange={(e) => numberCheck(e.target.value, 'total')}
                   className={cn(
@@ -1404,7 +1421,7 @@ export const PlaceOrder: FC = () => {
                 <div className="relative">
                   {Number(order.total) !== 0 && (
                     <InfoLabel>
-                      <p className={cn('mt-[9px] right-[15px] absolute')}>USD</p>
+                      <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USD</p>
                     </InfoLabel>
                   )}
                 </div>
