@@ -186,10 +186,10 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
             <InfoRow label="Est. Entry Price" value={`$${Number(order.price).toFixed(2)}`} />
             <InfoRow label="Est. Price Impact" value={`${totalPriceImpact.toFixed(4)}%`} />
             <InfoRow label="Slippage Tolerance" value={`${0.1}%`} />
-            <InfoRow label="Trader Notional Size" value={`${notionalValue}%`} />
+            <InfoRow label="Trader Notional Size" value={`${notionalValue} USDC`} />
             <InfoRow label="Fee (0.1%)" value={`${fee} USDC`} />
             <InfoRow label="Total Cost" value={`${total} USDC`} />
-            <InfoRow label="Est. Liquidation Price" value={`${totalPriceImpact.toFixed(4)}%`} />
+            <InfoRow label="Est. Liquidation Price" value={`${totalPriceImpact.toFixed(4)} USDC`} />
           </div>
 
           <Button
