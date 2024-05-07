@@ -1,70 +1,9 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import tw, { styled } from 'twin.macro'
 import { httpClient } from '../../api/'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { useCrypto } from '../../context'
-
-const HEADER = styled.div`
-  ${tw`w-full p-0 text-xs h-7`}
-  border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
-  & div {
-    ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
-    span {
-      ${tw`inline-block w-1/3 text-tiny font-medium`}
-    }
-    span:nth-child(2) {
-      ${tw`text-center`}
-    }
-    span:nth-child(3) {
-      ${tw`text-right`}
-    }
-    div:nth-child(3) {
-      ${tw`text-right w-1/3 justify-end`}
-    }
-  }
-`
-
-const WRAPPER = styled.div`
-  position: relative;
-  width: 100%;
-  padding: 0px 0px 0px 0px;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  /* Hide scrollbar for IE, Edge and Firefox */
-  & {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-`
-const TRADES = styled.div`
-  ${tw`w-full p-0 text-xs overflow-auto`}
-  & div {
-    ${tw`flex justify-between items-center h-full px-2 dark:text-grey-2 text-grey-1`}
-    span {
-      ${tw`inline-block w-1/3 text-tiny font-medium`}
-    }
-    span:nth-child(2) {
-      ${tw`text-center`}
-    }
-    span:nth-child(3) {
-      ${tw`text-right`}
-    }
-    div:nth-child(3) {
-      ${tw`text-right w-1/3 justify-end`}
-    }
-    .bid {
-      ${tw`text-green-500`}
-    }
-    .ask {
-      ${tw`text-red-500`}
-    }
-    .loaderContainer {
-      ${tw`flex justify-center items-center`}
-    }
-  }
-`
+import { InfoLabel } from './perps/components/PerpsGenericComp'
+import { cn } from 'gfx-component-lib'
 
 const GET_TRADE_HISTORY = '/perps-apis/getTradeHistory'
 
@@ -148,24 +87,43 @@ export const RecentTrades: FC = () => {
   }
 
   return (
-    <WRAPPER ref={wrapperRef}>
-      <HEADER>
-        <div>
-          <span> Price (USDC)</span>
-          <span>Size (SOL)</span>
-          <span>Time</span>
+    <div ref={wrapperRef} className={cn('overflow-auto h-full sm:max-h-[300px]')}>
+      <div>
+        <div className={cn('flex items-center px-2 my-1.5')}>
+          <div className={cn('w-1/3')}>
+            <InfoLabel> Price (USDC)</InfoLabel>
+          </div>
+          <div className={cn('w-1/3 flex justify-center')}>
+            <InfoLabel>Size (SOL)</InfoLabel>
+          </div>
+          <div className={cn('w-1/3 flex justify-end')}>
+            <InfoLabel>Time</InfoLabel>
+          </div>
         </div>
-      </HEADER>
-      <TRADES>
+      </div>
+      <div className={cn('overflow-auto h-full sm:max-h-[200px]')}>
         {tradeHistory.map((trade) => (
-          <div key={trade._id}>
-            <span className={trade.side === 'Bid' ? 'bid' : 'ask'}>{trade.price}</span>
-            <span>{trade.qty && trade.qty.toFixed(3)}</span>
-            <span>{unixTimestampToHHMMSS(trade.time)}</span>
+          <div key={trade._id} className={cn('flex items-center justify-between px-2')}>
+            <p
+              className={cn(`w-1/3 text-tiny font-semibold
+             ${trade.side === 'Bid' ? `text-green-4` : `text-red-1`}`)}
+            >
+              {trade.price}
+            </p>
+            <p className={cn(`w-1/3 flex text-tiny font-semibold justify-center`)}>
+              {trade.qty && trade.qty.toFixed(3)}
+            </p>
+            <p className={cn(`w-1/3 flex text-tiny font-semibold justify-end`)}>
+              {unixTimestampToHHMMSS(trade.time)}
+            </p>
           </div>
         ))}
-        {isLoading && <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />}
-      </TRADES>
-    </WRAPPER>
+        {isLoading && (
+          <div className="sm:h-[300px]">
+            <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

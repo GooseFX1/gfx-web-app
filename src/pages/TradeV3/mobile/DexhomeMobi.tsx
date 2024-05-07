@@ -1,13 +1,19 @@
-import { FC } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { FC, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useCrypto } from '../../../context'
 import { Header } from './Header'
 import { OrderBookMobi } from './OrderBookMobi'
 import { PlaceOrderMobi } from './PlaceOrderMobi'
+import PlaceOrderMobiV2 from './PlaceOrderMobiV2'
+import TabOrderbookRecentTrades from './TabOrderbookRecentTrades'
+import OrderAccountPositions from './OrderAccountPositions'
+import ButtonStatesMobi from './ButtonStatesMobi'
+import { TermsOfService } from '../TradeContainer'
 
 const WRAPPER = styled.div<{ isDevnet: boolean }>`
-  ${tw` overflow-hidden`}
-  height: calc(100vh - 100px);
+  ${tw` overflow-hidden sm:mx-2.5`}
+  /* height: calc(100vh - 100px); */
 
   .ant-drawer-body {
     ${tw`pt-[18px] pb-0 px-[5px]`}
@@ -36,11 +42,19 @@ const WRAPPER = styled.div<{ isDevnet: boolean }>`
 
 export const DexhomeMobi: FC = () => {
   const { isDevnet } = useCrypto()
+  const tabs = ['Order', 'Account', 'Positions']
+  const [selectedTab, setSelectedTab] = useState(tabs[0])
   return (
     <WRAPPER $isDevnet={isDevnet} id="dex-mobi-home">
       <Header />
-      <PlaceOrderMobi />
-      <OrderBookMobi />
+      {/* <PlaceOrderMobi /> */}
+      <TabOrderbookRecentTrades />
+      <OrderAccountPositions tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <ButtonStatesMobi tabs={tabs} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+
+      {/* <PlaceOrderMobiV2 /> */}
+
+      {/* <OrderBookMobi /> */}
     </WRAPPER>
   )
 }

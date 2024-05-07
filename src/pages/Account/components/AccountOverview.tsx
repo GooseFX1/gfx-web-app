@@ -6,7 +6,7 @@ import { useCrypto, useDarkMode, useOrderBook } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-import { DepositWithdraw } from '../../TradeV3/perps/DepositWithdraw'
+import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/utils'
 import { httpClient } from '../../../api'
@@ -219,9 +219,11 @@ const AccountOverview: FC = () => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchDayVolume()
     }
+    return () => setTradeType('deposit')
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
     <WRAPPER>
+      account overview
       {depositWithdrawModal && (
         <SETTING_MODAL
           visible={true}

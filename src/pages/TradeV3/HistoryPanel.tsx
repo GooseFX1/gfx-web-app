@@ -2,9 +2,9 @@
 import React, { useState, FC, useMemo, useEffect } from 'react'
 import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
 import tw, { styled } from 'twin.macro'
-import { useTraderConfig } from '../../context/trader_risk_group'
+import { ITraderRiskGroup, useTraderConfig } from '../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from './perps/utils'
-import { ClosePosition } from './ClosePosition'
+import { ClosePositionDialog } from './ClosePosition'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
@@ -12,8 +12,26 @@ import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
-import { Button } from '../../components'
+import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
+import { OrderBook } from './OrderBook'
+import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
+import { checkMobile } from '@/utils'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
+
+type TabColumnsDisplayProps = {
+  activeTab: number
+}
+
+type PositionDetailsProps = {
+  traderInfo: ITraderRiskGroup
+  selectedCrypto: {
+    pair: string
+  }
+  roundedSize: number | string
+  perpsPrice: number
+  notionalSize: number | string
+  handleClosePosition: () => void
+}
 
 const END_MODAL = styled(PopupCustom)`
   ${tw`!h-[450px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
@@ -32,7 +50,7 @@ const END_MODAL = styled(PopupCustom)`
 
 const columns = [
   {
-    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'PNL']
+    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'State']
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
@@ -213,8 +231,7 @@ const OPEN_ORDER = styled.div`
 `
 
 const TRADE_HISTORY = styled.div`
-  ${tw`w-full`}
-  height: calc(100% - 57px);
+  ${tw`w-full h-[calc(100% - 38px)]`}
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -353,44 +370,139 @@ const OpenOrdersComponent: FC = () => {
 
   const content = useMemo(
     () => (
-      <OPEN_ORDER>
+      <div className={cn('w-full px-2.5 overflow-auto')}>
         {openOrderUI &&
           openOrderUI.length > 0 &&
           openOrderUI.map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
-              <div key={index}>
-                <span className={order.order.side}>{order.order.side}</span>
-                <span>{order.order.size}</span>
-                <span>${order.order.price}</span>
-                <span>{(order.order.size * order.order.price).toFixed(2)}</span>
-                <span>
+              <div key={index} className={cn('flex items-center my-1 ')}>
+                <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
+                  {order.order.side.toUpperCase()}
+                </h5>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>{order.order.size} </InfoLabel>
+                </div>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>${order.order.price} </InfoLabel>
+                </div>
+                <div className={cn('w-[20%]')}>
+                  <InfoLabel>{(order.order.size * order.order.price).toFixed(2)}</InfoLabel>
+                </div>
+                <div className={cn('w-[20%]')}>
                   <Button
-                    className="cancelButton"
-                    loading={false}
+                    variant="outline"
+                    isLoading={loading && perpsOrderId === order.order.orderId}
+                    colorScheme="red"
+                    className={cn(`h-[30px]`)}
                     onClick={() => cancelOrderFn(order.order.orderId)}
                   >
-                    {loading && perpsOrderId === order.order.orderId ? (
-                      <div tw="!ml-[25%]">
-                        <RotatingLoader text="" textSize={8} iconSize={16} />
-                      </div>
-                    ) : (
-                      'Cancel'
-                    )}
+                    Close
                   </Button>
-                </span>
+                </div>
               </div>
             ) : null
           )}
-      </OPEN_ORDER>
+      </div>
     ),
     [formatPair, perpsOpenOrders, isDevnet]
   )
+  if (checkMobile() && openOrderUI.length > 0) {
+    const mobileContent = useMemo(
+      () => (
+        <div className={cn('w-full px-2.5 overflow-auto max-h-[300px] dark:border-black-4 border border-b-0  ')}>
+          {openOrderUI &&
+            openOrderUI.length > 0 &&
+            openOrderUI.map((order, index) =>
+              !removedOrderIds.includes(order.order.orderId) ? (
+                <div
+                  key={index}
+                  className={cn(
+                    'flex flex-col px-2.5 h-[125px] border border-t-0 border-r-0 border-l-0 dark:border-black-4 '
+                  )}
+                >
+                  <div className="flex justify-between mt-1">
+                    <div>
+                      <InfoLabel> SOL-PERP </InfoLabel>
+                    </div>
+                    <div>
+                      <InfoLabel>
+                        <h5
+                          className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}
+                        >
+                          {order.order.side.toUpperCase()}
+                        </h5>
+                      </InfoLabel>
+                    </div>
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>Size</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p> {order.order.size} </p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>Price</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p> {(order.order.size * order.order.price).toFixed(2)} </p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <ContentLabel>
+                          {' '}
+                          <p>USD Value</p>{' '}
+                        </ContentLabel>{' '}
+                      </div>
+                      <div>
+                        <InfoLabel>
+                          {' '}
+                          <p>{(order.order.size * order.order.price).toFixed(2)}</p>{' '}
+                        </InfoLabel>{' '}
+                      </div>
+                    </div>
+                  </div>
+                  <div className={cn('w-full flex justify-end mt-2')}>
+                    <Button
+                      variant="outline"
+                      isLoading={loading && perpsOrderId === order.order.orderId}
+                      colorScheme="red"
+                      size={'sm'}
+                      onClick={() => cancelOrderFn(order.order.orderId)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              ) : null
+            )}
+        </div>
+      ),
+      [formatPair, perpsOpenOrders, isDevnet]
+    )
+    return mobileContent
+  }
   return (
     <>
       {!openOrderUI.length ? (
-        <div className="no-positions-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-          <div>No Open Orders</div>
+        <div className={cn('flex items-center justify-center h-[80%] sm:h-[250px] rounded-b-[3px]')}>
+          <h4 className="text-grey-1"> No Open Orders</h4>
         </div>
       ) : (
         content
@@ -428,9 +540,8 @@ const TradeHistoryComponent: FC = () => {
   return (
     <>
       {!historyData || !historyData.length ? (
-        <div className="no-positions-found">
-          <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-          <div>No Trade History</div>
+        <div className={cn('flex items-center justify-center h-[80%]')}>
+          <h4 className="text-grey-1"> No Trade History</h4>
         </div>
       ) : (
         <TRADE_HISTORY>
@@ -438,10 +549,23 @@ const TradeHistoryComponent: FC = () => {
             historyData.length > 0 &&
             historyData.map((order, index) => (
               <div key={index}>
-                <span className={order.side}>{order.side}</span>
-                <span>{order.size}</span>
-                <span>${order.price}</span>
-                <span>{(order.size * order.price).toFixed(2)}</span>
+                <span>
+                  <InfoLabel>
+                    <h5 className={cn(order.side === 'Long' ? 'text-green-4 ml-2' : 'text-red-2 ml-2')}>
+                      {order.side}
+                    </h5>
+                  </InfoLabel>
+                </span>
+
+                <span>
+                  <InfoLabel>{order.size}</InfoLabel>
+                </span>
+                <span>
+                  <InfoLabel>${order.price} </InfoLabel>
+                </span>
+                <span>
+                  <InfoLabel>{(order.size * order.price).toFixed(2)}</InfoLabel>{' '}
+                </span>
               </div>
             ))}
         </TRADE_HISTORY>
@@ -503,10 +627,10 @@ const FundingHistoryComponent: FC = () => {
                     <img src={`${assetIcon}`} alt="SOL icon" />
                     <span>{selectedCrypto.pair}</span>
                   </div>
-                  <span className={item.averagePosition.side}>
+                  <h4 className={cn(`${item.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`)}>
                     {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                     {item.averagePosition.side === undefined && ''}
-                  </span>
+                  </h4>
                   <span>{item.averagePosition.quantity} SOL</span>
                   <span>
                     {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) < 0.0001
@@ -519,9 +643,11 @@ const FundingHistoryComponent: FC = () => {
             </div>
           </div>
         ) : (
-          <div className="no-positions-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <div>No Funding History</div>
+          <div className={cn('h-[80%] flex items-center justify-center')}>
+            <div className={cn('flex items-center justify-center h-[80%]')}>
+              <h4 className="text-grey-1"> No Funding History</h4>
+            </div>
+            {/* <InfoLabel>No Funding History</InfoLabel> */}
           </div>
         )}
       </FUNDING_HISTORY>
@@ -598,135 +724,355 @@ export const HistoryPanel: FC = () => {
     } else return 0
   }, [traderInfo.averagePosition, traderInfo.averagePosition.quantity, wallet.connected])
 
+  // return (
+  //   <>
+  //     <WRAPPER>
+  //       <HEADER>
+  //         {closePositionModal && (
+  //           <>
+  //             <SETTING_MODAL
+  //               visible={true}
+  //               centered={true}
+  //               footer={null}
+  //               title={
+  //                 <div tw="flex items-center">
+  //                   <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
+  //                 </div>
+  //               }
+  //               closeIcon={
+  //                 <img
+  //                   src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //                   height="20px"
+  //                   width="20px"
+  //                   onClick={() => setClosePositionModal(false)}
+  //                 />
+  //               }
+  //             >
+  //               <ClosePosition
+  //                 setVisibleState={setClosePositionModal}
+  //                 setSummaryData={setSummaryData}
+  //                 setPerpsEndModal={setPerpsEndModal}
+  //               />
+  //             </SETTING_MODAL>
+  //           </>
+  //         )}
+  //         {perpsEndModal && (
+  //           <>
+  //             <END_MODAL
+  //               visible={true}
+  //               centered={true}
+  //               footer={null}
+  //               title={
+  //                 <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
+  //                   {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
+  //                 </span>
+  //               }
+  //               closeIcon={
+  //                 <img
+  //                   src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //                   height="20px"
+  //                   width="20px"
+  //                   onClick={() => setPerpsEndModal(false)}
+  //                 />
+  //               }
+  //             >
+  //               <PerpsEndModal
+  //                 profit={summaryData.profit}
+  //                 side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+  //                 entryPrice={summaryData.entryPrice}
+  //                 currentPrice={summaryData.exitPrice}
+  //                 leverage={summaryData.leverage}
+  //                 pnlAmount={summaryData.pnl}
+  //                 percentageChange={summaryData.percentageChange}
+  //               />
+  //             </END_MODAL>
+  //           </>
+  //         )}
+  //         <div className="header-wrapper">
+  //           {/* {tabs.map((item, index) => (
+  //             <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
+  //               <div className="white-background">
+  //                 <div
+  //                   className={index === activeTab ? 'active tab' : 'tab'}
+  //                   onClick={() => setActiveTab(index)}
+  //                   css={[tw`!text-regular !font-bold`]}
+  //                 >
+  //                   {index === 1 ? (
+  //                     <div className="open-order-header">
+  //                       <div>{item}</div>
+  //                       {!isDevnet && (
+  //                         <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
+  //                       )}
+  //                     </div>
+  //                   ) : (
+  //                     item
+  //                   )}
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           ))} */}
+  //         </div>
+  //         <div className={`${tabs[activeTab].replaceAll(' ', '-').replaceAll('&', '-')} headers`}>
+  //           {columns[activeTab][tabs[activeTab]].map((item, index) => (
+  //             <span key={index}>{item}</span>
+  //           ))}
+  //         </div>
+  //       </HEADER>
+  //       {activeTab === 0 ? (
+  //         <>
+  //           <POSITIONS>
+  //             {traderInfo.averagePosition.side && Number(roundedSize) ? (
+  //               <div className="positions">
+  //                 <span>{selectedCrypto.pair}</span>
+  //                 <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
+  //                   {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+  //                 </span>
+  //                 <span>${traderInfo.averagePosition.price}</span>
+  //                 <span>{roundedSize}</span>
+  //                 <span>${perpsPrice}</span>
+  //                 <span>${formatNumberInThousands(Number(notionalSize))}</span>
+  //                 <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
+  //                 <span className={pnl <= 0 ? 'short' : 'long'}>
+  //                   $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
+  //                 </span>
+  //                 <button onClick={handleClosePosition}>Close</button>
+  //               </div>
+  //             ) : (
+  //               <div className="no-positions-found">
+  //                 <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
+  //                 <div>No Positions Found</div>
+  //               </div>
+  //             )}
+  //           </POSITIONS>
+  //         </>
+  //       ) : activeTab === 1 ? (
+  //         <OpenOrdersComponent />
+  //       ) : activeTab === 2 ? (
+  //         <TradeHistoryComponent />
+  //       ) : activeTab === 3 ? (
+  //         <FundingHistoryComponent />
+  //       ) : null}
+  //     </WRAPPER>
+  //   </>
+  // )
   return (
-    <>
-      <WRAPPER>
-        <HEADER>
-          {closePositionModal && (
-            <>
-              <SETTING_MODAL
-                visible={true}
-                centered={true}
-                footer={null}
-                title={
-                  <div tw="flex items-center">
-                    <span tw="font-semibold text-black-4 text-lg dark:text-grey-5">Close Position</span>
-                  </div>
-                }
-                closeIcon={
-                  <img
-                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                    height="20px"
-                    width="20px"
-                    onClick={() => setClosePositionModal(false)}
-                  />
-                }
+    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px] " defaultValue="0">
+      {closePositionModal && (
+        <ClosePositionDialog
+          closePositionModal={closePositionModal}
+          setVisibleState={setClosePositionModal}
+          setSummaryData={setSummaryData}
+          setPerpsEndModal={setPerpsEndModal}
+        />
+      )}
+      <TabsList className={cn('rounded-t-[3px]')}>
+        {tabs.map((item, index) => {
+          if (checkMobile() && index > 1) return null
+          return (
+            <TabsTrigger
+              className={cn('w-[20%] sm:w-[50%]')}
+              size="xl"
+              key={index}
+              value={index.toString()}
+              onClick={() => setActiveTab(index)}
+              variant="primary"
+            >
+              <TitleLabel whiteText={activeTab === index}>{item}</TitleLabel>
+            </TabsTrigger>
+          )
+        })}
+      </TabsList>
+      <TabsContent className={cn('h-full sm:min-h-[200px] rounded-b-[3px]')} value="0">
+        <>
+          {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
+          <PositionDetails
+            traderInfo={traderInfo}
+            selectedCrypto={selectedCrypto}
+            roundedSize={roundedSize}
+            perpsPrice={perpsPrice}
+            notionalSize={notionalSize}
+            handleClosePosition={handleClosePosition}
+          />
+        </>
+      </TabsContent>
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="1">
+        {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
+        <OpenOrdersComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="2">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <TradeHistoryComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="3">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <FundingHistoryComponent />
+      </TabsContent>
+      <TabsContent className={cn('h-[100%] rounded-b-[3px]')} value="4">
+        <TabColumnsDisplay activeTab={activeTab} />
+        <div className={cn('h-[80%] flex items-center justify-center')}>
+          <div className={cn('flex items-center justify-center h-[80%]')}>
+            <h4 className="text-grey-1"> No unsettled P&L</h4>
+          </div>
+          {/* <InfoLabel>No Funding History</InfoLabel> */}
+        </div>
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+const TabColumnsDisplay: React.FC<TabColumnsDisplayProps> = ({ activeTab }) => {
+  const length = useMemo(() => {
+    const items = columns[activeTab][tabs[activeTab]]
+    return items ? 100 / items.length : 0
+  }, [columns, activeTab, tabs])
+
+  return (
+    <div className={cn('px-2.5 py-2 flex border-b border-solid dark:border-black-4 border-grey-4')}>
+      {columns[activeTab][tabs[activeTab]].map((item, index) => (
+        <div style={{ width: `${length}%` }} key={item.id || index}>
+          <InfoLabel>{item}</InfoLabel>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const PositionDetails: React.FC<PositionDetailsProps> = ({
+  traderInfo,
+  selectedCrypto,
+  roundedSize,
+  perpsPrice,
+  notionalSize,
+  handleClosePosition
+}) => {
+  const { mode } = useDarkMode()
+  if (checkMobile())
+    return (
+      <>
+        {traderInfo.averagePosition.side && Number(roundedSize) ? (
+          <div
+            className={cn(
+              'flex flex-col px-2.5 mt-2.5 h-[125px] border border-r-none border-l-none dark:border-black-4 '
+            )}
+          >
+            <div className="flex justify-between w-full mt-1">
+              <div>
+                <InfoLabel>SOL-PERP </InfoLabel>{' '}
+              </div>
+              <div
+                className={cn(
+                  `w-[12.5%] ${traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`
+                )}
               >
-                <ClosePosition
-                  setVisibleState={setClosePositionModal}
-                  setSummaryData={setSummaryData}
-                  setPerpsEndModal={setPerpsEndModal}
-                />
-              </SETTING_MODAL>
-            </>
-          )}
-          {perpsEndModal && (
-            <>
-              <END_MODAL
-                visible={true}
-                centered={true}
-                footer={null}
-                title={
-                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5">
-                    {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
-                  </span>
-                }
-                closeIcon={
-                  <img
-                    src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                    height="20px"
-                    width="20px"
-                    onClick={() => setPerpsEndModal(false)}
-                  />
-                }
-              >
-                <PerpsEndModal
-                  profit={summaryData.profit}
-                  side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
-                  entryPrice={summaryData.entryPrice}
-                  currentPrice={summaryData.exitPrice}
-                  leverage={summaryData.leverage}
-                  pnlAmount={summaryData.pnl}
-                  percentageChange={summaryData.percentageChange}
-                />
-              </END_MODAL>
-            </>
-          )}
-          <div className="header-wrapper">
-            {tabs.map((item, index) => (
-              <div className={index === activeTab ? 'active gradient-border' : 'gradient-border'} key={index}>
-                <div className="white-background">
-                  <div
-                    className={index === activeTab ? 'active tab' : 'tab'}
-                    onClick={() => setActiveTab(index)}
-                    css={[tw`!text-regular !font-bold`]}
-                  >
-                    {index === 1 ? (
-                      <div className="open-order-header">
-                        <div>{item}</div>
-                        {!isDevnet && (
-                          <div className="count">{perpsOpenOrders.length > 0 ? perpsOpenOrders.length : 0}</div>
-                        )}
-                      </div>
-                    ) : (
-                      item
-                    )}
-                  </div>
+                <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>Size</p>{' '}
+                  </ContentLabel>{' '}
+                </div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {roundedSize} </p>{' '}
+                  </InfoLabel>{' '}
                 </div>
               </div>
-            ))}
-          </div>
-          <div className={`${tabs[activeTab].replaceAll(' ', '-').replaceAll('&', '-')} headers`}>
-            {columns[activeTab][tabs[activeTab]].map((item, index) => (
-              <span key={index}>{item}</span>
-            ))}
-          </div>
-        </HEADER>
-        {activeTab === 0 ? (
-          <>
-            <POSITIONS>
-              {traderInfo.averagePosition.side && Number(roundedSize) ? (
-                <div className="positions">
-                  <span>{selectedCrypto.pair}</span>
-                  <span className={traderInfo.averagePosition.side === 'buy' ? 'long' : 'short'}>
-                    {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
-                  </span>
-                  <span>${traderInfo.averagePosition.price}</span>
-                  <span>{roundedSize}</span>
-                  <span>${perpsPrice}</span>
-                  <span>${formatNumberInThousands(Number(notionalSize))}</span>
-                  <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
-                  <span className={pnl <= 0 ? 'short' : 'long'}>
-                    $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
-                  </span>
-                  <button onClick={handleClosePosition}>Close</button>
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>Price</p>{' '}
+                  </ContentLabel>{' '}
                 </div>
-              ) : (
-                <div className="no-positions-found">
-                  <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-positions-found" />
-                  <div>No Positions Found</div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {traderInfo.averagePosition.price} </p>{' '}
+                  </InfoLabel>{' '}
                 </div>
-              )}
-            </POSITIONS>
-          </>
-        ) : activeTab === 1 ? (
-          <OpenOrdersComponent />
-        ) : activeTab === 2 ? (
-          <TradeHistoryComponent />
-        ) : activeTab === 3 ? (
-          <FundingHistoryComponent />
-        ) : null}
-      </WRAPPER>
+              </div>
+              <div>
+                <div>
+                  <ContentLabel>
+                    {' '}
+                    <p>USD Value</p>{' '}
+                  </ContentLabel>{' '}
+                </div>
+                <div>
+                  <InfoLabel>
+                    {' '}
+                    <p> {perpsPrice} </p>{' '}
+                  </InfoLabel>{' '}
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="w-full justify-end flex mt-2">
+                <Button
+                  variant="outline"
+                  colorScheme="red"
+                  size={'sm'}
+                  className={cn(` ml-auto`)}
+                  onClick={handleClosePosition}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className={cn('flex items-center justify-center sm:h-[250px] h-[80%]')}>
+            <h4 className="text-grey-1"> No Positions Found</h4>
+          </div>
+        )}
+      </>
+    )
+  return (
+    <>
+      {traderInfo.averagePosition.side && Number(roundedSize) ? (
+        <div className={cn('flex px-2.5 mt-2.5')}>
+          <div className={cn('w-[12.5%]')}>
+            <InfoLabel>{selectedCrypto.pair} </InfoLabel>{' '}
+          </div>
+          <div
+            className={cn(
+              `w-[12.5%] ${traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`
+            )}
+          >
+            <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
+          </div>
+          <div className={cn('w-[12.5%] flex items-center ')}>
+            <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%] flex items-center')}>
+            <InfoLabel>{roundedSize} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%] flex items-center')}>
+            <InfoLabel>{perpsPrice} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%] flex items-center')}>
+            <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>{' '}
+          </div>
+          <div className={cn('w-[12.5%] flex items-center')}>
+            <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>{' '}
+          </div>
+          <div>
+            <Button variant="outline" colorScheme="red" className={cn(`h-[30px]`)} onClick={handleClosePosition}>
+              Close
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className={cn('flex items-center justify-center h-[80%]')}>
+          <h4 className="text-grey-1"> No Positions Found</h4>
+        </div>
+      )}
     </>
   )
 }

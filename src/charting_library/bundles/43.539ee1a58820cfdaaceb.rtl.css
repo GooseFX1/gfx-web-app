@@ -5,8 +5,8 @@
   box-sizing: border-box;
   cursor: default;
   transition: background-color 60ms ease, opacity 60ms ease, color 60ms ease;
-  color: #131313;
-  color: var(--tv-color-toolbar-button-text, #131313);
+  color: #1c1c1c;
+  color: var(--tv-color-toolbar-button-text, #1c1c1c);
 }
 html.theme-dark .button-2ioYhFEY {
   color: #787b86;

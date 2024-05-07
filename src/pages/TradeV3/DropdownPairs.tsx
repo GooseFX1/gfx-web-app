@@ -3,13 +3,30 @@ import { Dropdown } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
-import { Modal, SearchBar } from '../../components'
+import { Modal } from '../../components'
+import SearchBar from '../../components/common/SearchBar'
 import tw, { styled } from 'twin.macro'
 import { checkMobile } from '../../utils'
 import 'styled-components/macro'
+import { Search } from 'lucide-react'
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogCloseDefault,
+  DialogContent,
+  DialogHeader,
+  DialogOverlay,
+  Input,
+  InputElementLeft,
+  InputElementRight,
+  InputGroup,
+  cn
+} from 'gfx-component-lib'
+import { GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SELECTED_PAIR_CTN = styled.div`
-  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5`}
+  ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5 mt-0`}
   background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
 `
 
@@ -24,8 +41,7 @@ const SELECTED_PAIR = styled.div`
 
 const GRADIENT_BACKGROUND = styled.div`
   ${tw`h-full w-full rounded-[36px] dark:text-white text-black-4 
-    text-regular font-bold flex justify-around items-center`}
-  background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
+    text-regular font-bold flex justify-around items-center bg-grey-5 dark:bg-black-1`}
 `
 
 const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
@@ -147,13 +163,18 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }>
   )
 }
 
-const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setShowModal }) => {
+const SelectCryptoModal: FC<{
+  handleDropdownSearch: (string) => void
+  showModal: boolean
+  setShowModal: (arg: boolean) => void
+}> = ({ showModal, setShowModal, handleDropdownSearch }) => {
   const { selectedCrypto, setSelectedCrypto, pairs, getAskSymbolFromPair, filteredSearchPairs } = useCrypto()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const history = useHistory()
+  const [searchTokens, setSearchTokens] = useState<string>('')
 
   const handleSelection = (item) => {
     if (item.type === 'synth') {
@@ -164,30 +185,89 @@ const SelectCryptoModal: FC<{ setShowModal: (arg: boolean) => void }> = ({ setSh
       setShowModal(false)
     }
   }
+  // TODO Fix the bug
+  // const args = {
+  //   // rightItem: (<InputElementRight>GOFX</InputElementRight>),
+  //   leftItem: (
+  //     <InputElementLeft>
+  //       <Search />
+  //     </InputElementLeft>
+  //   )
+  // }
   return (
-    <>
-      <div className="popular">Most popular</div>
-      <div className="popular-container">
-        {pairs &&
-          pairs.slice(0, 3).map((item, index) => (
-            <div onClick={() => handleSelection(item)} key={index}>
-              <MostPopularCrypto {...item} />
-            </div>
-          ))}
-      </div>
-      <div className="allPairContainer">
-        {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
-          filteredSearchPairs.map((item, index) => (
-            <li onClick={() => handleSelection(item)} key={index}>
-              <PairComponents {...item} />
-            </li>
-          ))
-        ) : (
-          <div className="no-result-found">Sorry, no result found!</div>
-        )}
-      </div>
-    </>
+    <Dialog open={showModal} onOpenChange={setShowModal}>
+      <DialogOverlay />
+      <DialogClose onClick={() => setShowModal(false)} />
+
+      <DialogContent
+        size="md"
+        className={cn(' min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
+        placement={checkMobile() ? 'bottom' : 'default'}
+      >
+        <DialogCloseDefault onClick={() => setShowModal(false)} />
+
+        <DialogHeader
+          className={`space-y-0 flex flex-col w-full h-[58px] justify-between px-2.5 pb-1.25 border-b-1 border-solid
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary`}
+        >
+          {/* <InputGroup {...args} className={'w-11/12'}>
+            <Input
+              className={'text-left w-full'}
+              // TODO Fix the trading view bug
+              // onChange={(e) => handleDropdownSearch(e.target.value)}
+              placeholder="Search by Token symbol"
+            />
+          </InputGroup> */}
+          <SearchBar
+            onChange={(e) => handleDropdownSearch(e.target.value)}
+            onClear={() => setSearchTokens('')}
+            value={searchTokens}
+            // className={'min-w-[100px] min-h-[40px] '}
+          />
+        </DialogHeader>
+        <DialogBody
+          className={`flex flex-col w-full h-[210px] min-md:h-full 
+            min-md:mb-[20px] min-md:rounded-b-[10px] bg-white dark:bg-black-2 flex-auto overflow-y-scroll gap-2.5
+            min-md:gap-5 p-2.5
+      `}
+        >
+          {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
+            filteredSearchPairs.map((item, index) => (
+              <span onClick={() => handleSelection(item)} key={index}>
+                <PairComponents {...item} />
+              </span>
+            ))
+          ) : (
+            <div className="no-result-found">Sorry, no result found!</div>
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
+  // return (
+  //   <>
+  //     <div className="popular">Most popular</div>
+  //     <div className="popular-container">
+  //       {pairs &&
+  //         pairs.slice(0, 3).map((item, index) => (
+  //           <div onClick={() => handleSelection(item)} key={index}>
+  //             <MostPopularCrypto {...item} />
+  //           </div>
+  //         ))}
+  //     </div>
+  //     <div className="allPairContainer">
+  //       {filteredSearchPairs && filteredSearchPairs.length > 0 ? (
+  //         filteredSearchPairs.map((item, index) => (
+  //           <li onClick={() => handleSelection(item)} key={index}>
+  //             <PairComponents {...item} />
+  //           </li>
+  //         ))
+  //       ) : (
+  //         <div className="no-result-found">Sorry, no result found!</div>
+  //       )}
+  //     </div>
+  //   </>
+  // )
 }
 
 const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
@@ -203,29 +283,27 @@ const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = 
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
-    <GRADIENT_BORDER $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}>
-      <DROPDOWN_PAIR_DIV
-        onMouseEnter={() => setHoverBorder(true)}
-        onMouseLeave={() => setHoverBorder(false)}
-        $hoverBorder={checkMobile() ? selectedCrypto.pair === pair : hoverBorder}
-      >
-        <img className="asset-icon" src={assetIcon} alt="" />
-        <div className="spacing">{display}</div>
-        {changeValue !== ' ' ? <div className={classNameChange}>{changeValue}%</div> : <div />}
-      </DROPDOWN_PAIR_DIV>
-    </GRADIENT_BORDER>
+    <GradientBorder radius={3}>
+      <div className="flex items-center h-full p-2">
+        <img className="h-8 w-8" src={assetIcon} alt="" />
+        <InfoLabel>
+          {' '}
+          <h4 className="ml-2">{display}</h4>{' '}
+        </InfoLabel>
+      </div>
+    </GradientBorder>
   )
 }
 
-const ModalHeader = ({ handleDropdownSearch }) => {
-  return (
-    <SearchBar
-      className="dropdown-modal-search"
-      placeholder="Search by name"
-      setSearchFilter={handleDropdownSearch}
-    />
-  )
-}
+// const ModalHeader = ({ handleDropdownSearch }) => {
+//   return (
+//     <SearchBar
+//       className="dropdown-modal-search"
+//       placeholder="Search by name"
+//       setSearchFilter={handleDropdownSearch}
+//     />
+//   )
+// }
 
 const ModalHeaderMobi = ({ handleDropdownSearch }) => {
   // const { isDevnet, setIsDevnet } = useCrypto()
@@ -249,11 +327,11 @@ const ModalHeaderMobi = ({ handleDropdownSearch }) => {
           Perps
         </div>
       </MODAL_TITLE> */}
-      <SearchBar
+      {/* <SearchBar
         className="dropdown-modal-search"
         placeholder="Search by name"
         setSearchFilter={handleDropdownSearch}
-      />
+      /> */}
     </div>
   )
 }
@@ -284,22 +362,12 @@ export const DropdownPairs: FC = () => {
 
   return (
     <>
-      {showModal && (
-        <DROPDOWN_MODAL
-          setVisible={closeModal}
-          bigTitle={false}
-          visible={true}
-          title={
-            checkMobile() ? (
-              <ModalHeaderMobi handleDropdownSearch={handleDropdownSearch} />
-            ) : (
-              <ModalHeader handleDropdownSearch={handleDropdownSearch} />
-            )
-          }
-        >
-          <SelectCryptoModal setShowModal={setShowModal} />
-        </DROPDOWN_MODAL>
-      )}
+      <SelectCryptoModal
+        handleDropdownSearch={handleDropdownSearch}
+        showModal={showModal}
+        setShowModal={closeModal}
+      />
+
       <Dropdown
         overlay={<></>}
         trigger={['click']}
@@ -316,8 +384,8 @@ export const DropdownPairs: FC = () => {
                 src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
                 style={showModal ? { transform: 'rotate(180deg)' } : {}}
                 alt="arrow-icon"
-                height="7"
-                width="15"
+                height="10"
+                width="20"
               />
             </GRADIENT_BACKGROUND>
           </SELECTED_PAIR>

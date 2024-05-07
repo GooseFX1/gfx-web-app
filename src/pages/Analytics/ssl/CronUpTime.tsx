@@ -62,7 +62,6 @@ const RepositoryDetails: FC<RepositoryDetailsProps> = ({ repoData, repoName }) =
   const elementsToRender = []
   for (const [key, value] of Object.entries(repoData)) {
     if (key === timeSlot) {
-      console.log(key, timeSlot, value, 'shrihari')
       break // Stop adding elements once the condition is met
     }
     const approved = value === 1

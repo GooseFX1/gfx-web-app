@@ -5,6 +5,15 @@ import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  cn
+} from 'gfx-component-lib'
+import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
 
@@ -63,7 +72,8 @@ const LOADER = styled(Skeleton.Input)`
 
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
-  height: calc(100% - 60px);
+  height: calc(100% - 70px);
+  ${tw`sm:max-h-[222px]`}
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
@@ -87,12 +97,13 @@ const ORDER_BUY = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin: ${({ theme }) => theme.margin(0.5)} 0;
+  margin: ${({ theme }) => theme.margin(1)} 0;
   height: 20px;
   span {
     flex: 1;
     font-size: 13px;
     font-weight: 500;
+    border-radius: 2px 0 0 2px;
     color: ${({ theme }) => theme.text21};
 
     &:not(:last-child) {
@@ -131,7 +142,7 @@ const ORDER_SELL = styled.div`
   align-items: center;
   width: 100%;
   height: 20px;
-  margin: ${({ theme }) => theme.margin(0.5)} 0;
+  margin: ${({ theme }) => theme.margin(1)} 0;
 
   span {
     flex: 1;
@@ -171,13 +182,13 @@ const ORDER_SELL = styled.div`
 `
 
 const SIZE_BUY = styled.span`
-  ${tw`dark:bg-[#58ce3b] bg-[#71c25d]`}
+  ${tw`bg-green-4 `}
   position: absolute;
   right: 0;
   height: 100%;
 `
 const SIZE_SELL = styled.span`
-  ${tw`dark:bg-[#f24244] bg-[#f06565]`}
+  ${tw`bg-red-2`}
   position: absolute;
   left: 0;
   height: 100%;
@@ -190,11 +201,14 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
+  ${tw`sm:overflow-auto sm:max-h-[150px]`}
   width: 100%;
   display: flex;
+  overflow-y: auto;
   align-items: baseline;
   justify-content: center;
-  padding: 0px 10px;
+  padding: 0px 0px;
+  /* height: 100%; */
   span {
     width: 50%;
   }
@@ -260,6 +274,7 @@ export const OrderBook: FC = () => {
   const ask = useMemo(() => getAskSymbolFromPair(selectedCrypto.pair), [getAskSymbolFromPair, selectedCrypto.pair])
   const [spreadIndex, setSpreadIndex] = useState<number>(0)
   const prevOrderBook: any = usePrevious(orderBook)
+  const [showSpread, setShowSpread] = useState<boolean>(false)
   const [neworders, setNewOrders] = useState<{ bids: number[]; asks: number[] }>({
     bids: [],
     asks: []
@@ -421,15 +436,156 @@ export const OrderBook: FC = () => {
   }
 
   const SPREAD_DROPDOWN = (
-    <Menu>
+    <>
       {SPREADS.map((item, index) => (
-        <Menu.Item key={index} onClick={() => setSpreadIndex(index)}>
+        <DropdownMenuItem key={index} className="w-full" onClick={() => setSpreadIndex(index)}>
           {item}
-        </Menu.Item>
+        </DropdownMenuItem>
       ))}
-    </Menu>
+    </>
   )
 
+  return (
+    <div className={cn('h-full sm:max-h-[220px]')}>
+      {
+        <div className={cn('flex pl-2 h-[38px] items-center justify-between pb-1')}>
+          <div>
+            <InfoLabel>
+              {'Spread:'} {spreadAbsolute[1]}%
+            </InfoLabel>
+          </div>
+          <div>
+            {/* {
+              <Dropdown overlay={SPREAD_DROPDOWN} trigger={['click']} overlayClassName={`spread-dropdown ${mode}`}>
+                <div className="spreadDropdown">
+                  {SPREADS[spreadIndex]}
+                  <DownOutlined />
+                </div>
+              </Dropdown>
+            } */}
+            <DropdownMenu open={showSpread} onOpenChange={setShowSpread}>
+              <DropdownMenuTrigger asChild={true}>
+                <Button
+                  variant="outline"
+                  colorScheme="secondaryGradient"
+                  onClick={() => setShowSpread(true)}
+                  className={cn('max-content mr-2 h-[30px] w-[88px]')}
+                >
+                  <div className="flex w-full justify-between text-tiny">
+                    ${SPREADS[spreadIndex]}
+                    <img
+                      style={{
+                        transform: `rotate(${showSpread ? '0deg' : '180deg'})`,
+                        transition: 'transform 0.2s ease-in-out'
+                      }}
+                      src={`/img/mainnav/connect-chevron-${mode}.svg`}
+                      alt={'connect-chevron'}
+                    />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent asChild>
+                <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>{SPREAD_DROPDOWN}</div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      }
+      <div className={cn('px-2.5')}>
+        <div
+          className="flex border h-8 border-t-0 border-l-0 pb-1
+        items-center justify-between overflow-auto dark:border-b-black-4 dark:border-r-0
+         border-b-grey-4"
+        >
+          <InfoLabel>Size ({ask})</InfoLabel>
+          <InfoLabel> Price ({bid})</InfoLabel>
+          <InfoLabel>Size ({ask})</InfoLabel>
+        </div>
+      </div>
+
+      <ORDERS $visible={order.isHidden || (!orderBook.bids.length && !orderBook.asks.length)}>
+        {!orderBook.bids.length && !orderBook.asks.length ? (
+          <Loader />
+        ) : (
+          <ORDERBOOK_CONTAINER>
+            <div
+              className="!border-t-0 dark:border-r-black-4 border-r-grey-4 
+            !border-b-0 !border-l-0 pl-2 w-[50%] h-[40%] border"
+            >
+              {
+                slicedOrderBookBids.reduce(
+                  (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
+                    const value = price * size
+                    acc.totalValue += value
+                    acc.nodes.push(
+                      <ORDER_BUY key={index}>
+                        <span onClick={() => handleSetSize(size)}>
+                          <ContentLabel>
+                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                          </ContentLabel>
+                        </span>
+                        <span onClick={() => handleSetPrice(price)}>
+                          <InfoLabel>
+                            <p className="text-[13px]">${removeFloatingPointError(price)}</p>
+                          </InfoLabel>
+                        </span>
+
+                        <SIZE_BUY
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueBids) * 100}%`,
+                            opacity: neworders.bids.includes(index) ? '1' : '0.4'
+                          }}
+                        />
+                      </ORDER_BUY>
+                    )
+                    return acc
+                  },
+                  { nodes: [], totalValue: 0 }
+                ).nodes
+              }
+            </div>
+            <span
+              className="border-t-0 border-r-0 
+            dark:border-b-0 border-l-0  pr-2 h-full"
+            >
+              {
+                slicedOrderBookAsks.reduce(
+                  (acc: { nodes: ReactNode[]; totalValue: number }, [price, size], index) => {
+                    const value = price * size
+                    acc.totalValue += value
+                    acc.nodes.push(
+                      <ORDER_SELL key={index}>
+                        <span onClick={() => handleSetPrice(price)}>
+                          <InfoLabel>
+                            <p className="text-[13px]">${removeFloatingPointError(price)}</p>
+                          </InfoLabel>
+                        </span>
+                        <span onClick={() => handleSetSize(size)}>
+                          <ContentLabel>
+                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                          </ContentLabel>
+                        </span>
+
+                        <div
+                          className={cn('bg-red-2 rounded-r-[2px] absolute left-0 h-full')}
+                          style={{
+                            width: `${(acc.totalValue / totalOrderBookValueAsks) * 100}%`,
+                            opacity: neworders.asks.includes(index) ? '1' : '0.4'
+                          }}
+                        />
+                      </ORDER_SELL>
+                    )
+                    return acc
+                  },
+                  { nodes: [], totalValue: 0 }
+                ).nodes
+              }
+            </span>
+          </ORDERBOOK_CONTAINER>
+        )}
+      </ORDERS>
+    </div>
+  )
   return (
     <WRAPPER>
       <HEADER>

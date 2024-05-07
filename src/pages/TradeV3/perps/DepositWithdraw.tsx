@@ -1,26 +1,35 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Dispatch, ReactElement, SetStateAction, useCallback, useEffect } from 'react'
 import tw, { styled } from 'twin.macro'
-import { Checkbox, Dropdown, Menu } from 'antd'
-import {
-  MarketType,
-  useAccounts,
-  useConnectionConfig,
-  useCrypto,
-  useDarkMode,
-  useOrderBook
-} from '../../../context'
+import { Checkbox, Dropdown } from 'antd'
+import { MarketType, useAccounts, useConnectionConfig, useDarkMode, useOrderBook } from '../../../context'
 import { useMemo, FC, useState } from 'react'
-import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
-import { PERPS_COLLATERAL } from './perpsConstants'
-import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDevnet'
 import 'styled-components/macro'
 import { checkMobile, truncateAddress } from '../../../utils'
 import useBoolean from '../../../hooks/useBoolean'
-import { Button } from '../../../components'
+// import { Button } from '../../../components'
 import type { MenuProps } from 'antd'
 import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogCloseDefault,
+  DialogContent,
+  DialogOverlay,
+  DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  cn
+} from 'gfx-component-lib'
+import { ModalHeader } from '../InfoBanner'
+import { DepositWithdraw } from './DepositWithdrawNew'
+import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
+import { CircularArrow } from '@/components/common/Arrow'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -63,10 +72,10 @@ const CLOSE_ACCOUNT_CONDITIONS = styled.div`
     ${tw`mt-1 flex items-center`}
   }
   .approved {
-    ${tw`text-green-1 font-semibold`}
+    ${tw`text-green-4 font-semibold h-6`}
   }
   .failed {
-    ${tw`text-red-1 font-semibold`}
+    ${tw`text-red-2 font-semibold h-6`}
   }
 `
 
@@ -80,7 +89,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
   }
 `
 
-const SELECTED_COIN = styled.div`
+export const SELECTED_COIN = styled.div`
   ${tw`h-[45px] rounded-[36px] flex items-center text-center cursor-pointer pl-3 font-medium text-[16px]`}
   background-color: ${({ theme }) => theme.bg22};
 
@@ -104,7 +113,7 @@ const SELECTED_COIN = styled.div`
   }
 `
 
-const COIN_INFO = styled.div`
+export const COIN_INFO = styled.div`
   ${tw`flex items-center mr-auto h-12.5`}
 
   > * {
@@ -122,12 +131,12 @@ const COIN_INFO = styled.div`
   }
 `
 
-const LABEL = styled.div`
+export const LABEL = styled.div`
   ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
   color: ${({ theme }) => theme.text11};
 `
 
-const INPUT = styled.div`
+export const INPUT = styled.div`
   ${tw`w-[280px] rounded-circle flex items-center px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
   background: ${({ theme }) => theme.bg22};
 
@@ -157,215 +166,34 @@ const INPUT = styled.div`
   }
 `
 
-export const DepositWithdraw: FC<{
-  tradeType: string
+export const DepositWithdrawDialog: FC<{
+  depositWithdrawModal: boolean
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
-}> = ({ tradeType, setDepositWithdrawModal }) => {
-  const { balances: mainnetBalances, fetchAccounts } = useAccounts()
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { isDevnet } = useCrypto()
-  const { traderInfo } = useTraderConfig()
-  const { mode } = useDarkMode()
-  const [amount, setAmount] = useState('')
-  const perpTokenList = isDevnet ? PERPS_COLLATERAL_DEVNET : PERPS_COLLATERAL
-  const percentageArr = [25, 50, 75, 100]
-  const defualtPerpToken = perpTokenList[0]
-  const [percentageIndex, setPercentageindex] = useState(null)
-  const [perpToken, setPerpToken] = useState(defualtPerpToken)
-  const { depositFunds, withdrawFunds } = useTraderConfig()
-  const truncateAddress = (address: string, lengthToTruncate): string =>
-    `${address.substr(0, lengthToTruncate)}..${address.substr(-5, lengthToTruncate)}`
-  const trunMarketAddress = truncateAddress(perpToken.marketAddress, checkMobile() ? 3 : 5)
-  const symbol = perpToken.token
-  const balances = useMemo(() => mainnetBalances, [isDevnet])
-  const tokenAmount = balances[perpToken.marketAddress]
-  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, perpToken.type])
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
-
-  const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
-    if (!isDevnet) {
-      setPercentageindex(index)
-      if (tradeType === 'deposit') {
-        if (!tokenAmount || !tokenAmount.uiAmountString) {
-          setAmount('0.00')
-          return
-        }
-        let result = 0
-        if (index === 0) result = (+tokenAmount.uiAmountString * 25) / 100
-        else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
-        else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
-        else result = +tokenAmount.uiAmountString
-        setAmount(String(result))
-      } else {
-        const avail = traderInfo.maxWithdrawable
-        if (!avail || Number.isNaN(+avail)) {
-          setAmount('0.00')
-          return
-        }
-        let result = 0
-        if (index === 0) result = (+avail * 25) / 100
-        else if (index === 1) result = (+avail * 50) / 100
-        else if (index === 2) result = (+avail * 75) / 100
-        else result = +avail
-        setAmount((Math.floor(result * 1000) / 1000).toString())
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (isDevnet) setAmount('500')
-  }, [isDevnet])
-
-  const handleInputChange = (e) => {
-    if (isDevnet) {
-      setAmount('500')
-    } else {
-      const t = e.target.value
-      if (!isNaN(+t)) {
-        e.target.value = t.indexOf('.') >= 0 ? t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 5) : t
-        setAmount(e.target.value)
-      }
-    }
-  }
-  const handleSubmit = async () => {
-    try {
-      const answer = convertToFractional(amount)
-      setIsLoading(true)
-      const response = tradeType === 'deposit' ? await depositFunds(answer) : await withdrawFunds(answer)
-      if (response === null) {
-        setIsLoading(false)
-        return
-      }
-
-      // this will update balances
-      fetchAccounts()
-
-      if (response && response.txid) {
-        setIsLoading(false)
-        setDepositWithdrawModal(false)
-      }
-    } catch (e) {
-      console.log(e)
-      setIsLoading(false)
-    }
-  }
-  const checkDisabled = () => {
-    if (!publicKey) return true
-    if (isDevnet) {
-      if (!traderInfo.traderRiskGroup) return false
-      if (traderInfo.traderRiskGroup.totalDeposited.toJSON().m !== '0') return true
-      return false
-    }
-    if (tradeType !== 'deposit') {
-      if (!traderInfo.marginAvailable || +traderInfo.marginAvailable < +amount || !amount || !+amount) return true
-    } else {
-      if (
-        !tokenAmount ||
-        isLoading ||
-        !tokenAmount.uiAmountString ||
-        +tokenAmount.uiAmountString < +amount ||
-        !amount ||
-        !+amount
-      )
-        return true
-    }
-  }
-
-  const menus = (
-    <Menu>
-      {perpTokenList.map((item, index) => (
-        <Menu.Item
-          key={index}
-          onClick={() => {
-            setPerpToken(item)
-          }}
-        >
-          <Tokens {...item} />
-        </Menu.Item>
-      ))}
-    </Menu>
-  )
+}> = ({ depositWithdrawModal, setDepositWithdrawModal }) => {
+  const [tradeType, setTradeType] = useState<string>('deposit')
 
   return (
-    <WRAPPER>
-      {tradeType === 'account' ? (
-        <CloseTradingAccount setDepositWithdrawModal={setDepositWithdrawModal} />
-      ) : (
-        <>
-          <div tw="flex flex-row items-center justify-between">
-            <LABEL>Asset</LABEL>
-            {tradeType === 'deposit' && <span className="deposit"> Deposit Limit: $1,000,000.00 </span>}
-          </div>
-          <Dropdown overlay={menus} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
-            <SELECTED_COIN>
-              <COIN_INFO>
-                <img className="asset-icon" src={assetIcon} alt="coin-icon" />
-                <div className="coin">{symbol}</div>
-                <div className="market-add">{trunMarketAddress}</div>
-              </COIN_INFO>
-              <div className="dropdown">
-                <div className="available-bal">
-                  {tradeType === 'deposit'
-                    ? tokenAmount && tokenAmount.uiAmountString
-                      ? Number(tokenAmount.uiAmountString).toFixed(2)
-                      : '0.00'
-                    : traderInfo.maxWithdrawable
-                    ? Number(traderInfo.maxWithdrawable).toFixed(2)
-                    : '0.00'}
-                </div>
-                <img
-                  src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
-                  alt="arrow-icon"
-                  height="8"
-                  width="16"
-                />
-              </div>
-            </SELECTED_COIN>
-          </Dropdown>
-          <LABEL>Amount</LABEL>
-          <div className="input-row">
-            <INPUT>
-              <input
-                className="input-amt"
-                placeholder="0.00"
-                type="text"
-                value={amount}
-                onChange={handleInputChange}
-              />
-              <span className="token">{perpToken.token}</span>
-            </INPUT>
-            <div className="percentage">
-              {percentageArr.map((elem, index) => (
-                <div
-                  className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
-                  onClick={(e) => {
-                    handlePercentageChange(e, index)
-                  }}
-                  key={index}
-                >
-                  {elem}%
-                </div>
-              ))}
-            </div>
-          </div>
+    <Dialog open={depositWithdrawModal} onOpenChange={setDepositWithdrawModal}>
+      <DialogOverlay />
+      {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
+      <DialogContent
+        size="md"
+        placement={checkMobile() ? 'bottom' : 'default'}
+        className={'z-[999] w-[500px] h-[356px] sm:w-[100vw]'}
+      >
+        <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
 
-          <Button
-            className={`submit-btn ${checkDisabled() ? 'disabled' : ''}`}
-            onClick={handleSubmit}
-            loading={isLoading}
-            disabled={checkDisabled() || isLoading}
-            cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
-          >
-            {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
-          </Button>
-        </>
-      )}
-    </WRAPPER>
+        <DialogCloseDefault onClick={() => setDepositWithdrawModal(false)} />
+
+        <DialogBody>
+          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
 
-const Tokens: FC<{ token: string; type: MarketType; marketAddress: string }> = ({
+export const Tokens: FC<{ token: string; type: MarketType; marketAddress: string }> = ({
   token,
   type,
   marketAddress
@@ -388,7 +216,7 @@ const Tokens: FC<{ token: string; type: MarketType; marketAddress: string }> = (
   )
 }
 
-const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction<boolean>> }> = ({
+export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction<boolean>> }> = ({
   setDepositWithdrawModal
 }): ReactElement => {
   const { mode } = useDarkMode()
@@ -445,11 +273,13 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
 
   return (
     <div>
-      <div tw="flex flex-row items-center justify-between">
-        <LABEL tw="!mt-1 !mb-1">Choose account to close</LABEL>
+      <div tw="flex flex-row items-center justify-between mt-[-10px]">
+        <InfoLabel>
+          <h3>Choose account to close</h3>
+        </InfoLabel>
       </div>
 
-      <Dropdown menu={{ items }} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
+      {/* <Dropdown menu={{ items }} trigger={['click']} placement="bottom" align={{ offset: [0, 10] }}>
         <SELECTED_COIN>
           <COIN_INFO>
             {
@@ -478,10 +308,87 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
             </div>
           )}
         </SELECTED_COIN>
-      </Dropdown>
+      </Dropdown> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild={true}>
+          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 rounded-[100px]')}>
+            <div className={cn('flex w-full items-center')}>
+              {/* <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" /> */}
+              <InfoLabel>
+                {/* <h4 className={cn('ml-2 mr-1')}>{'symbol'}</h4>{' '} */}
+                {
+                  <h4 className="coin">
+                    {traderInstanceSdk === null
+                      ? 'No Accounts'
+                      : traderAddresses === null
+                      ? 'Loading...'
+                      : traderAddresses[0]
+                      ? ' Trader Account #1 '
+                      : 'No Accounts'}
+                  </h4>
+                }
+              </InfoLabel>
+
+              <ContentLabel>
+                <h4 className="ml-1">
+                  (
+                  {traderAddresses !== null &&
+                    traderAddresses[0] &&
+                    truncateAddress(traderAddresses[0]?.toString())}
+                  )
+                </h4>
+              </ContentLabel>
+              <div className={cn('ml-auto flex items-center')}>
+                <div className={cn('mr-2')}>
+                  {/* <InfoLabel>
+                    <h4>
+                      {tradeType === 'deposit'
+                        ? tokenAmount && tokenAmount.uiAmountString
+                          ? Number(tokenAmount.uiAmountString).toFixed(2)
+                          : '0.00'
+                        : traderInfo.maxWithdrawable
+                          ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                          : '0.00'}
+                    </h4>
+                  </InfoLabel> */}
+                </div>
+                <CircularArrow cssStyle={tw`h-5 w-5`} />
+              </div>
+            </div>
+
+            {/* <SELECTED_COIN>
+                  <COIN_INFO>
+                    <img className="asset-icon" src={assetIcon} alt="coin-icon" />
+                    <div className="coin">{symbol}</div>
+                    <div className="market-add">{trunMarketAddress}</div>
+                  </COIN_INFO>
+                  <div className="dropdown">
+                    <div className="available-bal">
+                      {tradeType === 'deposit'
+                        ? tokenAmount && tokenAmount.uiAmountString
+                          ? Number(tokenAmount.uiAmountString).toFixed(2)
+                          : '0.00'
+                        : traderInfo.maxWithdrawable
+                        ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                        : '0.00'}
+                    </div>
+                    <img
+                      src={mode === 'lite' ? '/img/assets/arrow.svg' : '/img/assets/arrow-down.svg'}
+                      alt="arrow-icon"
+                      height="8"
+                      width="16"
+                    />
+                  </div>
+                </SELECTED_COIN>{' '} */}
+          </Button>
+        </DropdownMenuTrigger>
+        {/* <DropdownMenuContent asChild className={cn('z-[1200]')}>
+          <div className={'flex flex-col gap-1.5 z-[1200] items-start w-[480px] max-w-[500px]'}>{}</div>
+        </DropdownMenuContent> */}
+      </DropdownMenu>
 
       <div tw="flex flex-row items-center justify-between mt-2 sm:mt-5">
-        <LABEL tw="!text-tiny font-semibold !mt-0 !mb-0">In order to close your account: </LABEL>
+        <InfoLabel>In order to close your account: </InfoLabel>
       </div>
       <CLOSE_ACCOUNT_CONDITIONS>
         <Condition condition={fundsWithdrawn} text="All funds withdrawn" />
@@ -495,17 +402,20 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
             <Checkbox onChange={() => setCheckboxChecked((prev) => !prev)} />
           )}
         </div>
-        <div tw="ml-2 dark:text-grey-2 text-grey-1 font-semibold !text-tiny sm:mt-5">
-          I agree that my account closure is permanent and erases all the data. In addition you will <br />
-          reclaim the SOL rent fee paid when creating the account.
-        </div>
+        <ContentLabel>
+          <p className={cn('text-tiny p-2.5')}>
+            I agree that my account closure is permanent and erases all the data. In addition you will reclaim the
+            SOL rent fee paid when creating the account.
+          </p>
+        </ContentLabel>
       </div>
 
       <div tw="flex items-center justify-center">
-        <Button
+        {/* <Button
           loading={isLoading}
           onClick={closeTraderAccountFn}
-          cssStyle={tw`bg-red-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
+          cssStyle={tw`bg-red-1 text-grey-5 
+           font-semibold border-0 rounded-circle text-average sm:text-regular`}
           disabled={
             !checkboxChecked ||
             isLoading ||
@@ -515,6 +425,31 @@ const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStateAction
             !traderAddresses[0]
           }
           tw="w-[240px] h-8.75 mt-2 sm:mt-3"
+        >
+          Close Account
+        </Button> */}
+        {/* className={cn('min-w-[170px] w-full h-[30px]')}
+                  variant="default"
+                  colorScheme="blue"
+                  size="lg"
+                  onClick={() => handlePlaceOrder()}
+                  disabled={buttonState !== ButtonState.CanPlaceOrder} */}
+        <Button
+          loading={isLoading}
+          disabled={
+            !checkboxChecked ||
+            isLoading ||
+            !fundsWithdrawn ||
+            !clearedAllOpenPositions ||
+            !openOrdersCleared ||
+            !traderAddresses[0]
+          }
+          className={cn('min-w-[140px] w-full h-[30px]')}
+          variant="default"
+          colorScheme="red"
+          size="lg"
+          onClick={closeTraderAccountFn}
+          tw="w-[140px] h-8.75 mt-2 sm:mt-3"
         >
           Close Account
         </Button>

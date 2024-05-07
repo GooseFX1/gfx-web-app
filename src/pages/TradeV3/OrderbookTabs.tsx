@@ -7,6 +7,8 @@ import { useCrypto, useOrder, useOrderBook, usePriceFeed } from '../../context'
 import { getPerpsPrice } from './perps/utils'
 import tw, { styled } from 'twin.macro'
 import { RecentTrades } from './RecentTrades'
+import { Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
+import { InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 
 const TAB_NAMES = [
   { display: 'Orderbook', key: 'orderbook' },
@@ -99,26 +101,58 @@ export const OrderbookTabs: React.FC = () => {
     setFocused('price')
   }
 
+  // return (
+  //   <WRAPPER>
+  //     <HEADER_WRAPPER>
+  //       <Radio.Group value={selectedTab} onChange={onChange} className="tabGroup">
+  //         {TAB_NAMES.map((item, index) => (
+  //           <div className={'container ' + (item.key === selectedTab ? 'active-field' : '')} key={index}>
+  //             <Radio.Button
+  //               key={item.key}
+  //               value={item.key}
+  //               className={'individualTabs ' + (item.key === selectedTab ? 'activeTab' : 'inactiveTab')}
+  //               disabled={item.key === 'price'}
+  //             >
+  //               {item.display}
+  //             </Radio.Button>
+  //           </div>
+  //         ))}
+  //       </Radio.Group>
+  //     </HEADER_WRAPPER>
+  //     <BODY_WRAPPER>{selectedTab === 'orderbook' ? <OrderBook /> : <RecentTrades />}</BODY_WRAPPER>
+  //     {/*<FOOTER_WRAPPER>Hello</FOOTER_WRAPPER>*/}
+  //   </WRAPPER>
+  // )
   return (
-    <WRAPPER>
-      <HEADER_WRAPPER>
-        <Radio.Group value={selectedTab} onChange={onChange} className="tabGroup">
-          {TAB_NAMES.map((item, index) => (
-            <div className={'container ' + (item.key === selectedTab ? 'active-field' : '')} key={index}>
-              <Radio.Button
-                key={item.key}
-                value={item.key}
-                className={'individualTabs ' + (item.key === selectedTab ? 'activeTab' : 'inactiveTab')}
-                disabled={item.key === 'price'}
-              >
-                {item.display}
-              </Radio.Button>
-            </div>
-          ))}
-        </Radio.Group>
-      </HEADER_WRAPPER>
-      <BODY_WRAPPER>{selectedTab === 'orderbook' ? <OrderBook /> : <RecentTrades />}</BODY_WRAPPER>
-      {/*<FOOTER_WRAPPER>Hello</FOOTER_WRAPPER>*/}
-    </WRAPPER>
+    <Tabs className="p-[0px] h-full" defaultValue="1">
+      <TabsList>
+        <TabsTrigger
+          className={cn('w-[50%]')}
+          size="xl"
+          value="1"
+          onClick={() => setSelectedTab('orderbook')}
+          variant="primary"
+        >
+          <TitleLabel whiteText={selectedTab === 'orderbook'}>Orderbook</TitleLabel>
+        </TabsTrigger>
+        <TabsTrigger
+          className={cn('w-[50%]')}
+          size="xl"
+          value="2"
+          onClick={() => setSelectedTab('trades')}
+          variant="primary"
+        >
+          <TitleLabel whiteText={selectedTab === 'trades'}>Recent Trades</TitleLabel>
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent className={cn('h-[90%]')} value="1">
+        <OrderBook />
+      </TabsContent>
+      <TabsContent className={cn('h-[90%]')} value="2">
+        <div className={cn('w-full h-full')}>
+          <RecentTrades />
+        </div>
+      </TabsContent>
+    </Tabs>
   )
 }

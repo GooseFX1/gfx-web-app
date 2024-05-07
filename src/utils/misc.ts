@@ -125,6 +125,10 @@ export const checkMobile = (): boolean => {
   const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
   return isBrowser ? window?.innerWidth < 500 : false
 }
+export const checkMobileDex = (): boolean => {
+  const isBrowser: boolean = ((): boolean => typeof window !== 'undefined')()
+  return isBrowser ? window?.innerWidth < 1000 : false
+}
 
 //eslint-disable-next-line
 export function debounce(callback: any, wait: number): (x: any) => void {

@@ -141,7 +141,7 @@ html.theme-dark ._tv-dialog--open-a-chart a:visited {
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   html.theme-dark ._tv-dialog .colorpicker-widget:not(.disabled):not(.selected):not(.disabled):hover {
-    border-color: #131313;
+    border-color: #1c1c1c;
   }
 }
 ._tv-dialog.ui-resizable {
@@ -195,55 +195,73 @@ html.theme-dark ._tv-dialog-title {
   }
 }
 ._tv-dialog-content {
-  color: #131313;
+  color: #1c1c1c;
   max-width: 100%;
 }
 html.theme-dark ._tv-dialog-content {
   color: #d6d8e0;
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']) {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']) {
   color: #2196f3;
   transition: color 0.35s ease;
 }
 html.theme-dark
   ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']) {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']) {
   color: #1976d2;
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):visited {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):visited {
   color: #2196f3;
   fill: #2196f3;
 }
 html.theme-dark
   ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):visited {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):visited {
   fill: #1976d2;
   color: #1976d2;
 }
 @media (any-hover: hover), (min--moz-device-pixel-ratio: 0) {
   ._tv-dialog-content
-    a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):hover {
+    a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+      [class*='sbSelector']
+    ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):hover {
     color: #1e88e5;
     fill: #1e88e5;
     transition-duration: 0.06s;
   }
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):focus {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):focus {
   outline: auto;
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):focus:not(:-moz-focusring) {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):focus:not(:-moz-focusring) {
   outline: none;
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):-moz-focusring {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):-moz-focusring {
   outline: auto;
 }
 ._tv-dialog-content
-  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not([class*='sbSelector']):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):active {
+  a:not([class*='button']):not([class*='btn']):not([class*='tabs']):not([class*='tab']):not(
+    [class*='sbSelector']
+  ):not([class*='filter']):not(a[href='#yes']):not(a[href='#no']):active {
   color: #1e88e5;
   fill: #1e88e5;
   transition-duration: 0.06s;

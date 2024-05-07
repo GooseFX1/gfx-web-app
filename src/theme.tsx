@@ -139,7 +139,7 @@ export function colors(mode: string): Colors {
     borderForCard: mode === 'dark' ? ' #3c3c3c' : ' #B5B5B5',
     backBtnBg: mode === 'dark' ? '#2a2a2a' : '#5855ff',
     tableHeader: mode === 'dark' ? '#1c1c1c' : '#636363',
-    tokenBorder: mode === 'dark' ? '#3c3c3c' : '#cacaca',
+    tokenBorder: mode === 'dark' ? '#ffffff' : '#5855ff',
     borderBottom: mode === 'dark' ? '#3C3C3C' : '#B5B5B5',
     multiplierBorder: mode === 'dark' ? '#b5b5b5' : '#5855ff',
     lpbg: mode === 'dark' ? '#2a2a2a' : '#d2d2d2',
@@ -250,7 +250,7 @@ export function colors(mode: string): Colors {
     borderColorTabBidFooter: mode === 'dark' ? '#131313' : '#EAEAEA',
 
     // trading history tab content
-    tradingHistoryTabContentBackground: mode === 'dark' ? '#141414' : '#fff',
+    tradingHistoryTabContentBackground: mode === 'dark' ? '#1C1C1C' : '#fff',
 
     // hover tr table
     hoverTrTableBackground: mode === 'dark' ? '#262626' : 'rgba(64, 64, 64, 0.2)',

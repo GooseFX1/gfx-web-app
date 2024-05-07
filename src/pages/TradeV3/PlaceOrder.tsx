@@ -16,9 +16,8 @@ import {
   useTokenRegistry,
   useConnectionConfig
 } from '../../context'
-import { Input } from 'antd'
-import { removeFloatingPointError } from '../../utils'
-import { Checkbox, Slider } from 'antd'
+import { checkMobile, removeFloatingPointError } from '../../utils'
+import { Dropdown } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -28,7 +27,35 @@ import 'styled-components/macro'
 import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
-import { DepositWithdraw } from './perps/DepositWithdraw'
+import { DepositWithdraw } from './perps/DepositWithdrawNew'
+import {
+  BlackGradientBg,
+  ContentLabel,
+  GradientButtonWithBorder,
+  InfoLabel,
+  PerpsLayout,
+  TitleLabel
+} from './perps/components/PerpsGenericComp'
+import {
+  Button,
+  Checkbox,
+  cn,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  IconTooltip,
+  Input,
+  InputElementRight,
+  InputGroup,
+  Slider,
+  Tabs,
+  TabsList,
+  TabsTrigger
+} from 'gfx-component-lib'
+import useBoolean from '@/hooks/useBoolean'
+import { CircularArrow } from '@/components/common/Arrow'
+import { Connect } from '../../layouts/Connect'
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -511,33 +538,29 @@ export const PlaceOrder: FC = () => {
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
   const [takeProfitArrow, setTakeProfitArrow] = useState(false)
   const [takeProfitAmount, setTakeProfitAmount] = useState<number>(null)
-  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(0)
+  const [takeProfitIndex, setTakeProfitIndex] = useState<number>(null)
   const [takeProfitInput, setTakeProfitInput] = useState<number>(null)
   const [profits, setProfits] = useState<any>(['', '', '', ''])
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const [tradeType, setTradeType] = useState<string>('deposit')
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useBoolean(false)
 
   const TAKE_PROFIT_ARRAY = [
     {
-      display: 'None',
-      value: 0,
-      key: 0
+      display: '10%',
+      value: 0.1,
+      key: 1
     },
     {
       display: '25%',
       value: 0.25,
-      key: 1
-    },
-    {
-      display: '50%',
-      value: 0.5,
       key: 2
     },
     order.side === 'buy'
       ? {
-          display: '100%',
-          value: 1,
+          display: '50%',
+          value: 0.5,
           key: 3
         }
       : {
@@ -556,11 +579,8 @@ export const PlaceOrder: FC = () => {
     TAKE_PROFIT_ARRAY.map((item, index) => {
       if (Number.isNaN(+order.price)) obj.push('')
       else {
-        if (index === 0) obj.push('')
-        else {
-          const profit = getProfitAmount(order.side, order.price, item.value)
-          obj.push(profit.toFixed(2))
-        }
+        const profit = getProfitAmount(order.side, order.price, item.value)
+        obj.push(profit.toFixed(2))
       }
     })
     setProfits(obj)
@@ -613,6 +633,7 @@ export const PlaceOrder: FC = () => {
     else if (buttonState === ButtonState.isGeoBlocked) return 'Georestricted'
     else if (buttonState === ButtonState.CreateAccount) return 'Deposit!'
     else if (buttonState === ButtonState.OrderTooSmall) return 'Minimum size 0.01'
+    else if (buttonState === ButtonState.NullAmount) return 'Enter Amount'
 
     if (order.side === 'buy') return 'LONG ' + symbol
     else return 'SHORT ' + symbol
@@ -637,6 +658,15 @@ export const PlaceOrder: FC = () => {
       return true
     } else {
       return false
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.keyCode === 8) {
+      const adjustedSize = Math.floor(maxQtyNum * DECIMAL_ADJUSTMENT_FACTOR) / DECIMAL_ADJUSTMENT_FACTOR
+      if (order.size === adjustedSize) {
+        setOrder((prev) => ({ ...prev, size: '' }))
+      }
     }
   }
 
@@ -771,42 +801,81 @@ export const PlaceOrder: FC = () => {
     if (order.side === 'buy' && takeProfitInput < +order.price) return true
     if (order.side === 'sell' && takeProfitInput > +order.price) return true
     if (!takeProfitInput) return true
+    return false
   }
 
   const calcTakeProfit = (value, index) => {
     setTakeProfitIndex(index)
-    setTakeProfitArrow(!takeProfitArrow)
     setTakeProfitInput(null)
   }
 
   const getTakeProfitItems = () => {
     let items = []
+
     items = TAKE_PROFIT_ARRAY.map((item, index) => {
       const html = (
-        <DROPDOWN_ITEMS
-          tw="mb-1 flex flex-row p-[5px] w-[90%] mx-auto rounded-[3px]"
-          onClick={() => calcTakeProfit(item.value, index)}
-          className={takeProfitIndex === index ? 'selected' : ''}
-        >
-          <span
-            tw="mr-2 font-semibold text-regular dark:text-grey-2 text-grey-1"
-            className={takeProfitIndex === index ? 'span-selected' : ''}
-          >
-            {item.display}
-          </span>
-          <span
-            tw="font-semibold text-regular mr-auto dark:text-grey-2 text-grey-1"
-            className={takeProfitIndex === index ? 'span-selected' : ''}
-          >
-            {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
-          </span>
-        </DROPDOWN_ITEMS>
+        // <DROPDOWN_ITEMS
+        //   tw="mb-1 flex flex-row p-[5px] w-[90%] mx-auto rounded-[3px]"
+        //   onClick={() => calcTakeProfit(item.value, index)}
+        //   className={takeProfitIndex === index ? 'selected' : ''}
+        // >
+        //   <span
+        //     tw="mr-2 font-semibold text-regular dark:text-grey-2 text-grey-1"
+        //     className={takeProfitIndex === index ? 'span-selected' : ''}
+        //   >
+        //     {item.display}
+        //   </span>
+        //   <span
+        //     tw="font-semibold text-regular mr-auto dark:text-grey-2 text-grey-1"
+        //     className={takeProfitIndex === index ? 'span-selected' : ''}
+        //   >
+        //     {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
+        //   </span>
+        // </DROPDOWN_ITEMS>
+        <DropdownMenuItem variant={'default'} onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}>
+          <ContentLabel>
+            <div className="flex w-[200px]" onClick={() => calcTakeProfit(item.value, index)}>
+              <p className={cn('font-bold cursor-pointer mr-1')}>{item.display}</p>
+              <p className={cn('font-bold cursor-pointer')}>
+                {index === 0 ? '' : profits[index] ? '($' + profits[index] + ')' : '(-)'}
+              </p>
+            </div>
+          </ContentLabel>
+        </DropdownMenuItem>
       )
-      return {
-        label: html,
-        key: index
-      }
+
+      return html
     })
+
+    const saveHtml = (
+      <DropdownMenuItem variant={'blank'} onSelect={(e) => e.preventDefault()}>
+        <InputGroup
+          rightItem={
+            <InputElementRight>
+              <Button
+                variant={'ghost'}
+                disabled={checkDisabled()}
+                className={cn(`cursor-pointer ${checkDisabled() ? '' : '!text-white'}`)}
+                onClick={!checkDisabled() && handleSave}
+              >
+                Save
+              </Button>
+            </InputElementRight>
+          }
+        >
+          <Input
+            //  className={checkDisabled() ? 'save-disable' : 'save-enable ' + `${mode}`}
+            // onClick={!checkDisabled() && handleSave}
+            onChange={handleDropdownInput}
+            type="number"
+            className={'dark:border-border-darkmode-secondary'}
+            placeholder={'Enter custom price'}
+          />
+        </InputGroup>
+      </DropdownMenuItem>
+    )
+
+    return [...items, saveHtml]
     const inputHTML = (
       <DROPDOWN_INPUT>
         <input
@@ -838,7 +907,6 @@ export const PlaceOrder: FC = () => {
   }
 
   const getTakeProfitParam = () => {
-    if (takeProfitIndex === 0) return null
     if (takeProfitIndex !== null) {
       const numPrice = +order.price
       if (Number.isNaN(numPrice)) return null
@@ -887,245 +955,541 @@ export const PlaceOrder: FC = () => {
     }
   }, [sliderValue, maxQtyNum])
 
+  // return (
+  //   <WRAPPER>
+  //     {depositWithdrawModal && (
+  //       <SETTING_MODAL_DEPOSIT
+  //         visible={true}
+  //         centered={true}
+  //         footer={null}
+  //         title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
+  //         closeIcon={
+  //           <img
+  //             src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //             height="20px"
+  //             width="20px"
+  //             onClick={() => setDepositWithdrawModal(false)}
+  //           />
+  //         }
+  //       >
+  //         <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
+  //       </SETTING_MODAL_DEPOSIT>
+  //     )}
+  //     <HEADER>
+  //       {confirmationModal && (
+  //         <>
+  //           <SETTING_MODAL
+  //             visible={true}
+  //             centered={true}
+  //             footer={null}
+  //             title={
+  //               <>
+  //                 <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">
+  //                   {order.display === 'limit' ? 'Limit ' : 'Market '}
+  //                   {order.side === 'buy' ? 'Long' : 'Short'}
+  //                 </span>
+  //                 <TITLE>SOL-PERP</TITLE>
+  //               </>
+  //             }
+  //             closeIcon={
+  //               <img
+  //                 src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
+  //                 height="20px"
+  //                 width="20px"
+  //                 onClick={() => setConfirmationModal(false)}
+  //               />
+  //             }
+  //           >
+  //             <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
+  //           </SETTING_MODAL>
+  //         </>
+  //       )}
+  //       <div className="pairInfo">
+  //         <div className="pairName">
+  //           <img src={`/img/crypto/${symbol}.svg`} alt="" />
+  //           {displayPair}
+  //         </div>
+  //         {<div className="pairLeverage">{sliderValue}</div>}
+  //       </div>
+  //       <div className="orderSide">
+  //         <div
+  //           className={order.side === 'buy' ? 'selected gradientBorder' : 'gradientBorder'}
+  //           onClick={() => handleOrderSide('buy')}
+  //         >
+  //           <div className="holder">
+  //             <div
+  //               className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}
+  //               css={[tw`text-regular font-bold`]}
+  //             >
+  //               {'Buy'}
+  //             </div>
+  //           </div>
+  //         </div>
+  //         <div
+  //           className={order.side === 'sell' ? 'selected gradientBorder' : 'gradientBorder'}
+  //           onClick={() => handleOrderSide('sell')}
+  //         >
+  //           <div className="holder">
+  //             <div
+  //               className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}
+  //               css={[tw`text-regular font-bold`]}
+  //             >
+  //               {'Sell'}
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </HEADER>
+  //     <BODY>
+  //       <INPUT_GRID_WRAPPER>
+  //         <div className="inputRow">
+  //           <INPUT_WRAPPER>
+  //             <div className="label">Order Type</div>
+  //             <div className={`dropdownContainer ${mode}`} onClick={handleDropdownClick}>
+  //               <div css={[tw`text-regular font-bold`]}>{displayedOrder?.text}</div>
+  //               <ArrowDropdown
+  //                 arrowRotation={arrowRotation}
+  //                 offset={[-115, 10]}
+  //                 onVisibleChange={() => {
+  //                   setDropdownVisible(true)
+  //                 }}
+  //                 placement="bottomLeft"
+  //                 overlay={
+  //                   <Overlay
+  //                     setArrowRotation={setArrowRotation}
+  //                     setDropdownVisible={setDropdownVisible}
+  //                     side={order.side}
+  //                   />
+  //                 }
+  //                 visible={dropdownVisible}
+  //                 measurements="13px !important"
+  //                 overlayClassName={mode}
+  //               />
+  //             </div>
+  //           </INPUT_WRAPPER>
+  //           <INPUT_WRAPPER>
+  //             <div className="label">Price</div>
+  //             <div className={focused === 'price' ? 'focus-border' : ''}>
+  //               <Input
+  //                 suffix={<span className="suffixText">{bid}</span>}
+  //                 onFocus={() => setFocused('price')}
+  //                 maxLength={15}
+  //                 onBlur={() => setFocused(undefined)}
+  //                 value={order.price ? order.price : ''}
+  //                 onChange={(e) => numberCheck(e.target.value, 'price')}
+  //                 placeholder={'0.00'}
+  //                 disabled={order.display === 'market'}
+  //                 style={order.display === 'market' ? { border: '1px solid #f06565' } : null}
+  //               />
+  //             </div>
+  //           </INPUT_WRAPPER>
+  //         </div>
+  //         <div className="inputRow">
+  //           <INPUT_WRAPPER>
+  //             <div className="label">Size</div>
+  //             <div className={focused === 'size' ? 'focus-border' : ''}>
+  //               <Input
+  //                 suffix={
+  //                   <>
+  //                     <img src={`/img/crypto/${symbol}.svg`} alt="" />
+  //                     <span className="suffixText">{symbol}</span>
+  //                   </>
+  //                 }
+  //                 placeholder={'0.00'}
+  //                 onFocus={() => setFocused('size')}
+  //                 maxLength={15}
+  //                 onBlur={() => setFocused(undefined)}
+  //                 value={order.size ?? ''}
+  //                 onChange={(e) => numberCheck(e.target.value, 'size')}
+  //               />
+  //             </div>
+  //           </INPUT_WRAPPER>
+  //           <INPUT_WRAPPER>
+  //             <div className="label">Amount</div>
+  //             <div className={focused === 'total' ? 'focus-border' : ''}>
+  //               <Input
+  //                 suffix={<span className="suffixText">{bid}</span>}
+  //                 onFocus={() => setFocused('total')}
+  //                 maxLength={15}
+  //                 onBlur={() => setFocused(undefined)}
+  //                 value={order.total ? order.total : ''}
+  //                 onChange={(e) => numberCheck(e.target.value, 'total')}
+  //                 placeholder={'0.00'}
+  //               />
+  //             </div>
+  //           </INPUT_WRAPPER>
+  //         </div>
+  //       </INPUT_GRID_WRAPPER>
+  //       {
+  //         //isDevnet ? (
+  //         //  <TOTAL_SELECTOR>
+  //         //    {TOTAL_VALUES.map((item) => (
+  //         //      <div
+  //         //        key={item.key}
+  //         //        className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
+  //         //        onClick={() => handleClick(item.value)}
+  //         //      >
+  //         //        {item.display}
+  //         //      </div>
+  //         //    ))}
+  //         //  </TOTAL_SELECTOR>
+  //         //) :
+  //         <LEVERAGE_WRAPPER>
+  //           <div className={height > 790 ? 'leverageText' : 'smallScreenLeverageText'}>Leverage</div>
+  //           <div className={height > 790 ? 'leverageBar' : 'smallScreenLeverageBar'}>
+  //             <Picker>
+  //               <Slider
+  //                 max={10}
+  //                 onChange={(e) => handleSliderChange(e)}
+  //                 step={0.0001}
+  //                 value={sliderValue}
+  //                 trackStyle={{
+  //                   height: '6px'
+  //                 }}
+  //                 handleStyle={{
+  //                   height: '20px',
+  //                   width: '20px',
+  //                   background: 'white',
+  //                   border: '2px solid #FFFFFF',
+  //                   position: 'relative',
+  //                   bottom: '2px'
+  //                 }}
+  //                 marks={getMarks()}
+  //               />
+  //             </Picker>
+  //           </div>
+  //         </LEVERAGE_WRAPPER>
+  //       }
+  //       {
+  //         //isDevnet ? (
+  //         //  <>
+  //         //    <ORDER_CATEGORY>
+  //         //      {ORDER_CATEGORY_TYPE.map((item) => (
+  //         //        <div key={item.id} className="orderCategoryCheckboxWrapper">
+  //         //          <Checkbox
+  //         //            checked={order.type === item.id}
+  //         //            onChange={(e) =>
+  //         //              e.target.checked
+  //         //                ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+  //         //                : setOrder((prev) => ({ ...prev, type: 'limit' }))
+  //         //            }
+  //         //          />
+  //         //          <div className="orderCategoryName">{item.display}</div>
+  //         //        </div>
+  //         //      ))}
+  //         //    </ORDER_CATEGORY>
+  //         //    <PLACE_ORDER_BUTTON
+  //         //      $action={buttonState === ButtonState.CanPlaceOrder}
+  //         //      //onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
+  //         //      $orderSide={order.side}
+  //         //      $isDevnet={isDevnet}
+  //         //    >
+  //         //      {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+  //         //    </PLACE_ORDER_BUTTON>
+  //         //  </>
+  //         //) :
+  //         <>
+  //           <div tw="flex flex-row">
+  //             <INPUT_WRAPPER $halfWidth={true}>
+  //               <div className="label">Take Profit</div>
+  //               <div className={`dropdownContainer ${mode} take-profit`}>
+  //                 <span className="green" css={[tw`text-regular font-bold`]}>
+  //                   {takeProfitIndex === 0
+  //                     ? 'None'
+  //                     : takeProfitIndex !== null
+  //                     ? profits[takeProfitIndex]
+  //                       ? '$' + profits[takeProfitIndex]
+  //                       : '(-)'
+  //                     : '$' + takeProfitAmount}
+  //                 </span>
+  //                 <ArrowDropdown
+  //                   arrowRotation={takeProfitArrow}
+  //                   overlayClassName={`takep-stopl-container ${mode}`}
+  //                   offset={[11, 9]}
+  //                   onVisibleChange={null}
+  //                   placement="bottomLeft"
+  //                   menu={{ items: getTakeProfitItems(), onClick: handleMenuClick }}
+  //                   overlay={<></>}
+  //                   measurements="11px !important"
+  //                   onOpenChange={handleOpenChange}
+  //                   open={takeProfitVisible}
+  //                 />
+  //               </div>
+  //             </INPUT_WRAPPER>
+  //             <INPUT_WRAPPER $halfWidth={true}>
+  //               <div className="label disable">Stop Loss</div>
+  //               <div className={`dropdownContainer ${mode} stop-loss`} css={[tw`text-regular font-bold`]}>
+  //                 <span className="red" css={[tw`text-regular font-bold`]}>
+  //                   None
+  //                 </span>
+  //                 <ArrowDropdown
+  //                   arrowRotation={false}
+  //                   overlayClassName="takep-stopl-container"
+  //                   offset={[11, 9]}
+  //                   onVisibleChange={null}
+  //                   placement="bottomLeft"
+  //                   menu={{ getTakeProfitItems, onClick: handleMenuClick }}
+  //                   overlay={<></>}
+  //                   measurements="11px !important"
+  //                   onOpenChange={null}
+  //                   open={false}
+  //                 />
+  //               </div>
+  //             </INPUT_WRAPPER>
+  //           </div>
+  //           <div tw="flex flex-row mt-[-6px]">
+  //             <ORDER_CATEGORY>
+  //               {ORDER_CATEGORY_TYPE.map((item) => (
+  //                 <div key={item.id} className="orderCategoryCheckboxWrapper">
+  //                   <Checkbox
+  //                     checked={order.type === item.id}
+  //                     onChange={(e) =>
+  //                       e.target.checked
+  //                         ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+  //                         : setOrder((prev) => ({ ...prev, type: 'limit' }))
+  //                     }
+  //                   />
+  //                   <div className="orderCategoryName">{item.display}</div>
+  //                 </div>
+  //               ))}
+  //             </ORDER_CATEGORY>
+  //             <PLACE_ORDER_BUTTON
+  //               $action={buttonState === ButtonState.CanPlaceOrder}
+  //               onClick={() =>
+  //                 buttonState === ButtonState.CreateAccount
+  //                   ? setDepositWithdrawModal(true)
+  //                   : buttonState !== ButtonState.CanPlaceOrder
+  //                   ? null
+  //                   : handlePlaceOrder()
+  //               }
+  //               $orderSide={order.side}
+  //               $isDevnet={isDevnet}
+  //               $isDeposit={buttonState === ButtonState.CreateAccount}
+  //             >
+  //               {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
+  //             </PLACE_ORDER_BUTTON>
+  //           </div>
+  //         </>
+  //       }
+  //       {/*{
+  //       isDevnet && (
+  //         <FEES>
+  //           <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
+  //             Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
+  //           </Tooltip>
+  //           <span>SOL network fee: ~ 0.03</span>
+  //         </FEES>
+  //       )}*/}
+  //     </BODY>
+  //   </WRAPPER>
+  // )
   return (
-    <WRAPPER>
-      {depositWithdrawModal && (
-        <SETTING_MODAL_DEPOSIT
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL_DEPOSIT>
-      )}
-      <HEADER>
+    <div className={cn('h-full')}>
+      <PerpsLayout>
+        <LongShortTitleLayout handleOrderSide={handleOrderSide} />
+        <LeverageRatioTile sliderValue={sliderValue} />
         {confirmationModal && (
-          <>
-            <SETTING_MODAL
-              visible={true}
-              centered={true}
-              footer={null}
-              title={
-                <>
-                  <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold">
-                    {order.display === 'limit' ? 'Limit ' : 'Market '}
-                    {order.side === 'buy' ? 'Long' : 'Short'}
-                  </span>
-                  <TITLE>SOL-PERP</TITLE>
-                </>
-              }
-              closeIcon={
-                <img
-                  src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-                  height="20px"
-                  width="20px"
-                  onClick={() => setConfirmationModal(false)}
-                />
-              }
-            >
-              <TradeConfirmation setVisibility={setConfirmationModal} takeProfit={getTakeProfitParam()} />
-            </SETTING_MODAL>
-          </>
+          <TradeConfirmation
+            open={confirmationModal}
+            setVisibility={setConfirmationModal}
+            takeProfit={getTakeProfitParam()}
+          />
         )}
-        <div className="pairInfo">
-          <div className="pairName">
-            <img src={`/img/crypto/${symbol}.svg`} alt="" />
-            {displayPair}
-          </div>
-          {<div className="pairLeverage">{sliderValue}</div>}
-        </div>
-        <div className="orderSide">
-          <div
-            className={order.side === 'buy' ? 'selected gradientBorder' : 'gradientBorder'}
-            onClick={() => handleOrderSide('buy')}
-          >
-            <div className="holder">
-              <div
-                className={order.side === 'buy' ? 'active overlayBorder buy' : 'inactive overlayBorder buy'}
-                css={[tw`text-regular font-bold`]}
-              >
-                {'Buy'}
+
+        <div className="px-2.5 flex flex-col sm:pb-2.5 py-1 sm:h-auto h-[calc(100% - 80px)]">
+          <div className={cn('flex mb-2.5')}>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel> Order type</InfoLabel>
               </div>
+              {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
+              <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
+                <DropdownMenuTrigger asChild={true}>
+                  <Button
+                    variant="outline"
+                    onClick={setIsOpen.on}
+                    colorScheme={mode === 'lite' ? 'blue' : 'white'}
+                    className={cn('max-content mr-2 h-[30px] sm:h-[35px]')}
+                  >
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex">
+                        {/* <IconTooltip tooltipType={'outline'}>
+                          <p>Limit</p>
+                        </IconTooltip> */}
+                        <h4 className={cn('ml-1')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
+                      </div>
+
+                      <img
+                        style={{
+                          height: '18px',
+                          width: '18px',
+                          transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                          transition: 'transform 0.2s ease-in-out'
+                        }}
+                        src={`/img/mainnav/connect-chevron-${mode}.svg`}
+                        alt={'connect-chevron'}
+                      />
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent asChild>
+                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>
+                    <DropdownMenuItem
+                      variant={'default'}
+                      onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
+                    >
+                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Limit</p>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}>
+                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Market</p>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </div>
-          <div
-            className={order.side === 'sell' ? 'selected gradientBorder' : 'gradientBorder'}
-            onClick={() => handleOrderSide('sell')}
-          >
-            <div className="holder">
-              <div
-                className={order.side === 'sell' ? 'active overlayBorder sell' : 'inactive overlayBorder sell'}
-                css={[tw`text-regular font-bold`]}
-              >
-                {'Sell'}
+            <div className={cn('flex w-1/2 flex-col')}>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Price</InfoLabel>{' '}
               </div>
-            </div>
-          </div>
-        </div>
-      </HEADER>
-      <BODY>
-        <INPUT_GRID_WRAPPER>
-          <div className="inputRow">
-            <INPUT_WRAPPER>
-              <div className="label">Order Type</div>
-              <div className={`dropdownContainer ${mode}`} onClick={handleDropdownClick}>
-                <div css={[tw`text-regular font-bold`]}>{displayedOrder?.text}</div>
-                <ArrowDropdown
-                  arrowRotation={arrowRotation}
-                  offset={[-115, 10]}
-                  onVisibleChange={() => {
-                    setDropdownVisible(true)
-                  }}
-                  placement="bottomLeft"
-                  overlay={
-                    <Overlay
-                      setArrowRotation={setArrowRotation}
-                      setDropdownVisible={setDropdownVisible}
-                      side={order.side}
-                    />
-                  }
-                  visible={dropdownVisible}
-                  measurements="13px !important"
-                  overlayClassName={mode}
-                />
-              </div>
-            </INPUT_WRAPPER>
-            <INPUT_WRAPPER>
-              <div className="label">Price</div>
-              <div className={focused === 'price' ? 'focus-border' : ''}>
+              <div className={cn('w-full flex')}>
                 <Input
-                  suffix={<span className="suffixText">{bid}</span>}
-                  onFocus={() => setFocused('price')}
-                  maxLength={15}
-                  onBlur={() => setFocused(undefined)}
-                  value={order.price ? order.price : ''}
+                  placeholder={'0.00 USD'}
+                  value={order.price ?? ''}
                   onChange={(e) => numberCheck(e.target.value, 'price')}
-                  placeholder={'0.00'}
                   disabled={order.display === 'market'}
-                  style={order.display === 'market' ? { border: '1px solid #f06565' } : null}
+                  className={cn(`mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`, order.price && `pr-12`)}
                 />
+                <div className="relative">
+                  {order.price && (
+                    <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
+                      <InfoLabel>
+                        <p>USD</p>{' '}
+                      </InfoLabel>
+                    </p>
+                  )}
+                </div>
               </div>
-            </INPUT_WRAPPER>
-          </div>
-          <div className="inputRow">
-            <INPUT_WRAPPER>
-              <div className="label">Size</div>
-              <div className={focused === 'size' ? 'focus-border' : ''}>
-                <Input
-                  suffix={
-                    <>
-                      <img src={`/img/crypto/${symbol}.svg`} alt="" />
-                      <span className="suffixText">{symbol}</span>
-                    </>
-                  }
-                  placeholder={'0.00'}
-                  onFocus={() => setFocused('size')}
-                  maxLength={15}
-                  onBlur={() => setFocused(undefined)}
-                  value={order.size ?? ''}
-                  onChange={(e) => numberCheck(e.target.value, 'size')}
-                />
-              </div>
-            </INPUT_WRAPPER>
-            <INPUT_WRAPPER>
-              <div className="label">Amount</div>
-              <div className={focused === 'total' ? 'focus-border' : ''}>
-                <Input
-                  suffix={<span className="suffixText">{bid}</span>}
-                  onFocus={() => setFocused('total')}
-                  maxLength={15}
-                  onBlur={() => setFocused(undefined)}
-                  value={order.total ? order.total : ''}
-                  onChange={(e) => numberCheck(e.target.value, 'total')}
-                  placeholder={'0.00'}
-                />
-              </div>
-            </INPUT_WRAPPER>
-          </div>
-        </INPUT_GRID_WRAPPER>
-        {
-          //isDevnet ? (
-          //  <TOTAL_SELECTOR>
-          //    {TOTAL_VALUES.map((item) => (
-          //      <div
-          //        key={item.key}
-          //        className={'valueSelector ' + (item.value === selectedTotal ? 'selected' : '')}
-          //        onClick={() => handleClick(item.value)}
-          //      >
-          //        {item.display}
-          //      </div>
-          //    ))}
-          //  </TOTAL_SELECTOR>
-          //) :
-          <LEVERAGE_WRAPPER>
-            <div className={height > 790 ? 'leverageText' : 'smallScreenLeverageText'}>Leverage</div>
-            <div className={height > 790 ? 'leverageBar' : 'smallScreenLeverageBar'}>
-              <Picker>
-                <Slider
-                  max={10}
-                  onChange={(e) => handleSliderChange(e)}
-                  step={0.0001}
-                  value={sliderValue}
-                  trackStyle={{
-                    height: '6px'
-                  }}
-                  handleStyle={{
-                    height: '20px',
-                    width: '20px',
-                    background: 'white',
-                    border: '2px solid #FFFFFF',
-                    position: 'relative',
-                    bottom: '2px'
-                  }}
-                  marks={getMarks()}
-                />
-              </Picker>
             </div>
-          </LEVERAGE_WRAPPER>
-        }
-        {
-          //isDevnet ? (
-          //  <>
-          //    <ORDER_CATEGORY>
-          //      {ORDER_CATEGORY_TYPE.map((item) => (
-          //        <div key={item.id} className="orderCategoryCheckboxWrapper">
-          //          <Checkbox
-          //            checked={order.type === item.id}
-          //            onChange={(e) =>
-          //              e.target.checked
-          //                ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-          //                : setOrder((prev) => ({ ...prev, type: 'limit' }))
-          //            }
-          //          />
-          //          <div className="orderCategoryName">{item.display}</div>
-          //        </div>
-          //      ))}
-          //    </ORDER_CATEGORY>
-          //    <PLACE_ORDER_BUTTON
-          //      $action={buttonState === ButtonState.CanPlaceOrder}
-          //      //onClick={() => (buttonState !== ButtonState.CanPlaceOrder ? null : placeOrder())}
-          //      $orderSide={order.side}
-          //      $isDevnet={isDevnet}
-          //    >
-          //      {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-          //    </PLACE_ORDER_BUTTON>
-          //  </>
-          //) :
-          <>
-            <div tw="flex flex-row">
-              <INPUT_WRAPPER $halfWidth={true}>
-                <div className="label">Take Profit</div>
-                <div className={`dropdownContainer ${mode} take-profit`}>
-                  <span className="green" css={[tw`text-regular font-bold`]}>
+          </div>
+          <div className={cn('flex mb-2.5')}>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Size</InfoLabel>{' '}
+              </div>
+              <div className={cn('w-full flex')}>
+                <Input
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  placeholder={'0.00 SOL'}
+                  onFocus={() => setFocused('size')}
+                  value={Number(order.size) !== 0 ? order.size : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'size')}
+                  className={cn(
+                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    Number(order.size) !== 0 && `pr-12`
+                  )}
+                />
+                <div className="relative">
+                  {Number(order.size) !== 0 && (
+                    <InfoLabel>
+                      {/* {order.size } */}
+                      <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
+                    </InfoLabel>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className={cn('flex w-1/2 flex-col')}>
+              <div className="pb-1">
+                {' '}
+                <InfoLabel>Amount</InfoLabel>{' '}
+              </div>
+              <div className={cn('w-full flex')}>
+                <Input
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  placeholder={'0.00 USD'}
+                  onFocus={() => setFocused('total')}
+                  value={order.total !== 0 ? order.total : ''}
+                  onChange={(e) => numberCheck(e.target.value, 'total')}
+                  className={cn(
+                    `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    order.total && `pr-12`
+                  )}
+                />
+                <div className="relative">
+                  {Number(order.total) !== 0 && (
+                    <InfoLabel>
+                      <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USD</p>
+                    </InfoLabel>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={cn('flex mb-2.5 flex-col')}>
+            <div className="pb-1">
+              {' '}
+              <InfoLabel>Take Profit {takeProfitVisible} </InfoLabel>{' '}
+            </div>
+            <div className={cn('w-full flex')}>
+              <div className="w-1/2 flex">
+                <Input
+                  placeholder={'0.00 USD'}
+                  value={
+                    takeProfitIndex === null
+                      ? takeProfitAmount
+                        ? takeProfitAmount
+                        : ''
+                      : profits[takeProfitIndex]
+                      ? '$' + profits[takeProfitIndex] + ' USD'
+                      : '(-)'
+                  }
+                  onChange={(e) => {
+                    setTakeProfitIndex(null)
+                    setTakeProfitAmount(Number(e.target.value))
+                  }}
+                  className={cn(
+                    `mr-2 p-1 h-[30px] sm:h-8.75 min-w-[100px] text-right`,
+                    (takeProfitIndex || takeProfitAmount) && `pr-1`
+                  )}
+                />
+                {/* {Number(takeProfitIndex) !== 0 || takeProfitAmount !== 0 && (
+                  <InfoLabel>
+                    <p className={cn('mt-1.5 right-[12px] absolute')}>USD</p>
+                  </InfoLabel>
+                )} */}
+              </div>
+              <div className="w-1/2">
+                <Tabs>
+                  <TabsList className="!p-0">
+                    {TAKE_PROFIT_ARRAY.map((elem, index) => (
+                      <TabsTrigger
+                        className={cn('w-[33%] h-[35px]')}
+                        size="xl"
+                        key={index}
+                        value={index.toString()}
+                        variant="primary"
+                        onClick={(e) => calcTakeProfit(elem.value, index)}
+                      >
+                        <TitleLabel whiteText={takeProfitIndex === index}>{elem.display}</TitleLabel>
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </Tabs>
+              </div>
+            </div>
+            {/* <DropdownMenu open={takeProfitVisible} onOpenChange={setTakeProfitVisible}>
+              <DropdownMenuTrigger asChild={true}>
+                <Button
+                  colorScheme={mode === 'lite' ? 'blue' : 'white'}
+                  variant="outline"
+                  onClick={() => setTakeProfitVisible(true)}
+                  className={cn('max-content mr-2 h-[30px]')}
+                >
+                  <div className="flex w-full justify-between">
                     {takeProfitIndex === 0
                       ? 'None'
                       : takeProfitIndex !== null
@@ -1133,90 +1497,158 @@ export const PlaceOrder: FC = () => {
                         ? '$' + profits[takeProfitIndex]
                         : '(-)'
                       : '$' + takeProfitAmount}
-                  </span>
-                  <ArrowDropdown
-                    arrowRotation={takeProfitArrow}
-                    overlayClassName={`takep-stopl-container ${mode}`}
-                    offset={[11, 9]}
-                    onVisibleChange={null}
-                    placement="bottomLeft"
-                    menu={{ items: getTakeProfitItems(), onClick: handleMenuClick }}
-                    overlay={<></>}
-                    measurements="11px !important"
-                    onOpenChange={handleOpenChange}
-                    open={takeProfitVisible}
-                  />
-                </div>
-              </INPUT_WRAPPER>
-              <INPUT_WRAPPER $halfWidth={true}>
-                <div className="label disable">Stop Loss</div>
-                <div className={`dropdownContainer ${mode} stop-loss`} css={[tw`text-regular font-bold`]}>
-                  <span className="red" css={[tw`text-regular font-bold`]}>
-                    None
-                  </span>
-                  <ArrowDropdown
-                    arrowRotation={false}
-                    overlayClassName="takep-stopl-container"
-                    offset={[11, 9]}
-                    onVisibleChange={null}
-                    placement="bottomLeft"
-                    menu={{ getTakeProfitItems, onClick: handleMenuClick }}
-                    overlay={<></>}
-                    measurements="11px !important"
-                    onOpenChange={null}
-                    open={false}
-                  />
-                </div>
-              </INPUT_WRAPPER>
-            </div>
-            <div tw="flex flex-row mt-[-6px]">
-              <ORDER_CATEGORY>
-                {ORDER_CATEGORY_TYPE.map((item) => (
-                  <div key={item.id} className="orderCategoryCheckboxWrapper">
-                    <Checkbox
-                      checked={order.type === item.id}
-                      onChange={(e) =>
-                        e.target.checked
-                          ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
-                          : setOrder((prev) => ({ ...prev, type: 'limit' }))
-                      }
+                    <img
+                      style={{
+                        transform: `rotate(${takeProfitVisible ? '0deg' : '180deg'})`,
+                        transition: 'transform 0.2s ease-in-out'
+                      }}
+                      src={`/img/mainnav/connect-chevron-${mode}.svg`}
+                      alt={'connect-chevron'}
                     />
-                    <div className="orderCategoryName">{item.display}</div>
                   </div>
-                ))}
-              </ORDER_CATEGORY>
-              <PLACE_ORDER_BUTTON
-                $action={buttonState === ButtonState.CanPlaceOrder}
-                onClick={() =>
-                  buttonState === ButtonState.CreateAccount
-                    ? setDepositWithdrawModal(true)
-                    : buttonState !== ButtonState.CanPlaceOrder
-                    ? null
-                    : handlePlaceOrder()
-                }
-                $orderSide={order.side}
-                $isDevnet={isDevnet}
-                $isDeposit={buttonState === ButtonState.CreateAccount}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent asChild>
+                <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>{getTakeProfitItems()}</div>
+              </DropdownMenuContent>
+            </DropdownMenu> */}
+          </div>
+          <div className={cn('flex mb-2.5 flex-col')}>
+            <InfoLabel>Leverage</InfoLabel>
+            <div className={cn('mt-2.5')}>
+              <Slider
+                max={10}
+                thumbSize="md"
+                value={[sliderValue]}
+                onValueChange={(e) => handleSliderChange(e)}
+                step={0.1}
+                min={0}
               >
-                {loading ? <RotatingLoader text="Placing Order" textSize={12} iconSize={18} /> : buttonText}
-              </PLACE_ORDER_BUTTON>
+                {sliderValue}x
+              </Slider>
+              <div className={cn('h-5 w-full flex items-center justify-center mt-3')}>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 2X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 4X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 8X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full justify-center')}>
+                  <TitleLabel> 10X</TitleLabel>
+                </div>
+              </div>
             </div>
-          </>
-        }
-        {/*{
-        isDevnet && (
-          <FEES>
-            <Tooltip color={mode === 'dark' ? '#EEEEEE' : '#1C1C1C'}>
-              Solana network fee, is the fee you pay in order to make transaction over the solana blockchain.
-            </Tooltip>
-            <span>SOL network fee: ~ 0.03</span>
-          </FEES>
-        )}*/}
-      </BODY>
-    </WRAPPER>
+          </div>
+          <div className={cn('flex items-center mt-auto')}>
+            {ORDER_CATEGORY_TYPE.map((item) => (
+              <div key={item.id} className={cn('flex mr-2 items-center')}>
+                <Checkbox
+                  checked={order.type === item.id}
+                  onCheckedChange={(checked: boolean) => {
+                    checked
+                      ? setOrder((prev) => ({ ...prev, type: item.id as OrderType }))
+                      : setOrder((prev) => ({ ...prev, type: 'limit' }))
+                  }}
+                />
+                <div className="ml-1">
+                  <InfoLabel>{item.display}</InfoLabel>
+                </div>
+              </div>
+            ))}
+            {!checkMobile() ? (
+              <div className={cn('ml-auto w-full')}>
+                {publicKey ? (
+                  <Button
+                    className={cn('min-w-[170px] !w-full h-[30px]')}
+                    variant="default"
+                    colorScheme="blue"
+                    size="lg"
+                    onClick={() => handlePlaceOrder()}
+                    disabled={buttonState !== ButtonState.CanPlaceOrder}
+                  >
+                    <h4>{buttonText}</h4>
+                  </Button>
+                ) : (
+                  <Connect customButtonStyle="!w-[100%]" containerStyle="!w-[100%]" />
+                )}
+              </div>
+            ) : publicKey ? (
+              <ButtonForMobile
+                buttonText={buttonText}
+                handlePlaceOrder={handlePlaceOrder}
+                buttonState={buttonState}
+              />
+            ) : null}
+          </div>
+        </div>
+      </PerpsLayout>
+    </div>
   )
 }
 
+const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
+  buttonText,
+  handlePlaceOrder,
+  buttonState
+}) => (
+  <BlackGradientBg>
+    <div className={cn('w-full absolute flex items-center justify-center')}>
+      <Button
+        className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-100')}
+        variant="default"
+        colorScheme="blue"
+        size="lg"
+        onClick={() => handlePlaceOrder()}
+        disabled={buttonState !== ButtonState.CanPlaceOrder}
+      >
+        <h4>{buttonText}</h4>
+      </Button>
+    </div>
+  </BlackGradientBg>
+)
+
+const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
+  <div className={cn('px-2.5 py-1')}>
+    <div className={cn('h-8.75 flex items-center justify-between')}>
+      <div className={cn('flex items-center')}>
+        <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} />
+        <InfoLabel> SOL-PERP </InfoLabel>
+      </div>
+      <div className="w-[43px] h-[23px]">
+        <GradientButtonWithBorder radius={5} height={23}>
+          <InfoLabel>
+            <h5 className={'!dark:text-white mt-0.5'}> {sliderValue}x </h5>
+          </InfoLabel>
+        </GradientButtonWithBorder>
+      </div>
+    </div>
+  </div>
+)
+
+const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handleOrderSide }) => {
+  const { order } = useOrder()
+  return (
+    <div className={cn('flex items-center sm:p-[5px]')}>
+      <div
+        onClick={() => handleOrderSide('buy')}
+        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]
+       justify-center ${order.side === 'buy' && 'bg-green-4'}`)}
+      >
+        <TitleLabel whiteText={order.side === 'buy'}> Long </TitleLabel>
+      </div>
+      <div
+        onClick={() => handleOrderSide('sell')}
+        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]
+      justify-center ${order.side === 'sell' && 'bg-red-1'}`)}
+      >
+        <TitleLabel whiteText={order.side === 'sell'}> Short </TitleLabel>
+      </div>
+    </div>
+  )
+}
 const SELECTOR = styled.div`
   ${tw`w-[150px] h-[60px] rounded-tiny py-1 dark:bg-black-2 bg-white`}
   border: 1px solid ${({ theme }) => theme.text4};

@@ -458,7 +458,9 @@
         o = Object(n.isMac)() || n.CheckMobile.iOS()
       function s(e) {
         var t = 0
-        return e.shiftKey && (t += 1024), e.altKey && (t += 512), e.ctrlKey && (t += 256), e.metaKey && (t += 2048), t
+        return (
+          e.shiftKey && (t += 1024), e.altKey && (t += 512), e.ctrlKey && (t += 256), e.metaKey && (t += 2048), t
+        )
       }
       function a(e) {
         return s(e) | e.keyCode
@@ -737,7 +739,10 @@
           (e.prototype._saveCurrentChartAsNewWithTitle = function (e) {
             var t = this._chartWidgetCollection
             a.enabled('saveload_storage_customization')
-              ? (t.metaInfo.uid.deleteValue(), t.metaInfo.id.deleteValue(), t.metaInfo.name.setValue(e), this._doSave())
+              ? (t.metaInfo.uid.deleteValue(),
+                t.metaInfo.id.deleteValue(),
+                t.metaInfo.name.setValue(e),
+                this._doSave())
               : window.open(Object(p.a)({ clone: t.metaInfo.uid.value(), name: e }), '_blank')
           }),
           (e.prototype._doSave = function (e, t, i, r) {
@@ -814,7 +819,9 @@
         (c.prototype.priceAxisViews = function (e, t) {
           return this.isSourceHidden()
             ? null
-            : t === this.priceScale() && this.properties().showPrice.value() && this._model.paneForSource(this) === e
+            : t === this.priceScale() &&
+              this.properties().showPrice.value() &&
+              this._model.paneForSource(this) === e
             ? [this._priceAxisView]
             : null
         }),
@@ -1856,7 +1863,11 @@
                 var t = e.chartWidget
                 t.withModel(null, function () {
                   var e = t.model().mainSeries()
-                  if (e.bars().size() > 0 || e.status() === L.STATUS_INVALID_SYMBOL || e.status() === L.STATUS_NO_BARS)
+                  if (
+                    e.bars().size() > 0 ||
+                    e.status() === L.STATUS_INVALID_SYMBOL ||
+                    e.status() === L.STATUS_NO_BARS
+                  )
                     tt()
                   else {
                     var i = e.dataEvents(),
@@ -1866,7 +1877,9 @@
                           i.completed().unsubscribe(null, r),
                           i.error().unsubscribe(null, r)
                       }
-                    i.barReceived().subscribe(null, r), i.completed().subscribe(null, r), i.error().subscribe(null, r)
+                    i.barReceived().subscribe(null, r),
+                      i.completed().subscribe(null, r),
+                      i.error().subscribe(null, r)
                   }
                 })
               }
@@ -1894,11 +1907,14 @@
               )
             })
             .then(function () {
-              window.saver && window.is_authenticated && k.widgetOptions.justCloned && window.saver.saveChartSilently()
+              window.saver &&
+                window.is_authenticated &&
+                k.widgetOptions.justCloned &&
+                window.saver.saveChartSilently()
             })
             .catch(P.logError.bind(P))
         }
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     '/YGI': function (e, t, i) {
       'use strict'
@@ -1958,12 +1974,15 @@
                     case 0:
                       ;(p = this._inserterImpl),
                         (i =
-                          void 0 !== p.createStub && void 0 !== p.removeStub ? this._inserterImpl.createStub() : null),
+                          void 0 !== p.createStub && void 0 !== p.removeStub
+                            ? this._inserterImpl.createStub()
+                            : null),
                         (o = !0),
                         (d.label = 1)
                     case 1:
                       return (
-                        d.trys.push([1, 3, 4, 5]), [4, this._studyMetaInfoRepository.findById(this._studyDescriptor)]
+                        d.trys.push([1, 3, 4, 5]),
+                        [4, this._studyMetaInfoRepository.findById(this._studyDescriptor)]
                       )
                     case 2:
                       return (s = d.sent()), [3, 5]
@@ -2108,12 +2127,16 @@
               var c = Object(s.selectionTolerance)(this._barBorderWidth),
                 u = Math.min(r.high, r.low),
                 h = Math.max(r.high, r.low)
-              return u - c <= e.y && e.y <= h + c ? this._hittest || new n.HitTestResult(n.HitTestResult.REGULAR) : null
+              return u - c <= e.y && e.y <= h + c
+                ? this._hittest || new n.HitTestResult(n.HitTestResult.REGULAR)
+                : null
             }),
             (e.prototype.draw = function (e, t) {
               if (0 !== this._bars.length) {
                 var i = t.pixelRatio
-                if (((this._barWidth = Object(s.optimalCandlestickWidth)(this._barSpacing, i)), this._barWidth >= 2))
+                if (
+                  ((this._barWidth = Object(s.optimalCandlestickWidth)(this._barSpacing, i)), this._barWidth >= 2)
+                )
                   Math.floor(i) % 2 != this._barWidth % 2 && this._barWidth--
                 this._wickVisible && this._drawWicks(e, i),
                   this._borderVisible && this._drawBorder(e, i),
@@ -2147,7 +2170,11 @@
               return this._barWidth <= 2 * i ? Math.max(Math.floor(e), Math.floor(1 * e)) : i
             }),
             (e.prototype._drawBorder = function (e, t) {
-              for (var i = '', n = this._calculateBorderWidth(t), s = null, a = 0, l = this._bars; a < l.length; a++) {
+              for (
+                var i = '', n = this._calculateBorderWidth(t), s = null, a = 0, l = this._bars;
+                a < l.length;
+                a++
+              ) {
                 var c = l[a]
                 if (
                   (c.borderColor !== i &&
@@ -2159,7 +2186,9 @@
                     h = u + this._barWidth - 1,
                     d = Math.round(Math.min(c.open, c.close) * t),
                     p = Math.round(Math.max(c.open, c.close) * t)
-                  if ((null !== s && ((u = Math.max(s + 1, u)), (u = Math.min(u, h))), this._barSpacing * t > 2 * n))
+                  if (
+                    (null !== s && ((u = Math.max(s + 1, u)), (u = Math.min(u, h))), this._barSpacing * t > 2 * n)
+                  )
                     Object(o.fillRectInnerBorder)(e, u, d, h - u + 1, p - d + 1, n)
                   else {
                     var f = h - u + 1
@@ -2181,7 +2210,8 @@
                     var d = a.color
                     ;(e.fillStyle = d), (i = d)
                   }
-                  if (a.hollow) (e.fillStyle = a.color), Object(o.fillRectInnerBorder)(e, u, l, h - u + 1, c - l + 1, r)
+                  if (a.hollow)
+                    (e.fillStyle = a.color), Object(o.fillRectInnerBorder)(e, u, l, h - u + 1, c - l + 1, r)
                   else {
                     if ((this._borderVisible && ((u += r), (l += r), (h -= r), (c -= r)), l > c)) continue
                     e.fillRect(u, l, h - u + 1, c - l + 1)
@@ -2227,7 +2257,9 @@
                 return Math.abs(e.y - _) - Math.abs(t.y - _)
               })
               var m = f[0]
-              return (Object(o.b)().value() === n.MagnetMode.StrongMagnet || Math.abs(m.y - _) < 50) && (s = m.price), s
+              return (
+                (Object(o.b)().value() === n.MagnetMode.StrongMagnet || Math.abs(m.y - _) < 50) && (s = m.price), s
+              )
             }),
             e
           )
@@ -2819,7 +2851,8 @@
           }),
           (s.findStudyMetaInfoByDescription = function (e, t) {
             if (e) {
-              for (var i = 0; i < e.length; ++i) if (e[i].description.toLowerCase() === t.toLowerCase()) return e[i]
+              for (var i = 0; i < e.length; ++i)
+                if (e[i].description.toLowerCase() === t.toLowerCase()) return e[i]
               throw new Error('unexpected study id:' + t)
             }
             throw new Error('There is no studies metainfo')
@@ -2900,7 +2933,8 @@
           }),
           (s.canHaveChildren = function (e) {
             if (e) {
-              if (e.isTVScriptStrategy || (e.TVScriptSourceCode && TVScript.isStrategy(e.TVScriptSourceCode))) return !1
+              if (e.isTVScriptStrategy || (e.TVScriptSourceCode && TVScript.isStrategy(e.TVScriptSourceCode)))
+                return !1
               if (e.id && !~s.CHILD_STUDY_PARENT_EXCLUDE_IDS.indexOf(e.id) && Array.isArray(e.plots))
                 for (var t = 0; t < e.plots.length; ++t)
                   if (~s.CHILD_STUDY_ALLOWED_PLOT_TYPES.indexOf(e.plots[t].type)) return !0
@@ -2909,7 +2943,7 @@
           }),
           (TradingView.StudyMetaInfo = s),
           t && t.exports && (t.exports = s)
-      }.call(this, i('tc+8'), i('YuTi')(e)))
+      }).call(this, i('tc+8'), i('YuTi')(e))
     },
     '0gbU': function (e, t, i) {
       'use strict'
@@ -2951,7 +2985,8 @@
           (m.prototype.createViews = function () {
             this._legendView || (this._legendView = new n(this, this._model)),
               this._dataWindowView || (this._dataWindowView = new o(this, this._model)),
-              this._statusView || (this._statusView = new c(this, this._model.properties().scalesProperties.textColor)),
+              this._statusView ||
+                (this._statusView = new c(this, this._model.properties().scalesProperties.textColor)),
               r.prototype.createViews.call(this)
           }),
           (m.prototype._tryCreateFormatter = function () {
@@ -3042,7 +3077,7 @@
             return e + (null === t ? '' : '_#_' + t)
           }),
           (t.study_Compare = m)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     '0waE': function (e, t, i) {
       'use strict'
@@ -3222,7 +3257,9 @@
         }),
         (L.prototype.mouseMoveEvent = function (e) {
           this._priceScale &&
-            (this.dataSourceAtPoint(e.localX, e.localY) ? this._setCursorClassName('pointer') : this._setResizeCursor())
+            (this.dataSourceAtPoint(e.localX, e.localY)
+              ? this._setCursorClassName('pointer')
+              : this._setResizeCursor())
         }),
         (L.prototype._zoomAvailable = function () {
           return (
@@ -3361,7 +3398,9 @@
           return this._isMainSeriesAxis() ? this._pane.chart().actions().logSeriesScale : this.actions.setLog
         }),
         (L.prototype._percentageAction = function () {
-          return this._isMainSeriesAxis() ? this._pane.chart().actions().percentSeriesScale : this.actions.setPercentage
+          return this._isMainSeriesAxis()
+            ? this._pane.chart().actions().percentSeriesScale
+            : this.actions.setPercentage
         }),
         (L.prototype._indexedTo100Action = function () {
           return this._isMainSeriesAxis()
@@ -3369,10 +3408,14 @@
             : this.actions.setIndexedTo100
         }),
         (L.prototype._autoScaleAction = function () {
-          return this._isMainSeriesAxis() ? this._pane.chart().actions().autoSeriesScale : this.actions.setAutoScale
+          return this._isMainSeriesAxis()
+            ? this._pane.chart().actions().autoSeriesScale
+            : this.actions.setAutoScale
         }),
         (L.prototype._regularScaleAction = function () {
-          return this._isMainSeriesAxis() ? this._pane.chart().actions().regularSeriesScale : this.actions.setRegular
+          return this._isMainSeriesAxis()
+            ? this._pane.chart().actions().regularSeriesScale
+            : this.actions.setRegular
         }),
         (L.prototype._lockScaleAction = function () {
           var e = this._pane.chart().actions().lockSeriesScale,
@@ -3380,7 +3423,9 @@
           return e.update({ hint: t }), e
         }),
         (L.prototype._invertAction = function () {
-          return this._isMainSeriesAxis() ? this._pane.chart().actions().invertSeriesScale : this.actions.invertScale
+          return this._isMainSeriesAxis()
+            ? this._pane.chart().actions().invertSeriesScale
+            : this.actions.invertScale
         }),
         (L.prototype._isMainSeriesAxis = function () {
           return this.priceScale().hasMainSeries()
@@ -3448,7 +3493,9 @@
             t = this._pane.chart().model().model().priceScaleSlotsCount()
           if (t.left + t.right === 1) return 0 === t.left ? e.moveScaleToLeft : e.moveScaleToRight
           var i = []
-          return i.push(e.mergeLeftScalesAction), i.push(e.mergeRightScalesAction), new a({ label: T, subItems: i })
+          return (
+            i.push(e.mergeLeftScalesAction), i.push(e.mergeRightScalesAction), new a({ label: T, subItems: i })
+          )
         }),
         (L.prototype.getContextMenuActions = function () {
           this._initActions()
@@ -3522,7 +3569,8 @@
             t.hoveredSource() && o.add(t.hoveredSource()),
             n === r.defaultPriceScale())
           )
-            for (var a = this._pane.state().dataSources(), l = 0; l < a.length; l++) r.isOverlay(a[l]) && i.push(a[l])
+            for (var a = this._pane.state().dataSources(), l = 0; l < a.length; l++)
+              r.isOverlay(a[l]) && i.push(a[l])
           return { sources: i, topLevelSources: o }
         }),
         (L.prototype.backLabels = function (e) {
@@ -3540,7 +3588,8 @@
           return r(i.sources), r(this._pane.state().customSources()), t
         }),
         (L.prototype.setSizeAndOffset = function (e, t) {
-          if (e.w < 0 || e.h < 0) throw new Error('Try to set invalid size to PriceAxisWidget ' + JSON.stringify(e))
+          if (e.w < 0 || e.h < 0)
+            throw new Error('Try to set invalid size to PriceAxisWidget ' + JSON.stringify(e))
           ;(null !== this._size && this._size.equals(e)) ||
             ((this._size = e),
             this._canvasBinding.resizeCanvas({ width: e.w, height: e.h }),
@@ -3592,7 +3641,8 @@
               }, [])
           a.length > 0 && this._hightlightBackground(e, a, this.priceScale().mainSource(), t)
           var l = o.model().crossHairSource()
-          l.startMeasurePoint() && this._hightlightBackground(e, l.measurePoints(), this.priceScale().mainSource(), t)
+          l.startMeasurePoint() &&
+            this._hightlightBackground(e, l.measurePoints(), this.priceScale().mainSource(), t)
         }),
         (L.prototype.drawBorder = function (e, t) {
           e.save(), (e.fillStyle = this.lineColor())
@@ -3609,13 +3659,17 @@
             n = this._isLeft
               ? Math.floor((this._size.w - r.tickLength - r.borderSize) * t)
               : Math.floor(r.borderSize * t),
-            o = this._isLeft ? Math.round(n - r.paddingInner * t) : Math.round(n + (r.tickLength + r.paddingInner) * t),
+            o = this._isLeft
+              ? Math.round(n - r.paddingInner * t)
+              : Math.round(n + (r.tickLength + r.paddingInner) * t),
             s = this._isLeft ? 'right' : 'left',
             a = Math.round(r.tickLength * t),
             l = Math.max(1, Math.floor(t)),
             c = Math.floor(0.5 * t),
             u = 0 !== i.length ? this._tickmarksCache.getLabelHeight(e, i[0].label) : 0,
-            h = this._isCurrencyLabelVisible() ? this._currencyLabelLineHeight() + this._currencyLabel.labelTop() : 0,
+            h = this._isCurrencyLabelVisible()
+              ? this._currencyLabelLineHeight() + this._currencyLabel.labelTop()
+              : 0,
             d = i.map(function (e) {
               if (this._options.croppedTickMarks) return !0
               var t = e.coord - u / 2
@@ -3636,7 +3690,8 @@
             n = this._pane.state(),
             o = this.rendererOptions()
           if (i === n.defaultPriceScale())
-            for (var s = this._pane.state().dataSources(), a = 0; a < s.length; a++) n.isOverlay(s[a]) && r.push(s[a])
+            for (var s = this._pane.state().dataSources(), a = 0; a < s.length; a++)
+              n.isOverlay(s[a]) && r.push(s[a])
           var l = this._pane.chart().model().model(),
             c = i.mainSource(),
             u = l.selection().sources(),
@@ -3735,9 +3790,9 @@
           )
         }),
         (L.prototype._isFromSameSide = function (e) {
-          return (this._isLeft ? this._pane.state().leftPriceScales() : this._pane.state().rightPriceScales()).includes(
-            e
-          )
+          return (
+            this._isLeft ? this._pane.state().leftPriceScales() : this._pane.state().rightPriceScales()
+          ).includes(e)
         }),
         (L.prototype._addViewsOrMaxMin = function (e, t) {
           var i = this._pane.state(),
@@ -3765,7 +3820,11 @@
             s = this._pane.state(),
             a = this.priceScale() === r.defaultPriceScale(),
             l = i.lineBeingEdited() || i.lineBeingCreated()
-          l && (l.priceScale() === n || (a && r.isOverlay(l))) && (u = l.priceAxisViews(s, n)) && u.length && o.push(u)
+          l &&
+            (l.priceScale() === n || (a && r.isOverlay(l))) &&
+            (u = l.priceAxisViews(s, n)) &&
+            u.length &&
+            o.push(u)
           this._addViewsOrMaxMin(i.sourcesBeingMoved(), o), this._addViewsOrMaxMin(i.selection().sources(), o)
           var c = i.hoveredSource()
           if (c) {
@@ -3963,7 +4022,9 @@
                 ((t.indexedTo100 = e.indexedTo100),
                 this._setIndexedTo100ValueWithDependentProperties(e.indexedTo100),
                 (this._invalidatedForRange.isValid = !1)),
-              void 0 !== e.log && e.log !== r.log && ((t.log = e.log), this._setLogValueWithDependentProperties(e.log)),
+              void 0 !== e.log &&
+                e.log !== r.log &&
+                ((t.log = e.log), this._setLogValueWithDependentProperties(e.log)),
               r.log &&
                 !this._properties.log.value() &&
                 (this._canConvertPriceRangeFromLog(this.m_priceRange)
@@ -3980,12 +4041,15 @@
               r.lockScale !== this._properties.lockScale.value() &&
                 this._properties.lockScale.listeners().fire(this._properties.lockScale),
               r.percentage !== this._properties.percentage.value() &&
-                (this._properties.percentage.listeners().fire(this._properties.percentage), this.updateFormatter()),
+                (this._properties.percentage.listeners().fire(this._properties.percentage),
+                this.updateFormatter()),
               r.indexedTo100 !== this._properties.indexedTo100.value() &&
-                (this._properties.indexedTo100.listeners().fire(this._properties.indexedTo100), this.updateFormatter()),
+                (this._properties.indexedTo100.listeners().fire(this._properties.indexedTo100),
+                this.updateFormatter()),
               r.percentageDisabled !== this._properties.percentageDisabled.value() &&
                 this._properties.percentageDisabled.listeners().fire(this._properties.percentageDisabled),
-              r.log !== this._properties.log.value() && this._properties.log.listeners().fire(this._properties.log),
+              r.log !== this._properties.log.value() &&
+                this._properties.log.listeners().fire(this._properties.log),
               r.logDisabled !== this._properties.logDisabled.value() &&
                 this._properties.logDisabled.listeners().fire(this._properties.logDisabled),
               (void 0 === t.log &&
@@ -4063,7 +4127,9 @@
             ;(this._marksCache = null), (this.m_priceRange = e), i || this._priceRangeChanged.fire(r, e)
           }),
           (x.prototype.isEmpty = function () {
-            return this.makeSureItIsValid(), 0 === this.m_height || !this.m_priceRange || this.m_priceRange.isEmpty()
+            return (
+              this.makeSureItIsValid(), 0 === this.m_height || !this.m_priceRange || this.m_priceRange.isEmpty()
+            )
           }),
           (x.prototype.invertedCoordinate = function (e) {
             return this.isInverted() ? e : this.height() - 1 - e
@@ -4241,7 +4307,8 @@
           (x.prototype.endScale = function () {
             this.isPercentage() ||
               this.isIndexedTo100() ||
-              (null !== this.m_scaleStartPoint && ((this.m_scaleStartPoint = null), (this.m_priceRangeSnapshot = null)))
+              (null !== this.m_scaleStartPoint &&
+                ((this.m_scaleStartPoint = null), (this.m_priceRangeSnapshot = null)))
           }),
           (x.prototype.startScroll = function (e) {
             this.isAutoScale() ||
@@ -4322,7 +4389,8 @@
           }),
           (x.prototype.formatPrice = function (e, t) {
             return (
-              this.isPercentage() ? (e = m(e, t)) : this.isIndexedTo100() && (e = v(e, t)), this.formatter().format(e)
+              this.isPercentage() ? (e = m(e, t)) : this.isIndexedTo100() && (e = v(e, t)),
+              this.formatter().format(e)
             )
           }),
           (x.prototype.formatPriceAbsolute = function (e) {
@@ -4426,7 +4494,7 @@
             })
           }),
           (t.PriceScale = x)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     '1pHB': function (e, t) {
       e.exports =
@@ -4546,7 +4614,9 @@
               s = this.index,
               a = this.pane,
               c = this._priceScaleByPane(i)
-            if (((this.index = e), (this.x = l(e) ? NaN : this._model.timeScale().indexToCoordinate(e)), null !== c)) {
+            if (
+              ((this.index = e), (this.x = l(e) ? NaN : this._model.timeScale().indexToCoordinate(e)), null !== c)
+            ) {
               ;(this.pane = i), (this.price = t)
               var u = i.mainDataSource().firstValue()
               this.y = c.priceToCoordinate(t, u)
@@ -4620,7 +4690,7 @@
             return this._linesShouldBeHidden
           }),
           (t.CrossHair = c)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     '22xp': function (e, t, i) {
       'use strict'
@@ -4693,7 +4763,9 @@
                 )
               if (0 === this._items.length)
                 return (
-                  (this._items = i), (this._zoffset = t), [{ change: 'rebuild', index: this._validOffsetToIndex(0) }]
+                  (this._items = i),
+                  (this._zoffset = t),
+                  [{ change: 'rebuild', index: this._validOffsetToIndex(0) }]
                 )
               var r = e + this._zoffset
               if (r < 0) {
@@ -5017,7 +5089,9 @@
             }
             return (
               e &&
-                ((t.points = this._points.state()), (t.tickmarks = this._tickMarks.state()), (t.width = this._width)),
+                ((t.points = this._points.state()),
+                (t.tickmarks = this._tickMarks.state()),
+                (t.width = this._width)),
               t
             )
           }),
@@ -5091,7 +5165,9 @@
           (e.prototype.setWidth = function (e) {
             if (!Number.isFinite(e) || e <= 0) A.logWarn('setWidth: invalid argument: ' + e)
             else if (this._width !== e) {
-              if (((this._visibleBarsInvalidated = !0), this._options.lockVisibleTimeRangeOnResize && this._width)) {
+              if (
+                ((this._visibleBarsInvalidated = !0), this._options.lockVisibleTimeRangeOnResize && this._width)
+              ) {
                 var t = (this._barSpacing * e) / this._width
                 this._tryToUpdateBarSpacing(this._barSpacing, t)
               }
@@ -5197,7 +5273,10 @@
                 }
               })
             } else
-              (this._visibleBarsInvalidated = !0), (this._rightOffset = r), this._correctOffset(), void 0 !== t && t()
+              (this._visibleBarsInvalidated = !0),
+                (this._rightOffset = r),
+                this._correctOffset(),
+                void 0 !== t && t()
           }),
           (e.prototype.scrollToOffsetAnimated = function (e, t) {
             var i = this
@@ -5395,7 +5474,8 @@
             }
           }),
           (e.prototype.endScale = function () {
-            null !== this._scaleStartPoint && ((this._scaleStartPoint = null), this._clearCommonTransitionsStartState())
+            null !== this._scaleStartPoint &&
+              ((this._scaleStartPoint = null), this._clearCommonTransitionsStartState())
           }),
           (e.prototype.startScroll = function (e) {
             null === this._scrollStartPoint &&
@@ -5849,7 +5929,9 @@
                 this._chartModel.setShouldBeSavedEvenIfHidden(!0)
             }),
             (t.prototype.undo = function () {
-              var e = Object(n.ensureNotNull)(this._chartModel.dataSourceForId(Object(n.ensureNotNull)(this._studyId)))
+              var e = Object(n.ensureNotNull)(
+                this._chartModel.dataSourceForId(Object(n.ensureNotNull)(this._studyId))
+              )
               this._chartModel.removeSource(e)
             }),
             (t.prototype.insertedStudy = function () {
@@ -5985,7 +6067,9 @@
               if ('string' != typeof t) {
                 if (t !== l.STATUS_LOADING && t !== l.STATUS_RESOLVING) {
                   var i = m(e, t)
-                  0 !== i.length ? this._dataUpdatedModeStatus.setValue(i) : this._dataUpdatedModeStatus.setValue(null)
+                  0 !== i.length
+                    ? this._dataUpdatedModeStatus.setValue(i)
+                    : this._dataUpdatedModeStatus.setValue(null)
                 }
               } else this._dataUpdatedModeStatus.setValue(null)
             } else this._dataUpdatedModeStatus.setValue(null)
@@ -8589,7 +8673,9 @@
                 var o = r.Std.sma(e, i, n),
                   s = r.Std.sma(t, i, n),
                   a = n.new_var(e.get() * t.get())
-                return (r.Std.sma(a, i, n) - o * s) / Math.sqrt(r.Std.variance2(e, o, i) * r.Std.variance2(t, s, i))
+                return (
+                  (r.Std.sma(a, i, n) - o * s) / Math.sqrt(r.Std.variance2(e, o, i) * r.Std.variance2(t, s, i))
+                )
               }),
               (this.main = function (e, t) {
                 ;(this._context = e), (this._input = t), this._context.select_sym(1)
@@ -9023,7 +9109,13 @@
                   o = r.Std.hl2(this._context),
                   s = this._context.new_var(o),
                   a = r.Std.change(s),
-                  l = this.f_0(i, a, r.Std.high(this._context), r.Std.low(this._context), r.Std.volume(this._context)),
+                  l = this.f_0(
+                    i,
+                    a,
+                    r.Std.high(this._context),
+                    r.Std.low(this._context),
+                    r.Std.volume(this._context)
+                  ),
                   c = this._context.new_var(l)
                 return [r.Std.sma(c, n, this._context)]
               })
@@ -9375,7 +9467,9 @@
                   u = 0,
                   h = 0
                 for (l = 0; l < this.period; l++)
-                  (h += Math.pow(n - o.get(l), 2)), (u += (i - l - 1) * (n - o.get(l))), (c += Math.pow(i - l - 1, 2))
+                  (h += Math.pow(n - o.get(l), 2)),
+                    (u += (i - l - 1) * (n - o.get(l))),
+                    (c += Math.pow(i - l - 1, 2))
                 return (u = Math.pow(u, 2)), [Math.sqrt((h - u / c) / (this.period - 2))]
               })
           }
@@ -9492,7 +9586,9 @@
                   u = 0,
                   h = 0
                 for (l = 0; l < this.period; l++)
-                  (h += Math.pow(n - o.get(l), 2)), (u += (i - l - 1) * (n - o.get(l))), (c += Math.pow(i - l - 1, 2))
+                  (h += Math.pow(n - o.get(l), 2)),
+                    (u += (i - l - 1) * (n - o.get(l))),
+                    (c += Math.pow(i - l - 1, 2))
                 u = Math.pow(u, 2)
                 var d,
                   p,
@@ -9642,7 +9738,8 @@
                   o = r.Std.lowest(n, e, this._context),
                   s = this._context.new_var(),
                   a = this.f_0(
-                    0.66 * ((r.Std.hl2(this._context) - o) / r.Std.max(i - o, 0.001) - 0.5) + 0.67 * r.Std.nz(s.get(1))
+                    0.66 * ((r.Std.hl2(this._context) - o) / r.Std.max(i - o, 0.001) - 0.5) +
+                      0.67 * r.Std.nz(s.get(1))
                   )
                 s.set(a[0])
                 var l = this._context.new_var()
@@ -11731,7 +11828,9 @@
                 var t = this.periods,
                   i = NaN
                 return (
-                  (i = isNaN(this.mmaPrev) ? r.Std.sma(e, t, this._context) : (this.mmaPrev * (t - 1) + e.get()) / t),
+                  (i = isNaN(this.mmaPrev)
+                    ? r.Std.sma(e, t, this._context)
+                    : (this.mmaPrev * (t - 1) + e.get()) / t),
                   (this.mmaPrev = i),
                   i
                 )
@@ -14034,7 +14133,11 @@
                 (this.lastSar = null)
             }),
               (this.highest = function (e, t) {
-                for (var i = this.bars.length - this.period, r = this.bars[i], n = i + 1; n < this.bars.length; n++)
+                for (
+                  var i = this.bars.length - this.period, r = this.bars[i], n = i + 1;
+                  n < this.bars.length;
+                  n++
+                )
                   this.bars[n] > r && (r = this.bars[n])
                 return r
               }),
@@ -14093,7 +14196,9 @@
                 return this.count++, n
               }),
               (this.main = function (e, t) {
-                return (this._context = e), (this._input = t), this._context.select_sym(0), [this.calculateVolatility()]
+                return (
+                  (this._context = e), (this._input = t), this._context.select_sym(0), [this.calculateVolatility()]
+                )
               })
           }
         },
@@ -14797,7 +14902,8 @@
           return this._changed
         }),
         (n.prototype.setValueToProperty = function (e) {
-          this._undoModel.setProperty(this._property, e, this._undoText, this._doesNotAffectSave), (this._changed = !1)
+          this._undoModel.setProperty(this._property, e, this._undoText, this._doesNotAffectSave),
+            (this._changed = !1)
         }),
         (n.prototype.property = function () {
           return this._property
@@ -14936,7 +15042,10 @@
               var e = this._source.titleInParts(!0, s, void 0, !1)
               if (this._source.isFailed()) {
                 var t = e[1]
-                return [(e[0] + ' ' + (void 0 === t ? '' : t.join(' '))).trim() + ': ' + this._source.status(), void 0]
+                return [
+                  (e[0] + ' ' + (void 0 === t ? '' : t.join(' '))).trim() + ': ' + this._source.status(),
+                  void 0
+                ]
               }
               return e
             }),
@@ -14972,7 +15081,8 @@
         n.call(this), (this._study = e), (this._plotIndex = t)
       }
       ;(n.prototype.barStyle = function (e, t, i) {
-        for (var r = {}, n = this.backColorers.length - 1; n >= 0; n--) this.backColorers[n].applyBarStyle(e, t, r, i)
+        for (var r = {}, n = this.backColorers.length - 1; n >= 0; n--)
+          this.backColorers[n].applyBarStyle(e, t, r, i)
         return this.applyBarStyle(e, t, r, i), r
       }),
         (n.prototype.pushBackBarColorer = function (e) {
@@ -15046,12 +15156,16 @@
           var s,
             a = o.upColor(n, t),
             l = o.downColor(n, t),
-            c = n.candleStyle.borderUpColor ? n.candleStyle.borderUpColor.value() : n.candleStyle.borderColor.value(),
+            c = n.candleStyle.borderUpColor
+              ? n.candleStyle.borderUpColor.value()
+              : n.candleStyle.borderColor.value(),
             u = n.candleStyle.borderDownColor
               ? n.candleStyle.borderDownColor.value()
               : n.candleStyle.borderColor.value(),
             h = n.candleStyle.wickUpColor ? n.candleStyle.wickUpColor.value() : n.candleStyle.wickColor.value(),
-            d = n.candleStyle.wickDownColor ? n.candleStyle.wickDownColor.value() : n.candleStyle.wickColor.value(),
+            d = n.candleStyle.wickDownColor
+              ? n.candleStyle.wickDownColor.value()
+              : n.candleStyle.wickColor.value(),
             p = this.findBar(e, !1, r)
           n.candleStyle.barColorsOnPrevClose.value()
             ? (s = this.findPrevBar(e, !1, r)[TradingView.CLOSE_PLOT] <= p[TradingView.CLOSE_PLOT])
@@ -15232,7 +15346,8 @@
               return 1
             }),
             (t.prototype.destroy = function () {
-              this.properties().styles.vol_ma.visible.listeners().unsubscribeAll(this), e.prototype.destroy.call(this)
+              this.properties().styles.vol_ma.visible.listeners().unsubscribeAll(this),
+                e.prototype.destroy.call(this)
             }),
             (t.prototype._titleInputs = function () {
               var e = {
@@ -15335,66 +15450,72 @@
             -1270418400, -1252274400, -1238968800, -1220824800, -1207519200, -1189375200, -1176069600, -1157320800,
             -114462e4, -1125871200, -1112565600, -1094421600, -1081116e3, -1062972e3, -1049666400, -1031522400,
             -1018216800, -1000072800, -986767200, -968018400, -955317600, -936568800, -923263200, -905119200,
-            -891813600, -880236e3, -76941e4, -765410400, -747266400, -733960800, -715816800, -702511200, -684367200,
-            -671061600, -652917600, -639612e3, -620863200, -608162400, -589413600, -576108e3, -557964e3, -544658400,
-            -526514400, -513208800, -495064800, -481759200, -463615200, -447285600, -431560800, -415836e3, -400111200,
-            -384386400, -368661600, -352936800, -337212e3, -321487200, -305762400, -289432800, -273708e3, -257983200,
-            -242258400, -226533600, -210808800, -195084e3, -179359200, -163634400, -147909600, -13158e4, -11646e4,
-            -100130400, -84405600, -68680800, -52956e3, -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800,
-            57722400, 73447200, 89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800, 199245600,
-            215575200, 230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400,
-            372823200, 388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200,
-            530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600,
-            688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400,
-            846381600, 860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400,
-            1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
-            1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3,
-            1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600,
-            142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200,
-            1572746400, 1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600,
-            1710036e3, 1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200,
-            1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
+            -891813600, -880236e3, -76941e4, -765410400, -747266400, -733960800, -715816800, -702511200,
+            -684367200, -671061600, -652917600, -639612e3, -620863200, -608162400, -589413600, -576108e3,
+            -557964e3, -544658400, -526514400, -513208800, -495064800, -481759200, -463615200, -447285600,
+            -431560800, -415836e3, -400111200, -384386400, -368661600, -352936800, -337212e3, -321487200,
+            -305762400, -289432800, -273708e3, -257983200, -242258400, -226533600, -210808800, -195084e3,
+            -179359200, -163634400, -147909600, -13158e4, -11646e4, -100130400, -84405600, -68680800, -52956e3,
+            -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800,
+            120621600, 126669600, 152071200, 162352800, 183520800, 199245600, 215575200, 230695200, 247024800,
+            262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3,
+            404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3,
+            544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600,
+            688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3,
+            828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800,
+            972784800, 986090400, 1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3,
+            1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200,
+            1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400,
+            1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3,
+            1509847200, 1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200,
+            1636250400, 1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800,
+            1772935200, 1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3,
+            1899338400, 1919901600, 1930788e3
           ],
           offset: [
-            -17762, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3
+            -17762, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3
           ]
         },
         'America/Los_Angeles': {
           time: [
             -2717668378, -1633298400, -1615154400, -1601848800, -1583704800, -880236e3, -769420800, -765410400,
-            -687995940, -662680800, -620866800, -608162400, -589417200, -576108e3, -557967600, -544658400, -526518e3,
-            -513208800, -495068400, -481759200, -463618800, -450309600, -431564400, -418255200, -400114800, -386805600,
-            -368665200, -355356e3, -337215600, -323906400, -305766e3, -292456800, -273711600, -261007200, -242262e3,
-            -226533600, -210812400, -195084e3, -179362800, -163634400, -147913200, -13158e4, -116463600, -100130400,
-            -84405600, -68680800, -52956e3, -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400,
-            73447200, 89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800, 199245600, 215575200,
-            230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400, 372823200,
-            388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3,
-            544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800,
-            702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600,
+            -687995940, -662680800, -620866800, -608162400, -589417200, -576108e3, -557967600, -544658400,
+            -526518e3, -513208800, -495068400, -481759200, -463618800, -450309600, -431564400, -418255200,
+            -400114800, -386805600, -368665200, -355356e3, -337215600, -323906400, -305766e3, -292456800,
+            -273711600, -261007200, -242262e3, -226533600, -210812400, -195084e3, -179362800, -163634400,
+            -147913200, -13158e4, -116463600, -100130400, -84405600, -68680800, -52956e3, -37231200, -21506400,
+            -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800, 120621600, 126669600,
+            152071200, 162352800, 183520800, 199245600, 215575200, 230695200, 247024800, 262749600, 278474400,
+            294199200, 309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3, 404877600, 419997600,
+            436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3, 544586400, 562125600,
+            576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800, 702439200,
+            719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600,
             860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400,
-            1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
-            1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3,
-            1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600,
-            142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200,
-            1572746400, 1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600,
-            1710036e3, 1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200,
-            1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
+            1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600,
+            1130637600, 1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600,
+            1257040800, 1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800,
+            1383444e3, 1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200,
+            1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200, 1636250400,
+            1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800, 1772935200,
+            1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3, 1899338400,
+            1919901600, 1930788e3
           ],
           offset: [
             -28378, -28800, -25200, -28800, -25200, -28800, -25200, -25200, -28800, -25200, -28800, -25200, -28800,
@@ -15421,43 +15542,47 @@
             -1270418400, -1252274400, -1238968800, -1220824800, -1207519200, -1189375200, -1176069600, -1157320800,
             -114462e4, -1125871200, -1112565600, -1094421600, -1081116e3, -1067810400, -1045432800, -1031522400,
             -1018216800, -1000072800, -986767200, -968018400, -955317600, -936568800, -923263200, -905119200,
-            -891813600, -880236e3, -769413600, -765410400, -747266400, -733960800, -715816800, -702511200, -684367200,
-            -671061600, -652917600, -639612e3, -620863200, -608162400, -589413600, -576108e3, -557964e3, -544658400,
-            -526514400, -513208800, -495064800, -481759200, -463615200, -447285600, -431560800, -415836e3, -400111200,
-            -384386400, -368661600, -352936800, -337212e3, -321487200, -305762400, -289432800, -273708e3, -257983200,
-            -242258400, -226533600, -210808800, -195084e3, -179359200, -163634400, -147909600, -13158e4, -11646e4,
-            -100130400, -84405600, -68680800, -52956e3, -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800,
-            57722400, 73447200, 89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800, 199245600,
-            215575200, 230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400,
-            372823200, 388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200,
-            530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600,
-            688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400,
-            846381600, 860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400,
-            1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
-            1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3,
-            1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600,
-            142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200,
-            1572746400, 1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600,
-            1710036e3, 1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200,
-            1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
+            -891813600, -880236e3, -769413600, -765410400, -747266400, -733960800, -715816800, -702511200,
+            -684367200, -671061600, -652917600, -639612e3, -620863200, -608162400, -589413600, -576108e3,
+            -557964e3, -544658400, -526514400, -513208800, -495064800, -481759200, -463615200, -447285600,
+            -431560800, -415836e3, -400111200, -384386400, -368661600, -352936800, -337212e3, -321487200,
+            -305762400, -289432800, -273708e3, -257983200, -242258400, -226533600, -210808800, -195084e3,
+            -179359200, -163634400, -147909600, -13158e4, -11646e4, -100130400, -84405600, -68680800, -52956e3,
+            -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800,
+            120621600, 126669600, 152071200, 162352800, 183520800, 199245600, 215575200, 230695200, 247024800,
+            262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3,
+            404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3,
+            544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600,
+            688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3,
+            828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800,
+            972784800, 986090400, 1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3,
+            1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200,
+            1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400,
+            1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3,
+            1509847200, 1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200,
+            1636250400, 1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800,
+            1772935200, 1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3,
+            1899338400, 1919901600, 1930788e3
           ],
           offset: [
-            -21036, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
-            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
-            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
-            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600
+            -21036, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600
           ]
         },
         'America/Phoenix': {
@@ -15474,68 +15599,72 @@
             -1397426400, -1378072800, -1365976800, -1346623200, -1333922400, -1315173600, -1301868e3, -1283724e3,
             -1270418400, -1252274400, -1238968800, -1220824800, -1207519200, -1188770400, -1176069600, -1157320800,
             -1144015200, -1125871200, -1112565600, -1094421600, -1081116e3, -1062972e3, -1049666400, -1031522400,
-            -1018216800, -1000072800, -986767200, -968018400, -955317600, -936568800, -880232400, -76941e4, -765410400,
-            -747266400, -733960800, -715824e3, -702518400, -684374400, -671068800, -652924800, -634176e3, -620863200,
-            -602719200, -589413600, -576108e3, -557964e3, -544658400, -526514400, -513208800, -495064800, -481759200,
-            -463615200, -450309600, -431560800, -418255200, -400111200, -384386400, -368661600, -352936800, -337212e3,
-            -321487200, -305762400, -289432800, -273708e3, -257983200, -242258400, -226533600, -210808800, -195084e3,
-            -179359200, -163634400, -147909600, -13158e4, -11646e4, -100130400, -84405600, -68680800, -52956e3,
-            -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800,
-            120621600, 136346400, 152071200, 167796e3, 183520800, 199245600, 215575200, 230695200, 247024800, 262749600,
-            278474400, 294199200, 309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3, 404877600, 419997600,
-            436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3, 544586400, 562125600, 576036e3,
-            59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800, 702439200, 719978400, 733888800,
-            752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600, 860292e3, 877831200, 891741600,
-            909280800, 923191200, 941335200, 954640800, 972784800, 986090400, 1004234400, 1018144800, 1035684e3,
-            1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200, 1162087200, 1173578400,
-            1194141600, 1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800,
-            1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200, 1457834400,
-            1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3,
-            1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600,
-            1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3,
-            1899338400, 1919901600, 1930788e3
+            -1018216800, -1000072800, -986767200, -968018400, -955317600, -936568800, -880232400, -76941e4,
+            -765410400, -747266400, -733960800, -715824e3, -702518400, -684374400, -671068800, -652924800,
+            -634176e3, -620863200, -602719200, -589413600, -576108e3, -557964e3, -544658400, -526514400,
+            -513208800, -495064800, -481759200, -463615200, -450309600, -431560800, -418255200, -400111200,
+            -384386400, -368661600, -352936800, -337212e3, -321487200, -305762400, -289432800, -273708e3,
+            -257983200, -242258400, -226533600, -210808800, -195084e3, -179359200, -163634400, -147909600,
+            -13158e4, -11646e4, -100130400, -84405600, -68680800, -52956e3, -37231200, -21506400, -5781600,
+            9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800, 120621600, 136346400, 152071200,
+            167796e3, 183520800, 199245600, 215575200, 230695200, 247024800, 262749600, 278474400, 294199200,
+            309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3, 404877600, 419997600, 436327200,
+            452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3, 544586400, 562125600, 576036e3,
+            59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800, 702439200, 719978400,
+            733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600, 860292e3,
+            877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400, 1004234400,
+            1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
+            1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800,
+            1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3,
+            1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200,
+            1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200, 1636250400,
+            1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800, 1772935200,
+            1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3, 1899338400,
+            1919901600, 1930788e3
           ],
           offset: [
-            -19052, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -14400, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3
+            -19052, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -14400, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3
           ]
         },
         'America/Vancouver': {
           time: [
             -2713910400, -1632088800, -1615154400, -880236e3, -769420800, -765410400, -747266400, -733960800,
-            -715816800, -702511200, -684367200, -671061600, -652917600, -639612e3, -620863200, -608162400, -589413600,
-            -576108e3, -557964e3, -544658400, -526514400, -513208800, -495064800, -481759200, -463615200, -450309600,
-            -431560800, -418255200, -400111200, -386805600, -368661600, -355356e3, -337212e3, -323906400, -305762400,
-            -292456800, -273708e3, -261007200, -242258400, -226533600, -210808800, -195084e3, -179359200, -163634400,
-            -147909600, -13158e4, -11646e4, -100130400, -84405600, -68680800, -52956e3, -37231200, -21506400, -5781600,
-            9943200, 25668e3, 41392800, 57722400, 73447200, 89172e3, 104896800, 120621600, 136346400, 152071200,
-            167796e3, 183520800, 199245600, 215575200, 230695200, 247024800, 262749600, 278474400, 294199200, 309924e3,
-            325648800, 341373600, 357098400, 372823200, 388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800,
-            483501600, 499226400, 514951200, 530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600,
-            638935200, 657079200, 670989600, 688528800, 702439200, 719978400, 733888800, 752032800, 765338400,
-            783482400, 796788e3, 814932e3, 828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200,
+            -715816800, -702511200, -684367200, -671061600, -652917600, -639612e3, -620863200, -608162400,
+            -589413600, -576108e3, -557964e3, -544658400, -526514400, -513208800, -495064800, -481759200,
+            -463615200, -450309600, -431560800, -418255200, -400111200, -386805600, -368661600, -355356e3,
+            -337212e3, -323906400, -305762400, -292456800, -273708e3, -261007200, -242258400, -226533600,
+            -210808800, -195084e3, -179359200, -163634400, -147909600, -13158e4, -11646e4, -100130400, -84405600,
+            -68680800, -52956e3, -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200,
+            89172e3, 104896800, 120621600, 136346400, 152071200, 167796e3, 183520800, 199245600, 215575200,
+            230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400,
+            372823200, 388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400,
+            514951200, 530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200,
+            657079200, 670989600, 688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400,
+            796788e3, 814932e3, 828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200,
             941335200, 954640800, 972784800, 986090400, 1004234400, 1018144800, 1035684e3, 1049594400, 1067133600,
-            1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600, 1205028e3,
-            1225591200, 1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400,
-            1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3,
-            1509847200, 1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200, 1636250400,
-            1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800, 1772935200,
-            1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3, 1899338400, 1919901600,
-            1930788e3
+            1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600,
+            1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800,
+            1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200,
+            1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200, 1572746400,
+            1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600, 1710036e3,
+            1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200,
+            1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
           ],
           offset: [
             -29548, -28800, -25200, -28800, -25200, -25200, -28800, -25200, -28800, -25200, -28800, -25200, -28800,
@@ -15558,18 +15687,19 @@
           time: [
             -2372112e3, -1567468800, -1233446400, -1222992e3, -1205971200, -1194048e3, -117288e4, -1162512e3,
             -1141344e3, -1130976e3, -1109808e3, -109944e4, -1078272e3, -1067817600, -1046649600, -1036281600,
-            -1015113600, -1004745600, -983577600, -973209600, -952041600, -941587200, -931046400, -900892800, -890352e3,
-            -83376e4, -82728e4, -752284800, -733795200, -197337600, -190857600, -184204800, -164505600, -152668800,
-            -132969600, -121132800, -101433600, -86832e3, -71107200, -54777600, -39052800, -23328e3, -7603200,
-            128131200, 136598400, 596937600, 605059200, 624412800, 636508800, 656467200, 667958400, 687916800, 699408e3,
-            719366400, 731462400, 938908800, 952041600, 1198972800, 1205625600, 1224374400, 1237075200, 1924981200
+            -1015113600, -1004745600, -983577600, -973209600, -952041600, -941587200, -931046400, -900892800,
+            -890352e3, -83376e4, -82728e4, -752284800, -733795200, -197337600, -190857600, -184204800, -164505600,
+            -152668800, -132969600, -121132800, -101433600, -86832e3, -71107200, -54777600, -39052800, -23328e3,
+            -7603200, 128131200, 136598400, 596937600, 605059200, 624412800, 636508800, 656467200, 667958400,
+            687916800, 699408e3, 719366400, 731462400, 938908800, 952041600, 1198972800, 1205625600, 1224374400,
+            1237075200, 1924981200
           ],
           offset: [
             -14028, -15408, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
             -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800,
             -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
-            -10800, -14400, -10800, -14400, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200,
-            -10800, -7200, -10800, -10800, -10800, -7200, -10800, -7200, -10800
+            -10800, -14400, -10800, -14400, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
+            -7200, -10800, -7200, -10800, -10800, -10800, -7200, -10800, -7200, -10800
           ]
         },
         'America/El_Salvador': {
@@ -15582,22 +15712,22 @@
             -59184e4, -570758400, -560217600, -539136e3, -53136e4, -195436800, -184204800, -155174400, -150076800,
             -128908800, -121132800, -99964800, -89596800, -68428800, -57974400, 499737600, 511228800, 530582400,
             540259200, 562118400, 571190400, 592963200, 602035200, 624412800, 634694400, 656467200, 666748800,
-            687916800, 697593600, 719971200, 728438400, 750816e3, 761702400, 782265600, 793152e3, 813715200, 823996800,
-            84456e4, 856051200, 876096e3, 888710400, 908064e3, 919555200, 938908800, 951609600, 970963200, 982454400,
-            1003017600, 1013904e3, 1036281600, 1045353600, 1066521600, 1076803200, 1099353600, 1108857600, 1129420800,
-            1140307200, 1162684800, 1172361600, 119232e4, 1203206400, 1224374400, 1234656e3, 1255824e3, 1266710400,
-            1287273600, 129816e4, 1318723200, 1330214400, 1350777600, 1361059200, 1382227200, 1392508800, 1413676800,
-            1424563200, 1445126400, 1456012800, 1476576e3, 1487462400, 1508025600, 1518912e3, 1541289600, 1550361600,
-            1924981200
+            687916800, 697593600, 719971200, 728438400, 750816e3, 761702400, 782265600, 793152e3, 813715200,
+            823996800, 84456e4, 856051200, 876096e3, 888710400, 908064e3, 919555200, 938908800, 951609600,
+            970963200, 982454400, 1003017600, 1013904e3, 1036281600, 1045353600, 1066521600, 1076803200,
+            1099353600, 1108857600, 1129420800, 1140307200, 1162684800, 1172361600, 119232e4, 1203206400,
+            1224374400, 1234656e3, 1255824e3, 1266710400, 1287273600, 129816e4, 1318723200, 1330214400, 1350777600,
+            1361059200, 1382227200, 1392508800, 1413676800, 1424563200, 1445126400, 1456012800, 1476576e3,
+            1487462400, 1508025600, 1518912e3, 1541289600, 1550361600, 1924981200
           ],
           offset: [
-            -11188, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
-            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800
+            -11188, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200,
+            -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
+            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200,
+            -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
+            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200,
+            -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800,
+            -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800, -7200, -10800
           ]
         },
         'America/Bogota': {
@@ -15612,21 +15742,22 @@
           time: [
             -2840140800, -1688256e3, -165681e4, -1641340800, -1627956e3, -1618700400, -1596416400, -1593804521,
             -1589846400, -1542416400, -1539478800, -1525305600, -1522713600, -1491177600, -1247529600, 354931200,
-            370742400, 386467200, 402278400, 418003200, 433814400, 449625600, 465361200, 481082400, 496810800, 512532e3,
-            528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800,
-            686113200, 695786400, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600,
-            828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400,
-            985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800,
-            1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600,
-            1269741600, 1288494e3, 1301191200, 1414288800, 1925002800
+            370742400, 386467200, 402278400, 418003200, 433814400, 449625600, 465361200, 481082400, 496810800,
+            512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400,
+            654663600, 670384800, 686113200, 695786400, 701834400, 717562800, 733284e3, 749012400, 764733600,
+            780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400,
+            922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600,
+            1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3,
+            1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1414288800,
+            1925002800
           ],
           offset: [
-            9017, 9017, 9079, 12679, 9079, 16279, 12679, 16279, 14400, 10800, 14400, 18e3, 14400, 10800, 7200, 10800,
-            14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
-            10800, 14400, 10800, 14400, 10800, 10800, 7200, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
-            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800,
-            14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
-            10800, 14400, 10800
+            9017, 9017, 9079, 12679, 9079, 16279, 12679, 16279, 14400, 10800, 14400, 18e3, 14400, 10800, 7200,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 10800, 7200, 10800, 14400, 10800, 14400, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800
           ]
         },
         'Europe/Athens': {
@@ -15634,51 +15765,54 @@
             -2344636800, -1686095940, -1182988800, -1178150400, -906854400, -904867200, -85725e4, -844473600,
             -828230400, -812419200, -552355200, -541641600, 166492800, 186195600, 198036e3, 213764400, 228880800,
             244090800, 260330400, 275457600, 291805200, 307418400, 323395200, 338947200, 354682800, 370411200,
-            386132400, 401860800, 417582e3, 433310400, 449031600, 465364800, 481086e3, 496814400, 512535600, 528264e3,
-            543985200, 559713600, 575434800, 591163200, 606884400, 622612800, 638334e3, 654667200, 670388400, 686116800,
-            701838e3, 717566400, 733287600, 749016e3, 764737200, 780465600, 796186800, 811915200, 828241200, 846388800,
-            859690800, 877838400, 891140400, 909288e3, 92259e4, 941342400, 954039600, 972792e3, 985489200, 1004241600,
-            1017543600, 1035691200, 1048993200, 1067140800, 1080442800, 1099195200, 1111892400, 1130644800, 1143342e3,
-            1162094400, 1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200, 1288497600,
-            1301194800, 1319947200, 1332644400, 1351396800, 1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3,
-            1445745600, 1459047600, 14778e5, 1490497200, 1509249600, 1521946800, 1540699200, 1554001200, 1572148800,
-            1585450800, 1603598400, 1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3,
-            1730001600, 1743303600, 1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400, 1856404800,
-            1869102e3, 1887854400, 1901156400, 1919304e3, 1932606e3
+            386132400, 401860800, 417582e3, 433310400, 449031600, 465364800, 481086e3, 496814400, 512535600,
+            528264e3, 543985200, 559713600, 575434800, 591163200, 606884400, 622612800, 638334e3, 654667200,
+            670388400, 686116800, 701838e3, 717566400, 733287600, 749016e3, 764737200, 780465600, 796186800,
+            811915200, 828241200, 846388800, 859690800, 877838400, 891140400, 909288e3, 92259e4, 941342400,
+            954039600, 972792e3, 985489200, 1004241600, 1017543600, 1035691200, 1048993200, 1067140800, 1080442800,
+            1099195200, 1111892400, 1130644800, 1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3,
+            1224993600, 1238295600, 1256443200, 1269745200, 1288497600, 1301194800, 1319947200, 1332644400,
+            1351396800, 1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600, 14778e5,
+            1490497200, 1509249600, 1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400,
+            1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600,
+            1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3,
+            1887854400, 1901156400, 1919304e3, 1932606e3
           ],
           offset: [
-            5692, 5692, 7200, 10800, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
+            5692, 5692, 7200, 10800, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
           ]
         },
         'Europe/Belgrade': {
           time: [
-            -2713910400, -905821200, -85725e4, -844552800, -828219600, -812498400, -79677e4, -777938400, -766616400,
-            417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4,
-            575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
-            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
-            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4,
-            1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800,
-            1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200,
-            1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3,
-            1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200,
-            1603594800, 1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3,
-            17433e5, 1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
-            1887850800, 1901152800, 1919300400, 1932602400
+            -2713910400, -905821200, -85725e4, -844552800, -828219600, -812498400, -79677e4, -777938400,
+            -766616400, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400,
+            543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800,
+            686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600,
+            828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3,
+            972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600,
+            1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3,
+            1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200,
+            1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600,
+            1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800,
+            1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600,
+            1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800,
+            1901152800, 1919300400, 1932602400
           ],
           offset: [
-            4920, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            4920, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600
           ]
         },
         'Europe/Berlin': {
@@ -15686,28 +15820,29 @@
             -2422051200, -1693702800, -1680476400, -1663452e3, -1650142800, -1632002400, -1618693200, -938901600,
             -85725e4, -844552800, -828219600, -812498400, -79677e4, -781048800, -776556e3, -765925200, -761173200,
             -748476e3, -733266e3, -717627600, -714603600, -71037e4, -701902800, -684972e3, -670453200, -654127200,
-            -639003600, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800, 449028e3,
-            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800,
-            622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600,
-            780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400,
-            941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200,
-            1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
-            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
-            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600,
-            1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200,
-            1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600,
-            1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
+            -639003600, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
+            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200,
+            591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800,
+            733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
+            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
+            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200,
+            1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600,
+            1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800,
+            1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200,
+            1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400,
+            1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200,
+            1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
             1932602400
           ],
           offset: [
-            3208, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 10800, 7200, 3600,
-            7200, 3600, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600
+            3208, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 10800, 7200,
+            3600, 7200, 3600, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/London': {
@@ -15718,38 +15853,41 @@
             -1333314e3, -1315778400, -1301259600, -1284328800, -126981e4, -1253484e3, -1238360400, -1221429600,
             -1206910800, -118998e4, -1175461200, -1159135200, -1143406800, -1126476e3, -1111957200, -1095631200,
             -1080507600, -1063576800, -1049058e3, -1032127200, -1017608400, -1001282400, -986158800, -969228e3,
-            -950475600, -942012e3, -904514400, -896043600, -875484e3, -864594e3, -844034400, -832539600, -812584800,
-            -798066e3, -781048800, -772059600, -764802e3, -748476e3, -733352400, -719445600, -717026400, -706741200,
-            -699483600, -687996e3, -668034e3, -654732e3, -636584400, -622072800, -605739600, -590623200, -57429e4,
-            -558568800, -542235600, -527119200, -512600400, -496274400, -481150800, -46422e4, -449701200, -432165600,
-            -417646800, -401320800, -386197200, -369266400, -354747600, -337816800, -323298e3, -306972e3, -291848400,
-            -276732e3, -257979600, -245282400, -22653e4, -213228e3, -195080400, -182383200, -163630800, -150933600,
-            -132181200, -119484e3, -100731600, -88034400, -68677200, -59004e3, -37238400, 57726e3, 69818400, 89175600,
-            101268e3, 120625200, 132717600, 152074800, 164167200, 183524400, 196221600, 214974e3, 227671200, 246423600,
-            259120800, 278478e3, 290570400, 309927600, 32202e4, 341377200, 354675600, 372823200, 386125200, 404272800,
-            417574800, 435722400, 449024400, 467776800, 481078800, 499226400, 512528400, 530676e3, 543978e3, 562125600,
+            -950475600, -942012e3, -904514400, -896043600, -875484e3, -864594e3, -844034400, -832539600,
+            -812584800, -798066e3, -781048800, -772059600, -764802e3, -748476e3, -733352400, -719445600,
+            -717026400, -706741200, -699483600, -687996e3, -668034e3, -654732e3, -636584400, -622072800,
+            -605739600, -590623200, -57429e4, -558568800, -542235600, -527119200, -512600400, -496274400,
+            -481150800, -46422e4, -449701200, -432165600, -417646800, -401320800, -386197200, -369266400,
+            -354747600, -337816800, -323298e3, -306972e3, -291848400, -276732e3, -257979600, -245282400, -22653e4,
+            -213228e3, -195080400, -182383200, -163630800, -150933600, -132181200, -119484e3, -100731600,
+            -88034400, -68677200, -59004e3, -37238400, 57726e3, 69818400, 89175600, 101268e3, 120625200, 132717600,
+            152074800, 164167200, 183524400, 196221600, 214974e3, 227671200, 246423600, 259120800, 278478e3,
+            290570400, 309927600, 32202e4, 341377200, 354675600, 372823200, 386125200, 404272800, 417574800,
+            435722400, 449024400, 467776800, 481078800, 499226400, 512528400, 530676e3, 543978e3, 562125600,
             575427600, 593575200, 606877200, 625629600, 638326800, 657079200, 670381200, 688528800, 701830800,
-            719978400, 733280400, 751428e3, 76473e4, 782877600, 796179600, 814327200, 828234e3, 846381600, 859683600,
-            877831200, 891133200, 909280800, 922582800, 941335200, 954032400, 972784800, 985482e3, 1004234400,
-            1017536400, 1035684e3, 1048986e3, 1067133600, 1080435600, 1099188e3, 1111885200, 1130637600, 1143334800,
-            1162087200, 1174784400, 1193536800, 1206838800, 1224986400, 1238288400, 1256436e3, 1269738e3, 1288490400,
-            1301187600, 131994e4, 1332637200, 1351389600, 1364691600, 1382839200, 1396141200, 1414288800, 1427590800,
-            1445738400, 1459040400, 1477792800, 149049e4, 1509242400, 1521939600, 1540692e3, 1553994e3, 1572141600,
-            1585443600, 1603591200, 1616893200, 1635645600, 1648342800, 1667095200, 1679792400, 1698544800, 1711846800,
-            1729994400, 1743296400, 1761444e3, 1774746e3, 1792893600, 1806195600, 1824948e3, 1837645200, 1856397600,
-            1869094800, 1887847200, 1901149200, 1919296800, 1932598800
+            719978400, 733280400, 751428e3, 76473e4, 782877600, 796179600, 814327200, 828234e3, 846381600,
+            859683600, 877831200, 891133200, 909280800, 922582800, 941335200, 954032400, 972784800, 985482e3,
+            1004234400, 1017536400, 1035684e3, 1048986e3, 1067133600, 1080435600, 1099188e3, 1111885200,
+            1130637600, 1143334800, 1162087200, 1174784400, 1193536800, 1206838800, 1224986400, 1238288400,
+            1256436e3, 1269738e3, 1288490400, 1301187600, 131994e4, 1332637200, 1351389600, 1364691600, 1382839200,
+            1396141200, 1414288800, 1427590800, 1445738400, 1459040400, 1477792800, 149049e4, 1509242400,
+            1521939600, 1540692e3, 1553994e3, 1572141600, 1585443600, 1603591200, 1616893200, 1635645600,
+            1648342800, 1667095200, 1679792400, 1698544800, 1711846800, 1729994400, 1743296400, 1761444e3,
+            1774746e3, 1792893600, 1806195600, 1824948e3, 1837645200, 1856397600, 1869094800, 1887847200,
+            1901149200, 1919296800, 1932598800
           ],
           offset: [
-            -75, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 0, 3600, 0, 3600, 7200, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0
+            -75, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
+            0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 0, 3600, 0, 3600,
+            7200, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
+            0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0
           ]
         },
         'Europe/Luxembourg': {
@@ -15762,60 +15900,64 @@
             -1096840800, -1080507600, -1063576800, -1049058e3, -1033336800, -1017608400, -1002492e3, -986158800,
             -969228e3, -950475600, -942012e3, -935182800, -85725e4, -844552800, -828219600, -812498400, -797979600,
             -781048800, -766616400, -745452e3, -733266e3, 228880800, 244004400, 260330400, 276058800, 29178e4,
-            307508400, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800, 449028e3,
-            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800,
-            622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600,
-            780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400,
-            941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200,
-            1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
-            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
-            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600,
-            1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200,
-            1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600,
-            1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
+            307508400, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
+            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200,
+            591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800,
+            733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
+            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
+            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200,
+            1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600,
+            1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800,
+            1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200,
+            1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400,
+            1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200,
+            1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
             1932602400
           ],
           offset: [
-            1476, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
-            3600, 0, 3600, 0, 3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            1476, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
+            0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/Madrid': {
           time: [
             -2177453684, -1631926800, -1616886e3, -1601168400, -158535e4, -1442451600, -142767e4, -1379293200,
             -1364770800, -1348448400, -1333321200, -1316390400, -1301266800, -1284339600, -1269817200, -1026954e3,
-            -1017615600, -1001898e3, -999478800, -986083200, -951433200, -940208400, -873075600, -862614e3, -842835600,
-            -828313200, -811386e3, -796863600, -779936400, -765414e3, -748486800, -733964400, -652323600, -639010800,
-            135126e3, 150253200, 166575600, 181702800, 196815600, 212547600, 22887e4, 243997200, 260330400, 276058800,
-            29178e4, 307508400, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
-            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600,
-            606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400,
-            764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400,
-            922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600,
-            1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400,
-            1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800,
-            1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400,
-            1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800,
-            1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600,
-            1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800,
-            1919300400, 1932602400
+            -1017615600, -1001898e3, -999478800, -986083200, -951433200, -940208400, -873075600, -862614e3,
+            -842835600, -828313200, -811386e3, -796863600, -779936400, -765414e3, -748486800, -733964400,
+            -652323600, -639010800, 135126e3, 150253200, 166575600, 181702800, 196815600, 212547600, 22887e4,
+            243997200, 260330400, 276058800, 29178e4, 307508400, 323834400, 338958e3, 354679200, 370407600,
+            386128800, 401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3,
+            528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600,
+            670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200,
+            811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800,
+            954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200,
+            1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
+            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
+            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400,
+            1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800,
+            1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5,
+            1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
+            1887850800, 1901152800, 1919300400, 1932602400
           ],
           offset: [
-            -884, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 7200, 3600, 0, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            -884, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 7200, 3600, 0,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/Paris': {
@@ -15828,29 +15970,31 @@
             -1096851600, -1080518400, -1063587600, -1049068800, -1033347600, -1017619200, -1002502800, -986169600,
             -969238800, -950486400, -942012e3, -932432400, -85725e4, -844552800, -828219600, -812498400, -800064e3,
             -796258800, -781048800, -766616400, 196822800, 212547600, 228880800, 244004400, 260330400, 276058800,
-            29178e4, 307508400, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
-            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600,
-            606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400,
-            764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400,
-            922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600,
-            1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400,
-            1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800,
-            1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400,
-            1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800,
-            1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600,
-            1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800,
+            29178e4, 307508400, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400,
+            433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4,
+            575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
+            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200,
+            859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600,
+            1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800,
+            1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600,
+            1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800,
+            1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3,
+            1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200,
+            1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600,
+            1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800,
             1919300400, 1932602400
           ],
           offset: [
-            561, 561, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
-            0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600,
-            0, 3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            561, 561, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0, 3600, 0,
+            3600, 0, 3600, 0, 3600, 0, 3600, 7200, 3600, 7200, 3600, 7200, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/Rome': {
@@ -15858,132 +16002,141 @@
             -3252096e3, -2403562204, -1690761600, -168048e4, -1664755200, -1648944e3, -163512e4, -1616889600,
             -1604275200, -1585526400, -1571011200, -1555286400, -932428800, -85725e4, -844552800, -828219600,
             -812498400, -798066e3, -781048800, -76671e4, -750895200, -733352400, -719452800, -70191e4, -689205600,
-            -670453200, -114048e3, -103161600, -81993600, -71708400, -50544e3, -40258800, -18489600, -8204400, 1296e4,
-            23245200, 43804800, 54694800, 75859200, 86749200, 107913600, 118198800, 138758400, 149648400, 170812800,
-            181098e3, 202262400, 212547600, 233107200, 243997200, 265161600, 276051600, 296611200, 307501200, 323834400,
-            338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800, 449028e3, 465361200, 481082400,
-            496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400,
-            654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200,
-            811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3,
-            972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600,
-            1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3,
-            1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800,
-            1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200,
-            1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400, 1667098800,
-            1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200, 1806199200,
-            1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400, 1932602400
+            -670453200, -114048e3, -103161600, -81993600, -71708400, -50544e3, -40258800, -18489600, -8204400,
+            1296e4, 23245200, 43804800, 54694800, 75859200, 86749200, 107913600, 118198800, 138758400, 149648400,
+            170812800, 181098e3, 202262400, 212547600, 233107200, 243997200, 265161600, 276051600, 296611200,
+            307501200, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
+            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200,
+            591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800,
+            733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
+            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
+            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200,
+            1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600,
+            1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800,
+            1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200,
+            1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400,
+            1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200,
+            1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
+            1932602400
           ],
           offset: [
-            2996, 2996, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            2996, 2996, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600
           ]
         },
         'Europe/Warsaw': {
           time: [
             -2840140800, -1717027200, -1693702800, -1680476400, -1663452e3, -1650142800, -1632002400, -1618693200,
-            -1600466400, -1587157200, -1501718400, -931730400, -85725e4, -844552800, -828219600, -812498400, -796600800,
-            -778723200, -762652800, -748483200, -733266e3, -715212e3, -701902800, -684972e3, -670453200, -654127200,
-            -639003600, -397090800, -386805600, -371084400, -355356e3, -334191600, -323301600, -307580400, -291852e3,
-            -271292400, -260402400, -239842800, -228952800, -208393200, -197503200, -176338800, -166053600, 228877200,
-            244000800, 260326800, 276055200, 291776400, 307504800, 323830800, 338954400, 354675600, 370404e3, 386125200,
-            401853600, 417574800, 433303200, 449024400, 465357600, 481078800, 496807200, 512528400, 528256800, 543978e3,
-            559706400, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200,
-            701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200,
-            859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
-            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400,
+            -1600466400, -1587157200, -1501718400, -931730400, -85725e4, -844552800, -828219600, -812498400,
+            -796600800, -778723200, -762652800, -748483200, -733266e3, -715212e3, -701902800, -684972e3,
+            -670453200, -654127200, -639003600, -397090800, -386805600, -371084400, -355356e3, -334191600,
+            -323301600, -307580400, -291852e3, -271292400, -260402400, -239842800, -228952800, -208393200,
+            -197503200, -176338800, -166053600, 228877200, 244000800, 260326800, 276055200, 291776400, 307504800,
+            323830800, 338954400, 354675600, 370404e3, 386125200, 401853600, 417574800, 433303200, 449024400,
+            465357600, 481078800, 496807200, 512528400, 528256800, 543978e3, 559706400, 575431200, 591159600,
+            606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3,
+            749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800,
+            891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4,
+            1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400,
             1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3,
-            1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400,
-            1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200,
-            1585447200, 1603594800, 1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400,
-            1729998e3, 17433e5, 1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200,
-            1869098400, 1887850800, 1901152800, 1919300400, 1932602400
+            1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800, 1414292400,
+            1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600,
+            1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400, 1667098800,
+            1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200, 1806199200,
+            1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400, 1932602400
           ],
           offset: [
-            5040, 5040, 3600, 7200, 3600, 7200, 3600, 7200, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            5040, 5040, 3600, 7200, 3600, 7200, 3600, 7200, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/Istanbul': {
           time: [
             -2840140800, -1869868800, -1693699200, -168048e4, -1570406400, -1552176e3, -1538352e3, -1522540800,
             -1507507200, -1490572800, -1440201600, -1428019200, -1409702400, -1396483200, -931046400, -922665600,
-            -917827200, -892425600, -875836800, -764726400, -744336e3, -733795200, -716428800, -701913600, -684979200,
-            -670464e3, -654134400, -639014400, -62208e4, -60696e4, -590025600, -575510400, -235612800, -194832e3,
-            -177724800, -165715200, 107917200, 121226400, 133927200, 152676e3, 164685600, 184125600, 196221600,
-            215575200, 228880800, 245815200, 260330400, 267926400, 428464800, 433908e3, 468122400, 482806800, 496720800,
-            512528400, 528256800, 543978e3, 559706400, 575427600, 591156e3, 606877200, 622605600, 638326800, 65466e4,
-            670381200, 686109600, 701830800, 717559200, 733280400, 749008800, 764125200, 780458400, 796179600, 811908e3,
-            828234e3, 846381600, 859683600, 877831200, 891133200, 909280800, 922582800, 941335200, 954032400, 972784800,
-            985482e3, 1004234400, 1017536400, 1035684e3, 1048986e3, 1067133600, 1080435600, 1099188e3, 1111885200,
-            1130637600, 1143334800, 1162087200, 1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200,
-            1269745200, 1288497600, 1301281200, 1319947200, 1332644400, 1351396800, 1364698800, 1382846400, 1396234800,
-            1414296e3, 1427598e3, 1446955200, 1459047600, 1473206400, 1925002800
+            -917827200, -892425600, -875836800, -764726400, -744336e3, -733795200, -716428800, -701913600,
+            -684979200, -670464e3, -654134400, -639014400, -62208e4, -60696e4, -590025600, -575510400, -235612800,
+            -194832e3, -177724800, -165715200, 107917200, 121226400, 133927200, 152676e3, 164685600, 184125600,
+            196221600, 215575200, 228880800, 245815200, 260330400, 267926400, 428464800, 433908e3, 468122400,
+            482806800, 496720800, 512528400, 528256800, 543978e3, 559706400, 575427600, 591156e3, 606877200,
+            622605600, 638326800, 65466e4, 670381200, 686109600, 701830800, 717559200, 733280400, 749008800,
+            764125200, 780458400, 796179600, 811908e3, 828234e3, 846381600, 859683600, 877831200, 891133200,
+            909280800, 922582800, 941335200, 954032400, 972784800, 985482e3, 1004234400, 1017536400, 1035684e3,
+            1048986e3, 1067133600, 1080435600, 1099188e3, 1111885200, 1130637600, 1143334800, 1162087200,
+            1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200, 1288497600,
+            1301281200, 1319947200, 1332644400, 1351396800, 1364698800, 1382846400, 1396234800, 1414296e3,
+            1427598e3, 1446955200, 1459047600, 1473206400, 1925002800
           ],
           offset: [
-            6952, 7016, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 10800,
-            14400, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            6952, 7016, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            10800, 14400, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
             7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
             7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
             7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
-            7200, 10800, 10800
+            7200, 10800, 7200, 10800, 10800
           ]
         },
         'Europe/Zurich': {
           time: [
-            -3675196800, -2385244800, -904431600, -891122400, -872982e3, -859672800, 354679200, 370407600, 386128800,
-            401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600,
-            55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
-            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
-            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4,
-            1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800,
-            1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200,
-            1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3,
-            1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200,
-            1603594800, 1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3,
-            17433e5, 1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
+            -3675196800, -2385244800, -904431600, -891122400, -872982e3, -859672800, 354679200, 370407600,
+            386128800, 401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3,
+            528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600,
+            670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200,
+            811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800,
+            954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200,
+            1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
+            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
+            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400,
+            1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800,
+            1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5,
+            1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
             1887850800, 1901152800, 1919300400, 1932602400
           ],
           offset: [
-            2048, 1786, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            2048, 1786, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600
           ]
         },
         'Australia/Sydney': {
           time: [
             -2364076800, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200, -828309600,
-            -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200, 162961200, 183520800,
-            195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3, 320814e3, 341373600,
-            352263600, 372823200, 386737200, 404877600, 415767600, 436327200, 447217200, 467776800, 478666800,
-            499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4, 59418e4, 606279600, 625629600, 636519600,
-            657079200, 667969200, 688528800, 699418800, 719978400, 731473200, 752032800, 762922800, 783482400,
-            794372400, 814932e3, 828241200, 846381600, 859690800, 877831200, 891140400, 909280800, 92259e4, 941335200,
-            954039600, 967341600, 985489200, 1004234400, 1017543600, 1035684e3, 1048993200, 1067133600, 1080442800,
-            1099188e3, 1111892400, 1130637600, 1143946800, 1162087200, 1174791600, 1193536800, 1207450800, 1223172e3,
-            1238900400, 1254621600, 127035e4, 1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600,
-            1381024800, 1396753200, 1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200,
-            1522551600, 1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400, 1648954800,
+            -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200, 162961200,
+            183520800, 195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3,
+            320814e3, 341373600, 352263600, 372823200, 386737200, 404877600, 415767600, 436327200, 447217200,
+            467776800, 478666800, 499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4, 59418e4,
+            606279600, 625629600, 636519600, 657079200, 667969200, 688528800, 699418800, 719978400, 731473200,
+            752032800, 762922800, 783482400, 794372400, 814932e3, 828241200, 846381600, 859690800, 877831200,
+            891140400, 909280800, 92259e4, 941335200, 954039600, 967341600, 985489200, 1004234400, 1017543600,
+            1035684e3, 1048993200, 1067133600, 1080442800, 1099188e3, 1111892400, 1130637600, 1143946800,
+            1162087200, 1174791600, 1193536800, 1207450800, 1223172e3, 1238900400, 1254621600, 127035e4,
+            1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600, 1381024800, 1396753200,
+            1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200, 1522551600,
+            1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400, 1648954800,
             1664676e3, 1680404400, 1696125600, 1712458800, 172818e4, 1743908400, 1759629600, 1775358e3, 1791079200,
-            1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200, 1917482400, 1933210800
+            1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200, 1917482400,
+            1933210800
           ],
           offset: [
             36292, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3,
@@ -16000,7 +16153,8 @@
         'Australia/Brisbane': {
           time: [
             -2366755200, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200, -828309600,
-            -813189600, 57722400, 68007600, 625629600, 636519600, 657079200, 667969200, 688528800, 699418800, 1925028e3
+            -813189600, 57722400, 68007600, 625629600, 636519600, 657079200, 667969200, 688528800, 699418800,
+            1925028e3
           ],
           offset: [
             36728, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3,
@@ -16010,48 +16164,53 @@
         'Australia/Adelaide': {
           time: [
             -2364076800, -2230156800, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200,
-            -828309600, -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200, 162961200,
-            183520800, 195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3, 320814e3,
-            341373600, 352263600, 372823200, 384318e3, 404877600, 415767600, 436327200, 447217200, 467776800, 478666800,
-            499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4, 59418e4, 606279600, 625629600, 637729200,
-            657079200, 667969200, 688528800, 701233200, 719978400, 731473200, 752032800, 764132400, 783482400,
-            796186800, 814932e3, 828241200, 846381600, 859690800, 877831200, 891140400, 909280800, 92259e4, 941335200,
-            954039600, 972784800, 985489200, 1004234400, 1017543600, 1035684e3, 1048993200, 1067133600, 1080442800,
-            1099188e3, 1111892400, 1130637600, 1143946800, 1162087200, 1174791600, 1193536800, 1207450800, 1223172e3,
-            1238900400, 1254621600, 127035e4, 1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600,
-            1381024800, 1396753200, 1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200,
-            1522551600, 1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400, 1648954800,
-            1664676e3, 1680404400, 1696125600, 1712458800, 172818e4, 1743908400, 1759629600, 1775358e3, 1791079200,
-            1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200, 1917482400, 1933210800
+            -828309600, -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200,
+            162961200, 183520800, 195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400,
+            309924e3, 320814e3, 341373600, 352263600, 372823200, 384318e3, 404877600, 415767600, 436327200,
+            447217200, 467776800, 478666800, 499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4,
+            59418e4, 606279600, 625629600, 637729200, 657079200, 667969200, 688528800, 701233200, 719978400,
+            731473200, 752032800, 764132400, 783482400, 796186800, 814932e3, 828241200, 846381600, 859690800,
+            877831200, 891140400, 909280800, 92259e4, 941335200, 954039600, 972784800, 985489200, 1004234400,
+            1017543600, 1035684e3, 1048993200, 1067133600, 1080442800, 1099188e3, 1111892400, 1130637600,
+            1143946800, 1162087200, 1174791600, 1193536800, 1207450800, 1223172e3, 1238900400, 1254621600,
+            127035e4, 1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600, 1381024800,
+            1396753200, 1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200,
+            1522551600, 1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400,
+            1648954800, 1664676e3, 1680404400, 1696125600, 1712458800, 172818e4, 1743908400, 1759629600, 1775358e3,
+            1791079200, 1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200,
+            1917482400, 1933210800
           ],
           offset: [
-            33260, 32400, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200,
-            37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
-            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200,
-            37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
-            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200,
-            37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
-            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200,
-            37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
-            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800
+            33260, 32400, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800, 34200, 37800,
+            34200, 37800, 34200, 37800
           ]
         },
         'Australia/ACT': {
           time: [
             -2364076800, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200, -828309600,
-            -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200, 162961200, 183520800,
-            195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3, 320814e3, 341373600,
-            352263600, 372823200, 386737200, 404877600, 415767600, 436327200, 447217200, 467776800, 478666800,
-            499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4, 59418e4, 606279600, 625629600, 636519600,
-            657079200, 667969200, 688528800, 699418800, 719978400, 731473200, 752032800, 762922800, 783482400,
-            794372400, 814932e3, 828241200, 846381600, 859690800, 877831200, 891140400, 909280800, 92259e4, 941335200,
-            954039600, 967341600, 985489200, 1004234400, 1017543600, 1035684e3, 1048993200, 1067133600, 1080442800,
-            1099188e3, 1111892400, 1130637600, 1143946800, 1162087200, 1174791600, 1193536800, 1207450800, 1223172e3,
-            1238900400, 1254621600, 127035e4, 1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600,
-            1381024800, 1396753200, 1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200,
-            1522551600, 1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400, 1648954800,
+            -813189600, 57722400, 68007600, 89172e3, 100062e3, 120621600, 131511600, 152071200, 162961200,
+            183520800, 195015600, 215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3,
+            320814e3, 341373600, 352263600, 372823200, 386737200, 404877600, 415767600, 436327200, 447217200,
+            467776800, 478666800, 499226400, 511326e3, 530071200, 542775600, 562125600, 57483e4, 59418e4,
+            606279600, 625629600, 636519600, 657079200, 667969200, 688528800, 699418800, 719978400, 731473200,
+            752032800, 762922800, 783482400, 794372400, 814932e3, 828241200, 846381600, 859690800, 877831200,
+            891140400, 909280800, 92259e4, 941335200, 954039600, 967341600, 985489200, 1004234400, 1017543600,
+            1035684e3, 1048993200, 1067133600, 1080442800, 1099188e3, 1111892400, 1130637600, 1143946800,
+            1162087200, 1174791600, 1193536800, 1207450800, 1223172e3, 1238900400, 1254621600, 127035e4,
+            1286071200, 1301799600, 1317520800, 1333249200, 1349575200, 1365303600, 1381024800, 1396753200,
+            1412474400, 1428202800, 1443924e3, 1459652400, 1475373600, 1491102e3, 1506823200, 1522551600,
+            1538877600, 1554606e3, 1570327200, 1586055600, 1601776800, 1617505200, 1633226400, 1648954800,
             1664676e3, 1680404400, 1696125600, 1712458800, 172818e4, 1743908400, 1759629600, 1775358e3, 1791079200,
-            1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200, 1917482400, 1933210800
+            1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200, 1917482400,
+            1933210800
           ],
           offset: [
             36292, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3, 39600, 36e3,
@@ -16068,100 +16227,104 @@
         'Asia/Almaty': {
           time: [
             -1441152e3, -1247529600, 354931200, 370742400, 386467200, 402278400, 418003200, 433814400, 449625600,
-            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800,
-            622609200, 638330400, 654663600, 670384800, 686113200, 695786400, 701834400, 717562800, 733284e3, 749012400,
-            764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400,
-            922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600,
-            1067137200, 1080439200, 1099191600, 1925013600
+            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600,
+            606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 695786400, 701834400, 717562800,
+            733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
+            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
+            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1925013600
           ],
           offset: [
             18468, 18e3, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600,
             25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 21600, 18e3, 21600, 25200, 21600, 25200, 21600,
-            25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200,
-            21600, 25200, 21600, 25200, 21600, 25200, 21600
+            25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600,
+            25200, 21600, 25200, 21600, 25200, 21600, 25200, 21600
           ]
         },
         'Asia/Ashkhabad': {
           time: [
             -1441152e3, -1247529600, 354931200, 370742400, 386467200, 402278400, 418003200, 433814400, 449625600,
-            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800,
-            622609200, 638330400, 654663600, 670384800, 686113200, 695786400, 192501e4
+            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600,
+            606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 695786400, 192501e4
           ],
           offset: [
-            14012, 14400, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600,
-            18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 18e3, 14400, 18e3
+            14012, 14400, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3,
+            21600, 18e3, 21600, 18e3, 21600, 18e3, 21600, 18e3, 18e3, 14400, 18e3
           ]
         },
         'Asia/Tokyo': {
           time: [
-            -2587678861, -683769600, -672274800, -654739200, -640825200, -620265600, -609375600, -588816e3, -577926e3,
-            1925024400
+            -2587678861, -683769600, -672274800, -654739200, -640825200, -620265600, -609375600, -588816e3,
+            -577926e3, 1925024400
           ],
           offset: [33539, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400]
         },
         'Asia/Taipei': {
           time: [
-            -2335219200, -1017792e3, -766191600, -745804800, -733795200, -716860800, -699580800, -683856e3, -670636800,
-            -65232e4, -639100800, -620784e3, -607564800, -589248e3, -576028800, -562896e3, -541728e3, -528681600,
-            -510192e3, -497145600, -478656e3, -465609600, -449798400, -433987200, -418176e3, -402451200, -38664e4,
-            -370915200, -355104e3, -339379200, -323568e3, -302486400, -291945600, -270950400, -260409600, 134006400,
-            149817600, 165542400, 181353600, 299635200, 307584e3, 1925020800
+            -2335219200, -1017792e3, -766191600, -745804800, -733795200, -716860800, -699580800, -683856e3,
+            -670636800, -65232e4, -639100800, -620784e3, -607564800, -589248e3, -576028800, -562896e3, -541728e3,
+            -528681600, -510192e3, -497145600, -478656e3, -465609600, -449798400, -433987200, -418176e3,
+            -402451200, -38664e4, -370915200, -355104e3, -339379200, -323568e3, -302486400, -291945600, -270950400,
+            -260409600, 134006400, 149817600, 165542400, 181353600, 299635200, 307584e3, 1925020800
           ],
           offset: [
-            29160, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
-            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
+            29160, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
           ]
         },
         'Asia/Singapore': {
           time: [
-            -2177452800, -2038176e3, -1167609600, -1073001600, -894153600, -879638400, -766972800, 378691200, 1925020800
+            -2177452800, -2038176e3, -1167609600, -1073001600, -894153600, -879638400, -766972800, 378691200,
+            1925020800
           ],
           offset: [24925, 24925, 25200, 26400, 26400, 27e3, 32400, 27e3, 28800]
         },
         'Asia/Shanghai': {
           time: [
-            -2177452800, -933638400, -922060800, -908841600, -888796800, -881020800, -767836800, -745804800, -733795200,
-            -716860800, -699580800, -683856e3, -670636800, -65232e4, -649987200, 515556e3, 527047200, 545191200,
-            558496800, 577245600, 589946400, 608695200, 622000800, 640144800, 653450400, 671594400, 6849e5, 1925020800
+            -2177452800, -933638400, -922060800, -908841600, -888796800, -881020800, -767836800, -745804800,
+            -733795200, -716860800, -699580800, -683856e3, -670636800, -65232e4, -649987200, 515556e3, 527047200,
+            545191200, 558496800, 577245600, 589946400, 608695200, 622000800, 640144800, 653450400, 671594400,
+            6849e5, 1925020800
           ],
           offset: [
-            29143, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
+            29143, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
           ]
         },
         'Asia/Seoul': {
           time: [
-            -1948752e3, -1830384e3, -767318400, -681177600, -672192e3, -654739200, -640828800, -623376e3, -609379200,
-            -588816e3, -577929600, -498096e3, -462672e3, -451699200, -429753600, -418262400, -399513600, -387417600,
-            -368064e3, -355968e3, -336614400, -324518400, -305164800, -293068800, -264902400, 547610400, 560919600,
-            57906e4, 592369200, 1925024400
+            -1948752e3, -1830384e3, -767318400, -681177600, -672192e3, -654739200, -640828800, -623376e3,
+            -609379200, -588816e3, -577929600, -498096e3, -462672e3, -451699200, -429753600, -418262400,
+            -399513600, -387417600, -368064e3, -355968e3, -336614400, -324518400, -305164800, -293068800,
+            -264902400, 547610400, 560919600, 57906e4, 592369200, 1925024400
           ],
           offset: [
-            30472, 30600, 32400, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400, 30600, 34200, 30600, 34200,
-            30600, 34200, 30600, 34200, 30600, 34200, 30600, 34200, 30600, 32400, 36e3, 32400, 36e3, 32400
+            30472, 30600, 32400, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400, 36e3, 32400, 30600, 34200, 30600,
+            34200, 30600, 34200, 30600, 34200, 30600, 34200, 30600, 34200, 30600, 32400, 36e3, 32400, 36e3, 32400
           ]
         },
         'Asia/Tehran': {
           time: [
             -1704153600, -757382400, 247190400, 259286400, 277776e3, 283996800, 290822400, 306547200, 322444800,
-            338515200, 673228800, 685497600, 701222400, 71712e4, 732758400, 748656e3, 764294400, 780192e3, 795830400,
-            811728e3, 827366400, 843264e3, 858988800, 874886400, 890524800, 906422400, 922060800, 937958400, 953596800,
-            969494400, 985219200, 1001116800, 1016755200, 1032652800, 1048291200, 1064188800, 1079827200, 1095724800,
-            1111449600, 1127347200, 1206057600, 1221955200, 123768e4, 1253577600, 1269216e3, 1285113600, 1300752e3,
-            1316649600, 1332288e3, 1348185600, 1363910400, 1379808e3, 1395446400, 1411344e3, 1426982400, 144288e4,
-            1458518400, 1474416e3, 1490140800, 1506038400, 1521676800, 1537574400, 1553212800, 1569110400, 1584748800,
-            1600646400, 1616371200, 1632268800, 1647907200, 1663804800, 1679443200, 1695340800, 1710979200, 1726876800,
-            1742601600, 1758499200, 1774137600, 1790035200, 1805673600, 1821571200, 1837209600, 1853107200, 1868745600,
-            1884643200, 1900368e3, 1916265600, 1931904e3
+            338515200, 673228800, 685497600, 701222400, 71712e4, 732758400, 748656e3, 764294400, 780192e3,
+            795830400, 811728e3, 827366400, 843264e3, 858988800, 874886400, 890524800, 906422400, 922060800,
+            937958400, 953596800, 969494400, 985219200, 1001116800, 1016755200, 1032652800, 1048291200, 1064188800,
+            1079827200, 1095724800, 1111449600, 1127347200, 1206057600, 1221955200, 123768e4, 1253577600,
+            1269216e3, 1285113600, 1300752e3, 1316649600, 1332288e3, 1348185600, 1363910400, 1379808e3, 1395446400,
+            1411344e3, 1426982400, 144288e4, 1458518400, 1474416e3, 1490140800, 1506038400, 1521676800, 1537574400,
+            1553212800, 1569110400, 1584748800, 1600646400, 1616371200, 1632268800, 1647907200, 1663804800,
+            1679443200, 1695340800, 1710979200, 1726876800, 1742601600, 1758499200, 1774137600, 1790035200,
+            1805673600, 1821571200, 1837209600, 1853107200, 1868745600, 1884643200, 1900368e3, 1916265600,
+            1931904e3
           ],
           offset: [
             12344, 12344, 12600, 14400, 18e3, 14400, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
-            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200,
-            12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
-            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200,
-            12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
-            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600
+            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
+            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
+            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
+            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
+            16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600, 16200, 12600,
+            16200, 12600
           ]
         },
         'Asia/Dubai': {
@@ -16174,21 +16337,22 @@
         },
         'Asia/Hong_Kong': {
           time: [
-            -2056663398, -900882e3, -891547200, -884217600, -761176800, -747878400, -728508600, -717021e3, -697059e3,
-            -683757e3, -668028600, -654726600, -636579e3, -623277e3, -605129400, -591827400, -573679800, -559773e3,
-            -541625400, -528323400, -510179400, -498083400, -478729800, -466633800, -446675400, -435184200, -415225800,
-            -403129800, -383776200, -371680200, -352326600, -340230600, -320877e3, -308781e3, -288822600, -277331400,
-            -257373e3, -245881800, -225923400, -213827400, -194473800, -182377800, -163024200, -148509e3, -132784200,
-            -117059400, -101334600, -85609800, -69280200, -53555400, -37830600, -22105800, -6381e3, 9343800, 25068600,
-            40793400, 56518200, 72243e3, 88572600, 104297400, 120022200, 126070200, 151471800, 167196600, 182921400,
-            198646200, 214371e3, 295414200, 309324600, 1925020800
+            -2056663398, -900882e3, -891547200, -884217600, -761176800, -747878400, -728508600, -717021e3,
+            -697059e3, -683757e3, -668028600, -654726600, -636579e3, -623277e3, -605129400, -591827400, -573679800,
+            -559773e3, -541625400, -528323400, -510179400, -498083400, -478729800, -466633800, -446675400,
+            -435184200, -415225800, -403129800, -383776200, -371680200, -352326600, -340230600, -320877e3,
+            -308781e3, -288822600, -277331400, -257373e3, -245881800, -225923400, -213827400, -194473800,
+            -182377800, -163024200, -148509e3, -132784200, -117059400, -101334600, -85609800, -69280200, -53555400,
+            -37830600, -22105800, -6381e3, 9343800, 25068600, 40793400, 56518200, 72243e3, 88572600, 104297400,
+            120022200, 126070200, 151471800, 167196600, 182921400, 198646200, 214371e3, 295414200, 309324600,
+            1925020800
           ],
           offset: [
-            27402, 28800, 32400, 30600, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
-            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
-            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
+            27402, 28800, 32400, 30600, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
           ]
         },
         'Asia/Bangkok': {
@@ -16197,31 +16361,33 @@
         },
         'Asia/Chongqing': {
           time: [
-            -2177452800, -933638400, -922060800, -908841600, -888796800, -881020800, -767836800, -745804800, -733795200,
-            -716860800, -699580800, -683856e3, -670636800, -65232e4, -649987200, 515556e3, 527047200, 545191200,
-            558496800, 577245600, 589946400, 608695200, 622000800, 640144800, 653450400, 671594400, 6849e5, 1925020800
+            -2177452800, -933638400, -922060800, -908841600, -888796800, -881020800, -767836800, -745804800,
+            -733795200, -716860800, -699580800, -683856e3, -670636800, -65232e4, -649987200, 515556e3, 527047200,
+            545191200, 558496800, 577245600, 589946400, 608695200, 622000800, 640144800, 653450400, 671594400,
+            6849e5, 1925020800
           ],
           offset: [
-            29143, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
+            29143, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800
           ]
         },
         'Asia/Jerusalem': {
           time: [
             -2840140800, -1640995200, -933638400, -857347200, -844293600, -825811200, -812678400, -794188800,
-            -779846400, -762645600, -748303200, -731116800, -681955200, -673228800, -667951200, -65232e4, -636415200,
-            -62208e4, -608936400, -59184e4, -572475600, -558568800, -542840400, -527724e3, -514414800, -490838400,
-            -482976e3, -459468e3, -451526400, -428544e3, -418251600, -400024800, -387417600, 142387200, 150854400,
-            167184e3, 178675200, 334022400, 337654800, 452563200, 462243600, 482284800, 495590400, 516758400, 526435200,
-            545443200, 558489600, 576633600, 589334400, 609897600, 620784e3, 638323200, 651628800, 669772800, 683683200,
-            701827200, 715737600, 733708800, 747187200, 765158400, 778032e3, 796608e3, 810086400, 826848e3, 842832e3,
-            858902400, 874195200, 890352e3, 90504e4, 923018400, 936324e3, 955677600, 970794e3, 986778e3, 1001293200,
-            1017363600, 1033952400, 1048813200, 1065142800, 1081299600, 1095814800, 1112320800, 1128823200, 1143770400,
-            1159668e3, 117522e4, 1189908e3, 1206669600, 1223172e3, 1238119200, 1254016800, 1269568800, 1284256800,
-            1301623200, 1317520800, 1333072800, 1348365600, 1364522400, 1382839200, 1395972e3, 1414288800, 1427421600,
-            1445738400, 1458871200, 1477792800, 1490320800, 1509242400, 1521770400, 1540692e3, 1553824800, 1572141600,
-            1585274400, 1603591200, 1616724e3, 1635645600, 1648173600, 1667095200, 1679623200, 1698544800, 1711677600,
-            1729994400, 1743127200, 1761444e3, 1774576800, 1792893600, 1806026400, 1824948e3, 1837476e3, 1856397600,
+            -779846400, -762645600, -748303200, -731116800, -681955200, -673228800, -667951200, -65232e4,
+            -636415200, -62208e4, -608936400, -59184e4, -572475600, -558568800, -542840400, -527724e3, -514414800,
+            -490838400, -482976e3, -459468e3, -451526400, -428544e3, -418251600, -400024800, -387417600, 142387200,
+            150854400, 167184e3, 178675200, 334022400, 337654800, 452563200, 462243600, 482284800, 495590400,
+            516758400, 526435200, 545443200, 558489600, 576633600, 589334400, 609897600, 620784e3, 638323200,
+            651628800, 669772800, 683683200, 701827200, 715737600, 733708800, 747187200, 765158400, 778032e3,
+            796608e3, 810086400, 826848e3, 842832e3, 858902400, 874195200, 890352e3, 90504e4, 923018400, 936324e3,
+            955677600, 970794e3, 986778e3, 1001293200, 1017363600, 1033952400, 1048813200, 1065142800, 1081299600,
+            1095814800, 1112320800, 1128823200, 1143770400, 1159668e3, 117522e4, 1189908e3, 1206669600, 1223172e3,
+            1238119200, 1254016800, 1269568800, 1284256800, 1301623200, 1317520800, 1333072800, 1348365600,
+            1364522400, 1382839200, 1395972e3, 1414288800, 1427421600, 1445738400, 1458871200, 1477792800,
+            1490320800, 1509242400, 1521770400, 1540692e3, 1553824800, 1572141600, 1585274400, 1603591200,
+            1616724e3, 1635645600, 1648173600, 1667095200, 1679623200, 1698544800, 1711677600, 1729994400,
+            1743127200, 1761444e3, 1774576800, 1792893600, 1806026400, 1824948e3, 1837476e3, 1856397600,
             1868925600, 1887847200, 190098e4, 1919296800, 1932429600
           ],
           offset: [
@@ -16258,30 +16424,32 @@
             -1224453600, -1206309600, -1192399200, -117486e4, -1160949600, -1143410400, -1125871200, -1112565600,
             -1094421600, -1081116e3, -1062972e3, -1049666400, -1031522400, -1018216800, -1000072800, -986767200,
             -968018400, -955317600, -936568800, -923263200, -757382400, 152676e3, 162356400, 183520800, 195015600,
-            215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3, 320814e3, 341373600, 352263600,
-            372823200, 384318e3, 404877600, 415767600, 436327200, 447217200, 467776800, 478666800, 499226400, 510116400,
-            530676e3, 541566e3, 562125600, 573620400, 59418e4, 60507e4, 623815200, 637729200, 655264800, 669178800,
-            686714400, 700628400, 718164e3, 732682800, 749613600, 764132400, 781063200, 795582e3, 812512800, 827031600,
-            844567200, 858481200, 876016800, 889930800, 907466400, 921985200, 938916e3, 953434800, 970365600, 984884400,
-            100242e4, 1016334e3, 1033869600, 1047783600, 1065319200, 1079838e3, 1096768800, 1111287600, 1128218400,
-            1142737200, 1159668e3, 1174186800, 1191117600, 1207450800, 1222567200, 1238900400, 1254016800, 127035e4,
-            1285466400, 1301799600, 1316916e3, 1333249200, 1348970400, 1365303600, 138042e4, 1396753200, 1411869600,
-            1428202800, 1443319200, 1459652400, 1474768800, 1491102e3, 1506218400, 1522551600, 1538272800, 1554606e3,
-            1569722400, 1586055600, 1601172e3, 1617505200, 1632621600, 1648954800, 1664071200, 1680404400, 1695520800,
-            1712458800, 1727575200, 1743908400, 1759024800, 1775358e3, 1790474400, 1806807600, 1821924e3, 1838257200,
-            1853373600, 1869706800, 1885428e3, 1901761200, 1916877600, 1933210800
+            215575200, 226465200, 247024800, 257914800, 278474400, 289364400, 309924e3, 320814e3, 341373600,
+            352263600, 372823200, 384318e3, 404877600, 415767600, 436327200, 447217200, 467776800, 478666800,
+            499226400, 510116400, 530676e3, 541566e3, 562125600, 573620400, 59418e4, 60507e4, 623815200, 637729200,
+            655264800, 669178800, 686714400, 700628400, 718164e3, 732682800, 749613600, 764132400, 781063200,
+            795582e3, 812512800, 827031600, 844567200, 858481200, 876016800, 889930800, 907466400, 921985200,
+            938916e3, 953434800, 970365600, 984884400, 100242e4, 1016334e3, 1033869600, 1047783600, 1065319200,
+            1079838e3, 1096768800, 1111287600, 1128218400, 1142737200, 1159668e3, 1174186800, 1191117600,
+            1207450800, 1222567200, 1238900400, 1254016800, 127035e4, 1285466400, 1301799600, 1316916e3,
+            1333249200, 1348970400, 1365303600, 138042e4, 1396753200, 1411869600, 1428202800, 1443319200,
+            1459652400, 1474768800, 1491102e3, 1506218400, 1522551600, 1538272800, 1554606e3, 1569722400,
+            1586055600, 1601172e3, 1617505200, 1632621600, 1648954800, 1664071200, 1680404400, 1695520800,
+            1712458800, 1727575200, 1743908400, 1759024800, 1775358e3, 1790474400, 1806807600, 1821924e3,
+            1838257200, 1853373600, 1869706800, 1885428e3, 1901761200, 1916877600, 1933210800
           ],
           offset: [
             41944, 41400, 45e3, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200,
-            41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 43200,
-            46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
-            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200,
-            46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
-            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200,
-            46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
-            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200,
-            46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
-            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800
+            41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200, 41400, 43200,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800, 43200, 46800,
+            43200, 46800
           ]
         },
         'Pacific/Chatham': {
@@ -16292,23 +16460,25 @@
             541568700, 562128300, 573623100, 594182700, 605072700, 623817900, 637731900, 655267500, 669181500,
             686717100, 700631100, 718166700, 732685500, 749616300, 764135100, 781065900, 795584700, 812515500,
             827034300, 844569900, 858483900, 876019500, 889933500, 907469100, 921987900, 938918700, 953437500,
-            970368300, 984887100, 1002422700, 1016336700, 1033872300, 1047786300, 1065321900, 1079840700, 1096771500,
-            1111290300, 1128221100, 1142739900, 1159670700, 1174189500, 1191120300, 1207453500, 1222569900, 1238903100,
-            1254019500, 1270352700, 1285469100, 1301802300, 1316918700, 1333251900, 1348973100, 1365306300, 1380422700,
-            1396755900, 1411872300, 1428205500, 1443321900, 1459655100, 1474771500, 1491104700, 1506221100, 1522554300,
-            1538275500, 1554608700, 1569725100, 1586058300, 1601174700, 1617507900, 1632624300, 1648957500, 1664073900,
-            1680407100, 1695523500, 1712461500, 1727577900, 1743911100, 1759027500, 1775360700, 1790477100, 1806810300,
-            1821926700, 1838259900, 1853376300, 1869709500, 1885430700, 1901763900, 1916880300, 1933213500
+            970368300, 984887100, 1002422700, 1016336700, 1033872300, 1047786300, 1065321900, 1079840700,
+            1096771500, 1111290300, 1128221100, 1142739900, 1159670700, 1174189500, 1191120300, 1207453500,
+            1222569900, 1238903100, 1254019500, 1270352700, 1285469100, 1301802300, 1316918700, 1333251900,
+            1348973100, 1365306300, 1380422700, 1396755900, 1411872300, 1428205500, 1443321900, 1459655100,
+            1474771500, 1491104700, 1506221100, 1522554300, 1538275500, 1554608700, 1569725100, 1586058300,
+            1601174700, 1617507900, 1632624300, 1648957500, 1664073900, 1680407100, 1695523500, 1712461500,
+            1727577900, 1743911100, 1759027500, 1775360700, 1790477100, 1806810300, 1821926700, 1838259900,
+            1853376300, 1869709500, 1885430700, 1901763900, 1916880300, 1933213500
           ],
           offset: [
-            44028, 44100, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900,
-            49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
-            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900,
-            49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
-            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900,
-            49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
-            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900,
-            49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500
+            44028, 44100, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500, 45900, 49500,
+            45900, 49500, 45900, 49500
           ]
         },
         'Pacific/Fakaofo': {
@@ -16324,39 +16494,41 @@
             -1514763396, -1343091600, -1234828800, -1220317200, -1207180800, -1191369600, -975283200, -963187200,
             -917136e3, -907372800, -821923200, -810086400, -627523200, -613008e3, 828842400, 846381600, 860292e3,
             877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 989114400, 1001815200,
-            1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200,
-            1162087200, 1175392800, 1193536800, 1207447200, 1224986400, 1238896800, 1256436e3, 1270346400, 1288490400,
-            1301796e3, 131994e4, 1333245600, 1351389600, 13653e5, 1382839200, 1396749600, 1414288800, 1428199200,
-            1445738400, 1459648800, 1477792800, 1491098400, 1509242400, 1522548e3, 1540692e3, 1554602400, 1572141600,
-            1586052e3, 1603591200, 1617501600, 1635645600, 1648951200, 1667095200, 1680400800, 1698544800, 1712455200,
-            1729994400, 1743904800, 1761444e3, 1775354400, 1792893600, 1806804e3, 1824948e3, 1838253600, 1856397600,
-            1869703200, 1887847200, 1901757600, 1919296800, 1933207200
+            1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
+            1143943200, 1162087200, 1175392800, 1193536800, 1207447200, 1224986400, 1238896800, 1256436e3,
+            1270346400, 1288490400, 1301796e3, 131994e4, 1333245600, 1351389600, 13653e5, 1382839200, 1396749600,
+            1414288800, 1428199200, 1445738400, 1459648800, 1477792800, 1491098400, 1509242400, 1522548e3,
+            1540692e3, 1554602400, 1572141600, 1586052e3, 1603591200, 1617501600, 1635645600, 1648951200,
+            1667095200, 1680400800, 1698544800, 1712455200, 1729994400, 1743904800, 1761444e3, 1775354400,
+            1792893600, 1806804e3, 1824948e3, 1838253600, 1856397600, 1869703200, 1887847200, 1901757600,
+            1919296800, 1933207200
           ],
           offset: [
-            -23796, -25200, -21600, -25200, -21600, -25200, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
-            -21600
+            -23796, -25200, -21600, -25200, -21600, -25200, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600,
+            -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600, -18e3,
+            -21600, -18e3, -21600, -18e3, -21600, -18e3, -21600
           ]
         },
         'Africa/Cairo': {
           time: [
-            -2185401600, -929836800, -923097600, -906163200, -892857600, -875836800, -857779200, -844300800, -825811200,
-            -812678400, -794188800, -779846400, -762652800, -399081600, -38664e4, -368323200, -355104e3, -336783600,
-            -323643600, -305161200, -292021200, -273625200, -260485200, -242089200, -228949200, -210553200, -197413200,
-            -178930800, -165790800, -147394800, -134254800, -115858800, -102632400, -84322800, -71096400, -52700400,
-            -39474e3, -21164400, -7938e3, 10371600, 23598e3, 41907600, 55134e3, 7353e4, 86756400, 105066e3, 118292400,
-            136602e3, 149828400, 168138e3, 181364400, 199760400, 212986800, 231296400, 244522800, 262832400, 276058800,
-            294368400, 307594800, 325990800, 339217200, 357526800, 370753200, 396406800, 402289200, 426819600,
-            433825200, 452221200, 465447600, 483757200, 496983600, 515293200, 528519600, 546829200, 560055600,
-            578451600, 591678e3, 610419600, 623214e3, 641523600, 65475e4, 673059600, 686286e3, 704682e3, 717908400,
-            736218e3, 749444400, 767754e3, 780980400, 799027200, 812332800, 830476800, 843782400, 861926400, 875232e3,
-            893376e3, 906681600, 925430400, 938736e3, 95688e4, 970185600, 988329600, 1001635200, 1019779200, 1033084800,
-            1051228800, 1064534400, 1083283200, 1096588800, 1114732800, 1128038400, 1146182400, 1158883200, 1177632e3,
-            1189123200, 1209081600, 1219968e3, 1240531200, 1250812800, 1272585600, 1281484800, 1284076800, 1285891200,
+            -2185401600, -929836800, -923097600, -906163200, -892857600, -875836800, -857779200, -844300800,
+            -825811200, -812678400, -794188800, -779846400, -762652800, -399081600, -38664e4, -368323200,
+            -355104e3, -336783600, -323643600, -305161200, -292021200, -273625200, -260485200, -242089200,
+            -228949200, -210553200, -197413200, -178930800, -165790800, -147394800, -134254800, -115858800,
+            -102632400, -84322800, -71096400, -52700400, -39474e3, -21164400, -7938e3, 10371600, 23598e3, 41907600,
+            55134e3, 7353e4, 86756400, 105066e3, 118292400, 136602e3, 149828400, 168138e3, 181364400, 199760400,
+            212986800, 231296400, 244522800, 262832400, 276058800, 294368400, 307594800, 325990800, 339217200,
+            357526800, 370753200, 396406800, 402289200, 426819600, 433825200, 452221200, 465447600, 483757200,
+            496983600, 515293200, 528519600, 546829200, 560055600, 578451600, 591678e3, 610419600, 623214e3,
+            641523600, 65475e4, 673059600, 686286e3, 704682e3, 717908400, 736218e3, 749444400, 767754e3, 780980400,
+            799027200, 812332800, 830476800, 843782400, 861926400, 875232e3, 893376e3, 906681600, 925430400,
+            938736e3, 95688e4, 970185600, 988329600, 1001635200, 1019779200, 1033084800, 1051228800, 1064534400,
+            1083283200, 1096588800, 1114732800, 1128038400, 1146182400, 1158883200, 1177632e3, 1189123200,
+            1209081600, 1219968e3, 1240531200, 1250812800, 1272585600, 1281484800, 1284076800, 1285891200,
             1400198400, 1403827200, 1406851200, 1411689600, 1924999200
           ],
           offset: [
@@ -16383,19 +16555,20 @@
             -2717668796, -1633298400, -1615154400, -1601848800, -1583704800, -1570399200, -1551650400, -1538949600,
             -1534111200, -880236e3, -769417200, -765410400, -147909600, -13158e4, -11646e4, -100130400, -84405600,
             -68680800, -52956e3, -37231200, -21506400, -5781600, 9943200, 25668e3, 41392800, 57722400, 73447200,
-            89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800, 199245600, 215575200, 230695200,
-            247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400, 372823200, 388548e3,
-            404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3, 544586400,
-            562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800, 702439200,
-            719978400, 733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600, 860292e3,
-            877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400, 1004234400,
-            1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200,
-            1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3, 1289095200,
-            1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600, 142578e4,
-            1446343200, 1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200, 1572746400,
+            89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800, 199245600, 215575200,
+            230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600, 357098400,
+            372823200, 388548e3, 404877600, 419997600, 436327200, 452052e3, 467776800, 483501600, 499226400,
+            514951200, 530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200,
+            657079200, 670989600, 688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400,
+            796788e3, 814932e3, 828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200,
+            941335200, 954640800, 972784800, 986090400, 1004234400, 1018144800, 1035684e3, 1049594400, 1067133600,
+            1081044e3, 1099188e3, 1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600,
+            1205028e3, 1225591200, 1236477600, 1257040800, 1268532e3, 1289095200, 1299981600, 1320544800,
+            1331431200, 1351994400, 1362880800, 1383444e3, 1394330400, 1414893600, 142578e4, 1446343200,
+            1457834400, 1478397600, 1489284e3, 1509847200, 1520733600, 1541296800, 1552183200, 1572746400,
             1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5, 1678586400, 1699149600, 1710036e3,
-            1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200, 1857002400,
-            1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
+            1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600, 1825552800, 1836439200,
+            1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
           ],
           offset: [
             -25196, -25200, -21600, -25200, -21600, -25200, -21600, -25200, -21600, -25200, -21600, -21600, -25200,
@@ -16415,182 +16588,191 @@
         'Europe/Helsinki': {
           time: [
             -2890252800, -1535932800, -875664e3, -859762800, 354679200, 370407600, 386128800, 401857200, 417582e3,
-            433310400, 449031600, 465364800, 481086e3, 496814400, 512535600, 528264e3, 543985200, 559713600, 575434800,
-            591163200, 606884400, 622612800, 638334e3, 654667200, 670388400, 686116800, 701838e3, 717566400, 733287600,
-            749016e3, 764737200, 780465600, 796186800, 811915200, 828241200, 846388800, 859690800, 877838400, 891140400,
-            909288e3, 92259e4, 941342400, 954039600, 972792e3, 985489200, 1004241600, 1017543600, 1035691200,
-            1048993200, 1067140800, 1080442800, 1099195200, 1111892400, 1130644800, 1143342e3, 1162094400, 1174791600,
-            1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200, 1288497600, 1301194800, 1319947200,
-            1332644400, 1351396800, 1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600,
-            14778e5, 1490497200, 1509249600, 1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400,
-            1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600,
-            1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3, 1887854400,
-            1901156400, 1919304e3, 1932606e3
+            433310400, 449031600, 465364800, 481086e3, 496814400, 512535600, 528264e3, 543985200, 559713600,
+            575434800, 591163200, 606884400, 622612800, 638334e3, 654667200, 670388400, 686116800, 701838e3,
+            717566400, 733287600, 749016e3, 764737200, 780465600, 796186800, 811915200, 828241200, 846388800,
+            859690800, 877838400, 891140400, 909288e3, 92259e4, 941342400, 954039600, 972792e3, 985489200,
+            1004241600, 1017543600, 1035691200, 1048993200, 1067140800, 1080442800, 1099195200, 1111892400,
+            1130644800, 1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600,
+            1256443200, 1269745200, 1288497600, 1301194800, 1319947200, 1332644400, 1351396800, 1364698800,
+            1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600, 14778e5, 1490497200, 1509249600,
+            1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400, 1616900400, 1635652800,
+            164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600, 1761451200, 1774753200,
+            1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3, 1887854400, 1901156400,
+            1919304e3, 1932606e3
           ],
           offset: [
-            5989, 5989, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
+            5989, 5989, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
+            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
           ]
         },
         'Europe/Stockholm': {
           time: [
-            -2871676800, -2208988800, -1692493200, -1680476400, 323834400, 338958e3, 354679200, 370407600, 386128800,
-            401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600,
-            55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
-            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
-            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4,
-            1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800,
-            1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200,
-            1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3,
-            1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200,
-            1603594800, 1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3,
-            17433e5, 1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
+            -2871676800, -2208988800, -1692493200, -1680476400, 323834400, 338958e3, 354679200, 370407600,
+            386128800, 401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3,
+            528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600,
+            670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200,
+            811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800,
+            954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200,
+            1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
+            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
+            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400,
+            1490493600, 1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800,
+            1616896800, 1635649200, 1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5,
+            1761447600, 1774749600, 1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400,
             1887850800, 1901152800, 1919300400, 1932602400
           ],
           offset: [
-            4332, 3614, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            4332, 3614, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600
           ]
         },
         'Europe/Copenhagen': {
           time: [
             -2524521600, -2398291200, -1692493200, -1680483600, -935107200, -85725e4, -844552800, -828219600,
-            -812498400, -79677e4, -781048800, -769381200, -747007200, -736376400, -715212e3, -706741200, -683157600,
-            -675291600, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800, 449028e3,
-            465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800,
-            622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600,
-            780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400,
-            941338800, 954036e3, 972788400, 985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200,
-            1080439200, 1099191600, 1111888800, 1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400,
-            122499e4, 1238292e3, 1256439600, 1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200,
-            1364695200, 1382842800, 1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600,
-            1509246e3, 1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200,
+            -812498400, -79677e4, -781048800, -769381200, -747007200, -736376400, -715212e3, -706741200,
+            -683157600, -675291600, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400,
+            433306800, 449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4,
+            575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
+            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200,
+            859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600,
+            1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800,
+            1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600,
+            1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800,
+            1396144800, 1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3,
+            1521943200, 1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200,
             1648346400, 1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600,
-            1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
-            1932602400
+            1792897200, 1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800,
+            1919300400, 1932602400
           ],
           offset: [
-            3020, 3020, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
-            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
+            3020, 3020, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600
           ]
         },
         'Atlantic/Reykjavik': {
           time: [
             -1956614400, -1668214800, -1647212400, -1636678800, -161343e4, -1605142800, -1581894e3, -1539565200,
-            -153135e4, -968029200, -952293600, -942012e3, -920239200, -909961200, -888789600, -877906800, -857944800,
-            -846457200, -826495200, -815007600, -795045600, -783558e3, -762991200, -752108400, -731541600, -717634800,
-            -700092e3, -686185200, -668642400, -654735600, -636588e3, -623286e3, -605743200, -591836400, -573688800,
-            -559782e3, -542239200, -528332400, -510789600, -496882800, -47934e4, -465433200, -447890400, -433983600,
-            -415836e3, -401929200, -384386400, -370479600, -352936800, -33903e4, -321487200, -307580400, -290037600,
-            -276130800, -258588e3, -244681200, -226533600, -212626800, -195084e3, -181177200, -163634400, -149727600,
-            -132184800, -118278e3, -100735200, -86828400, -68680800, -54774e3, 1924992e3
+            -153135e4, -968029200, -952293600, -942012e3, -920239200, -909961200, -888789600, -877906800,
+            -857944800, -846457200, -826495200, -815007600, -795045600, -783558e3, -762991200, -752108400,
+            -731541600, -717634800, -700092e3, -686185200, -668642400, -654735600, -636588e3, -623286e3,
+            -605743200, -591836400, -573688800, -559782e3, -542239200, -528332400, -510789600, -496882800,
+            -47934e4, -465433200, -447890400, -433983600, -415836e3, -401929200, -384386400, -370479600,
+            -352936800, -33903e4, -321487200, -307580400, -290037600, -276130800, -258588e3, -244681200,
+            -226533600, -212626800, -195084e3, -181177200, -163634400, -149727600, -132184800, -118278e3,
+            -100735200, -86828400, -68680800, -54774e3, 1924992e3
           ],
           offset: [
-            -5280, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0,
-            -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600,
+            -5280, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600,
             0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0,
-            -3600, 0, -3600, 0, -3600, 0
+            -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0, -3600, 0,
+            -3600, 0, -3600, 0, -3600, 0, -3600, 0
           ]
         },
         'Europe/Tallinn': {
           time: [
             -2840140800, -1638316800, -1632002400, -1618693200, -1593820800, -1535932800, -927936e3, -892944e3,
             -85725e4, -844552800, -828219600, -812498400, -797644800, 354931200, 370742400, 386467200, 402278400,
-            418003200, 433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4,
-            575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
-            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
-            877834800, 891136800, 909288e3, 92259e4, 941342400, 1017543600, 1035691200, 1048993200, 1067140800,
-            1080442800, 1099195200, 1111892400, 1130644800, 1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3,
-            1224993600, 1238295600, 1256443200, 1269745200, 1288497600, 1301194800, 1319947200, 1332644400, 1351396800,
-            1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600, 14778e5, 1490497200,
-            1509249600, 1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400, 1616900400, 1635652800,
-            164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600, 1761451200, 1774753200,
-            1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3, 1887854400, 1901156400, 1919304e3,
-            1932606e3
+            418003200, 433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600,
+            55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200,
+            701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600,
+            846385200, 859687200, 877834800, 891136800, 909288e3, 92259e4, 941342400, 1017543600, 1035691200,
+            1048993200, 1067140800, 1080442800, 1099195200, 1111892400, 1130644800, 1143342e3, 1162094400,
+            1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200, 1288497600,
+            1301194800, 1319947200, 1332644400, 1351396800, 1364698800, 1382846400, 1396148400, 1414296e3,
+            1427598e3, 1445745600, 1459047600, 14778e5, 1490497200, 1509249600, 1521946800, 1540699200, 1554001200,
+            1572148800, 1585450800, 1603598400, 1616900400, 1635652800, 164835e4, 1667102400, 1679799600,
+            1698552e3, 1711854e3, 1730001600, 1743303600, 1761451200, 1774753200, 1792900800, 1806202800,
+            1824955200, 1837652400, 1856404800, 1869102e3, 1887854400, 1901156400, 1919304e3, 1932606e3
           ],
           offset: [
-            5940, 5940, 3600, 7200, 3600, 5940, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 14400, 10800, 14400,
-            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 10800, 7200,
+            5940, 5940, 3600, 7200, 3600, 5940, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 14400, 10800,
+            14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
           ]
         },
         'Europe/Riga': {
           time: [
             -2840140800, -1632002400, -1618693200, -1601676e3, -1597266e3, -1377302400, -928022400, -899510400,
             -85725e4, -844552800, -828219600, -812498400, -79677e4, -795830400, 354931200, 370742400, 386467200,
-            402278400, 418003200, 433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600,
-            55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
-            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 843966e3, 859690800,
-            877838400, 891140400, 909288e3, 92259e4, 941342400, 985489200, 1004241600, 1017543600, 1035691200,
-            1048993200, 1067140800, 1080442800, 1099195200, 1111892400, 1130644800, 1143342e3, 1162094400, 1174791600,
-            1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200, 1288497600, 1301194800, 1319947200,
-            1332644400, 1351396800, 1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600,
-            14778e5, 1490497200, 1509249600, 1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400,
-            1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600,
-            1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3, 1887854400,
-            1901156400, 1919304e3, 1932606e3
+            402278400, 418003200, 433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400,
+            543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800,
+            686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600,
+            828237600, 843966e3, 859690800, 877838400, 891140400, 909288e3, 92259e4, 941342400, 985489200,
+            1004241600, 1017543600, 1035691200, 1048993200, 1067140800, 1080442800, 1099195200, 1111892400,
+            1130644800, 1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600,
+            1256443200, 1269745200, 1288497600, 1301194800, 1319947200, 1332644400, 1351396800, 1364698800,
+            1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600, 14778e5, 1490497200, 1509249600,
+            1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400, 1616900400, 1635652800,
+            164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600, 1761451200, 1774753200,
+            1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3, 1887854400, 1901156400,
+            1919304e3, 1932606e3
           ],
           offset: [
-            5794, 5794, 9394, 5794, 9394, 5794, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 10800, 14400, 10800,
-            14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
+            5794, 5794, 9394, 5794, 9394, 5794, 7200, 10800, 7200, 3600, 7200, 3600, 7200, 3600, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400,
+            10800, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            10800, 7200, 10800, 7200
           ]
         },
         'Europe/Vilnius': {
           time: [
             -2840140800, -1672531200, -1585094400, -1561248e3, -1553558400, -928195200, -900115200, -85725e4,
             -844552800, -828219600, -812498400, -802137600, 354931200, 370742400, 386467200, 402278400, 418003200,
-            433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200,
-            591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800, 733284e3,
-            749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200, 877834800, 891140400,
-            909284400, 922586400, 941338800, 1048993200, 1067140800, 1080442800, 1099195200, 1111892400, 1130644800,
-            1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3, 1224993600, 1238295600, 1256443200, 1269745200,
-            1288497600, 1301194800, 1319947200, 1332644400, 1351396800, 1364698800, 1382846400, 1396148400, 1414296e3,
-            1427598e3, 1445745600, 1459047600, 14778e5, 1490497200, 1509249600, 1521946800, 1540699200, 1554001200,
-            1572148800, 1585450800, 1603598400, 1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3,
-            1711854e3, 1730001600, 1743303600, 1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400,
-            1856404800, 1869102e3, 1887854400, 1901156400, 1919304e3, 1932606e3
+            433814400, 449625600, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4,
+            575431200, 591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400,
+            717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200,
+            859687200, 877834800, 891140400, 909284400, 922586400, 941338800, 1048993200, 1067140800, 1080442800,
+            1099195200, 1111892400, 1130644800, 1143342e3, 1162094400, 1174791600, 1193544e3, 1206846e3,
+            1224993600, 1238295600, 1256443200, 1269745200, 1288497600, 1301194800, 1319947200, 1332644400,
+            1351396800, 1364698800, 1382846400, 1396148400, 1414296e3, 1427598e3, 1445745600, 1459047600, 14778e5,
+            1490497200, 1509249600, 1521946800, 1540699200, 1554001200, 1572148800, 1585450800, 1603598400,
+            1616900400, 1635652800, 164835e4, 1667102400, 1679799600, 1698552e3, 1711854e3, 1730001600, 1743303600,
+            1761451200, 1774753200, 1792900800, 1806202800, 1824955200, 1837652400, 1856404800, 1869102e3,
+            1887854400, 1901156400, 1919304e3, 1932606e3
           ],
           offset: [
-            6076, 5040, 5736, 3600, 7200, 3600, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 14400, 10800, 14400, 10800,
-            14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 10800, 7200, 10800,
-            7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 7200, 3600,
-            7200, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            6076, 5040, 5736, 3600, 7200, 3600, 10800, 7200, 3600, 7200, 3600, 7200, 10800, 14400, 10800, 14400,
+            10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 14400, 10800, 10800, 7200,
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
+            7200, 3600, 7200, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
             10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200,
-            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
+            10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200, 10800, 7200
           ]
         },
         'America/Lima': {
           time: [
-            -2524521600, -1938556800, -1009843200, -1002067200, -986774400, -971049600, -955324800, -9396e5, 504921600,
-            512697600, 536457600, 544233600, 631152e3, 638928e3, 757382400, 765158400, 1924974e3
+            -2524521600, -1938556800, -1009843200, -1002067200, -986774400, -971049600, -955324800, -9396e5,
+            504921600, 512697600, 536457600, 544233600, 631152e3, 638928e3, 757382400, 765158400, 1924974e3
           ],
           offset: [
-            -18492, -18516, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
-            -18e3, -14400, -18e3
+            -18492, -18516, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
+            -14400, -18e3, -14400, -18e3
           ]
         },
         'America/Santiago': {
@@ -16599,22 +16781,23 @@
             -1286064e3, -1272844800, -1254528e3, -1241308800, -1222992e3, -1209772800, -1191369600, -1178150400,
             -870566400, -865296e3, -740534400, -736387200, -718070400, -713667600, -36633600, -23932800, -3369600,
             7516800, 24451200, 37756800, 55900800, 69206400, 87955200, 100656e3, 118195200, 132105600, 150854400,
-            163555200, 182304e3, 195609600, 213753600, 227059200, 245203200, 258508800, 277257600, 289958400, 308707200,
-            321408e3, 340156800, 353462400, 371606400, 384912e3, 403056e3, 416361600, 434505600, 447811200, 46656e4,
-            479260800, 498009600, 510710400, 529459200, 545184e3, 560908800, 574214400, 592358400, 605664e3, 624412800,
-            637113600, 653443200, 668563200, 687312e3, 700617600, 718761600, 732067200, 750211200, 763516800, 781660800,
-            794966400, 813715200, 826416e3, 845164800, 85968e4, 876614400, 88992e4, 906854400, 923184e3, 939513600,
-            952819200, 971568e3, 984268800, 1003017600, 1015718400, 1034467200, 1047168e3, 1065916800, 1079222400,
-            1097366400, 1110672e3, 1128816e3, 1142121600, 1160870400, 1173571200, 119232e4, 1206835200, 1223769600,
-            1237075200, 1255219200, 1270339200, 1286668800, 1304812800, 1313884800, 1335657600, 1346544e3, 1367107200,
-            1378598400, 1398556800, 1410048e3, 1463270400, 1471132800, 149472e4, 1502582400, 1526169600, 1534032e3,
-            1554595200, 1567900800, 1586044800, 1599350400, 1617494400, 16308e5, 1648944e3, 1662249600, 1680393600,
-            1693699200, 1712448e3, 1725753600, 1743897600, 1757203200, 1775347200, 1788652800, 1806796800, 1820102400,
+            163555200, 182304e3, 195609600, 213753600, 227059200, 245203200, 258508800, 277257600, 289958400,
+            308707200, 321408e3, 340156800, 353462400, 371606400, 384912e3, 403056e3, 416361600, 434505600,
+            447811200, 46656e4, 479260800, 498009600, 510710400, 529459200, 545184e3, 560908800, 574214400,
+            592358400, 605664e3, 624412800, 637113600, 653443200, 668563200, 687312e3, 700617600, 718761600,
+            732067200, 750211200, 763516800, 781660800, 794966400, 813715200, 826416e3, 845164800, 85968e4,
+            876614400, 88992e4, 906854400, 923184e3, 939513600, 952819200, 971568e3, 984268800, 1003017600,
+            1015718400, 1034467200, 1047168e3, 1065916800, 1079222400, 1097366400, 1110672e3, 1128816e3,
+            1142121600, 1160870400, 1173571200, 119232e4, 1206835200, 1223769600, 1237075200, 1255219200,
+            1270339200, 1286668800, 1304812800, 1313884800, 1335657600, 1346544e3, 1367107200, 1378598400,
+            1398556800, 1410048e3, 1463270400, 1471132800, 149472e4, 1502582400, 1526169600, 1534032e3, 1554595200,
+            1567900800, 1586044800, 1599350400, 1617494400, 16308e5, 1648944e3, 1662249600, 1680393600, 1693699200,
+            1712448e3, 1725753600, 1743897600, 1757203200, 1775347200, 1788652800, 1806796800, 1820102400,
             1838246400, 1851552e3, 1870300800, 1883001600, 1901750400, 1915056e3, 19332e5
           ],
           offset: [
-            -16966, -16966, -18e3, -16966, -14400, -16966, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400, -18e3,
-            -14400, -18e3, -14400, -18e3, -14400, -10800, -14400, -18e3, -14400, -10800, -14400, -10800, -14400, -10800,
+            -16966, -16966, -18e3, -16966, -14400, -16966, -14400, -18e3, -14400, -18e3, -14400, -18e3, -14400,
+            -18e3, -14400, -18e3, -14400, -18e3, -14400, -10800, -14400, -18e3, -14400, -10800, -14400, -10800,
             -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
             -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800,
             -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
@@ -16624,7 +16807,7 @@
             -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
             -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800,
             -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400, -10800, -14400,
-            -10800
+            -10800, -14400, -10800
           ]
         },
         'Asia/Bahrain': {
@@ -16633,17 +16816,18 @@
         },
         'Asia/Jakarta': {
           time: [
-            -3231273600, -1451693568, -117288e4, -876614400, -766022400, -683856e3, -620784e3, -189388800, 1925017200
+            -3231273600, -1451693568, -117288e4, -876614400, -766022400, -683856e3, -620784e3, -189388800,
+            1925017200
           ],
           offset: [25632, 25632, 26400, 27e3, 32400, 27e3, 28800, 27e3, 25200]
         },
         'Africa/Lagos': { time: [-1588464e3, 1924995600], offset: [816, 3600] },
         'Pacific/Norfolk': {
           time: [
-            -2177452800, -599616e3, 152071200, 162961200, 1443924e3, 1570327200, 1586055600, 1601776800, 1617505200,
-            1633226400, 1648954800, 1664676e3, 1680404400, 1696125600, 1712458800, 172818e4, 1743908400, 1759629600,
-            1775358e3, 1791079200, 1806807600, 1822528800, 1838257200, 1853978400, 1869706800, 1886032800, 1901761200,
-            1917482400, 1933210800
+            -2177452800, -599616e3, 152071200, 162961200, 1443924e3, 1570327200, 1586055600, 1601776800,
+            1617505200, 1633226400, 1648954800, 1664676e3, 1680404400, 1696125600, 1712458800, 172818e4,
+            1743908400, 1759629600, 1775358e3, 1791079200, 1806807600, 1822528800, 1838257200, 1853978400,
+            1869706800, 1886032800, 1901761200, 1917482400, 1933210800
           ],
           offset: [
             40312, 40320, 41400, 45e3, 41400, 39600, 43200, 39600, 43200, 39600, 43200, 39600, 43200, 39600, 43200,
@@ -16653,19 +16837,21 @@
         'America/Juneau': {
           time: [
             -3225169588, -2188987200, -880236e3, -769420800, -765410400, -21506400, -5781600, 9943200, 25668e3,
-            41392800, 57722400, 73447200, 89172e3, 104896800, 120621600, 126669600, 152071200, 162352800, 183520800,
-            199245600, 215575200, 230695200, 247024800, 262749600, 278474400, 294199200, 309924e3, 325648800, 341373600,
-            357098400, 372823200, 388548e3, 404877600, 419997600, 436327200, 438998400, 452052e3, 467776800, 483501600,
-            499226400, 514951200, 530676e3, 544586400, 562125600, 576036e3, 59418e4, 607485600, 625629600, 638935200,
-            657079200, 670989600, 688528800, 702439200, 719978400, 733888800, 752032800, 765338400, 783482400, 796788e3,
-            814932e3, 828842400, 846381600, 860292e3, 877831200, 891741600, 909280800, 923191200, 941335200, 954640800,
-            972784800, 986090400, 1004234400, 1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3,
-            1112493600, 1130637600, 1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600,
-            1257040800, 1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3,
-            1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200, 1520733600,
-            1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200, 1636250400, 1647136800, 16677e5,
-            1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800, 1772935200, 1793498400, 1804989600,
-            1825552800, 1836439200, 1857002400, 1867888800, 1888452e3, 1899338400, 1919901600, 1930788e3
+            41392800, 57722400, 73447200, 89172e3, 104896800, 120621600, 126669600, 152071200, 162352800,
+            183520800, 199245600, 215575200, 230695200, 247024800, 262749600, 278474400, 294199200, 309924e3,
+            325648800, 341373600, 357098400, 372823200, 388548e3, 404877600, 419997600, 436327200, 438998400,
+            452052e3, 467776800, 483501600, 499226400, 514951200, 530676e3, 544586400, 562125600, 576036e3,
+            59418e4, 607485600, 625629600, 638935200, 657079200, 670989600, 688528800, 702439200, 719978400,
+            733888800, 752032800, 765338400, 783482400, 796788e3, 814932e3, 828842400, 846381600, 860292e3,
+            877831200, 891741600, 909280800, 923191200, 941335200, 954640800, 972784800, 986090400, 1004234400,
+            1018144800, 1035684e3, 1049594400, 1067133600, 1081044e3, 1099188e3, 1112493600, 1130637600,
+            1143943200, 1162087200, 1173578400, 1194141600, 1205028e3, 1225591200, 1236477600, 1257040800,
+            1268532e3, 1289095200, 1299981600, 1320544800, 1331431200, 1351994400, 1362880800, 1383444e3,
+            1394330400, 1414893600, 142578e4, 1446343200, 1457834400, 1478397600, 1489284e3, 1509847200,
+            1520733600, 1541296800, 1552183200, 1572746400, 1583632800, 1604196e3, 1615687200, 1636250400,
+            1647136800, 16677e5, 1678586400, 1699149600, 1710036e3, 1730599200, 1741485600, 1762048800, 1772935200,
+            1793498400, 1804989600, 1825552800, 1836439200, 1857002400, 1867888800, 1888452e3, 1899338400,
+            1919901600, 1930788e3
           ],
           offset: [
             54139, -32261, -28800, -25200, -25200, -28800, -25200, -28800, -25200, -28800, -25200, -28800, -25200,
@@ -16683,48 +16869,50 @@
         },
         'Asia/Ho_Chi_Minh': {
           time: [
-            -2004048e3, -1851552e3, -852080400, -782614800, -767836800, -718070400, -457747200, -315622800, 171849600,
-            1925017200
+            -2004048e3, -1851552e3, -852080400, -782614800, -767836800, -718070400, -457747200, -315622800,
+            171849600, 1925017200
           ],
           offset: [25600, 25590, 25200, 28800, 32400, 25200, 28800, 25200, 28800, 25200]
         },
         'Australia/Perth': {
           time: [
-            -2337897600, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200, 152071200, 162961200,
-            436327200, 447217200, 690343200, 699418800, 1165111200, 1174791600, 1193536800, 1206846e3, 1224986400,
-            1238295600, 1925020800
+            -2337897600, -1672531140, -1665352800, -883605600, -876088800, -860364e3, -844639200, 152071200,
+            162961200, 436327200, 447217200, 690343200, 699418800, 1165111200, 1174791600, 1193536800, 1206846e3,
+            1224986400, 1238295600, 1925020800
           ],
           offset: [
-            27804, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400,
-            28800, 32400, 28800, 32400, 28800
+            27804, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800, 32400, 28800,
+            32400, 28800, 32400, 28800, 32400, 28800
           ]
         },
         'Europe/Oslo': {
           time: [
-            -2366755200, -1691881200, -1680566400, -927507600, -85725e4, -844552800, -828219600, -812498400, -79677e4,
-            -781048800, -765320400, -340840800, -324507600, -308786400, -293058e3, -277336800, -261608400, -245887200,
-            -230158800, -214437600, -198709200, -182988e3, -166654800, -147909600, -135205200, 323834400, 338958e3,
-            354679200, 370407600, 386128800, 401857200, 417578400, 433306800, 449028e3, 465361200, 481082400, 496810800,
-            512532e3, 528260400, 543981600, 55971e4, 575431200, 591159600, 606880800, 622609200, 638330400, 654663600,
-            670384800, 686113200, 701834400, 717562800, 733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600,
-            828237600, 846385200, 859687200, 877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400,
-            985485600, 1004238e3, 101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800,
-            1130641200, 1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600,
-            1269741600, 1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800,
-            1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200, 1540695600,
-            1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400, 1667098800, 1679796e3,
-            1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200, 1806199200, 1824951600,
-            1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400, 1932602400
+            -2366755200, -1691881200, -1680566400, -927507600, -85725e4, -844552800, -828219600, -812498400,
+            -79677e4, -781048800, -765320400, -340840800, -324507600, -308786400, -293058e3, -277336800,
+            -261608400, -245887200, -230158800, -214437600, -198709200, -182988e3, -166654800, -147909600,
+            -135205200, 323834400, 338958e3, 354679200, 370407600, 386128800, 401857200, 417578400, 433306800,
+            449028e3, 465361200, 481082400, 496810800, 512532e3, 528260400, 543981600, 55971e4, 575431200,
+            591159600, 606880800, 622609200, 638330400, 654663600, 670384800, 686113200, 701834400, 717562800,
+            733284e3, 749012400, 764733600, 780462e3, 796183200, 811911600, 828237600, 846385200, 859687200,
+            877834800, 891136800, 909284400, 922586400, 941338800, 954036e3, 972788400, 985485600, 1004238e3,
+            101754e4, 1035687600, 1048989600, 1067137200, 1080439200, 1099191600, 1111888800, 1130641200,
+            1143338400, 1162090800, 1174788e3, 1193540400, 1206842400, 122499e4, 1238292e3, 1256439600, 1269741600,
+            1288494e3, 1301191200, 1319943600, 1332640800, 1351393200, 1364695200, 1382842800, 1396144800,
+            1414292400, 1427594400, 1445742e3, 1459044e3, 1477796400, 1490493600, 1509246e3, 1521943200,
+            1540695600, 1553997600, 1572145200, 1585447200, 1603594800, 1616896800, 1635649200, 1648346400,
+            1667098800, 1679796e3, 1698548400, 1711850400, 1729998e3, 17433e5, 1761447600, 1774749600, 1792897200,
+            1806199200, 1824951600, 1837648800, 1856401200, 1869098400, 1887850800, 1901152800, 1919300400,
+            1932602400
           ],
           offset: [
-            2580, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
-            7200, 3600
+            2580, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600,
+            7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200,
+            3600, 7200, 3600, 7200, 3600, 7200, 3600, 7200, 3600
           ]
         }
       }
@@ -17014,7 +17202,8 @@
                 .bind(null, i)
             )
             .catch(i.oe)
-        for (var o = [], a = 1; a <= l.LevelsCount; a++) o.push(this._properties.child('level' + a).child('linewidth'))
+        for (var o = [], a = 1; a <= l.LevelsCount; a++)
+          o.push(this._properties.child('level' + a).child('linewidth'))
         this._widthsProperty = new s(o)
       }
       inherit(l, r),
@@ -17147,7 +17336,9 @@
                       (e.fillStyle = this._data.backgroundColor),
                       e.fill(),
                       (e.globalAlpha = 1))
-                    : ((e.fillStyle = this._data.backgroundColor), e.fillRect(i.x, i.y, i.w, i.h), (e.globalAlpha = 1)),
+                    : ((e.fillStyle = this._data.backgroundColor),
+                      e.fillRect(i.x, i.y, i.w, i.h),
+                      (e.globalAlpha = 1)),
                   !s.isIE && this._data.icons)
                 )
                   for (
@@ -17701,7 +17892,11 @@
           }),
           (e._isCorrectSession = function (e) {
             return (
-              4 === e.length && l(e.charCodeAt(0)) && l(e.charCodeAt(1)) && l(e.charCodeAt(2)) && l(e.charCodeAt(3))
+              4 === e.length &&
+              l(e.charCodeAt(0)) &&
+              l(e.charCodeAt(1)) &&
+              l(e.charCodeAt(2)) &&
+              l(e.charCodeAt(3))
             )
           }),
           (e._parseWorkingDays = function (e) {
@@ -18021,7 +18216,9 @@
               s = 60 * (n.startOffset() + n.length()) - 1,
               a = Math.floor(s / 3600)
             return (
-              (s -= 3600 * a), r.set_hms(o, a, s / 60, s % 60, 0, r.get_timezone(this._timezone)), { from: i, to: o }
+              (s -= 3600 * a),
+              r.set_hms(o, a, s / 60, s % 60, 0, r.get_timezone(this._timezone)),
+              { from: i, to: o }
             )
           }),
           (e.prototype._getEntriesForWeek = function (e) {
@@ -18206,7 +18403,11 @@
               var e = this,
                 t = []
               this.__collectibleLines._childs.forEach(function (i) {
-                for (var r = e.__collectibleLines[i].value().split('.'), n = e[r[0]], o = 1; o < r.length && n; ++o)
+                for (
+                  var r = e.__collectibleLines[i].value().split('.'), n = e[r[0]], o = 1;
+                  o < r.length && n;
+                  ++o
+                )
                   n = n[r[o]]
                 n && t.push({ property: n.color, defaultValue: n.color.value() })
               }),
@@ -18216,7 +18417,7 @@
             }
           }),
           (e.exports = s)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     '68at': function (e, t, i) {
       'use strict'
@@ -18801,7 +19002,8 @@
                     this._tooltipItems = i
                   }
                   'bottom' === this._direction &&
-                    (this._tooltip.style.bottom = Math.round(y - a - o.contentHeight(this._tooltipContent) + 10) + 'px')
+                    (this._tooltip.style.bottom =
+                      Math.round(y - a - o.contentHeight(this._tooltipContent) + 10) + 'px')
                 }
               }
             },
@@ -18994,11 +19196,18 @@
             return this._line.properties().arrowSellColor.setValue(e), this
           }),
           (c.prototype.getTextColor = function () {
-            return n.getColorFromProperties(this._line.properties().textColor, this._line.properties().textTransparency)
+            return n.getColorFromProperties(
+              this._line.properties().textColor,
+              this._line.properties().textTransparency
+            )
           }),
           (c.prototype.setTextColor = function (e) {
             return (
-              n.setColorToProperties(e, this._line.properties().textColor, this._line.properties().textTransparency),
+              n.setColorToProperties(
+                e,
+                this._line.properties().textColor,
+                this._line.properties().textTransparency
+              ),
               this
             )
           }),
@@ -19094,7 +19303,7 @@
           }),
           (t.ExecutionsPositionController = l),
           (t.LineToolExecution = u)
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     '7Fue': function (e, t, i) {
       'use strict'
@@ -19302,7 +19511,9 @@
           'number' != typeof e && (e = TradingView.STUDY_COUNT_LIMIT)
           ;(0, r.showNoticeDialog)({
             title: window.t('Warning'),
-            content: window.t('Studies limit exceeded: {0} studies per layout.\nPlease, remove some studies.').format(e)
+            content: window
+              .t('Studies limit exceeded: {0} studies per layout.\nPlease, remove some studies.')
+              .format(e)
           })
         })
       var r = i('brCa')
@@ -19921,7 +20132,8 @@
                   u,
                   h = s.parsePeriod(i),
                   d = new Date().valueOf(),
-                  p = (e.expired && t.cal_to_utc(t.get_timezone(e.timezone), new Date(1e3 * e.expiration_date))) || d
+                  p =
+                    (e.expired && t.cal_to_utc(t.get_timezone(e.timezone), new Date(1e3 * e.expiration_date))) || d
                 if ('' === h.resolution) (c = h.interval), (u = 'D')
                 else if ('S' === h.resolution) (c = 10 * h.interval), (u = '')
                 else {
@@ -19934,7 +20146,8 @@
                 }
                 var _ = e.sessionString || e.session
                 if (
-                  ((l = o.alignPeriodsBack(_, e.holidays, e.corrections, u, c, 1, p)), n && n.getRangeExtensionTime)
+                  ((l = o.alignPeriodsBack(_, e.holidays, e.corrections, u, c, 1, p)),
+                  n && n.getRangeExtensionTime)
                 ) {
                   var m = n.getRangeExtensionTime()
                   m && (l = Math.min(1e3 * m, l))
@@ -20086,11 +20299,11 @@
             )
           })()
         e.exports = o
-      }.call(this, i('jCNj')))
+      }).call(this, i('jCNj'))
     },
     '8pII': function (e) {
       e.exports = JSON.parse(
-        '{"content":{"chartProperties":{"scalesProperties":{"textColor":"#9598A1","lineColor":"#5D606B","backgroundColor":"#ffffff"},"paneProperties":{"vertGridProperties":{"color":"#1E222D"},"horzGridProperties":{"color":"#1E222D"},"background":"#131313"}},"sessions":{"graphics":{"backgrounds":{"outOfSession":{"color":"#2196f3","transparency":92}},"vertlines":{"sessBreaks":{"color":"#4985e7","style":2,"width":1}}}},"mainSourceProperties":{"baseLineColor":"#5d606b","candleStyle":{"borderColor":"#378658","upColor":"#26a69a","wickColor":"#B5B5B8","wickUpColor":"#26a69a","wickDownColor":"#ef5350","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350"},"haStyle":{"borderColor":"#378658","upColor":"#26a69a","wickColor":"#B5B5B8","wickUpColor":"#26a69a","wickDownColor":"#ef5350","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350"},"barStyle":{"downColor":"#ef5350","upColor":"#26a69a"},"pnfStyle":{"downColor":"#ef5350","upColor":"#26a69a","upColorProjection":"#336854","downColorProjection":"#7f323f"},"baselineStyle":{"baselineColor":"rgba( 117, 134, 150, 1)","topFillColor1":"rgba( 38, 166, 154, 0.28)","topFillColor2":"rgba( 38, 166, 154, 0.05)","bottomFillColor1":"rgba( 239, 83, 80, 0.05)","bottomFillColor2":"rgba( 239, 83, 80, 0.28)","topLineColor":"rgba( 38, 166, 154, 1)","bottomLineColor":"rgba( 239, 83, 80, 1)"},"areaStyle":{"transparency":100,"color1":"rgba(33, 150, 243, 0.28)","color2":"#2196f3","linecolor":"#2196f3","linewidth":2,"linestyle":0},"renkoStyle":{"upColor":"#26a69a","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f","borderUpColorProjection":"#336854","borderDownColorProjection":"#7f323f","wickUpColor":"#26a69a","wickDownColor":"#ef5350"},"lineStyle":{"color":"#2196f3","linewidth":2,"linestyle":0},"kagiStyle":{"downColor":"#ef5350","upColor":"#26a69a","upColorProjection":"#336854","downColorProjection":"#7f323f"},"pbStyle":{"upColor":"#26a69a","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f","borderUpColorProjection":"#336854","borderDownColorProjection":"#7f323f"},"rangeStyle":{"upColor":"#26a69a","downColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f"}}}}'
+        '{"content":{"chartProperties":{"scalesProperties":{"textColor":"#9598A1","lineColor":"#5D606B","backgroundColor":"#ffffff"},"paneProperties":{"vertGridProperties":{"color":"#1E222D"},"horzGridProperties":{"color":"#1E222D"},"background":"#1C1C1C"}},"sessions":{"graphics":{"backgrounds":{"outOfSession":{"color":"#2196f3","transparency":92}},"vertlines":{"sessBreaks":{"color":"#4985e7","style":2,"width":1}}}},"mainSourceProperties":{"baseLineColor":"#5d606b","candleStyle":{"borderColor":"#378658","upColor":"#26a69a","wickColor":"#B5B5B8","wickUpColor":"#26a69a","wickDownColor":"#ef5350","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350"},"haStyle":{"borderColor":"#378658","upColor":"#26a69a","wickColor":"#B5B5B8","wickUpColor":"#26a69a","wickDownColor":"#ef5350","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350"},"barStyle":{"downColor":"#ef5350","upColor":"#26a69a"},"pnfStyle":{"downColor":"#ef5350","upColor":"#26a69a","upColorProjection":"#336854","downColorProjection":"#7f323f"},"baselineStyle":{"baselineColor":"rgba( 117, 134, 150, 1)","topFillColor1":"rgba( 38, 166, 154, 0.28)","topFillColor2":"rgba( 38, 166, 154, 0.05)","bottomFillColor1":"rgba( 239, 83, 80, 0.05)","bottomFillColor2":"rgba( 239, 83, 80, 0.28)","topLineColor":"rgba( 38, 166, 154, 1)","bottomLineColor":"rgba( 239, 83, 80, 1)"},"areaStyle":{"transparency":100,"color1":"rgba(33, 150, 243, 0.28)","color2":"#2196f3","linecolor":"#2196f3","linewidth":2,"linestyle":0},"renkoStyle":{"upColor":"#26a69a","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f","borderUpColorProjection":"#336854","borderDownColorProjection":"#7f323f","wickUpColor":"#26a69a","wickDownColor":"#ef5350"},"lineStyle":{"color":"#2196f3","linewidth":2,"linestyle":0},"kagiStyle":{"downColor":"#ef5350","upColor":"#26a69a","upColorProjection":"#336854","downColorProjection":"#7f323f"},"pbStyle":{"upColor":"#26a69a","downColor":"#ef5350","borderUpColor":"#26a69a","borderDownColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f","borderUpColorProjection":"#336854","borderDownColorProjection":"#7f323f"},"rangeStyle":{"upColor":"#26a69a","downColor":"#ef5350","upColorProjection":"#336854","downColorProjection":"#7f323f"}}}}'
       )
     },
     '8qoI': function (e, t, i) {
@@ -20345,7 +20558,8 @@
                 }
               }),
               (m.prototype.exchange = function (e) {
-                if ((this.hasOwnProperty('_ticker') || this.parse(), !(arguments.length > 0))) return this._exchange
+                if ((this.hasOwnProperty('_ticker') || this.parse(), !(arguments.length > 0)))
+                  return this._exchange
                 null == e ? delete this._exchange : (this._exchange = e + '')
               }),
               (m.prototype.ticker = function (e) {
@@ -20353,7 +20567,8 @@
                 null == e ? delete this._ticker : (this._ticker = e + ''), delete this._root, delete this._contract
               }),
               (m.prototype.root = function (e) {
-                if ((this.hasOwnProperty('_root') || this.parseAsFutures(), !(arguments.length > 0))) return this._root
+                if ((this.hasOwnProperty('_root') || this.parseAsFutures(), !(arguments.length > 0)))
+                  return this._root
                 null == e
                   ? delete this._root
                   : ((this._root = e + ''), this._root && (this._ticker = this._root + (this._contract || '')))
@@ -20495,7 +20710,11 @@
               tokenize: w,
               validate: function (e) {
                 if (t.enabled('charting_library_base')) return { currentState: 'var' }
-                for (var i = 'init', r = { warnings: [], errors: [], isEmpty: !0 }, n = [], c = 0; c < e.length; c++) {
+                for (
+                  var i = 'init', r = { warnings: [], errors: [], isEmpty: !0 }, n = [], c = 0;
+                  c < e.length;
+                  c++
+                ) {
                   if (!((h = e[c]) instanceof o)) {
                     if ((delete r.isEmpty, h.isIncomplete)) {
                       var u = {
@@ -20575,7 +20794,11 @@
                         })
                   }
                 }
-                for (r.braceBalance = n.length, 'var' !== i && r.warnings.push({ status: 'incomplete' }); n.length; ) {
+                for (
+                  r.braceBalance = n.length, 'var' !== i && r.warnings.push({ status: 'incomplete' });
+                  n.length;
+
+                ) {
                   var h
                   u = {
                     status: 'incomplete',
@@ -20670,7 +20893,7 @@
             }
           })()
         e.exports = r
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     '8xAY': function (e, t, i) {
       'use strict'
@@ -20820,7 +21043,8 @@
           return (
             Object(r.__extends)(t, e),
             (t.prototype.setData = function (e) {
-              ;(this._data = e), (this._barWidth = Math.max(1, Math.round(Object(l.optimalHiLoWidth)(e.barSpacing))))
+              ;(this._data = e),
+                (this._barWidth = Math.max(1, Math.round(Object(l.optimalHiLoWidth)(e.barSpacing))))
             }),
             (t.prototype.hitTest = function (e) {
               if (null === this._data || null === this._barWidth) return null
@@ -20856,7 +21080,11 @@
                     s = Math.min(n.high, n.low),
                     a = Math.max(n.high, n.low)
                   e.fillText(i ? n.lowLabel : n.highLabel, n.time, s - this._data.labelsPadding),
-                    e.fillText(i ? n.highLabel : n.lowLabel, n.time, a + this._data.labelsPadding + this._data.fontSize)
+                    e.fillText(
+                      i ? n.highLabel : n.lowLabel,
+                      n.time,
+                      a + this._data.labelsPadding + this._data.fontSize
+                    )
                 }
                 e.restore()
               }
@@ -21132,7 +21360,11 @@
             b = m ? n.getInputByName(e, h) : null,
             S = t.hasOwnProperty(h)
           if (
-            (null !== y ? 1 : 0) + (null !== g ? 1 : 0) + (null !== v ? 1 : 0) + (null !== b ? 1 : 0) + (S ? 1 : 0) >
+            (null !== y ? 1 : 0) +
+              (null !== g ? 1 : 0) +
+              (null !== v ? 1 : 0) +
+              (null !== b ? 1 : 0) +
+              (S ? 1 : 0) >
             1
           )
             l.logWarn("Study '" + e.description + "' has ambiguous identifier '" + h + "'")
@@ -21148,11 +21380,15 @@
             } else if (null !== b) r.applyInputValue(t, b, o)
             else if (null !== g) {
               if (void 0 === w)
-                return void l.logWarn("Property name of '" + h + "' band for study '" + e.description + "' must be set")
+                return void l.logWarn(
+                  "Property name of '" + h + "' band for study '" + e.description + "' must be set"
+                )
               r.applyBandProperty(t, g, w, o)
             } else if (null !== v) {
               if (void 0 === w)
-                return void l.logWarn("Property name of '" + h + "' area for study '" + e.description + "' must be set")
+                return void l.logWarn(
+                  "Property name of '" + h + "' area for study '" + e.description + "' must be set"
+                )
               r.applyFilledAreaProperty(t, v, w, o)
             } else
               S
@@ -21268,7 +21504,9 @@
                 r = r[s]
               }
               var a = t[t.length - 1]
-              null != r && r.hasOwnProperty(a) ? (r[a] = i) : l.logWarn('Study does not have property ' + t.join('.'))
+              null != r && r.hasOwnProperty(a)
+                ? (r[a] = i)
+                : l.logWarn('Study does not have property ' + t.join('.'))
             }
           })
       })(r || (r = {})),
@@ -21384,7 +21622,9 @@
           }),
           (b.prototype._getChartWidgetApi = function (e) {
             var t = this._chartWidgets.get(e)
-            return void 0 === t && ((t = new o(e, this._activateChart.bind(null, e))), this._chartWidgets.set(e, t)), t
+            return (
+              void 0 === t && ((t = new o(e, this._activateChart.bind(null, e))), this._chartWidgets.set(e, t)), t
+            )
           }),
           (b.prototype.onActiveChartChanged = function () {
             return this._activeChangedChangedDelegate
@@ -21479,12 +21719,14 @@
             )
           }),
           (b.prototype.closePopupsAndDialogs = function () {
-            for (var e = document.querySelectorAll('._tv-dialog-title-close'), t = 0; t < e.length; t++) e[t].click()
+            for (var e = document.querySelectorAll('._tv-dialog-title-close'), t = 0; t < e.length; t++)
+              e[t].click()
             var r = i.c.KHon
             r && r.exports.closeAllDialogs(), l.hideAll(), a.emit(g)
           }),
           (b.prototype.selectLineTool = function (e) {
-            _.supportedLineTools[e] && ((e = _.supportedLineTools[e].name), c.tool.value() !== e && c.tool.setValue(e))
+            _.supportedLineTools[e] &&
+              ((e = _.supportedLineTools[e].name), c.tool.value() !== e && c.tool.setValue(e))
           }),
           (b.prototype.selectedLineTool = function () {
             for (var e = Object.keys(_.supportedLineTools), t = c.tool.value(), i = 0; i < e.length; ++i)
@@ -21544,7 +21786,12 @@
             )
           }),
           (b.prototype.mainSeriesPriceFormatter = function () {
-            return this._chartWidgetCollection.activeChartWidget.value().model().mainSeries().priceScale().formatter()
+            return this._chartWidgetCollection.activeChartWidget
+              .value()
+              .model()
+              .mainSeries()
+              .priceScale()
+              .formatter()
           }),
           (b.prototype.showNoticeDialog = function (e) {
             var t = (e = e || {}).callback
@@ -21636,7 +21883,7 @@
             return this._chartWidgetCollection.clientSnapshot()
           }),
           (e.exports = b)
-      }.call(this, i('aIyQ'), i('hY0g')))
+      }).call(this, i('aIyQ'), i('hY0g'))
     },
     '9zVu': function (e, t, i) {
       'use strict'
@@ -22181,7 +22428,8 @@
       function L(e, t, i, r, o) {
         if ((void 0 === o && (o = !0), void 0 === t[e]))
           return (
-            h.logDebug("We haven't had this property " + r + '.' + e + ' yet, please, remove it from whiteList'), null
+            h.logDebug("We haven't had this property " + r + '.' + e + ' yet, please, remove it from whiteList'),
+            null
           )
         if (Object(n.isObject)(i[e])) {
           var s = Object.keys(i[e]),
@@ -22905,7 +23153,9 @@
             ;(this._points[e] = t), this.normalizePoints()
           }),
           (h.prototype.addPoint = function (e, t) {
-            return this._points.push(e), (this._lastPoint = null), this.normalizePoints(), this.createServerPoints(), !0
+            return (
+              this._points.push(e), (this._lastPoint = null), this.normalizePoints(), this.createServerPoints(), !0
+            )
           }),
           (h.prototype.translatedType = function () {
             return 'Order'
@@ -22961,7 +23211,7 @@
             r._configureProperties(e)
           }),
           (t.LineToolOrder = h)
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     B8p3: function (e, t, i) {
       'use strict'
@@ -23092,7 +23342,9 @@
           blue: { border: '#047ACE', background: '#0496FF' }
         }),
         (c.prototype._drawTriangle = function (e, t) {
-          ;(e.strokeStyle = t.theme.border), (e.fillStyle = t.theme.background), (e.lineWidth = t.theme.dotBorderWidth)
+          ;(e.strokeStyle = t.theme.border),
+            (e.fillStyle = t.theme.background),
+            (e.lineWidth = t.theme.dotBorderWidth)
           var i = t,
             r = t.radius,
             n = Math.cos(Math.PI / 6) * r,
@@ -23127,7 +23379,8 @@
               e.fillText(t.label, t.x, t.y))
         }),
         (c.prototype.hitTest = function (e) {
-          for (var t, i = this._plates.length - 1; i >= 0; --i) if ((t = this._hitTestDot(this._plates[i], e))) return t
+          for (var t, i = this._plates.length - 1; i >= 0; --i)
+            if ((t = this._hitTestDot(this._plates[i], e))) return t
           return null
         }),
         (c.prototype._hitTestDot = function (e, t) {
@@ -23143,7 +23396,8 @@
         }),
         (u.prototype._getContainer = function (e) {
           return (
-            (this._container && this._context === e) || ((this._context = e), (this._container = $(e.canvas).parent())),
+            (this._container && this._context === e) ||
+              ((this._context = e), (this._container = $(e.canvas).parent())),
             this._container
           )
         }),
@@ -23382,7 +23636,9 @@
         (c.prototype.priceAxisViews = function (e, t) {
           return this.isSourceHidden()
             ? null
-            : t === this.priceScale() && this.properties().showPrice.value() && this._model.paneForSource(this) === e
+            : t === this.priceScale() &&
+              this.properties().showPrice.value() &&
+              this._model.paneForSource(this) === e
             ? [this._priceAxisView]
             : null
         }),
@@ -23463,7 +23719,7 @@
               cleanButAmpersand: TradingView.cleanButAmpersand,
               stripTags: TradingView.strip_tags
             })
-      }.call(this, i('YuTi')(e)))
+      }).call(this, i('YuTi')(e))
     },
     CW80: function (e, t, i) {
       'use strict'
@@ -23502,7 +23758,9 @@
         a = i('OH2X'),
         l = i('e92V')
       function c(e, t, i, r) {
-        return Object(n.assert)(Object(l.a)(e), 'Unknown line tool: ' + e), new (Object(n.ensureDefined)(a[e]))(t, i)
+        return (
+          Object(n.assert)(Object(l.a)(e), 'Unknown line tool: ' + e), new (Object(n.ensureDefined)(a[e]))(t, i)
+        )
       }
       function u(e, t) {
         return (
@@ -23819,7 +24077,8 @@
             if (void 0 === o.parseSymbol(e).type) return {}
             var i = e + t
             return (
-              this._barsCoefficientsCache[i] || (this._barsCoefficientsCache[i] = {}), this._barsCoefficientsCache[i]
+              this._barsCoefficientsCache[i] || (this._barsCoefficientsCache[i] = {}),
+              this._barsCoefficientsCache[i]
             )
           }),
           (m.prototype.destroy = function () {
@@ -24015,7 +24274,9 @@
                         v = !0
                       },
                       recalc: function (e, i) {
-                        ;(p = !1), (m.endOfData = v), (t.error && null !== t.error()) || c(m, g > 0 ? y : void 0, l, i)
+                        ;(p = !1),
+                          (m.endOfData = v),
+                          (t.error && null !== t.error()) || c(m, g > 0 ? y : void 0, l, i)
                       }
                     })
                     if (!b._studiesCache[e] || !b._studiesCache[e][o]) throw Error('This should never happen')
@@ -24059,7 +24320,8 @@
             }
             ;(s = (function (e) {
               if (Array.isArray(e)) return e
-              for (var t = [], i = a._studiesCache[r][n].metainfo.inputs, o = 0; o < i.length; o++) t[o] = e[i[o].id]
+              for (var t = [], i = a._studiesCache[r][n].metainfo.inputs, o = 0; o < i.length; o++)
+                t[o] = e[i[o].id]
               return t
             })(s)),
               TradingView.ChartapiMessagerInstances[r].onStudyLoading(n, o)
@@ -24414,7 +24676,8 @@
                     TradingView.ChartapiMessagerInstances[r].onSeriesClearData(o, s)
               },
               function (e, t) {
-                if ('projection' !== e.type) throw new Error('unexpected non-series data type for series ' + e.type)
+                if ('projection' !== e.type)
+                  throw new Error('unexpected non-series data type for series ' + e.type)
                 var n = e.projectionTime / 1e3,
                   a = -1
                 ;(e.data || []).forEach(function (e) {
@@ -24536,7 +24799,8 @@
                           (e.base_name || (e.base_name = [e.name]),
                           e.legs || (e.legs = [e.name]),
                           e.exchange || (e.exchange = e['exchange-listed']),
-                          e.full_name || (e.full_name = e.symbol || (e.exchange ? e.exchange + ':' + e.name : e.name)),
+                          e.full_name ||
+                            (e.full_name = e.symbol || (e.exchange ? e.exchange + ':' + e.name : e.name)),
                           e.pro_name || (e.pro_name = e.full_name),
                           e.data_status || (e.data_status = 'streaming'),
                           e.ticker || (e.ticker = e.symbol || e.name),
@@ -24562,7 +24826,8 @@
                           (void 0 === e.minmov || e.minmov <= 0) && i('minmov must be positive'),
                           (void 0 === e.pricescale || e.pricescale <= 0) && i('pricescale must be positive'),
                           (void 0 !== e.name && 0 !== e.name.length) || i('name must be non-empty string'),
-                          (void 0 !== e.session && 0 !== e.session.length) || i('session must be non-empty string'),
+                          (void 0 !== e.session && 0 !== e.session.length) ||
+                            i('session must be non-empty string'),
                           void 0 === e.timezone || 0 === e.timezone.length
                             ? i('timezone must be non-empty string')
                             : ('exchange' !== e.timezone && f(e.timezone)) ||
@@ -24807,7 +25072,7 @@
               }
           }),
           (e.exports = m)
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     ESp1: function (e, t, i) {
       'use strict'
@@ -25036,7 +25301,8 @@
           this._studyEngine.getTimescaleMarks(e, t, i, r, n)
         }),
         (JSServer.ChartApi.prototype.resolveSymbol = function (e, t, i, r, n) {
-          ;(this._notificationHandlers[e][t] = new u(r, t)), (this._symbolIdCache[this._makeSymbolKey(e, t)] = null)
+          ;(this._notificationHandlers[e][t] = new u(r, t)),
+            (this._symbolIdCache[this._makeSymbolKey(e, t)] = null)
           var o = this
           function s(t, r) {
             Object.keys(o._seriesIdCache).some(function (e) {
@@ -25269,7 +25535,9 @@
         (JSServer.ChartApi.prototype.modifyStudy = function (e, t, i, r, n) {
           var o = this,
             s = setTimeout(function () {
-              ;(i = i || ''), (o._notificationHandlers[e][t] = new u(n, t)), o._studyEngine.recomputeStudy(t, r, e, i)
+              ;(i = i || ''),
+                (o._notificationHandlers[e][t] = new u(n, t)),
+                o._studyEngine.recomputeStudy(t, r, e, i)
             }, 0)
           f(this._studyTimers, e, t, s)
         }),
@@ -25387,7 +25655,8 @@
           if (void 0 !== t) {
             var r = this._notificationHandlers[e][t]
             void 0 !== r && r && this._invokeHandler(r.handler, i),
-              ('series_deleted' !== i.method && 'study_deleted' !== i.method) || delete this._notificationHandlers[e][t]
+              ('series_deleted' !== i.method && 'study_deleted' !== i.method) ||
+                delete this._notificationHandlers[e][t]
           }
         }),
         (JSServer.ChartApi.prototype.searchSymbols = function (e, t, i, r, n, o, s, a, l, c) {
@@ -26683,7 +26952,8 @@
                 this._chartModel.fullUpdate()
             }),
             (t.prototype.undo = function () {
-              for (var e = this._chartModel.panes(), t = 0; t < e.length; t++) this._initialState[t].restorePane(e[t])
+              for (var e = this._chartModel.panes(), t = 0; t < e.length; t++)
+                this._initialState[t].restorePane(e[t])
               this._chartModel.fullUpdate()
             }),
             t
@@ -26825,7 +27095,10 @@
             var i = e.properties().symbol.value()
             this._currentSymbol !== i &&
               (p.logDebug(
-                'TrendLineCache. Clearing canvas because of changing symbol from ' + this._currentSymbol + ' to ' + i
+                'TrendLineCache. Clearing canvas because of changing symbol from ' +
+                  this._currentSymbol +
+                  ' to ' +
+                  i
               ),
               (this._currentSymbol = i),
               this._sourcesToRow.clear(),
@@ -26879,7 +27152,9 @@
               }
             return (
               !0 === i.showAngle &&
-                ((i.priceRange = Object(r.ensureNotNull)(Object(r.ensureNotNull)(e.priceScale()).priceRange()).state()),
+                ((i.priceRange = Object(r.ensureNotNull)(
+                  Object(r.ensureNotNull)(e.priceScale()).priceRange()
+                ).state()),
                 (i.barSpacing = e.model().timeScale().barSpacing())),
               i
             )
@@ -26987,14 +27262,13 @@
           (v.prototype.reset = function (e) {
             ;(this._prices = []), (this._params = e), this._cache.setFont(e.fontSize + 'px ' + e.font)
             var t = this
-            this._labelWidth = ['P', 'S1', 'R1', 'S2', 'R2', 'S3', 'R3', 'S4', 'R4', 'S5', 'R5', '/'].reduce(function (
-              e,
-              i
-            ) {
-              var r = t._cache.measureText(i).width
-              return Math.max(r, e)
-            },
-            0)
+            this._labelWidth = ['P', 'S1', 'R1', 'S2', 'R2', 'S3', 'R3', 'S4', 'R4', 'S5', 'R5', '/'].reduce(
+              function (e, i) {
+                var r = t._cache.measureText(i).width
+                return Math.max(r, e)
+              },
+              0
+            )
           }),
           (v.prototype.rowHeight = function () {
             return this._priceAxisFontSize + 4
@@ -27021,7 +27295,9 @@
             else
               for (var n = 0; n < this._prices.length; n++)
                 if (
-                  ((t = this._prices[n]), (i = e[n]), (void 0 !== t || void 0 !== i) && t.formatted !== i.formatted)
+                  ((t = this._prices[n]),
+                  (i = e[n]),
+                  (void 0 !== t || void 0 !== i) && t.formatted !== i.formatted)
                 ) {
                   r = !0
                   break
@@ -27089,11 +27365,16 @@
                         var h = {},
                           d = this._source.properties().levelsStyle.visibility
                         d.P.value() && this.mergeLabel(h, e[l].p, 'P'),
-                          d['S1/R1'].value() && (this.mergeLabel(h, e[l].s1, 'S1'), this.mergeLabel(h, e[l].r1, 'R1')),
-                          d['S2/R2'].value() && (this.mergeLabel(h, e[l].s2, 'S2'), this.mergeLabel(h, e[l].r2, 'R2')),
-                          d['S3/R3'].value() && (this.mergeLabel(h, e[l].s3, 'S3'), this.mergeLabel(h, e[l].r3, 'R3')),
-                          d['S4/R4'].value() && (this.mergeLabel(h, e[l].s4, 'S4'), this.mergeLabel(h, e[l].r4, 'R4')),
-                          d['S5/R5'].value() && (this.mergeLabel(h, e[l].s5, 'S5'), this.mergeLabel(h, e[l].r5, 'R5'))
+                          d['S1/R1'].value() &&
+                            (this.mergeLabel(h, e[l].s1, 'S1'), this.mergeLabel(h, e[l].r1, 'R1')),
+                          d['S2/R2'].value() &&
+                            (this.mergeLabel(h, e[l].s2, 'S2'), this.mergeLabel(h, e[l].r2, 'R2')),
+                          d['S3/R3'].value() &&
+                            (this.mergeLabel(h, e[l].s3, 'S3'), this.mergeLabel(h, e[l].r3, 'R3')),
+                          d['S4/R4'].value() &&
+                            (this.mergeLabel(h, e[l].s4, 'S4'), this.mergeLabel(h, e[l].r4, 'R4')),
+                          d['S5/R5'].value() &&
+                            (this.mergeLabel(h, e[l].s5, 'S5'), this.mergeLabel(h, e[l].r5, 'R5'))
                         var p = i.indexToCoordinate(c),
                           f = i.indexToCoordinate(u)
                         for (var _ in h) {
@@ -27179,7 +27460,8 @@
           }),
           (S.prototype._updateImpl = function () {
             if (
-              (this._visiblePivots.clear(), !this._model.timeScale().isEmpty() && !this._source.priceScale().isEmpty())
+              (this._visiblePivots.clear(),
+              !this._model.timeScale().isEmpty() && !this._source.priceScale().isEmpty())
             ) {
               var e = this._model.timeScale().visibleBarsStrictRange()
               if (null !== e && this._source.customData() && this._source.customData().pivots) {
@@ -27301,7 +27583,8 @@
               this._priceAxisViews.push(s), this._paneViews.push(new l(s, this, this._model))
             }
             this._dataWindowView || (this._dataWindowView = new o(this, this._model)),
-              this._statusView || (this._statusView = new n(this, this._model.properties().scalesProperties.textColor)),
+              this._statusView ||
+                (this._statusView = new n(this, this._model.properties().scalesProperties.textColor)),
               (this._legendView = null),
               (this._pricesView = new S(this, this._cache))
           }),
@@ -27322,7 +27605,8 @@
             return !1
           }),
           (w.prototype.stop = function () {
-            TradingView.Study.prototype.stop.call(this), this._cache && (this._cache.destroy(), (this._cache = null))
+            TradingView.Study.prototype.stop.call(this),
+              this._cache && (this._cache.destroy(), (this._cache = null))
           }),
           (w.prototype.priceRange = function (t, i) {
             if (!this.customData() || !this.customData().pivots || !this._indexes) return null
@@ -27344,14 +27628,17 @@
                 }
               }
             return this.priceScale().isLog() && o
-              ? new e(this.priceScale().priceToLogical(o.minValue()), this.priceScale().priceToLogical(o.maxValue()))
+              ? new e(
+                  this.priceScale().priceToLogical(o.minValue()),
+                  this.priceScale().priceToLogical(o.maxValue())
+                )
               : o
           }),
           (w.prototype.getStylesPropertyPage = function () {
             return f.StudyPivotPointsStandardStylesPropertyPage
           }),
           (t.study_PivotPointsStandard = w)
-      }.call(this, i('Qb4w').PriceRange))
+      }).call(this, i('Qb4w').PriceRange)
     },
     FaJS: function (e, t, i) {
       'use strict'
@@ -27450,7 +27737,8 @@
                 .bind(null, i)
             )
             .catch(i.oe)
-        for (var o = [], a = 1; a <= l.LevelsCount; a++) o.push(this._properties.child('level' + a).child('linewidth'))
+        for (var o = [], a = 1; a <= l.LevelsCount; a++)
+          o.push(this._properties.child('level' + a).child('linewidth'))
         this._widthsProperty = new s(o)
       }
       inherit(l, r),
@@ -27778,7 +28066,8 @@
                       var r = e.replace(/fill="#[\da-f]{6}"/i, 'fill="#FFFFFF"')
                       ;(this._image.canvas.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(e)),
                         this.showAnimatedBranding &&
-                          (this._imageWhite.canvas.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(r))
+                          (this._imageWhite.canvas.src =
+                            'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(r))
                     }
                     this._image.canvas.addEventListener('load', function () {
                       L && (i._image = k(i._image.canvas, i._imageWidth, i._imageHeight)),
@@ -27882,7 +28171,8 @@
                     var e = (0, p.getPretransformedContext2D)(this._fillCanv),
                       t = Math.round(this._strokeWidth * this._upscaleRatio)
                     ;(e.font = this._fontSize * this._upscaleRatio + this._font),
-                      void 0 === this._textWidth && (this._textWidth = Math.round(e.measureText(this._txt).width) + 2),
+                      void 0 === this._textWidth &&
+                        (this._textWidth = Math.round(e.measureText(this._txt).width) + 2),
                       this._setSizeFillTextCanvas(t),
                       ((e = (0, p.getPretransformedContext2D)(this._fillCanv)).textBaseline = 'top'),
                       (e.textAlign = 'start'),
@@ -27940,14 +28230,27 @@
                     e.beginPath(),
                     (e.fillStyle = this._brandCircleShadowColor),
                     (e.globalAlpha = this._brandCircleShadowOpacity),
-                    e.arc(this._imageWidth / 2, this._imageHeight / 2, this._brandCircleSize / 2 + 1, 0, 2 * Math.PI),
+                    e.arc(
+                      this._imageWidth / 2,
+                      this._imageHeight / 2,
+                      this._brandCircleSize / 2 + 1,
+                      0,
+                      2 * Math.PI
+                    ),
                     e.fill(),
                     e.closePath(),
                     e.restore(),
                     e.save(),
                     e.beginPath(),
                     (e.fillStyle = this._brandCircleColor),
-                    e.arc(this._imageWidth / 2, this._imageHeight / 2, this._brandCircleSize / 2, 0, 2 * Math.PI, !1),
+                    e.arc(
+                      this._imageWidth / 2,
+                      this._imageHeight / 2,
+                      this._brandCircleSize / 2,
+                      0,
+                      2 * Math.PI,
+                      !1
+                    ),
                     e.fill(),
                     e.closePath(),
                     e.restore()
@@ -28407,7 +28710,8 @@
                             this._bottom
                         ),
                         new o.Point(
-                          this._left + Math.max(this._powBy.width, void 0 !== this._custom ? this._custom.width : 0),
+                          this._left +
+                            Math.max(this._powBy.width, void 0 !== this._custom ? this._custom.width : 0),
                           this._paneHeight - this._bottom
                         )
                       )
@@ -28445,7 +28749,10 @@
                   return (
                     (e += '/' === e[e.length - 1] ? '?' : '&'),
                     (e +=
-                      'utm_source=' + window.location.origin + '&utm_medium=library' + (t ? '&utm_campaign=' + t : ''))
+                      'utm_source=' +
+                      window.location.origin +
+                      '&utm_medium=library' +
+                      (t ? '&utm_campaign=' + t : ''))
                   )
                 }
                 return e
@@ -28689,7 +28996,11 @@
             this._properties.shortDescription &&
               this._properties.shortDescription.listeners().subscribe(this, this.invalidateTitleCache),
             oe.enabled('update_study_formatter_on_symbol_resolve') &&
-              e.mainSeries().dataEvents().symbolResolved().subscribe(this, this._recreatePriceFormattingDependencies),
+              e
+                .mainSeries()
+                .dataEvents()
+                .symbolResolved()
+                .subscribe(this, this._recreatePriceFormattingDependencies),
             e.mainSeries().dataEvents().symbolResolved().subscribe(this, this.invalidateTitleCache)
           p = this
           var f = {}
@@ -28703,7 +29014,9 @@
           }).length),
             this._properties.showInDataWindow.listeners().subscribe(e, e.fullUpdate),
             this.hasBarColorer() &&
-              this._properties.visible.listeners().subscribe(e.mainSeries(), e.mainSeries().invalidateBarStylesCache),
+              this._properties.visible
+                .listeners()
+                .subscribe(e.mainSeries(), e.mainSeries().invalidateBarStylesCache),
             (this._childStudyByRebind = new r()),
             (this._formatterChanged = new r()),
             (this._priceStepChanged = new r()),
@@ -28772,7 +29085,9 @@
             for (var y, g = { noData: !1 }, v = null, b = null, S = 0; S < c.length; S++)
               c[S].target === e &&
                 (this.isSelfColorerPlot(S) || this.isOHLCColorerPlot(S)) &&
-                ((v = S), (b = this.metaInfo().palettes[c[S].palette]), (y = this.properties().palettes[c[S].palette]))
+                ((v = S),
+                (b = this.metaInfo().palettes[c[S].palette]),
+                (y = this.properties().palettes[c[S].palette]))
             var w = m[u]
             i && (g.price = w)
             var P = this.firstValue(!0)
@@ -28859,7 +29174,14 @@
           (de.prototype._plotsForAlert = function () {
             var e = this,
               t = this._metaInfo,
-              i = [Q.isLinePlot, Q.isShapesPlot, Q.isCharsPlot, Q.isArrowsPlot, Q.isOhlcPlot, Q.isAlertConditionPlot]
+              i = [
+                Q.isLinePlot,
+                Q.isShapesPlot,
+                Q.isCharsPlot,
+                Q.isArrowsPlot,
+                Q.isOhlcPlot,
+                Q.isAlertConditionPlot
+              ]
             return t.plots
               .map(function (e, t) {
                 return (e.pinePlotIndex = t), e
@@ -28942,7 +29264,8 @@
               setTimeout(this.start.bind(this), 0)
           }),
           (de.prototype.stop = function (e) {
-            if (!0 === e && this._children) for (var t = 0; t < this._children.length; ++t) this._children[t].stop(!0)
+            if (!0 === e && this._children)
+              for (var t = 0; t < this._children.length; ++t) this._children[t].stop(!0)
             this._chartApi &&
               this._chartApi.connected() &&
               this._studyId &&
@@ -29074,7 +29397,11 @@
               if (this._isChildStudy) {
                 if (!this._source.isStarted() || this._source.isRestarting())
                   return void this._source.onStart.subscribe(this, this._startAfterSymbolsResolved, !0)
-                J.setChildStudyMetaInfoPropertiesSourceId(this._metaInfo, this._source.sourceId(), this._properties)
+                J.setChildStudyMetaInfoPropertiesSourceId(
+                  this._metaInfo,
+                  this._source.sourceId(),
+                  this._properties
+                )
               }
               if (((this._studyId = ne()), delete this._restarting, this._allInputsAreValid())) {
                 this._inputs = this.inputs({ keepOptionalSymbolsEmpty: !0 })
@@ -29256,7 +29583,15 @@
                   this._source.isHibernated() && this._source.start()
               }
               this._incrementTurnaround(),
-                this._chartApi.rebindStudy(this._studyId, this._turnaround, r, this._studyName, t, this._handler, n)
+                this._chartApi.rebindStudy(
+                  this._studyId,
+                  this._turnaround,
+                  r,
+                  this._studyName,
+                  t,
+                  this._handler,
+                  n
+                )
             } else {
               if (!(e instanceof de)) return ae.logError('Unable to rebind study to source of this type'), !1
               var o = e.isHibernated()
@@ -29337,7 +29672,8 @@
                     break
                   }
             } else
-              this._incrementTurnaround(), this._chartApi.modifyStudy(this._studyId, this._turnaround, e, this._handler)
+              this._incrementTurnaround(),
+                this._chartApi.modifyStudy(this._studyId, this._turnaround, e, this._handler)
             this.invalidateTitleCache(), o && (this._studyModified = o)
           }),
           (de.prototype._incrementTurnaround = function () {
@@ -29384,7 +29720,9 @@
               })
             ;(!this.isStarted() && !e) ||
               this._restarting ||
-              (this._inputs ? this._tryChangeInputs() : this._chartApi && this._chartApi.connected() && this.restart(),
+              (this._inputs
+                ? this._tryChangeInputs()
+                : this._chartApi && this._chartApi.connected() && this.restart(),
               this.hasBarColorer() && this._model.mainSeries().invalidateBarStylesCache(),
               this.createViews(),
               this.recalculate(!0),
@@ -29410,7 +29748,8 @@
           }),
           (de.prototype.processHibernate = function () {
             this.isHibernateAllowed() &&
-              (!this._studyId && this.isVisible() && this.start(), this._studyId && !this.isVisible() && this.stop())
+              (!this._studyId && this.isVisible() && this.start(),
+              this._studyId && !this.isVisible() && this.stop())
           }),
           (de.prototype.isHibernated = function () {
             return !this.isVisible() && !this._studyId
@@ -29457,16 +29796,19 @@
                 ) {
                   var i = this.metaInfo().plots[t].id
                   if (this.isBgColorerPlot(t)) this._paneViews.push(new v(this, this._series, this._model, i))
-                  else if (this.isPlotShapesPlot(t)) this._paneViews.push(new b(this, this._series, this._model, i))
+                  else if (this.isPlotShapesPlot(t))
+                    this._paneViews.push(new b(this, this._series, this._model, i))
                   else if (this.isPlotCharsPlot(t)) this._paneViews.push(new S(this, this._series, this._model, i))
-                  else if (this.isPlotArrowsPlot(t)) this._paneViews.push(new w(this, this._series, this._model, i))
+                  else if (this.isPlotArrowsPlot(t))
+                    this._paneViews.push(new w(this, this._series, this._model, i))
                   else if (this.isOHLCSeriesPlot(t)) {
                     var r = this.metaInfo().plots[t].target
                     if (e[r]) continue
                     ;(e[r] = r),
                       this.isOHLCBarsPlot(t)
                         ? this._paneViews.push(new P(this, this._series, this._model, r))
-                        : this.isOHLCCandlesPlot(t) && this._paneViews.push(new C(this, this._series, this._model, r))
+                        : this.isOHLCCandlesPlot(t) &&
+                          this._paneViews.push(new C(this, this._series, this._model, r))
                     var n = this.createPriceAxisView(r)
                     ;(this._priceAxisViewsCache[r] = n),
                       this._priceAxisViewsBase.push(n),
@@ -29509,7 +29851,8 @@
               }
             this._dataWindowView || (this._dataWindowView = new I(this, this._model)),
               this._legendView || (this._legendView = new M(this, this._model)),
-              this._statusView || (this._statusView = new O(this, this._model.properties().scalesProperties.textColor)),
+              this._statusView ||
+                (this._statusView = new O(this, this._model.properties().scalesProperties.textColor)),
               (this._priceAxisViews = [].concat(
                 this._priceAxisViewsBase,
                 this._hlinesPriceAsisViews,
@@ -29618,7 +29961,9 @@
             return !0 === e ? this.source().turnaround(!0) + '_' + this._turnaround : this._turnaround
           }),
           (de.prototype._checkTurnaround = function (e) {
-            return e === this._turnaround || e === this._model.mainSeries().turnaround() || e === this.turnaround(!0)
+            return (
+              e === this._turnaround || e === this._model.mainSeries().turnaround() || e === this.turnaround(!0)
+            )
           }),
           (de.prototype._getStatusTextOnStudyError = function (e) {
             var t = e.split(':', 2)[0]
@@ -29716,7 +30061,8 @@
             this._invalidateLastNonEmptyPlotRowCache(), this.m_data.remove(e + 1), this.m_data.addTail(i, t)
           }),
           (de.prototype._updateSources = function () {
-            this._model.updateSource(this), this.hasBarColorer() && this._model.updateSource(this._model.mainSeries())
+            this._model.updateSource(this),
+              this.hasBarColorer() && this._model.updateSource(this._model.mainSeries())
           }),
           (de.processPlotOffsets = function (e, t) {
             ;(t && t.indexes_replace) || (e._plotOffsets = (t && t.offsets) || {})
@@ -29816,11 +30162,13 @@
                     if (u.visible.value()) {
                       if (((r = null), u.location && (r = u.location.value()), !i)) {
                         var p = [Z.Absolute, Z.Top, Z.Bottom].indexOf(r) < 0
-                        i = ((this.isPlotShapesPlot(c) || this.isPlotCharsPlot(c)) && p) || this.isPlotArrowsPlot(c)
+                        i =
+                          ((this.isPlotShapesPlot(c) || this.isPlotCharsPlot(c)) && p) || this.isPlotArrowsPlot(c)
                       }
                       if (
                         this.isLinePlot(c) ||
-                        ((this.isPlotShapesPlot(c) || this.isPlotCharsPlot(c)) && u.location.value() === Z.Absolute) ||
+                        ((this.isPlotShapesPlot(c) || this.isPlotCharsPlot(c)) &&
+                          u.location.value() === Z.Absolute) ||
                         this.isOHLCSeriesPlot(c)
                       ) {
                         var f = { name: h, offset: this.offset(h) },
@@ -29864,7 +30212,10 @@
             }
             var i = this.priceScale()
             return i && i.isLog() && e
-              ? new n(this.priceScale().priceToLogical(e.minValue()), this.priceScale().priceToLogical(e.maxValue()))
+              ? new n(
+                  this.priceScale().priceToLogical(e.minValue()),
+                  this.priceScale().priceToLogical(e.maxValue())
+                )
               : e
           }),
           (de.prototype.paneViews = function () {
@@ -30042,7 +30393,8 @@
           (de.prototype._recreatePriceStep = function () {
             var e = null,
               t = this._tryToGetPriceScale()
-            null !== t && (e = 1 / t), this._priceStep !== e && ((this._priceStep = e), this._priceStepChanged.fire())
+            null !== t && (e = 1 / t),
+              this._priceStep !== e && ((this._priceStep = e), this._priceStepChanged.fire())
           }),
           (de.prototype._tryToGetPriceScale = function () {
             var e = this._priceScaleByProperties()
@@ -30099,7 +30451,8 @@
             this.restart(!0)
           }),
           (de.prototype.hasSymbolInputs = function () {
-            for (var e = this._metaInfo.inputs.length; e--; ) if ('symbol' === this._metaInfo.inputs[e].type) return !0
+            for (var e = this._metaInfo.inputs.length; e--; )
+              if ('symbol' === this._metaInfo.inputs[e].type) return !0
             return !1
           }),
           (de.prototype.canOverrideMinTick = function () {
@@ -30154,7 +30507,8 @@
               return e._getPropertyDefinitionsViewModelClass().then(function (t) {
                 return null === t || e._isDestroyed
                   ? null
-                  : (null === e._definitionsViewModel && (e._definitionsViewModel = new t(e._model.undoModel(), e)),
+                  : (null === e._definitionsViewModel &&
+                      (e._definitionsViewModel = new t(e._model.undoModel(), e)),
                     e._definitionsViewModel)
               })
             }
@@ -30344,7 +30698,10 @@
                   r.version &&
                   e.version !== r.version &&
                   ae.logWarn(
-                    'Serialized metaInfo version ' + e.version + ' is not equal to the saved state version ' + r.version
+                    'Serialized metaInfo version ' +
+                      e.version +
+                      ' is not equal to the saved state version ' +
+                      r.version
                   )
                 var a = TradingView.clone(defaults('study'))
                 TradingView.merge(a, TradingView.factoryDefaults(J.getStudyPropertyRootName(e))),
@@ -30372,7 +30729,7 @@
               return ue(t || e, s, l)
             })(e, t, r, 0, o, J.getStudyPropertyRootName(e))
           })
-      }.call(this, i('tc+8'), i('aIyQ'), i('Qb4w').PriceRange))
+      }).call(this, i('tc+8'), i('aIyQ'), i('Qb4w').PriceRange)
     },
     GVQo: function (e, t, i) {
       'use strict'
@@ -30538,7 +30895,7 @@
               } else this.merge(e.marks)
           }),
           (e.exports.Tickmarks = i)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     GmZZ: function (e, t, i) {
       'use strict'
@@ -30666,7 +31023,9 @@
     HLXm: function (e, t, i) {
       'use strict'
       function r(e) {
-        'LineToolGannComplex' !== e.type || (void 0 !== e.version && 1 !== e.version) || (e.type = 'LineToolGannFixed')
+        'LineToolGannComplex' !== e.type ||
+          (void 0 !== e.version && 1 !== e.version) ||
+          (e.type = 'LineToolGannFixed')
       }
       i.r(t),
         i.d(t, 'migrateState', function () {
@@ -30802,7 +31161,10 @@
         he = (window.t('Sync To All Charts'), window.t('Unlock')),
         de = window.t('Lock'),
         pe =
-          (window.t('Show Earnings'), window.t('Show Dividends'), window.t('Show Splits'), window.t('Show All Ideas')),
+          (window.t('Show Earnings'),
+          window.t('Show Dividends'),
+          window.t('Show Splits'),
+          window.t('Show All Ideas')),
         fe = window.t('Show Ideas of Followed Users'),
         _e = window.t('Show My Ideas Only'),
         me = window.t('Settings...'),
@@ -31821,7 +32183,8 @@
             (e.prototype._deadHandler = function (e) {
               var t = this._ownersStack.indexOf(e)
               Object(r.assert)(-1 !== t, 'sanitized owner should be in stack')
-              for (var i = this._ownersStack.length - 1; i >= t; i--) this._unsubscribeOwner(this._ownersStack[i], !0)
+              for (var i = this._ownersStack.length - 1; i >= t; i--)
+                this._unsubscribeOwner(this._ownersStack[i], !0)
               ;(this._ownersStack.length = t),
                 t > 0
                   ? this._subscribeOwner(this._ownersStack[t - 1])
@@ -32075,10 +32438,18 @@
                   c = this.m_study.data(),
                   u = this.m_study.firstValue()
                 if (l && c._length() > 0) {
-                  for (var d = c._bsearch(t); Z.isIndexValid(d, c) && void 0 === c._valueAt(d)[this._plotIndex + 1]; )
+                  for (
+                    var d = c._bsearch(t);
+                    Z.isIndexValid(d, c) && void 0 === c._valueAt(d)[this._plotIndex + 1];
+
+                  )
                     d -= 1
                   t = Z.isIndexValid(d, c) ? c._indexAt(d) : t
-                  for (var p = c._bsearch(i); Z.isIndexValid(p, c) && void 0 === c._valueAt(p)[this._plotIndex + 1]; )
+                  for (
+                    var p = c._bsearch(i);
+                    Z.isIndexValid(p, c) && void 0 === c._valueAt(p)[this._plotIndex + 1];
+
+                  )
                     p += 1
                   i = Z.isIndexValid(p, c) ? c._indexAt(p) : i
                 }
@@ -32127,7 +32498,9 @@
                   _.pointsArrayToCoordinates(this.m_items, u),
                   this.m_model.timeScale().indexesToCoordinates(this.m_items),
                   s.histogramBase &&
-                    (this._histogramBase = this.m_study.priceScale().priceToCoordinate(s.histogramBase.value(), u)),
+                    (this._histogramBase = this.m_study
+                      .priceScale()
+                      .priceToCoordinate(s.histogramBase.value(), u)),
                   this.m_model.selection().isSelected(this.m_study))
                 ) {
                   var v = I(t, i)
@@ -32350,7 +32723,9 @@
                       : m === TradingView.Series.STYLE_AREA
                       ? 'areaStyle'
                       : null
-                y ? ((f = this.m_series.properties()[y].priceSource.value()), (_ = f)) : ((f = 'high'), (_ = 'low'))
+                y
+                  ? ((f = this.m_series.properties()[y].priceSource.value()), (_ = f))
+                  : ((f = 'high'), (_ = 'low'))
                 var g = this.m_study.priceScale().isInverted(),
                   v = t.coordinateToPrice(t.height() * t.topMargin(), l),
                   b = t.coordinateToPrice(t.height() * (1 - t.bottomMargin()), l)
@@ -32392,7 +32767,9 @@
                             (m = this.m_study.properties().styles[this.m_plotName].textColor.value()),
                               (r.style.textColor = B.generateColor(m, 100))
                         }
-                        return p && -1 !== d.indexOf(e) && this.m_selectionData.points.push(r), this.m_items.push(r), !1
+                        return (
+                          p && -1 !== d.indexOf(e) && this.m_selectionData.points.push(r), this.m_items.push(r), !1
+                        )
                       }
                     }.bind(this)
                   ),
@@ -32613,7 +32990,10 @@
             ;(e.items = this.m_items),
               (e.barSpacing = i),
               (e.colorup = B.generateColor(this.m_study.properties().styles[this.m_plotName].colorup.value(), t)),
-              (e.colordown = B.generateColor(this.m_study.properties().styles[this.m_plotName].colordown.value(), t))
+              (e.colordown = B.generateColor(
+                this.m_study.properties().styles[this.m_plotName].colordown.value(),
+                t
+              ))
             var r = u(e.colorup),
               n = r ? 100 * (1 - r[3]) : 0,
               o = u(e.colordown),
@@ -32624,7 +33004,8 @@
               (e.maxHeight = this.m_study.properties().styles[this.m_plotName].maxHeight.value())
             var a = new L()
             if (
-              (a.append(new w(e)), this.m_model.selection().isSelected(this.m_study) && null !== this.m_selectionData)
+              (a.append(new w(e)),
+              this.m_model.selection().isSelected(this.m_study) && null !== this.m_selectionData)
             ) {
               var l = this.m_selectionData
               ;(l.barSpacing = i), a.append(new P(l))
@@ -32669,7 +33050,9 @@
           this._invalidated = !0
         }),
         (te.prototype._updateImpl = function () {
-          if (((this.m_bars.length = 0), !this.m_model.timeScale().isEmpty() && !this.m_study.priceScale().isEmpty())) {
+          if (
+            ((this.m_bars.length = 0), !this.m_model.timeScale().isEmpty() && !this.m_study.priceScale().isEmpty())
+          ) {
             var e = this.m_model.timeScale().visibleBarsStrictRange()
             if (null !== e) {
               var t = this.m_series.nearestIndex(e.firstBar(), R.NearestRight),
@@ -32968,7 +33351,10 @@
           )
         })(a.a),
         u = function (e, t, i, r) {
-          ;(this.prevPointSignX = e), (this.prevPointSignY = t), (this.nextPointSignX = i), (this.nextPointSignY = r)
+          ;(this.prevPointSignX = e),
+            (this.prevPointSignY = t),
+            (this.nextPointSignX = i),
+            (this.nextPointSignY = r)
         }
       !(function (e) {
         ;(e.rightUp = new u(1, 0, 0, 1)),
@@ -33418,7 +33804,10 @@
                 : Promise.all(t)
                     .catch(function (t) {
                       return (
-                        (e._status = h), e.stop(!0), e._model.updateSource(e), Promise.reject('Invalid symbol, ' + t)
+                        (e._status = h),
+                        e.stop(!0),
+                        e._model.updateSource(e),
+                        Promise.reject('Invalid symbol, ' + t)
                       )
                     })
                     .then(function () {
@@ -33986,7 +34375,9 @@
                   h = Math.max(i.x, r.x),
                   d = Math.min(i.y, r.y),
                   p = Math.max(i.y, r.y)
-                if (((i = new o.Point(u, d)), (r = new o.Point(h, p)), Object(n.pointInBox)(e, Object(o.box)(i, r))))
+                if (
+                  ((i = new o.Point(u, d)), (r = new o.Point(h, p)), Object(n.pointInBox)(e, Object(o.box)(i, r)))
+                )
                   return this._backHitTestResult
               }
               return null
@@ -34198,7 +34589,8 @@
             }),
             (e.prototype.show = function (e) {
               var t
-              null === this._dialog && this._requestDialog(e), null === (t = this._dialog) || void 0 === t || t.open(e)
+              null === this._dialog && this._requestDialog(e),
+                null === (t = this._dialog) || void 0 === t || t.open(e)
             }),
             (e.prototype.hide = function () {
               var e
@@ -34445,7 +34837,13 @@
                   : 1 === o
                   ? (a = this._study.properties().childs().candleStyle.childs().barColorsOnPrevClose.value())
                   : 9 === o && (a = !0),
-                a ? (0 === t.priceDirection.basedOnPrevClose ? r : n) : 0 === t.priceDirection.basedOnCurrentBar ? r : n
+                a
+                  ? 0 === t.priceDirection.basedOnPrevClose
+                    ? r
+                    : n
+                  : 0 === t.priceDirection.basedOnCurrentBar
+                  ? r
+                  : n
               )
             }),
             t
@@ -34616,7 +35014,8 @@
           if (!e || !t) return t
           var i = TradingView.clone(t)
           return (
-            'VbPFixed@tv-volumebyprice' === e.id && e.version && e.version <= 4 && u._patchOldVolumeProfiles(0, i), i
+            'VbPFixed@tv-volumebyprice' === e.id && e.version && e.version <= 4 && u._patchOldVolumeProfiles(0, i),
+            i
           )
         }),
         (u.prototype.patchStudyData = function (e, t, i, r) {
@@ -34773,11 +35172,17 @@
               void 0 === t.defaults.precision &&
               n < a.VERSION_NEW_STUDY_PRECISION_FORMAT &&
               (-1 !==
-              ['Volume@tv-basicstudies', 'VbPVisible@tv-volumebyprice', 'VbPSessions@tv-volumebyprice'].indexOf(t.id)
+              ['Volume@tv-basicstudies', 'VbPVisible@tv-volumebyprice', 'VbPSessions@tv-volumebyprice'].indexOf(
+                t.id
+              )
                 ? (t.defaults.precision = 0)
                 : (t.defaults.precision = 4))
           if (t.version < 60)
-            for (var s = ['TV_DIVIDENDS', 'TV_SPLITS', 'TV_EARNINGS'], h = 'Script'.length, d = 0; d < s.length; d++)
+            for (
+              var s = ['TV_DIVIDENDS', 'TV_SPLITS', 'TV_EARNINGS'], h = 'Script'.length, d = 0;
+              d < s.length;
+              d++
+            )
               t.id.startsWith('Script$' + s[d] + '@tv-scripting') &&
                 ((t.fullId = 'ESD' + t.fullId.substring(h)),
                 (t.id = 'ESD' + t.id.substring(h)),
@@ -35040,11 +35445,15 @@
             return 3 * e
           }),
           (e.prototype._calcBezier = function (e) {
-            return ((this._a(this._mY1, this._mY2) * e + this._b(this._mY1, this._mY2)) * e + this._c(this._mY1)) * e
+            return (
+              ((this._a(this._mY1, this._mY2) * e + this._b(this._mY1, this._mY2)) * e + this._c(this._mY1)) * e
+            )
           }),
           (e.prototype._getSlope = function (e) {
             return (
-              3 * this._a(this._mX1, this._mX2) * e * e + 2 * this._b(this._mX1, this._mX2) * e + this._c(this._mX1)
+              3 * this._a(this._mX1, this._mX2) * e * e +
+              2 * this._b(this._mX1, this._mX2) * e +
+              this._c(this._mX1)
             )
           }),
           (e.prototype._getTForX = function (e) {
@@ -35732,7 +36141,8 @@
               if (s || l) {
                 var c = s ? 'left' : 'right'
                 return new h.HitTestResult(h.HitTestResult.CUSTOM, {
-                  mouseClickHandler: void 0 === t.mouseClickHandler ? void 0 : t.mouseClickHandler.bind(this, e, c),
+                  mouseClickHandler:
+                    void 0 === t.mouseClickHandler ? void 0 : t.mouseClickHandler.bind(this, e, c),
                   tooltip: t.tooltip
                 })
               }
@@ -35815,7 +36225,9 @@
             this._invalidated = !0
           }),
           (e.prototype.height = function (e, t) {
-            return void 0 === t && (t = !1), Math.max(this._axisRenderer.height(e, t), this._paneRenderer.height(e, t))
+            return (
+              void 0 === t && (t = !1), Math.max(this._axisRenderer.height(e, t), this._paneRenderer.height(e, t))
+            )
           }),
           (e.prototype.getFixedCoordinate = function () {
             return this._commonRendererData.fixedCoordinate || 0
@@ -35824,7 +36236,9 @@
             this._commonRendererData.fixedCoordinate = e
           }),
           (e.prototype.isVisible = function () {
-            return this._updateRendererDataIfNeeded(), this._axisRendererData.visible || this._paneRendererData.visible
+            return (
+              this._updateRendererDataIfNeeded(), this._axisRendererData.visible || this._paneRendererData.visible
+            )
           }),
           (e.prototype.isAxisLabelVisible = function () {
             return this._updateRendererDataIfNeeded(), this._axisRendererData.visible
@@ -35912,7 +36326,8 @@
                           var L = T.index === C.index
                           ;(S = L && y.showSymbolLabels.value()),
                             (w =
-                              y.seriesLastValueMode.value() === a.PriceAxisLastValueMode.LastPriceAndPercentageValue),
+                              y.seriesLastValueMode.value() ===
+                              a.PriceAxisLastValueMode.LastPriceAndPercentageValue),
                             (b = b && L),
                             (P = L && this._isCountdownEnabled() && x.showCountdown.value())
                         }
@@ -36172,7 +36587,8 @@
               var n = this._priceScale()
               if (null === n) return null
               var o = r.priceScalePosition(n)
-              if (('overlay' === o && (o = r.priceScalePosition(r.defaultPriceScale())), 'overlay' === o)) return null
+              if (('overlay' === o && (o = r.priceScalePosition(r.defaultPriceScale())), 'overlay' === o))
+                return null
               var s = this._chartModel.priceAxisRendererOptions()
               return (
                 s.fontSize !== this._fontSize && ((this._fontSize = s.fontSize), this._textWidthCache.reset()),
@@ -36384,7 +36800,9 @@
             (e.prototype.isEqualTo = function (t) {
               if (!(t instanceof e)) throw new Error('Argument is not an Interval')
               return (
-                !(!this.isValid() || !t.isValid()) && this.kind() === t.kind() && this.multiplier() === t.multiplier()
+                !(!this.isValid() || !t.isValid()) &&
+                this.kind() === t.kind() &&
+                this.multiplier() === t.multiplier()
               )
             }),
             (e.prototype.inMilliseconds = function (e) {
@@ -36604,7 +37022,13 @@
               })
               if (-1 !== n)
                 for (
-                  var o, s = this._data, l = s.barSpacing, c = s.baseLevelCoordinate, u = 0.25 * l, h = t.length, d = n;
+                  var o,
+                    s = this._data,
+                    l = s.barSpacing,
+                    c = s.baseLevelCoordinate,
+                    u = 0.25 * l,
+                    h = t.length,
+                    d = n;
                   d < h;
                   d++
                 ) {
@@ -36697,7 +37121,11 @@
                 : null
             }),
             (t.prototype.timeAxisViews = function () {
-              return this.isSourceHidden() ? null : this.properties().showTime.value() ? [this._timeAxisView] : null
+              return this.isSourceHidden()
+                ? null
+                : this.properties().showTime.value()
+                ? [this._timeAxisView]
+                : null
             }),
             (t.prototype.updateAllViews = function () {
               e.prototype.updateAllViews.call(this), this._priceAxisView.update(), this._timeAxisView.update()
@@ -36853,11 +37281,15 @@
               return e.leftPriceScales().length + e.rightPriceScales().length < this._priceScalesLimit
             }),
             (e.prototype._getPriceScaleTheSameAsForSource = function (e, t) {
-              return t.isOverlay(e) ? t.createPriceScaleAtPosition('overlay') : Object(n.ensureNotNull)(e.priceScale())
+              return t.isOverlay(e)
+                ? t.createPriceScaleAtPosition('overlay')
+                : Object(n.ensureNotNull)(e.priceScale())
             }),
             (e.prototype._priceScaleIsPrice = function (e, t) {
               var i = e.mainSource()
-              return !!i && (i === t.mainSeries() || (!!Object(o.isStudy)(i) && Boolean(i.metaInfo().is_price_study)))
+              return (
+                !!i && (i === t.mainSeries() || (!!Object(o.isStudy)(i) && Boolean(i.metaInfo().is_price_study)))
+              )
             }),
             (e.prototype._findFirstScaleForPriceStudy = function (e) {
               for (var t = e.model(), i = 0; i < this._priceScalesLimit; i++) {
@@ -37390,7 +37822,7 @@
           }),
           (TradingView.ChartapiMessagerInstances = []),
           (e.exports = l)
-      }.call(this, i('jCNj')))
+      }).call(this, i('jCNj'))
     },
     'N+BX': function (e, t, i) {
       'use strict'
@@ -37536,7 +37968,8 @@
               this._model.isMergeUpAvailableForSource(this._study) && new c.c(this._model, this._study, '').redo()
             }),
             (e.prototype.mergeDown = function () {
-              this._model.isMergeDownAvailableForSource(this._study) && new c.a(this._model, this._study, '').redo()
+              this._model.isMergeDownAvailableForSource(this._study) &&
+                new c.a(this._model, this._study, '').redo()
             }),
             (e.prototype.unmergeUp = function () {
               this._model.isUnmergeAvailableForSource(this._study) && new l.c(this._model, this._study, '').redo()
@@ -37548,13 +37981,15 @@
               this._model.isMergeUpAvailableForSource(this._study) && this._undoModel.mergeSourceUp(this._study)
             }),
             (e.prototype.mergeDownWithUndo = function () {
-              this._model.isMergeDownAvailableForSource(this._study) && this._undoModel.mergeSourceDown(this._study)
+              this._model.isMergeDownAvailableForSource(this._study) &&
+                this._undoModel.mergeSourceDown(this._study)
             }),
             (e.prototype.unmergeUpWithUndo = function () {
               this._model.isUnmergeAvailableForSource(this._study) && this._undoModel.unmergeSourceUp(this._study)
             }),
             (e.prototype.unmergeDownWithUndo = function () {
-              this._model.isUnmergeAvailableForSource(this._study) && this._undoModel.unmergeSourceDown(this._study)
+              this._model.isUnmergeAvailableForSource(this._study) &&
+                this._undoModel.unmergeSourceDown(this._study)
             }),
             (e.prototype.changePriceScale = function (e) {
               var t = Object(n.ensureNotNull)(this._model.paneForSource(this._model.mainSeries())),
@@ -38214,7 +38649,10 @@
                           break
                         }
                       }
-                      r && (n && r.parentElement ? r.insertAdjacentElement('afterend', n) : t._container.appendChild(r))
+                      r &&
+                        (n && r.parentElement
+                          ? r.insertAdjacentElement('afterend', n)
+                          : t._container.appendChild(r))
                     }
                     t.recalculate()
                   },
@@ -38733,7 +39171,9 @@
                   if (0 !== d.sources.length)
                     (h = this.panes()[u] || this.createPane()).restoreState(d, t, e.version, r, i, !0), (u += 1)
                   else
-                    A.logWarn('Empty pane detected - restoring is skipped. idx=' + s + ', state=' + JSON.stringify(d))
+                    A.logWarn(
+                      'Empty pane detected - restoring is skipped. idx=' + s + ', state=' + JSON.stringify(d)
+                    )
                 }
                 this._invalidateBarColorerCaches()
                 var p = this.dataSources(),
@@ -38914,9 +39354,11 @@
               if ('study_Sessions' !== (_ = (f = e.sources[p]).type)) {
                 if (Math.abs(f.zorder) > 1e200) {
                   var m = h - 1
-                  A.logWarn('Datasource zorder has bad value: ' + f.zorder + ' Resetting it to ' + m), (f.zorder = m)
+                  A.logWarn('Datasource zorder has bad value: ' + f.zorder + ' Resetting it to ' + m),
+                    (f.zorder = m)
                 } else if (!this.isZOrderAvailable(f.zorder)) {
-                  ;(l && 'MainSeries' === _ && this._model.mainSeries().zorder() === f.zorder) || (f.zorder = d + 1)
+                  ;(l && 'MainSeries' === _ && this._model.mainSeries().zorder() === f.zorder) ||
+                    (f.zorder = d + 1)
                 }
                 ;(s[(O = f.id)] = f.ownerSource),
                   _ &&
@@ -38999,7 +39441,9 @@
             if (!b.has(L)) {
               var I = new u(this._model.properties().scalesProperties)
               if (
-                (I.setHeight(this.m_height), I.addDataSource(L), e.overlayPriceScales && e.overlayPriceScales[L.id()])
+                (I.setHeight(this.m_height),
+                I.addDataSource(L),
+                e.overlayPriceScales && e.overlayPriceScales[L.id()])
               ) {
                 var M = e.overlayPriceScales[L.id()]
                 ;(M.m_isAutoScale = !0),
@@ -39016,7 +39460,9 @@
             if (k) (L = this.dataSourceForId(O)) && this.dataSourceForId(O).setOwnerSource(this.dataSourceForId(k))
           }
           if (
-            (e.mainSourceId && !this.m_mainDataSource && (this.m_mainDataSource = this.dataSourceForId(e.mainSourceId)),
+            (e.mainSourceId &&
+              !this.m_mainDataSource &&
+              (this.m_mainDataSource = this.dataSourceForId(e.mainSourceId)),
             !this.m_mainDataSource)
           )
             for (p = 0; p < this.m_dataSources.length; p++) {
@@ -39314,7 +39760,8 @@
         }
         return (
           (i.prototype.add = function (e, t) {
-            this._deferreds[e] && (this._deferreds[e].resolve(t), delete this._deferreds[e]), (this._studies[e] = t)
+            this._deferreds[e] && (this._deferreds[e].resolve(t), delete this._deferreds[e]),
+              (this._studies[e] = t)
           }),
           (i.prototype.get = function (e) {
             return this._studies[e]
@@ -39498,7 +39945,8 @@
           }),
           (a.prototype.clone = function (e) {
             for (
-              var t = new a(this._defaultName, this.state(), e && e.replaceByState, this._useUserPreferences), i = 0;
+              var t = new a(this._defaultName, this.state(), e && e.replaceByState, this._useUserPreferences),
+                i = 0;
               i < this._exclusions.length;
               ++i
             )
@@ -39509,7 +39957,7 @@
           (t.saveDefaultProperties = function (e) {
             a._saveDefaults = e
           })
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     Ofm5: function (e, t, i) {
       'use strict'
@@ -39561,7 +40009,8 @@
           (s.prototype.findDistanceInBars = function (e, t, i) {
             return e === t
               ? 0
-              : (this.historyExtrapolator().setLastBarTime(0, 1e3 * e), this.historyExtrapolator().indexOfBar(t, i))
+              : (this.historyExtrapolator().setLastBarTime(0, 1e3 * e),
+                this.historyExtrapolator().indexOfBar(t, i))
           }),
           (s.prototype.indexOfBar = function (e, t) {
             this._ensureExtrapolatedToTime(t, 1e3 * e)
@@ -39577,7 +40026,8 @@
               var n = i.slice(0)
               n.sort()
               for (r = 0; r < n.length - 1; ++r)
-                n[r] === n[r + 1] && console.error('Duplicating extrapolated bars: duplicated ' + new Date(1e3 * n[r]))
+                n[r] === n[r + 1] &&
+                  console.error('Duplicating extrapolated bars: duplicated ' + new Date(1e3 * n[r]))
               null !== this._lastRealBarIndex &&
                 null !== this._chartApiMessager &&
                 this._chartApiMessager.onTickmarksUpdated(this._lastRealBarIndex + 1, i, e, this._resolution)
@@ -39618,7 +40068,9 @@
             return this._extrapolateData(e, function (r) {
               if (r >= t || !i._shouldExtrapolateMore()) return null
               var o = n(i.newBarBuilder(e), r, t, 2e3, !0)
-              return o.times[o.length - 1] < t && console.warn('Extrapolation error: not enough data created'), o.times
+              return (
+                o.times[o.length - 1] < t && console.warn('Extrapolation error: not enough data created'), o.times
+              )
             })
           }),
           (s.prototype.newBarBuilder = function (e) {
@@ -40611,7 +41063,9 @@
               )
             }
             console.warn(
-              'Wrong time range: ' + JSON.stringify(e) + '. Expected an object with "from" and "to" numeric values.'
+              'Wrong time range: ' +
+                JSON.stringify(e) +
+                '. Expected an object with "from" and "to" numeric values.'
             )
           }),
           (A.prototype._getSession = function () {
@@ -40630,7 +41084,9 @@
               a = i.lastBar() - s.index,
               l = a <= 0 ? t.indexToTimePoint(i.lastBar()) : o.projectTime(s.value[TradingView.TIME_PLOT], a)
             if (
-              ((e.from = +t.indexToTimePoint(Math.max(0, i.firstBar())) || 0), (e.to = +l || 0), m.isDWM(r.interval()))
+              ((e.from = +t.indexToTimePoint(Math.max(0, i.firstBar())) || 0),
+              (e.to = +l || 0),
+              m.isDWM(r.interval()))
             ) {
               var c = this._getSession()
               ;(e.from = E(e.from, c)), (e.to = E(e.to, c))
@@ -40750,7 +41206,9 @@
                 for (var d in t.overrides)
                   h[d]
                     ? h[d].setValue(t.overrides[d])
-                    : u(c.name) && -1 !== ['profitLevel', 'stopLevel'].indexOf(d) && h.addProperty(d, t.overrides[d])
+                    : u(c.name) &&
+                      -1 !== ['profitLevel', 'stopLevel'].indexOf(d) &&
+                      h.addProperty(d, t.overrides[d])
               void 0 !== h.text && t.text && h.text.setValue(t.text)
               var p = r.createLineTool(a, l[0], c.name, h, void 0, s)
               if (u(c.name)) {
@@ -40758,7 +41216,8 @@
                 2 === l.length && (p.startChanging(1, l[1]), p.setPoint(1, l[1]), p.endChanging())
               } else {
                 var f = p.pointsCount()
-                if (f !== l.length && -1 !== f) throw new Error('Wrong points count for ' + t.shape + '. Required ' + f)
+                if (f !== l.length && -1 !== f)
+                  throw new Error('Wrong points count for ' + t.shape + '. Required ' + f)
                 for (var _ = 1; _ < l.length && this._chartWidget.model().lineBeingCreated(); _++)
                   r.coninueCreatingLine(l[_], null, _ < l.length - 1)
               }
@@ -40784,7 +41243,9 @@
           }),
           (A.prototype.createStudy = function (e, t, i, r, n, l) {
             if ('function' == typeof n)
-              return console.warn('"createStudy" does not take "callback" parameter anymore'), Promise.resolve(null)
+              return (
+                console.warn('"createStudy" does not take "callback" parameter anymore'), Promise.resolve(null)
+              )
             if ((l = l || {}).checkLimit && !this._chartWidget.model().canCreateStudy())
               return v(), Promise.resolve(null)
             e = e.toLowerCase()
@@ -40845,7 +41306,9 @@
             return this._chartWidget.model().mainSeries().priceScale().formatter()
           }),
           (A.prototype.onDataLoaded = function () {
-            return this._makeSubscriptionFromDelegate(this._chartWidget.model().mainSeries().dataEvents().completed())
+            return this._makeSubscriptionFromDelegate(
+              this._chartWidget.model().mainSeries().dataEvents().completed()
+            )
           }),
           (A.prototype.onSymbolChanged = function () {
             return this._makeSubscriptionFromDelegate(
@@ -40880,7 +41343,8 @@
           }),
           (A.prototype._destroy = function () {
             var e = this._chartWidget.model()
-            null !== e && e.timeScale().visibleBarsStrictRangeChanged().unsubscribe(this, this._onVisibleBarsChanged)
+            null !== e &&
+              e.timeScale().visibleBarsStrictRangeChanged().unsubscribe(this, this._onVisibleBarsChanged)
           }),
           (A.prototype.setTimezone = function (e) {
             this._chartWidget.setTimezone(e)
@@ -40913,7 +41377,7 @@
             this._chartWidget.model().mergeAllScales(e)
           }),
           (e.exports = A)
-      }.call(this, i('aIyQ'), i('jCNj')))
+      }).call(this, i('aIyQ'), i('jCNj'))
     },
     QCyK: function (e, t, i) {
       'use strict'
@@ -41400,7 +41864,9 @@
             (this._target = t),
             (this._isResolutionTheSame = r.Interval.isEqual(e.getResolution(), t.getResolution())),
             (this._isSessionTheSame =
-              ((i = e.getSymbolInfo()), (n = t.getSymbolInfo()), i.timezone === n.timezone && i.session === n.session)),
+              ((i = e.getSymbolInfo()),
+              (n = t.getSymbolInfo()),
+              i.timezone === n.timezone && i.session === n.session)),
             (this._shouldCorrectTradingDay = r.Interval.isDWM(e.getResolution()) && !this._isSessionTheSame)
         }
         return (
@@ -41759,7 +42225,8 @@
                 }
                 var a = n.substr(3),
                   l = JSON.parse(a)
-                i._chartWidgetCollection.metaInfo.id.value() || i._chartWidgetCollection.metaInfo.id.setValue(l.id),
+                i._chartWidgetCollection.metaInfo.id.value() ||
+                  i._chartWidgetCollection.metaInfo.id.setValue(l.id),
                   t.closeForm && t.closeForm(),
                   t.onPublishUrl && t.onPublishUrl(l.publishUrl, l.uuid),
                   (i._lastPublishUrl = l.publishUrl),
@@ -41813,7 +42280,9 @@
                         e && e(o)
                     }.bind(this),
                     function () {
-                      this._chartSavedDelegate.fire(!1), (this._isSaveInProcess = !1), t && t.apply(null, arguments)
+                      this._chartSavedDelegate.fire(!1),
+                        (this._isSaveInProcess = !1),
+                        t && t.apply(null, arguments)
                     }.bind(this),
                     i
                   ),
@@ -41824,7 +42293,7 @@
             return this._isSaveInProcess
           }),
           (t.ChartSaver = a)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     RqCd: function (e, t, i) {
       'use strict'
@@ -41977,7 +42446,8 @@
               }
             }),
             (e.prototype._clearLongTapTimeout = function () {
-              null !== this._longTapTimeoutId && (clearTimeout(this._longTapTimeoutId), (this._longTapTimeoutId = null))
+              null !== this._longTapTimeoutId &&
+                (clearTimeout(this._longTapTimeoutId), (this._longTapTimeoutId = null))
             }),
             (e.prototype._mouseDownHandler = function (e) {
               if (!('button' in e) || 0 === e.button) {
@@ -42030,7 +42500,8 @@
                 this._target.addEventListener('mouseleave', this._mouseLeaveHandler.bind(this)),
                 this._target.addEventListener('contextmenu', this._longTapHandler.bind(this)),
                 this._target.addEventListener('touchstart', this._mouseDownHandler.bind(this), { passive: !0 }),
-                Modernizr.mobiletouch || this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this)),
+                Modernizr.mobiletouch ||
+                  this._target.addEventListener('mousedown', this._mouseDownHandler.bind(this)),
                 this._initPinch(),
                 this._target.addEventListener('touchmove', function () {}, {
                   passive: !1
@@ -42068,7 +42539,9 @@
             }),
             (e.prototype._checkPinchState = function (e) {
               1 === e.length && (this._pinchPrevented = !1),
-                2 !== e.length || this._pinchPrevented || this._longTapActive ? this._stopPinch() : this._startPinch(e)
+                2 !== e.length || this._pinchPrevented || this._longTapActive
+                  ? this._stopPinch()
+                  : this._startPinch(e)
             }),
             (e.prototype._startPinch = function (e) {
               var t = this._target.getBoundingClientRect() || {
@@ -42302,7 +42775,8 @@
             (this._fixedPoints = []),
             (this._timePoint = []),
             (this._currentPointsetId = null),
-            this._properties.hasChild('symbol') || this._properties.addChild('symbol', new e(t.mainSeries().symbol())),
+            this._properties.hasChild('symbol') ||
+              this._properties.addChild('symbol', new e(t.mainSeries().symbol())),
             this._properties.hasChild('interval') ||
               this._properties.addChild('interval', new e(t.mainSeries().interval())),
             this.calcIsActualSymbol(),
@@ -42564,7 +43038,8 @@
             var t = this._properties.points
             t.addProperty(e)
             var i = t[e]
-            i.addChild('price', new S.PointPriceProperty(this, e)), i.addChild('bar', new S.PointIndexProperty(this, e))
+            i.addChild('price', new S.PointPriceProperty(this, e)),
+              i.addChild('bar', new S.PointIndexProperty(this, e))
           }),
           (S.prototype._createPointsProperties = function () {
             this._properties.addProperty('points')
@@ -43200,7 +43675,8 @@
               return e._getPropertyDefinitionsViewModelClass().then(function (t) {
                 return null === t || e._isDestroyed
                   ? null
-                  : (null === e._definitionsViewModel && (e._definitionsViewModel = new t(e._model.undoModel(), e)),
+                  : (null === e._definitionsViewModel &&
+                      (e._definitionsViewModel = new t(e._model.undoModel(), e)),
                     e._definitionsViewModel)
               })
             }
@@ -43269,7 +43745,8 @@
             t.hasChild('intervalsVisibilities'))
           ) {
             var i = r(t.child('intervalsVisibilities'))
-            for (var n in w.intervalsVisibilities) i.hasChild(n) || i.addChild(n, new e(w.intervalsVisibilities[n]))
+            for (var n in w.intervalsVisibilities)
+              i.hasChild(n) || i.addChild(n, new e(w.intervalsVisibilities[n]))
           } else t.addChild('intervalsVisibilities', new e(w.intervalsVisibilities))
           t.hasChild('title') || t.addChild('title', new e('')),
             t.addExclusion &&
@@ -43284,7 +43761,7 @@
         }),
           (t.LineToolPriceAxisView = o),
           (t.LineDataSource = S)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     SzKR: function (e, t, i) {},
     T6Of: function (e, t, i) {
@@ -43963,7 +44440,9 @@
       function n(e, t, i) {
         if (((t = t || 0), !c(e)))
           return i
-            ? Object(r.rgbaToString)(Object(r.rgba)(Object(r.parseRgb)(e), Object(r.normalizeAlphaComponent)(s(t))))
+            ? Object(r.rgbaToString)(
+                Object(r.rgba)(Object(r.parseRgb)(e), Object(r.normalizeAlphaComponent)(s(t)))
+              )
             : e
         var n = Object(r.parseRgb)(e),
           o = n[0],
@@ -44404,7 +44883,9 @@
                 (this._rawStudiesMetaInfo = [])
             }),
             (e.prototype._requestFinished = function () {
-              ;(this._isReady = !0), this._processPendingMetaInfoQueries(), this._processPendingFullMetaInfoQueries()
+              ;(this._isReady = !0),
+                this._processPendingMetaInfoQueries(),
+                this._processPendingFullMetaInfoQueries()
             }),
             (e.prototype._enqueueMetaInfoQuery = function (e) {
               var t = this
@@ -44841,7 +45322,9 @@
                 (this._state = e),
                 this.hasState() &&
                   (this.state().onDestroyed().subscribe(this, this._onStateDestroyed, !0),
-                  this.state().dataSourcesCollectionChanged().subscribe(this, this._onDataSourcesCollectionChanged),
+                  this.state()
+                    .dataSourcesCollectionChanged()
+                    .subscribe(this, this._onDataSourcesCollectionChanged),
                   this.updatePriceAxisWidgets()))
             }),
             (e.prototype.getScreenshotData = function () {
@@ -44873,7 +45356,12 @@
                     n = r.visibleLeftPriceScales(),
                     o = r.visibleRightPriceScales()
                   this._lhsPriceAxisesContainer.setScales(n, i.left, t.leftPriceScales().length, i.left + i.right),
-                    this._rhsPriceAxisesContainer.setScales(o, i.right, t.rightPriceScales().length, i.left + i.right)
+                    this._rhsPriceAxisesContainer.setScales(
+                      o,
+                      i.right,
+                      t.rightPriceScales().length,
+                      i.left + i.right
+                    )
                 }
               }
             }),
@@ -45145,7 +45633,8 @@
                     void this.setCursorForTool()
                   )
                 this._isScrolling &&
-                  (null !== this._scrollPriceScale && i.scrollPriceTo(this.state(), this._scrollPriceScale, e.localY),
+                  (null !== this._scrollPriceScale &&
+                    i.scrollPriceTo(this.state(), this._scrollPriceScale, e.localY),
                   i.scrollTimeTo(e.localX))
               }
             }),
@@ -45196,10 +45685,13 @@
               var e = Date.now(),
                 t = null === this._scrollXAnimation || this._scrollXAnimation.finished(e),
                 i = null === this._scrollYAnimation || this._scrollYAnimation.finished(e)
-              ;(null === this._scrollXAnimation && null === this._scrollYAnimation) || (t && i) || this._finishScroll(),
+              ;(null === this._scrollXAnimation && null === this._scrollYAnimation) ||
+                (t && i) ||
+                this._finishScroll(),
                 null !== this._scrollXAnimation &&
                   (this._scrollXAnimation.terminate(), (this._scrollXAnimation = null)),
-                null !== this._scrollYAnimation && (this._scrollYAnimation.terminate(), (this._scrollYAnimation = null))
+                null !== this._scrollYAnimation &&
+                  (this._scrollYAnimation.terminate(), (this._scrollYAnimation = null))
             }),
             (e.prototype._preventScroll = function () {
               return (
@@ -45249,7 +45741,8 @@
               return !this._chart.isActive() && !this._chart.crossHairSyncEnabled()
             }),
             (e.prototype._onDataSourcesCollectionChanged = function () {
-              ;(this._startMoveLineToolParams = null), null !== this._legendWidget && this._legendWidget.updateLayout()
+              ;(this._startMoveLineToolParams = null),
+                null !== this._legendWidget && this._legendWidget.updateLayout()
             }),
             (e.prototype._loadAndCreateLegendWidget = function () {
               var e = this
@@ -45474,7 +45967,8 @@
                   Promise.resolve(this._shouldShowConfirm(this._collectValues())).then(function (r) {
                     if (!r) return t(i._collectValues(), e), void e.close()
                     i._showConfirmDialog().then(function (r) {
-                      r === a && (e.focus(), i._fields[0].focus()), r === s && (t(i._collectValues(), e), e.close())
+                      r === a && (e.focus(), i._fields[0].focus()),
+                        r === s && (t(i._collectValues(), e), e.close())
                     })
                   })
                 }
@@ -45681,7 +46175,9 @@
           }),
           (e.prototype.isActualSymbol = function () {
             return (
-              this._lineTools.length > 0 && this._lineTools[0].isActualSymbol() && this._lineTools[0].isActualCurrency()
+              this._lineTools.length > 0 &&
+              this._lineTools[0].isActualSymbol() &&
+              this._lineTools[0].isActualCurrency()
             )
           }),
           (e.prototype.containsLineTool = function (e) {
@@ -46526,7 +47022,7 @@
             )
           })())
         e && e.exports && (e.exports = c)
-      }.call(this, i('YuTi')(e)))
+      }).call(this, i('YuTi')(e))
     },
     VgjZ: function (e, t, i) {
       'use strict'
@@ -46579,7 +47075,7 @@
     },
     W3MX: function (e) {
       e.exports = JSON.parse(
-        '{"color-aqua-spring":"#ebf9f5","color-army-green":"#3d2c12","color-army-green-2":"#31230d","color-athens-gray-1":"#f2f3f5","color-athens-gray-2":"#f7f8fa","color-athens-gray-3":"#eceff2","color-black":"#000000","color-blue-dianne":"#21384d","color-bluish":"#2185cc","color-bright-gray":"#363c4e","color-brownish-grey":"#8d6e63","color-carnation":"#f04561","color-catskill-white":"#e1ecf2","color-charade":"#2f3241","color-charcoal-grey":"#323337","color-curious-blue":"#299dcd","color-dark-blue-grey":"#123440","color-darkness-blue-grey":"#12213b","color-dark-grey":"#292a2d","color-dark-grey-blue":"#28415a","color-dark-sky-blue":"#37a6ef","color-dark-slate-blue":"#194453","color-deep-sea-blue":"#016087","color-duck-egg-blue":"#e1eff9","color-ebony-clay":"#262b3e","color-foam":"#d7f0fb","color-gull-gray":"#9db2bd","color-humming-bird":"#d3eef9","color-keppel-1":"#37bc9b","color-keppel-2":"#34b293","color-lavender-blush":"#ffedf0","color-lightish-purple":"#a75ee8","color-loblolly":"#c5cbce","color-manatee":"#878ca8","color-mandy":"#eb4d5c","color-medium-blue":"#2e7bb2","color-milk-chocolate":"#6f2626","color-mirage-1":"#131313","color-mirage-2":"#171b29","color-mirage-3":"#1c2030","color-mischka":"#d6d8e0","color-morning-glory":"#9addcc","color-oslo-gray":"#8b8e95","color-pale":"#fff2cf","color-pale-grey-1":"#f9fafb","color-pale-grey-2":"#e7ebee","color-pale-sky":"#6b7988","color-picton-blue-1":"#3bb3e4","color-picton-blue-2":"#41bef1","color-puerto-rico":"#3bc2a1","color-purple-brown":"#4e2934","color-purple-brown-2":"#3d2028","color-radical-red":"#ff4a68","color-regent-gray":"#8797a5","color-scooter":"#38acdb","color-silver-tree":"#53b987","color-slate-gray":"#758696","color-sundown":"#ffa4b3","color-sunglow":"#ffca3b","color-tan-hide":"#ff9850","color-trout-1":"#4c525e","color-trout-2":"#4f5966","color-violet-1":"#332738","color-violet-2":"#271d2b","color-water-blue":"#1592e6","color-white":"#ffffff","color-white-ice":"#ebf7fc","color-wild-watermelon":"#ff5773","color-bg-primary":"color-white","color-bg-primary-hover":"color-cold-gray-100","color-bg-secondary":"color-white","color-bg-highlight":"color-cold-gray-50","color-bg-scroll-buttons":"color-cold-gray-100","color-legacy-bg-scroll-buttons":"color-cold-gray-850","color-legacy-bg-widget":"color-white","color-text-primary":"color-cold-gray-900","color-text-secondary":"color-cold-gray-500","color-text-tertiary":"color-cold-gray-400","color-text-disabled":"color-cold-gray-300","color-box-shadow":"color-cold-gray-300","color-divider":"color-cold-gray-150","color-divider-hover":"color-cold-gray-100","color-active-hover-text":"color-black","color-alert-text":"color-black","color-border-table":"color-cold-gray-100","color-brand":"color-tv-blue-500","color-brand-active":"color-tv-blue-600","color-brand-hover":"color-tv-blue-600","color-brand-light":"color-picton-blue-2","color-chart-page-bg":"color-cold-gray-150","color-common-tooltip-bg":"color-cold-gray-800","color-common-tooltip-text":"color-cold-gray-100","color-danger":"color-radical-red","color-depthrenderer-stroke-style":"color-athens-gray-1","color-highlight-new":"color-pale","color-input-bg":"color-white","color-input-publish-bg":"color-white","color-link":"color-tv-blue-500","color-link-hover":"color-tv-blue-600","color-link-active":"color-tv-blue-600","color-list-nth-child-bg":"color-athens-gray-2","color-pane-bg":"color-white","color-pane-secondary-bg":"color-cold-gray-100","color-popup-menu-item-hover-bg":"color-cold-gray-100","color-popup-menu-separator":"color-cold-gray-150","color-replay-data-mode":"color-radical-red","color-screener-header-bg":"color-athens-gray-2","color-screener-description":"color-trout-2","color-legacy-success":"color-keppel-1","color-success":"color-minty-green-500","color-success-hover":"color-minty-green-600","color-success-active":"color-minty-green-700","color-toolbar-button-text":"color-cold-gray-900","color-toolbar-button-text-hover":"color-black","color-toolbar-button-text-active":"color-tv-blue-500","color-toolbar-button-text-active-hover":"color-tv-blue-600","color-toolbar-button-background-hover":"color-cold-gray-100","color-toolbar-button-background-secondary-hover":"color-cold-gray-150","color-toolbar-toggle-button-background-active":"color-tv-blue-500","color-toolbar-toggle-button-background-active-hover":"color-tv-blue-600","color-toolbar-interactive-element-text-normal":"color-cold-gray-900","color-toolbar-interactive-element-text-hover":"color-black","color-toolbar-opened-element-bg":"color-cold-gray-100","color-tooltip-bg":"color-ebony-clay","color-tv-dialog-caption":"color-trout-2","color-tv-dropdown-item-hover-bg":"color-athens-gray-1","color-underlined-text":"color-slate-gray","color-widget-pages-bg":"color-white","color-warning":"color-tan-orange-500","color-growing":"color-minty-green-400","color-falling":"color-ripe-red-400","color-collapse-tabs-border":"color-athens-gray-3","color-forex-icon":"color-bright-gray","color-list-item-active-bg":"color-dark-sky-blue","color-list-item-hover-bg":"color-white-ice","color-list-item-text":"color-ebony-clay","color-site-widget-hover":"color-athens-gray-1","color-attention":"color-sunglow","color-price-axis-label-back":"color-cold-gray-150","color-price-axis-label-text":"color-cold-gray-650","color-price-axis-gear":"color-cold-gray-900","color-price-axis-gear-hover":"#000000","color-price-axis-highlight":"color-cold-gray-150","color-marker-flagged":"color-ripe-red-400","color-marker-flagged-hovered":"color-ripe-red-600","color-bid":"color-tv-blue-500","color-ask":"color-ripe-red-400","color-sell":"color-ripe-red-400","color-buy":"color-tv-blue-500","color-neutral":"color-cold-gray-500","color-border":"#dadde0","color-border-chat-fields":"#c9cbcd","color-border-hover":"#c8c8c8","color-button-hover-bg":"#f2f2f2","color-depthrenderer-fill-style":"#555555","color-disabled-border-and-color":"#ececec","color-disabled-input":"#ececec","color-readonly-input":"#b4b4b4","color-empty-container-message":"#8a8a8a","color-icons":"#7d7d7d","color-input-textarea-readonly":"#555555","color-item-active-blue":"#eff9ff","color-item-hover-active-bg":"#f1f3f6","color-item-hover-bg":"#edf1f2","color-item-hover-blue":"#c6e9f8","color-item-selected-blue":"#eafafe","color-item-active-text":"color-white","color-item-active-bg":"color-tv-blue-500","color-list-item":"#888989","color-news-highlight":"#f2f5f8","color-placeholder":"#adaeb0","color-row-hover-active-bg":"#f1f3f6","color-sb-scrollbar-body-bg":"#d8d8d8","color-screener-header-bg-hover":"#f1f3f6","color-section-separator-border":"#b5b7b9","color-separator-table-chat":"#eaecef","color-tag-active-bg":"#cfdce3","color-tag-hover-bg":"#dce6ea","color-text-regular":"#4a4a4a","color-tv-button-checked":"#757575","color-white-theme-tooltip-text":"#333333","color-brand-dark":"#2a2c39","color-scroll-bg":"color-cold-gray-400","color-scroll-border":"color-item-hover-active-bg","color-widget-border":"color-cold-gray-100","color-scroll-buttons-arrow":"color-white","color-control-intent-default":"color-cold-gray-200","color-control-intent-success":"color-minty-green-600","color-control-intent-primary":"color-tv-blue-500","color-control-intent-warning":"color-tan-orange-500","color-control-intent-danger":"color-ripe-red-500","color-seeking-alpha-brand":"#ff7200","color-pro":"color-minty-green-400","color-pro-hover":"color-minty-green-600","color-pro-plus":"color-tv-blue-500","color-pro-plus-hover":"color-tv-blue-600","color-pro-premium":"color-tan-orange-500","color-pro-premium-hover":"color-tan-orange-700","color-trial":"color-cold-gray-500","color-trial-hover":"color-cold-gray-600","color-mod":"color-ripe-red-400","color-mod-hover":"color-ripe-red-600","color-top":"color-banana-yellow-700","color-top-hover":"color-banana-yellow-800","color-ad":"color-banana-yellow-a700","color-broker-featured":"color-minty-green-400","color-broker-featured-hover":"color-minty-green-600","color-alert-status-active":"color-minty-green-400","color-alert-status-stopped":"color-ripe-red-500","color-alert-status-stopped-auto":"color-tan-orange-500","color-covid19-confirmed":"color-ripe-red-500","color-covid19-recovered":"color-minty-green-500","color-covid19-deaths":"color-cold-gray-450","color-blue-gray-950":"#0C0E15","color-cold-gray-50":"#F8F9FD","color-cold-gray-100":"#F0F3FA","color-cold-gray-150":"#E0E3EB","color-cold-gray-200":"#D1D4DC","color-cold-gray-250":"#C1C4CD","color-cold-gray-300":"#B2B5BE","color-cold-gray-350":"#A3A6AF","color-cold-gray-400":"#9598A1","color-cold-gray-450":"#868993","color-cold-gray-500":"#787B86","color-cold-gray-550":"#6A6D78","color-cold-gray-600":"#5D606B","color-cold-gray-650":"#50535E","color-cold-gray-700":"#434651","color-cold-gray-750":"#363A45","color-cold-gray-800":"#2A2E39","color-cold-gray-850":"#1E222D","color-cold-gray-900":"#131313","color-cold-gray-950":"#0C0E15","color-ripe-red-50":"#FFEBEE","color-ripe-red-100":"#FFCDD2","color-ripe-red-200":"#ef9a9a","color-ripe-red-300":"#E57373","color-ripe-red-400":"#EF5350","color-ripe-red-500":"#F44336","color-ripe-red-600":"#E53935","color-ripe-red-700":"#D32F2F","color-ripe-red-800":"#C62828","color-ripe-red-900":"#B71C1C","color-ripe-red-a200":"#FF5252","color-tan-orange-50":"#FFF3E0","color-tan-orange-100":"#FFE0B2","color-tan-orange-200":"#FFCC80","color-tan-orange-300":"#ffb74d","color-tan-orange-400":"#FFA726","color-tan-orange-500":"#FF9800","color-tan-orange-600":"#FB8C00","color-tan-orange-700":"#F57C00","color-tan-orange-800":"#EF6C00","color-tan-orange-900":"#e65100","color-tan-orange-a200":"#ffab40","color-tan-orange-a400":"#ff9100","color-tan-orange-a700":"#FF6D00","color-iguana-green-100":"#C8E6C9","color-iguana-green-200":"#A5D6A7","color-iguana-green-300":"#81c784","color-iguana-green-400":"#66BB6A","color-iguana-green-500":"#4caf50","color-iguana-green-600":"#43a047","color-iguana-green-700":"#388e3c","color-iguana-green-900":"#1B5E20","color-iguana-green-a700":"#00c853","color-banana-yellow-100":"#FFF9C4","color-banana-yellow-200":"#FFF59D","color-banana-yellow-300":"#FFF176","color-banana-yellow-400":"#ffee58","color-banana-yellow-500":"#ffeb3b","color-banana-yellow-600":"#fdd835","color-banana-yellow-700":"#fbc02d","color-banana-yellow-800":"#f9a825","color-banana-yellow-900":"#F57F17","color-banana-yellow-a400":"#ffea00","color-banana-yellow-a700":"#ffd600","color-tv-blue-50":"#E3F2FD","color-tv-blue-100":"#BBDEFB","color-tv-blue-200":"#90CAF9","color-tv-blue-300":"#64B5F6","color-tv-blue-400":"#42A5F5","color-tv-blue-500":"#2196F3","color-tv-blue-600":"#1E88E5","color-tv-blue-700":"#1976D2","color-tv-blue-800":"#1565C0","color-tv-blue-900":"#0d47a1","color-tv-blue-a100":"#82b1ff","color-tv-blue-a200":"#448aff","color-tv-blue-a400":"#2979ff","color-tv-blue-a600":"#2962FF","color-tv-blue-a700":"#144987","color-tv-blue-a800":"#143661","color-tv-blue-a900":"#132742","color-deep-blue-100":"#D1C4E9","color-deep-blue-200":"#B39DDB","color-deep-blue-300":"#9575cd","color-deep-blue-400":"#7e57c2","color-deep-blue-500":"#673ab7","color-deep-blue-700":"#512da8","color-deep-blue-800":"#4527A0","color-deep-blue-900":"#311B92","color-deep-blue-a100":"#b388ff","color-deep-blue-a700":"#6200EA","color-minty-green-100":"#B2DFDB","color-minty-green-200":"#80cbc4","color-minty-green-300":"#4db6ac","color-minty-green-400":"#26a69a","color-minty-green-500":"#009688","color-minty-green-600":"#00897b","color-minty-green-700":"#00796b","color-minty-green-900":"#004D40","color-minty-green-a400":"#1de9b6","color-minty-green-a700":"#00BFA5","color-grapes-purple-100":"#E1BEE7","color-grapes-purple-200":"#CE93D8","color-grapes-purple-300":"#ba68c8","color-grapes-purple-400":"#ab47bc","color-grapes-purple-500":"#9c27b0","color-grapes-purple-600":"#8e24aa","color-grapes-purple-700":"#7b1fa2","color-grapes-purple-800":"#6A1B9A","color-grapes-purple-900":"#4A148C","color-grapes-purple-a700":"#aa00ff","color-berry-pink-100":"#F8BBD0","color-berry-pink-200":"#f48fb1","color-berry-pink-300":"#f06292","color-berry-pink-400":"#ec407a","color-berry-pink-500":"#e91e63","color-berry-pink-600":"#D81B60","color-berry-pink-700":"#C2185B","color-berry-pink-900":"#880E4F","color-berry-pink-a200":"#ff4081","color-sky-blue-100":"#B2EBF2","color-sky-blue-200":"#80DEEA","color-sky-blue-300":"#4dd0e1","color-sky-blue-400":"#26c6da","color-sky-blue-500":"#00bcd4","color-sky-blue-600":"#00acc1","color-sky-blue-700":"#0097A7","color-sky-blue-800":"#00838F","color-sky-blue-900":"#006064","color-sky-blue-a400":"#00e5ff","color-sky-blue-a700":"#00B8D4","color-deep-blue-600":"#5E35B1","color-facebook":"#1877F2","color-twitter":"#1DA1F2","color-pre-market":"color-tan-orange-600","color-pre-market-bg":"color-tan-orange-400","color-post-market":"color-tv-blue-500","color-post-market-bg":"color-tv-blue-400","color-market-open":"color-minty-green-500","color-market-open-bg":"color-minty-green-400","color-market-closed":"color-cold-gray-400","color-market-holiday":"color-cold-gray-400","color-invalid-symbol":"color-ripe-red-400","color-invalid-symbol-hover":"color-ripe-red-700","color-replay-mode":"color-tv-blue-500","color-replay-mode-icon":"color-white","color-replay-mode-hover":"color-tv-blue-600","color-delay-mode":"color-berry-pink-600","color-delay-mode-bg":"color-berry-pink-600","color-eod-mode":"color-berry-pink-600","color-eod-mode-bg":"color-berry-pink-600","color-data-problem":"color-ripe-red-600","color-data-problem-bg":"color-ripe-red-400","color-data-problem-hover":"color-ripe-red-700","color-list-item-bg-highlighted":"color-tv-blue-50","color-list-item-bg-selected":"color-tv-blue-100"}'
+        '{"color-aqua-spring":"#ebf9f5","color-army-green":"#3d2c12","color-army-green-2":"#31230d","color-athens-gray-1":"#f2f3f5","color-athens-gray-2":"#f7f8fa","color-athens-gray-3":"#eceff2","color-black":"#000000","color-blue-dianne":"#21384d","color-bluish":"#2185cc","color-bright-gray":"#363c4e","color-brownish-grey":"#8d6e63","color-carnation":"#f04561","color-catskill-white":"#e1ecf2","color-charade":"#2f3241","color-charcoal-grey":"#323337","color-curious-blue":"#299dcd","color-dark-blue-grey":"#123440","color-darkness-blue-grey":"#12213b","color-dark-grey":"#292a2d","color-dark-grey-blue":"#28415a","color-dark-sky-blue":"#37a6ef","color-dark-slate-blue":"#194453","color-deep-sea-blue":"#016087","color-duck-egg-blue":"#e1eff9","color-ebony-clay":"#262b3e","color-foam":"#d7f0fb","color-gull-gray":"#9db2bd","color-humming-bird":"#d3eef9","color-keppel-1":"#37bc9b","color-keppel-2":"#34b293","color-lavender-blush":"#ffedf0","color-lightish-purple":"#a75ee8","color-loblolly":"#c5cbce","color-manatee":"#878ca8","color-mandy":"#eb4d5c","color-medium-blue":"#2e7bb2","color-milk-chocolate":"#6f2626","color-mirage-1":"#1C1C1C","color-mirage-2":"#171b29","color-mirage-3":"#1c2030","color-mischka":"#d6d8e0","color-morning-glory":"#9addcc","color-oslo-gray":"#8b8e95","color-pale":"#fff2cf","color-pale-grey-1":"#f9fafb","color-pale-grey-2":"#e7ebee","color-pale-sky":"#6b7988","color-picton-blue-1":"#3bb3e4","color-picton-blue-2":"#41bef1","color-puerto-rico":"#3bc2a1","color-purple-brown":"#4e2934","color-purple-brown-2":"#3d2028","color-radical-red":"#ff4a68","color-regent-gray":"#8797a5","color-scooter":"#38acdb","color-silver-tree":"#53b987","color-slate-gray":"#758696","color-sundown":"#ffa4b3","color-sunglow":"#ffca3b","color-tan-hide":"#ff9850","color-trout-1":"#4c525e","color-trout-2":"#4f5966","color-violet-1":"#332738","color-violet-2":"#271d2b","color-water-blue":"#1592e6","color-white":"#ffffff","color-white-ice":"#ebf7fc","color-wild-watermelon":"#ff5773","color-bg-primary":"color-white","color-bg-primary-hover":"color-cold-gray-100","color-bg-secondary":"color-white","color-bg-highlight":"color-cold-gray-50","color-bg-scroll-buttons":"color-cold-gray-100","color-legacy-bg-scroll-buttons":"color-cold-gray-850","color-legacy-bg-widget":"color-white","color-text-primary":"color-cold-gray-900","color-text-secondary":"color-cold-gray-500","color-text-tertiary":"color-cold-gray-400","color-text-disabled":"color-cold-gray-300","color-box-shadow":"color-cold-gray-300","color-divider":"color-cold-gray-150","color-divider-hover":"color-cold-gray-100","color-active-hover-text":"color-black","color-alert-text":"color-black","color-border-table":"color-cold-gray-100","color-brand":"color-tv-blue-500","color-brand-active":"color-tv-blue-600","color-brand-hover":"color-tv-blue-600","color-brand-light":"color-picton-blue-2","color-chart-page-bg":"color-cold-gray-150","color-common-tooltip-bg":"color-cold-gray-800","color-common-tooltip-text":"color-cold-gray-100","color-danger":"color-radical-red","color-depthrenderer-stroke-style":"color-athens-gray-1","color-highlight-new":"color-pale","color-input-bg":"color-white","color-input-publish-bg":"color-white","color-link":"color-tv-blue-500","color-link-hover":"color-tv-blue-600","color-link-active":"color-tv-blue-600","color-list-nth-child-bg":"color-athens-gray-2","color-pane-bg":"color-white","color-pane-secondary-bg":"color-cold-gray-100","color-popup-menu-item-hover-bg":"color-cold-gray-100","color-popup-menu-separator":"color-cold-gray-150","color-replay-data-mode":"color-radical-red","color-screener-header-bg":"color-athens-gray-2","color-screener-description":"color-trout-2","color-legacy-success":"color-keppel-1","color-success":"color-minty-green-500","color-success-hover":"color-minty-green-600","color-success-active":"color-minty-green-700","color-toolbar-button-text":"color-cold-gray-900","color-toolbar-button-text-hover":"color-black","color-toolbar-button-text-active":"color-tv-blue-500","color-toolbar-button-text-active-hover":"color-tv-blue-600","color-toolbar-button-background-hover":"color-cold-gray-100","color-toolbar-button-background-secondary-hover":"color-cold-gray-150","color-toolbar-toggle-button-background-active":"color-tv-blue-500","color-toolbar-toggle-button-background-active-hover":"color-tv-blue-600","color-toolbar-interactive-element-text-normal":"color-cold-gray-900","color-toolbar-interactive-element-text-hover":"color-black","color-toolbar-opened-element-bg":"color-cold-gray-100","color-tooltip-bg":"color-ebony-clay","color-tv-dialog-caption":"color-trout-2","color-tv-dropdown-item-hover-bg":"color-athens-gray-1","color-underlined-text":"color-slate-gray","color-widget-pages-bg":"color-white","color-warning":"color-tan-orange-500","color-growing":"color-minty-green-400","color-falling":"color-ripe-red-400","color-collapse-tabs-border":"color-athens-gray-3","color-forex-icon":"color-bright-gray","color-list-item-active-bg":"color-dark-sky-blue","color-list-item-hover-bg":"color-white-ice","color-list-item-text":"color-ebony-clay","color-site-widget-hover":"color-athens-gray-1","color-attention":"color-sunglow","color-price-axis-label-back":"color-cold-gray-150","color-price-axis-label-text":"color-cold-gray-650","color-price-axis-gear":"color-cold-gray-900","color-price-axis-gear-hover":"#000000","color-price-axis-highlight":"color-cold-gray-150","color-marker-flagged":"color-ripe-red-400","color-marker-flagged-hovered":"color-ripe-red-600","color-bid":"color-tv-blue-500","color-ask":"color-ripe-red-400","color-sell":"color-ripe-red-400","color-buy":"color-tv-blue-500","color-neutral":"color-cold-gray-500","color-border":"#dadde0","color-border-chat-fields":"#c9cbcd","color-border-hover":"#c8c8c8","color-button-hover-bg":"#f2f2f2","color-depthrenderer-fill-style":"#555555","color-disabled-border-and-color":"#ececec","color-disabled-input":"#ececec","color-readonly-input":"#b4b4b4","color-empty-container-message":"#8a8a8a","color-icons":"#7d7d7d","color-input-textarea-readonly":"#555555","color-item-active-blue":"#eff9ff","color-item-hover-active-bg":"#f1f3f6","color-item-hover-bg":"#edf1f2","color-item-hover-blue":"#c6e9f8","color-item-selected-blue":"#eafafe","color-item-active-text":"color-white","color-item-active-bg":"color-tv-blue-500","color-list-item":"#888989","color-news-highlight":"#f2f5f8","color-placeholder":"#adaeb0","color-row-hover-active-bg":"#f1f3f6","color-sb-scrollbar-body-bg":"#d8d8d8","color-screener-header-bg-hover":"#f1f3f6","color-section-separator-border":"#b5b7b9","color-separator-table-chat":"#eaecef","color-tag-active-bg":"#cfdce3","color-tag-hover-bg":"#dce6ea","color-text-regular":"#4a4a4a","color-tv-button-checked":"#757575","color-white-theme-tooltip-text":"#333333","color-brand-dark":"#2a2c39","color-scroll-bg":"color-cold-gray-400","color-scroll-border":"color-item-hover-active-bg","color-widget-border":"color-cold-gray-100","color-scroll-buttons-arrow":"color-white","color-control-intent-default":"color-cold-gray-200","color-control-intent-success":"color-minty-green-600","color-control-intent-primary":"color-tv-blue-500","color-control-intent-warning":"color-tan-orange-500","color-control-intent-danger":"color-ripe-red-500","color-seeking-alpha-brand":"#ff7200","color-pro":"color-minty-green-400","color-pro-hover":"color-minty-green-600","color-pro-plus":"color-tv-blue-500","color-pro-plus-hover":"color-tv-blue-600","color-pro-premium":"color-tan-orange-500","color-pro-premium-hover":"color-tan-orange-700","color-trial":"color-cold-gray-500","color-trial-hover":"color-cold-gray-600","color-mod":"color-ripe-red-400","color-mod-hover":"color-ripe-red-600","color-top":"color-banana-yellow-700","color-top-hover":"color-banana-yellow-800","color-ad":"color-banana-yellow-a700","color-broker-featured":"color-minty-green-400","color-broker-featured-hover":"color-minty-green-600","color-alert-status-active":"color-minty-green-400","color-alert-status-stopped":"color-ripe-red-500","color-alert-status-stopped-auto":"color-tan-orange-500","color-covid19-confirmed":"color-ripe-red-500","color-covid19-recovered":"color-minty-green-500","color-covid19-deaths":"color-cold-gray-450","color-blue-gray-950":"#0C0E15","color-cold-gray-50":"#F8F9FD","color-cold-gray-100":"#F0F3FA","color-cold-gray-150":"#E0E3EB","color-cold-gray-200":"#D1D4DC","color-cold-gray-250":"#C1C4CD","color-cold-gray-300":"#B2B5BE","color-cold-gray-350":"#A3A6AF","color-cold-gray-400":"#9598A1","color-cold-gray-450":"#868993","color-cold-gray-500":"#787B86","color-cold-gray-550":"#6A6D78","color-cold-gray-600":"#5D606B","color-cold-gray-650":"#50535E","color-cold-gray-700":"#434651","color-cold-gray-750":"#363A45","color-cold-gray-800":"#2A2E39","color-cold-gray-850":"#1E222D","color-cold-gray-900":"#1C1C1C","color-cold-gray-950":"#0C0E15","color-ripe-red-50":"#FFEBEE","color-ripe-red-100":"#FFCDD2","color-ripe-red-200":"#ef9a9a","color-ripe-red-300":"#E57373","color-ripe-red-400":"#EF5350","color-ripe-red-500":"#F44336","color-ripe-red-600":"#E53935","color-ripe-red-700":"#D32F2F","color-ripe-red-800":"#C62828","color-ripe-red-900":"#B71C1C","color-ripe-red-a200":"#FF5252","color-tan-orange-50":"#FFF3E0","color-tan-orange-100":"#FFE0B2","color-tan-orange-200":"#FFCC80","color-tan-orange-300":"#ffb74d","color-tan-orange-400":"#FFA726","color-tan-orange-500":"#FF9800","color-tan-orange-600":"#FB8C00","color-tan-orange-700":"#F57C00","color-tan-orange-800":"#EF6C00","color-tan-orange-900":"#e65100","color-tan-orange-a200":"#ffab40","color-tan-orange-a400":"#ff9100","color-tan-orange-a700":"#FF6D00","color-iguana-green-100":"#C8E6C9","color-iguana-green-200":"#A5D6A7","color-iguana-green-300":"#81c784","color-iguana-green-400":"#66BB6A","color-iguana-green-500":"#4caf50","color-iguana-green-600":"#43a047","color-iguana-green-700":"#388e3c","color-iguana-green-900":"#1B5E20","color-iguana-green-a700":"#00c853","color-banana-yellow-100":"#FFF9C4","color-banana-yellow-200":"#FFF59D","color-banana-yellow-300":"#FFF176","color-banana-yellow-400":"#ffee58","color-banana-yellow-500":"#ffeb3b","color-banana-yellow-600":"#fdd835","color-banana-yellow-700":"#fbc02d","color-banana-yellow-800":"#f9a825","color-banana-yellow-900":"#F57F17","color-banana-yellow-a400":"#ffea00","color-banana-yellow-a700":"#ffd600","color-tv-blue-50":"#E3F2FD","color-tv-blue-100":"#BBDEFB","color-tv-blue-200":"#90CAF9","color-tv-blue-300":"#64B5F6","color-tv-blue-400":"#42A5F5","color-tv-blue-500":"#2196F3","color-tv-blue-600":"#1E88E5","color-tv-blue-700":"#1976D2","color-tv-blue-800":"#1565C0","color-tv-blue-900":"#0d47a1","color-tv-blue-a100":"#82b1ff","color-tv-blue-a200":"#448aff","color-tv-blue-a400":"#2979ff","color-tv-blue-a600":"#2962FF","color-tv-blue-a700":"#144987","color-tv-blue-a800":"#143661","color-tv-blue-a900":"#132742","color-deep-blue-100":"#D1C4E9","color-deep-blue-200":"#B39DDB","color-deep-blue-300":"#9575cd","color-deep-blue-400":"#7e57c2","color-deep-blue-500":"#673ab7","color-deep-blue-700":"#512da8","color-deep-blue-800":"#4527A0","color-deep-blue-900":"#311B92","color-deep-blue-a100":"#b388ff","color-deep-blue-a700":"#6200EA","color-minty-green-100":"#B2DFDB","color-minty-green-200":"#80cbc4","color-minty-green-300":"#4db6ac","color-minty-green-400":"#26a69a","color-minty-green-500":"#009688","color-minty-green-600":"#00897b","color-minty-green-700":"#00796b","color-minty-green-900":"#004D40","color-minty-green-a400":"#1de9b6","color-minty-green-a700":"#00BFA5","color-grapes-purple-100":"#E1BEE7","color-grapes-purple-200":"#CE93D8","color-grapes-purple-300":"#ba68c8","color-grapes-purple-400":"#ab47bc","color-grapes-purple-500":"#9c27b0","color-grapes-purple-600":"#8e24aa","color-grapes-purple-700":"#7b1fa2","color-grapes-purple-800":"#6A1B9A","color-grapes-purple-900":"#4A148C","color-grapes-purple-a700":"#aa00ff","color-berry-pink-100":"#F8BBD0","color-berry-pink-200":"#f48fb1","color-berry-pink-300":"#f06292","color-berry-pink-400":"#ec407a","color-berry-pink-500":"#e91e63","color-berry-pink-600":"#D81B60","color-berry-pink-700":"#C2185B","color-berry-pink-900":"#880E4F","color-berry-pink-a200":"#ff4081","color-sky-blue-100":"#B2EBF2","color-sky-blue-200":"#80DEEA","color-sky-blue-300":"#4dd0e1","color-sky-blue-400":"#26c6da","color-sky-blue-500":"#00bcd4","color-sky-blue-600":"#00acc1","color-sky-blue-700":"#0097A7","color-sky-blue-800":"#00838F","color-sky-blue-900":"#006064","color-sky-blue-a400":"#00e5ff","color-sky-blue-a700":"#00B8D4","color-deep-blue-600":"#5E35B1","color-facebook":"#1877F2","color-twitter":"#1DA1F2","color-pre-market":"color-tan-orange-600","color-pre-market-bg":"color-tan-orange-400","color-post-market":"color-tv-blue-500","color-post-market-bg":"color-tv-blue-400","color-market-open":"color-minty-green-500","color-market-open-bg":"color-minty-green-400","color-market-closed":"color-cold-gray-400","color-market-holiday":"color-cold-gray-400","color-invalid-symbol":"color-ripe-red-400","color-invalid-symbol-hover":"color-ripe-red-700","color-replay-mode":"color-tv-blue-500","color-replay-mode-icon":"color-white","color-replay-mode-hover":"color-tv-blue-600","color-delay-mode":"color-berry-pink-600","color-delay-mode-bg":"color-berry-pink-600","color-eod-mode":"color-berry-pink-600","color-eod-mode-bg":"color-berry-pink-600","color-data-problem":"color-ripe-red-600","color-data-problem-bg":"color-ripe-red-400","color-data-problem-hover":"color-ripe-red-700","color-list-item-bg-highlighted":"color-tv-blue-50","color-list-item-bg-selected":"color-tv-blue-100"}'
       )
     },
     W5mg: function (e, t, i) {
@@ -46693,7 +47189,9 @@
             (e.prototype._logMessage = function (e, t) {
               if (l.enabled('charting_library_debug_mode') || t) {
                 var i = this._symbolInfo.currency_code
-                console.log('FEED [' + this._symbolInfo.name + '|' + this._resolution + (i ? '|' + i : '') + ']: ' + e)
+                console.log(
+                  'FEED [' + this._symbolInfo.name + '|' + this._resolution + (i ? '|' + i : '') + ']: ' + e
+                )
               }
             }),
             (e.prototype._clearResetCacheTimeout = function () {
@@ -46714,7 +47212,9 @@
               if (t.length)
                 if (this._requesting) this._logMessage('Processing is skipped due active request')
                 else {
-                  if ((this._logMessage('Processing pending subscribers, count=' + t.length), this._errorMessage)) {
+                  if (
+                    (this._logMessage('Processing pending subscribers, count=' + t.length), this._errorMessage)
+                  ) {
                     var i = this._errorMessage
                     return (
                       this._logMessage('Return error: ' + i),
@@ -46808,7 +47308,8 @@
                 (t.barset = r)
               var n = this._inGapNextTime(i.from)
               if (n)
-                this._logMessage('Request {0} is in gap, nextTime = {1}'.format(e.key, u(1e3 * n))), (r.nextTime = n)
+                this._logMessage('Request {0} is in gap, nextTime = {1}'.format(e.key, u(1e3 * n))),
+                  (r.nextTime = n)
               else if (0 === r.count()) {
                 var o = this._cache.bars.length && this._cache.bars[this._cache.bars.length - 1].time / 1e3
                 o &&
@@ -46829,7 +47330,10 @@
               var i = this
               if (
                 (this._requesting &&
-                  this._logMessage('Internal error: trying to call getBars while the previous request is active', !0),
+                  this._logMessage(
+                    'Internal error: trying to call getBars while the previous request is active',
+                    !0
+                  ),
                 this._leftDate && this._leftDate < t)
               )
                 this._processPendingSubscribers()
@@ -46899,7 +47403,9 @@
             }),
             (e.prototype._processFullBarset = function (e, t) {
               var i = e[0].time
-              null !== this._leftDate && i < 1e3 * this._leftDate && this._logMessage('Returned more data than needed'),
+              null !== this._leftDate &&
+                i < 1e3 * this._leftDate &&
+                this._logMessage('Returned more data than needed'),
                 this._putToCache(e)
                   ? null !== this._leftDate &&
                     this._cache.bars.length &&
@@ -46913,7 +47419,9 @@
                   ? console.warn('nextTime should be set when there is no data in the requested period only')
                   : t &&
                     t.noData &&
-                    console.warn('noData should be set when there is no data in the requested period and earlier only')
+                    console.warn(
+                      'noData should be set when there is no data in the requested period and earlier only'
+                    )
             }),
             (e.prototype._addGap = function (t) {
               if (
@@ -46939,12 +47447,13 @@
                 for (
                   var i = function (i) {
                       if (e[i].time <= e[i - 1].time) {
-                        var n = 'Wrong bars time: time {0} of bar {1} should be more than time {2} of bar {3}'.format(
-                          e[i].time,
-                          i,
-                          e[i - 1].time,
-                          i - 1
-                        )
+                        var n =
+                          'Wrong bars time: time {0} of bar {1} should be more than time {2} of bar {3}'.format(
+                            e[i].time,
+                            i,
+                            e[i - 1].time,
+                            i - 1
+                          )
                         t &&
                           r._dwmAligner &&
                           (n += '\nCheck that you provide DWM bars without time part, i.e. 00:00 GMT'),
@@ -46968,7 +47477,9 @@
                 this._cache.bars[0].time === e[0].time &&
                 this._cache.bars[this._cache.bars.length - 1].time === e[e.length - 1].time
               )
-                return this._logMessage('Time range of received data is the same as cached one. Skip the update.'), !0
+                return (
+                  this._logMessage('Time range of received data is the same as cached one. Skip the update.'), !0
+                )
               if (
                 (0 !== this._cache.bars.length &&
                   e[e.length - 1].time === this._cache.bars[0].time &&
@@ -47142,7 +47653,7 @@
             r._configureProperties(t), t.hasChild('text') || t.addChild('text', new e('')), t.addExclusion('text')
           }),
           (t.LineToolTrendLine = l)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     'Wh/T': function (e, t, i) {
       'use strict'
@@ -47163,7 +47674,9 @@
             try {
               var e = (function () {
                 var e = 0
-                return JSON.parse(urlParams.logo).image && ((e = 'C'), r.enabled('link_to_tradingview') || (e = 'D')), e
+                return (
+                  JSON.parse(urlParams.logo).image && ((e = 'C'), r.enabled('link_to_tradingview') || (e = 'D')), e
+                )
               })()
               window.ga &&
                 (0 !== e && window.ga('send', 'event', 's', e), urlParams.utm || window.ga('send', 'event', 'l'))
@@ -47220,12 +47733,14 @@
         (c.prototype.checkAlert = function () {
           if (!(this._points.length < 2 || this._model.mainSeries().bars().isEmpty())) {
             var e = this._points[1]
-            if (this.status()) e.index > this._model.timeScale().baseIndex() && this.setStatus(a.AlertStatus.Waiting)
+            if (this.status())
+              e.index > this._model.timeScale().baseIndex() && this.setStatus(a.AlertStatus.Waiting)
             else {
               var t = this._model.mainSeries().bars().valueAt(e.index)
               if (null !== t) {
                 var i = this.direction()
-                if (i === a.Direction.Up && t[TradingView.HIGH_PLOT] >= e.price) this.setStatus(a.AlertStatus.Success)
+                if (i === a.Direction.Up && t[TradingView.HIGH_PLOT] >= e.price)
+                  this.setStatus(a.AlertStatus.Success)
                 else if (i === a.Direction.Down && t[TradingView.LOW_PLOT] <= e.price)
                   this.setStatus(a.AlertStatus.Success)
                 else {
@@ -47434,9 +47949,12 @@
       function r(e) {
         void 0 === e && (e = location.host)
         return -1 !==
-          ['i18n.tradingview.com', 'partial.tradingview.com', 'www.tradingview.com', 'wwwcn.tradingview.com'].indexOf(
-            e
-          ) ||
+          [
+            'i18n.tradingview.com',
+            'partial.tradingview.com',
+            'www.tradingview.com',
+            'wwwcn.tradingview.com'
+          ].indexOf(e) ||
           -1 !==
             [
               'd33t3vvu2t2yu5.cloudfront.net',
@@ -47725,7 +48243,11 @@
           if (t && i && t.index !== i.index) {
             ;(this._avgHL = this._source.properties().averageHL.value()),
               (this._variance = this._source.properties().variance.value() / 100)
-            for (var n = this._index ? t.index + 1 : t.index, o = r(i.index - t.index), s = n; s !== i.index; s += o)
+            for (
+              var n = this._index ? t.index + 1 : t.index, o = r(i.index - t.index), s = n;
+              s !== i.index;
+              s += o
+            )
               this._bars.push(this.createBar())
           }
         }),
@@ -48649,7 +49171,10 @@
               var e = this.isLockScale(),
                 t = this.properties().childs()
               e &&
-                (t.percentage.setValue(!1), t.indexedTo100.setValue(!1), t.log.setValue(!1), t.autoScale.setValue(!1)),
+                (t.percentage.setValue(!1),
+                t.indexedTo100.setValue(!1),
+                t.log.setValue(!1),
+                t.autoScale.setValue(!1)),
                 t.percentageDisabled.setValue(e),
                 t.logDisabled.setValue(e),
                 this._updateAutoScaleDisabledProperty(!1),
@@ -48774,7 +49299,10 @@
             void 0 === o && (o = null)
             var s = e.call(this, t, i, !0, r, n) || this
             return (
-              null !== o ? t.update({ onExecute: o.bind(s) }) : t.update({ onExecute: s._onActionCallback.bind(s) }), s
+              null !== o
+                ? t.update({ onExecute: o.bind(s) })
+                : t.update({ onExecute: s._onActionCallback.bind(s) }),
+              s
             )
           }
           return (
@@ -48862,7 +49390,11 @@
       var l = [4.5, 9, 11.25, 18, 22.5, 36, 45],
         c = (function () {
           for (var e = [], t = l.length - 1, i = 1, r = 0, n = 0; n < 1e10; )
-            (n = l[r] * i), e.push(Math.round(n)), e.push(Math.ceil(-n)), r === t - 1 && (i *= 10), (r = (r + 1) % t)
+            (n = l[r] * i),
+              e.push(Math.round(n)),
+              e.push(Math.ceil(-n)),
+              r === t - 1 && (i *= 10),
+              (r = (r + 1) % t)
           return (
             e.sort(function (e, t) {
               return e < t ? -1 : e > t ? 1 : 0
@@ -49101,7 +49633,10 @@
       var r = i('Eyy1'),
         n = (function () {
           function e(e, t) {
-            Object(r.assert)(e <= t, 'The last bar in the bars range should be greater than or equal to the first bar'),
+            Object(r.assert)(
+              e <= t,
+              'The last bar in the bars range should be greater than or equal to the first bar'
+            ),
               (this._firstBar = e),
               (this._lastBar = t)
           }
@@ -49243,7 +49778,8 @@
         function xe(e, i) {
           fe.call(this, e, i),
             this._options.timeScaleWidget &&
-              (this._options.timeScaleWidget.pressedMouseMoveScale = this._options.handleScale.axisPressedMouseMove)
+              (this._options.timeScaleWidget.pressedMouseMoveScale =
+                this._options.handleScale.axisPressedMouseMove)
           var n = this
           this._startSpinner(this._options.container.value())
           var o = this._options.content,
@@ -49454,7 +49990,8 @@
           }),
           (xe.prototype._setElement = function (e) {
             this._jqMainDiv && (this._jqMainDiv.remove(), this._jqParent.empty()),
-              this._controlBarNavigation && (this._controlBarNavigation.destroy(), (this._controlBarNavigation = null)),
+              this._controlBarNavigation &&
+                (this._controlBarNavigation.destroy(), (this._controlBarNavigation = null)),
               null !== this._removeMaximizeHotkey && this._removeMaximizeHotkey(),
               (this._removeMaximizeHotkey = this._initMaximizeHotkey(e[0]))
             var t = e.prop('ownerDocument')
@@ -49662,8 +50199,12 @@
               this._properties.paneProperties.horzGridProperties.color
                 .listeners()
                 .subscribe(this, xe.prototype.redrawPanes),
-              this._properties.scalesProperties.lineColor.listeners().subscribe(this, xe.prototype.setScaleLineColor),
-              this._properties.scalesProperties.textColor.listeners().subscribe(this, xe.prototype.setScaleTextColor)
+              this._properties.scalesProperties.lineColor
+                .listeners()
+                .subscribe(this, xe.prototype.setScaleLineColor),
+              this._properties.scalesProperties.textColor
+                .listeners()
+                .subscribe(this, xe.prototype.setScaleTextColor)
           }),
           (xe.prototype._initBackgroundColor = function () {
             null === this._backgroundColorSpawn &&
@@ -50228,7 +50769,11 @@
                     function () {
                       TradingView.bottomWidgetBar &&
                         (TradingView.bottomWidgetBar.toggleWidget('text_notes', !0),
-                        TradingView.bottomWidgetBar._widgets.text_notes.addNote(null, t.getSymbol(!0), t.getSymbol()))
+                        TradingView.bottomWidgetBar._widgets.text_notes.addNote(
+                          null,
+                          t.getSymbol(!0),
+                          t.getSymbol()
+                        ))
                     },
                     { source: 'Add text note in chart context menu' }
                   )
@@ -50406,9 +50951,15 @@
               checkable: !0,
               statName: 'ToggleHideAllDrawingTools'
             })
-            ue.binder = new f(ue, E.hideAllDrawings(), this.model(), window.t('Hide All Drawing Tools'), function () {
-              E.hideAllDrawings().setValue(this.value())
-            })
+            ue.binder = new f(
+              ue,
+              E.hideAllDrawings(),
+              this.model(),
+              window.t('Hide All Drawing Tools'),
+              function () {
+                E.hideAllDrawings().setValue(this.value())
+              }
+            )
             var he = new A({
               label: window.t('Hide Marks On Bars'),
               checkable: !0,
@@ -50506,7 +51057,12 @@
               checked: !1,
               statName: 'ToggleCountdown'
             })
-            Ce.binder = new f(Ce, this.model().mainSeries().properties().showCountdown, this.model(), Ce.getLabel())
+            Ce.binder = new f(
+              Ce,
+              this.model().mainSeries().properties().showCountdown,
+              this.model(),
+              Ce.getLabel()
+            )
             var xe = new A({
               label: window.t('Currency'),
               checkable: !0,
@@ -50732,7 +51288,9 @@
             'lockDrawingsAction' === e &&
               console.warn('Action "lockDrawingsAction" is deprecated. Use method "lockAllDrawingTools" instead'),
               'hideAllDrawingsAction' === e &&
-                console.warn('Action "hideAllDrawingsAction" is deprecated. Use method "hideAllDrawingTools" instead'),
+                console.warn(
+                  'Action "hideAllDrawingsAction" is deprecated. Use method "hideAllDrawingTools" instead'
+                ),
               e in this._actions
                 ? this._actions[e] instanceof A && this._actions[e].execute()
                 : console.warn('Unknown action id: ' + e)
@@ -50740,12 +51298,16 @@
           (xe.prototype.getCheckableActionState = function (e) {
             if ('lockDrawingsAction' === e)
               return (
-                console.warn('Action "lockDrawingsAction" is deprecated. Use method "lockAllDrawingTools" instead'),
+                console.warn(
+                  'Action "lockDrawingsAction" is deprecated. Use method "lockAllDrawingTools" instead'
+                ),
                 null
               )
             if ('hideAllDrawingsAction' === e)
               return (
-                console.warn('Action "hideAllDrawingsAction" is deprecated. Use method "hideAllDrawingTools" instead'),
+                console.warn(
+                  'Action "hideAllDrawingsAction" is deprecated. Use method "hideAllDrawingTools" instead'
+                ),
                 null
               )
             if (e in this._actions) {
@@ -50828,7 +51390,8 @@
           }),
           (xe.prototype.paint = function (e) {
             e || (e = z.full())
-            for (var t = 0; t < this._paneWidgets.length; t++) this._paneWidgets[t].paint(e.invalidateForPane(t), !1)
+            for (var t = 0; t < this._paneWidgets.length; t++)
+              this._paneWidgets[t].paint(e.invalidateForPane(t), !1)
             this._timeAxisWidget && this._timeAxisWidget.paint(e.fullInvalidation()), this._redrawPanes.fire()
           }),
           (xe.prototype._makeDefaultGui = function () {
@@ -50875,7 +51438,8 @@
           }),
           (xe.prototype._updateTimingsMeterState = function () {
             var e = this._options.visible.value()
-            null !== this._timingsMeter && (e ? this._timingsMeter.startCollect() : this._timingsMeter.stopCollect())
+            null !== this._timingsMeter &&
+              (e ? this._timingsMeter.startCollect() : this._timingsMeter.stopCollect())
           }),
           (xe.prototype._update = function (e) {
             var t = e ? e.fullInvalidation() : H.Full
@@ -50883,7 +51447,8 @@
               this._model ? this._updateGui() : this.adjustSize(), this._timeAxisWidget.update()
               for (var i = 0; i < this._paneWidgets.length; i++) {
                 this._paneWidgets[i].setState(this._model.panes()[i]),
-                  null !== this._paneWidgets[i].statusWidget() && this._paneWidgets[i].statusWidget().updateLayout()
+                  null !== this._paneWidgets[i].statusWidget() &&
+                    this._paneWidgets[i].statusWidget().updateLayout()
               }
               this._dataWindowWidget && this._dataWindowWidget.fullUpdate()
             } else if (t === H.Light) {
@@ -51125,7 +51690,9 @@
           }),
           (xe.prototype.getSymbol = function (e) {
             var t
-            return (t = this._model ? this._model.mainSeries().properties() : this._properties.mainSeriesProperties)
+            return (t = this._model
+              ? this._model.mainSeries().properties()
+              : this._properties.mainSeriesProperties)
               ? e && t.shortName && t.shortName.value()
                 ? t.shortName.value()
                 : t.symbol.value()
@@ -51197,7 +51764,9 @@
                   }))
               for (var t = this._paneWidgets.length; t--; )
                 this._paneWidgets[t].updateControls(), this._paneWidgets[t].updatePriceAxisWidgets()
-              this._timeAxisWidget.updatePriceAxisStubs(), this.adjustSize(), this.updateCrossHairPositionIfNeeded()
+              this._timeAxisWidget.updatePriceAxisStubs(),
+                this.adjustSize(),
+                this.updateCrossHairPositionIfNeeded()
             }
           }),
           (xe.prototype._makePaneWidgetsAndSeparators = function () {
@@ -51249,7 +51818,9 @@
             for (r = 0; r < t; r++) {
               var l,
                 c = e[r]
-              ;(l = this._paneWidgets[r]).hasState() && l.state() === c ? l.updatePriceAxisWidgets() : l.setState(c)
+              ;(l = this._paneWidgets[r]).hasState() && l.state() === c
+                ? l.updatePriceAxisWidgets()
+                : l.setState(c)
             }
             for (r = t; r--; ) this._paneWidgets[r].updateControls()
             this._updateThemedColor()
@@ -51329,7 +51900,8 @@
                   r
                     ? n(r(e, t, i))
                     : o.isSymbolicStudy(i)
-                    ? (ne('GUI', 'Confirmation dialogs', 'Symbol confirmation dialog'), S(i, o.model(), n, s, 'symbol'))
+                    ? (ne('GUI', 'Confirmation dialogs', 'Symbol confirmation dialog'),
+                      S(i, o.model(), n, s, 'symbol'))
                     : o.hasConfirmInputs(t)
                     ? (ne('GUI', 'Confirmation dialogs', 'Inputs confirmation dialog'), S(i, o.model(), n, s))
                     : n({})
@@ -51576,7 +52148,8 @@
             )
             if (0 !== t.length) {
               var i = null
-              C(t[0]) && (n(1 === t.length, 'Cannot remove several studies (no multi select for studies)'), (i = t[0]))
+              C(t[0]) &&
+                (n(1 === t.length, 'Cannot remove several studies (no multi select for studies)'), (i = t[0]))
               t.find(function (e) {
                 return e.hasAlert.value() && e.isUserDeletable()
               })
@@ -51625,7 +52198,11 @@
               .sources()
               .forEach(function (t) {
                 var i = t.properties().frozen.value()
-                e.setProperty(t.properties().frozen, !i, (i ? window.t('Unlock') : window.t('Lock')) + ' ' + t.title())
+                e.setProperty(
+                  t.properties().frozen,
+                  !i,
+                  (i ? window.t('Unlock') : window.t('Lock')) + ' ' + t.title()
+                )
               })
           }),
           (xe.prototype.showSelectedSourceProperties = function () {
@@ -51679,7 +52256,8 @@
             this._paneWidgets.length = 0
             for (e = 0; e < this._paneSeparators.length; e++) this._paneSeparators[e].destroy()
             for (var t in ((this._paneSeparators.length = 0),
-            this._controlBarNavigation && (this._controlBarNavigation.destroy(), (this._controlBarNavigation = void 0)),
+            this._controlBarNavigation &&
+              (this._controlBarNavigation.destroy(), (this._controlBarNavigation = void 0)),
             $(window).off('visibilitychange:chart_' + this._id),
             $(window).off('keydown:chart_' + this._id),
             this._jqMainDiv && this._jqMainDiv.remove(),
@@ -51865,7 +52443,13 @@
             applyPropertiesOverrides(this.properties(), null, !1, t, null),
               this._model &&
                 (applyPropertiesOverrides(this._model.model().properties(), null, !1, t),
-                applyPropertiesOverrides(this._model.mainSeries().properties(), null, !1, t, 'mainSeriesProperties'))
+                applyPropertiesOverrides(
+                  this._model.mainSeries().properties(),
+                  null,
+                  !1,
+                  t,
+                  'mainSeriesProperties'
+                ))
           }),
           (xe.prototype.applyStudiesOverrides = function (e) {
             ie.setDefaultsOverrides(e), this._applyStudiesOverrides()
@@ -51940,7 +52524,7 @@
           }),
           (e.exports.ChartWidget = xe),
           (e.exports.trackingModeIsAvailable = me)
-      }.call(this, i('hY0g'), i('aIyQ')))
+      }).call(this, i('hY0g'), i('aIyQ'))
     },
     'Zp/P': function (e, t, i) {
       'use strict'
@@ -51985,12 +52569,14 @@
             return Array.isArray(u) ? u : null
           }
           var h
-          return null === (h = Object(n.intersectRayAndBox)(t, e, Object(r.box)(l, c))) || Object(r.equalPoints)(t, h)
+          return null === (h = Object(n.intersectRayAndBox)(t, e, Object(r.box)(l, c))) ||
+            Object(r.equalPoints)(t, h)
             ? null
             : Object(r.lineSegment)(t, h)
         }
         if (a)
-          return null === (h = Object(n.intersectRayAndBox)(e, t, Object(r.box)(l, c))) || Object(r.equalPoints)(e, h)
+          return null === (h = Object(n.intersectRayAndBox)(e, t, Object(r.box)(l, c))) ||
+            Object(r.equalPoints)(e, h)
             ? null
             : Object(r.lineSegment)(e, h)
         u = Object(n.intersectLineSegmentAndBox)(Object(r.lineSegment)(e, t), Object(r.box)(l, c))
@@ -52132,7 +52718,9 @@
                   e.moveTo(Math.round(v[0].x * b) + w, Math.round(v[0].y * b) + w)
                 var P = v.length
                 ;(e.strokeStyle =
-                  null !== (o = null === (n = v[0].style) || void 0 === n ? void 0 : n.color) && void 0 !== o ? o : g),
+                  null !== (o = null === (n = v[0].style) || void 0 === n ? void 0 : n.color) && void 0 !== o
+                    ? o
+                    : g),
                   (e.lineWidth = S)
                 for (var C = 0; C < P; C++) {
                   var x = v[C],
@@ -52616,7 +53204,7 @@
           }),
           'undefined' != typeof window && (window.Delegate = t),
           e && e.exports && (e.exports = t)
-      }.call(this, i('YuTi')(e)))
+      }).call(this, i('YuTi')(e))
     },
     aKms: function (e, t, i) {
       'use strict'
@@ -53175,7 +53763,9 @@
             }),
             (e.prototype.setSize = function (e) {
               var t = void 0 !== e ? 'tv-spinner--size_' + e : ''
-              return (this._el.className = 'tv-spinner ' + t + ' ' + (this._shown ? 'tv-spinner--shown' : '')), this
+              return (
+                (this._el.className = 'tv-spinner ' + t + ' ' + (this._shown ? 'tv-spinner--shown' : '')), this
+              )
             }),
             (e.prototype.getEl = function () {
               return this._el
@@ -53449,7 +54039,8 @@
               this._paneViews.push(new N(this, this._model)),
               this._dataWindowView || (this._dataWindowView = new g(this, this._model)),
               this._legendView || (this._legendView = new v(this, this._model)),
-              this._statusView || (this._statusView = new y(this, this._model.properties().scalesProperties.textColor)),
+              this._statusView ||
+                (this._statusView = new y(this, this._model.properties().scalesProperties.textColor)),
               (this._priceAxisViews = [].concat(
                 this._priceAxisViewsBase,
                 this._hlinesPriceAsisViews,
@@ -53604,7 +54195,7 @@
             return e + (null === t ? '' : '_#_' + t)
           }),
           (t.study_Overlay = j)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     cO0S: function (e, t, i) {
       'use strict'
@@ -53655,7 +54246,10 @@
             }),
             (e.prototype.hitTest = function (e) {
               for (
-                var t = Object(s.selectionTolerance)(this._data.lineWidth), i = new Map(), l = 0, c = this._data.items;
+                var t = Object(s.selectionTolerance)(this._data.lineWidth),
+                  i = new Map(),
+                  l = 0,
+                  c = this._data.items;
                 l < c.length;
                 l++
               ) {
@@ -53667,7 +54261,8 @@
                   (u.style &&
                     (i.has(u.style.width)
                       ? (p = Object(r.ensureDefined)(i.get(u.style.width)))
-                      : ((p = Object(s.selectionTolerance)(this._data.lineWidth)), i.set(this._data.lineWidth, p))),
+                      : ((p = Object(s.selectionTolerance)(this._data.lineWidth)),
+                        i.set(this._data.lineWidth, p))),
                   Object(o.distanceToSegment)(
                     new n.Point(h, d),
                     new n.Point(h, this._data.histogramBase),
@@ -53910,7 +54505,10 @@
               ;(this._oldStartVisibleIndex = -1), (this._oldEndVisibleIndex = -1)
             }),
             this.m_mainSeries.dataEvents().barReceived().subscribe(this, he.prototype.updateTimeScaleBaseIndex),
-            this.m_mainSeries.properties().symbol.listeners().subscribe(this, this.setPriceAutoScaleForAllMainSources),
+            this.m_mainSeries
+              .properties()
+              .symbol.listeners()
+              .subscribe(this, this.setPriceAutoScaleForAllMainSources),
             this._readOnly ||
               (p.addChild('priceAxisProperties', this.m_mainSeries.m_priceScale.properties()),
               this._properties.paneProperties.legendProperties.showStudyTitles
@@ -54061,7 +54659,9 @@
             for (var t = !1 === e.value(), i = this.dataSources(), r = 0; r < i.length; r++) {
               var n = i[r],
                 o = m(n) && n.properties().visible.value()
-              t && o ? se.emit('drawing_event', n.id(), 'show') : !t && o && se.emit('drawing_event', n.id(), 'hide')
+              t && o
+                ? se.emit('drawing_event', n.id(), 'show')
+                : !t && o && se.emit('drawing_event', n.id(), 'hide')
             }
             this.selectionMacro(function (e) {
               e.clearSelection()
@@ -54393,7 +54993,9 @@
                       b = i.mainDataSource()
                     b instanceof N && ((v.price = n), (v.symbol = b.symbol())), (v.syncModel = m)
                     var S =
-                      this._lineBeingCreated || null !== this._linePointBeingEdited || this._sourcesBeingMoved.length
+                      this._lineBeingCreated ||
+                      null !== this._linePointBeingEdited ||
+                      this._sourcesBeingMoved.length
                     ;(S = S && F.drawOnAllCharts().value()), g._chartWidgetCollection.syncCrosshair(v, g, S, r)
                   }
               }
@@ -54528,7 +55130,8 @@
               this._timeScale.reset()
               for (var s = this.dataSources(), a = 0; a < s.length; a++) s[a].clearData && s[a].clearData()
             }
-            if (r.length > 0) for (s = this.dataSources(), a = 0; a < s.length; a++) s[a].moveData && s[a].moveData(r)
+            if (r.length > 0)
+              for (s = this.dataSources(), a = 0; a < s.length; a++) s[a].moveData && s[a].moveData(r)
             this._timeScale.update(e, t, i, n)
             var l =
               'ChartModel.prototype.updateTimeScale(' +
@@ -54613,7 +55216,8 @@
               (n || e.is_price_study
                 ? (u = this.paneForSource(o))
                 : ((u = this.createPane()), void 0 !== l && u.setPaneSize(l))),
-              'Compare@tv-basicstudies' === e.id && this.m_mainSeries.priceScale().setMode({ log: !1, percentage: !0 })
+              'Compare@tv-basicstudies' === e.id &&
+                this.m_mainSeries.priceScale().setMode({ log: !1, percentage: !0 })
             var d = Object.assign({}, r, { inputs: t }),
               p = D(e, d, u, this.studyVersioning(), o),
               f = A(this, p, o, e, c)
@@ -54754,7 +55358,9 @@
             var n = this._lineBeingCreated.addPoint(e, t, i)
             this._lineBeingCreated.updateAllViews()
             var o = new x(T.Light)
-            return n && ((this._paneBeingCreatedLineOn = null), (this._lineBeingCreated = null)), this.invalidate(o), n
+            return (
+              n && ((this._paneBeingCreatedLineOn = null), (this._lineBeingCreated = null)), this.invalidate(o), n
+            )
           }),
           (he.prototype.cancelCreatingLine = function () {
             if (this._lineBeingCreated) {
@@ -54958,7 +55564,9 @@
             for (var e = this._panes, t = e.length; t--; )
               for (var i = !1, r = e[t], n = r.dataSources(), o = n.length; o--; ) {
                 var s = n[o]
-                k(s) && 'Volume' === s.metaInfo().shortId && (s.updateAllViews(), i || (this.updatePane(r), (i = !0)))
+                k(s) &&
+                  'Volume' === s.metaInfo().shortId &&
+                  (s.updateAllViews(), i || (this.updatePane(r), (i = !0)))
               }
           }),
           (he.prototype.getAlertsList = function () {
@@ -55134,7 +55742,7 @@
             return this._studyColorRotatorFactory
           }),
           (e.exports = he)
-      }.call(this, i('tc+8'), i('aIyQ'), i('Qb4w').PriceRange))
+      }).call(this, i('tc+8'), i('aIyQ'), i('Qb4w').PriceRange)
     },
     cXAR: function (e, t, i) {
       'use strict'
@@ -55195,9 +55803,11 @@
           (t.prototype._updateImpl = function () {
             var e = this._series.symbolInfo()
             e
-              ? ((this._header = [e.name, Object(a.translatedIntervalString)(this._series.interval()), e.exchange].join(
-                  ', '
-                )),
+              ? ((this._header = [
+                  e.name,
+                  Object(a.translatedIntervalString)(this._series.interval()),
+                  e.exchange
+                ].join(', ')),
                 (this._title = e.description))
               : (this._header = this._series.symbol())
             for (var t = this._showLastPriceAndChangeOnly(), i = 0, r = this._items; i < r.length; i++) {
@@ -55211,7 +55821,9 @@
               this._items[5].setVisible(!1)
             var n = this._items[4]
             if (
-              (n.setValue(b), n.setVisible(!1), !this._model.timeScale().isEmpty() && 0 !== this._series.bars().size())
+              (n.setValue(b),
+              n.setVisible(!1),
+              !this._model.timeScale().isEmpty() && 0 !== this._series.bars().size())
             ) {
               var s = this._model.crossHairSource().appliedIndex()
               if (t || !Object(o.isNumber)(s)) {
@@ -55531,7 +56143,10 @@
           case r.Modifiers.Shift:
           case 0:
             return (
-              !!(9 !== i || (t.ownerDocument && t !== t.ownerDocument.body && t !== t.ownerDocument.documentElement)) &&
+              !!(
+                9 !== i ||
+                (t.ownerDocument && t !== t.ownerDocument.body && t !== t.ownerDocument.documentElement)
+              ) &&
               (13 === i ||
                 32 === i ||
                 !(function (e) {
@@ -55566,7 +56181,11 @@
           }
           return (
             (e.prototype.draw = function (e, t) {
-              for (var i, r, n, s, a = t.pixelRatio, l = '', c = !1, u = 0, h = this._data.items; u < h.length; u++) {
+              for (
+                var i, r, n, s, a = t.pixelRatio, l = '', c = !1, u = 0, h = this._data.items;
+                u < h.length;
+                u++
+              ) {
                 var d = h[u]
                 if (!Object(o.isNaN)(d.x) && !Object(o.isNaN)(d.y)) {
                   var p =
@@ -55717,9 +56336,11 @@
                   t.mainSourceProperties[e].wickDownColor || t.mainSourceProperties[e].wickColor)
             }),
             (t.chartProperties.paneProperties.vertGridProperties =
-              t.chartProperties.paneProperties.vertGridProperties || t.chartProperties.paneProperties.gridProperties),
+              t.chartProperties.paneProperties.vertGridProperties ||
+              t.chartProperties.paneProperties.gridProperties),
             (t.chartProperties.paneProperties.horzGridProperties =
-              t.chartProperties.paneProperties.horzGridProperties || t.chartProperties.paneProperties.gridProperties),
+              t.chartProperties.paneProperties.horzGridProperties ||
+              t.chartProperties.paneProperties.gridProperties),
             (t.chartProperties.paneProperties.legendProperties = this._model
               .properties()
               .state().paneProperties.legendProperties),
@@ -55837,7 +56458,8 @@
               this.chartModel().endScrollPrice(e, t))
           }),
           (O.prototype.setPriceAutoScale = function (e, t, i) {
-            this.pushUndoCommand(new E(this.m_model, e, t, t.state())), this.chartModel().setPriceAutoScale(e, t, i)
+            this.pushUndoCommand(new E(this.m_model, e, t, t.state())),
+              this.chartModel().setPriceAutoScale(e, t, i)
           }),
           (O.prototype.resetPriceScale = function (e, t) {
             this.pushUndoCommand(new E(this.m_model, e, t, t.state())), this.chartModel().resetPriceScale(e, t)
@@ -55991,7 +56613,8 @@
             if (this.m_model.properties().priceScaleSelectionStrategyName.value() !== e) {
               x('Chart', 'Change PriceScale Selection Strategy')
               var t = 'Set Price Scale Selection Stretegy to ' + e
-              this.beginUndoMacro(t), this.setProperty(this.m_model.properties().priceScaleSelectionStrategyName, e, t)
+              this.beginUndoMacro(t),
+                this.setProperty(this.m_model.properties().priceScaleSelectionStrategyName, e, t)
               var i = new P(this.m_model, e, t)
               this.pushUndoCommand(i), this.endUndoMacro()
             }
@@ -56079,7 +56702,9 @@
             })
           }),
           (O.prototype.removeAllDrawingTools = function (e) {
-            this.beginUndoMacro(window.t('Remove Drawings')), this._removeAllDrawingToolsImpl(), this.endUndoMacro()
+            this.beginUndoMacro(window.t('Remove Drawings')),
+              this._removeAllDrawingToolsImpl(),
+              this.endUndoMacro()
           }),
           (O.prototype.removeAllStudiesAndDrawingTools = function () {
             this.beginUndoMacro(window.t('Remove all studies and drawing tools')),
@@ -56175,7 +56800,10 @@
             var t = 'Load default drawing template'
             this.beginUndoMacro(t), this.saveLineToolState(e, t)
             var i = new S(this.m_model, e.properties(), t)
-            this.pushUndoCommand(i), this.saveLineToolState(e, t), this.endUndoMacro(), this.model().updateSource(e)
+            this.pushUndoCommand(i),
+              this.saveLineToolState(e, t),
+              this.endUndoMacro(),
+              this.model().updateSource(e)
           }),
           (O.prototype.restorePropertiesForSource = function (e) {
             r(e) ? this._restoreLineToolFactoryDefaults(e) : this._restoreFactoryDefaults(e.properties())
@@ -56191,7 +56819,10 @@
           (O.prototype.applyLineToolTemplate = function (e, t, i) {
             this.beginUndoMacro(i), this.saveLineToolState(e, i)
             var r = new v(e, t, i)
-            this.pushUndoCommand(r), this.saveLineToolState(e, i), this.endUndoMacro(), this.model().updateSource(e)
+            this.pushUndoCommand(r),
+              this.saveLineToolState(e, i),
+              this.endUndoMacro(),
+              this.model().updateSource(e)
           }),
           (O.prototype.onSimpleZoomIn = function () {
             return this._onSimpleZoomIn
@@ -56405,7 +57036,13 @@
           (B.prototype.redo = function () {
             ;(this._timeScaleState = this._model.timeScale().state()),
               (this._priceScaleState = this._pane.defaultPriceScale().state()),
-              this._model.zoomToViewport(this._startBar, this._endBar, this._startPrice, this._endPrice, this._pane)
+              this._model.zoomToViewport(
+                this._startBar,
+                this._endBar,
+                this._startPrice,
+                this._endPrice,
+                this._pane
+              )
           }),
           (B.prototype.undo = function () {
             this._model.timeScale().restoreState(this._timeScaleState),
@@ -56479,7 +57116,8 @@
             var t = null,
               i = null
             this._sourceState.metaInfo.is_price_study
-              ? ((t = this._model.paneForSource(this._model.mainSeries())), (i = this._model.mainSeries().priceScale()))
+              ? ((t = this._model.paneForSource(this._model.mainSeries())),
+                (i = this._model.mainSeries().priceScale()))
               : (i = (t = this._model.createPane()).defaultPriceScale())
             var r = t._restoreStudy(this._sourceState)
             r.metaInfo().linkedToSeries && r.setOwnerSource(this._model.mainSeries()),
@@ -56507,7 +57145,7 @@
           }),
           (t.ChartUndoModel = O),
           (t.PriceScaleChangeUndoCommand = E)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     dTSQ: function (e, t, i) {
       'use strict'
@@ -57392,7 +58030,13 @@
             o = i.toString(16),
             s = r.toString(16)
           return (
-            '#' + (1 === n.length ? '0' : '') + n + (1 === o.length ? '0' : '') + o + (1 === s.length ? '0' : '') + s
+            '#' +
+            (1 === n.length ? '0' : '') +
+            n +
+            (1 === o.length ? '0' : '') +
+            o +
+            (1 === s.length ? '0' : '') +
+            s
           )
         }),
         (function (e) {
@@ -57402,7 +58046,8 @@
             })
         })(C || (C = {})),
         (function (e) {
-          ;(e.re = /^rgba\(\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?[\d]{0,10}(?:\.\d+)?)\s*\)$/),
+          ;(e.re =
+            /^rgba\(\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?\d{1,10})\s*,\s*(-?[\d]{0,10}(?:\.\d+)?)\s*\)$/),
             (e.parse = function (e) {
               return [s(parseInt(e[1], 10)), a(parseInt(e[2], 10)), l(parseInt(e[3], 10)), c(parseFloat(e[4]))]
             })
@@ -57955,7 +58600,9 @@
           }),
           (p.prototype.getData = function (e) {
             s(e.start) && s(e.end)
-              ? ((this._lastRange = e), ((e = Object.assign({}, e)).end = this._maxDate), this._pushGetDataStack(e))
+              ? ((this._lastRange = e),
+                ((e = Object.assign({}, e)).end = this._maxDate),
+                this._pushGetDataStack(e))
               : d.logError('Wrong range')
           }),
           (p.prototype._abortAllRequests = function () {
@@ -57970,7 +58617,7 @@
             this._abortAllRequests(), (this._marks = {}), (this._loadedRange = null)
           }),
           (t.BarsMarksContainer = p)
-      }.call(this, i('Kxc7'), i('tc+8'), i('aIyQ')))
+      }).call(this, i('Kxc7'), i('tc+8'), i('aIyQ'))
     },
     fYB8: function (e, t, i) {
       'use strict'
@@ -58821,7 +59468,8 @@
           return (
             (e.prototype.destroy = function () {
               this._hoveredSourceChanged.destroy(),
-                null !== this._watermarkSource && (this._watermarkSource.destroy(), (this._watermarkSource = null)),
+                null !== this._watermarkSource &&
+                  (this._watermarkSource.destroy(), (this._watermarkSource = null)),
                 Array.from(this._customSourcesMap.keys()).forEach(this._removeCustomSource, this),
                 Object(r.assert)(0 === this._fgCustomSources.length),
                 Object(r.assert)(0 === this._bgCustomSources.length),
@@ -58837,7 +59485,9 @@
             }),
             (e.prototype.addStrategySource = function (e) {
               ;-1 === this._strategySources.indexOf(e) &&
-                (this._strategySources.push(e), this._strategySourcesChange.fire(), this.setActiveStrategySource(e))
+                (this._strategySources.push(e),
+                this._strategySourcesChange.fire(),
+                this.setActiveStrategySource(e))
             }),
             (e.prototype.removeStrategySource = function (e) {
               var t = this._strategySources.indexOf(e)
@@ -58975,7 +59625,8 @@
                 if (this._hoveredSource)
                   this._hoveredSource.updateAllViews(),
                     (n = new f.InvalidateMask()),
-                    null !== (r = this._invalidationMaskForSource(this._hoveredSource, f.InvalidationLevel.Light)) &&
+                    null !==
+                      (r = this._invalidationMaskForSource(this._hoveredSource, f.InvalidationLevel.Light)) &&
                       n.merge(r)
                 if (((this._hoveredSource = e), e))
                   e.updateAllViews(),
@@ -59289,7 +59940,10 @@
             (e.prototype._invalidationMaskForSource = function (e, t) {
               if (e === this.crossHairSource()) return f.InvalidateMask.cursor()
               if ((void 0 === t && (t = f.InvalidationLevel.Light), this._watermarkSource === e))
-                return this._paneInvalidationMask(Object(r.ensureNotNull)(this.paneForSource(this.mainSeries())), t)
+                return this._paneInvalidationMask(
+                  Object(r.ensureNotNull)(this.paneForSource(this.mainSeries())),
+                  t
+                )
               if (-1 !== this._allCustomSources.indexOf(e)) {
                 var i = new f.InvalidateMask()
                 return i.invalidateAll(t), i
@@ -59494,7 +60148,9 @@
             }),
             (t.prototype.marketTitle = function () {
               var e = this._series.marketStatusModel().status().value()
-              return this._showLastPriceAndChangeOnly() && ('pre_market' === e || 'post_market' === e) ? a + ':' : ''
+              return this._showLastPriceAndChangeOnly() && ('pre_market' === e || 'post_market' === e)
+                ? a + ':'
+                : ''
             }),
             (t.prototype.destroy = function () {
               this._showBarChange.unsubscribeAll(this), this._showSeriesOHLC.unsubscribeAll(this)
@@ -59752,7 +60408,8 @@
                   var r = []
                   for (; e && e !== t; )
                     e.classList && e.classList.contains(i) && r.push(e),
-                      (e = e.parentElement || ((n = e.parentNode) && (n.nodeType === Node.ELEMENT_NODE ? n : null)))
+                      (e =
+                        e.parentElement || ((n = e.parentNode) && (n.nodeType === Node.ELEMENT_NODE ? n : null)))
                   var n
                   return r
                 })(t, i, 'apply-common-tooltip'),
@@ -59961,7 +60618,8 @@
               i = this.lineWidth + 2,
               r = 2 * Math.PI
             e.beginPath()
-            for (var n = this.items.length; n--; ) (t = this.items[n]) && (e.moveTo(t.x, t.y), e.arc(t.x, t.y, i, 0, r))
+            for (var n = this.items.length; n--; )
+              (t = this.items[n]) && (e.moveTo(t.x, t.y), e.arc(t.x, t.y, i, 0, r))
             e.fill()
           }
         }),
@@ -60461,9 +61119,12 @@
                   r.has(e) || r.set(e, []),
                   r.get(e).push(i),
                   (r.get(e).fast = !0),
-                  this._symbol_data[e] && this._symbol_data[e].values && i(this._symbol_data[e], this._symbol_data[e])
+                  this._symbol_data[e] &&
+                    this._symbol_data[e].values &&
+                    i(this._symbol_data[e], this._symbol_data[e])
               }, this),
-                n.length && (this._quoteApi.quoteAddSymbols(n, { forcePermission: !0 }), this._delayUpdateFastSymbols())
+                n.length &&
+                  (this._quoteApi.quoteAddSymbols(n, { forcePermission: !0 }), this._delayUpdateFastSymbols())
             } else this._delayed_subscriptions.push(arguments)
           }),
           (h.prototype.unsubscribe = function (e, t, i) {
@@ -60518,7 +61179,8 @@
               else {
                 var o = l.guid()
                 i.subscribe(o, [e], function (s) {
-                  'error' === s.status && ((i._waitingForFormatters[e] = null), n('Quotes snapshot is not received')),
+                  'error' === s.status &&
+                    ((i._waitingForFormatters[e] = null), n('Quotes snapshot is not received')),
                     (function (e) {
                       return e && null != e.pricescale && null != e.minmov
                     })(s.values) &&
@@ -60553,7 +61215,7 @@
           }),
           (TradingView.QuoteSessionMultiplexer = h),
           t && t.exports && (t.exports = h)
-      }.call(this, i('aIyQ'), i('YuTi')(e)))
+      }).call(this, i('aIyQ'), i('YuTi')(e))
     },
     hP9j: function (e, t, i) {
       'use strict'
@@ -60758,7 +61420,7 @@
           }),
           'undefined' != typeof window && (window.WatchedValue = i),
           e && e.exports && (e.exports = i)
-      }.call(this, i('YuTi')(e)))
+      }).call(this, i('YuTi')(e))
     },
     hY3j: function (e, t, i) {
       'use strict'
@@ -61109,7 +61771,9 @@
           return Promise.reject(new Error('Non-object content in the non-series envelope'))
         if (Object(r.hasProperty)(t, 'indexes_replace')) return Promise.resolve({ indexes_replace: !0 })
         var i = { indexes_replace: !1 }
-        if ((Object(r.hasProperty)(t, 'offsets') && (i.offsets = t.offsets), Object(r.hasProperty)(t, 'isUpdate'))) {
+        if (
+          (Object(r.hasProperty)(t, 'offsets') && (i.offsets = t.offsets), Object(r.hasProperty)(t, 'isUpdate'))
+        ) {
           if ('boolean' != typeof t.isUpdate) return Promise.reject(new Error('Invalid type of "isUpdate" field'))
           i.isUpdate = t.isUpdate
         }
@@ -61420,8 +62084,11 @@
                   case 4:
                     var p = NaN
                     ;(h =
-                      (p = r.Std.equal(t, s) ? i + n + 2 * s : r.Std.greater(s, t) ? 2 * i + n + s : 2 * n + i + s) /
-                      4),
+                      (p = r.Std.equal(t, s)
+                        ? i + n + 2 * s
+                        : r.Std.greater(s, t)
+                        ? 2 * i + n + s
+                        : 2 * n + i + s) / 4),
                       (u.p = h),
                       (u.r1 = p / 2 - n),
                       (u.s1 = p / 2 - i)
@@ -61803,7 +62470,8 @@
               .subscribe(
                 null,
                 function (e) {
-                  ;(this._priceScaleSelectionStrategy = m(e.value())), this._priceScaleSelectionStrategy.apply(this)
+                  ;(this._priceScaleSelectionStrategy = m(e.value())),
+                    this._priceScaleSelectionStrategy.apply(this)
                 }.bind(this)
               ),
             this.m_timeScale.barSpacingChanged().subscribe(
@@ -62019,7 +62687,11 @@
               this._invalidateSourcesCache()
           }),
           (v.prototype.priceScalePosition = function (e) {
-            return this._leftPriceScales.includes(e) ? 'left' : this._rightPriceScales.includes(e) ? 'right' : 'overlay'
+            return this._leftPriceScales.includes(e)
+              ? 'left'
+              : this._rightPriceScales.includes(e)
+              ? 'right'
+              : 'overlay'
           }),
           (v.prototype.createPriceScaleAtPosition = function (e, t) {
             var i = this._properties.axisProperties.state()
@@ -62053,7 +62725,8 @@
             e.modeChanged().unsubscribeAll(this),
               e.priceRangeChanged().unsubscribeAll(this),
               e.internalHeightChanged().unsubscribeAll(this),
-              e === this._lockedPriceScale && ((this._lockedPriceScale = null), (this._currentPriceScaleRatio = null))
+              e === this._lockedPriceScale &&
+                ((this._lockedPriceScale = null), (this._currentPriceScaleRatio = null))
             var t = this._leftPriceScales.indexOf(e)
             ;-1 !== t && this._leftPriceScales.splice(t, 1)
             var i = this._rightPriceScales.indexOf(e)
@@ -62068,7 +62741,8 @@
               var n = e.priceScale()
               if ((n && n.dataSources().indexOf(e) >= 0 && n.removeDataSource(e), n && null === n.mainSource())) {
                 var o = n.dataSources().length
-                0 !== o && c.logError('Invalid priceScale state: empty mainSource but non-empty data sources=' + o),
+                0 !== o &&
+                  c.logError('Invalid priceScale state: empty mainSource but non-empty data sources=' + o),
                   this.removePriceScale(n)
               }
               e.onTagsChanged && e.onTagsChanged().unsubscribe(this, v.prototype.onSourceTagsChanged),
@@ -62193,7 +62867,8 @@
             if (this._cachedOrderedSoruces) return t()
             for (var i = [], r = 0, n = this.m_dataSources.length; r < n; r++) {
               var o = this.m_dataSources[r]
-              ;(!TradingView.isInherited(o.constructor, s) || (o.isActualSymbol() && o.isActualCurrency())) && i.push(o)
+              ;(!TradingView.isInherited(o.constructor, s) || (o.isActualSymbol() && o.isActualCurrency())) &&
+                i.push(o)
             }
             return (i = g(i)), (this._cachedOrderedSoruces = { all: i }), t()
           }),
@@ -62284,7 +62959,8 @@
           }),
           (v.prototype.actionNoScaleIsEnabled = function (e) {
             return (
-              !(!this.isOverlay(e) && TradingView.isInherited(e.constructor, l)) || this.canHaveMoreNoScaleSources()
+              !(!this.isOverlay(e) && TradingView.isInherited(e.constructor, l)) ||
+              this.canHaveMoreNoScaleSources()
             )
           }),
           (v.prototype.executionsPositionController = function () {
@@ -62358,7 +63034,8 @@
             var e = p(this.m_timeScale, this._lockedPriceScale)
             this._currentPriceScaleRatio === e ||
               this._lockedPriceScale.isLog() ||
-              (this._priceScaleRatioChanged.fire(this._currentPriceScaleRatio, e), (this._currentPriceScaleRatio = e))
+              (this._priceScaleRatioChanged.fire(this._currentPriceScaleRatio, e),
+              (this._currentPriceScaleRatio = e))
           }),
           (v.prototype._recalculatePriceScaleByScaleRatio = function (e) {
             this.isMainPane() &&
@@ -62398,7 +63075,9 @@
                   this._lockedPriceScale.setMode({ lockScale: !1 }),
                 (this._lockedPriceScale = e),
                 (this._currentPriceScaleRatio = p(this.m_timeScale, e))),
-              t.lockScale && !i.lockScale && ((this._lockedPriceScale = null), (this._currentPriceScaleRatio = null)),
+              t.lockScale &&
+                !i.lockScale &&
+                ((this._lockedPriceScale = null), (this._currentPriceScaleRatio = null)),
               t.percentage !== i.percentage || t.indexedTo100 !== i.indexedTo100)
             ) {
               var r = this.timeScale().visibleBarsStrictRange()
@@ -62452,7 +63131,8 @@
           (v.prototype.findTargetPriceAxisViews = function (e, t, i, r) {
             if (this._model.paneForSource(e) !== this) return null
             if (t === e.priceScale()) return i
-            if ('overlay' === this.priceScalePosition(e.priceScale())) return t === this.defaultPriceScale() ? i : null
+            if ('overlay' === this.priceScalePosition(e.priceScale()))
+              return t === this.defaultPriceScale() ? i : null
             var n = this.priceScalePosition(t)
             if (n !== this.priceScalePosition(e.priceScale())) return null
             var o = 'left' === n ? this.leftPriceScales() : this.rightPriceScales()
@@ -62466,7 +63146,7 @@
             this._invalidateSourcesCache()
           }),
           (t.Pane = v)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     icPo: function (e, t, i) {
       'use strict'
@@ -62554,7 +63234,9 @@
               ;(c *= this._sizeScale), this._properties.size.setValue(c)
               var u = -l.x,
                 h = Math.acos(u)
-              Math.asin(l.y) > 0 && (h = 2 * Math.PI - h), 0 === e && (h += Math.PI), this._properties.angle.setValue(h)
+              Math.asin(l.y) > 0 && (h = 2 * Math.PI - h),
+                0 === e && (h += Math.PI),
+                this._properties.angle.setValue(h)
             } else {
               var d = this._startChangeWidth,
                 p = s.subtract(o).length()
@@ -63092,7 +63774,9 @@
               for (var c in t) {
                 var u = c.toLowerCase(),
                   h = s.filter(l)
-                0 !== h.length ? (a[(h = h[0]).id] = t[c]) : console.warn('Uknown input `' + c + '` of `' + e + '`')
+                0 !== h.length
+                  ? (a[(h = h[0]).id] = t[c])
+                  : console.warn('Uknown input `' + c + '` of `' + e + '`')
               }
               return { id: o.id, name: e, inputs: a }
             })(e, t, (n = n || chartWidget))
@@ -63653,7 +64337,8 @@
                           dwglines: null
                         }[n]
                         return null === o
-                          ? (a.logWarn(n + ' is not supported by this build of graphics subsystem, skipping'), null)
+                          ? (a.logWarn(n + ' is not supported by this build of graphics subsystem, skipping'),
+                            null)
                           : new o(e, t, r)
                       })
                       .filter(function (e) {
@@ -64060,7 +64745,9 @@
           (e.prototype.addTail = function (e, t) {
             void 0 === t && (t = !1)
             var i = 0
-            t && this._end - this._start > 0 && ((i = 1), (this._items[this._end - this._start - 1].value = e[0].value))
+            t &&
+              this._end - this._start > 0 &&
+              ((i = 1), (this._items[this._end - this._start - 1].value = e[0].value))
             for (var r = i; r < e.length; ++r) {
               var n = e[r],
                 o = this.lastIndex()
@@ -64326,7 +65013,8 @@
                 n = i + r,
                 o = 0,
                 s = 0
-              for (; o < i && s < r; ) e[o].index < t[s].index ? o++ : e[o].index > t[s].index ? s++ : (o++, s++, n--)
+              for (; o < i && s < r; )
+                e[o].index < t[s].index ? o++ : e[o].index > t[s].index ? s++ : (o++, s++, n--)
               return n
             })(e, t),
             r = new Array(i),
@@ -64482,7 +65170,10 @@
       var d = (function () {
         function e(e, t, i, r) {
           if (
-            ((this.type = 'price'), t || (t = 1), (Object(n.isNumber)(e) && Object(n.isInteger)(e)) || (e = 100), e < 0)
+            ((this.type = 'price'),
+            t || (t = 1),
+            (Object(n.isNumber)(e) && Object(n.isInteger)(e)) || (e = 100),
+            e < 0)
           )
             throw new TypeError('invalid base')
           ;(this._priceScale = e),
@@ -64693,7 +65384,9 @@
               if (
                 null !== this._data &&
                 !1 !== this._data.visible &&
-                !(this._data.y < -this._data.linewidth / 2 || this._data.y > t.cssHeight + this._data.linewidth / 2)
+                !(
+                  this._data.y < -this._data.linewidth / 2 || this._data.y > t.cssHeight + this._data.linewidth / 2
+                )
               ) {
                 var i = t.pixelRatio
                 ;(e.lineCap = 'butt'),
@@ -64872,7 +65565,8 @@
                 ])
                   .then(i.bind(null, 'AMW5'))
                   .then(function (i) {
-                    e._promise === r && i.showLoadChartDialog(t, e._favoriteChartsService, e._chartWidgetCollection)
+                    e._promise === r &&
+                      i.showLoadChartDialog(t, e._favoriteChartsService, e._chartWidgetCollection)
                   }))
               })
           }),
@@ -65322,7 +66016,11 @@
                 (o = Math.max(1, o)),
                 this._fractionalDividers.length > 0 && Object(r.equal)(o, 1, 1e-9))
               )
-                for (s = 0, a = this._fractionalDividers[0]; Object(r.greaterOrEqual)(o, i * a, 1e-9) && o > n + 1e-9; )
+                for (
+                  s = 0, a = this._fractionalDividers[0];
+                  Object(r.greaterOrEqual)(o, i * a, 1e-9) && o > n + 1e-9;
+
+                )
                   (o /= a), (a = this._fractionalDividers[++s % this._fractionalDividers.length])
               return o
             }),
@@ -65569,7 +66267,12 @@
               for (
                 var e = this._document.documentElement,
                   t = 0,
-                  i = ['requestFullscreen', 'mozRequestFullScreen', 'webkitRequestFullscreen', 'msRequestFullscreen'];
+                  i = [
+                    'requestFullscreen',
+                    'mozRequestFullScreen',
+                    'webkitRequestFullscreen',
+                    'msRequestFullscreen'
+                  ];
                 t < i.length;
                 t++
               ) {
@@ -65723,7 +66426,8 @@
           (e.prototype.free = function () {
             if (
               (this._resizeHandler &&
-                (this._viewport.removeEventListener('resize', this._resizeHandler), (this._resizeHandler = void 0)),
+                (this._viewport.removeEventListener('resize', this._resizeHandler),
+                (this._resizeHandler = void 0)),
               this._visibilityApi && (this._visibilityApi.destroy(), (this._visibilityApi = void 0)),
               this._area)
             ) {
@@ -65835,16 +66539,20 @@
               this._series.setUserEditEnabled(e)
             }),
             (e.prototype.mergeUp = function () {
-              this._model.isMergeUpAvailableForSource(this._series) && new n.c(this._model, this._series, '').redo()
+              this._model.isMergeUpAvailableForSource(this._series) &&
+                new n.c(this._model, this._series, '').redo()
             }),
             (e.prototype.mergeDown = function () {
-              this._model.isMergeDownAvailableForSource(this._series) && new n.a(this._model, this._series, '').redo()
+              this._model.isMergeDownAvailableForSource(this._series) &&
+                new n.a(this._model, this._series, '').redo()
             }),
             (e.prototype.unmergeUp = function () {
-              this._model.isUnmergeAvailableForSource(this._series) && new o.c(this._model, this._series, '').redo()
+              this._model.isUnmergeAvailableForSource(this._series) &&
+                new o.c(this._model, this._series, '').redo()
             }),
             (e.prototype.unmergeDown = function () {
-              this._model.isUnmergeAvailableForSource(this._series) && new o.a(this._model, this._series, '').redo()
+              this._model.isUnmergeAvailableForSource(this._series) &&
+                new o.a(this._model, this._series, '').redo()
             }),
             (e.prototype.detachToRight = function () {
               new s.b(this._model, this._series, this._pane(), 'right', '').redo()
@@ -66070,7 +66778,11 @@
             (e.prototype.handleHotkey = function (e, t) {
               for (var i = this._actions.length; i-- > 0; ) {
                 var n = this._actions[i]
-                if (n.hotkey === e && (!n.element || (t.target && n.element.contains(t.target))) && !n.isDisabled())
+                if (
+                  n.hotkey === e &&
+                  (!n.element || (t.target && n.element.contains(t.target))) &&
+                  !n.isDisabled()
+                )
                   return (
                     n.handler(t),
                     t.preventDefault(),
@@ -66325,7 +67037,8 @@
               return this._onLabelHovered
             }),
             (e.prototype.setSizeAndOffset = function (e, t) {
-              if (e.w < 0 || e.h < 0) throw new Error('Try to set invalid size to PriceAxisStub ' + JSON.stringify(e))
+              if (e.w < 0 || e.h < 0)
+                throw new Error('Try to set invalid size to PriceAxisStub ' + JSON.stringify(e))
               this._size.equals(e) ||
                 ((this._size = e),
                 this._canvasBinding.resizeCanvas({ width: e.w, height: e.h }),
@@ -66336,7 +67049,11 @@
                 this._offset !== t && ((this._offset = t), (this._cell.style.left = t + 'px'))
             }),
             (e.prototype.paint = function (e) {
-              if ((!(e < s.InvalidationLevel.Full) || this._invalidated) && 0 !== this._size.w && 0 !== this._size.h) {
+              if (
+                (!(e < s.InvalidationLevel.Full) || this._invalidated) &&
+                0 !== this._size.w &&
+                0 !== this._size.h
+              ) {
                 this._invalidated = !1
                 var t = Object(o.getContext2D)(this._canvasBinding.canvas)
                 this._drawBackground(t, this._canvasBinding.pixelRatio),
@@ -66372,7 +67089,10 @@
                 null !== this._label && this._label.setMode(e),
                 this._cell.classList.toggle(h['fixed-gear'], 'gear' === e),
                 this._cell.classList.toggle(h['fixed-symbol'], 'symbol' === e),
-                this._cell.classList.toggle('apply-common-tooltip', 'symbol' !== e && this._labelOptions.enableTooltip))
+                this._cell.classList.toggle(
+                  'apply-common-tooltip',
+                  'symbol' !== e && this._labelOptions.enableTooltip
+                ))
             }),
             (e.prototype._setHighlighted = function (e) {
               this._labelOptions.enableHighlight &&
@@ -67944,7 +68664,9 @@
             )
           }),
           (z.prototype._trackingModeShouldBeActive = function () {
-            return !(!j || this._contextMenuOpenedOnLastMouseDown || this._crossHairShouldBeVisible()) && this._longTap
+            return (
+              !(!j || this._contextMenuOpenedOnLastMouseDown || this._crossHairShouldBeVisible()) && this._longTap
+            )
           }),
           (z.prototype._setCursorPosition = function (e, t, i) {
             this._chartUndoModel().setAndSaveCurrentPosition(
@@ -68067,7 +68789,9 @@
                   return e.cloneable()
                 })
               if ((r && r.cloneable() && o.push(r), o.length > 0))
-                return (this._clonningAtMoveLineTools = o), (this._startCloningPoint = new n(e.localX, e.localY)), !0
+                return (
+                  (this._clonningAtMoveLineTools = o), (this._startCloningPoint = new n(e.localX, e.localY)), !0
+                )
             }
             return !1
           }),
@@ -68119,7 +68843,10 @@
                   _ = this._chartModel().timeScale().coordinateToIndex(e.localX)
                 if (
                   (l.startMeasurePoint() && l.endMeasurePoint() && l.clearMeasure(),
-                  s.shift() && I.toolIsCursor(I.tool.value()) && o.selection().isEmpty() && I.tool.setValue('measure'),
+                  s.shift() &&
+                    I.toolIsCursor(I.tool.value()) &&
+                    o.selection().isEmpty() &&
+                    I.tool.setValue('measure'),
                   !(
                     this._tryStartMeasure(e, l, s, f, _) ||
                     this._tryFinishMeasure(e, l) ||
@@ -68138,12 +68865,15 @@
                       this._isScrolling ||
                       (!p(I.tool.value()) && !o.lineBeingCreated()))
                   ) {
-                    if (m.hittest && m.hittest.result() === M.CUSTOM) (y = m.hittest.data().mouseDownHandler) && y(e)
+                    if (m.hittest && m.hittest.result() === M.CUSTOM)
+                      (y = m.hittest.data().mouseDownHandler) && y(e)
                     if (!this._chart.readOnly()) {
                       var y
                       if (m && m.hittest && m.hittest.result() === M.CUSTOM_MOVE)
                         if ((y = m.hittest.data().pressedMouseMoveHandler))
-                          return void (m.isCustom ? y(e) : o.startCustomMoving(m.source, new n(e.localX, e.localY), y))
+                          return void (m.isCustom
+                            ? y(e)
+                            : o.startCustomMoving(m.source, new n(e.localX, e.localY), y))
                       var v = this._handleSelectionMouseDownAndGetJustDeselectedSource(m, s)
                       if (this._tryHandleEraserMouseDown(m, s)) return
                       var b = m.source && TradingView.isInherited(m.source.constructor, h) && m.source.isLocked()
@@ -68352,7 +69082,9 @@
                       ;(s = !!u && -1 !== W.indexOf(u.toolname)),
                         t.hittest && t.hittest.result() > M.MOVEPOINT_BACKGROUND
                           ? ((c = t.source),
-                            t.source && a(t.source) && ('eraser' !== l || t.source.constructor !== TradingView.Series)
+                            t.source &&
+                            a(t.source) &&
+                            ('eraser' !== l || t.source.constructor !== TradingView.Series)
                               ? i.setHoveredSource(t.source, t.hittest.data())
                               : i.setHoveredSource(null))
                           : i.setHoveredSource(null)
@@ -68428,7 +69160,11 @@
                     u = new n(s, a).subtract(this._startTouchPoint),
                     h = c.add(u)
                   this._setCursorPosition(h.x, h.y, t)
-                } else if (!TradingView.supportTouch() || !i.lineBeingCreated() || i.lineBeingCreated() instanceof d) {
+                } else if (
+                  !TradingView.supportTouch() ||
+                  !i.lineBeingCreated() ||
+                  i.lineBeingCreated() instanceof d
+                ) {
                   if (null !== this._startTrackPoint) {
                     this._exitTrackingModeOnNextTry = !1
                     ;(c = this._initCrossHairPosition),
@@ -68469,7 +69205,8 @@
                           if (i.lineBeingEdited()) {
                             var C = Math.round(i.timeScale().coordinateToIndex(s))
                             return (
-                              (!r.enabled('charting_library_base') || C >= 0) && i.changeLinePoint({ x: s, y: a }, t),
+                              (!r.enabled('charting_library_base') || C >= 0) &&
+                                i.changeLinePoint({ x: s, y: a }, t),
                               void this.setCursorForTool()
                             )
                           }
@@ -68544,7 +69281,8 @@
                 } else if (this._startTouchPoint) {
                   var D = i.lineBeingCreated(),
                     V = i.paneForSource(D)
-                  if (V !== this._state) return void this._setCursorPositionOnExternalPane(V, e.localX, e.localY, t)
+                  if (V !== this._state)
+                    return void this._setCursorPositionOnExternalPane(V, e.localX, e.localY, t)
                   var B = e.localX - this._startTouchPoint.x,
                     R = e.localY - this._startTouchPoint.y,
                     N = this._lastDrawingPoint.x + B,
@@ -68621,9 +69359,13 @@
                 if (null !== this._firstZoomPoint && this._firstZoomPoint.draggingMode) this._finishZoom(e)
                 else if ((!TradingView.supportTouch() && 'touchend' !== e.type) || !this._tryFinishMeasure(e, o)) {
                   if (
-                    ((this._processing = !1), n.customMoveBeingProcessed() && n.endCustomMoving(), n.lineBeingEdited())
+                    ((this._processing = !1),
+                    n.customMoveBeingProcessed() && n.endCustomMoving(),
+                    n.lineBeingEdited())
                   )
-                    return n.endChangingLinetool(), void (this._preventCrossHairMove() && this._clearCursorPosition())
+                    return (
+                      n.endChangingLinetool(), void (this._preventCrossHairMove() && this._clearCursorPosition())
+                    )
                   if ('LineToolBrush' !== c || this._isSelectBarModeEnabled()) {
                     if (n.sourcesBeingMoved().length)
                       return (
@@ -68668,7 +69410,8 @@
                     if (!(t || l.control() || C || i))
                       (b = this._dataSourceAtPoint(e.localX, e.localY)).source &&
                         b.source instanceof w &&
-                        ((b.hittest && b.hittest.result() > M.MOVEPOINT_BACKGROUND) || TradingView.isMobile.any()) &&
+                        ((b.hittest && b.hittest.result() > M.MOVEPOINT_BACKGROUND) ||
+                          TradingView.isMobile.any()) &&
                         n.selectionMacro(function (e) {
                           e.clearSelection(), e.addSourceToSelection(b.source)
                         })
@@ -68688,7 +69431,8 @@
                 if ((delete this._startTouchPoint, !a)) {
                   var j = (v = n.lineBeingCreated()).points()[v.points().length - 1],
                     m = j.price
-                  ;(N = n.coninueCreatingLine({ index: j.index, price: m }, new g(e))), delete this._lastDrawingPoint
+                  ;(N = n.coninueCreatingLine({ index: j.index, price: m }, new g(e))),
+                    delete this._lastDrawingPoint
                 }
                 N && (this._finishTool(v), e.preventDefault())
               }
@@ -68773,7 +69517,9 @@
                 if (!I.toolIsCursor(I.tool.value()) && !this._isSelectBarModeEnabled()) {
                   if (TradingView.isMobile.any()) return
                   return (
-                    I.resetToCursor(!0), this.setCursorForTool(), void (t.lineBeingCreated() && t.cancelCreatingLine())
+                    I.resetToCursor(!0),
+                    this.setCursorForTool(),
+                    void (t.lineBeingCreated() && t.cancelCreatingLine())
                   )
                 }
                 if (this._options.contextMenuEnabled) {
@@ -68884,7 +69630,8 @@
               n.push(new x()),
               r.enabled('charting_library_base') || n.push(i.applyColorTheme),
               n[n.length - 1] instanceof x || n.push(new x()),
-              this._chart.applyIndicatorsToAllChartsAvailable() && (n.push(i.applyStudiesToAllCharts), n.push(new x())),
+              this._chart.applyIndicatorsToAllChartsAvailable() &&
+                (n.push(i.applyStudiesToAllCharts), n.push(new x())),
               n.push(i.paneRemoveAllDrawingTools),
               n.push(i.paneRemoveAllStudies),
               n.push(new x()),
@@ -69123,13 +69870,21 @@
             for (d = h.length - 1; d >= 0; d--) h[d].clearDrawingCaches()
           }),
           (z.prototype._drawCustomSource = function (e, t, i) {
-            for (var r = this.state(), n = r.height(), o = r.width(), s = e.paneViews(r), a = 0; a < s.length; ++a) {
+            for (
+              var r = this.state(), n = r.height(), o = r.width(), s = e.paneViews(r), a = 0;
+              a < s.length;
+              ++a
+            ) {
               var l = s[a].renderer(n, o)
               null !== l && (t.save(), l.draw(t, i), t.restore())
             }
           }),
           (z.prototype._drawCustomSourceBackground = function (e, t, i) {
-            for (var r = this.state(), n = r.height(), o = r.width(), s = e.paneViews(r), a = 0; a < s.length; ++a) {
+            for (
+              var r = this.state(), n = r.height(), o = r.width(), s = e.paneViews(r), a = 0;
+              a < s.length;
+              ++a
+            ) {
               var l = s[a].renderer(n, o)
               null !== l && void 0 !== l.drawBackground && (t.save(), l.drawBackground(t, i), t.restore())
             }
@@ -69172,7 +69927,10 @@
                 var r = this._canvasRenderParams()
                 this.drawBackground(i, this.backgroundColor(), r),
                   this._state &&
-                    (this.drawGrid(i, r), this.drawWatermark(i, r), this.drawSources(i, r), this.drawBarsMarks(i, r, t))
+                    (this.drawGrid(i, r),
+                    this.drawWatermark(i, r),
+                    this.drawSources(i, r),
+                    this.drawBarsMarks(i, r, t))
               }
               if (this._state) {
                 var n = this._topCanvasBinding.canvas.getContext('2d')
@@ -69270,7 +70028,7 @@
             return this._highlightedPriceAxis
           }),
           (e.exports.PaneWidget = z)
-      }.call(this, i('hY0g'), i('Kxc7')))
+      }).call(this, i('hY0g'), i('Kxc7'))
     },
     mpWx: function (e, t, i) {
       'use strict'
@@ -69385,7 +70143,7 @@
             r._configureProperties(t), t.hasChild('text') || t.addChild('text', new e('')), t.addExclusion('text')
           }),
           (t.LineToolVertLine = l)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     n5al: function (e, t, i) {
       'use strict'
@@ -69506,7 +70264,8 @@
           n,
           o = 100,
           s = 1
-        if ('default' === t) null != e && ((o = e.pricescale), (s = e.minmov), (r = e.fractional), (n = e.minmove2))
+        if ('default' === t)
+          null != e && ((o = e.pricescale), (s = e.minmov), (r = e.fractional), (n = e.minmove2))
         else {
           var a = t.split(',')
           3 !== a.length && (a = ['100', '1', 'false']),
@@ -69789,7 +70548,7 @@
             n._configureProperties(e)
           }),
           (t.LineToolTrendAngle = l)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     'nd9+': function (e, t, i) {
       'use strict'
@@ -69864,7 +70623,9 @@
               var e = this.properties()
               e.unsubscribe(this, this._adjustScaleRatio),
                 e.childs().scaleRatio.unsubscribe(this, this._correctFirstPoint),
-                this.properties().onRestoreFactoryDefaults().unsubscribe(this, this._handleRestoringFactoryDefaults),
+                this.properties()
+                  .onRestoreFactoryDefaults()
+                  .unsubscribe(this, this._handleRestoringFactoryDefaults),
                 this._onTemplateApplying.unsubscribe(this, this._handleTemplateApplying),
                 this._onTemplateApplied.unsubscribe(this, this._correctFirstPoint)
             }),
@@ -70843,8 +71604,10 @@
                     _.set(e)),
                   1 === f.get())
                 ) {
-                  if ((u.gt(n, p.get()) && (p.set(n), _.set(Math.min(_.get() + t, i))), u.le(o, y))) return g(-1, o)
-                } else if ((u.lt(o, p.get()) && (p.set(o), _.set(Math.min(_.get() + t, i))), u.ge(n, y))) return g(1, n)
+                  if ((u.gt(n, p.get()) && (p.set(n), _.set(Math.min(_.get() + t, i))), u.le(o, y)))
+                    return g(-1, o)
+                } else if ((u.lt(o, p.get()) && (p.set(o), _.set(Math.min(_.get() + t, i))), u.ge(n, y)))
+                  return g(1, n)
                 var v = y + _.get() * (p.get() - y)
                 return 1 === f.get() ? u.ge(v, o) && (v = o) : u.le(v, n) && (v = n), m.set(v), v
               }),
@@ -71027,7 +71790,8 @@
               }),
               (f.prototype.new_ctx = function () {
                 return (
-                  this.ctx.length <= this.ctx_index && this.ctx.push(new f(this.symbol)), this.ctx[this.ctx_index++]
+                  this.ctx.length <= this.ctx_index && this.ctx.push(new f(this.symbol)),
+                  this.ctx[this.ctx_index++]
                 )
               }),
               (f.prototype.prepare = function (e) {
@@ -71213,7 +71977,8 @@
                   r &&
                   (!isNaN(t.symbol.time) || r.nonseries) &&
                   (r.nonseries
-                    ? ('projection' === r.type && (r.projectionTime = t.symbol.time), this.nonseriesOut(t.symbol, r))
+                    ? ('projection' === r.type && (r.projectionTime = t.symbol.time),
+                      this.nonseriesOut(t.symbol, r))
                     : r.bars
                     ? r.bars.forEach(function (e) {
                         n.out(t.symbol, e)
@@ -71229,7 +71994,9 @@
                 var s = this.runner.add_sym(e, t, i, r, this, n, o)
                 return (
                   this.symbols.push(s),
-                  s.isdwm() && this.symbols.length > 1 && s.enable_dwm_aligning(this.symbols[0].session, s.session),
+                  s.isdwm() &&
+                    this.symbols.length > 1 &&
+                    s.enable_dwm_aligning(this.symbols[0].session, s.session),
                   s
                 )
               }),
@@ -71315,7 +72082,8 @@
                   if (this.isRecalculated) {
                     var r = t.bar(t.count() - 1)
                     ;(r.isBarClosed = t.isLastBarClosed()), (r.isLastBar = !0), i.lastbar(r)
-                  } else this.barsets[e] || ((this.barsets[e] = t), i.set_symbolinfo(t.symbolinfo()), this.recalc())
+                  } else
+                    this.barsets[e] || ((this.barsets[e] = t), i.set_symbolinfo(t.symbolinfo()), this.recalc())
                 } else console.error('Unexpected barset = null')
               }),
               (v.prototype.recalc = function () {
@@ -71323,7 +72091,9 @@
                 for (var i = e.length - 1; i >= 0; i--)
                   for (var r = e[i], n = this.barsets[i], o = n.count(), s = 0; s < o; s++) {
                     var a = n.bar(s)
-                    ;(a.isLastBar = s === o - 1), (a.isBarClosed = !a.isLastBar || n.isLastBarClosed()), r.lastbar(a)
+                    ;(a.isLastBar = s === o - 1),
+                      (a.isBarClosed = !a.isLastBar || n.isLastBarClosed()),
+                      r.lastbar(a)
                   }
                 ;(this.isRecalculated = !0),
                   this.barsets[0] && this.barsets[0].endOfData && this.host.setNoMoreData(),
@@ -71369,13 +72139,18 @@
                   : s === o
                   ? (r[n - 1] = i)
                   : console.error(
-                      'time order violation, prev: ' + new Date(s).toUTCString() + ', cur: ' + new Date(o).toUTCString()
+                      'time order violation, prev: ' +
+                        new Date(s).toUTCString() +
+                        ', cur: ' +
+                        new Date(o).toUTCString()
                     ),
                   (this.isBarClosed = !!t)
               }),
               (w.prototype.init = function (e) {
                 ;(this.bb = y.newBarBuilder(this.period, e.symbol.session)),
-                  (this.bbEmptyBars = this.generateEmptyBars ? y.newBarBuilder(this.period, e.symbol.session) : void 0)
+                  (this.bbEmptyBars = this.generateEmptyBars
+                    ? y.newBarBuilder(this.period, e.symbol.session)
+                    : void 0)
               }),
               (w.prototype.extrapolate = function (e, t) {
                 return isNaN(e) || isNaN(t) ? void 0 : c(this.bbEmptyBars, e, t, Number.MAX_SAFE_INTEGER, !0).times
@@ -71428,7 +72203,7 @@
             )
           })()
         e.exports = a
-      }.call(this, i('yLpj')))
+      }).call(this, i('yLpj'))
     },
     ocrj: function (e, t, i) {
       'use strict'
@@ -71757,7 +72532,8 @@
                 null === r || (null !== o && 1e3 * t > o))
               ) {
                 var s = Object(n.extrapolateBarsFrontToTime)(this._barBuilder(), o || 1e3 * e, 1e3 * t, 2e3, !0)
-                ;(this._extrapolatedData = this._extrapolatedData.concat(s.times)), (i = this._extrapolatedData.length)
+                ;(this._extrapolatedData = this._extrapolatedData.concat(s.times)),
+                  (i = this._extrapolatedData.length)
               }
               if ((o = this._extrapolatedData[i - 1]) < 1e3 * t) return { success: !1 }
               var a = this._extrapolatedData.indexOf(1e3 * t)
@@ -71769,10 +72545,12 @@
                 r = i > 0 ? this._extrapolatedData[0] : null,
                 o = null !== r ? this._extrapolatedData[i - 1] : null
               if (
-                (1e3 * e !== r && ((this._extrapolatedData = [1e3 * e]), (r = null), (o = null)), null === r || t >= i)
+                (1e3 * e !== r && ((this._extrapolatedData = [1e3 * e]), (r = null), (o = null)),
+                null === r || t >= i)
               ) {
                 var s = Object(n.extrapolateBarsFrontByCount)(this._barBuilder(), o || 1e3 * e, t - i + 1, !0)
-                ;(this._extrapolatedData = this._extrapolatedData.concat(s.times)), (i = this._extrapolatedData.length)
+                ;(this._extrapolatedData = this._extrapolatedData.concat(s.times)),
+                  (i = this._extrapolatedData.length)
               }
               return i < t ? e : this._extrapolatedData[t] / 1e3
             }),
@@ -72096,7 +72874,8 @@
       var V = (function (e) {
           function t(t, i) {
             return (
-              e.call(this, t, i.lineTools(), O(D(t, i), i.lineTools()), 'Send Group ' + i.name() + ' backward') || this
+              e.call(this, t, i.lineTools(), O(D(t, i), i.lineTools()), 'Send Group ' + i.name() + ' backward') ||
+              this
             )
           }
           return Object(r.__extends)(t, e), t
@@ -72104,7 +72883,8 @@
         B = (function (e) {
           function t(t, i) {
             return (
-              e.call(this, t, i.lineTools(), k(D(t, i), i.lineTools()), 'Bring Group ' + i.name() + ' backward') || this
+              e.call(this, t, i.lineTools(), k(D(t, i), i.lineTools()), 'Bring Group ' + i.name() + ' backward') ||
+              this
             )
           }
           return Object(r.__extends)(t, e), t
@@ -72242,7 +73022,8 @@
                 var r = i[t],
                   n = r.model.mainSeries().properties().interval,
                   o = r.prevResolution !== n.value()
-                o && (e.push(n), n.setValueSilently(r.prevResolution)), r.model.appliedTimeFrame().merge(r.rangeOptions)
+                o && (e.push(n), n.setValueSilently(r.prevResolution)),
+                  r.model.appliedTimeFrame().merge(r.rangeOptions)
                 var s = r.model.timeScale()
                 s.setBarSpacing(r.barSpacing),
                   s.setRightOffset(r.rightOffset),
@@ -72364,7 +73145,9 @@
                 t = this._lineToolsIds.map(function (t) {
                   return e._model.dataSourceForId(t)
                 })
-              Object(n.ensureNotNull)(this._model.lineToolsGroupModel().groupForId(this._groupId)).excludeLineTools(t)
+              Object(n.ensureNotNull)(
+                this._model.lineToolsGroupModel().groupForId(this._groupId)
+              ).excludeLineTools(t)
             }),
             t
           )
@@ -72689,7 +73472,10 @@
             (t.prototype.redo = function () {
               var e = this._model.panes()[this._paneIndex],
                 t = e.dataSourceForId(this._clipboardData.source.id),
-                i = null !== t ? Object(n.ensureNotNull)(t.ownerSource()) : Object(n.ensureNotNull)(e.mainDataSource())
+                i =
+                  null !== t
+                    ? Object(n.ensureNotNull)(t.ownerSource())
+                    : Object(n.ensureNotNull)(e.mainDataSource())
               null === this._sourceState && (this._sourceState = this._getSourceState(i))
               var r = e.restoreLineTool(this._sourceState, !1, !1),
                 o = Object(n.ensureNotNull)(i.priceScale())
@@ -72711,7 +73497,9 @@
               } else be.logError('This command was never executed - nothing to undo')
             }),
             (t.prototype.source = function () {
-              return Object(n.ensureNotNull)(this._model.dataSourceForId(Object(n.ensureNotNull)(this._sourceState).id))
+              return Object(n.ensureNotNull)(
+                this._model.dataSourceForId(Object(n.ensureNotNull)(this._sourceState).id)
+              )
             }),
             (t.prototype.needCopyToOtherCharts = function () {
               return this._needCopyToOtherCharts
@@ -72897,7 +73685,13 @@
               return Object(o.showTooManyStudiesNotice)(), null
             this.beginUndoMacro(c)
             var u = !l
-            this._createLineCommand = new w(this._model(), e, i, a || Object(n.ensureNotNull)(e.mainDataSource()), u)
+            this._createLineCommand = new w(
+              this._model(),
+              e,
+              i,
+              a || Object(n.ensureNotNull)(e.mainDataSource()),
+              u
+            )
             var h = this._createLineCommand.startCreatingLine(t, r, s || null),
               d = Object(n.ensureNotNull)(this._createLineCommand.line()),
               p = null
@@ -73052,7 +73846,8 @@
           (t.prototype.endChangingLinetool = function (e) {
             this.model().endChangingLinetool(e),
               null !== this._currentLineChangeCommand &&
-                (this._currentLineChangeCommand.saveNewState(), this._pushUndoCommand(this._currentLineChangeCommand)),
+                (this._currentLineChangeCommand.saveNewState(),
+                this._pushUndoCommand(this._currentLineChangeCommand)),
               (this._currentLineChangeCommand = null)
           }),
           (t.prototype.setChartStyleProperty = function (e, t, i) {
@@ -73327,7 +74122,9 @@
             )
           }),
           (t.prototype.endScrollTime = function () {
-            this.model().endScrollTime(), (this._initialTimeScrollPos = null), (this._initialTimeScrollState = null)
+            this.model().endScrollTime(),
+              (this._initialTimeScrollPos = null),
+              (this._initialTimeScrollState = null)
           }),
           (t.prototype.startScaleTime = function (e) {
             var t = this.timeScale(),
@@ -74349,7 +75146,8 @@
           }),
           (ue.prototype.lastValueData = function (e, t, i) {
             var r = { noData: !0 }
-            if (this.m_model.timeScale().isEmpty() || this.priceScale().isEmpty() || this.data().isEmpty()) return r
+            if (this.m_model.timeScale().isEmpty() || this.priceScale().isEmpty() || this.data().isEmpty())
+              return r
             var n,
               o,
               s = this.m_model.timeScale().visibleBarsStrictRange()
@@ -74633,7 +75431,9 @@
             this.setSymbolIntervalCurrencyDelayed()
           }),
           (ue.prototype.changeCurrency = function () {
-            this.setSymbolIntervalCurrencyDelayed(), this.m_model.checkLineToolSelection(), this._currencyChanged.fire()
+            this.setSymbolIntervalCurrencyDelayed(),
+              this.m_model.checkLineToolSelection(),
+              this._currencyChanged.fire()
           }),
           (ue.prototype.changeTimeFrame = function () {
             B('GUI', 'Change timeframe')
@@ -74765,15 +75565,21 @@
               case 'series_loading':
                 if (e.params[1] !== this._turnaround) break
                 if (e.params[0] !== this._seriesId) {
-                  F.logNormal('command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId)
+                  F.logNormal(
+                    'command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId
+                  )
                   break
                 }
-                ;(this._loading = !0), this._setStatus(ue.STATUS_LOADING), (t._loadingStartTime = new Date().getTime())
+                ;(this._loading = !0),
+                  this._setStatus(ue.STATUS_LOADING),
+                  (t._loadingStartTime = new Date().getTime())
                 break
               case 'series_completed':
                 if (e.params[2] !== this._turnaround) break
                 if (e.params[0] !== this._seriesId) {
-                  F.logNormal('command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId)
+                  F.logNormal(
+                    'command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId
+                  )
                   break
                 }
                 if (this._setSymbolIntervalDelay) {
@@ -74830,12 +75636,17 @@
                 break
               case 'data_update':
                 if (e.params.customId !== this._seriesId) {
-                  F.logNormal('command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId)
+                  F.logNormal(
+                    'command for old series. Expected:' + this._seriesId + ', actual' + e.params.customId
+                  )
                   break
                 }
                 if (e.params.turnaround !== this._turnaround) {
                   F.logNormal(
-                    'command for old series turnaround. Expected:' + this._turnaround + ', actual' + e.params.turnaround
+                    'command for old series turnaround. Expected:' +
+                      this._turnaround +
+                      ', actual' +
+                      e.params.turnaround
                   )
                   break
                 }
@@ -74880,7 +75691,8 @@
                             r && t._boxSizeChanged.fire(t.m_data.boxSize),
                             i()
                         })
-                      : (e.params.nonseries || (t.m_data.m_nsBars.clear(), (t.m_data.lastProjectionPrice = void 0)),
+                      : (e.params.nonseries ||
+                          (t.m_data.m_nsBars.clear(), (t.m_data.lastProjectionPrice = void 0)),
                         i(),
                         i())
                   }).then(function () {
@@ -74916,7 +75728,9 @@
                         d.push(u[h].low),
                         d.push(u[h].close),
                         d.push(u[h].volume),
-                        s === ue.STYLE_KAGI ? d.push(u[h].additionalPrice) : s === ue.STYLE_PNF && d.push(u[h].factor),
+                        s === ue.STYLE_KAGI
+                          ? d.push(u[h].additionalPrice)
+                          : s === ue.STYLE_PNF && d.push(u[h].factor),
                         n.add(p, d)
                     }
                     a({
@@ -75033,7 +75847,9 @@
                 ))
           }),
           (ue.prototype._willSymbolIntervalCurrencyChanged = function () {
-            var e = this._checkIntervalWillChanged(this._parseInterval(this._properties.interval.value()).interval),
+            var e = this._checkIntervalWillChanged(
+                this._parseInterval(this._properties.interval.value()).interval
+              ),
               t = this._checkSymbolWillChanged(this._properties.symbol.value()),
               i = this._checkCurrencyWillChanged(this._properties.currencyId.value())
             return t || e || i
@@ -75190,7 +76006,10 @@
                   : new n(l.min, l.max)
                 : new n(-0.5, 0.5)
             return this.priceScale().isLog()
-              ? new n(this.priceScale().priceToLogical(u.minValue()), this.priceScale().priceToLogical(u.maxValue()))
+              ? new n(
+                  this.priceScale().priceToLogical(u.minValue()),
+                  this.priceScale().priceToLogical(u.maxValue())
+                )
               : u
           }),
           (ue.prototype.nearestData = function (e, t) {
@@ -75281,7 +76100,10 @@
             return !1
           }),
           (ue.prototype.updateAllViews = function () {
-            this._paneView.update(), this._dataWindowView.update(), this._legendView.update(), this._statusView.update()
+            this._paneView.update(),
+              this._dataWindowView.update(),
+              this._legendView.update(),
+              this._statusView.update()
             for (var e = this._priceAxisViews.length, t = 0; t < e; t++) this._priceAxisViews[t].update()
             this._priceLinePriceAxisView.update(),
               this._futureBarsPaneView && this._futureBarsPaneView.update(),
@@ -75373,7 +76195,9 @@
               this._properties.pnfStyle.inputs.sources.listeners().subscribe(this, this.onInputChanged),
               this._properties.pnfStyle.inputs.style.listeners().subscribe(this, this.onInputChanged),
               this._properties.pnfStyle.inputs.atrLength.listeners().subscribe(this, this.onInputChanged),
-              this._properties.pnfStyle.inputs.oneStepBackBuilding.listeners().subscribe(this, this.onInputChanged),
+              this._properties.pnfStyle.inputs.oneStepBackBuilding
+                .listeners()
+                .subscribe(this, this.onInputChanged),
               this._properties.rangeStyle.inputs.phantomBars.listeners().subscribe(this, this.onInputChanged)
           }),
           (ue.prototype.createExtendedHoursProperty = function () {
@@ -75659,7 +76483,7 @@
           }),
           (TradingView.Series = ue),
           (t.Series = ue)
-      }.call(this, i('aIyQ'), i('tc+8'), i('Qb4w').PriceRange))
+      }).call(this, i('aIyQ'), i('tc+8'), i('Qb4w').PriceRange)
     },
     qcGP: function (e, t, i) {
       'use strict'
@@ -76081,7 +76905,8 @@
                     f = a.bottom
                   Object(u.drawRoundRect)(e, l, h, c - l, f - h, this._data.backgroundRoundRect * i),
                     this._data.backgroundColor && ((e.fillStyle = this._data.backgroundColor), e.fill()),
-                    this._data.borderColor && ((e.strokeStyle = this._data.borderColor), (e.lineWidth = s), e.stroke())
+                    this._data.borderColor &&
+                      ((e.strokeStyle = this._data.borderColor), (e.lineWidth = s), e.stroke())
                 } else {
                   if (this._data.backgroundColor) {
                     e.fillStyle = this._data.backgroundColor
@@ -76180,7 +77005,9 @@
                 ;(u = 'center'), (c = h), (h -= r / 2)
                 break
               case 'right':
-                ;(u = 'end'), (c = (h -= r + e.offsetX) + r - f), Object(l.isRtl)() && e.forceTextAlign && (u = 'right')
+                ;(u = 'end'),
+                  (c = (h -= r + e.offsetX) + r - f),
+                  Object(l.isRtl)() && e.forceTextAlign && (u = 'right')
             }
             return {
               boxLeft: h,
@@ -76292,7 +77119,10 @@
             var s = o[i]
             if (!Object(n.isObject)(s) || !Object(n.hasProperty)(s, 'action'))
               throw new Error("Command should be an object with 'action' property")
-            Object(r.assert)('all' === s.action || 'one' === s.action, "Erase command action should be 'all' or 'one'")
+            Object(r.assert)(
+              'all' === s.action || 'one' === s.action,
+              "Erase command action should be 'all' or 'one'"
+            )
           }
         }
         return e
@@ -76581,7 +77411,10 @@
             var l = a[s],
               c = l.styleId
             void 0 !== i &&
-              Object(r.assert)(c in i, 'Every style used by graphics primitive should be declared in study metainfo')
+              Object(r.assert)(
+                c in i,
+                'Every style used by graphics primitive should be declared in study metainfo'
+              )
             var h = e.get(c)
             void 0 === h && ((h = new u(o, n)), e.set(c, h)), l.data.forEach(h.addData.bind(h))
           }
@@ -76689,7 +77522,9 @@
         function u(e, t) {
           var r = e.font
           return (
-            i.hasOwnProperty(r) || (i[r] = {}), i[r].hasOwnProperty(t) || (i[r][t] = e.measureText(t).width), i[r][t]
+            i.hasOwnProperty(r) || (i[r] = {}),
+            i[r].hasOwnProperty(t) || (i[r][t] = e.measureText(t).width),
+            i[r][t]
           )
         }
         s.listeners().subscribe(this, function () {
@@ -76827,7 +77662,9 @@
           return (
             Object(r.__extends)(t, e),
             (t.prototype.redo = function () {
-              this._chartWidget.screen.show(), this._property.setValue(this._value), this._handleResolution(this._value)
+              this._chartWidget.screen.show(),
+                this._property.setValue(this._value),
+                this._handleResolution(this._value)
             }),
             (t.prototype.undo = function () {
               this._chartWidget.screen.show(),
@@ -76952,7 +77789,9 @@
         }
         return (
           (e.prototype.isStdTheme = function () {
-            return Promise.resolve(Object(r.isStdTheme)(Object(r.extractThemeFromModel)(this._getActiveChartModel())))
+            return Promise.resolve(
+              Object(r.isStdTheme)(Object(r.extractThemeFromModel)(this._getActiveChartModel()))
+            )
           }),
           (e.prototype.setStdTheme = function (e, t, i) {
             return (
@@ -77214,7 +78053,9 @@
                     }),
               exchange: (this._statusViewProperties.childs().showExchange.value() && e && e.exchange) || void 0,
               symbol: this._series.symbol(),
-              interval: this._statusViewProperties.childs().showInterval.value() ? this._series.interval() : void 0,
+              interval: this._statusViewProperties.childs().showInterval.value()
+                ? this._series.interval()
+                : void 0,
               style: this._series.properties().childs().style.value(),
               inputs: this._series.getInputsProperties().state(),
               boxSize: this._series.data().boxSize,
@@ -77855,7 +78696,7 @@
           }),
           (t.LineToolRiskRewardLong = m),
           (t.LineToolRiskRewardShort = _)
-      }.call(this, i('Qb4w').PriceRange))
+      }).call(this, i('Qb4w').PriceRange)
     },
     tG6Q: function (e, t, i) {
       'use strict'
@@ -78046,7 +78887,7 @@
             return this
           }),
           (e.exports = i)
-      }.call(this, i('aIyQ')))
+      }).call(this, i('aIyQ'))
     },
     teHb: function (e, t, i) {
       'use strict'
@@ -78385,7 +79226,8 @@
               }).catch(function (e) {
                 console.warn('Error loading custom indicators ' + e), G.resolve()
               })
-            : (console.warn('custom_indicators_getter should be a function that returns a Promise object'), G.resolve())
+            : (console.warn('custom_indicators_getter should be a function that returns a Promise object'),
+              G.resolve())
         } else G.resolve()
         window.widgetReady = function (e) {
           v.subscribe('onChartReady', e)
@@ -78439,9 +79281,13 @@
             }
             e.enabled('no_min_chart_width') && (window.document.body.style.minWidth = '0px'),
               null != urlParams.studiesOverrides && F.setDefaultsOverrides(JSON.parse(urlParams.studiesOverrides)),
-              t(void 0 === TradingView.defaultProperties, 'Default properties are inited before applying overrides'),
+              t(
+                void 0 === TradingView.defaultProperties,
+                'Default properties are inited before applying overrides'
+              ),
               X(JSON.parse(urlParams.overrides)),
-              (urlParams.numeric_formatting = urlParams.numeric_formatting && JSON.parse(urlParams.numeric_formatting)),
+              (urlParams.numeric_formatting =
+                urlParams.numeric_formatting && JSON.parse(urlParams.numeric_formatting)),
               urlParams.numeric_formatting &&
                 'string' == typeof urlParams.numeric_formatting.decimal_sign &&
                 (S.decimalSign = urlParams.numeric_formatting.decimal_sign[0]),
@@ -78611,7 +79457,11 @@
                   chartWidgetCollection: t.chartWidgetCollection,
                   favoriteStudyTemplatesService: c
                 })))
-              l = Modernizr.mobiletouch ? ['full'] : e.enabled('caption_buttons_text_if_possible') ? void 0 : ['medium']
+              l = Modernizr.mobiletouch
+                ? ['full']
+                : e.enabled('caption_buttons_text_if_possible')
+                ? void 0
+                : ['medium']
               return new n(new r(), {
                 chartSaver: window.saver,
                 chartApiInstance: ChartApiInstance,
@@ -78670,7 +79520,16 @@
                 (TradingView.STUDY_COUNT_LIMIT = Math.max(2, +urlParams.studyCountLimit)),
               TradingView.isNaN(urlParams.ssreqdelay) || W(Math.max(0, +urlParams.ssreqdelay)),
               window.ChartApiInstance.connect(),
-              Promise.all([i.e(31), i.e(39), i.e(75), i.e(14), i.e(29), i.e(35), i.e(47), i.e('floating-toolbars')])
+              Promise.all([
+                i.e(31),
+                i.e(39),
+                i.e(75),
+                i.e(14),
+                i.e(29),
+                i.e(35),
+                i.e(47),
+                i.e('floating-toolbars')
+              ])
                 .then(
                   function (e) {
                     var t = i('tPkB')
@@ -78804,7 +79663,8 @@
           if (
             (a && (a.style.display = 'none'),
             setTimeout(te, 0),
-            e.enabled('14851') && (Math.random() <= 0.02 || e.enabled('cqg_terminal') || e.enabled('amp_terminal')))
+            e.enabled('14851') &&
+              (Math.random() <= 0.02 || e.enabled('cqg_terminal') || e.enabled('amp_terminal')))
           ) {
             ;(t = window),
               (i = document),
@@ -78870,7 +79730,7 @@
               t
             )
           })
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     uOxu: function (e, t, i) {
       'use strict'
@@ -79039,13 +79899,17 @@
             (localStorage.setItem('tv.logger.logHighRate', String(p)),
             localStorage.setItem('tv.logger.loglevel', String(d)))
         } catch (e) {
-          w.logWarn('Cannot save logger state (level: ' + d + ', high-rate: ' + p + ') to localStorage: ' + e.message)
+          w.logWarn(
+            'Cannot save logger state (level: ' + d + ', high-rate: ' + p + ') to localStorage: ' + e.message
+          )
         }
       }
       !(function () {
         p = !!o && 'true' === localStorage.getItem('tv.logger.logHighRate')
         var e = parseInt((o && localStorage.getItem('tv.logger.loglevel')) || '')
-        Number.isNaN(e) && (e = r.WARNING), m(e), w.logNormal('Init with settings - level: ' + d + ', high-rate: ' + p)
+        Number.isNaN(e) && (e = r.WARNING),
+          m(e),
+          w.logNormal('Init with settings - level: ' + d + ', high-rate: ' + p)
       })(),
         n.performance && n.performance.now
           ? w.logNormal('Sync logger and perf times, now is ' + n.performance.now())
@@ -79299,7 +80163,9 @@
           }),
           (T.prototype.optimalHeight = function () {
             var e = this.rendererOptions()
-            return Math.ceil(e.offsetSize + e.borderSize + e.tickLength + e.fontSize + e.paddingTop + e.paddingBottom)
+            return Math.ceil(
+              e.offsetSize + e.borderSize + e.tickLength + e.fontSize + e.paddingTop + e.paddingBottom
+            )
           }),
           (T.prototype.setSizes = function (e, t, i) {
             ;(this.size && this.size.equals(e)) ||
@@ -79541,7 +80407,7 @@
             )
           }),
           (t.TimeAxisWidget = T)
-      }.call(this, i('aIyQ'), i('Kxc7')))
+      }).call(this, i('aIyQ'), i('Kxc7'))
     },
     'uXw/': function (e, t, i) {
       'use strict'
@@ -79725,7 +80591,7 @@
             }
           })()
         e.exports = a
-      }.call(this, i('yLpj')))
+      }).call(this, i('yLpj'))
     },
     ulZB: function (e, t, i) {
       'use strict'
@@ -79831,7 +80697,8 @@
           (i.prototype.reloadProperties = function (e) {
             for (; this._childs.length > 0; ) this.removeProperty(this._childs[0])
             this._initValues = []
-            for (var t = 0; t < e.length; ++t) this._initValues.push(e[t].defaultValue), this.addChild(t, e[t].property)
+            for (var t = 0; t < e.length; ++t)
+              this._initValues.push(e[t].defaultValue), this.addChild(t, e[t].property)
             this.checkSelfColor()
           }),
           (i.prototype.setValue = function (e, i) {
@@ -79852,7 +80719,7 @@
             t.prototype.setValue.call(this, e ? this[0].value() : '')
           }),
           (e.exports = i)
-      }.call(this, i('tc+8')))
+      }).call(this, i('tc+8'))
     },
     vAx0: function (e, t, i) {
       'use strict'
@@ -79861,7 +80728,11 @@
         o = i('VdBB').HitTestResult,
         s = i('Zy3/').CompositeRenderer,
         a = i('6xeX').Tooltip,
-        l = (i('GH0z').PercentageFormatter, i('55Xp').roundToFirstValuable, i('LxhU').Interval, i('jCNj').utc_to_cal),
+        l =
+          (i('GH0z').PercentageFormatter,
+          i('55Xp').roundToFirstValuable,
+          i('LxhU').Interval,
+          i('jCNj').utc_to_cal),
         c = i('jCNj').get_timezone,
         u = i('ZZnO').dateFormatProperty,
         h = i('gQ5K').DateFormatter,
@@ -79884,8 +80755,10 @@
           (this.defaultStyle = i),
           (this.hoveredStyle = r),
           (this._templatesSize = new p(300, 150)),
-          (this.templatesCache.hovered = void 0 !== this.hoveredStyle ? this.createTemplate(this.hoveredStyle) : null),
-          (this.templatesCache.default = void 0 !== this.defaultStyle ? this.createTemplate(this.defaultStyle) : null),
+          (this.templatesCache.hovered =
+            void 0 !== this.hoveredStyle ? this.createTemplate(this.hoveredStyle) : null),
+          (this.templatesCache.default =
+            void 0 !== this.defaultStyle ? this.createTemplate(this.defaultStyle) : null),
           e.properties().paneProperties.background.subscribe(this, this.onPaneBgChange),
           e.mainSeries().onSymbolIntervalChanged().subscribe(this, this._onSymbolOrIntervalChanged)
       }
@@ -80011,7 +80884,8 @@
           return !0
         }),
         (v.prototype.renderer = function (e, t) {
-          if ((this._invalidated && (this.updateImpl(), (this._invalidated = !1)), this._hideLollipops)) return null
+          if ((this._invalidated && (this.updateImpl(), (this._invalidated = !1)), this._hideLollipops))
+            return null
           var i = new s()
           for (var n in this._lollipops)
             if (this._lollipops.hasOwnProperty(n)) {
@@ -80072,7 +80946,10 @@
         (v.prototype.createTemplate = function (e) {
           var t = f(document, this._templatesSize),
             i = _(t),
-            n = new r(e.lollipop.width / 2, e.lollipop.height - e.lollipop.circleHeight - (e.lollipop.incHeight || 0))
+            n = new r(
+              e.lollipop.width / 2,
+              e.lollipop.height - e.lollipop.circleHeight - (e.lollipop.incHeight || 0)
+            )
           return this.drawCircle(i, e, n), this.drawLabel(i, e, n), t
         }),
         (v.prototype.drawCircle = function (e, t, i) {
@@ -80288,7 +81165,8 @@
                   a = this._context.new_unlimited_var(r.Std.low(this._context)),
                   l = this._context.new_unlimited_var(r.Std.close(this._context))
                 return (
-                  this._context.select_sym(0), [o.adopt(n, i, 1), s.adopt(n, i, 1), a.adopt(n, i, 1), l.adopt(n, i, 1)]
+                  this._context.select_sym(0),
+                  [o.adopt(n, i, 1), s.adopt(n, i, 1), a.adopt(n, i, 1), l.adopt(n, i, 1)]
                 )
               })
           }
@@ -80797,7 +81675,9 @@
               var i = this._data.points[t]
               if (i.subtract(e).length() <= 5.5) {
                 var o =
-                  void 0 !== this._data.pointsCursorType ? this._data.pointsCursorType[t] : n.PaneCursorType.Default
+                  void 0 !== this._data.pointsCursorType
+                    ? this._data.pointsCursorType[t]
+                    : n.PaneCursorType.Default
                 return new r.HitTestResult(this._data.hittestResult, {
                   pointIndex: i.data,
                   cursorType: o
@@ -83344,7 +84224,8 @@
               }
             }
           }
-          for (var w = e.split('.'), P = TradingView.defaultProperties, C = 0; C < w.length; C++) P && (P = P[w[C]])
+          for (var w = e.split('.'), P = TradingView.defaultProperties, C = 0; C < w.length; C++)
+            P && (P = P[w[C]])
           return null != P ? TradingView.clone(P) : {}
         }
       function m(e, t, i, r, n) {
@@ -83479,13 +84360,17 @@
         }
         ;(r.prototype.destroy = function () {
           this._sessionstarted &&
-            (this._chartApi.quoteDeleteSession(this._sessionid), (this._sessionid = null), (this._sessionstarted = !1))
+            (this._chartApi.quoteDeleteSession(this._sessionid),
+            (this._sessionid = null),
+            (this._sessionstarted = !1))
         }),
           (r.prototype.connected = function () {
             return this._chartApi.connected()
           }),
           (r.prototype.connect = function (e) {
-            ;(this._globalHandler = e), this._chartApi.createSession(this._sessionid, this), this._chartApi.connect()
+            ;(this._globalHandler = e),
+              this._chartApi.createSession(this._sessionid, this),
+              this._chartApi.connect()
           }),
           (r.prototype.disconnect = function () {
             this._chartApi.disconnect()
@@ -83520,7 +84405,7 @@
           }),
           (TradingView.QuoteSession = r),
           e && e.exports && (e.exports = r)
-      }.call(this, i('YuTi')(e)))
+      }).call(this, i('YuTi')(e))
     },
     wiuq: function (e, t, i) {
       'use strict'
@@ -84215,7 +85100,9 @@
         (C.prototype.update = function () {
           if (
             ((this.m_items = []),
-            !this.m_model.timeScale().isEmpty() && this.m_series.priceScale() && !this.m_series.priceScale().isEmpty())
+            !this.m_model.timeScale().isEmpty() &&
+              this.m_series.priceScale() &&
+              !this.m_series.priceScale().isEmpty())
           ) {
             var e = this.m_model.timeScale().visibleBarsStrictRange()
             if (null !== e && 0 !== this.m_series.bars().size()) {
@@ -84283,7 +85170,9 @@
               simpleMode: !0
             }
           return (
-            i.styleType.value() === TradingView.Series.STYLE_LINE_TYPE_STEP ? (e = new l()).setData(r) : (e = new a(r)),
+            i.styleType.value() === TradingView.Series.STYLE_LINE_TYPE_STEP
+              ? (e = new l()).setData(r)
+              : (e = new a(r)),
             this.m_model.selection().isSelected(this.m_series)
               ? ((t = new d()).append(e), this._isMarkersEnabled && t.append(new n(this._selectionData)))
               : (t = e),
@@ -84516,12 +85405,14 @@
         }),
         (d.prototype._plotIndex1 = function () {
           return (
-            null === this._plIndex1 && (this._plIndex1 = this._plotNames().indexOf(this._plotAId()) + 1), this._plIndex1
+            null === this._plIndex1 && (this._plIndex1 = this._plotNames().indexOf(this._plotAId()) + 1),
+            this._plIndex1
           )
         }),
         (d.prototype._plotIndex2 = function () {
           return (
-            null === this._plIndex2 && (this._plIndex2 = this._plotNames().indexOf(this._plotBId()) + 1), this._plIndex2
+            null === this._plIndex2 && (this._plIndex2 = this._plotNames().indexOf(this._plotBId()) + 1),
+            this._plIndex2
           )
         }),
         (d.prototype._updateImpl = function () {
@@ -85003,7 +85894,8 @@
           return (
             (this._rowsToSources[t] = e),
             t >= this._actualCapacity &&
-              (this._actualCapacity++, this._recreateCanvas(this._actualWidth, h.ROW_HEIGHT * this._actualCapacity)),
+              (this._actualCapacity++,
+              this._recreateCanvas(this._actualWidth, h.ROW_HEIGHT * this._actualCapacity)),
             t
           )
         }),
@@ -85418,7 +86310,8 @@
             for (var a = r.model().mainSeries(), l = 0, c = t.seriesLikeSources(); l < c.length; l++) {
               var u = c[l]
               if (u.isVisible()) {
-                var h = i || Object(n.ensureDefined)(Object(n.ensureNotNull)(u.symbolInfo()).original_currency_code)
+                var h =
+                  i || Object(n.ensureDefined)(Object(n.ensureNotNull)(u.symbolInfo()).original_currency_code)
                 s._newSourcesCurrencies.set(u.id(), h),
                   s._oldSourcesCurrencies.set(u.id(), u.currency()),
                   (s._showFade = s._showFade || (u === a && u.currency() !== h))
@@ -85924,7 +86817,8 @@
               this._currencyInfo = e
               var t = null === e.selectedCurrency ? Object(n.t)('Mixed') : e.selectedCurrency
               return (
-                this._currencyText.textContent !== t && ((this._currencyText.textContent = t), (this._width = null)),
+                this._currencyText.textContent !== t &&
+                  ((this._currencyText.textContent = t), (this._width = null)),
                 this._arrowDown.classList.contains('js-hidden') !== e.readOnly &&
                   (this._arrowDown.classList.toggle('js-hidden', e.readOnly),
                   this._currencyLabel.classList.toggle(g.readonly, e.readOnly),
@@ -86073,7 +86967,12 @@
                 null !== this._currencyLabel && this._currencyLabel.isVisible())
               ) {
                 var i = this._undoModel.model().isDark()
-                this._currencyLabel.drawLabel(Object(s.getContext2D)(t), e.w, Object(s.getCanvasDevicePixelRatio)(t), i)
+                this._currencyLabel.drawLabel(
+                  Object(s.getContext2D)(t),
+                  e.w,
+                  Object(s.getCanvasDevicePixelRatio)(t),
+                  i
+                )
               }
               return t
             }),
@@ -86839,7 +87738,9 @@
               })
             }),
             (e.prototype.hasUserEditableOptions = function () {
-              return this.hasUserEditableInputs() || this.hasUserEditableProperties() || this.hasUserEditableStyles()
+              return (
+                this.hasUserEditableInputs() || this.hasUserEditableProperties() || this.hasUserEditableStyles()
+              )
             }),
             (e.prototype.getStrategyProperties = function () {
               for (
@@ -87478,7 +88379,12 @@
                 (e.strokeStyle = 'rgba(153,153,153,.7)'),
                 (e.lineWidth = 1),
                 e.beginPath(),
-                e.rect(0, this._data.height - this._data.bodyHeight + 0.5, this._data.width, this._data.bodyHeight),
+                e.rect(
+                  0,
+                  this._data.height - this._data.bodyHeight + 0.5,
+                  this._data.width,
+                  this._data.bodyHeight
+                ),
                 e.closePath(),
                 e.stroke(),
                 e.translate(0, -1),
@@ -87534,7 +88440,10 @@
                 o = i && this._horzVisible,
                 s = i || r
               if (('y' === this._axis && !o) || !s) return null
-              var a = 'y' === this._axis ? this._pane.width() - 4.5 : Object(n.ensureDefined)(this._source.lockedX) + 1,
+              var a =
+                  'y' === this._axis
+                    ? this._pane.width() - 4.5
+                    : Object(n.ensureDefined)(this._source.lockedX) + 1,
                 l = 'y' === this._axis ? this._source.y : this._pane.height() - 5.5 - 1
               return new R({ x: a, y: l, width: 9, height: 11, bodyHeight: 7 })
             }),
@@ -88100,7 +89009,8 @@
           }),
           (u.prototype.setQuantityBorderColor = function (e) {
             return (
-              'buy' === this._direction ? this.setQuantityBorderBuyColor(e) : this.setQuantityBorderSellColor(e), this
+              'buy' === this._direction ? this.setQuantityBorderBuyColor(e) : this.setQuantityBorderSellColor(e),
+              this
             )
           }),
           (u.prototype.setQuantityBorderBuyColor = function (e) {
@@ -88111,7 +89021,9 @@
           }),
           (u.prototype.getQuantityBackgroundColor = function () {
             var e = this._line.properties()
-            return ('buy' === this._direction ? e.quantityBackgroundBuyColor : e.quantityBackgroundSellColor).value()
+            return (
+              'buy' === this._direction ? e.quantityBackgroundBuyColor : e.quantityBackgroundSellColor
+            ).value()
           }),
           (u.prototype.setQuantityBackgroundColor = function (e) {
             return (
@@ -88165,7 +89077,9 @@
           }),
           (u.prototype.getReverseButtonBorderColor = function () {
             var e = this._line.properties()
-            return ('buy' === this._direction ? e.reverseButtonBorderBuyColor : e.reverseButtonBorderSellColor).value()
+            return (
+              'buy' === this._direction ? e.reverseButtonBorderBuyColor : e.reverseButtonBorderSellColor
+            ).value()
           }),
           (u.prototype.setReverseButtonBorderColor = function (e) {
             return (
@@ -88203,7 +89117,9 @@
           }),
           (u.prototype.setReverseButtonIconColor = function (e) {
             return (
-              'buy' === this._direction ? this.setReverseButtonIconBuyColor(e) : this.setReverseButtonIconSellColor(e),
+              'buy' === this._direction
+                ? this.setReverseButtonIconBuyColor(e)
+                : this.setReverseButtonIconSellColor(e),
               this
             )
           }),
@@ -88219,7 +89135,9 @@
           }),
           (u.prototype.setCloseButtonBorderColor = function (e) {
             return (
-              'buy' === this._direction ? this.setCloseButtonBorderBuyColor(e) : this.setCloseButtonBorderSellColor(e),
+              'buy' === this._direction
+                ? this.setCloseButtonBorderBuyColor(e)
+                : this.setCloseButtonBorderSellColor(e),
               this
             )
           }),
@@ -88251,7 +89169,8 @@
           }),
           (u.prototype.setCloseButtonIconColor = function (e) {
             return (
-              'buy' === this._direction ? this.setCloseButtonIconBuyColor(e) : this.setCloseButtonIconSellColor(e), this
+              'buy' === this._direction ? this.setCloseButtonIconBuyColor(e) : this.setCloseButtonIconSellColor(e),
+              this
             )
           }),
           (u.prototype.setCloseButtonIconBuyColor = function (e) {
@@ -88346,7 +89265,9 @@
             ;(this._points[e] = t), this.normalizePoints()
           }),
           (d.prototype.addPoint = function (e, t) {
-            return this._points.push(e), (this._lastPoint = null), this.normalizePoints(), this.createServerPoints(), !0
+            return (
+              this._points.push(e), (this._lastPoint = null), this.normalizePoints(), this.createServerPoints(), !0
+            )
           }),
           (d.prototype.translatedType = function () {
             return 'Position'
@@ -88394,7 +89315,7 @@
             r._configureProperties(e)
           }),
           (t.LineToolPosition = d)
-      }.call(this, i('Kxc7')))
+      }).call(this, i('Kxc7'))
     },
     zoPk: function (e, t, i) {
       'use strict'

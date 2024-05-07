@@ -15,6 +15,7 @@ const colors = {
   'grey-6': '#E2E2E2',
   'grey-7': '#D9D9D9',
   'grey-8': '#EEE',
+  'grey-9': '#AEA0B9',
   'blue-1': '#5855FF',
   'purple-1': '#A934FF',
   'purple-2': '#9625AE',
@@ -23,8 +24,10 @@ const colors = {
   'green-1': '#50BB35',
   'green-2': '#71C25D',
   'green-3': '#80CE00',
+  'green-4': '#6EAD57',
   'red-1': '#F06565',
   'red-2': '#F35355',
+  'yellow-1': '#FFB800',
   'green-gradient-1': '#8ADE75',
   'green-gradient-2': '#4B831D',
   'green-gradient-3': '#37BB7D',
@@ -43,6 +46,8 @@ const colors = {
 }
 const backgroundImage = {
   'gradient-1': 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%)',
+  'gradient-2': 'linear-gradient(0deg, #0F0F0F 0%, rgba(19, 19, 19, 0.00) 100%)',
+  'gradient-lite-3': 'linear-gradient(0deg, #F7F0FD 0%, rgba(247, 240, 253, 0.00) 100%)',
   ...twConfigColors.backgroundImage
 }
 
