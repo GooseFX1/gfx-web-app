@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useRewardToggle } from '../../context/reward_toggle'
 import 'styled-components/macro'
 import useBreakPoint from '../../hooks/useBreakPoint'
@@ -9,6 +9,8 @@ import Rewards from './v2/Rewards'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
 import RewardsClose from '@/assets/rewards_close.svg?react'
+import { renderSendWidget } from '@cedelabs/widgets-universal'
+
 export const REWARD_PANEL_INDEX = 0
 export const REFER_PANEL_INDEX = 1
 export const RAFFLE_PANEL_INDEX = 2
@@ -17,6 +19,10 @@ export const RewardsButton: FC = () => {
   const { rewardToggle, changePanel } = useRewardToggle()
 
   const { hasRewards } = useRewards()
+  const [connectToCede, setConnectToCede] = useState(false)
+  useEffect(() => {
+    connectToCede && renderSendWidget('#farm-container')
+  }, [connectToCede])
 
   const riveComponent = (
     <>
@@ -38,14 +44,24 @@ export const RewardsButton: FC = () => {
   }, [])
 
   return (
-    <Button
-      onClick={handleClick}
-      variant={'outline'}
-      size={'sm'}
-      className={'border-background-blue dark:border-white rounded-full w-[30px] relative'}
-    >
-      {riveComponent}
-    </Button>
+    <div className="flex gap-2">
+      <Button
+        onClick={() => setConnectToCede(true)}
+        variant={'outline'}
+        size={'sm'}
+        className={'border-background-blue dark:border-white relative'}
+      >
+        Connect to Cede
+      </Button>
+      <Button
+        onClick={handleClick}
+        variant={'outline'}
+        size={'sm'}
+        className={'border-background-blue dark:border-white rounded-full w-[30px] relative'}
+      >
+        {riveComponent}
+      </Button>
+    </div>
   )
 }
 
