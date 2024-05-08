@@ -1640,7 +1640,7 @@ const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handl
       </div>
       <div
         onClick={() => handleOrderSide('sell')}
-        className={cn(`h-[35px] w-[50%] flex items-center  sm:rounded-[10px] duration-200 cursor-pointer rounded-[3px]
+        className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]
       justify-center ${order.side === 'sell' && 'bg-red-1'}`)}
       >
         <TitleLabel whiteText={order.side === 'sell'}> Short </TitleLabel>

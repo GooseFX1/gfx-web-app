@@ -450,7 +450,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          className={cn('min-w-[140px] w-[140px] mt-2 sm:mt-[-5px]')}
+          className={cn('min-w-[140px] w-[140px] mt-2 sm:mt-[-8px]')}
           variant="default"
           colorScheme="red"
           size="lg"

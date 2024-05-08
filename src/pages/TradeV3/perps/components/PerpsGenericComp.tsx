@@ -4,7 +4,7 @@ import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 
 export const BlackGradientBg: FC<{ children: ReactNode }> = ({ children }) => (
   <div
-    className="fixed bottom-0 left-0 w-full h-20  gradient-lite-3 dark:bg-gradient-2
+    className="fixed bottom-0 left-0 w-full h-20  bg-gradient-lite-3 dark:bg-gradient-2
 z-50 flex justify-center items-center"
   >
     {children}
