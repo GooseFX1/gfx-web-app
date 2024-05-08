@@ -5,16 +5,14 @@ import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../api'
 import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 import { Tooltip } from '../../../components'
+import { Button } from 'gfx-component-lib'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -152,8 +150,6 @@ const FundingHistory: FC = () => {
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
-  const [tradeType, setTradeType] = useState<string>('deposit')
-
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
@@ -196,22 +192,10 @@ const FundingHistory: FC = () => {
   return (
     <WRAPPER>
       {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
       <h1>Funding</h1>
       <ACCOUNTVALUESFLEX>
@@ -275,9 +259,13 @@ const FundingHistory: FC = () => {
             <p>No Funding Found</p>
             {!connected && <Connect />}
             {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+              <Button
+                variant="primary"
+                colorScheme={'secondaryGradient'}
+                onClick={() => setDepositWithdrawModal(true)}
+              >
                 Deposit Now
-              </button>
+              </Button>
             )}
           </div>
         )}

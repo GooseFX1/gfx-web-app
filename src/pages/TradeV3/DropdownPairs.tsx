@@ -24,6 +24,7 @@ import {
   cn
 } from 'gfx-component-lib'
 import { GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const SELECTED_PAIR_CTN = styled.div`
   ${tw`h-10 w-[180px] rounded-[36px] cursor-pointer p-0.5 mt-0`}
@@ -175,6 +176,7 @@ const SelectCryptoModal: FC<{
   )
   const history = useHistory()
   const [searchTokens, setSearchTokens] = useState<string>('')
+  const { isMobile } = useBreakPoint()
 
   const handleSelection = (item) => {
     if (item.type === 'synth') {
@@ -197,12 +199,11 @@ const SelectCryptoModal: FC<{
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogOverlay />
-      <DialogClose onClick={() => setShowModal(false)} />
 
       <DialogContent
         size="md"
         className={cn(' min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
-        placement={checkMobile() ? 'bottom' : 'default'}
+        placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogCloseDefault onClick={() => setShowModal(false)} />
 

@@ -61,7 +61,7 @@ export const GradientButtonWithBorder: FC<{ children: ReactNode; radius: number;
 }
 
 export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px]')}>{children}</div>
+  <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px] sm:rounded-[10px]')}>{children}</div>
 )
 
 export const ContentLabel: FC<{ children: ReactNode }> = ({ children }) => (

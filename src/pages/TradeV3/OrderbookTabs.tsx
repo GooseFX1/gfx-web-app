@@ -124,10 +124,10 @@ export const OrderbookTabs: React.FC = () => {
   //   </WRAPPER>
   // )
   return (
-    <Tabs className="p-[0px] h-full" defaultValue="1">
-      <TabsList>
+    <Tabs className="p-[0px] h-full rounded-[3px]" defaultValue="1">
+      <TabsList className="rounded-[3px]">
         <TabsTrigger
-          className={cn('w-[50%]')}
+          className={cn('w-[50%] rounded-[3px]')}
           size="xl"
           value="1"
           onClick={() => setSelectedTab('orderbook')}
@@ -136,7 +136,7 @@ export const OrderbookTabs: React.FC = () => {
           <TitleLabel whiteText={selectedTab === 'orderbook'}>Orderbook</TitleLabel>
         </TabsTrigger>
         <TabsTrigger
-          className={cn('w-[50%]')}
+          className={cn('w-[50%] ')}
           size="xl"
           value="2"
           onClick={() => setSelectedTab('trades')}

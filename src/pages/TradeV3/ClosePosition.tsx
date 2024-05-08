@@ -31,51 +31,6 @@ import {
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { InfoRow } from './TradeConfirmation'
 
-const WRAPPER = styled.div`
-  .percentage {
-    ${tw`w-full h-[45px] rounded-circle flex flex-row dark:bg-black-1 bg-grey-4 mb-3.75`}
-    >input {
-      ${tw`w-full h-[45px] rounded-circle flex pl-6 font-semibold text-regular text-grey-1 
-        flex-row dark:bg-black-1 bg-grey-4 border-none`}
-      outline: none;
-    }
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input[type='number'] {
-      -moz-appearance: textfield;
-    }
-    .percentage-num {
-      ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center justify-center h-full 
-        text-[16px] text-grey-1 sm:text-regular`}
-    }
-    .selected {
-      ${tw`rounded-half text-white dark:text-grey-5`}
-      background-image: linear-gradient(105deg, #f7931a 6%, #ac1cc7 96%);
-    }
-  }
-`
-
-const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-4 sm:mb-2.5`}
-
-  > span {
-    ${tw`text-average font-semibold text-grey-1 sm:text-regular`}
-  }
-
-  .value {
-    ${tw`text-black-4 dark:text-white`}
-    .positive {
-      ${tw`text-green-2 font-medium`}
-    }
-    .negative {
-      ${tw`text-red-1 font-medium`}
-    }
-  }
-`
-
 const percentDetails = [
   {
     index: 0,
@@ -108,7 +63,7 @@ export const ClosePositionDialog: FC<{
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
     <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'w-[500px] h-[356px]'}>
-      <DialogCloseDefault onClick={() => setVisibleState(false)} />
+      <DialogCloseDefault />
 
       <DialogBody>
         <ClosePosition
@@ -281,7 +236,7 @@ export const ClosePosition: FC<{
   }, [exitPrice, price, displayExitQty])
 
   return (
-    <div className="w-full p-2.5">
+    <div className="w-full p-2.5 sm:px-10">
       <div tw="flex items-center my-4 sm:my-3">
         <div className="text-[18px]">
           <InfoLabel>
@@ -297,7 +252,7 @@ export const ClosePosition: FC<{
           <TabsList>
             {percentDetails.map((elem, index) => (
               <TabsTrigger
-                className={cn('w-[25%] h-8.75')}
+                className={cn('w-[25%]')}
                 size="xl"
                 key={index}
                 value={index.toString()}
@@ -361,12 +316,12 @@ export const ClosePosition: FC<{
       </div>
       <Button
         onClick={closePositionFn}
-        height="35px"
-        className={cn(`w-[200px] h-10 ml-[150px] bottom-2.5 absolute`)}
+        className={`w-[200px] ml-[150px] sm:ml-[120px] bottom-2.5 absolute`}
         colorScheme={'blue'}
         disabled={loading}
         loading={loading}
         width="100%"
+        size="lg"
         // cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
       >
         <span>
