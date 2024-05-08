@@ -6,12 +6,13 @@ import {
 } from '@solana/web3.js'
 
 type TXN_IX = TransactionInstruction | TransactionInstructionCtorFields
-type TXN = Transaction | TXN_IX
+export type TXN = Transaction | TXN_IX
 const DEFAULT_PRIORITY_FEE = 50000
 
 class TransactionBuilder {
   _transaction: Transaction = new Transaction()
   _priorityFee: number = DEFAULT_PRIORITY_FEE
+  _usePriorityFee: boolean = false
 
   constructor(txn?: TXN | Array<TXN>) {
     if (!txn) return
@@ -49,11 +50,13 @@ class TransactionBuilder {
   }
 
   getTransaction(): Transaction {
-    const ix = ComputeBudgetProgram.setComputeUnitPrice({
-      microLamports: this._priorityFee
-    })
+    if (this._usePriorityFee) {
+      const ix = ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: this._priorityFee
+      })
 
-    this._transaction.instructions.unshift(ix)
+      this._transaction.instructions.unshift(ix)
+    }
 
     return this._transaction
   }

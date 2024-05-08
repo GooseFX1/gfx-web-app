@@ -91,6 +91,7 @@ interface ISettingsConfig {
   priorityFeeInstruction?: TransactionInstruction
   setPriorityFee?: Dispatch<SetStateAction<PriorityFeeName>>
   latency: number
+  priorityFeeValue: number
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -128,7 +129,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
 
-  const priorityFeeInstruction = useMemo(() => {
+  const { priorityFeeInstruction, priorityFeeValue } = useMemo(() => {
     let fee = 0.0
     switch (priorityFee) {
       case 'Fast':
@@ -138,9 +139,12 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         fee = 50000
         break
     }
-    return ComputeBudgetProgram.setComputeUnitPrice({
-      microLamports: fee
-    })
+    return {
+      priorityFeeInstruction: ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: fee
+      }),
+      priorityFeeValue: fee
+    }
   }, [priorityFee])
   const curEnv: string = useMemo(() => {
     const host = window.location.hostname
@@ -273,7 +277,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         priorityFee,
         setPriorityFee,
         priorityFeeInstruction,
-        latency
+        latency,
+        priorityFeeValue
       }}
     >
       {children}

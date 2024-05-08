@@ -23,7 +23,7 @@ import * as anchor from '@project-serum/anchor'
 import { BN, Wallet } from '@project-serum/anchor'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from './settings'
-import { Keypair, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js'
 import { confirmTransaction, createAssociatedTokenAccountIx } from '../web3'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
 import { SubType } from '../hooks/useSolSub'
@@ -31,8 +31,8 @@ import CoinGecko from 'coingecko-api'
 import { ADDRESSES as rewardAddresses } from 'goosefx-stake-rewards-sdk/dist/constants'
 import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import useTransaction from '@/hooks/useTransaction'
 import TransactionBuilder from '@/web3/Builders/transaction.builder'
-import { notifyUsingPromise } from '@/utils/perpsNotifications'
 
 const cg = new CoinGecko()
 
@@ -202,6 +202,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
   const [pubKeys, setPubKeys] = useState<Record<string, PublicKey>>({})
   const { connectedWalletPublicKey } = useWalletBalance()
+  const { createTransactionBuilder, sendTransaction } = useTransaction()
   const resetStakeRewards = useCallback(() => {
     setStakePool(initialState.stakePool)
     setGofxVault(initialState.gofxVault)
@@ -339,7 +340,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })
   }, [walletContext.publicKey, walletContext?.wallet?.adapter?.publicKey, updateStakeDetails, stakeRewards])
   const checkForUserAccount = useCallback(
-    async (callback: () => Promise<TransactionInstruction>): Promise<Transaction> => {
+    async (callback: () => Promise<TransactionInstruction>): Promise<TransactionBuilder> => {
       if (!stakeRewards) {
         console.warn('stake rewards not loaded')
       }
@@ -356,7 +357,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         connection.getAccountInfo(usdcAddress),
         connection.getAccountInfo(gofxAddress)
       ])
-      const txBuilder = new TransactionBuilder()
+      const txBuilder = createTransactionBuilder()
 
       let res = userMetadata != null && usdcAccount != null && gofxAccount != null
       if (!usdcAccount) {
@@ -387,37 +388,28 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         txBuilder.add(txn)
       }
       const txnForUserAccountRequirements = txBuilder.getTransaction()
-      if (txnForUserAccountRequirements.instructions.length > 0) {
-        const txnSig = await walletContext
-          .sendTransaction(txnForUserAccountRequirements, connection)
-          .catch((err) => {
-            console.log(err)
-            return ''
-          })
 
-        res = await notifyUsingPromise(confirmTransaction(stakeRewards.connection, txnSig, 'confirmed'))
+      if (txnForUserAccountRequirements.instructions.length > (txBuilder._usePriorityFee ? 1 : 0)) {
+        res = Boolean(await sendTransaction(txnForUserAccountRequirements, { connection }))
       }
       if (!res) {
         return
       }
-      const txn = new TransactionBuilder()
+      const txn = createTransactionBuilder()
       txn.add(await callback())
-      return txn.getTransaction()
+      return txn
     },
     [stakeRewards, walletContext, getNetwork, connection]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
     const txn: TransactionInstruction = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
-    const txBuilder = new TransactionBuilder().add(txn)
-    const txnSig = await walletContext.sendTransaction(txBuilder.getTransaction(), connection).catch((err) => {
-      console.log(err)
-      return ''
-    })
+    const txBuilder = createTransactionBuilder().add(txn)
+    const txnSig = await sendTransaction(txBuilder.getTransaction(), { connection })
     if (txnSig === '') {
       return false
     }
-    await notifyUsingPromise(confirmTransaction(stakeRewards.connection, txnSig, 'confirmed'))
+
     return true
   }, [stakeRewards, walletContext, confirmTransaction, connection])
   const closeUserAccount = useCallback(async () => {
@@ -462,19 +454,17 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     async (amount: number) => {
       // console.log(amount)
       const stakeAmount = new anchor.BN(amount * 1e9)
-      const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, walletContext.publicKey))
 
-      const txnSig = await walletContext
-        .sendTransaction(txn, connection, {
+      const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, walletContext.publicKey))
+      console.log('STAKE')
+      await sendTransaction(txn.getTransaction(), {
+        connection,
+        options: {
           skipPreflight: true,
           preflightCommitment: 'confirmed'
-        })
-        .catch((err) => {
-          console.log(err)
-          return ''
-        })
-      console.log('txnSig', txnSig)
-      notifyUsingPromise(confirmTransaction(stakeRewards.connection, txnSig, 'confirmed'))
+        }
+      })
+      console.log('STAKE END')
     },
     [stakeRewards, walletContext, confirmTransaction, connection]
   )
@@ -482,7 +472,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     async (amount: number) => {
       const gofxMint = rewardAddresses[stakeRewards.network].GOFX_MINT
       const account = await connection.getTokenAccountsByOwner(walletContext.publicKey, { mint: gofxMint })
-      const txBuilder = new TransactionBuilder()
+      const txBuilder = createTransactionBuilder()
       if (!account || !account.value.length) {
         const ata = await getAssociatedTokenAddress(
           gofxMint, // mint
@@ -496,13 +486,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const txn = await checkForUserAccount(async () =>
         stakeRewards.unstake(unstakeAmount, walletContext.publicKey)
       )
-      txBuilder.add(txn)
-      //const proposedEndDate = moment().add(7, 'days').calendar()
-      const txnSig = await walletContext.sendTransaction(txBuilder.getTransaction(), connection).catch((err) => {
-        console.log(err)
-        return ''
-      })
-      notifyUsingPromise(confirmTransaction(stakeRewards.connection, txnSig, 'confirmed'))
+      txBuilder.add(txn.getTransaction())
+      sendTransaction(txBuilder.getTransaction(), { connection })
     },
     [stakeRewards, walletContext, connection]
   )
@@ -513,13 +498,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [stakeRewards, walletContext])
   const claimFees = useCallback(async () => {
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(walletContext.publicKey))
-
-    const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
-      console.log(err)
-      return ''
-    })
-
-    notifyUsingPromise(confirmTransaction(connection, txnSig, 'confirmed'))
+    sendTransaction(txn.getTransaction(), { connection })
   }, [stakeRewards, walletContext, connection, claimable])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
@@ -529,13 +508,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           walletContext.publicKey
         )
       )
-
-      const txnSig = await walletContext.sendTransaction(txn, connection).catch((err) => {
-        console.log(err)
-        return ''
-      })
-
-      notifyUsingPromise(confirmTransaction(stakeRewards.connection, txnSig, 'confirmed'))
+      sendTransaction(txn.getTransaction(), { connection })
     },
     [stakeRewards, walletContext]
   )

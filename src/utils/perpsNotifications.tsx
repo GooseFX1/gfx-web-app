@@ -3,7 +3,8 @@ import React, { FC, ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
 import { IntemediaryToast, OpenSolScanLink, OpenToastLink, cn, IntemediaryToastHeading } from 'gfx-component-lib'
-import { toast } from 'sonner'
+import { toast, ToastT } from 'sonner'
+import { Toast } from 'react-hot-toast'
 
 const CLOSE = styled.div`
   background-color: red;
@@ -153,7 +154,10 @@ export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
 export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
   return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
 }
-export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<boolean> => {
+export const notifyUsingPromise = async (
+  promise: Promise<unknown>,
+  onDismiss?: (toast: ToastT) => void
+): Promise<boolean> => {
   let res = false
   await toast.promise(promise, {
     loading: (
@@ -180,7 +184,10 @@ export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<boo
           Contact Us
         </OpenToastLink>
       </IntemediaryToast>
-    )
+    ),
+    onDismiss: (toast: ToastT) => {
+      if (onDismiss) onDismiss(toast)
+    }
   })
   return res
 }
