@@ -30,6 +30,7 @@ import { ModalHeader } from '../InfoBanner'
 import { DepositWithdraw } from './DepositWithdrawNew'
 import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
 import { CircularArrow } from '@/components/common/Arrow'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const WRAPPER = styled.div`
   .input-row {
@@ -67,7 +68,7 @@ const WRAPPER = styled.div`
 `
 
 const CLOSE_ACCOUNT_CONDITIONS = styled.div`
-  ${tw`!text-regular !font-semibold`}
+  ${tw`!text-regular !font-semibold `}
   div {
     ${tw`mt-1 flex items-center`}
   }
@@ -171,6 +172,7 @@ export const DepositWithdrawDialog: FC<{
   setDepositWithdrawModal: Dispatch<SetStateAction<boolean>>
 }> = ({ depositWithdrawModal, setDepositWithdrawModal }) => {
   const [tradeType, setTradeType] = useState<string>('deposit')
+  const { isMobile } = useBreakPoint()
 
   return (
     <Dialog open={depositWithdrawModal} onOpenChange={setDepositWithdrawModal}>
@@ -178,8 +180,8 @@ export const DepositWithdrawDialog: FC<{
       {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
       <DialogContent
         size="md"
-        placement={checkMobile() ? 'bottom' : 'default'}
-        className={'z-[999] w-[500px] h-[356px] sm:w-[100vw]'}
+        placement={isMobile ? 'bottom' : 'default'}
+        className={'w-[500px] h-[356px] sm:w-[100vw]'}
       >
         <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
 
@@ -204,6 +206,10 @@ export const Tokens: FC<{ token: string; type: MarketType; marketAddress: string
   const truncateAddress = (address: string): string => `${address.substr(0, 5)}..${address.substr(-5, 5)}`
   const truncMarketAddress = truncateAddress(marketAddress)
   const tokenAmount = balances[marketAddress]
+  const uiAmount = useMemo(
+    () => (tokenAmount?.uiAmount ? tokenAmount?.uiAmount?.toFixed(2) : '0.00'),
+    [tokenAmount]
+  )
   return (
     <DROPDOWN_PAIR_DIV>
       <COIN_INFO>
@@ -211,7 +217,7 @@ export const Tokens: FC<{ token: string; type: MarketType; marketAddress: string
         <div className="coin">{symbol}</div>
         <div className="market-add">{truncMarketAddress}</div>
       </COIN_INFO>
-      <div className="available-bal">{tokenAmount ? tokenAmount.uiAmountString : '0.00'}</div>
+      <div className="available-bal">{tokenAmount ? uiAmount : '0.00'}</div>
     </DROPDOWN_PAIR_DIV>
   )
 }
@@ -273,7 +279,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
 
   return (
     <div>
-      <div tw="flex flex-row items-center justify-between mt-[-10px]">
+      <div tw="flex flex-row items-center justify-between mt-[-10px] sm:mt-[-5px]">
         <InfoLabel>
           <h3>Choose account to close</h3>
         </InfoLabel>
@@ -311,7 +317,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
       </Dropdown> */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild={true}>
-          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 rounded-[100px]')}>
+          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 sm:mt-2.5 rounded-[100px]')}>
             <div className={cn('flex w-full items-center')}>
               {/* <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" /> */}
               <InfoLabel>
@@ -387,7 +393,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
         </DropdownMenuContent> */}
       </DropdownMenu>
 
-      <div tw="flex flex-row items-center justify-between mt-2 sm:mt-5">
+      <div tw="flex flex-row items-center justify-between mt-2 sm:mt-4">
         <InfoLabel>In order to close your account: </InfoLabel>
       </div>
       <CLOSE_ACCOUNT_CONDITIONS>
@@ -444,12 +450,11 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          className={cn('min-w-[140px] w-full h-[30px]')}
+          className={cn('min-w-[140px] w-[140px] mt-2 sm:mt-[-8px]')}
           variant="default"
           colorScheme="red"
           size="lg"
           onClick={closeTraderAccountFn}
-          tw="w-[140px] h-8.75 mt-2 sm:mt-3"
         >
           Close Account
         </Button>

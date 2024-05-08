@@ -12,10 +12,10 @@ import { formatNumberInThousands } from '../utils'
 import { TooltipTrigger, TooltipContent, Tooltip, cn } from 'gfx-component-lib'
 import { InfoImage, InfoLabel, PerpsLayout } from './PerpsGenericComp'
 import { Connect } from '../../../../layouts'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export const CollateralPanel: FC = (): JSX.Element => {
-  const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey, wallet?.adapter])
+  const { connectedWalletPublicKey } = useWalletBalance()
 
   return (
     <PerpsLayout>
@@ -24,7 +24,7 @@ export const CollateralPanel: FC = (): JSX.Element => {
           <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" />
           <InfoLabel>Sol Account</InfoLabel>
         </div>
-        {publicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
+        {connectedWalletPublicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
       </div>
     </PerpsLayout>
   )
@@ -87,7 +87,7 @@ const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
 
 const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
   const { mode } = useDarkMode()
-  const getHealthData = () => {
+  const healthData = useMemo(() => {
     const percent = accountHealth
     let barColour = ''
     if (percent <= 20) barColour = 'red'
@@ -103,8 +103,8 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
         <InfoLabel>{percent}%</InfoLabel>
       </div>
     )
-  }
-  const getBarsData = () => {
+  }, [accountHealth])
+  const barsData = useMemo(() => {
     const accountHealth = 40
     return (
       <div className="h-[20px] w-[32px]">
@@ -124,7 +124,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
         </div>
       </div>
     )
-  }
+  }, [accountHealth])
   return (
     <div tw="flex items-center justify-between my-2.5">
       <div>
@@ -142,8 +142,8 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
         </div>
       </div>
       <div className="flex items-center">
-        <div>{getBarsData()}</div>
-        <InfoLabel>{getHealthData()}</InfoLabel>
+        <div>{barsData}</div>
+        <InfoLabel>{healthData}</InfoLabel>
       </div>
     </div>
   )

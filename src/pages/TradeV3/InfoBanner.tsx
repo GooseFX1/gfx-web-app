@@ -204,7 +204,7 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
       <Tabs className="p-[0px] mb-2 h-full" defaultValue="1">
         <TabsList>
           <TabsTrigger
-            className={cn('w-[85px] h-8.75')}
+            className={cn('w-[85px]')}
             size="xl"
             value="1"
             variant="primary"
@@ -213,7 +213,7 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
             <TitleLabel whiteText={tradeType === 'deposit'}>Deposit</TitleLabel>
           </TabsTrigger>
           <TabsTrigger
-            className={cn('w-[85px] h-8.75')}
+            className={cn('w-[85px]')}
             size="xl"
             value="2"
             variant="primary"
@@ -223,7 +223,7 @@ export const ModalHeader: FC<{ setTradeType: (tradeType: string) => void; tradeT
           </TabsTrigger>
           {publicKey && (
             <TabsTrigger
-              className={cn('w-[85px] h-8.75')}
+              className={cn('w-[85px]')}
               size="xl"
               value="3"
               variant="primary"
@@ -354,11 +354,11 @@ export const InfoBanner: FC<{
             //   variant="outline"
             //   colorScheme="primaryGradient"
             //   size="sm"
-            className="max-w-[100px] min-h-[42px]
+            className="max-w-[120px] min-h-[42px]
            ml-4"
           >
             <ContainerTitle>
-              <h6>Market Price:&nbsp;</h6>
+              <h4>Market Price:&nbsp;</h4>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
                 <p>The current price at which a good or service can be purchased or sold.</p>
@@ -372,10 +372,10 @@ export const InfoBanner: FC<{
             // variant="outline"
             // colorScheme="primaryGradient"
             // size="sm"
-            className="max-w-[115px] min-h-[42px] ml-4"
+            className="max-w-[135px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
-              <h6>24H Change:&nbsp;</h6>
+              <h4>24H Change:&nbsp;</h4>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
                 <p>Volatility of the current asset selected in a time period of 24H.</p>
@@ -441,10 +441,10 @@ export const InfoBanner: FC<{
             // variant="outline"
             // colorScheme="primaryGradient"
             // size="sm"
-            className="max-w-[105px] min-h-[42px] ml-4"
+            className="max-w-[135px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
-              <h6>Open Interest:&nbsp;</h6>
+              <h4>Open Interest:&nbsp;</h4>
               {/* TODO Placement bottom */}
               <IconTooltip tooltipType={'outline'}>
                 <p>The total number of outstanding derivative contracts for an asset.</p>
@@ -454,9 +454,11 @@ export const InfoBanner: FC<{
               {!traderInfo.openInterests ? (
                 <Loader />
               ) : (
-                <h4 className="leading-4">
-                  <span>{openInterestFormatted} SOL</span>
-                </h4>
+                <InfoLabel>
+                  <h4 className="leading-4">
+                    <span>{openInterestFormatted} SOL</span>
+                  </h4>
+                </InfoLabel>
               )}
             </>
           </div>
@@ -521,12 +523,7 @@ export const InfoBanner: FC<{
           {/* <div className="white-background">
             <DEPOSIT_BTN onClick={() => setDepositWithdrawModal(true)}>Deposit / Withdraw </DEPOSIT_BTN>
           </div> */}
-          <Button
-            variant="default"
-            className={cn('h-[30px]')}
-            colorScheme="blue"
-            onClick={() => setDepositWithdrawModal(true)}
-          >
+          <Button variant="default" colorScheme="blue" size="sm" onClick={() => setDepositWithdrawModal(true)}>
             Deposit / Withdraw
           </Button>
         </DEPOSIT_WRAPPER>

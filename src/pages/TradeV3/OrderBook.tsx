@@ -493,7 +493,7 @@ export const OrderBook: FC = () => {
       }
       <div className={cn('px-2.5')}>
         <div
-          className="flex border h-8 border-t-0 border-l-0 pb-1
+          className="flex border h-8 border-t-0 border-l-0 pb-1 border-r-0
         items-center justify-between overflow-auto dark:border-b-black-4 dark:border-r-0
          border-b-grey-4"
         >

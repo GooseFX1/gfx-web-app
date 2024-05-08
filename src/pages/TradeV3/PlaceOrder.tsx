@@ -1284,7 +1284,7 @@ export const PlaceOrder: FC = () => {
   //   </WRAPPER>
   // )
   return (
-    <div className={cn('h-full')}>
+    <div className={cn('h-full rounded-[3px] sm:rounded-[10px]')}>
       <PerpsLayout>
         <LongShortTitleLayout handleOrderSide={handleOrderSide} />
         <LeverageRatioTile sliderValue={sliderValue} />
@@ -1376,19 +1376,18 @@ export const PlaceOrder: FC = () => {
           <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col')}>
               <div className="pb-1">
-                {' '}
-                <InfoLabel>Size</InfoLabel>{' '}
+                <InfoLabel>Size</InfoLabel>
               </div>
               <div className={cn('w-full flex')}>
                 <Input
                   onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 SOL'}
                   onFocus={() => setFocused('size')}
-                  value={Number(order.size) !== 0 ? order.size : ''}
+                  value={order.size !== '' ? order.size : ''}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                   className={cn(
                     `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    Number(order.size) !== 0 && `pr-12`
+                    order.size !== '' && `pr-12`
                   )}
                 />
                 <div className="relative">
@@ -1467,7 +1466,7 @@ export const PlaceOrder: FC = () => {
                   <TabsList className="!p-0">
                     {TAKE_PROFIT_ARRAY.map((elem, index) => (
                       <TabsTrigger
-                        className={cn('w-[33%] h-[35px]')}
+                        className={cn('w-[33%] sm:h-[35px] h-[30px] ')}
                         size="xl"
                         key={index}
                         value={index.toString()}
@@ -1631,7 +1630,7 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
 const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handleOrderSide }) => {
   const { order } = useOrder()
   return (
-    <div className={cn('flex items-center sm:p-[5px]')}>
+    <div className={cn('flex items-center sm:p-[5px] sm:rounded-[10px]')}>
       <div
         onClick={() => handleOrderSide('buy')}
         className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]

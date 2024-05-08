@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, useMemo } from 'react'
+import { FC, ReactElement, useMemo } from 'react'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { GradientText } from '../../components'
@@ -7,8 +7,18 @@ import { useCrypto, useOrder, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { checkMobile } from '../../utils'
 import useBoolean from '../../hooks/useBoolean'
-import { Button, Dialog, DialogBody, DialogContent, DialogHeader, DialogOverlay, cn } from 'gfx-component-lib'
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogCloseDefault,
+  DialogContent,
+  DialogHeader,
+  DialogOverlay,
+  cn
+} from 'gfx-component-lib'
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const WRAPPER = styled.div``
 
@@ -97,6 +107,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
     }
   }
 
+  const { isMobile } = useBreakPoint()
   const cssStyle = useMemo(() => {
     if (order.side === 'buy') return tw`bg-green-3 text-white font-semibold border-0 rounded-circle text-regular`
     else return tw`bg-red-2 text-white font-semibold border-0 rounded-circle text-regular`
@@ -162,11 +173,15 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
     <Dialog open={open} onOpenChange={setVisibility}>
       <DialogOverlay />
       <DialogContent
-        size="md"
-        placement={checkMobile() ? 'bottom' : 'default'}
-        className={cn('z-[962] sm:w-[100vw] min-md:w-[500px] sm:bottom-0 h-[346px] pt-3 flex flex-col gap-0')}
+        size="sm"
+        placement={isMobile ? 'bottom' : 'default'}
+        className={cn(
+          'sm:w-[100vw] min-md:w-[500px] rounded-[3px] sm:bottom-0 h-[346px] pt-3 flex flex-col gap-0'
+        )}
       >
-        <DialogHeader className={`space-y-0 w-full h-[58px] px-2.5 text-left `}>
+        <DialogCloseDefault />
+
+        <DialogHeader className={`space-y-0 w-full pb-2 px-2.5 text-left `}>
           <div className={'flex items-center'}>
             <InfoLabel>
               <h3 className="mr-1 mb-1">{order.side === 'buy' ? 'Long' : 'Short'}</h3>
@@ -184,9 +199,11 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
             <InfoRow label="Order Type" value={order.display === 'limit' ? 'Limit' : 'Market'} />
             <InfoRow label="Trader Size" value={`${Number(order.size).toFixed(5)} ${symbol}`} />
             <InfoRow label="Est. Entry Price" value={`$${Number(order.price).toFixed(2)}`} />
+            <TradeConfirmationLine />
             <InfoRow label="Est. Price Impact" value={`${totalPriceImpact.toFixed(4)}%`} />
             <InfoRow label="Slippage Tolerance" value={`${0.1}%`} />
             <InfoRow label="Trader Notional Size" value={`${notionalValue} USDC`} />
+            <TradeConfirmationLine />
             <InfoRow label="Fee (0.1%)" value={`${fee} USDC`} />
             <InfoRow label="Total Cost" value={`${total} USDC`} />
             <InfoRow label="Est. Liquidation Price" value={`${totalPriceImpact.toFixed(4)} USDC`} />
@@ -211,7 +228,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 }
 
 export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
-  <div className="flex justify-between mb-[5px] leading-4">
+  <div className="flex justify-between mb-2 leading-4">
     <ContentLabel>
       <p>{label}</p>
     </ContentLabel>
@@ -219,4 +236,8 @@ export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
       <p className={cn('!font-semibold')}>{value}</p>
     </InfoLabel>
   </div>
+)
+
+export const TradeConfirmationLine = (): ReactElement => (
+  <div className="w-full h-[1px] dark:bg-black-4 bg-grey-4 mb-2"></div>
 )

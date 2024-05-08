@@ -16,6 +16,7 @@ import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-compon
 import { OrderBook } from './OrderBook'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { checkMobile } from '@/utils'
+import useBreakPoint from '@/hooks/useBreakPoint'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 type TabColumnsDisplayProps = {
@@ -409,7 +410,11 @@ const OpenOrdersComponent: FC = () => {
   if (checkMobile() && openOrderUI.length > 0) {
     const mobileContent = useMemo(
       () => (
-        <div className={cn('w-full px-2.5 overflow-auto max-h-[300px] dark:border-black-4 border border-b-0  ')}>
+        <div
+          className={cn(
+            'w-full px-2.5 overflow-auto max-h-[300px] dark:border-black-4 border border-b-0 border-l-0 border-r-0 '
+          )}
+        >
           {openOrderUI &&
             openOrderUI.length > 0 &&
             openOrderUI.map((order, index) =>
@@ -417,12 +422,14 @@ const OpenOrdersComponent: FC = () => {
                 <div
                   key={index}
                   className={cn(
-                    'flex flex-col px-2.5 h-[125px] border border-t-0 border-r-0 border-l-0 dark:border-black-4 '
+                    'flex flex-col px-2.5 h-[125px] pt-2.5 border !border-t-0 !border-r-0 border-l-0 dark:border-black-4 '
                   )}
                 >
                   <div className="flex justify-between mt-1">
-                    <div>
-                      <InfoLabel> SOL-PERP </InfoLabel>
+                    <div className="flex items-center">
+                      <img src="/img/crypto/SOL.svg" alt="SOL" className="w-[20px] h-[20px] mr-1" />
+
+                      <InfoLabel>SOL-PERP </InfoLabel>
                     </div>
                     <div>
                       <InfoLabel>
@@ -438,43 +445,37 @@ const OpenOrdersComponent: FC = () => {
                     <div>
                       <div>
                         <ContentLabel>
-                          {' '}
-                          <p>Size</p>{' '}
-                        </ContentLabel>{' '}
+                          <p>Size</p>
+                        </ContentLabel>
                       </div>
                       <div>
                         <InfoLabel>
-                          {' '}
-                          <p> {order.order.size} </p>{' '}
-                        </InfoLabel>{' '}
+                          <p> {order.order.size} </p>
+                        </InfoLabel>
                       </div>
                     </div>
                     <div>
                       <div>
                         <ContentLabel>
-                          {' '}
-                          <p>Price</p>{' '}
-                        </ContentLabel>{' '}
+                          <p>Price</p>
+                        </ContentLabel>
                       </div>
                       <div>
                         <InfoLabel>
-                          {' '}
-                          <p> {(order.order.size * order.order.price).toFixed(2)} </p>{' '}
-                        </InfoLabel>{' '}
+                          <p> {(order.order.size * order.order.price).toFixed(2)} </p>
+                        </InfoLabel>
                       </div>
                     </div>
                     <div>
                       <div>
                         <ContentLabel>
-                          {' '}
-                          <p>USD Value</p>{' '}
-                        </ContentLabel>{' '}
+                          <p>USD Value</p>
+                        </ContentLabel>
                       </div>
                       <div>
                         <InfoLabel>
-                          {' '}
-                          <p>{(order.order.size * order.order.price).toFixed(2)}</p>{' '}
-                        </InfoLabel>{' '}
+                          <p>{(order.order.size * order.order.price).toFixed(2)}</p>
+                        </InfoLabel>
                       </div>
                     </div>
                   </div>
@@ -564,7 +565,7 @@ const TradeHistoryComponent: FC = () => {
                   <InfoLabel>${order.price} </InfoLabel>
                 </span>
                 <span>
-                  <InfoLabel>{(order.size * order.price).toFixed(2)}</InfoLabel>{' '}
+                  <InfoLabel>{(order.size * order.price).toFixed(2)}</InfoLabel>
                 </span>
               </div>
             ))}
@@ -716,6 +717,7 @@ export const HistoryPanel: FC = () => {
 
   const { market } = selectedCrypto
   let openOrder, baseAvailable, baseBalance, quoteAvailable, quoteBalance
+  const { isMobile } = useBreakPoint()
 
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
@@ -856,7 +858,7 @@ export const HistoryPanel: FC = () => {
   //   </>
   // )
   return (
-    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px] " defaultValue="0">
+    <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px]  " defaultValue="0">
       {closePositionModal && (
         <ClosePositionDialog
           closePositionModal={closePositionModal}
@@ -867,7 +869,7 @@ export const HistoryPanel: FC = () => {
       )}
       <TabsList className={cn('rounded-t-[3px]')}>
         {tabs.map((item, index) => {
-          if (checkMobile() && index > 1) return null
+          if (isMobile && index > 1) return null
           return (
             <TabsTrigger
               className={cn('w-[20%] sm:w-[50%]')}
@@ -882,7 +884,7 @@ export const HistoryPanel: FC = () => {
           )
         })}
       </TabsList>
-      <TabsContent className={cn('h-full sm:min-h-[200px] rounded-b-[3px]')} value="0">
+      <TabsContent className={cn('h-full sm:min-h-[200px] rounded-b-[3px] sm:rounded-[10px]')} value="0">
         <>
           {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
           <PositionDetails
@@ -957,7 +959,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
           >
             <div className="flex justify-between w-full mt-1">
               <div>
-                <InfoLabel>SOL-PERP </InfoLabel>{' '}
+                <InfoLabel>SOL-PERP </InfoLabel>
               </div>
               <div
                 className={cn(
@@ -971,43 +973,37 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
               <div>
                 <div>
                   <ContentLabel>
-                    {' '}
-                    <p>Size</p>{' '}
-                  </ContentLabel>{' '}
+                    <p>Size</p>
+                  </ContentLabel>
                 </div>
                 <div>
                   <InfoLabel>
-                    {' '}
-                    <p> {roundedSize} </p>{' '}
-                  </InfoLabel>{' '}
+                    <p> {roundedSize} </p>
+                  </InfoLabel>
                 </div>
               </div>
               <div>
                 <div>
                   <ContentLabel>
-                    {' '}
-                    <p>Price</p>{' '}
-                  </ContentLabel>{' '}
+                    <p>Price</p>
+                  </ContentLabel>
                 </div>
                 <div>
                   <InfoLabel>
-                    {' '}
-                    <p> {traderInfo.averagePosition.price} </p>{' '}
-                  </InfoLabel>{' '}
+                    <p> {traderInfo.averagePosition.price} </p>
+                  </InfoLabel>
                 </div>
               </div>
               <div>
                 <div>
                   <ContentLabel>
-                    {' '}
-                    <p>USD Value</p>{' '}
-                  </ContentLabel>{' '}
+                    <p>USD Value</p>
+                  </ContentLabel>
                 </div>
                 <div>
                   <InfoLabel>
-                    {' '}
-                    <p> {perpsPrice} </p>{' '}
-                  </InfoLabel>{' '}
+                    <p> {perpsPrice} </p>
+                  </InfoLabel>
                 </div>
               </div>
             </div>
@@ -1038,7 +1034,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
       {traderInfo.averagePosition.side && Number(roundedSize) ? (
         <div className={cn('flex px-2.5 mt-2.5')}>
           <div className={cn('w-[12.5%]')}>
-            <InfoLabel>{selectedCrypto.pair} </InfoLabel>{' '}
+            <InfoLabel>{selectedCrypto.pair} </InfoLabel>
           </div>
           <div
             className={cn(
@@ -1048,19 +1044,19 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
             <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
           </div>
           <div className={cn('w-[12.5%] flex items-center ')}>
-            <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>{' '}
+            <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>
           </div>
           <div className={cn('w-[12.5%] flex items-center')}>
-            <InfoLabel>{roundedSize} </InfoLabel>{' '}
+            <InfoLabel>{roundedSize} </InfoLabel>
           </div>
           <div className={cn('w-[12.5%] flex items-center')}>
-            <InfoLabel>{perpsPrice} </InfoLabel>{' '}
+            <InfoLabel>{perpsPrice} </InfoLabel>
           </div>
           <div className={cn('w-[12.5%] flex items-center')}>
-            <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>{' '}
+            <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>
           </div>
           <div className={cn('w-[12.5%] flex items-center')}>
-            <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>{' '}
+            <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>
           </div>
           <div>
             <Button variant="outline" colorScheme="red" className={cn(`h-[30px]`)} onClick={handleClosePosition}>

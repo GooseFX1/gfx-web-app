@@ -45,13 +45,13 @@ const OrderAccountPositions: FC<{
             <TitleLabel whiteText={selectedTab === tabs[2]}>{tabs[2]}</TitleLabel>
           </TabsTrigger>
         </TabsList>
-        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="1">
+        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="1">
           <PlaceOrderMobiV2 />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="2">
+        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="2">
           <CollateralPanel />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="3">
+        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="3">
           <div className={cn('w-full h-full')}>
             <OpenOrdersAndPositions />
           </div>

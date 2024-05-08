@@ -20,10 +20,10 @@ const Account: FC = () => {
     <div className="no-scrollbar flex flex-row flex-nowrap">
       <Sidebar selected={selected} setSelected={setSelected} />
       {selected === 0 && <AccountOverview />}
-      {selected === 2 && <DepositWithdrawHistory />}
-      {selected === 3 && <Trades />}
-      {selected === 4 && <FundingHistory />}
-      {selected === 5 && <Liquidations />}
+      {selected === 1 && <DepositWithdrawHistory />}
+      {selected === 2 && <Trades />}
+      {selected === 3 && <FundingHistory />}
+      {selected === 4 && <Liquidations />}
     </div>
   ) : (
     <div className={'flex flex-col'}>
