@@ -15,7 +15,7 @@ const OrderAccountPositions: FC<{
 }> = ({ tabs, selectedTab, setSelectedTab }): ReactElement => (
   <div>
     <div>
-      <Tabs className="p-[0px] sm:max-h-[450px] mb-24 sm:mb-4" defaultValue="1">
+      <Tabs className="p-[0px] sm:max-h-[450px] mb-24 sm:mb-4 sm:bg-grey-5 sm:dark:!bg-black-1" defaultValue="1">
         <TabsList className="sm:dark:!bg-black-1 sm:bg-grey-5 sm:py-[15px]">
           <TabsTrigger
             className={cn('w-[33%]')}
