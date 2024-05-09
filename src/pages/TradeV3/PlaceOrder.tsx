@@ -1518,8 +1518,10 @@ export const PlaceOrder: FC = () => {
               <Slider
                 max={10}
                 thumbSize="md"
+                showSteps={true}
                 value={[sliderValue]}
                 onValueChange={(e) => handleSliderChange(e)}
+                steps={4}
                 step={0.1}
                 min={0}
               >
