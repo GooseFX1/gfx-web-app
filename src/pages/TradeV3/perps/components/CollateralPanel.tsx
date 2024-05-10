@@ -57,7 +57,7 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
   return (
     <div>
       <AccountRowHealth accountHealth={accountHealth} />
-      <AccountRow keyStr="Balance" value={formatNumberInThousands(Number(traderInfo.collateralAvailable))} />
+      <AccountRow keyStr="Balance" value={formatNumberInThousands(Number(traderInfo?.collateralAvailable))} />
       <AccountRowPnl keyStr="Unrealized P&L" />
       <AccountRow keyStr="Margin Available" value={formatNumberInThousands(Number(traderInfo.marginAvailable))} />
       <AccountRow keyStr="Est. Liq. Price" value={formatNumberInThousands(Number(traderInfo.liquidationPrice))} />

@@ -1525,20 +1525,23 @@ export const PlaceOrder: FC = () => {
                 step={0.1}
                 min={0}
               >
-                {sliderValue}x
+                {sliderValue?.toFixed(0)}x
               </Slider>
-              <div className={cn('h-5 w-full flex items-center justify-center mt-3')}>
+              <div className={cn('h-5 w-full flex items-center justify-between mt-3 relative')}>
                 <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 2X</TitleLabel>
+                  <TitleLabel> 1X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 4X</TitleLabel>
+                <div className={cn('flex w-full justify-center ')}>
+                  <TitleLabel> 3X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 8X</TitleLabel>
+                <div className={cn('flex w-full  justify-center')}>
+                  <TitleLabel> 5X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 10X</TitleLabel>
+                <div className={cn('flex w-full   justify-center')}>
+                  <TitleLabel> 7X</TitleLabel>
+                </div>
+                <div className={cn('flex w-full  justify-center')}>
+                  <TitleLabel> 9X</TitleLabel>
                 </div>
               </div>
             </div>
