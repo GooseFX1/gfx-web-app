@@ -5,6 +5,7 @@ import { Button, cn } from 'gfx-component-lib'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '../../../layouts/Connect'
 import { TradeConfirmation } from '../TradeConfirmation'
+import { useTraderConfig } from '@/context/trader_risk_group'
 
 const ButtonStatesMobi: FC<{
   tabs: string[]
@@ -13,6 +14,11 @@ const ButtonStatesMobi: FC<{
 }> = ({ tabs, selectedTab, setSelectedTab }): ReactElement => {
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
   const { wallet } = useWallet()
+  const { traderInfo } = useTraderConfig()
+  const collateralAvailable = useMemo(
+    () => Number(traderInfo?.collateralAvailable),
+    [traderInfo?.collateralAvailable]
+  )
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   if (!publicKey)
     return (
@@ -23,7 +29,11 @@ const ButtonStatesMobi: FC<{
         <Connect customButtonStyle={`sm:w-[80vw] w-[90%] !h-10`} />
       </div>
     )
-  else if (selectedTab === tabs[1] || selectedTab === tabs[2])
+  else if (
+    selectedTab === tabs[1] ||
+    selectedTab === tabs[2] ||
+    (selectedTab === tabs[0] && collateralAvailable === 0)
+  )
     return (
       <div
         className="fixed bottom-0 left-0 w-full h-20 bg-gradient-lite-3 dark:bg-gradient-2

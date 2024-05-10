@@ -1594,22 +1594,32 @@ const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
   buttonText,
   handlePlaceOrder,
   buttonState
-}) => (
-  <BlackGradientBg>
-    <div className={cn('w-full absolute flex items-center justify-center')}>
-      <Button
-        className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-100')}
-        variant="default"
-        colorScheme="blue"
-        size="lg"
-        onClick={() => handlePlaceOrder()}
-        disabled={buttonState !== ButtonState.CanPlaceOrder}
-      >
-        <h4>{buttonText}</h4>
-      </Button>
-    </div>
-  </BlackGradientBg>
-)
+}) => {
+  const { traderInfo } = useTraderConfig()
+  const collateralAvailable = useMemo(
+    () => Number(traderInfo?.collateralAvailable),
+    [traderInfo?.collateralAvailable]
+  )
+
+  if (collateralAvailable === 0) return null
+
+  return (
+    <BlackGradientBg>
+      <div className={cn('w-full absolute flex items-center justify-center')}>
+        <Button
+          className={cn('min-w-[170px] !w-[90%] h-10 mb-2 disabled:opacity-100')}
+          variant="default"
+          colorScheme="blue"
+          size="lg"
+          onClick={() => handlePlaceOrder()}
+          disabled={buttonState !== ButtonState.CanPlaceOrder}
+        >
+          <h4>{buttonText}</h4>
+        </Button>
+      </div>
+    </BlackGradientBg>
+  )
+}
 
 const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
   <div className={cn('px-2.5 py-1')}>
