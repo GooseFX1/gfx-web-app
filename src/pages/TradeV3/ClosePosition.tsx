@@ -284,9 +284,9 @@ export const ClosePosition: FC<{
       </div> */}
 
       <div className="flex flex-col mt-2">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center my-2">
           <InfoLabel>
-            <p>{displayExitQty}</p>
+            <p>{displayExitQty} SOL</p>
           </InfoLabel>
           <InfoLabel>
             <div className="flex items-center gap-1">
@@ -298,7 +298,7 @@ export const ClosePosition: FC<{
         <InfoRow label="Est. Exit Price" value={exitPrice} />
         <InfoRow label="Est. Slippage" value={'0.000%'} />
         <InfoRow label="New Est. Liquidation Price" value={'None'} />
-        <div className="flex justify-between">
+        <div className="flex justify-between my-2">
           <ContentLabel>
             <p>Est. Realized P&L</p>
           </ContentLabel>

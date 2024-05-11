@@ -197,7 +197,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
         >
           <div className="flex flex-col">
             <InfoRow label="Order Type" value={order.display === 'limit' ? 'Limit' : 'Market'} />
-            <InfoRow label="Trader Size" value={`${Number(order.size).toFixed(5)} ${symbol}`} />
+            <InfoRow label="Trade Size" value={`${Number(order.size).toFixed(5)} ${symbol}`} />
             <InfoRow label="Est. Entry Price" value={`$${Number(order.price).toFixed(2)}`} />
             <TradeConfirmationLine />
             <InfoRow label="Est. Price Impact" value={`${totalPriceImpact.toFixed(4)}%`} />
@@ -228,7 +228,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 }
 
 export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
-  <div className="flex justify-between mb-2 leading-4">
+  <div className="flex justify-between leading-4 my-2">
     <ContentLabel>
       <p>{label}</p>
     </ContentLabel>

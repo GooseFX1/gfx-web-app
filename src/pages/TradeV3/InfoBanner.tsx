@@ -465,46 +465,73 @@ export const InfoBanner: FC<{
         </>
       }
       {/* {
-        <INFO_STATS>
-          <>
-            <div tw="flex flex-row">
-              <h4>1H Funding</h4>
-              <Tooltip
-                placement="rightTop"
-                notInherit={true}
-                color={mode === 'dark' ? '#1c1c1c' : '#ffffff'}
-                overlayClassName={`funding-tooltip ${mode}`}
-              >
-                <div tw="font-medium text-tiny dark:text-grey-5 text-grey-1 mb-2">
-                  Funding rate is determined every hour. If funding is <span tw="text-green-1">positive</span>,
-                  longs pay shorts. If it's
-                  <span tw="text-red-2"> negative</span>, short positions pay longs.{' '}
-                  <a
-                    href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
-                    tw="font-medium text-tiny dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
-                    target="_blank"
-                  >
-                    Learn More
-                  </a>
-                </div>
-              </Tooltip>
-            </div>
-            {!traderInfo.fundingRate ? <Loader /> : <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>}
-          </>
-        </INFO_STATS>
+        
       }
-      {
-        <INFO_STATS>
+      */}
+      <>
+        <div className="max-w-[135px] min-h-[42px] ml-4">
+          <ContainerTitle>
+            <h4>1H Funding:&nbsp;</h4>
+            <IconTooltip tooltipType={'outline'}>
+              <p tw=" mb-2">
+                Funding rate is determined every hour. If funding is <span tw="text-green-1">positive</span>, longs
+                pay shorts. If it's
+                <span tw="text-red-2"> negative</span>, short positions pay longs.{' '}
+                <a
+                  href="https://docs.goosefx.io/features/defi-derivatives/understanding-perpetual-futures/funding-rates"
+                  tw="font-medium text-tiny dark:text-grey-5 text-blue-1 underline hover:dark:text-grey-5 hover:text-blue-1 hover:underline"
+                  target="_blank"
+                >
+                  Learn More
+                </a>
+              </p>
+            </IconTooltip>
+          </ContainerTitle>
           <>
-            <h4>1YR Funding</h4>
-            {!traderInfo.fundingRate ? (
+            {!traderInfo.openInterests ? (
               <Loader />
             ) : (
-              <div> {(Number(traderInfo.fundingRate) * 24 * 365).toFixed(4)}%</div>
+              <InfoLabel>
+                <h4 className="leading-4">
+                  <span>
+                    {!traderInfo.fundingRate ? (
+                      <Loader />
+                    ) : (
+                      <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>
+                    )}
+                  </span>
+                </h4>
+              </InfoLabel>
             )}
           </>
-        </INFO_STATS>
-      } */}
+        </div>
+      </>
+
+      {
+        <>
+          <div
+            // variant="outline"
+            // colorScheme="primaryGradient"
+            // size="sm"
+            className="max-w-[135px] min-h-[42px] ml-4"
+          >
+            <ContainerTitle>
+              <h4>1YR Funding</h4>
+            </ContainerTitle>
+            <>
+              {!traderInfo.openInterests ? (
+                <Loader />
+              ) : (
+                <InfoLabel>
+                  <h4 className="leading-4">
+                    <span> {(Number(traderInfo.fundingRate) * 24 * 365).toFixed(4)}%</span>
+                  </h4>
+                </InfoLabel>
+              )}
+            </>
+          </div>
+        </>
+      }
       {isDevnet && blacklisted && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />
