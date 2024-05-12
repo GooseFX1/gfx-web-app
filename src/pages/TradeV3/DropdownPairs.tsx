@@ -363,19 +363,15 @@ export const DropdownPairs: FC = () => {
 
   return (
     <>
-      <SelectCryptoModal
-        handleDropdownSearch={handleDropdownSearch}
-        showModal={showModal}
-        setShowModal={closeModal}
-      />
+      {showModal && (
+        <SelectCryptoModal
+          handleDropdownSearch={handleDropdownSearch}
+          showModal={showModal}
+          setShowModal={closeModal}
+        />
+      )}
 
-      <Dropdown
-        overlay={<></>}
-        trigger={['click']}
-        onVisibleChange={() => {
-          setShowModal(true)
-        }}
-      >
+      <div onClick={() => setShowModal(true)}>
         <SELECTED_PAIR_CTN>
           <SELECTED_PAIR>
             <GRADIENT_BACKGROUND>
@@ -391,7 +387,7 @@ export const DropdownPairs: FC = () => {
             </GRADIENT_BACKGROUND>
           </SELECTED_PAIR>
         </SELECTED_PAIR_CTN>
-      </Dropdown>
+      </div>
     </>
   )
 }

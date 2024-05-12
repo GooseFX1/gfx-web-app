@@ -259,7 +259,7 @@ export const ClosePosition: FC<{
                 variant="primary"
                 onClick={(e) => handlePercentageChange(e, index)}
               >
-                <TitleLabel whiteText={percentageIndex == index}>{elem.display}</TitleLabel>
+                <TitleLabel whiteText={percentageIndex == index}>{elem.display}%</TitleLabel>
               </TabsTrigger>
             ))}
           </TabsList>
