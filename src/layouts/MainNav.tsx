@@ -294,8 +294,8 @@ const MobileNav: FC = () => {
           dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between`}
           >
             <NetworkStatus />
-            <FooterDivider className={'h-[30px] mx-auto'} />
-            <RPCToggle className={'mr-auto'} />
+            <FooterDivider className={'h-[30px]'} />
+            <RPCToggle />
             <FooterDivider className={'h-[30px]'} />
             <PriorityFee />
           </DialogFooter>
