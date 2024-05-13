@@ -472,7 +472,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     async (amount: number) => {
       const gofxMint = rewardAddresses[stakeRewards.network].GOFX_MINT
       const account = await connection.getTokenAccountsByOwner(walletContext.publicKey, { mint: gofxMint })
-      const txBuilder = createTransactionBuilder()
+      const txBuilder = createTransactionBuilder().usePriorityFee(false)
       if (!account || !account.value.length) {
         const ata = await getAssociatedTokenAddress(
           gofxMint, // mint
