@@ -12,7 +12,7 @@ const DEFAULT_PRIORITY_FEE = 50000
 class TransactionBuilder {
   _transaction: Transaction = new Transaction()
   _priorityFee: number = DEFAULT_PRIORITY_FEE
-  _usePriorityFee: boolean = false
+  _usePriorityFee = true
 
   constructor(txn?: TXN | Array<TXN>) {
     if (!txn) return
@@ -30,8 +30,15 @@ class TransactionBuilder {
     }
   }
 
-  add(txn: TXN | Array<TXN>): TransactionBuilder {
-    this.addTxn(txn)
+  usePriorityFee(val: boolean): TransactionBuilder {
+    this._usePriorityFee = val
+    return this
+  }
+
+  add(txn?: TXN | Array<TXN>): TransactionBuilder {
+    if (txn) {
+      this.addTxn(txn)
+    }
     return this
   }
 

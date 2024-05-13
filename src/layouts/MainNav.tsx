@@ -40,6 +40,7 @@ import RPCToggle from '@/components/footer/RPCToggle'
 import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
+import PriorityFee from '@/components/footer/PriorityFee'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -296,8 +297,8 @@ const MobileNav: FC = () => {
             <NetworkStatus />
             <FooterDivider className={'h-[30px] mx-auto'} />
             <RPCToggle className={'mr-auto'} />
-            {/*<FooterDivider className={'h-[30px]'} />*/}
-            {/*<PriorityFee />*/}
+            <FooterDivider className={'h-[30px]'} />
+            <PriorityFee />
           </DialogFooter>
         </DialogContent>
       </Dialog>
