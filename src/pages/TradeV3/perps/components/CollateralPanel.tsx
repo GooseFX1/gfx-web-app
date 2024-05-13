@@ -65,7 +65,7 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
   )
 }
 
-const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
+export const AccountRowPnl: FC<{ keyStr?: string }> = ({ keyStr }) => {
   const { traderInfo } = useTraderConfig()
   const isNegative = useMemo(() => traderInfo.pnl[0] === '-', [traderInfo])
   const pnl = useMemo(() => {
@@ -79,7 +79,7 @@ const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
   }, [traderInfo])
   return (
     <div tw="my-2.5 flex items-center justify-between">
-      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr}</h5>
+      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr ?? ''}</h5>
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
     </div>
   )

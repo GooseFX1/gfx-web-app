@@ -315,11 +315,11 @@ const CryptoContent: FC = () => {
 
   useEffect(() => {
     setChartContainer(<TVChartContainer visible={true} />)
-    // setTimeout(() => {
-    //   setChartContainer(<></>)
-    //   setChartContainer(<TVChartContainer symbol={selectedCrypto.pair} visible={true} />)
-    // }, 300)
-  }, [])
+    setTimeout(() => {
+      setChartContainer(<></>)
+      setChartContainer(<TVChartContainer visible={true} />)
+    }, 300)
+  }, [mode])
 
   useEffect(() => {
     if (!isInitialRender.current) {

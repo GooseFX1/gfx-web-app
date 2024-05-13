@@ -56,6 +56,7 @@ import {
 import useBoolean from '@/hooks/useBoolean'
 import { CircularArrow } from '@/components/common/Arrow'
 import { Connect } from '../../layouts/Connect'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -519,6 +520,8 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { order, setOrder, focused, setFocused } = useOrder()
+  const { connectedWalletPublicKey } = useWalletBalance()
+
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
@@ -955,6 +958,10 @@ export const PlaceOrder: FC = () => {
     }
   }, [sliderValue, maxQtyNum])
 
+  const sizeDisplay = useMemo(() => {
+    return order.size !== '' && order.size !== 0 ? order.size : ''
+  }, [order.size])
+
   // return (
   //   <WRAPPER>
   //     {depositWithdrawModal && (
@@ -1334,15 +1341,19 @@ export const PlaceOrder: FC = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent asChild>
-                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>
+                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px] '}>
                     <DropdownMenuItem
+                      className="!cursor-pointer"
                       variant={'default'}
                       onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
                     >
-                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Limit</p>
+                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Limit</p>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}>
-                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Market</p>
+                    <DropdownMenuItem
+                      className="!cursor-pointer"
+                      onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}
+                    >
+                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Market</p>
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
@@ -1386,11 +1397,11 @@ export const PlaceOrder: FC = () => {
                   onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 SOL'}
                   onFocus={() => setFocused('size')}
-                  value={order.size !== '' ? order.size : ''}
+                  value={sizeDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                   className={cn(
                     `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    order.size !== '' && `pr-12`
+                    sizeDisplay !== '' && `pr-12`
                   )}
                 />
                 <div className="relative">
@@ -1524,7 +1535,7 @@ export const PlaceOrder: FC = () => {
                 showSteps={true}
                 value={[sliderValue]}
                 onValueChange={(e) => handleSliderChange(e)}
-                steps={4}
+                steps={0}
                 step={0.1}
                 min={0}
               >

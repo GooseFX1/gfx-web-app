@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Dropdown } from 'antd'
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
 import { Modal } from '../../components'
@@ -23,7 +23,7 @@ import {
   InputGroup,
   cn
 } from 'gfx-component-lib'
-import { GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
+import { ContentLabel, GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
 const SELECTED_PAIR_CTN = styled.div`
@@ -165,11 +165,17 @@ const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }>
 }
 
 const SelectCryptoModal: FC<{
-  handleDropdownSearch: (string) => void
   showModal: boolean
   setShowModal: (arg: boolean) => void
-}> = ({ showModal, setShowModal, handleDropdownSearch }) => {
-  const { selectedCrypto, setSelectedCrypto, pairs, getAskSymbolFromPair, filteredSearchPairs } = useCrypto()
+}> = ({ showModal, setShowModal }) => {
+  const {
+    selectedCrypto,
+    setSelectedCrypto,
+    pairs,
+    getAskSymbolFromPair,
+    setFilteredSearchPairs,
+    filteredSearchPairs
+  } = useCrypto()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),
     [getAskSymbolFromPair, selectedCrypto.pair]
@@ -177,6 +183,17 @@ const SelectCryptoModal: FC<{
   const history = useHistory()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const { isMobile } = useBreakPoint()
+  const { mode } = useDarkMode()
+
+  const handleDropdownSearch = (searchString: string) => {
+    const filteredResult = pairs.filter((item) =>
+      getAskSymbolFromPair(item.pair).includes(searchString.toUpperCase())
+    )
+    setFilteredSearchPairs(filteredResult)
+  }
+  useEffect(() => {
+    handleDropdownSearch(searchTokens)
+  }, [searchTokens])
 
   const handleSelection = (item) => {
     if (item.type === 'synth') {
@@ -220,10 +237,10 @@ const SelectCryptoModal: FC<{
             />
           </InputGroup> */}
           <SearchBar
-            onChange={(e) => handleDropdownSearch(e.target.value)}
+            onChange={(e) => setSearchTokens(e.target.value)}
             onClear={() => setSearchTokens('')}
             value={searchTokens}
-            // className={'min-w-[100px] min-h-[40px] '}
+            className={'min-w-[250px] sm:w-[95%] sm:!max-w-[400px] !max-w-[440px] min-h-[40px] '}
           />
         </DialogHeader>
         <DialogBody
@@ -239,7 +256,23 @@ const SelectCryptoModal: FC<{
               </span>
             ))
           ) : (
-            <div className="no-result-found">Sorry, no result found!</div>
+            <div className="flex w-full items-center justify-center h-full">
+              <div className="flex flex-col items-center justify-center">
+                <img src={`/img/assets/noSearchResults${mode}.svg`} className="mb-4" alt="no-result-found" />
+                <InfoLabel>
+                  <h2 className="text-center"> Oops, no result found </h2>
+                </InfoLabel>
+
+                <div>
+                  <ContentLabel>
+                    <h4 className="mt-2 text-center">
+                      Don’t worry, there are more <br />
+                      pairs coming soon...
+                    </h4>
+                  </ContentLabel>
+                </div>
+              </div>
+            </div>
           )}
         </DialogBody>
       </DialogContent>
@@ -350,12 +383,7 @@ export const DropdownPairs: FC = () => {
     [getAskSymbolFromPair, selectedCrypto.pair]
   )
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
-  const handleDropdownSearch = (searchString: string) => {
-    const filteredResult = pairs.filter((item) =>
-      getAskSymbolFromPair(item.pair).includes(searchString.toUpperCase())
-    )
-    setFilteredSearchPairs(filteredResult)
-  }
+
   const closeModal = () => {
     setShowModal(false)
     setFilteredSearchPairs(pairs)
@@ -365,7 +393,7 @@ export const DropdownPairs: FC = () => {
     <>
       {showModal && (
         <SelectCryptoModal
-          handleDropdownSearch={handleDropdownSearch}
+          // handleDropdownSearch={handleDropdownSearch}
           showModal={showModal}
           setShowModal={closeModal}
         />

@@ -17,6 +17,7 @@ import { OrderBook } from './OrderBook'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { checkMobile } from '@/utils'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 type TabColumnsDisplayProps = {
@@ -51,7 +52,17 @@ const END_MODAL = styled(PopupCustom)`
 
 const columns = [
   {
-    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'State']
+    Positions: [
+      'Market',
+      'Side',
+      'Entry Price',
+      'Quantity',
+      'Market Price',
+      'Value',
+      'Est. Liq Price',
+      'PnL',
+      'State'
+    ]
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
@@ -1033,30 +1044,37 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
     <>
       {traderInfo.averagePosition.side && Number(roundedSize) ? (
         <div className={cn('flex px-2.5 mt-2.5')}>
-          <div className={cn('w-[12.5%]')}>
+          <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabel>{selectedCrypto.pair} </InfoLabel>
           </div>
           <div
             className={cn(
-              `w-[12.5%] ${traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'}`
+              `w-[11.1%] flex items-center ${
+                traderInfo.averagePosition.side === 'buy' ? 'text-green-4' : 'text-red-2'
+              }`
             )}
           >
             <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
           </div>
-          <div className={cn('w-[12.5%] flex items-center ')}>
+          <div className={cn('w-[11.1%] flex items-center ')}>
             <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>
           </div>
-          <div className={cn('w-[12.5%] flex items-center')}>
+          <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabel>{roundedSize} </InfoLabel>
           </div>
-          <div className={cn('w-[12.5%] flex items-center')}>
+          <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabel>{perpsPrice} </InfoLabel>
           </div>
-          <div className={cn('w-[12.5%] flex items-center')}>
+          <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>
           </div>
-          <div className={cn('w-[12.5%] flex items-center')}>
+          <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>
+          </div>
+          <div className={cn('w-[11.5%] flex items-center')}>
+            <div>
+              <HistoryPanelPnL notionalSize={notionalSize} />
+            </div>
           </div>
           <div>
             <Button variant="outline" colorScheme="red" className={cn(`h-[30px]`)} onClick={handleClosePosition}>
@@ -1070,5 +1088,25 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
         </div>
       )}
     </>
+  )
+}
+
+export const HistoryPanelPnL: FC<{ notionalSize }> = ({ notionalSize }) => {
+  const { traderInfo } = useTraderConfig()
+  const isNegative = useMemo(() => traderInfo.pnl[0] === '-', [traderInfo])
+  const { connectedWalletPublicKey } = useWalletBalance()
+
+  const pnl = useMemo(() => {
+    if (!Number(traderInfo.pnl)) return 0
+    return Number(traderInfo.pnl)
+  }, [traderInfo, connectedWalletPublicKey])
+
+  return (
+    <div tw="flex items-center justify-center">
+      {/* <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5> */}
+      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>
+        $ {pnl.toFixed(1)} ({((pnl / Number(notionalSize)) * 100).toFixed(0)}%)
+      </h5>
+    </div>
   )
 }

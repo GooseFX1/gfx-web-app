@@ -85,7 +85,7 @@ export const ClosePosition: FC<{
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
-  const [percentageIndex, setPercentageindex] = useState<number>(0)
+  const [percentageIndex, setPercentageindex] = useState<number>(3)
   const [loading, setLoading] = useState<boolean>(false)
   const [customAmount, setCustomAmount] = useState<string>(null)
   const [inputValue, setInputValue] = useState<number>(null)
@@ -248,7 +248,7 @@ export const ClosePosition: FC<{
         <span tw="text-average font-semibold text-grey-1 sm:text-tiny">{displayExitQty}</span> */}
       </div>
       <div className="percentage">
-        <Tabs defaultValue="0">
+        <Tabs defaultValue="3">
           <TabsList>
             {percentDetails.map((elem, index) => (
               <TabsTrigger
@@ -291,7 +291,7 @@ export const ClosePosition: FC<{
           <InfoLabel>
             <div className="flex items-center gap-1">
               <p className={cn('!font-semibold')}>{exitPrice}</p>
-              <p className="text-green-1">(Market Price)</p>
+              <p>(Market Price)</p>
             </div>
           </InfoLabel>
         </div>
