@@ -54,7 +54,7 @@ function useTransaction(): useTransactionReturn {
         confirmationWaitType?: Commitment
       }
     ) => {
-      let txSig: string = ''
+      let txSig = ''
       const exec = async () => {
         txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
           console.log('[ERROR] Transaction failed', err)
