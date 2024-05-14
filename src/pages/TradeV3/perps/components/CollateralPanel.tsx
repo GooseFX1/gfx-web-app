@@ -91,7 +91,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     const percent = accountHealth
     let barColour = ''
     if (percent <= 20) barColour = 'red'
-    else if (percent > 20 && percent <= 80) barColour = 'yellow'
+    else if (percent > 20 && percent <= 80) barColour = 'bg-yellow-1'
     else barColour = 'green'
     return (
       <div className="bar-holder">

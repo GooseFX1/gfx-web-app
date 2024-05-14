@@ -471,7 +471,7 @@ export const OrderBook: FC = () => {
                   onClick={() => setShowSpread(true)}
                   className={cn('max-content mr-2 h-[30px] w-[88px]')}
                 >
-                  <div className="flex w-full justify-between text-tiny">
+                  <div className="flex w-full justify-between items-center text-tiny">
                     ${SPREADS[spreadIndex]}
                     <img
                       style={{

@@ -153,7 +153,7 @@ const componentDimensionsMd = [
 // ]
 
 const DEX_CONTAINER = styled.div<{ $isLocked: boolean; $mode: string }>`
-  ${tw`relative flex w-full h-[calc(100vh - 85px)] flex-col overflow-y-scroll overflow-x-hidden`}
+  ${tw`relative flex w-full h-[calc(100vh - 56px - 42px)] flex-col overflow-y-scroll overflow-x-hidden`}
 
   .layout {
     ${tw`w-[99%] mt-2 mx-auto mb-0 relative !h-full`}
@@ -329,7 +329,7 @@ const CryptoContent: FC = () => {
     }
   }, [width])
 
-  const getRowHeight = (height: number) => (height < 800 ? 20 : height / 38)
+  const getRowHeight = (height: number) => (height < 800 ? 20 : height / 36.5)
 
   const defaultProps = {
     className: 'layout',
@@ -435,7 +435,6 @@ const CryptoContent: FC = () => {
         >
           {generateDOM()}
         </ReactGridLayout>
-        <TermsOfService />
       </DEX_CONTAINER>
     </>
   ) : (
