@@ -54,20 +54,22 @@ function useTransaction(): useTransactionReturn {
         confirmationWaitType?: Commitment
       }
     ) => {
-      const txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
-        console.log('[ERROR] Transaction failed', err)
-        return ''
-      })
-
-      if (!txSig) return
-      const blockHash = await connection.getLatestBlockhash()
-      const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
-        signature: txSig,
-        blockhash: blockHash.blockhash,
-        lastValidBlockHeight: blockHash.lastValidBlockHeight
-      }
-      const promise = promiseBuilder<Awaited<ReturnType<typeof connection.confirmTransaction>>>(
-        connection
+      let txSig: string = ''
+      const exec = async () => {
+        txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
+          console.log('[ERROR] Transaction failed', err)
+          return ''
+        })
+        if (!txSig) {
+          throw new Error('Transaction failed')
+        }
+        const blockHash = await connection.getLatestBlockhash()
+        const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
+          signature: txSig,
+          blockhash: blockHash.blockhash,
+          lastValidBlockHeight: blockHash.lastValidBlockHeight
+        }
+        return connection
           .confirmTransaction(blockHeightConfirmationStrategy, confirmationWaitType ?? 'confirmed')
           .then((res) => {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
@@ -81,9 +83,9 @@ function useTransaction(): useTransactionReturn {
             console.log('[ERROR] Transaction failed', err)
             throw new Error('Transaction failed', err)
           })
-      )
+      }
+      const promise = promiseBuilder<Awaited<ReturnType<typeof connection.confirmTransaction>>>(exec())
       await notifyUsingPromise(promise)
-      console.log('txSig', txSig)
       return txSig
     },
     [originalConnection, sendTransactionOriginal]
