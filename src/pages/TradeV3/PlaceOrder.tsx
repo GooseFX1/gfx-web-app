@@ -1405,7 +1405,7 @@ export const PlaceOrder: FC = () => {
                   )}
                 />
                 <div className="relative">
-                  {Number(order.size) !== 0 && (
+                  {order.size !== '' && (
                     <InfoLabel>
                       {/* {order.size } */}
                       <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
@@ -1450,14 +1450,14 @@ export const PlaceOrder: FC = () => {
             <div className={cn('w-full flex')}>
               <div className="w-1/2 flex">
                 <Input
-                  placeholder={'0.00 USD'}
+                  placeholder={'0.00 USDC'}
                   value={
                     takeProfitIndex === null
                       ? takeProfitAmount
                         ? takeProfitAmount
                         : ''
                       : profits[takeProfitIndex]
-                      ? '$' + profits[takeProfitIndex] + ' USD'
+                      ? '$' + profits[takeProfitIndex] + ' USDC'
                       : '(-)'
                   }
                   onChange={(e) => {

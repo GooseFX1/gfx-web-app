@@ -20,8 +20,8 @@ export const CollateralPanel: FC = (): JSX.Element => {
   return (
     <PerpsLayout>
       <div className={cn('p-2.5 sm:h-[300px]')}>
-        <div tw="flex items-center">
-          <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" />
+        <div tw="flex items-center mb-4">
+          <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
           <InfoLabel>Sol Account</InfoLabel>
         </div>
         {connectedWalletPublicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
@@ -104,6 +104,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
       </div>
     )
   }, [accountHealth])
+
   const barsData = useMemo(() => {
     const accountHealth = 40
     return (
@@ -125,8 +126,9 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
       </div>
     )
   }, [accountHealth])
+
   return (
-    <div tw="flex items-center justify-between my-2.5">
+    <div tw="flex items-center justify-between my-4">
       <div>
         <div tw="flex items-center">
           <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
@@ -150,7 +152,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
 }
 const AccountRow: FC<{ keyStr: string; value: string | number }> = ({ keyStr, value }) => {
   return (
-    <div tw=" flex items-center justify-between mb-[10px]">
+    <div tw=" flex items-center justify-between my-4">
       <InfoLabel>{keyStr}</InfoLabel>
       <InfoLabel>{value}</InfoLabel>
     </div>
