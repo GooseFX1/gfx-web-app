@@ -175,9 +175,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
       <DialogContent
         size="sm"
         placement={isMobile ? 'bottom' : 'default'}
-        className={cn(
-          'sm:w-[100vw] min-md:w-[500px] rounded-[3px] sm:bottom-0 h-[346px] pt-3 flex flex-col gap-0'
-        )}
+        className={cn('sm:w-[100vw] min-md:w-[500px] rounded-[3px] sm:bottom-0  pt-3 flex flex-col gap-0')}
       >
         <DialogCloseDefault />
 
@@ -197,7 +195,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
         >
           <div className="flex flex-col">
             <InfoRow label="Order Type" value={order.display === 'limit' ? 'Limit' : 'Market'} />
-            <InfoRow label="Trader Size" value={`${Number(order.size).toFixed(5)} ${symbol}`} />
+            <InfoRow label="Trade Size" value={`${Number(order.size).toFixed(5)} ${symbol}`} />
             <InfoRow label="Est. Entry Price" value={`$${Number(order.price).toFixed(2)}`} />
             <TradeConfirmationLine />
             <InfoRow label="Est. Price Impact" value={`${totalPriceImpact.toFixed(4)}%`} />
@@ -211,13 +209,15 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 
           <Button
             onClick={() => handleClick()}
-            colorScheme={'blue'}
+            colorScheme={order.side === 'buy' ? 'blue' : 'red'}
             variant={'default'}
-            className={cn('max-w-[178px] w-full h-10 mt-auto mb-2 ml-auto mr-auto ')}
+            className={cn(
+              order.size === 'buy' && 'bg-green-3',
+              'max-w-[178px] w-full h-10 mt-auto mb-2 ml-auto mr-auto '
+            )}
             loading={isLoading}
             disabled={isLoading}
             height={checkMobile() ? '45px' : '40px'}
-            cssStyle={cssStyle}
           >
             {order.side === 'buy' ? 'Long' : 'Short'} {Number(order.size).toFixed(3)} {symbol}
           </Button>
@@ -228,7 +228,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 }
 
 export const InfoRow: FC<{ label; value }> = ({ label, value }) => (
-  <div className="flex justify-between mb-2 leading-4">
+  <div className="flex justify-between leading-4 my-[5px] ">
     <ContentLabel>
       <p>{label}</p>
     </ContentLabel>

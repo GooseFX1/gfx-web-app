@@ -18,6 +18,7 @@ import {
 } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import { Dropdown } from 'antd'
+import { Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -48,7 +49,6 @@ import {
   Input,
   InputElementRight,
   InputGroup,
-  Slider,
   Tabs,
   TabsList,
   TabsTrigger
@@ -56,6 +56,7 @@ import {
 import useBoolean from '@/hooks/useBoolean'
 import { CircularArrow } from '@/components/common/Arrow'
 import { Connect } from '../../layouts/Connect'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -341,9 +342,12 @@ const TOTAL_SELECTOR = styled.div`
 `
 
 const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-2 w-11/12 text-left mt-[-8px]`}
+  ${tw`pl-0 w-full pr-2 text-left mt-[-5px] sm:mt-[-10px] sm:h-[38px]`}
   .ant-slider-rail {
     ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
+  }
+  .ant-slider {
+    margin: 0px;
   }
   .ant-slider-with-marks {
     ${tw`mb-2 my-[5px]`}
@@ -519,6 +523,8 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { order, setOrder, focused, setFocused } = useOrder()
+  const { connectedWalletPublicKey } = useWalletBalance()
+
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
   const [selectedTotal, setSelectedTotal] = useState<number>(null)
@@ -767,7 +773,11 @@ export const PlaceOrder: FC = () => {
   const getMarks = () => {
     const markObj = {}
     for (let i = 2; i <= 10; i = i + 2) {
-      markObj[i] = <span className="markSpan">{i + 'x'}</span>
+      markObj[i] = (
+        <div className="mr-2 mt-0.5 sm:mt-0">
+          <TitleLabel>{i + 'x'}</TitleLabel>
+        </div>
+      )
     }
     return markObj
   }
@@ -954,6 +964,14 @@ export const PlaceOrder: FC = () => {
       setOrder((prevState) => ({ ...prevState, size: adjustedSize }))
     }
   }, [sliderValue, maxQtyNum])
+
+  const sizeDisplay = useMemo(() => {
+    return order.size !== '' && order.size !== 0 ? order.size : ''
+  }, [order.size])
+
+  const amountDisplay = useMemo(() => {
+    return order.total !== '' && order.total !== 0 ? order.total : ''
+  }, [order.total])
 
   // return (
   //   <WRAPPER>
@@ -1334,15 +1352,19 @@ export const PlaceOrder: FC = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent asChild>
-                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px]'}>
+                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px] '}>
                     <DropdownMenuItem
+                      className="!cursor-pointer"
                       variant={'default'}
                       onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
                     >
-                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Limit</p>
+                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Limit</p>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}>
-                      <p className={cn('font-bold w-[90px] cursor-pointer')}>Market</p>
+                    <DropdownMenuItem
+                      className="!cursor-pointer"
+                      onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}
+                    >
+                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Market</p>
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
@@ -1355,17 +1377,20 @@ export const PlaceOrder: FC = () => {
               </div>
               <div className={cn('w-full flex')}>
                 <Input
-                  placeholder={'0.00 USD'}
+                  placeholder={'0.00 USDC'}
                   value={order.price ?? ''}
                   onChange={(e) => numberCheck(e.target.value, 'price')}
                   disabled={order.display === 'market'}
-                  className={cn(`mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`, order.price && `pr-12`)}
+                  className={cn(
+                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    order.price && `pr-[52px]`
+                  )}
                 />
                 <div className="relative">
                   {order.price && (
                     <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
                       <InfoLabel>
-                        <p>USD</p>{' '}
+                        <p>USDC</p>{' '}
                       </InfoLabel>
                     </p>
                   )}
@@ -1383,17 +1408,16 @@ export const PlaceOrder: FC = () => {
                   onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 SOL'}
                   onFocus={() => setFocused('size')}
-                  value={order.size !== '' ? order.size : ''}
+                  value={sizeDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                   className={cn(
                     `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    order.size !== '' && `pr-12`
+                    sizeDisplay !== '' && `pr-12`
                   )}
                 />
                 <div className="relative">
-                  {Number(order.size) !== 0 && (
+                  {sizeDisplay !== '' && (
                     <InfoLabel>
-                      {/* {order.size } */}
                       <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
                     </InfoLabel>
                   )}
@@ -1402,25 +1426,24 @@ export const PlaceOrder: FC = () => {
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
               <div className="pb-1">
-                {' '}
                 <InfoLabel>Amount</InfoLabel>{' '}
               </div>
               <div className={cn('w-full flex')}>
                 <Input
                   onKeyDown={(e) => handleKeyDown(e)}
-                  placeholder={'0.00 USD'}
+                  placeholder={'0.00 USDC'}
                   onFocus={() => setFocused('total')}
-                  value={order.total !== 0 ? order.total : ''}
+                  value={amountDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'total')}
                   className={cn(
                     `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    order.total && `pr-12`
+                    amountDisplay !== '' && `pr-[52px]`
                   )}
                 />
                 <div className="relative">
-                  {Number(order.total) !== 0 && (
+                  {amountDisplay !== '' && (
                     <InfoLabel>
-                      <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USD</p>
+                      <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USDC</p>
                     </InfoLabel>
                   )}
                 </div>
@@ -1436,14 +1459,14 @@ export const PlaceOrder: FC = () => {
             <div className={cn('w-full flex')}>
               <div className="w-1/2 flex">
                 <Input
-                  placeholder={'0.00 USD'}
+                  placeholder={'0.00 USDC'}
                   value={
                     takeProfitIndex === null
                       ? takeProfitAmount
                         ? takeProfitAmount
                         : ''
                       : profits[takeProfitIndex]
-                      ? '$' + profits[takeProfitIndex] + ' USD'
+                      ? '$' + profits[takeProfitIndex] + ' USDC'
                       : '(-)'
                   }
                   onChange={(e) => {
@@ -1515,32 +1538,45 @@ export const PlaceOrder: FC = () => {
           <div className={cn('flex mb-2.5 flex-col')}>
             <InfoLabel>Leverage</InfoLabel>
             <div className={cn('mt-2.5')}>
-              <Slider
-                max={10}
-                thumbSize="md"
-                showSteps={true}
-                value={[sliderValue]}
-                onValueChange={(e) => handleSliderChange(e)}
-                steps={4}
-                step={0.1}
-                min={0}
-              >
-                {sliderValue}x
-              </Slider>
-              <div className={cn('h-5 w-full flex items-center justify-center mt-3')}>
+              <LEVERAGE_WRAPPER>
+                <Picker>
+                  <Slider
+                    max={10}
+                    onChange={(e) => handleSliderChange(e)}
+                    step={0.0001}
+                    value={sliderValue}
+                    trackStyle={{
+                      height: '6px'
+                    }}
+                    handleStyle={{
+                      height: '20px',
+                      width: '20px',
+                      background: 'white',
+                      border: '2px solid #FFFFFF',
+                      position: 'relative',
+                      bottom: '2px'
+                    }}
+                    marks={getMarks()}
+                  />
+                </Picker>
+              </LEVERAGE_WRAPPER>
+              {/* <div className={cn('h-5 w-full flex items-center justify-between mt-3 relative')}>
                 <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 2X</TitleLabel>
+                  <TitleLabel> 1X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 4X</TitleLabel>
+                <div className={cn('flex w-full justify-center ')}>
+                  <TitleLabel> 3X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 8X</TitleLabel>
+                <div className={cn('flex w-full  justify-center')}>
+                  <TitleLabel> 5X</TitleLabel>
                 </div>
-                <div className={cn('flex w-full justify-center')}>
-                  <TitleLabel> 10X</TitleLabel>
+                <div className={cn('flex w-full   justify-center')}>
+                  <TitleLabel> 7X</TitleLabel>
                 </div>
-              </div>
+                <div className={cn('flex w-full  justify-center')}>
+                  <TitleLabel> 9X</TitleLabel>
+                </div>
+              </div> */}
             </div>
           </div>
           <div className={cn('flex items-center mt-auto')}>

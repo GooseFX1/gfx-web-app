@@ -148,7 +148,6 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
   }, [
     mode,
     symbol,
-    chartProperties,
     datafeed,
     defaultProps.autosize,
     defaultProps.clientId,
@@ -156,7 +155,6 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     defaultProps.fullscreen,
     defaultProps.interval,
     defaultProps.libraryPath,
-    defaultProps.studiesOverrides,
     defaultProps.theme,
     defaultProps.userId
   ])

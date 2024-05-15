@@ -20,8 +20,8 @@ export const CollateralPanel: FC = (): JSX.Element => {
   return (
     <PerpsLayout>
       <div className={cn('p-2.5 sm:h-[300px]')}>
-        <div tw="flex items-center">
-          <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" />
+        <div tw="flex items-center mb-4">
+          <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
           <InfoLabel>Sol Account</InfoLabel>
         </div>
         {connectedWalletPublicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
@@ -57,7 +57,7 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
   return (
     <div>
       <AccountRowHealth accountHealth={accountHealth} />
-      <AccountRow keyStr="Balance" value={formatNumberInThousands(Number(traderInfo.collateralAvailable))} />
+      <AccountRow keyStr="Balance" value={formatNumberInThousands(Number(traderInfo?.collateralAvailable))} />
       <AccountRowPnl keyStr="Unrealized P&L" />
       <AccountRow keyStr="Margin Available" value={formatNumberInThousands(Number(traderInfo.marginAvailable))} />
       <AccountRow keyStr="Est. Liq. Price" value={formatNumberInThousands(Number(traderInfo.liquidationPrice))} />
@@ -65,7 +65,7 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
   )
 }
 
-const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
+export const AccountRowPnl: FC<{ keyStr?: string }> = ({ keyStr }) => {
   const { traderInfo } = useTraderConfig()
   const isNegative = useMemo(() => traderInfo.pnl[0] === '-', [traderInfo])
   const pnl = useMemo(() => {
@@ -79,7 +79,7 @@ const AccountRowPnl: FC<{ keyStr: string }> = ({ keyStr }) => {
   }, [traderInfo])
   return (
     <div tw="my-2.5 flex items-center justify-between">
-      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr}</h5>
+      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr ?? ''}</h5>
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
     </div>
   )
@@ -91,7 +91,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     const percent = accountHealth
     let barColour = ''
     if (percent <= 20) barColour = 'red'
-    else if (percent > 20 && percent <= 80) barColour = 'yellow'
+    else if (percent > 20 && percent <= 80) barColour = 'bg-yellow-1'
     else barColour = 'green'
     return (
       <div className="bar-holder">
@@ -104,8 +104,8 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
       </div>
     )
   }, [accountHealth])
+
   const barsData = useMemo(() => {
-    const accountHealth = 40
     return (
       <div className="h-[20px] w-[32px]">
         <div className="flex">
@@ -125,8 +125,9 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
       </div>
     )
   }, [accountHealth])
+
   return (
-    <div tw="flex items-center justify-between my-2.5">
+    <div tw="flex items-center justify-between my-4">
       <div>
         <div tw="flex items-center">
           <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
@@ -150,7 +151,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
 }
 const AccountRow: FC<{ keyStr: string; value: string | number }> = ({ keyStr, value }) => {
   return (
-    <div tw=" flex items-center justify-between mb-[10px]">
+    <div tw=" flex items-center justify-between my-4">
       <InfoLabel>{keyStr}</InfoLabel>
       <InfoLabel>{value}</InfoLabel>
     </div>
