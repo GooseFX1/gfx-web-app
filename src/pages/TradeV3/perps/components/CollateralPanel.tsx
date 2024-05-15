@@ -57,16 +57,35 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
   return (
     <div>
       <AccountRowHealth accountHealth={accountHealth} />
-      <AccountRow keyStr="Balance" value={formatNumberInThousands(Number(traderInfo?.collateralAvailable))} />
-      <AccountRowPnl keyStr="Unrealized P&L" />
-      <AccountRow keyStr="Margin Available" value={formatNumberInThousands(Number(traderInfo.marginAvailable))} />
-      <AccountRow keyStr="Est. Liq. Price" value={formatNumberInThousands(Number(traderInfo.liquidationPrice))} />
+      <AccountRow
+        keyStr="Balance"
+        tooltipData="Balance refers to the total value of your cash balance that you can use as collateral
+       for opening new positions or maintaining existing ones. A negative balance indicates a notional position size greater than the amount deposited."
+        value={formatNumberInThousands(Number(traderInfo?.collateralAvailable))}
+      />
+      <AccountRowPnl
+        tooltipData="The total profit and loss from your positions in your account"
+        keyStr="Unrealized P&L"
+      />
+      <AccountRow
+        tooltipData="Margin Available is the amount of funds available in your account that can be used 
+      to open new positions or increase your position size. This is calculated based on your Balance and the margin requirements for the specific assets you are trading"
+        keyStr="Margin Available"
+        value={formatNumberInThousands(Number(traderInfo.marginAvailable))}
+      />
+      <AccountRow
+        tooltipData="The Liquidation Price is the price at which your position will be automatically
+       closed out by the trading platform if your margin falls below a certain threshold. The Liquidation Price is calculated based on the current market price, your position size, and the margin requirements for the specific assets you are trading."
+        keyStr="Est. Liq. Price"
+        value={formatNumberInThousands(Number(traderInfo.liquidationPrice))}
+      />
     </div>
   )
 }
 
-export const AccountRowPnl: FC<{ keyStr?: string }> = ({ keyStr }) => {
+export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ keyStr, tooltipData }) => {
   const { traderInfo } = useTraderConfig()
+  const { mode } = useDarkMode()
   const isNegative = useMemo(() => traderInfo.pnl[0] === '-', [traderInfo])
   const pnl = useMemo(() => {
     if (traderInfo.pnl === '0' || !Number(traderInfo.pnl)) return <span>0.00</span>
@@ -79,7 +98,17 @@ export const AccountRowPnl: FC<{ keyStr?: string }> = ({ keyStr }) => {
   }, [traderInfo])
   return (
     <div tw="my-2.5 flex items-center justify-between">
-      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr ?? ''}</h5>
+      <div className="flex items-center">
+        <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr ?? ''}</h5>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className={cn('ml-1.5')}>
+              <InfoImage mode={mode} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>{tooltipData}</TooltipContent>
+        </Tooltip>
+      </div>
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
     </div>
   )
@@ -149,10 +178,26 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     </div>
   )
 }
-const AccountRow: FC<{ keyStr: string; value: string | number }> = ({ keyStr, value }) => {
+const AccountRow: FC<{ keyStr: string; value: string | number; tooltipData: string }> = ({
+  keyStr,
+  value,
+  tooltipData
+}) => {
+  const { mode } = useDarkMode()
   return (
     <div tw=" flex items-center justify-between my-4">
-      <InfoLabel>{keyStr}</InfoLabel>
+      <div className="flex items-center">
+        <InfoLabel>{keyStr}</InfoLabel>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className={cn('ml-1.5')}>
+              <InfoImage mode={mode} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>{tooltipData}</TooltipContent>
+        </Tooltip>
+      </div>
+
       <InfoLabel>{value}</InfoLabel>
     </div>
   )
