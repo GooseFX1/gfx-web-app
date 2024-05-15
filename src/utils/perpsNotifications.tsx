@@ -2,9 +2,8 @@
 import React, { FC, ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
-import { IntemediaryToast, OpenSolScanLink, OpenToastLink, cn, IntemediaryToastHeading } from 'gfx-component-lib'
+import { cn, IntemediaryToast, IntemediaryToastHeading, OpenSolScanLink, OpenToastLink } from 'gfx-component-lib'
 import { toast, ToastT } from 'sonner'
-import { Toast } from 'react-hot-toast'
 
 const CLOSE = styled.div`
   background-color: red;
@@ -66,6 +65,7 @@ interface INotifyParams {
   network?: string
   notificationDuration?: number
 }
+
 const NOTIFICATION_TIMER = 5 * 1000
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -151,12 +151,15 @@ export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
     <OpenSolScanLink link={`https://solscan.io/tx/${txId}`} />
   </IntemediaryToast>
 )
+
 export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
   return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
 }
+
 export const notifyUsingPromise = async (
   promise: Promise<unknown>,
-  onDismiss?: (toast: ToastT) => void
+  onDismiss?: (toast: ToastT) => void,
+  tentativeTxId?: string
 ): Promise<boolean> => {
   let res = false
   await toast.promise(promise, {
@@ -164,6 +167,7 @@ export const notifyUsingPromise = async (
       <IntemediaryToast className={cn(`w-[290px]`)}>
         <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
         <p>Please wait a few moments for the transaction to confirm...</p>
+        {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
       </IntemediaryToast>
     ),
     success: (response: SuccessResponse) => {
