@@ -68,7 +68,7 @@ export const DepositWithdraw: FC<{
         else if (index === 1) result = (+tokenAmount.uiAmountString * 50) / 100
         else if (index === 2) result = (+tokenAmount.uiAmountString * 75) / 100
         else result = +tokenAmount.uiAmountString
-        setAmount(String(result))
+        setAmount(String(result.toFixed(2)))
       } else {
         const avail = traderInfo.maxWithdrawable
         if (!avail || Number.isNaN(+avail)) {

@@ -18,6 +18,7 @@ import {
 } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import { Dropdown } from 'antd'
+import { Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ArrowDropdown, PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -48,7 +49,6 @@ import {
   Input,
   InputElementRight,
   InputGroup,
-  Slider,
   Tabs,
   TabsList,
   TabsTrigger
@@ -342,9 +342,12 @@ const TOTAL_SELECTOR = styled.div`
 `
 
 const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-2 w-11/12 text-left mt-[-8px]`}
+  ${tw`pl-0 w-full pr-2 text-left mt-[-5px] sm:mt-[-10px] sm:h-[38px]`}
   .ant-slider-rail {
     ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
+  }
+  .ant-slider {
+    margin: 0px;
   }
   .ant-slider-with-marks {
     ${tw`mb-2 my-[5px]`}
@@ -770,7 +773,11 @@ export const PlaceOrder: FC = () => {
   const getMarks = () => {
     const markObj = {}
     for (let i = 2; i <= 10; i = i + 2) {
-      markObj[i] = <span className="markSpan">{i + 'x'}</span>
+      markObj[i] = (
+        <div className="mr-2 mt-0.5 sm:mt-0">
+          <TitleLabel>{i + 'x'}</TitleLabel>
+        </div>
+      )
     }
     return markObj
   }
@@ -941,7 +948,7 @@ export const PlaceOrder: FC = () => {
 
     //else if (order.total < availMargin) percentage = (Number(order.total) / Number(availMargin)) * availLeverage
     if (isNaN(Number((initLeverage + percentage).toFixed(2)))) return 0
-    return Number((initLeverage + percentage).toFixed(0))
+    return Number((initLeverage + percentage).toFixed(2))
     //return Number(initLeverage.toFixed(2))
   }, [maxQtyNum, order.size, publicKey, traderInfo.currentLeverage, traderInfo.availableLeverage])
 
@@ -1532,19 +1539,29 @@ export const PlaceOrder: FC = () => {
           <div className={cn('flex mb-2.5 flex-col')}>
             <InfoLabel>Leverage</InfoLabel>
             <div className={cn('mt-2.5')}>
-              <Slider
-                max={10}
-                thumbSize="md"
-                showSteps={true}
-                value={[sliderValue]}
-                onValueChange={(e) => handleSliderChange(e)}
-                steps={0}
-                step={0.1}
-                min={0}
-              >
-                {sliderValue}x
-              </Slider>
-              <div className={cn('h-5 w-full flex items-center justify-between mt-3 relative')}>
+              <LEVERAGE_WRAPPER>
+                <Picker>
+                  <Slider
+                    max={10}
+                    onChange={(e) => handleSliderChange(e)}
+                    step={0.0001}
+                    value={sliderValue}
+                    trackStyle={{
+                      height: '6px'
+                    }}
+                    handleStyle={{
+                      height: '20px',
+                      width: '20px',
+                      background: 'white',
+                      border: '2px solid #FFFFFF',
+                      position: 'relative',
+                      bottom: '2px'
+                    }}
+                    marks={getMarks()}
+                  />
+                </Picker>
+              </LEVERAGE_WRAPPER>
+              {/* <div className={cn('h-5 w-full flex items-center justify-between mt-3 relative')}>
                 <div className={cn('flex w-full justify-center')}>
                   <TitleLabel> 1X</TitleLabel>
                 </div>
@@ -1560,7 +1577,7 @@ export const PlaceOrder: FC = () => {
                 <div className={cn('flex w-full  justify-center')}>
                   <TitleLabel> 9X</TitleLabel>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className={cn('flex items-center mt-auto')}>

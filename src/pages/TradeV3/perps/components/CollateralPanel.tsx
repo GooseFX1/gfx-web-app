@@ -106,7 +106,6 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
   }, [accountHealth])
 
   const barsData = useMemo(() => {
-    const accountHealth = 40
     return (
       <div className="h-[20px] w-[32px]">
         <div className="flex">
