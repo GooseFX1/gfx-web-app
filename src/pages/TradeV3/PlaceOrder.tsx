@@ -962,6 +962,10 @@ export const PlaceOrder: FC = () => {
     return order.size !== '' && order.size !== 0 ? order.size : ''
   }, [order.size])
 
+  const amountDisplay = useMemo(() => {
+    return order.total !== '' && order.total !== 0 ? order.total : ''
+  }, [order.total])
+
   // return (
   //   <WRAPPER>
   //     {depositWithdrawModal && (
@@ -1405,9 +1409,8 @@ export const PlaceOrder: FC = () => {
                   )}
                 />
                 <div className="relative">
-                  {order.size !== '' && (
+                  {sizeDisplay !== '' && (
                     <InfoLabel>
-                      {/* {order.size } */}
                       <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
                     </InfoLabel>
                   )}
@@ -1416,7 +1419,6 @@ export const PlaceOrder: FC = () => {
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
               <div className="pb-1">
-                {' '}
                 <InfoLabel>Amount</InfoLabel>{' '}
               </div>
               <div className={cn('w-full flex')}>
@@ -1424,15 +1426,16 @@ export const PlaceOrder: FC = () => {
                   onKeyDown={(e) => handleKeyDown(e)}
                   placeholder={'0.00 USDC'}
                   onFocus={() => setFocused('total')}
-                  value={order.total !== 0 ? order.total : ''}
+                  value={amountDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'total')}
                   className={cn(
                     `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    order.total && `pr-[52px]`
+                    amountDisplay !== '' && `pr-[52px]`
                   )}
                 />
                 <div className="relative">
-                  {Number(order.total) !== 0 && (
+                  {console.log('SIIIIIZEZZEZEE', order.total)}
+                  {amountDisplay !== '' && (
                     <InfoLabel>
                       <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USDC</p>
                     </InfoLabel>
