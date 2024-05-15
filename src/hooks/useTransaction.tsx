@@ -50,9 +50,6 @@ function useTransaction(): useTransactionReturn {
         return { txSig: '', success: false }
       }
       const exec = async () => {
-        if (!txSig) {
-          throw new Error('Transaction failed')
-        }
         const blockHash = await connection.getLatestBlockhash()
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
           signature: txSig,
