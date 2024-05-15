@@ -217,7 +217,7 @@ const CollapsibleContent: FC<{
   const { isMobile, isTablet } = useBreakPoint()
   const [depositAmount, setDepositAmount] = useState<string>('')
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
-  const { sendTransaction } = useTransaction()
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
   useEffect(() => {
     if (userPublicKey) {
       if (coin.token === 'SOL') setUserTokenBalance(new BigNumber(userSolBalance))
@@ -394,8 +394,10 @@ const CollapsibleContent: FC<{
     setOperationPending(true)
     depositedBalanceConnection(userPublicKey, coin)
     setIsTxnSuccessfull(false)
+    const txBuilder = createTransactionBuilder()
     const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
-    const { success } = await sendTransaction(tx)
+    txBuilder.add(tx)
+    const { success } = await sendTransaction(txBuilder.getTransaction())
     console.log('success', success)
     setOperationPending(false)
     setIsButtonLoading(false)
@@ -417,8 +419,10 @@ const CollapsibleContent: FC<{
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
+      const txBuilder = createTransactionBuilder()
       const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey)
-      const { success } = await sendTransaction(tx)
+      txBuilder.add(tx)
+      const { success } = await sendTransaction(txBuilder.getTransaction())
       setOperationPending(false)
       setIsButtonLoading(false)
       if (!success) {
