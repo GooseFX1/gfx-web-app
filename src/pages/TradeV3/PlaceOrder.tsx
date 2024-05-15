@@ -1441,7 +1441,6 @@ export const PlaceOrder: FC = () => {
                   )}
                 />
                 <div className="relative">
-                  {console.log('SIIIIIZEZZEZEE', order.total)}
                   {amountDisplay !== '' && (
                     <InfoLabel>
                       <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USDC</p>
