@@ -197,7 +197,7 @@ const FundingHistory: FC = () => {
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <h1>Funding</h1>
+      <h1 className={'mb-2'}>Funding</h1>
       <ACCOUNTVALUESFLEX>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>

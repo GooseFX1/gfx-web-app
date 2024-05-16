@@ -226,7 +226,7 @@ const AccountOverview: FC = () => {
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <h1>Account Overview</h1>
+      <h1 className={'mb-2'}>Account Overview</h1>
       <ACCOUNTVALUESFLEX>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>

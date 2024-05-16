@@ -21,15 +21,14 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
 
   return (
     <WRAPPER
-      className="flex flex-col px-5 pb-0 mb-0 w-36 h-[calc(100vh - 80px)]
-    !border-l-0 border-t-0 border-b-0
-    border border-r-black-4"
+      className="flex flex-col px-5 pb-0 mb-0 w-36 h-[calc(100vh - 56px - 40px)]
+    !border-l-0 border-t-0 border-b-0 border border-r-black-4 dark:border-t-0 dark:border-b-0"
     >
       <Tabs defaultValue="0" className="!dark:bg-black-1 bg-grey-5">
         <TabsList className="flex flex-col mt-2 dark:!bg-black-1  ">
           {tabs.map((elem, index) => (
             <TabsTrigger
-              className={cn('w-full h-8.75 dark:!bg-black-1 ')}
+              className={cn('w-full h-8.75 dark:!bg-black-1')}
               size="xl"
               key={index}
               value={index.toString()}
