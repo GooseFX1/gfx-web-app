@@ -1,15 +1,14 @@
 import { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { useDarkMode, usePriceFeedFarm, useConnectionConfig, useSSLContext } from '../../context'
-import { executeAllPoolClaim, TxnReturn } from '../../web3'
+import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { executeAllPoolClaim } from '../../web3'
 import { truncateBigNumber } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { TERMS_OF_SERVICE } from '../../constants'
 import { Button, Dialog, DialogBody, DialogCloseDefault, DialogContent, DialogOverlay } from 'gfx-component-lib'
-import { toast } from 'sonner'
-import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
 import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
+import useTransaction from '@/hooks/useTransaction'
 
 export const AllClaimModal: FC<{
   allClaimModal: boolean
@@ -24,34 +23,18 @@ export const AllClaimModal: FC<{
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { rewards, allPoolSslData } = useSSLContext()
-
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
 
-  const handleAllClaim = () => {
+  const handleAllClaim = async () => {
     setIsLoading(true)
-    toast.promise(
-      promiseBuilder<Awaited<ReturnType<typeof executeAllPoolClaim>>>(
-        executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData, true)
-      ),
-      {
-        loading: <LoadingToast />,
-        error: (err) => {
-          console.log(err)
-          setAllClaimModal(false)
-          setIsLoading(false)
-          return <ErrorToast />
-        },
-        success: (res: TxnReturn) => {
-          console.log(res)
-          setAllClaimModal(false)
-          setIsLoading(false)
-          return <SuccessToast txId={res.signature} />
-        }
-      }
-    )
+    const tx = await executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData)
+    await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
+    setAllClaimModal(false)
+    setIsLoading(false)
   }
 
   const Content = useMemo(
