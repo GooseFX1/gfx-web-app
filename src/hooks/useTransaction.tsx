@@ -20,7 +20,7 @@ type useTransactionReturn = {
       connection,
       options,
       confirmationWaitType
-    }: {
+    }?: {
       connection?: Connection
       options?: SendTransactionOptions
       confirmationWaitType?: Commitment
@@ -44,22 +44,21 @@ function useTransaction(): useTransactionReturn {
   const sendTransaction = useCallback(
     async (
       txn: Transaction,
-      {
-        connection,
-        options,
-        confirmationWaitType
-      }: {
+      connectionData?: {
         connection?: Connection
         options?: SendTransactionOptions
         confirmationWaitType?: Commitment
       }
     ) => {
-      let txSig = ''
+      const connection = connectionData?.connection ?? originalConnection
+      const txSig = await sendTransactionOriginal(txn, connection, connectionData?.options).catch((err) => {
+        console.log('[ERROR] Transaction failed', err)
+        return ''
+      })
+      if (!txSig) {
+        return { txSig: '', success: false }
+      }
       const exec = async () => {
-        txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
-          console.log('[ERROR] Transaction failed', err)
-          return ''
-        })
         if (!txSig) {
           throw new Error('Transaction failed')
         }
@@ -69,15 +68,18 @@ function useTransaction(): useTransactionReturn {
           blockhash: blockHash.blockhash,
           lastValidBlockHeight: blockHash.lastValidBlockHeight
         }
+        console.log('PRE RESPONSE', txSig)
         return connection
-          .confirmTransaction(blockHeightConfirmationStrategy, confirmationWaitType ?? 'confirmed')
+          .confirmTransaction(blockHeightConfirmationStrategy, connectionData?.confirmationWaitType ?? 'confirmed')
           .then((res) => {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
             if (res.value.err != null) {
               console.log('Transaction failed', res.value.err)
               throw new Error('Transaction failed')
             }
-            return res
+            const response = { ...res, txid: txSig }
+            console.log('RESPONSE', response)
+            return response
           })
           .catch((err) => {
             console.log('[ERROR] Transaction failed', err)
