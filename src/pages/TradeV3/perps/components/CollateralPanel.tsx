@@ -54,6 +54,13 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
     return 100
   }, [traderInfo.health])
 
+  const userVolume = useMemo(() => {
+    const vol = traderInfo.traderVolume
+    if (Number.isNaN(vol)) return '0.00'
+    const rounded = (+vol).toFixed(2)
+    return rounded
+  }, [traderInfo.traderVolume])
+
   return (
     <div>
       <AccountRowHealth accountHealth={accountHealth} />
@@ -66,6 +73,12 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
       <AccountRowPnl
         tooltipData="The total profit and loss from your positions in your account"
         keyStr="Unrealized P&L"
+      />
+      <AccountRow
+        tooltipData="User volume refers to the total volume of trades made by you. The higher your volume, 
+        the greater your chances of receiving rewards in the competition"
+        keyStr="User Volume"
+        value={formatNumberInThousands(Number(userVolume))}
       />
       <AccountRow
         tooltipData="Margin Available is the amount of funds available in your account that can be used 
@@ -103,7 +116,7 @@ export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ ke
         <Tooltip>
           <TooltipTrigger>
             <div className={cn('ml-1.5')}>
-              <InfoImage mode={mode} />
+              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
             </div>
           </TooltipTrigger>
           <TooltipContent>{tooltipData}</TooltipContent>
@@ -164,7 +177,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           <Tooltip>
             <TooltipTrigger>
               <div className={cn('ml-1.5')}>
-                <InfoImage mode={mode} />
+                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
               </div>
             </TooltipTrigger>
             <TooltipContent>The health bar shows how close you are to being liquidated. </TooltipContent>
@@ -191,7 +204,7 @@ const AccountRow: FC<{ keyStr: string; value: string | number; tooltipData: stri
         <Tooltip>
           <TooltipTrigger>
             <div className={cn('ml-1.5')}>
-              <InfoImage mode={mode} />
+              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
             </div>
           </TooltipTrigger>
           <TooltipContent>{tooltipData}</TooltipContent>
