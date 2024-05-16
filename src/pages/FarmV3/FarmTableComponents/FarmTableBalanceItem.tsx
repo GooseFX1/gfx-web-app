@@ -448,7 +448,7 @@ const CollapsibleContent: FC<{
     setIsButtonLoading(true)
     setOperationPending(true)
     setIsTxnSuccessfull(false)
-    const tx = await executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey)
+    const tx = await executeClaimRewards(SSLProgram, connection, coin, userPublicKey)
     const { success } = await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
     setIsButtonLoading(false)
     setOperationPending(false)

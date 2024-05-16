@@ -253,7 +253,6 @@ export const executeWithdraw = async (
 
 export const executeClaimRewards = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
   walletPublicKey: PublicKey
@@ -267,7 +266,7 @@ export const executeClaimRewards = async (
     getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
   ])
 
-  const claimTX: Transaction = new Transaction()
+  const claimTX = new TransactionBuilder().usePriorityFee(false)
 
   const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
   if (createTokenAccIX) claimTX.add(createTokenAccIX)
@@ -291,18 +290,8 @@ export const executeClaimRewards = async (
     const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     claimTX.add(tr)
   }
-  //let signature
-  // try {
-  //   signature = await wallet.sendTransaction(claimTX, connection)
-  //   const confirm = await confirmTransaction(connection, signature, 'processed')
-  //   return { confirm, signature }
-  // } catch (error) {
-  //   console.log(error, 'claim rewards error\n', signature)
-  //   if (shouldThrow) throw error
-  //   return { error, signature }
-  // }
 
-  return claimTX
+  return claimTX.getTransaction()
 }
 
 const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLToken) => {
@@ -317,7 +306,6 @@ const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLTok
 
 export const executeAllPoolClaim = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   walletPublicKey: PublicKey,
   rewards: { [key: string]: PublicKey }[],
@@ -326,11 +314,6 @@ export const executeAllPoolClaim = async (
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
   const claimTX = new TransactionBuilder().usePriorityFee(false)
-  // const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-  //   microLamports: 250000
-  // })
-  //
-  // claimTX.add(addPriorityFee)
 
   for (let i = 0; i < allPoolSslData.length; i++) {
     const token = allPoolSslData[i]

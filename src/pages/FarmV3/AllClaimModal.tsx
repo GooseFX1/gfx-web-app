@@ -18,7 +18,6 @@ export const AllClaimModal: FC<{
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
-  const wal = useWallet()
   const { SSLProgram } = usePriceFeedFarm()
   const { connection } = useConnectionConfig()
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -31,7 +30,7 @@ export const AllClaimModal: FC<{
 
   const handleAllClaim = async () => {
     setIsLoading(true)
-    const tx = await executeAllPoolClaim(SSLProgram, wal, connection, pubKey, rewards, allPoolSslData)
+    const tx = await executeAllPoolClaim(SSLProgram, connection, pubKey, rewards, allPoolSslData)
     await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
     setAllClaimModal(false)
     setIsLoading(false)
