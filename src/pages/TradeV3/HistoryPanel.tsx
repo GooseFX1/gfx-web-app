@@ -52,17 +52,7 @@ const END_MODAL = styled(PopupCustom)`
 
 const columns = [
   {
-    Positions: [
-      'Market',
-      'Side',
-      'Entry Price',
-      'Quantity',
-      'Market Price',
-      'Value',
-      'Est. Liq Price',
-      'PnL',
-      'State'
-    ]
+    Positions: ['Market', 'Side', 'Entry Price', 'Quantity', 'Market Price', 'Value', 'Est. Liq Price', 'PnL', '']
   },
   {
     'Open Orders': ['Side', 'Size', 'Price', 'USD Value', 'Condition']
@@ -1105,7 +1095,7 @@ export const HistoryPanelPnL: FC<{ notionalSize }> = ({ notionalSize }) => {
     <div tw="flex items-center justify-center">
       {/* <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5> */}
       <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>
-        $ {pnl.toFixed(1)} ({((pnl / Number(notionalSize)) * 100).toFixed(0)}%)
+        $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
       </h5>
     </div>
   )
