@@ -105,15 +105,15 @@ export const RecentTrades: FC = () => {
         {tradeHistory.map((trade) => (
           <div key={trade._id} className={cn('flex items-center justify-between px-2')}>
             <p
-              className={cn(`w-1/3 text-tiny font-semibold
+              className={cn(`w-1/3 text-tiny font-semibold text-[13px]
              ${trade.side === 'Bid' ? `text-green-4` : `text-red-1`}`)}
             >
               {trade.price}
             </p>
-            <p className={cn(`w-1/3 flex text-tiny font-semibold justify-center`)}>
+            <p className={cn(`w-1/3 flex text-tiny font-semibold text-[13px] justify-center`)}>
               {trade.qty && trade.qty.toFixed(3)}
             </p>
-            <p className={cn(`w-1/3 flex text-tiny font-semibold justify-end`)}>
+            <p className={cn(`w-1/3 flex text-tiny font-semibold text-[13px] justify-end`)}>
               {unixTimestampToHHMMSS(trade.time)}
             </p>
           </div>
