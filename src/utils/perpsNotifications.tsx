@@ -160,38 +160,40 @@ export const notifyUsingPromise = async (
   promise: Promise<unknown>,
   onDismiss?: (toast: ToastT) => void,
   tentativeTxId?: string
-): Promise<boolean> => {
-  let res = false
-  await toast.promise(promise, {
-    loading: (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
-        <p>Please wait a few moments for the transaction to confirm...</p>
-        {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
-      </IntemediaryToast>
-    ),
-    success: (response: SuccessResponse) => {
-      res = true
-      return (
+): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    toast.promise(promise, {
+      loading: (
         <IntemediaryToast className={cn(`w-[290px]`)}>
-          <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
-          <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
-          <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
+          <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
+          <p>Please wait a few moments for the transaction to confirm...</p>
+          {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
         </IntemediaryToast>
-      )
-    },
-    error: () => (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
-        <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
-        <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
-          Contact Us
-        </OpenToastLink>
-      </IntemediaryToast>
-    ),
-    onDismiss: (toast: ToastT) => {
-      if (onDismiss) onDismiss(toast)
-    }
+      ),
+      success: (response: SuccessResponse) => {
+        resolve(true)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
+            <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
+            <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
+          </IntemediaryToast>
+        )
+      },
+      error: () => {
+        reject(false)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+            <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>
+        )
+      },
+      onDismiss: (toast: ToastT) => {
+        if (onDismiss) onDismiss(toast)
+      }
+    })
   })
-  return res
-}

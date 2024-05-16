@@ -25,7 +25,7 @@ type useTransactionReturn = {
       options?: SendTransactionOptions
       confirmationWaitType?: Commitment
     }
-  ) => Promise<string>
+  ) => Promise<{ success: boolean; txSig: string }>
 }
 
 function useTransaction(): useTransactionReturn {
@@ -54,11 +54,12 @@ function useTransaction(): useTransactionReturn {
         confirmationWaitType?: Commitment
       }
     ) => {
-      const txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
-        console.log('[ERROR] Transaction failed', err)
-        return ''
-      })
+      let txSig = ''
       const exec = async () => {
+        txSig = await sendTransactionOriginal(txn, connection ?? originalConnection, options).catch((err) => {
+          console.log('[ERROR] Transaction failed', err)
+          return ''
+        })
         if (!txSig) {
           throw new Error('Transaction failed')
         }
@@ -84,8 +85,8 @@ function useTransaction(): useTransactionReturn {
           })
       }
       const promise = promiseBuilder<Awaited<ReturnType<typeof connection.confirmTransaction>>>(exec())
-      await notifyUsingPromise(promise, null, txSig)
-      return txSig
+      const success = await notifyUsingPromise(promise, null, txSig)
+      return { txSig, success }
     },
     [originalConnection, sendTransactionOriginal]
   )
