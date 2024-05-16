@@ -405,8 +405,8 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
     const txn: TransactionInstruction = await stakeRewards.initializeUserAccount(null, walletContext.publicKey)
     const txBuilder = createTransactionBuilder().add(txn)
-    const txnSig = await sendTransaction(txBuilder.getTransaction(), { connection })
-    if (txnSig === '') {
+    const { txSig } = await sendTransaction(txBuilder.getTransaction(), { connection })
+    if (txSig === '') {
       return false
     }
 
