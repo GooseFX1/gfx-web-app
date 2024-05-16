@@ -153,8 +153,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const chainId = useMemo(() => APP_RPC.chainId, [endpointName])
-  const network = useMemo(() => APP_RPC.network, [endpointName])
+  const chainId = useMemo(() => RPCs[endpointName].chainId, [endpointName])
+  const network = useMemo(() => RPCs[endpointName].network, [endpointName])
 
   const endpoint = useMemo(() => {
     if (existingUserCache.endpoint !== null) {
@@ -162,10 +162,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
       if (endpointName === 'Custom') {
-        setEndpointName(APP_RPC.name)
-        return APP_RPC.endpoint
+        setEndpointName(RPCs[endpointName].name)
+        return RPCs[endpointName].endpoint
       } else {
-        return APP_RPC.endpoint
+        return RPCs[endpointName].endpoint
       }
     }
   }, [endpointName])
@@ -237,7 +237,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (endpointName === null) {
       setEndpointName(
-        existingUserCache.endpointName === null || existingUserCache.endpoint === null ? APP_RPC.name : 'Custom'
+        existingUserCache.endpointName === null || existingUserCache.endpoint === null
+          ? RPCs[endpointName].name
+          : 'Custom'
       )
     }
   }, [])
