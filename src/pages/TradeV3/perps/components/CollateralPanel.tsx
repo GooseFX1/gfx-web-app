@@ -10,7 +10,7 @@ import { useCrypto, useDarkMode } from '../../../../context'
 import useWindowSize from '../../../../utils/useWindowSize'
 import { formatNumberInThousands } from '../utils'
 import { TooltipTrigger, TooltipContent, Tooltip, cn } from 'gfx-component-lib'
-import { InfoImage, InfoLabel, PerpsLayout } from './PerpsGenericComp'
+import { InfoImage, InfoLabel, InfoLabelNunito, PerpsLayout } from './PerpsGenericComp'
 import { Connect } from '../../../../layouts'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
@@ -104,9 +104,11 @@ export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ ke
     if (traderInfo.pnl === '0' || !Number(traderInfo.pnl)) return <span>0.00</span>
     const isNegative = traderInfo.pnl[0] === '-'
     return (
-      <h5 className={isNegative ? cn(`text-red-1 font-semibold`) : cn(`text-green-gradient-1 font-semibold`)}>
-        {(!isNegative ? '+' : '') + formatNumberInThousands(Number(traderInfo.pnl))} $
-      </h5>
+      <InfoLabelNunito
+        className={isNegative ? cn(`!text-red-1 font-semibold`) : cn(`!text-green-gradient-1 font-semibold`)}
+      >
+        $ {(!isNegative ? '+' : '') + formatNumberInThousands(Number(traderInfo.pnl))}
+      </InfoLabelNunito>
     )
   }, [traderInfo])
   return (
@@ -122,7 +124,9 @@ export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ ke
           <TooltipContent>{tooltipData}</TooltipContent>
         </Tooltip>
       </div>
-      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5>
+      <InfoLabelNunito className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>
+        {pnl}
+      </InfoLabelNunito>
     </div>
   )
 }
@@ -142,7 +146,7 @@ const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
             <div key={index} className={percent <= item ? 'bars gray' : `bars ${barColour}`}></div>
           ))}
         </span>
-        <InfoLabel>{percent}%</InfoLabel>
+        <InfoLabelNunito>{percent}%</InfoLabelNunito>
       </div>
     )
   }, [accountHealth])
@@ -211,7 +215,7 @@ const AccountRow: FC<{ keyStr: string; value: string | number; tooltipData: stri
         </Tooltip>
       </div>
 
-      <InfoLabel>{value}</InfoLabel>
+      <InfoLabelNunito>${value}</InfoLabelNunito>
     </div>
   )
 }

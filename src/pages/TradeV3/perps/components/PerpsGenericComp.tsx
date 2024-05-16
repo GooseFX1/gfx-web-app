@@ -16,6 +16,11 @@ export const InfoLabel: FC<{ children: ReactNode }> = ({ children }) => (
     <h5 className={cn('text-black-4 dark:text-grey-8')}>{children}</h5>
   </div>
 )
+export const InfoLabelNunito: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
+  <div>
+    <p className={cn('text-black-4 dark:text-grey-8 text-[13px]', className)}>{children}</p>
+  </div>
+)
 export const GradientBorder: FC<{ children: ReactNode; radius: number }> = ({
   children,
   radius

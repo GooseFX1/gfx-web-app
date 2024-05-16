@@ -14,7 +14,7 @@ import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
 import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
 import { OrderBook } from './OrderBook'
-import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel, InfoLabelNunito, TitleLabel } from './perps/components/PerpsGenericComp'
 import { checkMobile } from '@/utils'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -379,16 +379,18 @@ const OpenOrdersComponent: FC = () => {
             !removedOrderIds.includes(order.order.orderId) ? (
               <div key={index} className={cn('flex items-center my-1 ')}>
                 <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
-                  {order.order.side.toUpperCase()}
+                  <InfoLabelNunito className={order.order.side === 'buy' ? `!text-green-4` : `!text-red-2`}>
+                    {order.order.side.toUpperCase()}
+                  </InfoLabelNunito>
                 </h5>
                 <div className={cn('w-[20%]')}>
-                  <InfoLabel>{order.order.size} </InfoLabel>
+                  <InfoLabelNunito>{order.order.size} </InfoLabelNunito>
                 </div>
                 <div className={cn('w-[20%]')}>
-                  <InfoLabel>${order.order.price} </InfoLabel>
+                  <InfoLabelNunito>${order.order.price} </InfoLabelNunito>
                 </div>
                 <div className={cn('w-[20%]')}>
-                  <InfoLabel>{(order.order.size * order.order.price).toFixed(2)}</InfoLabel>
+                  <InfoLabelNunito>${(order.order.size * order.order.price).toFixed(2)}</InfoLabelNunito>
                 </div>
                 <div className={cn('w-[20%]')}>
                   <Button
@@ -463,7 +465,7 @@ const OpenOrdersComponent: FC = () => {
                       </div>
                       <div>
                         <InfoLabel>
-                          <p> {(order.order.size * order.order.price).toFixed(2)} </p>
+                          <p> ${(order.order.size * order.order.price).toFixed(2)} </p>
                         </InfoLabel>
                       </div>
                     </div>
@@ -475,7 +477,7 @@ const OpenOrdersComponent: FC = () => {
                       </div>
                       <div>
                         <InfoLabel>
-                          <p>{(order.order.size * order.order.price).toFixed(2)}</p>
+                          <p>${(order.order.size * order.order.price).toFixed(2)}</p>
                         </InfoLabel>
                       </div>
                     </div>
@@ -552,21 +554,23 @@ const TradeHistoryComponent: FC = () => {
             historyData.map((order, index) => (
               <div key={index}>
                 <span>
-                  <InfoLabel>
-                    <h5 className={cn(order.side === 'Long' ? 'text-green-4 ml-2' : 'text-red-2 ml-2')}>
+                  <h5>
+                    <InfoLabelNunito
+                      className={cn(order.side === 'Long' ? '!text-green-4 ml-2' : '!text-red-2 ml-2')}
+                    >
                       {order.side}
-                    </h5>
-                  </InfoLabel>
+                    </InfoLabelNunito>
+                  </h5>
                 </span>
 
                 <span>
-                  <InfoLabel>{order.size}</InfoLabel>
+                  <InfoLabelNunito>{order.size}</InfoLabelNunito>
                 </span>
                 <span>
-                  <InfoLabel>${order.price} </InfoLabel>
+                  <InfoLabelNunito>${order.price} </InfoLabelNunito>
                 </span>
                 <span>
-                  <InfoLabel>{(order.size * order.price).toFixed(2)}</InfoLabel>
+                  <InfoLabelNunito>${(order.size * order.price).toFixed(2)}</InfoLabelNunito>
                 </span>
               </div>
             ))}
@@ -991,7 +995,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
                 </div>
                 <div>
                   <InfoLabel>
-                    <p> {traderInfo.averagePosition.price} </p>
+                    <p> ${traderInfo.averagePosition.price} </p>
                   </InfoLabel>
                 </div>
               </div>
@@ -1003,7 +1007,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
                 </div>
                 <div>
                   <InfoLabel>
-                    <p> {perpsPrice} </p>
+                    <p> ${perpsPrice} </p>
                   </InfoLabel>
                 </div>
               </div>
@@ -1035,7 +1039,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
       {traderInfo.averagePosition.side && Number(roundedSize) ? (
         <div className={cn('flex px-2.5 mt-2.5')}>
           <div className={cn('w-[11.1%] flex items-center')}>
-            <InfoLabel>{selectedCrypto.pair} </InfoLabel>
+            <InfoLabelNunito>{selectedCrypto.pair} </InfoLabelNunito>
           </div>
           <div
             className={cn(
@@ -1044,22 +1048,26 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
               }`
             )}
           >
-            <h5>{traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}</h5>
+            <InfoLabelNunito
+              className={traderInfo.averagePosition.side === 'buy' ? '!text-green-4' : '!text-red-2'}
+            >
+              {traderInfo.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+            </InfoLabelNunito>
           </div>
           <div className={cn('w-[11.1%] flex items-center ')}>
-            <InfoLabel>{traderInfo.averagePosition.price} </InfoLabel>
+            <InfoLabelNunito>${traderInfo.averagePosition.price} </InfoLabelNunito>
           </div>
           <div className={cn('w-[11.1%] flex items-center')}>
-            <InfoLabel>{roundedSize} </InfoLabel>
+            <InfoLabelNunito> {roundedSize}</InfoLabelNunito>
           </div>
           <div className={cn('w-[11.1%] flex items-center')}>
-            <InfoLabel>{perpsPrice} </InfoLabel>
+            <InfoLabelNunito>${perpsPrice} </InfoLabelNunito>
           </div>
           <div className={cn('w-[11.1%] flex items-center')}>
-            <InfoLabel>${formatNumberInThousands(Number(notionalSize))} </InfoLabel>
+            <InfoLabelNunito>${formatNumberInThousands(Number(notionalSize))} </InfoLabelNunito>
           </div>
           <div className={cn('w-[11.1%] flex items-center')}>
-            <InfoLabel>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>
+            <InfoLabelNunito>${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabelNunito>
           </div>
           <div className={cn('w-[11.5%] flex items-center')}>
             <div>
@@ -1094,9 +1102,9 @@ export const HistoryPanelPnL: FC<{ notionalSize }> = ({ notionalSize }) => {
   return (
     <div tw="flex items-center justify-center">
       {/* <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{pnl}</h5> */}
-      <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>
-        $ {pnl.toFixed(4)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
-      </h5>
+      <p className={isNegative ? cn(`text-red-1 text-[13px]`) : cn(`text-green-gradient-1 text-[13px]`)}>
+        $ {pnl.toFixed(2)} ({((pnl / Number(notionalSize)) * 100).toFixed(2)}%)
+      </p>
     </div>
   )
 }
