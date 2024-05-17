@@ -6730,9 +6730,9 @@ gfx-component-lib@^1.12.0:
     tailwindcss-animate "^1.0.7"
     tailwindcss-border-gradient-radius "^3.0.1"
 
-"gfx-perp-sdk@git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented":
+"gfx-perp-sdk@git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented-events":
   version "1.2.1"
-  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#e432fdfd2138c2a94aa767704ac80c692043b53b"
+  resolved "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#46c9c26f19c8716ae297a24b58c3dde010ce7903"
   dependencies:
     "@project-serum/anchor" "^0.26.0"
     "@project-serum/borsh" "^0.2.5"
