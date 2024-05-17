@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -10,6 +11,10 @@ import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/util
 import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Container, ContainerTitle, IconTooltip } from 'gfx-component-lib'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { AccountRowHealth } from '@/pages/TradeV3/perps/components/CollateralPanel'
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
   padding: 15px;
@@ -90,8 +95,8 @@ const ACCOUNTHEADER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex w-full h-full`}
-  border:1px solid #3C3C3C;
+  ${tw`flex w-full h-full dark:bg-black-2 bg-white`}
+  border-top:1px solid #3C3C3C;
   color: ${({ theme }) => theme.text2};
 
   .no-balances-found {
@@ -219,71 +224,117 @@ const AccountOverview: FC = () => {
     }
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
-    <WRAPPER>
+    <div className="flex flex-col w-full p-[15px]">
       {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <h1 className={'mb-2'}>Account Overview</h1>
-      <ACCOUNTVALUESFLEX>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>My Portfolio Value:</p>
-            <p>${formatNumberInThousands(Number(portfolioValue))}</p>
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>My 24h Trading Volume:</p>
-            <p>${formatNumberInThousands(dayVolume)}</p>
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>My Total Trading Volume:</p>
-            <p>${formatNumberInThousands(Number(userVolume))}</p>
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-        <div className="health-container">
-          <div className="health-icon">
-            <span className="key">Health</span>
-            <img src="/img/assets/heart-red.svg" alt="heart-icon" width="19" height="17" className="heart-icon" />
-            {getHealthData()}
-          </div>
+      <InfoLabel>
+        <h3>Account Overview</h3>
+      </InfoLabel>
+      <div className="flex justify-between items-center">
+        <div className="my-[15px] flex items-center">
+          <Container
+            variant="outline"
+            colorScheme="primaryGradient"
+            size="md"
+            className="max-w-[158px] min-h-[55px] p-1.5 flex justify-between"
+          >
+            <ContainerTitle>
+              <h5>My Portfolio Value:&nbsp;</h5>
+              {/* <IconTooltip tooltipType={'outline'}>
+              <p>The current price at which a good or service can be purchased or sold.</p>
+            </IconTooltip> */}
+            </ContainerTitle>
+            <InfoLabel>
+              <h3 className="leading-4">${formatNumberInThousands(Number(portfolioValue))}</h3>
+            </InfoLabel>
+          </Container>
+          <Container
+            variant="outline"
+            colorScheme="primaryGradient"
+            size="md"
+            className="max-w-[185px] min-h-[55px] p-1.5 flex justify-between ml-4"
+          >
+            <ContainerTitle>
+              <h5 className="whitespace-nowrap">My 24h Trading Volume:&nbsp;</h5>
+              {/* <IconTooltip tooltipType={'outline'}>
+              <p>The current price at which a good or service can be purchased or sold.</p>
+            </IconTooltip> */}
+            </ContainerTitle>
+            <InfoLabel>
+              <h3 className="leading-4">${formatNumberInThousands(dayVolume)}</h3>
+            </InfoLabel>
+          </Container>
+          <Container
+            variant="outline"
+            colorScheme="primaryGradient"
+            size="md"
+            className="max-w-[205px] min-h-[55px] p-1.5 flex justify-between ml-4"
+          >
+            <ContainerTitle>
+              <h5 className="whitespace-nowrap">My Total Trading Volume:&nbsp;</h5>
+              {/* <IconTooltip tooltipType={'outline'}>
+              <p>The current price at which a good or service can be purchased or sold.</p>
+            </IconTooltip> */}
+            </ContainerTitle>
+            <InfoLabel>
+              <h3 className="leading-4">${formatNumberInThousands(Number(userVolume))}</h3>
+            </InfoLabel>
+          </Container>
         </div>
-      </ACCOUNTVALUESFLEX>
-      <ACCOUNTHEADER>
+        <div className="w-[180px]">
+          <AccountRowHealth accountHealth={accountHealth} />
+        </div>
+      </div>
+
+      <div
+        className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className="h-5" key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
       <HISTORY>
         {traderInfo.averagePosition.side && Number(roundedSize) ? (
           <div className="positions">
             <div className="pair-container">
               <img src={`${assetIcon}`} alt="SOL icon" />
-              <span>{selectedCrypto.pair}</span>
+              <InfoLabel>
+                <p className="text-[13px]">{selectedCrypto.pair}</p>{' '}
+              </InfoLabel>
             </div>
-            <span>{roundedSize} SOL</span>
-            <span>${formatNumberInThousands(Number(notionalSize))}</span>
-            <span>${Number(traderInfo.liquidationPrice).toFixed(2)}</span>
+            <InfoLabel>
+              <p className="text-[13px]">{roundedSize} SOL </p>
+            </InfoLabel>
+            <InfoLabel>
+              <p className="text-[13px]">${formatNumberInThousands(Number(notionalSize))} </p>{' '}
+            </InfoLabel>
+            <InfoLabel>
+              <p className="text-[13px]">${Number(traderInfo.liquidationPrice).toFixed(2)} </p>{' '}
+            </InfoLabel>
           </div>
         ) : (
-          <div className="no-balances-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" />
-            <p>No Active Positions</p>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+          <div className="flex items-center justify-center w-full flex-col">
+            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
+            <ContentLabel className="text-[18px]">No Positions Found</ContentLabel>
+            <div className="mt-4">{!connected && <Connect />}</div>
+            <div className="mt-4">
+              {connected && (
+                <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+                  Deposit Now
+                </button>
+              )}
+            </div>
           </div>
         )}
       </HISTORY>
-    </WRAPPER>
+    </div>
   )
 }
 

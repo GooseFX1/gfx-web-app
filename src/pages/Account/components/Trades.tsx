@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -5,18 +6,16 @@ import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
+  ${tw`flex flex-col w-full !pb-0`}
   padding: 15px;
   h1 {
     font-size: 18px;
@@ -24,27 +23,9 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-8  items-center w-full`}
-    color: ${({ theme }) => theme.text2};
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
+  border-top: 1px solid #3c3c3c;
   border-top: none;
   height: calc(100vh - 180px);
 
@@ -68,10 +49,10 @@ const HISTORY = styled.div`
     height: 40px;
   }
   .history-item {
-    ${tw`grid grid-cols-8  items-center w-full`}
+    ${tw`grid grid-cols-8  items-center !border-t-0 !border-l-0 !border-r-0
+    w-full dark:border-b-black-4 border border-b-grey-4`}
     padding: 10px;
     font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
   }
   .history-item span:first-child {
     ${tw`pl-1`}
@@ -127,7 +108,6 @@ const Trades: FC = () => {
   const { connected, publicKey } = useWallet()
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
-  const [tradeType, setTradeType] = useState<string>('deposit')
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
@@ -174,46 +154,58 @@ const Trades: FC = () => {
   return (
     <WRAPPER>
       {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <h1>Trades</h1>
-      <ACCOUNTHEADER>
+      <InfoLabel>
+        <h1 className="mb-4">Trades</h1>
+      </InfoLabel>
+      <div
+        className="grid grid-cols-8 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className="h-5" key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
+
       <HISTORY>
         {filledTrades.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container dark:bg-black-5 bg-white">
               {filledTrades.map((trade) => (
                 <div key={trade._id} className="history-item">
                   <div className="pair-container">
                     <img src={`${assetIcon}`} alt="SOL icon" />
-                    <span>{selectedCrypto.pair}</span>
+                    <InfoLabel>
+                      <p className="text-[13px]">{selectedCrypto.pair}</p>
+                    </InfoLabel>
                   </div>
-                  <span className={getDisplayTradeSide(trade)}>{getDisplayTradeSide(trade)}</span>
-                  <span>{trade.qty.toFixed(3)} SOL</span>
-                  <span>${(trade.qty * trade.price).toFixed(2)}</span>
-                  <span>${trade.price.toFixed(2)}</span>
-                  <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
-                  <span className="filled">Filled</span>
-                  <span>{convertUnixTimestampToFormattedDate(trade.time * 1000)}</span>
+                  <InfoLabel className={getDisplayTradeSide(trade)}>
+                    <p className="text-[13px]">{getDisplayTradeSide(trade)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">{trade.qty.toFixed(3)} SOL</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${(trade.qty * trade.price).toFixed(2)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${trade.price.toFixed(2)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</p>
+                  </InfoLabel>
+                  <InfoLabel className="!text-green-4">
+                    <p className="text-[13px]">Filled</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">{convertUnixTimestampToFormattedDate(trade.time * 1000)}</p>
+                  </InfoLabel>
                 </div>
               ))}
             </div>

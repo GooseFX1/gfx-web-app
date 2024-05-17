@@ -11,9 +11,11 @@ import { GET_USER_FUND_TRANSFERS } from '../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../api'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
+  ${tw`flex flex-col w-full overflow-hidden`}
   padding: 15px;
   h1 {
     font-size: 18px;
@@ -21,27 +23,11 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        color: ${({ theme }) => theme.text2};
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
+  /* border-top: 1px solid #3c3c3c; */
   border-top: none;
   height: calc(100vh - 180px);
 
@@ -138,7 +124,7 @@ const DepositWithdrawHistory: FC = () => {
   }, [connected, publicKey, pagination])
 
   return (
-    <WRAPPER>
+    <div className="flex flex-col w-full p-[15px] !pb-0">
       {depositWithdrawModal && (
         <SETTING_MODAL
           visible={true}
@@ -157,24 +143,44 @@ const DepositWithdrawHistory: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <h1>Deposits/Withdrawals</h1>
-      <ACCOUNTHEADER>
+      <InfoLabel>
+        <h3 className="mb-4">Deposits/Withdrawals</h3>
+      </InfoLabel>
+      <div
+        className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className="h-5" key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
+
       <HISTORY>
         {fundTransfers.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundTransfers.map((transfer) => (
-                <div key={transfer._id} className="history-item">
-                  <span>{transfer.amount.toFixed(2)} USDC</span>
-                  <span>${transfer.amount.toFixed(2)}</span>
-                  <span className={`${transfer.type}-type`}>
-                    {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
-                  </span>
-                  <span>{convertUnixTimestampToFormattedDate(transfer.time)}</span>
+                <div
+                  key={transfer._id}
+                  className="grid grid-cols-4 gap-x-40 items-center w-full p-2.5 
+                border dark:border-b-black-4 border-b-grey-4 border-l-0 border-r-0 border-t-0
+                dark:bg-black-2 bg-white"
+                >
+                  <InfoLabel>
+                    {' '}
+                    <p className="text-[13px]">{transfer.amount.toFixed(2)} USDC</p>{' '}
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]"> ${transfer.amount.toFixed(2)}</p>{' '}
+                  </InfoLabel>
+                  <InfoLabel className={transfer.type === 'deposit' ? '!text-green-4' : '!text-red-2'}>
+                    <p className="text-[13px]">{transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">{convertUnixTimestampToFormattedDate(transfer.time)}</p>
+                  </InfoLabel>
                 </div>
               ))}
             </div>
@@ -199,7 +205,7 @@ const DepositWithdrawHistory: FC = () => {
           </div>
         )}
       </HISTORY>
-    </WRAPPER>
+    </div>
   )
 }
 

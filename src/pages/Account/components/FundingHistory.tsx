@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -5,14 +6,15 @@ import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { httpClient } from '../../../api'
+import { customClient, httpClient } from '../../../api'
 import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 import { Tooltip } from '../../../components'
-import { Button } from 'gfx-component-lib'
+import { Button, Container, ContainerTitle } from 'gfx-component-lib'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
+import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -45,6 +47,7 @@ const ACCOUNTVALUE = styled.div`
   }
 `
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ACCOUNTHEADER = styled.div`
   /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
 
@@ -66,9 +69,8 @@ const ACCOUNTHEADER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
-  height: calc(100vh - 222px);
+  ${tw`flex flex-col w-full h-full dark:bg-black-5`}
+  height: calc(100vh - 262px);
 
   .history-items-root-container {
     height: 100%;
@@ -128,7 +130,7 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .buy {
-    color: #80ce00;
+    color: #6ead57;
   }
   .filled {
     color: #80ce00;
@@ -168,7 +170,7 @@ const FundingHistory: FC = () => {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+        traderRiskGroup: '7FBZAuVwjcacagLFYhBWFhtbaUUDUVUYf8x5TLXPkP2E',
         page: pagination.page,
         limit: pagination.limit
       }
@@ -197,30 +199,54 @@ const FundingHistory: FC = () => {
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <h1 className={'mb-2'}>Funding</h1>
-      <ACCOUNTVALUESFLEX>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>Cumulative Funding:</p>
-            {getCumulativeFunding().toString().indexOf('.') != -1 ? (
-              <Tooltip
-                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                infoIcon={false}
-                title={getCumulativeFunding()}
-              >
-                <span>{getCumulativeFunding().toFixed(2)}</span>
-              </Tooltip>
-            ) : (
-              <span>{getCumulativeFunding()}</span>
-            )}
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-      </ACCOUNTVALUESFLEX>
-      <ACCOUNTHEADER>
+      <InfoLabel>
+        <h1>Funding</h1>
+      </InfoLabel>
+
+      <div className="flex justify-between items-center">
+        <div className="my-[15px] flex items-center">
+          <Container
+            variant="outline"
+            colorScheme="primaryGradient"
+            size="md"
+            className="w-[174px] min-h-[55px] p-1.5 flex justify-between"
+          >
+            <ContainerTitle>
+              <h5>Cumulative Funding:&nbsp;</h5>
+              {/* <IconTooltip tooltipType={'outline'}>
+              <p>The current price at which a good or service can be purchased or sold.</p>
+            </IconTooltip> */}
+            </ContainerTitle>
+            <InfoLabel>
+              <h3 className="leading-4">
+                $
+                {getCumulativeFunding().toString().indexOf('.') != -1 ? (
+                  <Tooltip
+                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                    infoIcon={false}
+                    title={getCumulativeFunding()}
+                  >
+                    <span>{getCumulativeFunding().toFixed(2)}</span>
+                  </Tooltip>
+                ) : (
+                  <span>{getCumulativeFunding()}</span>
+                )}
+              </h3>
+            </InfoLabel>
+          </Container>
+        </div>
+      </div>
+      <div
+        className="grid grid-cols-5 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className="h-5" key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
+
       <HISTORY>
         {fundingHistory.length ? (
           <div className="history-items-root-container">
@@ -235,7 +261,7 @@ const FundingHistory: FC = () => {
                     {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
                     {item.averagePosition.side === undefined && ''}
                   </span>
-                  <span>{item.averagePosition.quantity} SOL</span>
+                  <InfoLabelNunito className="text-[13px]">{item.averagePosition.quantity} SOL</InfoLabelNunito>
                   <span>
                     {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) < 0.0001
                       ? '< 0.0001'
@@ -255,8 +281,8 @@ const FundingHistory: FC = () => {
           </div>
         ) : (
           <div className="no-funding-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <p>No Funding Found</p>
+            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" /> */}
+            <ContentLabel className="text-[18px]  whitespace-nowrap mb-5">No Funding Found</ContentLabel>
             {!connected && <Connect />}
             {connected && (
               <Button

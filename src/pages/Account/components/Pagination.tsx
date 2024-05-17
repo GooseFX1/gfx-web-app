@@ -5,8 +5,8 @@ import 'styled-components/macro'
 import { useDarkMode } from '../../../context'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-row w-full items-center justify-end h-full`}
-  border-top: 1px solid #3c3c3c;
+  ${tw`flex flex-row w-full items-center justify-end h-full border !border-b-0 !border-l-0 !border-r-0  
+   dark:border-t-0 border-t-0`}
   color: ${({ theme }) => theme.text2};
   height: 100%;
   .imagesContainer {
