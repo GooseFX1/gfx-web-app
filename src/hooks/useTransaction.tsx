@@ -51,7 +51,8 @@ function useTransaction(): useTransactionReturn {
       }
     ) => {
       const connection = connectionData?.connection ?? originalConnection
-      const txSig = await sendTransactionOriginal(txn, connection, connectionData?.options).catch((err) => {
+      const options = { ...connectionData?.options, skipPreflight: true }
+      const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
         return ''
       })
