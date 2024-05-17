@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { useDarkMode } from '@/context'
+import { TERMS_OF_SERVICE } from '../../constants'
 import Lottie from 'lottie-react'
 import GeoRestrictedDark from '../../animations/GeorestrictedDark.json'
 import GeoRestrictedLite from '../../animations/GeorestrictedLite.json'
@@ -18,7 +19,7 @@ export const GeorestrictionBodyContent = memo(() => {
           Oops, It looks like you're trying to use GooseFX from a location where access is restricted according to
           our{' '}
           <a
-            href="https://www.goosefx.io/terms"
+            href={TERMS_OF_SERVICE}
             target={'_blank'}
             rel="noreferrer"
             className="font-bold dark:text-white text-blue-1 underline 
@@ -36,4 +37,4 @@ export const GeorestrictionBodyContent = memo(() => {
   )
 })
 
-GeorestrictionBodyContent.displayName = "GeorestrictionBodyContent"
+GeorestrictionBodyContent.displayName = 'GeorestrictionBodyContent'

@@ -1,11 +1,11 @@
 import { Dispatch, FC, SetStateAction, useEffect, useMemo } from 'react'
 import { SSLToken } from './constants'
+import { TERMS_OF_SERVICE } from '../../constants'
 import { truncateBigNumber, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, IconTooltip } from 'gfx-component-lib'
 import BigNumber from 'bignumber.js'
-
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
 
@@ -175,7 +175,7 @@ export const ActionModal: FC<{
             By {actionType === 'withdraw' ? 'withdrawing' : actionType === 'deposit' ? 'depositing' : 'claiming'},
             you agree to our{' '}
             <a
-              href="https://www.goosefx.io/terms"
+              href={TERMS_OF_SERVICE}
               target={'_blank'}
               rel={'noreferrer'}
               className="text-tiny font-semibold underline dark:text-white text-blue-1"
