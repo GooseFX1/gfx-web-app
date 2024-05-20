@@ -236,52 +236,39 @@ export const ClosePosition: FC<{
   }, [exitPrice, price, displayExitQty])
 
   return (
-    <div className="w-full p-2.5 sm:px-10">
-      <div tw="flex items-center my-4 sm:my-3">
-        <div className="text-[18px]">
-          <InfoLabel>
-            <h3> Close Position</h3>
-          </InfoLabel>
+    <div className="flex flex-col justify-between w-full p-3 sm:px-10">
+      <div>
+        <h3 className={cn('text-black-4 dark:text-grey-8 mt-1 mb-3')}>Close Position</h3>
+        <div className="percentage">
+          <Tabs defaultValue="3">
+            <TabsList>
+              {percentDetails.map((elem, index) => (
+                <TabsTrigger
+                  className={cn('w-[25%]')}
+                  size="xl"
+                  key={index}
+                  value={index.toString()}
+                  variant="primary"
+                  onClick={(e) => handlePercentageChange(e, index)}
+                >
+                  <TitleLabel whiteText={percentageIndex == index}>{elem.display}%</TitleLabel>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          {/* {percentDetails.map((elem, index) => (
+            <div
+              className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
+              onClick={(e) => {
+                handlePercentageChange(e, index)
+              }}
+              key={index}
+            >
+              {elem.display}%
+            </div>
+          ))} */}
         </div>
-        {/*      
-        <span tw="ml-auto text-average font-semibold text-black-4 dark:text-grey-5 sm:text-tiny">${price}</span>
-        <span tw="text-average font-semibold text-grey-1 sm:text-tiny">{displayExitQty}</span> */}
       </div>
-      <div className="percentage">
-        <Tabs defaultValue="3">
-          <TabsList>
-            {percentDetails.map((elem, index) => (
-              <TabsTrigger
-                className={cn('w-[25%]')}
-                size="xl"
-                key={index}
-                value={index.toString()}
-                variant="primary"
-                onClick={(e) => handlePercentageChange(e, index)}
-              >
-                <TitleLabel whiteText={percentageIndex == index}>{elem.display}%</TitleLabel>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-        {/* {percentDetails.map((elem, index) => (
-          <div
-            className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
-            onClick={(e) => {
-              handlePercentageChange(e, index)
-            }}
-            key={index}
-          >
-            {elem.display}%
-          </div>
-        ))} */}
-      </div>
-      {/* <div tw="flex flex-row justify-between">
-        <span tw="text-regular font-semibold dark:text-grey-4 text-grey-1 mb-2.5 sm:text-tiny">Custom</span>
-        {inputValue > Math.abs(totalExitQtyNumber) ? (
-          <span tw="text-red-1 font-semibold text-regular">Maximum quantity exceeded!</span>
-        ) : null}
-      </div> */}
 
       <div className="flex flex-col mt-2">
         <div className="flex justify-between items-center my-2">
@@ -295,34 +282,29 @@ export const ClosePosition: FC<{
             </div>
           </InfoLabel>
         </div>
-        <InfoRow label="Est. Exit Price" value={exitPrice} />
-        <InfoRow label="Est. Slippage" value={'0.000%'} />
-        <InfoRow label="New Est. Liquidation Price" value={'None'} />
-        <div className="flex justify-between my-2">
-          <ContentLabel>
-            <p>Est. Realized P&L</p>
-          </ContentLabel>
-          <InfoLabel>
-            <p>{pnlEstimate}</p>
-          </InfoLabel>
+        <div>
+          <InfoRow label="Est. Exit Price" value={exitPrice} />
+          <InfoRow label="Est. Slippage" value={'0.000%'} />
+          <InfoRow label="New Est. Liquidation Price" value={'None'} />
+          <div className="flex justify-between my-2">
+            <ContentLabel>
+              <p>Est. Realized P&L</p>
+            </ContentLabel>
+            <InfoLabel>
+              <p>{pnlEstimate}</p>
+            </InfoLabel>
+          </div>
         </div>
-        {/* <InfoRow label="Est. Entry Price" value={`$${Number(order.price).toFixed(2)}`} />
-            <InfoRow label="Est. Price Impact" value={`${totalPriceImpact.toFixed(4)}%`} />
-            <InfoRow label="Slippage Tolerance" value={`${0.1}%`} />
-            <InfoRow label="Trader Notional Size" value={`${notionalValue}%`} />
-            <InfoRow label="Fee (0.1%)" value={`${fee} USDC`} />
-            <InfoRow label="Total Cost" value={`${total} USDC`} />
-            <InfoRow label="Est. Liquidation Price" value={`${totalPriceImpact.toFixed(4)}%`} /> */}
       </div>
+
       <Button
         onClick={closePositionFn}
-        className={`w-[200px] ml-[150px] sm:ml-[120px] bottom-2.5 absolute`}
+        className={`mx-auto mb-2`}
         colorScheme={'blue'}
         disabled={loading}
         loading={loading}
-        width="100%"
         size="lg"
-        // cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
+        width={'100'}
       >
         <span>
           {percentDetails[percentageIndex]?.display
