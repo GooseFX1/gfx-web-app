@@ -11,20 +11,17 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { SendTransactionOptions } from '@solana/wallet-adapter-base'
 import { notifyUsingPromise, promiseBuilder } from '@/utils/perpsNotifications'
 
+type SendTxnOptions = {
+  connection?: Connection
+  options?: SendTransactionOptions
+  confirmationWaitType?: Commitment
+}
 type useTransactionReturn = {
   createTransactionBuilder: (txn?: TXN) => TransactionBuilder
   createTransaction: (txn?: TXN) => Transaction
   sendTransaction: (
     txn: Transaction,
-    {
-      connection,
-      options,
-      confirmationWaitType
-    }?: {
-      connection?: Connection
-      options?: SendTransactionOptions
-      confirmationWaitType?: Commitment
-    }
+    connectionData?: SendTxnOptions
   ) => Promise<{ success: boolean; txSig: string }>
 }
 
@@ -42,14 +39,7 @@ function useTransaction(): useTransactionReturn {
     [priorityFeeValue]
   )
   const sendTransaction = useCallback(
-    async (
-      txn: Transaction,
-      connectionData?: {
-        connection?: Connection
-        options?: SendTransactionOptions
-        confirmationWaitType?: Commitment
-      }
-    ) => {
+    async (txn: Transaction, connectionData?: SendTxnOptions) => {
       const connection = connectionData?.connection ?? originalConnection
       const options = { ...connectionData?.options, skipPreflight: true }
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
