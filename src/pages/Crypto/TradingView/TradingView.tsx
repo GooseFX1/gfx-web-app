@@ -143,6 +143,10 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     const tvWidget = new widget(widgetOptions)
 
     tvWidget.onChartReady(() => {
+      tvWidget.applyOverrides({
+        'paneProperties.backgroundType': 'solid',
+        'paneProperties.background': '#1C1C1C'
+      })
       tvWidgetRef.current = tvWidget
       tvWidget.subscribe('onAutoSaveNeeded', () => tvWidget.saveChartToServer())
     })
