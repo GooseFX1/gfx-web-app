@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useCallback } from 'react'
+import React, { FC, useCallback, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
 import { useDarkMode, useRewardToggle } from '../context'
@@ -9,13 +9,20 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 // import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
-import { MODAL_TYPES, APP_DEFAULT_ROUTE } from '../constants'
+import { APP_DEFAULT_ROUTE, MODAL_TYPES, SOCIAL_MEDIAS } from '../constants'
 import { CircularArrow } from '../components/common/Arrow'
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Button,
+  cn,
+  Dialog,
   DialogBody,
   DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTrigger,
   DropdownMenu,
@@ -23,23 +30,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Icon,
-  cn,
-  Dialog,
-  DialogFooter,
-  ListItem,
-  Accordion,
-  AccordionItem,
-  AccordionContent,
-  AccordionTrigger
+  ListItem
 } from 'gfx-component-lib'
 import useBoolean from '../hooks/useBoolean'
-import { SOCIAL_MEDIAS } from '../constants'
 import NetworkStatus from '@/components/footer/NetworkStatus'
 import RPCToggle from '@/components/footer/RPCToggle'
 // import PriorityFee from '@/components/footer/PriorityFee'
 import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
+import PriorityFee from '@/components/footer/PriorityFee'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -294,10 +294,10 @@ const MobileNav: FC = () => {
           dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between`}
           >
             <NetworkStatus />
-            <FooterDivider className={'h-[30px] mx-auto'} />
-            <RPCToggle className={'mr-auto'} />
-            {/*<FooterDivider className={'h-[30px]'} />*/}
-            {/*<PriorityFee />*/}
+            <FooterDivider className={'h-[30px]'} />
+            <RPCToggle />
+            <FooterDivider className={'h-[30px]'} />
+            <PriorityFee />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -393,7 +393,6 @@ const DesktopNav: FC = () => {
               changePanel(1)
               rewardToggle(!rewardModal)
             }}
-            isActive={panelIndex == 1}
           >
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>

@@ -14,7 +14,7 @@ import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFar
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, TxnReturn } from '@/web3'
+import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
 import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
 import { Loader, SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -24,8 +24,8 @@ import { ActionModal } from '@/pages/FarmV3/ActionModal'
 import OracleIcon from '@/pages/FarmV3/FarmTableComponents/OracleIcon'
 import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
-import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
 import BigNumber from 'bignumber.js'
+import useTransaction from '@/hooks/useTransaction'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01
@@ -216,6 +216,7 @@ const CollapsibleContent: FC<{
   const { isMobile, isTablet } = useBreakPoint()
   const [depositAmount, setDepositAmount] = useState<string>('')
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
   useEffect(() => {
     if (userPublicKey) {
       if (coin.token === 'SOL') setUserTokenBalance(new BigNumber(userSolBalance))
@@ -386,81 +387,51 @@ const CollapsibleContent: FC<{
     [enoughSOLInWallet, userTokenBalance, depositAmount, userDepositedAmount, withdrawAmount, coin?.token]
   )
 
-  const handleDeposit = useCallback((): void => {
+  const handleDeposit = useCallback(async (): Promise<void> => {
     if (checkConditionsForDepositWithdraw(true)) return
     setIsButtonLoading(true)
     setOperationPending(true)
     depositedBalanceConnection(userPublicKey, coin)
     setIsTxnSuccessfull(false)
-    toast.promise(
-      promiseBuilder<Awaited<ReturnType<typeof executeDeposit>>>(
-        executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey, true)
-      ),
-      {
-        loading: <LoadingToast />,
-        error: () => {
-          off(connectionId)
-          setOperationPending(false)
-          setIsButtonLoading(false)
-          setIsTxnSuccessfull(false)
-          return <ErrorToast />
-        },
-        success: (resp: TxnReturn) => {
-          setOperationPending(false)
-          setIsButtonLoading(false)
-          const { confirm } = resp
-          if (confirm && confirm?.value && confirm.value.err === null) {
-            setTimeout(() => setDepositAmount('0'), 500)
-            setActionModal(false)
-            setIsTxnSuccessfull(true)
-          } else {
-            off(connectionId)
-            setIsTxnSuccessfull(false)
-            return
-          }
-          return <SuccessToast txId={resp.signature} />
-        }
-      }
-    )
+    const txBuilder = createTransactionBuilder()
+    const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
+    txBuilder.add(tx)
+    const { success } = await sendTransaction(txBuilder.getTransaction())
+    console.log('success', success)
+    setOperationPending(false)
+    setIsButtonLoading(false)
+    setActionModal(false)
+
+    if (!success) {
+      off(connectionId)
+      setIsTxnSuccessfull(false)
+      return
+    }
+    setTimeout(() => setDepositAmount('0'), 500)
+    setIsTxnSuccessfull(true)
   }, [checkConditionsForDepositWithdraw, userPublicKey, SSLProgram, wal, connection, depositAmount, coin])
   const handleWithdraw = useCallback(
-    (amount: BigNumber): void => {
+    async (amount: BigNumber): Promise<void> => {
       if (checkConditionsForDepositWithdraw(false)) return
       console.log('withdraw', amount.toString())
       setIsButtonLoading(true)
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
-      toast.promise(
-        promiseBuilder<Awaited<ReturnType<typeof executeWithdraw>>>(
-          executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey, true)
-        ),
-        {
-          loading: <LoadingToast />,
-          error: () => {
-            off(connectionId)
-            setIsButtonLoading(false)
-            setOperationPending(false)
-            setIsTxnSuccessfull(false)
-            return <ErrorToast />
-          },
-          success: (resp: TxnReturn) => {
-            setOperationPending(false)
-            setIsButtonLoading(false)
-            const { confirm } = resp
-            if (confirm && confirm?.value && confirm.value.err === null) {
-              setTimeout(() => setWithdrawAmount('0'), 500)
-              setActionModal(false)
-              setIsTxnSuccessfull(true)
-            } else {
-              off(connectionId)
-              setIsTxnSuccessfull(false)
-              return
-            }
-            return <SuccessToast txId={resp.signature} />
-          }
-        }
-      )
+      const txBuilder = createTransactionBuilder()
+      const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey)
+      txBuilder.add(tx)
+      const { success } = await sendTransaction(txBuilder.getTransaction())
+      setOperationPending(false)
+      setIsButtonLoading(false)
+      if (!success) {
+        off(connectionId)
+        setIsTxnSuccessfull(false)
+        return
+      }
+      setTimeout(() => setWithdrawAmount('0'), 500)
+      setActionModal(false)
+      setIsTxnSuccessfull(true)
     },
     [
       checkConditionsForDepositWithdraw,
@@ -473,38 +444,21 @@ const CollapsibleContent: FC<{
       withdrawAmount
     ]
   )
-  const handleClaim = useCallback(() => {
+  const handleClaim = useCallback(async () => {
     setIsButtonLoading(true)
     setOperationPending(true)
     setIsTxnSuccessfull(false)
-    toast.promise(
-      promiseBuilder<Awaited<ReturnType<typeof executeClaimRewards>>>(
-        executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey, true)
-      ),
-      {
-        loading: <LoadingToast />,
-        error: () => {
-          setIsButtonLoading(false)
-          setOperationPending(false)
-          setIsTxnSuccessfull(false)
-          return <ErrorToast />
-        },
-        success: (resp: TxnReturn) => {
-          setIsButtonLoading(false)
-          setOperationPending(false)
-          const { confirm } = resp
-          if (confirm && confirm?.value && confirm.value.err === null) {
-            setActionModal(false)
-            setIsTxnSuccessfull(true)
-          } else {
-            off(connectionId)
-            setIsTxnSuccessfull(false)
-            return
-          }
-          return <SuccessToast txId={resp.signature} />
-        }
-      }
-    )
+    const tx = await executeClaimRewards(SSLProgram, connection, coin, userPublicKey)
+    const { success } = await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
+    setIsButtonLoading(false)
+    setOperationPending(false)
+    setActionModal(false)
+    if (!success) {
+      off(connectionId)
+      setIsTxnSuccessfull(false)
+      return
+    }
+    setIsTxnSuccessfull(true)
   }, [SSLProgram, wal, connection, coin, userPublicKey, claimableReward, walletName])
   const handleCancel = useCallback(() => {
     setIsButtonLoading(false)
@@ -557,14 +511,14 @@ const CollapsibleContent: FC<{
     new BigNumber(userDepositedAmount.toString())
       .div(new BigNumber(10 ** coin?.mintDecimals))
       .gte(new BigNumber(MIN_AMOUNT_WITHDRAW))
-
   const minMaxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
-
   const disabled =
     !connected ||
     operationPending ||
     isButtonLoading ||
-    (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
+    (modeOfOperation === ModeOfOperation.DEPOSIT
+      ? !canDeposit || userTokenBalance.lt(new BigNumber(depositAmount))
+      : !canWithdraw || userDepositedAmount.div(new BigNumber(10 ** coin?.mintDecimals)).lt(withdrawAmount))
   const canClaim = claimableReward.gte(MIN_AMOUNT_CLAIM)
 
   return (

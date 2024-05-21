@@ -2,8 +2,8 @@
 import React, { FC, ReactNode } from 'react'
 import { notification } from 'antd'
 import styled from 'styled-components'
-import { IntemediaryToast, OpenSolScanLink, OpenToastLink, cn, IntemediaryToastHeading } from 'gfx-component-lib'
-import { toast } from 'sonner'
+import { cn, IntemediaryToast, IntemediaryToastHeading, OpenSolScanLink, OpenToastLink } from 'gfx-component-lib'
+import { toast, ToastT } from 'sonner'
 
 const CLOSE = styled.div`
   background-color: red;
@@ -65,6 +65,7 @@ interface INotifyParams {
   network?: string
   notificationDuration?: number
 }
+
 const NOTIFICATION_TIMER = 5 * 1000
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -150,32 +151,49 @@ export const SuccessToast: FC<{ txId: string }> = ({ txId }) => (
     <OpenSolScanLink link={`https://solscan.io/tx/${txId}`} />
   </IntemediaryToast>
 )
+
 export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
   return new Promise((resolve, reject) => promise.then((res) => resolve(res)).catch((err) => reject(err)))
 }
-export const notifyUsingPromise = async (promise: Promise<unknown>): Promise<void> => {
-  toast.promise(promise, {
-    loading: (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
-        <p>Please wait a few moments for the transaction to confirm...</p>
-      </IntemediaryToast>
-    ),
-    success: (response: SuccessResponse) => (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
-        <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
-        <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
-      </IntemediaryToast>
-    ),
-    error: () => (
-      <IntemediaryToast className={cn(`w-[290px]`)}>
-        <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
-        <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
-        <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
-          Contact Us
-        </OpenToastLink>
-      </IntemediaryToast>
-    )
+
+export const notifyUsingPromise = async (
+  promise: Promise<unknown>,
+  onDismiss?: (toast: ToastT) => void,
+  tentativeTxId?: string
+): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    toast.promise(promise, {
+      loading: (
+        <IntemediaryToast className={cn(`w-[290px]`)}>
+          <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
+          <p>Please wait a few moments for the transaction to confirm...</p>
+          {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
+        </IntemediaryToast>
+      ),
+      success: (response: SuccessResponse) => {
+        resolve(true)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
+            <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
+            <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
+          </IntemediaryToast>
+        )
+      },
+      error: () => {
+        reject(false)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+            <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>
+        )
+      },
+      onDismiss: (toast: ToastT) => {
+        if (onDismiss) onDismiss(toast)
+      }
+    })
   })
-}

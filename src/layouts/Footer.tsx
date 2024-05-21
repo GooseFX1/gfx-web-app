@@ -5,6 +5,7 @@ import RPCToggle from '@/components/footer/RPCToggle'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { NAV_LINKS, navigateToCurried } from '@/utils/requests'
 import { Button, cn } from 'gfx-component-lib'
+import PriorityFee from '@/components/footer/PriorityFee'
 
 export const FooterDivider: FC<{ className?: string }> = ({ className }) => (
   <span
@@ -33,8 +34,8 @@ export const Footer: FC = () => (
       <RPCToggle />
       <FooterDivider />
 
-      {/*<PriorityFee />*/}
-      {/*<FooterDivider />*/}
+      <PriorityFee />
+      <FooterDivider />
 
       <ThemeToggle size={'sm'} colorScheme={'secondary'} />
     </div>
