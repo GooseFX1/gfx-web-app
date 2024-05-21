@@ -1,8 +1,8 @@
 import { TokenAmount } from '@solana/web3.js'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import useRewards from '../../../../context/rewardsContext'
-import { getAccurateNumber } from '../../../../utils'
-import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup } from 'gfx-component-lib'
+import React, { useCallback, useEffect, useState } from 'react'
+import useRewards from '@/context/rewardsContext'
+import { getAccurateNumber } from '@/utils'
+import TokenInput from '@/components/common/TokenInput'
 
 interface RewardsInputProps {
   userGoFxBalance: TokenAmount
@@ -15,7 +15,6 @@ export default function RewardsInput({
   isStakeSelected,
   onInputChange
 }: RewardsInputProps): JSX.Element {
-  const inputRef = useRef<HTMLInputElement>(null)
   const { totalStaked } = useRewards()
   const [inputValue, setInputValue] = useState<string>()
   const handleHalf = useCallback(async () => {
@@ -36,9 +35,7 @@ export default function RewardsInput({
     max = getAccurateNumber(max, 9)
     setInputValue(max.toString())
   }, [userGoFxBalance, isStakeSelected, totalStaked])
-  const focusInput = useCallback(() => {
-    inputRef.current?.focus()
-  }, [inputRef])
+
   const handleInputChange = useCallback((e) => {
     setInputValue(e.target.value)
     console.log
@@ -48,43 +45,14 @@ export default function RewardsInput({
   }, [inputValue])
   const disabled = isStakeSelected ? userGoFxBalance.uiAmount <= 0.0 : totalStaked <= 0.0
   return (
-    <InputGroup
-      onClick={focusInput}
-      className={cn('flex-grow flex-shrink min-sm:order-1')}
-      leftItem={
-        <InputElementLeft>
-          <Button
-            variant={'outline'}
-            onClick={handleHalf}
-            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-            size={'xs'}
-            disabled={disabled}
-          >
-            Half
-          </Button>
-          <Button
-            variant={'outline'}
-            onClick={handleMax}
-            className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-            size={'xs'}
-            disabled={disabled}
-          >
-            Max
-          </Button>
-        </InputElementLeft>
-      }
-      rightItem={<InputElementRight>GOFX</InputElementRight>}
-    >
-      <Input
-        ref={inputRef}
-        maxLength={12}
-        pattern="\d+(\.\d+)?"
-        placeholder={'0'}
-        onChange={handleInputChange}
-        value={inputValue}
-        type={'number'}
-        className={'text-right'}
-      />
-    </InputGroup>
+    <TokenInput
+      handleHalf={handleHalf}
+      handleMax={handleMax}
+      onChange={handleInputChange}
+      minMaxDisabled={disabled}
+      disabled={disabled}
+      value={inputValue}
+      tokenSymbol={'GOFX'}
+    />
   )
 }
