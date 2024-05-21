@@ -162,7 +162,7 @@ export const ClosePosition: FC<{
 
     const isNegative = pnlNumber < 0
     return (
-      <span className={isNegative ? 'text-red-2' : 'text-green-5'}>
+      <span className={isNegative ? 'text-red-2' : 'text-green-4'}>
         {(!isNegative ? '+' : '') + pnlNumber.toFixed(2) + ' USD'}
       </span>
     )

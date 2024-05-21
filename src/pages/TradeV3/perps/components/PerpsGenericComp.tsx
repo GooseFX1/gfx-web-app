@@ -69,6 +69,11 @@ export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
   <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px] sm:rounded-[10px]')}>{children}</div>
 )
 
+export const AccountsLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
+  <div>
+    <h5 className={cn('text-grey-9 dark:text-grey-1', className)}>{children}</h5>
+  </div>
+)
 export const ContentLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
   <div>
     <h5 className={cn('text-grey-1 dark:text-grey-2', className)}>{children}</h5>

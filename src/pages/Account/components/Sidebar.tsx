@@ -7,7 +7,7 @@ import { TitleLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { useDarkMode } from '@/context'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col px-5  w-36`}
+  ${tw`flex flex-col px-5 py-0 w-36 fixed`}
 `
 
 type SidebarProps = {
@@ -43,7 +43,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
     border dark:border-r-black-4 border-grey-4 "
     >
       <Tabs defaultValue="0" className="mt-2.5">
-        <TabsList className="flex flex-col ">
+        <TabsList className="flex flex-col gap-0 p-0">
           {tabs.map((elem, index) => (
             <TabsTrigger
               className={cn('w-full h-8.75 dark:!bg-black-1 !bg-grey-5')}

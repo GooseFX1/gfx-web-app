@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -6,7 +5,7 @@ import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { customClient, httpClient } from '../../../api'
+import { httpClient } from '../../../api'
 import { GET_USER_FUNDING_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
@@ -14,10 +13,15 @@ import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 import { Tooltip } from '../../../components'
 import { Button, Container, ContainerTitle } from 'gfx-component-lib'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import {
+  AccountsLabel,
+  ContentLabel,
+  InfoLabel,
+  InfoLabelNunito
+} from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
+  ${tw`flex flex-col w-full !pb-0 overflow-hidden ml-36`}
   padding: 15px;
   h1 {
     font-size: 18px;
@@ -25,60 +29,20 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTVALUESFLEX = styled.div`
-  ${tw`flex flex-row gap-x-4`}
-`
-const ACCOUNTVALUESCONTAINER = styled.div`
-  ${tw`w-[190px] rounded-[5px] p-[1px]`}
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-`
-
-const ACCOUNTVALUE = styled.div`
-  ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text2};
-  background: ${({ theme }) => theme.bg2};
-  padding: 5px;
-  p {
-    margin: 0px;
-    font-size: 13px;
-  }
-  p:last-child {
-    font-size: 15px;
-  }
-`
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ACCOUNTHEADER = styled.div`
-  /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
-
-  ${tw`grid grid-cols-5  items-center w-full`}
-  border: 1px solid #3C3C3C;
-  border-bottom: none;
-  margin-top: 10px;
-  color: ${({ theme }) => theme.text2};
-  span {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-  span:first-child {
-    ${tw`pl-3`}
-  }
-  span:last-child {
-    ${tw`pr-16`}
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full dark:bg-black-5`}
-  height: calc(100vh - 262px);
+  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white rounded-b-[5px]`}
+  height: calc(100vh - 265px);
 
   .history-items-root-container {
     height: 100%;
   }
 
   .history-items-container {
-    height: calc(100% - 40px);
+    height: calc(100%);
     overflow: auto;
+
+    ${tw`dark:bg-black-2 bg-white rounded-b-[5px]`}
+
     color: ${({ theme }) => theme.text2};
   }
   .pair-container {
@@ -101,6 +65,7 @@ const HISTORY = styled.div`
 
   .pagination-container {
     height: 40px;
+    border-radius: 5px;
   }
   .history-item:last-child {
     border-bottom: none;
@@ -170,7 +135,7 @@ const FundingHistory: FC = () => {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
         devnet: isDevnet,
-        traderRiskGroup: '7FBZAuVwjcacagLFYhBWFhtbaUUDUVUYf8x5TLXPkP2E',
+        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
         page: pagination.page,
         limit: pagination.limit
       }
@@ -199,9 +164,16 @@ const FundingHistory: FC = () => {
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <InfoLabel>
-        <h1>Funding</h1>
-      </InfoLabel>
+      <div className="flex justify-between items-center">
+        <div>
+          <InfoLabel>
+            <h1>Funding</h1>
+          </InfoLabel>
+        </div>
+        <div className="pagination-container">
+          <Pagination pagination={pagination} setPagination={setPagination} totalItemsCount={totalItemsCount} />
+        </div>
+      </div>
 
       <div className="flex justify-between items-center">
         <div className="my-[15px] flex items-center">
@@ -218,7 +190,7 @@ const FundingHistory: FC = () => {
             </IconTooltip> */}
             </ContainerTitle>
             <InfoLabel>
-              <h3 className="leading-4">
+              <h2 className="leading-4">
                 $
                 {getCumulativeFunding().toString().indexOf('.') != -1 ? (
                   <Tooltip
@@ -226,12 +198,12 @@ const FundingHistory: FC = () => {
                     infoIcon={false}
                     title={getCumulativeFunding()}
                   >
-                    <span>{getCumulativeFunding().toFixed(2)}</span>
+                    <>{getCumulativeFunding().toFixed(2)}</>
                   </Tooltip>
                 ) : (
-                  <span>{getCumulativeFunding()}</span>
+                  <>{getCumulativeFunding()}</>
                 )}
-              </h3>
+              </h2>
             </InfoLabel>
           </Container>
         </div>
@@ -241,7 +213,7 @@ const FundingHistory: FC = () => {
       dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
       >
         {columns.map((item, index) => (
-          <ContentLabel className="h-5" key={index}>
+          <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
             {item}
           </ContentLabel>
         ))}
@@ -262,27 +234,22 @@ const FundingHistory: FC = () => {
                     {item.averagePosition.side === undefined && ''}
                   </span>
                   <InfoLabelNunito className="text-[13px]">{item.averagePosition.quantity} SOL</InfoLabelNunito>
-                  <span>
+                  <InfoLabelNunito className="text-[13px]">
                     {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) < 0.0001
                       ? '< 0.0001'
                       : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
-                  </span>
-                  <span>{convertUnixTimestampToFormattedDate(item.time * 1000)}</span>
+                  </InfoLabelNunito>
+                  <InfoLabelNunito className="text-[13px] text-right">
+                    {convertUnixTimestampToFormattedDate(item.time * 1000)}
+                  </InfoLabelNunito>
                 </div>
               ))}
-            </div>
-            <div className="pagination-container">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
             </div>
           </div>
         ) : (
           <div className="no-funding-found">
             {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" /> */}
-            <ContentLabel className="text-[18px]  whitespace-nowrap mb-5">No Funding Found</ContentLabel>
+            <AccountsLabel className="text-[18px]  whitespace-nowrap mb-5">No Funding Found</AccountsLabel>
             {!connected && <Connect />}
             {connected && (
               <Button

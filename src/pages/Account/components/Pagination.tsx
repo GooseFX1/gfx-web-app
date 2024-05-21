@@ -53,7 +53,7 @@ export const Pagination: FC<{
           src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
           alt="arrow left"
           style={{ transform: 'rotate(90deg)' }}
-          className={mode != 'lite' && pagination.page == 1 ? 'svg-to-grey' : ''}
+          className={pagination.page == 1 ? 'svg-to-grey' : ''}
           onClick={() => handleArrowClick('back')}
         />
         <img

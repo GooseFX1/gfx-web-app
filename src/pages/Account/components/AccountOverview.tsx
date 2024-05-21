@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode, useOrderBook } from '../../../context'
+import { useCrypto, useOrderBook } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useTraderConfig } from '../../../context/trader_risk_group'
@@ -11,92 +10,14 @@ import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/util
 import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Container, ContainerTitle, IconTooltip } from 'gfx-component-lib'
-import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { Button, Container, ContainerTitle } from 'gfx-component-lib'
+import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { AccountRowHealth } from '@/pages/TradeV3/perps/components/CollateralPanel'
-const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
-  padding: 15px;
-  h1 {
-    font-size: 18px;
-    color: ${({ theme }) => theme.text2};
-  }
-`
-
-const ACCOUNTVALUESFLEX = styled.div`
-  ${tw`flex flex-row flex-wrap gap-x-4`}
-  .health-container {
-    ${tw`flex items-center`}
-    margin-left: auto;
-  }
-
-  .health-icon {
-    ${tw`flex items-center gap-x-2`}
-    span {
-      color: ${({ theme }) => theme.text2};
-    }
-  }
-
-  .bar-holder {
-    ${tw`flex gap-x-2`}
-  }
-  .bars {
-    ${tw`h-5 w-1.5 mr-2.5 inline-block rounded-average`}
-  }
-  .bars:last-child {
-    ${tw`mr-2`}
-  }
-  .green {
-    ${tw`bg-green-2`}
-  }
-  .red {
-    ${tw`bg-red-1`}
-  }
-`
-
-const ACCOUNTVALUESCONTAINER = styled.div`
-  ${tw`w-[190px] rounded-[5px] p-[1px]`}
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-`
-
-const ACCOUNTVALUE = styled.div`
-  ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text2};
-  background: ${({ theme }) => theme.bg2};
-  padding: 5px;
-  p {
-    margin: 0px;
-    font-size: 13px;
-  }
-  p:last-child {
-    font-size: 15px;
-  }
-`
-
-const ACCOUNTHEADER = styled.div`
-    /* ${tw`flex justify-between items-center flex-nowrap w-full`} */
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    border: 1px solid #3C3C3C;
-    color: ${({ theme }) => theme.text2};
-    border-bottom: none;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
 
 const HISTORY = styled.div`
-  ${tw`flex w-full h-full dark:bg-black-2 bg-white`}
-  border-top:1px solid #3C3C3C;
+  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] bg-white 
+  border  border-grey-4 dark:border-black-4 border-b-0 border-r-0 border-l-0
+  rounded-b-[5px]`}
   color: ${({ theme }) => theme.text2};
 
   .no-balances-found {
@@ -147,7 +68,6 @@ const HISTORY = styled.div`
 
 const columns = ['Asset', 'Balance', 'USD Value', 'Liq Price']
 const AccountOverview: FC = () => {
-  const { mode } = useDarkMode()
   const [dayVolume, setDayVolume] = useState<number>(0)
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
@@ -189,24 +109,6 @@ const AccountOverview: FC = () => {
     return 100
   }, [traderInfo.health])
 
-  const getHealthData = () => {
-    const percent = accountHealth
-    let barColour = ''
-    if (percent <= 20) barColour = 'red'
-    else if (percent > 20 && percent <= 80) barColour = 'bg-yellow-1'
-    else barColour = 'green'
-    return (
-      <div className="bar-holder">
-        <span>
-          {[0, 20, 40, 60, 80].map((item, index) => (
-            <div key={index} className={percent <= item ? 'bars gray' : `bars ${barColour}`}></div>
-          ))}
-        </span>
-        <span className="value">{percent}%</span>
-      </div>
-    )
-  }
-
   const fetchDayVolume = async () => {
     const res = await httpClient('api-services').get(`${GET_TRADER_DAY_VOLUME}`, {
       params: {
@@ -224,7 +126,7 @@ const AccountOverview: FC = () => {
     }
   }, [connected, traderInfo.traderRiskGroupKey])
   return (
-    <div className="flex flex-col w-full p-[15px]">
+    <div className="flex flex-col w-full p-[15px] ml-36">
       {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
@@ -249,7 +151,7 @@ const AccountOverview: FC = () => {
             </IconTooltip> */}
             </ContainerTitle>
             <InfoLabel>
-              <h3 className="leading-4">${formatNumberInThousands(Number(portfolioValue))}</h3>
+              <h2 className="leading-4">${formatNumberInThousands(Number(portfolioValue))}</h2>
             </InfoLabel>
           </Container>
           <Container
@@ -265,7 +167,7 @@ const AccountOverview: FC = () => {
             </IconTooltip> */}
             </ContainerTitle>
             <InfoLabel>
-              <h3 className="leading-4">${formatNumberInThousands(dayVolume)}</h3>
+              <h2 className="leading-4">${formatNumberInThousands(dayVolume)}</h2>
             </InfoLabel>
           </Container>
           <Container
@@ -281,7 +183,7 @@ const AccountOverview: FC = () => {
             </IconTooltip> */}
             </ContainerTitle>
             <InfoLabel>
-              <h3 className="leading-4">${formatNumberInThousands(Number(userVolume))}</h3>
+              <h2 className="leading-4">${formatNumberInThousands(Number(userVolume))}</h2>
             </InfoLabel>
           </Container>
         </div>
@@ -295,7 +197,7 @@ const AccountOverview: FC = () => {
       dark:bg-black-2 w-full py-2"
       >
         {columns.map((item, index) => (
-          <ContentLabel className="h-5" key={index}>
+          <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
             {item}
           </ContentLabel>
         ))}
@@ -316,19 +218,25 @@ const AccountOverview: FC = () => {
               <p className="text-[13px]">${formatNumberInThousands(Number(notionalSize))} </p>{' '}
             </InfoLabel>
             <InfoLabel>
-              <p className="text-[13px]">${Number(traderInfo.liquidationPrice).toFixed(2)} </p>{' '}
+              <p className="text-[13px] text-right mr-2.5">${Number(traderInfo.liquidationPrice).toFixed(2)} </p>{' '}
             </InfoLabel>
           </div>
         ) : (
           <div className="flex items-center justify-center w-full flex-col">
             {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
-            <ContentLabel className="text-[18px]">No Positions Found</ContentLabel>
+            <AccountsLabel className="text-[18px]">No Positions Found</AccountsLabel>
             <div className="mt-4">{!connected && <Connect />}</div>
-            <div className="mt-4">
+            <div className="mt-0">
               {connected && (
-                <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+                <Button
+                  colorScheme={'secondaryGradient'}
+                  onClick={() => setDepositWithdrawModal(true)}
+                  className={`ml-auto font-bold
+                    text-white min-w-[122px]  py-1.875  min-md:px-1.5 box-border`}
+                  size={'lg'}
+                >
                   Deposit Now
-                </button>
+                </Button>
               )}
             </div>
           </div>
