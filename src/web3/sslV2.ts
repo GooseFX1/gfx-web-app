@@ -11,16 +11,9 @@ import {
   NATIVE_MINT
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
-import {
-  ComputeBudgetProgram,
-  Connection,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  TransactionInstruction
-} from '@solana/web3.js'
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js'
 import { EVENT_EMITTER, SSL_PROGRAM_ID, SYSTEM } from './ids'
-import { confirmTransaction, findAssociatedTokenAddress } from './utils'
+import { findAssociatedTokenAddress } from './utils'
 import {
   LIQUIDITY_ACCOUNT_PREFIX,
   POOL_REGISTRY_PREFIX,
@@ -28,9 +21,9 @@ import {
   SSL_V2_ADMIN,
   toPublicKey
 } from '../web3'
-import { TxnReturn } from './stake'
 import { SSLToken } from '../pages/FarmV3/constants'
 import { convertToNativeValue } from '../utils'
+import TransactionBuilder from '@/web3/Builders/transaction.builder'
 
 export interface Account {
   /** Address of the account */
@@ -260,21 +253,20 @@ export const executeWithdraw = async (
 
 export const executeClaimRewards = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   token: SSLToken,
-  walletPublicKey: PublicKey,
-  shouldThrow = false
-): Promise<TxnReturn> => {
+  walletPublicKey: PublicKey
+): Promise<Transaction> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
-  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
-  const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
-  const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
+  const [feeVaultAccount, userAta, liquidityAccountKey, ataAddress] = await Promise.all([
+    findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress),
+    findAssociatedTokenAddress(walletPublicKey, tokenMintAddress),
+    getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
+    getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+  ])
 
-  const claimTX: Transaction = new Transaction()
-
-  const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+  const claimTX = new TransactionBuilder().usePriorityFee(false)
 
   const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
   if (createTokenAccIX) claimTX.add(createTokenAccIX)
@@ -298,16 +290,8 @@ export const executeClaimRewards = async (
     const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     claimTX.add(tr)
   }
-  let signature
-  try {
-    signature = await wallet.sendTransaction(claimTX, connection)
-    const confirm = await confirmTransaction(connection, signature, 'processed')
-    return { confirm, signature }
-  } catch (error) {
-    console.log(error, 'claim rewards error\n', signature)
-    if (shouldThrow) throw error
-    return { error, signature }
-  }
+
+  return claimTX.getTransaction()
 }
 
 const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLToken) => {
@@ -322,33 +306,28 @@ const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLTok
 
 export const executeAllPoolClaim = async (
   program: Program<Idl>,
-  wallet: WalletContextState,
   connection: Connection,
   walletPublicKey: PublicKey,
   rewards: { [key: string]: PublicKey }[],
-  allPoolSslData: SSLToken[],
-  shouldThrow = false
-): Promise<TxnReturn> => {
+  allPoolSslData: SSLToken[]
+): Promise<Transaction> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
-  const claimTX: Transaction = new Transaction()
-  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-    microLamports: 250000
-  })
-
-  claimTX.add(addPriorityFee)
+  const claimTX = new TransactionBuilder().usePriorityFee(false)
 
   for (let i = 0; i < allPoolSslData.length; i++) {
     const token = allPoolSslData[i]
     const tokenMintAddress = token?.mint
-    const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
-    const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
-    const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
     const claimableReward = isPendingRewards(rewards, token)
-
     if (!claimableReward) continue
 
-    const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+    const [feeVaultAccount, userAta, liquidityAccountKey, ataAddress] = await Promise.all([
+      findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress),
+      findAssociatedTokenAddress(walletPublicKey, tokenMintAddress),
+      getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
+      getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
+    ])
+
     const createTokenAccIX = await checkIfTokenAccExists(tokenMintAddress, walletPublicKey, connection, ataAddress)
     if (createTokenAccIX) claimTX.add(createTokenAccIX)
 
@@ -371,17 +350,7 @@ export const executeAllPoolClaim = async (
       claimTX.add(tr)
     }
   }
-
-  let signature
-  try {
-    signature = await wallet.sendTransaction(claimTX, connection)
-    const confirm = await confirmTransaction(connection, signature, 'processed')
-    return { confirm, signature }
-  } catch (error) {
-    console.log(error, 'Error in claiming all rewards', signature)
-    if (shouldThrow) throw error
-    return { error, signature }
-  }
+  return claimTX.getTransaction()
 }
 
 const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: string) => {

@@ -14,7 +14,7 @@ import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFar
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject, TxnReturn } from '@/web3'
+import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
 import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
 import { Loader, SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -24,7 +24,6 @@ import { ActionModal } from '@/pages/FarmV3/ActionModal'
 import OracleIcon from '@/pages/FarmV3/FarmTableComponents/OracleIcon'
 import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
-import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
 import BigNumber from 'bignumber.js'
 import useTransaction from '@/hooks/useTransaction'
 
@@ -445,38 +444,21 @@ const CollapsibleContent: FC<{
       withdrawAmount
     ]
   )
-  const handleClaim = useCallback(() => {
+  const handleClaim = useCallback(async () => {
     setIsButtonLoading(true)
     setOperationPending(true)
     setIsTxnSuccessfull(false)
-    toast.promise(
-      promiseBuilder<Awaited<ReturnType<typeof executeClaimRewards>>>(
-        executeClaimRewards(SSLProgram, wal, connection, coin, userPublicKey, true)
-      ),
-      {
-        loading: <LoadingToast />,
-        error: () => {
-          setIsButtonLoading(false)
-          setOperationPending(false)
-          setIsTxnSuccessfull(false)
-          return <ErrorToast />
-        },
-        success: (resp: TxnReturn) => {
-          setIsButtonLoading(false)
-          setOperationPending(false)
-          const { confirm } = resp
-          if (confirm && confirm?.value && confirm.value.err === null) {
-            setActionModal(false)
-            setIsTxnSuccessfull(true)
-          } else {
-            off(connectionId)
-            setIsTxnSuccessfull(false)
-            return
-          }
-          return <SuccessToast txId={resp.signature} />
-        }
-      }
-    )
+    const tx = await executeClaimRewards(SSLProgram, connection, coin, userPublicKey)
+    const { success } = await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
+    setIsButtonLoading(false)
+    setOperationPending(false)
+    setActionModal(false)
+    if (!success) {
+      off(connectionId)
+      setIsTxnSuccessfull(false)
+      return
+    }
+    setIsTxnSuccessfull(true)
   }, [SSLProgram, wal, connection, coin, userPublicKey, claimableReward, walletName])
   const handleCancel = useCallback(() => {
     setIsButtonLoading(false)
