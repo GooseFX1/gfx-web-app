@@ -87,6 +87,7 @@ export default function RewardsInput({
         onChange={handleInputChange}
         type={'number'}
         className={'text-right'}
+        value={inputValue}
       />
     </InputGroup>
   )

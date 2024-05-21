@@ -115,8 +115,7 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
 
       <Button
         className={cn(
-          `h-10 w-[130px] border-0 cursor-not-allowed whitespace-nowrap 
-      relative items-center justify-center`,
+          `h-10 w-[130px] border-0 whitespace-nowrap relative items-center justify-center`,
           oneDayLeft &&
             !canClaim &&
             `disabled:text-text-red disabled:dark:text-text-red opacity-100 dark:opacity-100`,

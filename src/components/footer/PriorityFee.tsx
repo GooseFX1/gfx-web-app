@@ -60,7 +60,7 @@ const PriorityFee: FC = () => {
     )
     const renderContent = (
       <>
-        <div className={'inline-flex gap-1'}>
+        <div className={'inline-flex gap-1 items-center'}>
           <h5 className={'text-h5 sm:text-h3'}>Priority Fee </h5>
           <IconTooltip tooltipType={'outline'} defaultOpen={false}>
             Add an extra fee to your transaction, increasing its priority in queue, likely to be processed faster
@@ -77,11 +77,11 @@ const PriorityFee: FC = () => {
               value: 'Default'
             },
             {
-              label: <PriorityFeeItem title={'Fast'} fee={0.04} />,
+              label: <PriorityFeeItem title={'Fast'} fee={0.002} />,
               value: 'Fast'
             },
             {
-              label: <PriorityFeeItem title={'Turbo'} fee={0.05} />,
+              label: <PriorityFeeItem title={'Turbo'} fee={0.005} />,
               value: 'Turbo'
             }
           ]}

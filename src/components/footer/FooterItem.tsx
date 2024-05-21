@@ -5,7 +5,13 @@ export interface FooterItemProps extends HTMLAttributes<HTMLDivElement> {
 }
 export const FooterItem: FC<FooterItemProps> = ({ title, className, children, ...rest }) => (
   <div className={cn('flex flex-col items-start min-lg:flex-row min-md:items-center gap-1', className)} {...rest}>
-    <p className={'text-b3 font-bold text-text-lightmode-secondary dark:text-text-darkmode-secondary'}>{title}</p>
+    <p
+      className={
+        'text-b3 font-bold text-text-lightmode-secondary dark:text-text-darkmode-secondary whitespace-nowrap'
+      }
+    >
+      {title}
+    </p>
     {children}
   </div>
 )

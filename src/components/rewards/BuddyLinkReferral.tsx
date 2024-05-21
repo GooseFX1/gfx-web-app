@@ -3,13 +3,12 @@ import useReferrals from '../../hooks/useReferrals'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '../../context'
 import { getTraderRiskGroupAccount } from '../../pages/TradeV3/perps/utils'
-import { notify } from '../../utils'
-import { Notification } from '../../context/rewardsContext'
 import { Transaction } from '@solana/web3.js'
 import { Connect } from '../../layouts'
 import { Loader } from '../Loader'
 import { sendPerpsTransaction } from '../../web3/connection'
 import { Button, cn } from 'gfx-component-lib'
+import { toast } from 'sonner'
 
 const BuddyLinkReferral: FC = () => {
   const [isCopied, setIsCopied] = useState(false)
@@ -38,9 +37,8 @@ const BuddyLinkReferral: FC = () => {
     if (!name || !name.trim()) return
     navigator.clipboard.writeText(referLink)
     setIsCopied(true)
-    notify({
-      type: 'success',
-      message: Notification('Success!', false, 'Link successfully copied to the clipboard. Share away!')
+    toast.success('Success!', {
+      description: 'Link successfully copied to the clipboard. Share away!'
     })
     setTimeout(() => {
       setIsCopied(false)
@@ -59,22 +57,15 @@ const BuddyLinkReferral: FC = () => {
         //await connection.confirmTransaction(await wallet.sendTransaction(transaction, connection)).then(() => {
         const res = await sendPerpsTransaction(connection, wal, transaction, [])
         console.log('res: ', res)
-        notify({
-          message: Notification(
-            'Success!',
-            false,
-            'Your personal link has been generated. Share this magic link with others to start earning!'
-          ),
-          type: 'success'
+        toast.success('Success!', {
+          description: 'Your personal link has been generated. Share this magic link with others to start earning!'
         })
 
         setName((await getName()) || '')
       } catch (e) {
         console.log(e)
-        notify({
-          message: Notification(
-            "We can't do that!",
-            true,
+        toast.error("We can't do that!", {
+          description: (
             <div>
               Please bear with us and try again, or if the error continues
               <a
@@ -86,8 +77,7 @@ const BuddyLinkReferral: FC = () => {
                 go to docs
               </a>
             </div>
-          ),
-          type: 'error'
+          )
         })
         //TODO: handle error state
       } finally {

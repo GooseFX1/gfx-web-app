@@ -14,6 +14,7 @@ import { WalletNotConnectedError } from '@solana/wallet-adapter-base'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import { perpsNotify, notifyUsingPromise } from '../utils/perpsNotifications'
 import { confirmTransaction } from './index'
+import TransactionBuilder from '@/web3/Builders/transaction.builder'
 
 interface BlockhashAndFeeCalculator {
   blockhash: string
