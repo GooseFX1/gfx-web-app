@@ -4,33 +4,34 @@ import { Idl, Program } from '@project-serum/anchor'
 import { struct, u32, u8 } from '@solana/buffer-layout'
 import { TOKEN_PROGRAM_ID } from 'openbook-ts/serum/lib/token-instructions'
 import {
-  NATIVE_MINT,
   createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddress,
+  createCloseAccountInstruction,
   createSyncNativeInstruction,
-  createCloseAccountInstruction
+  getAssociatedTokenAddress,
+  NATIVE_MINT
 } from '@solana/spl-token-v2'
 import { WalletContextState } from '@solana/wallet-adapter-react'
 import {
+  ComputeBudgetProgram,
   Connection,
   PublicKey,
-  Transaction,
-  TransactionInstruction,
   SystemProgram,
-  ComputeBudgetProgram
+  Transaction,
+  TransactionInstruction
 } from '@solana/web3.js'
-import { SYSTEM, SSL_PROGRAM_ID, EVENT_EMITTER } from './ids'
-import { findAssociatedTokenAddress, confirmTransaction } from './utils'
+import { EVENT_EMITTER, SSL_PROGRAM_ID, SYSTEM } from './ids'
+import { confirmTransaction, findAssociatedTokenAddress } from './utils'
 import {
   LIQUIDITY_ACCOUNT_PREFIX,
-  toPublicKey,
   POOL_REGISTRY_PREFIX,
+  SSL_POOL_SIGNER_PREFIX,
   SSL_V2_ADMIN,
-  SSL_POOL_SIGNER_PREFIX
+  toPublicKey
 } from '../web3'
 import { TxnReturn } from './stake'
 import { SSLToken } from '../pages/FarmV3/constants'
 import { convertToNativeValue } from '../utils'
+
 export interface Account {
   /** Address of the account */
   address: PublicKey
@@ -193,24 +194,30 @@ export const executeWithdraw = async (
   connection: Connection,
   token: SSLToken,
   amount: string,
-  walletPublicKey: PublicKey,
-  shouldThrow = false
-): Promise<TxnReturn> => {
-  const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
+  walletPublicKey: PublicKey
+): Promise<Transaction> => {
   const tokenMintAddress = token?.mint
-  const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
-  const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
-  const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
-  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+
+  const [poolRegistryAccountKey, liquidityAccountKey, sslAccountKey, userAta] = await Promise.all([
+    getPoolRegistryAccountKeys(),
+    getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
+    getsslPoolSignerKey(tokenMintAddress),
+    findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
+  ])
+
+  const [poolVaultAccount, feeVaultAccount] = await Promise.all([
+    findAssociatedTokenAddress(sslAccountKey, tokenMintAddress),
+    findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+  ])
+
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
-  const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
 
   const withdrawTX: Transaction = new Transaction()
-  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-    microLamports: 250000
-  })
+  // const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+  //   microLamports: 250000
+  // })
 
-  withdrawTX.add(addPriorityFee)
+  // withdrawTX.add(addPriorityFee)
 
   const ataAddress = await getAssociatedTokenAddress(tokenMintAddress, walletPublicKey)
 
@@ -237,17 +244,18 @@ export const executeWithdraw = async (
     const tr = createCloseAccountInstruction(ataAddress, walletPublicKey, walletPublicKey)
     withdrawTX.add(tr)
   }
-  let signature
-  try {
-    signature = await wallet.sendTransaction(withdrawTX, connection)
-    console.log(signature)
-    const confirm = await confirmTransaction(connection, signature, 'processed')
-    return { confirm, signature }
-  } catch (error) {
-    console.log(error, 'withdraw error\n', signature)
-    if (shouldThrow) throw error
-    return { error, signature }
-  }
+  // let signature
+  // try {
+  //   signature = await wallet.sendTransaction(withdrawTX, connection)
+  //   console.log(signature)
+  //   const confirm = await confirmTransaction(connection, signature, 'processed')
+  //   return { confirm, signature }
+  // } catch (error) {
+  //   console.log(error, 'withdraw error\n', signature)
+  //   if (shouldThrow) throw error
+  //   return { error, signature }
+  // }
+  return withdrawTX
 }
 
 export const executeClaimRewards = async (
@@ -418,12 +426,13 @@ const depositAmount = async (
   tokenMintAddress: PublicKey,
   tokenName: string,
   createLiquidityIX: TransactionInstruction | undefined,
-  walletPublicKey: PublicKey,
-  shouldThrow = false
-): Promise<TxnReturn> => {
-  const userAta = await findAssociatedTokenAddress(walletPublicKey, tokenMintAddress)
-  const poolVaultAccount = await findAssociatedTokenAddress(sslAccountKey, tokenMintAddress)
-  const feeVaultAccount = await findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+  walletPublicKey: PublicKey
+): Promise<Transaction> => {
+  const [userAta, poolVaultAccount, feeVaultAccount] = await Promise.all([
+    findAssociatedTokenAddress(walletPublicKey, tokenMintAddress),
+    findAssociatedTokenAddress(sslAccountKey, tokenMintAddress),
+    findAssociatedTokenAddress(poolRegistryAccountKey, tokenMintAddress)
+  ])
 
   const depositInstructionAccount = {
     liquidityAccount: liquidityAccountKey,
@@ -441,31 +450,32 @@ const depositAmount = async (
   const depositAmountIX: TransactionInstruction = await program.instruction.deposit(amountInBN, {
     accounts: depositInstructionAccount
   })
-  let signature
-  try {
-    let depositAmountTX: Transaction
-    if (tokenName === 'SOL') depositAmountTX = await wrapSolToken(walletPublicKey, connection, amountInNative)
-    else depositAmountTX = new Transaction()
-    if (createLiquidityIX !== undefined) {
-      depositAmountTX.add(createLiquidityIX)
-    }
-
-    const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-      microLamports: 250000
-    })
-
-    depositAmountTX.add(addPriorityFee).add(depositAmountIX)
-    signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
-    const confirm = await confirmTransaction(connection, signature, 'processed')
-    console.log('txn confirmed ', signature, confirm)
-    return { confirm, signature }
-  } catch (error) {
-    console.log(error, 'deposit error\n', signature)
-    if (shouldThrow) {
-      throw error
-    }
-    return { error, signature }
+  // let signature
+  // try {
+  let depositAmountTX: Transaction
+  if (tokenName === 'SOL') depositAmountTX = await wrapSolToken(walletPublicKey, connection, amountInNative)
+  else depositAmountTX = new Transaction()
+  if (createLiquidityIX !== undefined) {
+    depositAmountTX.add(createLiquidityIX)
   }
+  depositAmountTX.add(depositAmountIX)
+  // const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+  //   microLamports: 250000
+  // })
+
+  // depositAmountTX.add(addPriorityFee).add(depositAmountIX)
+  // signature = await wallet.sendTransaction(depositAmountTX, connection, { skipPreflight: true })
+  // const confirm = await confirmTransaction(connection, signature, 'processed')
+  // console.log('txn confirmed ', signature, confirm)
+  // return { confirm, signature }
+  // } catch (error) {
+  //   console.log(error, 'deposit error\n', signature)
+  //   if (shouldThrow) {
+  //     throw error
+  //   }
+  //   return { error, signature }
+  // }
+  return depositAmountTX
 }
 
 export const executeDeposit = async (
@@ -474,13 +484,14 @@ export const executeDeposit = async (
   connection: Connection,
   amount: string,
   token: SSLToken,
-  walletPublicKey: PublicKey,
-  shouldThrow = false
-): Promise<TxnReturn> => {
+  walletPublicKey: PublicKey
+): Promise<Transaction> => {
   const tokenMintAddress = token?.mint
-  const liquidityAccountKey = await getLiquidityAccountKey(walletPublicKey, tokenMintAddress)
-  const sslAccountKey = await getsslPoolSignerKey(tokenMintAddress)
-  const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
+  const [liquidityAccountKey, sslAccountKey, poolRegistryAccountKey] = await Promise.all([
+    getLiquidityAccountKey(walletPublicKey, tokenMintAddress),
+    getsslPoolSignerKey(tokenMintAddress),
+    getPoolRegistryAccountKeys()
+  ])
   const amountInNative = convertToNativeValue(amount, token?.mintDecimals)
   const liqAccData = await connection.getAccountInfo(liquidityAccountKey)
 
@@ -504,8 +515,7 @@ export const executeDeposit = async (
     tokenMintAddress,
     token?.token,
     createLiquidityIX,
-    walletPublicKey,
-    shouldThrow
+    walletPublicKey
   )
 }
 

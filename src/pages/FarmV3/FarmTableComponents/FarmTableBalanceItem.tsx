@@ -26,6 +26,7 @@ import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
 import { ErrorToast, LoadingToast, promiseBuilder, SuccessToast } from '@/utils/perpsNotifications'
 import BigNumber from 'bignumber.js'
+import useTransaction from '@/hooks/useTransaction'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01
@@ -216,6 +217,7 @@ const CollapsibleContent: FC<{
   const { isMobile, isTablet } = useBreakPoint()
   const [depositAmount, setDepositAmount] = useState<string>('')
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
   useEffect(() => {
     if (userPublicKey) {
       if (coin.token === 'SOL') setUserTokenBalance(new BigNumber(userSolBalance))
@@ -386,81 +388,51 @@ const CollapsibleContent: FC<{
     [enoughSOLInWallet, userTokenBalance, depositAmount, userDepositedAmount, withdrawAmount, coin?.token]
   )
 
-  const handleDeposit = useCallback((): void => {
+  const handleDeposit = useCallback(async (): Promise<void> => {
     if (checkConditionsForDepositWithdraw(true)) return
     setIsButtonLoading(true)
     setOperationPending(true)
     depositedBalanceConnection(userPublicKey, coin)
     setIsTxnSuccessfull(false)
-    toast.promise(
-      promiseBuilder<Awaited<ReturnType<typeof executeDeposit>>>(
-        executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey, true)
-      ),
-      {
-        loading: <LoadingToast />,
-        error: () => {
-          off(connectionId)
-          setOperationPending(false)
-          setIsButtonLoading(false)
-          setIsTxnSuccessfull(false)
-          return <ErrorToast />
-        },
-        success: (resp: TxnReturn) => {
-          setOperationPending(false)
-          setIsButtonLoading(false)
-          const { confirm } = resp
-          if (confirm && confirm?.value && confirm.value.err === null) {
-            setTimeout(() => setDepositAmount('0'), 500)
-            setActionModal(false)
-            setIsTxnSuccessfull(true)
-          } else {
-            off(connectionId)
-            setIsTxnSuccessfull(false)
-            return
-          }
-          return <SuccessToast txId={resp.signature} />
-        }
-      }
-    )
+    const txBuilder = createTransactionBuilder()
+    const tx = await executeDeposit(SSLProgram, wal, connection, depositAmount, coin, userPublicKey)
+    txBuilder.add(tx)
+    const { success } = await sendTransaction(txBuilder.getTransaction())
+    console.log('success', success)
+    setOperationPending(false)
+    setIsButtonLoading(false)
+    setActionModal(false)
+
+    if (!success) {
+      off(connectionId)
+      setIsTxnSuccessfull(false)
+      return
+    }
+    setTimeout(() => setDepositAmount('0'), 500)
+    setIsTxnSuccessfull(true)
   }, [checkConditionsForDepositWithdraw, userPublicKey, SSLProgram, wal, connection, depositAmount, coin])
   const handleWithdraw = useCallback(
-    (amount: BigNumber): void => {
+    async (amount: BigNumber): Promise<void> => {
       if (checkConditionsForDepositWithdraw(false)) return
       console.log('withdraw', amount.toString())
       setIsButtonLoading(true)
       setOperationPending(true)
       depositedBalanceConnection(userPublicKey, coin)
       setIsTxnSuccessfull(false)
-      toast.promise(
-        promiseBuilder<Awaited<ReturnType<typeof executeWithdraw>>>(
-          executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey, true)
-        ),
-        {
-          loading: <LoadingToast />,
-          error: () => {
-            off(connectionId)
-            setIsButtonLoading(false)
-            setOperationPending(false)
-            setIsTxnSuccessfull(false)
-            return <ErrorToast />
-          },
-          success: (resp: TxnReturn) => {
-            setOperationPending(false)
-            setIsButtonLoading(false)
-            const { confirm } = resp
-            if (confirm && confirm?.value && confirm.value.err === null) {
-              setTimeout(() => setWithdrawAmount('0'), 500)
-              setActionModal(false)
-              setIsTxnSuccessfull(true)
-            } else {
-              off(connectionId)
-              setIsTxnSuccessfull(false)
-              return
-            }
-            return <SuccessToast txId={resp.signature} />
-          }
-        }
-      )
+      const txBuilder = createTransactionBuilder()
+      const tx = await executeWithdraw(SSLProgram, wal, connection, coin, withdrawAmount, userPublicKey)
+      txBuilder.add(tx)
+      const { success } = await sendTransaction(txBuilder.getTransaction())
+      setOperationPending(false)
+      setIsButtonLoading(false)
+      if (!success) {
+        off(connectionId)
+        setIsTxnSuccessfull(false)
+        return
+      }
+      setTimeout(() => setWithdrawAmount('0'), 500)
+      setActionModal(false)
+      setIsTxnSuccessfull(true)
     },
     [
       checkConditionsForDepositWithdraw,
