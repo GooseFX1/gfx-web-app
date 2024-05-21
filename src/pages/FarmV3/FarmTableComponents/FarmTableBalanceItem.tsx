@@ -511,14 +511,14 @@ const CollapsibleContent: FC<{
     new BigNumber(userDepositedAmount.toString())
       .div(new BigNumber(10 ** coin?.mintDecimals))
       .gte(new BigNumber(MIN_AMOUNT_WITHDRAW))
-
   const minMaxDisabled = modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw
-
   const disabled =
     !connected ||
     operationPending ||
     isButtonLoading ||
-    (modeOfOperation === ModeOfOperation.DEPOSIT ? !canDeposit : !canWithdraw)
+    (modeOfOperation === ModeOfOperation.DEPOSIT
+      ? !canDeposit || userTokenBalance.lt(new BigNumber(depositAmount))
+      : !canWithdraw || userDepositedAmount.div(new BigNumber(10 ** coin?.mintDecimals)).lt(withdrawAmount))
   const canClaim = claimableReward.gte(MIN_AMOUNT_CLAIM)
 
   return (
