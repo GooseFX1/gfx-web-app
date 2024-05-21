@@ -7,7 +7,7 @@ import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup } fr
 interface RewardsInputProps {
   userGoFxBalance: TokenAmount
   isStakeSelected: boolean
-  onInputChange?: (value: number) => void
+  onInputChange?: (value: string) => void
 }
 
 export default function RewardsInput({
@@ -17,7 +17,7 @@ export default function RewardsInput({
 }: RewardsInputProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null)
   const { totalStaked } = useRewards()
-  const [inputValue, setInputValue] = useState<number>()
+  const [inputValue, setInputValue] = useState<string>()
   const handleHalf = useCallback(async () => {
     let half: number
     if (isStakeSelected) {
@@ -27,25 +27,21 @@ export default function RewardsInput({
       if (totalStaked <= 0) return
       half = totalStaked / 2
     }
-
-    setInputValue(getAccurateNumber(half, 9))
+    const number = getAccurateNumber(half, 9)
+    setInputValue(number.toString())
   }, [userGoFxBalance, totalStaked, isStakeSelected])
   const handleMax = useCallback(async () => {
     let max = userGoFxBalance.uiAmount
     if (!isStakeSelected) max = totalStaked
-    setInputValue(getAccurateNumber(max, 9))
+    max = getAccurateNumber(max, 9)
+    setInputValue(max.toString())
   }, [userGoFxBalance, isStakeSelected, totalStaked])
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
   const handleInputChange = useCallback((e) => {
-    const value = parseFloat(e.target.value)
-    if (e.target.value == '') {
-      setInputValue(0)
-    }
-    if (!isNaN(value)) {
-      setInputValue(value)
-    }
+    setInputValue(e.target.value)
+    console.log
   }, [])
   useEffect(() => {
     onInputChange(inputValue)
@@ -85,6 +81,7 @@ export default function RewardsInput({
         pattern="\d+(\.\d+)?"
         placeholder={'0'}
         onChange={handleInputChange}
+        value={inputValue}
         type={'number'}
         className={'text-right'}
       />
