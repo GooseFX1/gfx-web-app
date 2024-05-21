@@ -54,19 +54,19 @@ export default function RewardsInput({
       leftItem={
         <InputElementLeft>
           <Button
-            variant={'ghost'}
+            variant={'outline'}
             onClick={handleHalf}
             className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-            size={'sm'}
+            size={'xs'}
             disabled={disabled}
           >
             Half
           </Button>
           <Button
-            variant={'ghost'}
+            variant={'outline'}
             onClick={handleMax}
             className={cn(`p-1.5`, !disabled && `text-text-blue dark:text-text-darkmode-primary`)}
-            size={'sm'}
+            size={'xs'}
             disabled={disabled}
           >
             Max
