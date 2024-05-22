@@ -493,13 +493,15 @@ export const InfoBanner: FC<{
             ) : (
               <InfoLabel>
                 <h4 className="leading-4">
-                  <span>
+                  <>
                     {!traderInfo.fundingRate ? (
                       <Loader />
                     ) : (
-                      <div> {Number(traderInfo.fundingRate).toFixed(4)}%</div>
+                      <h4>
+                        <span>{Number(traderInfo.fundingRate).toFixed(4)}%</span>
+                      </h4>
                     )}
-                  </span>
+                  </>
                 </h4>
               </InfoLabel>
             )}

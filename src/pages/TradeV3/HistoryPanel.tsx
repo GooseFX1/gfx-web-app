@@ -377,10 +377,10 @@ const OpenOrdersComponent: FC = () => {
           openOrderUI.length > 0 &&
           openOrderUI.map((order, index) =>
             !removedOrderIds.includes(order.order.orderId) ? (
-              <div key={index} className={cn('flex items-center my-1 ')}>
+              <div key={index} className={cn('flex items-center mt-2.5 ')}>
                 <h5 className={cn(`w-[20%] ${order.order.side === 'buy' ? `text-green-4` : `text-red-2`}`)}>
                   <InfoLabelNunito className={order.order.side === 'buy' ? `!text-green-4` : `!text-red-2`}>
-                    {order.order.side.toUpperCase()}
+                    {order.order.side.toUpperCase() === 'BUY' ? 'Long' : 'Short'}
                   </InfoLabelNunito>
                 </h5>
                 <div className={cn('w-[20%]')}>
@@ -425,7 +425,7 @@ const OpenOrdersComponent: FC = () => {
                 <div
                   key={index}
                   className={cn(
-                    'flex flex-col px-2.5 h-[125px] pt-2.5 border !border-t-0 !border-r-0 border-l-0 dark:border-black-4 '
+                    'flex flex-col px-2.5  h-[125px] pt-2.5 !border-t-0 !border-r-0 border-l-0 dark:border-black-4 '
                   )}
                 >
                   <div className="flex justify-between mt-1">

@@ -774,7 +774,7 @@ export const PlaceOrder: FC = () => {
     const markObj = {}
     for (let i = 2; i <= 10; i = i + 2) {
       markObj[i] = (
-        <div className="mr-2 mt-0.5 sm:mt-0">
+        <div className={cn(i === 10 ? 'mr-1' : 'mr-0', 'mt-0.5 sm:mt-0')}>
           <TitleLabel>{i + 'x'}</TitleLabel>
         </div>
       )

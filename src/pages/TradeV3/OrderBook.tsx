@@ -182,7 +182,7 @@ const ORDER_SELL = styled.div`
 `
 
 const SIZE_BUY = styled.span`
-  ${tw`bg-green-4 `}
+  ${tw`bg-green-4`}
   position: absolute;
   right: 0;
   height: 100%;
@@ -521,7 +521,7 @@ export const OrderBook: FC = () => {
                       <ORDER_BUY key={index}>
                         <span onClick={() => handleSetSize(size)}>
                           <ContentLabel>
-                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                            <p className="text-[13px] pl-0.5">{removeFloatingPointError(size)}</p>
                           </ContentLabel>
                         </span>
                         <span onClick={() => handleSetPrice(price)}>
@@ -562,7 +562,7 @@ export const OrderBook: FC = () => {
                         </span>
                         <span onClick={() => handleSetSize(size)}>
                           <ContentLabel>
-                            <p className="text-[13px]">{removeFloatingPointError(size)}</p>
+                            <p className="text-[13px] pr-0.5">{removeFloatingPointError(size)}</p>
                           </ContentLabel>
                         </span>
 
