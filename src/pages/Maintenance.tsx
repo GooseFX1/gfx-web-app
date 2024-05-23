@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { useDarkMode } from '../context'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -7,16 +7,6 @@ import { SOCIAL_MEDIAS } from '../constants'
 
 const Maintenance: FC = () => {
   const { mode } = useDarkMode()
-
-  const [isBrowser, setIsBrowser] = useState(false)
-
-  useEffect(() => {
-    setIsBrowser(typeof window !== 'undefined')
-  }, [])
-
-  if (!isBrowser) {
-    return null // Or return a fallback UI
-  }
 
   return (
     <div css={[tw`w-[100vw] h-[calc(100vh - 58px)] flex flex-col items-center justify-center`]}>
