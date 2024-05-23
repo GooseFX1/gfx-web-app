@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Connection, Keypair, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js'
+import {
+  AccountMeta,
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction
+} from '@solana/web3.js'
 import {
   INewOrderAccounts,
   IDepositFundsAccounts,
@@ -14,7 +21,7 @@ import { FEES_ID, MPG_ID as MAINNET_MPG_ID, RISK_ID } from './perpsConstants'
 import { MPG_ID as DEVNET_MPG_ID } from './perpsConstantsDevnet'
 import { struct, u8 } from '@solana/buffer-layout'
 import { notify } from '../../../utils'
-import { createRandom } from '../../../hooks/useReferrals'
+import { createRandom, getMemberPDA, getRemainingAccountsForTransfer } from '../../../hooks/useReferrals'
 import { Trader, Product, Perp } from 'gfx-perp-sdk'
 
 export const newOrderIx = async (
@@ -220,7 +227,13 @@ export const withdrawFundsIx = async (
 ) => {
   try {
     const instructions = []
-    const ix = await traderInstanceSdk.withdrawFundsIx(withdrawFundsParams.quantity)
+    const memberPDA: PublicKey = await getMemberPDA(connection, wallet.publicKey)
+    const remainingAccounts: AccountMeta[] = await getRemainingAccountsForTransfer(
+      connection,
+      wallet.publicKey,
+      memberPDA
+    )
+    const ix = await traderInstanceSdk.withdrawFundsIx(withdrawFundsParams.quantity, remainingAccounts)
     instructions.push(ix)
 
     const response = await sendPerpsTransaction(connection, wallet, instructions, [])

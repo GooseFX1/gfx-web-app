@@ -163,6 +163,20 @@ export async function createRandom(
   }
 }
 
+export async function getMemberPDA(connection: Connection, wallet: PublicKey): Promise<PublicKey> {
+  const client = new Client(connection, wallet)
+  const buddyProfile = await client.buddy.getProfile(wallet)
+
+  if (!buddyProfile) return PublicKey.default
+
+  const treasuryPDA = client.pda.getTreasuryPDA([buddyProfile.account.pda], [10_000], USDC_MINT)
+
+  // Assumes always only 1 members
+  const member = (await client.member.getByTreasuryOwner(treasuryPDA))[0]
+
+  return member.account.pda
+}
+
 export async function getRemainingAccountsForTransfer(
   connection: Connection,
   wallet: PublicKey,
