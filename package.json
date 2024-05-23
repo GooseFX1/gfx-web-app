@@ -54,7 +54,7 @@
     "emailjs-com": "^3.2.0",
     "eventemitter3": "^4.0.7",
     "gfx-component-lib": "^1.12.0",
-    "gfx-perp-sdk": "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented-events-withdraw",
+    "gfx-perp-sdk": "git+https://github.com/GooseFX1/gfx-perp-ts-sdk.git#wasm-commented-events",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "latest",
     "goosefx-stake-rewards-sdk": "^2.0.1",
