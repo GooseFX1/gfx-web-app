@@ -2,21 +2,20 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../context'
+import { useCrypto } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
+import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { Button } from 'gfx-component-lib'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
+  ${tw`flex flex-col w-full !pb-0 ml-36`}
   padding: 15px;
   h1 {
     font-size: 18px;
@@ -24,36 +23,18 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-8  items-center w-full`}
-    color: ${({ theme }) => theme.text2};
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
+  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white rounded-b-[5px]`}
+  border-top: 1px solid #3c3c3c;
   border-top: none;
-  height: calc(100vh - 180px);
+  height: calc(100vh - 195px);
 
   .history-items-root-container {
     height: 100%;
   }
 
   .history-items-container {
-    height: calc(100% - 40px);
+    height: calc(100%);
     color: ${({ theme }) => theme.text2};
     overflow: auto;
   }
@@ -66,12 +47,13 @@ const HISTORY = styled.div`
   }
   .pagination-container {
     height: 40px;
+    background: none;
   }
   .history-item {
-    ${tw`grid grid-cols-8  items-center w-full`}
+    ${tw`grid grid-cols-8  items-center !border-t-0 !border-l-0 !border-r-0
+    w-full dark:border-b-black-4 border border-b-grey-4`}
     padding: 10px;
     font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
   }
   .history-item span:first-child {
     ${tw`pl-1`}
@@ -122,12 +104,9 @@ type Pagination = {
   limit: number
 }
 const Trades: FC = () => {
-  const { mode } = useDarkMode()
-
   const { connected, publicKey } = useWallet()
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
-  const [tradeType, setTradeType] = useState<string>('deposit')
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
@@ -174,66 +153,87 @@ const Trades: FC = () => {
   return (
     <WRAPPER>
       {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <h1>Trades</h1>
-      <ACCOUNTHEADER>
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <InfoLabel>
+            <h1 className="">Trades</h1>
+          </InfoLabel>
+        </div>
+        <div className="pagination-container">
+          <Pagination pagination={pagination} setPagination={setPagination} totalItemsCount={totalItemsCount} />
+        </div>
+      </div>
+
+      <div
+        className="grid grid-cols-8 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
+
       <HISTORY>
         {filledTrades.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container dark:bg-black-5 bg-white">
               {filledTrades.map((trade) => (
                 <div key={trade._id} className="history-item">
                   <div className="pair-container">
                     <img src={`${assetIcon}`} alt="SOL icon" />
-                    <span>{selectedCrypto.pair}</span>
+                    <InfoLabel>
+                      <p className="text-[13px]">{selectedCrypto.pair}</p>
+                    </InfoLabel>
                   </div>
-                  <span className={getDisplayTradeSide(trade)}>{getDisplayTradeSide(trade)}</span>
-                  <span>{trade.qty.toFixed(3)} SOL</span>
-                  <span>${(trade.qty * trade.price).toFixed(2)}</span>
-                  <span>${trade.price.toFixed(2)}</span>
-                  <span>${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
-                  <span className="filled">Filled</span>
-                  <span>{convertUnixTimestampToFormattedDate(trade.time * 1000)}</span>
+                  <InfoLabel className={getDisplayTradeSide(trade)}>
+                    <p className="text-[13px]">{getDisplayTradeSide(trade)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">{trade.qty.toFixed(3)} SOL</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${(trade.qty * trade.price).toFixed(2)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${trade.price.toFixed(2)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]">${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</p>
+                  </InfoLabel>
+                  <InfoLabel className="!text-green-4">
+                    <p className="text-[13px]">Filled</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px] text-right">
+                      {convertUnixTimestampToFormattedDate(trade.time * 1000)}
+                    </p>
+                  </InfoLabel>
                 </div>
               ))}
             </div>
-            <div className="pagination-container">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
           </div>
         ) : (
-          <div className="no-trades-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-            <p>No Trades Found</p>
+          <div className="flex flex-col items-center justify-center h-full">
+            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" /> */}
+            <AccountsLabel className="text-[18px] mb-5">No Trades Found</AccountsLabel>
             {!connected && <Connect />}
             {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+              <Button
+                colorScheme={'secondaryGradient'}
+                onClick={() => setDepositWithdrawModal(true)}
+                className={` font-bold
+                 text-white min-w-[122px]  mt-4 py-1.875  min-md:px-1.5 box-border`}
+                size={'lg'}
+              >
                 Deposit Now
-              </button>
+              </Button>
             )}
           </div>
         )}

@@ -131,7 +131,7 @@ export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ ke
   )
 }
 
-const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
+export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
   const { mode } = useDarkMode()
   const healthData = useMemo(() => {
     const percent = accountHealth

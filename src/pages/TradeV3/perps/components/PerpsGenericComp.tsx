@@ -11,9 +11,9 @@ z-50 flex justify-center items-center"
   </div>
 )
 
-export const InfoLabel: FC<{ children: ReactNode }> = ({ children }) => (
+export const InfoLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
   <div>
-    <h5 className={cn('text-black-4 dark:text-grey-8')}>{children}</h5>
+    <h5 className={cn('text-black-4 dark:text-grey-8', className)}>{children}</h5>
   </div>
 )
 export const InfoLabelNunito: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
@@ -69,9 +69,14 @@ export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
   <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px] sm:rounded-[10px]')}>{children}</div>
 )
 
-export const ContentLabel: FC<{ children: ReactNode }> = ({ children }) => (
+export const AccountsLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
   <div>
-    <h5 className={cn('text-grey-1 dark:text-grey-2')}>{children}</h5>
+    <h5 className={cn('text-grey-9 dark:text-grey-1', className)}>{children}</h5>
+  </div>
+)
+export const ContentLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
+  <div>
+    <h5 className={cn('text-grey-1 dark:text-grey-2', className)}>{children}</h5>
   </div>
 )
 export const TitleLabel: FC<{ children: ReactNode; whiteText?: boolean }> = ({ children, whiteText }) => (

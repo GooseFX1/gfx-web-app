@@ -15,6 +15,7 @@ import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 import { Tooltip } from '../../../../components'
+import { InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -201,7 +202,9 @@ const MobileFundingHistory: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <h1>Funding</h1>
+      <InfoLabel>
+        <h1>Funding</h1>
+      </InfoLabel>
       <ACCOUNTVALUESFLEX>
         <ACCOUNTVALUESCONTAINER>
           <ACCOUNTVALUE>

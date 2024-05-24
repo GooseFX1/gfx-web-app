@@ -2,55 +2,29 @@ import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../context'
+import { useCrypto } from '../../../context'
 import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ModalHeader, SETTING_MODAL } from '../../TradeV3/InfoBanner'
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { GET_USER_FUND_TRANSFERS } from '../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../api'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
-
-const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
-  padding: 15px;
-  h1 {
-    font-size: 18px;
-    color: ${({ theme }) => theme.text2};
-  }
-`
-
-const ACCOUNTHEADER = styled.div`
-    ${tw`grid grid-cols-4 gap-x-40 items-center w-full`}
-    border: 1px solid #3C3C3C;
-    margin-top: 10px;
-    span {
-        color: ${({ theme }) => theme.text2};
-        padding-top:10px;
-        padding-bottom:10px;
-    }
-    span:first-child {
-      ${tw`pl-3`}
-    }
-    span:last-child {
-      ${tw`pr-16`}
-    }
-  }
-`
+import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
+import { Button } from 'gfx-component-lib'
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full`}
-  border: 1px solid #3c3c3c;
+  ${tw`flex flex-col w-full dark:bg-black-2 bg-white rounded-b-[5px]`}
   border-top: none;
-  height: calc(100vh - 180px);
+  height: calc(100vh - 195px);
 
   .history-items-root-container {
     height: 100%;
   }
   .history-items-container {
-    height: calc(100% - 40px);
+    height: calc(100%);
     overflow: auto;
+    border-bottom: 5px;
     color: ${({ theme }) => theme.text2};
   }
 
@@ -108,14 +82,11 @@ type Pagination = {
   limit: number
 }
 const DepositWithdrawHistory: FC = () => {
-  const { mode } = useDarkMode()
-
   const { connected, publicKey } = useWallet()
   const { isDevnet } = useCrypto()
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
-  const [tradeType, setTradeType] = useState<string>('deposit')
   const [fundTransfers, setFundTransfers] = useState([])
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [totalItemsCount, setTotalItemsCount] = useState(0)
@@ -138,68 +109,80 @@ const DepositWithdrawHistory: FC = () => {
   }, [connected, publicKey, pagination])
 
   return (
-    <WRAPPER>
+    <div className="flex flex-col w-full p-[15px] !pb-0 ml-36">
       {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <h1>Deposits/Withdrawals</h1>
-      <ACCOUNTHEADER>
+      <div className="flex justify-between mb-4 items-center">
+        <InfoLabel>
+          <h3>Deposits/Withdrawals</h3>
+        </InfoLabel>
+        <div className="pagination-container">
+          <Pagination pagination={pagination} setPagination={setPagination} totalItemsCount={totalItemsCount} />
+        </div>
+      </div>
+
+      <div
+        className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4
+       border-grey-4 border border-l-0 border-r-0 border-t-0"
+      >
         {columns.map((item, index) => (
-          <span key={index}>{item}</span>
+          <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
+            {item}
+          </ContentLabel>
         ))}
-      </ACCOUNTHEADER>
+      </div>
+
       <HISTORY>
         {fundTransfers.length ? (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundTransfers.map((transfer) => (
-                <div key={transfer._id} className="history-item">
-                  <span>{transfer.amount.toFixed(2)} USDC</span>
-                  <span>${transfer.amount.toFixed(2)}</span>
-                  <span className={`${transfer.type}-type`}>
-                    {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
-                  </span>
-                  <span>{convertUnixTimestampToFormattedDate(transfer.time)}</span>
+                <div
+                  key={transfer._id}
+                  className="grid grid-cols-4 gap-x-40 items-center w-full p-2.5 
+                border dark:border-b-black-4 border-b-grey-4 border-l-0 border-r-0 border-t-0
+                dark:bg-black-2 bg-white"
+                >
+                  <InfoLabel>
+                    {' '}
+                    <p className="text-[13px]">{transfer.amount.toFixed(2)} USDC</p>{' '}
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px]"> ${transfer.amount.toFixed(2)}</p>{' '}
+                  </InfoLabel>
+                  <InfoLabel className={transfer.type === 'deposit' ? '!text-green-4' : '!text-red-2'}>
+                    <p className="text-[13px]">{transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}</p>
+                  </InfoLabel>
+                  <InfoLabel>
+                    <p className="text-[13px] text-right">{convertUnixTimestampToFormattedDate(transfer.time)}</p>
+                  </InfoLabel>
                 </div>
               ))}
             </div>
-            <div className="pagination-container">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
           </div>
         ) : (
-          <div className="no-deposits-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-deposits-found" />
-            <p>No Deposits Found</p>
+          <div className="flex flex-col h-full items-center justify-center">
+            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-deposits-found" /> */}
+            <AccountsLabel className="text-[18px] mb-5">No Deposits Found</AccountsLabel>
             {!connected && <Connect />}
             {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
+              <Button
+                variant="primary"
+                colorScheme={'secondaryGradient'}
+                onClick={() => setDepositWithdrawModal(true)}
+              >
                 Deposit Now
-              </button>
+              </Button>
             )}
           </div>
         )}
       </HISTORY>
-    </WRAPPER>
+    </div>
   )
 }
 

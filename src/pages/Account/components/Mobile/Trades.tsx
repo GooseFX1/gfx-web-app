@@ -14,6 +14,7 @@ import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
+import { InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -218,7 +219,9 @@ const MobileTrades: FC = () => {
         ) : (
           <div className="no-trades-found">
             <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-            <p>No Trades Found</p>
+            <InfoLabel>
+              <p>No Trades Found</p>
+            </InfoLabel>
             {!connected && <Connect />}
             {connected && (
               <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
