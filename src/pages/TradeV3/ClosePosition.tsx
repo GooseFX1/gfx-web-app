@@ -23,6 +23,7 @@ import {
   DialogCloseDefault,
   DialogContent,
   DialogOverlay,
+  Input,
   Tabs,
   TabsList,
   TabsTrigger,
@@ -34,22 +35,22 @@ import { InfoRow } from './TradeConfirmation'
 const percentDetails = [
   {
     index: 0,
-    display: 25,
+    display: '25%',
     value: new Fractional({ m: new anchor.BN(25), exp: new anchor.BN(2) })
   },
   {
     index: 1,
-    display: 50,
+    display: '50%',
     value: new Fractional({ m: new anchor.BN(5), exp: new anchor.BN(1) })
   },
   {
     index: 2,
-    display: 75,
-    value: new Fractional({ m: new anchor.BN(75), exp: new anchor.BN(2) })
+    display: '100%',
+    value: new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(0) })
   },
   {
     index: 3,
-    display: 100,
+    display: 'Custom',
     value: new Fractional({ m: new anchor.BN(1), exp: new anchor.BN(0) })
   }
 ]
@@ -62,7 +63,11 @@ export const ClosePositionDialog: FC<{
   <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-    <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'w-[500px] h-[356px]'}>
+    <DialogContent
+      size={'md'}
+      placement={checkMobile() ? 'bottom' : 'default'}
+      className={'w-[500px] sm:w-full h-[356px] sm:px-0'}
+    >
       <DialogCloseDefault />
 
       <DialogBody>
@@ -85,7 +90,7 @@ export const ClosePosition: FC<{
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
-  const [percentageIndex, setPercentageindex] = useState<number>(3)
+  const [percentageIndex, setPercentageindex] = useState<number>(2)
   const [loading, setLoading] = useState<boolean>(false)
   const [customAmount, setCustomAmount] = useState<string>(null)
   const [inputValue, setInputValue] = useState<number>(null)
@@ -99,6 +104,9 @@ export const ClosePosition: FC<{
 
   const handlePercentageChange = (e: React.MouseEvent<HTMLElement>, index: number) => {
     setPercentageindex(index)
+    if (index !== 3) {
+      setCustomAmount(null)
+    }
   }
 
   const entryPrice = useMemo(() => traderInfo.averagePosition.price, [traderInfo, activeProduct])
@@ -131,7 +139,7 @@ export const ClosePosition: FC<{
   }
 
   const selectedExitQty = useMemo(() => {
-    if (!percentageIndex && customAmount) {
+    if (percentageIndex === 3 && customAmount) {
       return getFractionalCustomAmount(customAmount)
     } else {
       const multiplier = percentDetails[percentageIndex]?.value
@@ -196,16 +204,17 @@ export const ClosePosition: FC<{
     setLoading(false)
   }
 
-  const handleInputChange = (e) => {
-    const inputAmt = e.target.value.replace(/[^0-9]\./g, '')
-    if (!isNaN(+inputAmt)) setInputValue(+inputAmt)
-    if (!isNaN(+inputAmt) && +inputAmt) {
-      if (+inputAmt <= Math.abs(totalExitQtyNumber)) {
-        setPercentageindex(null)
+  const handleInputChange = async (e) => {
+    const inputAmt = e.target.value
+    if (inputAmt === '.') setCustomAmount('0.')
+    // await setPercentageindex(3)
+    if (inputAmt) setInputValue(inputAmt)
+
+    if (inputAmt && inputAmt) {
+      if (inputAmt <= Math.abs(totalExitQtyNumber)) {
         setCustomAmount(inputAmt)
       }
     } else {
-      setPercentageindex(3)
       setCustomAmount(null)
     }
   }
@@ -236,11 +245,11 @@ export const ClosePosition: FC<{
   }, [exitPrice, price, displayExitQty])
 
   return (
-    <div className="flex flex-col justify-between w-full p-3 sm:px-10">
+    <div className="flex flex-col justify-between w-full p-3 sm:px-2">
       <div>
         <h3 className={cn('text-black-4 dark:text-grey-8 mt-1 mb-3')}>Close Position</h3>
         <div className="percentage">
-          <Tabs defaultValue="3">
+          <Tabs defaultValue="2" value={percentageIndex.toString()}>
             <TabsList>
               {percentDetails.map((elem, index) => (
                 <TabsTrigger
@@ -251,11 +260,28 @@ export const ClosePosition: FC<{
                   variant="primary"
                   onClick={(e) => handlePercentageChange(e, index)}
                 >
-                  <TitleLabel whiteText={percentageIndex == index}>{elem.display}%</TitleLabel>
+                  <TitleLabel whiteText={percentageIndex == index}>{elem.display}</TitleLabel>
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
+          {/* {inputValue > Math.abs(totalExitQtyNumber) ? (
+            <span tw="text-red-1 font-semibold text-regular">Maximum quantity exceeded!</span>
+          ) : null} */}
+          {customAmount && (
+            <InfoLabel>
+              <p className="text-[15px] absolute right-[25px] mt-[17px]">SOL</p>
+            </InfoLabel>
+          )}
+          <Input
+            placeholder={'0.00 SOL'}
+            value={customAmount ?? ''}
+            onFocus={() => setPercentageindex(3)}
+            onChange={(e) => handleInputChange(e)}
+            // disabled={order.display === 'market'}
+            className={cn(`my-2.5 h-[30px] sm:h-[35px] min-w-[100px] text-right`, customAmount && 'pr-[48px]')}
+          />
+
           {/* {percentDetails.map((elem, index) => (
             <div
               className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
@@ -270,7 +296,7 @@ export const ClosePosition: FC<{
         </div>
       </div>
 
-      <div className="flex flex-col mt-2">
+      <div className="flex flex-col">
         <div className="flex justify-between items-center my-2">
           <InfoLabel>
             <p>{displayExitQty} SOL</p>
@@ -283,6 +309,7 @@ export const ClosePosition: FC<{
           </InfoLabel>
         </div>
         <div>
+          <InfoRow label="SOL Market Price" value={'1 SOL = ' + '$' + exitPrice} />
           <InfoRow label="Est. Exit Price" value={exitPrice} />
           <InfoRow label="Est. Slippage" value={'0.000%'} />
           <InfoRow label="New Est. Liquidation Price" value={'None'} />
@@ -308,7 +335,7 @@ export const ClosePosition: FC<{
       >
         <span>
           {percentDetails[percentageIndex]?.display
-            ? `Close ${percentDetails[percentageIndex].display}% of the position`
+            ? `Close ${percentDetails[percentageIndex].display} of the position`
             : 'Close Position'}
         </span>
       </Button>
