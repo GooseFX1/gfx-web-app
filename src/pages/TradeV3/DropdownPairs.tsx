@@ -1,27 +1,19 @@
 /* eslint-disable */
-import { Dropdown } from 'antd'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
 import { Modal } from '../../components'
 import SearchBar from '../../components/common/SearchBar'
 import tw, { styled } from 'twin.macro'
-import { checkMobile } from '../../utils'
 import 'styled-components/macro'
-import { Search } from 'lucide-react'
 import {
+  cn,
   Dialog,
   DialogBody,
-  DialogClose,
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay,
-  Input,
-  InputElementLeft,
-  InputElementRight,
-  InputGroup,
-  cn
+  DialogOverlay
 } from 'gfx-component-lib'
 import { ContentLabel, GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -35,6 +27,7 @@ const SELECTED_PAIR = styled.div`
   ${tw`h-full w-full rounded-[36px] flex justify-around items-center text-tiny font-semibold`}
   color: ${({ theme }) => theme.text28};
   background: ${({ theme }) => theme.bg20};
+
   .asset-icon {
     ${tw`w-7 h-7`}
   }
@@ -52,6 +45,7 @@ const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
   .asset-icon {
     ${tw`h-7 w-7 mr-4.5 ml-2.5`}
   }
+
   .spacing {
     ${tw`mr-auto text-regular font-semibold`}
     color: ${({ theme }) => theme.text32};
@@ -64,14 +58,13 @@ const DROPDOWN_MODAL = styled(Modal)`
 
   .ant-modal-content {
     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
-
     .ant-modal-body {
       ${tw`pb-0 pt-4 sm:px-3`}
-
       .header-wrapper {
         ${tw`pb-3`}
         border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       }
+
       > div {
         > span {
           ${tw`w-full`}
@@ -85,15 +78,18 @@ const DROPDOWN_MODAL = styled(Modal)`
 
     background-color: ${({ theme }) => theme.bg2} !important;
     border-radius: 50px !important;
+
     > input {
       background-color: ${({ theme }) => theme.bg2} !important;
       border-radius: 50px !important;
       height: 36px;
     }
+
     > input::placeholder {
       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
     }
   }
+
   .popular {
     ${tw`font-semibold text-regular my-2.5 mr-2`}
     color: ${({ theme }) => theme.text11};
@@ -102,6 +98,7 @@ const DROPDOWN_MODAL = styled(Modal)`
   .popular-container {
     ${tw`flex flex-row items-center justify-start flex-wrap`}
   }
+
   .allPairContainer {
     ${tw`overflow-y-auto`}
     height: calc(100% - 160px);
@@ -145,6 +142,7 @@ const MODAL_TITLE = styled.div`
   .btn {
     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
   }
+
   .active {
     ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
@@ -219,7 +217,7 @@ const SelectCryptoModal: FC<{
 
       <DialogContent
         size="md"
-        className={cn(' min-md:w-[500px] h-[322px] sm:w-full pt-3 flex flex-col gap-0')}
+        className={cn('h-[322px] pt-3 flex flex-col gap-0')}
         placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogCloseDefault onClick={() => setShowModal(false)} />

@@ -2,7 +2,6 @@
 import { FC, useMemo, useState } from 'react'
 import { useCrypto, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
-import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import {
   convertToFractional,
@@ -18,6 +17,7 @@ import * as anchor from '@project-serum/anchor'
 import { checkMobile } from '../../utils'
 import {
   Button,
+  cn,
   Dialog,
   DialogBody,
   DialogCloseDefault,
@@ -26,8 +26,7 @@ import {
   Input,
   Tabs,
   TabsList,
-  TabsTrigger,
-  cn
+  TabsTrigger
 } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { InfoRow } from './TradeConfirmation'
@@ -63,11 +62,7 @@ export const ClosePositionDialog: FC<{
   <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-    <DialogContent
-      size={'md'}
-      placement={checkMobile() ? 'bottom' : 'default'}
-      className={'w-[500px] sm:w-full h-[356px] sm:px-0'}
-    >
+    <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'h-[356px] sm:px-0'}>
       <DialogCloseDefault />
 
       <DialogBody>

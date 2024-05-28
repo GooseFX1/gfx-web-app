@@ -1,34 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Dispatch, ReactElement, SetStateAction, useCallback, useEffect } from 'react'
+import { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
-import { Checkbox, Dropdown } from 'antd'
-import { MarketType, useAccounts, useConnectionConfig, useDarkMode, useOrderBook } from '../../../context'
-import { useMemo, FC, useState } from 'react'
-import { useTraderConfig } from '../../../context/trader_risk_group'
-import 'styled-components/macro'
-import { checkMobile, truncateAddress } from '../../../utils'
-import useBoolean from '../../../hooks/useBoolean'
 // import { Button } from '../../../components'
 import type { MenuProps } from 'antd'
+import { Checkbox } from 'antd'
+import { MarketType, useAccounts, useConnectionConfig, useDarkMode, useOrderBook } from '../../../context'
+import { useTraderConfig } from '../../../context/trader_risk_group'
+import 'styled-components/macro'
+import { truncateAddress } from '../../../utils'
+import useBoolean from '../../../hooks/useBoolean'
 import { PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Button,
+  cn,
   Dialog,
   DialogBody,
-  DialogClose,
   DialogCloseDefault,
   DialogContent,
   DialogOverlay,
-  DialogTitle,
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  cn
+  DropdownMenuTrigger
 } from 'gfx-component-lib'
 import { ModalHeader } from '../InfoBanner'
 import { DepositWithdraw } from './DepositWithdrawNew'
-import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
+import { ContentLabel, InfoLabel } from './components/PerpsGenericComp'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
@@ -36,10 +32,12 @@ const WRAPPER = styled.div`
   .input-row {
     ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
   }
+
   .deposit {
     ${tw`text-regular font-semibold mt-3.75 sm:text-tiny`}
     color: ${({ theme }) => theme.text37};
   }
+
   .percentage {
     ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
     background: ${({ theme }) => theme.bg22};
@@ -61,6 +59,7 @@ const WRAPPER = styled.div`
     color: ${({ theme }) => theme.white};
     outline: none;
   }
+
   .disabled {
     background-color: ${({ theme }) => theme.bg22};
     color: ${({ theme }) => theme.text28};
@@ -72,9 +71,11 @@ const CLOSE_ACCOUNT_CONDITIONS = styled.div`
   div {
     ${tw`mt-1 flex items-center`}
   }
+
   .approved {
     ${tw`text-green-4 font-semibold h-6`}
   }
+
   .failed {
     ${tw`text-red-2 font-semibold h-6`}
   }
@@ -85,6 +86,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
   .asset-icon {
     ${tw`h-7 w-7`}
   }
+
   .available-bal {
     ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
   }
@@ -97,16 +99,17 @@ export const SELECTED_COIN = styled.div`
   .ant-dropdown-menu {
     ${tw`bg-grey-1 dark:bg-grey-2`};
   }
+
   .anticon-down {
     ${tw`mr-1.5 w-3.5`}
   }
+
   .asset-icon {
     ${tw`h-7 w-7`}
   }
 
   .dropdown {
     ${tw`flex items-center mr-2.5`}
-
     .available-bal {
       ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
       color: ${({ theme }) => theme.text32};
@@ -116,7 +119,6 @@ export const SELECTED_COIN = styled.div`
 
 export const COIN_INFO = styled.div`
   ${tw`flex items-center mr-auto h-12.5`}
-
   > * {
     ${tw`mr-2.5`}
   }
@@ -161,6 +163,7 @@ export const INPUT = styled.div`
   input[type='number'] {
     -moz-appearance: textfield;
   }
+
   .token {
     ${tw`text-[16px] font-semibold sm:text-regular`}
     color: ${({ theme }) => theme.text11}
@@ -178,11 +181,7 @@ export const DepositWithdrawDialog: FC<{
     <Dialog open={depositWithdrawModal} onOpenChange={setDepositWithdrawModal}>
       <DialogOverlay />
       {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-      <DialogContent
-        size="md"
-        placement={isMobile ? 'bottom' : 'default'}
-        className={'w-[500px] h-[356px] sm:w-[100vw]'}
-      >
+      <DialogContent size="md" placement={isMobile ? 'bottom' : 'default'} className={'h-[356px]'}>
         <ModalHeader setTradeType={setTradeType} tradeType={tradeType} />
 
         <DialogCloseDefault onClick={() => setDepositWithdrawModal(false)} />
