@@ -7,7 +7,7 @@ import {
   InputGroup,
   ShadButtonProps
 } from 'gfx-component-lib'
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useCallback, useRef } from 'react'
 import { useDarkMode } from '@/context'
 
 interface TokenInputProps {
@@ -20,6 +20,7 @@ interface TokenInputProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
   outlineColorScheme?: Pick<ShadButtonProps, 'colorScheme'>
 }
+
 const TokenInput = ({
   value,
   handleHalf,
@@ -30,10 +31,16 @@ const TokenInput = ({
   onChange,
   outlineColorScheme
 }: TokenInputProps): JSX.Element => {
-  const { mode } = useDarkMode()
-  const isDarkMode = mode === 'dark'
+  const { isDarkMode } = useDarkMode()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const focusInput = useCallback(() => {
+    inputRef.current?.focus()
+  }, [inputRef])
+
   return (
     <InputGroup
+      onClick={focusInput}
       leftItem={
         <InputElementLeft>
           <Button
@@ -60,7 +67,13 @@ const TokenInput = ({
       }
       rightItem={<InputElementRight>{tokenSymbol}</InputElementRight>}
     >
-      <Input value={value ?? ''} placeholder={'0.00'} className={'text-right'} onChange={onChange} />
+      <Input
+        ref={inputRef}
+        value={value ?? ''}
+        placeholder={'0.00'}
+        className={'text-right'}
+        onChange={onChange}
+      />
     </InputGroup>
   )
 }

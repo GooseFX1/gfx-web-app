@@ -31,9 +31,15 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
   const { totalStakedInUSD, gofxValue, totalStaked, stake, unstakeableTickets } = useRewards()
   const [isUnstakeConfirmationModalOpen, setIsUnstakeConfirmationModalOpen] = useBoolean(false)
   const [isStakeLoading, setIsStakeLoading] = useBoolean(false)
-  const [proposedStakeAmount, setProposedStakeAmount] = useState<number>(0)
+  const [proposedStakeAmount, setProposedStakeAmount] = useState<string>('')
 
-  const adjustedStakeAmountInUSD = useMemo(() => proposedStakeAmount * gofxValue, [proposedStakeAmount, gofxValue])
+  const adjustedStakeAmountInUSD = useMemo(() => {
+    const value = parseFloat(proposedStakeAmount)
+    if (isNaN(value)) {
+      return 0.0
+    }
+    return value * gofxValue
+  }, [proposedStakeAmount, gofxValue])
   useEffect(() => {
     setCalculating.on()
     const val = ((Number(totalStakedInUSD) + adjustedStakeAmountInUSD) / 365) * (apy / 100)
@@ -48,7 +54,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
       return
     }
 
-    if (!proposedStakeAmount || proposedStakeAmount <= 0) {
+    if (!proposedStakeAmount || +proposedStakeAmount <= 0) {
       console.warn('INPUT VALUE IS NOT VALID', proposedStakeAmount)
       return
     }
@@ -56,7 +62,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     setIsStakeLoading.on()
     if (isStakeSelected) {
       try {
-        await stake(proposedStakeAmount)
+        await stake(+proposedStakeAmount)
         console.log(`Successful Stake: ${publicKey.toBase58()}
          - ${proposedStakeAmount}`)
       } catch (error) {
@@ -70,14 +76,14 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     setIsStakeLoading.off()
   }, [stake, proposedStakeAmount, publicKey, isStakeSelected])
   const disabledStakeButton =
-    proposedStakeAmount <= 0 ||
-    (isStakeSelected && proposedStakeAmount > userGoFxBalance.uiAmount) ||
-    (!isStakeSelected && proposedStakeAmount > totalStaked)
+    +proposedStakeAmount <= 0 ||
+    (isStakeSelected && +proposedStakeAmount > userGoFxBalance.uiAmount) ||
+    (!isStakeSelected && +proposedStakeAmount > totalStaked)
 
   return (
     <RewardsLeftLayout>
       <UnstakeConfirmationModal
-        amount={proposedStakeAmount}
+        amount={+proposedStakeAmount}
         isOpen={isUnstakeConfirmationModalOpen}
         onClose={setIsUnstakeConfirmationModalOpen.off}
         setStakeLoading={setIsStakeLoading.set}
@@ -128,11 +134,11 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
             >
               {isStakeLoading ? (
                 <Loader zIndex={2} />
-              ) : proposedStakeAmount > 0 ? (
+              ) : +proposedStakeAmount > 0 ? (
                 isStakeSelected ? (
-                  `Stake ${numberFormatter(proposedStakeAmount)} GOFX`
+                  `Stake ${numberFormatter(+proposedStakeAmount)} GOFX`
                 ) : (
-                  `Unstake ${numberFormatter(proposedStakeAmount)} GOFX`
+                  `Unstake ${numberFormatter(+proposedStakeAmount)} GOFX`
                 )
               ) : (
                 'Enter Amount'
