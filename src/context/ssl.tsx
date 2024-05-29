@@ -317,7 +317,8 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const liquidityAmount = response?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount
             liquidityAmountsArray[token?.mint?.toBase58()] = liquidityAmount
           } catch (e) {
-            console.log(e)
+            console.error('Error fetching liquidity values', e)
+            liquidityAmountsArray[token?.mint?.toBase58()] = 0
           }
         }
         setLiquidityAmount(liquidityAmountsArray)

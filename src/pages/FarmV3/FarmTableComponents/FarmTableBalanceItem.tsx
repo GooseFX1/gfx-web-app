@@ -125,7 +125,17 @@ const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
           </>
         }
         apy={`${apiSslData?.apy ? Number(apiSslData?.apy)?.toFixed(2) : '0.00'}%`}
-        liquidity={liquidity ? '$' + numberFormatter(liquidity) : <SkeletonCommon height="75%" width="75%" />}
+        liquidity={
+          liquidity != undefined ? (
+            liquidity > 0 ? (
+              '$' + numberFormatter(liquidity)
+            ) : (
+              '---'
+            )
+          ) : (
+            <SkeletonCommon height="75%" width="75%" />
+          )
+        }
         volume={<>${numberFormatter(apiSslData?.volume)}</>}
         fees={
           <Tooltip>
