@@ -75,6 +75,7 @@ import useSolSub, { SubType } from '../hooks/useSolSub'
 const ONE_MINUTE = 1000 * 60
 import { Perp, Product, Trader } from 'gfx-perp-sdk'
 import useActivityTracker from '@/hooks/useActivityTracker'
+import { notifyUsingPromiseForCloseTx, notifyUsingPromiseForFillTx } from '@/utils/perpsNotifications'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -226,6 +227,10 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [traderInstanceSdk, setTraderInstanceSdk] = useState<Trader>(null)
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
+  const [pendingMarketOrders, setPendingMarketOrders] = useState<number>(0)
+  const [promise, setPromise] = useState(null)
+  const [resolvePromise, setResolvePromise] = useState(null)
+
   useActivityTracker({
     callbackOff: () => setIsCurrentTabActive(false),
     callbackOn: () => setIsCurrentTabActive(true)
@@ -537,10 +542,35 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [currentMPG, wallet.connected, isCurrentTabActive])
 
+  const checkPendingOrders = useCallback(async (trgData) => {
+    if (!trgData) return
+    const consumeOrderbookRunning = Number(displayFractional(trgData.traderPositions[0].pendingPosition))
+    await setPendingMarketOrders(consumeOrderbookRunning / (10 * Math.pow(10, 4)))
+  }, [])
+
+  useEffect(() => {
+    if (pendingMarketOrders !== 0 && !promise) {
+      // Create a new promise and store its resolve function in the state
+      const newPromise = new Promise((resolve) => {
+        setResolvePromise(() => resolve)
+      })
+
+      setPromise(newPromise)
+      if (pendingMarketOrders > 0) notifyUsingPromiseForFillTx(newPromise, pendingMarketOrders.toFixed(2))
+      else notifyUsingPromiseForCloseTx(newPromise)
+    }
+    if (pendingMarketOrders === 0 && resolvePromise) {
+      resolvePromise(pendingMarketOrders) // Resolve the promise using the stored resolve function
+      setPromise(null)
+      setResolvePromise(null)
+    }
+  }, [pendingMarketOrders, promise, resolvePromise])
+
   useEffect(() => {
     ;(async () => {
       if (!currentTRG) return
       const trgData = await TraderRiskGroup.fetch(connection, currentTRG)
+      checkPendingOrders(trgData ? trgData[0] : null)
       updateTRGDetails(trgData ? trgData[0] : null, trgData ? trgData[1] : null)
     })()
   }, [currentTRG])
@@ -553,6 +583,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       id,
       callback: async (info) => {
         const trg = await TraderRiskGroup.decode(info.data)
+        checkPendingOrders(trg ?? null)
         updateTRGDetails(trg ?? null, trg ? info : null)
       },
       publicKey: currentTRG
