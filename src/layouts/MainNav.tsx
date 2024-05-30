@@ -89,7 +89,7 @@ export const MainNav: FC = () => {
         <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
           <img className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+            <img height="15px" src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
         </div>
 
@@ -149,7 +149,7 @@ const MobileNav: FC = () => {
     <>
       <Dialog open={isOpen} modal={false}>
         <DialogTrigger onClick={setIsOpen.on}>
-          <img className={`h-[35px]`} src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
+          <img height="35px" src={`/img/mainnav/menu-${mode}.svg`} alt={'open drawer'} />
         </DialogTrigger>
         <DialogContent fullScreen={true} className={'flex flex-col gap-0 '}>
           <DialogHeader className={'items-center'}>

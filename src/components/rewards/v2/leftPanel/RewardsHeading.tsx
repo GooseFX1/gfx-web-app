@@ -6,7 +6,7 @@ export default function RewardsLeftPanelHeading(): JSX.Element {
 
   return (
     <div className={`flex gap-5 mr-auto`}>
-      <img className={`hidden min-md:block w-[64px] h-[69px]`} src={`/img/assets/rewards-${mode}.svg`} />
+      <img className={`hidden min-md:block`} src={`/img/assets/rewards-${mode}.svg`} height="69px" width="64px" />
       <div className={`flex flex-col gap-[4px] justify-center`}>
         <h2 className={`dark:text-grey-5 text-black-4 text-h3 min-sm:text-h2 font-semibold !mb-0 `}>
           Earn USDC daily by staking your GOFX

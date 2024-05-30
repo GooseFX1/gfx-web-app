@@ -137,7 +137,7 @@ export const ActionModal: FC<{
             </div>
           )}
           <div className="flex flex-row items-center justify-between mb-3.75">
-            <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable yield</div>
+            <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold">Claimable Yield</div>
             <div className="dark:text-grey-5 text-black-4 text-regular font-semibold">
               {claimAmount ? `${truncateBigString(claimAmount.toString(), token.mintDecimals)}` : `00.00`}{' '}
               {token.token}
@@ -199,8 +199,8 @@ export const ActionModal: FC<{
             ? actionType === 'withdraw'
               ? 'h-[320px]'
               : actionType === 'claim'
-              ? 'h-[250px]'
-              : 'h-[275px]'
+                ? 'h-[250px]'
+                : 'h-[275px]'
             : 'h-[250px]'
         )}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}

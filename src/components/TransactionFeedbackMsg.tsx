@@ -16,11 +16,6 @@ const MESSAGE = styled.div`
   .mTitle {
     margin-bottom: 16px;
   }
-
-  .mIcon {
-    width: 20.5px;
-    height: 20px;
-  }
 `
 
 interface ISuccessfulListingMsg {
@@ -36,7 +31,7 @@ export const SuccessfulListingMsg: FC<ISuccessfulListingMsg> = (props) => (
     <Row className="mTitle" justify="space-between" align="middle">
       <Col>{props.title}</Col>
       <Col>
-        <img className="mIcon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+        <img src={`/img/assets/bid-success-icon.svg`} alt="sucess" height="20px" width="20.5px" />
       </Col>
     </Row>
 
@@ -68,7 +63,7 @@ export const SuccessfulListingMsgAMM: FC<ISuccessfulListingMsg> = (props) => (
     <Row className="mTitle" justify="space-between" align="middle">
       <Col>{props.title}</Col>
       <Col>
-        <img className="mIcon" src={`/img/assets/bid-success-icon.svg`} alt="" />
+        <img src={`/img/assets/bid-success-icon.svg`} alt="success" height="20px" width="20.5px" />
       </Col>
     </Row>
 
@@ -89,7 +84,7 @@ export const TransactionErrorMsg: FC<ITransactionErrorMsg> = (props) => (
     <Row className="mTitle" justify="space-between" align="middle">
       <Col>{props.title}</Col>
       <Col>
-        <img className="mIcon" src={`/img/assets/close-white-icon.svg`} alt="" />
+        <img src={`/img/assets/close-white-icon.svg`} alt="close" height="20px" width="20.5px" />
       </Col>
     </Row>
     <div>{props.itemName}</div>
@@ -122,7 +117,7 @@ export const SuccessSSLMessage: FC<{
       <div tw="flex items-center justify-between">
         <div tw="text-[15px]">Success</div>
         <div>
-          <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+          <img src={`/img/assets/Success-icon.svg`} alt="success" height="20px" width="20.5px" />
         </div>
       </div>
 
@@ -146,7 +141,7 @@ export const SuccessClaimAll: FC = () => (
     <div tw="flex items-center justify-between">
       <div tw="text-[15px]">Success</div>
       <div>
-        <img className="mIcon" src={`/img/assets/Success-icon.svg`} alt="" />
+        <img src={`/img/assets/Success-icon.svg`} alt="success" height="20px" width="20.5px" />
       </div>
     </div>
 
@@ -164,7 +159,7 @@ export const TransactionErrorMsgSSL: FC = () => (
     <div tw="flex items-center justify-between">
       <div tw="text-regular text-white">We didn't catch that!</div>
       <div>
-        <img className="mIcon" src={`/img/assets/close-circle.svg`} alt="" />
+        <img src={`/img/assets/close-circle.svg`} alt="close" height="20px" width="20.5px" />
       </div>
     </div>
     <div tw="text-[13px] font-semibold">

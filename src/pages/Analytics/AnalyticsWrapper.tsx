@@ -10,9 +10,6 @@ import AnalyticsDashboard from './AnalyticsDashboard'
 const CONNECT_WALLET_WRAPPER = styled.div`
   ${tw`w-full flex-col flex items-center justify-center`}
   height: 90vh;
-  .gooseLogo {
-    ${tw`w-28 h-28`}
-  }
   .first-line {
     ${tw`mt-8 font-semibold text-3xl	`}
     color: ${({ theme }) => theme.text7};
@@ -52,7 +49,7 @@ const AnalyticsWrapper: FC = () => {
 
   return !connected ? (
     <CONNECT_WALLET_WRAPPER>
-      <img className="gooseLogo" src="/img/crypto/GOFX.svg" alt="Goose" />
+      <img height="112px" width="112px" src="/img/crypto/GOFX.svg" alt="Goose" />
       <div className="first-line">Welcome to NFT Analytics page!</div>
       <div className="connectWallet">
         <Connect />
@@ -60,7 +57,7 @@ const AnalyticsWrapper: FC = () => {
     </CONNECT_WALLET_WRAPPER>
   ) : !adminAllowed ? (
     <WRAPPER>
-      <img className="gfxLogo" src="/img/crypto/GOFX.svg" alt="Launchpad Logo" />
+      <img height="112px" width="112px" src="/img/crypto/GOFX.svg" alt="Launchpad Logo" />
       <div className="first-line">Ups, wallet not supported!</div>
       <div className="second-line">
         Please contact <GradientText text={'contact@goosefx.io'} fontSize={18} fontWeight={500} /> or try again.

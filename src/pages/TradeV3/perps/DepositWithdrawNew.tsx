@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import tw from 'twin.macro'
-import { Dropdown, Menu } from 'antd'
-import { useAccounts, useCrypto, useDarkMode } from '../../../context'
+import { useAccounts, useCrypto } from '../../../context'
 import { useMemo, FC, useState } from 'react'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
@@ -11,7 +9,7 @@ import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDev
 import { checkMobile } from '../../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
-import { Tokens, CloseTradingAccount, SELECTED_COIN, COIN_INFO, INPUT } from './DepositWithdraw'
+import { Tokens, CloseTradingAccount } from './DepositWithdraw'
 import {
   Button,
   DropdownMenu,
@@ -19,7 +17,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Input,
-  InputElementLeft,
   InputElementRight,
   InputGroup,
   Tabs,
@@ -37,7 +34,6 @@ export const DepositWithdraw: FC<{
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
-  const { mode } = useDarkMode()
   const [amount, setAmount] = useState('')
   const perpTokenList = isDevnet ? PERPS_COLLATERAL_DEVNET : PERPS_COLLATERAL
   const percentageArr = [25, 50, 75, 100]
@@ -248,8 +244,8 @@ export const DepositWithdraw: FC<{
                               ? Number(tokenAmount.uiAmountString).toFixed(2)
                               : '0.00'
                             : traderInfo.maxWithdrawable
-                            ? Number(traderInfo.maxWithdrawable).toFixed(2)
-                            : '0.00'}
+                              ? Number(traderInfo.maxWithdrawable).toFixed(2)
+                              : '0.00'}
                         </h4>
                       </InfoLabel>
                     </div>

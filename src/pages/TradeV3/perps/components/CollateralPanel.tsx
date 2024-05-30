@@ -1,16 +1,9 @@
-/* eslint-disable */
-import { Children, FC, ReactNode, useMemo, useState } from 'react'
-import { Row, Col } from 'antd'
-import tw, { styled } from 'twin.macro'
-// import { Tooltip } from '../../../../components'
+import { FC, useMemo } from 'react'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
-import { PERPS_FEES } from '../perpsConstants'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useCrypto, useDarkMode } from '../../../../context'
-import useWindowSize from '../../../../utils/useWindowSize'
+import { useDarkMode } from '../../../../context'
 import { formatNumberInThousands } from '../utils'
 import { TooltipTrigger, TooltipContent, Tooltip, cn } from 'gfx-component-lib'
-import { InfoImage, InfoLabel, InfoLabelNunito, PerpsLayout } from './PerpsGenericComp'
+import { InfoLabel, InfoLabelNunito, PerpsLayout } from './PerpsGenericComp'
 import { Connect } from '../../../../layouts'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
@@ -46,8 +39,9 @@ const ConnectWalletLayout: FC = (): JSX.Element => {
   )
 }
 
+// eslint-disable-next-line
 const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element => {
-  const { collateralInfo, traderInfo, activeProduct } = useTraderConfig()
+  const { traderInfo } = useTraderConfig()
   const accountHealth = useMemo(() => {
     const health = Number(traderInfo.health)
     if (health) return health
@@ -67,7 +61,8 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
       <AccountRow
         keyStr="Balance"
         tooltipData="Balance refers to the total value of your cash balance that you can use as collateral
-       for opening new positions or maintaining existing ones. A negative balance indicates a notional position size greater than the amount deposited."
+       for opening new positions or maintaining existing ones. A negative balance indicates a notional 
+       position size greater than the amount deposited."
         value={formatNumberInThousands(Number(traderInfo?.collateralAvailable))}
       />
       <AccountRowPnl
@@ -82,13 +77,16 @@ const AccountsV5: FC<{ isSolAccount: boolean }> = (isSolAccount): JSX.Element =>
       />
       <AccountRow
         tooltipData="Margin Available is the amount of funds available in your account that can be used 
-      to open new positions or increase your position size. This is calculated based on your Balance and the margin requirements for the specific assets you are trading"
+      to open new positions or increase your position size. This is calculated based on your Balance and 
+      the margin requirements for the specific assets you are trading"
         keyStr="Margin Available"
         value={formatNumberInThousands(Number(traderInfo.marginAvailable))}
       />
       <AccountRow
         tooltipData="The Liquidation Price is the price at which your position will be automatically
-       closed out by the trading platform if your margin falls below a certain threshold. The Liquidation Price is calculated based on the current market price, your position size, and the margin requirements for the specific assets you are trading."
+       closed out by the trading platform if your margin falls below a certain threshold. The Liquidation 
+       Price is calculated based on the current market price, your position size, and the margin requirements 
+       for the specific assets you are trading."
         keyStr="Est. Liq. Price"
         value={formatNumberInThousands(Number(traderInfo.liquidationPrice))}
       />
@@ -151,8 +149,8 @@ export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
     )
   }, [accountHealth])
 
-  const barsData = useMemo(() => {
-    return (
+  const barsData = useMemo(
+    () => (
       <div className="h-[20px] w-[32px]">
         <div className="flex">
           {[0, 25, 50, 75].map((item, index) => (
@@ -169,8 +167,9 @@ export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           ))}
         </div>
       </div>
-    )
-  }, [accountHealth])
+    ),
+    [accountHealth]
+  )
 
   return (
     <div tw="flex items-center justify-between my-4">
@@ -208,7 +207,7 @@ const AccountRow: FC<{ keyStr: string; value: string | number; tooltipData: stri
         <Tooltip>
           <TooltipTrigger>
             <div className={cn('ml-1.5')}>
-              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
+              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" height="16px" width="16px" />
             </div>
           </TooltipTrigger>
           <TooltipContent>{tooltipData}</TooltipContent>

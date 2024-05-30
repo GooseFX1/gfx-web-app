@@ -50,16 +50,18 @@ const PastTopPrizesPopup: FC<{
               <div>
                 {raffle.prizes.map((prize, index) => (
                   <div key={index} className="flex items-center gap-3.75">
-                    <img src={`/img/crypto/${prize.currency}.svg`} className="h-[30px] w-[30px]" />
-                    <div className=" h-[41px] ">
+                    <img src={`/img/crypto/${prize.currency}.svg`} height="30px" width="30px" />
+                    <div className="h-[41px]">
                       <p className="text-regular font-semibold">
                         {numberFormatter(prize.amount)}&nbsp;{prize.currency}
                       </p>
                       <p>{prize.date}</p>
                     </div>
                     <img
-                      className={`w-10 h-10 min-md:w-7.5 min-md:h-7.5 ml-auto cursor-pointer`}
+                      className={`min-md:w-7.5 min-md:h-7.5 ml-auto cursor-pointer`}
                       src={'/img/assets/solscan.png'}
+                      height="40px"
+                      width="40px"
                     />
                   </div>
                 ))}

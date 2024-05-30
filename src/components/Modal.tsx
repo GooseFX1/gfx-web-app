@@ -13,7 +13,7 @@ const CLOSE_ICON = styled(CenteredImg)`
   ${tw`absolute top-[28px] right-[25px] cursor-pointer`}
 
   img {
-    ${tw`h-[20px] w-[20px] opacity-60`}
+    ${tw`opacity-60`}
   }
 `
 
@@ -88,7 +88,7 @@ export const Modal: FC<{
           {mode === 'dark' ? (
             <SVGToWhite src={`/img/assets/cross.svg`} alt="close" />
           ) : (
-            <img src={`/img/assets/cross.svg`} alt="close" />
+            <img src={`/img/assets/cross.svg`} alt="close" height="20px" width="20px" />
           )}
         </CLOSE_ICON>
       </HEADER>

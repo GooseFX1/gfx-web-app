@@ -1,9 +1,6 @@
-/* eslint-disable arrow-body-style */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Table } from 'antd'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
-import tw from 'twin.macro'
 import { Spin } from 'antd'
 
 const COLUMN = [
@@ -82,7 +79,7 @@ const SSLAnalyticsTableWrapper: FC<{ liveBalances: any; refreshData: any; loadin
             <div>
               <Button onClick={() => refreshData()}>Reload data</Button>
             </div>
-            {liveBalances.map((item, index) => {
+            {liveBalances.map((item) => {
               const dsItem = []
               const valuePrimary = getValue(item.amount, item.price)
               dsItem.push({

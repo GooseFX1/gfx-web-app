@@ -37,7 +37,12 @@ export const ReferAndEarn: FC = () => {
   return (
     <div className={`flex flex-col font-semibold h-full leading-normal max-w-[580px] `}>
       <div className={`flex items-center min-md:gap-5`}>
-        <img src={`/img/assets/referral_${mode}.svg`} className={`w-[64px] h-[69px] hidden min-md:block`} />
+        <img
+          src={`/img/assets/referral_${mode}.svg`}
+          height="69px"
+          width="64px"
+          className={`hidden min-md:block`}
+        />
         <h3 className={`dark:text-white text-black-4 min-md:text-h2`}>
           Refer friends and earn 20% of their taker fees!
         </h3>
