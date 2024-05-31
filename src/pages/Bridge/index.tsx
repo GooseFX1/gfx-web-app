@@ -105,7 +105,7 @@ const Bridge: FC = () => {
                 <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
                   Bridge Wallet FAQ
                 </span>
-                <img height="24px" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
+                <img className="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
               </div>
             </TooltipTrigger>
             <TooltipContent>

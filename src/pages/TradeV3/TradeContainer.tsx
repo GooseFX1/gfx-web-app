@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, ReactElement, useEffect, useRef, useState } from 'react'
 import { useDarkMode, useConnectionConfig } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
@@ -436,30 +437,29 @@ const CryptoContent: FC = () => {
   )
 }
 
-export const TermsOfService = (): ReactElement => (
-  <div
-    className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 
-      sm:h-[70px] h-0 sm:mb-10 border-grey-4 dark:border-black-4 border-t-1"
-  >
-    <div>
-      {checkMobile() && (
-        <div className="">
-          <div className="flex sm:gap-2 px-1">
-            <p className="text-[10px] text-white items-center flex ml-1 mt-2">Risk & Disclaimers</p>
-            <p className="text-[10px] text-white items-center flex ml-1 mt-2">Terms of Service</p>
-          </div>
-          <p>
-            <p className="text-[10px] items-center flex text-grey-1 px-2">
-              Copyright 2024 GOOSEFX, security audits by
-              <span className="text-white ml-1" onClick={() => openLinkInNewTab('https://osec.io/')}>
-                OtterSec.
-              </span>
+export const TermsOfService = () => {
+  return (
+    <div className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 sm:h-[70px] h-0 sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
+      <div>
+        {checkMobile() && (
+          <div className="">
+            <div className="flex sm:gap-2 px-1">
+              <p className="text-[10px] text-white items-center flex ml-1 mt-2">Risk & Disclaimers</p>
+              <p className="text-[10px] text-white items-center flex ml-1 mt-2">Terms of Service</p>
+            </div>
+            <p>
+              <p className="text-[10px] items-center flex text-grey-1 px-2">
+                Copyright 2024 GOOSEFX, security audits by
+                <span className="text-white ml-1" onClick={() => openLinkInNewTab('https://osec.io/')}>
+                  OtterSec.
+                </span>
+              </p>
             </p>
-          </p>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 export default CryptoContent

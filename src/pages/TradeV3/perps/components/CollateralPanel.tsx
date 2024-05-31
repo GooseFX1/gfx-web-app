@@ -6,6 +6,8 @@ import { TooltipTrigger, TooltipContent, Tooltip, cn } from 'gfx-component-lib'
 import { InfoLabel, InfoLabelNunito, PerpsLayout } from './PerpsGenericComp'
 import { Connect } from '../../../../layouts'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+// eslint-disable-next-line
+import tw, { styled } from 'twin.macro'
 
 export const CollateralPanel: FC = (): JSX.Element => {
   const { connectedWalletPublicKey } = useWalletBalance()
