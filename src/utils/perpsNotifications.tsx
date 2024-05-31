@@ -197,3 +197,80 @@ export const notifyUsingPromise = async (
       }
     })
   })
+
+export const notifyUsingPromiseForFillTx = async (
+  promise: Promise<unknown>,
+  solAmount: string
+): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    toast.promise(promise, {
+      loading: (
+        <IntemediaryToast className={cn(`w-[290px]`)}>
+          <IntemediaryToastHeading stage={'loading'}>Placing Order...</IntemediaryToastHeading>
+          <p className={cn(`text-[13px]`)}>
+            Please wait a few moments for the order to <br /> fill...
+          </p>
+        </IntemediaryToast>
+      ),
+      success: (response: SuccessResponse) => {
+        resolve(true)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'success'}>Order Filled!</IntemediaryToastHeading>
+            <p className={cn(`pt-1 text-[13px]`)}>
+              Your Order was Filled of <br />
+              {solAmount} SOL.
+            </p>
+          </IntemediaryToast>
+        )
+      },
+      error: () => {
+        reject(false)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+            <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>
+        )
+      }
+    })
+  })
+
+export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    toast.promise(promise, {
+      loading: (
+        <IntemediaryToast className={cn(`w-[290px]`)}>
+          <IntemediaryToastHeading stage={'loading'}>Closing Position...</IntemediaryToastHeading>
+          <p className={cn(`text-[13px]`)}>
+            Please wait a few moments for the position to <br />
+            be closed...
+          </p>
+        </IntemediaryToast>
+      ),
+      success: (response: SuccessResponse) => {
+        resolve(true)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'success'}>Order Closed!</IntemediaryToastHeading>
+            <p className={cn(`pt-1 text-[13px]`)}>Your position was closed successfully!</p>
+          </IntemediaryToast>
+        )
+      },
+      error: () => {
+        reject(false)
+        return (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+            <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
+            <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+              Contact Us
+            </OpenToastLink>
+          </IntemediaryToast>
+        )
+      }
+    })
+  })
