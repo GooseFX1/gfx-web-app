@@ -9,13 +9,13 @@ import { checkMobile } from '../../utils'
 import useBoolean from '../../hooks/useBoolean'
 import {
   Button,
+  cn,
   Dialog,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay,
-  cn
+  DialogOverlay
 } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -27,9 +27,11 @@ const ROW = styled.div`
   > span {
     ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
   }
+
   .value {
     ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
   }
+
   .spacing {
     ${tw`mb-[25px] sm:mb-3.75`}
   }
@@ -173,9 +175,9 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
     <Dialog open={open} onOpenChange={setVisibility}>
       <DialogOverlay />
       <DialogContent
-        size="sm"
+        size="md"
         placement={isMobile ? 'bottom' : 'default'}
-        className={cn('sm:w-[100vw] min-md:w-[500px] rounded-[3px] sm:bottom-0  pt-3 flex flex-col gap-0')}
+        className={cn('rounded-[3px] sm:bottom-0  pt-3 flex flex-col gap-0')}
       >
         <DialogCloseDefault />
 
