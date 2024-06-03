@@ -5,6 +5,8 @@
 // import { SVGDynamicReverseMode } from '../../styles'
 // import { useWallet } from '@solana/wallet-adapter-react'
 
+import { ReactElement } from "react";
+
 // const WRAPPER = styled.div`
 //   width: 100%;
 //   height: 100%;
@@ -219,4 +221,4 @@
 //   )
 // }
 
-export const CircularMenu = () => <div>Circular Menu</div>
+export const CircularMenu = (): ReactElement => <div>Circular Menu</div>
