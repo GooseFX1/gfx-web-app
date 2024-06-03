@@ -11,7 +11,6 @@ import {
   SimulatedTransactionResponse,
   RpcResponseAndContext
 } from '@solana/web3.js'
-import { getHashedName, getNameAccountKey, NameRegistryState } from '@solana/spl-name-service'
 import { useLocalStorage } from '../utils'
 import { NETWORK_CONSTANTS } from '../constants'
 import { WalletContextState } from '@solana/wallet-adapter-react'
@@ -138,57 +137,6 @@ export const simulateTransaction = async (
   return sim
 }
 
-export const getInputKey = async (
-  input: string
-): Promise<{ hashedInputName: Buffer; inputDomainKey: PublicKey }> => {
-  const hashedInputName = await getHashedName(input)
-  const inputDomainKey = await getNameAccountKey(hashedInputName, undefined, SOL_TLD_AUTHORITY)
-  return { inputDomainKey, hashedInputName }
-}
-
-interface ISolDomainToWalletAddress {
-  domainName: string
-  connection: Connection
-}
-
-export const resolveDomainToWalletAddress = async ({
-  domainName: rawText,
-  connection
-}: ISolDomainToWalletAddress): Promise<string> => {
-  const input = rawText?.trim?.()
-  const errorCantResolve = new Error("Can't resolve provided name into valid Solana address =(")
-
-  // throw and error if input is not provided
-  if (!input) {
-    return Promise.reject(errorCantResolve)
-  }
-
-  const isValidSolana = isValidSolanaAddress(input)
-  if (isValidSolana) {
-    return Promise.resolve(input)
-  }
-
-  const inputLowerCased = input?.toLowerCase()
-  const isSolDamain = inputLowerCased?.endsWith?.('.sol')
-
-  if (isSolDamain) {
-    // get domain part before .sol
-    const domainName = inputLowerCased.split('.sol')[0]
-    const { inputDomainKey } = await getInputKey(domainName)
-
-    const registry = await NameRegistryState.retrieve(connection, inputDomainKey)
-
-    const owner = registry?.owner?.toBase58?.()
-
-    if (owner) {
-      return Promise.resolve(owner)
-    }
-  }
-
-  // throw error if had no luck get valid Solana address
-  return Promise.reject(errorCantResolve)
-}
-
 // TODO: reconcile this function with other similar definition in the codebase
 export const findProgramAddress = async (
   seeds: (Buffer | Uint8Array)[],
@@ -236,13 +184,6 @@ export const openLinkInNewTab = (url: string): void => {
   const newTab = window.open(url, '_blank')
   if (newTab) {
     newTab.focus()
-  }
-}
-export const handleRedirect = (marketplace: string, mintAddress: string): void => {
-  switch (marketplace) {
-    case 'HYPERSPACE':
-      openLinkInNewTab(`https://hyperspace.xyz/token/${mintAddress}`)
-      break
   }
 }
 export const getPriceObject = (str: string): string => {
