@@ -1,8 +1,6 @@
-/* eslint-disable */
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
-import { Modal } from '../../components'
 import SearchBar from '../../components/common/SearchBar'
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
@@ -38,129 +36,129 @@ const GRADIENT_BACKGROUND = styled.div`
     text-regular font-bold flex justify-around items-center bg-grey-5 dark:bg-black-1`}
 `
 
-const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
-  ${tw`h-12.5 flex rounded-tiny items-center text-regular font-semibold cursor-pointer`}
-  background-color: ${({ theme, $hoverBorder }) => ($hoverBorder ? theme.bg2 : theme.bg20)};
+// const DROPDOWN_PAIR_DIV = styled.div<{ $hoverBorder: boolean }>`
+//   ${tw`h-12.5 flex rounded-tiny items-center text-regular font-semibold cursor-pointer`}
+//   background-color: ${({ theme, $hoverBorder }) => ($hoverBorder ? theme.bg2 : theme.bg20)};
 
-  .asset-icon {
-    ${tw`h-7 w-7 mr-4.5 ml-2.5`}
-  }
+//   .asset-icon {
+//     ${tw`h-7 w-7 mr-4.5 ml-2.5`}
+//   }
 
-  .spacing {
-    ${tw`mr-auto text-regular font-semibold`}
-    color: ${({ theme }) => theme.text32};
-  }
-`
+//   .spacing {
+//     ${tw`mr-auto text-regular font-semibold`}
+//     color: ${({ theme }) => theme.text32};
+//   }
+// `
 
-const DROPDOWN_MODAL = styled(Modal)`
-  ${tw`!h-[425px] !w-[528px] rounded-[22px]`}
-  background-color: ${({ theme }) => theme.bg20} !important;
+// const DROPDOWN_MODAL = styled(Modal)`
+//   ${tw`!h-[425px] !w-[528px] rounded-[22px]`}
+//   background-color: ${({ theme }) => theme.bg20} !important;
 
-  .ant-modal-content {
-    ${tw`h-full overflow-y-hidden overflow-x-hidden`}
-    .ant-modal-body {
-      ${tw`pb-0 pt-4 sm:px-3`}
-      .header-wrapper {
-        ${tw`pb-3`}
-        border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
-      }
+//   .ant-modal-content {
+//     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
+//     .ant-modal-body {
+//       ${tw`pb-0 pt-4 sm:px-3`}
+//       .header-wrapper {
+//         ${tw`pb-3`}
+//         border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+//       }
 
-      > div {
-        > span {
-          ${tw`w-full`}
-        }
-      }
-    }
-  }
+//       > div {
+//         > span {
+//           ${tw`w-full`}
+//         }
+//       }
+//     }
+//   }
 
-  .dropdown-modal-search {
-    ${tw`m-0`}
+//   .dropdown-modal-search {
+//     ${tw`m-0`}
 
-    background-color: ${({ theme }) => theme.bg2} !important;
-    border-radius: 50px !important;
+//     background-color: ${({ theme }) => theme.bg2} !important;
+//     border-radius: 50px !important;
 
-    > input {
-      background-color: ${({ theme }) => theme.bg2} !important;
-      border-radius: 50px !important;
-      height: 36px;
-    }
+//     > input {
+//       background-color: ${({ theme }) => theme.bg2} !important;
+//       border-radius: 50px !important;
+//       height: 36px;
+//     }
 
-    > input::placeholder {
-      ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
-    }
-  }
+//     > input::placeholder {
+//       ${tw`text-regular font-medium dark:text-grey-1 text-grey-2`}
+//     }
+//   }
 
-  .popular {
-    ${tw`font-semibold text-regular my-2.5 mr-2`}
-    color: ${({ theme }) => theme.text11};
-  }
+//   .popular {
+//     ${tw`font-semibold text-regular my-2.5 mr-2`}
+//     color: ${({ theme }) => theme.text11};
+//   }
 
-  .popular-container {
-    ${tw`flex flex-row items-center justify-start flex-wrap`}
-  }
+//   .popular-container {
+//     ${tw`flex flex-row items-center justify-start flex-wrap`}
+//   }
 
-  .allPairContainer {
-    ${tw`overflow-y-auto`}
-    height: calc(100% - 160px);
-  }
+//   .allPairContainer {
+//     ${tw`overflow-y-auto`}
+//     height: calc(100% - 160px);
+//   }
 
-  .popular-container:after {
-    ${tw`flex w-[528px] m-0 p-0 h-[1.5px] sm:h-0`}
-    background-color: ${({ theme }) => theme.tokenBorder};
-    content: '';
-  }
+//   .popular-container:after {
+//     ${tw`flex w-[528px] m-0 p-0 h-[1.5px] sm:h-0`}
+//     background-color: ${({ theme }) => theme.tokenBorder};
+//     content: '';
+//   }
 
-  .popular-tokens {
-    ${tw`rounded-half flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
-    background: ${({ theme }) => theme.bg2};
-    border: 1.5px solid ${({ theme }) => theme.tokenBorder};
+//   .popular-tokens {
+//     ${tw`rounded-half flex flex-row justify-center items-center h-[42px] mb-3 py-0 px-2.5 cursor-pointer`}
+//     background: ${({ theme }) => theme.bg2};
+//     border: 1.5px solid ${({ theme }) => theme.tokenBorder};
 
-    .asset-icon {
-      ${tw`h-[30px] w-[30px] mr-2.5`}
-    }
+//     .asset-icon {
+//       ${tw`h-[30px] w-[30px] mr-2.5`}
+//     }
 
-    .pair {
-      ${tw`font-semibold text-regular`}
-      color: ${({ theme }) => theme.text11};
-    }
-  }
+//     .pair {
+//       ${tw`font-semibold text-regular`}
+//       color: ${({ theme }) => theme.text11};
+//     }
+//   }
 
-  .no-result-found {
-    ${tw`text-center text-regular font-medium mt-[150px] sm:mt-[50px]`}
-    color: ${({ theme }) => theme.text1};
-  }
-`
+//   .no-result-found {
+//     ${tw`text-center text-regular font-medium mt-[150px] sm:mt-[50px]`}
+//     color: ${({ theme }) => theme.text1};
+//   }
+// `
 
-const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
-  ${tw`p-px rounded-tiny`}
-  background: ${({ $hoverBorder, theme }) =>
-    $hoverBorder ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
-`
+// const GRADIENT_BORDER = styled.div<{ $hoverBorder: boolean }>`
+//   ${tw`p-px rounded-tiny`}
+//   background: ${({ $hoverBorder, theme }) =>
+//     $hoverBorder ? 'linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);' : theme.bg20};
+// `
 
-const MODAL_TITLE = styled.div`
-  ${tw`flex flex-row justify-center items-center`}
-  .btn {
-    ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
-  }
+// const MODAL_TITLE = styled.div`
+//   ${tw`flex flex-row justify-center items-center`}
+//   .btn {
+//     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
+//   }
+// 
+//.active {
+//     ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
+//     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
+//   }
+// `
 
-  .active {
-    ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
-    background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
-  }
-`
+// const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
+//   const { getAskSymbolFromPair } = useCrypto()
 
-const MostPopularCrypto: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
-  const { getAskSymbolFromPair } = useCrypto()
-
-  const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
-  const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
-  return (
-    <div className="popular-tokens">
-      <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
-      <div className="pair">{display}</div>
-    </div>
-  )
-}
+//   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
+//   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
+//   return (
+//     <div className="popular-tokens">
+//       <img className="asset-icon" src={assetIcon} alt="crypto-icon" />
+//       <div className="pair">{display}</div>
+//     </div>
+//   )
+// }
 
 const SelectCryptoModal: FC<{
   showModal: boolean
@@ -304,14 +302,15 @@ const SelectCryptoModal: FC<{
 
 const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = ({ pair, type, display }) => {
   const { tokenInfo } = usePriceFeed()
-  const { getAskSymbolFromPair, selectedCrypto } = useCrypto()
-  const [hoverBorder, setHoverBorder] = useState<boolean>(false)
+  const { getAskSymbolFromPair } = useCrypto()
+  // const [hoverBorder, setHoverBorder] = useState<boolean>(false)
   const symbol = useMemo(() => getAskSymbolFromPair(pair), [getAskSymbolFromPair, pair])
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, type])
 
   const changeValue = tokenInfo[pair] ? tokenInfo[pair].change : ' '
   let classNameChange = ''
   if (changeValue && changeValue.substring(0, 1) === '-') classNameChange = 'down24h'
+  //eslint-disable-next-line
   else if (changeValue && changeValue.substring(0, 1) === '+') classNameChange = 'up24h'
 
   return (
@@ -337,44 +336,42 @@ const PairComponents: FC<{ pair: string; type: MarketType; display: string }> = 
 //   )
 // }
 
-const ModalHeaderMobi = ({ handleDropdownSearch }) => {
-  // const { isDevnet, setIsDevnet } = useCrypto()
-  // const {isGeoBlocked} = useConnectionConfig()
+// const ModalHeaderMobi = ({ handleDropdownSearch }) => {
+//   // const { isDevnet, setIsDevnet } = useCrypto()
+//   // const {isGeoBlocked} = useConnectionConfig()
 
-  // const handleToggle = (e: string) => {
-  //   if (e === 'spot') setIsDevnet(true)
-  //   else setIsDevnet(false)
-  // }
+//   // const handleToggle = (e: string) => {
+//   //   if (e === 'spot') setIsDevnet(true)
+//   //   else setIsDevnet(false)
+//   // }
 
-  return (
-    <div className="header-wrapper">
-      {/* <MODAL_TITLE>
-        <div onClick={() => handleToggle('spot')} className={isDevnet ? 'active btn' : 'btn'}>
-          Spot
-        </div>
-        <div
-          onClick={isGeoBlocked ? null : () => handleToggle('perps')}
-          className={!isDevnet ? 'active btn' : 'btn'}
-        >
-          Perps
-        </div>
-      </MODAL_TITLE> */}
-      {/* <SearchBar
-        className="dropdown-modal-search"
-        placeholder="Search by name"
-        setSearchFilter={handleDropdownSearch}
-      /> */}
-    </div>
-  )
-}
+//   return (
+//     <div className="header-wrapper">
+//       {/* <MODAL_TITLE>
+//         <div onClick={() => handleToggle('spot')} className={isDevnet ? 'active btn' : 'btn'}>
+//           Spot
+//         </div>
+//         <div
+//           onClick={isGeoBlocked ? null : () => handleToggle('perps')}
+//           className={!isDevnet ? 'active btn' : 'btn'}
+//         >
+//           Perps
+//         </div>
+//       </MODAL_TITLE> */}
+//       {/* <SearchBar
+//         className="dropdown-modal-search"
+//         placeholder="Search by name"
+//         setSearchFilter={handleDropdownSearch}
+//       /> */}
+//     </div>
+//   )
+// }
 
 export const DropdownPairs: FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
-  const { selectedCrypto, getAskSymbolFromPair, formatPair, setFilteredSearchPairs, pairs, isDevnet } = useCrypto()
+  const { selectedCrypto, getAskSymbolFromPair, setFilteredSearchPairs, pairs } = useCrypto()
   //const formattedPair = useMemo(() => formatPair(selectedCrypto.pair), [formatPair, selectedCrypto.pair])
-  const displayPair = useMemo(() => {
-    return selectedCrypto.display
-  }, [selectedCrypto.pair, selectedCrypto.type])
+  const displayPair = useMemo(() => selectedCrypto.display, [selectedCrypto.pair, selectedCrypto.type])
   const { mode } = useDarkMode()
   const symbol = useMemo(
     () => getAskSymbolFromPair(selectedCrypto.pair),

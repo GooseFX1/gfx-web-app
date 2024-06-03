@@ -1,4 +1,3 @@
-/* eslint-disable */
 import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -159,6 +158,7 @@ const Overlay: FC<{
   )
 }
 
+//eslint-disable-next-line
 export const CollateralPanelMobi = ({ setUserProfile }) => {
   const dropdownOptions = ['SOL Account', 'Fees']
   const { connected, wallet } = useWallet()

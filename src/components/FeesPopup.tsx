@@ -52,8 +52,6 @@ const Wrapper = styled.div`
       }
     }
     .srm-icon {
-      width: 25px;
-      height: 25px;
       margin: 0px 7px;
       position: relative;
       bottom: 2px;
@@ -194,7 +192,7 @@ export const FeesPopup: FC<{ rewardModal?; rewardToggle?; modalType }> = ({ rewa
             <>
               <div>
                 {value}
-                <img src="/img/crypto/SRM.svg" alt="SRM" className="srm-icon" />
+                <img src="/img/crypto/SRM.svg" alt="SRM" className="srm-icon" height="25px" width="25px" />
                 SRM
               </div>
             </>

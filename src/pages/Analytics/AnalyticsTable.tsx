@@ -50,7 +50,7 @@ const AnalyticsSection: FC = () => {
         <img
           onClick={() => arrowDownClicked()}
           style={expand ? { transform: 'rotate(180deg)' } : {}}
-          src="/img/assets/nft-admin/arrow-down.svg"
+          src="/img/assets/arrow-down-new.svg"
           alt="arrow-down"
           className="arrow"
         />
@@ -73,7 +73,7 @@ const FinancialSection: FC = () => {
         <img
           onClick={() => arrowDownClicked()}
           style={expand ? { transform: 'rotate(180deg)' } : {}}
-          src="/img/assets/nft-admin/arrow-down.svg"
+          src="/img/assets/arrow-down-new.svg"
           alt="arrow-down"
           className="arrow"
         />

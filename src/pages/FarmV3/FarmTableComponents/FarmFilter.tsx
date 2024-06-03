@@ -59,7 +59,7 @@ const FarmFilter: FC<{
       />
       <FarmRowItem
         title={'APY'}
-        tooltip={'APY is calculated on a rolling 3 day basis based on TVL/Fees. See FAQ below for more info'}
+        tooltip={'APY is generated on a three daily rolling basis. See FAQ below for more details'}
         onClick={handleSort('apy')}
         invert={sort == 'DESC' && sortType == 'apy'}
       />
@@ -74,7 +74,7 @@ const FarmFilter: FC<{
               />
               <FarmRowItem
                 title={'24H Volume'}
-                tooltip={'24H Volume is calculated since 10P.M UTC on a daily basis'}
+                tooltip={'24H Volume is reset daily at 10PM UTC'}
                 onClick={handleSort('volume')}
                 invert={sort == 'DESC' && sortType == 'volume'}
               />

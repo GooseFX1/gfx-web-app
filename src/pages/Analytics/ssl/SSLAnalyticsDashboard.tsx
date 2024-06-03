@@ -23,9 +23,6 @@ const WRAPPER = styled.div`
     ${tw`mt-8 font-semibold text-3xl	`}
     color: ${({ theme }) => theme.text7};
   }
-  .gfxLogo {
-    ${tw`w-28 h-28`}
-  }
   .second-line {
     ${tw`text-lg mt-6 font-medium	w-96 text-center`}
     color: ${({ theme }) => theme.text4};
@@ -143,7 +140,7 @@ const SSLAnalyticsDashboard: FC = () => {
 
   return !adminAllowed ? (
     <WRAPPER>
-      <img className="gfxLogo" src="/img/crypto/GOFX.svg" alt="Launchpad Logo" />
+      <img height="112px" width="112px" src="/img/crypto/GOFX.svg" alt="Launchpad Logo" />
       <div className="first-line">Ups, wallet not supported!</div>
       <div className="second-line">
         Please contact <GradientText text={'contact@goosefx.io'} fontSize={18} fontWeight={500} /> or try again.

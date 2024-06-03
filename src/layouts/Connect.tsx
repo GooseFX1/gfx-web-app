@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React, { FC, useCallback, useMemo, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useMemo, useEffect, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { Loader } from '../components'
@@ -60,9 +59,9 @@ export const Connect: FC<MenuItemProps> = ({
     )
   }, [blacklisted, pathname, base58PublicKey])
   const { balance } = useWalletBalance()
- 
-  const { adapter } = wallet || {};
-  const { name: adapterName, icon: adapterIcon} = adapter || {}
+
+  const { adapter } = wallet || {}
+  const { name: adapterName, icon: adapterIcon } = adapter || {}
 
   useEffect(() => {
     if (geoBlocked || base58PublicKey) setWalletModalVisible(false)
@@ -159,11 +158,7 @@ export const Connect: FC<MenuItemProps> = ({
                 className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
                   border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] mr-1 overflow-hidden`}
               >
-                <img
-                  className={'w-auto rounded-lg'}
-                  src={adapterIcon}
-                  alt={`${adapterName}_icon`}
-                />
+                <img className={'w-auto rounded-lg'} src={adapterIcon} alt={`${adapterName}_icon`} />
               </div>
             )}
             {connectLabel}

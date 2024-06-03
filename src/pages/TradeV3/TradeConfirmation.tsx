@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, ReactElement, useMemo } from 'react'
-import tw, { styled } from 'twin.macro'
 import 'styled-components/macro'
 import { GradientText } from '../../components'
 import { useCrypto, useOrder, useOrderBook } from '../../context'
@@ -20,22 +18,18 @@ import {
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
-const WRAPPER = styled.div``
-
-const ROW = styled.div`
-  ${tw`flex flex-row justify-between items-start mb-2.5 sm:mb-2`}
-  > span {
-    ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
-  }
-
-  .value {
-    ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
-  }
-
-  .spacing {
-    ${tw`mb-[25px] sm:mb-3.75`}
-  }
-`
+// const ROW = styled.div`
+//   ${tw`flex flex-row justify-between items-start mb-2.5 sm:mb-2`}
+//   > span {
+//     ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
+//   }
+//   .value {
+//     ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
+//   }
+//   .spacing {
+//     ${tw`mb-[25px] sm:mb-3.75`}
+//   }
+// `
 
 export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolean) => any; takeProfit?: any }> = ({
   setVisibility,
@@ -110,10 +104,10 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
   }
 
   const { isMobile } = useBreakPoint()
-  const cssStyle = useMemo(() => {
-    if (order.side === 'buy') return tw`bg-green-3 text-white font-semibold border-0 rounded-circle text-regular`
-    else return tw`bg-red-2 text-white font-semibold border-0 rounded-circle text-regular`
-  }, [order.side])
+  // const cssStyle = useMemo(() => {
+  //   if (order.side === 'buy') return tw`bg-green-3 text-white font-semibold border-0 rounded-circle text-regular`
+  //   else return tw`bg-red-2 text-white font-semibold border-0 rounded-circle text-regular`
+  // }, [order.side])
 
   // return (
   //   <WRAPPER>

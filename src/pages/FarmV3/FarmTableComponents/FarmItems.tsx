@@ -1,7 +1,7 @@
 import { SSLToken } from '@/pages/FarmV3/constants'
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import { Accordion, AccordionItem } from 'gfx-component-lib'
-import { StatsModal } from '@/pages/FarmV3/StatsModal'
+// import { StatsModal } from '@/pages/FarmV3/StatsModal'
 import NoResultsFound from '@/pages/FarmV3/FarmTableComponents/NoResultsFound'
 import FarmContent from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
 import { useSSLContext } from '@/context'
@@ -13,7 +13,7 @@ const FarmItems: FC<{
   searchTokens: string
   showDeposited: boolean
 }> = ({ tokens, numberOfCoinsDeposited, showDeposited, searchTokens }) => {
-  const [statsModal, setStatsModal] = useState<boolean>(false)
+  // const [statsModal, setStatsModal] = useState<boolean>(false)
   const { filteredLiquidityAccounts } = useSSLContext()
 
   const noResultsTitle =
@@ -39,7 +39,7 @@ const FarmItems: FC<{
 
           return show ? (
             <AccordionItem value={coin.token} variant={'secondary'} key={coin.token}>
-              {statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} />}
+              {/* statsModal && <StatsModal token={coin} statsModal={statsModal} setStatsModal={setStatsModal} /> */}
               <FarmContent coin={coin} key={`content-${coin.token}`} />
             </AccordionItem>
           ) : null

@@ -48,7 +48,7 @@ ${tw`relative sm:w-3/4`}
   }
 
     .ant-image-img {
-      ${tw`absolute w-[16px] left-3 top-2`}
+      ${tw`absolute left-3 top-2`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
     .ant-image-clear {
@@ -56,7 +56,7 @@ ${tw`relative sm:w-3/4`}
       filter: ${({ theme }) => theme.filterWhiteIcon};
     }
     .ant-image-clear-farm {
-      ${tw`absolute h-6 w-6 right-2 top-[5px] cursor-pointer`}
+      ${tw`absolute right-2 top-[5px] cursor-pointer`}
     }
   }
 `
@@ -92,13 +92,15 @@ export const SearchBar: FC<{
   return (
     <SEARCH_BAR_WRAPPER bgColor={bgColor} width={width} $cssStyle={cssStyle} {...rest}>
       <input placeholder={placeholder} ref={inputRef} value={filter ?? ''} onChange={handleInputValue} />
-      <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} />
+      <img className="ant-image-img" src={`/img/assets/search_${mode}.svg`} width="16px" />
       {filter && (
         <img
           className={'ant-image-clear-farm'}
           src={`/img/assets/search_farm_${mode}.svg`}
           onClick={() => handleCloseClick()}
           alt="clear-search"
+          height="24px"
+          width="24px"
         />
       )}
     </SEARCH_BAR_WRAPPER>

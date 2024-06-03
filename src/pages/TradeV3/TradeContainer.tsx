@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable */
-import React, { FC, useEffect, useRef, useState } from 'react'
-import { useCrypto, useDarkMode, useConnectionConfig } from '../../context'
+import { FC, ReactElement, useEffect, useRef, useState } from 'react'
+import { useDarkMode, useConnectionConfig } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
@@ -10,15 +9,12 @@ import tw, { styled } from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
 import { CollateralPanel } from './perps/components/CollateralPanel'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { Connect } from '../../layouts/Connect'
 import { HistoryPanel } from '../TradeV3/HistoryPanel'
 import useWindowSize from '../../utils/useWindowSize'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { checkMobile, checkMobileDex } from '../../utils'
 import { DexhomeMobi } from './mobile/DexhomeMobi'
-import { InfoLabel } from './perps/components/PerpsGenericComp'
 import { openLinkInNewTab } from '@/web3'
 
 const ReactGridLayout = WidthProvider(Responsive)
@@ -280,16 +276,16 @@ const UNLOCKED_OVERLAY = styled.div<{ $blacklisted?: boolean }>`
     ${tw`text-regular font-semibold dark:text-grey-5 text-black-4`}
   }
 `
-const PERPS_INFO = styled.div<{ $wallet: boolean; $isLocked: boolean }>`
-  ${tw`h-full w-full flex flex-col text-center justify-center items-center`}
-  filter: blur(${({ $wallet, $isLocked }) => (!$isLocked ? 3 : $wallet ? 0 : 3)}px) !important;
-  border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
+// const PERPS_INFO = styled.div<{ $wallet: boolean; $isLocked: boolean }>`
+//   ${tw`h-full w-full flex flex-col text-center justify-center items-center`}
+//   filter: blur(${({ $wallet, $isLocked }) => (!$isLocked ? 3 : $wallet ? 0 : 3)}px) !important;
+//   border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
 
-  > div {
-    ${tw`font-medium text-regular dark:text-grey-2 text-grey-1 text-center mt-8`}
-    line-height: 18px;
-  }
-`
+//   > div {
+//     ${tw`font-medium text-regular dark:text-grey-2 text-grey-1 text-center mt-8`}
+//     line-height: 18px;
+//   }
+// `
 
 function getInitLayout() {
   const lg = localStorage.getItem('lg')
@@ -309,7 +305,6 @@ const CryptoContent: FC = () => {
   const { blacklisted } = useConnectionConfig()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const { wallet } = useWallet()
   const [chartContainer, setChartContainer] = useState<any>()
   const isInitialRender = useRef(true)
 
@@ -466,4 +461,5 @@ export const TermsOfService = () => {
     </div>
   )
 }
+
 export default CryptoContent
