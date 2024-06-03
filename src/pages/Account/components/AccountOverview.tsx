@@ -10,14 +10,16 @@ import { formatNumberInThousands, getPerpsPrice } from '../../TradeV3/perps/util
 import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-import { Button, Container, ContainerTitle } from 'gfx-component-lib'
+import { Button, Container, ContainerTitle, cn } from 'gfx-component-lib'
 import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { AccountRowHealth } from '@/pages/TradeV3/perps/components/CollateralPanel'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 const HISTORY = styled.div`
-  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] bg-white 
+  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] sm:h-[calc(100vh - 315px)] bg-white 
   border  border-grey-4 dark:border-black-4 border-b-0 border-r-0 border-l-0
-  rounded-b-[5px]`}
+  sm:border-t-0  
+  rounded-b-[5px] sm:my-[15px]`}
   color: ${({ theme }) => theme.text2};
 
   .no-balances-found {
@@ -125,24 +127,27 @@ const AccountOverview: FC = () => {
       fetchDayVolume()
     }
   }, [connected, traderInfo.traderRiskGroupKey])
+  const { isMobile } = useBreakPoint()
   return (
-    <div className="flex flex-col w-full p-[15px] ml-36">
+    <div className="flex flex-col w-full p-[15px] sm:py-0 ml-36 sm:ml-0">
       {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
           setDepositWithdrawModal={setDepositWithdrawModal}
         />
       )}
-      <InfoLabel>
-        <h3>Account Overview</h3>
-      </InfoLabel>
-      <div className="flex justify-between items-center">
-        <div className="my-[15px] flex items-center">
+      {!isMobile && (
+        <InfoLabel>
+          <h3>Account Overview</h3>
+        </InfoLabel>
+      )}
+      <div className="flex justify-between items-center sm:overflow-x-auto">
+        <div className="my-[15px] flex items-center sm:my-0">
           <Container
             variant="outline"
             colorScheme="primaryGradient"
             size="md"
-            className="max-w-[158px] min-h-[55px] p-1.5 flex justify-between"
+            className="max-w-[158px] min-w-[140px] min-h-[55px] p-1.5 flex justify-between"
           >
             <ContainerTitle>
               <h5>My Portfolio Value:&nbsp;</h5>
@@ -187,63 +192,112 @@ const AccountOverview: FC = () => {
             </InfoLabel>
           </Container>
         </div>
-        <div className="w-[180px]">
-          <AccountRowHealth accountHealth={accountHealth} />
-        </div>
-      </div>
-
-      <div
-        className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
-      dark:bg-black-2 w-full py-2"
-      >
-        {columns.map((item, index) => (
-          <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
-            {item}
-          </ContentLabel>
-        ))}
-      </div>
-      <HISTORY>
-        {traderInfo.averagePosition.side && Number(roundedSize) ? (
-          <div className="positions">
-            <div className="pair-container">
-              <img src={`${assetIcon}`} alt="SOL icon" />
-              <InfoLabel>
-                <p className="text-[13px]">{selectedCrypto.pair}</p>{' '}
-              </InfoLabel>
-            </div>
-            <InfoLabel>
-              <p className="text-[13px]">{roundedSize} SOL </p>
-            </InfoLabel>
-            <InfoLabel>
-              <p className="text-[13px]">${formatNumberInThousands(Number(notionalSize))} </p>{' '}
-            </InfoLabel>
-            <InfoLabel>
-              <p className="text-[13px] text-right mr-2.5">${Number(traderInfo.liquidationPrice).toFixed(2)} </p>{' '}
-            </InfoLabel>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center w-full flex-col">
-            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
-            <AccountsLabel className="text-[18px]">No Positions Found</AccountsLabel>
-            <div className="mt-4">{!connected && <Connect />}</div>
-            <div className="mt-0">
-              {connected && (
-                <Button
-                  colorScheme={'secondaryGradient'}
-                  onClick={() => setDepositWithdrawModal(true)}
-                  className={`ml-auto font-bold
-                    text-white min-w-[122px]  py-1.875  min-md:px-1.5 box-border`}
-                  size={'lg'}
-                >
-                  Deposit Now
-                </Button>
-              )}
-            </div>
+        {!isMobile && (
+          <div className="w-[180px]">
+            <AccountRowHealth accountHealth={accountHealth} />
           </div>
         )}
-      </HISTORY>
+      </div>
+      {isMobile && (
+        <div className="flex justify-between items-center sm:h-10 mt-[-10px]">
+          <InfoLabel>
+            <h3>Account Overview</h3>
+          </InfoLabel>
+          <div className="w-[150px]">
+            <AccountRowHealth accountHealth={accountHealth} />
+          </div>
+        </div>
+      )}
+
+      {!isMobile && (
+        <>
+          <div
+            className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
+      dark:bg-black-2 w-full py-2"
+          >
+            {columns.map((item, index) => (
+              <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
+                {item}
+              </ContentLabel>
+            ))}
+          </div>
+          <HISTORY>
+            {traderInfo.averagePosition.side && Number(roundedSize) ? (
+              <div className="positions">
+                <div className="pair-container">
+                  <img src={`${assetIcon}`} alt="SOL icon" />
+                  <InfoLabel>
+                    <p className="text-[13px]">{selectedCrypto.pair}</p>{' '}
+                  </InfoLabel>
+                </div>
+                <InfoLabel>
+                  <p className="text-[13px]">{roundedSize} SOL </p>
+                </InfoLabel>
+                <InfoLabel>
+                  <p className="text-[13px]">${formatNumberInThousands(Number(notionalSize))} </p>{' '}
+                </InfoLabel>
+                <InfoLabel>
+                  <p className="text-[13px] text-right mr-2.5">
+                    ${Number(traderInfo.liquidationPrice).toFixed(2)}{' '}
+                  </p>{' '}
+                </InfoLabel>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center w-full flex-col">
+                {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
+                <AccountsLabel className="text-[18px]">No Positions Found</AccountsLabel>
+                <div className="mt-4">{!connected && <Connect />}</div>
+                <div className="mt-0">
+                  {connected && (
+                    <Button
+                      colorScheme={'secondaryGradient'}
+                      onClick={() => setDepositWithdrawModal(true)}
+                      className={`ml-auto font-bold
+                    text-white min-w-[122px]  py-1.875  min-md:px-1.5 box-border`}
+                      size={'lg'}
+                    >
+                      Deposit Now
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </HISTORY>
+        </>
+      )}
+      {isMobile && (
+        <>
+          <HISTORY>
+            <div className="flex flex-col w-full p-2.5">
+              <div className="flex justify-between mt-[5px]">
+                <ContentLabel className="text-[15px]"> Asset </ContentLabel>
+                <InfoLabel className="text-[15px] flex items-center ">
+                  <img src={`${assetIcon}`} className="h-5 w-5 mr-1" alt="SOL icon" />
+                  SOL-PERP{' '}
+                </InfoLabel>
+              </div>
+              <div className="flex justify-between mt-[5px]">
+                <ContentLabel className="text-[15px]"> Balance </ContentLabel>
+                <InfoLabel className="text-[15px]"> {roundedSize} SOL </InfoLabel>
+              </div>
+              <div className="flex justify-between mt-[5px]">
+                <ContentLabel className="text-[15px]"> USD Value </ContentLabel>
+                <InfoLabel className="text-[15px]"> ${formatNumberInThousands(Number(notionalSize))} </InfoLabel>
+              </div>
+              <div className="flex justify-between mt-[5px]">
+                <ContentLabel className="text-[15px]"> Liquidity Price </ContentLabel>
+                <InfoLabel className="text-[15px]"> ${Number(traderInfo.liquidationPrice).toFixed(2)} </InfoLabel>
+              </div>
+              <BorderLine className={'mt-2'} />
+            </div>
+          </HISTORY>
+        </>
+      )}
     </div>
   )
 }
 
+export const BorderLine: FC<{ className?: string }> = ({ className }) => (
+  <div className={cn(`h-[1px] dark:bg-black-4 bg-grey-4`, className)}></div>
+)
 export default AccountOverview
