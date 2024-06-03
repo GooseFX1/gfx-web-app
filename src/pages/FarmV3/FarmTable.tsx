@@ -4,7 +4,7 @@ import { ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { SSLToken, poolType, Pool } from './constants'
+import { Pool, poolType, SSLToken } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { getPriceObject } from '../../web3'
@@ -211,16 +211,16 @@ export const FarmTable: FC = () => {
           <img
             src={`/img/assets/${pool.name}_pools_${mode}.svg`}
             alt="pool-icon"
-            className="h-[55px] w-[50px] mr-3.75 duration-500 sm:h-[45] sm:w-[40px]"
+            className="h-[55px] w-[50px] mr-3.75 duration-500 max-sm:h-[45] max-sm:w-[40px]"
           />
           <div className="flex flex-col">
             <h2
               className="text-average font-semibold dark:text-grey-5 text-black-4 capitalize
-              sm:text-average sm:mb-0 sm:leading-[22px]"
+              max-sm:text-average max-sm:mb-0 max-sm:leading-[22px]"
             >
               {pool.name} Pools
             </h2>
-            <p className="text-average font-medium text-grey-1 dark:text-grey-2 sm:text-tiny sm:leading-5">
+            <p className="text-average font-medium text-grey-1 dark:text-grey-2 max-sm:text-tiny max-sm:leading-5">
               {pool.desc}
             </p>
           </div>
@@ -240,7 +240,7 @@ export const FarmTable: FC = () => {
         <RadioOptionGroup
           defaultValue={'all_pools'}
           value={pool.name}
-          className={'w-full min-md:w-max gap-1.25 sm:gap-0 sm:grid-cols-4'}
+          className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4'}
           optionClassName={`min-md:w-[85px]`}
           options={[
             {
@@ -313,8 +313,8 @@ export const FarmTable: FC = () => {
             <div className="ml-auto flex items-center">
               <Switch variant={'default'} checked={showDeposited} onClick={handleShowDepositedToggle} />
               <div
-                className={`h-8.75 leading-5 text-regular sm:text-tiny sm:leading-[18px] text-right dark:text-grey-2 
-                text-grey-1 font-semibold mt-[-4px] ml-2.5 sm:ml-2`}
+                className={`h-8.75 leading-5 text-regular max-sm:text-tiny max-sm:leading-[18px] text-right
+                dark:text-grey-2 text-grey-1 font-semibold mt-[-4px] ml-2.5 max-sm:ml-2`}
               >
                 Show <br /> Deposited
               </div>

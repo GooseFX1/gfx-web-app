@@ -9,12 +9,12 @@ import {
   ColumnMobile,
   ColumnWeb,
   formatNumberToHumanReadable,
+  getClassNameForBoost,
   getFormattedDomainName,
   HowToEarn
 } from './Columns'
 import { User, useStats } from '../../context/stats'
 import { useDarkMode } from '../../context'
-import { getClassNameForBoost } from './Columns'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { useHistory } from 'react-router-dom'
@@ -33,7 +33,7 @@ const WRAPPER = styled.div<{ $index: number }>`
   }
   ${tw`dark:bg-black-1 bg-grey-5`}
   table {
-    ${tw`w-full max-w-[1440px] mx-auto dark:bg-black-1 px-5 bg-grey-5 border-separate sm:px-[15px]`}
+    ${tw`w-full max-w-[1440px] mx-auto dark:bg-black-1 px-5 bg-grey-5 border-separate max-sm:px-[15px]`}
     border-spacing: 0 15px;
   }
   .tableHeader {
@@ -42,7 +42,7 @@ const WRAPPER = styled.div<{ $index: number }>`
     }
   }
   .slider {
-    ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] sm:rounded-[30px] sm:w-[90px]`}
+    ${tw`w-20 h-10 rounded-[36px] absolute z-[-1] max-sm:rounded-[30px] max-sm:w-[90px]`}
     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
     transition: left 500ms ease-in-out;
   }
@@ -86,7 +86,7 @@ const WRAPPER = styled.div<{ $index: number }>`
 `
 
 const HEADER = styled.div<{ $mode: string; $isMobile: boolean }>`
-  ${tw`h-56 w-full pt-[15px] sm:h-auto sm:p-[15px]`}
+  ${tw`h-56 w-full pt-[15px] max-sm:h-auto max-sm:p-[15px]`}
   background: ${({ $mode }) => `
     url('/img/assets/Leaderboard/purple_bg_${$mode}.svg')
   `};
@@ -112,7 +112,7 @@ export const TABLE_ROW = styled.tr`
 
 const CARD = styled.div`
   ${tw`h-[90px] w-[32%] dark:bg-black-1 bg-white border border-solid dark:border-grey-2 border-grey-1
-      rounded-small flex flex-row items-center px-3.75 sm:mb-[15px] sm:w-full`}
+      rounded-small flex flex-row items-center px-3.75 max-sm:mb-[15px] max-sm:w-full`}
 `
 
 const LeaderBoard: FC = () => {
@@ -153,7 +153,7 @@ const LeaderBoard: FC = () => {
           </div>
         </div> */}
 
-        <div tw="sm:flex sm:flex-row sm:justify-between sm:items-center relative">
+        <div tw="max-sm:flex max-sm:flex-row max-sm:justify-between max-sm:items-center relative">
           <div tw="text-grey-5 font-semibold text-lg text-center mt-3 mb-3.75">Season 1</div>
           <a
             href="https://docs.goosefx.io/earn/perps-leaderboard?utm_source=perps_leaderboard"
@@ -163,17 +163,17 @@ const LeaderBoard: FC = () => {
               !breakpoint.isMobile && tw`absolute right-5 top-0`,
               tw`border border-solid border-grey-1 w-[149px] h-10 rounded-[100px] 
                 cursor-pointer py-0.5 pl-5 pr-1 flex flex-row items-center justify-between bg-white dark:bg-black-1 
-                sm:right-0`
+                max-sm:right-0`
             ]}
           >
-            <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
+            <span tw="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 max-sm:text-tiny">
               How to earn
             </span>
             <img src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />
           </a>
         </div>
         <div tw="relative">
-          <div tw="text-grey-5 font-medium text-regular text-center sm:text-tiny sm:mb-0">
+          <div tw="text-grey-5 font-medium text-regular text-center max-sm:text-tiny max-sm:mb-0">
             Trade smart, climb the leaderboard, and be among {!breakpoint.isMobile && <br />}
             the top to win exciting rewards!{' '}
           </div>
@@ -217,7 +217,8 @@ const LeaderBoard: FC = () => {
         </div>
       )}
 
-      <div tw="flex flex-row justify-between relative px-5 max-w-[1440px] mx-auto sm:block sm:px-[15px] sm:mb-0">
+      <div tw="flex flex-row justify-between relative px-5 max-w-[1440px] mx-auto max-sm:block max-sm:px-[15px]
+      max-sm:mb-0">
         {users?.slice(0, 3).map((user: User, index: number) => (
           <CARD key={index}>
             <div tw="text-lg font-semibold mr-3.75 text-black-4 dark:text-grey-5">#{user?.id}</div>

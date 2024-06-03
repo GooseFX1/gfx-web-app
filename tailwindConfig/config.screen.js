@@ -1,9 +1,9 @@
 const screens = {
   //WIDTH_UP_TO - @media(max-width: ${max}px)
-  sm: { max: '500px' },
-  md: { max: '720px' },
-  lg: { max: '960px' },
-  xl: { max: '1280px' },
+  "max-sm": { max: '500px' },
+  "max-md": { max: '720px' },
+  "max-lg": { max: '960px' },
+  "max-xl": { max: '1280px' },
 
   //WIDTH_FROM - @media(min-width: ${min-}px)
   'min-sm': '501px',

@@ -28,7 +28,7 @@ const FarmItems: FC<{
       {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       )}
-      <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'lg:min-w-full gap-3.75'}>
+      <Accordion type={'multiple'} collapsible={true} variant={'secondary'} className={'max-lg:min-w-full gap-3.75'}>
         {tokens.map((coin) => {
           if (!coin || !filteredLiquidityAccounts) return null
           const liqAcc = filteredLiquidityAccounts[coin.mint.toBase58()]

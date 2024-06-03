@@ -116,7 +116,7 @@ export const ActionModal: FC<{
             <img key={`close-mobile-button`} src={`/img/mainnav/close-thin-${mode}.svg`} alt="close-icon" />
           </div>
 
-          <div className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 sm:text-average">
+          <div className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 max-sm:text-average">
             <h3>{heading}</h3>
           </div>
           <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">

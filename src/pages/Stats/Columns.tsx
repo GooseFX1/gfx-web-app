@@ -1,4 +1,4 @@
-import { FC, useState, Dispatch, SetStateAction, ReactElement } from 'react'
+import { Dispatch, FC, ReactElement, SetStateAction, useState } from 'react'
 import Slider from 'react-slick'
 import { useDarkMode } from '../../context'
 import { checkMobile, truncateAddressForSixChar } from '../../utils'
@@ -16,28 +16,28 @@ const STYLED_POPUP = styled(PopupCustom)`
   }
   .ant-modal-close-x {
     > img {
-      ${tw`sm:!h-4 sm:!w-4 absolute bottom-2 opacity-60`}
+      ${tw`max-sm:!h-4 max-sm:!w-4 absolute bottom-2 opacity-60`}
     }
   }
   .ant-modal-body {
-    ${tw`sm:p-[15px]`}
+    ${tw`max-sm:p-[15px]`}
   }
   .slick-prev {
     ${tw`w-auto top-[475px] text-regular mr-1.5 font-semibold cursor-pointer z-10
-      sm:top-[470px] sm:left-0 dark:text-white text-black-4`}
+      max-sm:top-[470px] max-sm:left-0 dark:text-white text-black-4`}
     &:before {
       display: none;
     }
   }
   .slick-next {
     ${tw`w-auto top-[475px] text-regular mr-1.5 font-semibold cursor-pointer z-10
-      sm:top-[470px] sm:right-[-10px] dark:text-white text-black-4`}
+      max-sm:top-[470px] max-sm:right-[-10px] dark:text-white text-black-4`}
     &:before {
       display: none;
     }
   }
   .bannerContainer {
-    ${tw`rounded-bigger flex items-center justify-center sm:w-full sm:p-2.5`}
+    ${tw`rounded-bigger flex items-center justify-center max-sm:w-full max-sm:p-2.5`}
   }
   .sliderContainer {
     ${tw`h-5/6 w-11/12 sm:w-full sm:h-[90%]`}
