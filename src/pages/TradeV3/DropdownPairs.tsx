@@ -3,23 +3,15 @@ import { useHistory } from 'react-router-dom'
 import { MarketType, useCrypto, useDarkMode, usePriceFeed } from '../../context'
 import SearchBar from '../../components/common/SearchBar'
 import tw, { styled } from 'twin.macro'
-import { checkMobile } from '../../utils'
 import 'styled-components/macro'
-import { Search } from 'lucide-react'
 import {
   cn,
   Dialog,
   DialogBody,
-  DialogClose,
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay,
-  Input,
-  InputElementLeft,
-  InputElementRight,
-  InputGroup,
-  cn
+  DialogOverlay
 } from 'gfx-component-lib'
 import { ContentLabel, GradientBorder, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -149,7 +141,7 @@ const GRADIENT_BACKGROUND = styled.div`
 //     ${tw`flex flex-row justify-center items-center mr-6 text-regular font-semibold text-grey-2 w-[90px] h-9 mb-3.75`}
 //   }
 // 
-  .active {
+//.active {
 //     ${tw`!text-white w-[90px] h-9 text-regular font-semibold rounded-[40px]`}
 //     background: linear-gradient(96.79deg, #f7931a 4.25%, #ac1cc7 97.61%);
 //   }
