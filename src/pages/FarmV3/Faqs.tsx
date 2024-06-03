@@ -1,11 +1,11 @@
 import { FC } from 'react'
-import { faqs, Faq } from './constants'
+import { Faq, faqs } from './constants'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, cn } from 'gfx-component-lib'
 
 export const Faqs: FC = () => (
-  <div className={cn(`sm:w-[calc(100% - 15px)]`)}>
+  <div className={cn(`max-sm:w-[calc(100% - 15px)]`)}>
     <div className="flex flex-row mt-10 mb-5 items-center">
-      <h2 className="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 sm:text-lg pl-2">
+      <h2 className="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 max-sm:text-lg pl-2">
         FAQs
       </h2>
       <a

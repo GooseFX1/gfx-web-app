@@ -1,18 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, ReactNode, useMemo, useState, useEffect, useRef } from 'react'
-import { Dropdown, Menu, Skeleton } from 'antd'
+import React, { FC, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Dropdown, Skeleton } from 'antd'
 import { DownOutlined } from '@ant-design/icons'
 import { MarketSide, useCrypto, useDarkMode, useOrder, useOrderBook } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
 import tw, { styled } from 'twin.macro'
-import {
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  cn
-} from 'gfx-component-lib'
+import { Button, cn, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 
 const SPREADS = [1 / 100, 5 / 100, 1 / 10, 5 / 10, 1]
@@ -73,7 +66,7 @@ const LOADER = styled(Skeleton.Input)`
 const ORDERS = styled.div<{ $visible: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   height: calc(100% - 70px);
-  ${tw`sm:max-h-[222px]`}
+  ${tw`max-sm:max-h-[222px]`}
   justify-content: space-between;
   align-items: center;
   max-height: ${({ $visible }) => ($visible ? '328px' : 'auto')};
@@ -201,7 +194,7 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
-  ${tw`sm:overflow-auto sm:max-h-[150px]`}
+  ${tw`max-sm:overflow-auto sm:max-h-[150px]`}
   width: 100%;
   display: flex;
   overflow-y: auto;

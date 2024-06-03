@@ -119,7 +119,7 @@ export const ActionModal: FC<{
           <div className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-3.75 max-sm:text-average">
             <h3>{heading}</h3>
           </div>
-          <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 sm:text-tiny">
+          <div className="dark:text-grey-2 text-grey-1 text-regular font-semibold mb-3 max-sm:text-tiny">
             <h5>
               By
               {description}
@@ -194,7 +194,7 @@ export const ActionModal: FC<{
       <DialogContent
         size={'md'}
         className={cn(
-          'w-full sm:rounded-t-[10px] sm:rounded-b-none p-6',
+          'w-full max-sm:rounded-t-[10px] max-sm:rounded-b-none p-6',
           breakpoint.isMobile
             ? actionType === 'withdraw'
               ? 'h-[320px]'

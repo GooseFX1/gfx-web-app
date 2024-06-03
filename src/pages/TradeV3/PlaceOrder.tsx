@@ -338,7 +338,7 @@ const TOTAL_SELECTOR = styled.div`
 `
 
 const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-0 w-full pr-2 text-left mt-[-5px] sm:mt-[-10px] sm:h-[38px]`}
+  ${tw`pl-0 w-full pr-2 text-left mt-[-5px] max-sm:mt-[-10px] max-sm:h-[38px]`}
   .ant-slider-rail {
     ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
   }
@@ -770,7 +770,7 @@ export const PlaceOrder: FC = () => {
     const markObj = {}
     for (let i = 2; i <= 10; i = i + 2) {
       markObj[i] = (
-        <div className={cn(i === 10 ? 'mr-1' : 'mr-0', 'mt-0.5 sm:mt-0')}>
+        <div className={cn(i === 10 ? 'mr-1' : 'mr-0', 'mt-0.5 max-sm:mt-0')}>
           <TitleLabel>{i + 'x'}</TitleLabel>
         </div>
       )
@@ -1298,7 +1298,7 @@ export const PlaceOrder: FC = () => {
   //   </WRAPPER>
   // )
   return (
-    <div className={cn('h-full rounded-[3px] sm:rounded-[10px]')}>
+    <div className={cn('h-full rounded-[3px] max-sm:rounded-[10px]')}>
       <PerpsLayout>
         <LongShortTitleLayout handleOrderSide={handleOrderSide} />
         <LeverageRatioTile sliderValue={sliderValue} />
@@ -1310,7 +1310,7 @@ export const PlaceOrder: FC = () => {
           />
         )}
 
-        <div className="px-2.5 flex flex-col sm:pb-2.5 py-1 sm:h-auto h-[calc(100% - 80px)]">
+        <div className="px-2.5 flex flex-col max-sm:pb-2.5 py-1 max-sm:h-auto h-[calc(100% - 80px)]">
           <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col')}>
               <div className="pb-1">

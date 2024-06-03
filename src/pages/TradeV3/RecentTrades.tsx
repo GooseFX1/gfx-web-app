@@ -87,7 +87,7 @@ export const RecentTrades: FC = () => {
   }
 
   return (
-    <div ref={wrapperRef} className={cn('overflow-auto h-full sm:max-h-[300px]')}>
+    <div ref={wrapperRef} className={cn('overflow-auto h-full max-sm:max-h-[300px]')}>
       <div>
         <div className={cn('flex items-center px-2 my-1.5')}>
           <div className={cn('w-1/3')}>

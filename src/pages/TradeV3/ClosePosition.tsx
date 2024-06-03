@@ -62,7 +62,7 @@ export const ClosePositionDialog: FC<{
   <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
-    <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'h-[356px] sm:px-0'}>
+    <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'h-[356px] max-sm:px-0'}>
       <DialogCloseDefault />
 
       <DialogBody>
@@ -240,7 +240,7 @@ export const ClosePosition: FC<{
   }, [exitPrice, price, displayExitQty])
 
   return (
-    <div className="flex flex-col justify-between w-full p-3 sm:px-2">
+    <div className="flex flex-col justify-between w-full p-3 max-sm:px-2">
       <div>
         <h3 className={cn('text-black-4 dark:text-grey-8 mt-1 mb-3')}>Close Position</h3>
         <div className="percentage">
