@@ -18,6 +18,93 @@ import { fetchIsUnderMaintenance } from '../api/config'
 import { ENVS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { INTERVALS } from '@/utils/time'
+import axios from 'axios'
+import * as https from 'node:https'
+
+const RETRY_ATTEMPTS = 3
+
+const agent = new https.Agent({
+  maxSockets: 100
+})
+
+const axiosObject = axios.create({
+  httpsAgent: agent
+})
+
+export async function axiosFetchWithRetries(
+  input: string | URL | globalThis.Request,
+  incomingInit?: RequestInit,
+  retryAttempts = 0
+): Promise<Response> {
+  let attempt = 0
+  let init = incomingInit
+  // Adding default headers
+  if (!init || !init.headers) {
+    init = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      ...init
+    }
+  }
+
+  while (attempt < retryAttempts) {
+    try {
+      let axiosHeaders = {}
+
+      axiosHeaders = Array.from(new Headers(init.headers).entries()).reduce((acc, [key, value]) => {
+        acc[key] = value
+        return acc
+      }, {})
+
+      const axiosConfig = {
+        data: init.body,
+        headers: axiosHeaders,
+        method: init.method,
+        baseURL: input.toString(),
+        validateStatus: () => true
+      }
+
+      const axiosResponse = await axiosObject.request(axiosConfig)
+
+      const { data, status, statusText, headers } = axiosResponse
+
+      // Mapping headers from axios to fetch format
+      const headersArray: [string, string][] = Object.entries(headers).map(([key, value]) => [key, value])
+
+      const fetchHeaders = new Headers(headersArray)
+
+      const response = new Response(JSON.stringify(data), {
+        status,
+        statusText,
+        headers: fetchHeaders
+      })
+
+      // Comment the above lines and uncomment the following one to switch from axios to fetch
+      // const response = await fetch(input, init);
+
+      // Traffic might get routed to backups or node restarts or if anything throws a 502, retry
+      if (response.status === 502) {
+        console.log('Retrying due to 502')
+
+        attempt++
+
+        // Backoff to avoid hammering the server
+        await new Promise<void>((resolve) => setTimeout(resolve, 100 * attempt))
+
+        continue
+      }
+      return Promise.resolve(response)
+    } catch (e) {
+      console.log(`Retrying due to error ${e}`, e)
+
+      attempt++
+      continue
+    }
+  }
+
+  return Promise.reject('Max retries reached')
+}
 
 const countries = [
   { code: 'BY', name: 'Belarus' },
@@ -200,9 +287,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     // creates connection - temp ws url
     return new Connection(endpoint, {
-      commitment: 'processed',
-      httpAgent: false,
-      disableRetryOnRateLimit: true
+      async fetch(input, init?) {
+        return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
+      },
+      commitment: 'processed'
     })
   }, [endpointName, endpoint])
 
@@ -220,9 +308,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     // creates connection - temp ws url
     return new Connection(endpoint, {
-      commitment: 'confirmed',
-      httpAgent: false,
-      disableRetryOnRateLimit: true
+      async fetch(input, init?) {
+        return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
+      },
+      commitment: 'confirmed'
     })
   }, [endpointName, endpoint])
 
