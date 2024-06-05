@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
+import { cn, Tabs, TabsContent, TabsList, TabsTrigger } from 'gfx-component-lib'
 import React, { Dispatch, FC, ReactElement, SetStateAction } from 'react'
 import { TitleLabel } from '../perps/components/PerpsGenericComp'
-import { OrderBook } from '../OrderBook'
-import { RecentTrades } from '../RecentTrades'
 import PlaceOrderMobiV2 from './PlaceOrderMobiV2'
 import { CollateralPanel } from '../perps/components/CollateralPanel'
 import OpenOrdersAndPositions from './OpenOrdersAndPositions'
@@ -15,7 +13,8 @@ const OrderAccountPositions: FC<{
 }> = ({ tabs, selectedTab, setSelectedTab }): ReactElement => (
   <div>
     <div>
-      <Tabs className="p-[0px] max-sm:max-h-[450px] mb-24 max-sm:mb-4 max-sm:bg-grey-5 max-sm:dark:!bg-black-1" defaultValue="1">
+      <Tabs className="p-[0px] max-sm:max-h-[450px] mb-24 max-sm:mb-4 max-sm:bg-grey-5 max-sm:dark:!bg-black-1"
+            defaultValue="1">
         <TabsList className="max-sm:dark:!bg-black-1 max-sm:bg-grey-5 max-sm:py-[15px]">
           <TabsTrigger
             className={cn('w-[33%]')}

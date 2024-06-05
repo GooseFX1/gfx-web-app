@@ -1,7 +1,6 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from 'react'
 import tw from 'twin.macro'
 import { useAccounts, useCrypto } from '../../../context'
-import { useMemo, FC, useState } from 'react'
 import { convertToFractional } from './utils'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import { PERPS_COLLATERAL } from './perpsConstants'
@@ -9,9 +8,10 @@ import { PERPS_COLLATERAL as PERPS_COLLATERAL_DEVNET } from './perpsConstantsDev
 import { checkMobile } from '../../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { ContentLabel, InfoLabel, TitleLabel } from './components/PerpsGenericComp'
-import { Tokens, CloseTradingAccount } from './DepositWithdraw'
+import { CloseTradingAccount, Tokens } from './DepositWithdraw'
 import {
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -21,8 +21,7 @@ import {
   InputGroup,
   Tabs,
   TabsList,
-  TabsTrigger,
-  cn
+  TabsTrigger
 } from 'gfx-component-lib'
 import { CircularArrow } from '../../../components/common/Arrow'
 
@@ -327,7 +326,7 @@ export const DepositWithdraw: FC<{
               onClick={handleSubmit}
               loading={isLoading}
               disabled={checkDisabled() || isLoading}
-              cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average max-sm:text-regular`}
+             cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average max-sm:text-regular`}
             >
               {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
             </Button> */}
