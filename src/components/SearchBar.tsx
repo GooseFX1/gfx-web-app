@@ -6,7 +6,7 @@ import { SpaceBetweenDiv } from '../styles'
 import { useDarkMode } from '../context'
 
 const SEARCH_BAR_WRAPPER = styled(SpaceBetweenDiv)<{ bgColor: string; width: number; $cssStyle: TwStyle }>`
-${tw`relative sm:w-3/4`}
+${tw`relative max-sm:w-3/4`}
   width: ${({ width }) => (width ? width : '50%')} !important;
   max-width: ${({ width }) => (width ? width : '583px')} !important;
   margin: 0 0 0 ${({ theme }) => theme.margin(3)};
@@ -16,7 +16,7 @@ ${tw`relative sm:w-3/4`}
   }
   
   .ant-image {
-    ${tw`sm:relative sm:left-2.5`}
+    ${tw`max-sm:relative max-sm:left-2.5`}
     filter: ${({ theme }) => theme.filterWhiteIcon};
 
     @media(max-width: 500px){
@@ -32,7 +32,7 @@ ${tw`relative sm:w-3/4`}
     color: ${({ theme }) => theme.text32};
     border: transparent;
 
-    ${tw`sm:w-full text-[15px] duration-500
+    ${tw`max-sm:w-full text-[15px] duration-500
       font-semibold  rounded-circle p-[0 40px 0 35px]`}
     ${({ $cssStyle }) => $cssStyle};
 

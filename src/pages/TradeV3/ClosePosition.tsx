@@ -274,7 +274,7 @@ export const ClosePosition: FC<{
             onFocus={() => setPercentageindex(3)}
             onChange={(e) => handleInputChange(e)}
             // disabled={order.display === 'market'}
-            className={cn(`my-2.5 h-[30px] sm:h-[35px] min-w-[100px] text-right`, customAmount && 'pr-[48px]')}
+            className={cn(`my-2.5 h-[30px] max-sm:h-[35px] min-w-[100px] text-right`, customAmount && 'pr-[48px]')}
           />
 
           {/* {percentDetails.map((elem, index) => (

@@ -30,22 +30,22 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 
 const WRAPPER = styled.div`
   .input-row {
-    ${tw`flex flex-row h-12.5 sm:block sm:w-full sm:h-auto`}
+    ${tw`flex flex-row h-12.5 max-sm:block max-sm:w-full max-sm:h-auto`}
   }
 
   .deposit {
-    ${tw`text-regular font-semibold mt-3.75 sm:text-tiny`}
+    ${tw`text-regular font-semibold mt-3.75 max-sm:text-tiny`}
     color: ${({ theme }) => theme.text37};
   }
 
   .percentage {
-    ${tw`w-[280px] ml-auto rounded-circle flex flex-row sm:w-full sm:mb-[25px] sm:h-[45px]`}
+    ${tw`w-[280px] ml-auto rounded-circle flex flex-row max-sm:w-full max-sm:mb-[25px] max-sm:h-[45px]`}
     background: ${({ theme }) => theme.bg22};
   }
 
   .percentage-num {
     ${tw`w-1/4 font-semibold cursor-pointer flex flex-row items-center 
-    justify-center h-full text-[16px] sm:text-regular text-grey-1`}
+    justify-center h-full text-[16px] max-sm:text-regular text-grey-1`}
   }
 
   .selected {
@@ -55,7 +55,7 @@ const WRAPPER = styled.div`
 
   .submit-btn {
     ${tw`block h-12.5 w-[222px] flex items-center rounded-circle mx-auto my-3.5 font-semibold 
-      text-average border-0 border-none bg-blue-1 sm:h-[45px] sm:w-full`}
+      text-average border-0 border-none bg-blue-1 max-sm:h-[45px] max-sm:w-full`}
     color: ${({ theme }) => theme.white};
     outline: none;
   }
@@ -88,7 +88,7 @@ const DROPDOWN_PAIR_DIV = styled.div`
   }
 
   .available-bal {
-    ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
+    ${tw`mr-3.75 text-[16px] font-semibold max-sm:text-regular`}
   }
 `
 
@@ -111,7 +111,7 @@ export const SELECTED_COIN = styled.div`
   .dropdown {
     ${tw`flex items-center mr-2.5`}
     .available-bal {
-      ${tw`mr-3.75 text-[16px] font-semibold sm:text-regular`}
+      ${tw`mr-3.75 text-[16px] font-semibold max-sm:text-regular`}
       color: ${({ theme }) => theme.text32};
     }
   }
@@ -124,23 +124,23 @@ export const COIN_INFO = styled.div`
   }
 
   .market-add {
-    ${tw`text-[16px] font-semibold sm:text-tiny`}
+    ${tw`text-[16px] font-semibold max-sm:text-tiny`}
     color: ${({ theme }) => theme.text36};
   }
 
   .coin {
-    ${tw`text-[16px] font-semibold sm:text-regular`}
+    ${tw`text-[16px] font-semibold max-sm:text-regular`}
     color: ${({ theme }) => theme.text11};
   }
 `
 
 export const LABEL = styled.div`
-  ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 sm:text-regular sm:mb-2 sm:mt-3.75`}
+  ${tw`text-lg font-semibold mx-0 mb-2.5 mt-4.5 max-sm:text-regular max-sm:mb-2 max-sm:mt-3.75`}
   color: ${({ theme }) => theme.text11};
 `
 
 export const INPUT = styled.div`
-  ${tw`w-[280px] rounded-circle flex items-center px-5 sm:w-full sm:mb-[25px] sm:h-[45px]`}
+  ${tw`w-[280px] rounded-circle flex items-center px-5 max-sm:w-full max-sm:mb-[25px] max-sm:h-[45px]`}
   background: ${({ theme }) => theme.bg22};
 
   .input-amt {
@@ -165,7 +165,7 @@ export const INPUT = styled.div`
   }
 
   .token {
-    ${tw`text-[16px] font-semibold sm:text-regular`}
+    ${tw`text-[16px] font-semibold max-sm:text-regular`}
     color: ${({ theme }) => theme.text11}
   }
 `
@@ -278,7 +278,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
 
   return (
     <div>
-      <div tw="flex flex-row items-center justify-between mt-[-10px] sm:mt-[-5px]">
+      <div tw="flex flex-row items-center justify-between mt-[-10px] max-sm:mt-[-5px]">
         <InfoLabel>
           <h3>Choose account to close</h3>
         </InfoLabel>
@@ -316,7 +316,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
       </Dropdown> */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild={true}>
-          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 sm:mt-2.5 rounded-[100px]')}>
+          <Button variant="outline" colorScheme="default" className={cn('w-full mt-2 max-sm:mt-2.5 rounded-[100px]')}>
             <div className={cn('flex w-full items-center')}>
               {/* <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" /> */}
               <InfoLabel>
@@ -392,7 +392,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
         </DropdownMenuContent> */}
       </DropdownMenu>
 
-      <div tw="flex flex-row items-center justify-between mt-2 sm:mt-4">
+      <div tw="flex flex-row items-center justify-between mt-2 max-sm:mt-4">
         <InfoLabel>In order to close your account: </InfoLabel>
       </div>
       <CLOSE_ACCOUNT_CONDITIONS>
@@ -420,7 +420,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
           loading={isLoading}
           onClick={closeTraderAccountFn}
           cssStyle={tw`bg-red-1 text-grey-5 
-           font-semibold border-0 rounded-circle text-average sm:text-regular`}
+           font-semibold border-0 rounded-circle text-average max-sm:text-regular`}
           disabled={
             !checkboxChecked ||
             isLoading ||
@@ -429,7 +429,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          tw="w-[240px] h-8.75 mt-2 sm:mt-3"
+          tw="w-[240px] h-8.75 mt-2 max-sm:mt-3"
         >
           Close Account
         </Button> */}
@@ -449,7 +449,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
             !openOrdersCleared ||
             !traderAddresses[0]
           }
-          className={cn('min-w-[140px] w-[140px] mt-2 sm:mt-[-8px]')}
+          className={cn('min-w-[140px] w-[140px] mt-2 max-sm:mt-[-8px]')}
           variant="default"
           colorScheme="red"
           size="lg"

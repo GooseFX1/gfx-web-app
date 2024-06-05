@@ -23,7 +23,7 @@ const PastTopPrizesPopup: FC<{
     <Modal isOpen={showPastPrize} onClose={setShowPastPrize} zIndex={300}>
       <div
         className={`flex flex-col items-center justify-center w-screen min-md:w-[598px] h-[360px]
-        absolute min-md:static bottom-0 left-0 sm:animate-slideInBottom
+        absolute min-md:static bottom-0 left-0 max-sm:animate-slideInBottom
       `}
       >
         <div

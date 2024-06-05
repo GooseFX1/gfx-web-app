@@ -15,8 +15,8 @@ const OrderAccountPositions: FC<{
 }> = ({ tabs, selectedTab, setSelectedTab }): ReactElement => (
   <div>
     <div>
-      <Tabs className="p-[0px] sm:max-h-[450px] mb-24 sm:mb-4 sm:bg-grey-5 sm:dark:!bg-black-1" defaultValue="1">
-        <TabsList className="sm:dark:!bg-black-1 sm:bg-grey-5 sm:py-[15px]">
+      <Tabs className="p-[0px] max-sm:max-h-[450px] mb-24 max-sm:mb-4 max-sm:bg-grey-5 max-sm:dark:!bg-black-1" defaultValue="1">
+        <TabsList className="max-sm:dark:!bg-black-1 max-sm:bg-grey-5 max-sm:py-[15px]">
           <TabsTrigger
             className={cn('w-[33%]')}
             size="xl"
@@ -45,13 +45,13 @@ const OrderAccountPositions: FC<{
             <TitleLabel whiteText={selectedTab === tabs[2]}>{tabs[2]}</TitleLabel>
           </TabsTrigger>
         </TabsList>
-        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="1">
+        <TabsContent className={cn('h-[90%] max-sm:h-[65%] max-sm:rounded-[10px]')} value="1">
           <PlaceOrderMobiV2 />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="2">
+        <TabsContent className={cn('h-[90%] max-sm:h-[65%] max-sm:rounded-[10px]')} value="2">
           <CollateralPanel />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%] sm:rounded-[10px]')} value="3">
+        <TabsContent className={cn('h-[90%] max-sm:h-[65%] max-sm:rounded-[10px]')} value="3">
           <div className={cn('w-full h-full')}>
             <OpenOrdersAndPositions />
           </div>

@@ -144,7 +144,7 @@ export const DepositWithdraw: FC<{
     <div>
       {perpTokenList.map((item, index) => (
         <DropdownMenuItem onClick={() => setPerpToken(item)} key={index}>
-          <p className={cn('font-bold w-[450px] sm:w-[90vw] cursor-pointer')}>
+          <p className={cn('font-bold w-[450px] max-sm:w-[90vw] cursor-pointer')}>
             <Tokens {...item} />
           </p>
         </DropdownMenuItem>
@@ -181,12 +181,12 @@ export const DepositWithdraw: FC<{
   }
 
   return (
-    <div className={cn('w-full p-2.5 sm:px-2.5 sm:pb-2.5')}>
+    <div className={cn('w-full p-2.5 max-sm:px-2.5 max-sm:pb-2.5')}>
       {tradeType === 'account' ? (
         <CloseTradingAccount setDepositWithdrawModal={setDepositWithdrawModal} />
       ) : (
         <>
-          <div tw="flex flex-row items-center sm:mt-[-5px] justify-between">
+          <div tw="flex flex-row items-center max-sm:mt-[-5px] justify-between">
             <h3>Select Asset</h3>
             {tradeType === 'deposit' && (
               <ContentLabel>
@@ -224,7 +224,7 @@ export const DepositWithdraw: FC<{
               <Button
                 variant="outline"
                 colorScheme="default"
-                className={cn('w-full mt-2 sm:mt-2.5 rounded-[100px]')}
+                className={cn('w-full mt-2 max-sm:mt-2.5 rounded-[100px]')}
               >
                 <div className={cn('flex w-full items-center')}>
                   <img className={cn('h-[25px] w-[25px] left-0')} src={assetIcon} alt="coin-icon" />
@@ -282,17 +282,17 @@ export const DepositWithdraw: FC<{
             <DropdownMenuContent asChild className={cn('z-[1200]')}>
               <div
                 className="flex flex-col gap-1.5 z-[1200] items-start w-[480px]
-               sm:w-[96vw] max-w-[500px]"
+               max-sm:w-[96vw] max-w-[500px]"
               >
                 {menus}
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
           <InfoLabel>
-            <h3 className={cn('mt-3 mb-2 sm:mt-5')}>Amount</h3>
+            <h3 className={cn('mt-3 mb-2 max-sm:mt-5')}>Amount</h3>
           </InfoLabel>
 
-          <Tabs defaultValue="0" className="sm:mt-2.5 sm:mb-2.5">
+          <Tabs defaultValue="0" className="max-sm:mt-2.5 max-sm:mb-2.5">
             <TabsList>
               {percentageArr.map((elem, index) => (
                 <TabsTrigger
@@ -327,7 +327,7 @@ export const DepositWithdraw: FC<{
               onClick={handleSubmit}
               loading={isLoading}
               disabled={checkDisabled() || isLoading}
-              cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average sm:text-regular`}
+              cssStyle={tw`bg-blue-1 text-grey-5 font-semibold border-0 rounded-circle text-average max-sm:text-regular`}
             >
               {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
             </Button> */}
@@ -338,7 +338,7 @@ export const DepositWithdraw: FC<{
               onClick={handleSubmit}
               loading={isLoading}
               disabled={checkDisabled() || isLoading}
-              className="w-[140px] sm:w-[full] mt-[35px] ml-[calc(50% - 70px)] sm:ml-[35`%]"
+              className="w-[140px] max-sm:w-[full] mt-[35px] ml-[calc(50% - 70px)] max-sm:ml-[35`%]"
             >
               {tradeType === 'deposit' ? 'Deposit' : 'Withdraw'}
             </Button>

@@ -26,7 +26,7 @@ const ButtonStatesMobi: FC<{
         className="fixed bottom-0 left-0 w-full h-20  bg-gradient-lite-3 dark:bg-gradient-2
       z-50 flex justify-center items-center"
       >
-        <Connect customButtonStyle={`sm:w-[80vw] w-[90%] !h-10`} />
+        <Connect customButtonStyle={`max-sm:w-[80vw] w-[90%] !h-10`} />
       </div>
     )
   else if (

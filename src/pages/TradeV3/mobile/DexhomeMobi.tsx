@@ -11,7 +11,7 @@ import ButtonStatesMobi from './ButtonStatesMobi'
 // import { TermsOfService } from '../TradeContainer'
 
 const WRAPPER = styled.div<{ isDevnet: boolean }>`
-  ${tw` overflow-hidden sm:mx-2.5`}
+  ${tw` overflow-hidden max-sm:mx-2.5`}
   /* height: calc(100vh - 100px); */
 
   .ant-drawer-body {

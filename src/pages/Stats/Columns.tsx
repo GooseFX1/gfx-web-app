@@ -40,7 +40,7 @@ const STYLED_POPUP = styled(PopupCustom)`
     ${tw`rounded-bigger flex items-center justify-center max-sm:w-full max-sm:p-2.5`}
   }
   .sliderContainer {
-    ${tw`h-5/6 w-11/12 sm:w-full sm:h-[90%]`}
+    ${tw`h-5/6 w-11/12 max-sm:w-full max-sm:h-[90%]`}
     img {
       ${tw`m-auto`}
     }
@@ -50,10 +50,10 @@ const STYLED_POPUP = styled(PopupCustom)`
       ${tw`font-semibold text-center`}
     }
     h2 {
-      ${tw`mt-6 text-lg font-semibold dark:text-grey-5 text-black-4 sm:mt-10`}
+      ${tw`mt-6 text-lg font-semibold dark:text-grey-5 text-black-4 max-sm:mt-10`}
     }
     .subText {
-      ${tw`font-medium text-regular dark:text-grey-2 mb-6 text-grey-1 sm:w-[292px] sm:text-[13px]`}
+      ${tw`font-medium text-regular dark:text-grey-2 mb-6 text-grey-1 max-sm:w-[292px] max-sm:text-[13px]`}
     }
     .space {
       ${tw`mt-10`}
@@ -64,12 +64,12 @@ const STYLED_POPUP = styled(PopupCustom)`
     }
     .listNow {
       ${tw`text-grey-5 text-regular font-semibold cursor-pointer w-[200px] h-[45px] rounded-half mt-10 
-        mx-auto flex flex-row justify-center items-center sm:mt-[30px]`}
+        mx-auto flex flex-row justify-center items-center max-sm:mt-[30px]`}
       background: linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);
     }
     .explore {
       ${tw`text-grey-5 text-regular font-semibold cursor-pointer w-[200px] h-[45px] rounded-half mt-10 
-      mx-auto flex flex-row justify-center items-center bg-blue-1 sm:mt-[30px]`}
+      mx-auto flex flex-row justify-center items-center bg-blue-1 max-sm:mt-[30px]`}
     }
   }
 `
@@ -260,7 +260,7 @@ export const HowToEarn: FC<{
                   to={`/NFTs/profile/${wallet?.adapter?.publicKey.toBase58()}`}
                   target="_blank"
                   rel="noreferrer"
-                  tw="block w-1/2 mx-auto my-0 sm:w-full"
+                  tw="block w-1/2 mx-auto my-0 max-sm:w-full"
                 >
                   <div className="listNow">List now</div>
                 </Link>
@@ -285,7 +285,7 @@ export const HowToEarn: FC<{
               </div>
               <LearnMore screenType={screenType} />
               {screenType === 2 && (
-                <Link to="/nfts/" target="_blank" rel="noreferrer" tw="block w-1/2 mx-auto my-0 sm:w-full">
+                <Link to="/nfts/" target="_blank" rel="noreferrer" tw="block w-1/2 mx-auto my-0 max-sm:w-full">
                   <div className="explore">Explore</div>
                 </Link>
               )}
@@ -336,7 +336,7 @@ export const HowToEarn: FC<{
                 to={'/trade/n3Lx4oVjUN1XAD6GMB9PLLhX9W7TPakdzW461mhF95u/'}
                 target="_blank"
                 rel="noreferrer"
-                tw="block w-1/2 mx-auto my-0 sm:w-full"
+                tw="block w-1/2 mx-auto my-0 max-sm:w-full"
               >
                 <div className="explore" css={[tw`!text-regular !font-bold`]}>
                   Trade Now

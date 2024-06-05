@@ -28,7 +28,7 @@ export const STYLED_POPUP = styled(Modal)<{ width: string; height: string }>`
       display: flex;
       height: 24px;
       width: 24px;
-      ${tw`sm:h-[18px] sm:w-[18px]`}
+      ${tw`max-sm:h-[18px] max-sm:w-[18px]`}
     }
   }
 `

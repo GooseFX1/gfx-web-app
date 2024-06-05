@@ -17,8 +17,8 @@ const TabOrderbookRecentTrades = (): ReactElement => {
   }, [])
   return (
     <div>
-      <Tabs className="p-0 sm:max-h-[300px]" defaultValue="1">
-        <TabsList className="sm:dark:!bg-black-1 sm:bg-grey-5 sm:pb-[15px] sm:pt-3">
+      <Tabs className="p-0 max-sm:max-h-[300px]" defaultValue="1">
+        <TabsList className="max-sm:dark:!bg-black-1 max-sm:bg-grey-5 max-sm:pb-[15px] max-sm:pt-3">
           <TabsTrigger
             className={cn('w-[33%]')}
             size="xl"
@@ -47,13 +47,13 @@ const TabOrderbookRecentTrades = (): ReactElement => {
             <TitleLabel whiteText={selectedTab === 'trades'}>Recent Trades</TitleLabel>
           </TabsTrigger>
         </TabsList>
-        <TabsContent className={cn('h-[90%] sm:h-[220px] sm:max-h-[250px]')} value="1">
+        <TabsContent className={cn('h-[90%] max-sm:h-[220px] max-sm:max-h-[250px]')} value="1">
           {chartContainer}
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="2">
+        <TabsContent className={cn('h-[90%] max-sm:h-[65%]')} value="2">
           <OrderBook />
         </TabsContent>
-        <TabsContent className={cn('h-[90%] sm:h-[65%]')} value="3">
+        <TabsContent className={cn('h-[90%] max-sm:h-[65%]')} value="3">
           <div className={cn('w-full h-full')}>
             <RecentTrades />
           </div>

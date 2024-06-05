@@ -823,7 +823,7 @@ export const PlaceOrderMobi = () => {
             footer={null}
             title={
               <>
-                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold sm:text-lg">
+                <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold max-sm:text-lg">
                   {order.display === 'limit' ? 'Limit ' : 'Market '}
                   {order.side === 'buy' ? 'Long' : 'Short'}
                 </span>

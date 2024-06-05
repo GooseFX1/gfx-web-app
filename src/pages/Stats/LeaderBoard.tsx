@@ -137,8 +137,8 @@ const LeaderBoard: FC = () => {
         {breakpoint.isMobile && (
           <div tw="text-grey-5 font-semibold text-tiny text-center mb-3.75">Updates At 12am UTC</div>
         )}
-        {/* <div tw="relative sm:justify-start relative z-0">
-          <div tw="w-[240px] mx-auto flex flex-row justify-center relative sm:w-[270px]">
+        {/* <div tw="relative max-sm:justify-start relative z-0">
+          <div tw="w-[240px] mx-auto flex flex-row justify-center relative max-sm:w-[270px]">
             <div className="slider"></div>
             {leaderboardScreens.map((pool, index) => (
               <div

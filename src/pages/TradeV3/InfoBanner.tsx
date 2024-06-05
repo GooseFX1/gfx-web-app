@@ -54,7 +54,7 @@ export const SETTING_MODAL = styled(PopupCustom)`
 `
 
 const INFO_WRAPPER = styled.div`
-  ${tw`pt-3 px-3 flex flex-row items-center sm:justify-center`}
+  ${tw`pt-3 px-3 flex flex-row items-center max-sm:justify-center`}
   .spot-toggle .perps {
     ${tw`cursor-pointer mr-5`}
   }
@@ -130,7 +130,7 @@ const LOCK_LAYOUT = styled.div<{ $isLocked: boolean }>`
   }
 `
 const DEPOSIT_WRAPPER = styled.div<{ $isLocked: boolean }>`
-  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto sm:ml-0`}
+  ${tw`w-[158px] h-10 rounded-[36px] flex items-center justify-center cursor-pointer p-0.5 ml-auto max-sm:ml-0`}
   margin-left: ${({ $isLocked }) => ($isLocked ? 'auto' : '15px')};
 
   .white-background {

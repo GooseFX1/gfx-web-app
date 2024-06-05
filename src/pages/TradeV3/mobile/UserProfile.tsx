@@ -435,7 +435,7 @@ const Positions = () => {
             centered={true}
             footer={null}
             title={
-              <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5 sm:text-lg">
+              <span tw="dark:text-grey-5 text-black-4 text-[25px] font-semibold mb-4.5 max-sm:text-lg">
                 {summaryData.profit ? 'Fortune Favours The Bold!' : 'Better Luck Next Time!'}
               </span>
             }

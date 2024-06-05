@@ -14,7 +14,7 @@ export const CollateralPanel: FC = (): JSX.Element => {
 
   return (
     <PerpsLayout>
-      <div className={cn('p-2.5 sm:h-[300px]')}>
+      <div className={cn('p-2.5 max-sm:h-[300px]')}>
         <div tw="flex items-center mb-4">
           <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
           <InfoLabel>Sol Account</InfoLabel>

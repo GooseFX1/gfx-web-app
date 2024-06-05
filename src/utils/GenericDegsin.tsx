@@ -22,7 +22,7 @@ export const STYLED_TITLE = styled.div<{ $focus: boolean }>`
     ${tw`!w-[20px] !h-[20px] block ml-2`}
   }
   .arrowDown {
-    ${tw`sm:w-[17px] cursor-pointer sm:h-[8px] w-[18px] h-[7px] ml-[10px] duration-500`}
+    ${tw`max-sm:w-[17px] cursor-pointer max-sm:h-[8px] w-[18px] h-[7px] ml-[10px] duration-500`}
     transform: scale(1.5);
   }
   .invert {

@@ -137,7 +137,7 @@ const POPULAR = styled.div`
 `
 
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] sm:m-1 sm:ml-0`}
+  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] max-sm:m-1 max-sm:ml-0`}
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
   padding: 0 16px 0 4px;

@@ -61,7 +61,7 @@ const PriorityFee: FC = () => {
     const renderContent = (
       <>
         <div className={'inline-flex gap-1 items-center'}>
-          <h5 className={'text-h5 sm:text-h3'}>Priority Fee </h5>
+          <h5 className={'text-h5 max-sm:text-h3'}>Priority Fee </h5>
           <IconTooltip tooltipType={'outline'} defaultOpen={false}>
             Add an extra fee to your transaction, increasing its priority in queue, likely to be processed faster
             by the network.
@@ -106,7 +106,7 @@ const PriorityFee: FC = () => {
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
             >
               {renderContent}
             </DialogBody>

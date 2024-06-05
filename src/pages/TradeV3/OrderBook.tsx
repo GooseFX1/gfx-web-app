@@ -194,7 +194,7 @@ const WRAPPER = styled.div`
 `
 
 const ORDERBOOK_CONTAINER = styled.div`
-  ${tw`max-sm:overflow-auto sm:max-h-[150px]`}
+  ${tw`max-sm:overflow-auto max-sm:max-h-[150px]`}
   width: 100%;
   display: flex;
   overflow-y: auto;
@@ -439,7 +439,7 @@ export const OrderBook: FC = () => {
   )
 
   return (
-    <div className={cn('h-full sm:max-h-[220px]')}>
+    <div className={cn('h-full max-sm:max-h-[220px]')}>
       {
         <div className={cn('flex pl-2 h-[38px] items-center justify-between pb-1')}>
           <div>

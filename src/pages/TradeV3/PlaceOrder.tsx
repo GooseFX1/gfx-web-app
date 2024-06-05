@@ -1324,7 +1324,7 @@ export const PlaceOrder: FC = () => {
                     variant="outline"
                     onClick={setIsOpen.on}
                     colorScheme={mode === 'lite' ? 'blue' : 'white'}
-                    className={cn('max-content mr-2 h-[30px] sm:h-[35px]')}
+                    className={cn('max-content mr-2 h-[30px] max-sm:h-[35px]')}
                   >
                     <div className="flex w-full items-center justify-between">
                       <div className="flex">
@@ -1378,13 +1378,13 @@ export const PlaceOrder: FC = () => {
                   onChange={(e) => numberCheck(e.target.value, 'price')}
                   disabled={order.display === 'market'}
                   className={cn(
-                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    `mr-2 p-1 h-[30px] max-sm:h-[35px] min-w-[100px] text-right`,
                     order.price && `pr-[52px]`
                   )}
                 />
                 <div className="relative">
                   {order.price && (
-                    <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
+                    <p className={cn('mt-[7px] max-sm:mt-[9px] right-3 absolute mr-1')}>
                       <InfoLabel>
                         <p>USDC</p>{' '}
                       </InfoLabel>
@@ -1407,14 +1407,14 @@ export const PlaceOrder: FC = () => {
                   value={sizeDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'size')}
                   className={cn(
-                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    `mr-2 p-1 h-[30px] max-sm:h-[35px] min-w-[100px] text-right`,
                     sizeDisplay !== '' && `pr-12`
                   )}
                 />
                 <div className="relative">
                   {sizeDisplay !== '' && (
                     <InfoLabel>
-                      <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
+                      <p className={cn('mt-[7px] max-sm:mt-[9px] right-3 absolute mr-1')}>SOL</p>
                     </InfoLabel>
                   )}
                 </div>
@@ -1432,14 +1432,14 @@ export const PlaceOrder: FC = () => {
                   value={amountDisplay}
                   onChange={(e) => numberCheck(e.target.value, 'total')}
                   className={cn(
-                    `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+                    `mr-2 p-1 max-sm:text-[15px] h-[30px] max-sm:h-[35px] min-w-[100px] text-right`,
                     amountDisplay !== '' && `pr-[52px]`
                   )}
                 />
                 <div className="relative">
                   {amountDisplay !== '' && (
                     <InfoLabel>
-                      <p className={cn('sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USDC</p>
+                      <p className={cn('max-sm:mt-[9px] mt-[7px] right-[15px] absolute')}>USDC</p>
                     </InfoLabel>
                   )}
                 </div>
@@ -1470,7 +1470,7 @@ export const PlaceOrder: FC = () => {
                     setTakeProfitAmount(Number(e.target.value))
                   }}
                   className={cn(
-                    `mr-2 p-1 h-[30px] sm:h-8.75 min-w-[100px] text-right`,
+                    `mr-2 p-1 h-[30px] max-sm:h-8.75 min-w-[100px] text-right`,
                     (takeProfitIndex || takeProfitAmount) && `pr-1`
                   )}
                 />
@@ -1485,7 +1485,7 @@ export const PlaceOrder: FC = () => {
                   <TabsList className="!p-0">
                     {TAKE_PROFIT_ARRAY.map((elem, index) => (
                       <TabsTrigger
-                        className={cn('w-[33%] sm:h-[35px] h-[30px] ')}
+                        className={cn('w-[33%] max-sm:h-[35px] h-[30px] ')}
                         size="xl"
                         key={index}
                         value={index.toString()}
@@ -1674,7 +1674,7 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
 const LongShortTitleLayout: FC<{ handleOrderSide: (string) => void }> = ({ handleOrderSide }) => {
   const { order } = useOrder()
   return (
-    <div className={cn('flex items-center sm:p-[5px] sm:rounded-[10px]')}>
+    <div className={cn('flex items-center max-sm:p-[5px] max-sm:rounded-[10px]')}>
       <div
         onClick={() => handleOrderSide('buy')}
         className={cn(`h-[35px] w-[50%] flex items-center duration-200 cursor-pointer rounded-[3px]

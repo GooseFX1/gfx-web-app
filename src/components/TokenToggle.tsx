@@ -6,7 +6,7 @@ import 'styled-components/macro'
 
 const TOGGLE_WRAPPER = styled.div<{ position: number }>`
   .background {
-    ${tw`w-[50px] h-[26px] sm:h-[35px] sm:mr-3 sm:w-[65px] rounded-[33px] duration-500 flex 
+    ${tw`w-[50px] h-[26px] max-sm:h-[35px] max-sm:mr-3 max-sm:w-[65px] rounded-[33px] duration-500 flex 
     cursor-pointer items-center`}
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%);
   }
@@ -16,7 +16,7 @@ const TOGGLE_WRAPPER = styled.div<{ position: number }>`
       position === 1 ? 'linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%)' : 'pink'}
   }
   .tokenImg {
-    ${tw`h-[26px] sm:w-[35px] sm:h-[35px] w-[26px] rounded-[50%] duration-500`}
+    ${tw`h-[26px] max-sm:w-[35px] max-sm:h-[35px] w-[26px] rounded-[50%] duration-500`}
     margin-left: ${({ position }) => (position ? '24px' : '-1px')};
     @media (max-width: 500px) {
       margin-left: ${({ position }) => (position ? '35px' : '-1px')};
@@ -89,12 +89,12 @@ export const TokenToggle: FC<ITokenToggle> = ({ tokenA, tokenB, toggleToken, ico
 export const ShowDepositedToggle: FC<{ enabled: boolean; setEnable: any }> = ({ enabled, setEnable }) => (
   <TOGGLE_WRAPPER position={enabled ? 1 : 0} onClick={() => setEnable()}>
     <div
-      tw="!rounded-[35px] !w-[75px] sm:!w-[70px] !h-8.75 
-       sm:ml-0 duration-500 dark:bg-black-3 bg-grey-4"
+      tw="!rounded-[35px] !w-[75px] max-sm:!w-[70px] !h-8.75 
+       max-sm:ml-0 duration-500 dark:bg-black-3 bg-grey-4"
       className={enabled && 'pinkGradient'}
     >
       <div
-        css={[enabled ? tw`ml-10 sm:ml-9` : tw`ml-[-1px] sm:ml-0`]}
+        css={[enabled ? tw`ml-10 max-sm:ml-9` : tw`ml-[-1px] max-sm:ml-0`]}
         tw="!h-8.75 !w-8.75 z-[10] !bg-black-4 rounded-[50%] duration-200"
       />
     </div>

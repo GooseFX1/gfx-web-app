@@ -16,12 +16,12 @@ import {
 } from 'gfx-component-lib'
 
 // const TEXT_AREA = styled.div`
-//     ${tw`h-[452px] w-full p-[1.2px] mt-4 sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
+//     ${tw`h-[452px] w-full p-[1.2px] mt-4 max-sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
 //     background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
 //     flex-grow: 0;
 //
 //     .text-area-inner {
-//         ${tw`h-[450px] sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
+//         ${tw`h-[450px] max-sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
 //     }
 //
 //     h3 {
@@ -45,18 +45,18 @@ import {
 // `
 
 // const TOS_MODAL = styled(Modal)`
-//     ${tw`w-[600px]! sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
+//     ${tw`w-[600px]! max-sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
 //     &.ant-modal {
 //         ${tw`!rounded-bigger`}
 //     }
 //
 //     .ant-modal-body {
-//         ${tw`sm:px-3! sm:h-[520px]`}
+//         ${tw`max-sm:px-3! max-sm:h-[520px]`}
 //     }
 // `
 
 // const CONFIRM = styled.div`
-//     ${tw`flex items-center p-2 mt-2.5 sm:pb-0`}
+//     ${tw`flex items-center p-2 mt-2.5 max-sm:pb-0`}
 // `
 //
 // const MAINBUTTON = styled.button<{ checked }>`
