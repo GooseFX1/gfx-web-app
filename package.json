@@ -154,6 +154,7 @@
     "typescript": "^5.4.5",
     "@ethereumjs/tx": "4.2.0",
     "@ethereumjs/util": "8.1.0",
-    "node-addon-api": "7.1.0"
+    "node-addon-api": "7.1.0",
+    "commander": "11.0.0"
   }
 }
