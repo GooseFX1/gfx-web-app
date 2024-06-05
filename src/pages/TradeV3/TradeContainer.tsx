@@ -330,7 +330,7 @@ const CryptoContent: FC = () => {
     className: 'layout',
     items: 3,
     rowHeight: getRowHeight(height),
-    cols: { lg: 8, md: 4, max-sm: 2, xs: 2, xxs: 2 },
+    cols: { lg: 8, md: 4, sm: 2, xs: 2, xxs: 2 },
     isBounded: false,
     isDraggable: !blacklisted && !isLocked,
     margin: [0, 0]
