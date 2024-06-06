@@ -181,15 +181,15 @@ export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           <InfoLabel>Health</InfoLabel>
           <Tooltip>
             <TooltipTrigger>
-              <div className={cn('ml-1.5')}>
-                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
+              <div>
+                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-5 ml-1 w-5" />
               </div>
             </TooltipTrigger>
             <TooltipContent>The health bar shows how close you are to being liquidated. </TooltipContent>
           </Tooltip>
         </div>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center ml-2">
         <div>{barsData}</div>
         <InfoLabel>{healthData}</InfoLabel>
       </div>

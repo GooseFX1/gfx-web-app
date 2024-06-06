@@ -2,21 +2,19 @@ import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../../context'
-import { Connect } from '../../../../layouts/Connect'
+import { useCrypto } from '../../../../context'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { GET_USER_FUND_TRANSFERS } from '../../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../../api'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 import { ContentLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
-import { BorderLine } from '../AccountOverview'
+import { BorderLine, NoPositionFound } from '../AccountOverview'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full !pb-0`}
-  padding: 5px;
+  
   h1 {
     font-size: 18px;
     color: ${({ theme }) => theme.text2};
@@ -38,7 +36,7 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-5 p-2.5 `}
+    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-2 p-2.5 `}
     /* padding: 10px; */
     color: ${({ theme }) => theme.text2};
     font-size: 13px;
@@ -96,14 +94,11 @@ type Pagination = {
   limit: number
 }
 const MobileDepositWithdrawHistory: FC = () => {
-  const { mode } = useDarkMode()
-
   const { connected, publicKey } = useWallet()
   const { isDevnet } = useCrypto()
 
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
-  const [tradeType, setTradeType] = useState<string>('deposit')
   const [fundTransfers, setFundTransfers] = useState([])
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [totalItemsCount, setTotalItemsCount] = useState(0)
@@ -127,31 +122,19 @@ const MobileDepositWithdrawHistory: FC = () => {
 
   return (
     <WRAPPER>
-      {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+        {depositWithdrawModal && (
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <InfoLabelNunito className="ml-2.5 mt-[-10px]">
+      <InfoLabelNunito className="ml-2.5 mt-[15px]">
         <h3>Deposits/Withdrawals</h3>
       </InfoLabelNunito>
       <HISTORY>
         {fundTransfers.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container overflow-y-auto h-[calc(100vh - 260px)]">
+            <div className="history-items-container overflow-y-auto h-[calc(100vh - 275px)]">
               {fundTransfers.map((transfer) => (
                 <>
                   {' '}
@@ -192,27 +175,28 @@ const MobileDepositWithdrawHistory: FC = () => {
                 </>
               ))}
             </div>
-            <div className="h-[50px]">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
+
           </div>
         ) : (
-          <div className="no-deposits-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-deposits-found" />
-            <p>No Deposits Found</p>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+
+          <div className='history-item h-[calc(100vh - 270px)]'>
+            <NoPositionFound
+              str='No Deposits Found'
+              connected={connected}
+              setDepositWithdrawModal={setDepositWithdrawModal}
+            />
           </div>
+
+
         )}
       </HISTORY>
+      <div className="h-[50px]">
+        <Pagination
+          pagination={pagination}
+          setPagination={setPagination}
+          totalItemsCount={totalItemsCount}
+        />
+      </div>
     </WRAPPER>
   )
 }

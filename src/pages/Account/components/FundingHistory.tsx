@@ -122,6 +122,7 @@ const FundingHistory: FC = () => {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [fundingHistory, setFundingHistory] = useState([])
   const [totalItemsCount, setTotalItemsCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -131,6 +132,7 @@ const FundingHistory: FC = () => {
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
 
   const fetchFundingHistory = async () => {
+    setIsLoading(true)
     const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
       params: {
         API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
@@ -142,6 +144,7 @@ const FundingHistory: FC = () => {
     })
     setFundingHistory(res.data.data)
     setTotalItemsCount(res.data.totalCount)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -153,7 +156,7 @@ const FundingHistory: FC = () => {
   const getCumulativeFunding = (): number =>
     traderInfo.traderRiskGroup !== null
       ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-        10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+      10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
       : 0
 
   return (
@@ -220,7 +223,7 @@ const FundingHistory: FC = () => {
       </div>
 
       <HISTORY>
-        {fundingHistory.length ? (
+        {fundingHistory.length && (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundingHistory.map((item) => (
@@ -246,7 +249,9 @@ const FundingHistory: FC = () => {
               ))}
             </div>
           </div>
-        ) : (
+        )}
+
+        {isLoading && (
           <div className="no-funding-found">
             {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" /> */}
             <AccountsLabel className="text-[18px]  whitespace-nowrap mb-5">No Funding Found</AccountsLabel>
