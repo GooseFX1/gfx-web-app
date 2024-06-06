@@ -89,7 +89,8 @@
 // `
 //
 // const INNERWRAPPER = styled.div<{ $desktop: boolean }>`
-//   ${tw`flex items-center w-screen mb-[42px] max-sm:justify-start max-sm:flex-col max-sm:items-center max-sm:h-full max-sm:mt-8`}
+//   ${tw`flex items-center w-screen mb-[42px] max-sm:justify-start max-sm:flex-col max-sm:items-center
+//   max-sm:h-full max-sm:mt-8`}
 //   color: ${({ theme }) => theme.text1};
 //   justify-content: ${({ $desktop }) => ($desktop ? 'space-between' : 'space-around')};
 //
