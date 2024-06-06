@@ -88,7 +88,7 @@ const DepositWithdrawHistory: FC = () => {
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
 
   const [fundTransfers, setFundTransfers] = useState([])
-  const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
+  const [pagination, setPagination] = useState<Pagination>({ page: 0, limit: 20 })
   const [totalItemsCount, setTotalItemsCount] = useState(0)
 
   const fetchFundTransfers = async () => {

@@ -11,9 +11,11 @@ import { GET_USER_FUND_TRANSFERS } from '../../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../../api'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
+import { ContentLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { BorderLine } from '../AccountOverview'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
+  ${tw`flex flex-col w-full !pb-0`}
   padding: 5px;
   h1 {
     font-size: 18px;
@@ -22,7 +24,7 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex w-full h-full mt-[15px]`}
+  ${tw`flex w-full h-full mt-[15px] px-2.5`}
 
   .history-items-root-container {
     ${tw`w-full h-full overflow-auto`}
@@ -36,16 +38,15 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between`}
-    padding: 10px;
+    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-5 p-2.5 `}
+    /* padding: 10px; */
     color: ${({ theme }) => theme.text2};
     font-size: 13px;
-    border: 1px solid #3c3c3c;
     border-top: none;
-    height: 130px;
+    /* height: 107px; */
   }
   .history-item:first-child {
-    border-top: 1px solid #3c3c3c;
+    /* border-top: 1px solid #3c3c3c; */
     border-radius: 5px 5px 0px 0px;
   }
 
@@ -83,7 +84,7 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .deposit-type {
-    color: #80ce00;
+    color: #6ead57;
   }
   .withdraw-type {
     color: #f35355;
@@ -144,35 +145,54 @@ const MobileDepositWithdrawHistory: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <h1>Deposits/Withdrawals</h1>
+      <InfoLabelNunito className="ml-2.5 mt-[-10px]">
+        <h3>Deposits/Withdrawals</h3>
+      </InfoLabelNunito>
       <HISTORY>
         {fundTransfers.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container overflow-y-auto h-[calc(100vh - 260px)]">
               {fundTransfers.map((transfer) => (
-                <div key={transfer._id} className="history-item">
-                  <div className="flex">
-                    <span>Amount</span>
-                    <span className="ml-auto">{transfer.amount.toFixed(2)} USDC</span>
+                <>
+                  {' '}
+                  <div key={transfer._id} className="history-item">
+                    <div className="flex ">
+                      <ContentLabel className="text-[15px]">Amount</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {' '}
+                          {transfer.amount.toFixed(2)} USDC
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Notional</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">${transfer.amount.toFixed(2)}</InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Type</ContentLabel>
+                      <span className={` ml-auto`}>
+                        <InfoLabelNunito className={`text-[15px] ${transfer.type}-type`}>
+                          {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Date</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {convertUnixTimestampToFormattedDate(transfer.time)}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex">
-                    <span>Notional</span>
-                    <span className="ml-auto">${transfer.amount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex">
-                    <span>Type</span>
-                    <span className={`${transfer.type}-type ml-auto`}>
-                      {transfer.type.charAt(0).toUpperCase() + transfer.type.slice(1)}
-                    </span>
-                  </div>
-                  <div className="flex">
-                    <span>Date</span>
-                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(transfer.time)}</span>
-                  </div>
-                </div>
+                  <BorderLine className="mt-0  ml-2.5 mr-2.5 " />
+                </>
               ))}
             </div>
-            <div className="pagination-container">
+            <div className="h-[50px]">
               <Pagination
                 pagination={pagination}
                 setPagination={setPagination}
