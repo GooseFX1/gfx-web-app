@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../../context'
-import { Connect } from '../../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
@@ -16,7 +15,7 @@ import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 import { Tooltip } from '../../../../components'
 import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
-import { BorderLine } from '../AccountOverview'
+import { BorderLine, NoPositionFound } from '../AccountOverview'
 import { Container, ContainerTitle } from 'gfx-component-lib'
 
 const WRAPPER = styled.div`
@@ -30,7 +29,6 @@ const WRAPPER = styled.div`
 
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full h-full mt-[15px] px-2.5 overflow-y-auto `}
-  height: calc(100vh - 305px);
   .history-items-container {
     ${tw`flex flex-col`}
   }
@@ -158,7 +156,7 @@ const MobileFundingHistory: FC = () => {
   const getCumulativeFunding = (): number =>
     traderInfo.traderRiskGroup !== null
       ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-        10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+      10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
       : 0
 
   return (
@@ -182,8 +180,8 @@ const MobileFundingHistory: FC = () => {
         </SETTING_MODAL>
       )}
 
-      <div className="flex justify-between items-center ml-2.5 mt-[-20px]">
-        <div className="my-[15px] flex items-center">
+      <div className="flex justify-between items-center ml-2.5">
+        <div className="sm:my-[15px] flex items-center">
           <Container
             variant="outline"
             colorScheme="primaryGradient"
@@ -254,7 +252,7 @@ const MobileFundingHistory: FC = () => {
                       <span className="ml-auto">
                         <InfoLabelNunito className="text-[15px]">
                           {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) <
-                          0.0001
+                            0.0001
                             ? '< 0.0001'
                             : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
                         </InfoLabelNunito>
@@ -273,27 +271,25 @@ const MobileFundingHistory: FC = () => {
                 </>
               ))}
             </div>
-            <div className="h-[50px]">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
+
           </div>
         ) : (
-          <div className="no-funding-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <p>No Funding Found</p>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+          <div className="history-item  h-[calc(100vh - 350px)]">
+            <NoPositionFound
+              str='No Funding Found'
+              connected={connected}
+              setDepositWithdrawModal={setDepositWithdrawModal}
+            />
           </div>
         )}
       </HISTORY>
+      <div className="h-[50px]">
+        <Pagination
+          pagination={pagination}
+          setPagination={setPagination}
+          totalItemsCount={totalItemsCount}
+        />
+      </div>
     </WRAPPER>
   )
 }

@@ -12,6 +12,18 @@ input[type='number']::-webkit-outer-spin-button {
 }
 @import 'gfx-component-lib/dist/style.css';
 
+.no-scrollbar {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+}
+  
+
 * {
   font-family: 'Nunito Sans', sans-serif;
   -ms-overflow-style: none !important;

@@ -2,24 +2,19 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../../context'
-import { Connect } from '../../../../layouts/Connect'
+import { useCrypto } from '../../../../context'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
-
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
-import { BorderLine } from '../AccountOverview'
+import { BorderLine, NoPositionFound } from '../AccountOverview'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full !pb-0`}
-  padding: 5px;
   h1 {
     font-size: 18px;
     color: ${({ theme }) => theme.text2};
@@ -38,7 +33,7 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-5  `}
+    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-2  `}
     padding: 10px;
     color: ${({ theme }) => theme.text2};
     font-size: 13px;
@@ -70,9 +65,9 @@ const HISTORY = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #3c3c3c;
+    
     width: 100%;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 210px);
   }
   .no-trades-found > p {
     margin: 0;
@@ -106,12 +101,9 @@ type Pagination = {
   limit: number
 }
 const MobileTrades: FC = () => {
-  const { mode } = useDarkMode()
-
   const { connected, publicKey } = useWallet()
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
-
-  const [tradeType, setTradeType] = useState<string>('deposit')
+ 
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
@@ -146,32 +138,20 @@ const MobileTrades: FC = () => {
 
   return (
     <WRAPPER>
-      {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+       {depositWithdrawModal && (
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <InfoLabel className="ml-2.5 mt-[-12px]">
+      <InfoLabel className="ml-2.5 mt-[15px]" >
         <h3>Trades</h3>
       </InfoLabel>
 
       <HISTORY>
         {filledTrades.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container overflow-y-auto h-[calc(100vh - 260px)]">
+            <div className="history-items-container overflow-y-auto h-[calc(100vh - 275px)]">
               {filledTrades.map((trade) => (
                 <>
                   {' '}
@@ -235,33 +215,31 @@ const MobileTrades: FC = () => {
                       </span>
                     </div>
                   </div>
+          
                   <BorderLine className="mx-2.5 " />
                 </>
               ))}
             </div>
-            <div className=" h-[50px]">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
           </div>
         ) : (
-          <div className="no-trades-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-            <InfoLabel>
-              <p>No Trades Found</p>
-            </InfoLabel>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+          <div className='history-item h-[calc(100vh - 270px)]'>
+
+            <NoPositionFound
+              str='No Trades Found'
+              connected={connected}
+              setDepositWithdrawModal={setDepositWithdrawModal}
+            />
           </div>
         )}
       </HISTORY>
+      <div className=" h-[50px]">
+        <Pagination
+          pagination={pagination}
+          setPagination={setPagination}
+          totalItemsCount={totalItemsCount}
+        />
+      </div>
+
     </WRAPPER>
   )
 }
