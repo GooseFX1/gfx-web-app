@@ -49,7 +49,7 @@ export const TVChartContainer: FC<{ visible: boolean }> = ({ visible }) => {
     interval: resolution ? resolution : '5',
     auto_save_delay: 5,
     containerId: 'tv_chart_container',
-    libraryPath: 'src/tv_charting_lib/charting_library/',
+    libraryPath: '/charting_library',
     chartsStorageUrl: 'https://saveload.tradingview.com',
     chartsStorageApiVersion: '1.1',
     clientId: 'tradingview.com',
