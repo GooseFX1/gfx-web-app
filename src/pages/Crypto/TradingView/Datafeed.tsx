@@ -248,7 +248,7 @@ const makeDataFeed = () => {
 
 const minTs = (minCount: number, resolutionTv: string) => {
   const ts = getUnixTs()
-  switch (resolutionTv) {
+  switch (resolutionTv.toLowerCase()) {
     case '1':
       return ts - 60 * 1 * minCount
     case '3':
