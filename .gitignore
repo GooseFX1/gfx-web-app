@@ -33,3 +33,5 @@ yarn-error.log*
 .idea
 .vscode
 .history
+.gitmodules
+src/tv_charting_lib
