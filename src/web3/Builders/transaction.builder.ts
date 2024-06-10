@@ -39,9 +39,13 @@ class TransactionBuilder {
     return this
   }
 
-  add(txn?: TXN_IN): TransactionBuilder {
+  add(txn?: TXN_IN|TransactionBuilder): TransactionBuilder {
     if (txn) {
-      this.addTxn(txn)
+      if (txn instanceof TransactionBuilder) {
+        this._instructions.push(...txn._instructions)
+      }else{
+        this.addTxn(txn)
+      }
     }
     return this
   }

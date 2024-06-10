@@ -256,7 +256,7 @@ export const executeClaimRewards = async (
   connection: Connection,
   token: SSLToken,
   walletPublicKey: PublicKey
-): Promise<Transaction> => {
+): Promise<TransactionBuilder> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
   const tokenMintAddress = token?.mint
   const [feeVaultAccount, userAta, liquidityAccountKey, ataAddress] = await Promise.all([
@@ -291,7 +291,7 @@ export const executeClaimRewards = async (
     claimTX.add(tr)
   }
 
-  return claimTX.getTransaction()
+  return claimTX
 }
 
 const isPendingRewards = (rewards: { [key: string]: PublicKey }[], token: SSLToken) => {
@@ -310,7 +310,7 @@ export const executeAllPoolClaim = async (
   walletPublicKey: PublicKey,
   rewards: { [key: string]: PublicKey }[],
   allPoolSslData: SSLToken[]
-): Promise<Transaction> => {
+): Promise<TransactionBuilder> => {
   const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
 
   const claimTX = new TransactionBuilder().usePriorityFee(false)
@@ -350,7 +350,7 @@ export const executeAllPoolClaim = async (
       claimTX.add(tr)
     }
   }
-  return claimTX.getTransaction()
+  return claimTX
 }
 
 const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: string) => {

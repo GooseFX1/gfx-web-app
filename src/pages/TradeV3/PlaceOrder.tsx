@@ -5,30 +5,27 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import {
   AVAILABLE_ORDERS,
-  OrderType,
-  OrderSide,
   OrderDisplayType,
+  OrderSide,
+  OrderType,
   useAccounts,
+  useConnectionConfig,
   useCrypto,
+  useDarkMode,
   useOrder,
   useOrderBook,
-  useDarkMode,
-  useTokenRegistry,
-  useConnectionConfig
+  useTokenRegistry
 } from '../../context'
 import { checkMobile, removeFloatingPointError } from '../../utils'
-import { Dropdown } from 'antd'
 import { Slider } from 'antd'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ArrowDropdown, PopupCustom } from '../../components'
+import { PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { getPerpsPrice, getProfitAmount } from './perps/utils'
 import { TradeConfirmation } from './TradeConfirmation'
 import 'styled-components/macro'
-import { RotatingLoader } from '../../components/RotatingLoader'
 import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
-import { DepositWithdraw } from './perps/DepositWithdrawNew'
 import {
   BlackGradientBg,
   ContentLabel,
@@ -45,7 +42,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  IconTooltip,
   Input,
   InputElementRight,
   InputGroup,
@@ -54,9 +50,9 @@ import {
   TabsTrigger
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
-import { CircularArrow } from '@/components/common/Arrow'
 import { Connect } from '../../layouts/Connect'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+
 const MAX_SLIDER_THRESHOLD = 9.9 // If the slider is more than num will take maximum leverage
 const DECIMAL_ADJUSTMENT_FACTOR = 1000 // For three decimal places, adjust if needed
 
@@ -627,8 +623,8 @@ export const PlaceOrder: FC = () => {
     if (!connected) return ButtonState.Connect
     if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
     if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-    if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
-    if (order.size < 0.01) return ButtonState.OrderTooSmall
+    if (+order.size > maxQtyNum) return ButtonState.BalanceExceeded
+    if (+order.size < 0.01) return ButtonState.OrderTooSmall
     //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
     return ButtonState.CanPlaceOrder
   }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
