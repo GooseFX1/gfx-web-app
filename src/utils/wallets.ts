@@ -6,7 +6,8 @@ import {
   NightlyWalletAdapter,
   PhantomWalletAdapter,
   SolflareWalletAdapter,
-  TorusWalletAdapter
+  TorusWalletAdapter,
+  WalletConnectWalletAdapter
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapter, WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
@@ -16,7 +17,6 @@ import {
   SolanaMobileWalletAdapter
 } from '@solana-mobile/wallet-adapter-mobile'
 import { MoongateWalletAdapter } from '@moongate/moongate-adapter'
-import { WalletConnectWalletAdapter } from '@/walletconnectadapter'
 
 export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[] => [
   new SolanaMobileWalletAdapter({
@@ -33,7 +33,7 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
   new PhantomWalletAdapter(),
   new SolflareWalletAdapter({ network }),
   new WalletConnectWalletAdapter({
-    network: network == WalletAdapterNetwork.Testnet ? WalletAdapterNetwork.Devnet : network,
+    network: WalletAdapterNetwork.Mainnet,
     options: {
       relayUrl: 'wss://relay.walletconnect.com',
       projectId: 'f294cea1e9cd00f0e185354688de6620',

@@ -37,7 +37,7 @@
     "@solana/wallet-adapter-base": "^0.9.2fa3",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-walletconnect": "^0.1.16",
-    "@solana/wallet-adapter-wallets": "^0.19.21",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.75.0",
     "@solflare-wallet/metamask-wallet-standard": "^1.0.7",
     "antd": "^4.21.6",
