@@ -63,8 +63,12 @@ class TransactionBuilder {
     )
     return this
   }
-
-  getTransaction(walletPublicKey:PublicKey, recentBlockhash:string): VersionedTransaction {
+  /** @deprecated Internal use in useTransaction hook - compile */
+  _getTransaction(
+    walletPublicKey:PublicKey,
+    recentBlockhash:string,
+    useVersionedTransaction: boolean
+  ): VersionedTransaction|Transaction {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: this._priorityFee
@@ -72,13 +76,16 @@ class TransactionBuilder {
 
       this._instructions.unshift(ix)
     }
-    const message = new TransactionMessage({
-      instructions: this._instructions,
-      payerKey:walletPublicKey,
-      recentBlockhash: recentBlockhash
-    }).compileToV0Message()
+    if (useVersionedTransaction){
+      const message = new TransactionMessage({
+        instructions: this._instructions,
+        payerKey:walletPublicKey,
+        recentBlockhash: recentBlockhash
+      }).compileToV0Message()
 
-    return new VersionedTransaction(message)
+      return new VersionedTransaction(message)
+    }
+    return new Transaction().add(...this._instructions);
   }
 
   clear(): TransactionBuilder {

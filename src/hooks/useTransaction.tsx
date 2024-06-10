@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
 import { useConnectionConfig } from '@/context'
 import { BlockheightBasedTransactionConfirmationStrategy, Commitment, Connection, Transaction } from '@solana/web3.js'
@@ -15,39 +15,44 @@ type SendTxnOptions = {
 type useTransactionReturn = {
   createTransactionBuilder: (txn?: TXN) => TransactionBuilder
   sendTransaction: (
-    txn: Transaction|TransactionBuilder,
+    txn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions
   ) => Promise<{ success: boolean; txSig: string }>
 }
+const baseSet = new Set()
 
 function useTransaction(): useTransactionReturn {
   const { priorityFeeValue } = useConnectionConfig()
-  const { sendTransaction: sendTransactionOriginal } = useWallet()
+  const { sendTransaction: sendTransactionOriginal, wallet } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
-  const {connectedWalletPublicKey} = useWalletBalance()
+  const { connectedWalletPublicKey } = useWalletBalance()
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
   )
-
+  const supportedTransactionTypes = useMemo(() =>
+    wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction = useCallback(
-    async (txnIn: Transaction|TransactionBuilder, connectionData?: SendTxnOptions) => {
+    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions) => {
 
       const connection = connectionData?.connection ?? originalConnection
       const options = { ...connectionData?.options, skipPreflight: true }
       let blockHash = await connection.getLatestBlockhash()
 
       const txn = txnIn instanceof TransactionBuilder ?
-        txnIn.getTransaction(connectedWalletPublicKey,blockHash.blockhash) : txnIn
+        txnIn._getTransaction(connectedWalletPublicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn
+      console.log('signing txn', txn)
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
         return ''
       })
+      console.log('got signature response', txSig)
       if (!txSig) {
         return { txSig: '', success: false }
       }
       const exec = async () => {
         blockHash = await connection.getLatestBlockhash()
+        console.log('blockhash', blockHash)
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
           signature: txSig,
           blockhash: blockHash.blockhash,
@@ -75,7 +80,7 @@ function useTransaction(): useTransactionReturn {
       const success = await notifyUsingPromise(promise, null, txSig)
       return { txSig, success }
     },
-    [originalConnection, sendTransactionOriginal]
+    [originalConnection, sendTransactionOriginal, supportedTransactionTypes]
   )
   return {
     createTransactionBuilder,
