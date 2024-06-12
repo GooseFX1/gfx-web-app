@@ -23,6 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Git credentials
+        run: |
+          git config --global url."https://${{ secrets.SUBMODULE_REPO_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      - name: Add Submodule
+        run: git submodule add https://GooseFX1/tradingview_chart_lib.git src/tv_charting_lib
+      - name: Update Submodule
+        run: git submodule update --init --recursive
       - uses: actions/setup-node@v2
         with:
           node-version: '16.18.1'
