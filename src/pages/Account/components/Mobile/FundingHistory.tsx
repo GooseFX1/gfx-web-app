@@ -97,10 +97,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Bid {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .filled {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .Ask {
     color: #f35355;

@@ -300,7 +300,7 @@ export const NoPositionFound: FC<{ str: string, connected: boolean, setDepositWi
       <div className="mt-0">
         {connected && (
           <Button
-            colorScheme={'secondaryGradient'}
+            colorScheme={'blue'}
             onClick={() => setDepositWithdrawModal(true)}
             className={`ml-auto font-bold
     text-white min-w-[122px]  py-1.875  min-md:px-1.5 box-border`}
