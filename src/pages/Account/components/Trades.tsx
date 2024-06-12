@@ -10,7 +10,7 @@ import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-import {  ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { NoPositionFound } from './AccountOverview'
 
 const WRAPPER = styled.div`
@@ -86,10 +86,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Long {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .filled {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .Short {
     color: #f35355;
@@ -120,19 +120,25 @@ const Trades: FC = () => {
   )
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
   const fetchFilledTrades = async () => {
-    setIsLoading(true)
-    const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFilledTrades(res.data.data)
-    setTotalItemsCount(res.data.totalCount)
-    setIsLoading(false)
+    try {
+      setIsLoading(true)
+      const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
+        params: {
+          API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+          devnet: isDevnet,
+          traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+          page: pagination.page,
+          limit: pagination.limit
+        }
+      })
+      setFilledTrades(res.data.data)
+      setTotalItemsCount(res.data.totalCount)
+      setIsLoading(false)
+    }
+    catch (err) {
+      setIsLoading(false)
+    }
+
   }
 
   useEffect(() => {
@@ -183,7 +189,7 @@ const Trades: FC = () => {
       </div>
 
       <HISTORY>
-        {filledTrades.length && (
+        {filledTrades.length > 0 && (
           <div className="history-items-root-container">
             <div className="history-items-container dark:bg-black-5 bg-white">
               {filledTrades.map((trade) => (
@@ -223,7 +229,7 @@ const Trades: FC = () => {
           </div>
         )}
 
-        {!isLoading && <NoPositionFound
+        {!isLoading && filledTrades.length === 0 && <NoPositionFound
           str='No Trades Found'
           connected={connected}
           setDepositWithdrawModal={setDepositWithdrawModal}

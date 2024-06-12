@@ -54,10 +54,11 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`grid grid-cols-5  items-center w-full`}
+    ${tw`grid grid-cols-5  items-center w-full !border-t-0 !border-l-0 !border-r-0
+    w-full dark:border-b-black-4 border border-b-grey-4`}
+   
     padding: 10px;
     font-size: 13px;
-    border-bottom: 1px solid #3c3c3c;
   }
   .history-item span:first-child {
     ${tw`pl-1`}
@@ -98,7 +99,7 @@ const HISTORY = styled.div`
     color: #6ead57;
   }
   .filled {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .sell {
     color: #f35355;
@@ -132,19 +133,24 @@ const FundingHistory: FC = () => {
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
 
   const fetchFundingHistory = async () => {
-    setIsLoading(true)
-    const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFundingHistory(res.data.data)
-    setTotalItemsCount(res.data.totalCount)
-    setIsLoading(false)
+    try {
+      setIsLoading(true)
+      const res = await httpClient('api-services').get(`${GET_USER_FUNDING_HISTORY}`, {
+        params: {
+          API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+          devnet: isDevnet,
+          traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+          page: pagination.page,
+          limit: pagination.limit
+        }
+      })
+      setFundingHistory(res.data.data)
+      setTotalItemsCount(res.data.totalCount)
+      setIsLoading(false)
+    }
+    catch(err){
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -213,7 +219,7 @@ const FundingHistory: FC = () => {
       </div>
       <div
         className="grid grid-cols-5 items-center rounded-t-[3px] px-2.5 bg-white
-      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-grey-4 border border-l-0 border-r-0 border-t-0"
+      dark:bg-black-2 w-full py-2 dark:border-b-black-4 border-b-grey-4 border border-l-0 border-r-0 border-t-0"
       >
         {columns.map((item, index) => (
           <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
@@ -223,9 +229,9 @@ const FundingHistory: FC = () => {
       </div>
 
       <HISTORY>
-        {fundingHistory.length && (
+        {fundingHistory.length > 0 && (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container ">
               {fundingHistory.map((item) => (
                 <div key={item._id} className="history-item">
                   <div className="pair-container">
@@ -250,8 +256,7 @@ const FundingHistory: FC = () => {
             </div>
           </div>
         )}
-
-        {isLoading && (
+        {!isLoading && fundingHistory?.length === 0 && (
           <div className="no-funding-found">
             {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" /> */}
             <AccountsLabel className="text-[18px]  whitespace-nowrap mb-5">No Funding Found</AccountsLabel>

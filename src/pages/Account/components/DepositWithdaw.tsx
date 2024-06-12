@@ -68,7 +68,7 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .deposit-type {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .withdraw-type {
     color: #f35355;
@@ -92,19 +92,26 @@ const DepositWithdrawHistory: FC = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchFundTransfers = async () => {
-    setIsLoading(true)
-    const res = await httpClient('api-services').get(`${GET_USER_FUND_TRANSFERS}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        walletAddress: publicKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFundTransfers(res.data.data)
-    setTotalItemsCount(res.data.totalCount)
-    setIsLoading(false)
+    try {
+      setIsLoading(true)
+      const res = await httpClient('api-services').get(`${GET_USER_FUND_TRANSFERS}`, {
+        params: {
+          API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+          devnet: isDevnet,
+          walletAddress: publicKey.toString(),
+          page: pagination.page,
+          limit: pagination.limit
+        }
+      })
+      setIsLoading(false)
+
+      setFundTransfers(res.data.data)
+      setTotalItemsCount(res.data.totalCount)
+    }
+    catch (err) {
+      setIsLoading(false)
+    }
+
   }
   useEffect(() => {
     fetchFundTransfers()
@@ -140,7 +147,7 @@ const DepositWithdrawHistory: FC = () => {
       </div>
 
       <HISTORY>
-        {fundTransfers.length && (
+        {fundTransfers.length > 0 && (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundTransfers.map((transfer) => (
@@ -168,8 +175,7 @@ const DepositWithdrawHistory: FC = () => {
             </div>
           </div>
         )}
-
-        {!isLoading && <NoPositionFound
+        {!isLoading && fundTransfers?.length === 0 && <NoPositionFound
           str='No Deposits Found'
           connected={connected}
           setDepositWithdrawModal={setDepositWithdrawModal}
