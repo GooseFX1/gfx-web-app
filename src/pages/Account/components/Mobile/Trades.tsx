@@ -22,7 +22,9 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full mt-[15px] px-2.5 rounded-[3px]`}
+  ${tw`flex flex-col w-full h-full mt-[15px] !rounded-[3px] bg-white dark:bg-black-2 ml-2.5 
+  w-[calc(100vw - 20px)]
+  `}
 
   .history-items-container {
     ${tw`flex flex-col`}
@@ -33,7 +35,7 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between bg-white dark:bg-black-2  `}
+    ${tw`flex flex-col w-full justify-between  `}
     padding: 10px;
     color: ${({ theme }) => theme.text2};
     font-size: 13px;

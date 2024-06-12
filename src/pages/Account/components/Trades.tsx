@@ -23,7 +23,7 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white rounded-b-[5px]`}
+  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white !rounded-b-[5px] pb-[2px]`}
   border-top: 1px solid #3c3c3c;
   border-top: none;
   height: calc(100vh - 195px);
