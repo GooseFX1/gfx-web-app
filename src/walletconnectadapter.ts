@@ -89,7 +89,6 @@ export class WalletConnectWalletAdapter extends BaseSignerWalletAdapter {
           network: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp' as WalletConnectChainID,
           options: this._config.options
         })
-
         ;({ publicKey } = await wallet.connect())
       } catch (error: any) {
         if (error.constructor.name === 'QRCodeModalError') throw new WalletWindowClosedError()
