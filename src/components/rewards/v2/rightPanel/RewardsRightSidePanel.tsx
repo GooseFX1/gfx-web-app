@@ -4,9 +4,9 @@ import { numberFormatter } from '../../../../utils'
 import { Tooltip } from '../../../Tooltip'
 import RewardsClaimButton from './RewardsClaimButton'
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
 import RewardsRightLayout from '../../layout/RewardsRightLayout'
 import { cn } from 'gfx-component-lib'
+import { SkeletonCommon } from '@/components'
 
 export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Element {
   const { totalEarned, totalStaked, gofxValue, totalStakedGlobally, userStakeRatio } = useRewards()
@@ -19,7 +19,7 @@ export default function RewardsRightSidePanel({ apy }: { apy: number }): JSX.Ele
     <RewardsRightLayout className={`bg-gradient-to-br from-green-gradient-3 to-green-gradient-4`}>
       <h1 className={`text-h2 min-md:text-h1 font-semibold !mb-0 text-white mx-auto`}>
         {apy == 0 ? (
-          <Skeleton highlightColor={'#37BB7D'} height={'15px'} width={'60px'} borderRadius={'1rem'} />
+          <SkeletonCommon height="100%" />
         ) : (
           `${apy}% APY`
         )}
