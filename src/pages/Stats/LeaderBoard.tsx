@@ -22,7 +22,6 @@ import { GradientText } from '../../components'
 import useBreakPoint from '../../hooks/useBreakPoint'
 
 const WRAPPER = styled.div<{ $index: number }>`
-  height: calc(100vh - 56px);
   &::-webkit-scrollbar {
     display: none;
   }
