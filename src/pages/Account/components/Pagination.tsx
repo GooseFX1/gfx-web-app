@@ -19,8 +19,9 @@ const WRAPPER = styled.div`
   }
 
   .svg-to-grey {
-    filter: invert(70%);
+    filter: invert(50%);
   }
+  
 `
 type Pagination = {
   page: number
@@ -59,7 +60,7 @@ export const Pagination: FC<{
           src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}
           alt="arrow left"
           style={{ transform: 'rotate(90deg)' }}
-          className={pagination.page == 1 ? 'svg-to-grey' : ''}
+          className={pagination.page == 1 ?  'svg-to-grey' : ''}
           onClick={() => handleArrowClick('back')}
         />
         <img

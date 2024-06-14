@@ -19,7 +19,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 const HISTORY = styled.div`
   ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] sm:h-[calc(100vh - 315px)] bg-white 
   border  border-grey-4 dark:border-black-4 border-b-0 border-r-0 border-l-0
-  sm:border-t-0  
+  sm:border-t-0  rounded-[3px]
   rounded-b-[5px] sm:my-[15px]`}
   color: ${({ theme }) => theme.text2};
 
@@ -130,7 +130,7 @@ const AccountOverview: FC = () => {
   }, [connected, traderInfo.traderRiskGroupKey])
   const { isMobile } = useBreakPoint()
   return (
-    <div className="flex flex-col w-full p-[15px] sm:p-[10px] sm:py-0 ml-36 sm:ml-0">
+    <div className="flex flex-col w-full p-[15px] sm:p-[10px] sm:py-0 ml-36 sm:ml-0 ">
       {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
@@ -214,7 +214,7 @@ const AccountOverview: FC = () => {
         <>
           <div
             className="grid grid-cols-4 gap-x-40 items-center rounded-t-[3px] px-2.5 bg-white
-      dark:bg-black-2 w-full py-2"
+      dark:bg-black-2 w-full py-2 rounded-[3px]"
           >
             {columns.map((item, index) => (
               <ContentLabel className={index === columns.length - 1 ? 'text-right' : ''} key={index}>
@@ -254,7 +254,7 @@ const AccountOverview: FC = () => {
         <>
           <HISTORY>
             {traderInfo.averagePosition.side && Number(roundedSize) ? (
-              <div className="flex flex-col w-full p-2.5">
+              <div className="flex flex-col w-full p-2.5 rounded-[3px]">
                 <div className="flex justify-between mt-[5px] ">
                   <ContentLabel className="text-[15px]"> Asset </ContentLabel>
                   <InfoLabelNunito className="text-[15px] flex items-center ">
