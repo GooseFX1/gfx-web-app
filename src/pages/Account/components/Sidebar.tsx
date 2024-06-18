@@ -14,7 +14,23 @@ type SidebarProps = {
   selected: number
   setSelected: React.Dispatch<React.SetStateAction<number>>
 }
-const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
+const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => (
+  <WRAPPER
+    className="flex flex-col px-2.5 pb-0 mb-0 w-36 h-[calc(100vh - 96px)]
+    !border-l-0 !border-t-0 !border-b-0 !overflow-hidden
+    border dark:border-r-black-4 border-grey-4 "
+  >
+    <SideBarTabs selected={selected} setSelected={setSelected} />
+
+    {/* {tabs.map((tab, index) => (
+        <SPAN key={tab} className={selected == index ? 'selected' : undefined} onClick={() => handleClick(index)}>
+          {tab}
+        </SPAN>
+      ))} */}
+  </WRAPPER>
+)
+
+export const SideBarTabs: FC<SidebarProps> = ({ selected, setSelected }) => {
   const handleClick = (num: number) => {
     setSelected(num)
   }
@@ -35,18 +51,14 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
     },
     [tabs, mode, selected]
   )
-
   return (
-    <WRAPPER
-      className="flex flex-col px-2.5 pb-0 mb-0 w-36 h-[calc(100vh - 96px)]
-    !border-l-0 !border-t-0 !border-b-0 !overflow-hidden
-    border dark:border-r-black-4 border-grey-4 "
-    >
-      <Tabs defaultValue="0" className="mt-2.5">
-        <TabsList className="flex flex-col gap-0 p-0">
+    <div className=" h-10 mt-2.5 ">
+      <Tabs defaultValue="0" className=" no-scrollbar !bg-grey-5 dark:!bg-black-1 
+      sm:overflow-x-auto sm:w-[calc(100vw - 20px)]">
+        <TabsList className="sm:flex  gap-0 !p-0 sm:ml-2.5 ">
           {tabs.map((elem, index) => (
             <TabsTrigger
-              className={cn('w-full h-8.75 dark:!bg-black-1 !bg-grey-5')}
+              className={cn('w-full sm:w-[117px] h-8.75 dark:!bg-black-1 !bg-grey-5')}
               size="xl"
               key={index}
               value={index.toString()}
@@ -58,13 +70,7 @@ const Sidebar: FC<SidebarProps> = ({ selected, setSelected }) => {
           ))}
         </TabsList>
       </Tabs>
-      {/* {tabs.map((tab, index) => (
-        <SPAN key={tab} className={selected == index ? 'selected' : undefined} onClick={() => handleClick(index)}>
-          {tab}
-        </SPAN>
-      ))} */}
-    </WRAPPER>
+    </div>
   )
 }
-
 export default Sidebar

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useCrypto } from '../../../context'
-import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { httpClient } from '../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../TradeV3/perps/perpsConstants'
@@ -11,8 +10,8 @@ import { useTraderConfig } from '../../../context/trader_risk_group'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
-import { Button } from 'gfx-component-lib'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { NoPositionFound } from './AccountOverview'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full !pb-0 ml-36`}
@@ -24,7 +23,7 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white rounded-b-[5px]`}
+  ${tw`flex flex-col w-full h-full dark:bg-black-2 bg-white !rounded-b-[5px] pb-[2px]`}
   border-top: 1px solid #3c3c3c;
   border-top: none;
   height: calc(100vh - 195px);
@@ -87,10 +86,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Long {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .filled {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .Short {
     color: #f35355;
@@ -112,6 +111,7 @@ const Trades: FC = () => {
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [filledTrades, setFilledTrades] = useState([])
   const [totalItemsCount, setTotalItemsCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -120,17 +120,25 @@ const Trades: FC = () => {
   )
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
   const fetchFilledTrades = async () => {
-    const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFilledTrades(res.data.data)
-    setTotalItemsCount(res.data.totalCount)
+    try {
+      setIsLoading(true)
+      const res = await httpClient('api-services').get(`${GET_USER_TRADES_HISTORY}`, {
+        params: {
+          API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+          devnet: isDevnet,
+          traderRiskGroup: traderInfo.traderRiskGroupKey.toString(),
+          page: pagination.page,
+          limit: pagination.limit
+        }
+      })
+      setFilledTrades(res.data.data)
+      setTotalItemsCount(res.data.totalCount)
+      setIsLoading(false)
+    }
+    catch (err) {
+      setIsLoading(false)
+    }
+
   }
 
   useEffect(() => {
@@ -181,7 +189,7 @@ const Trades: FC = () => {
       </div>
 
       <HISTORY>
-        {filledTrades.length ? (
+        {filledTrades.length > 0 && (
           <div className="history-items-root-container">
             <div className="history-items-container dark:bg-black-5 bg-white">
               {filledTrades.map((trade) => (
@@ -219,24 +227,14 @@ const Trades: FC = () => {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full">
-            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" /> */}
-            <AccountsLabel className="text-[18px] mb-5">No Trades Found</AccountsLabel>
-            {!connected && <Connect />}
-            {connected && (
-              <Button
-                colorScheme={'secondaryGradient'}
-                onClick={() => setDepositWithdrawModal(true)}
-                className={` font-bold
-                 text-white min-w-[122px]  mt-4 py-1.875  min-md:px-1.5 box-border`}
-                size={'lg'}
-              >
-                Deposit Now
-              </Button>
-            )}
-          </div>
         )}
+
+        {!isLoading && filledTrades.length === 0 && <NoPositionFound
+          str='No Trades Found'
+          connected={connected}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />}
+
       </HISTORY>
     </WRAPPER>
   )

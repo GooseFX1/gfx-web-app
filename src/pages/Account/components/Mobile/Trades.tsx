@@ -2,23 +2,19 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
-import { useCrypto, useDarkMode } from '../../../../context'
-import { Connect } from '../../../../layouts/Connect'
+import { useCrypto } from '../../../../context'
 import { useWallet } from '@solana/wallet-adapter-react'
-
-import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
-
-import { DepositWithdraw } from '@/pages/TradeV3/perps/DepositWithdrawNew'
 import { httpClient } from '../../../../api'
 import { GET_USER_TRADES_HISTORY } from '../../../TradeV3/perps/perpsConstants'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
-import { InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { BorderLine, NoPositionFound } from '../AccountOverview'
+import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-col w-full`}
-  padding: 5px;
+  ${tw`flex flex-col w-full !pb-0`}
   h1 {
     font-size: 18px;
     color: ${({ theme }) => theme.text2};
@@ -26,7 +22,9 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full mt-[15px]`}
+  ${tw`flex flex-col w-full h-full mt-[15px] !rounded-[3px] bg-white dark:bg-black-2 ml-2.5 
+  w-[calc(100vw - 20px)]
+  `}
 
   .history-items-container {
     ${tw`flex flex-col`}
@@ -37,16 +35,16 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between`}
+    ${tw`flex flex-col w-full justify-between  `}
     padding: 10px;
     color: ${({ theme }) => theme.text2};
     font-size: 13px;
-    border: 1px solid #3c3c3c;
+    /* border: 1px solid #3c3c3c; */
     border-top: none;
-    height: 170px;
+    /* height: 170px; */
   }
   .history-item:first-child {
-    border-top: 1px solid #3c3c3c;
+    /* border-top: 1px solid #3c3c3c; */
     border-radius: 5px 5px 0px 0px;
   }
 
@@ -69,9 +67,9 @@ const HISTORY = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #3c3c3c;
+    
     width: 100%;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 210px);
   }
   .no-trades-found > p {
     margin: 0;
@@ -90,10 +88,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Bid {
-    color: #80ce00;
+    color: #6ead57;
   }
   .filled {
-    color: #80ce00;
+    color: #6ead57;
   }
   .Ask {
     color: #f35355;
@@ -105,12 +103,9 @@ type Pagination = {
   limit: number
 }
 const MobileTrades: FC = () => {
-  const { mode } = useDarkMode()
-
   const { connected, publicKey } = useWallet()
   const [depositWithdrawModal, setDepositWithdrawModal] = useState<boolean>(false)
-
-  const [tradeType, setTradeType] = useState<string>('deposit')
+ 
   const { isDevnet } = useCrypto()
   const { traderInfo } = useTraderConfig()
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
@@ -145,92 +140,108 @@ const MobileTrades: FC = () => {
 
   return (
     <WRAPPER>
-      {depositWithdrawModal && (
-        <SETTING_MODAL
-          visible={true}
-          centered={true}
-          footer={null}
-          title={<ModalHeader setTradeType={setTradeType} tradeType={tradeType} />}
-          closeIcon={
-            <img
-              src={`/img/assets/close-${mode === 'lite' ? 'gray' : 'white'}-icon.svg`}
-              height="20px"
-              width="20px"
-              onClick={() => setDepositWithdrawModal(false)}
-            />
-          }
-        >
-          <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
-        </SETTING_MODAL>
+       {depositWithdrawModal && (
+        <DepositWithdrawDialog
+          depositWithdrawModal={depositWithdrawModal}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />
       )}
-      <h1>Trades</h1>
+      <InfoLabel className="ml-2.5 mt-[15px]" >
+        <h3>Trades</h3>
+      </InfoLabel>
+
       <HISTORY>
         {filledTrades.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container overflow-y-auto h-[calc(100vh - 275px)]">
               {filledTrades.map((trade) => (
-                <div key={trade._id} className="history-item">
-                  <div className="flex">
-                    <span>Market</span>
-                    <div className="pair-container ml-auto">
-                      <img src={`${assetIcon}`} alt="SOL icon" />
-                      <span>{selectedCrypto.pair}</span>
+                <>
+                  {' '}
+                  <div key={trade._id} className="history-item">
+                    <div className="flex">
+                      <ContentLabel className="text-[15px]">Market</ContentLabel>
+                      <div className="pair-container ml-auto">
+                        <img src={`${assetIcon}`} alt="SOL icon" />
+                        <InfoLabelNunito className="text-[15px]">{selectedCrypto.pair}</InfoLabelNunito>
+                      </div>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Direction</ContentLabel>
+                      <span className={`${trade.side} ml-auto`}>
+                        <InfoLabelNunito className={`${trade.side} text-[15px]`}>
+                          {trade.side === 'Bid' ? 'Long' : 'Short'}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Size</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">{trade.qty.toFixed(3)} SOL</InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Notional</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          ${(trade.qty * trade.price).toFixed(2)}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Entry Price</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">${trade.price.toFixed(2)}</InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Fee</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {' '}
+                          ${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Status</ContentLabel>
+                      <span className="filled ml-auto">
+                        <InfoLabelNunito className="text-[15px] filled">Filled</InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Date</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {convertUnixTimestampToFormattedDate(trade.time * 1000)}
+                        </InfoLabelNunito>
+                      </span>
                     </div>
                   </div>
-                  <div className="flex">
-                    <span>Direction</span>
-                    <span className={`${trade.side} ml-auto`}>{trade.side === 'Bid' ? 'Long' : 'Short'}</span>
-                  </div>
-                  <div className="flex">
-                    <span>Size</span>
-                    <span className="ml-auto">{trade.qty.toFixed(3)} SOL</span>
-                  </div>
-                  <div className="flex">
-                    <span>Notional</span>
-                    <span className="ml-auto">${(trade.qty * trade.price).toFixed(2)}</span>
-                  </div>
-                  <div className="flex">
-                    <span>Entry Price</span>
-                    <span className="ml-auto">${trade.price.toFixed(2)}</span>
-                  </div>
-                  <div className="flex">
-                    <span>Fee</span>
-                    <span className="ml-auto">${((trade.qty * trade.price * 0.1) / 100).toFixed(3)}</span>
-                  </div>
-                  <div className="flex">
-                    <span>Status</span>
-                    <span className="filled ml-auto">Filled</span>
-                  </div>
-                  <div className="flex">
-                    <span>Date</span>
-                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(trade.time * 1000)}</span>
-                  </div>
-                </div>
+          
+                  <BorderLine className="mx-2.5 " />
+                </>
               ))}
-            </div>
-            <div className="pagination-container">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
             </div>
           </div>
         ) : (
-          <div className="no-trades-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-trades-found" />
-            <InfoLabel>
-              <p>No Trades Found</p>
-            </InfoLabel>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+          <div className='history-item h-[calc(100vh - 270px)]'>
+
+            <NoPositionFound
+              str='No Trades Found'
+              connected={connected}
+              setDepositWithdrawModal={setDepositWithdrawModal}
+            />
           </div>
         )}
       </HISTORY>
+      <div className=" h-[50px]">
+        <Pagination
+          pagination={pagination}
+          setPagination={setPagination}
+          totalItemsCount={totalItemsCount}
+        />
+      </div>
+
     </WRAPPER>
   )
 }

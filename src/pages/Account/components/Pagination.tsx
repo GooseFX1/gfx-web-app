@@ -1,11 +1,13 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useDarkMode } from '../../../context'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-row w-full items-center justify-end h-full border !border-b-0 !border-l-0 !border-r-0  
+  ${tw`flex flex-row w-full items-center sm:justify-center
+   justify-end h-full border !border-b-0 !border-l-0 !border-r-0  
    dark:border-t-0 border-t-0`}
   color: ${({ theme }) => theme.text2};
   height: 100%;
@@ -45,9 +47,13 @@ export const Pagination: FC<{
       return number
     }
   }
+  const roundDecimal = useMemo(() => roundUpIfDecimal(totalItemsCount / pagination.limit),
+    [totalItemsCount, pagination.limit])
+  const { connectedWalletPublicKey } = useWalletBalance()
   return (
     <WRAPPER>
-      <p>{`Page ${pagination.page} of ${roundUpIfDecimal(totalItemsCount / pagination.limit)}`} </p>
+      <p>{`Page ${connectedWalletPublicKey && (roundDecimal > 0) ? pagination.page : 0} 
+      of ${roundDecimal}`} </p>
       <div className="imagesContainer">
         <img
           src={mode === 'lite' ? '/img/assets/circularArrowlite.svg' : '/img/assets/circularArrowdark.svg'}

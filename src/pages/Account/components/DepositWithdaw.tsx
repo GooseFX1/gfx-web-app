@@ -3,15 +3,14 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useCrypto } from '../../../context'
-import { Connect } from '../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GET_USER_FUND_TRANSFERS } from '../../TradeV3/perps/perpsConstants'
 import { httpClient } from '../../../api'
 import { Pagination } from './Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../TradeV3/perps/utils'
-import { AccountsLabel, ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
-import { Button } from 'gfx-component-lib'
+import { NoPositionFound } from './AccountOverview'
 
 const HISTORY = styled.div`
   ${tw`flex flex-col w-full dark:bg-black-2 bg-white rounded-b-[5px]`}
@@ -69,7 +68,7 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .deposit-type {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .withdraw-type {
     color: #f35355;
@@ -90,19 +89,29 @@ const DepositWithdrawHistory: FC = () => {
   const [fundTransfers, setFundTransfers] = useState([])
   const [pagination, setPagination] = useState<Pagination>({ page: 1, limit: 20 })
   const [totalItemsCount, setTotalItemsCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchFundTransfers = async () => {
-    const res = await httpClient('api-services').get(`${GET_USER_FUND_TRANSFERS}`, {
-      params: {
-        API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
-        devnet: isDevnet,
-        walletAddress: publicKey.toString(),
-        page: pagination.page,
-        limit: pagination.limit
-      }
-    })
-    setFundTransfers(res.data.data)
-    setTotalItemsCount(res.data.totalCount)
+    try {
+      setIsLoading(true)
+      const res = await httpClient('api-services').get(`${GET_USER_FUND_TRANSFERS}`, {
+        params: {
+          API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
+          devnet: isDevnet,
+          walletAddress: publicKey.toString(),
+          page: pagination.page,
+          limit: pagination.limit
+        }
+      })
+      setIsLoading(false)
+
+      setFundTransfers(res.data.data)
+      setTotalItemsCount(res.data.totalCount)
+    }
+    catch (err) {
+      setIsLoading(false)
+    }
+
   }
   useEffect(() => {
     fetchFundTransfers()
@@ -138,7 +147,7 @@ const DepositWithdrawHistory: FC = () => {
       </div>
 
       <HISTORY>
-        {fundTransfers.length ? (
+        {fundTransfers.length > 0 && (
           <div className="history-items-root-container">
             <div className="history-items-container">
               {fundTransfers.map((transfer) => (
@@ -165,22 +174,13 @@ const DepositWithdrawHistory: FC = () => {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col h-full items-center justify-center">
-            {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-deposits-found" /> */}
-            <AccountsLabel className="text-[18px] mb-5">No Deposits Found</AccountsLabel>
-            {!connected && <Connect />}
-            {connected && (
-              <Button
-                variant="primary"
-                colorScheme={'secondaryGradient'}
-                onClick={() => setDepositWithdrawModal(true)}
-              >
-                Deposit Now
-              </Button>
-            )}
-          </div>
         )}
+        {!isLoading && fundTransfers?.length === 0 && <NoPositionFound
+          str='No Deposits Found'
+          connected={connected}
+          setDepositWithdrawModal={setDepositWithdrawModal}
+        />}
+
       </HISTORY>
     </div>
   )

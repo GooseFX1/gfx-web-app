@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import tw from 'twin.macro'
 import 'styled-components/macro'
 import { useCrypto, useDarkMode } from '../../../../context'
-import { Connect } from '../../../../layouts/Connect'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { ModalHeader, SETTING_MODAL } from '../../../TradeV3/InfoBanner'
@@ -15,7 +14,9 @@ import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { Pagination } from '../Pagination'
 import { convertUnixTimestampToFormattedDate } from '../../../TradeV3/perps/utils'
 import { Tooltip } from '../../../../components'
-import { InfoLabel } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { ContentLabel, InfoLabel, InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import { BorderLine, NoPositionFound } from '../AccountOverview'
+import { Container, ContainerTitle } from 'gfx-component-lib'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full`}
@@ -26,32 +27,9 @@ const WRAPPER = styled.div`
   }
 `
 
-const ACCOUNTVALUESFLEX = styled.div`
-  ${tw`flex flex-row gap-x-4`}
-`
-
-const ACCOUNTVALUESCONTAINER = styled.div`
-  ${tw`w-[190px] rounded-[5px] p-[1px]`}
-  background: linear-gradient(94deg, #f7931a 0%, #ac1cc7 100%);
-`
-
-const ACCOUNTVALUE = styled.div`
-  ${tw`h-full w-full rounded-[5px] flex flex-col  text-tiny font-semibold`}
-  color: ${({ theme }) => theme.text2};
-  background: ${({ theme }) => theme.bg2};
-  padding: 5px;
-  p {
-    margin: 0px;
-    font-size: 13px;
-  }
-  p:last-child {
-    font-size: 15px;
-  }
-`
-
 const HISTORY = styled.div`
-  ${tw`flex flex-col w-full h-full mt-[15px]`}
-
+  ${tw`flex flex-col w-full h-full mt-[15px] ml-2.5 w-[calc(100vw - 30px)]
+  dark:bg-black-5  bg-white overflow-y-auto rounded-[3px] `}
   .history-items-container {
     ${tw`flex flex-col`}
   }
@@ -61,16 +39,16 @@ const HISTORY = styled.div`
   }
 
   .history-item {
-    ${tw`flex flex-col w-full justify-between`}
+    ${tw`flex flex-col w-full justify-between `}
     padding: 10px;
     font-size: 13px;
     color: ${({ theme }) => theme.text2};
-    border: 1px solid #3c3c3c;
+    /* border: 1px solid #3c3c3c; */
     border-top: none;
-    height: 170px;
+    /* height: 170px; */
   }
   .history-item:first-child {
-    border-top: 1px solid #3c3c3c;
+    /* border-top: 1px solid #3c3c3c; */
     border-radius: 5px 5px 0px 0px;
   }
 
@@ -98,7 +76,7 @@ const HISTORY = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid #3c3c3c;
+    /* border: 1px solid #3c3c3c; */
     border-radius: 5px;
     width: 100%;
     height: calc(100vh - 205px);
@@ -120,10 +98,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Bid {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .filled {
-    color: #80ce00;
+    color: #6EAD57;
   }
   .Ask {
     color: #f35355;
@@ -179,7 +157,7 @@ const MobileFundingHistory: FC = () => {
   const getCumulativeFunding = (): number =>
     traderInfo.traderRiskGroup !== null
       ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
-        10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
+      10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
       : 0
 
   return (
@@ -202,88 +180,117 @@ const MobileFundingHistory: FC = () => {
           <DepositWithdraw tradeType={tradeType} setDepositWithdrawModal={setDepositWithdrawModal} />
         </SETTING_MODAL>
       )}
-      <InfoLabel>
-        <h1>Funding</h1>
+
+      <div className="flex justify-between items-center ml-2.5">
+        <div className="sm:my-[15px] flex items-center">
+          <Container
+            variant="outline"
+            colorScheme="primaryGradient"
+            size="md"
+            className="w-[174px] min-h-[55px] p-1.5 flex justify-between"
+          >
+            <ContainerTitle>
+              <h5>Cumulative Funding:&nbsp;</h5>
+              {/* <IconTooltip tooltipType={'outline'}>
+              <p>The current price at which a good or service can be purchased or sold.</p>
+            </IconTooltip> */}
+            </ContainerTitle>
+            <InfoLabel>
+              <h2 className="leading-4">
+                $
+                {getCumulativeFunding().toString().indexOf('.') != -1 ? (
+                  <Tooltip
+                    color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
+                    infoIcon={false}
+                    title={getCumulativeFunding()}
+                  >
+                    <>{getCumulativeFunding().toFixed(2)}</>
+                  </Tooltip>
+                ) : (
+                  <>{getCumulativeFunding()}</>
+                )}
+              </h2>
+            </InfoLabel>
+          </Container>
+        </div>
+      </div>
+      <InfoLabel className="ml-2.5 ">
+        <h3>Funding</h3>
       </InfoLabel>
-      <ACCOUNTVALUESFLEX>
-        <ACCOUNTVALUESCONTAINER>
-          <ACCOUNTVALUE>
-            <p>Cumulative Funding:</p>
-            {getCumulativeFunding().toString().indexOf('.') != -1 ? (
-              <Tooltip
-                color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
-                infoIcon={false}
-                title={getCumulativeFunding()}
-              >
-                <span>{getCumulativeFunding().toFixed(2)}</span>
-              </Tooltip>
-            ) : (
-              <span>{getCumulativeFunding()}</span>
-            )}
-          </ACCOUNTVALUE>
-        </ACCOUNTVALUESCONTAINER>
-      </ACCOUNTVALUESFLEX>
       <HISTORY>
         {fundingHistory.length ? (
           <div className="history-items-root-container">
-            <div className="history-items-container">
+            <div className="history-items-container  overflow-y-auto h-[calc(100vh - 350px)]">
               {fundingHistory.map((item) => (
-                <div key={item._id} className="history-item">
-                  <div className="flex">
-                    <span>Market</span>
-                    <div className="pair-container ml-auto">
-                      <img src={`${assetIcon}`} alt="SOL icon" />
-                      <span>{selectedCrypto.pair}</span>
+                <>
+                  <div key={item._id} className="history-item">
+                    <div className="flex">
+                      <ContentLabel className="text-[15px]">Market</ContentLabel>
+                      <div className="pair-container ml-auto">
+                        <img src={`${assetIcon}`} alt="SOL icon" />
+                        <InfoLabelNunito className="text-[15px]">{selectedCrypto.pair}</InfoLabelNunito>
+                      </div>
+                    </div>
+                    <div className="flex ">
+                      <ContentLabel className="text-[15px]">Direction</ContentLabel>
+                      <span className={`${item.averagePosition.side} ml-auto`}>
+                        <InfoLabelNunito className={`${item.averagePosition.side} text-[15px]`}>
+                          {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
+                          {item.averagePosition.side === undefined && ''}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Position Size</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {item.averagePosition.quantity} SOL
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Payment</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) <
+                            0.0001
+                            ? '< 0.0001'
+                            : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
+                        </InfoLabelNunito>
+                      </span>
+                    </div>
+                    <div className="flex mt-[5px]">
+                      <ContentLabel className="text-[15px]">Date</ContentLabel>
+                      <span className="ml-auto">
+                        <InfoLabelNunito className="text-[15px]">
+                          {convertUnixTimestampToFormattedDate(item.time * 1000)}
+                        </InfoLabelNunito>
+                      </span>
                     </div>
                   </div>
-                  <div className="flex">
-                    <span>Direction</span>
-                    <span className={`${item.averagePosition.side} ml-auto`}>
-                      {item.averagePosition.side === 'buy' ? 'Long' : 'Short'}
-                      {item.averagePosition.side === undefined && ''}
-                    </span>
-                  </div>
-                  <div className="flex">
-                    <span>Position Size</span>
-                    <span className="ml-auto">{item.averagePosition.quantity} SOL</span>
-                  </div>
-                  <div className="flex">
-                    <span>Payment</span>
-                    <span className="ml-auto">
-                      {Math.abs(item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)) <
-                      0.0001
-                        ? '< 0.0001'
-                        : item.fundingBalanceDifference / 10 ** (Number(item.fundingBalance.exp) + 5)}
-                    </span>
-                  </div>
-                  <div className="flex">
-                    <span>Date</span>
-                    <span className="ml-auto">{convertUnixTimestampToFormattedDate(item.time * 1000)}</span>
-                  </div>
-                </div>
+                  <BorderLine className="mx-2.5" />
+                </>
               ))}
             </div>
-            <div className="pagination-container">
-              <Pagination
-                pagination={pagination}
-                setPagination={setPagination}
-                totalItemsCount={totalItemsCount}
-              />
-            </div>
+
           </div>
         ) : (
-          <div className="no-funding-found">
-            <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-funding-found" />
-            <p>No Funding Found</p>
-            {!connected && <Connect />}
-            {connected && (
-              <button onClick={() => setDepositWithdrawModal(true)} className="deposit">
-                Deposit Now
-              </button>
-            )}
+          <div className="history-item  h-[calc(100vh - 350px)]">
+            <NoPositionFound
+              str='No Funding Found'
+              connected={connected}
+              setDepositWithdrawModal={setDepositWithdrawModal}
+            />
           </div>
         )}
       </HISTORY>
+      <div className="h-[50px]">
+        <Pagination
+          pagination={pagination}
+          setPagination={setPagination}
+          totalItemsCount={totalItemsCount}
+        />
+      </div>
     </WRAPPER>
   )
 }
