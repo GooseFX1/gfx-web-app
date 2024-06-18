@@ -1,16 +1,20 @@
 import {
   ComputeBudgetProgram,
+  PublicKey,
   Transaction,
   TransactionInstruction,
-  TransactionInstructionCtorFields
+  TransactionInstructionCtorFields,
+  TransactionMessage,
+  VersionedTransaction
 } from '@solana/web3.js'
 
 type TXN_IX = TransactionInstruction | TransactionInstructionCtorFields
 export type TXN = Transaction | TXN_IX
+export type TXN_IN = TXN | Array<TXN>
 const DEFAULT_PRIORITY_FEE = 50000
 
 class TransactionBuilder {
-  _transaction: Transaction = new Transaction()
+  _instructions: TransactionInstruction[] = []
   _priorityFee: number = DEFAULT_PRIORITY_FEE
   _usePriorityFee = true
 
@@ -19,13 +23,13 @@ class TransactionBuilder {
     this.addTxn(txn)
   }
 
-  private addTxn(txn: TXN | Array<TXN>): void {
+  private addTxn(txn:TXN_IN): void {
     const tx: Array<TXN> = [txn].flat()
     for (const t of tx) {
       if (t instanceof Transaction) {
-        this._transaction.add(...t.instructions)
-      } else {
-        this._transaction.add(t)
+        this._instructions.push(...t.instructions)
+      } else if(t instanceof TransactionInstruction) {
+        this._instructions.push(t)
       }
     }
   }
@@ -35,9 +39,13 @@ class TransactionBuilder {
     return this
   }
 
-  add(txn?: TXN | Array<TXN>): TransactionBuilder {
+  add(txn?: TXN_IN|TransactionBuilder): TransactionBuilder {
     if (txn) {
-      this.addTxn(txn)
+      if (txn instanceof TransactionBuilder) {
+        this._instructions.push(...txn._instructions)
+      }else{
+        this.addTxn(txn)
+      }
     }
     return this
   }
@@ -48,28 +56,40 @@ class TransactionBuilder {
   }
 
   addPriorityFee(): TransactionBuilder {
-    this._transaction.instructions.unshift(
+    this._instructions.unshift(
       ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: this._priorityFee
       })
     )
     return this
   }
-
-  getTransaction(): Transaction {
+  /** @deprecated Internal use in useTransaction hook - compile */
+  _getTransaction(
+    walletPublicKey:PublicKey,
+    recentBlockhash:string,
+    useVersionedTransaction: boolean
+  ): VersionedTransaction|Transaction {
     if (this._usePriorityFee) {
       const ix = ComputeBudgetProgram.setComputeUnitPrice({
         microLamports: this._priorityFee
       })
 
-      this._transaction.instructions.unshift(ix)
+      this._instructions.unshift(ix)
     }
+    if (useVersionedTransaction){
+      const message = new TransactionMessage({
+        instructions: this._instructions,
+        payerKey:walletPublicKey,
+        recentBlockhash: recentBlockhash
+      }).compileToV0Message()
 
-    return this._transaction
+      return new VersionedTransaction(message)
+    }
+    return new Transaction().add(...this._instructions);
   }
 
   clear(): TransactionBuilder {
-    this._transaction = new Transaction()
+    this._instructions = []
     return this
   }
 }

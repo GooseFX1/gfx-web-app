@@ -31,7 +31,7 @@ export const AllClaimModal: FC<{
   const handleAllClaim = async () => {
     setIsLoading(true)
     const tx = await executeAllPoolClaim(SSLProgram, connection, pubKey, rewards, allPoolSslData)
-    await sendTransaction(createTransactionBuilder().add(tx).getTransaction())
+    await sendTransaction(createTransactionBuilder().add(tx))
     setAllClaimModal(false)
     setIsLoading(false)
   }

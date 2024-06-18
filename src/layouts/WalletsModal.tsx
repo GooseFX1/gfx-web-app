@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState, useEffect, useMemo } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
@@ -17,7 +17,6 @@ const DETECTED_NAME = styled.div`
 const WALLET_DETECTED = styled(Button)`
   ${tw`flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
   border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`}
-
   img {
     ${tw`h-[30px] w-[30px] mr-2.5 ml-2 rounded-half !bg-black-1`}
   }
@@ -28,6 +27,9 @@ const WALLET_DETECTED = styled(Button)`
 `
 const STYLED_POPUP = styled(PopupCustom)`
   ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
+  & & {
+    background: purple !important;
+  }
   .ant-modal-body {
     ${tw`py-0 h-[calc(100% - 47px)] overflow-y-scroll`}
   }

@@ -2,6 +2,7 @@ import { cn, Icon, Input, InputElementLeft, InputElementRight, InputGroup } from
 import React from 'react'
 import { useDarkMode } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
+
 interface SearchBarProps {
   onClear?: () => void
   value?: string | number
@@ -22,7 +23,7 @@ const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX
       rightItem={
         <InputElementRight
           onClick={onClear}
-          show={(typeof value == 'string' && value.trim().length > 0) || value > 0}
+          show={(typeof value == 'string' && value.trim().length > 0) || +value > 0}
         >
           <Icon
             size={'sm'}

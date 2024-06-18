@@ -1,30 +1,28 @@
 /* eslint-disable */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
-import { Input, Checkbox, Slider, Drawer } from 'antd'
+import { Checkbox, Drawer, Input, Slider } from 'antd'
 import {
   AVAILABLE_ORDERS,
+  OrderDisplayType,
   OrderType,
   useAccounts,
+  useConnectionConfig,
   useCrypto,
-  useOrder,
-  useTokenRegistry,
-  OrderDisplayType,
   useDarkMode,
+  useOrder,
   useOrderBook,
-  useWalletModal,
-  useConnectionConfig
+  useTokenRegistry,
+  useWalletModal
 } from '../../../context'
 import { RotatingLoader } from '../../../components/RotatingLoader'
 import { Picker } from '../Picker'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useTraderConfig } from '../../../context/trader_risk_group'
 import 'styled-components/macro'
-import { Tooltip, PopupCustom } from '../../../components'
-import { TradeConfirmation } from '../TradeConfirmation'
+import { PopupCustom, Tooltip } from '../../../components'
 import { removeFloatingPointError } from '../../../utils'
-import { getPerpsPrice } from '../perps/utils'
-import { getProfitAmount } from '../perps/utils'
+import { getPerpsPrice, getProfitAmount } from '../perps/utils'
 
 enum ButtonState {
   Connect = 0,
@@ -621,8 +619,8 @@ export const PlaceOrderMobi = () => {
     if (!connected) return ButtonState.Connect
     if (!traderInfo?.traderRiskGroupKey) return ButtonState.CreateAccount
     if (!order.price || !order.total || !order.size) return ButtonState.NullAmount
-    if (order.size > maxQtyNum) return ButtonState.BalanceExceeded
-    if (order.size < 0.01) return ButtonState.OrderTooSmall
+    if (+order.size > maxQtyNum) return ButtonState.BalanceExceeded
+    if (+order.size < 0.01) return ButtonState.OrderTooSmall
     //if (order.total > perpsBidBalance) return ButtonState.BalanceExceeded
     return ButtonState.CanPlaceOrder
   }, [connected, selectedCrypto.pair, order, isDevnet, traderInfo])
