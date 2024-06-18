@@ -140,7 +140,7 @@ export const TermsOfService: FC<{
         </DialogHeader>
         <DialogBody className={'p-2.5 flex-col'}>
           <div className={`flex flex-col gap-4 overflow-hidden`}>
-            <div className={'overflow-y-scroll no-scrollbar h-[273px] flex flex-col gap-4'}>
+            <div className={'overflow-y-scroll no-scrollbar h-[263px] flex flex-col gap-4'}>
               <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>General</h3>
               <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
                 These terms and conditions (“Terms”) govern the use of the Website (defined below) and the Services
