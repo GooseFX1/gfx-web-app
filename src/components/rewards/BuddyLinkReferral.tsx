@@ -5,9 +5,8 @@ import { useConnectionConfig } from '../../context'
 import { getTraderRiskGroupAccount } from '../../pages/TradeV3/perps/utils'
 import { Transaction } from '@solana/web3.js'
 import { Connect } from '../../layouts'
-import { Loader } from '../Loader'
 import { sendPerpsTransaction } from '../../web3/connection'
-import { Button, cn } from 'gfx-component-lib'
+import { Button, cn, Loader, loaders } from 'gfx-component-lib'
 import { toast } from 'sonner'
 
 const BuddyLinkReferral: FC = () => {
@@ -175,7 +174,7 @@ const BuddyLinkReferral: FC = () => {
         />
       ) : (
         <div className={`absolute`}>
-          <Loader zIndex={1} />
+          <Loader animationData={loaders.loader_button} style={{scale:'2.0'}} className={cn('h-6.25 w-6.25 mt-1')}/>
         </div>
       )}
     </div>
