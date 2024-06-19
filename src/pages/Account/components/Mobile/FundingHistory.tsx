@@ -182,7 +182,7 @@ const MobileFundingHistory: FC = () => {
       )}
 
       <div className="flex justify-between items-center ml-2.5">
-        <div className="sm:my-[15px] flex items-center">
+        <div className="max-sm:my-[15px] flex items-center">
           <Container
             variant="outline"
             colorScheme="primaryGradient"

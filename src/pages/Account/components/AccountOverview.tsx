@@ -17,10 +17,10 @@ import { AccountRowHealth } from '@/pages/TradeV3/perps/components/CollateralPan
 import useBreakPoint from '@/hooks/useBreakPoint'
 
 const HISTORY = styled.div`
-  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] sm:h-[calc(100vh - 315px)] bg-white 
+  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] max-sm:h-[calc(100vh - 315px)] bg-white 
   border  border-grey-4 dark:border-black-4 border-b-0 border-r-0 border-l-0
-  sm:border-t-0  rounded-[3px]
-  rounded-b-[5px] sm:my-[15px]`}
+  max-sm:border-t-0  rounded-[3px]
+  rounded-b-[5px] max-sm:my-[15px]`}
   color: ${({ theme }) => theme.text2};
 
   .no-balances-found {
@@ -130,7 +130,7 @@ const AccountOverview: FC = () => {
   }, [connected, traderInfo.traderRiskGroupKey])
   const { isMobile } = useBreakPoint()
   return (
-    <div className="flex flex-col w-full p-[15px] sm:p-[10px] sm:py-0 ml-36 sm:ml-0 ">
+    <div className="flex flex-col w-full p-[15px] max-sm:p-[10px] max-sm:py-0 ml-36 max-sm:ml-0 ">
       {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
@@ -142,8 +142,8 @@ const AccountOverview: FC = () => {
           <h3>Account Overview</h3>
         </InfoLabel>
       )}
-      <div className="flex justify-between items-center sm:overflow-x-auto sm:mt-[15px] no-scrollbar">
-        <div className="my-[15px] flex items-center sm:my-0">
+      <div className="flex justify-between items-center max-sm:overflow-x-auto max-sm:mt-[15px] no-scrollbar">
+        <div className="my-[15px] flex items-center max-sm:my-0">
           <Container
             variant="outline"
             colorScheme="primaryGradient"
@@ -200,7 +200,7 @@ const AccountOverview: FC = () => {
         )}
       </div>
       {isMobile && (
-        <div className="flex justify-between items-center sm:h-[27px] mt-[15px]">
+        <div className="flex justify-between items-center max-sm:h-[27px] mt-[15px]">
           <InfoLabel>
             <h3>Account Overview</h3>
           </InfoLabel>

@@ -6,7 +6,7 @@ import { useDarkMode } from '../../../context'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const WRAPPER = styled.div`
-  ${tw`flex flex-row w-full items-center sm:justify-center
+  ${tw`flex flex-row w-full items-center max-sm:justify-center
    justify-end h-full border !border-b-0 !border-l-0 !border-r-0  
    dark:border-t-0 border-t-0`}
   color: ${({ theme }) => theme.text2};
