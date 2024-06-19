@@ -30,6 +30,8 @@ import {
 } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { InfoRow } from './TradeConfirmation'
+import { PerpsEndModal } from './PerpsEndModal'
+import PerpsEndModalV2 from './PerpsEndModalV2'
 
 const percentDetails = [
   {
@@ -54,27 +56,42 @@ const percentDetails = [
   }
 ]
 export const ClosePositionDialog: FC<{
+  perpsEndModal: boolean
+  summaryData: any
   closePositionModal: boolean
   setVisibleState: React.Dispatch<React.SetStateAction<any>>
   setSummaryData: React.Dispatch<React.SetStateAction<any>>
   setPerpsEndModal: React.Dispatch<React.SetStateAction<any>>
-}> = ({ closePositionModal, setVisibleState, setSummaryData, setPerpsEndModal }) => (
-  <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
+}> = ({ perpsEndModal, closePositionModal, setVisibleState, setSummaryData, setPerpsEndModal, summaryData }) => {
+  const { traderInfo } = useTraderConfig()
+  return <Dialog open={closePositionModal} onOpenChange={setVisibleState}>
     <DialogOverlay />
     {/* <DialogClose onClick={() => setDepositWithdrawModal(false)} /> */}
     <DialogContent size={'md'} placement={checkMobile() ? 'bottom' : 'default'} className={'h-[356px] sm:px-0'}>
       <DialogCloseDefault />
 
       <DialogBody>
-        <ClosePosition
-          setVisibleState={setVisibleState}
-          setPerpsEndModal={setPerpsEndModal}
-          setSummaryData={setSummaryData}
-        />
+        {perpsEndModal ?
+          <PerpsEndModalV2
+            profit={summaryData.profit}
+            side={traderInfo.averagePosition.side === 'buy' ? 'buy' : 'sell'}
+            entryPrice={summaryData.entryPrice}
+            currentPrice={summaryData.exitPrice}
+            leverage={summaryData.leverage}
+            pnlAmount={summaryData.pnl}
+            percentageChange={summaryData.percentageChange}
+          />
+          :
+          <ClosePosition
+            setVisibleState={setVisibleState}
+            setPerpsEndModal={setPerpsEndModal}
+            setSummaryData={setSummaryData}
+          />}
+
       </DialogBody>
     </DialogContent>
   </Dialog>
-)
+}
 
 export const ClosePosition: FC<{
   setVisibleState: React.Dispatch<React.SetStateAction<any>>
@@ -240,44 +257,45 @@ export const ClosePosition: FC<{
   }, [exitPrice, price, displayExitQty])
 
   return (
-    <div className="flex flex-col justify-between w-full p-3 sm:px-2">
-      <div>
-        <h3 className={cn('text-black-4 dark:text-grey-8 mt-1 mb-3')}>Close Position</h3>
-        <div className="percentage">
-          <Tabs defaultValue="2" value={percentageIndex.toString()}>
-            <TabsList>
-              {percentDetails.map((elem, index) => (
-                <TabsTrigger
-                  className={cn('w-[25%]')}
-                  size="xl"
-                  key={index}
-                  value={index.toString()}
-                  variant="primary"
-                  onClick={(e) => handlePercentageChange(e, index)}
-                >
-                  <TitleLabel whiteText={percentageIndex == index}>{elem.display}</TitleLabel>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          {/* {inputValue > Math.abs(totalExitQtyNumber) ? (
+    <>
+      <div className="flex flex-col justify-between w-full p-3 sm:px-2">
+        <div>
+          <h3 className={cn('text-black-4 dark:text-grey-8 mt-1 mb-3')}>Close Position</h3>
+          <div className="percentage">
+            <Tabs defaultValue="2" value={percentageIndex.toString()}>
+              <TabsList>
+                {percentDetails.map((elem, index) => (
+                  <TabsTrigger
+                    className={cn('w-[25%]')}
+                    size="xl"
+                    key={index}
+                    value={index.toString()}
+                    variant="primary"
+                    onClick={(e) => handlePercentageChange(e, index)}
+                  >
+                    <TitleLabel whiteText={percentageIndex == index}>{elem.display}</TitleLabel>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+            {/* {inputValue > Math.abs(totalExitQtyNumber) ? (
             <span tw="text-red-1 font-semibold text-regular">Maximum quantity exceeded!</span>
           ) : null} */}
-          {customAmount && (
-            <InfoLabel>
-              <p className="text-[15px] absolute right-[25px] mt-[17px]">SOL</p>
-            </InfoLabel>
-          )}
-          <Input
-            placeholder={'0.00 SOL'}
-            value={customAmount ?? ''}
-            onFocus={() => setPercentageindex(3)}
-            onChange={(e) => handleInputChange(e)}
-            // disabled={order.display === 'market'}
-            className={cn(`my-2.5 h-[30px] sm:h-[35px] min-w-[100px] text-right`, customAmount && 'pr-[48px]')}
-          />
+            {customAmount && (
+              <InfoLabel>
+                <p className="text-[15px] absolute right-[25px] mt-[17px]">SOL</p>
+              </InfoLabel>
+            )}
+            <Input
+              placeholder={'0.00 SOL'}
+              value={customAmount ?? ''}
+              onFocus={() => setPercentageindex(3)}
+              onChange={(e) => handleInputChange(e)}
+              // disabled={order.display === 'market'}
+              className={cn(`my-2.5 h-[30px] sm:h-[35px] min-w-[100px] text-right`, customAmount && 'pr-[48px]')}
+            />
 
-          {/* {percentDetails.map((elem, index) => (
+            {/* {percentDetails.map((elem, index) => (
             <div
               className={percentageIndex === index ? 'percentage-num selected' : 'percentage-num'}
               onClick={(e) => {
@@ -288,52 +306,54 @@ export const ClosePosition: FC<{
               {elem.display}%
             </div>
           ))} */}
-        </div>
-      </div>
-
-      <div className="flex flex-col">
-        <div className="flex justify-between items-center my-2">
-          <InfoLabel>
-            <p>{displayExitQty} SOL</p>
-          </InfoLabel>
-          <InfoLabel>
-            <div className="flex items-center gap-1">
-              <p className={cn('!font-semibold')}>{exitPrice}</p>
-              <p>(Market Price)</p>
-            </div>
-          </InfoLabel>
-        </div>
-        <div>
-          <InfoRow label="SOL Market Price" value={'1 SOL = ' + '$' + exitPrice} />
-          <InfoRow label="Est. Exit Price" value={exitPrice} />
-          <InfoRow label="Est. Slippage" value={'0.000%'} />
-          <InfoRow label="New Est. Liquidation Price" value={'None'} />
-          <div className="flex justify-between my-2">
-            <ContentLabel>
-              <p>Est. Realized P&L</p>
-            </ContentLabel>
-            <InfoLabel>
-              <p>{pnlEstimate}</p>
-            </InfoLabel>
           </div>
         </div>
-      </div>
 
-      <Button
-        onClick={closePositionFn}
-        className={`mx-auto mb-2`}
-        colorScheme={'blue'}
-        disabled={loading}
-        loading={loading}
-        size="lg"
-        width={'100'}
-      >
-        <span>
-          {percentDetails[percentageIndex]?.display
-            ? `Close ${percentDetails[percentageIndex].display} of the position`
-            : 'Close Position'}
-        </span>
-      </Button>
-    </div>
+        <div className="flex flex-col">
+          <div className="flex justify-between items-center my-2">
+            <InfoLabel>
+              <p>{displayExitQty} SOL</p>
+            </InfoLabel>
+            <InfoLabel>
+              <div className="flex items-center gap-1">
+                <p className={cn('!font-semibold')}>{exitPrice}</p>
+                <p>(Market Price)</p>
+              </div>
+            </InfoLabel>
+          </div>
+          <div>
+            <InfoRow label="SOL Market Price" value={'1 SOL = ' + '$' + exitPrice} />
+            <InfoRow label="Est. Exit Price" value={exitPrice} />
+            <InfoRow label="Est. Slippage" value={'0.000%'} />
+            <InfoRow label="New Est. Liquidation Price" value={'None'} />
+            <div className="flex justify-between my-2">
+              <ContentLabel>
+                <p>Est. Realized P&L</p>
+              </ContentLabel>
+              <InfoLabel>
+                <p>{pnlEstimate}</p>
+              </InfoLabel>
+            </div>
+          </div>
+        </div>
+
+        <Button
+          onClick={closePositionFn}
+          className={`mx-auto mb-2`}
+          colorScheme={'blue'}
+          disabled={loading}
+          loading={loading}
+          size="lg"
+          width={'100'}
+        >
+          <span>
+            {percentDetails[percentageIndex]?.display
+              ? `Close ${percentDetails[percentageIndex].display} of the position`
+              : 'Close Position'}
+          </span>
+        </Button>
+      </div>
+    </>
+
   )
 }

@@ -664,7 +664,7 @@ const FundingHistoryComponent: FC = () => {
 export const HistoryPanel: FC = () => {
   const [activeTab, setActiveTab] = useState(0)
   const [closePositionModal, setClosePositionModal] = useState<boolean>(false)
-  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(false)
+  const [perpsEndModal, setPerpsEndModal] = useState<boolean>(true)
   const [summaryData, setSummaryData] = useState<{
     profit: boolean
     entryPrice: string
@@ -864,14 +864,17 @@ export const HistoryPanel: FC = () => {
   // )
   return (
     <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px]  " defaultValue="0">
-      {closePositionModal && (
+      {(closePositionModal || perpsEndModal) && (
         <ClosePositionDialog
+        summaryData={summaryData} 
+        perpsEndModal={perpsEndModal}
           closePositionModal={closePositionModal}
           setVisibleState={setClosePositionModal}
           setSummaryData={setSummaryData}
           setPerpsEndModal={setPerpsEndModal}
         />
       )}
+
       <TabsList className={cn('rounded-t-[3px]')}>
         {tabs.map((item, index) => {
           if (isMobile && index > 1) return null
