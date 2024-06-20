@@ -1,9 +1,7 @@
 import React, { FC } from 'react'
 import useTimer from '../../../../hooks/useTimer'
-import tw from 'twin.macro'
-import Button from '../../../twComponents/Button'
 import useBoolean from '../../../../hooks/useBoolean'
-import { Loader } from '../../../Loader'
+import { Button } from 'gfx-component-lib'
 
 const Countdown: FC<{ timestamp: number }> = ({ timestamp }) => {
   const [isLoading, setIsLoading] = useBoolean(false)
@@ -36,14 +34,10 @@ const Countdown: FC<{ timestamp: number }> = ({ timestamp }) => {
   const { time, isDone } = useTimer({ targetTime: timestamp ?? 0 })
   return (
     <Button
-      cssClasses={[
-        tw`bg-white flex justify-center w-[320px] h-10 text-blue-1 font-semibold text-average opacity-50`,
-        isDone && tw`opacity-100`
-      ]}
       disabled={!isDone || isLoading}
       onClick={fakeLoad}
     >
-      {isDone ? isLoading ? <Loader zIndex={2} color={'#5855FF'} /> : 'Started' : time}
+      {isDone ? 'Started' : time}
     </Button>
   )
 }
