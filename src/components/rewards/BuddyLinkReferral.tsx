@@ -174,7 +174,9 @@ const BuddyLinkReferral: FC = () => {
         />
       ) : (
         <div className={`absolute`}>
-          <Loader animationData={loaders.loader_button} style={{scale:'2.0'}} className={cn('h-6.25 w-6.25 mt-1')}/>
+          <Loader animationData={loaders.loader_button}
+                  style={{scale:'2.0'}} className={cn('h-6.25 w-6.25 mt-1')}
+          />
         </div>
       )}
     </div>
