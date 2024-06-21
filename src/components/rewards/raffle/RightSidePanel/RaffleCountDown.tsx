@@ -36,6 +36,7 @@ const Countdown: FC<{ timestamp: number }> = ({ timestamp }) => {
     <Button
       disabled={!isDone || isLoading}
       onClick={fakeLoad}
+      isLoading={isLoading}
     >
       {isDone ? 'Started' : time}
     </Button>
