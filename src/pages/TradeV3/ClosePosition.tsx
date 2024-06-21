@@ -326,7 +326,7 @@ export const ClosePosition: FC<{
         disabled={loading}
         isLoading={loading}
         size="lg"
-        width={'100'}
+        fullWidth
       >
         <span>
           {percentDetails[percentageIndex]?.display
