@@ -16,7 +16,7 @@ import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
 import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
-import { Loader, SkeletonCommon } from '@/components'
+import { SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import TokenInput from '@/components/common/TokenInput'
 import { Connect } from '@/layouts'
@@ -882,10 +882,9 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
           canClaim && !isLoading && 'before:animate-border-spin'
         )}
         disabled={isLoading || !canClaim || isLoading}
+        isLoading={isLoading}
       >
-        {isLoading ? (
-          <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
-        ) : canClaim ? (
+        {canClaim ? (
           `Claim ${bigNumberFormatter(claimableReward)} ${token}`
         ) : (
           'No Claimable Rewards'
