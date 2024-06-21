@@ -10,7 +10,7 @@ import {
   SSLToken
 } from '@/pages/FarmV3/constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '@/context'
+import { APP_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -855,7 +855,6 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
   disableActionButton
 }) => {
   const { connected } = useWallet()
-  const { mode } = useDarkMode()
 
   return (
     <div className={'flex flex-col min-lg:flex-row gap-2.5 max-sm:mt-3'}>
