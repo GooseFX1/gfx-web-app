@@ -27,7 +27,7 @@ jobs:
         run: |
           git config --global url."https://${{ secrets.SUBMODULE_REPO_TOKEN }}@github.com/".insteadOf "https://github.com/"
       - name: Add Submodule
-        run: git submodule add https://GooseFX1/tradingview_chart_lib.git src/tv_charting_lib
+        run: git submodule add https://github.com/GooseFX1/tradingview_chart_lib.git src/tv_charting_lib
       - name: Update Submodule
         run: git submodule update --init --recursive
       - uses: actions/setup-node@v2
