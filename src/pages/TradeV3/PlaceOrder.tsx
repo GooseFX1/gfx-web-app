@@ -561,15 +561,15 @@ export const PlaceOrder: FC = () => {
     },
     order.side === 'buy'
       ? {
-          display: '50%',
-          value: 0.5,
-          key: 3
-        }
+        display: '50%',
+        value: 0.5,
+        key: 3
+      }
       : {
-          display: '75%',
-          value: 0.75,
-          key: 3
-        }
+        display: '75%',
+        value: 0.75,
+        key: 3
+      }
   ]
 
   useEffect(() => {
@@ -652,16 +652,7 @@ export const PlaceOrder: FC = () => {
       setSelectedTotal(null)
     }
   }
-  function isValidDecimal(input) {
-    const num = Number(input)
-    const scaled = num * 1000
-
-    if (scaled === Math.round(scaled)) {
-      return true
-    } else {
-      return false
-    }
-  }
+  
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 8) {
@@ -672,22 +663,7 @@ export const PlaceOrder: FC = () => {
     }
   }
 
-  const numberCheck = (input: string, source: string) => {
-    if (!isNaN(+input)) {
-      setSelectedTotal(null)
-      switch (source) {
-        case 'size':
-          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, size: input }))
-          break
-        case 'total':
-          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, total: input }))
-          break
-        case 'price':
-          if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, price: input }))
-          break
-      }
-    }
-  }
+ 
 
   const handleClick = (value: number) => {
     const price = order.price ?? getPerpsPrice(orderBook)
@@ -1313,85 +1289,10 @@ export const PlaceOrder: FC = () => {
         <div className="px-2.5 flex flex-col sm:pb-2.5 py-1 sm:h-auto h-[calc(100% - 80px)]">
           <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col')}>
-              <div className="pb-1">
-                {' '}
-                <InfoLabel> Order type</InfoLabel>
-              </div>
-              {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
-              <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
-                <DropdownMenuTrigger asChild={true}>
-                  <Button
-                    variant="outline"
-                    onClick={setIsOpen.on}
-                    colorScheme={mode === 'lite' ? 'blue' : 'white'}
-                    className={cn('max-content mr-2 h-[30px] sm:h-[35px]')}
-                  >
-                    <div className="flex w-full items-center justify-between">
-                      <div className="flex">
-                        {/* <IconTooltip tooltipType={'outline'}>
-                          <p>Limit</p>
-                        </IconTooltip> */}
-                        <h4 className={cn('ml-1')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
-                      </div>
-
-                      <img
-                        style={{
-                          height: '18px',
-                          width: '18px',
-                          transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
-                          transition: 'transform 0.2s ease-in-out'
-                        }}
-                        src={`/img/mainnav/connect-chevron-${mode}.svg`}
-                        alt={'connect-chevron'}
-                      />
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent asChild>
-                  <div className={'flex flex-col gap-1.5 items-start  max-w-[250px] '}>
-                    <DropdownMenuItem
-                      className="!cursor-pointer"
-                      variant={'default'}
-                      onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
-                    >
-                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Limit</p>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="!cursor-pointer"
-                      onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}
-                    >
-                      <p className={cn('font-bold w-[90px] !cursor-pointer')}>Market</p>
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <OrderTypeDropdown isOpen={isOpen} setIsOpen={setIsOpen} />
             </div>
             <div className={cn('flex w-1/2 flex-col')}>
-              <div className="pb-1">
-                {' '}
-                <InfoLabel>Price</InfoLabel>{' '}
-              </div>
-              <div className={cn('w-full flex')}>
-                <Input
-                  placeholder={'0.00 USDC'}
-                  value={order.price ?? ''}
-                  onChange={(e) => numberCheck(e.target.value, 'price')}
-                  disabled={order.display === 'market'}
-                  className={cn(
-                    `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
-                    order.price && `pr-[52px]`
-                  )}
-                />
-                <div className="relative">
-                  {order.price && (
-                    <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
-                      <InfoLabel>
-                        <p>USDC</p>{' '}
-                      </InfoLabel>
-                    </p>
-                  )}
-                </div>
-              </div>
+              <PriceInput numberCheck={numberCheck} setOrder={setOrder}/>
             </div>
           </div>
           <div className={cn('flex mb-2.5')}>
@@ -1405,7 +1306,7 @@ export const PlaceOrder: FC = () => {
                   placeholder={'0.00 SOL'}
                   onFocus={() => setFocused('size')}
                   value={sizeDisplay}
-                  onChange={(e) => numberCheck(e.target.value, 'size')}
+                  onChange={(e) => numberCheck(e.target.value, 'size', setOrder)}
                   className={cn(
                     `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
                     sizeDisplay !== '' && `pr-12`
@@ -1430,7 +1331,7 @@ export const PlaceOrder: FC = () => {
                   placeholder={'0.00 USDC'}
                   onFocus={() => setFocused('total')}
                   value={amountDisplay}
-                  onChange={(e) => numberCheck(e.target.value, 'total')}
+                  onChange={(e) => numberCheck(e.target.value, 'total', setOrder)}
                   className={cn(
                     `mr-2 p-1 sm:text-[15px] h-[30px] sm:h-[35px] min-w-[100px] text-right`,
                     amountDisplay !== '' && `pr-[52px]`
@@ -1462,8 +1363,8 @@ export const PlaceOrder: FC = () => {
                         ? takeProfitAmount
                         : ''
                       : profits[takeProfitIndex]
-                      ? '$' + profits[takeProfitIndex] + ' USDC'
-                      : '(-)'
+                        ? '$' + profits[takeProfitIndex] + ' USDC'
+                        : '(-)'
                   }
                   onChange={(e) => {
                     setTakeProfitIndex(null)
@@ -1653,6 +1554,101 @@ const ButtonForMobile: FC<{ buttonText; handlePlaceOrder; buttonState }> = ({
   )
 }
 
+export const OrderTypeDropdown: FC<{ isOpen: boolean, setIsOpen: any }> = ({ isOpen, setIsOpen }) => {
+  const { mode } = useDarkMode()
+  const { order, setOrder } = useOrder()
+  return (<div className={cn('flex w-full flex-col')}>
+    <div className="pb-1">
+      {' '}
+      <InfoLabel> Order type</InfoLabel>
+    </div>
+    {/* <Input className={cn('w-auto min-w-[100px] mr-2')} /> */}
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
+      <DropdownMenuTrigger asChild={true}>
+        <Button
+          variant="outline"
+          onClick={setIsOpen.on}
+          colorScheme={mode === 'lite' ? 'blue' : 'white'}
+          className={cn('max-content mr-2 h-[30px] sm:h-[35px]')}
+        >
+          <div className="flex w-full items-center justify-between">
+            <div className="flex">
+              {/* <IconTooltip tooltipType={'outline'}>
+                          <p>Limit</p>
+                        </IconTooltip> */}
+              <h4 className={cn('ml-1')}>{order.display === 'limit' ? 'Limit ' : 'Market '}</h4>
+            </div>
+
+            <img
+              style={{
+                height: '18px',
+                width: '18px',
+                transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
+                transition: 'transform 0.2s ease-in-out'
+              }}
+              src={`/img/mainnav/connect-chevron-${mode}.svg`}
+              alt={'connect-chevron'}
+            />
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent asChild>
+        <div className={'flex flex-col gap-1.5 items-start  max-w-[250px] '}>
+          <DropdownMenuItem
+            className="!cursor-pointer"
+            variant={'default'}
+            onClick={() => setOrder((prev) => ({ ...prev, display: 'limit' }))}
+          >
+            <p className={cn('font-bold w-[90px] !cursor-pointer')}>Limit</p>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="!cursor-pointer"
+            onClick={() => setOrder((prev) => ({ ...prev, display: 'market' }))}
+          >
+            <p className={cn('font-bold w-[90px] !cursor-pointer')}>Market</p>
+          </DropdownMenuItem>
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>)
+}
+
+export const PriceInput:FC<{numberCheck: (arg1: string, arg2: string, setOrder) => void, setOrder}> = ({numberCheck, setOrder}) => {
+  const { order } = useOrder()
+  return (<>
+    <div className="pb-1">
+      <InfoLabel>Price</InfoLabel>{' '}
+    </div>
+    <div className={cn('w-full flex')}>
+      <Input
+        placeholder={'0.00 USDC'}
+        value={order.price ?? ''}
+        onChange={(e) => numberCheck(e.target.value, 'price', setOrder)}
+        disabled={order.display === 'market'}
+        className={cn(
+          `mr-2 p-1 h-[30px] sm:h-[35px] min-w-[100px] text-right`,
+          order.price && `pr-[52px]`
+        )}
+      />
+      <div className="relative">
+        {order.price && (
+          <p className={cn('mt-[7px] sm:mt-[9px] right-3 absolute mr-1')}>
+            <InfoLabel>
+              <p>USDC</p>{' '}
+            </InfoLabel>
+          </p>
+        )}
+      </div>
+    </div>
+  </>)
+}
+
+
+
+
+
+
+
 const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
   <div className={cn('px-2.5 py-1')}>
     <div className={cn('h-8.75 flex items-center justify-between')}>
@@ -1742,4 +1738,32 @@ const Overlay: FC<{
       ))}
     </SELECTOR>
   )
+}
+
+function isValidDecimal(input) {
+  const num = Number(input)
+  const scaled = num * 1000
+
+  if (scaled === Math.round(scaled)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+export const numberCheck = (input: string, source: string, setOrder) => {
+  if (!isNaN(+input)) {
+    switch (source) {
+      case 'size':
+        console.log('shri here')
+        if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, size: input }))
+        break
+      case 'total':
+        if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, total: input }))
+        break
+      case 'price':
+        if (isValidDecimal(input)) setOrder((prev) => ({ ...prev, price: input }))
+        break
+    }
+  }
 }

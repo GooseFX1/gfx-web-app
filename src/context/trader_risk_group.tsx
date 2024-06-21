@@ -139,7 +139,7 @@ interface IPerpsInfo {
   marketProductGroup: MarketProductGroup
   traderInfo: ITraderRiskGroup
   marketProductGroupKey: PublicKey
-  newOrder: () => Promise<DepositIx | void>
+  newOrder: (side?: string, size?: string) => Promise<DepositIx | void>
   newOrderTakeProfit: (price: string) => Promise<DepositIx | void>
   closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<DepositIx | void>
   cancelOrder: (orderId: string) => Promise<DepositIx | void>
@@ -674,21 +674,25 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         order.display === 'market'
           ? 'market'
           : order.type === 'limit'
-          ? 'limit'
-          : order.type === 'ioc'
-          ? 'immediateOrCancel'
-          : 'postOnly',
+            ? 'limit'
+            : order.type === 'ioc'
+              ? 'immediateOrCancel'
+              : 'postOnly',
       limitPrice: convertToFractional(order.price.toString())
     }
   }
 
-  const getNewTakeProfitOrderParams = (profitPrice: string) => {
+  const getDecimalMultiplier = (decimals: number) => {
     let n = '1'
-    for (let i = 0; i < activeProduct.decimals; i++) n = n + '0'
+    for (let i = 0; i < decimals; i++) n = n + '0'
+    return n
+  }
+
+  const getNewTakeProfitOrderParams = (profitPrice: string) => {
     const decimalAdjustedQty = mulFractionals(
       convertToFractional(order.size.toString()),
-      new Fractional({ m: new anchor.BN(n), exp: new anchor.BN(0) })
-    )
+      new Fractional({ m: new anchor.BN(getDecimalMultiplier(activeProduct.decimals)), exp: new anchor.BN(0) })
+    );
 
     return {
       maxBaseQty: decimalAdjustedQty,
@@ -701,8 +705,18 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
-  const newOrder = useCallback(async () => {
+  const newOrder = useCallback(async (side?: string, size?: string) => {
     const newOrderParams = getNewOrderParams()
+    if (side) {
+      newOrderParams.side = side
+    }
+    if (size) {
+      const decimalAdjustedQty = mulFractionals(
+        convertToFractional(size),
+        new Fractional({ m: new anchor.BN(getDecimalMultiplier(activeProduct.decimals)), exp: new anchor.BN(0) })
+      );
+      newOrderParams.maxBaseQty = decimalAdjustedQty;
+    }
     const response = await newOrderIx(
       newOrderParams,
       wallet,
@@ -716,27 +730,27 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const newOrderTakeProfit = useCallback(
     async (price: string) => {
       const newOrderAccounts: INewOrderAccounts = {
-          user: wallet.publicKey,
-          traderRiskGroup: currentTRG,
-          marketProductGroup: currentMPG,
-          product: new PublicKey(activeProduct.id),
-          aaobProgram: new PublicKey(ORDERBOOK_P_ID),
-          orderbook: new PublicKey(activeProduct.orderbook_id),
-          marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
-          eventQueue: new PublicKey(activeProduct.event_queue),
-          bids: new PublicKey(activeProduct.bids),
-          asks: new PublicKey(activeProduct.asks),
-          systemProgram: SystemProgram.programId,
-          feeModelProgram: new PublicKey(FEES_ID),
-          feeModelConfigurationAcct: getFeeConfigAcct(new PublicKey(MPG_ID)),
-          traderFeeStateAcct: traderRiskGroup.feeStateAccount,
-          feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
-          riskEngineProgram: new PublicKey(RISK_ID),
-          riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
-          riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
-          traderRiskStateAcct: traderRiskGroup.riskStateAccount,
-          riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
-        },
+        user: wallet.publicKey,
+        traderRiskGroup: currentTRG,
+        marketProductGroup: currentMPG,
+        product: new PublicKey(activeProduct.id),
+        aaobProgram: new PublicKey(ORDERBOOK_P_ID),
+        orderbook: new PublicKey(activeProduct.orderbook_id),
+        marketSigner: getMarketSigner(new PublicKey(activeProduct.id)),
+        eventQueue: new PublicKey(activeProduct.event_queue),
+        bids: new PublicKey(activeProduct.bids),
+        asks: new PublicKey(activeProduct.asks),
+        systemProgram: SystemProgram.programId,
+        feeModelProgram: new PublicKey(FEES_ID),
+        feeModelConfigurationAcct: getFeeConfigAcct(new PublicKey(MPG_ID)),
+        traderFeeStateAcct: traderRiskGroup.feeStateAccount,
+        feeOutputRegister: new PublicKey(FEE_OUTPUT_REGISTER),
+        riskEngineProgram: new PublicKey(RISK_ID),
+        riskModelConfigurationAcct: new PublicKey(RISK_MODEL_CONFIG_ACCT),
+        riskOutputRegister: new PublicKey(RISK_OUTPUT_REGISTER),
+        traderRiskStateAcct: traderRiskGroup.riskStateAccount,
+        riskAndFeeSigner: getRiskAndFeeSigner(new PublicKey(MPG_ID))
+      },
         newOrderParams = getNewOrderParams(),
         takeProfitParams = getNewTakeProfitOrderParams(price)
       const response = await newTakeProfitOrderIx(
@@ -841,14 +855,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const response = traderRiskGroup
           ? await depositFundsIx({ quantity: amount }, wallet, connection, traderInstanceSdk)
           : await initTrgDepositIx(
-              depositFundsAccounts,
-              { quantity: amount },
-              wallet,
-              connection,
-              perpInstanceSdk,
-              newTrg,
-              isDevnet
-            )
+            depositFundsAccounts,
+            { quantity: amount },
+            wallet,
+            connection,
+            perpInstanceSdk,
+            newTrg,
+            isDevnet
+          )
         !traderRiskGroup && fetchTrgAcc()
         return response
       } catch (err) {
