@@ -13,7 +13,7 @@ export const GeorestrictionModal: FC<{
     <Dialog open={geoBlocked} onOpenChange={setGeoBlocked}>
       <DialogOverlay />
       <DialogContent
-        className={'p-3 w-[400px] h-[336px] sm:rounded-b-none sm:rounded-t-small sm:w-full'}
+        className={'p-3 w-[400px] h-[336px] max-sm:rounded-b-none max-sm:rounded-t-small max-sm:w-full'}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
         <DialogCloseDefault />

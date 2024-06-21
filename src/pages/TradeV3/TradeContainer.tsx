@@ -439,11 +439,11 @@ const CryptoContent: FC = () => {
 
 export const TermsOfService = () => {
   return (
-    <div className="flex items-center sm:items-start sm:flex-col justify-between px-2 sm:px-0 sm:h-[70px] h-0 sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
+    <div className="flex items-center max-sm:items-start max-sm:flex-col justify-between px-2 max-sm:px-0 max-sm:h-[70px] h-0 max-sm:mb-10 border-grey-4 dark:border-black-4 border-t-1">
       <div>
         {checkMobile() && (
           <div className="">
-            <div className="flex sm:gap-2 px-1">
+            <div className="flex max-sm:gap-2 px-1">
               <p className="text-[10px] text-white items-center flex ml-1 mt-2">Risk & Disclaimers</p>
               <p className="text-[10px] text-white items-center flex ml-1 mt-2">Terms of Service</p>
             </div>

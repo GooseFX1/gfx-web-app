@@ -291,7 +291,7 @@ const MobileNav: FC = () => {
           </DialogBody>
           <DialogFooter
             className={`border-t-1 border-solid border-t-border-lightmode-secondary px-3.75 py-2.5 
-          dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between`}
+          dark:border-t-border-darkmode-secondary h-[75px] items-center justify-between flex-row`}
           >
             <NetworkStatus />
             <FooterDivider className={'h-[30px]'} />

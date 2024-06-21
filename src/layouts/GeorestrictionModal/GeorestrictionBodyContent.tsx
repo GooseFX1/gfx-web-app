@@ -9,7 +9,7 @@ export const GeorestrictionBodyContent = memo(() => {
   const { isDarkMode } = useDarkMode()
   return (
     <>
-      <h5 className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5 sm:ml-1">Georestricted</h5>
+      <h5 className="dark:text-grey-8 text-black-4 text-lg font-semibold mb-2.5 max-sm:ml-1">Georestricted</h5>
       <Lottie
         animationData={isDarkMode ? GeoRestrictedDark : GeoRestrictedLite}
         className="h-[118px] w-[170px] mx-auto"

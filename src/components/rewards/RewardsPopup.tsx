@@ -9,6 +9,7 @@ import Rewards from './v2/Rewards'
 import Refer from './Refer'
 import Raffle from './raffle/Raffle'
 import RewardsClose from '@/assets/rewards_close.svg?react'
+
 export const REWARD_PANEL_INDEX = 0
 export const REFER_PANEL_INDEX = 1
 export const RAFFLE_PANEL_INDEX = 2
@@ -58,7 +59,8 @@ export const RewardsPopup: FC = () => {
     <Dialog open={rewardModal} onOpenChange={rewardToggle}>
       <DialogOverlay />
       <DialogContent
-        className={'w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none min-lg:max-w-full'}
+        className={`w-full h-max max-h-[100dvh] overflow-y-scroll rounded-b-none 
+        `}
         fullScreen={!isMobile}
         placement={'bottom'}
       >
@@ -66,7 +68,7 @@ export const RewardsPopup: FC = () => {
           onClick={() => rewardToggle(false)}
           variant={'ghost'}
           className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-3 min-md:right-5
-                   min-md:top-5 z-[1] w-max p-0`}
+                   min-md:top-2.5 z-[1] w-max p-0`}
           size={'sm'}
         >
           <RewardsClose
@@ -76,7 +78,7 @@ export const RewardsPopup: FC = () => {
         </Button>
         <DialogBody
           className={`bg-white dark:bg-black-2 relative min-md:min-h-[441px]
-         w-full flex flex-row md:flex-col rounded-t-[10px]`}
+         w-full flex flex-row max-md:flex-col rounded-t-[10px]`}
         >
           {panelIndex == REWARD_PANEL_INDEX && <Rewards />}
           {panelIndex == REFER_PANEL_INDEX && <Refer />}

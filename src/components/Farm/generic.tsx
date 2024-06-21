@@ -155,8 +155,8 @@ export const LastRefreshedAnimation: FC<{ lastRefreshedClass: string }> = ({
 )
 
 export const STYLED_BUTTON = styled.button`
-  ${tw`sm:m-auto cursor-pointer w-[100px] sm:w-[100px] text-center border-none border-0 sm:font-medium
-  font-semibold text-base h-8.75 rounded-[36px] duration-700   text-[15px] sm:text-[13px] text-grey-1`}
+  ${tw`max-sm:m-auto cursor-pointer w-[100px] max-sm:w-[100px] text-center border-none border-0 max-sm:font-medium
+  font-semibold text-base h-8.75 rounded-[36px] duration-700   text-[15px] max-sm:text-[13px] text-grey-1`}
   background: none;
 
   :disabled {
@@ -165,7 +165,7 @@ export const STYLED_BUTTON = styled.button`
 `
 
 export const RefreshIcon = styled.button`
-  ${tw`cursor-pointer  sm:ml-10 rounded-full border-0 p-0 bg-transparent`}
+  ${tw`cursor-pointer  max-sm:ml-10 rounded-full border-0 p-0 bg-transparent`}
   .rotateRefreshBtn {
     -webkit-animation: cog 1s infinite;
     -moz-animation: cog 1s infinite;

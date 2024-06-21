@@ -76,7 +76,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
           className={'inline-flex gap-2 min-md:gap-0 min-md:justify-between items-center text-b2 font-semibold'}
         >
           <div className={'inline-flex gap-1 items-center'}>
-            <h5 className={'sm:text-h3 text-h5'}>RPC Settings</h5>
+            <h5 className={'max-sm:text-h3 text-h5'}>RPC Settings</h5>
             <IconTooltip tooltipType={'outline'} portal={false}>
               An RPC node, allows users of the RPC node to submit new transactions to be included in blocks. Select
               your RPC or up to enter a custom one.
@@ -156,7 +156,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
             <DialogCloseDefault className={'top-2'} />
             <DialogBody
               className={`border-1 border-solid border-border-lightmode-primary 
-          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 sm:gap-3.75`}
+          dark:border-border-darkmode-primary rounded-t-[10px] px-2.5 py-3 flex flex-col gap-2.5 max-sm:gap-3.75`}
             >
               {renderContent}
             </DialogBody>

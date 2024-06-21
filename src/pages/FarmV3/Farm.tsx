@@ -1,9 +1,8 @@
 import { FC, useEffect } from 'react'
 import { FarmHeader } from './FarmHeader'
-import { usePriceFeedFarm } from '../../context'
+import { SSLProvider, usePriceFeedFarm } from '../../context'
 import { FarmTable } from './FarmTable'
 import { Faqs } from './Faqs'
-import { SSLProvider } from '../../context'
 
 const Farm: FC = () => {
   const { refreshTokenData } = usePriceFeedFarm()
@@ -21,7 +20,7 @@ const Farm: FC = () => {
        m-auto no-scrollbar gap-7.5`}
       >
         <FarmHeader />
-        <div className={'gap-7.5 mt-7.5 p-5 sm:px-2.5 sm:pb-3.75 pt-0'}>
+        <div className={'gap-7.5 mt-7.5 p-5 max-sm:px-2.5 max-sm:pb-3.75 pt-0'}>
           <FarmTable />
           <Faqs />
         </div>

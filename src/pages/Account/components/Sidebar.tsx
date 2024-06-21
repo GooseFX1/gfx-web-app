@@ -54,11 +54,11 @@ export const SideBarTabs: FC<SidebarProps> = ({ selected, setSelected }) => {
   return (
     <div className=" h-10 mt-2.5 ">
       <Tabs defaultValue="0" className=" no-scrollbar !bg-grey-5 dark:!bg-black-1 
-      sm:overflow-x-auto sm:w-[calc(100vw - 20px)]">
-        <TabsList className="sm:flex  gap-0 !p-0 sm:ml-2.5 ">
+      max-sm:overflow-x-auto max-sm:w-[calc(100vw - 20px)]">
+        <TabsList className="max-sm:flex  gap-0 !p-0 max-sm:ml-2.5 ">
           {tabs.map((elem, index) => (
             <TabsTrigger
-              className={cn('w-full sm:w-[117px] h-8.75 dark:!bg-black-1 !bg-grey-5')}
+              className={cn('w-full max-sm:w-[117px] h-8.75 dark:!bg-black-1 !bg-grey-5')}
               size="xl"
               key={index}
               value={index.toString()}

@@ -14,14 +14,14 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
 }) => {
   const { mode } = useDarkMode()
   return (
-    <div css={cn(` flex flex-col mt-[30px] sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
+    <div css={cn(` flex flex-col mt-[30px] max-sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
       <div
-        className="!h-[97px] sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold
+        className="!h-[97px] max-sm:h-[81px]  flex flex-row justify-center items-center text-regular font-semibold
           dark:text-white text-black"
       >
         <Lottie
           animationData={mode === 'dark' ? NoResultFarmdark : NoResultFarmlite}
-          className="h-[97px] sm:h-[81px] w-[168px] mx-auto"
+          className="h-[97px] max-sm:h-[81px] w-[168px] mx-auto"
         />
       </div>
       <div className="flex items-center flex-col">

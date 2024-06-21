@@ -1,10 +1,10 @@
-import { FC, useState, Dispatch, SetStateAction, useRef, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
-import { poolType, Pool } from './constants'
+import { Pool, poolType } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import 'slick-carousel/slick/slick.css'
@@ -20,24 +20,24 @@ const STYLED_POPUP = styled(PopupCustom)<{
   }
   .ant-modal-close-x {
     > img {
-      ${tw`sm:!h-4 sm:!w-4 absolute bottom-2 opacity-60`}
+      ${tw`max-sm:!h-4 max-sm:!w-4 absolute bottom-2 opacity-60`}
     }
   }
   .ant-modal-body {
-    ${tw`p-5 sm:p-[15px]`}
+    ${tw`p-5 max-sm:p-[15px]`}
   }
   .slick-prev {
     ${tw`text-white text-regular font-semibold cursor-pointer bg-blue-1 w-[152px] h-[50px] 
       rounded-half left-2.5 top-[330px] text-regular font-semibold cursor-pointer z-10
-      sm:top-[470px] sm:left-0 !flex flex-row justify-center items-center`}
+      max-sm:top-[470px] max-sm:left-0 !flex flex-row justify-center items-center`}
     &:before {
       display: none;
     }
   }
   .next-btn {
-    ${tw`text-regular font-semibold cursor-pointer bg-black-4 sm:bottom-3
+    ${tw`text-regular font-semibold cursor-pointer bg-black-4 max-sm:bottom-3
       w-[150px] h-9 rounded-half bottom-[-2px] text-regular font-semibold
-        cursor-pointer z-10 !flex flex-row justify-center items-center absolute sm:w-2/5`}
+        cursor-pointer z-10 !flex flex-row justify-center items-center absolute max-sm:w-2/5`}
     right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 76px)' : '10px')};
     background: ${({ currentSlide, userAnswer, mode }) =>
       currentSlide === 1 && userAnswer.answerOne === null
@@ -75,23 +75,23 @@ const STYLED_POPUP = styled(PopupCustom)<{
   .prev-btn {
     ${tw`dark:text-white text-blue-1 text-regular font-semibold cursor-pointer 
     text-regular font-semibold cursor-pointer z-10 left-2.5 bottom-2 underline
-    !flex flex-row justify-center items-center absolute sm:bottom-5 sm:w-auto`}
+    !flex flex-row justify-center items-center absolute max-sm:bottom-5 max-sm:w-auto`}
   }
   .slide {
     * {
       ${tw`font-semibold text-center`}
     }
     img {
-      ${tw`h-[162px] w-[170px] sm:h-[150px] sm:w-[205px]`}
+      ${tw`h-[162px] w-[170px] max-sm:h-[150px] max-sm:w-[205px]`}
     }
     h2 {
-      ${tw`text-lg font-semibold dark:text-grey-5 text-black-4 mb-5 sm:text-average`}
+      ${tw`text-lg font-semibold dark:text-grey-5 text-black-4 mb-5 max-sm:text-average`}
     }
     .subText {
       ${tw`font-medium text-regular dark:text-grey-2 text-grey-1`}
     }
     .question {
-      ${tw`font-semibold text-lg dark:text-grey-5 text-black-4 text-left mt-6 mb-3.75 sm:text-average`}
+      ${tw`font-semibold text-lg dark:text-grey-5 text-black-4 text-left mt-6 mb-3.75 max-sm:text-average`}
     }
     .cta {
       ${tw`text-white text-regular font-semibold cursor-pointer w-[152px] h-[35px] rounded-half
@@ -100,10 +100,10 @@ const STYLED_POPUP = styled(PopupCustom)<{
     }
     .option-cnt-active {
       ${tw`bg-gradient-to-r from-secondary-gradient-1 to-secondary-gradient-2
-         w-[460px] h-[58px] cursor-pointer rounded-tiny p-px sm:w-full sm:h-12.5`}
+         w-[460px] h-[58px] cursor-pointer rounded-tiny p-px max-sm:w-full max-sm:h-12.5`}
     }
     .option-cnt {
-      ${tw`w-[460px] h-[58px] cursor-pointer rounded-tiny mb-2.5 sm:w-full sm:h-12.5`}
+      ${tw`w-[460px] h-[58px] cursor-pointer rounded-tiny mb-2.5 max-sm:w-full max-sm:h-12.5`}
     }
     .active {
       ${tw`dark:text-grey-8 text-black-4`}
@@ -118,7 +118,7 @@ const STYLED_POPUP = styled(PopupCustom)<{
 const OPTION = styled.div`
   ${tw`h-full w-full cursor-pointer rounded-tiny dark:bg-black-1 bg-grey-5 
   !text-left px-3.75 pt-3.75 text-average font-semibold dark:text-grey-2 text-grey-1 mb-3.75
-  sm:w-full sm:h-12.5 sm:text-regular`}
+  max-sm:w-full max-sm:h-12.5 max-sm:text-regular`}
 `
 const Error = () => (
   <div tw="!text-left !font-medium text-tiny text-red-2 relative bottom-1.5">
@@ -293,7 +293,7 @@ export const ChoosePool: FC<{
           </div>
         </div>
         <div className="slide">
-          <div tw="absolute top-[-2px] text-average !text-grey-2 dark:!text-grey-1 sm:text-regular">
+          <div tw="absolute top-[-2px] text-average !text-grey-2 dark:!text-grey-1 max-sm:text-regular">
             <span tw="text-purple-3">Step 1</span> of 3
           </div>
           <div className="question">What are your risk preferences?</div>

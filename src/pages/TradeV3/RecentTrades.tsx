@@ -87,7 +87,7 @@ export const RecentTrades: FC = () => {
   }
 
   return (
-    <div ref={wrapperRef} className={cn('overflow-auto h-full sm:max-h-[300px]')}>
+    <div ref={wrapperRef} className={cn('overflow-auto h-full max-sm:max-h-[300px]')}>
       <div>
         <div className={cn('flex items-center px-2 my-1.5')}>
           <div className={cn('w-1/3')}>
@@ -101,7 +101,7 @@ export const RecentTrades: FC = () => {
           </div>
         </div>
       </div>
-      <div className={cn('overflow-auto h-full sm:max-h-[200px]')}>
+      <div className={cn('overflow-auto h-full max-sm:max-h-[200px]')}>
         {tradeHistory.map((trade) => (
           <div key={trade._id} className={cn('flex items-center justify-between px-2')}>
             <p
@@ -119,7 +119,7 @@ export const RecentTrades: FC = () => {
           </div>
         ))}
         {isLoading && (
-          <div className="sm:h-[300px]">
+          <div className="max-sm:h-[300px]">
             <RotatingLoader text="Fetching trades" textSize={12} iconSize={18} />
           </div>
         )}

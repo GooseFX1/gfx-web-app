@@ -45,7 +45,7 @@ const FarmBalanceItem = ({
   token?: string
   earnedUSD?: number | string
 }) => (
-  <div className={cn('flex flex-row md-xl:flex-col md-xl:w-max justify-between md-xl:justify-normal sm:mb-1')}>
+  <div className={cn('flex flex-row md-xl:flex-col md-xl:w-max justify-between md-xl:justify-normal max-sm:mb-1')}>
     <h4 className={cn(`dark:text-grey-8 text-black-4 font-semibold text-regular`, titlePosition)}>{title}</h4>
     <div
       className={cn(
@@ -816,7 +816,7 @@ const DepositAndWithdrawToggle: FC<DepositAndWithdrawToggleProps> = ({
   <RadioOptionGroup
     defaultValue={'deposit'}
     value={value}
-    className={`w-full md-xl:w-[190px] sm:mt-1`}
+    className={`w-full md-xl:w-[190px] max-sm:mt-1`}
     optionClassName={`w-full md-xl:w-[85px] text-h5`}
     options={[
       {
@@ -858,7 +858,7 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
   const { mode } = useDarkMode()
 
   return (
-    <div className={'flex flex-col min-lg:flex-row gap-2.5 sm:mt-3'}>
+    <div className={'flex flex-col min-lg:flex-row gap-2.5 max-sm:mt-3'}>
       {connected ? (
         <Button
           colorScheme={'blue'}

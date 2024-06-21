@@ -195,7 +195,7 @@ export const FarmHeader: FC = () => {
   return (
     <div
       className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll
-      p-5 pt-3.75 sm:pl-2.5 sm:pr-0 pb-0
+      p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0
       `}
     >
       {poolSelectionModal && (
@@ -231,7 +231,7 @@ export const FarmHeader: FC = () => {
         variant={'ghost'}
         onClick={setPoolSelectionModal.on}
       >
-        <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="sm:mr-2.5" />
+        <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="max-sm:mr-2.5" />
       </Button>
     </div>
   )

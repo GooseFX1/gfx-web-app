@@ -19,15 +19,15 @@ import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
 // const ROW = styled.div`
-//   ${tw`flex flex-row justify-between items-start mb-2.5 sm:mb-2`}
+//   ${tw`flex flex-row justify-between items-start mb-2.5 max-sm:mb-2`}
 //   > span {
-//     ${tw`text-average font-semibold text-grey-2 sm:text-regular`}
+//     ${tw`text-average font-semibold text-grey-2 max-sm:text-regular`}
 //   }
 //   .value {
-//     ${tw`text-black-4 dark:text-white font-semibold sm:text-regular`}
+//     ${tw`text-black-4 dark:text-white font-semibold max-sm:text-regular`}
 //   }
 //   .spacing {
-//     ${tw`mb-[25px] sm:mb-3.75`}
+//     ${tw`mb-[25px] max-sm:mb-3.75`}
 //   }
 // `
 
@@ -111,7 +111,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
 
   // return (
   //   <WRAPPER>
-  //     <div tw="mt-[30px] mb-7 sm:my-0">
+  //     <div tw="mt-[30px] mb-7 max-sm:my-0">
   //       <ROW>
   //         <span>Order Type</span>
   //         <span className="value">{order.display === 'limit' ? 'Limit' : 'Market'}</span>
@@ -171,7 +171,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
       <DialogContent
         size="md"
         placement={isMobile ? 'bottom' : 'default'}
-        className={cn('rounded-[3px] sm:bottom-0  pt-3 flex flex-col gap-0')}
+        className={cn('pt-3 flex flex-col gap-0')}
       >
         <DialogCloseDefault />
 

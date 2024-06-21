@@ -8,7 +8,7 @@ import { CenteredDiv, CenteredImg, SVGToPrimary2, SVGToWhite } from '../styles'
 const TABS = ['/trade', '/farm']
 
 const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
-  ${tw`h-[3.5] w-[7vw] flex justify-center items-center text-smallest capitalize sm:text-regular`};
+  ${tw`h-[3.5] w-[7vw] flex justify-center items-center text-smallest capitalize max-sm:text-regular`};
   font-weight: ${({ $hover }) => ($hover ? '600' : 'normal')};
   color: ${({ $hover, $mode }) =>
     $hover && $mode === 'dark'
@@ -21,7 +21,7 @@ const LABEL = styled.span<{ $mode: string; $hover: boolean }>`
 `
 
 const TAB = styled(Link)<{ $hover: boolean; $mode: string }>`
-  ${tw`flex flex-col items-center justify-center sm:relative sm:flex-row sm:justify-center sm:w-full`}
+  ${tw`flex flex-col items-center justify-center max-sm:relative max-sm:flex-row max-sm:justify-center max-sm:w-full`}
 
   @media (max-width: 500px) {
     background-color: ${({ $hover }) => ($hover ? '#5855FF' : 'inherit')};
@@ -29,11 +29,11 @@ const TAB = styled(Link)<{ $hover: boolean; $mode: string }>`
 `
 
 const TAB_ICON = styled(CenteredImg)`
-  ${tw`mb-2.5 h-6 w-6 sm:absolute sm:left-10 sm:!mb-0`}
+  ${tw`mb-2.5 h-6 w-6 max-sm:absolute max-sm:left-10 max-sm:!mb-0`}
 `
 
 const WRAPPER = styled(CenteredDiv)<{ $height: number; $index: number; $width: number }>`
-  ${tw`relative h-20 rounded-circle sm:mt-8`}
+  ${tw`relative h-20 rounded-circle max-sm:mt-8`}
   background-color: ${({ theme }) => theme.bg20};
 
   .arrow-down {

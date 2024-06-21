@@ -1,23 +1,21 @@
 /* eslint-disable */
-import React, { useState, FC, useMemo, useEffect } from 'react'
-import { useAccounts, useCrypto, useTokenRegistry, useOrderBook, useDarkMode, usePriceFeed } from '../../context'
+import React, { FC, useEffect, useMemo, useState } from 'react'
+import { useAccounts, useCrypto, useDarkMode, useOrderBook, usePriceFeed, useTokenRegistry } from '../../context'
 import tw, { styled } from 'twin.macro'
 import { ITraderRiskGroup, useTraderConfig } from '../../context/trader_risk_group'
 import { formatNumberInThousands, getPerpsPrice } from './perps/utils'
 import { ClosePositionDialog } from './ClosePosition'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
-import { RotatingLoader } from '../../components/RotatingLoader'
-import { PerpsEndModal } from './PerpsEndModal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { httpClient } from '../../api'
 import { GET_USER_FUNDING_HISTORY } from './perps/perpsConstants'
-import { Button, Tabs, TabsContent, TabsList, TabsTrigger, cn } from 'gfx-component-lib'
-import { OrderBook } from './OrderBook'
+import { Button, cn, Tabs, TabsContent, TabsList, TabsTrigger } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel, InfoLabelNunito, TitleLabel } from './perps/components/PerpsGenericComp'
 import { checkMobile } from '@/utils'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+
 const tabs = ['Positions', 'Open Orders', 'Trades', 'Funding History', 'SOL Unsettled P&L']
 
 type TabColumnsDisplayProps = {
@@ -505,7 +503,7 @@ const OpenOrdersComponent: FC = () => {
   return (
     <>
       {!openOrderUI.length ? (
-        <div className={cn('flex items-center justify-center h-[80%] sm:h-[250px] rounded-b-[3px]')}>
+        <div className={cn('flex items-center justify-center h-[80%] max-sm:h-[250px] rounded-b-[3px]')}>
           <h4 className="text-grey-1"> No Open Orders</h4>
         </div>
       ) : (
@@ -877,7 +875,7 @@ export const HistoryPanel: FC = () => {
           if (isMobile && index > 1) return null
           return (
             <TabsTrigger
-              className={cn('w-[20%] sm:w-[50%]')}
+              className={cn('w-[20%] max-sm:w-[50%]')}
               size="xl"
               key={index}
               value={index.toString()}
@@ -889,7 +887,7 @@ export const HistoryPanel: FC = () => {
           )
         })}
       </TabsList>
-      <TabsContent className={cn('h-full sm:min-h-[200px] rounded-b-[3px] sm:rounded-[10px]')} value="0">
+      <TabsContent className={cn('h-full max-sm:min-h-[200px] rounded-b-[3px] max-sm:rounded-[10px]')} value="0">
         <>
           {!checkMobile() && <TabColumnsDisplay activeTab={activeTab} />}
           <PositionDetails
@@ -1028,7 +1026,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
             </div>
           </div>
         ) : (
-          <div className={cn('flex items-center justify-center sm:h-[250px] h-[80%]')}>
+          <div className={cn('flex items-center justify-center max-sm:h-[250px] h-[80%]')}>
             <h4 className="text-grey-1"> No Positions Found</h4>
           </div>
         )}

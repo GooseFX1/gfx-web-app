@@ -16,12 +16,12 @@ import {
 } from 'gfx-component-lib'
 
 // const TEXT_AREA = styled.div`
-//     ${tw`h-[452px] w-full p-[1.2px] mt-4 sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
+//     ${tw`h-[452px] w-full p-[1.2px] mt-4 max-sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
 //     background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
 //     flex-grow: 0;
 //
 //     .text-area-inner {
-//         ${tw`h-[450px] sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
+//         ${tw`h-[450px] max-sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
 //     }
 //
 //     h3 {
@@ -45,18 +45,18 @@ import {
 // `
 
 // const TOS_MODAL = styled(Modal)`
-//     ${tw`w-[600px]! sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
+//     ${tw`w-[600px]! max-sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
 //     &.ant-modal {
 //         ${tw`!rounded-bigger`}
 //     }
 //
 //     .ant-modal-body {
-//         ${tw`sm:px-3! sm:h-[520px]`}
+//         ${tw`max-sm:px-3! max-sm:h-[520px]`}
 //     }
 // `
 
 // const CONFIRM = styled.div`
-//     ${tw`flex items-center p-2 mt-2.5 sm:pb-0`}
+//     ${tw`flex items-center p-2 mt-2.5 max-sm:pb-0`}
 // `
 //
 // const MAINBUTTON = styled.button<{ checked }>`
@@ -128,20 +128,21 @@ export const TermsOfService: FC<{
   return (
     <Dialog open={toShow} onOpenChange={changeTOSState}>
       <DialogOverlay />
-      <DialogContent size={'md'} className={'flex flex-col gap-3'}>
+      <DialogContent size={'md'} className={'flex flex-col gap-0'}>
         <DialogHeader
-          className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid pb-[5px]
+          className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
         dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
         >
           <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>
             Welcome to GOOSEFX!
           </h3>
-          <DialogCloseDefault className={'top-0'} />
+          <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
-        <DialogBody className={'p-2.5 flex-col'}>
+        <DialogBody className={'flex-col px-2.5'}>
           <div className={`flex flex-col gap-4 overflow-hidden`}>
-            <div className={'overflow-y-scroll no-scrollbar h-[263px] flex flex-col gap-4'}>
-              <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>General</h3>
+            <div className={'overflow-y-scroll no-scrollbar h-[273px] flex flex-col gap-4 '}>
+              <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary mt-2.5'}>
+                General</h3>
               <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
                 These terms and conditions (“Terms”) govern the use of the Website (defined below) and the Services
                 (defined below). These Terms also include any guidelines, announcements, additional terms,
@@ -439,7 +440,7 @@ export const TermsOfService: FC<{
                 of use or privacy policies of third-party websites, you should carefully read and understand those
                 policies.
               </p>
-              <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
+              <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary mb-2.5`}>
                 <b>
                   BY MAKING USE OF OUR SERVICES, YOU ACKNOWLEDGE AND AGREE THAT: (A) YOU ARE AWARE OF THE RISKS
                   ASSOCIATED WITH TRANSACTIONS OF ENCRYPTED OR DIGITAL TOKENS OR CRYPTOCURRENCIES WITH A CERTAIN

@@ -22,12 +22,12 @@ export const Footer: FC = () => (
       `inline-flex w-screen border-t-1 border-solid
      border-b-border-lightmode-secondary dark:border-border-darkmode-secondary
      bg-background-lightmode-primary dark:bg-background-darkmode-primary
-     items-center px-3.75 py-1 mt-auto sm:p-2.5 min-lg:fixed min-lg:bottom-0
+     items-center px-3.75 py-1 mt-auto max-sm:p-2.5 min-lg:fixed min-lg:bottom-0
      `,
-      window.location.pathname.includes('trade') && 'sm:mb-[65px]'
+      window.location.pathname.includes('trade') && 'max-sm:mb-[65px]'
     )}
   >
-    <div className={'inline-flex mr-auto items-center gap-2 sm:hidden'}>
+    <div className={'inline-flex mr-auto items-center gap-2 max-sm:hidden'}>
       <NetworkStatus />
       <FooterDivider />
 
@@ -39,12 +39,12 @@ export const Footer: FC = () => (
 
       <ThemeToggle size={'sm'} colorScheme={'secondary'} />
     </div>
-    <div className={'inline-flex ml-auto items-center sm:flex-wrap sm:gap-3.75 sm:gap-y-2.5'}>
+    <div className={'inline-flex ml-auto items-center max-sm:flex-wrap max-sm:gap-3.75 max-sm:gap-y-2.5'}>
       <Button
         variant={'ghost'}
         onClick={navigateToCurried(NAV_LINKS.terms, '_blank')}
         size={'sm'}
-        className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
+        className={'max-sm:p-0 max-sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 max-sm:h-[26px]'}
       >
         Terms Of Service
       </Button>
@@ -52,7 +52,7 @@ export const Footer: FC = () => (
         variant={'ghost'}
         onClick={navigateToCurried(NAV_LINKS.risks, '_blank')}
         size={'sm'}
-        className={'sm:p-0 sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 sm:h-[26px]'}
+        className={'max-sm:p-0 max-sm:text-h5 dark:text-text-darkmode-primary text-text-blue text-h6 max-sm:h-[26px]'}
       >
         Risks & Disclaimers
       </Button>

@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useState, useMemo, useCallback, SyntheticEvent, useRef } from 'react'
-import { Input, Image } from 'antd'
+import React, { FC, SyntheticEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Image, Input } from 'antd'
 import styled from 'styled-components'
 import { TokenInfo } from '@solana/spl-token-registry'
 import { Modal } from '../../components'
-import { useTokenRegistry, useDarkMode, useConnectionConfig, useSwap } from '../../context'
+import { useConnectionConfig, useDarkMode, useSwap, useTokenRegistry } from '../../context'
 import { CenteredDiv, CenteredImg, SpaceBetweenDiv, SVGToWhite } from '../../styles'
 import { POPULAR_TOKENS } from '../../constants'
 import { aborter, checkMobile } from '../../utils'
@@ -13,13 +13,13 @@ import 'styled-components/macro'
 import tw from 'twin.macro'
 
 const BODY = styled.div`
-  ${tw`h-[300px] sm:h-[268px]`}
+  ${tw`h-[300px] max-sm:h-[268px]`}
   margin: 0 -${({ theme }) => theme.margin(3)};
   overflow-y: auto;
 `
 
 const SELECTOR_MODAL = styled(Modal)`
-  ${tw`top-[-24px]! w-[628px]! sm:w-full!`}
+  ${tw`top-[-24px]! w-[628px]! max-sm:w-full!`}
   background-color: ${({ theme }) => theme.bg20} !important;
 
   .close-icon-root {
@@ -36,7 +36,7 @@ const SELECTOR_MODAL = styled(Modal)`
 `
 
 const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
-  ${tw`absolute top-[7px] left-[7px] h-[42px] w-[188px] rounded-circle cursor-pointer z-[1] sm:w-[142px]`}
+  ${tw`absolute top-[7px] left-[7px] h-[42px] w-[188px] rounded-circle cursor-pointer z-[1] max-sm:w-[142px]`}
 
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   background-color: ${({ theme }) => theme.bg21};
@@ -46,7 +46,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
     color: ${({ theme }) => theme.white};
 
     .text-primary {
-      ${tw`sm:w-12.5 sm:text-[15px]`}
+      ${tw`max-sm:w-12.5 max-sm:text-[15px]`}
       ${({ theme }) => theme.ellipse}
     }
 
@@ -61,7 +61,7 @@ const SELECTOR = styled(CenteredDiv)<{ $height: string }>`
 `
 
 const INPUT = styled.div`
-  ${tw`relative w-[528px] sm:w-11/12`}
+  ${tw`relative w-[528px] max-sm:w-11/12`}
 
   input {
     height: ${({ theme }) => theme.margin(5)};
@@ -133,11 +133,11 @@ const TOKEN = styled.div`
 `
 
 const POPULAR = styled.div`
-  ${tw`flex justify-center ml-[-6px] p-0 sm:flex-wrap sm:justify-start sm:ml-0`}
+  ${tw`flex justify-center ml-[-6px] p-0 max-sm:flex-wrap max-sm:justify-start max-sm:ml-0`}
 `
 
 const POPULAR_TK = styled(TOKEN)`
-  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] sm:m-1 sm:ml-0`}
+  ${tw`flex justify-between rounded-bigger py-0 pr-4 pl-1 h-[40px] w-auto ml-[12px] max-sm:m-1 max-sm:ml-0`}
   border: ${({ theme }) => '1.5px solid ' + theme.tokenBorder};
   background-color: ${({ theme }) => theme.bg2};
   padding: 0 16px 0 4px;

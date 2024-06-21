@@ -10,7 +10,7 @@ import { getPriceObject } from '../../../web3/utils'
 const WRAPPER = styled.div`
     ${tw`p-10`}
     table {
-      ${tw`sm:dark:bg-black-3 sm:bg-white mt-[10px] w-full overflow-x-hidden`}
+      ${tw`max-sm:dark:bg-black-3 max-sm:bg-white mt-[10px] w-full overflow-x-hidden`}
       border-radius: 20px 20px 0 0;
   
       @media (max-width: 500px) {
@@ -40,10 +40,10 @@ const WRAPPER = styled.div`
   
     thead {
       ${tw`text-base font-semibold bg-grey-5 dark:bg-black-1 
-      sm:h-[52px] rounded-[20px 20px 5px 5px] text-regular`}
+      max-sm:h-[52px] rounded-[20px 20px 5px 5px] text-regular`}
   
       tr {
-        ${tw`h-10 sm:h-full`}
+        ${tw`h-10 max-sm:h-full`}
         border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
   
         th {
@@ -64,7 +64,7 @@ const WRAPPER = styled.div`
       ${tw`dark:bg-black-1 bg-grey-5 overflow-hidden`}
       tr {
         ${tw`dark:bg-black-2 bg-white mt-[15px] dark:border-black-2 border-white
-        sm:mb-0 rounded-small cursor-pointer h-[60px] sm:h-[70px]`};
+        max-sm:mb-0 rounded-small cursor-pointer h-[60px] max-sm:h-[70px]`};
   
       td {
         ${tw`h-[100%] flex items-center justify-center text-[15px] font-semibold text-center

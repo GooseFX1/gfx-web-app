@@ -76,7 +76,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
     setIsStakeLoading.off()
   }, [stake, proposedStakeAmount, publicKey, isStakeSelected])
   const disabledStakeButton =
-    +proposedStakeAmount <= 0 ||
+    (+proposedStakeAmount <= 0||isNaN(+proposedStakeAmount)) ||
     (isStakeSelected && +proposedStakeAmount > userGoFxBalance.uiAmount) ||
     (!isStakeSelected && +proposedStakeAmount > totalStaked)
 

@@ -57,7 +57,7 @@ const GRADIENT_BACKGROUND = styled.div`
 //   .ant-modal-content {
 //     ${tw`h-full overflow-y-hidden overflow-x-hidden`}
 //     .ant-modal-body {
-//       ${tw`pb-0 pt-4 sm:px-3`}
+//       ${tw`pb-0 pt-4 max-sm:px-3`}
 //       .header-wrapper {
 //         ${tw`pb-3`}
 //         border-bottom: ${({ theme }) => '1px solid ' + theme.tokenBorder};
@@ -103,7 +103,7 @@ const GRADIENT_BACKGROUND = styled.div`
 //   }
 
 //   .popular-container:after {
-//     ${tw`flex w-[528px] m-0 p-0 h-[1.5px] sm:h-0`}
+//     ${tw`flex w-[528px] m-0 p-0 h-[1.5px] max-sm:h-0`}
 //     background-color: ${({ theme }) => theme.tokenBorder};
 //     content: '';
 //   }
@@ -124,7 +124,7 @@ const GRADIENT_BACKGROUND = styled.div`
 //   }
 
 //   .no-result-found {
-//     ${tw`text-center text-regular font-medium mt-[150px] sm:mt-[50px]`}
+//     ${tw`text-center text-regular font-medium mt-[150px] max-sm:mt-[50px]`}
 //     color: ${({ theme }) => theme.text1};
 //   }
 // `
@@ -236,7 +236,7 @@ const SelectCryptoModal: FC<{
             onChange={(e) => setSearchTokens(e.target.value)}
             onClear={() => setSearchTokens('')}
             value={searchTokens}
-            className={'min-w-[250px] sm:w-[95%] sm:!max-w-[400px] !max-w-[440px] min-h-[40px] '}
+            className={'min-w-[250px] max-sm:w-[95%] max-sm:!max-w-[400px] !max-w-[440px] min-h-[40px] '}
           />
         </DialogHeader>
         <DialogBody

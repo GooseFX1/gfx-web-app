@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, FC, useRef, useState } from 'react'
+import { FC, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import PageLoader from '../../components/common/PageLoader'
@@ -98,11 +98,11 @@ const Bridge: FC = () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <div
-                className="border border-solid border-grey-1 w-[178px] sm:w-[160px] h-8 rounded-[100px]
+                className="border border-solid border-grey-1 w-[178px] max-sm:w-[160px] h-8 rounded-[100px]
               cursor-pointer py-0.5 pl-2.5 pr-1 flex flex-row items-center 
-              justify-between bg-grey-5 dark:bg-black-1 sm:right-0"
+              justify-between bg-grey-5 dark:bg-black-1 max-sm:right-0"
               >
-                <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 sm:text-tiny">
+                <span className="mr-[5px] font-bold text-regular dark:text-grey-5 text-black-4 max-sm:text-tiny">
                   Bridge Wallet FAQ
                 </span>
                 <img className="h-6" src="/img/assets/Leaderboard/questionMark.svg" alt="question-icon" />

@@ -55,8 +55,8 @@ export const PerpsEndModal: FC<{
         alt="graphic"
         width="100%"
       />
-      <div tw="mb-5 relative top-[-50px] sm:top-[-25px]">
-        <div tw="mb-1.5 sm:mb-0">
+      <div tw="mb-5 relative top-[-50px] max-sm:top-[-25px]">
+        <div tw="mb-1.5 max-sm:mb-0">
           <span tw="dark:text-grey-2 text-black-4 text-lg font-semibold mr-1.5">SOL-PERP</span>
           <span className={'orderType ' + (side === 'buy' ? 'greenShade' : 'redShade')}>
             {side === 'buy' ? 'Long' : 'Short'}
@@ -69,7 +69,7 @@ export const PerpsEndModal: FC<{
           <span tw="text-grey-1 dark:text-grey-2 text-average font-semibold">({percentageChange}%)</span>
         </div>
       </div>
-      <div tw="flex flex-row justify-between relative top-[-50px] mb-7 sm:top-[-25px]">
+      <div tw="flex flex-row justify-between relative top-[-50px] mb-7 max-sm:top-[-25px]">
         <COL>
           <span className="key">Entry Price</span>
           <span className="value">${entryPrice}</span>
@@ -88,7 +88,7 @@ export const PerpsEndModal: FC<{
           Share it with your friends!
         </div>
       )}
-      <div tw="relative top-[-50px] text-center font-semibold text-regular dark:text-grey-5 text-black-4 sm:top-[-25px]">
+      <div tw="relative top-[-50px] text-center font-semibold text-regular dark:text-grey-5 text-black-4 max-sm:top-[-25px]">
         Take a screenshot!
       </div>
     </WRAPPER>
