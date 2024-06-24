@@ -324,9 +324,9 @@ export const ClosePosition: FC<{
         className={`mx-auto mb-2`}
         colorScheme={'blue'}
         disabled={loading}
-        loading={loading}
+        isLoading={loading}
         size="lg"
-        width={'100'}
+        fullWidth
       >
         <span>
           {percentDetails[percentageIndex]?.display

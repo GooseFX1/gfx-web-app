@@ -2,11 +2,11 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import useRewards from '../../context/rewardsContext'
 import { UnstakeTicket } from 'goosefx-stake-rewards-sdk'
 import moment from 'moment/moment'
-import { Loader } from '../Loader'
 import { numberFormatter } from '../../utils'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogHeader, DialogOverlay } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import CloseLite from '@/assets/close-lite.svg?react'
+
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
   onClose: () => void
@@ -125,14 +125,11 @@ const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
         disabled={!canClaim || isClaiming}
         colorScheme={canClaim ? 'primaryGradient' : 'default'}
         onClick={unstakeGoFX}
+        isLoading={isClaiming}
       >
-        {isClaiming ? (
-          <div className={`absolute`}>
-            <Loader zIndex={2} />
-          </div>
-        ) : (
+        {
           claimButtonText
-        )}
+        }
       </Button>
     </div>
   )

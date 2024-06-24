@@ -10,13 +10,13 @@ import {
   SSLToken
 } from '@/pages/FarmV3/constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { APP_RPC, useAccounts, useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '@/context'
+import { APP_RPC, useAccounts, useConnectionConfig, usePriceFeedFarm, useSSLContext } from '@/context'
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
 import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
-import { Loader, SkeletonCommon } from '@/components'
+import { SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import TokenInput from '@/components/common/TokenInput'
 import { Connect } from '@/layouts'
@@ -855,7 +855,6 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
   disableActionButton
 }) => {
   const { connected } = useWallet()
-  const { mode } = useDarkMode()
 
   return (
     <div className={'flex flex-col min-lg:flex-row gap-2.5 max-sm:mt-3'}>
@@ -882,10 +881,9 @@ const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
           canClaim && !isLoading && 'before:animate-border-spin'
         )}
         disabled={isLoading || !canClaim || isLoading}
+        isLoading={isLoading}
       >
-        {isLoading ? (
-          <Loader color={mode == 'dark' ? 'white' : 'bg-background-blue'} />
-        ) : canClaim ? (
+        {canClaim ? (
           `Claim ${bigNumberFormatter(claimableReward)} ${token}`
         ) : (
           'No Claimable Rewards'

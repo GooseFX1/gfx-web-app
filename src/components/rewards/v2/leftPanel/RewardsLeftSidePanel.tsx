@@ -11,7 +11,6 @@ import useRewards from '../../../../context/rewardsContext'
 import RewardsUnstakeBottomBar from './UnstakeBottomBar'
 import { numberFormatter } from '../../../../utils'
 import UnstakeConfirmationModal from '../../UnstakeConfirmationModal'
-import { Loader } from '../../../Loader'
 import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
 import HowItWorksButton from '../HowItWorksButton'
 import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
@@ -131,10 +130,9 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
               colorScheme={'blue'}
               onClick={handleStakeUnstake}
               disabled={disabledStakeButton || isStakeLoading}
+              isLoading={isStakeLoading}
             >
-              {isStakeLoading ? (
-                <Loader zIndex={2} />
-              ) : +proposedStakeAmount > 0 ? (
+              {+proposedStakeAmount > 0 ? (
                 isStakeSelected ? (
                   `Stake ${numberFormatter(+proposedStakeAmount)} GOFX`
                 ) : (

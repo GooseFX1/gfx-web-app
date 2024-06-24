@@ -211,7 +211,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
               order.size === 'buy' && 'bg-green-3',
               'max-w-[178px] w-full h-10 mt-auto mb-2 ml-auto mr-auto '
             )}
-            loading={isLoading}
+            isLoading={isLoading}
             disabled={isLoading}
             height={checkMobile() ? '45px' : '40px'}
           >

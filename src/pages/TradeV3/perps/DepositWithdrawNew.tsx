@@ -335,7 +335,7 @@ export const DepositWithdraw: FC<{
               size="default"
               variant="default"
               onClick={handleSubmit}
-              loading={isLoading}
+              isLoading={isLoading}
               disabled={checkDisabled() || isLoading}
               className="w-[140px] max-sm:w-[full] mt-[35px] ml-[calc(50% - 70px)] max-sm:ml-[35`%]"
             >

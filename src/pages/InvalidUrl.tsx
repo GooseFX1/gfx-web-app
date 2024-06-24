@@ -1,84 +1,40 @@
 import React, { FC } from 'react'
-import styled from 'styled-components'
-import { MainButton } from '../components'
-import { useDarkMode } from '../context'
+import { useDarkMode } from '@/context'
 import { useHistory } from 'react-router-dom'
 import Lottie from 'lottie-react'
-import notFound from '../animations/404.json'
-import { APP_DEFAULT_ROUTE } from '../constants'
+import notFound from '@/animations/404.json'
+import { APP_DEFAULT_ROUTE } from '@/constants'
+import { Button } from 'gfx-component-lib'
 
-const PAGE_CONTAINER = styled.div`
-  width: 100vw;
-  height: calc(100vh - 58px);
-
-  .moveDown {
-    position: relative;
-    top: 100px;
-  }
-  .animation-404 {
-    height: 500px;
-  }
-  .plug-icon-left {
-    position: absolute;
-    bottom: 58px;
-    left: 0px;
-  }
-  .plug-icon-right {
-    position: absolute;
-    top: 50px;
-    right: 0px;
-  }
-  .not-found-message {
-    margin: 0 auto;
-    color: ${({ theme }) => theme.text11};
-    font-size: 25px;
-    font-weight: 500;
-    width: 30%;
-    min-width: 300px;
-    text-align: center;
-  }
-`
-
-const HOME_BTN = styled(MainButton)`
-  background: linear-gradient(90deg, #5855ff 0%, #dc1fff 100%);
-  margin: 42px auto 0;
-
-  &:hover {
-    background: linear-gradient(90deg, #dc1fff 0%, #dc1fff 100%);
-  }
-
-  span {
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 27px;
-  }
-`
 
 const GenericNotFound: FC<{ redirectLink?: string; redirectString?: string }> = ({
-  redirectLink,
-  redirectString
-}) => {
+                                                                                   redirectLink,
+                                                                                   redirectString
+                                                                                 }) => {
   const { mode } = useDarkMode()
   const history = useHistory()
 
   return (
-    <PAGE_CONTAINER>
-      <Lottie animationData={notFound} className="animation-404" />
-      <img className="plug-icon-left" src={`/img/assets/plug2-${mode}.svg`} alt="" />
-      <img className="plug-icon-right" src={`/img/assets/plug-${mode}.svg`} alt="" />
-      <div className="not-found-message">Oops! We can’t find the page that you are looking for.</div>
-      <div>
-        <HOME_BTN
-          height={'60px'}
-          status={'action'}
-          width={'267px'}
-          radius={'20px'}
-          onClick={() => history.push(redirectLink ? redirectLink : APP_DEFAULT_ROUTE)}
-        >
-          <span> {redirectString ? redirectString : `Go Back Home`}</span>
-        </HOME_BTN>
-      </div>
-    </PAGE_CONTAINER>
+    <div className={`
+    flex flex-1 flex-col items-center relative h-[calc(100vh_-_39px)] w-full
+    `}>
+      <Lottie  animationData={notFound} className="h-[500px]" />
+      <img className="absolute bottom-[58px] left-0" src={`/img/assets/plug2-${mode}.svg`} alt="" />
+      <img className="absolute top-[50px] right-0" src={`/img/assets/plug-${mode}.svg`} alt="" />
+      <h1 className={` h-[25px] text-text-darkmode-tertiary dark:text-buttons-lightmode-primary
+      `}>Oops! We can’t find the page that you are looking for.</h1>
+
+      <Button
+        className={'w-[267px] h-[60px] mt-[42px]'}
+        height={'60px'}
+        status={'action'}
+        onClick={() => history.push(redirectLink ? redirectLink : APP_DEFAULT_ROUTE)}
+        colorScheme={'primaryGradient'}
+      >
+        {redirectString ? redirectString : `Go Back Home`}
+      </Button>
+
+    </div>
   )
 }
 export default GenericNotFound

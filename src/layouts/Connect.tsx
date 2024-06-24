@@ -1,19 +1,17 @@
-import { FC, useCallback, useMemo, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
-import { Loader } from '../components'
 import { truncateAddress } from '../utils'
 import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
-import { useConnectionConfig } from '../context'
-import { useDarkMode, useWalletModal } from '../context'
+import { useConnectionConfig, useDarkMode, useWalletModal } from '../context'
 import { useLocation } from 'react-router-dom'
 import {
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  cn,
   Icon,
   ToastTitle
 } from 'gfx-component-lib'
@@ -71,11 +69,7 @@ export const Connect: FC<MenuItemProps> = ({
     if (!wallet || (!base58PublicKey && adapterName === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
     } else if (!base58PublicKey) {
-      return (
-        <div className={'absolute'}>
-          <Loader zIndex={1} />
-        </div>
-      )
+      return null
     }
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
@@ -152,6 +146,7 @@ export const Connect: FC<MenuItemProps> = ({
               customButtonStyle
             )}
             onClick={() => !connected && handleConnect()}
+            isLoading={wallet?.adapter?.connecting}
           >
             {connected && (
               <div

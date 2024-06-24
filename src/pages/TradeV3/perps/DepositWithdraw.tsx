@@ -440,7 +440,7 @@ export const CloseTradingAccount: FC<{ setDepositWithdrawModal: Dispatch<SetStat
                   onClick={() => handlePlaceOrder()}
                   disabled={buttonState !== ButtonState.CanPlaceOrder} */}
         <Button
-          loading={isLoading}
+          isLoading={isLoading}
           disabled={
             !checkboxChecked ||
             isLoading ||
