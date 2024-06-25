@@ -31,12 +31,14 @@ interface MenuItemProps {
 }
 
 export const Connect: FC<MenuItemProps> = ({
-  containerStyle,
-  customButtonStyle,
-  customMenuListItemsContainerStyle,
-  customMenuListItemStyle
-}) => {
-  const { wallet, connected, publicKey, disconnect } = useWallet()
+                                             containerStyle,
+                                             customButtonStyle,
+                                             customMenuListItemsContainerStyle,
+                                             customMenuListItemStyle
+                                           }) => {
+  const { wallet, connected, publicKey, disconnect, connecting, disconnecting }
+    = useWallet()
+  const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
   const breakpoint = useBreakPoint()
@@ -68,9 +70,7 @@ export const Connect: FC<MenuItemProps> = ({
   const connectLabel = useMemo(() => {
     if (!wallet || (!base58PublicKey && adapterName === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
-    } else if (!base58PublicKey) {
-      return null
-    }
+    } 
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
   }, [base58PublicKey, canConnect, adapterName, wallet, breakpoint])
@@ -146,7 +146,7 @@ export const Connect: FC<MenuItemProps> = ({
               customButtonStyle
             )}
             onClick={() => !connected && handleConnect()}
-            isLoading={wallet?.adapter?.connecting}
+            isLoading={isAttempting}
           >
             {connected && (
               <div
