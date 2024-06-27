@@ -70,10 +70,12 @@ export const Connect: FC<MenuItemProps> = ({
   const connectLabel = useMemo(() => {
     if (!wallet || (!base58PublicKey && adapterName === SolanaMobileWalletAdapterWalletName)) {
       return 'Connect Wallet'
-    } 
+    } else if (!base58PublicKey || isAttempting) {
+      return null
+    }
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, canConnect, adapterName, wallet, breakpoint])
+  }, [base58PublicKey, canConnect, adapterName, wallet, breakpoint,isAttempting])
 
   // watches for a selected wallet returned from modal
   useEffect(() => {
