@@ -9,7 +9,7 @@ import axios from 'axios'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import { AlertOutlined, CheckCircleOutlined } from '@ant-design/icons'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import styled from 'styled-components'
 import { Button, Spin } from 'antd'
 import { customClient } from '../../../api/index'
@@ -122,7 +122,7 @@ const SSLPairWrapper: FC = () => {
 
   const getChartOptions = (index: number) => {
     if (chartData && chartData[index] && chartData[index].length) {
-      const x = _.cloneDeep(options)
+      const x = cloneDeep(options)
       x.series[0]['data'] = chartData[index]
       x.series[0]['name'] = 'active status'
       x['title']['text'] = chartData[index][0].name + ' uptime'

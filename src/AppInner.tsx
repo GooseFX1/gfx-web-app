@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Router } from './Router'
 import { DarkModeProvider, SettingsProvider, WalletProvider } from './context'
 import ThemeProvider from './theme'
@@ -7,11 +7,10 @@ import queryString from 'query-string'
 import WalletBalanceProvider from '@/context/walletBalanceContext'
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [init, setInit] = useState<boolean | null>(null)
 
   useEffect(() => {
     if (existingUserCache === null || existingUserCache.farm === undefined) {
-      setInit(true)
+      console.log('** GFX Application Init **')
       window.localStorage.setItem(
         'gfx-user-cache',
         JSON.stringify({
@@ -37,11 +36,7 @@ export default function AppInner(): JSX.Element {
     const values = queryString.parse(window.location?.search)
 
     console.log(window.location, values)
-  }, [window.location.href])
-
-  useEffect(() => {
-    console.log('** GFX Application Init **')
-  }, [init])
+  }, [])
 
   return (
     existingUserCache !== null && (
