@@ -45,7 +45,6 @@ const WRAPPER_STYLES: CSSProperties = {
 
 const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
 
-
 function PageLoader() {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
@@ -59,9 +58,7 @@ function PageLoader() {
   })
 
   return (
-    <div
-      style={WRAPPER_STYLES}
-    >
+    <div style={WRAPPER_STYLES}>
       <div style={INNER_STYLES}>
         <RiveComponent />
       </div>
