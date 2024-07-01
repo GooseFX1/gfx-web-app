@@ -562,7 +562,7 @@ export const InfoBanner: FC<{
           <div className="white-background">
             <div onClick={() => setIsLocked(!isLocked)}>
               <img
-                className={cn('h-10 w-10 mx-2')}
+                className={cn('h-10 w-10 mx-2 cursor')}
                 src={isLocked ? `/img/assets/${mode}Lock.svg` : `/img/assets/${mode}Unlock.svg`}
                 alt="lock"
               />
