@@ -4,7 +4,7 @@ import { useDarkMode, useConnectionConfig } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
 import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
-import _ from 'lodash'
+import { map, range } from 'lodash'
 import tw, { styled } from 'twin.macro'
 import { InfoBanner } from './InfoBanner'
 import { PlaceOrder } from './PlaceOrder'
@@ -299,6 +299,16 @@ function getInitLayout() {
   return { lg: componentDimensionsLg, md: componentDimensionsMd }
 }
 
+interface IRepositionProps {
+  isLocked: boolean
+}
+
+const Reposition: FC<IRepositionProps> = ({isLocked}) => {
+  return isLocked ?<UNLOCKED_OVERLAY>
+  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+</UNLOCKED_OVERLAY> : null
+}
+
 const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
@@ -336,16 +346,12 @@ const CryptoContent: FC = () => {
     margin: [0, 0]
   }
   const generateDOM = () =>
-    _.map(_.range(layout.lg.length), function (i) {
+    map(range(layout.lg.length), function (i) {
       if (i === 0)
         return (
           <div key={i} className="space-cont">
             {chartContainer}
-            {!isLocked ? (
-              <UNLOCKED_OVERLAY>
-                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-              </UNLOCKED_OVERLAY>
-            ) : null}
+            <Reposition isLocked={isLocked} />
           </div>
         )
       if (i === 1)
@@ -353,11 +359,7 @@ const CryptoContent: FC = () => {
           <div key={i} className="space-cont">
             <>
               <OrderbookTabs />
-              {!isLocked ? (
-                <UNLOCKED_OVERLAY>
-                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-                </UNLOCKED_OVERLAY>
-              ) : null}
+              <Reposition isLocked={isLocked} />
             </>
           </div>
         )
@@ -366,11 +368,7 @@ const CryptoContent: FC = () => {
           <div key={i} className="space-cont">
             <>
               <PlaceOrder />
-              {!isLocked ? (
-                <UNLOCKED_OVERLAY>
-                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-                </UNLOCKED_OVERLAY>
-              ) : null}
+              <Reposition isLocked={isLocked} />
             </>
           </div>
         )
@@ -379,11 +377,7 @@ const CryptoContent: FC = () => {
         return (
           <div key={i} className="space-cont">
             <HistoryPanel />
-            {!isLocked ? (
-              <UNLOCKED_OVERLAY>
-                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-              </UNLOCKED_OVERLAY>
-            ) : null}
+            <Reposition isLocked={isLocked} />
           </div>
         )
       if (i === 4)
@@ -394,20 +388,17 @@ const CryptoContent: FC = () => {
               <UNLOCKED_OVERLAY $blacklisted={blacklisted}>
                 <button className="georestricted">Georestricted</button>
               </UNLOCKED_OVERLAY>
-            ) : !isLocked ? (
-              <UNLOCKED_OVERLAY>
-                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-              </UNLOCKED_OVERLAY>
-            ) : null}
+            ) : <Reposition isLocked={isLocked} />}
           </div>
         )
       return <div key={i}>{/* <span className="text">{i}</span> */}</div>
     })
 
   const onLayoutChange = (newLayout) => {
-    if (JSON.stringify(layout) === JSON.stringify(newLayout)) return
-    localStorage.setItem('lg', JSON.stringify(newLayout))
-    localStorage.setItem('md', JSON.stringify(newLayout))
+    const stringifiedNewLayout = JSON.stringify(newLayout)
+    if (JSON.stringify(layout) === stringifiedNewLayout) return
+    localStorage.setItem('lg', stringifiedNewLayout)
+    localStorage.setItem('md', stringifiedNewLayout)
     setLayout({ lg: newLayout, md: newLayout })
   }
 

@@ -1,4 +1,4 @@
-import React, { FC, lazy, Suspense } from 'react'
+import React, { CSSProperties, FC, lazy, Suspense } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
@@ -34,6 +34,17 @@ import { RewardsProvider } from '@/context/rewardsContext'
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
 
+const WRAPPER_STYLES: CSSProperties = {
+  flex: '1',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 'calc(100dvh - 56px)'
+}
+
+const INNER_STYLES: CSSProperties = { width: '500px', height: '500px' }
+
 function PageLoader() {
   const { mode } = useDarkMode()
   const { RiveComponent } = useRive({
@@ -47,17 +58,8 @@ function PageLoader() {
   })
 
   return (
-    <div
-      style={{
-        flex: '1',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 'calc(100dvh - 56px)'
-      }}
-    >
-      <div style={{ width: '500px', height: '500px' }}>
+    <div style={WRAPPER_STYLES}>
+      <div style={INNER_STYLES}>
         <RiveComponent />
       </div>
     </div>

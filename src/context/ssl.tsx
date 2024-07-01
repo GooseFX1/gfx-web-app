@@ -82,45 +82,9 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
 
   const publicKey: PublicKey | null = useMemo(
-    () => (wallet && wallet?.adapter ? wallet?.adapter?.publicKey : null),
-    [wallet, wallet?.adapter, wallet?.adapter?.publicKey]
+    () => (wallet?.adapter?.publicKey || null),
+    [wallet]
   )
-
-  const getSSLTableData = async () => {
-    try {
-      const res = await httpClient('api-services').post(`${GET_24_CHANGES}`, {
-        devnet: false
-      })
-      const data = res.data
-      setTableData(data)
-    } catch (e) {
-      setTableData(null)
-    }
-  }
-
-  const getAllVolume = async () => {
-    try {
-      const res = await httpClient('api-services').post(`${TOTAL_VOLUME}`, {
-        devnet: false
-      })
-      const data = res.data
-      setSslAllVolume(data)
-    } catch (e) {
-      setSslAllVolume(null)
-    }
-  }
-
-  const getTotalFees = async () => {
-    try {
-      const res = await httpClient('api-services').post(`${TOTAL_FEES}`, {
-        devnet: false
-      })
-      const data = res.data
-      setSslTotalFees(data)
-    } catch (e) {
-      setSslTotalFees(null)
-    }
-  }
 
   // const isWhitelistApi = async () => {
   //   try {
@@ -285,10 +249,10 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const tempRewards = {}
       for (let i = 0; i < allPoolSslData.length; i++) {
         const mint = allPoolSslData[i]?.mint?.toBase58()
-        const liqForMint = allPoolFilteredLiquidityAcc[mint]
         if (!allPoolFilteredLiquidityAcc[mint]) {
           tempRewards[mint] = null
         } else {
+          const liqForMint = allPoolFilteredLiquidityAcc[mint]
           const diff = allPoolSslData[i].totalAccumulatedLpReward.sub(liqForMint.lastObservedTap)
           const numerator = diff.mul(liqForMint.amountDeposited)
           const answer = numerator.div(allPoolSslData[i].totalLiquidityDeposits)
@@ -301,6 +265,42 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   //Call API to get ssl table data. Need to run only once
   useEffect(() => {
+    const getSSLTableData = async () => {
+      try {
+        const res = await httpClient('api-services').post(`${GET_24_CHANGES}`, {
+          devnet: false
+        })
+        const data = res.data
+        setTableData(data)
+      } catch (e) {
+        setTableData(null)
+      }
+    }
+  
+    const getAllVolume = async () => {
+      try {
+        const res = await httpClient('api-services').post(`${TOTAL_VOLUME}`, {
+          devnet: false
+        })
+        const data = res.data
+        setSslAllVolume(data)
+      } catch (e) {
+        setSslAllVolume(null)
+      }
+    }
+  
+    const getTotalFees = async () => {
+      try {
+        const res = await httpClient('api-services').post(`${TOTAL_FEES}`, {
+          devnet: false
+        })
+        const data = res.data
+        setSslTotalFees(data)
+      } catch (e) {
+        setSslTotalFees(null)
+      }
+    }
+
     getSSLTableData(), getAllVolume(), getTotalFees()
   }, [])
 

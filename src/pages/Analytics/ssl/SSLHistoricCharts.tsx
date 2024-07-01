@@ -6,7 +6,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 
 const PAGE_WRAPPER = styled.div`
   height: 100%;
@@ -150,7 +150,7 @@ const SSLHistoricCharts: FC<{ chartData: any; loading: boolean }> = ({ chartData
 
   const primaryOptionsAmount = useMemo(() => {
     if (tokenData.primary && tokenData.primary.length) {
-      const x = _.cloneDeep(options)
+      const x = cloneDeep(options)
       x.series[0]['data'] = tokenData.primary
       x.series[0]['name'] = tokenData.primary[0].mintName
       x['title']['text'] = tokenData.primary[0].mintName + ' Liquidity amount'
@@ -160,7 +160,7 @@ const SSLHistoricCharts: FC<{ chartData: any; loading: boolean }> = ({ chartData
 
   const primaryOptionsValue = useMemo(() => {
     if (tokenData.primary && tokenData.primary.length) {
-      const x = _.cloneDeep(options)
+      const x = cloneDeep(options)
       const processedData = tokenData.primary.map((item) => {
         return {
           ...item,
@@ -181,7 +181,7 @@ const SSLHistoricCharts: FC<{ chartData: any; loading: boolean }> = ({ chartData
       tokenData.secondary[index] &&
       tokenData.secondary[index].length
     ) {
-      const x = _.cloneDeep(options)
+      const x = cloneDeep(options)
       if (amount) {
         x.series[0]['data'] = tokenData.secondary[index]
         x.series[0]['name'] = tokenData.secondary[index][0].mintName

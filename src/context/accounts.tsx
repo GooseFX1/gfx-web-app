@@ -46,6 +46,7 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { wallet } = useWallet()
   const [balances, setBalances] = useState<IAccounts>({})
   const [fetching, setFetching] = useState(false)
+  const { publicKey } = wallet?.adapter || {}
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
     try {
@@ -74,17 +75,17 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     ;(async () => {
       setFetching(true)
-
+      
       try {
+        
         const [parsedAccounts, solAmount] = await Promise.all([
-          connection.getParsedTokenAccountsByOwner(wallet?.adapter?.publicKey, { programId: TOKEN_PROGRAM_ID }),
-          connection.getBalance(wallet?.adapter?.publicKey)
+          connection.getParsedTokenAccountsByOwner(publicKey, { programId: TOKEN_PROGRAM_ID }),
+          connection.getBalance(publicKey)
         ])
 
         const accounts = parsedAccounts.value.reduce((acc: IAccounts, { account }) => {
           const { mint, tokenAmount } = account.data.parsed.info
           acc[mint] = tokenAmount
-          handleAccountChange(subscriptions, connection, wallet?.adapter?.publicKey, new PublicKey(mint))
           return acc
         }, {})
 
@@ -97,6 +98,11 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
           uiAmountString: uiAmount.toString()
         }
         setBalances(accounts)
+
+        Promise.all(parsedAccounts.value.map(({account}) => {
+          const {mint} = account.data.parsed.info
+          return handleAccountChange(subscriptions, connection, publicKey, new PublicKey(mint))
+        }))
       } catch (e: any) {
         console.log('check account fetch')
       }
@@ -105,17 +111,17 @@ export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
 
     return subscriptions
-  }, [connection, wallet?.adapter?.publicKey])
+  }, [connection, publicKey])
 
   useEffect(() => {
     let cancelled = false
-    const subscriptions: number[] = !cancelled && wallet?.adapter?.publicKey ? fetchAccounts() : []
+    const subscriptions: number[] = !cancelled && publicKey ? fetchAccounts() : []
 
     return () => {
       cancelled = true
       subscriptions.forEach((subscription) => connection.removeAccountChangeListener(subscription))
     }
-  }, [connection, fetchAccounts, wallet?.adapter?.publicKey, tokenRegistry])
+  }, [connection, fetchAccounts, publicKey, tokenRegistry])
 
   return (
     <AccountsContext.Provider
