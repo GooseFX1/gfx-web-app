@@ -299,16 +299,6 @@ function getInitLayout() {
   return { lg: componentDimensionsLg, md: componentDimensionsMd }
 }
 
-interface IRepositionProps {
-  isLocked: boolean
-}
-
-const Reposition: FC<IRepositionProps> = ({isLocked}) => {
-  return isLocked ?<UNLOCKED_OVERLAY>
-  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
-</UNLOCKED_OVERLAY> : null
-}
-
 const CryptoContent: FC = () => {
   const [isLocked, setIsLocked] = useState(true)
   const [layout, setLayout] = useState(getInitLayout())
@@ -351,7 +341,11 @@ const CryptoContent: FC = () => {
         return (
           <div key={i} className="space-cont">
             {chartContainer}
-            <Reposition isLocked={isLocked} />
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+              </UNLOCKED_OVERLAY>
+            ) : null}
           </div>
         )
       if (i === 1)
@@ -359,7 +353,11 @@ const CryptoContent: FC = () => {
           <div key={i} className="space-cont">
             <>
               <OrderbookTabs />
-              <Reposition isLocked={isLocked} />
+              {!isLocked ? (
+                <UNLOCKED_OVERLAY>
+                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+                </UNLOCKED_OVERLAY>
+              ) : null}
             </>
           </div>
         )
@@ -368,7 +366,11 @@ const CryptoContent: FC = () => {
           <div key={i} className="space-cont">
             <>
               <PlaceOrder />
-              <Reposition isLocked={isLocked} />
+              {!isLocked ? (
+                <UNLOCKED_OVERLAY>
+                  <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+                </UNLOCKED_OVERLAY>
+              ) : null}
             </>
           </div>
         )
@@ -377,7 +379,11 @@ const CryptoContent: FC = () => {
         return (
           <div key={i} className="space-cont">
             <HistoryPanel />
-            <Reposition isLocked={isLocked} />
+            {!isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+              </UNLOCKED_OVERLAY>
+            ) : null}
           </div>
         )
       if (i === 4)
@@ -388,17 +394,20 @@ const CryptoContent: FC = () => {
               <UNLOCKED_OVERLAY $blacklisted={blacklisted}>
                 <button className="georestricted">Georestricted</button>
               </UNLOCKED_OVERLAY>
-            ) : <Reposition isLocked={isLocked} />}
+            ) : !isLocked ? (
+              <UNLOCKED_OVERLAY>
+                <img src={`/img/assets/Reposition.svg`} alt="reposition" className="reposition" />
+              </UNLOCKED_OVERLAY>
+            ) : null}
           </div>
         )
       return <div key={i}>{/* <span className="text">{i}</span> */}</div>
     })
 
   const onLayoutChange = (newLayout) => {
-    const stringifiedNewLayout = JSON.stringify(newLayout)
-    if (JSON.stringify(layout) === stringifiedNewLayout) return
-    localStorage.setItem('lg', stringifiedNewLayout)
-    localStorage.setItem('md', stringifiedNewLayout)
+    if (JSON.stringify(layout) === JSON.stringify(newLayout)) return
+    localStorage.setItem('lg', JSON.stringify(newLayout))
+    localStorage.setItem('md', JSON.stringify(newLayout))
     setLayout({ lg: newLayout, md: newLayout })
   }
 
