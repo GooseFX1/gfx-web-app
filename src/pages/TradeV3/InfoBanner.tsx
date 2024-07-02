@@ -2,35 +2,16 @@
 import { Skeleton } from 'antd'
 import React, { FC, useMemo, useState } from 'react'
 import tw from 'twin.macro'
-import { useCrypto, usePriceFeed, useDarkMode, useOrderBook, useConnectionConfig } from '../../context'
+import { useConnectionConfig, useCrypto, useDarkMode, useOrderBook, usePriceFeed } from '../../context'
 import { DropdownPairs } from './DropdownPairs'
 import { DepositWithdrawDialog } from './perps/DepositWithdraw'
-import { DepositWithdraw } from './perps/DepositWithdrawNew'
 import { getPerpsPrice, truncateBigNumber } from './perps/utils'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import styled from 'styled-components/macro'
 import useWindowSize from '../../utils/useWindowSize'
-import { Tooltip, PopupCustom } from '../../components'
+import { PopupCustom } from '../../components'
 import { useWallet } from '@solana/wallet-adapter-react'
-import {
-  Button,
-  Container,
-  ContainerTitle,
-  Dialog,
-  DialogBody,
-  DialogClose,
-  DialogCloseDefault,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogTrigger,
-  IconTooltip,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  cn
-} from 'gfx-component-lib'
+import { Button, cn, ContainerTitle, IconTooltip, Tabs, TabsList, TabsTrigger } from 'gfx-component-lib'
 import { InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 
 export const SETTING_MODAL = styled(PopupCustom)`
@@ -256,18 +237,7 @@ export const InfoBanner: FC<{
   const tokenInfos = useMemo(() => tokenInfo[selectedCrypto.pair], [tokenInfo[selectedCrypto.pair]])
   const formatDisplayVolume = (volume) => {
     if (!volume) return null
-    //const stringLength = volume.length
-    //if (stringLength < 6) return volume
-    //else {
-    //  const [numberBeforeDecimal, numberAfterDecimal] = volume.split('.'),
-    //    reverseNumber = numberBeforeDecimal.split('').reverse().join('')
-    //  let answer = ''
-    //  for (let i = 0; i < reverseNumber.length; i++) {
-    //    answer += reverseNumber.substring(i, i + 1)
-    //    if (i % 3 === 2 && i !== reverseNumber.length - 1) answer = answer + ','
-    //  }
-    //  const reversedResult = answer.split('').reverse().join('')
-    //  return reversedResult + '.' + numberAfterDecimal
+
     return truncateBigNumber(volume)
   }
 
@@ -328,32 +298,11 @@ export const InfoBanner: FC<{
         setDepositWithdrawModal={setDepositWithdrawModal}
       />
 
-      {/*<div className="spot-toggle">
-        <span
-          className={'spot toggle ' + (!isDevnet ? 'selected' : '')}
-          css={[tw`text-2xl font-bold`]}
-          key="spot"
-          onClick={() => handleToggle('perps')}
-        >
-          Mainnet
-        </span>
-        <span
-          className={'perps toggle ' + (blacklisted ? 'geoblocked' : isDevnet ? 'selected' : '')}
-          css={[tw`text-2xl font-bold`]}
-          key="perps"
-          onClick={blacklisted ? null : () => handleToggle('spot')}
-        >
-          Devnet
-        </span>
-      </div>*/}
 
       <DropdownPairs />
       {
         <>
           <div
-            //   variant="outline"
-            //   colorScheme="primaryGradient"
-            //   size="sm"
             className="max-w-[120px] min-h-[42px]
            ml-4"
           >
@@ -369,9 +318,7 @@ export const InfoBanner: FC<{
             </InfoLabel>
           </div>
           <div
-            // variant="outline"
-            // colorScheme="primaryGradient"
-            // size="sm"
+
             className="max-w-[135px] min-h-[42px] ml-4"
           >
             <ContainerTitle>
@@ -389,54 +336,9 @@ export const InfoBanner: FC<{
             </InfoLabel>
           </div>
 
-          {/* <INFO_STATS>
-            <>
-              <div>24H Volume</div>
-              {!displayVolume ? <Loader /> : <div>$ {displayVolume}</div>}
-            </>
-          </INFO_STATS> */}
         </>
       }
 
-      {/*<INFO_STATS>
-        <>
-          <div>24hr Change</div>
-          {!changeValue ? (
-            <Loader />
-          ) : (
-            <div className={classNameChange}>
-              {classNameChange === 'up24h' ? (
-                <img src="/img/assets/24hourup.png" height="10" alt="up-icon" />
-              ) : (
-                <img src="/img/assets/24hourdown.svg" height="10" alt="down-icon" />
-              )}
-              {changeValue} %
-            </div>
-          )}
-        </>
-         </INFO_STATS> */}
-      {/* {width > 1400 && (
-        <INFO_STATS>
-          <h4>Daily Range</h4>
-          {!range ? (
-            <Loader />
-          ) : (
-            <div>
-              <span>$ {range.min}</span>
-              <span className="barContainer">
-                {[0, 1, 2, 3, 4, 5].map((item, index) => {
-                  //@ts-ignore
-                  if (item < bars) return <div key={index} className="verticalLines coloured"></div>
-                  else return <div key={index} className="verticalLines grey"></div>
-                })}
-              </span>
-              <span>$ {range.max}</span>
-            </div>
-          )}
-        </INFO_STATS>
-      )} */}
-      {
-        <>
           <div
             // variant="outline"
             // colorScheme="primaryGradient"
@@ -462,13 +364,7 @@ export const InfoBanner: FC<{
               )}
             </>
           </div>
-        </>
-      }
-      {/* {
-        
-      }
-      */}
-      <>
+
         <div className="max-w-[135px] min-h-[42px] ml-4">
           <ContainerTitle>
             <h4>1H Funding:&nbsp;</h4>
@@ -487,7 +383,6 @@ export const InfoBanner: FC<{
               </p>
             </IconTooltip>
           </ContainerTitle>
-          <>
             {!traderInfo.openInterests ? (
               <Loader />
             ) : (
@@ -505,12 +400,8 @@ export const InfoBanner: FC<{
                 </h4>
               </InfoLabel>
             )}
-          </>
         </div>
-      </>
 
-      {
-        <>
           <div
             // variant="outline"
             // colorScheme="primaryGradient"
@@ -532,8 +423,7 @@ export const InfoBanner: FC<{
               )}
             </>
           </div>
-        </>
-      }
+
       {isDevnet && blacklisted && (
         <div tw="flex ml-auto relative top-[23px]">
           <img src={`/img/assets/georestricted_${mode}.svg`} alt="geoblocked-icon" />

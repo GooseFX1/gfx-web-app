@@ -1,5 +1,4 @@
 import { FC, ReactElement, useMemo } from 'react'
-import 'styled-components/macro'
 import { GradientText } from '../../components'
 import { useCrypto, useOrder, useOrderBook } from '../../context'
 import { useTraderConfig } from '../../context/trader_risk_group'
@@ -17,19 +16,6 @@ import {
 } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel } from './perps/components/PerpsGenericComp'
 import useBreakPoint from '@/hooks/useBreakPoint'
-
-// const ROW = styled.div`
-//   ${tw`flex flex-row justify-between items-start mb-2.5 max-sm:mb-2`}
-//   > span {
-//     ${tw`text-average font-semibold text-grey-2 max-sm:text-regular`}
-//   }
-//   .value {
-//     ${tw`text-black-4 dark:text-white font-semibold max-sm:text-regular`}
-//   }
-//   .spacing {
-//     ${tw`mb-[25px] max-sm:mb-3.75`}
-//   }
-// `
 
 export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolean) => any; takeProfit?: any }> = ({
   setVisibility,
@@ -104,67 +90,7 @@ export const TradeConfirmation: FC<{ open: boolean; setVisibility: (bool: boolea
   }
 
   const { isMobile } = useBreakPoint()
-  // const cssStyle = useMemo(() => {
-  //   if (order.side === 'buy') return tw`bg-green-3 text-white font-semibold border-0 rounded-circle text-regular`
-  //   else return tw`bg-red-2 text-white font-semibold border-0 rounded-circle text-regular`
-  // }, [order.side])
 
-  // return (
-  //   <WRAPPER>
-  //     <div tw="mt-[30px] mb-7 max-sm:my-0">
-  //       <ROW>
-  //         <span>Order Type</span>
-  //         <span className="value">{order.display === 'limit' ? 'Limit' : 'Market'}</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Trade Size</span>
-  //         <span className="value spacing">
-  //           {Number(order.size).toFixed(5)} {symbol}
-  //         </span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Est. Entry Price</span>
-  //         <span className="value">${order.price}</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Est. Price Impact</span>
-  //         <span className="value">{totalPriceImpact.toFixed(4)}%</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Slippage Tolerance</span>
-  //         <span className="value spacing">{'0.1%'}</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Trade Notional Size</span>
-  //         <span className="value">{notionalValue} USDC</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Fee (0.1%)</span>
-  //         <span className="value">{fee} USDC</span>
-  //       </ROW>
-  //       <ROW>
-  //         <span>Total Cost</span>
-  //         <span tw="mb-7" className="value">
-  //           {total} USDC
-  //         </span>
-  //       </ROW>
-  //       {/* <ROW>
-  //         <span>Est. Liquidation Price</span>
-  //         <span className="value">$14.9628</span>
-  //       </ROW> */}
-  //     </div>
-  //     <Button
-  //       onClick={() => handleClick()}
-  //       width="100%"
-  //       loading={isLoading}
-  //       disabled={isLoading}
-  //       height={checkMobile() ? '45px' : '50px'}
-  //       cssStyle={cssStyle}
-  //     >
-  //       {order.side === 'buy' ? 'Long' : 'Short'} {Number(order.size).toFixed(3)} {symbol}
-  //     </Button>
-  //   </WRAPPER>
-  // )
   return (
     <Dialog open={open} onOpenChange={setVisibility}>
       <DialogOverlay />
