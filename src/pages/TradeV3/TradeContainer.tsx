@@ -118,7 +118,7 @@ const UnlockedOverlay:FC<{geoblocked?:boolean}> = ({geoblocked})=>
   <div className={`
   h-[calc(100%_-_10px)] w-[calc(100%_-_10px)] border-[1px] border-solid dark:border-white 
   border-border-primaryGradient-primary bg-gradient-110deg from-brand-secondaryGradient-primary/50
-  to-brand-primaryGradient-primary/30 absolute top-0 cursor-pointer text-center rounded-[3px] flex flex-col justify-center
+  to-brand-primaryGradient-secondary/30 absolute top-0 cursor-pointer text-center rounded-[3px] flex flex-col justify-center
   items-center
   `}>
   {
