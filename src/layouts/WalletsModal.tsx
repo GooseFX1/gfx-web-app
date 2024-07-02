@@ -117,14 +117,6 @@ export const WalletsModal: FC = () => {
     [select]
   )
 
-  // useEffect(() => {
-  //   console.log('triggered', connected)
-  //   const modal = document.getElementsByTagName('w3m-modal')[0]
-  //   const abc = wallet?.adapter?.publicKey
-  //   if(abc) modal?.classList?.remove('open')
-  //   console.log('modal', modal, connected)
-  // }, [wallet, document, connected])
-
   // filters detected wallets and de-duplicates
   const detectedWallets = useMemo(
     () =>
