@@ -48,7 +48,7 @@
     "bs58": "^4.0.1",
     "coingecko-api": "^1.0.10",
     "gfx-component-lib": "^1.12.7",
-    "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#5",
+    "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk/releases/download/5/gfx-perp-sdk.tar.gz",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "latest",
     "goosefx-stake-rewards-sdk": "^2.0.1",
@@ -157,6 +157,5 @@
     "@ethereumjs/util": "8.1.0",
     "node-addon-api": "7.1.0",
     "commander": "11.0.0"
-  },
-  "packageManager": "yarn@3.3.1+sha512.e355f587284d06d2c0c1c2259c68746aa1f1f6cdeedefce543cec206709beeb7951c0a27cdbfb7b5736a576854829af9c660bbe82052192c49f108a546994b71"
+  }
 }
