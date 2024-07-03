@@ -30,6 +30,7 @@ import { StatsProvider } from './context/stats'
 import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
 import { Toaster } from 'gfx-component-lib'
 import { RewardsProvider } from '@/context/rewardsContext'
+import { MarketProductGroupProvider } from './context/market_product_group'
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
@@ -87,10 +88,10 @@ export const Router: FC = () => {
                     ) : (
                       <Suspense fallback={<PageLoader />}>
                         <Switch>
-                          {/* 
+                          {/*
                               <Route exact path="/swap/:tradePair?">
                                 <Swap />
-                              </Route> 
+                              </Route>
                             */}
                           <Route exact path="/bridge">
                             <Bridge />
@@ -98,11 +99,13 @@ export const Router: FC = () => {
                           <Route path="/trade">
                             <PriceFeedProvider>
                               <OrderProvider>
-                                <TraderProvider>
-                                  <OrderBookProvider>
-                                    <CryptoContent />
-                                  </OrderBookProvider>
-                                </TraderProvider>
+                                <MarketProductGroupProvider>
+                                  <TraderProvider>
+                                    <OrderBookProvider>
+                                      <CryptoContent />
+                                    </OrderBookProvider>
+                                  </TraderProvider>
+                                </MarketProductGroupProvider>
                               </OrderProvider>
                             </PriceFeedProvider>
                           </Route>
@@ -133,11 +136,13 @@ export const Router: FC = () => {
                           <Route exact path="/account">
                             <PriceFeedProvider>
                               <OrderProvider>
-                                <TraderProvider>
-                                  <OrderBookProvider>
-                                    <Account />
-                                  </OrderBookProvider>
-                                </TraderProvider>
+                                <MarketProductGroupProvider>
+                                  <TraderProvider>
+                                    <OrderBookProvider>
+                                      <Account />
+                                    </OrderBookProvider>
+                                  </TraderProvider>
+                                </MarketProductGroupProvider>
                               </OrderProvider>
                             </PriceFeedProvider>
                           </Route>
