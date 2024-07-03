@@ -2,14 +2,13 @@ import React, { FC, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import * as saveLoadAdapter from './save-load-adapter'
 import { convertResolutionToApi, DataFeedWrapper } from './Datafeed'
-import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget } from '@/tv_charting_lib/charting_library'
+import { ChartingLibraryWidgetOptions, IChartingLibraryWidget, widget } from '@/tv_charting_lib/charting_library'
 import { useCrypto, useDarkMode } from '../../../context'
 import { flatten } from '../../../utils'
 
 const CONTAINER = styled.div<{ $visible: boolean }>`
   width: 100%;
   height: 100%;
-  max-height: ${({ $visible }) => ($visible ? '600px' : '0')};
   opacity: ${({ $visible }) => ($visible ? '1' : '0')};
   transition: all ${({ theme }) => theme.mainTransitionTime} ease-in-out;
 `
