@@ -179,10 +179,8 @@ export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
           <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" className="h-5 w-5 mr-1.5" />
           <InfoLabel>Health</InfoLabel>
           <Tooltip>
-            <TooltipTrigger>
-              <div>
-                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" className="h-5 ml-1 w-5" />
-              </div>
+            <TooltipTrigger className={' ml-1 '}>
+              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" className="h-4 w-4" />
             </TooltipTrigger>
             <TooltipContent>The health bar shows how close you are to being liquidated. </TooltipContent>
           </Tooltip>
