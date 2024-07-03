@@ -48,7 +48,7 @@
     "bs58": "^4.0.1",
     "coingecko-api": "^1.0.10",
     "gfx-component-lib": "^1.12.7",
-    "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz",
+    "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#5",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "latest",
     "goosefx-stake-rewards-sdk": "^2.0.1",

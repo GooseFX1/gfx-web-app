@@ -41,15 +41,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@project-serum/borsh", "virtual:83ccfb0fb0e306caeb6fc735dc9939d4eabad1d385a7c19a946b700c791bdce537a0cc4f67942e927d3fb321ea38fd70fcd184b8fea2556a7d827bca97f634c8#npm:0.2.5"],\
             ["@pythnetwork/client", "virtual:cf8d131f70cd5f5f052407fa276c0c1508b011bc9e0a129434cb2a0d67959d5a5d0cd545d783fe024674a6060e41346227078984ed8488f42b49f53d237523f0#npm:2.21.1"],\
             ["@rive-app/react-canvas", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:4.13.0"],\
-            ["@solana-mobile/wallet-adapter-mobile", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3"],\
+            ["@solana-mobile/wallet-adapter-mobile", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3"],\
             ["@solana/buffer-layout", "npm:4.0.1"],\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
             ["@solana/spl-token-registry", "npm:0.2.4574"],\
             ["@solana/spl-token-v2", [\
               "@solana/spl-token",\
               "npm:0.2.0"\
             ]],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-adapter-react", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35"],\
             ["@solana/wallet-adapter-walletconnect", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.1.16"],\
             ["@solana/wallet-adapter-wallets", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.19.32"],\
@@ -90,7 +90,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-simple-import-sort", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:7.0.0"],\
             ["eslint-plugin-unused-imports", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:2.0.0"],\
             ["gfx-component-lib", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:1.12.9"],\
-            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz"],\
+            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#commit=b482f811d754babb36c2dad8abaaf7be90ad9354"],\
             ["gfx_stocks_pool", "file:./wasm#./wasm::hash=a4b3c5&locator=gfx-web-app%40workspace%3A."],\
             ["goosefx-ssl-sdk", "npm:1.2.24"],\
             ["goosefx-stake-rewards-sdk", "npm:2.0.2"],\
@@ -2377,7 +2377,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@metaplex-foundation/beet", "npm:0.7.2"],\
             ["@metaplex-foundation/beet-solana", "npm:0.4.1"],\
             ["@metaplex-foundation/cusper", "npm:0.0.2"],\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["bn.js", "npm:5.2.1"],\
             ["debug", "virtual:c9e1a4b59e37cb479517edede3bf2093b28c0ca1a9d0e517f3c345075bd1e468980b94b4957e389116607ee7155441dfd7d09e19a4229d5d09bcf06244401590#npm:4.3.5"]\
@@ -2407,7 +2407,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@moongate/moongate-adapter", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.0.99"],\
             ["@moongate/solana-wallet-sdk", "npm:1.1.92"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__wallet-adapter-base", null],\
             ["@types/solana__web3.js", null]\
@@ -4349,16 +4349,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],\
       ["@react-native-async-storage/async-storage", [\
         ["npm:1.23.1", {\
-          "packageLocation": "./.yarn/unplugged/@react-native-async-storage-async-storage-virtual-0c08ee8aee/node_modules/@react-native-async-storage/async-storage/",\
+          "packageLocation": "./.yarn/unplugged/@react-native-async-storage-async-storage-virtual-f3c64f92a3/node_modules/@react-native-async-storage/async-storage/",\
           "packageDependencies": [\
             ["@react-native-async-storage/async-storage", "npm:1.23.1"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:1.23.1", {\
-          "packageLocation": "./.yarn/unplugged/@react-native-async-storage-async-storage-virtual-0c08ee8aee/node_modules/@react-native-async-storage/async-storage/",\
+        ["virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:1.23.1", {\
+          "packageLocation": "./.yarn/unplugged/@react-native-async-storage-async-storage-virtual-f3c64f92a3/node_modules/@react-native-async-storage/async-storage/",\
           "packageDependencies": [\
-            ["@react-native-async-storage/async-storage", "virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:1.23.1"],\
+            ["@react-native-async-storage/async-storage", "virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:1.23.1"],\
             ["@types/react-native", null],\
             ["merge-options", "npm:3.0.4"],\
             ["react-native", null]\
@@ -4739,16 +4739,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],\
       ["@solana-mobile/mobile-wallet-adapter-protocol", [\
         ["npm:2.1.3", {\
-          "packageLocation": "./.yarn/unplugged/@solana-mobile-mobile-wallet-adapter-protocol-virtual-f7bfd2cca3/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/",\
+          "packageLocation": "./.yarn/unplugged/@solana-mobile-mobile-wallet-adapter-protocol-virtual-483e1b92c5/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/",\
           "packageDependencies": [\
             ["@solana-mobile/mobile-wallet-adapter-protocol", "npm:2.1.3"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:189bbd9b1e909792f118bf32a0690bee3429d598ea1e6e4203718d04732aadd28fc2f40301e393226c17016a88cb2b8b776dc4894821904bf508210e461b0cf8#npm:2.1.3", {\
-          "packageLocation": "./.yarn/unplugged/@solana-mobile-mobile-wallet-adapter-protocol-virtual-f7bfd2cca3/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/",\
+        ["virtual:d0530a047bf6071d526f0b170d3384a2e0fbf7fe40c13aa1ef691d7cab661264e36afcb00027b194e1d4f9c9ea3bb637c80768a415d26ff365235bf34a788fe1#npm:2.1.3", {\
+          "packageLocation": "./.yarn/unplugged/@solana-mobile-mobile-wallet-adapter-protocol-virtual-483e1b92c5/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/",\
           "packageDependencies": [\
-            ["@solana-mobile/mobile-wallet-adapter-protocol", "virtual:189bbd9b1e909792f118bf32a0690bee3429d598ea1e6e4203718d04732aadd28fc2f40301e393226c17016a88cb2b8b776dc4894821904bf508210e461b0cf8#npm:2.1.3"],\
+            ["@solana-mobile/mobile-wallet-adapter-protocol", "virtual:d0530a047bf6071d526f0b170d3384a2e0fbf7fe40c13aa1ef691d7cab661264e36afcb00027b194e1d4f9c9ea3bb637c80768a415d26ff365235bf34a788fe1#npm:2.1.3"],\
             ["@solana/wallet-standard", "npm:1.1.2"],\
             ["@solana/wallet-standard-util", "npm:1.1.1"],\
             ["@solana/web3.js", "npm:1.94.0"],\
@@ -4775,11 +4775,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:2.1.3", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-mobile-mobile-wallet-adapter-protocol-web3js-virtual-189bbd9b1e/0/cache/@solana-mobile-mobile-wallet-adapter-protocol-web3js-npm-2.1.3-c3d2e86d5c-b659bfa42b.zip/node_modules/@solana-mobile/mobile-wallet-adapter-protocol-web3js/",\
+        ["virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:2.1.3", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-mobile-mobile-wallet-adapter-protocol-web3js-virtual-d0530a047b/0/cache/@solana-mobile-mobile-wallet-adapter-protocol-web3js-npm-2.1.3-c3d2e86d5c-b659bfa42b.zip/node_modules/@solana-mobile/mobile-wallet-adapter-protocol-web3js/",\
           "packageDependencies": [\
-            ["@solana-mobile/mobile-wallet-adapter-protocol-web3js", "virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:2.1.3"],\
-            ["@solana-mobile/mobile-wallet-adapter-protocol", "virtual:189bbd9b1e909792f118bf32a0690bee3429d598ea1e6e4203718d04732aadd28fc2f40301e393226c17016a88cb2b8b776dc4894821904bf508210e461b0cf8#npm:2.1.3"],\
+            ["@solana-mobile/mobile-wallet-adapter-protocol-web3js", "virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:2.1.3"],\
+            ["@solana-mobile/mobile-wallet-adapter-protocol", "virtual:d0530a047bf6071d526f0b170d3384a2e0fbf7fe40c13aa1ef691d7cab661264e36afcb00027b194e1d4f9c9ea3bb637c80768a415d26ff365235bf34a788fe1#npm:2.1.3"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
             ["bs58", "npm:5.0.0"],\
@@ -4800,13 +4800,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-mobile-wallet-adapter-mobile-virtual-40afc495ac/0/cache/@solana-mobile-wallet-adapter-mobile-npm-2.1.3-ef7482013b-9d39e1bf1e.zip/node_modules/@solana-mobile/wallet-adapter-mobile/",\
+        ["virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-mobile-wallet-adapter-mobile-virtual-74b82b3e83/0/cache/@solana-mobile-wallet-adapter-mobile-npm-2.1.3-ef7482013b-9d39e1bf1e.zip/node_modules/@solana-mobile/wallet-adapter-mobile/",\
           "packageDependencies": [\
-            ["@solana-mobile/wallet-adapter-mobile", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3"],\
-            ["@react-native-async-storage/async-storage", "virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:1.23.1"],\
-            ["@solana-mobile/mobile-wallet-adapter-protocol-web3js", "virtual:40afc495aced8a2d8c9bc14fd696a16aba090e7fd5f71275f101f5865190b3618ce362274db22fc8e85cb54b8456f66321aabbc4ad97ab6215d15f489068d068#npm:2.1.3"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana-mobile/wallet-adapter-mobile", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3"],\
+            ["@react-native-async-storage/async-storage", "virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:1.23.1"],\
+            ["@solana-mobile/mobile-wallet-adapter-protocol-web3js", "virtual:74b82b3e835dbe298f2d57026054885e08a29eaac521efeed8dce514fd5882e140c2f4de505644d42e63610edeb610f02b9fc6d1ff4292f49affe3287a074913#npm:2.1.3"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-features", "npm:1.2.0"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
@@ -4975,13 +4975,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-spl-token-virtual-73a152afc4/0/cache/@solana-spl-token-npm-0.3.11-d9399904a5-84faef5e8e.zip/node_modules/@solana/spl-token/",\
+        ["virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-spl-token-virtual-cdcb665d17/0/cache/@solana-spl-token-npm-0.3.11-d9399904a5-84faef5e8e.zip/node_modules/@solana/spl-token/",\
           "packageDependencies": [\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
             ["@solana/buffer-layout", "npm:4.0.1"],\
             ["@solana/buffer-layout-utils", "npm:0.2.0"],\
-            ["@solana/spl-token-metadata", "virtual:73a152afc4f6e610d0fd54257f59cb60ff5b3ad2b36476c2227c8df235e656d96a84bac769637290f3ac7cd6ae5668c44e12d4e20ec0c600387c81336992dc55#npm:0.1.4"],\
+            ["@solana/spl-token-metadata", "virtual:cdcb665d172292685303a63e4522be89b8677fce619ad09207c3b9a0b4cc6510ccbc3cf4186e9c335d3d1cea9edc6be00498210a74e0f9cb6a4ba82fe45dd3fa#npm:0.1.4"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
             ["buffer", "npm:6.0.3"]\
@@ -5017,10 +5017,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:73a152afc4f6e610d0fd54257f59cb60ff5b3ad2b36476c2227c8df235e656d96a84bac769637290f3ac7cd6ae5668c44e12d4e20ec0c600387c81336992dc55#npm:0.1.4", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-spl-token-metadata-virtual-8478e9eca4/0/cache/@solana-spl-token-metadata-npm-0.1.4-c093cf75cb-974969ce59.zip/node_modules/@solana/spl-token-metadata/",\
+        ["virtual:cdcb665d172292685303a63e4522be89b8677fce619ad09207c3b9a0b4cc6510ccbc3cf4186e9c335d3d1cea9edc6be00498210a74e0f9cb6a4ba82fe45dd3fa#npm:0.1.4", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-spl-token-metadata-virtual-6d7ccf24f1/0/cache/@solana-spl-token-metadata-npm-0.1.4-c093cf75cb-974969ce59.zip/node_modules/@solana/spl-token-metadata/",\
           "packageDependencies": [\
-            ["@solana/spl-token-metadata", "virtual:73a152afc4f6e610d0fd54257f59cb60ff5b3ad2b36476c2227c8df235e656d96a84bac769637290f3ac7cd6ae5668c44e12d4e20ec0c600387c81336992dc55#npm:0.1.4"],\
+            ["@solana/spl-token-metadata", "virtual:cdcb665d172292685303a63e4522be89b8677fce619ad09207c3b9a0b4cc6510ccbc3cf4186e9c335d3d1cea9edc6be00498210a74e0f9cb6a4ba82fe45dd3fa#npm:0.1.4"],\
             ["@solana/codecs", "npm:2.0.0-preview.2"],\
             ["@solana/spl-type-length-value", "npm:0.1.0"],\
             ["@solana/web3.js", "npm:1.94.0"],\
@@ -5065,7 +5065,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-alpha-virtual-b901bede52/0/cache/@solana-wallet-adapter-alpha-npm-0.1.10-f303b72289-02be026c9f.zip/node_modules/@solana/wallet-adapter-alpha/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-alpha", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.10"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5088,7 +5088,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-avana-virtual-157b46bf72/0/cache/@solana-wallet-adapter-avana-npm-0.1.13-833e2a028e-65cec6a507.zip/node_modules/@solana/wallet-adapter-avana/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-avana", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.13"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5124,10 +5124,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-base-virtual-3b25d84881/0/cache/@solana-wallet-adapter-base-npm-0.9.23-06f36d032e-bd2fc54ae3.zip/node_modules/@solana/wallet-adapter-base/",\
+        ["virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-base-virtual-fe9b575f89/0/cache/@solana-wallet-adapter-base-npm-0.9.23-06f36d032e-bd2fc54ae3.zip/node_modules/@solana/wallet-adapter-base/",\
           "packageDependencies": [\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-features", "npm:1.2.0"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
@@ -5154,7 +5154,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-bitkeep-virtual-08e0de3632/0/cache/@solana-wallet-adapter-bitkeep-npm-0.3.20-cdba97ce8a-c1fc6f0cbc.zip/node_modules/@solana/wallet-adapter-bitkeep/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-bitkeep", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.3.20"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5177,7 +5177,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-bitpie-virtual-aba12152f1/0/cache/@solana-wallet-adapter-bitpie-npm-0.5.18-05a2deba84-fd6149de19.zip/node_modules/@solana/wallet-adapter-bitpie/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-bitpie", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.5.18"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5200,7 +5200,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-clover-virtual-161d378986/0/cache/@solana-wallet-adapter-clover-npm-0.4.19-810cb308d0-1f9a125242.zip/node_modules/@solana/wallet-adapter-clover/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-clover", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.4.19"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5223,7 +5223,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-coin98-virtual-894a0cbecf/0/cache/@solana-wallet-adapter-coin98-npm-0.5.20-62ef5c6378-e98a60fd16.zip/node_modules/@solana/wallet-adapter-coin98/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-coin98", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.5.20"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
             ["bs58", "npm:4.0.1"]\
@@ -5247,7 +5247,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-coinbase-virtual-6d70903b59/0/cache/@solana-wallet-adapter-coinbase-npm-0.1.19-4ba59d1af4-4386239b46.zip/node_modules/@solana/wallet-adapter-coinbase/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-coinbase", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.19"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5270,7 +5270,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-coinhub-virtual-5227aa31d0/0/cache/@solana-wallet-adapter-coinhub-npm-0.3.18-350138bd3c-4524dc2151.zip/node_modules/@solana/wallet-adapter-coinhub/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-coinhub", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.3.18"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5294,7 +5294,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@solana/wallet-adapter-fractal", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.8"],\
             ["@fractalwagmi/solana-wallet-adapter", "npm:0.1.1"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5317,7 +5317,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-huobi-virtual-45b53b5d68/0/cache/@solana-wallet-adapter-huobi-npm-0.1.15-0626c3c8f1-25871768d2.zip/node_modules/@solana/wallet-adapter-huobi/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-huobi", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.15"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5340,7 +5340,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-hyperpay-virtual-bd6b2aa8b8/0/cache/@solana-wallet-adapter-hyperpay-npm-0.1.14-1ee3ca9229-32bd1360eb.zip/node_modules/@solana/wallet-adapter-hyperpay/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-hyperpay", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.14"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5364,7 +5364,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@solana/wallet-adapter-keystone", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.15"],\
             ["@keystonehq/sol-keyring", "npm:0.3.1"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5387,7 +5387,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-krystal-virtual-22a7003f54/0/cache/@solana-wallet-adapter-krystal-npm-0.1.12-89e7176a5e-4a8f20ba97.zip/node_modules/@solana/wallet-adapter-krystal/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-krystal", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.12"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5413,7 +5413,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ledgerhq/devices", "npm:6.27.1"],\
             ["@ledgerhq/hw-transport", "npm:6.27.1"],\
             ["@ledgerhq/hw-transport-webhid", "npm:6.27.1"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
             ["buffer", "npm:6.0.3"]\
@@ -5437,7 +5437,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-mathwallet-virtual-cec0e875d5/0/cache/@solana-wallet-adapter-mathwallet-npm-0.9.18-8c9b600a6b-81e1489415.zip/node_modules/@solana/wallet-adapter-mathwallet/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-mathwallet", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.9.18"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5460,7 +5460,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-neko-virtual-3d9c2061a7/0/cache/@solana-wallet-adapter-neko-npm-0.2.12-d349b58b38-a3a1536045.zip/node_modules/@solana/wallet-adapter-neko/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-neko", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.2.12"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5483,7 +5483,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-nightly-virtual-21caacba32/0/cache/@solana-wallet-adapter-nightly-npm-0.1.16-ef01a63d98-9601f9f826.zip/node_modules/@solana/wallet-adapter-nightly/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-nightly", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.16"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5506,7 +5506,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-nufi-virtual-92b0684d63/0/cache/@solana-wallet-adapter-nufi-npm-0.1.17-5fbef3a702-9f09fcc202.zip/node_modules/@solana/wallet-adapter-nufi/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-nufi", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.17"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5529,7 +5529,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-onto-virtual-ad5bc43d5f/0/cache/@solana-wallet-adapter-onto-npm-0.1.7-6e4823429e-8b59f33de3.zip/node_modules/@solana/wallet-adapter-onto/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-onto", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.7"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5553,7 +5553,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@solana/wallet-adapter-particle", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.12"],\
             ["@particle-network/solana-wallet", "virtual:d34362470be085e0f0274e63dffd5792e9313523b1201913644995549c554fe586ced67642aef157bdf7f0a7b723eb3327d8a0b698f931f9cc889a04f2f72b85#npm:1.3.2"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5576,7 +5576,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-phantom-virtual-bf40003da4/0/cache/@solana-wallet-adapter-phantom-npm-0.9.24-01960b3869-a290046056.zip/node_modules/@solana/wallet-adapter-phantom/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-phantom", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.9.24"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5595,17 +5595,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.15.35", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-react-virtual-f58d8684ef/0/cache/@solana-wallet-adapter-react-npm-0.15.35-0cf0eed804-a670241de0.zip/node_modules/@solana/wallet-adapter-react/",\
+        ["virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-react-virtual-f81e9cb8a2/0/cache/@solana-wallet-adapter-react-npm-0.15.35-0cf0eed804-a670241de0.zip/node_modules/@solana/wallet-adapter-react/",\
           "packageDependencies": [\
-            ["@solana/wallet-adapter-react", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.15.35"],\
-            ["@solana-mobile/wallet-adapter-mobile", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
-            ["@solana/wallet-standard-wallet-adapter-react", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:1.1.2"],\
+            ["@solana/wallet-adapter-react", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35"],\
+            ["@solana-mobile/wallet-adapter-mobile", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
+            ["@solana/wallet-standard-wallet-adapter-react", "virtual:f81e9cb8a25e7c11ca32de86770873055ebd960e4c32a6f28316e71c34a24d941c36d08f5274098c970bde264aad32585edecb597df60aa535e4e67872329c7e#npm:1.1.2"],\
             ["@solana/web3.js", "npm:1.94.0"],\
-            ["@types/react", null],\
+            ["@types/react", "npm:17.0.80"],\
             ["@types/solana__web3.js", null],\
-            ["react", null]\
+            ["react", "npm:17.0.2"]\
           ],\
           "packagePeers": [\
             "@solana/web3.js",\
@@ -5615,17 +5615,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-react-virtual-f81e9cb8a2/0/cache/@solana-wallet-adapter-react-npm-0.15.35-0cf0eed804-a670241de0.zip/node_modules/@solana/wallet-adapter-react/",\
+        ["virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.15.35", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-react-virtual-aa2b2a7bef/0/cache/@solana-wallet-adapter-react-npm-0.15.35-0cf0eed804-a670241de0.zip/node_modules/@solana/wallet-adapter-react/",\
           "packageDependencies": [\
-            ["@solana/wallet-adapter-react", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35"],\
-            ["@solana-mobile/wallet-adapter-mobile", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
-            ["@solana/wallet-standard-wallet-adapter-react", "virtual:f81e9cb8a25e7c11ca32de86770873055ebd960e4c32a6f28316e71c34a24d941c36d08f5274098c970bde264aad32585edecb597df60aa535e4e67872329c7e#npm:1.1.2"],\
+            ["@solana/wallet-adapter-react", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.15.35"],\
+            ["@solana-mobile/wallet-adapter-mobile", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
+            ["@solana/wallet-standard-wallet-adapter-react", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:1.1.2"],\
             ["@solana/web3.js", "npm:1.94.0"],\
-            ["@types/react", "npm:17.0.80"],\
+            ["@types/react", null],\
             ["@types/solana__web3.js", null],\
-            ["react", "npm:17.0.2"]\
+            ["react", null]\
           ],\
           "packagePeers": [\
             "@solana/web3.js",\
@@ -5648,7 +5648,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-safepal-virtual-f856fde0b4/0/cache/@solana-wallet-adapter-safepal-npm-0.5.18-0e90c55a31-805d1dcf94.zip/node_modules/@solana/wallet-adapter-safepal/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-safepal", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.5.18"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5671,7 +5671,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-saifu-virtual-dee3c8ddba/0/cache/@solana-wallet-adapter-saifu-npm-0.1.15-1b31e635ea-02832bab4c.zip/node_modules/@solana/wallet-adapter-saifu/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-saifu", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.15"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5694,7 +5694,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-salmon-virtual-22815c7fee/0/cache/@solana-wallet-adapter-salmon-npm-0.1.14-e1ca532bc2-673d9f79b2.zip/node_modules/@solana/wallet-adapter-salmon/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-salmon", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.14"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null],\
             ["salmon-adapter-sdk", "virtual:22815c7fee30954d5fb5ef6c836f328810a76f69b646f304387d22ee90117362d69149b7efdec7f98541cc458b176ff1b4fca4a57cc4ca4942416060e6402c72#npm:1.1.1"]\
@@ -5718,7 +5718,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-sky-virtual-0da2950dff/0/cache/@solana-wallet-adapter-sky-npm-0.1.15-f3d7683397-ca492dbfb1.zip/node_modules/@solana/wallet-adapter-sky/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-sky", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.15"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5741,7 +5741,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-solflare-virtual-d8b13fc9a2/0/cache/@solana-wallet-adapter-solflare-npm-0.6.28-3334871859-54480b3674.zip/node_modules/@solana/wallet-adapter-solflare/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-solflare", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.6.28"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-chains", "npm:1.1.0"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@solflare-wallet/metamask-sdk", "virtual:d8b13fc9a2eb1c2225a71a564e8065f052453474da091c52f66447a60ed1a51fac3ca3649e8b438d937cee28b009ae846ad72612f0200e5d8297e4c435aa5dc9#npm:1.0.3"],\
@@ -5768,7 +5768,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-solong-virtual-9b6cdb9799/0/cache/@solana-wallet-adapter-solong-npm-0.9.18-f33ac99cce-5dc52d70ca.zip/node_modules/@solana/wallet-adapter-solong/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-solong", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.9.18"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5791,7 +5791,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-spot-virtual-d369e529a8/0/cache/@solana-wallet-adapter-spot-npm-0.1.15-e354621109-1292c9de91.zip/node_modules/@solana/wallet-adapter-spot/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-spot", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.15"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5814,7 +5814,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-tokenary-virtual-2c2592ed0c/0/cache/@solana-wallet-adapter-tokenary-npm-0.1.12-905d5d0671-a9e8b2c59a.zip/node_modules/@solana/wallet-adapter-tokenary/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-tokenary", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.12"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5837,7 +5837,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-tokenpocket-virtual-400d8a8e5b/0/cache/@solana-wallet-adapter-tokenpocket-npm-0.4.19-cfad053364-25aa7e0526.zip/node_modules/@solana/wallet-adapter-tokenpocket/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-tokenpocket", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.4.19"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5860,7 +5860,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-torus-virtual-0a5085676a/0/cache/@solana-wallet-adapter-torus-npm-0.11.28-a5c0d88a97-edebec425c.zip/node_modules/@solana/wallet-adapter-torus/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-torus", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.11.28"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@toruslabs/solana-embed", "virtual:0a5085676aad6cd14845246edb9ab7a60d199e6f5771db05c6d402fe607ab5b8ce8ea23b2c5f73cee733ea53548287530b0dae59b63b4a97ab23a7b179bb4ead#npm:0.3.4"],\
             ["@types/solana__web3.js", null],\
@@ -5888,7 +5888,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-trezor-virtual-8c929bc20c/0/cache/@solana-wallet-adapter-trezor-npm-0.1.2-0e9a652832-2ee3b79cf7.zip/node_modules/@solana/wallet-adapter-trezor/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-trezor", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.2"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@trezor/connect-web", "virtual:8c929bc20cf411be958392940e3386db8a8aea9f3c68da4296be7e2931aee97cd5cc4de9be70b173fe183a5221e5d47ec278313aecf50c99e567bd9e294151f9#npm:9.3.0"],\
             ["@types/solana__web3.js", null],\
@@ -5913,7 +5913,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-trust-virtual-1d130d64ff/0/cache/@solana-wallet-adapter-trust-npm-0.1.13-d6f7272419-9e434b4267.zip/node_modules/@solana/wallet-adapter-trust/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-trust", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.13"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -5937,7 +5937,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@solana/wallet-adapter-unsafe-burner", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.7"],\
             ["@noble/curves", "npm:1.4.2"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-features", "npm:1.2.0"],\
             ["@solana/wallet-standard-util", "npm:1.1.1"],\
             ["@solana/web3.js", "npm:1.94.0"],\
@@ -5963,7 +5963,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@solana/wallet-adapter-walletconnect", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.1.16"],\
             ["@jnwng/walletconnect-solana", "virtual:045b0feb33f239caf61c1b73426232954eb2590143dbd132f6ad58b5cdd640ff5b5a9696d69c748a8ba9a4e2b89025b5e0ed5b6624a1846307e3cf8292c86a71#npm:0.2.0"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -6044,7 +6044,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-adapter-xdefi-virtual-572fb1dad6/0/cache/@solana-wallet-adapter-xdefi-npm-0.1.7-fcf7fd5e77-bfefe3ecd3.zip/node_modules/@solana/wallet-adapter-xdefi/",\
           "packageDependencies": [\
             ["@solana/wallet-adapter-xdefi", "virtual:5d66bbdcd9505bce106252f6d4e220c6ce31c103a63e51448dd34e439fbb82350c778ee61b307f29c985ea8e09de89d61bbc24bcb76d9634f59c274fe949d48b#npm:0.1.7"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/solana__web3.js", null]\
           ],\
@@ -6184,11 +6184,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:1.1.2", {\
-          "packageLocation": "./.yarn/__virtual__/@solana-wallet-standard-wallet-adapter-react-virtual-7fc9313ce4/0/cache/@solana-wallet-standard-wallet-adapter-react-npm-1.1.2-ebb61c8cc8-c8fb71a04d.zip/node_modules/@solana/wallet-standard-wallet-adapter-react/",\
+        ["virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:1.1.2", {\
+          "packageLocation": "./.yarn/__virtual__/@solana-wallet-standard-wallet-adapter-react-virtual-09bb319e06/0/cache/@solana-wallet-standard-wallet-adapter-react-npm-1.1.2-ebb61c8cc8-c8fb71a04d.zip/node_modules/@solana/wallet-standard-wallet-adapter-react/",\
           "packageDependencies": [\
-            ["@solana/wallet-standard-wallet-adapter-react", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:1.1.2"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-standard-wallet-adapter-react", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:1.1.2"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-wallet-adapter-base", "virtual:390ffb317977611fc5cafce0f1395d1813eaf17edaf008d41d35c451a0ded8b1a601d0883997b285d81a4ef3860dd1bdea8b2a9a26bbf7b2766341194b655bd0#npm:1.1.2"],\
             ["@types/react", null],\
             ["@types/solana__wallet-adapter-base", null],\
@@ -6208,7 +6208,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solana-wallet-standard-wallet-adapter-react-virtual-e5b4bb2a49/0/cache/@solana-wallet-standard-wallet-adapter-react-npm-1.1.2-ebb61c8cc8-c8fb71a04d.zip/node_modules/@solana/wallet-standard-wallet-adapter-react/",\
           "packageDependencies": [\
             ["@solana/wallet-standard-wallet-adapter-react", "virtual:f81e9cb8a25e7c11ca32de86770873055ebd960e4c32a6f28316e71c34a24d941c36d08f5274098c970bde264aad32585edecb597df60aa535e4e67872329c7e#npm:1.1.2"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-wallet-adapter-base", "virtual:390ffb317977611fc5cafce0f1395d1813eaf17edaf008d41d35c451a0ded8b1a601d0883997b285d81a4ef3860dd1bdea8b2a9a26bbf7b2766341194b655bd0#npm:1.1.2"],\
             ["@types/react", "npm:17.0.80"],\
             ["@types/solana__wallet-adapter-base", null],\
@@ -6288,7 +6288,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@solflare-wallet-metamask-wallet-standard-virtual-516cbf9672/0/cache/@solflare-wallet-metamask-wallet-standard-npm-1.0.11-9498bf24e4-735c2b2fee.zip/node_modules/@solflare-wallet/metamask-wallet-standard/",\
           "packageDependencies": [\
             ["@solflare-wallet/metamask-wallet-standard", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:1.0.11"],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-standard-chains", "npm:1.1.0"],\
             ["@solana/wallet-standard-features", "npm:1.2.0"],\
             ["@solana/web3.js", "npm:1.94.0"],\
@@ -13358,14 +13358,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["gfx-perp-sdk", [\
-        ["https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz", {\
-          "packageLocation": "./.yarn/cache/gfx-perp-sdk-https-7ad8c46103-61639bd922.zip/node_modules/gfx-perp-sdk/",\
+        ["https://github.com/GooseFX1/gfx-perp-ts-sdk.git#commit=b482f811d754babb36c2dad8abaaf7be90ad9354", {\
+          "packageLocation": "./.yarn/cache/gfx-perp-sdk-https-ddfcc89641-c011862afc.zip/node_modules/gfx-perp-sdk/",\
           "packageDependencies": [\
-            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz"],\
+            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#commit=b482f811d754babb36c2dad8abaaf7be90ad9354"],\
             ["@project-serum/anchor", "npm:0.26.0"],\
             ["@project-serum/borsh", "virtual:83ccfb0fb0e306caeb6fc735dc9939d4eabad1d385a7c19a946b700c791bdce537a0cc4f67942e927d3fb321ea38fd70fcd184b8fea2556a7d827bca97f634c8#npm:0.2.5"],\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
-            ["@solana/wallet-adapter-react", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.15.35"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
+            ["@solana/wallet-adapter-react", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.15.35"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["@types/bn.js", "npm:5.1.5"],\
             ["axios", "npm:1.7.2"],\
@@ -13392,15 +13392,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@project-serum/borsh", "virtual:83ccfb0fb0e306caeb6fc735dc9939d4eabad1d385a7c19a946b700c791bdce537a0cc4f67942e927d3fb321ea38fd70fcd184b8fea2556a7d827bca97f634c8#npm:0.2.5"],\
             ["@pythnetwork/client", "virtual:cf8d131f70cd5f5f052407fa276c0c1508b011bc9e0a129434cb2a0d67959d5a5d0cd545d783fe024674a6060e41346227078984ed8488f42b49f53d237523f0#npm:2.21.1"],\
             ["@rive-app/react-canvas", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:4.13.0"],\
-            ["@solana-mobile/wallet-adapter-mobile", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:2.1.3"],\
+            ["@solana-mobile/wallet-adapter-mobile", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:2.1.3"],\
             ["@solana/buffer-layout", "npm:4.0.1"],\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
             ["@solana/spl-token-registry", "npm:0.2.4574"],\
             ["@solana/spl-token-v2", [\
               "@solana/spl-token",\
               "npm:0.2.0"\
             ]],\
-            ["@solana/wallet-adapter-base", "virtual:f58d8684efe5cf0b3053d57ee611ff048d4a8d09e01cde1eff30a57ac058f32ed5401dd48e0c3560ee48dff821d456b2032257047a2e3ab83a34c7b4214fd4f0#npm:0.9.23"],\
+            ["@solana/wallet-adapter-base", "virtual:aa2b2a7bef8dd01898f4fa9cd7fc67de46961d792e13253a54e1849137c0a8e8e564edd8778f3eed02cdd2b51c819b8da172ab66a4afc0d37eecb9fb18867e66#npm:0.9.23"],\
             ["@solana/wallet-adapter-react", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.15.35"],\
             ["@solana/wallet-adapter-walletconnect", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.1.16"],\
             ["@solana/wallet-adapter-wallets", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:0.19.32"],\
@@ -13441,7 +13441,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-simple-import-sort", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:7.0.0"],\
             ["eslint-plugin-unused-imports", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:2.0.0"],\
             ["gfx-component-lib", "virtual:a8acbffc9ff68055d4891104c746ce26b662ad0cd29d0ad845d06e57d9fdbde0d3674d1ddb4cb88d4d569ecbd8ba0ba8fe247916acb50ae670e586464e2e6c18#npm:1.12.9"],\
-            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz"],\
+            ["gfx-perp-sdk", "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#commit=b482f811d754babb36c2dad8abaaf7be90ad9354"],\
             ["gfx_stocks_pool", "file:./wasm#./wasm::hash=a4b3c5&locator=gfx-web-app%40workspace%3A."],\
             ["goosefx-ssl-sdk", "npm:1.2.24"],\
             ["goosefx-stake-rewards-sdk", "npm:2.0.2"],\
@@ -13631,7 +13631,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@project-serum/anchor", "npm:0.26.0"],\
             ["@pythnetwork/client", "virtual:cf8d131f70cd5f5f052407fa276c0c1508b011bc9e0a129434cb2a0d67959d5a5d0cd545d783fe024674a6060e41346227078984ed8488f42b49f53d237523f0#npm:2.21.1"],\
             ["@solana/buffer-layout", "npm:4.0.1"],\
-            ["@solana/spl-token", "virtual:7ad8c461031a15414378b7687afc205289ac86a234777f2d5eb4d181f8b480125004185519c34dfb18bf16ae3e299d685fba1fefe458744fb6cba124e510bc37#npm:0.3.11"],\
+            ["@solana/spl-token", "virtual:ddfcc89641a831f053b7ed9bd3e06e24742f0f0eebee90bdef69a27da7211270047b432071f20e44d6667245fb85ea93123ace8a63e4354cbca2dc56dca4dcee#npm:0.3.11"],\
             ["@solana/web3.js", "npm:1.94.0"],\
             ["dotenv", "npm:16.4.5"],\
             ["goosefx-ssl-sdk", "npm:1.2.24"]\

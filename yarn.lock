@@ -9900,9 +9900,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gfx-perp-sdk@https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz":
+"gfx-perp-sdk@https://github.com/GooseFX1/gfx-perp-ts-sdk.git#5":
   version: 1.2.1
-  resolution: "gfx-perp-sdk@https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz"
+  resolution: "gfx-perp-sdk@https://github.com/GooseFX1/gfx-perp-ts-sdk.git#commit=b482f811d754babb36c2dad8abaaf7be90ad9354"
   dependencies:
     "@project-serum/anchor": ^0.26.0
     "@project-serum/borsh": ^0.2.5
@@ -9912,7 +9912,7 @@ __metadata:
     "@types/bn.js": ^5.1.1
     axios: ^1.4.0
     bn.js: ^5.2.1
-  checksum: 61639bd9226558c9e0d0836f02aed48b26ede9c424af3da85583775a5468929781717c64f2c76f99dba6e0b915a125e07771f153ffbc288d80007c40d1fb040a
+  checksum: c011862afc183f96f2853eed51c19d5f66bcf804ad9d85c86497149a29f2d7156da3098508562c6993fd90c7a56399ab4ebbda84227ad909c874f03699d04738
   languageName: node
   linkType: hard
 
@@ -9979,7 +9979,7 @@ __metadata:
     eslint-plugin-simple-import-sort: ^7.0.0
     eslint-plugin-unused-imports: ^2.0.0
     gfx-component-lib: ^1.12.7
-    gfx-perp-sdk: "https://github.com/GooseFX1/gfx-perp-ts-sdk/archive/refs/tags/3/gfx-perp-sdk.tar.gz"
+    gfx-perp-sdk: "https://github.com/GooseFX1/gfx-perp-ts-sdk.git#5"
     gfx_stocks_pool: "file:./wasm"
     goosefx-ssl-sdk: latest
     goosefx-stake-rewards-sdk: ^2.0.1
