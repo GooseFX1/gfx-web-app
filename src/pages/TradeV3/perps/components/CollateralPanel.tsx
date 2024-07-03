@@ -2,12 +2,11 @@ import { FC, useMemo } from 'react'
 import { useTraderConfig } from '../../../../context/trader_risk_group'
 import { useDarkMode } from '../../../../context'
 import { formatNumberInThousands } from '../utils'
-import { TooltipTrigger, TooltipContent, Tooltip, cn } from 'gfx-component-lib'
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { InfoLabel, InfoLabelNunito, PerpsLayout } from './PerpsGenericComp'
 import { Connect } from '../../../../layouts'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 // eslint-disable-next-line
-import tw, { styled } from 'twin.macro'
 
 export const CollateralPanel: FC = (): JSX.Element => {
   const { connectedWalletPublicKey } = useWalletBalance()
@@ -15,8 +14,8 @@ export const CollateralPanel: FC = (): JSX.Element => {
   return (
     <PerpsLayout>
       <div className={cn('p-2.5 max-sm:h-[300px]')}>
-        <div tw="flex items-center mb-4">
-          <img src="img/crypto/SOL.svg" tw="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
+        <div className="flex items-center mb-4">
+          <img src="img/crypto/SOL.svg" className="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
           <InfoLabel>Sol Account</InfoLabel>
         </div>
         {connectedWalletPublicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
@@ -112,13 +111,13 @@ export const AccountRowPnl: FC<{ keyStr?: string; tooltipData: string }> = ({ ke
     )
   }, [traderInfo])
   return (
-    <div tw="my-2.5 flex items-center justify-between">
+    <div className="my-2.5 flex items-center justify-between">
       <div className="flex items-center">
         <h5 className={isNegative ? cn(`text-red-1`) : cn(`text-green-gradient-1`)}>{keyStr ?? ''}</h5>
         <Tooltip>
           <TooltipTrigger>
             <div className={cn('ml-1.5')}>
-              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-4 w-4 " />
+              <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" className="h-4 w-4 " />
             </div>
           </TooltipTrigger>
           <TooltipContent>{tooltipData}</TooltipContent>
@@ -174,15 +173,15 @@ export const AccountRowHealth: FC<{ accountHealth }> = ({ accountHealth }) => {
   )
 
   return (
-    <div tw="flex items-center justify-between my-4">
+    <div className="flex items-center justify-between my-4">
       <div>
-        <div tw="flex items-center">
-          <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" tw="h-5 w-5 mr-1.5" />
+        <div className="flex items-center">
+          <img src={`/img/assets/healthIcon${mode}.svg`} alt="heart-icon" className="h-5 w-5 mr-1.5" />
           <InfoLabel>Health</InfoLabel>
           <Tooltip>
             <TooltipTrigger>
               <div>
-                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" tw="h-5 ml-1 w-5" />
+                <img src={`/img/assets/Tooltip${mode}.svg`} alt="tooltip" className="h-5 ml-1 w-5" />
               </div>
             </TooltipTrigger>
             <TooltipContent>The health bar shows how close you are to being liquidated. </TooltipContent>
@@ -203,7 +202,7 @@ const AccountRow: FC<{ keyStr: string; value: string | number; tooltipData: stri
 }) => {
   const { mode } = useDarkMode()
   return (
-    <div tw=" flex items-center justify-between my-4">
+    <div className=" flex items-center justify-between my-4">
       <div className="flex items-center">
         <InfoLabel>{keyStr}</InfoLabel>
         <Tooltip>
