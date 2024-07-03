@@ -25,7 +25,7 @@ package-lock.json
 .env.production.local
 .devcert
 *:Zone.Identifier
-
+.yarn
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
