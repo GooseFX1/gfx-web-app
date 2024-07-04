@@ -20,7 +20,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "gfx-perp-sdk/*": ["node_modules/gfx-perp-sdk/*"]
     }
   },
   "include": ["src", "src/types/custom.d.ts"],
