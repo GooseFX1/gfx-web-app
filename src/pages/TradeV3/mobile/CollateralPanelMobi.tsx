@@ -6,6 +6,7 @@ import { truncateAddress } from '../../../utils'
 import { ArrowDropdown, Tooltip } from '../../../components'
 import { useCrypto, useDarkMode, useOrder } from '../../../context'
 import { useTraderConfig } from '../../../context/trader_risk_group'
+import { useMpgConfig } from '@/context/market_product_group'
 
 const WRAPPER = styled.div`
   .deposit-wrapper {
@@ -16,7 +17,7 @@ const WRAPPER = styled.div`
       background: ${({ theme }) => theme.bg20};
     }
     .deposit-btn {
-      ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-regular 
+      ${tw`w-full h-full rounded-[36px] flex items-center justify-center text-regular
       font-semibold dark:text-white text-black-4`}
       background: linear-gradient(94deg, rgba(247, 147, 26, 0.4) 0%, rgba(172, 28, 199, 0.4) 100%);
     }
@@ -167,7 +168,8 @@ export const CollateralPanelMobi = ({ setUserProfile }) => {
   const [arrowRotation, setArrowRotation] = useState(false)
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const [collateralPanelInfo, showCollateralPanelInfo] = useState<string>(dropdownOptions[0])
-  const { collateralInfo, traderInfo, activeProduct } = useTraderConfig()
+  const { collateralInfo, traderInfo } = useTraderConfig()
+  const { activeProduct } =   useMpgConfig()
   const { mode } = useDarkMode()
   const { order } = useOrder()
   const { getAskSymbolFromPair, selectedCrypto } = useCrypto()

@@ -30,6 +30,7 @@ import {
 } from 'gfx-component-lib'
 import { ContentLabel, InfoLabel, TitleLabel } from './perps/components/PerpsGenericComp'
 import { InfoRow } from './TradeConfirmation'
+import { useMpgConfig } from '@/context/market_product_group'
 
 const percentDetails = [
   {
@@ -81,7 +82,8 @@ export const ClosePosition: FC<{
   setSummaryData: React.Dispatch<React.SetStateAction<any>>
   setPerpsEndModal: React.Dispatch<React.SetStateAction<any>>
 }> = ({ setVisibleState, setSummaryData, setPerpsEndModal }) => {
-  const { traderInfo, activeProduct } = useTraderConfig()
+  const { traderInfo } = useTraderConfig()
+  const { activeProduct } =  useMpgConfig()
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const { orderBook } = useOrderBook()
   const price = getPerpsPrice(orderBook)
