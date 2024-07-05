@@ -1,6 +1,6 @@
 import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
-import React, { ReactNode, useContext, useEffect, useState, FC, useMemo } from 'react'
+import React, { ReactNode, useContext, useEffect, useState, FC } from 'react'
 import { MPG_ID as MAINNET_MPG_ID, MPs as MAINNET_MPs } from '../pages/TradeV3/perps/perpsConstants'
 import { MPG_ID as DEVNET_MPG_ID, MPs as DEVNET_MPs } from '../pages/TradeV3/perps/perpsConstantsDevnet'
 import { MarketProductGroup } from '../pages/TradeV3/perps/dexterity/accounts'
