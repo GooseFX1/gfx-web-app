@@ -49,22 +49,21 @@ export const MarketProductGroupProvider: FC<{ children: ReactNode }> = ({ childr
   const [initTesting, setInitTesting] = useState<boolean>(false)
   const [perpInstanceSdk, setPerpInstanceSdk] = useState<Perp>(null)
   const [perpProductInstanceSdk, setPerpProductInstanceSdk] = useState<Product>(null)
+  const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 
   const wallet: WalletContextState = useWallet()
 
-  const { perpsConnection: mainnetConnection } = useConnectionConfig()
-  const MPG_ID = useMemo(() => (isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID), [isDevnet])
+  const { perpsConnection: connection } = useConnectionConfig()
+  const MPG_ID = isDevnet ? DEVNET_MPG_ID : MAINNET_MPG_ID
 
-  const MPs = useMemo(() => (isDevnet ? DEVNET_MPs : MAINNET_MPs), [isDevnet])
+  const MPs = isDevnet ? DEVNET_MPs : MAINNET_MPs
 
   const { on, off } = useSolSub()
-  const connection = useMemo(() => mainnetConnection, [])
 
   useActivityTracker({
     callbackOff: () => setIsCurrentTabActive(false),
     callbackOn: () => setIsCurrentTabActive(true)
   })
-  const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 
   const updateMPGDetails = async (mpgData, mpgRawData) => {
     mpgData ? setMarketProductGroup(mpgData) : setMarketProductGroup(null)
@@ -83,7 +82,8 @@ export const MarketProductGroupProvider: FC<{ children: ReactNode }> = ({ childr
     ;(async () => {
       if (!currentMPG) return
       const mpgData = await MarketProductGroup.fetch(connection, currentMPG)
-      updateMPGDetails(mpgData ? mpgData[0] : null, mpgData ? mpgData[1] : null)
+      const [mpg, mpgRawData] = mpgData || [null, null]
+      updateMPGDetails(mpg, mpgRawData)
     })()
   }, [currentMPG, connection])
 
