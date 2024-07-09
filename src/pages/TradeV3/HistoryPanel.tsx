@@ -102,7 +102,7 @@ const HEADER = styled.div`
       ${tw`w-1/4 h-[31px] p-0.5`}
       border: ${({ theme }) => '1px solid ' + theme.tokenBorder};
       .tab {
-        ${tw`cursor-pointer h-full w-full flex flex-row items-center 
+        ${tw`cursor-pointer h-full w-full flex flex-row items-center
         justify-center font-semibold cursor-pointer text-tiny text-[#636363] dark:text-[#B5B5B5]`}
         background-color: ${({ theme }) => theme.bg2};
       }
@@ -951,10 +951,11 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
   handleClosePosition
 }) => {
   const { mode } = useDarkMode()
+  const { publicKey } = useWallet()
   if (checkMobile())
     return (
       <>
-        {traderInfo.averagePosition.side && Number(roundedSize) ? (
+        {publicKey && traderInfo.averagePosition.side && Number(roundedSize) ? (
           <div
             className={cn(
               'flex flex-col px-2.5 mt-2.5 h-[125px] border border-r-none border-l-none dark:border-black-4 '
@@ -1034,7 +1035,7 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
     )
   return (
     <>
-      {traderInfo.averagePosition.side && Number(roundedSize) ? (
+      {publicKey && traderInfo.averagePosition.side && Number(roundedSize) ? (
         <div className={cn('flex px-2.5 mt-2.5')}>
           <div className={cn('w-[11.1%] flex items-center')}>
             <InfoLabelNunito>{selectedCrypto.pair} </InfoLabelNunito>

@@ -11,13 +11,17 @@ import { httpClient } from '../../../api'
 import { GET_TRADER_DAY_VOLUME } from '../../TradeV3/perps/perpsConstants'
 import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 import { Button, Container, ContainerTitle, cn } from 'gfx-component-lib'
-import { AccountsLabel, ContentLabel, InfoLabel, 
-  InfoLabelNunito } from '@/pages/TradeV3/perps/components/PerpsGenericComp'
+import {
+  AccountsLabel,
+  ContentLabel,
+  InfoLabel,
+  InfoLabelNunito
+} from '@/pages/TradeV3/perps/components/PerpsGenericComp'
 import { AccountRowHealth } from '@/pages/TradeV3/perps/components/CollateralPanel'
 import useBreakPoint from '@/hooks/useBreakPoint'
 
 const HISTORY = styled.div`
-  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] max-sm:h-[calc(100vh - 315px)] bg-white 
+  ${tw`flex w-full dark:bg-black-2 h-[calc(100vh - 268px)] max-sm:h-[calc(100vh - 315px)] bg-white
   border  border-grey-4 dark:border-black-4 border-b-0 border-r-0 border-l-0
   max-sm:border-t-0  rounded-[3px]
   rounded-b-[5px] max-sm:my-[15px]`}
@@ -77,7 +81,7 @@ const AccountOverview: FC = () => {
 
   const { traderInfo, portfolioValue } = useTraderConfig()
   const { orderBook } = useOrderBook()
-  const { connected } = useWallet()
+  const { connected, publicKey } = useWallet()
 
   const { selectedCrypto, isDevnet, getAskSymbolFromPair } = useCrypto()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
@@ -93,11 +97,14 @@ const AccountOverview: FC = () => {
   const assetIcon = useMemo(() => `/img/crypto/${symbol}.svg`, [symbol, selectedCrypto.type])
 
   const userVolume = useMemo(() => {
+    if (!publicKey) {
+      return '0.00'
+    }
     const vol = traderInfo.traderVolume
     if (Number.isNaN(vol)) return '0.00'
     const rounded = (+vol).toFixed(2)
     return rounded
-  }, [traderInfo.traderVolume])
+  }, [traderInfo.traderVolume, publicKey, connected])
 
   const roundedSize = useMemo(() => {
     const size = Number(traderInfo.averagePosition.quantity)
@@ -126,6 +133,8 @@ const AccountOverview: FC = () => {
   useEffect(() => {
     if (traderInfo.traderRiskGroupKey !== null) {
       fetchDayVolume()
+    } else {
+      setDayVolume(0)
     }
   }, [connected, traderInfo.traderRiskGroupKey])
   const { isMobile } = useBreakPoint()
@@ -157,7 +166,9 @@ const AccountOverview: FC = () => {
             </IconTooltip> */}
             </ContainerTitle>
             <InfoLabel>
-              <h2 className="leading-4">${formatNumberInThousands(Number(portfolioValue))}</h2>
+              <h2 className="leading-4">
+                ${publicKey ? formatNumberInThousands(Number(portfolioValue)) : '0.00'}
+              </h2>
             </InfoLabel>
           </Container>
           <Container
@@ -223,7 +234,7 @@ const AccountOverview: FC = () => {
             ))}
           </div>
           <HISTORY>
-            {traderInfo.averagePosition.side && Number(roundedSize) ? (
+            {publicKey && traderInfo.averagePosition.side && Number(roundedSize) ? (
               <div className="positions">
                 <div className="pair-container">
                   <img src={`${assetIcon}`} alt="SOL icon" />
@@ -244,8 +255,11 @@ const AccountOverview: FC = () => {
                 </InfoLabel>
               </div>
             ) : (
-              <NoPositionFound str='No Positions Found'
-                connected={connected} setDepositWithdrawModal={setDepositWithdrawModal} />
+              <NoPositionFound
+                str="No Positions Found"
+                connected={connected}
+                setDepositWithdrawModal={setDepositWithdrawModal}
+              />
             )}
           </HISTORY>
         </>
@@ -253,7 +267,7 @@ const AccountOverview: FC = () => {
       {isMobile && (
         <>
           <HISTORY>
-            {traderInfo.averagePosition.side && Number(roundedSize) ? (
+            {publicKey && traderInfo.averagePosition.side && Number(roundedSize) ? (
               <div className="flex flex-col w-full p-2.5 rounded-[3px]">
                 <div className="flex justify-between mt-[5px] ">
                   <ContentLabel className="text-[15px]"> Asset </ContentLabel>
@@ -268,22 +282,27 @@ const AccountOverview: FC = () => {
                 </div>
                 <div className="flex justify-between mt-[5px] ">
                   <ContentLabel className="text-[15px]"> USD Value </ContentLabel>
-                  <InfoLabelNunito className="text-[15px]"> ${formatNumberInThousands(Number(notionalSize))}
+                  <InfoLabelNunito className="text-[15px]">
+                    {' '}
+                    ${formatNumberInThousands(Number(notionalSize))}
                   </InfoLabelNunito>
                 </div>
                 <div className="flex justify-between mt-[5px] ">
                   <ContentLabel className="text-[15px]"> Liquidity Price </ContentLabel>
-                  <InfoLabelNunito className="text-[15px]"> ${Number(traderInfo.liquidationPrice).toFixed(2)}
+                  <InfoLabelNunito className="text-[15px]">
+                    {' '}
+                    ${Number(traderInfo.liquidationPrice).toFixed(2)}
                   </InfoLabelNunito>
                 </div>
                 <BorderLine className={'mt-2.5'} />
               </div>
             ) : (
               <NoPositionFound
-                str='No Positions Found'
-                connected={connected} setDepositWithdrawModal={setDepositWithdrawModal} />
+                str="No Positions Found"
+                connected={connected}
+                setDepositWithdrawModal={setDepositWithdrawModal}
+              />
             )}
-
           </HISTORY>
         </>
       )}
@@ -291,26 +310,30 @@ const AccountOverview: FC = () => {
   )
 }
 
-export const NoPositionFound: FC<{ str: string, connected: boolean, setDepositWithdrawModal: (boolean) => void }> =
-  ({ str, connected, setDepositWithdrawModal }) =>
-    <div className="flex h-full items-center justify-center w-full flex-col">
-      {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
-      <AccountsLabel className="text-[18px]">{str}</AccountsLabel>
-      <div className="mt-4">{!connected && <Connect />}</div>
-      <div className="mt-0">
-        {connected && (
-          <Button
-            colorScheme={'blue'}
-            onClick={() => setDepositWithdrawModal(true)}
-            className={`ml-auto font-bold
+export const NoPositionFound: FC<{
+  str: string
+  connected: boolean
+  setDepositWithdrawModal: (boolean) => void
+}> = ({ str, connected, setDepositWithdrawModal }) => (
+  <div className="flex h-full items-center justify-center w-full flex-col">
+    {/* <img src={`/img/assets/NoPositionsFound_${mode}.svg`} alt="no-balances-found" /> */}
+    <AccountsLabel className="text-[18px]">{str}</AccountsLabel>
+    <div className="mt-4">{!connected && <Connect />}</div>
+    <div className="mt-0">
+      {connected && (
+        <Button
+          colorScheme={'blue'}
+          onClick={() => setDepositWithdrawModal(true)}
+          className={`ml-auto font-bold
     text-white min-w-[122px]  py-1.875  min-md:px-1.5 box-border`}
-            size={'lg'}
-          >
-            Deposit Now
-          </Button>
-        )}
-      </div>
+          size={'lg'}
+        >
+          Deposit Now
+        </Button>
+      )}
     </div>
+  </div>
+)
 
 export const BorderLine: FC<{ className?: string }> = ({ className }) => (
   <div className={cn(`h-[1px] dark:!bg-black-4 bg-grey-4 dark:text-black-2 text-white`, className)}>'</div>

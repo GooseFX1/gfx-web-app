@@ -86,10 +86,10 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .Long {
-    color: #6EAD57;
+    color: #6ead57;
   }
   .filled {
-    color: #6EAD57;
+    color: #6ead57;
   }
   .Short {
     color: #f35355;
@@ -134,11 +134,9 @@ const Trades: FC = () => {
       setFilledTrades(res.data.data)
       setTotalItemsCount(res.data.totalCount)
       setIsLoading(false)
-    }
-    catch (err) {
+    } catch (err) {
       setIsLoading(false)
     }
-
   }
 
   useEffect(() => {
@@ -151,10 +149,12 @@ const Trades: FC = () => {
 
   // if the trader is the maker side displayed should be the opposite
   const getDisplayTradeSide = (trade: any) => {
-    if (trade.taker == traderInfo.traderRiskGroupKey.toString()) {
-      return trade.side === 'Bid' ? 'Long' : 'Short'
-    } else {
-      return trade.side === 'Ask' ? 'Long' : 'Short'
+    if (publicKey && traderInfo.traderRiskGroupKey !== null) {
+      if (trade.taker == traderInfo.traderRiskGroupKey.toString()) {
+        return trade.side === 'Bid' ? 'Long' : 'Short'
+      } else {
+        return trade.side === 'Ask' ? 'Long' : 'Short'
+      }
     }
   }
 
@@ -229,12 +229,13 @@ const Trades: FC = () => {
           </div>
         )}
 
-        {!isLoading && filledTrades.length === 0 && <NoPositionFound
-          str='No Trades Found'
-          connected={connected}
-          setDepositWithdrawModal={setDepositWithdrawModal}
-        />}
-
+        {!isLoading && filledTrades.length === 0 && (
+          <NoPositionFound
+            str="No Trades Found"
+            connected={connected}
+            setDepositWithdrawModal={setDepositWithdrawModal}
+          />
+        )}
       </HISTORY>
     </WRAPPER>
   )

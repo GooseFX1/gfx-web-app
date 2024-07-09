@@ -68,7 +68,7 @@ const HISTORY = styled.div`
     font-weight: 600;
   }
   .deposit-type {
-    color: #6EAD57;
+    color: #6ead57;
   }
   .withdraw-type {
     color: #f35355;
@@ -107,14 +107,17 @@ const DepositWithdrawHistory: FC = () => {
 
       setFundTransfers(res.data.data)
       setTotalItemsCount(res.data.totalCount)
-    }
-    catch (err) {
+    } catch (err) {
       setIsLoading(false)
     }
-
   }
   useEffect(() => {
-    fetchFundTransfers()
+    if (publicKey) {
+      fetchFundTransfers()
+    } else {
+      setFundTransfers([])
+      setTotalItemsCount(0)
+    }
   }, [connected, publicKey, pagination])
 
   return (
@@ -153,7 +156,7 @@ const DepositWithdrawHistory: FC = () => {
               {fundTransfers.map((transfer) => (
                 <div
                   key={transfer._id}
-                  className="grid grid-cols-4 gap-x-40 items-center w-full p-2.5 
+                  className="grid grid-cols-4 gap-x-40 items-center w-full p-2.5
                 border dark:border-b-black-4 border-b-grey-4 border-l-0 border-r-0 border-t-0
                 dark:bg-black-2 bg-white"
                 >
@@ -175,12 +178,13 @@ const DepositWithdrawHistory: FC = () => {
             </div>
           </div>
         )}
-        {!isLoading && fundTransfers?.length === 0 && <NoPositionFound
-          str='No Deposits Found'
-          connected={connected}
-          setDepositWithdrawModal={setDepositWithdrawModal}
-        />}
-
+        {!isLoading && fundTransfers?.length === 0 && (
+          <NoPositionFound
+            str="No Deposits Found"
+            connected={connected}
+            setDepositWithdrawModal={setDepositWithdrawModal}
+          />
+        )}
       </HISTORY>
     </div>
   )
