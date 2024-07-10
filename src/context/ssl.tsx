@@ -1,4 +1,3 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import {
   FC,
   useState,
@@ -8,7 +7,6 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
-  useMemo,
   useCallback
 } from 'react'
 import { usePriceFeedFarm } from '.'
@@ -28,6 +26,7 @@ import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
 import { PublicKey } from '@solana/web3.js'
 import useSolSub, { SubType } from '../hooks/useSolSub'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 interface SSLData {
   pool: Pool
@@ -61,7 +60,7 @@ const SSLContext = createContext<SSLData | null>(null)
 export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection } = useConnectionConfig()
   const { SSLProgram } = usePriceFeedFarm()
-  const { wallet } = useWallet()
+  const {connectedWalletPublicKey:publicKey} = useWalletBalance()
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])
@@ -79,27 +78,6 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
   const [connectionId, setConnectionId] = useState<string>()
   const { on, off } = useSolSub()
-  // const [isWhitelisted, setIsWhitelisted] = useState<boolean>(false)
-
-  const publicKey: PublicKey | null = useMemo(
-    () => (wallet?.adapter?.publicKey || null),
-    [wallet]
-  )
-
-  // const isWhitelistApi = async () => {
-  //   try {
-  //     const walletAddress = publicKey
-  //     if (walletAddress) {
-  //       const res = await httpClient('api-services').post(`${IS_WHITELIST}`, {
-  //         walletAddress: walletAddress?.toBase58()
-  //       })
-  //       const data = res.data
-  //       setIsWhitelisted(data)
-  //     }
-  //   } catch (e) {
-  //     setIsWhitelisted(false)
-  //   }
-  // }
 
   useEffect(() => {
     ;(async () => {
