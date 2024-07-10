@@ -1,8 +1,6 @@
 /* eslint-disable */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { FC, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import tw from 'twin.macro'
 import {
   AVAILABLE_ORDERS,
   OrderType,
@@ -16,12 +14,10 @@ import {
 } from '../../context'
 import { checkMobile } from '../../utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { PopupCustom } from '../../components'
 import { useTraderConfig } from '../../context/trader_risk_group'
 import { getProfitAmount } from './perps/utils'
 import { TradeConfirmation } from './TradeConfirmation'
 import 'styled-components/macro'
-import { Picker } from './Picker'
 import useWindowSize from '../../utils/useWindowSize'
 import {
   BlackGradientBg,
@@ -64,65 +60,6 @@ enum ButtonState {
   OrderTooSmall = 6
 }
 
-const LEVERAGE_WRAPPER = styled.div`
-  ${tw`pl-0 w-full pr-2 text-left mt-[-5px] max-sm:mt-[-10px] max-sm:h-[38px]`}
-  .ant-slider-rail {
-    ${tw`h-[6px] dark:bg-[#262626] bg-grey-1`}
-  }
-  .ant-slider {
-    margin: 0px;
-  }
-  .ant-slider-with-marks {
-    ${tw`mb-2 my-[5px]`}
-  }
-  .ant-slider-step {
-    .ant-slider-dot {
-      margin-left: 0px !important;
-      height: 9px !important;
-      width: 9px !important;
-    }
-    .ant-slider-dot-active {
-      display: none;
-    }
-  }
-  .ant-slider-mark {
-    .ant-slider-mark-text {
-      margin-left: 0px;
-      margin-top: 4px;
-      margin-bottom: 4px;
-    }
-    .markSpan {
-      ${tw`dark:text-[#B5B5B5] text-[#636363] text-tiny`}
-      margin-left: 0px;
-    }
-  }
-  .leverageText {
-    ${tw`text-regular dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold mt-[5%]`}
-  }
-  .smallScreenLeverageText {
-    ${tw`dark:text-[#B5B5B5] text-[#636363] pl-2 font-semibold`}
-  }
-
-  .leverageBar {
-    ${tw`mt-[-5px] mb-[30px]`}
-  }
-  .smallScreenLeverageBar {
-    ${tw`!mb-5`}
-  }
-`
-styled(PopupCustom)`
-  ${tw`!h-[536px] !w-[500px] rounded-bigger dark:bg-black-2 bg-grey-5`}
-
-  .ant-modal-header {
-    ${tw`rounded-tl-half rounded-tr-half px-[25px] pt-5 pb-0 border-b-0 dark:bg-black-2 bg-grey-5`}
-  }
-  .ant-modal-content {
-    ${tw`shadow-none`}
-  }
-  .ant-modal-body {
-    ${tw`py-0 px-[25px]`}
-  }
-`
 const ORDER_CATEGORY_TYPE = [
   {
     id: 'postOnly',
