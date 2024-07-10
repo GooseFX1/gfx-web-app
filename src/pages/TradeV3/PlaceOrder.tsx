@@ -437,7 +437,7 @@ export const PlaceOrder: FC = () => {
           />
         )}
 
-        <div className="px-2.5 flex flex-col max-sm:pb-2.5 py-1 max-sm:h-auto h-[calc(100% - 80px)]">
+        <div className="px-2.5 flex flex-col flex-1 max-sm:pb-2.5 py-1 max-sm:h-auto h-[calc(100% - 80px)]">
           <div className={cn('flex mb-2.5')}>
             <div className={cn('flex w-1/2 flex-col gap-1')}>
               <InfoLabel> Order type</InfoLabel>
