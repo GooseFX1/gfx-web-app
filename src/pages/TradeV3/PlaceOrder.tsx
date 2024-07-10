@@ -673,8 +673,8 @@ export const PlaceOrder: FC = () => {
           </div>
           <div className={cn('flex mb-2.5 flex-col gap-1')}>
             <InfoLabel>Leverage</InfoLabel>
-              <Slider max={12}  value={leverageValue}
-                      step={0.0001}
+              <Slider max={10}  value={leverageValue}
+                      step={0.1}
                       steps={5}
                       showSteps
                       snapToStep
@@ -682,28 +682,6 @@ export const PlaceOrder: FC = () => {
                       onValueChange={(v)=>handleSliderChange(v)}>
                 {leverageValue[0].toFixed(2)}x
               </Slider>
-              {/*<LEVERAGE_WRAPPER>*/}
-              {/*  <Picker>*/}
-              {/*    <Slider*/}
-              {/*      max={10}*/}
-              {/*      onChange={(e) => handleSliderChange(e)}*/}
-              {/*      step={0.0001}*/}
-              {/*      value={sliderValue}*/}
-              {/*      trackStyle={{*/}
-              {/*        height: '6px'*/}
-              {/*      }}*/}
-              {/*      handleStyle={{*/}
-              {/*        height: '20px',*/}
-              {/*        width: '20px',*/}
-              {/*        background: 'white',*/}
-              {/*        border: '2px solid #FFFFFF',*/}
-              {/*        position: 'relative',*/}
-              {/*        bottom: '2px'*/}
-              {/*      }}*/}
-              {/*      marks={getMarks()}*/}
-              {/*    />*/}
-              {/*  </Picker>*/}
-              {/*</LEVERAGE_WRAPPER>*/}
           </div>
           <div className={cn('flex items-center mt-auto')}>
             {ORDER_CATEGORY_TYPE.map((item) => (

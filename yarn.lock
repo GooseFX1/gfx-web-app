@@ -7342,10 +7342,10 @@ get-tsconfig@^4.5.0:
   dependencies:
     resolve-pkg-maps "^1.0.0"
 
-gfx-component-lib@^1.12.12:
-  version "1.12.12"
-  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.12.12.tgz#ee22e213265f1273de2ae11aef2efe74d8c3e573"
-  integrity sha512-P2rrq8d8ZW+eF1SlmH4hT302ys09qA8VG9VE49gBUhNvl53Vhw332jCvNQTwdqV+YLU/IbTkX7rljy86YJL1hg==
+gfx-component-lib@^1.12.13:
+  version "1.12.13"
+  resolved "https://registry.yarnpkg.com/gfx-component-lib/-/gfx-component-lib-1.12.13.tgz#21edd55568cbab2e6e9a16532f4505f10c85fbde"
+  integrity sha512-quoPeXI5rEoURrG7mbjcRT7BE07BfByoupT/T3kfsEw29sftEiKKx8ThO4laVuEtbP+moZYvCDtLY1sSmtCv9w==
   dependencies:
     "@radix-ui/react-accordion" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.0.4"
@@ -7373,7 +7373,7 @@ gfx-component-lib@^1.12.12:
     react "^18.2.0"
     react-dom "^18.2.0"
     react-resizable-panels "^2.0.3"
-    sonner "^1.4.41"
+    sonner "^1.5.0"
     tailwind-merge "^2.2.1"
     tailwindcss-animate "^1.0.7"
     tailwindcss-border-gradient-radius "^3.0.1"
@@ -10992,7 +10992,7 @@ sonic-boom@^2.2.1:
   dependencies:
     atomic-sleep "^1.0.0"
 
-sonner@^1.4.41:
+sonner@^1.4.41, sonner@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.5.0.tgz#af359f817063318415326b33aab54c5d17c747b7"
   integrity sha512-FBjhG/gnnbN6FY0jaNnqZOMmB73R+5IiyYAw8yBj7L54ER7HB3fOSE5OFiQiE2iXWxeXKvg6fIP4LtVppHEdJA==
