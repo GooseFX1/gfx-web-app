@@ -91,8 +91,9 @@ export const WalletsModal: FC = () => {
               isLoading={connecting && wallet.adapter.name === selectedWallet}
               onClick={() => handleWalletClick(wallet.adapter.name)}
               className={cn(
-                `flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`,
+                `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2
+                  hover:border-purple-1 hover:dark:border-white`,
                 connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
               )}
             >
@@ -108,7 +109,7 @@ export const WalletsModal: FC = () => {
                   {wallet.adapter.name.replace('(Extension)', '')}
                 </h6>
               </div>
-              <div className="text-green-1 pr-5">Detected</div>
+              <div className="text-green-3 pr-5">Detected</div>
             </Button>
           ))}
 
@@ -123,8 +124,9 @@ export const WalletsModal: FC = () => {
                 isLoading={connecting && wallet.adapter.name === selectedWallet}
                 onClick={() => handleWalletClick(wallet.adapter.name)}
                 className={cn(
-                  `flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`,
+                  `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 
+                  hover:border-purple-1 hover:dark:border-white`,
                   connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
                 )}
               >
