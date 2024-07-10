@@ -56,7 +56,7 @@ const HISTORY = styled.div`
   .history-item {
     ${tw`grid grid-cols-5  items-center w-full !border-t-0 !border-l-0 !border-r-0
     w-full dark:border-b-black-4 border border-b-grey-4`}
-   
+
     padding: 10px;
     font-size: 13px;
   }
@@ -99,7 +99,7 @@ const HISTORY = styled.div`
     color: #6ead57;
   }
   .filled {
-    color: #6EAD57;
+    color: #6ead57;
   }
   .sell {
     color: #f35355;
@@ -124,6 +124,7 @@ const FundingHistory: FC = () => {
   const [fundingHistory, setFundingHistory] = useState([])
   const [totalItemsCount, setTotalItemsCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [cumulativeFunding, setCumulativeFunding] = useState(0)
 
   const { selectedCrypto, getAskSymbolFromPair } = useCrypto()
   const symbol = useMemo(
@@ -147,23 +148,30 @@ const FundingHistory: FC = () => {
       setFundingHistory(res.data.data)
       setTotalItemsCount(res.data.totalCount)
       setIsLoading(false)
-    }
-    catch(err){
+    } catch (err) {
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    if (traderInfo.traderRiskGroupKey !== null) {
+    if (publicKey && traderInfo.traderRiskGroupKey !== null) {
       fetchFundingHistory()
+    } else {
+      setFundingHistory([])
+      setTotalItemsCount(0)
     }
   }, [connected, publicKey, traderInfo.traderRiskGroupKey, pagination])
 
-  const getCumulativeFunding = (): number =>
-    traderInfo.traderRiskGroup !== null
-      ? Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
+  useEffect(() => {
+    const getCumulativeFunding = (): number =>
+      Number(traderInfo.traderRiskGroup.fundingBalance.m.toString()) /
       10 ** (Number(traderInfo.traderRiskGroup.fundingBalance.exp.toString()) + 5)
-      : 0
+    if (publicKey && traderInfo.traderRiskGroup !== null) {
+      setCumulativeFunding(getCumulativeFunding())
+    } else {
+      setCumulativeFunding(0)
+    }
+  }, [connected, publicKey, traderInfo.traderRiskGroup])
 
   return (
     <WRAPPER>
@@ -201,16 +209,16 @@ const FundingHistory: FC = () => {
             <InfoLabel>
               <h2 className="leading-4">
                 $
-                {getCumulativeFunding().toString().indexOf('.') != -1 ? (
+                {cumulativeFunding.toString().indexOf('.') != -1 ? (
                   <Tooltip
                     color={mode === 'dark' ? '#F7F0FD' : '#1C1C1C'}
                     infoIcon={false}
-                    title={getCumulativeFunding()}
+                    title={cumulativeFunding}
                   >
-                    <>{getCumulativeFunding().toFixed(2)}</>
+                    <>{cumulativeFunding.toFixed(2)}</>
                   </Tooltip>
                 ) : (
-                  <>{getCumulativeFunding()}</>
+                  <>{cumulativeFunding}</>
                 )}
               </h2>
             </InfoLabel>

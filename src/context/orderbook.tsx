@@ -7,6 +7,7 @@ import { useTraderConfig } from './trader_risk_group'
 import { httpClient } from '../api'
 import { GET_OPEN_ORDERS, GET_ORDERBOOK } from '../pages/TradeV3/perps/perpsConstants'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useMpgConfig } from './market_product_group'
 
 const MILLISECONDS_IN_SECOND = 1000
 
@@ -40,7 +41,8 @@ export const OrderBookProvider: FC<{ children: ReactNode }> = ({ children }) => 
   const [openOrders] = useState([])
   const [perpsOpenOrders, setPerpsOpenOrders] = useState([])
   const wallet = useWallet()
-  const { activeProduct, traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
+  const { traderInfo, setOrderBook: setOrderBookCopy } = useTraderConfig()
+  const { activeProduct } = useMpgConfig()
 
   useEffect(() => {
     const refreshOpenOrders = async () => {

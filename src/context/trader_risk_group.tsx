@@ -18,7 +18,6 @@ import {
   FEE_OUTPUT_REGISTER as MAINNET_FEE_OUTPUT_REGISTER,
   GET_FUNDING_RATE,
   MPG_ID as MAINNET_MPG_ID,
-  MPs as MAINNET_MPs,
   ORDERBOOK_P_ID,
   RISK_ID,
   RISK_MODEL_CONFIG_ACCT as MAINNET_RISK_MODEL_CONFIG_ACCT,
@@ -31,10 +30,9 @@ import {
   FEE_OUTPUT_REGISTER as DEVNET_FEE_OUTPUT_REGISTER,
   RISK_OUTPUT_REGISTER as DEVNET_RISK_OUTPUT_REGISTER,
   RISK_MODEL_CONFIG_ACCT as DEVNET_RISK_MODEL_CONFIG_ACCT,
-  VAULT_MINT as DEVNET_VAULT_MINT,
-  MPs as DEVNET_MPs
+  VAULT_MINT as DEVNET_VAULT_MINT
 } from '../pages/TradeV3/perps/perpsConstantsDevnet'
-import { MarketProductGroup, TraderRiskGroup } from '../pages/TradeV3/perps/dexterity/accounts'
+import { TraderRiskGroup } from '../pages/TradeV3/perps/dexterity/accounts'
 import { Fractional } from '../pages/TradeV3/perps/dexterity/types'
 import {
   computeHealth,
@@ -73,9 +71,10 @@ import { useCrypto } from './crypto'
 import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
 const ONE_MINUTE = 1000 * 60
-import { Perp, Product, Trader } from 'gfx-perp-sdk'
+import { Trader } from 'gfx-perp-sdk'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { notifyUsingPromiseForCloseTx, notifyUsingPromiseForFillTx } from '@/utils/perpsNotifications'
+import { useMpgConfig } from './market_product_group'
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -136,9 +135,7 @@ interface DepositIx {
 }
 
 interface IPerpsInfo {
-  marketProductGroup: MarketProductGroup
   traderInfo: ITraderRiskGroup
-  marketProductGroupKey: PublicKey
   newOrder: () => Promise<DepositIx | void>
   newOrderTakeProfit: (price: string) => Promise<DepositIx | void>
   closePosition: (orderbook: OrderBook, qtyToExit: Fractional) => Promise<DepositIx | void>
@@ -146,7 +143,6 @@ interface IPerpsInfo {
   depositFunds: (amount: Fractional) => Promise<DepositIx | void>
   withdrawFunds: (amount: Fractional) => Promise<DepositIx | void>
   closeTraderAccount: () => Promise<DepositIx | void>
-  activeProduct: IActiveProduct
   order: IOrder
   setOrder: Dispatch<SetStateAction<IOrder>>
   setFocused: Dispatch<SetStateAction<OrderInput>>
@@ -154,21 +150,9 @@ interface IPerpsInfo {
   collateralInfo: ICollateralInfo
   setOrderBook: Dispatch<SetStateAction<OrderBook>>
   portfolioValue: number
-  perpInstanceSdk: Perp
-  perpProductInstanceSdk: Product
   traderInstanceSdk: Trader
 }
 
-export interface IActiveProduct {
-  id: string
-  orderbook_id: string
-  bids: string
-  asks: string
-  event_queue: string
-  tick_size: number
-  decimals: number
-  pairName: string
-}
 export interface ITraderHistory {
   price: string
   quantity: string
@@ -185,17 +169,11 @@ export const useTraderConfig = (): IPerpsInfo => {
 }
 
 export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentMPG, setMPG] = useState<PublicKey>(new PublicKey(DEVNET_MPG_ID))
   const [currentTRG, setTRG] = useState<PublicKey | null>(null)
   const [traderRiskGroup, setTraderRiskGroup] = useState<TraderRiskGroup | null>(null)
-  const [marketProductGroup, setMarketProductGroup] = useState<MarketProductGroup | null>(null)
-  const [rawData, setRawData] = useState<{
-    mpg: AccountInfo<Buffer>
-    trg: AccountInfo<Buffer>
-  }>({ mpg: null, trg: null })
+  const [rawData, setRawData] = useState<AccountInfo<Buffer>>(null)
   const [marginAvail, setMarginAvail] = useState<string>('0')
   const [pnl, setPnl] = useState<string>('0')
-  const [activeProduct, setActiveProduct] = useState<IActiveProduct>(MAINNET_MPs[0])
   const [focused, setFocused] = useState<OrderInput>(undefined)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState<boolean>(false)
@@ -222,10 +200,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [fundingRate, setFundingRate] = useState<string>('0')
   const [maxWithdrawable, setMaxWithdrawable] = useState<string>('0')
   const [traderVolume, setTraderVolume] = useState<string>('0')
-  const [perpInstanceSdk, setPerpInstanceSdk] = useState<Perp>(null)
-  const [perpProductInstanceSdk, setPerpProductInstanceSdk] = useState<Product>(null)
   const [traderInstanceSdk, setTraderInstanceSdk] = useState<Trader>(null)
-  const [initTesting, setInitTesting] = useState<boolean>(false)
   const [devnetToggle, setDevnetToggle] = useState<number>(0)
   const [pendingMarketOrders, setPendingMarketOrders] = useState<number>(0)
   const [promise, setPromise] = useState(null)
@@ -237,6 +212,14 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
 
+  const {
+    mpgRawData,
+    marketProductGroup,
+    activeProduct,
+    perpInstanceSdk,
+    perpProductInstanceSdk,
+    marketProductGroupKey
+  } = useMpgConfig()
   const { order, setOrder } = useOrder()
   const { isDevnet } = useCrypto()
   const prevCountRef = useRef<boolean>()
@@ -259,15 +242,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [isDevnet]
   )
 
-  const MPs = useMemo(() => (isDevnet ? DEVNET_MPs : MAINNET_MPs), [isDevnet])
-
   const VAULT_MINT = useMemo(() => (isDevnet ? DEVNET_VAULT_MINT : MAINNET_VAULT_MINT), [isDevnet])
   const connection = useMemo(() => mainnetConnection, [])
-
-  const updateMPGDetails = async (mpgData, mpgRawData) => {
-    mpgData ? setMarketProductGroup(mpgData) : setMarketProductGroup(null)
-    mpgRawData && setRawData((prevState) => ({ ...prevState, mpg: mpgRawData }))
-  }
 
   const setCollateralPrice = async () => {
     const collateralPrice = await getPythPrice(connection, 'Crypto.USDC/USD')
@@ -279,8 +255,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const perpsWasm = useCallback(async () => {
     const wasm = await import('perps-wasm')
-    const mpg = rawData.mpg
-    const trg = rawData.trg
+    const mpg = mpgRawData
+    const trg = rawData
     if (mpg) {
       //try {
       //  const res = wasm.get_funding_rate(mpg.data, BigInt(0))
@@ -406,22 +382,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
     }
-  }, [rawData.mpg, rawData.trg])
-
-  useEffect(() => {
-    const initSdk = async () => {
-      if (!wallet.connected) return
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      const perp = new Perp(connection, 'mainnet', wallet)
-      await perp.init()
-      const product = new Product(perp)
-      product.initByIndex(0)
-      setPerpInstanceSdk(perp)
-      setPerpProductInstanceSdk(product)
-    }
-    initSdk()
-  }, [wallet, connection])
+  }, [mpgRawData, rawData])
 
   useEffect(() => {
     const fetchPerpsInstanceFromSdk = async () => {
@@ -463,22 +424,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     // const liquidationP = getLiquidationPrice(res.traderPortfolioValue)
   }
 
-  const parseMPG = async () => {
-    //const res = marketProductGroup.marketProducts.array[0].value.outright.cumFundingPerShare
-    //const price = onChainPrice
-    //if (!price || Number.isNaN(+price) || Number.isNaN(+displayFractional(res))) return null
-    //const percent = (+displayFractional(res) / +price) * 100
-    //setFundingRate(percent.toFixed(4))
-  }
-
   const setDefaults = async () => {
     console.log('setting default...')
     setTRG(null)
     setTraderRiskGroup(null)
-    setRawData((prevState) => ({
-      ...prevState,
-      trg: null
-    }))
+    setRawData(null)
     setMarginAvail('0')
     setPnl('0')
     setTraderBalances([])
@@ -504,43 +454,13 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const updateTRGDetails = (traderRiskGroup, rawData) => {
     setTraderRiskGroup(traderRiskGroup)
     if (traderRiskGroup) {
-      setRawData((prevState) => ({ ...prevState, trg: rawData }))
+      setRawData(rawData)
     }
   }
 
   useEffect(() => {
     perpsWasm()
-  }, [rawData.mpg, rawData.trg])
-
-  useEffect(() => {
-    ;(async () => {
-      if (!currentMPG) return
-      const mpgData = await MarketProductGroup.fetch(connection, currentMPG)
-      updateMPGDetails(mpgData ? mpgData[0] : null, mpgData ? mpgData[1] : null)
-    })()
-  }, [currentMPG, connection])
-
-  useEffect(() => {
-    if (!currentMPG || !wallet.connected || !isCurrentTabActive) return
-    const id = 'market-product-group'
-    on({
-      SubType: SubType.AccountChange,
-      id,
-      callback: async (info) => {
-        const trg = await MarketProductGroup.decode(info.data)
-        updateMPGDetails(trg, trg ? info : null)
-      },
-      publicKey: currentMPG
-    })
-    setTimeout(() => {
-      setIsCurrentTabActive(false)
-      off(id)
-    }, 15 * ONE_MINUTE)
-    return () => {
-      off(id)
-      return undefined
-    }
-  }, [currentMPG, wallet.connected, isCurrentTabActive])
+  }, [mpgRawData, rawData])
 
   const checkPendingOrders = useCallback(async (trgData) => {
     if (!trgData) return
@@ -614,17 +534,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [MPG_ID, wallet.connected, wallet.publicKey])
 
-  const testing = async () => {
-    // const res1 = await adminInitialiseMPG(connection, wallet)
-    // console.log(res1)
-    // const res2 = await adminCreateMarket(connection, wallet)
-    // console.log(res2)
-    // const res3 = await updateFeesIx(wallet, connection, {
-    //   feeModelConfigAcct: marketProductGroup.feeModelConfigurationAcct
-    // })
-    // console.log(res3)
-  }
-
   const getFundingRate = async () => {
     const res = await httpClient('api-services').post(`${GET_FUNDING_RATE}`, {
       API_KEY: 'zxMTJr3MHk7GbFUCmcFyFV4WjiDAufDp',
@@ -635,8 +544,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   useEffect(() => {
-    setMPG(new PublicKey(MPG_ID))
-    setActiveProduct(MPs[0])
     setCollateralPrice()
     getFundingRate()
   }, [isDevnet])
@@ -718,7 +625,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const newOrderAccounts: INewOrderAccounts = {
           user: wallet.publicKey,
           traderRiskGroup: currentTRG,
-          marketProductGroup: currentMPG,
+          marketProductGroup: marketProductGroupKey,
           product: new PublicKey(activeProduct.id),
           aaobProgram: new PublicKey(ORDERBOOK_P_ID),
           orderbook: new PublicKey(activeProduct.orderbook_id),
@@ -874,19 +781,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [traderRiskGroup, marketProductGroup])
 
   useEffect(() => {
-    if (marketProductGroup) {
-      parseMPG()
-    }
-  }, [marketProductGroup])
-
-  useEffect(() => {
-    if (marketProductGroup && wallet.connected && !initTesting) {
-      setInitTesting(true)
-      testing()
-    }
-  }, [marketProductGroup, wallet])
-
-  useEffect(() => {
     if (order.display === 'market') {
       const qty = order.size ?? 0
       const priceMarket = getPerpsMarketOrderPrice(orderBookCopy, order.side, qty.toString())
@@ -931,8 +825,6 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           maxWithdrawable: maxWithdrawable,
           traderVolume
         },
-        marketProductGroup: marketProductGroup,
-        marketProductGroupKey: currentMPG,
         setOrderBook,
         newOrder: newOrder,
         newOrderTakeProfit: newOrderTakeProfit,
@@ -941,15 +833,12 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         depositFunds: depositFunds,
         withdrawFunds: withdrawFunds,
         closeTraderAccount: closeTraderAccount,
-        activeProduct: activeProduct,
         order: order,
         setOrder: setOrder,
         setFocused: setFocused,
         loading: loading,
         collateralInfo: collateralInfo,
         portfolioValue,
-        perpInstanceSdk: perpInstanceSdk,
-        perpProductInstanceSdk: perpProductInstanceSdk,
         traderInstanceSdk: traderInstanceSdk
       }}
     >

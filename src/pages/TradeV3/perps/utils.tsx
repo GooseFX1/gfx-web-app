@@ -27,7 +27,8 @@ import { ITraderBalances } from '../../../types/dexterity_instructions'
 import { MarketProductGroup, TraderRiskGroup } from './dexterity/accounts'
 import { pyth, SYSTEM } from '../../../web3'
 import { Slab } from './instructions/Agnostic'
-import { IActiveProduct, ITraderHistory } from '../../../context/trader_risk_group'
+import { ITraderHistory } from '../../../context/trader_risk_group'
+import { IActiveProduct } from '../../../context/market_product_group'
 import { OrderBook, OrderSide } from '../../../context'
 
 export const getDexProgram = async (connection: Connection, wallet: any): Promise<anchor.Program> => {
@@ -475,7 +476,7 @@ export const convertToFractional = (amount: string): Fractional => {
   const newM = Number(beforeDecimal + maxFour)
   return new Fractional({ m: new anchor.BN(newM), exp: new anchor.BN(newdigitsAfterDecimal) })
 }
-const SLAB_DESERIALIZATION_OFFSET = 40; 
+const SLAB_DESERIALIZATION_OFFSET = 40;
 
 export const loadSlab = async (connection: Connection, account: string) => {
   try {

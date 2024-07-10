@@ -14,7 +14,7 @@ import { DepositWithdrawDialog } from '@/pages/TradeV3/perps/DepositWithdraw'
 
 const WRAPPER = styled.div`
   ${tw`flex flex-col w-full !pb-0`}
-  
+
   h1 {
     font-size: 18px;
     color: ${({ theme }) => theme.text2};
@@ -22,7 +22,7 @@ const WRAPPER = styled.div`
 `
 
 const HISTORY = styled.div`
-  ${tw`flex w-full h-full mt-[15px] bg-white dark:bg-black-2 w-[calc(100vw - 20px)] ml-2.5 
+  ${tw`flex w-full h-full mt-[15px] bg-white dark:bg-black-2 w-[calc(100vw - 20px)] ml-2.5
   rounded-[3px]`}
 
   .history-items-root-container {
@@ -117,13 +117,19 @@ const MobileDepositWithdrawHistory: FC = () => {
     setFundTransfers(res.data.data)
     setTotalItemsCount(res.data.totalCount)
   }
+
   useEffect(() => {
-    fetchFundTransfers()
+    if (publicKey) {
+      fetchFundTransfers()
+    } else {
+      setFundTransfers([])
+      setTotalItemsCount(0)
+    }
   }, [connected, publicKey, pagination])
 
   return (
     <WRAPPER>
-        {depositWithdrawModal && (
+      {depositWithdrawModal && (
         <DepositWithdrawDialog
           depositWithdrawModal={depositWithdrawModal}
           setDepositWithdrawModal={setDepositWithdrawModal}
@@ -176,27 +182,19 @@ const MobileDepositWithdrawHistory: FC = () => {
                 </>
               ))}
             </div>
-
           </div>
         ) : (
-
-          <div className='history-item h-[calc(100vh - 270px)]'>
+          <div className="history-item h-[calc(100vh - 270px)]">
             <NoPositionFound
-              str='No Deposits Found'
+              str="No Deposits Found"
               connected={connected}
               setDepositWithdrawModal={setDepositWithdrawModal}
             />
           </div>
-
-
         )}
       </HISTORY>
       <div className="h-[50px]">
-        <Pagination
-          pagination={pagination}
-          setPagination={setPagination}
-          totalItemsCount={totalItemsCount}
-        />
+        <Pagination pagination={pagination} setPagination={setPagination} totalItemsCount={totalItemsCount} />
       </div>
     </WRAPPER>
   )
