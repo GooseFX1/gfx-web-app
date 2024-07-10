@@ -108,10 +108,11 @@ export const WalletsModal: FC = () => {
   //)
 
   const handleWalletClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>, walletName: WalletName<string>) => {
+    (walletName: WalletName<string>) => {
       select(walletName)
       // handleCancel(event)
       setSelectedWallet(walletName)
+      if(walletName === 'WalletConnect') setVisible(false)
     },
     [select]
   )
@@ -148,7 +149,7 @@ export const WalletsModal: FC = () => {
           <WALLET_DETECTED
             key={index}
             isLoading={connecting && wallet.adapter.name === selectedWallet}
-            onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
+            onClick={() => handleWalletClick(wallet.adapter.name)}
             className={connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'}
           >
             <div tw="flex items-center">
@@ -168,7 +169,7 @@ export const WalletsModal: FC = () => {
             <WALLET_DETECTED
               key={index}
               isLoading={connecting && wallet.adapter.name === selectedWallet}
-              onClick={(event) => handleWalletClick(event, wallet.adapter.name)}
+              onClick={() => handleWalletClick(wallet.adapter.name)}
               className={
                 connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
               }
