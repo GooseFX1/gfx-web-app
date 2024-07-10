@@ -15,21 +15,6 @@ import {
   DialogCloseDefault,
   DialogHeader
 } from 'gfx-component-lib'
-import tw, { styled } from 'twin.macro'
-import 'styled-components/macro'
-
-
-const WALLET_DETECTED = styled(Button)`
-  ${tw`flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`}
-  img {
-    ${tw`h-[30px] w-[30px] mr-2.5 ml-2 rounded-half !bg-black-1`}
-  }
-
-  &:hover {
-    border: 1px solid ${({ theme }) => theme.text30};
-  }
-`
 
 // metamask detection
 initializeWhenDetected()
@@ -111,8 +96,14 @@ export const WalletsModal: FC = () => {
                 connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
               )}
             >
-              <div tw="flex items-center">
-                <img src={wallet.adapter.icon} alt="wallet-icon" height={'30px'} width={'30px'} />
+              <div className="flex items-center">
+                <img
+                  src={wallet.adapter.icon}
+                  alt="wallet-icon"
+                  height={'30px'}
+                  width={'30px'}
+                  className="mr-2.5 ml-2 rounded-half"
+                />
                 <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
                   {wallet.adapter.name.replace('(Extension)', '')}
                 </h6>
@@ -127,27 +118,29 @@ export const WalletsModal: FC = () => {
                 readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
             )
             .map((wallet, index) => (
-              <WALLET_DETECTED
+              <Button
                 key={index}
                 isLoading={connecting && wallet.adapter.name === selectedWallet}
                 onClick={() => handleWalletClick(wallet.adapter.name)}
-                className={
+                className={cn(
+                  `flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`,
                   connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
-                }
+                )}
               >
-                <div tw="flex items-center">
+                <div className="flex items-center">
                   <img
                     src={wallet.adapter.icon}
                     alt="wallet-icon"
                     height={'30px'}
                     width={'30px'}
-                    tw="mr-2.5 ml-2 rounded-half"
+                    className="mr-2.5 ml-2 rounded-half !h-[30px]"
                   />
                   <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
                     {wallet.adapter.name.replace('(Extension)', '')}
                   </h6>
                 </div>
-              </WALLET_DETECTED>
+              </Button>
             ))}
         </DialogBody>
       </DialogContent>
