@@ -534,7 +534,6 @@ export const PlaceOrder: FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const { blacklisted } = useConnectionConfig()
   const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   //Take profit state:
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
