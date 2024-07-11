@@ -103,7 +103,7 @@ export const WalletsModal: FC = () => {
                   alt="wallet-icon"
                   height={'30px'}
                   width={'30px'}
-                  className="mr-2.5 ml-2 rounded-half"
+                  className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
                 />
                 <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
                   {wallet.adapter.name.replace('(Extension)', '')}
@@ -136,7 +136,7 @@ export const WalletsModal: FC = () => {
                     alt="wallet-icon"
                     height={'30px'}
                     width={'30px'}
-                    className="mr-2.5 ml-2 rounded-half !h-[30px]"
+                    className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
                   />
                   <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
                     {wallet.adapter.name.replace('(Extension)', '')}
