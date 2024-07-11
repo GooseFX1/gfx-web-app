@@ -34,15 +34,15 @@ export const getWalletAdapters = (network: WalletAdapterNetwork): WalletAdapter[
   new SolflareWalletAdapter({ network }),
   new MoongateWalletAdapter({ position: 'bottom-right' }),
   new LedgerWalletAdapter(),
-  new TorusWalletAdapter(),
-  new MathWalletAdapter(),
-  new Coin98WalletAdapter(),
-  new CoinbaseWalletAdapter(),
-  new NightlyWalletAdapter(),
-  new WalletConnectWalletAdapter({
+    new WalletConnectWalletAdapter({
     network: WalletAdapterNetwork.Mainnet,
     options: {
       projectId: 'bd4997ce3ede37c95770ba10a3804dad'
     }
-  })
+  }),
+  new CoinbaseWalletAdapter(),
+  new TorusWalletAdapter(),
+  new MathWalletAdapter(),
+  new Coin98WalletAdapter(),
+  new NightlyWalletAdapter()
 ]
