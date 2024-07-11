@@ -519,7 +519,7 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { order, setOrder, focused, setFocused } = useOrder()
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
 
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()

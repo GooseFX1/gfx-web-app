@@ -6,21 +6,23 @@ import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
 import {
-  cn,
   Button,
+  cn,
   Dialog,
-  DialogContent,
-  DialogOverlay,
   DialogBody,
   DialogCloseDefault,
-  DialogHeader
+  DialogContent,
+  DialogHeader,
+  DialogOverlay
 } from 'gfx-component-lib'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 // metamask detection
 initializeWhenDetected()
 
 export const WalletsModal: FC = () => {
-  const { wallets, select, publicKey, connecting } = useWallet()
+  const { wallets, select, connecting } = useWallet()
+  const {publicKey} = useWalletBalance()
   const { setVisible, visible } = useWalletModal()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)

@@ -49,10 +49,10 @@ export const Pagination: FC<{
   }
   const roundDecimal = useMemo(() => roundUpIfDecimal(totalItemsCount / pagination.limit),
     [totalItemsCount, pagination.limit])
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
   return (
     <WRAPPER>
-      <p>{`Page ${connectedWalletPublicKey && (roundDecimal > 0) ? pagination.page : 0} 
+      <p>{`Page ${publicKey && (roundDecimal > 0) ? pagination.page : 0} 
       of ${roundDecimal}`} </p>
       <div className="imagesContainer">
         <img

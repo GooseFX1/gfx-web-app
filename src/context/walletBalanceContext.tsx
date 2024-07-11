@@ -34,7 +34,7 @@ type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
 
 interface IWalletBalanceContext {
   balance: Balance
-  connectedWalletPublicKey?: PublicKey
+  publicKey?: PublicKey
   createTokenAccountInstruction: (data: CreateTokenAccountParams) => TransactionInstruction
   createTokenAccountInstructions: (data: CreateTokenAccountParams[]) => TransactionInstruction[]
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
@@ -263,7 +263,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     <WalletBalanceContext.Provider
       value={{
         balance: balanceProxy,
-        connectedWalletPublicKey: publicKey,
+        publicKey: publicKey,
         createTokenAccountInstruction,
         createTokenAccountInstructions,
         createTokenAccount,

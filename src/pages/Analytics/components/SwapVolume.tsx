@@ -1,5 +1,4 @@
-import { useWallet } from '@solana/wallet-adapter-react'
-import React, { useEffect, useState, FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { fetchTotalVolumeTrade, fetchTotalVolumeTradeChart } from '../../../api/SSL'
 import { moneyFormatterWithComma } from '../../../utils'
 import { GradientText } from '../../../components'
@@ -7,14 +6,14 @@ import { CARD } from './GofxHolders'
 import { SwapVolumeChart } from './SwapVolumeChart'
 import SwapVolumeDailyChart from './SwapVolumeDailyChart'
 import { SwapVolumePieChart } from './SwapVolumePieChart'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const SwapVolume: FC = () => {
   const [swapData, setData] = useState<any>(null)
-  const { wallet } = useWallet()
   const [swapDataGraph, setGraphData] = useState([])
   const [swapDailyDataGraph, setDailyGraphData] = useState([])
   const [pieChartData, setPieChartData] = useState([])
-
+  const {publicKey} = useWalletBalance()
   useEffect(() => {
     ;(async () => {
       const data = await fetchTotalVolumeTrade()
@@ -24,7 +23,7 @@ const SwapVolume: FC = () => {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await fetchTotalVolumeTradeChart(wallet?.adapter?.publicKey)
+      const { data } = await fetchTotalVolumeTradeChart(publicKey)
       setPieChartData(data)
       const arr = []
       const dailyArr = []

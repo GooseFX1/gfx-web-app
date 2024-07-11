@@ -16,6 +16,7 @@ import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 interface IPrices {
   [x: string]: {
@@ -59,21 +60,21 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
   const [stakeAccountKey, setAccountKey] = useState<PublicKey>()
   const wal = useWallet()
   const [solPrice, setSolPrice] = useState<number>(0)
-  const { wallet } = useWallet()
+  const { publicKey } = useWalletBalance()
   const { connection, network } = useConnectionConfig()
   const stakeProgram: Program = useMemo(
     () =>
-      wallet?.adapter?.publicKey
+     publicKey
         ? new Program(
             sslJson as any,
             SSL_PROGRAM_ID,
             new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
           )
         : undefined,
-    [connection, wallet?.adapter?.publicKey, network]
+    [connection, publicKey, network]
   )
   useEffect(() => {
-    if (wallet?.adapter?.publicKey) {
+    if (publicKey) {
       if (stakeAccountKey === undefined) {
         getStakingAccountKey(wal, network).then((accountKey) => setAccountKey(accountKey))
       }
@@ -82,7 +83,7 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     }
 
     return null
-  }, [wallet?.adapter?.publicKey, connection])
+  }, [publicKey, connection])
 
   const SSLProgram: Program = useMemo(
     () =>

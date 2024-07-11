@@ -25,7 +25,7 @@ function useTransaction(): useTransactionReturn {
   const { priorityFeeValue } = useConnectionConfig()
   const { sendTransaction: sendTransactionOriginal, wallet } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
@@ -40,7 +40,7 @@ function useTransaction(): useTransactionReturn {
       let blockHash = await connection.getLatestBlockhash()
 
       const txn = txnIn instanceof TransactionBuilder ?
-        txnIn._getTransaction(connectedWalletPublicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn
+        txnIn._getTransaction(publicKey, blockHash.blockhash, supportedTransactionTypes.has(0)) : txnIn
       console.log('signing txn', txn)
       const txSig = await sendTransactionOriginal(txn, connection, options).catch((err) => {
         console.log('[ERROR] Transaction failed', err)
