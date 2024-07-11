@@ -5,78 +5,16 @@ import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standar
 import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
-import { PopupCustom } from '../components'
-import tw, { styled } from 'twin.macro'
-import 'styled-components/macro'
-import { Button } from 'gfx-component-lib'
-
-const DETECTED_NAME = styled.div`
-  ${tw`text-regular font-semibold dark:text-grey-6 text-black-4`}
-`
-
-const WALLET_DETECTED = styled(Button)`
-  ${tw`flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 w-full`}
-  img {
-    ${tw`h-[30px] w-[30px] mr-2.5 ml-2 rounded-half !bg-black-1`}
-  }
-
-  &:hover {
-    border: 1px solid ${({ theme }) => theme.text30};
-  }
-`
-const STYLED_POPUP = styled(PopupCustom)`
-  ${tw`dark:text-grey-5 text-grey-1 text-smallest`}
-  & & {
-    background: purple !important;
-  }
-  .ant-modal-body {
-    ${tw`py-0 h-[calc(100% - 47px)] overflow-y-scroll`}
-  }
-  &.ant-modal {
-    ${tw`text-smallest dark:bg-black-2 bg-grey-5`}
-  }
-  .ant-modal-content {
-    ${tw`h-full overflow-y-scroll`}
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  .ant-modal-header {
-    ${tw`bg-transparent text-center py-2`}
-    .ant-modal-title {
-      ${tw`text-lg !font-semibold dark:text-white text-blue-1`}
-    }
-  }
-  .show-more {
-    ${tw`text-average font-semibold underline text-center 
-      cursor-pointer dark:text-white text-blue-1`}
-  }
-  .ant-modal-close {
-    ${tw`top-[14px] right-[14px]`}
-    .ant-modal-close-x {
-      ${tw`!w-5 !h-5`}
-    }
-  }
-  .titleContainer {
-    ${tw`flex items-center text-lg text-center justify-center font-semibold leading-7 dark:text-grey-5 text-black-4`}
-  }
-  .wallets-container {
-    ${tw`mt-[22px]`}
-  }
-  .wallets-holder {
-    ${tw`my-0 mx-3.75`}
-  }
-  .wallet-border {
-    border-bottom: 1px solid ${({ theme }) => theme.tokenBorder};
-  }
-  .detected {
-    ${tw`text-regular font-semibold ml-[-20px] mt-2 justify-center flex dark:text-grey-2 text-purple-1`}
-  }
-  .textDetected {
-    ${tw`mr-3.75 text-tiny font-semibold text-green-3`}
-  }
-`
+import {
+  cn,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogBody,
+  DialogCloseDefault,
+  DialogHeader
+} from 'gfx-component-lib'
 
 // metamask detection
 initializeWhenDetected()
@@ -112,7 +50,7 @@ export const WalletsModal: FC = () => {
       select(walletName)
       // handleCancel(event)
       setSelectedWallet(walletName)
-      if(walletName === 'WalletConnect') setVisible(false)
+      if (walletName === 'WalletConnect') setVisible(false)
     },
     [select]
   )
@@ -136,57 +74,78 @@ export const WalletsModal: FC = () => {
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
-    <STYLED_POPUP
-      width={'354px'}
-      height={'525px'}
-      visible={visible}
-      title={'Select a wallet'}
-      footer={null}
-      onCancel={() => setVisible(false)}
-    >
-      <div className="wallets-container">
-        {detectedWallets.map((wallet, index) => (
-          <WALLET_DETECTED
-            key={index}
-            isLoading={connecting && wallet.adapter.name === selectedWallet}
-            onClick={() => handleWalletClick(wallet.adapter.name)}
-            className={connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'}
-          >
-            <div tw="flex items-center">
-              <img src={wallet.adapter.icon} alt="wallet-icon" height={'30px'} width={'30px'} />
-              <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
-            </div>
-            <div className="textDetected">Detected</div>
-          </WALLET_DETECTED>
-        ))}
-
-        {undetectedWallets
-          .filter(
-            ({ readyState }) =>
-              readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-          )
-          .map((wallet, index) => (
-            <WALLET_DETECTED
+    <Dialog onOpenChange={setVisible} open={visible}>
+      <DialogOverlay />
+      <DialogContent className={'flex flex-col gap-0 max-h-[500px]'}>
+        <DialogHeader
+          className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
+        >
+          <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>Select Wallet</h3>
+          <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
+        </DialogHeader>
+        <DialogBody className={'flex-col pt-5 px-2 overflow-scroll'}>
+          {detectedWallets.map((wallet, index) => (
+            <Button
               key={index}
               isLoading={connecting && wallet.adapter.name === selectedWallet}
               onClick={() => handleWalletClick(wallet.adapter.name)}
-              className={
+              className={cn(
+                `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2
+                  hover:border-purple-1 hover:dark:border-white`,
                 connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
-              }
+              )}
             >
-              <div tw="flex items-center">
+              <div className="flex items-center">
                 <img
                   src={wallet.adapter.icon}
                   alt="wallet-icon"
                   height={'30px'}
                   width={'30px'}
-                  tw="mr-2.5 ml-2 rounded-half"
+                  className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
                 />
-                <DETECTED_NAME>{wallet.adapter.name.replace('(Extension)', '')}</DETECTED_NAME>
+                <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
+                  {wallet.adapter.name.replace('(Extension)', '')}
+                </h6>
               </div>
-            </WALLET_DETECTED>
+              <div className="text-green-3 pr-5">Detected</div>
+            </Button>
           ))}
-      </div>
-    </STYLED_POPUP>
+
+          {undetectedWallets
+            .filter(
+              ({ readyState }) =>
+                readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+            )
+            .map((wallet, index) => (
+              <Button
+                key={index}
+                isLoading={connecting && wallet.adapter.name === selectedWallet}
+                onClick={() => handleWalletClick(wallet.adapter.name)}
+                className={cn(
+                  `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
+                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 
+                  hover:border-purple-1 hover:dark:border-white`,
+                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+                )}
+              >
+                <div className="flex items-center">
+                  <img
+                    src={wallet.adapter.icon}
+                    alt="wallet-icon"
+                    height={'30px'}
+                    width={'30px'}
+                    className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
+                  />
+                  <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
+                    {wallet.adapter.name.replace('(Extension)', '')}
+                  </h6>
+                </div>
+              </Button>
+            ))}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   )
 }
