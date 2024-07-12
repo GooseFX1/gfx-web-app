@@ -1,5 +1,3 @@
-<!-- **TITLE FORMATTING** - ClickUp title “UI: Farm - Create Header” becomes “Farm: Create Header” as title of pull request -->
-
 ## Description
 
 ## How has this been tested?
@@ -16,5 +14,3 @@
 - [ ] The related ClickUp task has been linked to this PR
 - [ ] The person creating the pull request is listed in "Assignees"
 - [ ] Change requires updated documentation
-
-## Screenshots or Loom Video (optional):
