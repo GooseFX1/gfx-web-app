@@ -34,7 +34,7 @@ type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
 
 interface IWalletBalanceContext {
   balance: Balance
-  publicKey?: PublicKey
+  publicKey: PublicKey | null
   createTokenAccountInstruction: (data: CreateTokenAccountParams) => TransactionInstruction
   createTokenAccountInstructions: (data: CreateTokenAccountParams[]) => TransactionInstruction[]
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
@@ -101,7 +101,7 @@ const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
 
 function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JSX.Element {
   const { wallet, sendTransaction } = useWallet()
-  const publicKey = wallet?.adapter?.publicKey
+  const publicKey: PublicKey | null = wallet?.adapter?.publicKey ?? null
   const { network, connection } = useConnectionConfig()
   const [balance, setBalance] = useState<Balance>({})
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
