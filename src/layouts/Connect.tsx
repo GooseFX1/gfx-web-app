@@ -1,8 +1,7 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBreakPoint from '../hooks/useBreakPoint'
 import { truncateAddress } from '../utils'
-import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-adapter-mobile'
 import { useConnectionConfig, useDarkMode, useWalletModal } from '../context'
 import { useLocation } from 'react-router-dom'
 import {
@@ -31,7 +30,6 @@ interface MenuItemProps {
 }
 
 export const Connect: FC<MenuItemProps> = ({
-                                             containerStyle,
                                              customButtonStyle,
                                              customMenuListItemsContainerStyle,
                                              customMenuListItemStyle
@@ -48,42 +46,34 @@ export const Connect: FC<MenuItemProps> = ({
   const selfRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
   const [geoBlocked, setGeoBlocked] = useState(false)
-  const canConnect = useMemo(() => {
-    if (!base58PublicKey) {
-      return true
-    }
-    return (
-      !blacklisted ||
-      (blacklisted && pathname === '/farm/temp-withdraw') ||
-      (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey))
-    )
-  }, [blacklisted, pathname, base58PublicKey])
+
+  const canConnect = (!blacklisted ||
+    (blacklisted && pathname === '/farm/temp-withdraw') ||
+    (blacklisted && ALLOWED_WALLETS.includes(base58PublicKey)))
+
   const { balance } = useWalletBalance()
 
   const { adapter } = wallet || {}
   const { name: adapterName, icon: adapterIcon } = adapter || {}
 
   useEffect(() => {
-    if (geoBlocked || base58PublicKey) setWalletModalVisible(false)
-  }, [geoBlocked, base58PublicKey])
+    if ((geoBlocked || base58PublicKey) && visible) setWalletModalVisible(false)
+  }, [geoBlocked, base58PublicKey,visible])
 
   const connectLabel = useMemo(() => {
-    if (!wallet || (!base58PublicKey && adapterName === SolanaMobileWalletAdapterWalletName)) {
+    if (!connected || isAttempting) {
       return 'Connect Wallet'
-    } else if (!base58PublicKey || isAttempting) {
-      return null
     }
+
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, canConnect, adapterName, wallet, breakpoint,isAttempting])
+  }, [base58PublicKey, connected, adapterName, wallet, breakpoint,isAttempting])
 
   // watches for a selected wallet returned from modal
-  useEffect(() => {
-    if (!canConnect) {
-      disconnect().catch((err) => console.log('disconnect failed', err))
-      setGeoBlocked(true)
-    }
-  }, [disconnect, canConnect])
+  if (base58PublicKey && !canConnect && !geoBlocked) {
+    disconnect().catch((err) => console.log('disconnect failed', err))
+    setGeoBlocked(true)
+  }
 
   const handleDisconnect = useCallback(
     (e) => {
@@ -129,12 +119,10 @@ export const Connect: FC<MenuItemProps> = ({
   }, [])
   const openSolScan = useCallback(() => {
     window.open(`https://solscan.io/account/${base58PublicKey}`, '_blank')
-  }, [publicKey])
+  }, [base58PublicKey])
   // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
-    <div
-      className={cn(`relative inline-block text-left z-20 focus-visible:outline-none`, containerStyle)}
-      ref={selfRef}
+    <
     >
       {geoBlocked && <GeorestrictionModal geoBlocked={geoBlocked} setGeoBlocked={setGeoBlocked} />}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
@@ -286,6 +274,6 @@ export const Connect: FC<MenuItemProps> = ({
           </DropdownMenuContent>
         )}
       </DropdownMenu>
-    </div>
+    </>
   )
 }
