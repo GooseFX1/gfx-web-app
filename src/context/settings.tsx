@@ -7,6 +7,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
 import { ENV } from '@solana/spl-token-registry'
@@ -15,7 +16,7 @@ import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solan
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance } from '../api/config'
-import { ENVS } from '../constants'
+import { ENVS, SOL_TX_STATUS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { INTERVALS } from '@/utils/time'
 import axios from 'axios'
@@ -205,13 +206,25 @@ export function useConnectionConfig(): ISettingsConfig {
   return context
 }
 
+type Keys = keyof typeof SOL_TX_STATUS
+
+export const getConnection =
+  (endpoint: string, type: (typeof SOL_TX_STATUS)[Keys]): Connection => new Connection(endpoint, {
+    async fetch(input, init?) {
+      return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
+    },
+    commitment: type
+  })
+
 export type PriorityFeeName = 'Default' | 'Fast' | 'Turbo'
 export const USER_CACHE = 'gfx-user-cache' as const
 export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
-  const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const { current: existingUserCache } = useRef<IRPC_CACHE>(
+    JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  )
   const [endpointName, setEndpointName] = useState<EndPointName>(existingUserCache.endpointName || 'QuickNode')
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(existingUserCache.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
@@ -234,33 +247,28 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       priorityFeeValue: fee
     }
   }, [priorityFee])
+
   const curEnv: string = useMemo(() => {
     const host = window.location.hostname
     if (host.includes(ENVS.STAGING)) {
       return ENVS.STAGING
     } else if (process.env.NODE_ENV === ENVS.PROD) {
       return ENVS.PROD
-    } else {
-      return ENVS.DEV
     }
+
+    return ENVS.DEV
   }, [])
 
-  const chainId = useMemo(() => RPCs[endpointName].chainId, [endpointName])
-  const network = useMemo(() => RPCs[endpointName].network, [endpointName])
+  const { chainId, network } = RPCs[endpointName]
 
   const endpoint = useMemo(() => {
-    if (existingUserCache.endpoint !== null) {
-      return existingUserCache.endpoint
-    } else {
-      // asserts 'Custom' is cached with a null enpoint value - results in default reset
-      if (endpointName === 'Custom') {
-        setEndpointName(RPCs[endpointName].name)
-        return RPCs[endpointName].endpoint
-      } else {
-        return RPCs[endpointName].endpoint
-      }
+    if (existingUserCache.endpoint === null) {
+      return RPCs[endpointName].endpoint
     }
+
+    return existingUserCache.endpoint
   }, [endpointName])
+
   useEffect(
     () =>
       window.localStorage.setItem(
@@ -274,80 +282,44 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       ),
     [priorityFee, endpointName, endpoint]
   )
-  const perpsConnection = useMemo(() => {
-    // sets rpc info to cache
-    window.localStorage.setItem(
-      USER_CACHE,
-      JSON.stringify({
-        ...existingUserCache,
-        endpointName: endpointName,
-        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
-      })
-    )
 
-    // creates connection - temp ws url
-    return new Connection(endpoint, {
-      async fetch(input, init?) {
-        return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
-      },
-      commitment: 'processed'
-    })
-  }, [endpointName, endpoint])
+  const perpsConnection = useMemo(() => getConnection(endpoint, SOL_TX_STATUS.PROCESSED), [endpointName, endpoint])
 
-  const connection = useMemo(() => {
-    // sets rpc info to cache
-    window.localStorage.setItem(
-      USER_CACHE,
-      JSON.stringify({
-        ...existingUserCache,
-        endpointName: endpointName,
-        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null,
-        priorityFee: priorityFee
-      })
-    )
+  const connection = useMemo(() => getConnection(endpoint, SOL_TX_STATUS.CONFIRMED), [endpointName, endpoint])
 
-    // creates connection - temp ws url
-    return new Connection(endpoint, {
-      async fetch(input, init?) {
-        return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
-      },
-      commitment: 'confirmed'
-    })
-  }, [endpointName, endpoint])
-
-  const getAndSetLatency = useCallback(async () => {
+  const setConnectionLatency = useCallback(async () => {
     const start = Date.now()
     await connection.getLatestBlockhashAndContext({
-      commitment: 'confirmed'
+      commitment: SOL_TX_STATUS.CONFIRMED
     })
     const end = Date.now()
     const speedMs = end - start
     setLatency(speedMs)
   }, [connection])
+
   useEffect(() => {
     let timer: NodeJS.Timeout
-    getAndSetLatency()
+    setConnectionLatency()
     if (shouldTrack) {
       timer = setInterval(async () => {
-        getAndSetLatency()
+        setConnectionLatency()
       }, INTERVALS.SECOND * 30)
     }
     return () => clearInterval(timer)
-  }, [shouldTrack, getAndSetLatency, endpoint, connection, endpointName])
+  }, [shouldTrack, setConnectionLatency, endpoint, connection, endpointName])
+
   useActivityTracker({
     callbackOff: () => setShouldTrack(false),
     callbackOn: () => {
       setShouldTrack(true)
-      getAndSetLatency()
+      setConnectionLatency()
     }
   })
+
   useEffect(() => {
     if (endpointName === null) {
-      setEndpointName(
-        existingUserCache.endpointName === null || existingUserCache.endpoint === null
-          ? RPCs[endpointName].name
-          : 'Custom'
-      )
+      const hasEndpoint = existingUserCache.endpointName === null || existingUserCache.endpoint === null
+      setEndpointName(hasEndpoint ? RPCs[endpointName].name : 'Custom')
     }
   }, [])
 
@@ -361,7 +333,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
 
       // sets isUnderMaintenance flag
-      fetchIsUnderMaintenance().then((maintenanceStatus: boolean) => setIsUnderMaintenance(maintenanceStatus))
+      fetchIsUnderMaintenance().then(setIsUnderMaintenance)
     }
   }, [])
 
@@ -374,7 +346,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         network,
         endpointName,
         setEndpointName,
-        setSlippage: (val: number) => setSlippage(val),
+        setSlippage,
         slippage: slippage,
         perpsConnection,
         blacklisted,
