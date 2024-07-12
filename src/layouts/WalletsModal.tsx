@@ -15,14 +15,13 @@ import {
   DialogHeader,
   DialogOverlay
 } from 'gfx-component-lib'
-import { useWalletBalance } from '@/context/walletBalanceContext'
 
 // metamask detection
 initializeWhenDetected()
 
 export const WalletsModal: FC = () => {
-  const { wallets, select, connecting } = useWallet()
-  const {publicKey} = useWalletBalance()
+  const { wallets, select, connecting, publicKey } = useWallet()
+
   const { setVisible, visible } = useWalletModal()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
