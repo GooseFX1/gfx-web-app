@@ -60,7 +60,7 @@ const SSLContext = createContext<SSLData | null>(null)
 export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { network, connection } = useConnectionConfig()
   const { SSLProgram } = usePriceFeedFarm()
-  const {connectedWalletPublicKey:publicKey} = useWalletBalance()
+  const {publicKey:publicKey} = useWalletBalance()
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const [liquidityAccounts, setLiquidityAccounts] = useState([])

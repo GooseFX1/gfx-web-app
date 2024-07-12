@@ -10,11 +10,11 @@ import React, {
   useState
 } from 'react'
 import { TOKEN_PROGRAM_ID, WRAPPED_SOL_MINT } from 'openbook-ts/serum/lib/token-instructions'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useConnectionConfig } from './settings'
 import { useTokenRegistry } from './token_registry'
 import { findAssociatedTokenAddress } from '../web3'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export type IAccount = {
   amount: string
@@ -43,10 +43,10 @@ const AccountsContext = createContext<IAccountsConfig | null>(null)
 export const AccountsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { connection } = useConnectionConfig()
   const { tokens: tokenRegistry } = useTokenRegistry()
-  const { wallet } = useWallet()
+  const { publicKey } = useWalletBalance()
   const [balances, setBalances] = useState<IAccounts>({})
   const [fetching, setFetching] = useState(false)
-  const { publicKey } = wallet?.adapter || {}
+
 
   const handleAccountChange = async (sub: number[], connection: Connection, owner: PublicKey, mint: PublicKey) => {
     try {

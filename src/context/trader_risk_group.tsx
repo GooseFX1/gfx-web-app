@@ -1,21 +1,21 @@
-import { WalletContextState, useWallet } from '@solana/wallet-adapter-react'
+import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
 import { AccountInfo, PublicKey, SystemProgram } from '@solana/web3.js'
 import React, {
   Dispatch,
-  SetStateAction,
+  FC,
   ReactNode,
+  SetStateAction,
+  useCallback,
   useContext,
   useEffect,
-  useState,
-  FC,
-  useCallback,
   useMemo,
-  useRef
+  useRef,
+  useState
 } from 'react'
 import {
   DEX_ID,
-  FEES_ID,
   FEE_OUTPUT_REGISTER as MAINNET_FEE_OUTPUT_REGISTER,
+  FEES_ID,
   GET_FUNDING_RATE,
   MPG_ID as MAINNET_MPG_ID,
   ORDERBOOK_P_ID,
@@ -26,10 +26,10 @@ import {
   VAULT_SEED
 } from '../pages/TradeV3/perps/perpsConstants'
 import {
-  MPG_ID as DEVNET_MPG_ID,
   FEE_OUTPUT_REGISTER as DEVNET_FEE_OUTPUT_REGISTER,
-  RISK_OUTPUT_REGISTER as DEVNET_RISK_OUTPUT_REGISTER,
+  MPG_ID as DEVNET_MPG_ID,
   RISK_MODEL_CONFIG_ACCT as DEVNET_RISK_MODEL_CONFIG_ACCT,
+  RISK_OUTPUT_REGISTER as DEVNET_RISK_OUTPUT_REGISTER,
   VAULT_MINT as DEVNET_VAULT_MINT
 } from '../pages/TradeV3/perps/perpsConstantsDevnet'
 import { TraderRiskGroup } from '../pages/TradeV3/perps/dexterity/accounts'
@@ -48,10 +48,10 @@ import {
   mulFractionals,
   tradeHistoryInfo
 } from '../pages/TradeV3/perps/utils'
-import { INewOrderAccounts, IDepositFundsAccounts, ITraderBalances } from '../types/dexterity_instructions'
+import { IDepositFundsAccounts, INewOrderAccounts, ITraderBalances } from '../types/dexterity_instructions'
 import { useConnectionConfig } from './settings'
 import * as anchor from '@project-serum/anchor'
-import { Bid, Ask } from '../pages/TradeV3/perps/dexterity/types/Side'
+import { Ask, Bid } from '../pages/TradeV3/perps/dexterity/types/Side'
 import { Limit } from '../pages/TradeV3/perps/dexterity/types/OrderType'
 import { DecrementTake } from '../pages/TradeV3/perps/dexterity/types/SelfTradeBehavior'
 import { findAssociatedTokenAddress } from '../web3'
@@ -64,17 +64,19 @@ import {
   newTakeProfitOrderIx,
   withdrawFundsIx
 } from '../pages/TradeV3/perps/ixUtils'
-import { OrderInput, useOrder, IOrder, OrderSide } from './order'
+import { IOrder, OrderInput, OrderSide, useOrder } from './order'
 import { notify, removeFloatingPointError } from '../utils'
 import { DEFAULT_ORDER_BOOK, OrderBook } from './orderbook'
 import { useCrypto } from './crypto'
 import { httpClient } from '../api'
 import useSolSub, { SubType } from '../hooks/useSolSub'
-const ONE_MINUTE = 1000 * 60
 import { Trader } from 'gfx-perp-sdk'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { notifyUsingPromiseForCloseTx, notifyUsingPromiseForFillTx } from '@/utils/perpsNotifications'
 import { useMpgConfig } from './market_product_group'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+
+const ONE_MINUTE = 1000 * 60
 
 export const AVAILABLE_ORDERS_PERPS = [
   {
@@ -205,7 +207,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pendingMarketOrders, setPendingMarketOrders] = useState<number>(0)
   const [promise, setPromise] = useState(null)
   const [resolvePromise, setResolvePromise] = useState(null)
-
+  const {publicKey} = useWalletBalance()
   useActivityTracker({
     callbackOff: () => setIsCurrentTabActive(false),
     callbackOn: () => setIsCurrentTabActive(true)
@@ -520,7 +522,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentTRG, wallet.connected, isCurrentTabActive])
 
   const fetchTrgAcc = async () => {
-    const trgAccount = await getTraderRiskGroupAccount(wallet.publicKey, connection, MPG_ID)
+    const trgAccount = await getTraderRiskGroupAccount(publicKey, connection, MPG_ID)
     if (trgAccount) {
       setTRG(trgAccount.pubkey)
     }
@@ -528,11 +530,11 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (prevCountRef.current === undefined) prevCountRef.current = isDevnet
-    if (wallet.connected && wallet.publicKey) {
+    if (wallet.connected && publicKey) {
       setDefaults()
       fetchTrgAcc()
     }
-  }, [MPG_ID, wallet.connected, wallet.publicKey])
+  }, [MPG_ID, wallet.connected, publicKey])
 
   const getFundingRate = async () => {
     const res = await httpClient('api-services').post(`${GET_FUNDING_RATE}`, {
@@ -623,7 +625,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const newOrderTakeProfit = useCallback(
     async (price: string) => {
       const newOrderAccounts: INewOrderAccounts = {
-          user: wallet.publicKey,
+          user: publicKey,
           traderRiskGroup: currentTRG,
           marketProductGroup: marketProductGroupKey,
           product: new PublicKey(activeProduct.id),
@@ -723,7 +725,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       // not removed this because we need it for initTrgDepositIx
       const newTrg = anchor.web3.Keypair.generate()
       const depositFundsAccounts: IDepositFundsAccounts = {
-        userTokenAccount: await findAssociatedTokenAddress(wallet.publicKey, new PublicKey(VAULT_MINT)),
+        userTokenAccount: await findAssociatedTokenAddress(publicKey, new PublicKey(VAULT_MINT)),
         traderRiskGroup: currentTRG ?? newTrg.publicKey,
         marketProductGroup: new PublicKey(MPG_ID),
         marketProductGroupVault: anchor.web3.PublicKey.findProgramAddressSync(

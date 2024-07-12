@@ -9,7 +9,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 // eslint-disable-next-line
 
 export const CollateralPanel: FC = (): JSX.Element => {
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
 
   return (
     <PerpsLayout>
@@ -18,7 +18,7 @@ export const CollateralPanel: FC = (): JSX.Element => {
           <img src="img/crypto/SOL.svg" className="h-[25px] w-[25px] mr-2" alt="SOL Logo" />
           <InfoLabel>Sol Account</InfoLabel>
         </div>
-        {connectedWalletPublicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
+        {publicKey ? <AccountsV5 isSolAccount={true} /> : <ConnectWalletLayout />}
       </div>
     </PerpsLayout>
   )

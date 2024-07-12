@@ -1091,12 +1091,12 @@ const PositionDetails: React.FC<PositionDetailsProps> = ({
 export const HistoryPanelPnL: FC<{ notionalSize }> = ({ notionalSize }) => {
   const { traderInfo } = useTraderConfig()
   const isNegative = useMemo(() => traderInfo.pnl[0] === '-', [traderInfo])
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
 
   const pnl = useMemo(() => {
     if (!Number(traderInfo.pnl)) return 0
     return Number(traderInfo.pnl)
-  }, [traderInfo, connectedWalletPublicKey])
+  }, [traderInfo, publicKey])
 
   return (
     <div tw="flex items-center justify-center">

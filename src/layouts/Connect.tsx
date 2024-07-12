@@ -36,8 +36,9 @@ export const Connect: FC<MenuItemProps> = ({
                                              customMenuListItemsContainerStyle,
                                              customMenuListItemStyle
                                            }) => {
-  const { wallet, connected, publicKey, disconnect, connecting, disconnecting }
+  const { wallet, connected, disconnect, connecting, disconnecting }
     = useWallet()
+  const {publicKey} = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)

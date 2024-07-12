@@ -1,4 +1,3 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import tw from 'twin.macro'
@@ -6,6 +5,8 @@ import { isAdminAllowed } from '../../api/NFTLaunchpad'
 import { Connect } from '../../layouts'
 import { GradientText } from '../../components'
 import AnalyticsDashboard from './AnalyticsDashboard'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const CONNECT_WALLET_WRAPPER = styled.div`
   ${tw`w-full flex-col flex items-center justify-center`}
@@ -35,17 +36,17 @@ const WRAPPER = styled.div`
 `
 
 const AnalyticsWrapper: FC = () => {
-  const { wallet, connected } = useWallet()
   const [adminAllowed, setAdminAllowed] = useState<boolean>(false)
-
+  const {connected} = useWallet()
+  const {publicKey} = useWalletBalance()
   useEffect(() => {
     ;(async () => {
-      if (wallet?.adapter?.publicKey) {
-        const data = await isAdminAllowed(wallet?.adapter?.publicKey.toString())
+      if (publicKey) {
+        const data = await isAdminAllowed(publicKey.toString())
         setAdminAllowed(data.allowed)
       }
     })()
-  }, [wallet?.adapter?.publicKey])
+  }, [publicKey])
 
   return !connected ? (
     <CONNECT_WALLET_WRAPPER>

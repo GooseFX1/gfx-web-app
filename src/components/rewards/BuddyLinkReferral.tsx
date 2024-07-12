@@ -8,6 +8,7 @@ import { Connect } from '../../layouts'
 import { sendPerpsTransaction } from '../../web3/connection'
 import { Button, cn, Loader, loaders } from 'gfx-component-lib'
 import { toast } from 'sonner'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 const BuddyLinkReferral: FC = () => {
   const [isCopied, setIsCopied] = useState(false)
@@ -16,13 +17,11 @@ const BuddyLinkReferral: FC = () => {
   const [riskGroup, setRiskGroup] = useState(null)
   const [loading, setLoading] = useState(false)
   const { createRandomBuddy, getName, isReady } = useReferrals()
-  const { wallet } = useWallet()
+  const { connected } = useWallet()
   const wal = useWallet()
   const { perpsConnection: connection } = useConnectionConfig()
   const referLink = useMemo(() => `app.goosefx.io/?r=${name}`, [name])
-
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const connected = useMemo(() => wallet?.adapter?.connected, [wallet?.adapter, wallet?.adapter?.connected])
+  const {publicKey} = useWalletBalance()
 
   useMemo(() => {
     if (connection && connected) {

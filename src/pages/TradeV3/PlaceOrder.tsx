@@ -519,7 +519,7 @@ export const PlaceOrder: FC = () => {
   const { getUIAmount } = useAccounts()
   const { selectedCrypto, getSymbolFromPair, getAskSymbolFromPair, getBidSymbolFromPair, isDevnet } = useCrypto()
   const { order, setOrder, focused, setFocused } = useOrder()
-  const { connectedWalletPublicKey } = useWalletBalance()
+  const { publicKey } = useWalletBalance()
 
   const { traderInfo } = useTraderConfig()
   const { orderBook } = useOrderBook()
@@ -534,7 +534,6 @@ export const PlaceOrder: FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const { blacklisted } = useConnectionConfig()
   const { wallet } = useWallet()
-  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
   //Take profit state:
   const [takeProfitVisible, setTakeProfitVisible] = useState(false)
