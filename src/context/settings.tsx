@@ -259,7 +259,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return ENVS.DEV
   }, [])
 
-  const { chainId, network } = RPCs[endpointName]
+  
+  const { chainId, network } = RPCs[endpointName] || RPCs['QuickNode']
 
   const endpoint = useMemo(() => {
     if (existingUserCache.endpoint === null) {
