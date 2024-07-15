@@ -21,6 +21,7 @@ const colors = {
   'purple-2': '#9625AE',
   'purple-3': '#C27EFF',
   'purple-4': '#AEA0B9',
+  'purple-5': '#A846FF',
   'green-1': '#50BB35',
   'green-2': '#71C25D',
   'green-3': '#80CE00',
