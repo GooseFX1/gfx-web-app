@@ -38,10 +38,10 @@ import {
   Input,
   InputElementRight,
   InputGroup,
+  Slider,
   Tabs,
   TabsList,
-  TabsTrigger,
-  Slider
+  TabsTrigger
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
 import { Connect } from '../../layouts/Connect'
@@ -612,7 +612,8 @@ export const PlaceOrder: FC = () => {
             <InfoLabel>Leverage</InfoLabel>
               <Slider max={10}  value={leverageValue}
                       step={0.1}
-                      steps={5}
+                      steps={4}
+                      snapToThreshold={0.05}
                       showSteps
                       snapToStep
                       minStepsBetweenThumbs={0.1}
