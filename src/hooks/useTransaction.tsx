@@ -80,7 +80,7 @@ function useTransaction(): useTransactionReturn {
       const success = await notifyUsingPromise(promise, null, txSig)
       return { txSig, success }
     },
-    [originalConnection, sendTransactionOriginal, supportedTransactionTypes]
+    [originalConnection, sendTransactionOriginal, supportedTransactionTypes, publicKey]
   )
   return {
     createTransactionBuilder,

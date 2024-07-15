@@ -23,7 +23,7 @@ import * as anchor from '@project-serum/anchor'
 import { BN, Wallet } from '@project-serum/anchor'
 import { useConnectionConfig } from './settings'
 import { Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { confirmTransaction, createAssociatedTokenAccountIx } from '../web3'
+import { createAssociatedTokenAccountIx } from '../web3'
 import { createAssociatedTokenAccountInstruction, getAssociatedTokenAddress } from '@solana/spl-token-v2'
 import { SubType } from '../hooks/useSolSub'
 import CoinGecko from 'coingecko-api'
@@ -312,7 +312,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const gfxVaultVal = Number(((data.gofxVault as any)?.amount ?? BigInt(0)) / BigInt(1e9))
     setTotalStakedGlobally(gfxVaultVal)
     setUserStakeRatio((Number(newTotalStaked) / gfxVaultVal) * 100)
-  }, [stakeRewards, publicKey, publicKey])
+  }, [stakeRewards, publicKey])
   useLayoutEffect(() => {
     const fetchGofxValue = async () => {
       const res = await cg.coins.fetch('goosefx', {}).catch((err) => {
@@ -397,7 +397,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txn.add(await callback())
       return txn
     },
-    [stakeRewards, publicKey, getNetwork, connection]
+    [stakeRewards, publicKey, getNetwork, connection, sendTransaction]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
@@ -409,7 +409,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
 
     return true
-  }, [stakeRewards, publicKey, confirmTransaction, connection])
+  }, [stakeRewards, publicKey, sendTransaction, connection])
   const closeUserAccount = useCallback(async () => {
     //TODO: the below is not currently in use -> removing for now if needed add back in
     // const txn = stakeRewards.closeUserAccount(null, publicKey)
@@ -455,10 +455,10 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       const txn = await checkForUserAccount(async () => stakeRewards.stake(stakeAmount, publicKey))
       console.log('STAKE')
-      await sendTransaction(txn)
+      sendTransaction(txn)
       console.log('STAKE END')
     },
-    [stakeRewards, publicKey, confirmTransaction, connection]
+    [stakeRewards, publicKey, sendTransaction, connection]
   )
   const unstake = useCallback(
     async (amount: number) => {
@@ -481,7 +481,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       txBuilder.add(txn._instructions)
       sendTransaction(txBuilder)
     },
-    [stakeRewards, publicKey, connection]
+    [stakeRewards, publicKey, sendTransaction, connection]
   )
   const getClaimableFees = useCallback(async (): Promise<number> => {
     // retrieves value of claimable amount from contract
@@ -491,7 +491,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const claimFees = useCallback(async () => {
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(publicKey))
     sendTransaction(txn)
-  }, [stakeRewards, publicKey, connection, claimable])
+  }, [stakeRewards, publicKey, connection, claimable, sendTransaction])
   const redeemUnstakingTickets = useCallback(
     async (toUnstake: UnstakeableTicket[]) => {
       const txn = await checkForUserAccount(async () =>
@@ -502,7 +502,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       )
       sendTransaction(txn)
     },
-    [stakeRewards, publicKey]
+    [stakeRewards, publicKey, sendTransaction]
   )
   const enterGiveaway = useCallback(
     (giveawayContract: string) => {
