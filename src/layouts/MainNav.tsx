@@ -40,6 +40,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
+import { LiteProToggle } from '@/pages/FarmV4/LiteProToggle'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -51,6 +52,7 @@ export const MainNav: FC = () => {
   const query = new URLSearchParams(location.search)
   const showRewardsModal = query.get('rewards')
   const [isBannerActive] = useBoolean(false)
+  const { pathname } = useLocation()
 
   useEffect(() => {
     if (showRewardsModal) {
@@ -96,6 +98,7 @@ export const MainNav: FC = () => {
         <DesktopNav />
         <div className={`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
           <RewardsButton />
+          {pathname.includes('farm') ? <LiteProToggle /> : <></>}
           <Connect />
           {/* <NotificationButton /> */}
           {/*<More />*/}
