@@ -38,7 +38,7 @@ function useActivityTracker(props?: UseActivityTrackerProps): void {
       window.removeEventListener('mousemove', handleMouseMove)
       clearTimeout(timer)
     }
-  }, [callbackOn, callbackOff, lifeTime, callOnUnmount])
+  }, [callbackOn, callbackOff, lifeTime, callOnUnmount,isOff])
   useEffect(() => {
     if (callOnMount) {
       callbackOn?.()
