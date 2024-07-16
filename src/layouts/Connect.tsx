@@ -36,14 +36,14 @@ export const Connect: FC<MenuItemProps> = ({
                                            }) => {
   const { wallet, connected, disconnect, connecting, disconnecting }
     = useWallet()
-  const {publicKey, base58PublicKey} = useWalletBalance()
+  const { base58PublicKey} = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
   const breakpoint = useBreakPoint()
   const { mode } = useDarkMode()
-  const { setVisible: setWalletModalVisible } = useWalletModal()
-  const selfRef = useRef<HTMLDivElement>(null)
+  const { setVisible: setWalletModalVisible, visible } = useWalletModal()
+
   const { pathname } = useLocation()
   const [geoBlocked, setGeoBlocked] = useState(false)
 
