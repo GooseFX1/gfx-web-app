@@ -220,7 +220,7 @@ export const FarmContainer: FC = () => {
             >
               <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="max-sm:mr-2.5" />
             </Button>
-            <Icon src={`img/assets/farm_filter_${mode}.png`} size='lg' className='cursor-pointer' />
+            <Icon src={`img/assets/farm_filter_${mode}.svg`} size='lg' className='cursor-pointer' />
             <div className={'flex flex-row ml-auto gap-3.75'}>
               {pubKey != null && (
                 <div className='flex items-center mr-2'>
