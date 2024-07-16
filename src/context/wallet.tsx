@@ -32,7 +32,7 @@ export const WalletProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [network])
 
   return (
-    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet" autoConnect>
+    <WalletAdapterProvider wallets={wallets} localStorageKey="wallet" autoConnect={true}>
       <WalletModalProvider modal={<WalletsModal />}>{children}</WalletModalProvider>
     </WalletAdapterProvider>
   )
