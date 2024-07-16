@@ -143,8 +143,8 @@ export const Connect: FC<MenuItemProps> = ({
             colorScheme={!connected ? 'purple' : 'primaryGradient'}
             size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
             className={cn(
-              `min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none 
-                  flex justify-center`,
+              `flex min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
+              connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
             onClick={() => !connected && handleConnect()}
@@ -153,7 +153,7 @@ export const Connect: FC<MenuItemProps> = ({
             {connected && (
               <div
                 className={`flex items-center justify-center border-4 dark:border-black-1 border-solid
-                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] mr-1 overflow-hidden`}
+                  border-grey-5 rounded-circle bg-grey-5 dark:bg-black-1 w-[24px] h-[24px] overflow-hidden`}
               >
                 <img className={'w-auto rounded-lg'} src={adapterIcon} alt={`${adapterName}_icon`} />
               </div>
@@ -165,7 +165,6 @@ export const Connect: FC<MenuItemProps> = ({
                   transform: `rotate(${isOpen ? '0deg' : '180deg'})`,
                   transition: 'transform 0.2s ease-in-out'
                 }}
-                className={`ml-1`}
                 src={`/img/mainnav/connect-chevron-dark.svg`}
                 alt={'connect-chevron'}
               />

@@ -66,7 +66,8 @@ export const GradientButtonWithBorder: FC<{ children: ReactNode; radius: number;
 }
 
 export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
-  <div className={cn('h-full dark:bg-black-2 bg-white rounded-[3px] max-sm:rounded-[10px]  overflow-y-scroll')}>
+  <div className={cn(`flex flex-col flex-1 h-full dark:bg-black-2 bg-white rounded-[3px] max-sm:rounded-[10px] 
+  overflow-y-scroll`)}>
     {children}</div>
 )
 
