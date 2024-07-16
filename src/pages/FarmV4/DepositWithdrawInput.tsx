@@ -2,24 +2,22 @@
 import { Button, cn, Input, InputElementRight, InputGroup } from 'gfx-component-lib'
 import { useCallback, useRef, FC } from 'react'
 import { useDarkMode } from '@/context'
+import BigNumber from 'bignumber.js'
 
 const DepositWithdrawInput: FC<{
   isDeposit: boolean
   onChange: any
-  depositAmount: string
-  withdrawAmount: string
-}> = ({ isDeposit, onChange, depositAmount, withdrawAmount }): JSX.Element => {
+  depositAmount: BigNumber
+  withdrawAmount: BigNumber
+  handleHalf: any
+  handleMax: any
+}> = ({ isDeposit, onChange, depositAmount, withdrawAmount, handleHalf, handleMax }): JSX.Element => {
   const { isDarkMode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const focusInput = useCallback(() => {
     inputRef.current?.focus()
   }, [inputRef])
-
-  const calculateValue = () => {
-    if (isDeposit) return depositAmount
-    else return withdrawAmount
-  }
 
   return (
     <div className="m-2.5">
@@ -32,6 +30,7 @@ const DepositWithdrawInput: FC<{
               colorScheme={isDarkMode ? 'white' : 'blue'}
               className={cn(`p-1.5 text-text-black-4 dark:text-text-darkmode-primary`)}
               size={'xs'}
+              onClick={handleHalf}
             >
               Half
             </Button>
@@ -40,6 +39,7 @@ const DepositWithdrawInput: FC<{
               className={cn(`p-1.5 text-text-black-4 dark:text-text-darkmode-primary`)}
               size={'xs'}
               colorScheme={isDarkMode ? 'white' : 'blue'}
+              onClick={handleMax}
             >
               Max
             </Button>
@@ -51,7 +51,15 @@ const DepositWithdrawInput: FC<{
           placeholder={'0.00'}
           className={'text-left !p-1.5'}
           onChange={onChange}
-          value={calculateValue()}
+          value={
+            isDeposit
+              ? depositAmount?.isZero()
+                ? ''
+                : depositAmount?.toNumber()
+              : withdrawAmount?.isZero()
+              ? ''
+              : withdrawAmount?.toNumber()
+          }
         />
       </InputGroup>
     </div>

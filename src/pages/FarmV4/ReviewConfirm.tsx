@@ -2,12 +2,13 @@
 import { useSSLContext } from "@/context"
 import { FC, ReactElement } from "react"
 import { Icon } from 'gfx-component-lib'
+import DepositWithdrawLabel from "./DepositWithdrawLabel"
 
 export const ReviewConfirm: FC = (): ReactElement => {
     const { selectedCard } = useSSLContext()
     return (
         <>
-            <div className='text-regular font-semibold font-poppins dark:text-grey-8 text-black-4 mb-2.5 mx-2.5'>2. Review and Confirm</div>
+            <DepositWithdrawLabel text="2. Review and Confirm" />
             <div className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 p-2.5">
             <div>
                 <div className="flex justify-between mb-2">
