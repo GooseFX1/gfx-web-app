@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { ReactElement, FC } from "react";
-import { GradientButtonWithBorder } from "@/pages/TradeV3/perps/components/PerpsGenericComp";
+import { Badge } from 'gfx-component-lib'
 
 export const PoolStats: FC<{token: any}> = ({ token }): ReactElement => {
     return (
@@ -27,10 +27,10 @@ export const PoolStats: FC<{token: any}> = ({ token }): ReactElement => {
           <span className="!font-regular font-semibold dark:text-grey-2 text-grey-1 underline decoration-dotted">
             APR
           </span>
-          <div className="w-2/12">
-            <GradientButtonWithBorder radius={5} height={22}>
-              <span className="!font-regular font-semibold font-poppins dark:text-grey-8 text-black-4">185%</span>
-            </GradientButtonWithBorder>
+          <div>
+            <Badge variant="default" size={'lg'}>
+              <span className={'font-poppins font-semibold my-0.5'}>185%</span>
+            </Badge>
           </div>
         </div>
       </>

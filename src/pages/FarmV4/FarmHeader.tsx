@@ -222,7 +222,7 @@ export const FarmHeader: FC = () => {
           variant={'secondary'}
           onClick={setPoolSelectionModal.on}
         >
-          Create Pool <Icon src="/img/assets/arrowcircle.svg" alt="?-icon" className="max-sm:mr-2.5" size='sm' />
+          Create Pool <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size='sm' />
         </Button>
       </div>
       <div className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll`}>
