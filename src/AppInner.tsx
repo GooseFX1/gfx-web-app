@@ -9,8 +9,7 @@ import useBoolean from '@/hooks/useBoolean'
 
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [hasCache, setHasCache] = useBoolean(existingUserCache!=null)
-
+  const [hasCache, setHasCache] = useBoolean(existingUserCache != null)
 
   useEffect(() => {
     if (existingUserCache === null || existingUserCache.farm === undefined) {
