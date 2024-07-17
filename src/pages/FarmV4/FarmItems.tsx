@@ -136,7 +136,7 @@ const FarmItems: FC<{
       {/* {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       )} */}
-      <div className="border-top grid grid-cols-4 gap-3 max-sm:grid-cols-1">
+      <div className="border-top grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {SSL_TOKENS.filter((token) => {
           if (pool.name === 'All') return true
           else return pool.name === token.type
