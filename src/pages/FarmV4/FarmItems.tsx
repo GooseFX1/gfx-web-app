@@ -136,22 +136,25 @@ const FarmItems: FC<{
       {/* {((numberOfCoinsDeposited === 0 && showDeposited) || tokens?.length === 0) && (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       )} */}
-      <div className='flex flex-wrap border-top'>
-        {SSL_TOKENS.filter(token => {
+      <div className="border-top grid grid-cols-4 gap-3 max-sm:grid-cols-1">
+        {SSL_TOKENS.filter((token) => {
           if (pool.name === 'All') return true
           else return pool.name === token.type
         }).map((token) => {
           if (!token || !filteredLiquidityAccounts) return null
           const liqAcc = filteredLiquidityAccounts[token.sourceTokenMintAddress]
-          const userDepositedAmount = truncateBigString(liqAcc?.amountDeposited.toString(), token.sourceTokenMintDecimals)
+          const userDepositedAmount = truncateBigString(
+            liqAcc?.amountDeposited.toString(),
+            token.sourceTokenMintDecimals
+          )
 
           const show =
             (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
 
-          return show ? (
-            <FarmCard token={token} />
-          ) : null
+          return show ? <FarmCard token={token} /> : null
         })}
+      </div>
+      <div className={'w-full flex items-center mt-4'}>
         <Button
           className="cursor-pointer text-white rounded-full border-[1.5px] border-solid dark:border-purple-5 bg-black-1 mx-auto"
           variant={'primary'}

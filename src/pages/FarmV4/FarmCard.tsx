@@ -7,7 +7,7 @@ export const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
   const { setOperationPending, setSelectedCard } = useSSLContext()
   return (
     <div
-      className="h-[207px] w-[24%] bg-red-100 mr-2.5 mb-3.75 border 
+      className="h-[207px] w-full bg-red-100 border 
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 p-2.5 rounded-[8px]"
     >
       <div className="flex flex-row justify-between mb-2.5">
