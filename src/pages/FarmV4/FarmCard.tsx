@@ -39,7 +39,7 @@ export const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
             dark:text-grey-8 text-black-4 mb-2"
       >
         {`${token?.sourceToken} - ${token?.targetToken}`}
-        <Icon src={`img/assets/farm_${token?.type}.png`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${token?.type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <PoolStats token={token} />
     </div>
