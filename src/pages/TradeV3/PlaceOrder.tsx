@@ -22,7 +22,6 @@ import useWindowSize from '../../utils/useWindowSize'
 import {
   BlackGradientBg,
   ContentLabel,
-  GradientButtonWithBorder,
   InfoLabel,
   PerpsLayout,
   TitleLabel
@@ -703,15 +702,15 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
   <div className={cn('px-2.5 py-1')}>
     <div className={cn('h-8.75 flex items-center justify-between')}>
       <div className={cn('flex items-center')}>
-        <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} />
+        <img src={'/img/crypto/SOL.svg'} className={cn('h-6 mr-2 w-6')} alt="SOL Logo" />
         <InfoLabel> SOL-PERP </InfoLabel>
       </div>
       <div className="w-[43px] h-[23px]">
-        <GradientButtonWithBorder radius={5} height={23}>
+        <Badge variant="default" size={'lg'}>
           <InfoLabel>
             <h5 className={'!dark:text-white mt-0.5'}> {sliderValue}x </h5>
           </InfoLabel>
-        </GradientButtonWithBorder>
+        </Badge>
       </div>
     </div>
   </div>

@@ -29,41 +29,6 @@ export const GradientBorder: FC<{ children: ReactNode; radius: number }> = ({
     <div className={`bg-grey-5 dark:bg-black-1 h-full rounded-[${radius}px]`}>{children}</div>
   </div>
 )
-export const GradientButtonWithBorder: FC<{ children: ReactNode; radius: number; height: number }> = ({
-  children,
-  radius,
-  height
-}): ReactElement => {
-  const ref = useRef(null)
-
-  const [width, setWidth] = useState(0)
-
-  useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.offsetWidth)
-    }
-  }, [children])
-
-  return (
-    <div className="relative">
-      <div className={`w-full p-[1px] bg-gradient-1 rounded-[${radius}px] h-[${height}px]`}>
-        <div className={`bg-grey-5 dark:bg-black-1 h-full rounded-[${radius - 1}px]`}>
-          <div className={`w-full p-[1px] bg-gradient-1 rounded-[${radius - 1}px] h-full opacity-50`}></div>
-        </div>
-      </div>
-      <div
-        ref={ref}
-        style={{
-          width: 'fit-content',
-          marginLeft: `${(43 - width) / 2}px`
-        }}
-        className={`absolute mt-[-21px] h-[${height}px]`}
-      >
-        {children}
-      </div>
-    </div>
-  )
-}
 
 export const PerpsLayout: FC<{ children: ReactNode }> = ({ children }) => (
   <div className={cn(`flex flex-col flex-1 h-full dark:bg-black-2 bg-white rounded-[3px] max-sm:rounded-[10px] 
