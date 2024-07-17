@@ -95,8 +95,8 @@ export const FarmContainer: FC = () => {
     () =>
       searchTokens
         ? farmTableRow.filter((token) =>
-          token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
-        )
+            token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+          )
         : [...farmTableRow],
     [searchTokens, farmTableRow, sort]
   )
@@ -177,14 +177,14 @@ export const FarmContainer: FC = () => {
 
   return (
     <div className={'flex flex-col gap-3.75'}>
-            {poolSelectionModal && (
+      {poolSelectionModal && (
         <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal.set} />
       )}
-      <div className="flex items-center gap-3.75">
+      <div className="flex items-center max-sm:flex-col max-sm:gap-4">
         <RadioOptionGroup
           defaultValue={'All'}
           value={pool.name}
-          className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4'}
+          className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
           optionClassName={`min-md:w-[85px]`}
           options={[
             {
@@ -205,59 +205,52 @@ export const FarmContainer: FC = () => {
           ]}
         />
 
-        {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
-          <div className="flex items-center w-full gap-3.75">
-            <SearchBar
-              onChange={(e) => initiateGlobalSearch(e.target.value)}
-              onClear={() => setSearchTokens('')}
-              value={searchTokens}
-              className={'!max-w-[90%]'}
-            />
+        <div className="flex items-center w-full justify-between">
+          <SearchBar
+            onChange={(e) => initiateGlobalSearch(e.target.value)}
+            onClear={() => setSearchTokens('')}
+            value={searchTokens}
+            className={'!max-w-full flex-1'}
+          />
+          <div className="flex justify-between ml-3">
+            {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
+              <Button
+                className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
+                variant={'ghost'}
+                onClick={setPoolSelectionModal.on}
+              >
+                <Icon
+                  src="/img/assets/question-icn.svg"
+                  alt="?-icon"
+                  className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+                />
+              </Button>
+            )}
             <Button
-              className="cursor-pointer ml-auto p-0 min-w-7.5"
+              className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
               variant={'ghost'}
-              onClick={setPoolSelectionModal.on}
+              onClick={() => console.log('filter')}
             >
-              <Icon src="/img/assets/question-icn.svg" alt="?-icon" className="max-sm:mr-2.5" />
+              <Icon
+                src={`img/assets/farm_filter_${mode}.svg`}
+                size={'md'}
+                className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+              />
             </Button>
-            <Icon src={`img/assets/farm_filter_${mode}.svg`} size='lg' className='cursor-pointer' />
             <div className={'flex flex-row ml-auto gap-3.75'}>
               {pubKey != null && (
-                <div className='flex items-center mr-2'>
+                <div className="flex items-center mr-2">
                   <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
-                  <div
-                    className="h-8.75 leading-5 text-regular text-right dark:text-grey-2 text-grey-1
-               font-semibold mt-[-4px] ml-3.75 hidden min-lg:block"
-                  >
+                  <div className="h-full text-xs text-right dark:text-grey-2 text-grey-1 font-semibold ml-2 hidden min-lg:block">
                     Show <br /> Deposited
                   </div>
                 </div>
               )}
             </div>
           </div>
-        )}
-      </div>
-      {breakpoint.isMobile && (
-        <div className="flex flex-row">
-          <SearchBar
-            className={pubKey ? 'w-[55%]' : 'min-md:w-[95%]'}
-            onChange={(e) => initiateGlobalSearch(e.target.value)}
-            onClear={() => setSearchTokens('')}
-            value={searchTokens}
-          />
-          {pubKey && (
-            <div className="ml-auto flex items-center">
-              <Switch variant={'default'} checked={showDeposited} onClick={handleShowDepositedToggle} />
-              <div
-                className={`h-8.75 leading-5 text-regular max-sm:text-tiny max-sm:leading-[18px] text-right
-                dark:text-grey-2 text-grey-1 font-semibold mt-[-4px] ml-2.5 max-sm:ml-2`}
-              >
-                Show <br /> Deposited
-              </div>
-            </div>
-          )}
         </div>
-      )}
+      </div>
+
       <FarmItems
         tokens={filteredTokens}
         numberOfCoinsDeposited={numberOfCoinsDeposited}
