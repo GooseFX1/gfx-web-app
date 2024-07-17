@@ -5,11 +5,16 @@ import ThemeProvider from './theme'
 import { USER_CONFIG_CACHE } from './types/app_params'
 import queryString from 'query-string'
 import WalletBalanceProvider from '@/context/walletBalanceContext'
+import useBoolean from '@/hooks/useBoolean'
+
 export default function AppInner(): JSX.Element {
   const existingUserCache: USER_CONFIG_CACHE | null = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const [hasCache, setHasCache] = useBoolean(existingUserCache!=null)
+
 
   useEffect(() => {
     if (existingUserCache === null || existingUserCache.farm === undefined) {
+      setHasCache.on()
       console.log('** GFX Application Init **')
       window.localStorage.setItem(
         'gfx-user-cache',
@@ -30,7 +35,7 @@ export default function AppInner(): JSX.Element {
     if (values.r && !localStorage.getItem('referrer')) {
       localStorage.setItem('referrer', values.r as string)
     }
-  }, [])
+  })
 
   useEffect(() => {
     const values = queryString.parse(window.location?.search)
@@ -39,7 +44,7 @@ export default function AppInner(): JSX.Element {
   }, [])
 
   return (
-    existingUserCache !== null && (
+    hasCache && (
       <DarkModeProvider>
         <ThemeProvider>
           <SettingsProvider>
