@@ -5,7 +5,7 @@ import { ShowDepositedToggle, SkeletonCommon } from '../../components'
 import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { Pool, poolType, SSLToken } from './constants'
+import { Pool, poolType, SSLToken, SSL_TOKENS } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { getPriceObject } from '../../web3'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
@@ -49,7 +49,8 @@ export const FarmContainer: FC = () => {
     [wallet?.adapter?.publicKey]
   )
 
-  const numberOfCoinsDeposited = useMemo(() => {
+  //TODO::need to change the calculation upon getting onchain data
+  const numberOfTokensDeposited = useMemo(() => {
     const count = sslData.reduce((accumulator, data) => {
       const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
       const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
@@ -94,11 +95,12 @@ export const FarmContainer: FC = () => {
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? farmTableRow.filter((token) =>
-            token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+        ? SSL_TOKENS.filter((token) =>
+            token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
+            token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
           )
-        : [...farmTableRow],
-    [searchTokens, farmTableRow, sort]
+        : [...SSL_TOKENS],
+    [searchTokens, SSL_TOKENS, sort]
   )
 
   useEffect(() => {
@@ -120,8 +122,8 @@ export const FarmContainer: FC = () => {
   }, [sslData])
 
   const poolSize = useMemo(
-    () => (showDeposited ? numberOfCoinsDeposited : filteredTokens?.length),
-    [showDeposited, numberOfCoinsDeposited, filteredTokens]
+    () => (showDeposited ? numberOfTokensDeposited : filteredTokens?.length),
+    [showDeposited, numberOfTokensDeposited, filteredTokens]
   )
 
   const sortUserBalances = (sortValue: string) => {
@@ -253,7 +255,7 @@ export const FarmContainer: FC = () => {
 
       <FarmItems
         tokens={filteredTokens}
-        numberOfCoinsDeposited={numberOfCoinsDeposited}
+        numberOfTokensDeposited={numberOfTokensDeposited}
         searchTokens={searchTokens}
         showDeposited={showDeposited}
       />

@@ -39,7 +39,7 @@ export const DepositWithdrawHeader: FC = (): JSX.Element => {
         size={'sm'}
       >
         <RewardsClose
-          className={`h-3 w-3 min-md:h-5 min-md:w-5 stroke-border-lightmode-primary 
+          className={`h-3 w-3 min-md:h-5 min-md:w-5 min-md:stroke-border-lightmode-primary 
     min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
         />
       </Button>
