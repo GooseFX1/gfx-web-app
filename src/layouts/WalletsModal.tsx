@@ -5,10 +5,12 @@ import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standar
 import { TermsOfService } from './TermsOfService'
 import { USER_CONFIG_CACHE } from '../types/app_params'
 import { useWalletModal } from '../context'
+import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
   cn,
   Dialog,
+  DialogTitle,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
@@ -27,6 +29,8 @@ export const WalletsModal: FC = () => {
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const [selectedWallet, setSelectedWallet] = useState<string>('')
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
+  const breakpoint = useBreakPoint()
+  const isMobile = breakpoint.isMobile || breakpoint.isTablet
 
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
@@ -56,37 +60,43 @@ export const WalletsModal: FC = () => {
     [select]
   )
 
-  // filters detected wallets and de-duplicates
-  const detectedWallets = useMemo(
-    () =>
-      wallets
-        .filter(({ readyState }) => readyState === WalletReadyState.Installed)
-        .filter(
-          (value, index, self) => self.findIndex((item) => item.adapter.name === value.adapter.name) === index
-        ),
-    [wallets]
-  )
+  // organizes and de-duplicates wallets
+  const renderWallets = useMemo(() => {
+    const detectedWallets = wallets
+      .filter(({ readyState }) => readyState === WalletReadyState.Installed)
+      .filter((value, index, self) => self.findIndex((item) => item.adapter.name === value.adapter.name) === index)
+      .map((w) => ({ ...w, detected: true }))
 
-  const undetectedWallets = useMemo(
-    () => wallets.filter(({ readyState }) => readyState !== WalletReadyState.Installed),
-    [wallets]
-  )
+    const undetectedWallets = wallets
+      .filter(
+        ({ readyState }) =>
+          readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
+      )
+      .map((w) => ({ ...w, detected: false }))
+
+    return [...detectedWallets, ...undetectedWallets]
+  }, [wallets])
 
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
     <Dialog onOpenChange={setVisible} open={visible}>
       <DialogOverlay />
-      <DialogContent className={'flex flex-col gap-0 max-h-[500px]'}>
+      <DialogContent
+        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
+        fullScreen={isMobile}
+        placement={isMobile ? 'bottom' : 'default'}
+      >
         <DialogHeader
           className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
         dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
         >
-          <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>Select Wallet</h3>
+          <DialogTitle>Choose a wallet</DialogTitle>
           <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
-        <DialogBody className={'flex-col pt-5 px-2 overflow-scroll'}>
-          {detectedWallets.map((wallet, index) => (
+        <DialogBody className={'flex-col p-2 overflow-scroll'}>
+          {renderWallets.map((wallet, index) => (
             <Button
               key={index}
               isLoading={connecting && wallet.adapter.name === selectedWallet}
@@ -102,49 +112,17 @@ export const WalletsModal: FC = () => {
                 <img
                   src={wallet.adapter.icon}
                   alt="wallet-icon"
-                  height={'30px'}
-                  width={'30px'}
-                  className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
+                  height={'25px'}
+                  width={'25px'}
+                  className="mr-2.5 ml-2 rounded-half !h-[25px] bg-black-1"
                 />
-                <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
+                <p className={'text-regular dark:text-grey-6 text-black-4 font-nunito font-bold'}>
                   {wallet.adapter.name.replace('(Extension)', '')}
-                </h6>
+                </p>
               </div>
-              <div className="text-green-3 pr-5">Detected</div>
+              {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
             </Button>
           ))}
-
-          {undetectedWallets
-            .filter(
-              ({ readyState }) =>
-                readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-            )
-            .map((wallet, index) => (
-              <Button
-                key={index}
-                isLoading={connecting && wallet.adapter.name === selectedWallet}
-                onClick={() => handleWalletClick(wallet.adapter.name)}
-                className={cn(
-                  `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2 
-                  hover:border-purple-1 hover:dark:border-white`,
-                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
-                )}
-              >
-                <div className="flex items-center">
-                  <img
-                    src={wallet.adapter.icon}
-                    alt="wallet-icon"
-                    height={'30px'}
-                    width={'30px'}
-                    className="mr-2.5 ml-2 rounded-half !h-[30px] bg-black-1"
-                  />
-                  <h6 className={'text-regular dark:text-grey-6 text-black-4'}>
-                    {wallet.adapter.name.replace('(Extension)', '')}
-                  </h6>
-                </div>
-              </Button>
-            ))}
         </DialogBody>
       </DialogContent>
     </Dialog>
