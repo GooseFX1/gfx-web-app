@@ -124,6 +124,7 @@ export interface ITraderRiskGroup {
   fundingRate: string
   maxWithdrawable: string
   traderVolume: string
+  openPositions: number
 }
 
 interface ICollateralInfo {
@@ -213,7 +214,7 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
     callbackOn: () => setIsCurrentTabActive(true)
   })
   const [isCurrentTabActive, setIsCurrentTabActive] = useState(true)
-
+  const [openPositions, setOpenPositions] = useState<number>(0)
   const {
     mpgRawData,
     marketProductGroup,
@@ -803,7 +804,16 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return '0'
     }
   }, [traderRiskGroup])
-
+  useEffect(()=>{
+    if(traderInstanceSdk && perpProductInstanceSdk){
+      traderInstanceSdk.getOpenOrders(perpProductInstanceSdk).then((r)=>{
+        setOpenPositions(r.bids.length + r.asks.length)
+      })
+        .catch(err=>{
+          console.error(err)
+        })
+    }
+  },[traderInstanceSdk,perpProductInstanceSdk])
   return (
     <TraderContext.Provider
       value={{
@@ -825,7 +835,8 @@ export const TraderProvider: FC<{ children: ReactNode }> = ({ children }) => {
           health: accountHealth,
           fundingRate: fundingRate,
           maxWithdrawable: maxWithdrawable,
-          traderVolume
+          traderVolume,
+          openPositions
         },
         setOrderBook,
         newOrder: newOrder,
