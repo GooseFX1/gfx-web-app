@@ -25,8 +25,8 @@ const StickyFooter: FC = (): ReactElement => {
         <Connect containerStyle={'inline-flex basis-1/2 z-0'} customButtonStyle={'h-[35px] w-full'} />
       )}
       <div className='mx-2.5 h-8.75 w-8.75 rounded-full border-[1.5px] border-solid dark:border-white 
-            border-blue-1 flex justify-center items-center'>
-        <Icon src={`img/assets/refresh_${mode}.png`} size='sm' />
+            border-blue-1 flex justify-center items-center cursor-pointer'>
+        <Icon src={`img/assets/refresh_${mode}.svg`} size='sm' />
       </div>
       <div className='h-8.75 w-[82px] rounded-full border-[1.5px] border-solid dark:border-white 
             border-blue-1 flex justify-center items-center py-[7.5px] px-2.5'>
