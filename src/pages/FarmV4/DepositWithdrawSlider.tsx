@@ -75,7 +75,7 @@ export const DepositWithdrawSlider: FC = () => {
     [modeOfOperation]
   )
 
-  //need to handle the half case for withdraw once we get the onChain data
+  //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(
     (sourceToken: boolean) => {
       if (modeOfOperation === ModeOfOperation.DEPOSIT) {
@@ -93,7 +93,7 @@ export const DepositWithdrawSlider: FC = () => {
     [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
   )
 
-  //need to handle the max case for withdraw once we get the onChain data
+  //TODO::need to handle the max case for withdraw once we get the onChain data
   const handleMax = useCallback(
     (sourceToken: boolean) => {
       if (modeOfOperation === ModeOfOperation.DEPOSIT) {
