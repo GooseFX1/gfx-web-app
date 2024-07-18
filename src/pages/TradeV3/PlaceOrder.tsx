@@ -27,6 +27,7 @@ import {
   TitleLabel
 } from './perps/components/PerpsGenericComp'
 import {
+  Badge,
   Button,
   Checkbox,
   cn,
