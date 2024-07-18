@@ -1,11 +1,5 @@
-/* eslint-disable */
 import { FC, useEffect, useMemo, useState, useCallback } from 'react'
-import {
-  Dialog,
-  DialogOverlay,
-  DialogContent,
-  DialogBody,
-  } from 'gfx-component-lib'
+import { Dialog, DialogOverlay, DialogContent, DialogBody } from 'gfx-component-lib'
 import { useSSLContext, useAccounts, useConnectionConfig } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -19,7 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import BigNumber from 'bignumber.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
-import { DepositWithdrawHeader } from './DepositWithdrawHeader' 
+import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
