@@ -166,23 +166,23 @@ const MobileNav: FC = () => {
               overflow-y-scroll`}
           >
             <ListItem
-              variant={pathname.includes('bridge') && 'primary'}
+              variant={pathname.includes('ssl') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
                          dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+                pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
               )}
               onClick={() => {
                 setIsOpen.off()
-                history.push('/bridge')
+                history.push('/ssl')
               }}
             >
               <img
                 className="h-[35px]"
-                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
                 alt="dark"
               />
-              &nbsp;Bridge
+              &nbsp;SSL
             </ListItem>
             <ListItem
               variant={pathname.includes('farm') && 'primary'}
@@ -261,6 +261,15 @@ const MobileNav: FC = () => {
                 </AccordionTrigger>
                 <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
                   <MobileAccordionContent
+                    title={'Bridge'}
+                    description={'Bridge your assets to and from other chains'}
+                    onClick={() => {
+                      setIsOpen.off()
+                      history.push('/bridge')
+                    }}
+                    isActive={pathname.includes('bridge')}
+                  />
+                  <MobileAccordionContent
                     title={'Leaderboard'}
                     description={'Trade smart and be among the top to win exciting rewards!'}
                     onClick={() => {
@@ -325,18 +334,18 @@ const DesktopNav: FC = () => {
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/bridge')}
+        onClick={() => history.push('/ssl')}
         className={cn(
           `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+          pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
           className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
+          src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
           alt="dark"
         />
-        Bridge
+        SSL
       </Button>
       <Button
         variant={'ghost'}
@@ -429,6 +438,15 @@ const DesktopNav: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
+          <DropdownMenuItem
+            onClick={() => history.push('/bridge')}
+            isActive={pathname.includes('bridge')}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
+              <p className={'text-b3'}>Bridge your assets to and from other chains</p>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => history.push('/leaderboard')}
             isActive={pathname.includes('leaderboard')}

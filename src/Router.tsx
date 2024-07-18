@@ -115,7 +115,7 @@ export const Router: FC = () => {
                               <LeaderBoard />
                             </StatsProvider>
                           </Route>
-                          <Route exact path={['/farming', '/farm/temp-withdraw']}>
+                          <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
                             <PriceFeedFarmProvider>
                               <Farm />
                             </PriceFeedFarmProvider>
