@@ -1,18 +1,36 @@
 import { useSSLContext } from '@/context'
 import { FC } from 'react'
-import { Icon, Button } from 'gfx-component-lib'
+import { Icon, Button, DialogTitle } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 
 export const DepositWithdrawHeader: FC = (): JSX.Element => {
   const { selectedCard, setOperationPending } = useSSLContext()
   return (
-    <div className="w-full h-14 flex flex-row items-center border-b 
-        border-solid dark:border-black-4 border-grey-4 px-2.5">
-      <Icon src={`img/crypto/${selectedCard?.sourceToken}.svg`} size="lg" />
-      <Icon src={`img/crypto/${selectedCard?.targetToken}.svg`} size="lg" className="mr-1.5" />
+    <DialogTitle
+      className="w-full h-14 flex flex-row items-center border-b 
+        border-solid dark:border-black-4 border-grey-4 px-2.5"
+    >
+      <div className="flex relative w-[80px]">
+        <Icon
+          src={`img/crypto/${selectedCard?.sourceToken}.svg`}
+          size="lg"
+          className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
+        />
+        <Icon
+          src={`img/crypto/${selectedCard?.targetToken}.svg`}
+          size="lg"
+          className={
+            'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
+          }
+        />
+      </div>
       <div className="font-poppins font-semibold text-average text-black-4 dark:text-grey-8 ">
         {selectedCard.sourceToken + ' - ' + selectedCard.targetToken}
       </div>
+
+      {/* <Icon src={`img/crypto/${selectedCard?.sourceToken}.svg`} size="lg" />
+      <Icon src={`img/crypto/${selectedCard?.targetToken}.svg`} size="lg" className="mr-1.5" /> */}
+      
       <Button
         onClick={() => setOperationPending(false)}
         variant={'ghost'}
@@ -25,6 +43,6 @@ export const DepositWithdrawHeader: FC = (): JSX.Element => {
     min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
         />
       </Button>
-    </div>
+    </DialogTitle>
   )
 }

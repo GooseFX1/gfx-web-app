@@ -116,17 +116,13 @@ export const DepositWithdrawSlider: FC = () => {
   return (
     <Dialog open={true}>
       <DialogOverlay />
-      <DialogContent
-        className={`w-[393px] max-h-screen overflow-y-scroll rounded-b-none`}
-        fullScreen={true}
-        placement={'right'}
-      >
-        <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block`}>
-          <>
-            <DepositWithdrawHeader />
+      <DialogContent className={`w-[393px] max-h-screen rounded-b-none`} fullScreen={true} placement={'right'}>
+        <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
+          <DepositWithdrawHeader />
+          <div className="overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
             <DepositWithdrawAccordion />
-            <DepositWithdrawLabel text="1. Add Deposits"/>
+            <DepositWithdrawLabel text="1. Add Deposits" />
             <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />
             <DepositWithdrawInput
               isDeposit={modeOfOperation === ModeOfOperation.DEPOSIT}
@@ -146,9 +142,11 @@ export const DepositWithdrawSlider: FC = () => {
               handleMax={() => handleMax(false)}
             />
             <ReviewConfirm />
-            {userPublicKey && (userSourceTokenBal?.isZero() || userTargetTokenBal?.isZero()) && <SwapNow /> }
-            <StickyFooter />
-          </>
+            {userPublicKey && (userSourceTokenBal?.isZero() || userTargetTokenBal?.isZero()) && (
+              <SwapNow />
+            )}
+          </div>
+          <StickyFooter />
         </DialogBody>
       </DialogContent>
     </Dialog>
