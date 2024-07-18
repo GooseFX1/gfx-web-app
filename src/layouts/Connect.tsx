@@ -130,9 +130,9 @@ export const Connect: FC<MenuItemProps> = ({
         <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
           <Button
             colorScheme={!connected ? 'purple' : 'primaryGradient'}
-            size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
+            size={'sm'}
             className={cn(
-              `flex min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
+              `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
               connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
