@@ -361,19 +361,6 @@ export const SSL_TOKENS = [
     targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     targetTokenMintDecimals: 6,
     type: 'Hyper'
-  },
-  {
-    sourceToken: 'SOL',
-    targetToken: 'JITOSOL',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn',
-    targetTokenMintDecimals: 9,
-    type: 'Primary'
   }
 ]
 
