@@ -377,6 +377,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
 
       if (gofxAccount === null) {
+        console.log('ACC gofx account')
         const txn = createAssociatedTokenAccountInstruction(
           publicKey,
           gofxAddress,
@@ -387,17 +388,19 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
       const txnForUserAccountRequirements = txBuilder
 
-      if (txnForUserAccountRequirements._instructions.length > (txBuilder._usePriorityFee ? 1 : 0)) {
+      if (txnForUserAccountRequirements._instructions.length > 0) {
         res = Boolean(await sendTransaction(txnForUserAccountRequirements))
       }
+
       if (!res) {
+        console.log('ACC missing',res,{userMetadata,usdcAccount,gofxAccount})
         return
       }
       const txn = createTransactionBuilder()
       txn.add(await callback())
       return txn
     },
-    [stakeRewards, publicKey, getNetwork, connection, sendTransaction]
+    [stakeRewards, publicKey, getNetwork, connection, sendTransaction, createTransactionBuilder]
   )
 
   const initializeUserAccount = useCallback(async (): Promise<boolean> => {
@@ -490,6 +493,7 @@ export const RewardsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [stakeRewards, publicKey])
   const claimFees = useCallback(async () => {
     const txn = await checkForUserAccount(async () => stakeRewards.claimFees(publicKey))
+    console.log('claim fees txn', txn)
     sendTransaction(txn)
   }, [stakeRewards, publicKey, connection, claimable, sendTransaction])
   const redeemUnstakingTickets = useCallback(
