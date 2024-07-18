@@ -684,7 +684,7 @@ export const HistoryPanel: FC = () => {
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const wallet = useWallet()
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, traderInstanceSdk } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
@@ -862,18 +862,20 @@ export const HistoryPanel: FC = () => {
   // )
 
   const getLabel = useCallback((index:number, item:string)=>{
-    if (!traderInfo || (index > 1)) {
+    if (!traderInstanceSdk || !perpsOpenOrders || (index > 1)) {
       return item
     }
+
     switch (index) {
       case 0:
-        return `${item} (${traderInfo.openPositions})`
+        return `${item} (${traderInstanceSdk?.traderPositions?.length??0})`
       case 1:
         return `${item} (${perpsOpenOrders?.length ?? 0})`
       default:
         return item
     }
-  },[traderInfo,perpsOpenOrders]);
+  },[traderInstanceSdk,perpsOpenOrders]);
+
   return (
     <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px]  " defaultValue="0">
       {closePositionModal && (
