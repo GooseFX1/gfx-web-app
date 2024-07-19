@@ -57,7 +57,7 @@ export const Connect: FC<MenuItemProps> = ({
   const { name: adapterName, icon: adapterIcon } = adapter || {}
 
   useEffect(() => {
-    if ((geoBlocked || base58PublicKey) && visible) setWalletModalVisible(false)
+    if ((geoBlocked) && visible) setWalletModalVisible(false)
   }, [geoBlocked, base58PublicKey,visible])
 
   const connectLabel = useMemo(() => {
@@ -89,9 +89,10 @@ export const Connect: FC<MenuItemProps> = ({
     [disconnect]
   )
   const handleWalletChange = useCallback(() => {
+    console.log('change')
     setWalletModalVisible(true)
     setIsOpen.off()
-  }, [setWalletModalVisible])
+  }, [])
   const copyAddress = useCallback(() => {
     navigator.clipboard.writeText(base58PublicKey)
 
@@ -135,7 +136,7 @@ export const Connect: FC<MenuItemProps> = ({
               connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
-            onClick={() => !connected && handleConnect()}
+            onClick={() => (!connected||isAttempting) && handleConnect()}
             isLoading={isAttempting}
           >
             {connected && (
