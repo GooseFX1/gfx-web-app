@@ -85,7 +85,6 @@ export const WalletsModal: FC = () => {
       <DialogContent
         className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
-        fullScreen={isMobile}
         placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogHeader

@@ -2,11 +2,12 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { useConnectionConfig } from '../context'
 import { USER_CONFIG_CACHE } from '../types/app_params'
-import 'styled-components/macro'
+import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
   Checkbox,
   Dialog,
+  DialogTitle,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
@@ -15,84 +16,14 @@ import {
   DialogOverlay
 } from 'gfx-component-lib'
 
-// const TEXT_AREA = styled.div`
-//     ${tw`h-[452px] w-full p-[1.2px] mt-4 max-sm:h-[374px] rounded-[8px] dark:text-grey-2 text-grey-1`}
-//     background: linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%);
-//     flex-grow: 0;
-//
-//     .text-area-inner {
-//         ${tw`h-[450px] max-sm:h-[372px] w-full px-[24px] py-[12px] rounded-[8px] overflow-auto dark:bg-black-6 bg-white`}
-//     }
-//
-//     h3 {
-//         ${tw`dark:text-grey-2 text-grey-1 font-semibold`}
-//     }
-//
-//     p {
-//         font-size: 12px;
-//         font-weight: 500;
-//         font-stretch: normal;
-//         font-style: normal;
-//         line-height: normal;
-//         letter-spacing: normal;
-//         text-align: left;
-//     }
-// `
-
-// const CAPTION = styled.div`
-//   ${tw`absolute bottom-[96px]`}
-//   color: ${({ theme }) => theme.text5};
-// `
-
-// const TOS_MODAL = styled(Modal)`
-//     ${tw`w-[600px]! max-sm:w-full! p-0! dark:bg-black-2 bg-grey-5`}
-//     &.ant-modal {
-//         ${tw`!rounded-bigger`}
-//     }
-//
-//     .ant-modal-body {
-//         ${tw`max-sm:px-3! max-sm:h-[520px]`}
-//     }
-// `
-
-// const CONFIRM = styled.div`
-//     ${tw`flex items-center p-2 mt-2.5 max-sm:pb-0`}
-// `
-//
-// const MAINBUTTON = styled.button<{ checked }>`
-//     ${tw`h-12.5 w-[60%] rounded-circle border-none`}
-//     background-color: ${({ theme }) => theme.bg22};
-//     background-image: ${({ theme, checked }) =>
-//             checked ? 'linear-gradient(96deg, #f7931a 1%, #ac1cc7 99%)' : theme.bg22};
-// `
-//
-// const TOS_CHECKBOX = styled(Checkbox)`
-//     ${tw`flex !items-start`}
-//     .ant-checkbox-inner {
-//         ${tw`h-[20px] w-[20px]`}
-//     }
-//
-//     .ant-checkbox-inner::after {
-//         ${tw`h-[12px] w-[6px] `}
-//     }
-//
-//     span {
-//         ${tw`text-[12px]`}
-//         color: ${({ theme }) => theme.text28};
-//     }
-//
-//     .ant-checkbox-wrapper .ant-checkbox-wrapper-disabled {
-//         opacity: 0.5;
-//     }
-// `
-
 export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
   const { blacklisted } = useConnectionConfig()
   const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-
+  const breakpoint = useBreakPoint()
+  const isMobile = breakpoint.isMobile || breakpoint.isTablet
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
   const [checked, setChecked] = useState<boolean>(false)
   // const [isRead, setRead] = useState<boolean>(false)
@@ -128,21 +59,25 @@ export const TermsOfService: FC<{
   return (
     <Dialog open={toShow} onOpenChange={changeTOSState}>
       <DialogOverlay />
-      <DialogContent size={'md'} className={'flex flex-col gap-0'}>
+      <DialogContent
+        className={`flex flex-col gap-0 max-h-[464px] border-1 border-solid
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
+        fullScreen={isMobile}
+        placement={isMobile ? 'bottom' : 'default'}
+      >
         <DialogHeader
           className={`p-2.5 text-center items-start justify-start flex border-b-1 border-solid
         dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
         >
-          <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary'}>
-            Welcome to GOOSEFX!
-          </h3>
+          <DialogTitle>Welcome to GOOSEFX!</DialogTitle>
           <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
         <DialogBody className={'flex-col px-2.5'}>
           <div className={`flex flex-col gap-4 overflow-hidden`}>
-            <div className={'overflow-y-scroll no-scrollbar h-[273px] flex flex-col gap-4 '}>
+            <div className={'overflow-y-scroll no-scrollbar h-[320px] flex flex-col gap-4 '}>
               <h3 className={'text-h3 text-text-lightmode-primary dark:text-text-darkmode-primary mt-2.5'}>
-                General</h3>
+                General
+              </h3>
               <p className={`text-b3 text-text-lightmode-secondary dark:text-text-darkmode-secondary`}>
                 These terms and conditions (“Terms”) govern the use of the Website (defined below) and the Services
                 (defined below). These Terms also include any guidelines, announcements, additional terms,
@@ -457,15 +392,20 @@ export const TermsOfService: FC<{
         </DialogBody>
         <DialogFooter
           className={`border-t-1 border-solid dark:border-border-darkmode-secondary
-         border-border-lightmode-secondary flex flex-row justify-between p-2.5 `}
+         border-border-lightmode-secondary flex flex-row max-sm:items-start items-center max-sm:flex-col justify-between p-2.5 `}
         >
           <div className={`inline-flex items-center gap-2.5`}>
             <Checkbox id={'c1'} checked={checked} onCheckedChange={(state) => setChecked(Boolean(state))} />
-            <label htmlFor={'c1'} className={`max-w-[237px]`}>
+            <label htmlFor={'c1'} className={`max-w-[237px] max-sm:w-full`}>
               I agree GooseFX terms and conditions and protocol disclaimer.
             </label>
           </div>
-          <Button className={'w-[130px]'} onClick={accept} colorScheme={'blue'} disabled={!checked}>
+          <Button
+            className={'w-[130px] max-sm:w-full max-sm:w-full max-sm:my-2'}
+            onClick={accept}
+            colorScheme={'blue'}
+            disabled={!checked}
+          >
             Continue
           </Button>
         </DialogFooter>
