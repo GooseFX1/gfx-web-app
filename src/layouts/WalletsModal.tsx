@@ -55,7 +55,8 @@ export const WalletsModal: FC = () => {
       select(walletName)
       // handleCancel(event)
       setSelectedWallet(walletName)
-      if (walletName === 'WalletConnect') setVisible(false)
+      setVisible(false)
+      // if (walletName === 'WalletConnect') setVisible(false)
     },
     [select]
   )
