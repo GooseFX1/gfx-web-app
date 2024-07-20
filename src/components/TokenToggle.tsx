@@ -5,13 +5,14 @@ import tw from 'twin.macro'
 import 'styled-components/macro'
 
 const TOGGLE_WRAPPER = styled.div<{ position: number }>`
+  cursor: pointer;
+
   .background {
-    ${tw`w-[50px] h-[26px] max-sm:h-[35px] max-sm:mr-3 max-sm:w-[65px] rounded-[33px] duration-500 flex 
-    cursor-pointer items-center`}
+    ${tw`w-[50px] h-[26px] max-sm:h-[35px] max-sm:mr-3 max-sm:w-[65px] rounded-[33px] duration-500 flex items-center`}
     background: linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%);
   }
   .pinkGradient {
-    ${tw`cursor-pointer items-center`}
+    ${tw`items-center`}
     background: ${({ position }) =>
       position === 1 ? 'linear-gradient(90.95deg, #F7931A 25.41%, #AC1CC7 99.19%)' : 'pink'}
   }
@@ -45,11 +46,6 @@ const Toggle = styled(CenteredImg)<{ $mode: number }>`
     $mode === 0
       ? 'linear-gradient(96.79deg, #F7931A 4.25%, #AC1CC7 97.61%);'
       : 'linear-gradient(96.79deg, #5855FF 4.25%, #DC1FFF 97.61%);'};
-
-  &:hover {
-    cursor: pointer;
-  }
-
   > div {
     ${tw`h-[20px] w-[20px]`}
     ${({ theme }) => theme.roundedBorders}
@@ -90,11 +86,11 @@ export const ShowDepositedToggle: FC<{ enabled: boolean; setEnable: any }> = ({ 
   <TOGGLE_WRAPPER position={enabled ? 1 : 0} onClick={() => setEnable()}>
     <div
       tw="!rounded-[35px] !w-[75px] max-sm:!w-[70px] !h-8.75 
-       max-sm:ml-0 duration-500 dark:bg-black-3 bg-grey-4"
+       max-sm:ml-0 duration-500 dark:bg-black-3 bg-grey-4 border border-solid dark:border-white border-grey-2"
       className={enabled && 'pinkGradient'}
     >
       <div
-        css={[enabled ? tw`ml-10 max-sm:ml-9` : tw`ml-[-1px] max-sm:ml-0`]}
+        css={[enabled ? tw`ml-[2.3rem]` : tw`max-sm:ml-1`]}
         tw="!h-8.75 !w-8.75 z-[10] !bg-black-4 rounded-[50%] duration-200"
       />
     </div>
