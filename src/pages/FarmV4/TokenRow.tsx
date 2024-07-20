@@ -18,7 +18,7 @@ export const TokenRow: FC<{ token: any; balance: any }> = ({ token, balance }): 
         <span className="text-regular font-semibold font-poppins dark:text-grey-8 text-black-4 mr-2">{token}</span>
         <div className="w-[89px] px-1">
           <a href={`https://solscan.io/account/${tokenAccount}`} target="_blank" rel="noreferrer">
-            <Badge variant="default" size={'lg'} >
+            <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
               <span className={'font-poppins font-semibold my-0.5 mr-2'}>{truncateAddress(tokenAccount, 3)}</span>
               <Icon
                 src={`/img/assets/arrowcircle-${mode}.svg`}

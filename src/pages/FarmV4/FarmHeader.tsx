@@ -197,32 +197,33 @@ export const FarmHeader: FC = () => {
   // )
 
   return (
-    <div className='p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0'>
+    <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
       {operationPending && <DepositWithdrawSlider />}
-      <div className='relative mb-3.75'>
-        <div className='flex flex-row items-center mb-1.5'>
-          <Icon src={`img/assets/${isProMode ? 'pro' : 'lite'}.svg`} size='sm' className='mr-1.5'></Icon>
-          <h4 className='text-tiny font-semibold dark:text-grey-8 text-black-4'>{isProMode ? 'PRO' :  'LITE' }</h4>
+      <div className="relative mb-3.75">
+        <div className="flex flex-row items-center mb-1.5">
+          <Icon src={`img/assets/${isProMode ? 'pro' : 'lite'}.svg`} size="sm" className="mr-1.5"></Icon>
+          <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isProMode ? 'PRO' : 'LITE'}</h4>
         </div>
-        {isProMode && 
-          <div className='flex flex-row items-center mb-1.5'>
-            <h4 
-              className='cursor-pointer dark:text-white underline text-blue-1 mr-2 text-average font-semibold'>
-                Pools
+        {isProMode && (
+          <div className="flex flex-row items-center mb-1.5">
+            <h4 className="cursor-pointer dark:text-white underline text-blue-1 mr-2 text-average font-semibold">
+              Pools
             </h4>
-            <h4 
-              className='cursor-pointer dark:text-grey-1 text-grey-9 text-average font-semibold'>
-              Portfolio
-            </h4>
+            <h4 className="cursor-pointer dark:text-grey-1 text-grey-9 text-average font-semibold">Portfolio</h4>
           </div>
-        }
-        <h4 className='mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold'>Provide liquidity and earn fees</h4>
+        )}
+        <h4 className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
+          Provide liquidity and earn fees
+        </h4>
         <Button
           className="cursor-pointer absolute right-0 top-0 bg-blue-1 text-white"
           variant={'secondary'}
           onClick={setPoolSelectionModal.on}
+          iconRight={
+            <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size="sm" />
+          }
         >
-          Create Pool <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size='sm' />
+          Create Pool
         </Button>
       </div>
       <div className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll`}>
@@ -246,7 +247,9 @@ export const FarmHeader: FC = () => {
               size={'lg'}
             >
               <ContainerTitle className={'z-[1]'}>
-                <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted">{card?.name}:</h4>
+                <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted">
+                  {card?.name}:
+                </h4>
                 &nbsp;
               </ContainerTitle>
               <h2> {card.value}</h2>

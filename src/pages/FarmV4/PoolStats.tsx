@@ -28,7 +28,7 @@ export const PoolStats: FC<{token: any}> = ({ token }): ReactElement => {
             APR
           </span>
           <div>
-            <Badge variant="default" size={'lg'}>
+            <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
               <span className={'font-poppins font-semibold my-0.5'}>185%</span>
             </Badge>
           </div>
