@@ -6,6 +6,7 @@ import { numberFormatter } from '../../utils'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogHeader, DialogOverlay } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import CloseLite from '@/assets/close-lite.svg?react'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 interface AllUnstakingTicketModalProps {
   isOpen: boolean
@@ -64,14 +65,14 @@ const AllUnstakingTicketsModal: FC<AllUnstakingTicketModalProps> = ({ isOpen, on
     </Dialog>
   )
 }
-const UnstakingTicketLineItem = ({ ticket }: { ticket: UnstakeTicket }) => {
+const UnstakingTicketLineItem = ({ ticket }: PropsWithKey<{ ticket: UnstakeTicket }>) => {
   const [oneDayLeft, setOneDayLeft] = useState(false)
   const [canClaim, setCanClaim] = useState(false)
   const { redeemUnstakingTickets, getUiAmount, userMetaData } = useRewards()
   const [isClaiming, setIsClaiming] = useState(false)
   const [claimButtonText, setClaimButtonText] = useState('Unstake GOFX')
   const setClaimText = useCallback(
-    (interval: NodeJS.Timer) => {
+    (interval: NodeJS.Timeout) => {
       const unixTime = moment.unix(ticket.createdAt.toNumber()).add(7, 'days')
       const momentTime = moment.duration(unixTime.diff(moment()))
       const secondDuration = momentTime.asSeconds()

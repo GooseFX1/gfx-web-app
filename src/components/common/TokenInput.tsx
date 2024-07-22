@@ -1,14 +1,7 @@
-import {
-  Button,
-  cn,
-  Input,
-  InputElementLeft,
-  InputElementRight,
-  InputGroup,
-  ShadButtonProps
-} from 'gfx-component-lib'
+import { Button, cn, Input, InputElementLeft, InputElementRight, InputGroup, ShadButtonProps } from 'gfx-component-lib'
 import { ChangeEvent, useCallback, useRef } from 'react'
 import { useDarkMode } from '@/context'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 interface TokenInputProps {
   value?: number | string
@@ -30,7 +23,7 @@ const TokenInput = ({
   disabled,
   onChange,
   outlineColorScheme
-}: TokenInputProps): JSX.Element => {
+}: PropsWithKey<TokenInputProps>): JSX.Element => {
   const { isDarkMode } = useDarkMode()
   const inputRef = useRef<HTMLInputElement>(null)
 

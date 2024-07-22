@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { cn } from 'gfx-component-lib'
-import { FC, ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
+import { FC, ReactElement, ReactNode } from 'react'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 export const BlackGradientBg: FC<{ children: ReactNode }> = ({ children }) => (
   <div
@@ -41,7 +42,8 @@ export const AccountsLabel: FC<{ children: ReactNode; className?: string }> = ({
     <h5 className={cn('text-grey-9 dark:text-grey-1', className)}>{children}</h5>
   </div>
 )
-export const ContentLabel: FC<{ children: ReactNode; className?: string }> = ({ children, className }) => (
+export const ContentLabel: FC<PropsWithKey<{ children: ReactNode; className?: string }>> =
+  ({ children, className }) => (
   <div>
     <h5 className={cn('text-grey-1 dark:text-grey-2', className)}>{children}</h5>
   </div>

@@ -3,18 +3,12 @@ import { FC, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { DropdownPairs } from '../DropdownPairs'
-import {
-  useCrypto,
-  useOrderBook,
-  usePriceFeed
-  // uncomment this only when testing with devnet in your local environment
-  // useConnectionConfig
-} from '../../../context'
+import { useCrypto, useOrderBook, usePriceFeed } from '../../../context'
 import { getPerpsPrice } from '../perps/utils'
 import 'styled-components/macro'
-import { Drawer } from 'antd'
 import { UserProfile } from './UserProfile'
 import { SkeletonCommon } from '../../../components'
+import { AntDDrawer } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 const HEADER = styled.div`
   ${tw`flex flex-row max-sm:mt-[15px] max-sm:!mb-0 flex-wrap gap-y-2`}
@@ -104,7 +98,7 @@ export const Header: FC = () => {
   return (
     <HEADER>
       {userProfile && (
-        <Drawer
+        <AntDDrawer
           title={null}
           placement="bottom"
           closable={false}
@@ -115,7 +109,7 @@ export const Header: FC = () => {
           className="user-profile-drawer"
         >
           <UserProfile setUserProfile={setUserProfile} />
-        </Drawer>
+        </AntDDrawer>
       )}
       {!tokenPrice ? (
         <div tw="w-full">

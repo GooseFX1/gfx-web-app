@@ -6,10 +6,11 @@ import useBreakPoint from '../../hooks/useBreakPoint'
 import { useDarkMode } from '../../context'
 import { Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, IconTooltip } from 'gfx-component-lib'
 import BigNumber from 'bignumber.js'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 //milliseconds in 5 minutes to be used to update the countdown every 5 minutes
 const TIMER = 300 * 1000
 
-export const ActionModal: FC<{
+export const ActionModal: FC<PropsWithKey<{
   actionModal: boolean
   setActionModal: Dispatch<SetStateAction<boolean>>
   handleWithdraw: (BigNumber) => void
@@ -25,7 +26,7 @@ export const ActionModal: FC<{
   earlyWithdrawFee: number
   diffTimer: number
   setDiffTimer: Dispatch<SetStateAction<number>>
-}> = ({
+}>> = ({
   actionModal,
   setActionModal,
   handleWithdraw,
