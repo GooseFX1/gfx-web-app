@@ -26,6 +26,7 @@ import FarmItemHead from '@/pages/FarmV3/FarmTableComponents/FarmItemHead'
 import { toast } from 'sonner'
 import BigNumber from 'bignumber.js'
 import useTransaction from '@/hooks/useTransaction'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 const MIN_AMOUNT_DEPOSIT = 0.01
 const MIN_AMOUNT_WITHDRAW = 0.01
@@ -37,14 +38,14 @@ const FarmBalanceItem = ({
   asZero,
   token,
   earnedUSD = 0
-}: {
+}: PropsWithKey<{
   title: string
   value: React.ReactNode
   titlePosition?: 'text-end' | 'text-start'
   asZero?: boolean
   token?: string
   earnedUSD?: number | string
-}) => (
+}>) => (
   <div className={cn('flex flex-row md-xl:flex-col md-xl:w-max justify-between md-xl:justify-normal max-sm:mb-1')}>
     <h4 className={cn(`dark:text-grey-8 text-black-4 font-semibold text-regular`, titlePosition)}>{title}</h4>
     <div
@@ -63,7 +64,7 @@ const FarmBalanceItem = ({
   </div>
 )
 
-const FarmContent: FC<{ coin: SSLToken }> = ({ coin }) => {
+const FarmContent: FC<PropsWithKey<{ coin: SSLToken }>> = ({ coin }) => {
   const { prices } = usePriceFeedFarm()
   const { isTxnSuccessfull, filteredLiquidityAccounts, liquidityAmount, sslTableData, rewards } = useSSLContext()
   const tokenMintAddress = useMemo(() => coin?.mint?.toBase58(), [coin])
@@ -808,7 +809,7 @@ type DepositAndWithdrawToggleProps = {
   operationPending: boolean
   setModeOfOperation: (mode: string) => void
 }
-const DepositAndWithdrawToggle: FC<DepositAndWithdrawToggleProps> = ({
+const DepositAndWithdrawToggle: FC<PropsWithKey<DepositAndWithdrawToggleProps>> = ({
   value,
   operationPending,
   setModeOfOperation
@@ -843,7 +844,7 @@ type ConnectClaimComboProps = {
   token: string
   disableActionButton: boolean
 }
-const ConnectClaimCombo: FC<ConnectClaimComboProps> = ({
+const ConnectClaimCombo: FC<PropsWithKey<ConnectClaimComboProps>> = ({
   disabled,
   depositWithdrawOnClick,
   isLoading,

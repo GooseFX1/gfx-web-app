@@ -1,10 +1,11 @@
-import React, { useMemo, FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { SSLToken } from '@/pages/FarmV3/constants'
 import { useDarkMode } from '@/context'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
-const OracleIcon: FC<{
+const OracleIcon: FC<PropsWithKey<{
   token: SSLToken
-}> = ({ token }) => {
+}>> = ({ token }) => {
   const { mode } = useDarkMode()
   const switchboardTokens: string[] = useMemo(() => ['MSOL', 'JITOSOL'], [])
   const usesSwitchboard: boolean = useMemo(() => switchboardTokens.includes(token?.token), [token])

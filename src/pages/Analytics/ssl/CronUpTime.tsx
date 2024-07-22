@@ -2,8 +2,8 @@
 import { getCronUpTimeData } from '@/api/analytics'
 import { getTodaysDate } from '../../../utils'
 import React, { FC, ReactElement, useEffect, useState } from 'react'
-import { TooltipTrigger, cn } from 'gfx-component-lib'
 import { Tooltip } from 'antd'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 const getCurrentTimeSlot = (): string => {
   const now = new Date() // Get the current date and time
@@ -55,7 +55,7 @@ interface RepositoryDetailsProps {
   repoName: string
 }
 
-const RepositoryDetails: FC<RepositoryDetailsProps> = ({ repoData, repoName }) => {
+const RepositoryDetails: FC<PropsWithKey<RepositoryDetailsProps>> = ({ repoData, repoName }) => {
   const timeSlot = getCurrentTimeSlot()
 
   // Create an array of JSX elements to render based on the condition

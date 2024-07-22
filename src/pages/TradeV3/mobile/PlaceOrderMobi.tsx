@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
-import { Checkbox, Drawer, Input, Slider } from 'antd'
+import { Checkbox, Drawer, DrawerProps, Input, Slider } from 'antd'
 import {
   AVAILABLE_ORDERS,
   OrderDisplayType,
@@ -743,7 +743,7 @@ export const PlaceOrderMobi = () => {
   return (
     <WRAPPER>
       {showMarketDrawer && (
-        <Drawer
+        <AntDDrawer
           title={null}
           placement="bottom"
           closable={false}
@@ -772,10 +772,10 @@ export const PlaceOrderMobi = () => {
               </div>
             ))}
           </SELECTOR>
-        </Drawer>
+        </AntDDrawer>
       )}
       {showProfitLossDrawer && (
-        <Drawer
+        <AntDDrawer
           title={null}
           placement="bottom"
           closable={false}
@@ -813,7 +813,7 @@ export const PlaceOrderMobi = () => {
             setInput={setProfitPrice}
             setVisibility={setShowProfitLossDrawer}
           />
-        </Drawer>
+        </AntDDrawer>
       )}
       {confirmationModal && (
         <>
@@ -1072,4 +1072,10 @@ export const PlaceOrderMobi = () => {
       </div> */}
     </WRAPPER>
   )
+}
+export type PropsWithKey<T> =  T & {
+  key?: string | number | unknown | any
+}
+export function AntDDrawer({...props}:PropsWithKey<DrawerProps>){
+  return <Drawer {...props}/>
 }

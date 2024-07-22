@@ -6,6 +6,7 @@ import { httpClient } from '../../../api'
 import { truncateBigNumber } from '../../../utils/misc'
 import { usePriceFeedFarm } from '../../../context'
 import { getPriceObject } from '../../../web3/utils'
+import { PropsWithKey } from '@/pages/TradeV3/mobile/PlaceOrderMobi'
 
 const WRAPPER = styled.div`
     ${tw`p-10`}
@@ -127,10 +128,10 @@ const CoinGeckoPairs = (): any => {
   )
 }
 
-const PairData: FC<{
+const PairData: FC<PropsWithKey<{
   pair: any
   index: number
-}> = ({ pair }) => {
+}>> = ({ pair }) => {
   const { prices, refreshTokenData } = usePriceFeedFarm()
 
   useEffect(() => {
