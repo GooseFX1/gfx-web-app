@@ -5,7 +5,7 @@ import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
 import { Pool, poolType } from './constants'
-import { useDarkMode, useSSLContext } from '../../context'
+import { useDarkMode, useFarmContext } from '../../context'
 import { USER_CONFIG_CACHE } from '../../types/app_params'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -170,7 +170,7 @@ export const ChoosePool: FC<{
   poolSelectionModal: boolean
   setPoolSelectionModal: Dispatch<SetStateAction<boolean>>
 }> = ({ poolSelectionModal, setPoolSelectionModal }): JSX.Element => {
-  const { setPool, setIsFirstPoolOpen } = useSSLContext()
+  const { setPool, setIsFirstPoolOpen } = useFarmContext()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [userPool, setUserPool] = useState<Pool>(null)
   const [isError, setIsError] = useState<boolean>(false)

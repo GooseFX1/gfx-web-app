@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import { Dialog, DialogOverlay, DialogContent, DialogBody } from 'gfx-component-lib'
-import { useSSLContext, useAccounts, useConnectionConfig } from '@/context'
+import { useFarmContext, useAccounts, useConnectionConfig } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -19,7 +19,7 @@ export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { selectedCard } = useSSLContext()
+  const { selectedCard } = useFarmContext()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)

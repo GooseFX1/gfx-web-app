@@ -20,7 +20,7 @@ import {
   // IS_WHITELIST,
   TOTAL_VOLUME,
   TOTAL_FEES
-} from '../pages/FarmV4/constants'
+} from '../pages/FarmV3/constants'
 import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
@@ -53,8 +53,6 @@ interface SSLData {
   allPoolFilteredLiquidityAcc: any
   depositedBalanceConnection: any
   connectionId: string
-  selectedCard: any
-  setSelectedCard: Dispatch<SetStateAction<any>>
 }
 
 const SSLContext = createContext<SSLData | null>(null)
@@ -79,7 +77,6 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
   const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
   const [connectionId, setConnectionId] = useState<string>()
-  const [selectedCard, setSelectedCard] = useState<any>()
   const { on, off } = useSolSub()
 
   useEffect(() => {
@@ -357,9 +354,7 @@ export const SSLProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsFirstPoolOpen: setIsFirstPoolOpen,
         allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc,
         depositedBalanceConnection: depositedBalanceConnection,
-        connectionId: connectionId,
-        selectedCard: selectedCard,
-        setSelectedCard: setSelectedCard
+        connectionId: connectionId
       }}
     >
       {children}
