@@ -6,7 +6,7 @@ interface IRewardToggleConfig {
   panelIndex: number
   changePanel: (index: number) => void
   isProMode: boolean
-  setIsProMode: any
+  setIsProMode: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
 }
 const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
