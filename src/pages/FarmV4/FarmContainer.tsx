@@ -48,17 +48,7 @@ export const FarmContainer: FC = () => {
   )
 
   //TODO::need to change the calculation upon getting onchain data
-  const numberOfTokensDeposited = useMemo(() => {
-    const count = sslData.reduce((accumulator, data) => {
-      const amountInNative = filteredLiquidityAccounts[data?.mint?.toBase58()]?.amountDeposited?.toString()
-      const amountInUSD = truncateBigString(amountInNative, data?.mintDecimals)
-      if (amountInUSD && amountInUSD !== '0.00') {
-        return accumulator + 1
-      }
-      return accumulator
-    }, 0)
-    return count
-  }, [pool, filteredLiquidityAccounts, sslData, pubKey])
+  const numberOfTokensDeposited = 0
 
   const farmTableRow = useMemo(
     () =>
@@ -118,11 +108,6 @@ export const FarmContainer: FC = () => {
   useEffect(() => {
     sslData?.length && setInitialLoad(false)
   }, [sslData])
-
-  const poolSize = useMemo(
-    () => (showDeposited ? numberOfTokensDeposited : filteredTokens?.length),
-    [showDeposited, numberOfTokensDeposited, filteredTokens]
-  )
 
   const sortUserBalances = (sortValue: string) => {
     farmTableRow.sort((a, b) => {
