@@ -1,12 +1,11 @@
 import { FC, useEffect } from 'react'
 import { FarmHeader } from './FarmHeader'
-import { SSLProvider, usePriceFeedFarm } from '../../context'
+import { usePriceFeedFarm, FarmProvider } from '../../context'
 import { FarmContainer } from './FarmContainer'
 import { Faqs } from './Faqs'
 
 const FarmV4: FC = () => {
   const { refreshTokenData } = usePriceFeedFarm()
-  //const { operationPending } = useSSLContext()
 
   // initial load of all the prices
   useEffect(() => {
@@ -14,7 +13,7 @@ const FarmV4: FC = () => {
   }, [])
 
   return (
-    <SSLProvider>
+    <FarmProvider>
       <div
         id="farm-container"
         className={`dark:bg-black-1 bg-grey-5 h-[calc(100vh - 56px)] overflow-auto max-w-[1440px]
@@ -26,7 +25,7 @@ const FarmV4: FC = () => {
           <Faqs />
         </div>
       </div>
-    </SSLProvider>
+    </FarmProvider>
   )
 }
 export default FarmV4

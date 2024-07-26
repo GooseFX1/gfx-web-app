@@ -1,10 +1,10 @@
-import { useSSLContext } from '@/context'
+import { useFarmContext } from '@/context'
 import { FC } from 'react'
 import { Icon, Button, DialogTitle } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 
 export const DepositWithdrawHeader: FC = (): JSX.Element => {
-  const { selectedCard, setOperationPending } = useSSLContext()
+  const { selectedCard, setOperationPending } = useFarmContext()
   return (
     <DialogTitle
       className="w-full h-14 flex flex-row items-center border-b 

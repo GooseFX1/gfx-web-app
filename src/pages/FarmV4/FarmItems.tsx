@@ -3,7 +3,7 @@ import { SSLToken } from '@/pages/FarmV3/constants'
 import { FC } from 'react'
 // import { StatsModal } from '@/pages/FarmV3/StatsModal'
 import NoResultsFound from '@/pages/FarmV3/FarmTableComponents/NoResultsFound'
-import { useSSLContext } from '@/context'
+import { useFarmContext } from '@/context'
 import { truncateBigString } from '@/utils'
 import { FarmCard } from './FarmCard'
 import { Button } from 'gfx-component-lib'
@@ -16,7 +16,7 @@ const FarmItems: FC<{
   showDeposited: boolean
 }> = ({ tokens, numberOfTokensDeposited, showDeposited, searchTokens }) => {
   // const [statsModal, setStatsModal] = useState<boolean>(false)
-  const { filteredLiquidityAccounts, pool } = useSSLContext()
+  const { filteredLiquidityAccounts, pool } = useFarmContext()
 
   const noResultsTitle =
     Boolean(searchTokens) && !showDeposited ? 'Oops, no pools found' : 'Oops, no pools deposited'

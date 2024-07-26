@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
-import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { useDarkMode, usePriceFeedFarm, useFarmContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken, SSL_TOKENS } from './constants'
@@ -32,9 +32,7 @@ export const FarmContainer: FC = () => {
     sslTableData,
     liquidityAmount,
     setIsFirstPoolOpen,
-    rewards,
-    allPoolSslData
-  } = useSSLContext()
+  } = useFarmContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
   const [showDeposited, setShowDeposited] = useState<boolean>(existingUserCache.farm.showDepositedFilter)

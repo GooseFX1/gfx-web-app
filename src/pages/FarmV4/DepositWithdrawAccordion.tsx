@@ -1,5 +1,5 @@
 import { FC, ReactElement } from "react"
-import { useSSLContext } from '@/context'
+import { useFarmContext } from '@/context'
 import {
     Accordion,
     AccordionItem,
@@ -9,7 +9,7 @@ import {
 import { PoolStats } from './PoolStats'
 
 const DepositWithdrawAccordion: FC = (): ReactElement => {
-  const { selectedCard } = useSSLContext()
+  const { selectedCard } = useFarmContext()
     return(
         <Accordion collapsible type={'multiple'}>
         <AccordionItem value="pool-stats" className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3">

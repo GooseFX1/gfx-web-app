@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { ChoosePool } from './ChoosePool'
-import { usePriceFeedFarm, useRewardToggle, useSSLContext } from '../../context'
+import { usePriceFeedFarm, useRewardToggle, useFarmContext } from '../../context'
 import { truncateBigNumber } from '../../utils'
 import { SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
@@ -32,7 +32,7 @@ export const FarmHeader: FC = () => {
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
     operationPending
-  } = useSSLContext()
+  } = useFarmContext()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
   const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)

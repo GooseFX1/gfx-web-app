@@ -1,11 +1,11 @@
 /* eslint-disable */
-import { useSSLContext } from "@/context"
+import { useFarmContext } from "@/context"
 import { FC, ReactElement } from "react"
 import { Icon } from 'gfx-component-lib'
 import DepositWithdrawLabel from "./DepositWithdrawLabel"
 
 export const ReviewConfirm: FC = (): ReactElement => {
-    const { selectedCard } = useSSLContext()
+    const { selectedCard } = useFarmContext()
     return (
         <>
             <DepositWithdrawLabel text="2. Review and Confirm" />

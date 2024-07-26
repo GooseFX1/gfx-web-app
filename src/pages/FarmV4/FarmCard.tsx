@@ -1,10 +1,10 @@
-import { useSSLContext } from '@/context'
+import { useFarmContext } from '@/context'
 import { Button, Icon } from 'gfx-component-lib'
 import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
 export const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
-  const { setOperationPending, setSelectedCard } = useSSLContext()
+  const { setOperationPending, setSelectedCard } = useFarmContext()
   return (
     <div
       className="h-[207px] w-full bg-red-100 border 
