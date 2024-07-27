@@ -170,7 +170,7 @@ export const ChoosePool: FC<{
   poolSelectionModal: boolean
   setPoolSelectionModal: Dispatch<SetStateAction<boolean>>
 }> = ({ poolSelectionModal, setPoolSelectionModal }): JSX.Element => {
-  const { setPool, setIsFirstPoolOpen } = useFarmContext()
+  const { setPool } = useFarmContext()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [userPool, setUserPool] = useState<Pool>(null)
   const [isError, setIsError] = useState<boolean>(false)
@@ -211,7 +211,6 @@ export const ChoosePool: FC<{
     if (userSelection !== 'none') {
       setPoolSelectionModal(false)
       setPool(userPool)
-      setTimeout(() => setIsFirstPoolOpen(true), 500)
     } else {
       sliderRef.current.slickGoTo(0)
       setUserAnswer({
