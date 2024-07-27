@@ -3,7 +3,7 @@ import { Button, Icon } from 'gfx-component-lib'
 import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
-export const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
+const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
   const { setOperationPending, setSelectedCard } = useFarmContext()
   return (
     <div
@@ -45,3 +45,5 @@ export const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
     </div>
   )
 }
+
+export default FarmCard

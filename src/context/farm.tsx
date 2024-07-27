@@ -47,8 +47,6 @@ import {
     sslAllVolume: any
     sslTotalFees: string
     rewards: any
-    isFirstPoolOpen: boolean
-    setIsFirstPoolOpen: Dispatch<SetStateAction<boolean>>
     allPoolFilteredLiquidityAcc: any
     depositedBalanceConnection: any
     connectionId: string
@@ -78,7 +76,6 @@ import {
     const [sslTableData, setTableData] = useState<SSLTableData>(null)
     const [sslAllVolume, setSslAllVolume] = useState<any>(null)
     const [sslTotalFees, setSslTotalFees] = useState<string>(null)
-    const [isFirstPoolOpen, setIsFirstPoolOpen] = useState<boolean>(false)
     const [connectionId, setConnectionId] = useState<string>()
     const [selectedCard, setSelectedCard] = useState<any>()
     const [isPortfolio, setIsPortfolio] = useBoolean(false)
@@ -350,8 +347,6 @@ import {
           sslAllVolume: sslAllVolume,
           sslTotalFees: sslTotalFees,
           rewards: rewards,
-          isFirstPoolOpen: isFirstPoolOpen,
-          setIsFirstPoolOpen: setIsFirstPoolOpen,
           allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc,
           depositedBalanceConnection: depositedBalanceConnection,
           connectionId: connectionId,

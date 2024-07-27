@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
-import { useDarkMode, usePriceFeedFarm, useFarmContext } from '../../context'
+import { useDarkMode, usePriceFeedFarm, useFarmContext, useRewardToggle } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken, SSL_TOKENS } from './constants'
@@ -31,7 +31,6 @@ export const FarmContainer: FC = () => {
     filteredLiquidityAccounts,
     sslTableData,
     liquidityAmount,
-    setIsFirstPoolOpen,
   } = useFarmContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
@@ -41,6 +40,7 @@ export const FarmContainer: FC = () => {
   const { prices } = usePriceFeedFarm()
   const [allClaimModal, setAllClaimModal] = useState<boolean>(false)
   const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)
+  const { isProMode } = useRewardToggle()
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -123,7 +123,6 @@ export const FarmContainer: FC = () => {
   }
 
   const initiateGlobalSearch = (value: string) => {
-    setIsFirstPoolOpen(false)
     setPool(poolType.all)
     setSearchTokens(value)
   }
@@ -143,7 +142,6 @@ export const FarmContainer: FC = () => {
 
   const handleToggle = (pooltype: Pool) => {
     setPool(pooltype)
-    setIsFirstPoolOpen(false)
   }
 
   const handleShowDepositedToggle = () => {
@@ -157,7 +155,6 @@ export const FarmContainer: FC = () => {
       )
       return !prev
     })
-    setIsFirstPoolOpen(false)
   }
 
   return (
@@ -179,12 +176,12 @@ export const FarmContainer: FC = () => {
             },
             {
               value: poolType.primary.name,
-              label: 'Primary',
+              label: isProMode ? 'CLMM' : 'Primary',
               onClick: () => (operationPending ? null : handleToggle(poolType.primary))
             },
             {
               value: poolType.hyper.name,
-              label: 'Hyper',
+              label: isProMode ? 'Standard' : 'Hyper',
               onClick: () => (operationPending ? null : handleToggle(poolType.hyper))
             }
           ]}
