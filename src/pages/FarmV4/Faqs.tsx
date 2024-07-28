@@ -1,9 +1,13 @@
 import { FC } from 'react'
 import { Faq, faqs } from './constants'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, cn } from 'gfx-component-lib'
+import { useRewardToggle } from '../../context'
 
-export const Faqs: FC = () => (
-  <div className={cn(`max-sm:w-[calc(100% - 15px)]`)}>
+
+export const Faqs: FC = () => {
+  const { isPortfolio } = useRewardToggle()
+  return !isPortfolio && (
+    <div className={cn(`max-sm:w-[calc(100% - 15px)]`)}>
     <div className="flex flex-row mt-10 mb-5 items-center">
       <h2 className="mr-auto text-[20px] font-semibold h-[35px] dark:text-grey-5 text-black-4 max-sm:text-lg pl-2">
         FAQs
@@ -26,4 +30,5 @@ export const Faqs: FC = () => (
       ))}
     </Accordion>
   </div>
-)
+  )
+}

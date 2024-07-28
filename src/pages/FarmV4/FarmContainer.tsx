@@ -14,6 +14,7 @@ import { Icon, Switch, Button } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmItems from './FarmItems'
+import Portfolio from './Portfolio'
 import useBoolean from '@/hooks/useBoolean'
 import { ChoosePool } from './ChoosePool'
 
@@ -30,7 +31,7 @@ export const FarmContainer: FC = () => {
     sslData,
     filteredLiquidityAccounts,
     sslTableData,
-    liquidityAmount,
+    liquidityAmount
   } = useFarmContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
@@ -40,7 +41,7 @@ export const FarmContainer: FC = () => {
   const { prices } = usePriceFeedFarm()
   const [allClaimModal, setAllClaimModal] = useState<boolean>(false)
   const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)
-  const { isProMode } = useRewardToggle()
+  const { isProMode, isPortfolio } = useRewardToggle()
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -83,9 +84,10 @@ export const FarmContainer: FC = () => {
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? SSL_TOKENS.filter((token) =>
-            token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
-            token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+        ? SSL_TOKENS.filter(
+            (token) =>
+              token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
+              token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
           )
         : [...SSL_TOKENS],
     [searchTokens, SSL_TOKENS, sort]
@@ -162,83 +164,88 @@ export const FarmContainer: FC = () => {
       {poolSelectionModal && (
         <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal.set} />
       )}
-      <div className="flex items-center max-sm:flex-col max-sm:gap-4">
-        <RadioOptionGroup
-          defaultValue={'All'}
-          value={pool.name}
-          className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
-          optionClassName={`min-md:w-[85px]`}
-          options={[
-            {
-              value: poolType.all.name,
-              label: 'All',
-              onClick: () => (operationPending ? null : handleToggle(poolType.all))
-            },
-            {
-              value: poolType.primary.name,
-              label: isProMode ? 'CLMM' : 'Primary',
-              onClick: () => (operationPending ? null : handleToggle(poolType.primary))
-            },
-            {
-              value: poolType.hyper.name,
-              label: isProMode ? 'Standard' : 'Hyper',
-              onClick: () => (operationPending ? null : handleToggle(poolType.hyper))
-            }
-          ]}
-        />
+      {!isPortfolio ? (
+        <>
+          <div className="flex items-center max-sm:flex-col max-sm:gap-4">
+            <RadioOptionGroup
+              defaultValue={'All'}
+              value={pool.name}
+              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
+              optionClassName={`min-md:w-[85px]`}
+              options={[
+                {
+                  value: poolType.all.name,
+                  label: 'All',
+                  onClick: () => (operationPending ? null : handleToggle(poolType.all))
+                },
+                {
+                  value: poolType.primary.name,
+                  label: isProMode ? 'CLMM' : 'Primary',
+                  onClick: () => (operationPending ? null : handleToggle(poolType.primary))
+                },
+                {
+                  value: poolType.hyper.name,
+                  label: isProMode ? 'Standard' : 'Hyper',
+                  onClick: () => (operationPending ? null : handleToggle(poolType.hyper))
+                }
+              ]}
+            />
 
-        <div className="flex items-center w-full justify-between">
-          <SearchBar
-            onChange={(e) => initiateGlobalSearch(e.target.value)}
-            onClear={() => setSearchTokens('')}
-            value={searchTokens}
-            className={'!max-w-full flex-1'}
-          />
-          <div className="flex justify-between ml-3">
-            {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
-              <Button
-                className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
-                variant={'ghost'}
-                onClick={setPoolSelectionModal.on}
-              >
-                <Icon
-                  src="/img/assets/question-icn.svg"
-                  alt="?-icon"
-                  className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
-                />
-              </Button>
-            )}
-            <Button
-              className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
-              variant={'ghost'}
-              onClick={() => console.log('filter')}
-            >
-              <Icon
-                src={`img/assets/farm_filter_${mode}.svg`}
-                size={'md'}
-                className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+            <div className="flex items-center w-full justify-between">
+              <SearchBar
+                onChange={(e) => initiateGlobalSearch(e.target.value)}
+                onClear={() => setSearchTokens('')}
+                value={searchTokens}
+                className={'!max-w-full flex-1'}
               />
-            </Button>
-            <div className={'flex flex-row ml-auto gap-3.75'}>
-              {pubKey != null && (
-                <div className="flex items-center mr-2">
-                  <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
-                  <div className="h-full text-xs text-right dark:text-grey-2 text-grey-1 font-semibold ml-2 hidden min-lg:block">
-                    Show <br /> Deposited
-                  </div>
+              <div className="flex justify-between ml-3">
+                {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
+                  <Button
+                    className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
+                    variant={'ghost'}
+                    onClick={setPoolSelectionModal.on}
+                  >
+                    <Icon
+                      src="/img/assets/question-icn.svg"
+                      alt="?-icon"
+                      className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+                    />
+                  </Button>
+                )}
+                <Button
+                  className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
+                  variant={'ghost'}
+                  onClick={() => console.log('filter')}
+                >
+                  <Icon
+                    src={`img/assets/farm_filter_${mode}.svg`}
+                    size={'md'}
+                    className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+                  />
+                </Button>
+                <div className={'flex flex-row ml-auto gap-3.75'}>
+                  {pubKey != null && (
+                    <div className="flex items-center mr-2">
+                      <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
+                      <div className="h-full text-xs text-right dark:text-grey-2 text-grey-1 font-semibold ml-2 hidden min-lg:block">
+                        Show <br /> Deposited
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <FarmItems
-        tokens={filteredTokens}
-        numberOfTokensDeposited={numberOfTokensDeposited}
-        searchTokens={searchTokens}
-        showDeposited={showDeposited}
-      />
+          <FarmItems
+            tokens={filteredTokens}
+            numberOfTokensDeposited={numberOfTokensDeposited}
+            searchTokens={searchTokens}
+            showDeposited={showDeposited}
+          />
+        </>
+      ) : (
+        <Portfolio />
+      )}
     </div>
   )
 }

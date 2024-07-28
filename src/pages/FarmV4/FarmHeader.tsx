@@ -19,15 +19,13 @@ export const FarmHeader: FC = () => {
     sslAllVolume,
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
-    operationPending,
-    isPortfolio,
-    setIsPortfolio
+    operationPending
   } = useFarmContext()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
-  const { isProMode } = useRewardToggle()
+  const { isProMode, isPortfolio, setIsPortfolio } = useRewardToggle()
 
   const TVL = useMemo(() => {
     if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
@@ -218,7 +216,9 @@ export const FarmHeader: FC = () => {
           </div>
         )}
         <h4 className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
-          Provide liquidity and earn fees
+          {!isPortfolio
+            ? 'Provide liquidity and earn fees'
+            : 'All your deposits, rewards and advance metrics in one place.'}
         </h4>
         <Button
           className="cursor-pointer absolute right-0 top-0 bg-blue-1 text-white"
@@ -230,46 +230,50 @@ export const FarmHeader: FC = () => {
           Create Pool
         </Button>
       </div>
-      <div className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll`}>
-        {isProMode && (
-          <RadioOptionGroup
-            optionSize={isMobile ? 'xl' : 'sm'}
-            defaultValue={'24h'}
-            orientation={'vertical'}
-            className={'gap-0'}
-            options={options}
-          />
-        )}
-        <div className="flex flex-row gap-2.5 self-stretch">
-          {infoCards?.map((card) => (
-            <Container
-              key={card?.name}
-              className={'w-[130px] justify-center h-full'}
-              colorScheme={'primaryGradient'}
-              size={'lg'}
-            >
-              <ContainerTitle className={'z-[1]'}>
-                <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted">
-                  {card?.name}:
-                </h4>
-                &nbsp;
-              </ContainerTitle>
-              <h2> {card.value}</h2>
-            </Container>
-          ))}
+      {!isPortfolio && (
+        <div className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll`}>
           {isProMode && (
-            <div className="flex flex-col justify-around">
-              <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">More metrics?</div>
-              <div
-                className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
-                onClick={setIsPortfolio.on}
-              >
-                Go to Portfolio
-              </div>
-            </div>
+            <RadioOptionGroup
+              optionSize={isMobile ? 'xl' : 'sm'}
+              defaultValue={'24h'}
+              orientation={'vertical'}
+              className={'gap-0'}
+              options={options}
+            />
           )}
+          <div className="flex flex-row gap-2.5 self-stretch">
+            {infoCards?.map((card) => (
+              <Container
+                key={card?.name}
+                className={'w-[130px] justify-center h-full'}
+                colorScheme={'primaryGradient'}
+                size={'lg'}
+              >
+                <ContainerTitle className={'z-[1]'}>
+                  <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted">
+                    {card?.name}:
+                  </h4>
+                  &nbsp;
+                </ContainerTitle>
+                <h2> {card.value}</h2>
+              </Container>
+            ))}
+            {isProMode && (
+              <div className="flex flex-col justify-around">
+                <div className="text-lg font-semibold font-poppins dark:text-grey-8 text-black-4">
+                  More metrics?
+                </div>
+                <div
+                  className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
+                  onClick={setIsPortfolio.on}
+                >
+                  Go to Portfolio
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
