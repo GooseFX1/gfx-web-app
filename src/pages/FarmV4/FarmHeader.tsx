@@ -9,6 +9,7 @@ import { Button, cn, Container, ContainerTitle, Icon } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
+import DocsBanner from './DocsBanner'
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
@@ -186,6 +187,7 @@ export const FarmHeader: FC = () => {
   return (
     <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
       {operationPending && <DepositWithdrawSlider />}
+      <DocsBanner />
       <div className="relative mb-3.75">
         <div className="flex flex-row items-center mb-1.5">
           <Icon src={`img/assets/${isProMode ? 'pro' : 'lite'}.svg`} size="sm" className="mr-1.5"></Icon>
