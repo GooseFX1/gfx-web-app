@@ -26,7 +26,6 @@ import {
   import { PublicKey } from '@solana/web3.js'
   import useSolSub, { SubType } from '../hooks/useSolSub'
   import { useWalletBalance } from '@/context/walletBalanceContext'
-  import useBoolean from '@/hooks/useBoolean'
   
   interface FarmData {
     pool: Pool
@@ -52,8 +51,6 @@ import {
     connectionId: string
     selectedCard: any
     setSelectedCard: Dispatch<SetStateAction<any>>
-    isPortfolio: boolean,
-    setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
   }
   
   const FarmContext = createContext<FarmData | null>(null)
@@ -78,7 +75,6 @@ import {
     const [sslTotalFees, setSslTotalFees] = useState<string>(null)
     const [connectionId, setConnectionId] = useState<string>()
     const [selectedCard, setSelectedCard] = useState<any>()
-    const [isPortfolio, setIsPortfolio] = useBoolean(false)
     const { on, off } = useSolSub()
   
     useEffect(() => {
@@ -351,9 +347,7 @@ import {
           depositedBalanceConnection: depositedBalanceConnection,
           connectionId: connectionId,
           selectedCard: selectedCard,
-          setSelectedCard: setSelectedCard,
-          isPortfolio: isPortfolio,
-          setIsPortfolio: setIsPortfolio
+          setSelectedCard: setSelectedCard
         }}
       >
         {children}
