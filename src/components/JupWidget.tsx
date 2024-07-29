@@ -45,23 +45,23 @@ export function JupWidget() : JSX.Element {
       return () => clearInterval(intervalId);
     }
   }, [isLoaded]);
-  const isTradeOrFarm = pathname.includes("trade") || pathname.includes("farm");
+  const isFarmOrSSL = pathname.includes("farm") || pathname.includes("ssl");
   useEffect(() => {
    const timeout = setTimeout(() => {
-      if (isLoaded && Boolean(window.Jupiter.init) && isTradeOrFarm) {
+      if (isLoaded && Boolean(window.Jupiter.init) && isFarmOrSSL) {
         launchWidget();
       }
     }, 200);
    return ()=> {
       clearTimeout(timeout)
    }
-  }, [isLoaded, launchWidget,pathname,isTradeOrFarm]);
+  }, [isLoaded, launchWidget,pathname,isFarmOrSSL]);
   useLayoutEffect(() => {
-    if (!isTradeOrFarm) {
+    if (!isFarmOrSSL) {
       window.Jupiter.close();
       window.Jupiter._instance = null
     }
-  }, [pathname,isTradeOrFarm])
+  }, [pathname,isFarmOrSSL])
 // To make sure passthrough wallet are synced
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
