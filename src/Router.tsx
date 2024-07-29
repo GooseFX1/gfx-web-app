@@ -2,20 +2,21 @@ import React, { CSSProperties, FC, lazy, Suspense } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
-  NavCollapseProvider,
-  PriceFeedProvider,
-  OrderBookProvider,
-  PriceFeedFarmProvider,
   AccountsProvider,
-  TokenRegistryProvider,
-  RewardToggleProvider,
-  OrderProvider,
   CryptoProvider,
+  NavCollapseProvider,
+  OrderBookProvider,
+  OrderProvider,
+  PriceFeedFarmProvider,
+  PriceFeedProvider,
+  RewardToggleProvider,
+  TokenRegistryProvider,
   useConnectionConfig,
   useDarkMode
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
+import { JupWidget } from '@/components/JupWidget'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -76,6 +77,8 @@ export const Router: FC = () => {
       {window.location.pathname === '/' && (
         <Redirect from="/" to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }} />
       )}
+      <JupWidget />
+
       <TokenRegistryProvider>
         <AccountsProvider>
           <RewardToggleProvider>
