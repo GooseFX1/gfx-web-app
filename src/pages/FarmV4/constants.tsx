@@ -361,6 +361,19 @@ export const SSL_TOKENS = [
     targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     targetTokenMintDecimals: 6,
     type: 'Hyper'
+  },
+  {
+    sourceToken: 'USDC',
+    targetToken: 'SOL',
+    liquidity: '$5.17M',
+    volume: '$111.18K',
+    fees: '$50.21K',
+    apr: 185,
+    sourceTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    sourceTokenMintDecimals: 6,
+    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
+    targetTokenMintDecimals: 9,
+    type: 'Primary'
   }
 ]
 
