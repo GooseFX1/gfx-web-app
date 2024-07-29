@@ -583,7 +583,7 @@ const CollapsibleContent: FC<{
             title={'My Balance:'}
             key={'mobile-my-balance'}
             asZero={userDepositedAmount?.isZero()}
-            value={truncateBigString(userDepositedAmount?.toString(), coin?.mintDecimals)}
+            value={numberFormatter(parseFloat(userDepositInUSD))}
             token={coin?.token}
           />
           <FarmBalanceItem
