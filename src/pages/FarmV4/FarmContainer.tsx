@@ -15,8 +15,6 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
-import useBoolean from '@/hooks/useBoolean'
-import { ChoosePool } from './ChoosePool'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -40,7 +38,6 @@ export const FarmContainer: FC = () => {
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
   const [allClaimModal, setAllClaimModal] = useState<boolean>(false)
-  const [poolSelectionModal, setPoolSelectionModal] = useBoolean(false)
   const { isProMode, isPortfolio } = useRewardToggle()
 
   const pubKey: PublicKey | null = useMemo(
@@ -161,9 +158,6 @@ export const FarmContainer: FC = () => {
 
   return (
     <div className={'flex flex-col gap-3.75'}>
-      {poolSelectionModal && (
-        <ChoosePool poolSelectionModal={poolSelectionModal} setPoolSelectionModal={setPoolSelectionModal.set} />
-      )}
       {!isPortfolio ? (
         <>
           <div className="flex items-center max-sm:flex-col max-sm:gap-4">
@@ -199,19 +193,6 @@ export const FarmContainer: FC = () => {
                 className={'!max-w-full flex-1'}
               />
               <div className="flex justify-between ml-3">
-                {((!breakpoint.isTablet && breakpoint.isLaptop) || breakpoint.isDesktop) && (
-                  <Button
-                    className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
-                    variant={'ghost'}
-                    onClick={setPoolSelectionModal.on}
-                  >
-                    <Icon
-                      src="/img/assets/question-icn.svg"
-                      alt="?-icon"
-                      className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
-                    />
-                  </Button>
-                )}
                 <Button
                   className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
                   variant={'ghost'}

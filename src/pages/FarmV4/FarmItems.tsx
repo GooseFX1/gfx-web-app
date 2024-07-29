@@ -8,7 +8,6 @@ import FarmCard from './FarmCard'
 import FarmRow from './FarmRow'
 import FarmFilter from './FarmFilter'
 import { Button } from 'gfx-component-lib'
-import FindPool from './FindPool'
 
 const FarmItems: FC<{
   tokens: any
@@ -77,7 +76,6 @@ const FarmItems: FC<{
         </>
       ) : (
         <div className="border-top grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-          {pool.name === 'All' && !showDeposited && !searchTokens && <FindPool />}
           {tokens
             .filter((token: any) => {
               if (pool.name === 'All') return true
