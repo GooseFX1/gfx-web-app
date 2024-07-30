@@ -10,13 +10,14 @@ import {
   Button,
   cn,
   Dialog,
-  DialogTitle,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
   DialogHeader,
-  DialogOverlay
+  DialogOverlay,
+  DialogTitle
 } from 'gfx-component-lib'
+import useBoolean from '@/hooks/useBoolean'
 
 // metamask detection
 initializeWhenDetected()
@@ -31,13 +32,17 @@ export const WalletsModal: FC = () => {
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
-
+  const [hasRequestedConnect, setHasRequestedConnect] = useBoolean(false)
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
       setVisible(false)
       setTermsOfServiceVisible(true)
+      setHasRequestedConnect.on()
+    } else if (!termsOfServiceVisible && hasRequestedConnect && existingUserCache.hasSignedTC) {
+      setVisible(true)
+      setHasRequestedConnect.off()
     }
-  }, [visible])
+  }, [visible,termsOfServiceVisible])
 
   useEffect(() => {
     if (base58PublicKey || !visible) setSelectedWallet('')
