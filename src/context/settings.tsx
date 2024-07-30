@@ -212,8 +212,8 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
   const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [endpointName, setEndpointName] = useState<EndPointName>(existingUserCache.endpointName || 'QuickNode')
-  const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(existingUserCache.priorityFee || 'Default')
+  const [endpointName, setEndpointName] = useState<EndPointName>(existingUserCache?.endpointName || 'QuickNode')
+  const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(existingUserCache?.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
 
@@ -245,11 +245,11 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const chainId = useMemo(() => RPCs[endpointName].chainId, [endpointName])
-  const network = useMemo(() => RPCs[endpointName].network, [endpointName])
+  const chainId = useMemo(() => RPCs[endpointName??'QuickNode'].chainId, [endpointName])
+  const network = useMemo(() => RPCs[endpointName??'QuickNode'].network, [endpointName])
 
   const endpoint = useMemo(() => {
-    if (existingUserCache.endpoint !== null) {
+    if (existingUserCache?.endpoint !== null) {
       return existingUserCache.endpoint
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
@@ -257,7 +257,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setEndpointName(RPCs[endpointName].name)
         return RPCs[endpointName].endpoint
       } else {
-        return RPCs[endpointName].endpoint
+        return RPCs.QuickNode.endpoint
       }
     }
   }, [endpointName])
