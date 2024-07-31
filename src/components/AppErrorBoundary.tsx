@@ -29,7 +29,7 @@ class ErrorBoundary extends Component {
     }
     let reloadRef = null
     if (errorCount < 2) {
-      // reloadRef = setTimeout(() => window.location.reload(), 1000)
+      reloadRef = setTimeout(() => window.location.reload(), 1000)
     }
     return { hasError: true, errorCount: errorCount, reloadRef: reloadRef }
   }
