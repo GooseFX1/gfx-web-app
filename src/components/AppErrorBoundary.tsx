@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import React, { Component } from 'react'
-import { Icon, Loader, loaders } from 'gfx-component-lib'
+import { Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
 
 const sessionStorageErrorCount = 'error-count' as const
@@ -29,7 +29,7 @@ class ErrorBoundary extends Component {
     }
     let reloadRef = null
     if (errorCount < 2) {
-      reloadRef = setTimeout(() => window.location.reload(), 1000)
+      // reloadRef = setTimeout(() => window.location.reload(), 1000)
     }
     return { hasError: true, errorCount: errorCount, reloadRef: reloadRef }
   }
@@ -49,26 +49,39 @@ class ErrorBoundary extends Component {
       if (this.state.errorCount < 2) {
         // You can render any custom fallback UI
         return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
-          <h1>Something went wrong.</h1>
-          <p>Reloading the page.</p>
+          <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
+          <h1 className={'dark:text-text-darkmode-primary mb-5'}>Sorry, Something Went Wrong...</h1>
+          <p>Attempting Recovery, Hold Tight!</p>
           <Loader animationData={loaders.loader_generic} className={'w-20 h-20'} />
         </div>
       }
       return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
-        <div className={'flex flex-col gap-2 items-center justify-center'}>
-          <h1>Something went wrong.</h1>
-          <p>Please contact the team on</p>
-          <span className={'inline-flex mx-auto gap-6 '}>
-          <a href={SOCIAL_MEDIAS.twitter} target={'_blank'} className={'inline-flex'}>
-          <Icon size={'sm'} src={'/img/mainnav/x-active-dark.svg'} className={'w-4 h-4 my-auto'} />
-        </a>
-          <a href={SOCIAL_MEDIAS.discord} target={'_blank'}>
-          <Icon src={'/img/mainnav/discord-active-dark.svg'} className={'w-6 h-6'} />
-        </a>
-            <a href={SOCIAL_MEDIAS.telegram} target={'_blank'}>
-          <Icon src={'/img/mainnav/telegram-active-dark.svg'} className={'w-6 h-6'} />
-        </a>
-        </span>
+        <div className={'flex flex-col gap-5 items-center justify-center'}>
+          <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
+          <h1 className={'dark:text-text-darkmode-primary'}>Sorry, Something Went Wrong...</h1>
+          <div className={'flex flex-col items-center justify-center'}>
+            <p className={'text-text-darkmode-tertiary text-b2'}>
+              We are sorry, but there was an issue with the crash
+            </p>
+            <p className={'text-text-darkmode-tertiary text-b2'}>
+              Please contact us on&nbsp;
+              <a className={'underline text-text-darkmode-primary font-bold'}
+                 href={SOCIAL_MEDIAS.twitter} target={'_blank'}
+              >
+                X
+              </a>,&nbsp;
+              <a className={'underline text-text-darkmode-primary font-bold'}
+                 href={SOCIAL_MEDIAS.discord} target={'_blank'}
+              >
+                Discord
+              </a>,&nbsp;or&nbsp;<a
+              className={'underline text-text-darkmode-primary font-bold'}
+              href={SOCIAL_MEDIAS.telegram} target={'_blank'}
+            >
+              Telegram
+            </a>
+            </p>
+          </div>
         </div>
       </div>
     }
