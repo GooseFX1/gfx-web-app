@@ -4,15 +4,17 @@ import React, { Component } from 'react'
 import { Icon, Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
 
-const sessionStorageErrorCount = 'error-count' as const;
+const sessionStorageErrorCount = 'error-count' as const
+
 class ErrorBoundary extends Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false, errorCount: (
-      parseInt(sessionStorage.getItem(sessionStorageErrorCount) ?? '0')
+    super(props)
+    this.state = {
+      hasError: false, errorCount: (
+        parseInt(sessionStorage.getItem(sessionStorageErrorCount) ?? '0')
       ),
       reloadRef: null
-    };
+    }
     this.timeoutRef = null
   }
 
@@ -20,16 +22,16 @@ class ErrorBoundary extends Component {
     // Update state so the next render will show the fallback UI.
     const errorCount = parseInt((sessionStorage.getItem(sessionStorageErrorCount) ?? '0')) + 1
 
-    sessionStorage.setItem(sessionStorageErrorCount,errorCount)
+    sessionStorage.setItem(sessionStorageErrorCount, errorCount)
 
-    if (localStorage.getItem('gfx-user-cache')){
+    if (localStorage.getItem('gfx-user-cache')) {
       localStorage.removeItem('gfx-user-cache')
     }
     let reloadRef = null
     if (errorCount < 2) {
-      reloadRef = setTimeout(()=>window.location.reload(),1000)
+      reloadRef = setTimeout(() => window.location.reload(), 1000)
     }
-    return { hasError: true, errorCount: errorCount, reloadRef: reloadRef };
+    return { hasError: true, errorCount: errorCount, reloadRef: reloadRef }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
@@ -44,12 +46,12 @@ class ErrorBoundary extends Component {
   render() {
 
     if (this.state.hasError) {
-      if (this.state.errorCount < 2){
+      if (this.state.errorCount < 2) {
         // You can render any custom fallback UI
         return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
           <h1>Something went wrong.</h1>
           <p>Reloading the page.</p>
-          <Loader animationData={loaders.loader_generic} className={'w-20 h-20'}/>
+          <Loader animationData={loaders.loader_generic} className={'w-20 h-20'} />
         </div>
       }
       return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
@@ -77,7 +79,7 @@ class ErrorBoundary extends Component {
         this.setState({ ...this.state, errorCount: 0 })
       }, 2000)
     }
-    return this.props.children;
+    return this.props.children
   }
 }
 
