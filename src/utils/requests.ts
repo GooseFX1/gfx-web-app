@@ -18,7 +18,10 @@ async function testRPC(rpc: string): Promise<boolean> {
   try {
     const res = await fetch(rpc, {
       method: 'POST',
-      body: JSON.stringify({ jsonrpc: '2.0', method: 'getHealth', params: [], id: 1 })
+      body: JSON.stringify({ jsonrpc: '2.0', method: 'getHealth', params: [], id: 1 }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
     if (!res.ok) {
       console.log('[ERROR] testing RPC failed')
