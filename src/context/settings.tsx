@@ -253,14 +253,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return existingUserCache.endpoint
     } else {
       // asserts 'Custom' is cached with a null enpoint value - results in default reset
-      if (endpointName === 'Custom') {
-        setEndpointName(RPCs[endpointName].name)
-        return RPCs[endpointName].endpoint
-      } else {
-        return RPCs.QuickNode.endpoint
-      }
+      return RPCs[endpointName].endpoint
     }
   }, [endpointName])
+
   useEffect(
     () =>
       window.localStorage.setItem(
@@ -268,7 +264,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         JSON.stringify({
           ...existingUserCache,
           endpointName: endpointName,
-          endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null,
+          endpoint: endpointName ? endpoint : null,
           priorityFee: priorityFee
         })
       ),
@@ -281,7 +277,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
-        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null
+        endpoint: endpointName ? endpoint : null
       })
     )
 
@@ -301,7 +297,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
-        endpoint: existingUserCache.endpointName === 'Custom' ? endpoint : null,
+        endpoint: endpointName ? endpoint : null,
         priorityFee: priorityFee
       })
     )
