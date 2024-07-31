@@ -245,17 +245,12 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const chainId = useMemo(() => RPCs[endpointName??'QuickNode'].chainId, [endpointName])
-  const network = useMemo(() => RPCs[endpointName??'QuickNode'].network, [endpointName])
-
-  const endpoint = useMemo(() => {
-    if (existingUserCache?.endpoint !== null) {
-      return existingUserCache.endpoint
-    } else {
-      // asserts 'Custom' is cached with a null enpoint value - results in default reset
-      return RPCs[endpointName].endpoint
-    }
-  }, [endpointName])
+  const chainId = useMemo(() => RPCs[endpointName ?? 'QuickNode'].chainId, [endpointName])
+  const network = useMemo(() => RPCs[endpointName ?? 'QuickNode'].network, [endpointName])
+  const endpoint = useMemo(
+    () => (existingUserCache?.endpoint !== null ? existingUserCache.endpoint : RPCs[endpointName].endpoint),
+    [endpointName]
+  )
 
   useEffect(
     () =>
@@ -264,12 +259,13 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         JSON.stringify({
           ...existingUserCache,
           endpointName: endpointName,
-          endpoint: endpointName ? endpoint : null,
+          endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
           priorityFee: priorityFee
         })
       ),
     [priorityFee, endpointName, endpoint]
   )
+
   const perpsConnection = useMemo(() => {
     // sets rpc info to cache
     window.localStorage.setItem(
@@ -277,7 +273,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
-        endpoint: endpointName ? endpoint : null
+        endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null
       })
     )
 
@@ -297,7 +293,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       JSON.stringify({
         ...existingUserCache,
         endpointName: endpointName,
-        endpoint: endpointName ? endpoint : null,
+        endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
         priorityFee: priorityFee
       })
     )
