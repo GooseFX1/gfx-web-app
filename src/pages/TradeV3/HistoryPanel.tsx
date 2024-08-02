@@ -867,8 +867,6 @@ export const HistoryPanel: FC = () => {
     }
 
     switch (index) {
-      case 0:
-        return `${item} (${traderInstanceSdk?.traderPositions?.length??0})`
       case 1:
         return `${item} (${perpsOpenOrders?.length ?? 0})`
       default:
