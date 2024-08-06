@@ -139,7 +139,7 @@ export const WalletsModal: FC = () => {
               {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
             </Button>
           ))}
-          {!showAll && subsetWallets.length > 4 && <Button
+          {!showAll && renderWallets.length > 4 && <Button
             variant={'outline'}
             colorScheme={'purple'}
             onClick={setShowAll.on}
