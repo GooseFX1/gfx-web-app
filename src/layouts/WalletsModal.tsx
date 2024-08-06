@@ -84,7 +84,8 @@ export const WalletsModal: FC = () => {
     console.log({detectedWallets})
     return [...detectedWallets, ...undetectedWallets]
   }, [wallets])
-  const subsetWallets = showAll ? renderWallets : renderWallets.slice(0, 4)
+  const subsetWallets = showAll ? renderWallets :
+    renderWallets.slice(0, Math.min(4,renderWallets.length))
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
@@ -138,7 +139,7 @@ export const WalletsModal: FC = () => {
               {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
             </Button>
           ))}
-          {!showAll && <Button
+          {!showAll && subsetWallets.length > 4 && <Button
             variant={'outline'}
             colorScheme={'purple'}
             onClick={setShowAll.on}
