@@ -33,7 +33,6 @@ export const WalletsModal: FC = () => {
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
   const [hasRequestedConnect, setHasRequestedConnect] = useBoolean(false)
-  const [showAll, setShowAll] = useBoolean(false)
 
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
@@ -81,11 +80,10 @@ export const WalletsModal: FC = () => {
           readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
       )
       .map((w) => ({ ...w, detected: false }))
-    console.log({detectedWallets})
+
     return [...detectedWallets, ...undetectedWallets]
   }, [wallets])
-  const subsetWallets = showAll ? renderWallets :
-    renderWallets.slice(0, Math.min(4,renderWallets.length))
+
   return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
@@ -104,7 +102,7 @@ export const WalletsModal: FC = () => {
           <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
         <DialogBody className={'flex-col p-2 overflow-scroll gap-3.75'}>
-          {subsetWallets.map((wallet, index) => (
+          {renderWallets.map((wallet, index) => (
             <Button
               key={index}
               isLoading={connecting && wallet.adapter.name === selectedWallet}
@@ -139,12 +137,6 @@ export const WalletsModal: FC = () => {
               {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
             </Button>
           ))}
-          {!showAll && renderWallets.length > 4 && <Button
-            variant={'outline'}
-            colorScheme={'purple'}
-            onClick={setShowAll.on}
-            className={'w-max mx-auto'}
-          >Show All</Button>}
         </DialogBody>
       </DialogContent>
     </Dialog>
