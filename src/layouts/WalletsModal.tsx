@@ -33,6 +33,7 @@ export const WalletsModal: FC = () => {
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
   const [hasRequestedConnect, setHasRequestedConnect] = useBoolean(false)
+
   useEffect(() => {
     if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
       setVisible(false)
@@ -42,7 +43,7 @@ export const WalletsModal: FC = () => {
       setVisible(true)
       setHasRequestedConnect.off()
     }
-  }, [visible,termsOfServiceVisible])
+  }, [visible, termsOfServiceVisible])
 
   useEffect(() => {
     if (base58PublicKey || !visible) setSelectedWallet('')
@@ -100,16 +101,24 @@ export const WalletsModal: FC = () => {
           <DialogTitle>Choose a wallet</DialogTitle>
           <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
-        <DialogBody className={'flex-col p-2 overflow-scroll'}>
+        <DialogBody className={'flex-col p-2 overflow-scroll gap-3.75'}>
           {renderWallets.map((wallet, index) => (
             <Button
               key={index}
               isLoading={connecting && wallet.adapter.name === selectedWallet}
               onClick={() => handleWalletClick(wallet.adapter.name)}
+              variant={'outline'}
+              colorScheme={'secondaryGradient'}
+              size={'lg'}
               className={cn(
-                `w-full flex items-center !h-[46px] !px-0 rounded-[100px] flex dark:bg-black-1 bg-white 
-                  border-1 cursor-pointer mb-3.75 dark:border-grey-1 border-grey-2
-                  hover:border-purple-1 hover:dark:border-white`,
+                `w-full items-center !h-[46px] !px-0  flex 
+                before:to-border-lightmode-secondary before:from-border-lightmode-secondary 
+                dark:before:to-border-darkmode-secondary dark:before:from-border-darkmode-secondary 
+                hover:before:to-brand-secondaryGradient-secondary hover:before:from-brand-secondaryGradient-primary
+                dark:hover:before:to-brand-secondaryGradient-secondary
+                dark:hover:before:from-brand-secondaryGradient-primary
+                rounded-[4px] before:rounded-[4px]
+                `,
                 connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
               )}
             >
