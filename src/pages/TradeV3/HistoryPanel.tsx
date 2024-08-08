@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useAccounts, useCrypto, useDarkMode, useOrderBook, usePriceFeed, useTokenRegistry } from '../../context'
 import tw, { styled } from 'twin.macro'
 import { ITraderRiskGroup, useTraderConfig } from '../../context/trader_risk_group'
@@ -684,7 +684,7 @@ export const HistoryPanel: FC = () => {
   const { perpsOpenOrders, orderBook } = useOrderBook()
   const { mode } = useDarkMode()
   const wallet = useWallet()
-  const { traderInfo } = useTraderConfig()
+  const { traderInfo, traderInstanceSdk } = useTraderConfig()
   const perpsPrice = useMemo(() => getPerpsPrice(orderBook), [orderBook])
   const notionalSize = useMemo(
     () => (Number(traderInfo.averagePosition.quantity) * perpsPrice).toFixed(3),
@@ -860,6 +860,20 @@ export const HistoryPanel: FC = () => {
   //     </WRAPPER>
   //   </>
   // )
+
+  const getLabel = useCallback((index:number, item:string)=>{
+    if (!traderInstanceSdk || !perpsOpenOrders || (index > 1)) {
+      return item
+    }
+
+    switch (index) {
+      case 1:
+        return `${item} (${perpsOpenOrders?.length ?? 0})`
+      default:
+        return item
+    }
+  },[traderInstanceSdk,perpsOpenOrders]);
+
   return (
     <Tabs className="p-[0px] mb-2 h-[calc(100% - 37px)] rounded-[3px]  " defaultValue="0">
       {closePositionModal && (
@@ -882,7 +896,7 @@ export const HistoryPanel: FC = () => {
               onClick={() => setActiveTab(index)}
               variant="primary"
             >
-              <TitleLabel whiteText={activeTab === index}>{item}</TitleLabel>
+              <TitleLabel whiteText={activeTab === index}>{getLabel(index,item)}</TitleLabel>
             </TabsTrigger>
           )
         })}
