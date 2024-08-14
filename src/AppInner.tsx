@@ -23,6 +23,10 @@ export default function AppInner(): JSX.Element {
             hasFarmOnboarded: false,
             showDepositedFilter: false
           },
+          gamma: {
+            hasGAMMAOnboarded: false,
+            showDepositedFilter: false
+          },
           hasSignedTC: existingUserCache !== null ? existingUserCache.hasSignedTC : false,
           endpointName: null,
           endpoint: null
