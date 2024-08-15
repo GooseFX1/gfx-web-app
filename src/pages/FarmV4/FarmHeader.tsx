@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
 import { usePriceFeedFarm, useRewardToggle, useFarmContext } from '../../context'
 import { truncateBigNumber } from '../../utils'
-import { SSLToken } from './constants'
+import { SSLToken, poolType } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -20,7 +20,8 @@ export const FarmHeader: FC = () => {
     sslAllVolume,
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
-    operationPending
+    operationPending,
+    setPool
   } = useFarmContext()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
@@ -201,7 +202,10 @@ export const FarmHeader: FC = () => {
                   !isPortfolio && `dark:!text-white !underline !text-blue-1`
                 }`
               )}
-              onClick={setIsPortfolio.off}
+              onClick={() => {
+                setIsPortfolio.off()
+                setPool(poolType.all)
+              }}
             >
               Pools
             </h4>
@@ -211,7 +215,10 @@ export const FarmHeader: FC = () => {
                   isPortfolio && `!underline !text-blue-1 dark:!text-white`
                 }`
               )}
-              onClick={setIsPortfolio.on}
+              onClick={() => {
+                setIsPortfolio.on()
+                setPool(poolType.primary)
+              }}
             >
               Portfolio
             </h4>
@@ -267,7 +274,10 @@ export const FarmHeader: FC = () => {
                 </div>
                 <div
                   className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
-                  onClick={setIsPortfolio.on}
+                  onClick={() => {
+                    setIsPortfolio.on()
+                    setPool(poolType.primary)
+                  }}
                 >
                   Go to Portfolio
                 </div>
