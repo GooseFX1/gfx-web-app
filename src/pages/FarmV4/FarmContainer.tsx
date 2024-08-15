@@ -139,10 +139,6 @@ export const FarmContainer: FC = () => {
     setSortType(sortValue)
   }
 
-  const handleToggle = (pooltype: Pool) => {
-    setPool(pooltype)
-  }
-
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
       window.localStorage.setItem(
@@ -170,21 +166,20 @@ export const FarmContainer: FC = () => {
                 {
                   value: poolType.all.name,
                   label: 'All',
-                  onClick: () => (operationPending ? null : handleToggle(poolType.all))
+                  onClick: () => (operationPending ? null : setPool(poolType.all))
                 },
                 {
                   value: poolType.primary.name,
                   label: isProMode ? 'CLMM' : 'Primary',
-                  onClick: () => (operationPending ? null : handleToggle(poolType.primary))
+                  onClick: () => (operationPending ? null : setPool(poolType.primary))
                 },
                 {
                   value: poolType.hyper.name,
                   label: isProMode ? 'Standard' : 'Hyper',
-                  onClick: () => (operationPending ? null : handleToggle(poolType.hyper))
+                  onClick: () => (operationPending ? null : setPool(poolType.hyper))
                 }
               ]}
             />
-
             <div className="flex items-center w-full justify-between">
               <SearchBar
                 onChange={(e) => initiateGlobalSearch(e.target.value)}
