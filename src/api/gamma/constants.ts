@@ -1,4 +1,4 @@
-export const GAMMA_API_BASE = 'ssl-stats'
+export const GAMMA_API_BASE = 'gamma-api'
 
 export enum GAMMA_ENDPOINTS_V1 {
     CONFIG = '/config',
