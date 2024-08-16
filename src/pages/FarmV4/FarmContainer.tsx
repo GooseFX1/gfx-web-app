@@ -185,7 +185,7 @@ export const FarmContainer: FC = () => {
                 onChange={(e) => initiateGlobalSearch(e.target.value)}
                 onClear={() => setSearchTokens('')}
                 value={searchTokens}
-                className={'!max-w-full flex-1'}
+                className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
               />
               <div className="flex justify-between ml-3">
                 <Button
@@ -203,7 +203,7 @@ export const FarmContainer: FC = () => {
                   {pubKey != null && (
                     <div className="flex items-center mr-2">
                       <ShowDepositedToggle enabled={showDeposited} setEnable={handleShowDepositedToggle} />
-                      <div className="h-full text-xs text-right dark:text-grey-2 text-grey-1 font-semibold ml-2 hidden min-lg:block">
+                      <div className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 font-semibold ml-2 hidden min-lg:block">
                         Show <br /> Deposited
                       </div>
                     </div>

@@ -11,8 +11,8 @@ import { PoolStats } from './PoolStats'
 const DepositWithdrawAccordion: FC = (): ReactElement => {
   const { selectedCard } = useFarmContext()
     return(
-        <Accordion collapsible type={'multiple'}>
-        <AccordionItem value="pool-stats" className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3">
+        <Accordion collapsible type={'multiple'} variant='default'>
+        <AccordionItem value="pool-stats" className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 rounded-[4px]">
           <AccordionTrigger>Pool Stats</AccordionTrigger>
           <AccordionContent>
             <PoolStats token={selectedCard} />

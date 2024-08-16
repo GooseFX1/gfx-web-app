@@ -10,7 +10,7 @@ const StickyFooter: FC = (): ReactElement => {
 
   return (
     <div className='fixed h-[55px] w-full flex flex-row bottom-0 border-t 
-        border-solid dark:border-black-4 border-grey-4 p-2.5 dark:bg-black-1 bg-white'>
+        border-solid dark:border-black-4 border-grey-4 p-2.5 dark:bg-black-2 bg-white'>
       {connected ? (
         <Button
           colorScheme={'blue'}

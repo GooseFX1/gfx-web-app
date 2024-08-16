@@ -7,11 +7,11 @@ const DocsBanner: FC = () => {
   return (
     showBanner && (
       <div
-        className="flex items-center justify-center h-8.75 w-full rounded-[4px]
-      border border-solid border-grey-1 dark:border-grey-8 mb-3.75 relative"
+        className="flex items-center justify-center h-8.75 w-full rounded-[4px] bg-white
+      border border-solid border-grey-1 dark:border-grey-8 mb-3.75 relative dark:bg-black-2 "
       >
         <RewardsClose
-          className={`absolute right-3 h-3 w-3 min-md:h-5 min-md:w-5 min-md:stroke-border-lightmode-primary 
+          className={`absolute right-3 h-3 w-3 min-md:h-[15px] min-md:w-[15px] min-md:stroke-border-lightmode-primary 
     min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary cursor-pointer`}
           onClick={setShowBanner.off}
         />

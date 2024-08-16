@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react'
-import { usePriceFeedFarm, useRewardToggle, useFarmContext } from '../../context'
+import { usePriceFeedFarm, useRewardToggle, useFarmContext, useDarkMode } from '../../context'
 import { truncateBigNumber } from '../../utils'
 import { SSLToken, poolType } from './constants'
 import { getPriceObject } from '../../web3'
@@ -28,6 +28,7 @@ export const FarmHeader: FC = () => {
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
   const { isProMode, isPortfolio, setIsPortfolio } = useRewardToggle()
+  const { mode } = useDarkMode()
 
   const TVL = useMemo(() => {
     if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
@@ -147,22 +148,22 @@ export const FarmHeader: FC = () => {
 
   const infoCards = userPubKey
     ? [
-        { name: 'Total Earned', value: totalEarnings },
-        { name: 'TVL', value: TVL },
-        {
-          name: '24H Volume',
-          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
-        },
-        { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
-      ]
+      { name: 'Total Earned', value: totalEarnings },
+      { name: 'TVL', value: TVL },
+      {
+        name: '24H Volume',
+        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
+      },
+      { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
+    ]
     : [
-        { name: 'TVL', value: TVL },
-        {
-          name: '24H Volume',
-          value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
-        },
-        { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
-      ]
+      { name: 'TVL', value: TVL },
+      {
+        name: '24H Volume',
+        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
+      },
+      { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
+    ]
   const options = useMemo(
     () => [
       {
@@ -191,15 +192,19 @@ export const FarmHeader: FC = () => {
       <DocsBanner />
       <div className="relative mb-3.75">
         <div className="flex flex-row items-center mb-1.5">
-          <Icon src={`img/assets/${isProMode ? 'pro' : 'lite'}.svg`} size="sm" className="mr-1.5"></Icon>
+          <Icon 
+            src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`} 
+            size="sm" 
+            className="mr-1.5">
+          </Icon>
           <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isProMode ? 'PRO' : 'LITE'}</h4>
         </div>
         {isProMode && (
           <div className="flex flex-row items-center mb-1.5">
             <h4
               className={cn(
-                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 ${
-                  !isPortfolio && `dark:!text-white !underline !text-blue-1`
+                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
+                 ${!isPortfolio && `dark:!text-white !underline !text-blue-1`
                 }`
               )}
               onClick={() => {
@@ -211,8 +216,8 @@ export const FarmHeader: FC = () => {
             </h4>
             <h4
               className={cn(
-                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 ${
-                  isPortfolio && `!underline !text-blue-1 dark:!text-white`
+                `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
+                ${isPortfolio && `!underline !text-blue-1 dark:!text-white`
                 }`
               )}
               onClick={() => {
@@ -224,11 +229,11 @@ export const FarmHeader: FC = () => {
             </h4>
           </div>
         )}
-        <h4 className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
+        <div className="mb-1.5 dark:text-grey-2 text-grey-1 text-regular font-semibold">
           {!isPortfolio
             ? 'Provide liquidity and earn fees'
             : 'All your deposits, rewards and advance metrics in one place.'}
-        </h4>
+        </div>
         <Button
           className="cursor-pointer absolute right-0 top-0 bg-blue-1 text-white"
           variant={'secondary'}
@@ -259,7 +264,7 @@ export const FarmHeader: FC = () => {
                 size={'lg'}
               >
                 <ContainerTitle className={'z-[1]'}>
-                  <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted">
+                  <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted mb-1">
                     {card?.name}:
                   </h4>
                   &nbsp;
