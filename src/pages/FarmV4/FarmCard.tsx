@@ -24,7 +24,7 @@ const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
           />
         </div>
         <Button
-          className="cursor-pointer bg-blue-1 text-white"
+          className="cursor-pointer bg-blue-1 text-white h-[30px]"
           variant={'secondary'}
           onClick={() => {
             setSelectedCard(token)

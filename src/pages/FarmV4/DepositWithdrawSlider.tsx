@@ -110,7 +110,10 @@ export const DepositWithdrawSlider: FC = () => {
   return (
     <Dialog open={true}>
       <DialogOverlay />
-      <DialogContent className={`w-[393px] max-h-screen rounded-b-none`} fullScreen={true} placement={'right'}>
+      <DialogContent className={`w-[393px] max-h-screen rounded-b-none border-l border-t 
+      border-solid dark:border-black-4`} 
+        fullScreen={true} 
+        placement={'right'}>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
           <div className="overflow-y-scroll h-full pb-[110px]">
@@ -125,6 +128,8 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
+              userSourceTokenBal={userSourceTokenBal}
+              sourceToken={true}
             />
             <TokenRow token={selectedCard?.targetToken} balance={userTargetTokenBal} />
             <DepositWithdrawInput
@@ -134,6 +139,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
+              userTargetTokenBal={userTargetTokenBal}
             />
             <ReviewConfirm />
             {userPublicKey && (userSourceTokenBal?.isZero() || userTargetTokenBal?.isZero()) && (

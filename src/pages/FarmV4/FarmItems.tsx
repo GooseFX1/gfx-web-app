@@ -103,7 +103,8 @@ const FarmItems: FC<{
       ) : (
         <div className={'w-full flex items-center mt-4'}>
           <Button
-            className="cursor-pointer text-white rounded-full border-[1.5px] border-solid dark:border-purple-5 bg-black-1 mx-auto"
+            className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5 
+            dark:bg-black-1 dark:text-white bg-grey-5 mx-auto font-bold text-regular text-black-4"
             variant={'primary'}
           >
             Load More
