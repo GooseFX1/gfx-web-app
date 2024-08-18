@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
-import { usePriceFeedFarm, useRewardToggle, useFarmContext, useDarkMode } from '../../context'
+import { useDarkMode, useFarmContext, usePriceFeedFarm, useRewardToggle } from '../../context'
 import { truncateBigNumber } from '../../utils'
-import { SSLToken, poolType } from './constants'
+import { poolType, SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -20,7 +20,6 @@ export const FarmHeader: FC = () => {
     sslAllVolume,
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
-    operationPending,
     setPool
   } = useFarmContext()
   const { prices } = usePriceFeedFarm()
@@ -188,7 +187,7 @@ export const FarmHeader: FC = () => {
 
   return (
     <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
-      {operationPending && <DepositWithdrawSlider />}
+      <DepositWithdrawSlider />
       <DocsBanner />
       <div className="relative mb-3.75">
         <div className="flex flex-row items-center mb-1.5">

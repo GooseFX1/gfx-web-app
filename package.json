@@ -47,7 +47,7 @@
     "borsh": "^0.6.0",
     "bs58": "^4.0.1",
     "coingecko-api": "^1.0.10",
-    "gfx-component-lib": "^1.12.16",
+    "gfx-component-lib": "^1.12.19",
     "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk/releases/download/5/gfx-perp-sdk.tar.gz",
     "gfx_stocks_pool": "file:./wasm",
     "goosefx-ssl-sdk": "latest",
@@ -158,5 +158,6 @@
     "node-addon-api": "7.1.0",
     "commander": "11.0.0",
     "@walletconnect/sign-client": "2.13.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
