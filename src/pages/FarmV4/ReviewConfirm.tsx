@@ -1,16 +1,18 @@
 /* eslint-disable */
-import { useFarmContext } from "@/context"
-import { FC, ReactElement } from "react"
-import { Icon } from 'gfx-component-lib'
-import DepositWithdrawLabel from "./DepositWithdrawLabel"
+import { useFarmContext } from '@/context'
+import { FC, ReactElement } from 'react'
+import { Container, Icon } from 'gfx-component-lib'
+import DepositWithdrawLabel from './DepositWithdrawLabel'
 
 export const ReviewConfirm: FC = (): ReactElement => {
     const { selectedCard } = useFarmContext()
     return (
         <>
             <DepositWithdrawLabel text="2. Review and Confirm" />
-            <div className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 p-2.5">
-            <div>
+            {/*<div className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 p-2.5">*/}
+            <Container colorScheme={'default'}
+            className={'mx-2.5 my-3 p-2.5 w-auto rounded-[4px]'}
+            >
                 <div className="flex justify-between mb-2">
                     <span className="!font-regular font-semibold dark:text-grey-2 text-grey-1 underline decoration-dotted">Deposit Ratio</span>
                     <div className="!font-regular font-semibold dark:text-grey-8 text-black-4 flex flex-row">
@@ -32,8 +34,7 @@ export const ReviewConfirm: FC = (): ReactElement => {
                     <span className="!font-regular font-semibold dark:text-grey-2 text-grey-1 underline decoration-dotted">Total Deposit</span>
                     <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">{selectedCard?.fees}</span>
                 </div>
-            </div>
-        </div>
+            </Container>
         </>
 
     )

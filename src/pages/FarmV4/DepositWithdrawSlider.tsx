@@ -1,6 +1,6 @@
-import { FC, useEffect, useMemo, useState, useCallback } from 'react'
-import { Dialog, DialogOverlay, DialogContent, DialogBody } from 'gfx-component-lib'
-import { useFarmContext, useAccounts, useConnectionConfig } from '@/context'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { Dialog, DialogBody, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import { useAccounts, useConnectionConfig, useFarmContext } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -29,7 +29,10 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
-
+  const {
+    operationPending,
+    setOperationPending
+  } = useFarmContext()
   useEffect(() => {
     ;(async () => {
       if (userPublicKey) {
@@ -108,7 +111,7 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   return (
-    <Dialog open={true}>
+    <Dialog open={operationPending} onOpenChange={setOperationPending}>
       <DialogOverlay />
       <DialogContent className={`w-[393px] max-h-screen rounded-b-none border-l border-t 
       border-solid dark:border-black-4`} 
@@ -116,7 +119,7 @@ export const DepositWithdrawSlider: FC = () => {
         placement={'right'}>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
-          <div className="overflow-y-scroll h-full pb-[110px]">
+          <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text="1. Add Deposits" />
