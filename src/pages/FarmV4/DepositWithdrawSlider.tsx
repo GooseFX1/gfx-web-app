@@ -113,8 +113,7 @@ export const DepositWithdrawSlider: FC = () => {
   return (
     <Dialog open={operationPending} onOpenChange={setOperationPending}>
       <DialogOverlay />
-      <DialogContent className={`w-[393px] max-h-screen rounded-b-none border-l border-t 
-      border-solid dark:border-black-4`} 
+      <DialogContent className={`w-[393px] max-h-screen border-1 border-solid border-r-0 dark:border-black-4`}
         fullScreen={true} 
         placement={'right'}>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
