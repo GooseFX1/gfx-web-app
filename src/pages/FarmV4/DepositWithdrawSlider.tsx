@@ -14,9 +14,11 @@ import BigNumber from 'bignumber.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
+  const {isMobile} = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
   const { selectedCard } = useFarmContext()
@@ -113,9 +115,11 @@ export const DepositWithdrawSlider: FC = () => {
   return (
     <Dialog open={operationPending} onOpenChange={setOperationPending}>
       <DialogOverlay />
-      <DialogContent className={`w-[393px] max-h-screen border-1 border-solid border-r-0 dark:border-black-4`}
+      <DialogContent className={`sm:w-[393px] max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
+      sm:rounded-none border-b-0 rounded-b-[0px]
+      `}
         fullScreen={true} 
-        placement={'right'}>
+        placement={isMobile?'bottom':'right'}>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
