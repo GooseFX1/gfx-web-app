@@ -9,7 +9,7 @@ const DepositWithdrawAccordion: FC = (): ReactElement => {
         <Accordion collapsible type={'multiple'} variant='default'
                    className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3">
         <AccordionItem value="pool-stats" >
-          <AccordionTrigger>Pool Stats</AccordionTrigger>
+          <AccordionTrigger><h4>Pool Stats</h4></AccordionTrigger>
           <AccordionContent>
             <PoolStats token={selectedCard} />
           </AccordionContent>
