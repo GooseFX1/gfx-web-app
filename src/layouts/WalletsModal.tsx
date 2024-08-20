@@ -90,7 +90,7 @@ export const WalletsModal: FC = () => {
     <Dialog onOpenChange={setVisible} open={visible}>
       <DialogOverlay />
       <DialogContent
-        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1000]
+        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1000] overflow-hidden
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
         placement={isMobile ? 'bottom' : 'default'}
       >
@@ -101,42 +101,44 @@ export const WalletsModal: FC = () => {
           <DialogTitle>Choose a wallet</DialogTitle>
           <DialogCloseDefault className={'top-0 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0'} />
         </DialogHeader>
-        <DialogBody className={'flex-col p-2 overflow-scroll gap-3.75'}>
-          {renderWallets.map((wallet, index) => (
-            <Button
-              key={index}
-              isLoading={connecting && wallet.adapter.name === selectedWallet}
-              onClick={() => handleWalletClick(wallet.adapter.name)}
-              variant={'outline'}
-              colorScheme={'secondaryGradient'}
-              size={'lg'}
-              className={cn(
-                `w-full items-center !h-[46px] !px-0  flex 
+        <DialogBody className={'flex-col flex-[1 0] p-2 overflow-auto pb-0'}>
+          <div className={'flex flex-col gap-3.75 flex-[1 0]'}>
+            {renderWallets.map((wallet, index) => (
+              <Button
+                key={index}
+                isLoading={connecting && wallet.adapter.name === selectedWallet}
+                onClick={() => handleWalletClick(wallet.adapter.name)}
+                variant={'outline'}
+                colorScheme={'secondaryGradient'}
+                size={'lg'}
+                className={cn(
+                  `w-full items-center !h-[46px] !px-0  flex 
                 before:to-border-lightmode-secondary before:from-border-lightmode-secondary 
                 dark:before:to-border-darkmode-secondary dark:before:from-border-darkmode-secondary 
                 hover:before:to-brand-secondaryGradient-secondary hover:before:from-brand-secondaryGradient-primary
                 dark:hover:before:to-brand-secondaryGradient-secondary
                 dark:hover:before:from-brand-secondaryGradient-primary
-                rounded-[4px] before:rounded-[4px]
+                rounded-[4px] before:rounded-[4px] last:mb-2
                 `,
-                connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
-              )}
-            >
-              <div className="flex items-center">
-                <img
-                  src={wallet.adapter.icon}
-                  alt="wallet-icon"
-                  height={'25px'}
-                  width={'25px'}
-                  className="mr-2.5 ml-2 rounded-half !h-[25px] bg-black-1"
-                />
-                <p className={'text-regular dark:text-grey-6 text-black-4 font-nunito font-bold'}>
-                  {wallet.adapter.name.replace('(Extension)', '')}
-                </p>
-              </div>
-              {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
-            </Button>
-          ))}
+                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+                )}
+              >
+                <div className="flex items-center">
+                  <img
+                    src={wallet.adapter.icon}
+                    alt="wallet-icon"
+                    height={'25px'}
+                    width={'25px'}
+                    className="mr-2.5 ml-2 rounded-half !h-[25px] bg-black-1"
+                  />
+                  <p className={'text-regular dark:text-grey-6 text-black-4 font-nunito font-bold'}>
+                    {wallet.adapter.name.replace('(Extension)', '')}
+                  </p>
+                </div>
+                {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
+              </Button>
+            ))}
+          </div>
         </DialogBody>
       </DialogContent>
     </Dialog>
