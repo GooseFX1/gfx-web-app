@@ -78,9 +78,9 @@ export const ADDRESSES: {
 } = {
   'mainnet-beta': [
     {
-      token: 'USDT',
-      name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+      token: 'SOL',
+      name: 'Solana',
+      address: new PublicKey('So11111111111111111111111111111111111111112'),
       cappedDeposit: 500000
     },
     {
@@ -90,9 +90,9 @@ export const ADDRESSES: {
       cappedDeposit: 500000
     },
     {
-      token: 'SOL',
-      name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112'),
+      token: 'USDT',
+      name: 'USDT Coin',
+      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
       cappedDeposit: 500000
     },
     {

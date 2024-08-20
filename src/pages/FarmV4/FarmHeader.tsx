@@ -10,6 +10,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import DocsBanner from './DocsBanner'
+import { CreatePool } from './CreatePool'
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
@@ -28,6 +29,7 @@ export const FarmHeader: FC = () => {
   const { isMobile } = useBreakPoint()
   const { isProMode, isPortfolio, setIsPortfolio } = useRewardToggle()
   const { mode } = useDarkMode()
+  const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
 
   const TVL = useMemo(() => {
     if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
@@ -187,6 +189,7 @@ export const FarmHeader: FC = () => {
 
   return (
     <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
+      {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool}/>}
       <DepositWithdrawSlider />
       <DocsBanner />
       <div className="relative mb-3.75">
@@ -239,6 +242,7 @@ export const FarmHeader: FC = () => {
           iconRight={
             <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size="sm" />
           }
+          onClick={() => setIsCreatePool(true)}
         >
           Create Pool
         </Button>
