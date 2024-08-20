@@ -30,13 +30,13 @@ interface MenuItemProps {
 }
 
 export const Connect: FC<MenuItemProps> = ({
-                                             customButtonStyle,
-                                             customMenuListItemsContainerStyle,
-                                             customMenuListItemStyle
-                                           }) => {
+  customButtonStyle,
+  customMenuListItemsContainerStyle,
+  customMenuListItemStyle
+}) => {
   const { wallet, connected, disconnect, connecting, disconnecting }
     = useWallet()
-  const { base58PublicKey} = useWalletBalance()
+  const { base58PublicKey } = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -58,7 +58,7 @@ export const Connect: FC<MenuItemProps> = ({
 
   useEffect(() => {
     if ((geoBlocked) && visible) setWalletModalVisible(false)
-  }, [geoBlocked, base58PublicKey,visible])
+  }, [geoBlocked, base58PublicKey, visible])
 
   const connectLabel = useMemo(() => {
     if (!connected || isAttempting) {
@@ -67,7 +67,7 @@ export const Connect: FC<MenuItemProps> = ({
 
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, connected, adapterName, wallet, breakpoint,isAttempting])
+  }, [base58PublicKey, connected, adapterName, wallet, breakpoint, isAttempting])
 
   // watches for a selected wallet returned from modal
   if (base58PublicKey && !canConnect && !geoBlocked) {
@@ -124,7 +124,7 @@ export const Connect: FC<MenuItemProps> = ({
   // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
     <
-    >
+      >
       {geoBlocked && <GeorestrictionModal geoBlocked={geoBlocked} setGeoBlocked={setGeoBlocked} />}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -136,7 +136,7 @@ export const Connect: FC<MenuItemProps> = ({
               connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
-            onClick={() => (!connected||isAttempting) && handleConnect()}
+            onClick={() => (!connected || isAttempting) && handleConnect()}
             isLoading={isAttempting}
           >
             {connected && (
