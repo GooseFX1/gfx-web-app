@@ -46,9 +46,9 @@ export const DepositWithdrawSlider: FC = () => {
 
   useEffect(() => {
     if (userPublicKey) {
-      if (selectedCard.sourceToken === 'SOL') setUserSourceTokenBal(new BigNumber(userSolBalance))
+      if (selectedCard?.sourceToken === 'SOL') setUserSourceTokenBal(new BigNumber(userSolBalance))
       else setUserSourceTokenBal(new BigNumber(getUIAmount(selectedCard?.sourceTokenMintAddress)))
-      if (selectedCard.targetToken === 'SOL') setUserTargetTokenBal(new BigNumber(userSolBalance))
+      if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(new BigNumber(userSolBalance))
       else setUserTargetTokenBal(new BigNumber(getUIAmount(selectedCard?.targetTokenMintAddress)))
     }
   }, [selectedCard, userPublicKey, userSolBalance, getUIAmount])
