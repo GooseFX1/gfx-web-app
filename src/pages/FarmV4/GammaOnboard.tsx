@@ -1,0 +1,221 @@
+/* eslint-disable */
+import { FC, useEffect, useRef, useState, useMemo } from 'react'
+import tw, { styled } from 'twin.macro'
+import { PopupCustom } from '../../components'
+import 'styled-components/macro'
+import Slider from 'react-slick'
+import { checkMobile } from '../../utils'
+import { useDarkMode } from '../../context'
+import { USER_CONFIG_CACHE } from '../../types/app_params'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+
+const STYLED_POPUP = styled(PopupCustom) <{
+  currentSlide: number
+  mode: string
+}>`
+  .ant-modal-content {
+    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger z-[10] border border-solid dark:border-black-4 border-grey-4`}
+  }
+  .ant-modal-close {
+    ${tw`top-3 right-3`}
+  }
+  .ant-modal-close-x {
+    > img {
+      ${tw`h-4 w-4 opacity-60`}
+    }
+  }
+  .ant-modal-body {
+    ${tw`p-2.5`}
+  }
+  .next-btn {
+    ${tw`text-regular font-semibold cursor-pointer max-sm:w-2/5
+      w-[130px] h-[35px] rounded-half bottom-1 bg-blue-1 z-10
+      !flex flex-row justify-center items-center absolute`}
+    right: ${({ currentSlide }) => (currentSlide === 0 ? 'calc(50% - 65px)' : '10px')};
+    color: ${({ currentSlide }) =>
+    currentSlide === 1
+      ? '#FFFFFF'
+      : currentSlide === 2
+        ? '#FFFFFF'
+        : currentSlide === 3
+          ? '#FFFFFF'
+          : currentSlide === 0
+            ? '#FFFFFF'
+            : '#636363'};
+  }
+  .prev-btn {
+    ${tw`dark:text-white text-blue-1 text-regular font-bold cursor-pointer 
+    left-2.5 bottom-2 underline absolute max-sm:bottom-5 max-sm:w-auto`}
+  }
+  .slick-slider{
+    ${tw`h-full`}
+  }
+  .lite-mode-txt{
+    font-size: 15px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(90deg, #2BC7F2 13.68%, #30E19E 33.53%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .pro-mode-txt{
+    font-size: 15px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(90deg, #724FFF 13.68%, #C121F0 33.53%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+`
+
+const NextArrow: FC<{
+  sliderRef: any
+  currentSlide: number
+  handleUserOnboading: any
+}> = ({ sliderRef, currentSlide, handleUserOnboading }) => (
+  <div
+    className="next-btn"
+    onClick={() => {
+      currentSlide !== 2 ?
+        sliderRef.current.slickNext() :
+        handleUserOnboading()
+    }}
+  >
+    {currentSlide === 2 ? 'Start' : 'Next'}
+  </div>
+)
+
+const PrevArrow: FC<{
+  sliderRef: any
+  currentSlide: number
+}> = ({ sliderRef, currentSlide }) =>
+    currentSlide !== 0 && (
+      <div
+        className="prev-btn"
+        onClick={() => {
+          sliderRef.current.slickPrev()
+        }}
+      >
+        Previous
+      </div>
+    )
+
+const GammaOnboard: FC = (): JSX.Element => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0)
+  const sliderRef = useRef<any>()
+  const { mode } = useDarkMode()
+  const [boarding] = useState(JSON.parse(localStorage.getItem('gfx-user-cache')))
+
+  const hasUserOnboarded = useMemo(
+    () => {
+      console.log('firing again')
+      return boarding?.gamma?.hasGAMMAOnboarded
+    }, 
+    [boarding?.gamma]
+  )
+
+  const handleUserOnboading = () => {
+    if (!hasUserOnboarded) {
+      window.localStorage.setItem(
+        'gfx-user-cache',
+        JSON.stringify({
+          ...boarding,
+          gamma: { ...boarding?.gamma, hasGAMMAOnboarded: true }
+        })
+      )
+    }
+  }
+
+  useEffect(() => {
+    return () => handleUserOnboading();
+  }, [])
+
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipe: false,
+    nextArrow: (
+      <NextArrow
+        sliderRef={sliderRef}
+        currentSlide={currentSlide}
+        handleUserOnboading={handleUserOnboading}
+      />
+    ),
+    prevArrow: <PrevArrow sliderRef={sliderRef} currentSlide={currentSlide} />,
+    beforeChange: (_current, next) => {
+      sliderRef && sliderRef.current && sliderRef.current.slickPause()
+      setCurrentSlide(next)
+    }
+  }
+
+  return (
+    <STYLED_POPUP
+      height={checkMobile() ? '353px' : '320px'}
+      width={checkMobile() ? '95%' : '400px'}
+      title={null}
+      centered={true}
+      visible={!hasUserOnboarded}
+      onCancel={() => handleUserOnboading()}
+      footer={null}
+      currentSlide={currentSlide}
+      mode={mode}
+    >
+      <Slider {...settings} ref={sliderRef}>
+        <div className="slide">
+          <div className="text-regular font-semibold text-grey-9">
+            <span className="text-purple-3 !font-semibold">Step 1</span> of 3
+          </div>
+          <img
+            src={`img/assets/welcome_${mode}.svg`}
+            alt="welcome-icn"
+            className='mt-[22px] mb-3.75 mx-auto'
+          />
+          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1'>
+            Welcome to GooseFX, let's begin by getting to <br />
+            know our essential features.
+          </div>
+        </div>
+        <div className="slide">
+          <div className="text-regular font-semibold text-grey-9">
+            <span className="text-purple-3 !font-semibold">Step 2</span> of 3
+          </div>
+          <img
+            src={`img/assets/welcome_lite_${mode}.svg`}
+            alt="welcome-icn"
+            className='mt-[22px] mb-3.75 mx-auto'
+          />
+          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
+            <span className='lite-mode-txt'>Lite Mode</span>,
+            if you are new to liquidity, this is the <br />
+            mode for you, with a simple UI and guided steps.
+          </div>
+          <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
+            Remember you can switch back at any time :)
+          </div>
+        </div>
+        <div className="slide">
+          <div className="text-regular font-semibold text-grey-9">
+            <span className="text-purple-3 !font-semibold">Step 3</span> of 3
+          </div>
+          <img
+            src={`img/assets/welcome_pro_${mode}.svg`}
+            alt="welcome-icn"
+            className='mt-[22px] mb-3.75 mx-auto'
+          />
+          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
+            <span className='pro-mode-txt'>Pro Mode</span>,
+            Unlock advanced features, custom <br />
+            pricing, and more. Perfect for experienced users.
+          </div>
+          <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
+            Remember you can switch back at any time :)
+          </div>
+        </div>
+      </Slider>
+    </STYLED_POPUP>
+  )
+}
+
+export default GammaOnboard
