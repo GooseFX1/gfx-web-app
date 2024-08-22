@@ -1,27 +1,28 @@
 /* eslint-disable */
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { useConnectionConfig } from '../context'
-import { USER_CONFIG_CACHE } from '../types/app_params'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
   Checkbox,
   Dialog,
-  DialogTitle,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay
+  DialogOverlay,
+  DialogTitle
 } from 'gfx-component-lib'
+import useUserCache from '@/hooks/useUserCache'
 
 export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
   const { blacklisted } = useConnectionConfig()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const {userCache, updateUserCache} = useUserCache()
+
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
   const [toShow, setToShow] = useState<boolean>(!!visible && true)
@@ -29,8 +30,8 @@ export const TermsOfService: FC<{
   // const [isRead, setRead] = useState<boolean>(false)
 
   useEffect(() => {
-    setToShow(blacklisted ? false : !existingUserCache.hasSignedTC && true)
-  }, [])
+    setToShow(blacklisted ? false : !userCache.hasSignedTC && true)
+  }, [userCache])
 
   useEffect(() => {
     if (visible && !blacklisted) {
@@ -39,13 +40,9 @@ export const TermsOfService: FC<{
   }, [visible])
 
   const accept = () => {
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        hasSignedTC: checked
-      })
-    )
+    updateUserCache({
+      hasSignedTC: checked
+    })
 
     setToShow(false)
     setVisible?.(false)

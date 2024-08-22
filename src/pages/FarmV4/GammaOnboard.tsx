@@ -1,14 +1,14 @@
 /* eslint-disable */
-import { FC, useEffect, useRef, useState, useMemo } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
 import { useDarkMode } from '../../context'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import useUserCache from '@/hooks/useUserCache'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
@@ -103,30 +103,21 @@ const GammaOnboard: FC = (): JSX.Element => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const [boarding] = useState(JSON.parse(localStorage.getItem('gfx-user-cache')))
+  const { userCache, updateUserCache } = useUserCache();
 
-  const hasUserOnboarded = useMemo(
-    () => {
-      console.log('firing again')
-      return boarding?.gamma?.hasGAMMAOnboarded
-    }, 
-    [boarding?.gamma]
-  )
-
-  const handleUserOnboading = () => {
-    if (!hasUserOnboarded) {
-      window.localStorage.setItem(
-        'gfx-user-cache',
-        JSON.stringify({
-          ...boarding,
-          gamma: { ...boarding?.gamma, hasGAMMAOnboarded: true }
-        })
-      )
+  const handleUserOnboarding = () => {
+    if (!userCache.gamma.hasGAMMAOnboarded) {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          hasGAMMAOnboarded: true
+        }
+      })
     }
   }
 
   useEffect(() => {
-    return () => handleUserOnboading();
+    return () => handleUserOnboarding();
   }, [])
 
   const settings = {
@@ -140,7 +131,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       <NextArrow
         sliderRef={sliderRef}
         currentSlide={currentSlide}
-        handleUserOnboading={handleUserOnboading}
+        handleUserOnboading={handleUserOnboarding}
       />
     ),
     prevArrow: <PrevArrow sliderRef={sliderRef} currentSlide={currentSlide} />,
@@ -156,8 +147,8 @@ const GammaOnboard: FC = (): JSX.Element => {
       width={checkMobile() ? '95%' : '400px'}
       title={null}
       centered={true}
-      visible={!hasUserOnboarded}
-      onCancel={() => handleUserOnboading()}
+      visible={!userCache.gamma.hasGAMMAOnboarded}
+      onCancel={() => handleUserOnboarding()}
       footer={null}
       currentSlide={currentSlide}
       mode={mode}

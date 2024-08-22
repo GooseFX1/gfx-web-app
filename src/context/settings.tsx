@@ -12,7 +12,6 @@ import React, {
 import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solana/web3.js'
-import { USER_CONFIG_CACHE } from '../types/app_params'
 import { fetchBrowserCountryCode } from '../api/analytics'
 import { fetchIsUnderMaintenance } from '../api/config'
 import { ENVS } from '../constants'
@@ -20,6 +19,7 @@ import useActivityTracker from '@/hooks/useActivityTracker'
 import { INTERVALS } from '@/utils/time'
 import axios from 'axios'
 import * as https from 'node:https'
+import useUserCache from '@/hooks/useUserCache'
 
 const RETRY_ATTEMPTS = 3
 
@@ -160,8 +160,6 @@ export const RPCs = {
   Custom: CUSTOM_RPC
 }
 
-type IRPC_CACHE = null | USER_CONFIG_CACHE
-
 interface ISettingsConfig {
   chainId: ENV
   connection: Connection
@@ -211,9 +209,9 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(DEFAULT_SLIPPAGE)
   const [blacklisted, setBlacklisted] = useState<boolean>(false)
   const [isUnderMaintenance, setIsUnderMaintenance] = useState<boolean>(false)
-  const existingUserCache: IRPC_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
-  const [endpointName, setEndpointName] = useState<EndPointName>(existingUserCache?.endpointName || 'QuickNode')
-  const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(existingUserCache?.priorityFee || 'Default')
+  const {userCache, updateUserCache} = useUserCache();
+  const [endpointName, setEndpointName] = useState<EndPointName>(userCache.endpointName || 'QuickNode')
+  const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(userCache.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
 
@@ -248,34 +246,24 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const chainId = useMemo(() => RPCs[endpointName ?? 'QuickNode'].chainId, [endpointName])
   const network = useMemo(() => RPCs[endpointName ?? 'QuickNode'].network, [endpointName])
   const endpoint = useMemo(
-    () => (existingUserCache?.endpoint !== null ? existingUserCache.endpoint : RPCs[endpointName].endpoint),
+    () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
     [endpointName]
   )
 
   useEffect(
-    () =>
-      window.localStorage.setItem(
-        USER_CACHE,
-        JSON.stringify({
-          ...existingUserCache,
-          endpointName: endpointName,
-          endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
-          priorityFee: priorityFee
-        })
-      ),
+    () => updateUserCache({
+      endpointName: endpointName,
+      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
+      priorityFee: priorityFee
+    }),
     [priorityFee, endpointName, endpoint]
   )
 
   const perpsConnection = useMemo(() => {
-    // sets rpc info to cache
-    window.localStorage.setItem(
-      USER_CACHE,
-      JSON.stringify({
-        ...existingUserCache,
-        endpointName: endpointName,
-        endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null
-      })
-    )
+    updateUserCache({
+      endpointName: endpointName,
+      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null
+    })
 
     // creates connection - temp ws url
     return new Connection(endpoint, {
@@ -287,16 +275,10 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [endpointName, endpoint])
 
   const connection = useMemo(() => {
-    // sets rpc info to cache
-    window.localStorage.setItem(
-      USER_CACHE,
-      JSON.stringify({
-        ...existingUserCache,
-        endpointName: endpointName,
-        endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
-        priorityFee: priorityFee
-      })
-    )
+    updateUserCache({
+      endpointName: endpointName,
+      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
+      priorityFee});
 
     // creates connection - temp ws url
     return new Connection(endpoint, {
@@ -335,13 +317,14 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   useEffect(() => {
     if (endpointName === null) {
+
       setEndpointName(
-        existingUserCache.endpointName === null || existingUserCache.endpoint === null
+        userCache.endpointName === null || userCache.endpoint === null
           ? RPCs[endpointName].name
           : 'Custom'
       )
     }
-  }, [])
+  }, [userCache])
 
   useEffect(() => {
     if (curEnv === ENVS.PROD) {

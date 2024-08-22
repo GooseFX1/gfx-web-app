@@ -3,16 +3,16 @@ import { PublicKey } from '@solana/web3.js'
 import { useDarkMode, useFarmContext, useRewardToggle } from '../../context'
 import { poolType, SSL_TOKENS } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
-import { Icon, Switch, Button } from 'gfx-component-lib'
+import { Button, Icon, Switch } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
+import useUserCache from '@/hooks/useUserCache'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const { userCache, updateUserCache } = useUserCache()
 
   const { wallet } = useWallet()
   const {
@@ -21,7 +21,7 @@ export const FarmContainer: FC = () => {
     setPool
   } = useFarmContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
-  const [showDeposited, setShowDeposited] = useState<boolean>(existingUserCache.farm.showDepositedFilter)
+  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.farm.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
 
   const pubKey: PublicKey | null = useMemo(
@@ -75,18 +75,17 @@ export const FarmContainer: FC = () => {
   )
 
   useEffect(() => {
-    if (pubKey === null)
+    if (pubKey === null && userCache.farm.showDepositedFilter)
       setShowDeposited(() => {
-        window.localStorage.setItem(
-          'gfx-user-cache',
-          JSON.stringify({
-            ...existingUserCache,
-            farm: { ...existingUserCache.farm, showDepositedFilter: false }
-          })
-        )
+        updateUserCache({
+          farm: {
+            ...userCache.farm,
+            showDepositedFilter: false
+          }
+        })
         return false
       })
-  }, [pubKey])
+  }, [pubKey,userCache])
 
   // useEffect(() => {
   //   sslData?.length && setInitialLoad(false)
@@ -99,13 +98,13 @@ export const FarmContainer: FC = () => {
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
-      window.localStorage.setItem(
-        'gfx-user-cache',
-        JSON.stringify({
-          ...existingUserCache,
-          farm: { ...existingUserCache.farm, showDepositedFilter: !prev }
-        })
-      )
+      updateUserCache({
+        farm: {
+          ...userCache.farm,
+          showDepositedFilter: !prev
+        }
+      })
+
       return !prev
     })
   }
@@ -160,12 +159,12 @@ export const FarmContainer: FC = () => {
                 <div className={'flex flex-row ml-auto gap-3.75'}>
                   {pubKey != null && (
                     <div className="flex items-center mr-2">
-                      <Switch 
-                        variant={"default"} 
-                        size={"sm"} 
-                        colorScheme={"primary"} 
-                        checked={showDeposited} 
-                        onClick={handleShowDepositedToggle} 
+                      <Switch
+                        variant={'default'}
+                        size={'sm'}
+                        colorScheme={'primary'}
+                        checked={showDeposited}
+                        onClick={handleShowDepositedToggle}
                       />
                       <div className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
                         font-semibold ml-2 hidden min-lg:block">

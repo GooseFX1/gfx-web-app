@@ -6,9 +6,9 @@ import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
 import { Pool, poolType } from './constants'
 import { useDarkMode, useSSLContext } from '../../context'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import useUserCache from '@/hooks/useUserCache'
 
 const STYLED_POPUP = styled(PopupCustom)<{
   currentSlide: number
@@ -176,7 +176,7 @@ export const ChoosePool: FC<{
   const [isError, setIsError] = useState<boolean>(false)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const {userCache, updateUserCache} = useUserCache();
 
   const [userAnswer, setUserAnswer] = useState<any>({
     answerOne: null,
@@ -253,16 +253,15 @@ export const ChoosePool: FC<{
   }
 
   useEffect(() => {
-    if (!existingUserCache.farm.hasFarmOnboarded) {
-      window.localStorage.setItem(
-        'gfx-user-cache',
-        JSON.stringify({
-          ...existingUserCache,
-          farm: { ...existingUserCache.farm, hasFarmOnboarded: true }
-        })
-      )
+    if (!userCache.farm.hasFarmOnboarded) {
+      updateUserCache({
+        farm: {
+          ...userCache.farm,
+          hasFarmOnboarded: true
+        }
+      })
     }
-  }, [])
+  }, [userCache])
 
   return (
     <STYLED_POPUP
