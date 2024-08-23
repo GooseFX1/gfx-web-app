@@ -205,12 +205,32 @@ function newCache(): USER_CONFIG_CACHE {
 export function resetUserCache(): void {
   window.localStorage.setItem('gfx-user-cache', JSON.stringify(newCache()))
 }
+function migrateCache(cache: USER_CONFIG_CACHE) : USER_CONFIG_CACHE{
+  const migratedCache = structuredClone(cache);
+  const opCache = newCache();
 
+  for (const key in opCache) {
+    if (!(key in migratedCache) || typeof migratedCache[key] !== typeof opCache[key]) {
+      migratedCache[key] = opCache[key];
+    }
+  }
+  for (const key in migratedCache) {
+    if (!(key in opCache)) {
+      delete migratedCache[key];
+    }
+  }
+  if (JSON.stringify(migratedCache) !== JSON.stringify(cache)) {
+    console.log('MIGRATED CACHE', migratedCache)
+    window.localStorage.setItem('gfx-user-cache', JSON.stringify(migratedCache));
+  }
+  return migratedCache;
+}
 export function getOrCreateCache(): USER_CONFIG_CACHE {
   const rawCache = window.localStorage.getItem('gfx-user-cache')
   if (rawCache) {
     try {
-      return JSON.parse(rawCache) as USER_CONFIG_CACHE
+      const cache = JSON.parse(rawCache) as USER_CONFIG_CACHE
+      return migrateCache(cache)
     } catch (e) {
       console.error('Error parsing user cache', e)
     }
