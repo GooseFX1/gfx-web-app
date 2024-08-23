@@ -75,11 +75,11 @@ export const FarmContainer: FC = () => {
   )
 
   useEffect(() => {
-    if (pubKey === null && userCache.farm.showDepositedFilter)
+    if (pubKey === null && userCache.gamma.showDepositedFilter)
       setShowDeposited(() => {
         updateUserCache({
-          farm: {
-            ...userCache.farm,
+          gamma: {
+            ...userCache.gamma,
             showDepositedFilter: false
           }
         })
@@ -99,8 +99,8 @@ export const FarmContainer: FC = () => {
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
       updateUserCache({
-        farm: {
-          ...userCache.farm,
+        gamma: {
+          ...userCache.gamma,
           showDepositedFilter: !prev
         }
       })
