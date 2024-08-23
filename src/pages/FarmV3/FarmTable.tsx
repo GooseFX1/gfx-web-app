@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
-import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken } from './constants'
@@ -16,11 +16,10 @@ import SearchBar from '@/components/common/SearchBar'
 import FarmFilter from '@/pages/FarmV3/FarmTableComponents/FarmFilter'
 import FarmItems from './FarmTableComponents/FarmItems'
 import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBalanceItem'
-import useUserCache from '@/hooks/useUserCache'
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const { userCache, updateUserCache } = useUserCache()
+  const { userCache, updateUserCache } = useConnectionConfig()
 
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()

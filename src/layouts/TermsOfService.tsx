@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 import { useConnectionConfig } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
@@ -14,30 +14,31 @@ import {
   DialogOverlay,
   DialogTitle
 } from 'gfx-component-lib'
-import useUserCache from '@/hooks/useUserCache'
 
 export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
-  const { blacklisted } = useConnectionConfig()
-  const {userCache, updateUserCache} = useUserCache()
-
+  const { blacklisted, userCache, updateUserCache } = useConnectionConfig()
   const breakpoint = useBreakPoint()
   const isMobile = breakpoint.isMobile || breakpoint.isTablet
-  const [toShow, setToShow] = useState<boolean>(!!visible && true)
+  const isOnAmm = window.location.pathname.includes('farm')
+  const [toShow, setToShow] = useState<boolean>(!!visible || (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || !isOnAmm)
   const [checked, setChecked] = useState<boolean>(false)
   // const [isRead, setRead] = useState<boolean>(false)
+  console.log('TOS USER CACHE', userCache)
+  useLayoutEffect(() => {
+    if (blacklisted) {
+      setToShow(false)
+      return;
+    }
+    const isOnAmm = window.location.pathname.includes('farm');
+    const canShowTos = (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || (!isOnAmm && !userCache.hasSignedTC);
 
-  useEffect(() => {
-    setToShow(blacklisted ? false : !userCache.hasSignedTC && true)
-  }, [userCache])
-
-  useEffect(() => {
-    if (visible && !blacklisted) {
+    if (visible || canShowTos) {
       setToShow(true)
     }
-  }, [visible])
+  }, [visible, userCache.gamma.hasGAMMAOnboarded, userCache.hasSignedTC, blacklisted])
 
   const accept = () => {
     updateUserCache({

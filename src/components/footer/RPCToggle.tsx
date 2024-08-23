@@ -23,7 +23,6 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
-import useUserCache from '@/hooks/useUserCache'
 
 type RPCToggleProps = Omit<FooterItemProps, 'title'>
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
@@ -34,7 +33,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const [rpcUrl, setRpcUrl] = useState('')
   const [error, setError] = useState('')
   const [isOpen, setIsOpen] = useBoolean(false)
-  const {updateUserCache} = useUserCache()
+  const {updateUserCache} = useConnectionConfig()
   const providerSrc = useMemo(
     () => `/img/mainnav/provider_${endpointName.toLowerCase()}_${mode}.svg`,
     [endpointName, mode]

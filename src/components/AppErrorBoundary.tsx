@@ -3,7 +3,7 @@
 import React, { Component } from 'react'
 import { Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
-import { resetUserCache, validateUserCache } from '@/hooks/useUserCache'
+import { resetUserCache, validateUserCache } from '@/context'
 
 const sessionStorageErrorCount = 'error-count' as const
 

@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useDarkMode, useFarmContext, useRewardToggle } from '../../context'
+import { useConnectionConfig, useDarkMode, useFarmContext, useRewardToggle } from '../../context'
 import { poolType, SSL_TOKENS } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Icon, Switch } from 'gfx-component-lib'
@@ -8,11 +8,10 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
-import useUserCache from '@/hooks/useUserCache'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
-  const { userCache, updateUserCache } = useUserCache()
+  const { userCache, updateUserCache } = useConnectionConfig()
 
   const { wallet } = useWallet()
   const {

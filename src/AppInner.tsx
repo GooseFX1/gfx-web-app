@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react'
 import { Router } from './Router'
-import { DarkModeProvider, SettingsProvider, WalletProvider } from './context'
+import { DarkModeProvider, SettingsProvider, useConnectionConfig, WalletProvider } from './context'
 import ThemeProvider from './theme'
 import queryString from 'query-string'
 import WalletBalanceProvider from '@/context/walletBalanceContext'
-import useUserCache from '@/hooks/useUserCache'
 
 export default function AppInner(): JSX.Element {
   // init cache at highest level
-  useUserCache()
+  useConnectionConfig()
 
 
   useEffect(() => {

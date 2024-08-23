@@ -3,7 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'
-import { useWalletModal } from '../context'
+import { useConnectionConfig, useWalletModal } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
@@ -17,7 +17,6 @@ import {
   DialogTitle
 } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
-import useUserCache from '@/hooks/useUserCache'
 
 // metamask detection
 initializeWhenDetected()
@@ -26,7 +25,7 @@ export const WalletsModal: FC = () => {
   const { wallets, select, connecting, publicKey } = useWallet()
 
   const { setVisible, visible } = useWalletModal()
-  const {userCache} = useUserCache()
+  const {userCache} = useConnectionConfig()
 
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const [selectedWallet, setSelectedWallet] = useState<string>('')

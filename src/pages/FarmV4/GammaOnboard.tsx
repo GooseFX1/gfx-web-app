@@ -5,10 +5,9 @@ import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
-import { useDarkMode } from '../../context'
+import { useConnectionConfig, useDarkMode } from '../../context'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import useUserCache from '@/hooks/useUserCache'
 import { Button } from 'gfx-component-lib'
 
 const STYLED_POPUP = styled(PopupCustom) <{
@@ -106,7 +105,7 @@ const GammaOnboard: FC = (): JSX.Element => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const { userCache, updateUserCache } = useUserCache();
+  const { userCache, updateUserCache } = useConnectionConfig();
 
   const handleUserOnboarding = () => {
     if (!userCache.gamma.hasGAMMAOnboarded) {
