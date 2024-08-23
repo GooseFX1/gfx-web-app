@@ -9,6 +9,7 @@ import { useDarkMode } from '../../context'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import useUserCache from '@/hooks/useUserCache'
+import { Button } from 'gfx-component-lib'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
@@ -72,7 +73,8 @@ const NextArrow: FC<{
   currentSlide: number
   handleUserOnboading: any
 }> = ({ sliderRef, currentSlide, handleUserOnboading }) => (
-  <div
+  <Button
+    colorScheme={'blue'}
     className="next-btn"
     onClick={() => {
       currentSlide !== 2 ?
@@ -81,7 +83,7 @@ const NextArrow: FC<{
     }}
   >
     {currentSlide === 2 ? 'Start' : 'Next'}
-  </div>
+  </Button>
 )
 
 const PrevArrow: FC<{
@@ -89,14 +91,15 @@ const PrevArrow: FC<{
   currentSlide: number
 }> = ({ sliderRef, currentSlide }) =>
     currentSlide !== 0 && (
-      <div
-        className="prev-btn"
+      <Button
+        variant={'link'}
+        className={'prev-btn'}
         onClick={() => {
           sliderRef.current.slickPrev()
         }}
       >
         Previous
-      </div>
+      </Button>
     )
 
 const GammaOnboard: FC = (): JSX.Element => {
@@ -147,7 +150,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       width={checkMobile() ? '95%' : '400px'}
       title={null}
       centered={true}
-      visible={!userCache.gamma.hasGAMMAOnboarded}
+      visible={true || !userCache.gamma.hasGAMMAOnboarded}
       onCancel={() => handleUserOnboarding()}
       footer={null}
       currentSlide={currentSlide}
