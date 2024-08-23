@@ -1,21 +1,21 @@
 /* eslint-disable */
-import { FC, useEffect, useRef, useState, useMemo } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
-import { useDarkMode } from '../../context'
-import { USER_CONFIG_CACHE } from '../../types/app_params'
+import { useConnectionConfig, useDarkMode } from '../../context'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { Button } from 'gfx-component-lib'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
   mode: string
 }>`
   .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger z-[10] border border-solid dark:border-black-4 border-grey-4`}
+    ${tw`h-full dark:bg-black-2 bg-white rounded-[8px] z-[10] border border-solid dark:border-black-4 border-grey-4`}
   }
   .ant-modal-close {
     ${tw`top-3 right-3`}
@@ -72,7 +72,8 @@ const NextArrow: FC<{
   currentSlide: number
   handleUserOnboading: any
 }> = ({ sliderRef, currentSlide, handleUserOnboading }) => (
-  <div
+  <Button
+    colorScheme={'blue'}
     className="next-btn"
     onClick={() => {
       currentSlide !== 2 ?
@@ -81,7 +82,7 @@ const NextArrow: FC<{
     }}
   >
     {currentSlide === 2 ? 'Start' : 'Next'}
-  </div>
+  </Button>
 )
 
 const PrevArrow: FC<{
@@ -89,44 +90,36 @@ const PrevArrow: FC<{
   currentSlide: number
 }> = ({ sliderRef, currentSlide }) =>
     currentSlide !== 0 && (
-      <div
-        className="prev-btn"
+      <Button
+        variant={'link'}
+        className={'prev-btn'}
         onClick={() => {
           sliderRef.current.slickPrev()
         }}
       >
         Previous
-      </div>
+      </Button>
     )
 
 const GammaOnboard: FC = (): JSX.Element => {
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const sliderRef = useRef<any>()
   const { mode } = useDarkMode()
-  const [boarding] = useState(JSON.parse(localStorage.getItem('gfx-user-cache')))
+  const { userCache, updateUserCache } = useConnectionConfig();
 
-  const hasUserOnboarded = useMemo(
-    () => {
-      console.log('firing again')
-      return boarding?.gamma?.hasGAMMAOnboarded
-    }, 
-    [boarding?.gamma]
-  )
-
-  const handleUserOnboading = () => {
-    if (!hasUserOnboarded) {
-      window.localStorage.setItem(
-        'gfx-user-cache',
-        JSON.stringify({
-          ...boarding,
-          gamma: { ...boarding?.gamma, hasGAMMAOnboarded: true }
-        })
-      )
+  const handleUserOnboarding = () => {
+    if (!userCache.gamma.hasGAMMAOnboarded) {
+      updateUserCache({
+        gamma: {
+          ...userCache.gamma,
+          hasGAMMAOnboarded: true
+        }
+      })
     }
   }
 
   useEffect(() => {
-    return () => handleUserOnboading();
+    return () => handleUserOnboarding();
   }, [])
 
   const settings = {
@@ -140,7 +133,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       <NextArrow
         sliderRef={sliderRef}
         currentSlide={currentSlide}
-        handleUserOnboading={handleUserOnboading}
+        handleUserOnboading={handleUserOnboarding}
       />
     ),
     prevArrow: <PrevArrow sliderRef={sliderRef} currentSlide={currentSlide} />,
@@ -156,8 +149,8 @@ const GammaOnboard: FC = (): JSX.Element => {
       width={checkMobile() ? '95%' : '400px'}
       title={null}
       centered={true}
-      visible={!hasUserOnboarded}
-      onCancel={() => handleUserOnboading()}
+      visible={!userCache.gamma.hasGAMMAOnboarded}
+      onCancel={() => handleUserOnboarding()}
       footer={null}
       currentSlide={currentSlide}
       mode={mode}

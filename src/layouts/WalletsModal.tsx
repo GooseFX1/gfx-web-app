@@ -3,8 +3,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'
-import { USER_CONFIG_CACHE } from '../types/app_params'
-import { useWalletModal } from '../context'
+import { useConnectionConfig, useWalletModal } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
@@ -26,7 +25,8 @@ export const WalletsModal: FC = () => {
   const { wallets, select, connecting, publicKey } = useWallet()
 
   const { setVisible, visible } = useWalletModal()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const {userCache} = useConnectionConfig()
+
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const [selectedWallet, setSelectedWallet] = useState<string>('')
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
@@ -35,15 +35,15 @@ export const WalletsModal: FC = () => {
   const [hasRequestedConnect, setHasRequestedConnect] = useBoolean(false)
 
   useEffect(() => {
-    if (visible && !termsOfServiceVisible && !existingUserCache.hasSignedTC) {
+    if (visible && !termsOfServiceVisible && !userCache.hasSignedTC) {
       setVisible(false)
       setTermsOfServiceVisible(true)
       setHasRequestedConnect.on()
-    } else if (!termsOfServiceVisible && hasRequestedConnect && existingUserCache.hasSignedTC) {
+    } else if (!termsOfServiceVisible && hasRequestedConnect && userCache.hasSignedTC) {
       setVisible(true)
       setHasRequestedConnect.off()
     }
-  }, [visible, termsOfServiceVisible])
+  }, [visible, termsOfServiceVisible, userCache])
 
   useEffect(() => {
     if (base58PublicKey || !visible) setSelectedWallet('')
@@ -84,7 +84,7 @@ export const WalletsModal: FC = () => {
     return [...detectedWallets, ...undetectedWallets]
   }, [wallets])
 
-  return !existingUserCache.hasSignedTC && termsOfServiceVisible ? (
+  return !userCache.hasSignedTC && termsOfServiceVisible ? (
     <TermsOfService setVisible={setTermsOfServiceVisible} visible={termsOfServiceVisible} />
   ) : (
     <Dialog onOpenChange={setVisible} open={visible}>

@@ -17,7 +17,7 @@ import {
   PopoverTrigger
 } from 'gfx-component-lib'
 import { FooterItem, FooterItemContent, FooterItemProps } from '@/components/footer/FooterItem'
-import { EndPointName, useConnectionConfig, useDarkMode, USER_CACHE } from '@/context'
+import { EndPointName, useConnectionConfig, useDarkMode } from '@/context'
 import { Circle } from '@/components/common/Circle'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { testRPC } from '@/utils/requests'
@@ -33,6 +33,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const [rpcUrl, setRpcUrl] = useState('')
   const [error, setError] = useState('')
   const [isOpen, setIsOpen] = useBoolean(false)
+  const {updateUserCache} = useConnectionConfig()
   const providerSrc = useMemo(
     () => `/img/mainnav/provider_${endpointName.toLowerCase()}_${mode}.svg`,
     [endpointName, mode]
@@ -41,8 +42,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     if (RPC === 'Custom') {
       testRPC(rpcUrl).then((res) => {
         if (res) {
-          const existingCache = JSON.parse(window.localStorage.getItem(USER_CACHE))
-          window.localStorage.setItem(USER_CACHE, JSON.stringify({ ...existingCache, endpoint: rpcUrl }))
+          updateUserCache({endpoint: rpcUrl})
           setEndpointName(RPC)
           setError('')
           setIsOpen.off()

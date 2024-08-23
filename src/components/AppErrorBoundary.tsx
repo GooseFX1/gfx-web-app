@@ -3,6 +3,7 @@
 import React, { Component } from 'react'
 import { Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
+import { resetUserCache, validateUserCache } from '@/context'
 
 const sessionStorageErrorCount = 'error-count' as const
 
@@ -23,9 +24,9 @@ class ErrorBoundary extends Component {
     const errorCount = parseInt((sessionStorage.getItem(sessionStorageErrorCount) ?? '0')) + 1
 
     sessionStorage.setItem(sessionStorageErrorCount, errorCount)
-
-    if (localStorage.getItem('gfx-user-cache')) {
-      localStorage.removeItem('gfx-user-cache')
+    const isCacheValid = validateUserCache();
+    if (!isCacheValid) {
+      resetUserCache();
     }
     let reloadRef = null
     if (errorCount < 2) {
