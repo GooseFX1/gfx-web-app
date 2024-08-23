@@ -3,9 +3,18 @@ import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useFarmContext, useRewardToggle } from '../../context'
 import { poolType, SSL_TOKENS } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, Icon, Switch } from 'gfx-component-lib'
+import {
+  Icon,
+  Switch,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  // DropdownMenuItem,
+  DropdownMenuTrigger
+} from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
+import useBoolean from '@/hooks/useBoolean'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
 
@@ -19,6 +28,7 @@ export const FarmContainer: FC = () => {
     pool,
     setPool
   } = useFarmContext()
+  const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
@@ -144,17 +154,27 @@ export const FarmContainer: FC = () => {
                 className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
               />
               <div className="flex justify-between ml-3">
-                <Button
-                  className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
-                  variant={'ghost'}
-                  onClick={() => console.log('filter')}
-                >
-                  <Icon
-                    src={`img/assets/farm_filter_${mode}.svg`}
-                    size={'md'}
-                    className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
-                  />
-                </Button>
+                <DropdownMenu open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
+                  <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+                    <Button
+                      className="ml-auto p-0 !h-[35px] !w-[35px] mr-3"
+                      variant={'ghost'}
+                      onClick={() => console.log('filter')}
+                    >
+                      <Icon
+                        src={`img/assets/farm_filter_${mode}.svg`}
+                        size={'md'}
+                        className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
+                      />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className={'mt-3.75'} portal={false}>
+                      <h4>Filters</h4>
+                      <div>tag</div>
+                      <h4>Sort By</h4>
+                      <div>tag</div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <div className={'flex flex-row ml-auto gap-3.75'}>
                   {pubKey != null && (
                     <div className="flex items-center mr-2">
@@ -165,8 +185,10 @@ export const FarmContainer: FC = () => {
                         checked={showDeposited}
                         onClick={handleShowDepositedToggle}
                       />
-                      <div className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
-                        font-semibold ml-2 hidden min-lg:block">
+                      <div
+                        className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
+                        font-semibold ml-2 hidden min-lg:block"
+                      >
                         Show <br /> Deposited
                       </div>
                     </div>
