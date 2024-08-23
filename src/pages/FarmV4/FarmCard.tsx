@@ -1,5 +1,5 @@
 import { useFarmContext } from '@/context'
-import { Button, Icon } from 'gfx-component-lib'
+import { Button, Icon, Badge } from 'gfx-component-lib'
 import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
@@ -20,7 +20,9 @@ const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
           <Icon
             src={`img/crypto/${token?.targetToken}.svg`}
             size="lg"
-            className={'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
+            className={
+              'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
+            }
           />
         </div>
         <Button
@@ -40,6 +42,11 @@ const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
       >
         {`${token?.sourceToken} - ${token?.targetToken}`}
         <Icon src={`img/assets/farm_${token?.type}.svg`} size="sm" className="ml-1.5" />
+        {token?.isOwner && (
+          <Badge size="sm" variant="default">
+            Owner
+          </Badge>
+        )}
       </div>
       <PoolStats token={token} />
     </div>

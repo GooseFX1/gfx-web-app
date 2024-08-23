@@ -2,8 +2,8 @@
 import { FC, useState, useMemo } from "react"
 import { Container, Button, Icon } from "gfx-component-lib"
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import { useDarkMode, useFarmContext } from "@/context"
-import { SSL_TOKENS, poolType } from './constants'
+import { useDarkMode, useFarmContext, useGamma } from '@/context'
+import { poolType } from './constants'
 import SearchBar from '@/components/common/SearchBar'
 import PositionHeader from './PositionHeader'
 import MyPositions from './MyPositions'
@@ -11,6 +11,7 @@ import MyPositions from './MyPositions'
 const Positions: FC = () => {
     const { operationPending, pool, setPool } = useFarmContext()
     const { mode } = useDarkMode()
+    const { pools } = useGamma()
     const [searchTokens, setSearchTokens] = useState<string>('')
     const [sort, setSort] = useState<string>('ASC')
     const [sortType, setSortType] = useState<string>(null)
@@ -20,13 +21,13 @@ const Positions: FC = () => {
     const filteredTokens = useMemo(
         () =>
             searchTokens
-                ? SSL_TOKENS.filter(
+                ? pools.filter(
                     (token) =>
                         token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
                         token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
                 )
-                : [...SSL_TOKENS],
-        [searchTokens, SSL_TOKENS]
+                : [...pools],
+        [searchTokens, pools]
     )
 
     console.log('consoling....', searchTokens, filteredTokens)

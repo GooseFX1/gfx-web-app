@@ -1,7 +1,7 @@
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useConnectionConfig, useDarkMode, useFarmContext, useRewardToggle } from '../../context'
-import { poolType, SSL_TOKENS } from './constants'
+import { useConnectionConfig, useDarkMode, useFarmContext, useRewardToggle, useGamma } from '../../context'
+import { poolType } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Icon,
@@ -9,8 +9,13 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
-  // DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuItemIndicator,
+  RadioGroup,
+  RadioGroupItemAsIndicator
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
@@ -21,7 +26,7 @@ import Portfolio from './Portfolio'
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
   const { userCache, updateUserCache } = useConnectionConfig()
-
+  const { pools, GAMMA_SORT_CONFIG } = useGamma()
   const { wallet } = useWallet()
   const {
     operationPending,
@@ -32,7 +37,9 @@ export const FarmContainer: FC = () => {
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
-
+  const [value, setValue] = useState('1')
+  const [showCreatedPools, setShowCreatedPools] = useBoolean(false)
+  
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
@@ -74,13 +81,13 @@ export const FarmContainer: FC = () => {
   const filteredTokens = useMemo(
     () =>
       searchTokens
-        ? SSL_TOKENS.filter(
+        ? pools?.filter(
           (token) =>
             token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
             token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
         )
-        : [...SSL_TOKENS],
-    [searchTokens, SSL_TOKENS]
+        : [...pools],
+    [searchTokens, pools]
   )
 
   useEffect(() => {
@@ -117,6 +124,14 @@ export const FarmContainer: FC = () => {
       return !prev
     })
   }
+
+  const handleFilterByCreated = useCallback(
+    (e: any) => {
+      console.log(e)
+      showCreatedPools ? setShowCreatedPools.off() : setShowCreatedPools.on()
+    },
+    [showCreatedPools]
+  )
 
   return (
     <div className={'flex flex-col gap-3.75'}>
@@ -169,10 +184,41 @@ export const FarmContainer: FC = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className={'mt-3.75'} portal={false}>
-                      <h4>Filters</h4>
-                      <div>tag</div>
-                      <h4>Sort By</h4>
-                      <div>tag</div>
+                    <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
+                    <div className="flex items-center justify-between mr-2">
+                      <span
+                        className="h-full text-normal text-left dark:text-grey-2 text-grey-1 
+                        font-semibold ml-2 hidden min-lg:block"
+                      >
+                        Show created pools
+                      </span>
+                      <Switch
+                        variant={'default'}
+                        size={'sm'}
+                        colorScheme={'primary'}
+                        checked={showCreatedPools}
+                        onClick={handleFilterByCreated}
+                      />
+                    </div>
+                    <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
+                    <DropdownMenuRadioGroup asChild value={value} onValueChange={setValue}>
+                      <div className={'grid grid-cols-2 gap-1.5 items-center'}>
+                        {GAMMA_SORT_CONFIG.map((s) => (
+                          <DropdownMenuItem isActive={value == s.id} asChild key={s.id}>
+                            <DropdownMenuRadioItem value={s.id} onSelect={(e) => e.preventDefault()}>
+                              <DropdownMenuItemIndicator asChild forceMount className={'absolute top-0 right-0'}>
+                                <RadioGroup value={value}>
+                                  <RadioGroupItemAsIndicator value={s.id} />
+                                </RadioGroup>
+                              </DropdownMenuItemIndicator>
+                              <div>
+                                <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
+                              </div>
+                            </DropdownMenuRadioItem>
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+                    </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <div className={'flex flex-row ml-auto gap-3.75'}>

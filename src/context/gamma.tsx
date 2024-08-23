@@ -15,25 +15,38 @@ import {
   UserPortfolioLPPosition,
   UserPortfolioStats
 } from '../types/gamma'
+  import { useWalletBalance } from '@/context/walletBalanceContext'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
-  pools: GAMMAPool[]
+  pools: any[]
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
   lpPositions: UserPortfolioLPPosition[]
+  GAMMA_SORT_CONFIG: { id: string, name: string }[]
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 
-export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
-  const [pools, setPools] = useState<GAMMAPool[] | null>(null)
+  const [pools, setPools] = useState<any[] | null>(null)
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
+  const GAMMA_SORT_CONFIG = [
+    { id: '1', name: 'Position: High' },
+    { id: '2', name: 'Position: Low' },
+    { id: '3', name: 'Pending: High' },
+    { id: '4', name: 'Pending: Low' },
+    { id: '5', name: 'Earned: High' },
+    { id: '6', name: 'Earned: Low' },
+    { id: '7', name: 'APR: High' },
+    { id: '8', name: 'APR: Low' }
+  ]
 
   useEffect(() => {
     fetchGAMMAConfig().then((config) => {
@@ -54,8 +67,8 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchPools])
 
   useEffect(() => {
-    if (user === null) {
-      fetchUser(user.id).then((userData) => {
+    if (publicKey !== null) {
+      fetchUser(publicKey.toBase58()).then((userData) => {
         if (userData) setUser(userData)
       })
     }
@@ -85,7 +98,8 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
         pools,
         user,
         portfolioStats,
-        lpPositions
+        lpPositions,
+        GAMMA_SORT_CONFIG
       }}
     >
       {children}
@@ -93,10 +107,10 @@ export const DarkModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useDarkMode = (): GAMMADataModel => {
+export const useGamma = (): GAMMADataModel => {
   const context = useContext(GAMMAContext)
   if (!context) {
-    throw new Error('Missing dark mode context')
+    throw new Error('Missing gamma context')
   }
 
   return context

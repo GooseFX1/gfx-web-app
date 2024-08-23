@@ -12,6 +12,7 @@ import {
   RewardToggleProvider,
   TokenRegistryProvider,
   useConnectionConfig,
+  GammaProvider,
   useDarkMode
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
@@ -125,7 +126,9 @@ export const Router: FC = () => {
                           </Route>
                           <Route exact path={['/farm', '/farm/temp-withdraw']}>
                             <PriceFeedFarmProvider>
-                              <FarmV4 />
+                              <GammaProvider>
+                                <FarmV4 />
+                              </GammaProvider>
                             </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path="/analytics">

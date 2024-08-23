@@ -1,9 +1,13 @@
-import apiClient from '../index'
-import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from './constants'
+// import apiClient from '../index'
+import { 
+    // GAMMA_API_BASE, 
+    // GAMMA_ENDPOINTS_V1, 
+    GAMMA_TOKENS 
+} from './constants'
 import {
   GAMMAConfig,
   GAMMAProtocolStats,
-  GAMMAPool,
+//   GAMMAPool,
   GAMMAUser,
   UserPortfolioStats,
   UserPortfolioLPPosition
@@ -11,8 +15,9 @@ import {
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.CONFIG)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.CONFIG)
+    // return response.data
+    return {}
   } catch (error) {
     console.error('Error fetching GAMMA Config:', error)
     return null
@@ -21,18 +26,20 @@ const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
 
 const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
+    // return response.data
+    return {}
   } catch (error) {
     console.error('Error fetching aggregate stats:', error)
     return null
   }
 }
 
-const fetchPools = async (): Promise<GAMMAPool[] | null> => {
+const fetchPools = async (): Promise<any[] | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.POOLS)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.POOLS)
+    // return response.data
+    return GAMMA_TOKENS
   } catch (error) {
     console.error('Error fetching pools:', error)
     return null
@@ -41,8 +48,9 @@ const fetchPools = async (): Promise<GAMMAPool[] | null> => {
 
 const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
+    // return response.data
+    return publicKey
   } catch (error) {
     console.error('Error fetching user:', error)
     return null
@@ -51,8 +59,9 @@ const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
 
 const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
+    // return response.data
+    return userId
   } catch (error) {
     console.error('Error fetching portfolio stats:', error)
     return null
@@ -61,8 +70,9 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
   try {
-    const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
-    return response.data
+    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
+    // return response.data
+    return userId
   } catch (error) {
     console.error('Error fetching LP positions:', error)
     return null
