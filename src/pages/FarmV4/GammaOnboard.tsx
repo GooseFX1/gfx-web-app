@@ -150,7 +150,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       width={checkMobile() ? '95%' : '400px'}
       title={null}
       centered={true}
-      visible={true || !userCache.gamma.hasGAMMAOnboarded}
+      visible={!userCache.gamma.hasGAMMAOnboarded}
       onCancel={() => handleUserOnboarding()}
       footer={null}
       currentSlide={currentSlide}
