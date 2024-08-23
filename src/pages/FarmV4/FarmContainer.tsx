@@ -21,7 +21,7 @@ export const FarmContainer: FC = () => {
     setPool
   } = useFarmContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
-  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.farm.showDepositedFilter)
+  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
 
   const pubKey: PublicKey | null = useMemo(
