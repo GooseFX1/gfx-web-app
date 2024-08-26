@@ -9,7 +9,10 @@ import {
   Icon,
   Input,
   InputElementLeft,
-  InputGroup
+  InputGroup,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
 } from 'gfx-component-lib'
 import { useAccounts, useDarkMode } from '../../context'
 import { ADDRESSES, SSLToken } from './constants'
@@ -41,6 +44,8 @@ const Step2: FC<{
       }) => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
+  const tokenAamount = tokenA ? getUIAmount(tokenA.address.toBase58()).toFixed(2) : '0.00'
+  const tokenBamount = tokenB ? getUIAmount(tokenB.address.toBase58()).toFixed(2) : '0.00'
   return (
     <>
       <div className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
@@ -56,12 +61,18 @@ const Step2: FC<{
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               1. Select Token A
             </div>
-            <div className="flex flex-row items-center">
-              <img src="/img/assets/wallet-dark-enabled.svg" alt="wallet" className="mr-1.5" />
-              <span className="text-regular font-semibold dark:text-grey-2 text-black-4">
-                                {getUIAmount(tokenA?.address?.toBase58())?.toFixed(2)} {tokenA?.token}
+            {tokenA && <div className="flex flex-row items-center">
+              <img src={`/img/assets/wallet-${mode}-${tokenAamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
+                   alt="wallet" className="mr-1.5" />
+              <span className={
+                cn(
+                  "text-regular font-semibold dark:text-grey-2 text-black-4",
+                  tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                )
+              }>
+                                {tokenAamount} {tokenA?.token}
                             </span>
-            </div>
+            </div>}
           </div>
           <TokenSelectionInput
             token={tokenA}
@@ -75,12 +86,18 @@ const Step2: FC<{
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               2. Select Token B
             </div>
-            <div className="flex flex-row items-center">
-              <img src="/img/assets/wallet-dark-enabled.svg" alt="wallet" className="mr-1.5" />
-              <span className="text-regular font-semibold dark:text-grey-2 text-black-4">
+            {tokenB && <div className="flex flex-row items-center">
+              <img src={`/img/assets/wallet-${mode}-${tokenBamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
+                   alt="wallet" className="mr-1.5" />
+              <span className={
+                cn(
+                "text-regular font-semibold dark:text-grey-2 text-black-4",
+                tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                )
+              }>
                                 {getUIAmount(tokenB?.address?.toBase58())?.toFixed(2)} {tokenB?.token}
                             </span>
-            </div>
+            </div>}
           </div>
           <TokenSelectionInput
             token={tokenB}
@@ -90,10 +107,17 @@ const Step2: FC<{
         </div>
         <div>
           <div className="flex flex-row justify-between items-center mb-2.5 mx-2.5">
-            <div className="font-sans text-regular font-semibold dark:text-grey-8
-                        text-black-4 underline !decoration-dotted">
-              3. Initial Price
-            </div>
+            <Tooltip >
+              <TooltipTrigger className={`font-sans text-regular font-semibold dark:text-grey-8
+                        text-black-4 underline !decoration-dotted`}>
+                3. Initial Price
+              </TooltipTrigger>
+              <TooltipContent className={'z-[1001]'} align={'start'}>
+                The initial price is based on the ratio of tokens you deposit for initial liquidity.
+                If the token is already trading on GooseFx, we'll automatically use the current price.
+              </TooltipContent>
+            </Tooltip>
+
             <div className="flex flex-row items-center">
               <img src={`/img/assets/switch_${mode}.svg`}
                    alt="switch"
@@ -166,7 +190,7 @@ function TokenSelectionInput({
   setToken: Dispatch<SetStateAction<SSLToken>>
 }) {
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
-  const { mode, isDarkMode} = useDarkMode()
+  const { mode, isDarkMode } = useDarkMode()
   return <InputGroup
     leftItem={
       <InputElementLeft>
@@ -178,10 +202,10 @@ function TokenSelectionInput({
 
               isLoading={false}
               className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
-              iconLeft={token?<Icon
+              iconLeft={token ? <Icon
                 src={`img/crypto/${token.token}.svg`}
                 size={'sm'}
-              />:null}
+              /> : null}
               iconRight={<Icon
                 style={{
                   transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
@@ -189,12 +213,12 @@ function TokenSelectionInput({
                 }}
                 src={`/img/assets/farm-chevron-${mode}.svg`}
                 className={cn(
-                  !isDarkMode? 'stroke-background-blue' : ''
+                  !isDarkMode ? 'stroke-background-blue' : ''
                 )}
                 size={'sm'}
               />}
             >
-              {token ? token.token: 'Select Token'}
+              {token ? token.token : 'Select Token'}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className={'mt-3.75'} portal={false}>
@@ -215,7 +239,7 @@ function TokenSelectionInput({
     }
   >
     <Input type="text"
-           placeholder={`0.00 ${token?token.token:''}`}
+           placeholder={`0.00 ${token ? token.token : ''}`}
            onChange={(e) => handleChange(e, true)}
            value={amountToken}
            className={'h-[45px] text-right'}
