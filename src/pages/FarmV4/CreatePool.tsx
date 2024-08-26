@@ -1,12 +1,10 @@
-import React, { Dispatch, FC, SetStateAction, useState, useMemo } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
 import { useDarkMode, usePriceFeedFarm } from '../../context'
-import useBoolean from '@/hooks/useBoolean'
-import { ADDRESSES } from './constants'
 import { getPriceObject } from '@/web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
@@ -21,11 +19,11 @@ const STYLED_POPUP = styled(PopupCustom) <{
   mode: string
 }>`
   .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger z-[10]`}
+    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger z-[10] border border-solid dark:border-black-4 border-grey-4`}
   }
   .ant-modal-close-x {
     > img {
-      ${tw`max-sm:!h-4 max-sm:!w-4 absolute bottom-2 opacity-60`}
+      ${tw`!h-4 !w-4 absolute bottom-2 opacity-60`}
     }
   }
   .ant-modal-body {
@@ -104,11 +102,9 @@ export const CreatePool: FC<{
   const { mode } = useDarkMode()
   const { prices } = usePriceFeedFarm()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
-  const [isDropdownOpenA, setIsDropdownOpenA] = useBoolean(false)
-  const [isDropdownOpenB, setIsDropdownOpenB] = useBoolean(false)
-  const [tokenA, setTokenA] = useState(ADDRESSES['mainnet-beta'][0])
+  const [tokenA, setTokenA] = useState(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
-  const [tokenB, setTokenB] = useState(ADDRESSES['mainnet-beta'][1])
+  const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [feeTier, setFeeTier] = useState<string>("0.01")
   const [poolType, setPoolType] = useState<string>('')
@@ -164,10 +160,6 @@ export const CreatePool: FC<{
             setTokenA={setTokenA} 
             tokenB={tokenB} 
             setTokenB={setTokenB}
-            isDropdownOpenA={isDropdownOpenA}
-            setIsDropdownOpenA={setIsDropdownOpenA}
-            isDropdownOpenB={isDropdownOpenB}
-            setIsDropdownOpenB={setIsDropdownOpenB}
             handleChange={handleChange}
             amountTokenA={amountTokenA}
             amountTokenB={amountTokenB}
