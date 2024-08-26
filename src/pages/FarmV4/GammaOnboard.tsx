@@ -165,10 +165,10 @@ const GammaOnboard: FC = (): JSX.Element => {
             alt="welcome-icn"
             className='mt-[22px] mb-3.75 mx-auto'
           />
-          <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1'>
-            Welcome to GooseFX, let's begin by getting to <br />
-            know our essential features.
-          </div>
+          <p className='m-auto text-regular text-center font-semibold dark:text-grey-2 text-grey-1 max-w-[350px]'>
+            Welcome to GooseFX's farm, where you can earn yield on your tokens by being a liquidity provider (LP).
+            Let’s get to know our main modes.
+          </p>
         </div>
         <div className="slide">
           <div className="text-regular font-semibold text-grey-9">
