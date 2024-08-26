@@ -13,6 +13,7 @@ import Step2 from './Step2'
 import Step3 from './Step3'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { Button } from 'gfx-component-lib'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
@@ -66,19 +67,22 @@ const NextArrow: FC<{
   sliderRef: any
   currentSlide: number
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
-}> = ({ sliderRef, currentSlide, setIsCreatePool }) => {
+  disabled: boolean
+}> = ({ sliderRef, currentSlide, setIsCreatePool, disabled }) => {
   const { connected } = useWallet()
   if (currentSlide === 0) return <></>
   return connected ? (
-    <div
+    <Button
       className="next-btn"
+      colorScheme={'blue'}
       onClick={() => {
         if(currentSlide===1) sliderRef.current.slickNext()
         else if(currentSlide===2) setIsCreatePool(false)
-      }} 
+      }}
+      disabled={disabled}
     >
       {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
-    </div>
+    </Button>
   ) : <Connect containerStyle={'h-8.75 w-[157px]'} customButtonStyle={'h-8.75 w-[157px] absolute bottom-4 right-2.5'} />
 }
 
@@ -118,7 +122,9 @@ export const CreatePool: FC<{
     swipe: false,
     beforeChange: (_current, next) => setCurrentSlide(next),
     prevArrow: <PrevArrow sliderRef={slider} currentSlide={currentSlide} />,
-    nextArrow: <NextArrow sliderRef={slider} currentSlide={currentSlide} setIsCreatePool={setIsCreatePool} />
+    nextArrow: <NextArrow sliderRef={slider} currentSlide={currentSlide} setIsCreatePool={setIsCreatePool}
+      disabled={currentSlide == 1 ?!tokenA || !tokenB : !amountTokenA || !amountTokenB}
+    />
   }
 
   const handleChange = (e, isSource: boolean) => {

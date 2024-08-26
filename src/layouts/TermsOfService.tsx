@@ -59,7 +59,7 @@ export const TermsOfService: FC<{
       <DialogOverlay />
       <DialogContent
         className={`flex flex-col gap-0 max-h-[464px] border-1 border-solid
-        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none z-[1001]`}
         fullScreen={isMobile}
         placement={isMobile ? 'bottom' : 'default'}
       >

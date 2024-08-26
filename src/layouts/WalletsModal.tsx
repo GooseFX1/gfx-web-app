@@ -90,7 +90,7 @@ export const WalletsModal: FC = () => {
     <Dialog onOpenChange={setVisible} open={visible}>
       <DialogOverlay />
       <DialogContent
-        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1000] overflow-hidden
+        className={`flex flex-col gap-0 max-h-[500px] border-1 border-solid z-[1001] overflow-hidden
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
         placement={isMobile ? 'bottom' : 'default'}
       >
