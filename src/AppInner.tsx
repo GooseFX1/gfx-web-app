@@ -9,7 +9,6 @@ export default function AppInner(): JSX.Element {
   // init cache at highest level
   useConnectionConfig()
 
-
   useEffect(() => {
     const values = queryString.parse(window.location?.search)
     if (values.r && !localStorage.getItem('referrer')) {

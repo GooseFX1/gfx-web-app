@@ -1,27 +1,19 @@
-import React, { FC, ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
 import {
-  fetchGAMMAConfig,
   fetchAggregateStats,
+  fetchGAMMAConfig,
+  fetchLpPositions,
   fetchPools,
-  fetchUser,
   fetchPortfolioStats,
-  fetchLpPositions
+  fetchUser
 } from '../api/gamma'
 import {
   GAMMAConfig,
-  GAMMAProtocolStats,
-  // GAMMATokenList,
-  GAMMAToken,
-  // ExtensionsItem,
-  // TransferFeeDataBaseType,
-  // GAMMAPoolKeysArray,
-  GAMMAPoolKeys,
   GAMMAPool,
-  // GAMMAPoolCategory,
-  // GAMMAPoolStats,
+  GAMMAProtocolStats,
   GAMMAUser,
-  UserPortfolioStats,
-  UserPortfolioLPPosition
+  UserPortfolioLPPosition,
+  UserPortfolioStats
 } from '../types/gamma'
 
 interface GAMMADataModel {
