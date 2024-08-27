@@ -210,7 +210,8 @@ export const CreatePool: FC<{
           <Step3 tokenA={tokenA} tokenB={tokenB} poolType={poolType}  />
         </div>
       </Slider>
-      {currentSlide != 0 && <div className={'flex justify-between border-t-1 solid border-red-500 p-2.5 items-center'}>
+      {currentSlide != 0 && <div className={`flex justify-between border-t-1 solid
+       border-border-lightmode-secondary dark:border-border-darkmode-secondary p-2.5 items-center`}>
         {next}{prev}
         {currentSlide > 0 && <Button variant={'link'}
                                      className={'font-bold dark:text-white text-blue-1 text-regular cursor-pointer '}
