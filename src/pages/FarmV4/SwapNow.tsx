@@ -1,6 +1,6 @@
 import { FC, ReactElement } from 'react'
 import { useFarmContext } from '@/context'
-import { Icon, Button } from 'gfx-component-lib'
+import { Button, Icon } from 'gfx-component-lib'
 
 const SwapNow: FC = (): ReactElement => {
   const { selectedCard } = useFarmContext()
@@ -23,6 +23,12 @@ const SwapNow: FC = (): ReactElement => {
             className="cursor-pointer bg-blue-1 text-white block mx-auto !w-full"
             variant={'secondary'}
             disabled={!selectedCard}
+            onClick={()=>{
+              const jupWrapper = document.getElementById("jupiter-terminal-instance")
+              if (jupWrapper) {
+                ((jupWrapper.childNodes[0] as HTMLElement).children[0] as HTMLElement).click()
+              }
+            }}
           >
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>
