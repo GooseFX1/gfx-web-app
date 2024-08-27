@@ -20,7 +20,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
   mode: string
 }>`
   .ant-modal-content {
-    ${tw`h-full dark:bg-black-2 bg-white rounded-bigger z-[10] border border-solid dark:border-black-4 border-grey-4`}
+    ${tw`h-full dark:bg-black-2 bg-white rounded-[8px] z-[10] border border-solid dark:border-black-4 border-grey-4`}
   }
   .ant-modal-close-x {
     > img {
@@ -61,6 +61,9 @@ const STYLED_POPUP = styled(PopupCustom) <{
   .slick-slider{
     ${tw`h-full`}
   }
+  .slick-list {
+      height: 100%;
+  }   
 `
 
 const NextArrow: FC<{

@@ -181,9 +181,8 @@ const GammaOnboard: FC = (): JSX.Element => {
             className='mt-[22px] mb-3.75 mx-auto'
           />
           <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
-            <span className='lite-mode-txt'>Lite Mode</span>,
-            if you are new to liquidity, this is the <br />
-            mode for you, with a simple UI and guided steps.
+            <span className='lite-mode-txt'>Lite Mode:&nbsp;</span>
+            A more simple experience if you are<br/>new to liquidity providing on DEXs!
           </div>
           <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
             Remember you can switch back at any time :)
@@ -199,9 +198,8 @@ const GammaOnboard: FC = (): JSX.Element => {
             className='mt-[22px] mb-3.75 mx-auto'
           />
           <div className='text-regular text-center font-semibold dark:text-grey-2 text-grey-1 mb-1.5'>
-            <span className='pro-mode-txt'>Pro Mode</span>,
-            Unlock advanced features, custom <br />
-            pricing, and more. Perfect for experienced users.
+            <span className='pro-mode-txt'>Pro Mode:&nbsp;</span>
+            Unlock advanced features, portfolio tracking, stats & more! For experienced users.
           </div>
           <div className='text-regular text-center text-tiny dark:text-grey-1 text-grey-9'>
             Remember you can switch back at any time :)
