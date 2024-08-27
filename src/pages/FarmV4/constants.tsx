@@ -1,4 +1,4 @@
-import { SuccessSSLMessage, TransactionErrorMsgSSL, SuccessClaimAll } from '../../components'
+import { SuccessClaimAll, SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
@@ -270,7 +270,19 @@ export const faqs = [
   }
 ]
 
-export const SSL_TOKENS = [
+export const SSL_TOKENS: {
+  sourceToken: string
+  targetToken: string
+  liquidity: string
+  volume: string
+  fees: string
+  apr: number
+  sourceTokenMintAddress: string
+  sourceTokenMintDecimals: number
+  targetTokenMintAddress: string
+  targetTokenMintDecimals: number
+  type: string
+}[] = [
   {
     sourceToken: 'SOL',
     targetToken: 'USDC',

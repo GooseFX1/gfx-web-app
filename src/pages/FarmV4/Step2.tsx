@@ -1,7 +1,8 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction, useLayoutEffect } from 'react'
 import {
   Button,
   cn,
+  Container,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -14,10 +15,11 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { useAccounts, useDarkMode } from '../../context'
-import { ADDRESSES, SSLToken } from './constants'
+import { useAccounts, useDarkMode, useFarmContext } from '../../context'
+import { ADDRESSES, SSL_TOKENS, SSLToken } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
+import Text from '@/components/Text'
 
 const Step2: FC<{
   tokenA: SSLToken
@@ -30,6 +32,9 @@ const Step2: FC<{
   feeTier: string
   setFeeTier: Dispatch<SetStateAction<string>>
   liquidity: number
+  closeCreateModal?: () => void
+  poolExists: boolean
+  setPoolExists: (b: boolean) => void
 }> = ({
         tokenA,
         setTokenA,
@@ -40,22 +45,50 @@ const Step2: FC<{
         amountTokenB,
         feeTier,
         setFeeTier,
-        liquidity
+        liquidity,
+        closeCreateModal,
+        poolExists,
+        setPoolExists
       }) => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
+  const { setSelectedCard, setOperationPending } = useFarmContext()
   const tokenAamount = tokenA ? getUIAmount(tokenA.address.toBase58()).toFixed(2) : '0.00'
   const tokenBamount = tokenB ? getUIAmount(tokenB.address.toBase58()).toFixed(2) : '0.00'
+  const navigateToPool = () => {
+    if (!tokenA || !tokenB) return
+    for (const token of SSL_TOKENS) {
+      if (token.sourceTokenMintAddress == tokenA.address.toBase58() &&
+        token.targetTokenMintAddress == tokenB.address.toBase58()) {
+        setSelectedCard(token)
+        setOperationPending(true)
+        closeCreateModal()
+        break
+      }
+    }
+  }
+  useLayoutEffect(() => {
+    if (!tokenA || !tokenB) return
+    // API Req
+    for (const token of SSL_TOKENS) {
+      if (token.sourceTokenMintAddress == tokenA.address.toBase58() &&
+        token.targetTokenMintAddress == tokenB.address.toBase58()) {
+        setPoolExists(true)
+        return
+      }
+    }
+    setPoolExists(false)
+  }, [tokenA, tokenB, setPoolExists])
   return (
     <>
       <div className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
-              border-grey-4 p-2.5 h-16">
+              border-grey-4 p-2.5 h-16 ">
         <span className="text-purple-3">Step 2</span> of 3
         <h2 className="dark:text-grey-8 text-black-4 font-semibold font-sans text-[18px] mt-2">
           Pool Settings
         </h2>
       </div>
-      <div className="p-3 flex flex-col border-b border-solid dark:border-black-4 border-grey-4 gap-5">
+      <div className="p-3 flex flex-col overflow-scroll border-b border-solid dark:border-black-4 border-grey-4 gap-5">
         <div>
           <div className="flex flex-row justify-between items-center mb-2.5">
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
@@ -91,8 +124,8 @@ const Step2: FC<{
                    alt="wallet" className="mr-1.5" />
               <span className={
                 cn(
-                "text-regular font-semibold dark:text-grey-2 text-black-4",
-                tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                  'text-regular font-semibold dark:text-grey-2 text-black-4',
+                  tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )
               }>
                                 {tokenBamount} {tokenB?.token}
@@ -107,7 +140,7 @@ const Step2: FC<{
         </div>
         <div>
           <div className="flex flex-row justify-between items-center mb-2.5">
-            <Tooltip >
+            <Tooltip>
               <TooltipTrigger className={`font-sans text-regular font-semibold dark:text-grey-8
                         text-black-4 underline !decoration-dotted`}>
                 3. Initial Price
@@ -119,7 +152,7 @@ const Step2: FC<{
             </Tooltip>
 
             <div className={cn('flex flex-row items-center',
-              (!tokenA || !tokenB) && "invisible")}>
+              (!tokenA || !tokenB) && 'invisible')}>
               <img src={`/img/assets/switch_${mode}.svg`}
                    alt="switch"
                    className="mr-1.5"
@@ -137,7 +170,7 @@ const Step2: FC<{
             <span className={cn(
               'text-regular font-semibold dark:text-grey-1 text-grey-9',
               (!tokenA || !tokenB) && 'invisible'
-              )}>
+            )}>
                             {`${tokenA?.token} / ${tokenB?.token}`}
             </span>
           </div>
@@ -146,35 +179,46 @@ const Step2: FC<{
           <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
             4. Fee Tier
           </div>
-            <RadioOptionGroup
-              defaultValue={'deposit'}
-              value={feeTier}
-              className={`w-full mt-3 max-sm:mt-1`}
-              optionClassName={`w-full text-h5`}
-              options={[
-                {
-                  value: '0.01',
-                  label: '0.01%',
-                  onClick: () => setFeeTier('0.01')
-                },
-                {
-                  value: '0.04',
-                  label: '0.04%',
-                  onClick: () => setFeeTier('0.04')
-                },
-                {
-                  value: '0.7',
-                  label: '0.7%',
-                  onClick: () => setFeeTier('0.7')
-                },
-                {
-                  value: '1',
-                  label: '1%',
-                  onClick: () => setFeeTier('1')
-                }
-              ]}
-            />
+          <RadioOptionGroup
+            defaultValue={'deposit'}
+            value={feeTier}
+            className={`w-full mt-3 max-sm:mt-1`}
+            optionClassName={`w-full text-h5`}
+            options={[
+              {
+                value: '0.01',
+                label: '0.01%',
+                onClick: () => setFeeTier('0.01')
+              },
+              {
+                value: '0.04',
+                label: '0.04%',
+                onClick: () => setFeeTier('0.04')
+              },
+              {
+                value: '0.7',
+                label: '0.7%',
+                onClick: () => setFeeTier('0.7')
+              },
+              {
+                value: '1',
+                label: '1%',
+                onClick: () => setFeeTier('1')
+              }
+            ]}
+          />
         </div>
+        {poolExists && <div>
+          <Container className={'flex flex-col gap-2.5 p-2.5'}>
+            <Text as={'h3'}>Existing Pool!</Text>
+            <Text as={'p'}>The SOL-USDC exists. Start adding your funds now!</Text>
+            <Button
+              fullWidth
+              colorScheme={'blue'}
+              onClick={navigateToPool}
+            >Goto {tokenA?.token}/{tokenB?.token} Pool</Button>
+          </Container>
+        </div>}
       </div>
     </>
   )
