@@ -59,11 +59,20 @@ const STYLED_POPUP = styled(PopupCustom) <{
     !flex flex-row justify-center items-center absolute max-sm:bottom-5 max-sm:w-auto`}
   }
   .slick-slider{
-    ${tw`h-full`}
+    height: 100%;
   }
   .slick-list {
+      animation: animateHeight 0.5s;
+  }
+    // to prevent flickering in when animating in with antd - should be replaced with dialog + slide from comp lib
+  @keyframes animateHeight {
+    from {
       height: 100%;
-  }   
+    }
+    to {
+      height: max-content;
+    }
+  }
 `
 
 const NextArrow: FC<{
