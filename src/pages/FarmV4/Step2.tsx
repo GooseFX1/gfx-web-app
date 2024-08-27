@@ -55,24 +55,24 @@ const Step2: FC<{
           Pool Settings
         </h2>
       </div>
-      <div className="p-3 flex flex-col border-b border-solid dark:border-black-4 border-grey-4 gap-2">
+      <div className="p-3 flex flex-col border-b border-solid dark:border-black-4 border-grey-4 gap-5">
         <div>
-          <div className="flex flex-row justify-between items-center mb-2.5 mx-2.5">
+          <div className="flex flex-row justify-between items-center mb-2.5">
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               1. Select Token A
             </div>
-            {tokenA && <div className="flex flex-row items-center">
+            <div className={cn('flex flex-row items-center', !tokenA && 'invisible')}>
               <img src={`/img/assets/wallet-${mode}-${tokenAamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
                    alt="wallet" className="mr-1.5" />
               <span className={
                 cn(
-                  "text-regular font-semibold dark:text-grey-2 text-black-4",
+                  'text-regular font-semibold dark:text-grey-2 text-black-4',
                   tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )
               }>
                                 {tokenAamount} {tokenA?.token}
                             </span>
-            </div>}
+            </div>
           </div>
           <TokenSelectionInput
             token={tokenA}
@@ -82,11 +82,11 @@ const Step2: FC<{
           />
         </div>
         <div>
-          <div className="flex flex-row justify-between items-center mb-2.5 mx-2.5">
+          <div className="flex flex-row justify-between items-center mb-2.5">
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               2. Select Token B
             </div>
-            {tokenB && <div className="flex flex-row items-center">
+            <div className={cn('flex flex-row items-center', !tokenB && 'invisible')}>
               <img src={`/img/assets/wallet-${mode}-${tokenBamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
                    alt="wallet" className="mr-1.5" />
               <span className={
@@ -95,9 +95,9 @@ const Step2: FC<{
                 tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )
               }>
-                                {getUIAmount(tokenB?.address?.toBase58())?.toFixed(2)} {tokenB?.token}
+                                {tokenBamount} {tokenB?.token}
                             </span>
-            </div>}
+            </div>
           </div>
           <TokenSelectionInput
             token={tokenB}
@@ -106,7 +106,7 @@ const Step2: FC<{
             setToken={setTokenB} />
         </div>
         <div>
-          <div className="flex flex-row justify-between items-center mb-2.5 mx-2.5">
+          <div className="flex flex-row justify-between items-center mb-2.5">
             <Tooltip >
               <TooltipTrigger className={`font-sans text-regular font-semibold dark:text-grey-8
                         text-black-4 underline !decoration-dotted`}>
@@ -118,31 +118,34 @@ const Step2: FC<{
               </TooltipContent>
             </Tooltip>
 
-            <div className="flex flex-row items-center">
+            <div className={cn('flex flex-row items-center',
+              (!tokenA || !tokenB) && "invisible")}>
               <img src={`/img/assets/switch_${mode}.svg`}
                    alt="switch"
                    className="mr-1.5"
               />
-              {tokenA && tokenB && (<span className="text-regular font-bold dark:text-white
-                            text-blue-1 underline cursor-pointer">
+              <span className={cn(`text-regular font-bold dark:text-white
+                text-blue-1 underline cursor-pointer`)}>
                                 {`${tokenA?.token} per ${tokenB?.token}`}
-                            </span>)}
+                            </span>
             </div>
           </div>
           <div className="h-[45px] dark:bg-black-1 bg-grey-5 flex p-2
                     flex-row justify-between rounded-[3px] border border-solid border-black-4
                     dark:border-grey-4 items-center ">
             <span className="text-regular font-semibold dark:text-grey-8 text-black-4">{liquidity}</span>
-            {tokenA && tokenB && <span className="text-regular font-semibold dark:text-grey-1 text-grey-9">
+            <span className={cn(
+              'text-regular font-semibold dark:text-grey-1 text-grey-9',
+              (!tokenA || !tokenB) && 'invisible'
+              )}>
                             {`${tokenA?.token} / ${tokenB?.token}`}
-            </span>}
+            </span>
           </div>
         </div>
         <div>
-          <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4 mx-2.5">
+          <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
             4. Fee Tier
           </div>
-          <div className="mx-2.5">
             <RadioOptionGroup
               defaultValue={'deposit'}
               value={feeTier}
@@ -171,7 +174,6 @@ const Step2: FC<{
                 }
               ]}
             />
-          </div>
         </div>
       </div>
     </>
@@ -221,7 +223,7 @@ function TokenSelectionInput({
               {token ? token.token : 'Select Token'}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className={'mt-3.75'} portal={false}>
+          <DropdownMenuContent className={'mt-3.75 z-[1001]'} portal={true}>
             {ADDRESSES['mainnet-beta']?.map((item, index) => (
               <DropdownMenuItem className={'group gap-2 cursor-pointer'}
                                 onClick={() => setToken(item)}

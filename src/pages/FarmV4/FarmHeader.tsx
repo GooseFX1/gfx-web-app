@@ -237,7 +237,8 @@ export const FarmHeader: FC = () => {
             : 'All your deposits, rewards and advance metrics in one place.'}
         </div>
         <Button
-          className="cursor-pointer absolute right-0 top-0 bg-blue-1 text-white"
+          className="cursor-pointer absolute right-0 top-0"
+          colorScheme={'blue'}
           variant={'secondary'}
           iconRight={
             <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size="sm" />

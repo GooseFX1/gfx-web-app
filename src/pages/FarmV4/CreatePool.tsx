@@ -32,7 +32,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
   }
   .next-btn {
     ${tw`text-regular font-semibold cursor-pointer bg-black-4 max-sm:w-2/5
-      w-[157px] h-9 rounded-half bottom-4 text-regular font-semibold bg-blue-1
+      w-[157px] h-9 rounded-half bottom-3 text-regular font-semibold bg-blue-1
       cursor-pointer z-10 !flex flex-row justify-center items-center absolute right-2.5`}
     color: ${({ currentSlide }) =>
     currentSlide === 1
@@ -55,7 +55,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
   }
   .prev-btn {
     ${tw`dark:text-white text-blue-1 text-regular font-bold cursor-pointer 
-    text-regular font-semibold cursor-pointer left-4 bottom-6 underline
+    text-regular font-semibold cursor-pointer left-4 bottom-3.5 underline
     !flex flex-row justify-center items-center absolute max-sm:bottom-5 max-sm:w-auto`}
   }
   .slick-slider{
@@ -73,8 +73,9 @@ const NextArrow: FC<{
   if (currentSlide === 0) return <></>
   return connected ? (
     <Button
-      className="next-btn"
+      className="next-btn !font-bold"
       colorScheme={'blue'}
+      variant={'secondary'}
       onClick={() => {
         if(currentSlide===1) sliderRef.current.slickNext()
         else if(currentSlide===2) setIsCreatePool(false)
@@ -91,11 +92,12 @@ const PrevArrow: FC<{
   currentSlide: number
 }> = ({ sliderRef, currentSlide }) =>
     currentSlide !== 0 && (
-      <div
-        className="prev-btn"
+      <Button
+        variant={'link'}
+        className="prev-btn !font-bold"
         onClick={() => sliderRef.current.slickPrev()}>
         Back
-      </div>
+      </Button>
     )
 
 export const CreatePool: FC<{

@@ -86,7 +86,7 @@ const Step3: FC<{
                     <TooltipTrigger className={`text-regular font-semibold text-yellow-2 underline !decoration-dotted`}>
                         Pool Fee Rate
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className={'z-[1001]'}>
                         This is the fee in bps % we charge per swap
                     </TooltipContent>
                 </Tooltip>
@@ -97,7 +97,7 @@ const Step3: FC<{
                     <TooltipTrigger className="text-regular font-semibold text-yellow-2 underline !decoration-dotted">
                         Pool Creation Fee
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className={'z-[1001]'}>
                         This fee is the SOL required to create the pool on the blockchain network,
                         it is not a fee to our protocol.
                     </TooltipContent>

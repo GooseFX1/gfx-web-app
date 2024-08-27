@@ -74,7 +74,8 @@ const NextArrow: FC<{
 }> = ({ sliderRef, currentSlide, handleUserOnboading }) => (
   <Button
     colorScheme={'blue'}
-    className="next-btn"
+    variant={'secondary'}
+    className="next-btn !font-bold"
     onClick={() => {
       currentSlide !== 2 ?
         sliderRef.current.slickNext() :
