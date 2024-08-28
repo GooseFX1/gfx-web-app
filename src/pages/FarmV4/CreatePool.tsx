@@ -52,8 +52,8 @@ const STYLED_POPUP = styled(PopupCustom) <{
   }
   .prev-btn {
     ${tw`dark:text-white text-blue-1 text-regular font-bold cursor-pointer 
-    text-regular font-semibold cursor-pointer left-4 bottom-3.5 underline
-    !flex flex-row justify-center items-center absolute max-sm:bottom-5 max-sm:w-auto`}
+    text-regular font-semibold cursor-pointer underline
+    !flex flex-row justify-center items-center max-sm:bottom-5 max-sm:w-auto`}
   }
   .slick-slider{
     animation: animateHeight 0.5s;
@@ -205,15 +205,15 @@ export const CreatePool: FC<{
       </Slider>
       {currentSlide != 0 && <div className={`flex justify-between border-t-1 solid
        border-border-lightmode-secondary dark:border-border-darkmode-secondary p-2.5 items-center`}>
-        {next}{prev}
         {currentSlide > 0 && <Button variant={'link'}
-                                     className={'font-bold dark:text-white text-blue-1 text-regular cursor-pointer '}
+                                     className={`prev-btn font-bold dark:text-white text-blue-1 text-regular 
+                                     cursor-pointer `}
                                      colorScheme={'white'}
                                      disabled={currentSlide == 0}
                                      onClick={prev}
         >Back</Button>}
         {connected ? <Button colorScheme={'blue'}
-                             className={'w-[157px] font-bold'}
+                             className={'w-[157px] font-bold next-btn'}
                              disabled={currentSlide == 1 ? !tokenA || !tokenB : !amountTokenA || !amountTokenB}
                              onClick={next}
         >
