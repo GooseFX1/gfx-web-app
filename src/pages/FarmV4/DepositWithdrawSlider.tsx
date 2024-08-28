@@ -15,6 +15,8 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { GAMMAActionModal } from '@/pages/FarmV4/GammaActionModal'
+import useBoolean from '@/hooks/useBoolean'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -31,6 +33,8 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
+  const [isButtonLoading, setIsButtonLoading] = useBoolean();
+  const [actionType, setActionType] = useState<string>('')
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
 
   const {
@@ -113,6 +117,27 @@ export const DepositWithdrawSlider: FC = () => {
     },
     [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
   )
+  const handleWithdraw = ()=>{
+    console.log('withdraw')
+    setActionType('withdraw')
+  }
+  const handleDeposit = ()=>{
+    console.log('withdraw')
+    setActionType('deposit')
+  }
+  const handleClaim = ()=>{
+    console.log('withdraw')
+    setIsButtonLoading.on()
+    setIsButtonLoading.off()
+    setActionType('claim')
+  }
+  const handleCancel = () =>{
+    console.log('cancel')
+    setIsButtonLoading.off()
+    setOperationPending(false)
+  }
+  const claimableReward = new BigNumber(0)
+
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}
     >
@@ -130,6 +155,22 @@ export const DepositWithdrawSlider: FC = () => {
          onInteractOutside={(e) => e.preventDefault()}
 
       >
+        fullScreen={true}
+        placement={isMobile?'bottom':'right'}>
+        <GAMMAActionModal
+          actionModal={operationPending}
+          setActionModal={setOperationPending}
+          handleWithdraw={handleWithdraw}
+          handleDeposit={handleDeposit}
+          handleClaim={handleClaim}
+          isButtonLoading={isButtonLoading}
+          handleCancel={handleCancel}
+          sourceAmount={isDeposit ? userSourceDepositAmount.toString() : userSourceWithdrawAmount.toString()}
+          targetAmount={isDeposit ? userTargetDepositAmount.toString() : userTargetWithdrawAmount.toString()}
+          claimAmount={claimableReward}
+          actionType={actionType}
+          selectedCard={selectedCard}
+        />
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
