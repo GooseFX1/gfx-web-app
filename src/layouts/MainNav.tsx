@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useRewardToggle } from '../context'
+import { useDarkMode, useRewardToggle, useConnectionConfig } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -9,7 +9,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 // import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
-import { APP_DEFAULT_ROUTE, MODAL_TYPES, SOCIAL_MEDIAS } from '../constants'
+import { APP_DEFAULT_ROUTE, MODAL_TYPES } from '../constants'
 import { CircularArrow } from '../components/common/Arrow'
 import {
   Accordion,
@@ -42,6 +42,7 @@ import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
 
 export const MainNav: FC = () => {
+  const { globalBanner } = useConnectionConfig()
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
@@ -50,24 +51,12 @@ export const MainNav: FC = () => {
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const showRewardsModal = query.get('rewards')
-  const [isBannerActive] = useBoolean(false)
 
   useEffect(() => {
     if (showRewardsModal) {
       rewardToggle(true)
     }
   }, [location])
-
-  const bannerInfo = (
-    <div>
-      Solana network is currently congested. Due to this some transactions may fail to confirm without retries and
-      volumes will be lower than usual. See our&nbsp;
-      <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
-        Twitter
-      </a>
-      &nbsp; for further updates.
-    </div>
-  )
 
   return (
     <div className={`w-screen flex flex-col fixed top-0 z-[10]`}>
@@ -78,18 +67,22 @@ export const MainNav: FC = () => {
           rewardToggle={!breakpoint.isMobile && rewardToggle}
         />
       )}
-      {isBannerActive && breakpoint.isDesktop && (
-        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>{bannerInfo}</div>
+      {globalBanner !== null && (
+        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>{globalBanner}</div>
       )}
 
       <div
         className={`h-[56px] px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
-        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}
+      relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}
       >
         <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
-          <img className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
+          <img
+            className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')}
+            src={`/img/mainnav/Icon.svg`}
+            alt="Main Navigation Icon"
+          />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
+            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} alt="GooseFX Logo" />
           )}
         </div>
 

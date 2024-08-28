@@ -8,7 +8,6 @@ import { cn } from 'gfx-component-lib'
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { rewardModal } = useRewardToggle()
   const { mode } = useDarkMode()
-
   // To enable dark mode using tailwind - using dark:classname
   return (
     <div
@@ -21,7 +20,10 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
     >
       <MainNav />
       <TermsOfService />
-      <div className={`min-2xl:w-[2500px] m-auto mt-[55px] min-md:mb-[45px]`} id="gfx-app-layout">
+      <div
+        className={cn(`min-2xl:w-[2500px] m-auto min-md:mb-[45px] mt-[102px]`)}
+        id="gfx-app-layout"
+      >
         {children}
       </div>
       <Footer />
