@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { RewardsButton } from '../components/rewards/RewardsPopup'
-import { useDarkMode, useRewardToggle, useConnectionConfig } from '../context'
+import { useDarkMode, useRewardToggle } from '../context'
 import { ThemeToggle } from '../components/ThemeToggle'
 import tw from 'twin.macro'
 import 'styled-components/macro'
@@ -42,7 +42,6 @@ import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
 
 export const MainNav: FC = () => {
-  const { globalBanner } = useConnectionConfig()
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const history = useHistory()
@@ -67,10 +66,6 @@ export const MainNav: FC = () => {
           rewardToggle={!breakpoint.isMobile && rewardToggle}
         />
       )}
-      {globalBanner !== null && (
-        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>{globalBanner}</div>
-      )}
-
       <div
         className={`h-[56px] px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
       relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}

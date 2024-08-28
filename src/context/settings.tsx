@@ -97,7 +97,6 @@ interface ISettingsConfig {
   setPriorityFee?: Dispatch<SetStateAction<PriorityFeeName>>
   latency: number
   priorityFeeValue: number
-  globalBanner: React.ReactElement | null
 }
 
 const SettingsContext = React.createContext<ISettingsConfig | null>(null)
@@ -136,15 +135,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [priorityFee, setPriorityFee] = useState<PriorityFeeName>(existingUserCache?.priorityFee || 'Default')
   const [latency, setLatency] = useState<number>(0)
   const [shouldTrack, setShouldTrack] = useState<boolean>(true)
-
-  // TODO: use fetchGlobalBanner().then((res) => setGlobalBanner(res))
-  const globalBanner: React.ReactElement | null = (
-    <span>
-      Notice: We are deprecating perps for the time being to focus on AMM/SSL. Please close your positions and
-      withdraw by Sept 15, 2024 or they will automatically be settled. Thanks again for using our DEX and we hope
-      you enjoyed the experience! Follow our socials for more info.
-    </span>
-  )
 
   const { priorityFeeInstruction, priorityFeeValue } = useMemo(() => {
     let fee = 0.0
@@ -305,8 +295,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setPriorityFee,
         priorityFeeInstruction,
         latency,
-        priorityFeeValue,
-        globalBanner
+        priorityFeeValue
       }}
     >
       {children}

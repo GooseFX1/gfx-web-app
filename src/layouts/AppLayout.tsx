@@ -21,7 +21,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       <MainNav />
       <TermsOfService />
       <div
-        className={cn(`min-2xl:w-[2500px] m-auto min-md:mb-[45px] mt-[102px]`)}
+        className={cn(`min-2xl:w-[2500px] m-auto min-md:mb-[45px] mt-[55px]`)}
         id="gfx-app-layout"
       >
         {children}
