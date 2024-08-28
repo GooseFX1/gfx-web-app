@@ -959,11 +959,13 @@ body.dark {
   }
 }
 
-#jupiter-terminal-instance {
-  width: 0;
-  height: 0;
-}
+
 #jupiter-terminal-instance > div {
-  z-index: 1001;
+  position: absolute;
   @apply border-1 border-solid dark:border-border-darkmode-primary border-border-lightmode-primary rounded-full !bottom-16;
 }
+
+#jupiter-terminal-instance > div, #jupiter-terminal-instance > div > div, #jupiter-terminal {
+  z-index: 99999;
+}
+

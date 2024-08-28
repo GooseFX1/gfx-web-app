@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogOverlay } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent } from 'gfx-component-lib'
 import { useAccounts, useConnectionConfig, useFarmContext } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -113,9 +113,13 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   return (
-    <Dialog open={operationPending} onOpenChange={setOperationPending}
+    <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}
     >
-      <DialogOverlay />
+
+      <div className={`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
+      backdrop-blur-sm
+      `}
+      />
 
       <DialogContent className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[525px]
