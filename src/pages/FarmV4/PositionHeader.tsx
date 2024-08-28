@@ -64,13 +64,14 @@ const PositionHeader: FC<{
                             <FarmRowItem
                                 title={'Position'}
                                 //onClick={handleSort('liquidity')}
-                                tooltip={'24H Volume is reset daily at 10PM UTC'}
+                                tooltip={'Current deposit in the pool, displayed in approximate USD value.'}
                                 invert={sort == 'DESC' && sortType == 'liquidity'}
                                 iconRight={true}
                             />
                             <FarmRowItem
-                                title={'Fee Tier'}
-                                tooltip={'24H Volume is reset daily at 10PM UTC'}
+                                title={'Fee'}
+                                tooltip={`The percentage fee taken by the pool,
+                                 this influence the rewards you’ll earn.`}
                                 //onClick={handleSort('volume')}
                                 invert={sort == 'DESC' && sortType == 'volume'}
                                 iconRight={true}
@@ -79,7 +80,7 @@ const PositionHeader: FC<{
                             <FarmRowItem
                                 title={'Token A/B'}
                                 //onClick={handleSort('fee')}
-                                tooltip={'24H Volume is reset daily at 10PM UTC'}
+                                tooltip={'Total amount of your position in the pool.'}
                                 invert={sort == 'DESC' && sortType == 'fee'}
                                 iconRight={false}
                             />
@@ -87,7 +88,7 @@ const PositionHeader: FC<{
                     )}
                     <FarmRowItem
                         title={'Pending'}
-                        tooltip={'Values are displayed in native token'}
+                        tooltip={'Unclaimed interest generated from your deposits in the pool.'}
                         //onClick={handleSort('balance')}
                         invert={sort == 'DESC' && sortType == 'balance'}
                         iconRight={true}
@@ -95,7 +96,7 @@ const PositionHeader: FC<{
                     />
                     <FarmRowItem
                         title={'Earned'}
-                        tooltip={'Values are displayed in native token'}
+                        tooltip={'Earned is the total amount of claimed interest generated.'}
                         //onClick={handleSort('balance')}
                         invert={sort == 'DESC' && sortType == 'balance'}
                         iconRight={true}

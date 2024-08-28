@@ -12,13 +12,15 @@ const PortfolioScreen: FC = (): JSX.Element => (
       </div>
       <div className="grid gap-[15px] lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 mb-3.75">
         <ComingSoon 
-          header='Portfolio Value' 
+          header='Portfolio Value'
+          tooltip={'Portfolio Value is the total worth of all your investments across all pools.'}
           subHeader='Monitor your top pools and coin values with advanced, user-friendly graphs.' 
           value='711.98' 
           image="chart" 
         />
         <ComingSoon 
-          header='Total Earned' 
+          header='Total Earned'
+          tooltip={'Total Earned is the total rewards you\'ve claimed from all your pools since your first deposit.'}
           subHeader='Track the history of all your earnings across different time periods.' 
           value='21.31' 
           image="graph" 
