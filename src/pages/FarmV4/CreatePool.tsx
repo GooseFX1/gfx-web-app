@@ -48,14 +48,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
           : currentSlide === 0
             ? '#FFFFFF'
             : '#636363'};
-    cursor: ${({ currentSlide }) =>
-    currentSlide === 1
-      ? 'pointer'
-      : currentSlide === 2
-        ? 'pointer'
-        : currentSlide === 3
-          ? 'pointer'
-          : 'pointer'};
+      cursor: pointer;
   }
   .prev-btn {
     ${tw`dark:text-white text-blue-1 text-regular font-bold cursor-pointer 
@@ -63,7 +56,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
     !flex flex-row justify-center items-center absolute max-sm:bottom-5 max-sm:w-auto`}
   }
   .slick-slider{
-    height: 100%;
+    animation: animateHeight 0.5s;
   }
   .slick-list {
       animation: animateHeight 0.5s;
@@ -71,7 +64,7 @@ const STYLED_POPUP = styled(PopupCustom) <{
     // to prevent flickering in when animating in with antd - should be replaced with dialog + slide from comp lib
   @keyframes animateHeight {
     from {
-      height: 100%;
+      height: 0;
     }
     to {
       height: max-content;
@@ -191,10 +184,10 @@ export const CreatePool: FC<{
           <Step1 slider={slider} setPoolType={setPoolType} setIsCreatePool={setIsCreatePool} />
         </div>
         <div className="slide">
-          <Step2 
-            tokenA={tokenA} 
-            setTokenA={setTokenA} 
-            tokenB={tokenB} 
+          <Step2
+            tokenA={tokenA}
+            setTokenA={setTokenA}
+            tokenB={tokenB}
             setTokenB={setTokenB}
             handleChange={handleChange}
             amountTokenA={amountTokenA}

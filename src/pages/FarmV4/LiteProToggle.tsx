@@ -1,10 +1,17 @@
-import { useDarkMode, useRewardToggle } from "@/context";
-import { Button, Icon } from "gfx-component-lib";
-import { ReactElement } from "react";
+import { useDarkMode, useRewardToggle } from '@/context'
+import { Button, Icon } from 'gfx-component-lib'
+import { ReactElement, useLayoutEffect } from 'react'
+import useBreakPoint from '@/hooks/useBreakPoint'
 
 export const LiteProToggle = (): ReactElement => {
     const { isProMode, setIsProMode, setIsPortfolio } = useRewardToggle()
     const { mode } = useDarkMode()
+    const {isMobile} = useBreakPoint();
+    useLayoutEffect(() => {
+        if (isMobile) {
+            setIsProMode.off()
+        }
+    }, [isMobile])
     return (
         <Button
             className={`h-[30px] w-[75px] border-[1.5px] border-solid 
@@ -14,6 +21,7 @@ export const LiteProToggle = (): ReactElement => {
                 setIsPortfolio.off()
                 setIsProMode.toggle()
             }}
+            disabled={isMobile}
         >
             <Icon src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`} 
             alt="?-icon" className="max-sm:mr-2.5" size='sm' />

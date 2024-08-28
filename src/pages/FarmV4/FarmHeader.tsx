@@ -5,7 +5,7 @@ import { poolType, SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { Button, cn, Container, ContainerTitle, Icon } from 'gfx-component-lib'
+import { Button, cn, Container, ContainerTitle, Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
@@ -147,24 +147,26 @@ export const FarmHeader: FC = () => {
     return '$' + truncateBigNumber(totalFees)
   }, [allPoolSslData, sslTotalFees])
 
-  const infoCards = userPubKey
-    ? [
-      { name: 'Total Earned', value: totalEarnings },
-      { name: 'TVL', value: TVL },
+  const infoCards = useMemo(() => {
+    const data = [
+      { name: 'TVL', value: TVL,
+        tooltip: 'TVL represents the total USD value of all assets deposited in our pools' },
       {
         name: '24H Volume',
-        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
+        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded,
+        tooltip: ''
       },
-      { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
-    ]
-    : [
-      { name: 'TVL', value: TVL },
       {
-        name: '24H Volume',
-        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded
-      },
-      { name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees }
+        name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees,
+        tooltip: ''
+      }
     ]
+    if (userPubKey) {
+      data.unshift({ name: 'Total Earned', value: totalEarnings,
+        tooltip: '' })
+    }
+    return data
+  }, [userPubKey])
   const options = useMemo(
     () => [
       {
@@ -189,14 +191,14 @@ export const FarmHeader: FC = () => {
 
   return (
     <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
-      {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool}/>}
+      {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />}
       <DepositWithdrawSlider />
       <DocsBanner />
       <div className="relative mb-3.75">
         <div className="flex flex-row items-center mb-1.5">
-          <Icon 
-            src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`} 
-            size="sm" 
+          <Icon
+            src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
+            size="sm"
             className="mr-1.5">
           </Icon>
           <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isProMode ? 'PRO' : 'LITE'}</h4>
@@ -260,17 +262,24 @@ export const FarmHeader: FC = () => {
             />
           )}
           <div className="flex flex-row gap-2.5 self-stretch">
-            {infoCards?.map((card) => (
+            {infoCards.map((card) => (
               <Container
-                key={card?.name}
+                key={card.name}
                 className={'w-[130px] justify-center h-full'}
                 colorScheme={'primaryGradient'}
                 size={'lg'}
               >
                 <ContainerTitle className={'z-[1]'}>
-                  <h4 className="text-tiny font-semibold text-grey-1 dark:text-grey-2 underline decoration-dotted mb-1">
-                    {card?.name}:
-                  </h4>
+                  <Tooltip>
+                    <TooltipTrigger className={`text-grey-1 dark:text-grey-2 !cursor-pointer
+                    text-tiny font-semibold  underline decoration-dotted mb-1 underline-offset-4`}
+                                    disabled={!(card.tooltip.trim())}>
+                        {card?.name}:
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {card.tooltip}
+                    </TooltipContent>
+                  </Tooltip>
                   &nbsp;
                 </ContainerTitle>
                 <h2> {card.value}</h2>

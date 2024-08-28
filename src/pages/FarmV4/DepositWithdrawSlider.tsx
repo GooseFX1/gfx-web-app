@@ -113,13 +113,18 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   return (
-    <Dialog open={operationPending} onOpenChange={setOperationPending}>
+    <Dialog open={operationPending} onOpenChange={setOperationPending}
+    >
       <DialogOverlay />
+
       <DialogContent className={`sm:w-[393px] max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px]
       `}
         fullScreen={true} 
-        placement={isMobile?'bottom':'right'}>
+        placement={isMobile?'bottom':'right'}
+         onInteractOutside={(e) => e.preventDefault()}
+
+      >
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
