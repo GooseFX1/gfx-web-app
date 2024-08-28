@@ -31,6 +31,8 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
+  const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
+
   const {
     operationPending,
     setOperationPending
@@ -57,7 +59,7 @@ export const DepositWithdrawSlider: FC = () => {
     (input: string, sourceToken: boolean) => {
       // handle if the user sends '' or undefined in input box
       if (input === '') {
-        if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+        if (isDeposit) {
           if (sourceToken) setUserSourceDepositAmount(null)
           else setUserTargetDepositAmount(null)
         } else {
@@ -68,7 +70,7 @@ export const DepositWithdrawSlider: FC = () => {
       }
       const inputValue = +input
       if (!isNaN(inputValue)) {
-        if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+        if (isDeposit) {
           if (sourceToken) setUserSourceDepositAmount(new BigNumber(input))
           else setUserTargetDepositAmount(new BigNumber(input))
         } else {
@@ -83,7 +85,7 @@ export const DepositWithdrawSlider: FC = () => {
   //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(
     (sourceToken: boolean) => {
-      if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (isDeposit) {
         if (sourceToken) {
           setUserSourceDepositAmount(
             userSourceTokenBal ? new BigNumber(userSourceTokenBal).div(2) : new BigNumber(0)
@@ -101,7 +103,7 @@ export const DepositWithdrawSlider: FC = () => {
   //TODO::need to handle the max case for withdraw once we get the onChain data
   const handleMax = useCallback(
     (sourceToken: boolean) => {
-      if (modeOfOperation === ModeOfOperation.DEPOSIT) {
+      if (isDeposit) {
         if (sourceToken) {
           setUserSourceDepositAmount(userSourceTokenBal ? new BigNumber(userSourceTokenBal) : new BigNumber(0))
         } else {
@@ -111,7 +113,6 @@ export const DepositWithdrawSlider: FC = () => {
     },
     [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
   )
-
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}
     >
@@ -134,10 +135,10 @@ export const DepositWithdrawSlider: FC = () => {
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
             <DepositWithdrawAccordion />
-            <DepositWithdrawLabel text="1. Add Deposits" />
+            <DepositWithdrawLabel text={`1. Add ${isDeposit?'Deposit':'Withdraw'}`} />
             <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />
             <DepositWithdrawInput
-              isDeposit={modeOfOperation === ModeOfOperation.DEPOSIT}
+              isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, true)}
               depositAmount={userSourceDepositAmount}
               withdrawAmount={userSourceWithdrawAmount}
@@ -148,7 +149,7 @@ export const DepositWithdrawSlider: FC = () => {
             />
             <TokenRow token={selectedCard?.targetToken} balance={userTargetTokenBal} />
             <DepositWithdrawInput
-              isDeposit={modeOfOperation === ModeOfOperation.DEPOSIT}
+              isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, false)}
               depositAmount={userTargetDepositAmount}
               withdrawAmount={userTargetWithdrawAmount}
@@ -161,7 +162,7 @@ export const DepositWithdrawSlider: FC = () => {
               <SwapNow />
             )}
           </div>
-          <StickyFooter />
+          <StickyFooter isDeposit={isDeposit} />
         </DialogBody>
       </DialogContent>
     </Dialog>

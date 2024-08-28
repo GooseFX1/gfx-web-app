@@ -4,9 +4,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Icon } from 'gfx-component-lib'
 import { useDarkMode } from '@/context'
 
-const StickyFooter: FC = (): ReactElement => {
+type StickyFooterProps  = {
+  isDeposit: boolean
+}
+const StickyFooter: FC<StickyFooterProps> = ({isDeposit}): ReactElement => {
   const {connected} = useWallet()
-  const {mode} = useDarkMode()
+  const {mode,isDarkMode} = useDarkMode()
 
   return (
     <div className='fixed h-[55px] w-full flex flex-row bottom-0 border-t 
@@ -19,20 +22,25 @@ const StickyFooter: FC = (): ReactElement => {
         //   onClick={depositWithdrawOnClick}
         //   isLoading={isLoading}
         >
-          Deposit
+          {isDeposit?'Deposit':'Withdraw'}
         </Button>
       ) : (
         <Connect containerStyle={'h-8.75 w-[235px] z-0'} customButtonStyle={'h-8.75 w-[235px]'} />
       )}
-      <div className='mx-2.5 h-8.75 w-8.75 rounded-full border-[1.5px] border-solid dark:border-white 
-            border-blue-1 flex justify-center items-center cursor-pointer'>
+      <Button variant={'outline'}
+              colorScheme={isDarkMode ? 'default' : 'blue'}
+      className={'p-1.5 bg-white'}
+      >
         <Icon src={`img/assets/refresh_${mode}.svg`} size='sm' />
-      </div>
-      <div className='h-8.75 w-[82px] rounded-full border-[1.5px] border-solid dark:border-white 
-            border-blue-1 flex justify-between items-center py-[7.5px] px-2.5 cursor-pointer'>
-            <Icon src={`img/assets/footer_filter_${mode}.svg`} size='sm' />
-            <span className='font-bold text-regular text-black-4 dark:text-white'>0.1%</span>
-      </div>
+      </Button>
+      <Button
+        variant={'outline'}
+        colorScheme={isDarkMode ? 'default' : 'blue'}
+        className={'bg-white'}
+        iconLeft={<Icon src={`img/assets/footer_filter_${mode}.svg`} size="sm" />}
+      >
+        <span className="font-bold text-regular text-black-4 dark:text-white">0.1%</span>
+      </Button>
     </div>
   )
 }
