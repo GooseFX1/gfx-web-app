@@ -271,8 +271,10 @@ export const FarmHeader: FC = () => {
               >
                 <ContainerTitle className={'z-[1]'}>
                   <Tooltip>
-                    <TooltipTrigger className={`text-grey-1 dark:text-grey-2 !cursor-pointer
-                    text-tiny font-semibold  underline decoration-dotted mb-1 underline-offset-4`}
+                    <TooltipTrigger className={cn(`text-grey-1 dark:text-grey-2 !cursor-pointer
+                    text-tiny font-semibold`,
+                    card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
+                    )}
                                     disabled={!(card.tooltip.trim())}>
                         {card?.name}:
                     </TooltipTrigger>

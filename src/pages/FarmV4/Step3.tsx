@@ -105,7 +105,6 @@ const Step3: FC<{
                 <span className="text-regular font-semibold text-yellow-2">~0.2 SOL</span>
             </div>
         </div>
-        <div className='h-[15px] border-b border-solid dark:border-black-4 border-grey-4'></div>
     </>
 )
 
