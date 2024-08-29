@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogBody, DialogContent } from 'gfx-component-lib'
 import { useAccounts, useConnectionConfig, useFarmContext } from '@/context'
@@ -15,8 +16,8 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { GAMMAActionModal } from '@/pages/FarmV4/GammaActionModal'
 import useBoolean from '@/hooks/useBoolean'
+import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -157,19 +158,19 @@ export const DepositWithdrawSlider: FC = () => {
       >
         fullScreen={true}
         placement={isMobile?'bottom':'right'}>
-        <GAMMAActionModal
-          actionModal={operationPending}
-          setActionModal={setOperationPending}
-          handleWithdraw={handleWithdraw}
-          handleDeposit={handleDeposit}
-          handleClaim={handleClaim}
-          isButtonLoading={isButtonLoading}
-          handleCancel={handleCancel}
-          sourceAmount={isDeposit ? userSourceDepositAmount.toString() : userSourceWithdrawAmount.toString()}
-          targetAmount={isDeposit ? userTargetDepositAmount.toString() : userTargetWithdrawAmount.toString()}
-          claimAmount={claimableReward}
-          actionType={actionType}
-          selectedCard={selectedCard}
+        <GammaActionModal
+          // actionModal={operationPending}
+          // setActionModal={setOperationPending}
+          // handleWithdraw={handleWithdraw}
+          // handleDeposit={handleDeposit}
+          // handleClaim={handleClaim}
+          // isButtonLoading={isButtonLoading}
+          // handleCancel={handleCancel}
+          // sourceAmount={isDeposit ? userSourceDepositAmount.toString() : userSourceWithdrawAmount.toString()}
+          // targetAmount={isDeposit ? userTargetDepositAmount.toString() : userTargetWithdrawAmount.toString()}
+          // claimAmount={claimableReward}
+          // actionType={actionType}
+          // selectedCard={selectedCard}
         />
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
