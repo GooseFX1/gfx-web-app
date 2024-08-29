@@ -17,15 +17,8 @@ import {
   fetchPortfolioStats,
   fetchUser
 } from '../api/gamma'
-import {
-  GAMMAConfig, GAMMAPool,
-  // GAMMAPool,
-  GAMMAProtocolStats,
-  GAMMAUser,
-  UserPortfolioLPPosition,
-  UserPortfolioStats
-} from '../types/gamma'
-  import { useWalletBalance } from '@/context/walletBalanceContext'
+import { GAMMAConfig, GAMMAProtocolStats, GAMMAUser, UserPortfolioLPPosition, UserPortfolioStats } from '../types/gamma'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 import { BASE_SLIPPAGE } from '@/context/farm'
 
 interface GAMMADataModel {

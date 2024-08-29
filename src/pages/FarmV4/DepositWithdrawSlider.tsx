@@ -177,6 +177,7 @@ export const DepositWithdrawSlider: FC = () => {
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}>
       <div className={`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
+      dark:bg-opacity-50
       backdrop-blur-sm
       `}
       />
