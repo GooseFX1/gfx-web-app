@@ -9,7 +9,7 @@ import {
 } from '../api/gamma'
 import {
   GAMMAConfig,
-  GAMMAPool,
+  // GAMMAPool,
   GAMMAProtocolStats,
   GAMMAUser,
   UserPortfolioLPPosition,
