@@ -69,8 +69,11 @@ const StickyFooter: FC<StickyFooterProps> = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
-                          side={'bottom'}
-                          sideOffset={isMobile ? -44 : 5}
+                          sideOffset={isMobile ?
+                            canClaim ? -90 : -44 :
+                            5}
+                          align={isMobile ? 'center' : 'end'}
+                          alignOffset={0}
           >
             <div className={'flex gap-1 items-center'}>
               <h5>Liquidity Slippage</h5>

@@ -153,6 +153,12 @@ export const DepositWithdrawSlider: FC = () => {
     setIsButtonLoading.off()
     setOperationPending(false)
     setIsClaim.off()
+    setActionType('')
+  }
+  const handleActionCancel = () => {
+    setActionType('')
+    setIsClaim.off()
+    setIsButtonLoading.off()
   }
   const claimableReward = new BigNumber(0)
 
@@ -191,7 +197,7 @@ export const DepositWithdrawSlider: FC = () => {
           isOpen={actionType != '' && actionType != 'deposit'}
           setIsOpen={(b) => {
             if (!b) {
-              handleCancel()
+              handleActionCancel()
             }
           }}
           title={actionModalTitle}
