@@ -140,11 +140,7 @@ const MobileNav: FC = () => {
   const [isOpen, setIsOpen] = useBoolean(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
-  const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
-  // const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
-  // const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
-  const tradeActive =
-    pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
+
   const isLeaderboardOpen = pathname.includes('leaderboard')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
@@ -166,6 +162,25 @@ const MobileNav: FC = () => {
               overflow-y-scroll`}
           >
             <ListItem
+              variant={pathname.includes('farm') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/farm')
+              }}
+            >
+              <img
+                className="h-[35px] w-[35px]"
+                src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
+                alt="dark"
+              />
+              &nbsp;Pool
+            </ListItem>
+            <ListItem
               variant={pathname.includes('ssl') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
@@ -184,35 +199,17 @@ const MobileNav: FC = () => {
               />
               &nbsp;SSL
             </ListItem>
-            <ListItem
-              variant={pathname.includes('farm') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/farm')
-              }}
-            >
-              <img
-                className="h-[35px]"
-                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-                alt="dark"
-              />
-              &nbsp;Farm
-            </ListItem>
+
             <Accordion type={'single'} collapsible variant={'unset'}>
-              <AccordionItem value={'trade'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={tradeActive} className={'text-h3 px-2.5'}>
+              <AccordionItem value={'leaderboard'} variant={'unset'}>
+                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-1.25'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
-                      src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
+                      src={`/img/mainnav/more-${mode}${isLeaderboardOpen ? '-active' : ''}.svg`}
                       alt="dark"
-                    />{' '}
-                    &nbsp;Trade
+                    />
+                    &nbsp;More
                   </span>
                 </AccordionTrigger>
                 <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
@@ -234,32 +231,6 @@ const MobileNav: FC = () => {
                     }}
                     isActive={pathname.includes('account')}
                   />
-                  <MobileAccordionContent
-                    title={'Referrals'}
-                    description={'Refer your friends to earn a share of their fees.'}
-                    onClick={() => {
-                      setIsOpen.off()
-                      changePanel(1)
-                      rewardToggle(!rewardModal)
-                    }}
-                    isActive={panelIndex == 1}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <Accordion type={'single'} collapsible variant={'unset'}>
-              <AccordionItem value={'leaderboard'} variant={'unset'}>
-                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-2.5'}>
-                  <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
-                    <img
-                      className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${isLeaderboardOpen ? '-active' : ''}.svg`}
-                      alt="dark"
-                    />
-                    &nbsp;More
-                  </span>
-                </AccordionTrigger>
-                <AccordionContent variant={'unset'} className={'flex flex-col gap-1.5 pt-2.5'}>
                   <MobileAccordionContent
                     title={'Bridge'}
                     description={'Bridge your assets to and from other chains'}
@@ -294,7 +265,7 @@ const MobileNav: FC = () => {
                       navigateTo(NAV_LINKS.docs, '_blank')
                     }}
                   />
-                  <div className={'inline-flex items-center justify-center gap-8 mt-1'}>
+                  <div className={'inline-flex items-center justify-center gap-8 my-1'}>
                     <SocialLinks />
                   </div>
                 </AccordionContent>
@@ -322,16 +293,28 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
-  const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
-  const [isTradeOpen, setIsTradeOpen] = useBoolean(false)
   const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
 
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
-  const tradeActive =
-    pathname.includes('trade') || (rewardModal && panelIndex == 1) || pathname.includes('account')
+
   return (
     <div className={`flex items-center gap-6 mx-auto`}>
+      <Button
+        variant={'ghost'}
+        onClick={() => history.push('/farm')}
+        className={cn(
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
+        <img
+          className="w-[26px] h-[26px] mb-0.5"
+          src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
+          alt="dark"
+        />
+        Pool
+      </Button>
       <Button
         variant={'ghost'}
         onClick={() => history.push('/ssl')}
@@ -347,72 +330,7 @@ const DesktopNav: FC = () => {
         />
         SSL
       </Button>
-      <Button
-        variant={'ghost'}
-        onClick={() => history.push('/farm')}
-        className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-        )}
-      >
-        <img
-          className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
-          alt="dark"
-        />
-        Farm
-      </Button>
-      <DropdownMenu onOpenChange={setIsTradeOpen.toggle}>
-        <DropdownMenuTrigger asChild={true}>
-          <Button
-            variant={'ghost'}
-            className={cn(
-              `tracking-wider flex-col gap-0 p-0 text-center justify-center items-center 
-              text-h6 font-semibold font-poppins`,
-              tradeActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-            )}
-          >
-            <span className={`inline-flex justify-center items-center`}>
-              <img
-                className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/trade-${mode}${tradeActive ? '-active' : ''}.svg`}
-                alt="dark"
-              />
-              <CircularArrow
-                cssStyle={tw`w-[12px] h-[12px]`}
-                invert={isTradeOpen}
-                css={[tradeActive || isTradeOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
-              />
-            </span>
-            Trade
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
-          <DropdownMenuItem onClick={() => history.push('/trade')} isActive={pathname.includes('trade')}>
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
-              <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => history.push('/account')} isActive={pathname.includes('account')}>
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
-              <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              changePanel(1)
-              rewardToggle(!rewardModal)
-            }}
-          >
-            <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>
-              <p className={'text-b3'}>Refer your friends to earn a share of their fees</p>
-            </div>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+
       <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
         <DropdownMenuTrigger asChild={true}>
           <Button
@@ -438,6 +356,24 @@ const DesktopNav: FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
+          <DropdownMenuItem
+            onClick={() => history.push('/trade')}
+            isActive={pathname.includes('trade')}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
+              <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => history.push('/account')}
+            isActive={pathname.includes('account')}
+          >
+            <div>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
+              <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => history.push('/bridge')}
             isActive={pathname.includes('bridge')}

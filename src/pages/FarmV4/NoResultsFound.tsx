@@ -2,8 +2,9 @@ import React, { FC } from 'react'
 import { useDarkMode } from '@/context'
 import { Button, cn } from 'gfx-component-lib'
 import Lottie from 'lottie-react'
-import NoResultFarmdark from '@/animations/NoResultFarmdark.json'
-import NoResultFarmlite from '@/animations/NoResultFarmlite.json'
+import NoResultsFoundDark from '@/animations/gamma_pool_dark.json'
+import NoResultsFoundLite from '@/animations/gamma_pool_lite.json'
+
 import { navigateToCurried } from '@/utils/requests'
 import { SOCIAL_MEDIAS } from '@/constants'
 
@@ -12,7 +13,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
   subText,
   requestPool
 }) => {
-  const { mode } = useDarkMode()
+  const { isDarkMode } = useDarkMode()
   return (
     <div css={cn(` flex flex-col mt-[30px] max-sm:mt-0`, requestPool ? `h-[258px]` : `h-[208px]`)}>
       <div
@@ -20,7 +21,7 @@ const NoResultsFound: FC<{ str?: string; subText?: string; requestPool?: boolean
           dark:text-white text-black"
       >
         <Lottie
-          animationData={mode === 'dark' ? NoResultFarmdark : NoResultFarmlite}
+          animationData={isDarkMode ? NoResultsFoundDark : NoResultsFoundLite}
           className="h-[97px] max-sm:h-[81px] w-[168px] mx-auto"
         />
       </div>

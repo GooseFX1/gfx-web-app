@@ -34,17 +34,11 @@ const FarmItems: FC<{
   //   setSortType(sortValue)
   // }
 
-  const noResultsTitle =
-    Boolean(searchTokens) && !showDeposited ? 'Oops, no pools found' : 'Oops, no pools deposited'
-  const noResultsSubText =
-    Boolean(searchTokens) && !showDeposited
-      ? 'Don’t worry, there are more pools coming soon...'
-      : 'Don’t worry, explore our pools and start earning!'
-
   return (
     <div className={''}>
       {(numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
-        <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
+        <NoResultsFound requestPool={!showDeposited} str={"No Deposits"}
+                        subText={"Don’t worry, explore or create a pool to get started and start earning!"} />
       ) : isProMode ? (
         <>
           <FarmFilter sort={sort} sortType={sortType} />
