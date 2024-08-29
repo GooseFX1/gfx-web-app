@@ -2,9 +2,10 @@ import { FC, ReactElement, useState } from 'react'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Icon, IconTooltip, Input, Popover, PopoverContent, PopoverTrigger } from 'gfx-component-lib'
-import { BASE_SLIPPAGE, useDarkMode, useFarmContext } from '@/context'
+import { BASE_SLIPPAGE, useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useGammaContext } from '@/context/gamma'
 
 type StickyFooterProps = {
   isDeposit: boolean
@@ -27,7 +28,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
   const { connected } = useWallet()
   const { isMobile } = useBreakPoint()
   const { mode, isDarkMode } = useDarkMode()
-  const { slippage, setSlippage, isCustomSlippage } = useFarmContext()
+  const { slippage, setSlippage, isCustomSlippage } = useGammaContext()
   const [value, setValue] = useState<number>(0)
   const localIsCustomSlippage = isCustomSlippage || !BASE_SLIPPAGE.includes(value)
   return (
@@ -46,7 +47,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
             {isDeposit ? 'Deposit' : 'Withdraw'}
           </Button>
         ) : (
-          <Connect containerStyle={'h-8.75 w-[235px] z-0'} customButtonStyle={'h-8.75 w-[235px]'} />
+          <Connect fullWidth containerStyle={'h-8.75 z-0'} customButtonStyle={'h-8.75 '} />
         )}
         <Button variant={'outline'}
                 colorScheme={isDarkMode ? 'default' : 'blue'}

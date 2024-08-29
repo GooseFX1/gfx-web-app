@@ -7,7 +7,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState
 } from 'react'
 import { usePriceFeedFarm } from '.'
@@ -52,9 +51,7 @@ interface FarmData {
   connectionId: string
   selectedCard: any
   setSelectedCard: Dispatch<SetStateAction<any>>
-  slippage: number
-  setSlippage: Dispatch<SetStateAction<number>>
-  isCustomSlippage: boolean
+
 }
 
 const FarmContext = createContext<FarmData | null>(null)
@@ -79,10 +76,7 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
   const [connectionId, setConnectionId] = useState<string>()
   const [selectedCard, setSelectedCard] = useState<any>()
-  const [slippage, setSlippage] = useState<number>(0.1)
-  const isCustomSlippage = useMemo(() =>
-      !BASE_SLIPPAGE.includes(slippage)
-    , [slippage])
+
   const { on, off } = useSolSub()
 
   useEffect(() => {
@@ -356,9 +350,6 @@ export const FarmProvider: FC<{ children: ReactNode }> = ({ children }) => {
         connectionId: connectionId,
         selectedCard: selectedCard,
         setSelectedCard: setSelectedCard,
-        slippage,
-        setSlippage,
-        isCustomSlippage
       }}
     >
       {children}

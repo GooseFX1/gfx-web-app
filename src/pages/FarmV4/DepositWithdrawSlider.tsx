@@ -138,11 +138,11 @@ export const DepositWithdrawSlider: FC = () => {
     setActionType('claim')
   }
   const handleProcessStart = (type: 'claim' | 'withdraw') => {
-    return ()=>{
+    return () => {
       if (type === 'claim') {
         setIsClaim.on()
       }
-      console.log('performing',type)
+      console.log('performing', type)
       setOperationPending(true)
       setActionType(type)
     }
@@ -156,18 +156,18 @@ export const DepositWithdrawSlider: FC = () => {
   }
   const claimableReward = new BigNumber(0)
 
-  const { actionLabel,actionModalTitle } = useMemo(()=>{
+  const { actionLabel, actionModalTitle } = useMemo(() => {
     let actionModalTitle = 'Withdraw'
     let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.sourceToken} +
      ${userTargetWithdrawAmount} ${selectedCard?.targetToken}`
 
-   if(isClaim) {
-     actionModalTitle = 'Claim'
+    if (isClaim) {
+      actionModalTitle = 'Claim'
       actionLabel = `Claim ${claimableReward} SOME REWARD HERE`
     }
 
-    return {actionLabel,actionModalTitle}
-  },[isDeposit,isClaim])
+    return { actionLabel, actionModalTitle }
+  }, [isDeposit, isClaim])
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}
     >
@@ -188,35 +188,35 @@ export const DepositWithdrawSlider: FC = () => {
         fullScreen={true}
         placement={isMobile?'bottom':'right'}>
         <GammaActionModal
-          isOpen={actionType!='' && actionType!='deposit'}
-          setIsOpen={(b)=>{
+          isOpen={actionType != '' && actionType != 'deposit'}
+          setIsOpen={(b) => {
             if (!b) {
               handleCancel()
             }
           }}
           title={actionModalTitle}
           actionLabel={actionLabel}
-          onActionClick={!isDeposit?handleWithdraw:isClaim?handleClaim:handleDeposit}
+          onActionClick={!isDeposit ? handleWithdraw : isClaim ? handleClaim : handleDeposit}
           actionType={actionType}
         >
-        <GammaActionModalContentStack options={[
-          {
-            textLeft: 'SOL Amount',
-            textRight: '≈ 0.5 SOL'
-          },
-          {
-            textLeft: 'USDC Amount',
-            textRight: '$12.0'
-          },
-          {
-            textLeft: 'Claim Reward',
-            textRight: '2500 GOFX'
-          },
-          {
-            textLeft: 'Total USDC',
-            textRight: '≈ $90.00'
-          }
-        ]} />
+          <GammaActionModalContentStack options={[
+            {
+              textLeft: 'SOL Amount',
+              textRight: '≈ 0.5 SOL'
+            },
+            {
+              textLeft: 'USDC Amount',
+              textRight: '$12.0'
+            },
+            {
+              textLeft: 'Claim Reward',
+              textRight: '2500 GOFX'
+            },
+            {
+              textLeft: 'Total USDC',
+              textRight: '≈ $90.00'
+            }
+          ]} />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
@@ -256,7 +256,7 @@ export const DepositWithdrawSlider: FC = () => {
           <StickyFooter
             disableActionButton={false}
             isLoading={false}
-            onActionClick={isDeposit?handleDeposit:handleProcessStart('withdraw')}
+            onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
             isDeposit={isDeposit}
             canClaim={true || isClaim}
             claimText={'Claim 0.5 SOL + 12.0 USDC'}
