@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent } from 'gfx-component-lib'
+import { Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
 import { useAccounts, useConnectionConfig, useFarmContext } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -18,10 +18,11 @@ import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
+import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
-  const {isMobile} = useBreakPoint()
+  const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
   const { selectedCard } = useFarmContext()
@@ -34,8 +35,9 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
-  const [isButtonLoading, setIsButtonLoading] = useBoolean();
+  const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
+  const [isClaim, setIsClaim] = useBoolean(false)
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
 
   const {
@@ -118,27 +120,54 @@ export const DepositWithdrawSlider: FC = () => {
     },
     [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
   )
-  const handleWithdraw = ()=>{
+  const handleWithdraw = () => {
     console.log('withdraw')
-    setActionType('withdraw')
+
+
   }
-  const handleDeposit = ()=>{
+  const handleDeposit = () => {
     console.log('withdraw')
     setActionType('deposit')
+    setOperationPending(true)
+
   }
-  const handleClaim = ()=>{
+  const handleClaim = () => {
     console.log('withdraw')
     setIsButtonLoading.on()
-    setIsButtonLoading.off()
+    setOperationPending(true)
     setActionType('claim')
   }
-  const handleCancel = () =>{
+  const handleProcessStart = (type: 'claim' | 'withdraw') => {
+    return ()=>{
+      if (type === 'claim') {
+        setIsClaim.on()
+      }
+      console.log('performing',type)
+      setOperationPending(true)
+      setActionType(type)
+    }
+  }
+
+  const handleCancel = () => {
     console.log('cancel')
     setIsButtonLoading.off()
     setOperationPending(false)
+    setIsClaim.off()
   }
   const claimableReward = new BigNumber(0)
 
+  const { actionLabel,actionModalTitle } = useMemo(()=>{
+    let actionModalTitle = 'Withdraw'
+    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.sourceToken} +
+     ${userTargetWithdrawAmount} ${selectedCard?.targetToken}`
+
+   if(isClaim) {
+     actionModalTitle = 'Claim'
+      actionLabel = `Claim ${claimableReward} SOME REWARD HERE`
+    }
+
+    return {actionLabel,actionModalTitle}
+  },[isDeposit,isClaim])
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}
     >
@@ -159,25 +188,42 @@ export const DepositWithdrawSlider: FC = () => {
         fullScreen={true}
         placement={isMobile?'bottom':'right'}>
         <GammaActionModal
-          // actionModal={operationPending}
-          // setActionModal={setOperationPending}
-          // handleWithdraw={handleWithdraw}
-          // handleDeposit={handleDeposit}
-          // handleClaim={handleClaim}
-          // isButtonLoading={isButtonLoading}
-          // handleCancel={handleCancel}
-          // sourceAmount={isDeposit ? userSourceDepositAmount.toString() : userSourceWithdrawAmount.toString()}
-          // targetAmount={isDeposit ? userTargetDepositAmount.toString() : userTargetWithdrawAmount.toString()}
-          // claimAmount={claimableReward}
-          // actionType={actionType}
-          // selectedCard={selectedCard}
-        />
+          isOpen={actionType!='' && actionType!='deposit'}
+          setIsOpen={(b)=>{
+            if (!b) {
+              handleCancel()
+            }
+          }}
+          title={actionModalTitle}
+          actionLabel={actionLabel}
+          onActionClick={!isDeposit?handleWithdraw:isClaim?handleClaim:handleDeposit}
+          actionType={actionType}
+        >
+        <GammaActionModalContentStack options={[
+          {
+            textLeft: 'SOL Amount',
+            textRight: '≈ 0.5 SOL'
+          },
+          {
+            textLeft: 'USDC Amount',
+            textRight: '$12.0'
+          },
+          {
+            textLeft: 'Claim Reward',
+            textRight: '2500 GOFX'
+          },
+          {
+            textLeft: 'Total USDC',
+            textRight: '≈ $90.00'
+          }
+        ]} />
+        </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
             <DepositWithdrawAccordion />
-            <DepositWithdrawLabel text={`1. Add ${isDeposit?'Deposit':'Withdraw'}`} />
+            <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
             <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
@@ -204,8 +250,19 @@ export const DepositWithdrawSlider: FC = () => {
               <SwapNow />
             )}
           </div>
-          <StickyFooter isDeposit={isDeposit} />
+
         </DialogBody>
+        <DialogFooter>
+          <StickyFooter
+            disableActionButton={false}
+            isLoading={false}
+            onActionClick={isDeposit?handleDeposit:handleProcessStart('withdraw')}
+            isDeposit={isDeposit}
+            canClaim={true || isClaim}
+            claimText={'Claim 0.5 SOL + 12.0 USDC'}
+            onClaimClick={handleProcessStart('claim')}
+          />
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
