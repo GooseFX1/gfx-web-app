@@ -28,67 +28,62 @@ export const FarmContainer: FC = () => {
   const { userCache, updateUserCache } = useConnectionConfig()
   const { pools, GAMMA_SORT_CONFIG } = useGamma()
   const { wallet } = useWallet()
-  const {
-    operationPending,
-    pool,
-    setPool
-  } = useFarmContext()
+  const { operationPending, pool, setPool } = useFarmContext()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
-  const [value, setValue] = useState('1')
+  const [currentSort, setCurrentSort] = useState<string>('1')
   const [showCreatedPools, setShowCreatedPools] = useBoolean(false)
-  
+
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
 
-  //TODO::need to change the calculation upon getting onchain data
+  //TODO: need to change the calculation upon getting onchain data
   const numberOfTokensDeposited = 0
 
-  // const farmTableRow = useMemo(
-  //   () =>
-  //     sslData.map((token: SSLToken) => {
-  //       const tokenName = token?.token === 'SOL' ? 'WSOL' : token?.token
-  //       const apy = Number(sslTableData?.[tokenName]?.apy)
-  //       const volume = sslTableData?.[tokenName]?.volume / 1_000_000
-  //       const nativeFees = sslTableData?.[tokenName]?.fee / 10 ** token?.mintDecimals
-  //       const feesInUSD =
-  //         prices[getPriceObject(token?.token)]?.current &&
-  //         prices[getPriceObject(token?.token)]?.current * nativeFees
-  //       const nativeLiquidity = liquidityAmount?.[token?.mint?.toBase58()]
-  //       const liquidityInUSD =
-  //         prices[getPriceObject(token?.token)]?.current &&
-  //         prices[getPriceObject(token?.token)]?.current * nativeLiquidity
-  //       const account = filteredLiquidityAccounts[token?.mint?.toBase58()]
-  //       const amountDeposited = formatUserBalance(account?.amountDeposited?.toString(), token?.mintDecimals)
-  //       const beforeDecimal = amountDeposited?.beforeDecimalBN
-  //       const dataObj = {
-  //         ...token,
-  //         apy: apy,
-  //         volume: volume,
-  //         fee: feesInUSD,
-  //         liquidity: liquidityInUSD,
-  //         beforeDecimal: beforeDecimal
-  //       }
-  //       return dataObj
-  //     }),
-  //   [sslData, sslTableData, liquidityAmount, filteredLiquidityAccounts]
-  // )
+  const filteredPools = useMemo(() => {
+    const filterPools = (pools) =>
+      pools.filter((pool) => {
+        const matchesSearch =
+          !searchTokens ||
+          pool.sourceToken.toLowerCase().includes(searchTokens.toLowerCase()) ||
+          pool.targetToken.toLowerCase().includes(searchTokens.toLowerCase())
+        const matchesCreated = !showCreatedPools || pool.isOwner === true
+        return matchesSearch && matchesCreated
+      })
 
-  const filteredTokens = useMemo(
-    () =>
-      searchTokens
-        ? pools?.filter(
-          (token) =>
-            token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
-            token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
-        )
-        : [...pools],
-    [searchTokens, pools]
-  )
+    const sortPools = (filteredPools) => {
+      const sortConfig = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
+      if (!sortConfig) return filteredPools
+      return filteredPools.sort((a, b) => {
+        switch (sortConfig.name) {
+          case 'Liquidity: High':
+            return b.liquidity - a.liquidity
+          case 'Liquidity: Low':
+            return a.liquidity - b.liquidity
+          case 'Volume: High':
+            return b.volume - a.volume
+          case 'Volume: Low':
+            return a.volume - b.volume
+          case 'Fees: High':
+            return b.fees - a.fees
+          case 'Fees: Low':
+            return a.fees - b.fees
+          case 'APR: High':
+            return b.apr - a.apr
+          case 'APR: Low':
+            return a.apr - b.apr
+          default:
+            return 0
+        }
+      })
+    }
+
+    return sortPools(filterPools(pools))
+  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG])
 
   useEffect(() => {
     if (pubKey === null && userCache.gamma.showDepositedFilter)
@@ -101,11 +96,7 @@ export const FarmContainer: FC = () => {
         })
         return false
       })
-  }, [pubKey,userCache])
-
-  // useEffect(() => {
-  //   sslData?.length && setInitialLoad(false)
-  // }, [sslData])
+  }, [pubKey, userCache])
 
   const initiateGlobalSearch = (value: string) => {
     setPool(poolType.all)
@@ -201,13 +192,14 @@ export const FarmContainer: FC = () => {
                       />
                     </div>
                     <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
-                    <DropdownMenuRadioGroup asChild value={value} onValueChange={setValue}>
+
+                    <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={setCurrentSort}>
                       <div className={'grid grid-cols-2 gap-1.5 items-center'}>
                         {GAMMA_SORT_CONFIG.map((s) => (
-                          <DropdownMenuItem isActive={value == s.id} asChild key={s.id}>
-                            <DropdownMenuRadioItem value={s.id} onSelect={(e) => e.preventDefault()}>
+                          <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
+                            <DropdownMenuRadioItem value={s.id}>
                               <DropdownMenuItemIndicator asChild forceMount className={'absolute top-0 right-0'}>
-                                <RadioGroup value={value}>
+                                <RadioGroup value={currentSort}>
                                   <RadioGroupItemAsIndicator value={s.id} />
                                 </RadioGroup>
                               </DropdownMenuItemIndicator>
@@ -244,10 +236,11 @@ export const FarmContainer: FC = () => {
             </div>
           </div>
           <FarmItems
-            tokens={filteredTokens}
+            tokens={filteredPools}
             numberOfTokensDeposited={numberOfTokensDeposited}
-            searchTokens={searchTokens}
-            showDeposited={showDeposited}
+            isSearchActive={searchTokens}
+            isDepositedActive={showDeposited}
+            isCreatedActive={showCreatedPools}
           />
         </>
       ) : (

@@ -45,15 +45,11 @@ export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
               `}>
             APR
           </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            This is the yield generated on a 24H basis annualized
-          </TooltipContent>
-        </Tooltip>
-        <div>
-          <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>185%</span>
-          </Badge>
+          <div>
+            <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
+              <span className={'font-poppins font-semibold my-0.5'}>{token?.apr}%</span>
+            </Badge>
+          </div>
         </div>
       </div>
     </>

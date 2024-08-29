@@ -38,12 +38,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
   const GAMMA_SORT_CONFIG = [
-    { id: '1', name: 'Position: High' },
-    { id: '2', name: 'Position: Low' },
-    { id: '3', name: 'Pending: High' },
-    { id: '4', name: 'Pending: Low' },
-    { id: '5', name: 'Earned: High' },
-    { id: '6', name: 'Earned: Low' },
+    { id: '1', name: 'Liquidity: High' },
+    { id: '2', name: 'Liquidity: Low' },
+    { id: '3', name: 'Volume: High' },
+    { id: '4', name: 'Volume: Low' },
+    { id: '5', name: 'Fees: High' },
+    { id: '6', name: 'Fees: Low' },
     { id: '7', name: 'APR: High' },
     { id: '8', name: 'APR: Low' }
   ]

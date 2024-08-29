@@ -12,33 +12,73 @@ import { Button } from 'gfx-component-lib'
 const FarmItems: FC<{
   tokens: any
   numberOfTokensDeposited: number
-  searchTokens: string
-  showDeposited: boolean
-}> = ({ tokens, numberOfTokensDeposited, showDeposited, searchTokens }) => {
+  isSearchActive: string
+  isDepositedActive: boolean
+  isCreatedActive: boolean
+}> = ({ tokens, numberOfTokensDeposited, isDepositedActive, isSearchActive, isCreatedActive }) => {
   // const [statsModal, setStatsModal] = useState<boolean>(false)
   const { filteredLiquidityAccounts, pool } = useFarmContext()
   const { isProMode } = useRewardToggle()
   const [sort, setSort] = useState<string>('ASC')
   const [sortType, setSortType] = useState<string>(null)
 
-  // const handleColumnSort = (sortValue: string) => {
-  //   if (sortValue === 'balance') {
-  //     sortUserBalances(sortValue)
-  //     return
-  //   }
-  //   farmTableRow.sort((a, b) => {
-  //     if (sort === 'DESC') return a[sortValue] > b[sortValue] ? -1 : 1
-  //     else return a[sortValue] > b[sortValue] ? 1 : -1
-  //   })
-  //   setSort((prev) => (prev === 'ASC' ? 'DESC' : 'ASC'))
-  //   setSortType(sortValue)
-  // }
+  const noPoolsFound = {
+    title: 'Oops, no pools found',
+    subText: 'Don’t worry, there are more pools coming soon...'
+  }
+  const noPoolsDeposited = {
+    title: 'Oops, no pools deposited',
+    subText: 'Don’t worry, explore our pools and start earning!'
+  }
+  const noCreatedPools = {
+    title: 'Oops, no created pools',
+    subText: 'Don’t worry, you can always create one!'
+  }
+  let noResultsTitle = ''
+  let noResultsSubText = ''
+  switch (true) {
+    case !Boolean(isSearchActive) && !isDepositedActive && !isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+    case Boolean(isSearchActive) && isDepositedActive && isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+    case Boolean(isSearchActive) && !isDepositedActive && !isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+    case Boolean(isSearchActive) && !isDepositedActive && isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+    case Boolean(isSearchActive) && isDepositedActive && !isCreatedActive:
+      noResultsTitle = noPoolsDeposited.title
+      noResultsSubText = noPoolsDeposited.subText
+      break
+    case !Boolean(isSearchActive) && isDepositedActive && isCreatedActive:
+      noResultsTitle = noPoolsDeposited.title
+      noResultsSubText = noPoolsDeposited.subText
+      break
+    case !Boolean(isSearchActive) && isDepositedActive && !isCreatedActive:
+      noResultsTitle = noPoolsDeposited.title
+      noResultsSubText = noPoolsDeposited.subText
+      break
+    case !Boolean(isSearchActive) && !isDepositedActive && isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+    case !isDepositedActive && isCreatedActive:
+      noResultsTitle = noPoolsFound.title
+      noResultsSubText = noPoolsFound.subText
+      break
+  }
 
   return (
     <div className={''}>
-      {(numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
-        <NoResultsFound requestPool={!showDeposited} str={"No Deposits"}
-                        subText={"Don’t worry, explore or create a pool to get started and start earning!"} />
+      {(numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
+        <NoResultsFound requestPool={!isDepositedActive} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <>
           <FarmFilter sort={sort} sortType={sortType} />
@@ -58,8 +98,8 @@ const FarmItems: FC<{
                   )
 
                   const show =
-                    (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') ||
-                    !showDeposited
+                    (isDepositedActive && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') ||
+                    !isDepositedActive
 
                   return show ? (
                     <FarmRow token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} />
@@ -84,7 +124,7 @@ const FarmItems: FC<{
               )
 
               const show =
-                (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
+                (isDepositedActive && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !isDepositedActive
 
               return show ? (
                 <FarmCard token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} />
@@ -92,7 +132,7 @@ const FarmItems: FC<{
             })}
         </div>
       )}
-      {(numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
+      {(numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>
