@@ -1,14 +1,26 @@
-import { FC } from "react"
+import { FC } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 
-const ComingSoon: FC<{ header: string; value: string; image: string; subHeader: string }> = 
-  ({ header, value, image, subHeader }): JSX.Element => (
+const ComingSoon: FC<{
+  header: string;
+  value: string;
+  image: string;
+  subHeader: string;
+  tooltip?: string;
+}> =
+  ({ header, value, image, subHeader, tooltip }): JSX.Element => (
   <div
     className="h-[250px] border border-solid dark:border-black-4 border-grey-4 
       p-2.5 dark:bg-black-2 bg-white rounded-[10px]"
   >
-    <h4 className="text-regular font-semibold text-black-4 dark:text-grey-8 underline decoration-dotted mb-2.5">
-      {header}
-    </h4>
+    <Tooltip>
+      <TooltipTrigger disabled={!tooltip} asChild>
+        <h4 className="text-regular font-semibold text-black-4 dark:text-grey-8 underline decoration-dotted mb-2.5">
+          {header}
+        </h4>
+      </TooltipTrigger>
+      <TooltipContent align={'start'}>{tooltip}</TooltipContent>
+    </Tooltip>
     {value ? (
       <span className="font-semibold font-poppins text-[28px] dark:text-grey-8 text-black-4">
         ${value}

@@ -1,6 +1,6 @@
 import { useFarmContext } from '@/context'
 import { FC } from 'react'
-import { Icon, Button, DialogTitle } from 'gfx-component-lib'
+import { Button, DialogTitle, Icon } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 
 export const DepositWithdrawHeader: FC = (): JSX.Element => {
@@ -34,13 +34,13 @@ export const DepositWithdrawHeader: FC = (): JSX.Element => {
       <Button
         onClick={() => setOperationPending(false)}
         variant={'ghost'}
-        className={`hidden min-md:inline-block absolute p-[inherit] right-3.75 top-5 min-md:right-5
+        className={`inline-block absolute p-[inherit] right-3.75 top-5 min-md:right-5
              min-md:top-5 z-[1] w-max p-0`}
         size={'sm'}
       >
         <RewardsClose
-          className={`h-3 w-3 min-md:h-5 min-md:w-5 min-md:stroke-border-lightmode-primary 
-    min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary`}
+          className={`h-5.25 w-5.25 min-md:h-5 min-md:w-5 min-md:stroke-border-lightmode-primary 
+    min-md:dark:stroke-border-darkmode-primary`}
         />
       </Button>
     </DialogTitle>

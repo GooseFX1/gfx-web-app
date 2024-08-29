@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBoolean from '@/hooks/useBoolean'
 import { useConnectionConfig, useWalletModal } from '@/context'
@@ -11,7 +11,7 @@ export function JupWidget() : JSX.Element {
   const {connection, endpoint} = useConnectionConfig()
   const {setVisible} = useWalletModal()
   const {pathname} = useLocation()
-
+  const intervalId = useRef<NodeJS.Timeout | null>()
   const launchWidget = useCallback(() => {
     window.Jupiter.init({
       connectionObj: connection,
@@ -33,16 +33,17 @@ export function JupWidget() : JSX.Element {
       defaultExplorer: 'Solscan'
     })
   }, [passthroughWalletContextState, endpoint, setVisible, connection])
+
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | undefined = undefined;
-    if (!isLoaded || !window.Jupiter.init || !intervalId) {
-      intervalId = setInterval(() => {
+    
+    if (!isLoaded || !window.Jupiter.init || !intervalId.current) {
+      intervalId.current = setInterval(() => {
         setIsLoaded.set(Boolean(window.Jupiter.init));
       }, 500);
     }
 
-    if (intervalId) {
-      return () => clearInterval(intervalId);
+    if (intervalId.current) {
+      return () => clearInterval(intervalId.current);
     }
   }, [isLoaded]);
   const isFarmOrSSL = pathname.includes("farm") || pathname.includes("ssl");

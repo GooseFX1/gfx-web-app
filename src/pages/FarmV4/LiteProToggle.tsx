@@ -1,10 +1,11 @@
-import { useDarkMode, useRewardToggle } from "@/context";
-import { Button, Icon } from "gfx-component-lib";
-import { ReactElement } from "react";
+import { useDarkMode, useRewardToggle } from '@/context'
+import { Button, Icon } from 'gfx-component-lib'
+import { ReactElement } from 'react'
 
 export const LiteProToggle = (): ReactElement => {
     const { isProMode, setIsProMode, setIsPortfolio } = useRewardToggle()
     const { mode } = useDarkMode()
+
     return (
         <Button
             className={`h-[30px] w-[75px] border-[1.5px] border-solid 

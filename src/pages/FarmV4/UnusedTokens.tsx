@@ -1,23 +1,32 @@
-import { useFarmContext, useRewardToggle } from "@/context"
-import { Icon } from "gfx-component-lib"
-import { FC } from "react"
-import { poolType } from "./constants"
+import { useFarmContext, useRewardToggle } from '@/context'
+import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { FC } from 'react'
+import { poolType } from './constants'
 
 const UnusedTokens: FC = () => {
     const { setIsPortfolio } = useRewardToggle()
     const { setPool } = useFarmContext()
     return (
         <div
-            className="h-[250px] border border-solid dark:border-black-4 border-grey-4 
+            className="h-[250px] border border-solid dark:border-black-4 border-grey-4
         p-2.5 dark:bg-black-2 bg-white rounded-[10px]"
         >
-            <h4 className="font-poppins text-regular font-semibold 
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <h4 className="font-poppins text-regular font-semibold
             text-black-4 dark:text-grey-8 underline decoration-dotted mb-2.5">
-                Unused Tokens
-            </h4>
-            <div className='font-poppins text-[28px] font-semibold 
-            text-black-4 dark:text-grey-8 mb-3.75'>$799.28</div>
-            <div className='flex flex-row justify-between items-center mb-3'>
+                  Unused Tokens
+                </h4>
+              </TooltipTrigger>
+              <TooltipContent align={'start'}>
+                Unused Tokens are assets in your wallet not earning returns.
+                Deposit them into our pools to start generating returns.
+              </TooltipContent>
+            </Tooltip>
+          <div className="font-poppins text-[28px] font-semibold
+            text-black-4 dark:text-grey-8 mb-3.75">$799.28
+          </div>
+          <div className='flex flex-row justify-between items-center mb-3'>
                 <div className='flex flex-row items-center'>
                     <Icon src="img/crypto/SOL.svg" alt="token" size="sm" className="mr-1.5" />
                     <span className='text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-2.5'>
