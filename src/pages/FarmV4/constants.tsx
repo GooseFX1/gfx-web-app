@@ -70,6 +70,10 @@ export const poolType = {
   hyper: {
     index: 2,
     name: 'Hyper'
+  },
+  migrate: {
+    index: 3,
+    name: 'Migrate'
   }
 }
 

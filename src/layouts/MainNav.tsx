@@ -178,7 +178,7 @@ const MobileNav: FC = () => {
                 src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
-              &nbsp;Pool
+              &nbsp;Pools
             </ListItem>
             <ListItem
               variant={pathname.includes('ssl') && 'primary'}
@@ -304,16 +304,16 @@ const DesktopNav: FC = () => {
         variant={'ghost'}
         onClick={() => history.push('/farm')}
         className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
-          className="w-[26px] h-[26px] mb-0.5"
+          className="!w-[26px] !h-[26px] mb-0.5"
           src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
           alt="dark"
         />
-        Pool
+        Pools
       </Button>
       <Button
         variant={'ghost'}

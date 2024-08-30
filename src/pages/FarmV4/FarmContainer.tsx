@@ -1,12 +1,9 @@
-import { FC, useEffect, useMemo, useState, useCallback } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useConnectionConfig, useDarkMode, useRewardToggle, useGamma } from '../../context'
+import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { poolType } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
-  cn,
-  Icon,
-  Switch,
   Button,
   Dialog,
   DialogBody,
@@ -15,13 +12,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuItemIndicator,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuItemIndicator,
-  Badge,
+  DropdownMenuTrigger,
+  Icon,
   RadioGroup,
-  RadioGroupItemAsIndicator
+  RadioGroupItemAsIndicator,
+  Switch,
+  Badge,
+  cn
 } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
@@ -143,11 +143,6 @@ export const FarmContainer: FC = () => {
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
-                  value: poolType.all.name,
-                  label: 'All',
-                  onClick: () => (operationPending ? null : setPool(poolType.all))
-                },
-                {
                   value: poolType.primary.name,
                   label: 'Primary',
                   onClick: () => (operationPending ? null : setPool(poolType.primary))
@@ -156,7 +151,12 @@ export const FarmContainer: FC = () => {
                   value: poolType.hyper.name,
                   label: 'Hyper',
                   onClick: () => (operationPending ? null : setPool(poolType.hyper))
-                }
+                },
+                {
+                  value: poolType.migrate.name,
+                  label: 'Migrate',
+                  onClick: () => (operationPending ? null : setPool(poolType.migrate))
+                },
               ]}
             />
             <div className="flex items-center w-full justify-between">
@@ -322,6 +322,8 @@ export const FarmContainer: FC = () => {
             isSearchActive={searchTokens}
             isDepositedActive={showDeposited}
             isCreatedActive={showCreatedPools}
+            setPool={setPool}
+            pool={pool}
           />
         </>
       ) : (
