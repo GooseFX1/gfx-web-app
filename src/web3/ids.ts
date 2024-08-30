@@ -512,6 +512,8 @@ export const WRAPPED_SOL_MINT = new PublicKey('So1111111111111111111111111111111
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
 
+export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb')
+
 export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
 )
@@ -592,3 +594,13 @@ export const AH_BUMP = 253
 export const AH_FEE_BUMP = 251
 
 export const AH_TREASURY_BUMP = 255
+
+// GAMMA CONSTANTS:
+
+export const GAMMA_PROGRAM_ID = 'GaMMAt2scxuGJu3esLfLsJZaC482MPEKswdx8DfUsHCR'
+
+export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
+
+export const AUTHORITY_PREFIX = 'vault_and_lp_mint_auth_seed'
+
+export const USER_POOL_LIQUIDITY_PREFIX =  "user-pool-liquidity"

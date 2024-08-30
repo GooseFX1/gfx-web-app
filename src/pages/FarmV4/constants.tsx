@@ -284,15 +284,15 @@ export const SSL_TOKENS: {
   type: string
 }[] = [
   {
-    sourceToken: 'SOL',
+    sourceToken: 'USDT',
     targetToken: 'USDC',
     liquidity: '$5.17M',
     volume: '$111.18K',
     fees: '$50.21K',
     apr: 185,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
+    sourceTokenMintAddress: 'M1N29VNS1mEmqK83VyEyXcrJ6A39c2NB3NSCXJhXsiL',
     sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    targetTokenMintAddress: 'm1n13267SbQXczvpsbWGEYw5pBEscGWoduJf5J1PVy7',
     targetTokenMintDecimals: 6,
     type: 'Primary'
   },

@@ -1,7 +1,6 @@
-/* eslint-disable */
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
-import { useAccounts, useConnectionConfig, useFarmContext } from '@/context'
+import { useAccounts, useConnectionConfig, useFarmContext, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -19,6 +18,8 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
+import useTransaction from '@/hooks/useTransaction'
+import { deposit, withdraw } from '@/web3/Farm'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -35,10 +36,13 @@ export const DepositWithdrawSlider: FC = () => {
   const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
+  //eslint-disable-next-line
   const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
   const [isClaim, setIsClaim] = useBoolean(false)
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
+  const { GammaProgram } = usePriceFeedFarm()
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
 
   const {
     operationPending,
@@ -120,23 +124,54 @@ export const DepositWithdrawSlider: FC = () => {
     },
     [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
   )
-  const handleWithdraw = () => {
-    console.log('withdraw')
 
+  const handleDeposit = async () => {
+    const txBuilder = createTransactionBuilder()
+    const tx = await deposit(userSourceDepositAmount, 
+      userTargetDepositAmount, 
+      selectedCard, 
+      userPublicKey, 
+      GammaProgram, 
+      connection
+    )
+    txBuilder.add(tx)
+    const { success } = await sendTransaction(txBuilder)
+    console.log('success', success)
 
-  }
-  const handleDeposit = () => {
-    console.log('withdraw')
+    if (!success) {
+      console.log('failure')
+      return
+    }
     setActionType('deposit')
     setOperationPending(true)
-
   }
+
+  const handleWithdraw = async() => {
+    const txBuilder = createTransactionBuilder()
+    const tx = await withdraw(
+      userSourceWithdrawAmount, 
+      userTargetWithdrawAmount, 
+      selectedCard, 
+      userPublicKey, 
+      GammaProgram
+    )
+    txBuilder.add(tx)
+    const { success } = await sendTransaction(txBuilder)
+    console.log('success', success)
+
+    if (!success) {
+      console.log('failure')
+      return
+    }
+  }
+
   const handleClaim = () => {
     console.log('withdraw')
     setIsButtonLoading.on()
     setOperationPending(true)
     setActionType('claim')
   }
+  //eslint-disable-next-line
   const handleProcessStart = (type: 'claim' | 'withdraw') => {
     return () => {
       if (type === 'claim') {
@@ -148,13 +183,13 @@ export const DepositWithdrawSlider: FC = () => {
     }
   }
 
-  const handleCancel = () => {
-    console.log('cancel')
-    setIsButtonLoading.off()
-    setOperationPending(false)
-    setIsClaim.off()
-    setActionType('')
-  }
+  // const handleCancel = () => {
+  //   console.log('cancel')
+  //   setIsButtonLoading.off()
+  //   setOperationPending(false)
+  //   setIsClaim.off()
+  //   setActionType('')
+  // }
   const handleActionCancel = () => {
     setActionType('')
     setIsClaim.off()
@@ -252,7 +287,6 @@ export const DepositWithdrawSlider: FC = () => {
               <SwapNow />
             )}
           </div>
-
         </DialogBody>
         <DialogFooter>
           <StickyFooter
