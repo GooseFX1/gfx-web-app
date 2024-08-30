@@ -20,7 +20,8 @@ const FarmItemsMigrate: FC<{
                               }) => {
   const { connected } = useWallet()
 
-  if (!connected) return <MigrateNotConnected/>
+  if (!connected || openPositionsAcrossPrograms.length ==0)
+    return <MigrateNotConnected noPositions={openPositionsAcrossPrograms.length>0}/>
   return <div className={'grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}>
     {openPositionsAcrossPrograms.map((pos)=>
     <MigratePositionCard position={pos} positionsOnOtherPrograms={[
