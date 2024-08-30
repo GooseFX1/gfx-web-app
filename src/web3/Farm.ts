@@ -119,10 +119,12 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
 export const deposit = async (
     userSourceDepositAmount: BigNumber, 
     userTargetDepositAmount: BigNumber,
-    selectedCard: any, userPublicKey: 
-    PublicKey, program: Program<Idl>, 
+    //eslint-disable-next-line
+    selectedCard: any, 
+    userPublicKey: PublicKey, 
+    program: Program<Idl>, 
     connection: Connection
-) => {
+): Promise<Transaction> => {
     const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
     const depositInstructionAccount = { ...depositAccounts }
     const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
@@ -152,10 +154,11 @@ export const deposit = async (
 export const withdraw = async (
     userSourceWithdrawAmount: BigNumber, 
     userTargetWithdrawAmount: BigNumber,
+    //eslint-disable-next-line
     selectedCard: any, 
     userPublicKey: PublicKey, 
-    program: Program<Idl>, 
-) => {
+    program: Program<Idl> 
+): Promise<Transaction> => {
     const withdrawAccounts = await getAccountsForDepositWithdraw(
         selectedCard,
         userPublicKey, 
