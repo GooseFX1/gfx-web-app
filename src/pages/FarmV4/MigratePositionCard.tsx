@@ -29,10 +29,10 @@ const MigratePositionCard: FC<MigratePositionCardProps> = ({ position,positionsO
         `}
         >{position.tokenA.name} - {position.tokenB.name}</h3>
       </div>
-      <Container className={`
+      <Container className={` p-2.5 pt-0.5
       bg-background-lightmode-primary dark:bg-background-darkmode-primary gap-2`}>
         <h3 className={`bg-gradient-to-r from-brand-secondaryGradient-primary to-brand-secondaryGradient-secondary
-         inline-block text-transparent 
+        text-transparent leading-normal
         bg-clip-text`}>
           Boost Your Earnings!
         </h3>

@@ -16,7 +16,8 @@ const MigrateCard: FC<MigrateCardProps> = ({
                      }) =>{
   const {connected} = useWallet()
   return (
-    <Container className={'flex flex-col flex-1 gap-2.5 p-2.5'}>
+    <Container className={`flex flex-col flex-1 gap-2.5 p-2.5 bg-background-lightmode-secondary 
+    dark:bg-background-darkmode-secondary rounded-[8px] before:rounded-[8px]`}>
       <h3 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>
         Boost Your Earnings!
       </h3>
