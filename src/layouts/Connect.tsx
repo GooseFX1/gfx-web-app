@@ -27,12 +27,14 @@ interface MenuItemProps {
   customMenuListItemsContainerStyle?: string
   customButtonStyle?: string
   customButtonWrapperStyle?: string
+  fullWidth?: boolean
 }
 
 export const Connect: FC<MenuItemProps> = ({
   customButtonStyle,
   customMenuListItemsContainerStyle,
-  customMenuListItemStyle
+  customMenuListItemStyle,
+  fullWidth
 }) => {
   const { wallet, connected, disconnect, connecting, disconnecting }
     = useWallet()
@@ -136,6 +138,7 @@ export const Connect: FC<MenuItemProps> = ({
               connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
+            fullWidth={fullWidth}
             onClick={() => (!connected || isAttempting) && handleConnect()}
             isLoading={isAttempting}
           >

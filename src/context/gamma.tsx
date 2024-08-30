@@ -1,4 +1,14 @@
-import React, { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchGAMMAConfig,
@@ -7,15 +17,9 @@ import {
   fetchPortfolioStats,
   fetchUser
 } from '../api/gamma'
-import {
-  GAMMAConfig,
-  // GAMMAPool,
-  GAMMAProtocolStats,
-  GAMMAUser,
-  UserPortfolioLPPosition,
-  UserPortfolioStats
-} from '../types/gamma'
-  import { useWalletBalance } from '@/context/walletBalanceContext'
+import { GAMMAConfig, GAMMAProtocolStats, GAMMAUser, UserPortfolioLPPosition, UserPortfolioStats } from '../types/gamma'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import { BASE_SLIPPAGE } from '@/context/farm'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -25,6 +29,9 @@ interface GAMMADataModel {
   portfolioStats: UserPortfolioStats
   lpPositions: UserPortfolioLPPosition[]
   GAMMA_SORT_CONFIG: { id: string, name: string }[]
+  slippage: number
+  setSlippage: Dispatch<SetStateAction<number>>
+  isCustomSlippage: boolean
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
@@ -37,6 +44,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
+  const [slippage, setSlippage] = useState<number>(0.1)
+  const isCustomSlippage = useMemo(() =>
+      !BASE_SLIPPAGE.includes(slippage)
+    , [slippage])
   const GAMMA_SORT_CONFIG = [
     { id: '1', name: 'Liquidity: High' },
     { id: '2', name: 'Liquidity: Low' },
@@ -99,7 +110,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         user,
         portfolioStats,
         lpPositions,
-        GAMMA_SORT_CONFIG
+        GAMMA_SORT_CONFIG,
+        slippage,
+        setSlippage,
+        isCustomSlippage
       }}
     >
       {children}

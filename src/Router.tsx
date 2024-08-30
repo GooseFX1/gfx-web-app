@@ -4,6 +4,7 @@ import { AppLayout } from './layouts'
 import {
   AccountsProvider,
   CryptoProvider,
+  GammaProvider,
   NavCollapseProvider,
   OrderBookProvider,
   OrderProvider,
@@ -12,12 +13,17 @@ import {
   RewardToggleProvider,
   TokenRegistryProvider,
   useConnectionConfig,
-  GammaProvider,
   useDarkMode
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
 import { JupWidget } from '@/components/JupWidget'
+import { TraderProvider } from './context/trader_risk_group'
+import { StatsProvider } from './context/stats'
+import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
+import { Toaster } from 'gfx-component-lib'
+import { RewardsProvider } from '@/context/rewardsContext'
+import { MarketProductGroupProvider } from './context/market_product_group'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -28,12 +34,6 @@ const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyt
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
 const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
-import { TraderProvider } from './context/trader_risk_group'
-import { StatsProvider } from './context/stats'
-import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
-import { Toaster } from 'gfx-component-lib'
-import { RewardsProvider } from '@/context/rewardsContext'
-import { MarketProductGroupProvider } from './context/market_product_group'
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
