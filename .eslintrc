@@ -1,8 +1,11 @@
 {
+  "parser": "@typescript-eslint/parser",
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "es6": true,
+    "jest": true
   },
   "plugins": ["@typescript-eslint", "unused-imports", "react", "import"],
   "extends": [
@@ -45,7 +48,7 @@
     "@typescript-eslint/no-this-alias": "error",
     "@typescript-eslint/ban-types": "warn",
     "@typescript-eslint/no-unused-vars": "error",
-    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "no-var": "error",
     // change to "error"
     "no-prototype-builtins": "warn",
@@ -59,7 +62,11 @@
     "react/jsx-no-target-blank": "warn",
     "react/no-unescaped-entities": "off",
     "prefer-spread": "warn",
-    "react/no-unknown-property": "off"
+    "react/no-unknown-property": "off",
+    "tsdoc/syntax": "off",
+    "tsdoc-malformed-inline-tag": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "no-inner-declarations": ["warn"]
   },
   "globals": {
     "React": true,
