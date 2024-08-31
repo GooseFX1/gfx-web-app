@@ -1,9 +1,9 @@
 import { FC, ReactElement } from 'react'
-import { useFarmContext } from '@/context'
+import { useGamma } from '@/context'
 import { Button, Icon } from 'gfx-component-lib'
 
 const SwapNow: FC = (): ReactElement => {
-  const { selectedCard } = useFarmContext()
+  const { selectedCard } = useGamma()
 
   return (
     <div className="mx-2.5">

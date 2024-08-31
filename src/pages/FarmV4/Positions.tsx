@@ -2,16 +2,15 @@
 import { FC, useState, useMemo } from "react"
 import { Container, Button, Icon } from "gfx-component-lib"
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import { useDarkMode, useFarmContext, useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import { poolType } from './constants'
 import SearchBar from '@/components/common/SearchBar'
 import PositionHeader from './PositionHeader'
 import MyPositions from './MyPositions'
 
 const Positions: FC = () => {
-    const { operationPending, pool, setPool } = useFarmContext()
     const { mode } = useDarkMode()
-    const { pools } = useGamma()
+    const { pools, operationPending, pool, setPool } = useGamma()
     const [searchTokens, setSearchTokens] = useState<string>('')
     const [sort, setSort] = useState<string>('ASC')
     const [sortType, setSortType] = useState<string>(null)

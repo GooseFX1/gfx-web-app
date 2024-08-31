@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { Icon, Badge, Container } from 'gfx-component-lib'
-import { useFarmContext } from '@/context'
+import { useGamma } from '@/context'
 
 const MyPositions: FC<{ tokens: any }> = ({ tokens }) => {
-    const { pool } = useFarmContext()
+    const { pool } = useGamma()
     return (
         <div>
             {tokens

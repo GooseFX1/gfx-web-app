@@ -1,5 +1,5 @@
 import { FC, useMemo, useState } from 'react'
-import { useDarkMode, useFarmContext, usePriceFeedFarm, useRewardToggle } from '../../context'
+import { useDarkMode, useGamma, usePriceFeedFarm, useRewardToggle } from '../../context'
 import { truncateBigNumber } from '../../utils'
 import { poolType, SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
@@ -22,7 +22,7 @@ export const FarmHeader: FC = () => {
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
     setPool
-  } = useFarmContext()
+  } = useGamma()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])

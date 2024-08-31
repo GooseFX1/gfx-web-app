@@ -1,11 +1,11 @@
-import { useFarmContext, useRewardToggle } from '@/context'
+import { useGamma, useRewardToggle } from '@/context'
 import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { FC } from 'react'
 import { poolType } from './constants'
 
 const UnusedTokens: FC = () => {
     const { setIsPortfolio } = useRewardToggle()
-    const { setPool } = useFarmContext()
+    const { setPool } = useGamma()
     return (
         <div
             className="h-[250px] border border-solid dark:border-black-4 border-grey-4
