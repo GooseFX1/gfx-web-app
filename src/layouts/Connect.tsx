@@ -125,8 +125,7 @@ export const Connect: FC<MenuItemProps> = ({
   }, [base58PublicKey])
   // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
-    <
-      >
+    <>
       {geoBlocked && <GeorestrictionModal geoBlocked={geoBlocked} setGeoBlocked={setGeoBlocked} />}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -164,7 +163,11 @@ export const Connect: FC<MenuItemProps> = ({
           </Button>
         </DropdownMenuTrigger>
         {connected && (
-          <DropdownMenuContent className={cn('mt-3.75', customMenuListItemsContainerStyle)} portal={false}>
+          <DropdownMenuContent
+            className={cn('mt-1', customMenuListItemsContainerStyle)}
+            portal={false}
+            align={'end'}
+          >
             <div
               className={cn(`flex flex-row gap-2 items-center border-b border-solid pb-2 mb-2
               border-border-darkmode-primary

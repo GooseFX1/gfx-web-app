@@ -49,14 +49,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
   const GAMMA_SORT_CONFIG = [
-    { id: '1', name: 'Liquidity: High' },
-    { id: '2', name: 'Liquidity: Low' },
-    { id: '3', name: 'Volume: High' },
-    { id: '4', name: 'Volume: Low' },
-    { id: '5', name: 'Fees: High' },
-    { id: '6', name: 'Fees: Low' },
-    { id: '7', name: 'APR: High' },
-    { id: '8', name: 'APR: Low' }
+    { id: '1', name: 'Liquidity: High to Low' },
+    { id: '2', name: 'Liquidity: Low to High' },
+    { id: '3', name: 'Volume: High to Low' },
+    { id: '4', name: 'Volume: Low to High' },
+    { id: '5', name: 'Fees: High to Low' },
+    { id: '6', name: 'Fees: Low to High' },
+    { id: '7', name: 'APR: High to Low' },
+    { id: '8', name: 'APR: Low to High' }
   ]
 
   useEffect(() => {

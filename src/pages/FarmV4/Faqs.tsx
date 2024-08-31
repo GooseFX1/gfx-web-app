@@ -21,7 +21,7 @@ export const Faqs: FC = () => {
         Go To Docs
       </a>
     </div>
-    <Accordion collapsible type={'multiple'}>
+    <Accordion collapsible="true" type={'multiple'}>
       {faqs.map((item: Faq) => (
         <AccordionItem key={item.question} value={item.question}>
           <AccordionTrigger>{item.question}</AccordionTrigger>
