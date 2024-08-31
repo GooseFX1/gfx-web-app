@@ -32,8 +32,10 @@ const StickyFooter: FC<StickyFooterProps> = ({
   const [value, setValue] = useState<number>(0)
   const localIsCustomSlippage = isCustomSlippage || !BASE_SLIPPAGE.includes(value)
   return (
-    <div className={`w-full h-max mt-auto p-2.5 flex flex-col gap-2.5  border-t
-        border-solid dark:border-black-4 border-grey-4 `}>
+    <div
+      className={`w-full h-max mt-auto p-2.5 flex flex-col gap-2.5  border-t
+        border-solid dark:border-black-4 border-grey-4 `}
+    >
       <div className="w-full flex flex-row dark:bg-black-2 bg-white gap-2.5">
         {connected ? (
           <Button
@@ -113,12 +115,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
               onChange={(e) => setValue(parseFloat(e.target.value))}
               type={'number'}
             />
-            <Button
-              fullWidth
-              colorScheme={'blue'}
-              disabled={value == slippage}
-              onClick={() => setSlippage(value)}
-            >
+            <Button fullWidth colorScheme={'blue'} disabled={value == slippage} onClick={() => setSlippage(value)}>
               Save
             </Button>
           </PopoverContent>
