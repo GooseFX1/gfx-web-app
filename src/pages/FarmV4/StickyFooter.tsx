@@ -51,7 +51,10 @@ const StickyFooter: FC<StickyFooterProps> = ({
         ) : (
           <Connect fullWidth containerStyle={'h-8.75 z-0'} customButtonStyle={'h-8.75 '} />
         )}
-        <Button variant={'outline'} colorScheme={isDarkMode ? 'default' : 'blue'} className={'p-1.5 bg-white'}>
+        <Button variant={'outline'}
+          colorScheme={isDarkMode ? 'default' : 'blue'}
+          className={'p-1.5 bg-white'}
+        >
           <Icon src={`img/assets/refresh_${mode}.svg`} size="sm" />
         </Button>
         <Popover modal={false}>
@@ -67,9 +70,10 @@ const StickyFooter: FC<StickyFooterProps> = ({
               </span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent
-            className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
-            sideOffset={isMobile ? (canClaim ? -90 : -44) : 5}
+          <PopoverContent className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
+            sideOffset={isMobile ?
+              canClaim ? -90 : -44 :
+              5}
             align={isMobile ? 'center' : 'end'}
             alignOffset={0}
           >
@@ -81,8 +85,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
                 </span>
               </IconTooltip>
             </div>
-            <RadioOptionGroup
-              defaultValue={'0.1'}
+            <RadioOptionGroup defaultValue={'0.1'}
               value={localIsCustomSlippage ? 'custom' : value.toString()}
               options={[
                 {
@@ -105,8 +108,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
                   value: 'custom',
                   onClick: () => setValue(0)
                 }
-              ]}
-            />
+              ]} />
             <Input
               className={'text-right'}
               value={value}

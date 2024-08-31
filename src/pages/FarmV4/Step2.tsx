@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { useAccounts, useDarkMode, useFarmContext } from '../../context'
+import { useAccounts, useDarkMode, useGamma } from '../../context'
 import { ADDRESSES, SSL_TOKENS, SSLToken } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
@@ -52,7 +52,7 @@ const Step2: FC<{
       }) => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { setSelectedCard, setOperationPending } = useFarmContext()
+  const { setSelectedCard, setOperationPending } = useGamma()
   const tokenAamount = tokenA ? getUIAmount(tokenA.address.toBase58()).toFixed(2) : '0.00'
   const tokenBamount = tokenB ? getUIAmount(tokenB.address.toBase58()).toFixed(2) : '0.00'
   const navigateToPool = () => {

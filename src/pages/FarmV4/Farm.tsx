@@ -1,12 +1,10 @@
 import { FC } from 'react'
 import { FarmHeader } from './FarmHeader'
-import { FarmProvider } from '../../context'
 import { FarmContainer } from './FarmContainer'
 import { Faqs } from './Faqs'
 import GammaOnboard from './GammaOnboard'
 
 const FarmV4: FC = () => (
-  <FarmProvider>
     <div
       id="farm-container"
       className={`dark:bg-black-1 bg-grey-5 h-[calc(100vh - 56px)] overflow-auto max-w-[1440px]
@@ -19,6 +17,5 @@ const FarmV4: FC = () => (
         <Faqs />
       </div>
     </div>
-  </FarmProvider>
 )
 export default FarmV4

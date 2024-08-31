@@ -12,10 +12,11 @@ import React, {
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
-import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
+import { getStakingAccountKey, SSL_PROGRAM_ID, GAMMA_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
+import GammaJson from '../pages/FarmV4/idl/gamma.json'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
 interface IPrices {
@@ -49,6 +50,7 @@ interface IPriceFeedConfig {
   SSLProgram: Program
   stakeAccountKey: PublicKey
   solPrice: number
+  GammaProgram: Program | undefined
 }
 
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
@@ -95,6 +97,18 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     [connection]
   )
 
+  const GammaProgram: Program | undefined = useMemo(
+    () =>
+      new Program(
+        GammaJson as any,
+        GAMMA_PROGRAM_ID,
+        new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
+      ),
+    [connection]
+  )
+
+  console.log("GammaProgram", GammaProgram, SSLProgram)
+
   const refreshTokenData = useCallback(async () => {
     ;(async () => {
       const { data } = await getFarmTokenPrices()
@@ -123,7 +137,8 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
         stakeProgram,
         SSLProgram,
         stakeAccountKey,
-        solPrice
+        solPrice,
+        GammaProgram
       }}
     >
       {children}

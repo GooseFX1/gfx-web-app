@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState, useCallback } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useConnectionConfig, useDarkMode, useFarmContext, useRewardToggle, useGamma } from '../../context'
+import { useConnectionConfig, useDarkMode, useRewardToggle, useGamma } from '../../context'
 import { poolType } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
@@ -34,9 +34,8 @@ export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { pools, GAMMA_SORT_CONFIG } = useGamma()
+  const { pools, GAMMA_SORT_CONFIG, operationPending, pool, setPool } = useGamma()
   const { wallet } = useWallet()
-  const { operationPending, pool, setPool } = useFarmContext()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)

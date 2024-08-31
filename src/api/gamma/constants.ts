@@ -82,15 +82,15 @@ export const GAMMA_TOKENS = [
   },
   {
     sourceToken: 'BONK',
-    targetToken: 'SOL',
+    targetToken: 'USDT',
     liquidity: 4.99,
     volume: 678.90,
     fees: 192.34,
     isOwner: false,
     apr: 202,
-    sourceTokenMintAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+    sourceTokenMintAddress: 'M1N29VNS1mEmqK83VyEyXcrJ6A39c2NB3NSCXJhXsiL',
     sourceTokenMintDecimals: 5,
-    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
+    targetTokenMintAddress: 'm1n13267SbQXczvpsbWGEYw5pBEscGWoduJf5J1PVy7',
     targetTokenMintDecimals: 9,
     type: 'Hyper'
   },
