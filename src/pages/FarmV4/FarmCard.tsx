@@ -1,10 +1,10 @@
-import { useFarmContext } from '@/context'
+import { useGamma } from '@/context'
 import { Button, Icon, Badge } from 'gfx-component-lib'
 import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
 const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
-  const { setOperationPending, setSelectedCard } = useFarmContext()
+  const { setOperationPending, setSelectedCard } = useGamma()
   return (
     <div
       className="h-[207px] w-full bg-red-100 border 

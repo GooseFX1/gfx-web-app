@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
-import { useAccounts, useConnectionConfig, useFarmContext, usePriceFeedFarm } from '@/context'
+import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -26,7 +26,7 @@ export const DepositWithdrawSlider: FC = () => {
   const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { selectedCard } = useFarmContext()
+  const { selectedCard, operationPending, setOperationPending } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -43,11 +43,7 @@ export const DepositWithdrawSlider: FC = () => {
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-
-  const {
-    operationPending,
-    setOperationPending
-  } = useFarmContext()
+  
   useEffect(() => {
     ;(async () => {
       if (userPublicKey) {

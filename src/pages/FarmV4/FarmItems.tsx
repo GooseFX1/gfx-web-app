@@ -1,8 +1,7 @@
 /* eslint-disable */
 import { FC, useState } from 'react'
-// import { StatsModal } from '@/pages/FarmV3/StatsModal'
 import NoResultsFound from './NoResultsFound'
-import { useFarmContext, useRewardToggle } from '@/context'
+import { useGamma, useRewardToggle } from '@/context'
 import { truncateBigString } from '@/utils'
 import FarmCard from './FarmCard'
 import FarmRow from './FarmRow'
@@ -16,8 +15,7 @@ const FarmItems: FC<{
   isDepositedActive: boolean
   isCreatedActive: boolean
 }> = ({ tokens, numberOfTokensDeposited, isDepositedActive, isSearchActive, isCreatedActive }) => {
-  // const [statsModal, setStatsModal] = useState<boolean>(false)
-  const { filteredLiquidityAccounts, pool } = useFarmContext()
+  const { filteredLiquidityAccounts, pool } = useGamma()
   const { isProMode } = useRewardToggle()
   const [sort, setSort] = useState<string>('ASC')
   const [sortType, setSortType] = useState<string>(null)
