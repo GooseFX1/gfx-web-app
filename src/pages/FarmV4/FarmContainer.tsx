@@ -322,8 +322,6 @@ export const FarmContainer: FC = () => {
             isSearchActive={searchTokens}
             isDepositedActive={showDeposited}
             isCreatedActive={showCreatedPools}
-            setPool={setPool}
-            pool={pool}
           />
         </>
       ) : (

@@ -1,14 +1,9 @@
 /* eslint-disable */
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
-import { truncateBigString } from '@/utils'
-import FarmCard from './FarmCard'
-import FarmRow from './FarmRow'
-import FarmFilter from './FarmFilter'
 import { Button } from 'gfx-component-lib'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { Pool, poolType } from '@/pages/FarmV4/constants'
+import { poolType } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
@@ -21,10 +16,10 @@ const noPoolsDeposited = {
   title: 'Oops, no pools deposited',
   subText: 'Don’t worry, explore our pools and start earning!'
 }
-const noCreatedPools = {
-  title: 'Oops, no created pools',
-  subText: 'Don’t worry, you can always create one!'
-}
+// const noCreatedPools = {
+//   title: 'Oops, no created pools',
+//   subText: 'Don’t worry, you can always create one!'
+// }
 
 const FarmItems: FC<{
   tokens: any
@@ -35,7 +30,6 @@ const FarmItems: FC<{
 }> = ({ tokens, numberOfTokensDeposited, isDepositedActive, isSearchActive, isCreatedActive }) => {
   const { filteredLiquidityAccounts, pool, setPool } = useGamma()
   const { isProMode } = useRewardToggle()
-  const { connected } = useWallet()
 
   let noResultsTitle = ''
   let noResultsSubText = ''
