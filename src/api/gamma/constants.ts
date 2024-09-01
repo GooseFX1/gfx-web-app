@@ -11,18 +11,17 @@ export enum GAMMA_ENDPOINTS_V1 {
 
 export const GAMMA_TOKENS = [
   {
-    sourceToken: 'SOL',
-    targetToken: 'USDC',
-    liquidity: 4.32,
-    volume: 123.45,
-    fees: 75.21,
-    isOwner: true,
-    apr: 22,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    targetTokenMintDecimals: 6,
-    type: 'Primary'
+    sourceToken: 'JITOSOL',
+    targetToken: 'BONK',
+    liquidity: '$5.17M',
+    volume: '$111.18K',
+    fees: '$50.21K',
+    apr: 185,
+    sourceTokenMintAddress: 'M1N4uXEQxqGNmFK5jgEcfUtHM1hz59vNNxtM48QK7Ar',
+    sourceTokenMintDecimals: 6,
+    targetTokenMintAddress: 'M1N3AoeSDNHXFB8hL7951Ubf77o9STpdz8W9VhqUT3L',
+    targetTokenMintDecimals: 9,
+    type: 'Hyper'
   },
   {
     sourceToken: 'SOL',

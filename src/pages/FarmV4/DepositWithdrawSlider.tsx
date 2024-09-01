@@ -19,14 +19,14 @@ import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { deposit, withdraw } from '@/web3/Farm'
+import { deposit, withdraw, calculateTokenAndLPAmount } from '@/web3/Farm'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { selectedCard, operationPending, setOperationPending } = useGamma()
+  const { selectedCard, operationPending, setOperationPending, selectedCardPool } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
@@ -67,11 +67,11 @@ export const DepositWithdrawSlider: FC = () => {
       // handle if the user sends '' or undefined in input box
       if (input === '') {
         if (isDeposit) {
-          if (sourceToken) setUserSourceDepositAmount(null)
-          else setUserTargetDepositAmount(null)
+          if (sourceToken) setUserSourceDepositAmount(new BigNumber(0))
+          else setUserTargetDepositAmount(new BigNumber(0))
         } else {
-          if (sourceToken) setUserSourceWithdrawAmount(null)
-          else setUserTargetWithdrawAmount(null)
+          if (sourceToken) setUserSourceWithdrawAmount(new BigNumber(0))
+          else setUserTargetWithdrawAmount(new BigNumber(0))
         }
         return
       }
@@ -88,6 +88,12 @@ export const DepositWithdrawSlider: FC = () => {
     },
     [modeOfOperation]
   )
+  
+  useEffect(() => {
+    if(userSourceDepositAmount && Object.keys(selectedCardPool)?.length){
+      calculateTokenAndLPAmount(userSourceDepositAmount, 0, selectedCardPool, connection)
+    }
+  }, [userSourceDepositAmount, selectedCardPool])
 
   //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(

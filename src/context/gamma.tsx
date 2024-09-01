@@ -33,6 +33,8 @@ import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
+import { getpoolId } from '@/web3/Farm'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
@@ -59,6 +61,7 @@ interface GAMMADataModel {
   liquidityAmount: any
   filteredLiquidityAccounts: any
   setFilteredLiquidityAccounts: any
+  selectedCardPool: any
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
@@ -77,7 +80,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pool, setPool] = useState<Pool>(poolType.all)
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
-  const { SSLProgram } = usePriceFeedFarm()
+  const { SSLProgram, GammaProgram } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
   const [sslAllVolume, setSslAllVolume] = useState<any>(null)
@@ -87,6 +90,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
   const [allPoolLiquidityAcc, setAllPoolLiquidityAcc] = useState([])
   const [liquidityAmount, setLiquidityAmount] = useState({})
+  const [selectedCardPool, setSelectedCardPool] = useState({})
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
@@ -205,6 +209,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
     }
   }, [fetchLpPositions, user])
+
+  useEffect(() => {
+    ; (async () => {
+      if (GammaProgram) {
+        try {
+          const poolIdKey = getpoolId(selectedCard)
+          const gammaPool = await GammaProgram?.account?.poolState?.fetch(poolIdKey)
+          setSelectedCardPool(gammaPool)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    })()
+  }, [GammaProgram, selectedCard])
 
   useEffect(() => {
     ; (async () => {
@@ -362,7 +380,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc,
         liquidityAmount: liquidityAmount,
         filteredLiquidityAccounts: filteredLiquidityAccounts,
-        setFilteredLiquidityAccounts: setFilteredLiquidityAccounts
+        setFilteredLiquidityAccounts: setFilteredLiquidityAccounts,
+        selectedCardPool: selectedCardPool
       }}
     >
       {children}
