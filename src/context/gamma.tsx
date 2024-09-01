@@ -1,14 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchGAMMAConfig,
@@ -77,7 +67,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>()
   const [operationPending, setOperationPending] = useState<boolean>(false)
-  const [pool, setPool] = useState<Pool>(poolType.all)
+  const [pool, setPool] = useState<Pool>(poolType.primary)
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const { SSLProgram, GammaProgram } = usePriceFeedFarm()

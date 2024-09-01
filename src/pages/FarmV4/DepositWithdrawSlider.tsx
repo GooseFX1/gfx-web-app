@@ -1,5 +1,5 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
+import { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { cn, Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
 import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
@@ -19,7 +19,7 @@ import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { deposit, withdraw, calculateTokenAndLPAmount } from '@/web3/Farm'
+import { calculateTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -211,12 +211,18 @@ export const DepositWithdrawSlider: FC = () => {
 
     return { actionLabel, actionModalTitle }
   }, [isDeposit, isClaim])
+  useLayoutEffect(() => {
+    if (operationPending) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+  }, [operationPending])
   return (
     <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}>
-      <div className={`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
-      dark:bg-opacity-50
-      backdrop-blur-sm
-      `}
+      <div className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
+      dark:bg-opacity-50 backdrop-blur-sm
+      `)}
       />
       <DialogContent className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[525px] gap-0
