@@ -156,7 +156,7 @@ export const FarmContainer: FC = () => {
                   value: poolType.migrate.name,
                   label: 'Migrate',
                   onClick: () => (operationPending ? null : setPool(poolType.migrate))
-                },
+                }
               ]}
             />
             <div className="flex items-center w-full justify-between">

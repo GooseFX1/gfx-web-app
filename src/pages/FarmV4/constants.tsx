@@ -229,7 +229,7 @@ export const faqs = [
   {
     question: 'How often can I claim my LP rewards?',
     answer: <div>Whenever there is any pending yield that was earned from your LP position, you can claim.</div>
-  },
+  }
 ]
 export const faqsMigrate = [
   {
@@ -272,7 +272,7 @@ export const faqsMigrate = [
     answer: <div>Migrated LP positions are locked for 2 days, during which they earn extra $GOFX rewards on selected
       pools. This is to prevent abuse from migrating back and forth and claiming extra $GOFX.
     </div>
-  },
+  }
 ]
 export const SSL_TOKENS: {
   sourceToken: string
