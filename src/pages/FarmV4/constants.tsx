@@ -297,16 +297,16 @@ export const SSL_TOKENS: {
     type: 'Primary'
   },
   {
-    sourceToken: 'SOL',
+    sourceToken: 'JITOSOL',
     targetToken: 'BONK',
     liquidity: '$5.17M',
     volume: '$111.18K',
     fees: '$50.21K',
     apr: 185,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-    targetTokenMintDecimals: 5,
+    sourceTokenMintAddress: 'M1N4uXEQxqGNmFK5jgEcfUtHM1hz59vNNxtM48QK7Ar',
+    sourceTokenMintDecimals: 6,
+    targetTokenMintAddress: 'M1N3AoeSDNHXFB8hL7951Ubf77o9STpdz8W9VhqUT3L',
+    targetTokenMintDecimals: 9,
     type: 'Hyper'
   },
   {

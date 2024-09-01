@@ -106,9 +106,6 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
       ),
     [connection]
   )
-
-  console.log("GammaProgram", GammaProgram, SSLProgram)
-
   const refreshTokenData = useCallback(async () => {
     ;(async () => {
       const { data } = await getFarmTokenPrices()

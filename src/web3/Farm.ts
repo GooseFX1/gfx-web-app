@@ -16,6 +16,11 @@ import {
     MEMO_ID
 } from './ids'
 
+enum TokenType {
+    Token0,
+    Token1
+}
+
 const getPoolVaultKey = async (poolIdKey: PublicKey, mintAddress: string): Promise<undefined | PublicKey> => {
     try {
         const getPoolVaultKey: [PublicKey, number] = await PublicKey.findProgramAddress(
@@ -51,7 +56,8 @@ const getLiquidityPoolKey = async (poolIdKey: PublicKey, userPublicKey: PublicKe
     }
 }
 
-const getpoolId = (selectedCard): PublicKey => {
+export const getpoolId = (selectedCard: any): PublicKey => {
+    if (!selectedCard) return
     const programId = new PublicKey(GAMMA_PROGRAM_ID)
     const configId = getCpmmPdaAmmConfigId(programId, 0)
     const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
@@ -117,12 +123,12 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
 }
 
 export const deposit = async (
-    userSourceDepositAmount: BigNumber, 
+    userSourceDepositAmount: BigNumber,
     userTargetDepositAmount: BigNumber,
     //eslint-disable-next-line
-    selectedCard: any, 
-    userPublicKey: PublicKey, 
-    program: Program<Idl>, 
+    selectedCard: any,
+    userPublicKey: PublicKey,
+    program: Program<Idl>,
     connection: Connection
 ): Promise<Transaction> => {
     const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
@@ -131,9 +137,9 @@ export const deposit = async (
     let liquidityAccIX = undefined
     if (!liqAccData) {
         liquidityAccIX = await createLiquidityAccountIX(
-            userPublicKey, 
-            depositAccounts?.poolState, 
-            depositAccounts?.userPoolLiquidity, 
+            userPublicKey,
+            depositAccounts?.poolState,
+            depositAccounts?.userPoolLiquidity,
             program
         )
     }
@@ -151,17 +157,55 @@ export const deposit = async (
     return depositAmountTX
 }
 
+export const calculateTokenAndLPAmount = async (
+    givenTokenAmount: BigNumber,
+    tokenType: TokenType,
+    poolState: any,
+    connection: Connection
+): Promise<void> => {
+    let lpTokenAmount: BigNumber;
+    let otherTokenAmount: BigNumber;
+    if (tokenType === TokenType.Token0) {
+        const lpTokenSupply = poolState?.lpSupply?.toNumber()
+        const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
+        const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.uiAmount
+        const protocolFees0 = poolState?.protocolFeesToken0?.toNumber()
+        const fundFees0 = poolState?.fundFeesToken0?.toNumber()
+        const swapTokenAmount0 = amount0 - (protocolFees0 + fundFees0)
+
+        const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
+        const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.uiAmount
+        const protocolFees1 = poolState?.protocolFeesToken1?.toNumber()
+        const fundFees1 = poolState?.fundFeesToken1?.toNumber()
+        const swapTokenAmount1 = amount1 - (protocolFees1 + fundFees1)
+        lpTokenAmount = givenTokenAmount?.multipliedBy(new BigNumber(lpTokenSupply))
+            .dividedBy(new BigNumber(swapTokenAmount0))
+        otherTokenAmount = lpTokenAmount?.multipliedBy(new BigNumber(swapTokenAmount1).
+            dividedBy(new BigNumber(lpTokenSupply)))
+
+        console.log('amounts:', lpTokenSupply, givenTokenAmount?.toNumber(), swapTokenAmount0, swapTokenAmount1)
+        console.log('amounts: is', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+    }   //20.3435837316 -> 
+    // } else {
+    //     // Calculate LP token amount based on token1
+    //     lpTokenAmount = givenTokenAmount.mul(lpTokenSupply).div(swapTokenAmount1)
+    //     // Calculate token0 amount
+    //     otherTokenAmount = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
+    // }
+}
+
+
 export const withdraw = async (
-    userSourceWithdrawAmount: BigNumber, 
+    userSourceWithdrawAmount: BigNumber,
     userTargetWithdrawAmount: BigNumber,
     //eslint-disable-next-line
-    selectedCard: any, 
-    userPublicKey: PublicKey, 
-    program: Program<Idl> 
+    selectedCard: any,
+    userPublicKey: PublicKey,
+    program: Program<Idl>
 ): Promise<Transaction> => {
     const withdrawAccounts = await getAccountsForDepositWithdraw(
         selectedCard,
-        userPublicKey, 
+        userPublicKey,
         false
     )
     const withdrawInstructionAccount = { ...withdrawAccounts }
