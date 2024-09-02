@@ -1,10 +1,12 @@
-import { FC } from 'react'
-import { Faq, faqs } from './constants'
+import { FC, ReactNode } from 'react'
+import { faqs, faqsMigrate, poolType } from './constants'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, cn } from 'gfx-component-lib'
-import { useRewardToggle } from '../../context'
+import { useGamma, useRewardToggle } from '../../context'
 
 
 export const Faqs: FC = () => {
+  const {pool} = useGamma()
+
   const { isPortfolio } = useRewardToggle()
   return !isPortfolio && (
     <div className={cn(`max-sm:w-[calc(100% - 15px)]`)}>
@@ -22,13 +24,16 @@ export const Faqs: FC = () => {
       </a>
     </div>
     <Accordion collapsible="true" type={'multiple'}>
-      {faqs.map((item: Faq) => (
-        <AccordionItem key={item.question} value={item.question}>
-          <AccordionTrigger>{item.question}</AccordionTrigger>
-          <AccordionContent>{item.answer}</AccordionContent>
-        </AccordionItem>
+      {(pool.name === poolType.migrate.name ? faqsMigrate : faqs).map((item) => (
+        <FAQItem key={item.question} {...item} />
       ))}
     </Accordion>
   </div>
   )
 }
+const FAQItem:FC<{question:string, answer:ReactNode|ReactNode[]}> = ({question,answer}) => (
+  <AccordionItem key={question} value={question}>
+    <AccordionTrigger>{question}</AccordionTrigger>
+    <AccordionContent>{answer}</AccordionContent>
+  </AccordionItem>
+)
