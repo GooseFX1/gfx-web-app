@@ -66,17 +66,17 @@ export const GAMMA_TOKENS = [
     type: 'Hyper'
   },
   {
-    sourceToken: 'USDC',
-    targetToken: 'SOL',
-    liquidity: 3.85,
+    sourceToken: 'MSOL',
+    targetToken: 'USDC',
+    liquidity: 123,
     volume: 567.89,
     fees: 168.92,
     isOwner: false,
     apr: 88,
-    sourceTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    sourceTokenMintDecimals: 6,
-    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    targetTokenMintDecimals: 9,
+    sourceTokenMintAddress: 'N4CdHcZYMj7DufSu89m1gi3RFxt8NiJQ9PmfNg8kc8P',
+    sourceTokenMintDecimals: 9,
+    targetTokenMintAddress: 'N5Y2m9HSPDBr8ft6UVWL4vLoaBfqPYawxhM1uEMx5Gk',
+    targetTokenMintDecimals: 6,
     type: 'Primary'
   },
   {

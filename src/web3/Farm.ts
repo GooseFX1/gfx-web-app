@@ -4,7 +4,6 @@ import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token-v
 import { Idl, Program } from "@project-serum/anchor"
 import { Transaction } from "@solana/web3.js"
 import BN from 'bn.js'
-import BigNumber from "bignumber.js"
 import {
     GAMMA_PROGRAM_ID,
     POOL_VAULT_SEED_PREFIX,
@@ -15,6 +14,7 @@ import {
     SYSTEM,
     MEMO_ID
 } from './ids'
+import { convertToNativeValue } from "@/utils"
 
 enum TokenType {
     Token0,
@@ -123,9 +123,8 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
 }
 
 export const deposit = async (
-    userSourceDepositAmount: BigNumber,
-    userTargetDepositAmount: BigNumber,
-    //eslint-disable-next-line
+    userSourceDepositAmount: string,
+    userTargetDepositAmount: string,
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>,
@@ -157,48 +156,9 @@ export const deposit = async (
     return depositAmountTX
 }
 
-export const calculateTokenAndLPAmount = async (
-    givenTokenAmount: BigNumber,
-    tokenType: TokenType,
-    poolState: any,
-    connection: Connection
-): Promise<void> => {
-    let lpTokenAmount: BigNumber;
-    let otherTokenAmount: BigNumber;
-    if (tokenType === TokenType.Token0) {
-        const lpTokenSupply = poolState?.lpSupply?.toNumber()
-        const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
-        const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.uiAmount
-        const protocolFees0 = poolState?.protocolFeesToken0?.toNumber()
-        const fundFees0 = poolState?.fundFeesToken0?.toNumber()
-        const swapTokenAmount0 = amount0 - (protocolFees0 + fundFees0)
-
-        const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
-        const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.uiAmount
-        const protocolFees1 = poolState?.protocolFeesToken1?.toNumber()
-        const fundFees1 = poolState?.fundFeesToken1?.toNumber()
-        const swapTokenAmount1 = amount1 - (protocolFees1 + fundFees1)
-        lpTokenAmount = givenTokenAmount?.multipliedBy(new BigNumber(lpTokenSupply))
-            .dividedBy(new BigNumber(swapTokenAmount0))
-        otherTokenAmount = lpTokenAmount?.multipliedBy(new BigNumber(swapTokenAmount1).
-            dividedBy(new BigNumber(lpTokenSupply)))
-
-        console.log('amounts:', lpTokenSupply, givenTokenAmount?.toNumber(), swapTokenAmount0, swapTokenAmount1)
-        console.log('amounts: is', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
-    }   //20.3435837316 -> 
-    // } else {
-    //     // Calculate LP token amount based on token1
-    //     lpTokenAmount = givenTokenAmount.mul(lpTokenSupply).div(swapTokenAmount1)
-    //     // Calculate token0 amount
-    //     otherTokenAmount = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
-    // }
-}
-
-
 export const withdraw = async (
-    userSourceWithdrawAmount: BigNumber,
-    userTargetWithdrawAmount: BigNumber,
-    //eslint-disable-next-line
+    userSourceWithdrawAmount: string,
+    userTargetWithdrawAmount: string,
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>
@@ -218,4 +178,50 @@ export const withdraw = async (
     const withdrawAmountTX = new Transaction()
     withdrawAmountTX.add(withdrawIX)
     return withdrawAmountTX
+}
+
+export const calculateOtherTokenAndLPAmount = async (
+    givenTokenAmount: string,
+    tokenType: TokenType,
+    poolState: any,
+    connection: Connection
+): Promise<{ lpTokenAmount: BN, otherTokenAmount: BN }> => {
+    let lpTokenAmount: BN;
+    let otherTokenAmount: BN;
+
+    const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
+    const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
+    const protocolFees0 = poolState?.protocolFeesToken0
+    const fundFees0 = poolState?.fundFeesToken0
+    const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
+
+    const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
+    const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
+    const protocolFees1 = poolState?.protocolFeesToken1
+    const fundFees1 = poolState?.fundFeesToken1
+    const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
+
+    const lpTokenSupply = poolState?.lpSupply
+
+    if (tokenType === TokenType.Token0) {
+        const inputToken0 = convertToNativeValue(givenTokenAmount, poolState?.mint0Decimals)
+        lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
+        otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
+
+        console.log('amount type 0', lpTokenSupply.toNumber(), inputToken0)
+        console.log('amount 0', amount0, protocolFees0?.toNumber(), fundFees0?.toNumber(), swapTokenAmount0?.toNumber())
+        console.log('amount 1', amount1, protocolFees1.toNumber(), fundFees1.toNumber(), swapTokenAmount1?.toNumber())
+        console.log('amount 2', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+    } else {
+        const inputToken1 = convertToNativeValue(givenTokenAmount, poolState?.mint1Decimals)
+        lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
+        otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
+
+        console.log('amount type 1', lpTokenSupply?.toNumber(), inputToken1)
+        console.log('amount 0', amount0, protocolFees0.toNumber(), fundFees0.toNumber(), swapTokenAmount0?.toNumber())
+        console.log('amount 1', amount1, protocolFees1.toNumber(), fundFees1.toNumber(), swapTokenAmount1?.toNumber())
+        console.log('amount 2', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+    }
+
+    return { lpTokenAmount, otherTokenAmount }
 }

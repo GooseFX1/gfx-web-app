@@ -1,17 +1,16 @@
 import { Button, cn, Input, InputElementRight, InputGroup } from 'gfx-component-lib'
 import { useCallback, useRef, FC } from 'react'
 import { useDarkMode } from '@/context'
-import BigNumber from 'bignumber.js'
 
 const DepositWithdrawInput: FC<{
   isDeposit: boolean
   onChange: any
-  depositAmount: BigNumber
-  withdrawAmount: BigNumber
+  depositAmount: string
+  withdrawAmount: string
   handleHalf: any
   handleMax: any
-  userSourceTokenBal?: BigNumber
-  userTargetTokenBal?: BigNumber
+  userSourceTokenBal?: number
+  userTargetTokenBal?: number
   sourceToken?: boolean
 }> = ({
   isDeposit,
@@ -44,8 +43,8 @@ const DepositWithdrawInput: FC<{
                 className={cn(`p-1.5 text-text-black-4 dark:text-text-darkmode-primary`)}
                 size={'xs'}
                 onClick={handleHalf}
-                disabled={(sourceToken && !userSourceTokenBal?.gt(BigNumber(0)) ||
-                  !sourceToken && !userTargetTokenBal?.gt(BigNumber(0)))}
+                disabled={(sourceToken && userSourceTokenBal < 0 ||
+                  !sourceToken && userTargetTokenBal < 0)}
               >
                 Half
               </Button>
@@ -55,8 +54,8 @@ const DepositWithdrawInput: FC<{
                 size={'xs'}
                 colorScheme={isDarkMode ? 'white' : 'blue'}
                 onClick={handleMax}
-                disabled={(sourceToken && !userSourceTokenBal?.gt(BigNumber(0)) ||
-                  !sourceToken && !userTargetTokenBal?.gt(BigNumber(0)))}
+                disabled={(sourceToken && userSourceTokenBal < 0 ||
+                  !sourceToken && userTargetTokenBal < 0)}
               >
                 Max
               </Button>
@@ -70,12 +69,12 @@ const DepositWithdrawInput: FC<{
             onChange={onChange}
             value={
               isDeposit
-                ? depositAmount?.isZero()
+                ? !depositAmount
                   ? ''
-                  : depositAmount?.toNumber()
-                : withdrawAmount?.isZero()
+                  : depositAmount
+                : !withdrawAmount
                   ? ''
-                  : withdrawAmount?.toNumber()
+                  : withdrawAmount
             }
           />
         </InputGroup>

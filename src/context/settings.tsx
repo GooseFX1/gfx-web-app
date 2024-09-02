@@ -139,8 +139,8 @@ export type RPC = {
 export const APP_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'QuickNode',
-  endpoint: `https://rpc-proxy.goosefx.workers.dev`,
-  network: WalletAdapterNetwork.Mainnet
+  endpoint: `https://api.devnet.solana.com`,
+  network: WalletAdapterNetwork.Devnet
 }
 export const HELIUS_RPC: RPC = {
   chainId: ENV.MainnetBeta,

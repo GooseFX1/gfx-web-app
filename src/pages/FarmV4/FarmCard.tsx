@@ -4,7 +4,7 @@ import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
 const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
-  const { setOperationPending, setSelectedCard } = useGamma()
+  const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
   return (
     <div
       className="h-[207px] w-full bg-red-100 border 
@@ -30,7 +30,7 @@ const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
           variant={'secondary'}
           onClick={() => {
             setSelectedCard(token)
-            setOperationPending(true)
+            setOpenDepositWithdrawSlider(true)
           }}
         >
           Deposit

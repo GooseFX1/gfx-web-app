@@ -32,7 +32,6 @@ const Step2: FC<{
   feeTier: string
   setFeeTier: Dispatch<SetStateAction<string>>
   liquidity: number
-  closeCreateModal?: () => void
   poolExists: boolean
   setPoolExists: (b: boolean) => void
 }> = ({
@@ -46,13 +45,12 @@ const Step2: FC<{
         feeTier,
         setFeeTier,
         liquidity,
-        closeCreateModal,
         poolExists,
         setPoolExists
       }) => {
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
-  const { setSelectedCard, setOperationPending } = useGamma()
+  const { setSelectedCard } = useGamma()
   const tokenAamount = tokenA ? getUIAmount(tokenA.address.toBase58()).toFixed(2) : '0.00'
   const tokenBamount = tokenB ? getUIAmount(tokenB.address.toBase58()).toFixed(2) : '0.00'
   const navigateToPool = () => {
@@ -61,8 +59,6 @@ const Step2: FC<{
       if (token.sourceTokenMintAddress == tokenA.address.toBase58() &&
         token.targetTokenMintAddress == tokenB.address.toBase58()) {
         setSelectedCard(token)
-        setOperationPending(true)
-        closeCreateModal()
         break
       }
     }
