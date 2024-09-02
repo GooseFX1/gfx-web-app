@@ -10,7 +10,6 @@ import { TokenRow } from './TokenRow'
 import { ReviewConfirm } from './ReviewConfirm'
 import StickyFooter from './StickyFooter'
 import { useWallet } from '@solana/wallet-adapter-react'
-import BigNumber from 'bignumber.js'
 import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
@@ -19,23 +18,23 @@ import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { calculateTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
+import { deposit, withdraw, calculateOtherTokenAndLPAmount } from '@/web3/Farm'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { selectedCard, operationPending, setOperationPending, selectedCardPool } = useGamma()
+  const { selectedCard, openDepositWithdrawSlider, setOpenDepositWithdrawSlider, selectedCardPool } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
-  const [userSourceTokenBal, setUserSourceTokenBal] = useState<BigNumber>(new BigNumber(0))
-  const [userTargetTokenBal, setUserTargetTokenBal] = useState<BigNumber>(new BigNumber(0))
-  const [userSourceDepositAmount, setUserSourceDepositAmount] = useState<BigNumber>(new BigNumber(0))
-  const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<BigNumber>(new BigNumber(0))
-  const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
-  const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<BigNumber>(new BigNumber(0))
+  const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
+  const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
+  const [userSourceDepositAmount, setUserSourceDepositAmount] = useState<string>('')
+  const [userTargetDepositAmount, setUserTargetDepositAmount] = useState<string>('')
+  const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<string>('')
+  const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<string>('')
   //eslint-disable-next-line
   const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
@@ -43,9 +42,9 @@ export const DepositWithdrawSlider: FC = () => {
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  
+
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (userPublicKey) {
         const solAmount = await connection.getBalance(userPublicKey)
         setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
@@ -55,10 +54,10 @@ export const DepositWithdrawSlider: FC = () => {
 
   useEffect(() => {
     if (userPublicKey) {
-      if (selectedCard?.sourceToken === 'SOL') setUserSourceTokenBal(new BigNumber(userSolBalance))
-      else setUserSourceTokenBal(new BigNumber(getUIAmount(selectedCard?.sourceTokenMintAddress)))
-      if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(new BigNumber(userSolBalance))
-      else setUserTargetTokenBal(new BigNumber(getUIAmount(selectedCard?.targetTokenMintAddress)))
+      if (selectedCard?.sourceToken === 'SOL') setUserSourceTokenBal(userSolBalance)
+      else setUserSourceTokenBal(getUIAmount(selectedCard?.sourceTokenMintAddress))
+      if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(userSolBalance)
+      else setUserTargetTokenBal(getUIAmount(selectedCard?.targetTokenMintAddress))
     }
   }, [selectedCard, userPublicKey, userSolBalance, getUIAmount])
 
@@ -67,33 +66,42 @@ export const DepositWithdrawSlider: FC = () => {
       // handle if the user sends '' or undefined in input box
       if (input === '') {
         if (isDeposit) {
-          if (sourceToken) setUserSourceDepositAmount(new BigNumber(0))
-          else setUserTargetDepositAmount(new BigNumber(0))
+          if (sourceToken) setUserSourceDepositAmount('')
+          else setUserTargetDepositAmount('')
         } else {
-          if (sourceToken) setUserSourceWithdrawAmount(new BigNumber(0))
-          else setUserTargetWithdrawAmount(new BigNumber(0))
+          if (sourceToken) setUserSourceWithdrawAmount('')
+          else setUserTargetWithdrawAmount('')
         }
         return
       }
       const inputValue = +input
       if (!isNaN(inputValue)) {
         if (isDeposit) {
-          if (sourceToken) setUserSourceDepositAmount(new BigNumber(input))
-          else setUserTargetDepositAmount(new BigNumber(input))
+          if (sourceToken) setUserSourceDepositAmount(input)
+          else setUserTargetDepositAmount(input)
         } else {
-          if (sourceToken) setUserSourceWithdrawAmount(new BigNumber(input))
-          else setUserTargetWithdrawAmount(new BigNumber(input))
+          if (sourceToken) setUserSourceWithdrawAmount(input)
+          else setUserTargetWithdrawAmount(input)
         }
       }
     },
     [modeOfOperation]
   )
-  
+
   useEffect(() => {
-    if(userSourceDepositAmount && Object.keys(selectedCardPool)?.length){
-      calculateTokenAndLPAmount(userSourceDepositAmount, 0, selectedCardPool, connection)
-    }
+    ; (async () => {
+      if (userSourceDepositAmount && Object.keys(selectedCardPool)?.length) {
+        const { lpTokenAmount, otherTokenAmount } = await calculateOtherTokenAndLPAmount(
+          userSourceDepositAmount,
+          0,
+          selectedCardPool,
+          connection
+        )
+        console.log("amount 3", lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+      }
+    })()
   }, [userSourceDepositAmount, selectedCardPool])
+
 
   //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(
@@ -101,11 +109,11 @@ export const DepositWithdrawSlider: FC = () => {
       if (isDeposit) {
         if (sourceToken) {
           setUserSourceDepositAmount(
-            userSourceTokenBal ? new BigNumber(userSourceTokenBal).div(2) : new BigNumber(0)
+            userSourceTokenBal ? (userSourceTokenBal / 2)?.toString() : ''
           )
         } else {
           setUserTargetDepositAmount(
-            userTargetTokenBal ? new BigNumber(userTargetTokenBal).div(2) : new BigNumber(0)
+            userTargetTokenBal ? (userTargetTokenBal / 2)?.toString() : ''
           )
         }
       }
@@ -118,9 +126,9 @@ export const DepositWithdrawSlider: FC = () => {
     (sourceToken: boolean) => {
       if (isDeposit) {
         if (sourceToken) {
-          setUserSourceDepositAmount(userSourceTokenBal ? new BigNumber(userSourceTokenBal) : new BigNumber(0))
+          setUserSourceDepositAmount(userSourceTokenBal ? userSourceTokenBal?.toString() : '')
         } else {
-          setUserTargetDepositAmount(userTargetTokenBal ? new BigNumber(userTargetTokenBal) : new BigNumber(0))
+          setUserTargetDepositAmount(userTargetTokenBal ? userTargetTokenBal?.toString() : '')
         }
       }
     },
@@ -129,11 +137,11 @@ export const DepositWithdrawSlider: FC = () => {
 
   const handleDeposit = async () => {
     const txBuilder = createTransactionBuilder()
-    const tx = await deposit(userSourceDepositAmount, 
-      userTargetDepositAmount, 
-      selectedCard, 
-      userPublicKey, 
-      GammaProgram, 
+    const tx = await deposit(userSourceDepositAmount,
+      userTargetDepositAmount,
+      selectedCard,
+      userPublicKey,
+      GammaProgram,
       connection
     )
     txBuilder.add(tx)
@@ -145,16 +153,15 @@ export const DepositWithdrawSlider: FC = () => {
       return
     }
     setActionType('deposit')
-    setOperationPending(true)
   }
 
-  const handleWithdraw = async() => {
+  const handleWithdraw = async () => {
     const txBuilder = createTransactionBuilder()
     const tx = await withdraw(
-      userSourceWithdrawAmount, 
-      userTargetWithdrawAmount, 
-      selectedCard, 
-      userPublicKey, 
+      userSourceWithdrawAmount,
+      userTargetWithdrawAmount,
+      selectedCard,
+      userPublicKey,
       GammaProgram
     )
     txBuilder.add(tx)
@@ -170,9 +177,10 @@ export const DepositWithdrawSlider: FC = () => {
   const handleClaim = () => {
     console.log('withdraw')
     setIsButtonLoading.on()
-    setOperationPending(true)
+    setOpenDepositWithdrawSlider(true)
     setActionType('claim')
   }
+
   //eslint-disable-next-line
   const handleProcessStart = (type: 'claim' | 'withdraw') => {
     return () => {
@@ -180,24 +188,18 @@ export const DepositWithdrawSlider: FC = () => {
         setIsClaim.on()
       }
       console.log('performing', type)
-      setOperationPending(true)
+      setOpenDepositWithdrawSlider(true)
       setActionType(type)
     }
   }
 
-  // const handleCancel = () => {
-  //   console.log('cancel')
-  //   setIsButtonLoading.off()
-  //   setOperationPending(false)
-  //   setIsClaim.off()
-  //   setActionType('')
-  // }
   const handleActionCancel = () => {
     setActionType('')
     setIsClaim.off()
     setIsButtonLoading.off()
   }
-  const claimableReward = new BigNumber(0)
+
+  const claimableReward = 0
 
   const { actionLabel, actionModalTitle } = useMemo(() => {
     let actionModalTitle = 'Withdraw'
@@ -212,14 +214,14 @@ export const DepositWithdrawSlider: FC = () => {
     return { actionLabel, actionModalTitle }
   }, [isDeposit, isClaim])
   useLayoutEffect(() => {
-    if (operationPending) {
+    if (openDepositWithdrawSlider) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'auto'
     }
-  }, [operationPending])
+  }, [openDepositWithdrawSlider])
   return (
-    <Dialog modal={false} open={operationPending} onOpenChange={setOperationPending}>
+    <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <div className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
@@ -227,9 +229,9 @@ export const DepositWithdrawSlider: FC = () => {
       <DialogContent className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[525px] gap-0
       `}
-                     fullScreen={true}
-                     placement={isMobile ? 'bottom' : 'right'}
-                     onInteractOutside={(e) => e.preventDefault()}
+        fullScreen={true}
+        placement={isMobile ? 'bottom' : 'right'}
+        onInteractOutside={(e) => e.preventDefault()}
 
       >
         <GammaActionModal
@@ -264,7 +266,12 @@ export const DepositWithdrawSlider: FC = () => {
           ]} />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-          <DepositWithdrawHeader />
+          <DepositWithdrawHeader
+            setUserSourceDepositAmount={setUserSourceDepositAmount}
+            setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
+            setUserTargetDepositAmount={setUserTargetDepositAmount}
+            setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+          />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
             <DepositWithdrawAccordion />
@@ -291,7 +298,7 @@ export const DepositWithdrawSlider: FC = () => {
               userTargetTokenBal={userTargetTokenBal}
             />
             <ReviewConfirm />
-            {userPublicKey && (userSourceTokenBal?.isZero() || userTargetTokenBal?.isZero()) && (
+            {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && (
               <SwapNow />
             )}
           </div>

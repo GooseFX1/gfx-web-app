@@ -34,7 +34,7 @@ export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { pools, GAMMA_SORT_CONFIG, operationPending, pool, setPool } = useGamma()
+  const { pools, GAMMA_SORT_CONFIG, pool, setPool } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
@@ -145,17 +145,17 @@ export const FarmContainer: FC = () => {
                 {
                   value: poolType.primary.name,
                   label: 'Primary',
-                  onClick: () => (operationPending ? null : setPool(poolType.primary))
+                  onClick: () => setPool(poolType.primary)
                 },
                 {
                   value: poolType.hyper.name,
                   label: 'Hyper',
-                  onClick: () => (operationPending ? null : setPool(poolType.hyper))
+                  onClick: () => setPool(poolType.hyper)
                 },
                 {
                   value: poolType.migrate.name,
                   label: 'Migrate',
-                  onClick: () => (operationPending ? null : setPool(poolType.migrate))
+                  onClick: () => setPool(poolType.migrate)
                 }
               ]}
             />

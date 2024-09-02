@@ -3,16 +3,15 @@ import { useDarkMode } from '@/context'
 import { Icon, Badge, cn } from 'gfx-component-lib'
 import { truncateAddress } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import BigNumber from 'bignumber.js'
 
-export const TokenRow: FC<{ token: any; balance: any }> = ({ token, balance }): ReactElement => {
+export const TokenRow: FC<{ token: any; balance: number }> = ({ token, balance }): ReactElement => {
   const { mode } = useDarkMode()
   const { wallet } = useWallet()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const tokenAccount = "FdUm8MtCFGMC2UvxEV2bywKBQaP6es7osMwqZ9i2Gbvi"
 
   const getWalletIcon = () => {
-    if (userPublicKey && balance.gt(new BigNumber(0))) {
+    if (userPublicKey && balance > 0) {
       return `img/assets/wallet-${mode}-enabled.svg`
     } else {
       return `img/assets/wallet-${mode}-disabled.svg`
@@ -40,7 +39,7 @@ export const TokenRow: FC<{ token: any; balance: any }> = ({ token, balance }): 
         className={'flex flex-row items-center'}>
         <Icon src={getWalletIcon()} size="sm" />
         <div className={cn('ml-1.5 text-regular font-semibold dark:text-grey-8 text-black-4', 
-        userPublicKey && balance.gt(new BigNumber(0)) ? 'opacity-100' : 'opacity-50')}>
+        userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50')}>
           {`${balance} ${token}`}
         </div>
       </div>

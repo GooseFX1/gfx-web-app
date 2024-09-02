@@ -38,8 +38,8 @@ interface GAMMADataModel {
   isCustomSlippage: boolean
   selectedCard: any
   setSelectedCard: Dispatch<SetStateAction<any>>
-  operationPending: boolean
-  setOperationPending: Dispatch<SetStateAction<boolean>>
+  openDepositWithdrawSlider: boolean
+  setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   pool: Pool
   setPool: Dispatch<SetStateAction<Pool>>
   allPoolSslData: SSLToken[]
@@ -66,7 +66,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>()
-  const [operationPending, setOperationPending] = useState<boolean>(false)
+  const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [pool, setPool] = useState<Pool>(poolType.primary)
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
@@ -358,8 +358,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isCustomSlippage,
         selectedCard: selectedCard,
         setSelectedCard: setSelectedCard,
-        operationPending: operationPending,
-        setOperationPending: setOperationPending,
+        openDepositWithdrawSlider: openDepositWithdrawSlider,
+        setOpenDepositWithdrawSlider: setOpenDepositWithdrawSlider,
         sslData: sslData,
         setPool: setPool,
         pool: pool,

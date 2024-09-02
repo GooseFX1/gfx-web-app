@@ -10,7 +10,7 @@ import MyPositions from './MyPositions'
 
 const Positions: FC = () => {
     const { mode } = useDarkMode()
-    const { pools, operationPending, pool, setPool } = useGamma()
+    const { pools, pool, setPool } = useGamma()
     const [searchTokens, setSearchTokens] = useState<string>('')
     const [sort, setSort] = useState<string>('ASC')
     const [sortType, setSortType] = useState<string>(null)
@@ -67,12 +67,12 @@ const Positions: FC = () => {
                         {
                             value: poolType.primary.name,
                             label: 'Primary',
-                            onClick: () => (operationPending ? null : setPool(poolType.primary))
+                            onClick: () => setPool(poolType.primary)
                         },
                         {
                             value: poolType.hyper.name,
                             label: 'Hyper',
-                            onClick: () => (operationPending ? null : setPool(poolType.hyper))
+                            onClick: () => setPool(poolType.hyper)
                         }
                     ]}
                 />
