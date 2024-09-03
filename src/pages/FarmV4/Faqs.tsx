@@ -31,7 +31,7 @@ export const Faqs: FC = () => {
   </div>
   )
 }
-const FAQItem:FC<{question:string, answer:ReactNode|ReactNode[]}> = ({question,answer}) => (
+const FAQItem:FC<{key: string, question:string, answer:ReactNode|ReactNode[]}> = ({question,answer}) => (
   <AccordionItem key={question} value={question}>
     <AccordionTrigger>{question}</AccordionTrigger>
     <AccordionContent>{answer}</AccordionContent>

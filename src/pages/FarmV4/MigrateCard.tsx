@@ -13,8 +13,8 @@ const MigrateCard: FC<MigrateCardProps> = ({
   openPositionsAcrossPrograms,
   openPositionImages,
   setPool
-                     }) =>{
-  const {connected} = useWallet()
+}) => {
+  const { connected } = useWallet()
   return (
     <Container className={`flex flex-col flex-1 gap-2.5 p-2.5 bg-background-lightmode-secondary 
     dark:bg-background-darkmode-secondary rounded-[8px] before:rounded-[8px]`}>
@@ -27,28 +27,28 @@ const MigrateCard: FC<MigrateCardProps> = ({
       </p>
 
       {connected ? <div className={'mt-auto gap-2 flex flex-col'}>
-          {openPositionsAcrossPrograms>0 && <div className={cn(`flex w-full gap-2 relative items-center`
+        {openPositionsAcrossPrograms > 0 && <div className={cn(`flex w-full gap-2 relative items-center`
+        )}>
+          <div className={cn(`flex relative`,
+            openPositionImages.length == 1 && `w-[30px]`,
+            openPositionImages.length == 2 && `w-[52px]`,
+            openPositionImages.length == 3 && `w-[74px]`
           )}>
-            <div className={cn(`flex relative`,
-              openPositionImages.length == 1 && `w-[30px]`,
-              openPositionImages.length == 2 && `w-[52px]`,
-              openPositionImages.length == 3 && `w-[74px]`
-            )}>
-              {openPositionImages.map((src)=>
-                <Icon key={src} src={src} className={`[&:nth-child(2)]:left-1/4 [&:nth-child(2)]:absolute 
-                  [&:nth-child(3)]:left-2/4 [&:nth-child(3)]:absolute`}/>
-              )} </div> <p>{openPositionsAcrossPrograms} Positions</p>
-          </div>}
-          <Button
-            className={`w-max`}
-            colorScheme={'blue'}
-            onClick={()=>setPool(poolType.migrate)}
-            disabled={openPositionsAcrossPrograms===0}
-          >
-            {openPositionsAcrossPrograms>0?'Migrate Now':'No Open Positions'}
-          </Button>
-        </div> :
-        <Connect customButtonStyle={`mt-auto w-max`}/>}
+            {openPositionImages.map((src) =>
+              <Icon src={src} key={src} className={`[&:nth-child(2)]:left-1/4 [&:nth-child(2)]:absolute 
+                  [&:nth-child(3)]:left-2/4 [&:nth-child(3)]:absolute`} />
+            )} </div> <p>{openPositionsAcrossPrograms} Positions</p>
+        </div>}
+        <Button
+          className={`w-max`}
+          colorScheme={'blue'}
+          onClick={() => setPool(poolType?.migrate)}
+          disabled={openPositionsAcrossPrograms === 0}
+        >
+          {openPositionsAcrossPrograms > 0 ? 'Migrate Now' : 'No Open Positions'}
+        </Button>
+      </div> :
+        <Connect customButtonStyle={`mt-auto w-max`} />}
     </Container>
   )
 }

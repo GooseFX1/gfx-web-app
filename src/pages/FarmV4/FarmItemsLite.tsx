@@ -1,6 +1,4 @@
-/* eslint-disable */
-
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { Pool, poolType } from '@/pages/FarmV4/constants'
 import MigrateCard from '@/pages/FarmV4/MigrateCard'
 import { truncateBigString } from '@/utils'
@@ -14,6 +12,7 @@ const FarmItemsLite: FC<{
   tokens: any
   filteredLiquidityAccounts: any
   isDepositedActive: boolean
+  isSearchActive: string
 }> = ({
         pool,
         openPositionImages,
@@ -21,9 +20,10 @@ const FarmItemsLite: FC<{
         setPool,
         tokens,
         filteredLiquidityAccounts,
-        isDepositedActive
+        isDepositedActive,
+        isSearchActive
       }) => <div className="border-top grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-    {pool.name != poolType.migrate.name && <MigrateCard
+    {!isSearchActive && pool?.name != poolType?.migrate?.name && <MigrateCard
       openPositionImages={openPositionImages}
       openPositionsAcrossPrograms={openPositionsAcrossPrograms}
       setPool={setPool}

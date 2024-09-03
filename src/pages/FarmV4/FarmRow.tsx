@@ -1,10 +1,18 @@
 import { FC } from 'react'
 import { Icon, Badge } from 'gfx-component-lib'
+import { useGamma } from '@/context'
 
-const FarmRow: FC<{ token: any }> = ({ token }): JSX.Element => (
-  <div
-    className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 dark:bg-black-2 px-2.5
+const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element => {
+  const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
+  return(
+    <div
+    className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 dark:bg-black-2 px-2.5 cursor-pointer
     h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75 my-3.75"
+    key={key}
+    onClick={() => {
+      setSelectedCard(token)
+      setOpenDepositWithdrawSlider(true)
+    }}
   >
     <div className="flex flex-row items-center">
       <Icon
@@ -44,6 +52,7 @@ const FarmRow: FC<{ token: any }> = ({ token }): JSX.Element => (
       </Badge>
     </div>
   </div>
-)
+  )
+}
 
 export default FarmRow
