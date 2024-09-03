@@ -25,10 +25,15 @@ export const DepositWithdrawSlider: FC = () => {
   const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { selectedCard, openDepositWithdrawSlider, setOpenDepositWithdrawSlider, selectedCardPool } = useGamma()
+  const { 
+    selectedCard, 
+    openDepositWithdrawSlider, 
+    setOpenDepositWithdrawSlider, 
+    selectedCardPool, 
+    modeOfOperation
+  } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
-  const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
   const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
   const [userSourceDepositAmount, setUserSourceDepositAmount] = useState<string>('')
@@ -273,7 +278,7 @@ export const DepositWithdrawSlider: FC = () => {
             setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
           />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
-            <DepositWithdrawToggle modeOfOperation={modeOfOperation} setModeOfOperation={setModeOfOperation} />
+            <DepositWithdrawToggle />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
             <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />

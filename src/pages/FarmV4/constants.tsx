@@ -58,10 +58,6 @@ export type SSLTableData = {
 }
 
 export const poolType = {
-  all: {
-    index: 0,
-    name: 'All'
-  },
   primary: {
     index: 1,
     name: 'Primary'

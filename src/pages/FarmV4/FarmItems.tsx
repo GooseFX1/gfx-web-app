@@ -78,8 +78,23 @@ const FarmItems: FC<{
     '/img/crypto/meteora.svg'
   ]
   return (
-    <div className={''}>
-      {(numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
+    <div>
+      {pool.name === poolType?.migrate?.name ? (
+        <FarmItemsMigrate openPositionsAcrossPrograms={[{
+          tokenA: {
+            name: 'SOL',
+            balance: '0.24',
+            symbol: 'SOL',
+            src: '/img/crypto/SOL.svg'
+          },
+          tokenB: {
+            name: 'USDC',
+            balance: '0.24',
+            symbol: 'USDC',
+            src: '/img/crypto/USDC.svg'
+          }
+        }]} />
+      ) : (numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
         <NoResultsFound requestPool={!isDepositedActive} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro
@@ -88,7 +103,7 @@ const FarmItems: FC<{
           isDepositedActive={isDepositedActive}
           pool={pool}
         />
-      ) : pool.name != poolType.migrate.name ? <FarmItemsLite
+      ) : pool.name != poolType?.migrate?.name ? <FarmItemsLite
         pool={pool}
         openPositionImages={openPositionImages}
         openPositionsAcrossPrograms={openPositionsAcrossPrograms}
@@ -96,22 +111,8 @@ const FarmItems: FC<{
         tokens={tokens}
         filteredLiquidityAccounts={filteredLiquidityAccounts}
         isDepositedActive={isDepositedActive}
-      /> : (
-        <FarmItemsMigrate openPositionsAcrossPrograms={[{
-          tokenA: {
-            name: 'SOL',
-            balance: '0.24',
-            symbol: 'SOL',
-            src:'/img/crypto/SOL.svg'
-          },
-          tokenB: {
-            name: 'USDC',
-            balance: '0.24',
-            symbol: 'USDC',
-            src:'/img/crypto/USDC.svg'
-          }
-        }]}/>
-      )}
+        isSearchActive={isSearchActive}
+      /> : <></>}
       {(numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
         <></>
       ) : (

@@ -3,12 +3,13 @@ import { Button, Icon, Badge } from 'gfx-component-lib'
 import { ReactElement, FC } from 'react'
 import { PoolStats } from './PoolStats'
 
-const FarmCard: FC<{ token: any }> = ({ token }): ReactElement => {
+const FarmCard: FC<{ token: any, key: string }> = ({ token, key }): ReactElement => {
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
   return (
     <div
       className="h-[207px] w-full bg-red-100 border 
         border-solid dark:border-black-4 border-grey-4 bg-white dark:bg-black-2 p-2.5 rounded-[8px]"
+        key={key}
     >
       <div className="flex flex-row justify-between mb-2.5">
         <div className="flex relative">

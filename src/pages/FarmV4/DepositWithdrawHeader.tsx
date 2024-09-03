@@ -2,6 +2,7 @@ import { useGamma } from '@/context'
 import { FC, Dispatch, SetStateAction } from 'react'
 import { Button, DialogTitle, Icon } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
+import { ModeOfOperation } from './constants'
 
 export const DepositWithdrawHeader: FC<{
   setUserSourceDepositAmount: Dispatch<SetStateAction<string>>
@@ -14,7 +15,7 @@ export const DepositWithdrawHeader: FC<{
   setUserTargetDepositAmount,
   setUserTargetWithdrawAmount
 }): JSX.Element => {
-  const { selectedCard, setOpenDepositWithdrawSlider } = useGamma()
+  const { selectedCard, setOpenDepositWithdrawSlider, setModeOfOperation } = useGamma()
 
   const handleClose = () => {
     setUserSourceDepositAmount('')
@@ -22,6 +23,7 @@ export const DepositWithdrawHeader: FC<{
     setUserTargetDepositAmount('')
     setUserTargetWithdrawAmount('')
     setOpenDepositWithdrawSlider(false)
+    setModeOfOperation(ModeOfOperation?.DEPOSIT)
   }
 
   return (

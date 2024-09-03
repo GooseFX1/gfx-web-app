@@ -213,7 +213,7 @@ export const FarmHeader: FC = () => {
               )}
               onClick={() => {
                 setIsPortfolio.off()
-                setPool(poolType.all)
+                setPool(poolType?.primary)
               }}
             >
               Pools
@@ -226,7 +226,7 @@ export const FarmHeader: FC = () => {
               )}
               onClick={() => {
                 setIsPortfolio.on()
-                setPool(poolType.primary)
+                setPool(poolType?.primary)
               }}
             >
               Portfolio
@@ -262,7 +262,7 @@ export const FarmHeader: FC = () => {
             />
           )}
           <div className="flex flex-row gap-2.5 self-stretch">
-            {infoCards.map((card) => (
+            {infoCards?.map((card) => (
               <Container
                 key={card.name}
                 className={'w-[130px] justify-center h-full'}
@@ -296,7 +296,7 @@ export const FarmHeader: FC = () => {
                   className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
                   onClick={() => {
                     setIsPortfolio.on()
-                    setPool(poolType.primary)
+                    setPool(poolType?.primary)
                   }}
                 >
                   Go to Portfolio

@@ -12,6 +12,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   ADDRESSES,
   GET_24_CHANGES,
+  ModeOfOperation,
   Pool,
   poolType,
   SSLTableData,
@@ -52,6 +53,8 @@ interface GAMMADataModel {
   filteredLiquidityAccounts: any
   setFilteredLiquidityAccounts: any
   selectedCardPool: any
+  modeOfOperation: string
+  setModeOfOperation: Dispatch<SetStateAction<string>>
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
@@ -81,6 +84,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [allPoolLiquidityAcc, setAllPoolLiquidityAcc] = useState([])
   const [liquidityAmount, setLiquidityAmount] = useState({})
   const [selectedCardPool, setSelectedCardPool] = useState({})
+  const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
@@ -371,7 +375,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         liquidityAmount: liquidityAmount,
         filteredLiquidityAccounts: filteredLiquidityAccounts,
         setFilteredLiquidityAccounts: setFilteredLiquidityAccounts,
-        selectedCardPool: selectedCardPool
+        selectedCardPool: selectedCardPool,
+        modeOfOperation: modeOfOperation,
+        setModeOfOperation: setModeOfOperation
       }}
     >
       {children}

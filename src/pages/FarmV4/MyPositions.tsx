@@ -1,9 +1,10 @@
 import { FC } from 'react'
 import { Icon, Badge, Container } from 'gfx-component-lib'
 import { useGamma } from '@/context'
+import { ModeOfOperation } from './constants'
 
 const MyPositions: FC<{ tokens: any }> = ({ tokens }) => {
-    const { pool } = useGamma()
+    const { pool, setSelectedCard, setOpenDepositWithdrawSlider, setModeOfOperation } = useGamma()
     return (
         <div>
             {tokens
@@ -68,12 +69,22 @@ const MyPositions: FC<{ tokens: any }> = ({ tokens }) => {
                             </Container>
                             <div className='h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px] 
                             border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 rounded-tiny 
-                            cursor-pointer text-black-4 dark:text-white text-regular font-bold'>
+                            cursor-pointer text-black-4 dark:text-white text-regular font-bold'
+                                onClick={() => {
+                                    setSelectedCard(token)
+                                    setOpenDepositWithdrawSlider(true)
+                                    setModeOfOperation(ModeOfOperation?.DEPOSIT)
+                                }}>
                                 +
                             </div>
                             <div className='h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px] 
                             border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 
-                            rounded-tiny cursor-pointer text-black-4 dark:text-white text-regular font-bold'>
+                            rounded-tiny cursor-pointer text-black-4 dark:text-white text-regular font-bold'
+                                onClick={() => {
+                                    setSelectedCard(token)
+                                    setOpenDepositWithdrawSlider(true)
+                                    setModeOfOperation(ModeOfOperation?.WITHDRAW)
+                                }}>
                                 -
                             </div>
                         </div>

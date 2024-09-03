@@ -8,10 +8,10 @@ type GammaActionModalContentStackProps = {
   options: Option[]
 }
 const GammaActionModalContentStack: FC<GammaActionModalContentStackProps> = ({
-                                                                               options
-                                                                             }) =>
+  options
+}) =>
   <div className={'flex flex-col flex-1 gap-1.25'}>
-    {options.map((option, index) => (
+    {options?.map((option, index) => (
       <div key={index} className={'flex justify-between w-full gap-1.25'}>
         <p className={`text-text-lightmode-secondary dark:text-text-darkmode-secondary text-b2 font-semibold`}>
           {option.textLeft}

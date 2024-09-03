@@ -11,10 +11,10 @@ import { Connect } from '@/layouts'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
 import { Button, cn } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
@@ -123,7 +123,6 @@ export const CreatePool: FC<{
   const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
   const [feeTier, setFeeTier] = useState<string>("0.01")
-  const [poolType, setPoolType] = useState<string>('')
   const { connected } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
 
@@ -181,7 +180,7 @@ export const CreatePool: FC<{
     >
       <Slider ref={slider} {...settings}>
         <div className="slide">
-          <Step1 slider={slider} setPoolType={setPoolType} setIsCreatePool={setIsCreatePool} />
+          <Step1 slider={slider} setIsCreatePool={setIsCreatePool} />
         </div>
         <div className="slide">
           <Step2
@@ -200,7 +199,7 @@ export const CreatePool: FC<{
           />
         </div>
         <div className="slide">
-          <Step3 tokenA={tokenA} tokenB={tokenB} poolType={poolType}  />
+          <Step3 tokenA={tokenA} tokenB={tokenB} />
         </div>
       </Slider>
       {currentSlide != 0 && <div className={`flex justify-between border-t-1 solid

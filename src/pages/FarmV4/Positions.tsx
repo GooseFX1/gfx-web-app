@@ -14,9 +14,6 @@ const Positions: FC = () => {
     const [searchTokens, setSearchTokens] = useState<string>('')
     const [sort, setSort] = useState<string>('ASC')
     const [sortType, setSortType] = useState<string>(null)
-    const initiateSearch = (value: string) => {
-        setSearchTokens(value)
-    }
     const filteredTokens = useMemo(
         () =>
             searchTokens
@@ -28,8 +25,6 @@ const Positions: FC = () => {
                 : [...pools],
         [searchTokens, pools]
     )
-
-    console.log('consoling....', searchTokens, filteredTokens)
 
     return (
         <div>
@@ -60,25 +55,25 @@ const Positions: FC = () => {
             <div className="flex items-center max-sm:flex-col max-sm:gap-4 mb-3.75">
                 <RadioOptionGroup
                     defaultValue={'Primary'}
-                    value={pool.name}
+                    value={pool?.name}
                     className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
                     optionClassName={`min-md:w-[85px]`}
                     options={[
                         {
-                            value: poolType.primary.name,
+                            value: poolType?.primary?.name,
                             label: 'Primary',
-                            onClick: () => setPool(poolType.primary)
+                            onClick: () => setPool(poolType?.primary)
                         },
                         {
-                            value: poolType.hyper.name,
+                            value: poolType?.hyper?.name,
                             label: 'Hyper',
-                            onClick: () => setPool(poolType.hyper)
+                            onClick: () => setPool(poolType?.hyper)
                         }
                     ]}
                 />
                 <div className="flex items-center w-full justify-between">
                     <SearchBar
-                        onChange={(e) => initiateSearch(e.target.value)}
+                        onChange={(e) => setSearchTokens(e?.target?.value)}
                         onClear={() => setSearchTokens('')}
                         value={searchTokens}
                         className={'!max-w-full flex-1'}

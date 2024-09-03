@@ -53,11 +53,13 @@ export const FarmContainer: FC = () => {
 
   const filteredPools = useMemo(() => {
     const filterPools = (pools) =>
-      pools.filter((pool) => {
+      pools
+        ?.filter(item => item?.type === pool?.name)
+        ?.filter((pool) => {
         const matchesSearch =
           !searchTokens ||
-          pool.sourceToken.toLowerCase().includes(searchTokens.toLowerCase()) ||
-          pool.targetToken.toLowerCase().includes(searchTokens.toLowerCase())
+          pool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
+          pool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
         const matchesCreated = !showCreatedPools || pool.isOwner === true
         return matchesSearch && matchesCreated
       })
@@ -104,11 +106,6 @@ export const FarmContainer: FC = () => {
         return false
       })
   }, [pubKey, userCache])
-
-  const initiateGlobalSearch = (value: string) => {
-    setPool(poolType.all)
-    setSearchTokens(value)
-  }
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
@@ -161,7 +158,7 @@ export const FarmContainer: FC = () => {
             />
             <div className="flex items-center w-full justify-between">
               <SearchBar
-                onChange={(e) => initiateGlobalSearch(e.target.value)}
+                onChange={(e) => setSearchTokens(e?.target?.value)}
                 onClear={() => setSearchTokens('')}
                 value={searchTokens}
                 className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
