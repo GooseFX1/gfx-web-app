@@ -53,6 +53,7 @@ interface GAMMADataModel {
   filteredLiquidityAccounts: any
   setFilteredLiquidityAccounts: any
   selectedCardPool: any
+  setSelectedCardPool: Dispatch<SetStateAction<any>>
   modeOfOperation: string
   setModeOfOperation: Dispatch<SetStateAction<string>>
 }
@@ -68,7 +69,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
   const [slippage, setSlippage] = useState<number>(0.1)
-  const [selectedCard, setSelectedCard] = useState<any>()
+  const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [pool, setPool] = useState<Pool>(poolType.primary)
   const [sslData, setSslData] = useState<SSLToken[]>([])
@@ -206,7 +207,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     ; (async () => {
-      if (GammaProgram) {
+      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = getpoolId(selectedCard)
           const gammaPool = await GammaProgram?.account?.poolState?.fetch(poolIdKey)
@@ -377,7 +378,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setFilteredLiquidityAccounts: setFilteredLiquidityAccounts,
         selectedCardPool: selectedCardPool,
         modeOfOperation: modeOfOperation,
-        setModeOfOperation: setModeOfOperation
+        setModeOfOperation: setModeOfOperation,
+        setSelectedCardPool: setSelectedCardPool
       }}
     >
       {children}

@@ -21,7 +21,8 @@ export const FarmHeader: FC = () => {
     sslAllVolume,
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
-    setPool
+    setPool,
+    openDepositWithdrawSlider
   } = useGamma()
   const { prices } = usePriceFeedFarm()
   const { wallet } = useWallet()
@@ -192,7 +193,7 @@ export const FarmHeader: FC = () => {
   return (
     <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
       {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />}
-      <DepositWithdrawSlider />
+      {openDepositWithdrawSlider && <DepositWithdrawSlider />}
       <DocsBanner />
       <div className="relative mb-3.75">
         <div className="flex flex-row items-center mb-1.5">

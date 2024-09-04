@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn, Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
 import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
@@ -19,18 +19,22 @@ import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
 import { deposit, withdraw, calculateOtherTokenAndLPAmount } from '@/web3/Farm'
+import BN from 'bn.js'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
   const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
-  const { 
-    selectedCard, 
-    openDepositWithdrawSlider, 
-    setOpenDepositWithdrawSlider, 
-    selectedCardPool, 
-    modeOfOperation
+  const {
+    selectedCard,
+    openDepositWithdrawSlider,
+    setOpenDepositWithdrawSlider,
+    selectedCardPool,
+    modeOfOperation,
+    setModeOfOperation,
+    setSelectedCard,
+    setSelectedCardPool
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
@@ -41,12 +45,21 @@ export const DepositWithdrawSlider: FC = () => {
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<string>('')
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<string>('')
   //eslint-disable-next-line
+  const [transactionLPAmount, setTransactionLPAmount] = useState<BN>()
+  //eslint-disable-next-line
   const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
   const [isClaim, setIsClaim] = useBoolean(false)
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
+
+  //eslint-disable-next-line
+  useEffect(() => {
+    return ()=>{
+      handleClose
+    }
+  }, [])
 
   useEffect(() => {
     ; (async () => {
@@ -58,55 +71,75 @@ export const DepositWithdrawSlider: FC = () => {
   }, [userPublicKey])
 
   useEffect(() => {
-    if (userPublicKey) {
-      if (selectedCard?.sourceToken === 'SOL') setUserSourceTokenBal(userSolBalance)
-      else setUserSourceTokenBal(getUIAmount(selectedCard?.sourceTokenMintAddress))
+    if (selectedCard) {
+      if (selectedCard.sourceToken === 'SOL') setUserSourceTokenBal(userSolBalance)
+      else setUserSourceTokenBal(getUIAmount(selectedCard.sourceTokenMintAddress))
       if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(userSolBalance)
-      else setUserTargetTokenBal(getUIAmount(selectedCard?.targetTokenMintAddress))
+      else setUserTargetTokenBal(getUIAmount(selectedCard.targetTokenMintAddress))
     }
-  }, [selectedCard, userPublicKey, userSolBalance, getUIAmount])
+  }, [selectedCard, userSolBalance])
+
+  const handleClose = () => {
+    setUserSourceDepositAmount('')
+    setUserSourceWithdrawAmount('')
+    setUserTargetDepositAmount('')
+    setUserTargetWithdrawAmount('')
+    setSelectedCard({})
+    setSelectedCardPool({})
+    setModeOfOperation(ModeOfOperation?.DEPOSIT)
+    setOpenDepositWithdrawSlider(false)
+  }
 
   const handleInputChange = useCallback(
-    (input: string, sourceToken: boolean) => {
-      // handle if the user sends '' or undefined in input box
+    async (input: string, sourceToken: boolean) => {
+      
       if (input === '') {
         if (isDeposit) {
-          if (sourceToken) setUserSourceDepositAmount('')
-          else setUserTargetDepositAmount('')
+          setUserSourceDepositAmount('')
+          setUserTargetDepositAmount('')
         } else {
-          if (sourceToken) setUserSourceWithdrawAmount('')
-          else setUserTargetWithdrawAmount('')
+          setUserSourceWithdrawAmount('')
+          setUserTargetWithdrawAmount('')
         }
         return
       }
+
       const inputValue = +input
       if (!isNaN(inputValue)) {
         if (isDeposit) {
-          if (sourceToken) setUserSourceDepositAmount(input)
-          else setUserTargetDepositAmount(input)
+          if (sourceToken){
+            setUserSourceDepositAmount(input)
+            if (Object.keys(selectedCardPool)?.length) {
+              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+                input,
+                0,
+                selectedCardPool,
+                connection
+              )
+              setTransactionLPAmount(lpTokenAmount)
+              setUserTargetDepositAmount(otherTokenAmountInString)
+            }
+          } else {
+            setUserTargetDepositAmount(input)
+            if (Object.keys(selectedCardPool)?.length) {
+              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+                input,
+                1,
+                selectedCardPool,
+                connection
+              )
+              setTransactionLPAmount(lpTokenAmount)
+              setUserSourceDepositAmount(otherTokenAmountInString)
+            }
+          }
         } else {
           if (sourceToken) setUserSourceWithdrawAmount(input)
           else setUserTargetWithdrawAmount(input)
         }
       }
     },
-    [modeOfOperation]
+    [modeOfOperation, selectedCardPool, userSourceDepositAmount]
   )
-
-  useEffect(() => {
-    ; (async () => {
-      if (userSourceDepositAmount && Object.keys(selectedCardPool)?.length) {
-        const { lpTokenAmount, otherTokenAmount } = await calculateOtherTokenAndLPAmount(
-          userSourceDepositAmount,
-          0,
-          selectedCardPool,
-          connection
-        )
-        console.log("amount 3", lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
-      }
-    })()
-  }, [userSourceDepositAmount, selectedCardPool])
-
 
   //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(
@@ -182,7 +215,6 @@ export const DepositWithdrawSlider: FC = () => {
   const handleClaim = () => {
     console.log('withdraw')
     setIsButtonLoading.on()
-    setOpenDepositWithdrawSlider(true)
     setActionType('claim')
   }
 
@@ -218,13 +250,7 @@ export const DepositWithdrawSlider: FC = () => {
 
     return { actionLabel, actionModalTitle }
   }, [isDeposit, isClaim])
-  useLayoutEffect(() => {
-    if (openDepositWithdrawSlider) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'auto'
-    }
-  }, [openDepositWithdrawSlider])
+
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <div className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
@@ -276,6 +302,7 @@ export const DepositWithdrawSlider: FC = () => {
             setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
             setUserTargetDepositAmount={setUserTargetDepositAmount}
             setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+            handleClose={handleClose}
           />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
             <DepositWithdrawToggle />
@@ -303,9 +330,7 @@ export const DepositWithdrawSlider: FC = () => {
               userTargetTokenBal={userTargetTokenBal}
             />
             <ReviewConfirm />
-            {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && (
-              <SwapNow />
-            )}
+            {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
           </div>
         </DialogBody>
         <DialogFooter>
