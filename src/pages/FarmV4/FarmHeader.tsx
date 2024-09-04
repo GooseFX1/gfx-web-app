@@ -191,7 +191,7 @@ export const FarmHeader: FC = () => {
   )
 
   return (
-    <div className="p-5 pt-3.75 max-sm:pl-2.5 max-sm:pr-0 pb-0">
+    <div className="mt-3">
       {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />}
       {openDepositWithdrawSlider && <DepositWithdrawSlider />}
       <DocsBanner />
@@ -200,8 +200,8 @@ export const FarmHeader: FC = () => {
           <Icon
             src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
             size="sm"
-            className="mr-1.5">
-          </Icon>
+            className="mr-1.5"
+          ></Icon>
           <h4 className="text-tiny font-semibold dark:text-grey-8 text-black-4">{isProMode ? 'PRO' : 'LITE'}</h4>
         </div>
         {isProMode && (
@@ -209,8 +209,7 @@ export const FarmHeader: FC = () => {
             <h4
               className={cn(
                 `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
-                 ${!isPortfolio && `dark:!text-white !underline !text-blue-1`
-                }`
+                 ${!isPortfolio && `dark:!text-white !underline !text-blue-1`}`
               )}
               onClick={() => {
                 setIsPortfolio.off()
@@ -222,8 +221,7 @@ export const FarmHeader: FC = () => {
             <h4
               className={cn(
                 `cursor-pointer mr-2 text-average font-semibold dark:text-grey-1 text-grey-9 
-                ${isPortfolio && `!underline !text-blue-1 dark:!text-white`
-                }`
+                ${isPortfolio && `!underline !text-blue-1 dark:!text-white`}`
               )}
               onClick={() => {
                 setIsPortfolio.on()
@@ -240,19 +238,21 @@ export const FarmHeader: FC = () => {
             : 'All your deposits, rewards and advance metrics in one place.'}
         </div>
         <Button
-          className="cursor-pointer absolute right-0 top-0"
+          className="pr-2 cursor-pointer absolute right-5 max-sm:right-[8px] top-0"
           colorScheme={'blue'}
           variant={'secondary'}
-          iconRight={
-            <Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" className="max-sm:mr-2.5" size="sm" />
-          }
+          iconRight={<Icon src="/img/assets/arrowcircle-dark.svg" alt="?-icon" size="sm" />}
           onClick={() => setIsCreatePool(true)}
         >
           Create Pool
         </Button>
       </div>
+
       {!isPortfolio && (
-        <div className={`flex flex-row relative items-center no-scrollbar gap-2.5 overflow-x-scroll`}>
+        <div
+          className={`flex flex-row relative items-center no-scrollbar gap-2.5 
+          overflow-x-scroll pl-5 max-sm:pl-2.5 pr-0`}
+        >
           {isProMode && (
             <RadioOptionGroup
               optionSize={isMobile ? 'xl' : 'sm'}
@@ -272,16 +272,17 @@ export const FarmHeader: FC = () => {
               >
                 <ContainerTitle className={'z-[1]'}>
                   <Tooltip>
-                    <TooltipTrigger className={cn(`text-grey-1 dark:text-grey-2 !cursor-pointer
+                    <TooltipTrigger
+                      className={cn(
+                        `text-grey-1 dark:text-grey-2 !cursor-pointer
                     text-tiny font-semibold`,
-                      card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
-                    )}
-                                    disabled={!(card.tooltip.trim())}>
+                        card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
+                      )}
+                      disabled={!card.tooltip.trim()}
+                    >
                       {card?.name}:
                     </TooltipTrigger>
-                    <TooltipContent>
-                      {card.tooltip}
-                    </TooltipContent>
+                    <TooltipContent>{card.tooltip}</TooltipContent>
                   </Tooltip>
                   &nbsp;
                 </ContainerTitle>

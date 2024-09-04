@@ -7,17 +7,17 @@ const DocsBanner: FC = () => {
   return (
     showBanner && (
       <div
-        className="flex items-center justify-center h-8.75 w-full rounded-[4px] bg-white
-      border border-solid border-grey-1 dark:border-grey-8 mb-3.75 relative dark:bg-black-2 "
+        className="relative flex max-sm:items-start max-sm:flex-col min-md:items-center min-md:justify-center 
+        w-full p-1 mb-3.75 rounded-[4px] bg-white dark:bg-black-2
+        border border-solid border-grey-1 dark:border-grey-8 "
       >
         <RewardsClose
-          className={`absolute right-3 h-3 w-3 min-md:h-[15px] min-md:w-[15px] min-md:stroke-border-lightmode-primary 
-    min-md:stroke-border-darkmode-primary min-md:dark:stroke-border-darkmode-primary cursor-pointer`}
+          className={`absolute max-sm:top-2 right-2 top-[10px] h-[12px] w-[12px] stroke-border-lightmode-primary 
+          dark:stroke-border-darkmode-primary cursor-pointer`}
           onClick={setShowBanner.off}
         />
-        <span className="font-poppins text-regular font-semibold text-purple-3 mr-2">New to GooseFX?</span>
+        <span className="font-poppins text-regular font-semibold text-purple-3 mr-1">New to GooseFX?</span>
         <span className="text-regular font-semibold dark:text-grey-8 text-grey-1">
-          {' '}
           Follow our{' '}
           <a
             className="font-bold text-regular dark:text-white text-blue-1 underline hover:underline visited:text-blue-1"

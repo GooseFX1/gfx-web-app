@@ -16,8 +16,7 @@ export const LiteProToggle = (): ReactElement => {
                 setIsProMode.toggle()
             }}
         >
-            <Icon src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`} 
-            alt="?-icon" className="max-sm:mr-2.5" size='sm' />
+            <Icon src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`} alt="?-icon" size='sm' />
             <div className="text-black-4 dark:text-white font-bold text-regular">
                 {isProMode ? 'PRO' : 'LITE'}
             </div>

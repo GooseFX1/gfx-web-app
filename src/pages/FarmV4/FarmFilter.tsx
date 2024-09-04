@@ -38,13 +38,13 @@ const FarmFilter: FC<{
   sort: string
   sortType: string
 }> = ({ sort, sortType }) => {
-  const { isMobile, isTablet } = useBreakPoint()
+  const { isMobile, isTablet, isDesktop } = useBreakPoint()
   return (
     <div
       className={cn(
-        `grid grid-cols-5 border-b-1 border-solid border-border-lightmode-secondary 
+        `grid grid-flow-col grid-cols-5 border-b-1 border-solid border-border-lightmode-secondary 
       dark:border-border-darkmode-secondary h-10 px-2 items-center`,
-        isMobile && `grid-cols-3`,
+        isMobile && `grid-cols-2`,
         isTablet && `grid-cols-4`
       )}
     >
@@ -54,35 +54,34 @@ const FarmFilter: FC<{
         className={'justify-start'}
         invert={sort == 'DESC' && sortType == 'token'}
       />
-      {!isMobile && (
-        <>
-          {!isTablet && (
-            <>
-              <FarmRowItem
-                title={'Liquidity'}
-                //onClick={handleSort('liquidity')}
-                invert={sort == 'DESC' && sortType == 'liquidity'}
-              />
-              <FarmRowItem
-                title={'24H Volume'}
-                tooltip={'24H Volume is reset daily at 10PM UTC'}
-                //onClick={handleSort('volume')}
-                invert={sort == 'DESC' && sortType == 'volume'}
-              />
-              <FarmRowItem
-                title={'24H Fees'}
-                //onClick={handleSort('fee')}
-                invert={sort == 'DESC' && sortType == 'fee'}
-              />
-            </>
-          )}
-          <FarmRowItem
-            title={'24H APR'}
-            tooltip={'Values are displayed in native token'}
-            //onClick={handleSort('balance')}
-            invert={sort == 'DESC' && sortType == 'balance'}
-          />
-        </>
+      <FarmRowItem
+        title={'Liquidity'}
+        //onClick={handleSort('liquidity')}
+        invert={sort == 'DESC' && sortType == 'liquidity'}
+      />
+      {(isTablet || isDesktop) && (
+        <FarmRowItem
+          title={'24H Volume'}
+          tooltip={'24H Volume is reset daily at 10PM UTC'}
+          //onClick={handleSort('volume')}
+          invert={sort == 'DESC' && sortType == 'volume'}
+        />
+      )}
+      {isDesktop && (
+        <FarmRowItem
+          title={'24H Fees'}
+          //onClick={handleSort('fee')}
+          invert={sort == 'DESC' && sortType == 'fee'}
+        />
+      )}
+      {console.log(isMobile, isTablet, isDesktop)}
+      {(isTablet || isDesktop) && (
+        <FarmRowItem
+          title={'24H APR'}
+          tooltip={'Values are displayed in native token'}
+          //onClick={handleSort('balance')}
+          invert={sort == 'DESC' && sortType == 'balance'}
+        />
       )}
     </div>
   )

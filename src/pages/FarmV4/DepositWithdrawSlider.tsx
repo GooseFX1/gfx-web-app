@@ -355,7 +355,7 @@ export const DepositWithdrawSlider: FC = () => {
       `)}
       />
       <DialogContent className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
-      sm:rounded-none border-b-0 rounded-b-[0px] max-h-[525px] gap-0
+      sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
       `}
         fullScreen={true}
         placement={isMobile ? 'bottom' : 'right'}

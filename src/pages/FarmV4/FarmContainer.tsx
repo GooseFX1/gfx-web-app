@@ -143,11 +143,11 @@ export const FarmContainer: FC = () => {
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
         <>
-          <div className="flex items-center max-sm:flex-col max-sm:gap-4">
+          <div className="flex items-center max-sm:flex-col max-sm:gap-">
             <RadioOptionGroup
               defaultValue={'All'}
               value={pool.name}
-              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
+              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 mb-4'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
