@@ -35,11 +35,11 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
           {token.sourceToken} - {token.targetToken}
         </div>
-        {(isDesktop) && (
+        {isDesktop && (
           <div
             className="border border-solid dark:border-black-4 flex items-center
             font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
-            border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] w-10 h-[25px] px-1"
+            border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] w-10 h-[25px] px-1 ml-2"
           >
             0.2%
           </div>
