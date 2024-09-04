@@ -1,4 +1,15 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchGAMMAConfig,
@@ -25,6 +36,7 @@ import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
 import { getpoolId } from '@/web3/Farm'
+import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -56,8 +68,22 @@ interface GAMMADataModel {
   setSelectedCardPool: Dispatch<SetStateAction<any>>
   modeOfOperation: string
   setModeOfOperation: Dispatch<SetStateAction<string>>
+  page: number
+  setPage: Dispatch<SetStateAction<number>>
+  tokenList: TokenListToken[]
 }
-
+type TokenListToken = {
+  "address": string,
+  "name": string,
+  "symbol": string,
+  "decimals": number,
+  "logoURI": string,
+  "tags": string[],
+  "daily_volume": number|null,
+  "freeze_authority": string|null,
+  "mint_authority": string|null
+}
+export const TOKEN_LIST_PAGE_SIZE = 30
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -99,7 +125,57 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     { id: '7', name: 'APR: High to Low' },
     { id: '8', name: 'APR: Low to High' }
   ]
-
+  const [tokenList, setTokenList] = useState<TokenListToken[]>([])
+  const [page, setPage] = useState(1)
+  useEffect(()=>{
+    // first render only
+    if (tokenList.length == 0) {
+      fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${TOKEN_LIST_PAGE_SIZE}&page=1`)
+        .then(async (res) => {
+          const data = await res.json()
+          setTokenList(data)
+        }).catch((e) => {
+        console.error('Error fetching token list', e)
+      })
+    }
+  },[])
+  const fetchTokenList = async (page: number, pageSize: number) => {
+    try {
+      const response =
+        await fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
+      return await response.json() as {
+        data: {
+          tokens: TokenListToken[],
+          count: number,
+          currentPage: number,
+          pageSize: number,
+          totalItems: number,
+          totalPages
+        },
+        success: boolean
+      }
+    } catch (error) {
+      console.error('Error fetching token list:', error)
+      return null
+    }
+  }
+  const updateTokenList = async (page: number, pageSize: number) => {
+    const response = await fetchTokenList(page, pageSize)
+    if (!response) {
+      return
+    }
+    const currentTokenList = tokenList
+    const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
+    for (const token of response.data.tokens) {
+      if (hasSetOfTokens.has(token.address)){continue}
+      hasSetOfTokens.add(token.address)
+      tokenList.push(token)
+    }
+    setTokenList([...currentTokenList])
+  }
+  useLayoutEffect(()=>{
+    updateTokenList(page,TOKEN_LIST_PAGE_SIZE)
+  },[page])
   useEffect(() => {
     ; (async () => {
       if (SSLProgram) {
@@ -379,7 +455,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedCardPool: selectedCardPool,
         modeOfOperation: modeOfOperation,
         setModeOfOperation: setModeOfOperation,
-        setSelectedCardPool: setSelectedCardPool
+        setSelectedCardPool: setSelectedCardPool,
+        page,
+        setPage,
+        tokenList
       }}
     >
       {children}
