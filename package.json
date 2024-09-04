@@ -14,7 +14,8 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix && yarn format:fix",
     "lint:strict": "eslint --max-warnings=0 src",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false",
+    "submod:init": "git submodule update --init && rm -rf ./external/eslintrc.js && cd external && yarn &$ cd .."
   },
   "dependencies": {
     "@ant-design/plots": "^1.2.5",
