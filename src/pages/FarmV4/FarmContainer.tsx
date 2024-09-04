@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState, useLayoutEffect } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { poolType } from './constants'
@@ -34,7 +34,7 @@ export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { pools, GAMMA_SORT_CONFIG, pool, setPool } = useGamma()
+  const { pools, GAMMA_SORT_CONFIG, pool, openDepositWithdrawSlider, setPool } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
@@ -47,6 +47,17 @@ export const FarmContainer: FC = () => {
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
     [wallet?.adapter?.publicKey]
   )
+
+  useLayoutEffect(() => {
+    if (openDepositWithdrawSlider) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'auto'
+    }
+    return ()=>{
+      document.body.style.overflow = 'auto'
+    }
+  }, [openDepositWithdrawSlider])
 
   //TODO: need to change the calculation upon getting onchain data
   const numberOfTokensDeposited = 0
