@@ -2,10 +2,11 @@ import { FC, ReactElement, useState } from 'react'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, Icon, IconTooltip, Input, Popover, PopoverContent, PopoverTrigger } from 'gfx-component-lib'
-import { BASE_SLIPPAGE, useDarkMode } from '@/context'
+import { useDarkMode } from '@/context'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { useGamma } from '@/context/gamma'
+import { BASE_SLIPPAGE } from '@/pages/FarmV4/constants'
 
 type StickyFooterProps = {
   isDeposit: boolean

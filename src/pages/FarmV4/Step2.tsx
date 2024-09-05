@@ -15,8 +15,8 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { TOKEN_LIST_PAGE_SIZE, useAccounts, useDarkMode, useGamma } from '../../context'
-import { JupToken, SSL_TOKENS } from './constants'
+import { useAccounts, useDarkMode, useGamma } from '../../context'
+import { JupToken, SSL_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'

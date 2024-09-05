@@ -22,12 +22,15 @@ import { GAMMAConfig, GAMMAProtocolStats, GAMMAUser, UserPortfolioLPPosition, Us
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   ADDRESSES,
+  BASE_SLIPPAGE,
+  GAMMA_SORT_CONFIG,
   GET_24_CHANGES,
   ModeOfOperation,
   Pool,
   poolType,
   SSLTableData,
   SSLToken,
+  TOKEN_LIST_PAGE_SIZE,
   TOTAL_FEES,
   TOTAL_VOLUME
 } from '../pages/FarmV4/constants'
@@ -86,9 +89,7 @@ export type TokenListToken = {
   "freeze_authority": string|null,
   "mint_authority": string|null
 }
-export const TOKEN_LIST_PAGE_SIZE = 30
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
-export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
@@ -119,16 +120,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
-  const GAMMA_SORT_CONFIG = [
-    { id: '1', name: 'Liquidity: High to Low' },
-    { id: '2', name: 'Liquidity: Low to High' },
-    { id: '3', name: 'Volume: High to Low' },
-    { id: '4', name: 'Volume: Low to High' },
-    { id: '5', name: 'Fees: High to Low' },
-    { id: '6', name: 'Fees: Low to High' },
-    { id: '7', name: 'APR: High to Low' },
-    { id: '8', name: 'APR: Low to High' }
-  ]
+
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
   const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
