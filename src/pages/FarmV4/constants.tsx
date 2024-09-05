@@ -29,7 +29,24 @@ export type LiquidityAccount = {
   space?: number[]
   totalEarned?: BN
 }
-
+export type SSLToken = {
+  token: string
+  name: string
+  address: PublicKey
+  assetType?: number
+  bump?: number
+  mathParams?: any
+  mint?: PublicKey
+  mintDecimals?: number
+  oraclePriceHistories?: number[]
+  pad0?: number[]
+  pad1?: number[]
+  space?: number[]
+  status?: number
+  totalAccumulatedLpReward?: BN
+  totalLiquidityDeposits?: BN
+  cappedDeposit?: number
+}
 export type JupToken = {
   "address": string,
   "name": string,
