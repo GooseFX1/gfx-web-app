@@ -15,11 +15,12 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { useAccounts, useDarkMode, useGamma } from '../../context'
-import { ADDRESSES, SSL_TOKENS, SSLToken } from './constants'
+import { TOKEN_LIST_PAGE_SIZE, useAccounts, useDarkMode, useGamma } from '../../context'
+import { SSL_TOKENS, SSLToken } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
+import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
 
 const Step2: FC<{
   tokenA: SSLToken
@@ -231,6 +232,8 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<SSLToken>>
 }) {
+  console.log(setToken)
+  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   return <InputGroup
@@ -263,18 +266,26 @@ function TokenSelectionInput({
               {token ? token.token : 'Select Token'}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className={'mt-3.75 z-[1001]'} portal={true}>
-            {ADDRESSES['mainnet-beta']?.map((item, index) => (
-              <DropdownMenuItem className={'group gap-2 cursor-pointer'}
-                                onClick={() => setToken(item)}
-                                key={`${item}_${index}`}>
-                <Icon
-                  src={`img/crypto/${item?.token}.svg`}
-                  size={'sm'}
-                />
-                <span>{item?.token}</span>
-              </DropdownMenuItem>
-            ))}
+          <DropdownMenuContent className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
+                               portal={true}>
+            {isLoadingTokenList ?
+              <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>
+              : <ScrollingHydrateContainer callback={() => {
+              if (tokenList.length <= 0) return
+              updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() => setPage(page + 1))
+            }}>
+              {tokenList.map((item, index) => (
+                <DropdownMenuItem className={'group gap-2 cursor-pointer'}
+                  // onClick={() => setToken(item)}
+                                  key={`${item}_${index}`}>
+                  <Icon
+                    src={item.logoURI ?? `img/crypto/${item.symbol}.svg`}
+                    size={'sm'}
+                  />
+                  <span>{item.symbol}</span>
+                </DropdownMenuItem>
+              ))}
+            </ScrollingHydrateContainer>}
           </DropdownMenuContent>
         </DropdownMenu>
       </InputElementLeft>

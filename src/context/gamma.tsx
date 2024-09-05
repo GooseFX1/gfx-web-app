@@ -71,6 +71,8 @@ interface GAMMADataModel {
   page: number
   setPage: Dispatch<SetStateAction<number>>
   tokenList: TokenListToken[]
+  isLoadingTokenList: boolean
+  updateTokenList: (page: number, pageSize: number) => Promise<void>
 }
 type TokenListToken = {
   "address": string,
@@ -127,37 +129,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   ]
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
+  const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
   useEffect(()=>{
     // first render only
     if (tokenList.length == 0) {
-      fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${TOKEN_LIST_PAGE_SIZE}&page=1`)
-        .then(async (res) => {
-          const data = await res.json()
-          setTokenList(data)
-        }).catch((e) => {
-        console.error('Error fetching token list', e)
-      })
+      setIsLoadingTokenList(true)
+      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
     }
   },[])
+  console.log('TOKEN LIST', tokenList)
   const fetchTokenList = async (page: number, pageSize: number) => {
-    try {
-      const response =
-        await fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
-      return await response.json() as {
-        data: {
-          tokens: TokenListToken[],
-          count: number,
-          currentPage: number,
-          pageSize: number,
-          totalItems: number,
-          totalPages
-        },
-        success: boolean
-      }
-    } catch (error) {
-      console.error('Error fetching token list:', error)
-      return null
-    }
+    setIsLoadingTokenList(true)
+    return fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
+      .then(async (res) => res.json()).catch((e) => {
+        console.log('Error fetching token list', e)
+        return null
+      }).finally(()=>setIsLoadingTokenList(false))
+
   }
   const updateTokenList = async (page: number, pageSize: number) => {
     const response = await fetchTokenList(page, pageSize)
@@ -169,8 +157,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     for (const token of response.data.tokens) {
       if (hasSetOfTokens.has(token.address)){continue}
       hasSetOfTokens.add(token.address)
-      tokenList.push(token)
+      currentTokenList.push(token)
     }
+    console.log({ currentTokenList })
     setTokenList([...currentTokenList])
   }
   useLayoutEffect(()=>{
@@ -458,7 +447,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCardPool: setSelectedCardPool,
         page,
         setPage,
-        tokenList
+        tokenList,
+        isLoadingTokenList,
+        updateTokenList
       }}
     >
       {children}
