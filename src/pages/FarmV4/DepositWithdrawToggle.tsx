@@ -1,9 +1,19 @@
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, Dispatch, SetStateAction } from 'react'
 import { ModeOfOperation } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
 
-const DepositWithdrawToggle: FC = (): ReactElement => {
+const DepositWithdrawToggle: FC<{
+  setUserSourceDepositAmount: Dispatch<SetStateAction<string>>
+  setUserSourceWithdrawAmount: Dispatch<SetStateAction<string>>
+  setUserTargetDepositAmount: Dispatch<SetStateAction<string>>
+  setUserTargetWithdrawAmount: Dispatch<SetStateAction<string>>
+}> = ({
+  setUserSourceDepositAmount,
+  setUserSourceWithdrawAmount,
+  setUserTargetDepositAmount,
+  setUserTargetWithdrawAmount
+}): ReactElement => {
   const { modeOfOperation, setModeOfOperation } = useGamma()
   return (
     <RadioOptionGroup
@@ -15,12 +25,20 @@ const DepositWithdrawToggle: FC = (): ReactElement => {
         {
           value: 'deposit',
           label: 'Deposit',
-          onClick: () => setModeOfOperation(ModeOfOperation?.DEPOSIT)
+          onClick: () => {
+            setModeOfOperation(ModeOfOperation?.DEPOSIT)
+            setUserTargetWithdrawAmount('')
+            setUserSourceWithdrawAmount('')
+          }
         },
         {
           value: 'withdraw',
           label: 'Withdraw',
-          onClick: () => setModeOfOperation(ModeOfOperation?.WITHDRAW)
+          onClick: () => {
+            setModeOfOperation(ModeOfOperation?.WITHDRAW)
+            setUserSourceDepositAmount('')
+            setUserTargetDepositAmount('')
+          }
         }
       ]}
     />

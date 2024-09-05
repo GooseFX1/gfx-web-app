@@ -34,7 +34,10 @@ export const DepositWithdrawSlider: FC = () => {
     modeOfOperation,
     setModeOfOperation,
     setSelectedCard,
-    setSelectedCardPool
+    setSelectedCardPool,
+    slippage,
+    sendingTransaction,
+    setSendingTransaction
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
@@ -56,7 +59,7 @@ export const DepositWithdrawSlider: FC = () => {
 
   //eslint-disable-next-line
   useEffect(() => {
-    return ()=>{
+    return () => {
       handleClose
     }
   }, [])
@@ -107,7 +110,7 @@ export const DepositWithdrawSlider: FC = () => {
       const inputValue = +input
       if (!isNaN(inputValue)) {
         if (isDeposit) {
-          if (sourceToken){
+          if (sourceToken) {
             setUserSourceDepositAmount(input)
             if (Object.keys(selectedCardPool)?.length) {
               const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
@@ -133,64 +136,152 @@ export const DepositWithdrawSlider: FC = () => {
             }
           }
         } else {
-          if (sourceToken) setUserSourceWithdrawAmount(input)
-          else setUserTargetWithdrawAmount(input)
+          if (sourceToken) {
+            setUserSourceWithdrawAmount(input)
+            if (Object.keys(selectedCardPool)?.length) {
+              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+                input,
+                0,
+                selectedCardPool,
+                connection
+              )
+              setTransactionLPAmount(lpTokenAmount)
+              setUserTargetWithdrawAmount(otherTokenAmountInString)
+            }
+          }
+          else {
+            setUserTargetWithdrawAmount(input)
+            if (Object.keys(selectedCardPool)?.length) {
+              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+                input,
+                1,
+                selectedCardPool,
+                connection
+              )
+              setTransactionLPAmount(lpTokenAmount)
+              setUserSourceWithdrawAmount(otherTokenAmountInString)
+            }
+          }
         }
       }
     },
-    [modeOfOperation, selectedCardPool, userSourceDepositAmount]
+    [modeOfOperation, selectedCardPool]
   )
+
+  const actionButtonText = useMemo(() => {
+    if(!userSourceTokenBal) return `Insufficient ${selectedCard?.sourceToken}`
+    else if(!userTargetTokenBal) return `Insufficient ${selectedCard?.targetToken}`
+    else if(isDeposit && (!+userSourceDepositAmount || !+userTargetDepositAmount)) return `Enter Amounts`
+    else if(!isDeposit && (!+userSourceWithdrawAmount || !+userTargetWithdrawAmount)) return `Enter Amounts`
+    else if(isDeposit)  return `Deposit`
+    else return `Withdraw`
+  }, [selectedCard, userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount,
+    userSourceDepositAmount, userTargetDepositAmount, isDeposit, userSourceWithdrawAmount
+  ])
+
+  const isActionButtonDisabled = useMemo(() => {
+    if(!userSourceTokenBal) return true
+    else if(!userTargetTokenBal) return true
+    else if(isDeposit && (!+userSourceDepositAmount || !+userTargetDepositAmount)) return true
+    else if(!isDeposit && (!+userSourceWithdrawAmount || !+userTargetWithdrawAmount)) return true
+    else if(isDeposit) return false
+    else return false
+  }, [userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount, userSourceDepositAmount, 
+    userTargetDepositAmount, isDeposit, userSourceWithdrawAmount])
 
   //TODO::need to handle the half case for withdraw once we get the onChain data
   const handleHalf = useCallback(
-    (sourceToken: boolean) => {
+    async (sourceToken: boolean) => {
       if (isDeposit) {
         if (sourceToken) {
-          setUserSourceDepositAmount(
-            userSourceTokenBal ? (userSourceTokenBal / 2)?.toString() : ''
-          )
+          setUserSourceDepositAmount(userSourceTokenBal ? (userSourceTokenBal / 2)?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              (userSourceTokenBal / 2)?.toString(),
+              0,
+              selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserTargetDepositAmount(otherTokenAmountInString)
+          }
         } else {
-          setUserTargetDepositAmount(
-            userTargetTokenBal ? (userTargetTokenBal / 2)?.toString() : ''
-          )
+          setUserTargetDepositAmount(userTargetTokenBal ? (userTargetTokenBal / 2)?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            console.log('otherTokenAmountInString')
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              (userTargetTokenBal / 2)?.toString(),
+              1,
+              selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserSourceDepositAmount(otherTokenAmountInString)
+          }
         }
       }
     },
-    [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
+    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool]
   )
 
   //TODO::need to handle the max case for withdraw once we get the onChain data
   const handleMax = useCallback(
-    (sourceToken: boolean) => {
+    async (sourceToken: boolean) => {
       if (isDeposit) {
         if (sourceToken) {
           setUserSourceDepositAmount(userSourceTokenBal ? userSourceTokenBal?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              userSourceTokenBal?.toString(),
+              0,
+              selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserTargetDepositAmount(otherTokenAmountInString)
+          }
         } else {
           setUserTargetDepositAmount(userTargetTokenBal ? userTargetTokenBal?.toString() : '')
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              userTargetTokenBal?.toString(),
+              1,
+              selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserSourceDepositAmount(otherTokenAmountInString)
+          }
         }
       }
     },
-    [modeOfOperation, userSourceTokenBal, userTargetTokenBal]
+    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool]
   )
 
   const handleDeposit = async () => {
     const txBuilder = createTransactionBuilder()
     const tx = await deposit(userSourceDepositAmount,
       userTargetDepositAmount,
+      transactionLPAmount,
+      slippage,
       selectedCard,
       userPublicKey,
       GammaProgram,
       connection
     )
     txBuilder.add(tx)
+    setSendingTransaction(true)
     const { success } = await sendTransaction(txBuilder)
-    console.log('success', success)
 
     if (!success) {
       console.log('failure')
+      setSendingTransaction(false)
       return
+    } else {
+      setSendingTransaction(false)
+      setUserSourceDepositAmount('')
+      setUserTargetDepositAmount('')
     }
-    setActionType('deposit')
   }
 
   const handleWithdraw = async () => {
@@ -198,17 +289,23 @@ export const DepositWithdrawSlider: FC = () => {
     const tx = await withdraw(
       userSourceWithdrawAmount,
       userTargetWithdrawAmount,
+      transactionLPAmount,
+      slippage,
       selectedCard,
       userPublicKey,
       GammaProgram
     )
     txBuilder.add(tx)
     const { success } = await sendTransaction(txBuilder)
-    console.log('success', success)
 
     if (!success) {
       console.log('failure')
+      setSendingTransaction(false)
       return
+    } else {
+      setSendingTransaction(false)
+      setUserSourceWithdrawAmount('')
+      setUserTargetWithdrawAmount('')
     }
   }
 
@@ -297,15 +394,14 @@ export const DepositWithdrawSlider: FC = () => {
           ]} />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
-          <DepositWithdrawHeader
-            setUserSourceDepositAmount={setUserSourceDepositAmount}
-            setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
-            setUserTargetDepositAmount={setUserTargetDepositAmount}
-            setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
-            handleClose={handleClose}
-          />
+          <DepositWithdrawHeader handleClose={handleClose} />
           <div className="flex flex-col overflow-y-scroll h-full pb-[110px]">
-            <DepositWithdrawToggle />
+            <DepositWithdrawToggle
+              setUserSourceDepositAmount={setUserSourceDepositAmount}
+              setUserSourceWithdrawAmount={setUserSourceWithdrawAmount}
+              setUserTargetDepositAmount={setUserTargetDepositAmount}
+              setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
+            />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
             <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />
@@ -335,13 +431,14 @@ export const DepositWithdrawSlider: FC = () => {
         </DialogBody>
         <DialogFooter>
           <StickyFooter
-            disableActionButton={false}
-            isLoading={false}
+            disableActionButton={isActionButtonDisabled}
+            isLoading={sendingTransaction}
             onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
             isDeposit={isDeposit}
             canClaim={true || isClaim}
             claimText={'Claim 0.5 SOL + 12.0 USDC'}
             onClaimClick={handleProcessStart('claim')}
+            actionButtonText={actionButtonText}
           />
         </DialogFooter>
       </DialogContent>

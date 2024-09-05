@@ -77,6 +77,8 @@ interface GAMMADataModel {
   isLoadingTokenList: boolean
   updateTokenList: (page: number, pageSize: number) => Promise<void>
   maxTokensReached: boolean
+  sendingTransaction: boolean
+  setSendingTransaction: Dispatch<SetStateAction<boolean>>
 }
 export type TokenListToken = {
   "address": string,
@@ -89,6 +91,7 @@ export type TokenListToken = {
   "freeze_authority": string|null,
   "mint_authority": string|null
 }
+
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { publicKey: publicKey } = useWalletBalance()
@@ -117,6 +120,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCardPool, setSelectedCardPool] = useState({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [maxTokensReached, setMaxTokensReached] = useState(false)
+  const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
+
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
@@ -455,7 +460,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         tokenList,
         isLoadingTokenList,
         updateTokenList,
-        maxTokensReached
+        maxTokensReached,
+        sendingTransaction: sendingTransaction,
+        setSendingTransaction: setSendingTransaction
       }}
     >
       {children}

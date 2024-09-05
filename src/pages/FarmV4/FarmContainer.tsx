@@ -103,7 +103,7 @@ export const FarmContainer: FC = () => {
     }
 
     return sortPools(filterPools(pools))
-  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG])
+  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG, pool])
 
   useEffect(() => {
     if (pubKey === null && userCache.gamma.showDepositedFilter)
