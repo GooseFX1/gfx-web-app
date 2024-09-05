@@ -16,17 +16,17 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { TOKEN_LIST_PAGE_SIZE, useAccounts, useDarkMode, useGamma } from '../../context'
-import { SSL_TOKENS, SSLToken } from './constants'
+import { JupToken, SSL_TOKENS } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
 
 const Step2: FC<{
-  tokenA: SSLToken
-  setTokenA: Dispatch<SetStateAction<SSLToken>>
-  tokenB: SSLToken
-  setTokenB: Dispatch<SetStateAction<SSLToken>>
+  tokenA: JupToken
+  setTokenA: Dispatch<SetStateAction<JupToken>>
+  tokenB: JupToken
+  setTokenB: Dispatch<SetStateAction<JupToken>>
   handleChange: (e: any, boolean) => void
   amountTokenA: string
   amountTokenB: string
@@ -52,13 +52,13 @@ const Step2: FC<{
   const { getUIAmount } = useAccounts()
   const { mode } = useDarkMode()
   const { setSelectedCard } = useGamma()
-  const tokenAamount = tokenA ? getUIAmount(tokenA.address.toBase58()).toFixed(2) : '0.00'
-  const tokenBamount = tokenB ? getUIAmount(tokenB.address.toBase58()).toFixed(2) : '0.00'
+  const tokenAamount = tokenA ? getUIAmount(tokenA.address).toFixed(2) : '0.00'
+  const tokenBamount = tokenB ? getUIAmount(tokenB.address).toFixed(2) : '0.00'
   const navigateToPool = () => {
     if (!tokenA || !tokenB) return
     for (const token of SSL_TOKENS) {
-      if (token.sourceTokenMintAddress == tokenA.address.toBase58() &&
-        token.targetTokenMintAddress == tokenB.address.toBase58()) {
+      if (token.sourceTokenMintAddress == tokenA.address &&
+        token.targetTokenMintAddress == tokenB.address) {
         setSelectedCard(token)
         break
       }
@@ -68,8 +68,8 @@ const Step2: FC<{
     if (!tokenA || !tokenB) return
     // API Req
     for (const token of SSL_TOKENS) {
-      if (token.sourceTokenMintAddress == tokenA.address.toBase58() &&
-        token.targetTokenMintAddress == tokenB.address.toBase58()) {
+      if (token.sourceTokenMintAddress == tokenA.address &&
+        token.targetTokenMintAddress == tokenB.address) {
         setPoolExists(true)
         return
       }
@@ -100,7 +100,7 @@ const Step2: FC<{
                   tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )
               }>
-                                {tokenAamount} {tokenA?.token}
+                                {tokenAamount} {tokenA?.symbol}
                             </span>
             </div>
           </div>
@@ -125,7 +125,7 @@ const Step2: FC<{
                   tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                 )
               }>
-                                {tokenBamount} {tokenB?.token}
+                                {tokenBamount} {tokenB?.symbol}
                             </span>
             </div>
           </div>
@@ -156,7 +156,7 @@ const Step2: FC<{
               />
               <span className={cn(`text-regular font-bold dark:text-white
                 text-blue-1 underline cursor-pointer`)}>
-                                {`${tokenA?.token} per ${tokenB?.token}`}
+                                {`${tokenA?.symbol} per ${tokenB?.symbol}`}
                             </span>
             </div>
           </div>
@@ -168,7 +168,7 @@ const Step2: FC<{
               'text-regular font-semibold dark:text-grey-1 text-grey-9',
               (!tokenA || !tokenB) && 'invisible'
             )}>
-                            {`${tokenA?.token} / ${tokenB?.token}`}
+                            {`${tokenA?.symbol} / ${tokenB?.symbol}`}
             </span>
           </div>
         </div>
@@ -213,7 +213,7 @@ const Step2: FC<{
               fullWidth
               colorScheme={'blue'}
               onClick={navigateToPool}
-            >Goto {tokenA?.token}/{tokenB?.token} Pool</Button>
+            >Goto {tokenA?.symbol}/{tokenB?.symbol} Pool</Button>
           </Container>
         </div>}
       </div>
@@ -227,12 +227,11 @@ function TokenSelectionInput({
                                amountToken,
                                setToken
                              }: {
-  token: SSLToken | null
+  token: JupToken | null
   handleChange: (e: any, boolean) => void
   amountToken: string
-  setToken: Dispatch<SetStateAction<SSLToken>>
+  setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  console.log(setToken)
   const { tokenList, isLoadingTokenList, updateTokenList, page, setPage } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
@@ -248,7 +247,7 @@ function TokenSelectionInput({
               isLoading={false}
               className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
               iconLeft={token ? <Icon
-                src={`img/crypto/${token.token}.svg`}
+                src={token.logoURI ?? `img/crypto/${token.symbol}.svg`}
                 size={'sm'}
               /> : null}
               iconRight={<Icon
@@ -263,7 +262,7 @@ function TokenSelectionInput({
                 size={'sm'}
               />}
             >
-              {token ? token.token : 'Select Token'}
+              {token ? token.symbol : 'Select Token'}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
@@ -276,7 +275,7 @@ function TokenSelectionInput({
             }}>
               {tokenList.map((item, index) => (
                 <DropdownMenuItem className={'group gap-2 cursor-pointer'}
-                  // onClick={() => setToken(item)}
+                                  onClick={() => setToken(item)}
                                   key={`${item}_${index}`}>
                   <Icon
                     src={item.logoURI ?? `img/crypto/${item.symbol}.svg`}
@@ -292,7 +291,7 @@ function TokenSelectionInput({
     }
   >
     <Input type="text"
-           placeholder={`0.00 ${token ? token.token : ''}`}
+           placeholder={`0.00 ${token ? token.symbol : ''}`}
            onChange={(e) => handleChange(e, true)}
            value={amountToken}
            className={'h-[45px] text-right'}

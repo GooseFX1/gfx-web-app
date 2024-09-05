@@ -1,11 +1,11 @@
 import { FC } from 'react'
-import { SSLToken } from './constants'
+import { JupToken } from './constants'
 import { useGamma } from '@/context'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 
 const Step3: FC<{
-    tokenA: SSLToken
-    tokenB: SSLToken
+    tokenA: JupToken
+    tokenB: JupToken
 }> = ({ tokenA, tokenB }) => {
     const { pool } = useGamma()
     return (
@@ -41,20 +41,20 @@ const Step3: FC<{
                     <div className="text-regular font-semibold dark:text-grey-8 text-black-4 
                         flex flex-row items-center">
                         <img
-                            src={`/img/crypto/${tokenA?.token}.svg`}
+                            src={`/img/crypto/${tokenA?.symbol}.svg`}
                             alt={"token"} height={20}
                             width={20}
                             className='mr-[5px]'
                         />
-                        <span>{tokenA?.token}&nbsp;/&nbsp;</span>
+                        <span>{tokenA?.symbol}&nbsp;/&nbsp;</span>
                         <img
-                            src={`/img/crypto/${tokenB?.token}.svg`}
+                            src={tokenB?.logoURI ?? `/img/crypto/${tokenB?.symbol}.svg`}
                             alt={"token"}
                             height={20}
                             width={20}
                             className='mr-[5px]'
                         />
-                        <span>{tokenB?.token}</span>
+                        <span>{tokenB?.symbol}</span>
                     </div>
                 </div>
                 <div className="flex justify-between mb-2">
@@ -65,18 +65,18 @@ const Step3: FC<{
                 </div>
                 <div className="flex justify-between mb-2">
                     <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">
-                        {`Token A (${tokenA?.token})`}
+                        {`Token A (${tokenA?.symbol})`}
                     </span>
                     <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                        {`2.55 ${tokenA?.token}`}
+                        {`2.55 ${tokenA?.symbol}`}
                     </span>
                 </div>
                 <div className="flex justify-between mb-2">
                     <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">
-                        {`Token B (${tokenB?.token})`}
+                        {`Token B (${tokenB?.symbol})`}
                     </span>
                     <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                        {`326.22 ${tokenB?.token}`}
+                        {`326.22 ${tokenB?.symbol}`}
                     </span>
                 </div>
                 <div className="flex justify-between mb-2">

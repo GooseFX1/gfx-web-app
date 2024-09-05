@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
 import { useDarkMode, useGamma, usePriceFeedFarm, useRewardToggle } from '../../context'
 import { truncateBigNumber } from '../../utils'
-import { poolType, SSLToken } from './constants'
+import { JupToken, poolType } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -36,9 +36,9 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
 
     const totalLiquidity = allPoolSslData
-      .map((token: SSLToken) => {
-        const nativeLiquidity = liquidityAmount[token?.mint?.toBase58()]
-        return prices?.[getPriceObject(token?.token)]?.current * nativeLiquidity
+      .map((token: JupToken) => {
+        const nativeLiquidity = liquidityAmount[token?.address]
+        return prices?.[getPriceObject(token?.symbol)]?.current * nativeLiquidity
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
@@ -49,11 +49,11 @@ export const FarmHeader: FC = () => {
     if (!allPoolSslData || !allPoolFilteredLiquidityAcc) return `$0.00`
 
     const totalEarned = allPoolSslData
-      .map((token: SSLToken) => {
+      .map((token: JupToken) => {
         const totalEarnedInNative =
-          allPoolFilteredLiquidityAcc?.[token?.mint?.toBase58()]?.totalEarned?.toNumber() /
-          Math.pow(10, token?.mintDecimals)
-        return totalEarnedInNative ? prices?.[getPriceObject(token?.token)]?.current * totalEarnedInNative : 0
+          allPoolFilteredLiquidityAcc?.[token?.address]?.totalEarned?.toNumber() /
+          Math.pow(10, token?.decimals)
+        return totalEarnedInNative ? prices?.[getPriceObject(token?.symbol)]?.current * totalEarnedInNative : 0
       })
       .reduce((acc, curValue) => acc + curValue, 0)
 
@@ -66,8 +66,8 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const volume = sslTableData?.[key]?.volume
         return volume / 1_000_000
       })
@@ -80,8 +80,8 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const volume = sslAllVolume?.[key]?.volume7D
         return volume / 1_000_000
       })
@@ -94,8 +94,8 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null) return `$0.00`
 
     const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const volume = sslAllVolume?.[key]?.totalTokenVolume
         return volume / 1_000_000
       })
@@ -108,11 +108,11 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null) return `$0.00`
 
     const totalFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const fee = sslTableData?.[key]?.fee
-        const feeInNative = fee / 10 ** token.mintDecimals
-        const fees = feeInNative * prices?.[getPriceObject(token?.token)]?.current
+        const feeInNative = fee / 10 ** token.decimals
+        const fees = feeInNative * prices?.[getPriceObject(token?.symbol)]?.current
         return fees
       })
       .reduce((acc, curValue) => acc + curValue, 0)
@@ -124,8 +124,8 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null || !sslTotalFees) return `$0.00`
 
     const totalWeeklyFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const fees = sslTotalFees?.[key]?.fees7D
         return fees / 1_000_00 // As fees is coming with 5 decimal places
       })
@@ -138,8 +138,8 @@ export const FarmHeader: FC = () => {
     if (allPoolSslData == null || !sslTotalFees) return `$0.00`
 
     const totalFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
+      .map((token: JupToken) => {
+        const key = token.symbol === 'SOL' ? 'WSOL' : token.symbol
         const fees = sslTotalFees?.[key]?.totalTokenFees
         return fees / 1_000_00 // As fees is coming with 5 decimal places
       })
