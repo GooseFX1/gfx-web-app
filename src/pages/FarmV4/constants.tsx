@@ -467,3 +467,15 @@ export const ALLOWED_WALLETS = [
   'SmWd75HVb9tESGmvyAe7c1jGAB51SNtnQYMvA9Zs1X1',
   '3UkKMebXhKsGavP62sMW6ERD3zXHCFiL6RcwwnpK6ggf'
 ]
+export const GAMMA_SORT_CONFIG = [
+  { id: '1', name: 'Liquidity: High to Low' },
+  { id: '2', name: 'Liquidity: Low to High' },
+  { id: '3', name: 'Volume: High to Low' },
+  { id: '4', name: 'Volume: Low to High' },
+  { id: '5', name: 'Fees: High to Low' },
+  { id: '6', name: 'Fees: Low to High' },
+  { id: '7', name: 'APR: High to Low' },
+  { id: '8', name: 'APR: Low to High' }
+]
+export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
+export const TOKEN_LIST_PAGE_SIZE = 30
