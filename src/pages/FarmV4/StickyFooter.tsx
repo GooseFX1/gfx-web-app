@@ -16,15 +16,16 @@ type StickyFooterProps = {
   canClaim: boolean
   claimText: string
   onClaimClick: () => void
+  actionButtonText: string
 }
 const StickyFooter: FC<StickyFooterProps> = ({
-  isDeposit,
   disableActionButton,
   isLoading,
   onActionClick,
   canClaim,
   claimText,
-  onClaimClick
+  onClaimClick,
+  actionButtonText
 }): ReactElement => {
   const { connected } = useWallet()
   const { isMobile } = useBreakPoint()
@@ -47,10 +48,10 @@ const StickyFooter: FC<StickyFooterProps> = ({
             onClick={onActionClick}
             isLoading={isLoading}
           >
-            {isDeposit ? 'Deposit' : 'Withdraw'}
+            {actionButtonText}
           </Button>
         ) : (
-          <Connect fullWidth containerStyle={'h-8.75 z-0'} customButtonStyle={'h-8.75 '} />
+          <Connect fullWidth containerStyle={'h-8.75 z-0'} customButtonStyle={'h-8.75'} />
         )}
         <Button variant={'outline'}
           colorScheme={isDarkMode ? 'default' : 'blue'}

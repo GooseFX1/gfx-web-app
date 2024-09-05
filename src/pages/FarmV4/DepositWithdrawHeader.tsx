@@ -1,15 +1,9 @@
 import { useGamma } from '@/context'
-import { FC, Dispatch, SetStateAction } from 'react'
+import { FC } from 'react'
 import { Button, DialogTitle, Icon } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
 
-export const DepositWithdrawHeader: FC<{
-  setUserSourceDepositAmount: Dispatch<SetStateAction<string>>
-  setUserSourceWithdrawAmount: Dispatch<SetStateAction<string>>
-  setUserTargetDepositAmount: Dispatch<SetStateAction<string>>
-  setUserTargetWithdrawAmount: Dispatch<SetStateAction<string>>
-  handleClose: () => void
-}> = ({ handleClose }): JSX.Element => {
+export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleClose }): JSX.Element => {
   const { selectedCard } = useGamma()
 
   return (

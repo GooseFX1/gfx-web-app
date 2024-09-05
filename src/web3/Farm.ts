@@ -14,7 +14,7 @@ import {
     SYSTEM,
     MEMO_ID
 } from './ids'
-import { convertToNativeValue } from "@/utils"
+import { convertToNativeValue, withdrawBigString } from "@/utils"
 
 enum TokenType {
     Token0,
@@ -122,9 +122,20 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
     return accountObj
 }
 
+const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: boolean): string => {
+    if(!amount || !slippage) return ''
+
+    let slippageAmount = 0
+    if(isDeposit) slippageAmount = Math.ceil(+amount + ((slippage/100) * +amount))
+    else slippageAmount = Math.floor(+amount + ((slippage/100) * +amount))
+    return slippageAmount?.toString()
+}
+
 export const deposit = async (
     userSourceDepositAmount: string,
     userTargetDepositAmount: string,
+    lpAmount: BN,
+    slippage: number,
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>,
@@ -142,10 +153,14 @@ export const deposit = async (
             program
         )
     }
+    const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
+    const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
     const depositIX: TransactionInstruction = await program.instruction.deposit(
-        new BN(Math.sqrt(450)),
-        new BN(3),
-        new BN(150), {
+        lpAmount,
+        new BN(token0Amount),
+        new BN(token1Amount), {
         accounts: depositInstructionAccount
     })
     const depositAmountTX = new Transaction()
@@ -159,20 +174,22 @@ export const deposit = async (
 export const withdraw = async (
     userSourceWithdrawAmount: string,
     userTargetWithdrawAmount: string,
+    lpAmount: BN,
+    slippage: number,
     selectedCard: any,
     userPublicKey: PublicKey,
     program: Program<Idl>
 ): Promise<Transaction> => {
-    const withdrawAccounts = await getAccountsForDepositWithdraw(
-        selectedCard,
-        userPublicKey,
-        false
-    )
+    const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
     const withdrawInstructionAccount = { ...withdrawAccounts }
+    const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
+    const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
     const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
-        new BN(Math.sqrt(450)),
-        new BN(3),
-        new BN(150), {
+        lpAmount,
+        new BN(token0Amount),
+        new BN(token1Amount), {
         accounts: withdrawInstructionAccount
     })
     const withdrawAmountTX = new Transaction()
@@ -185,9 +202,13 @@ export const calculateOtherTokenAndLPAmount = async (
     tokenType: TokenType,
     poolState: any,
     connection: Connection
-): Promise<{ lpTokenAmount: BN, otherTokenAmount: BN }> => {
+): Promise<{ lpTokenAmount: BN, otherTokenAmountInString: string }> => {
+    
+    if(!givenTokenAmount || +givenTokenAmount <= 0) {
+        return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
+    }
     let lpTokenAmount: BN;
-    let otherTokenAmount: BN;
+    let otherTokenAmountInString: string;
 
     const tokenAccountInfo0 = await connection.getParsedAccountInfo(poolState?.token0Vault)
     const amount0 = (tokenAccountInfo0?.value?.data as any).parsed?.info?.tokenAmount?.amount
@@ -206,22 +227,14 @@ export const calculateOtherTokenAndLPAmount = async (
     if (tokenType === TokenType.Token0) {
         const inputToken0 = convertToNativeValue(givenTokenAmount, poolState?.mint0Decimals)
         lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
-        otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
-
-        console.log('amount type 0', lpTokenSupply.toNumber(), inputToken0)
-        console.log('amount 0', amount0, protocolFees0?.toNumber(), fundFees0?.toNumber(), swapTokenAmount0?.toNumber())
-        console.log('amount 1', amount1, protocolFees1.toNumber(), fundFees1.toNumber(), swapTokenAmount1?.toNumber())
-        console.log('amount 2', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+        const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
+        otherTokenAmountInString = withdrawBigString(otherTokenAmount?.toString(), poolState?.mint1Decimals)
     } else {
         const inputToken1 = convertToNativeValue(givenTokenAmount, poolState?.mint1Decimals)
         lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
-        otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
-
-        console.log('amount type 1', lpTokenSupply?.toNumber(), inputToken1)
-        console.log('amount 0', amount0, protocolFees0.toNumber(), fundFees0.toNumber(), swapTokenAmount0?.toNumber())
-        console.log('amount 1', amount1, protocolFees1.toNumber(), fundFees1.toNumber(), swapTokenAmount1?.toNumber())
-        console.log('amount 2', lpTokenAmount?.toNumber(), otherTokenAmount?.toNumber())
+        const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
+        otherTokenAmountInString = withdrawBigString(otherTokenAmount?.toString(), poolState?.mint0Decimals)
     }
 
-    return { lpTokenAmount, otherTokenAmount }
+    return { lpTokenAmount, otherTokenAmountInString }
 }
