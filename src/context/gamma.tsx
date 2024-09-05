@@ -23,11 +23,11 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   ADDRESSES,
   GET_24_CHANGES,
-  JupToken,
   ModeOfOperation,
   Pool,
   poolType,
   SSLTableData,
+  SSLToken,
   TOTAL_FEES,
   TOTAL_VOLUME
 } from '../pages/FarmV4/constants'
@@ -37,7 +37,6 @@ import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
 import { getpoolId } from '@/web3/Farm'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
-import { PublicKey } from '@solana/web3.js'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -56,8 +55,8 @@ interface GAMMADataModel {
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   pool: Pool
   setPool: Dispatch<SetStateAction<Pool>>
-  allPoolSslData: JupToken[]
-  sslData: JupToken[]
+  allPoolSslData: SSLToken[]
+  sslData: SSLToken[]
   sslTableData: SSLTableData
   sslAllVolume: any
   sslTotalFees: string
@@ -102,8 +101,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [pool, setPool] = useState<Pool>(poolType.primary)
-  const [sslData, setSslData] = useState<JupToken[]>([])
-  const [allPoolSslData, setAllPoolSslData] = useState<JupToken[]>([])
+  const [sslData, setSslData] = useState<SSLToken[]>([])
+  const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const { SSLProgram, GammaProgram } = usePriceFeedFarm()
   const { network, connection } = useConnectionConfig()
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
@@ -140,7 +139,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
     }
   },[])
-  console.log('TOKEN LIST', tokenList)
+
   const fetchTokenList = async (page: number, pageSize: number) => {
     setIsLoadingTokenList(true)
     return fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
@@ -185,16 +184,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const liquidityAmountsArray = {}
         for (const token of allPoolSslData) {
           try {
-            const mint = new PublicKey(token.address)
-            const sslAccountKey = await getsslPoolSignerKey(mint)
+            const sslAccountKey = await getsslPoolSignerKey(token.mint)
             const response = await connection.getParsedTokenAccountsByOwner(sslAccountKey, {
-              mint
+              mint: token.mint
             })
             const liquidityAmount = response?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount
-            liquidityAmountsArray[token.address] = liquidityAmount
+            liquidityAmountsArray[token?.mint?.toBase58()] = liquidityAmount
           } catch (e) {
             console.error('Error fetching liquidity values', e)
-            liquidityAmountsArray[token.address] = 0
+            liquidityAmountsArray[token?.mint?.toBase58()] = 0
           }
         }
         setLiquidityAmount(liquidityAmountsArray)
@@ -395,7 +393,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (publicKey !== null) {
           for (const token of sslData) {
             try {
-              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, new PublicKey(token?.mint))
+              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
               const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
               liquidityData.push(liquidityAccount)
             } catch (e) {
@@ -415,7 +413,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (publicKey !== null) {
           for (const token of allPoolSslData) {
             try {
-              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, new PublicKey(token?.address))
+              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
               const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
               liquidityData.push(liquidityAccount)
             } catch (e) {
