@@ -232,7 +232,7 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage } = useGamma()
+  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   return <InputGroup
@@ -267,10 +267,8 @@ function TokenSelectionInput({
           </DropdownMenuTrigger>
           <DropdownMenuContent className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
                                portal={true}>
-            {isLoadingTokenList ?
-              <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>
-              : <ScrollingHydrateContainer callback={() => {
-              if (tokenList.length <= 0) return
+            <ScrollingHydrateContainer callback={() => {
+              if (tokenList.length <= 0 && maxTokensReached) return
               updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() => setPage(page + 1))
             }}>
               {tokenList.length > 0 ? tokenList.map((item, index) => (
@@ -286,7 +284,9 @@ function TokenSelectionInput({
               )):
                 <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
               }
-            </ScrollingHydrateContainer>}
+              {isLoadingTokenList ?
+                <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>:<></>}
+            </ScrollingHydrateContainer>
           </DropdownMenuContent>
         </DropdownMenu>
       </InputElementLeft>

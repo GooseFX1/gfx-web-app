@@ -1,4 +1,4 @@
-export const GAMMA_API_BASE = 'gamma-api'
+export const GAMMA_API_BASE = 'http://localhost:4000/v1'
 
 export enum GAMMA_ENDPOINTS_V1 {
   CONFIG = '/config',
