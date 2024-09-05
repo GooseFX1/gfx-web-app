@@ -74,6 +74,7 @@ interface GAMMADataModel {
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
   updateTokenList: (page: number, pageSize: number) => Promise<void>
+  maxTokensReached: boolean
 }
 export type TokenListToken = {
   "address": string,
@@ -115,6 +116,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [liquidityAmount, setLiquidityAmount] = useState({})
   const [selectedCardPool, setSelectedCardPool] = useState({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
+  const [maxTokensReached, setMaxTokensReached] = useState(false)
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
     , [slippage])
@@ -149,10 +151,21 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   }
   const updateTokenList = async (page: number, pageSize: number) => {
-    const response = await fetchTokenList(page, pageSize)
-    if (!response) {
+    const response = await fetchTokenList(page, pageSize) as {
+      data: {
+        tokens: TokenListToken[],
+        count: number,
+        currentPage: number,
+        pageSize: number,
+        totalItems: number,
+        totalPages
+      },
+      success: boolean
+    }
+    if (!response || !response.success) {
       return
     }
+    setMaxTokensReached(response.data.totalPages <= response.data.currentPage)
     const currentTokenList = tokenList
     const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
@@ -451,7 +464,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setPage,
         tokenList,
         isLoadingTokenList,
-        updateTokenList
+        updateTokenList,
+        maxTokensReached
       }}
     >
       {children}
