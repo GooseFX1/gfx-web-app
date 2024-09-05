@@ -49,14 +49,14 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       if (this.state.errorCount < 2) {
         // You can render any custom fallback UI
-        return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
+        return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto text-center'}>
           <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
           <h1 className={'dark:text-text-darkmode-primary mb-5'}>Sorry, Something Went Wrong...</h1>
           <p>Attempting Recovery, Hold Tight!</p>
           <Loader animationData={loaders.loader_generic} className={'w-20 h-20'} />
         </div>
       }
-      return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
+      return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto text-center'}>
         <div className={'flex flex-col gap-5 items-center justify-center'}>
           <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
           <h1 className={'dark:text-text-darkmode-primary'}>Sorry, Something Went Wrong...</h1>

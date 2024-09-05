@@ -273,7 +273,7 @@ function TokenSelectionInput({
               if (tokenList.length <= 0) return
               updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() => setPage(page + 1))
             }}>
-              {tokenList.map((item, index) => (
+              {tokenList.length > 0 ? tokenList.map((item, index) => (
                 <DropdownMenuItem className={'group gap-2 cursor-pointer'}
                                   onClick={() => setToken(item)}
                                   key={`${item}_${index}`}>
@@ -283,7 +283,9 @@ function TokenSelectionInput({
                   />
                   <span>{item.symbol}</span>
                 </DropdownMenuItem>
-              ))}
+              )):
+                <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
+              }
             </ScrollingHydrateContainer>}
           </DropdownMenuContent>
         </DropdownMenu>
