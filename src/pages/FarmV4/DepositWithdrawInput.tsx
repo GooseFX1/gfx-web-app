@@ -1,5 +1,5 @@
 import { Button, cn, Input, InputAddonRight, InputGroup } from 'gfx-component-lib'
-import { FC, useCallback, useRef } from 'react'
+import { FC, useCallback, useMemo, useRef } from 'react'
 import { useDarkMode } from '@/context'
 
 const DepositWithdrawInput: FC<{
@@ -30,8 +30,13 @@ const DepositWithdrawInput: FC<{
     const focusInput = useCallback(() => {
       inputRef.current?.focus()
     }, [inputRef])
-    const disabled = (sourceToken && userSourceTokenBal < 0 ||
-      !sourceToken && userTargetTokenBal < 0);
+
+    const disabled = useMemo(() => {
+      if(sourceToken && userSourceTokenBal <= 0) return true
+      else if(!sourceToken && userTargetTokenBal <= 0) return true
+      else return false
+    }, [sourceToken, userSourceTokenBal, userTargetTokenBal])
+    
     return (
       <div className="m-2.5">
         <InputGroup
@@ -39,10 +44,11 @@ const DepositWithdrawInput: FC<{
           aria-disabled={disabled}
           onClick={focusInput}
           rightItem={
-            <InputAddonRight className={`border-1 border-solid outline-none border-l-0
+            <InputAddonRight className={`border-1 border-solid !outline-none border-l-0
             group-focus-within:border-border-lightmode-primary group-focus:dark:border-border-darkmode-primary
             dark:border-border-darkmode-secondary border-border-lightmode-secondary
             disabled:dark:border-border-darkmode-secondary disabled:border-border-lightmode-secondary
+            dark:bg-black-1 bg-grey-5
             `}>
               <Button
                 variant={'outline'}
@@ -50,8 +56,7 @@ const DepositWithdrawInput: FC<{
                 className={cn(`p-1.5 text-text-black-4 dark:text-text-darkmode-primary`)}
                 size={'xs'}
                 onClick={handleHalf}
-                disabled={(sourceToken && userSourceTokenBal < 0 ||
-                  !sourceToken && userTargetTokenBal < 0)}
+                disabled={disabled}
               >
                 Half
               </Button>
