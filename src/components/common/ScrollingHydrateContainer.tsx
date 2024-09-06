@@ -1,21 +1,23 @@
-import React, { HTMLAttributes, SyntheticEvent } from 'react'
+import React, { forwardRef, HTMLAttributes, SyntheticEvent } from 'react'
 import { cn } from 'gfx-component-lib'
 
 type ScrollingHydrateContainerProps = {
-  children: React.ReactNode
   callback?: () => void
   isLoading?: boolean
 } & HTMLAttributes<HTMLDivElement>
 
-function ScrollingHydrateContainer({
+const ScrollingHydrateContainer = forwardRef<
+  HTMLDivElement,
+  ScrollingHydrateContainerProps
+>(({
                                      children,
                                      className,
                                      callback,
                                      isLoading,
                                      ...props
-                                   }: ScrollingHydrateContainerProps) {
-  return (
+                                   }, ref) => (
     <div
+      ref={ref}
       onScroll={(e: SyntheticEvent)=>{
         const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLDivElement;
         const progress = (scrollTop / ( scrollHeight - clientHeight ) ) * 100
@@ -28,7 +30,6 @@ function ScrollingHydrateContainer({
       {...props}>
       {children}
     </div>
-  )
-}
-
+  ))
+ScrollingHydrateContainer.displayName = 'ScrollingHydrateContainer'
 export default ScrollingHydrateContainer

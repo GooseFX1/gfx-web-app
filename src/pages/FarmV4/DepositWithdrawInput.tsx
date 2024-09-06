@@ -45,7 +45,7 @@ const DepositWithdrawInput: FC<{
           onClick={focusInput}
           rightItem={
             <InputAddonRight className={`border-1 border-solid !outline-none border-l-0
-            group-focus-within:border-border-lightmode-primary group-focus:dark:border-border-darkmode-primary
+            group-focus-within:border-border-lightmode-primary group-focus-within:dark:border-white
             dark:border-border-darkmode-secondary border-border-lightmode-secondary
             disabled:dark:border-border-darkmode-secondary disabled:border-border-lightmode-secondary
             dark:bg-black-1 bg-grey-5
