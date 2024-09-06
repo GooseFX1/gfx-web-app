@@ -478,4 +478,4 @@ export const GAMMA_SORT_CONFIG = [
   { id: '8', name: 'APR: Low to High' }
 ]
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
-export const TOKEN_LIST_PAGE_SIZE = 30
+export const TOKEN_LIST_PAGE_SIZE = 2000

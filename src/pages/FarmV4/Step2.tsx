@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useLayoutEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 import {
   Button,
   cn,
@@ -21,6 +21,7 @@ import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
+import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 
 const Step2: FC<{
   tokenA: JupToken
@@ -235,6 +236,7 @@ function TokenSelectionInput({
   const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached } = useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
+  const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   return <InputGroup
     leftItem={
       <InputElementLeft>
@@ -267,23 +269,27 @@ function TokenSelectionInput({
           </DropdownMenuTrigger>
           <DropdownMenuContent className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
                                portal={true}>
-            <ScrollingHydrateContainer callback={() => {
+            <ScrollingHydrateContainer
+              ref={(ref)=>setScrollingContainerRef(ref)}
+              callback={() => {
               if (tokenList.length <= 0 && maxTokensReached) return
               updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() => setPage(page + 1))
             }}>
-              {tokenList.length > 0 ? tokenList.map((item, index) => (
+              {tokenList.length > 0 ? <WindowingContainer
+                rootElement={scrollingContainerRef}
+              items={tokenList}
+              render={(item: JupToken)=>(
                 <DropdownMenuItem className={'group gap-2 cursor-pointer'}
                                   onClick={() => setToken(item)}
-                                  key={`${item}_${index}`}>
+                                  key={`${item.symbol}`}>
                   <Icon
                     src={item.logoURI ?? `img/crypto/${item.symbol}.svg`}
                     size={'sm'}
                   />
                   <span>{item.symbol}</span>
                 </DropdownMenuItem>
-              )):
-                <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>
-              }
+              )}
+              /> : <DropdownMenuItem disabled={true}>No Tokens Found</DropdownMenuItem>}
               {isLoadingTokenList ?
                 <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>:<></>}
             </ScrollingHydrateContainer>
