@@ -1,5 +1,4 @@
 import { PublicKey, TransactionInstruction, Connection } from "@solana/web3.js"
-import { getCpmmPdaAmmConfigId, getCpmmPdaPoolId } from "external/src/gfx/cpmm/pda"
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token-v2'
 import { Idl, Program } from "@project-serum/anchor"
 import { Transaction } from "@solana/web3.js"
@@ -12,7 +11,9 @@ import {
     USER_POOL_LIQUIDITY_PREFIX,
     TOKEN_2022_PROGRAM_ID,
     SYSTEM,
-    MEMO_ID
+    MEMO_ID,
+    AMM_CONFIG,
+    POOL_SEED
 } from './ids'
 import { convertToNativeValue, withdrawBigString } from "@/utils"
 
@@ -55,21 +56,50 @@ const getLiquidityPoolKey = async (poolIdKey: PublicKey, userPublicKey: PublicKe
         return undefined
     }
 }
+const u16ToBytes = (num: number): Uint8Array => {
+    const arr = new ArrayBuffer(2);
+    const view = new DataView(arr);
+    view.setUint16(0, num, false);
+    return new Uint8Array(arr);
+}
 
-export const getpoolId = (selectedCard: any): PublicKey => {
+const getAmmConfigId = async (programId: PublicKey, index: number): Promise<undefined | PublicKey> => {
+    try {
+        const ammConfigId: [PublicKey, number] = await PublicKey.findProgramAddress(
+            [Buffer.from(AMM_CONFIG), u16ToBytes(index)],
+            programId
+        )
+        return ammConfigId[0]
+    } catch (err) {
+        return undefined
+    }
+}
+
+const getPoolIdKey = async (programId: PublicKey, ammConfigId: PublicKey, mintA: PublicKey, mintB: PublicKey)
+    : Promise<undefined | PublicKey> => {
+    try {
+        const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+            [Buffer.from(POOL_SEED), ammConfigId?.toBuffer(), mintA?.toBuffer(), mintB?.toBuffer()],
+            programId
+        )
+        return getPoolIdKey[0]
+    } catch (err) {
+        return undefined
+    }
+}
+
+export const getpoolId = async (selectedCard: any): Promise<PublicKey> => {
     if (!selectedCard) return
     const programId = new PublicKey(GAMMA_PROGRAM_ID)
-    const configId = getCpmmPdaAmmConfigId(programId, 0)
+    const configIdKey = await getAmmConfigId(programId, 0)
     const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
     const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
-    const configIdKey = configId?.publicKey
-    const poolId = getCpmmPdaPoolId(
+    const poolIdKey = getPoolIdKey(
         programId,
         configIdKey,
         vaultAMintKey,
         vaultBMintKey
     )
-    const poolIdKey = poolId?.publicKey
     return poolIdKey
 }
 
@@ -93,7 +123,7 @@ const createLiquidityAccountIX = async (
 
 const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: PublicKey, isDeposit: boolean) => {
 
-    const poolIdKey = getpoolId(selectedCard)
+    const poolIdKey = await getpoolId(selectedCard)
     const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
     const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
     const poolVaultKeyA = await getPoolVaultKey(poolIdKey, selectedCard?.sourceTokenMintAddress)
@@ -123,11 +153,11 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
 }
 
 const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: boolean): string => {
-    if(!amount || !slippage) return ''
+    if (!amount || !slippage) return ''
 
     let slippageAmount = 0
-    if(isDeposit) slippageAmount = Math.ceil(+amount + ((slippage/100) * +amount))
-    else slippageAmount = Math.floor(+amount + ((slippage/100) * +amount))
+    if (isDeposit) slippageAmount = Math.ceil(+amount + ((slippage / 100) * +amount))
+    else slippageAmount = Math.floor(+amount + ((slippage / 100) * +amount))
     return slippageAmount?.toString()
 }
 
@@ -203,8 +233,8 @@ export const calculateOtherTokenAndLPAmount = async (
     poolState: any,
     connection: Connection
 ): Promise<{ lpTokenAmount: BN, otherTokenAmountInString: string }> => {
-    
-    if(!givenTokenAmount || +givenTokenAmount <= 0) {
+
+    if (!givenTokenAmount || +givenTokenAmount <= 0) {
         return { lpTokenAmount: new BN(0), otherTokenAmountInString: '' }
     }
     let lpTokenAmount: BN;
@@ -237,4 +267,8 @@ export const calculateOtherTokenAndLPAmount = async (
     }
 
     return { lpTokenAmount, otherTokenAmountInString }
+}
+
+export const createPool = (tokenA, tokenB, amountTokenA, amountTokenB) => {
+    console.log('create pool is being called', tokenA, tokenB, amountTokenA, amountTokenB)
 }

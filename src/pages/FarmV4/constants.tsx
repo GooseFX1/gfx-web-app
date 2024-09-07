@@ -78,12 +78,7 @@ export const poolType = {
 }
 
 export const ADDRESSES: {
-  [network in WalletAdapterNetwork]: {
-      token: string
-      name: string
-      address: PublicKey
-      cappedDeposit?: number
-  }[]
+  [network in WalletAdapterNetwork]: SSLToken[]
 } = {
   'mainnet-beta': [
     {
@@ -429,7 +424,7 @@ export const genericErrMsg = (error: string): Message => ({
   message: error
 })
 
-// export const depositCapError = (token: JupToken, liquidity: number): Message => ({
+// export const depositCapError = (token: SSLToken, liquidity: number): Message => ({
 //   type: 'error',
 //   message: `You cannot deposit more than $${truncateBigNumber(token?.cappedDeposit - liquidity)}
 //   ${token.token} because the ${token.token} pool is capped at $${truncateBigNumber(token?.cappedDeposit)}!`

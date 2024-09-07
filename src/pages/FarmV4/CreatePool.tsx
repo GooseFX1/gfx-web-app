@@ -1,11 +1,10 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { checkMobile } from '../../utils'
-import { useDarkMode, usePriceFeedFarm } from '../../context'
-import { getPriceObject } from '@/web3'
+import { useDarkMode } from '../../context'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
 import Step1 from './Step1'
@@ -15,6 +14,7 @@ import { Button, cn } from 'gfx-component-lib'
 import useBoolean from '@/hooks/useBoolean'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { createPool } from '@/web3/Farm'
 
 const STYLED_POPUP = styled(PopupCustom) <{
   currentSlide: number
@@ -72,51 +72,12 @@ const STYLED_POPUP = styled(PopupCustom) <{
   }
 `
 
-// const NextArrow: FC<{
-//   sliderRef: any
-//   currentSlide: number
-//   setIsCreatePool: Dispatch<SetStateAction<boolean>>
-//   disabled: boolean
-// }> = ({ sliderRef, currentSlide, setIsCreatePool, disabled }) => {
-//   const { connected } = useWallet()
-//   if (currentSlide === 0) return <></>
-//   return connected ? (
-//     <Button
-//       className="next-btn !font-bold"
-//       colorScheme={'blue'}
-//       variant={'secondary'}
-//       onClick={() => {
-//         if(currentSlide===1) sliderRef.current.slickNext()
-//         else if(currentSlide===2) setIsCreatePool(false)
-//       }}
-//       disabled={disabled}
-//     >
-//       {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
-//     </Button>
-//   ) : <Connect containerStyle={'h-8.75 w-[157px]'}
-//   customButtonStyle={'h-8.75 w-[157px] absolute bottom-4 right-2.5'} />
-// }
-//
-// const PrevArrow: FC<{
-//   sliderRef: any
-//   currentSlide: number
-// }> = ({ sliderRef, currentSlide }) =>
-//     currentSlide !== 0 && (
-//       <Button
-//         variant={'link'}
-//         className="prev-btn !font-bold"
-//         onClick={() => sliderRef.current.slickPrev()}>
-//         Back
-//       </Button>
-//     )
-
 export const CreatePool: FC<{
   isCreatePool: boolean
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({ isCreatePool, setIsCreatePool }): JSX.Element => {
   const slider = React.useRef<Slider>(null)
   const { mode } = useDarkMode()
-  const { prices } = usePriceFeedFarm()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [tokenA, setTokenA] = useState(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
@@ -125,6 +86,8 @@ export const CreatePool: FC<{
   const [feeTier, setFeeTier] = useState<string>("0.01")
   const { connected } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
+  const [localPoolType, setLocalPoolType] = useState<string>('')
+  const [initialPrice, setInitialPrice] = useState<string>('')
 
   const settings = {
     dots: false,
@@ -147,7 +110,11 @@ export const CreatePool: FC<{
       isSource ? setAmountTokenA(inputNumber) : setAmountTokenB(inputNumber)
     }
   }
-  const next = () => slider?.current?.slickNext()
+
+  const next = () => {
+    if(currentSlide !==2) slider?.current?.slickNext()
+    else createPool(tokenA, tokenB, amountTokenA, amountTokenB)
+  }
   const prev = () => {
     slider?.current?.slickPrev()
     if (currentSlide == 1) {
@@ -156,19 +123,12 @@ export const CreatePool: FC<{
       setPoolExists.off()
     }
   }
-  const liquidity = useMemo(
-    () =>
-      prices[getPriceObject(tokenA?.token)]?.current &&
-      prices[getPriceObject(tokenA?.token)]?.current,
-    [prices, tokenA]
-  )
 
   return (
     <STYLED_POPUP
       className={cn(
         checkMobile() ? 'min-h-[353px]' : 'min-h-[502px]'
       )}
-      //height={checkMobile() ? '353px' : '502px'}
       width={checkMobile() ? '95%' : '500px'}
       title={null}
       centered={true}
@@ -180,7 +140,7 @@ export const CreatePool: FC<{
     >
       <Slider ref={slider} {...settings}>
         <div className="slide">
-          <Step1 slider={slider} setIsCreatePool={setIsCreatePool} />
+          <Step1 slider={slider} setIsCreatePool={setIsCreatePool} setLocalPoolType={setLocalPoolType} />
         </div>
         <div className="slide">
           <Step2
@@ -193,28 +153,35 @@ export const CreatePool: FC<{
             amountTokenB={amountTokenB}
             feeTier={feeTier}
             setFeeTier={setFeeTier}
-            liquidity={liquidity}
             poolExists={poolExists}
             setPoolExists={setPoolExists.set}
+            initialPrice={initialPrice}
+            setInitialPrice={setInitialPrice}
           />
         </div>
         <div className="slide">
-          <Step3 tokenA={tokenA} tokenB={tokenB} />
+          <Step3
+            tokenA={tokenA}
+            tokenB={tokenB}
+            amountTokenA={amountTokenA}
+            amountTokenB={amountTokenB}
+            localPoolType={localPoolType}
+            initialPrice={initialPrice}
+          />
         </div>
       </Slider>
       {currentSlide != 0 && <div className={`flex justify-between border-t-1 solid
        border-border-lightmode-secondary dark:border-border-darkmode-secondary p-2.5 items-center`}>
         {currentSlide > 0 && <Button variant={'link'}
-                                     className={`prev-btn font-bold dark:text-white text-blue-1 text-regular 
-                                     cursor-pointer `}
-                                     colorScheme={'white'}
-                                     disabled={currentSlide == 0}
-                                     onClick={prev}
+          className={`prev-btn font-bold dark:text-white text-blue-1 text-regular cursor-pointer `}
+          colorScheme={'white'}
+          disabled={currentSlide == 0}
+          onClick={prev}
         >Back</Button>}
         {connected ? <Button colorScheme={'blue'}
-                             className={'w-[157px] font-bold next-btn'}
-                             disabled={currentSlide == 1 ? !tokenA || !tokenB : !amountTokenA || !amountTokenB}
-                             onClick={next}
+          className={'w-[157px] font-bold next-btn'}
+          disabled={currentSlide == 1 && !tokenA || !tokenB || !amountTokenA || !amountTokenB}
+          onClick={next}
         >
           {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
         </Button> : <Connect />}
