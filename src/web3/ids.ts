@@ -604,3 +604,7 @@ export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
 export const AUTHORITY_PREFIX = 'vault_and_lp_mint_auth_seed'
 
 export const USER_POOL_LIQUIDITY_PREFIX =  "user-pool-liquidity"
+
+export const AMM_CONFIG = 'amm_config'
+
+export const POOL_SEED = 'pool'

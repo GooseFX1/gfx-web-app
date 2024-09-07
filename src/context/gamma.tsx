@@ -284,7 +284,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     ; (async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
-          const poolIdKey = getpoolId(selectedCard)
+          const poolIdKey = await getpoolId(selectedCard)
           const gammaPool = await GammaProgram?.account?.poolState?.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
