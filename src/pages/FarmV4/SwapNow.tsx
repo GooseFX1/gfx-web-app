@@ -1,9 +1,22 @@
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useCallback } from 'react'
 import { useGamma } from '@/context'
 import { Button, Icon } from 'gfx-component-lib'
+import useBreakPoint from "../../hooks/useBreakPoint";
 
 const SwapNow: FC = (): ReactElement => {
   const { selectedCard } = useGamma()
+  const { isMobile } = useBreakPoint()
+
+  const handleInitSwap = useCallback(() => {
+    if (isMobile) {
+      window.open('https://jup.ag/swap', '_blank')
+    } else {
+      const jupWrapper = document.getElementById('jupiter-terminal-instance')
+      if (jupWrapper) {
+        ((jupWrapper.childNodes[0] as HTMLElement).children[0] as HTMLElement).click()
+      }
+    }
+  }, [])
 
   return (
     <div className="mx-2.5">
@@ -23,12 +36,7 @@ const SwapNow: FC = (): ReactElement => {
             className="cursor-pointer bg-blue-1 text-white block mx-auto !w-full"
             variant={'secondary'}
             disabled={!selectedCard}
-            onClick={()=>{
-              const jupWrapper = document.getElementById("jupiter-terminal-instance")
-              if (jupWrapper) {
-                ((jupWrapper.childNodes[0] as HTMLElement).children[0] as HTMLElement).click()
-              }
-            }}
+            onClick={handleInitSwap}
           >
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>

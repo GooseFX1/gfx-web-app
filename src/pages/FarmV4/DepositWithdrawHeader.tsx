@@ -36,8 +36,8 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
         size={'sm'}
       >
         <RewardsClose
-          className={`h-5.25 w-5.25 min-md:h-5 min-md:w-5 min-md:stroke-border-lightmode-primary 
-    min-md:dark:stroke-border-darkmode-primary`}
+          className={`h-5.25 w-5.25 min-md:h-5 min-md:w-5 
+            stroke-border-lightmode-primary dark:stroke-border-darkmode-primary`}
         />
       </Button>
     </DialogTitle>

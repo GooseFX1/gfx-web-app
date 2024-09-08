@@ -91,7 +91,7 @@ const Step2: FC<{
     return (
       <>
         <div className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
-              border-grey-4 p-2.5 h-16 ">
+              border-grey-4 p-2.5 h-17 ">
           <span className="text-purple-3">Step 2</span> of 3
           <h2 className="dark:text-grey-8 text-black-4 font-semibold font-sans text-[18px] mt-2">
             Pool Settings
@@ -272,7 +272,7 @@ function TokenSelectionInput({
               <Icon
                 style={{
                   transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
-                  transition: 'transform 0.2s ease-in-out',
+                  transition: 'transform 0.2s ease-in-out'
                 }}
                 src={`/img/assets/farm-chevron-${mode}.svg`}
                 className={cn(!isDarkMode ? 'stroke-background-blue' : '')}

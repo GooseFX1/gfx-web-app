@@ -143,11 +143,11 @@ export const FarmContainer: FC = () => {
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
         <>
-          <div className="flex items-center max-sm:flex-col max-sm:gap-4">
+          <div className="flex items-center max-sm:flex-col max-sm:gap-">
             <RadioOptionGroup
               defaultValue={'All'}
               value={pool.name}
-              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-4 mr-2'}
+              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 mb-4'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
@@ -174,10 +174,10 @@ export const FarmContainer: FC = () => {
                 value={searchTokens}
                 className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
               />
-              <div className="flex justify-between ml-3">
+              <div className="flex justify-between">
                 {breakpoint.isMobile ? (
                   <div>
-                    <Button className="ml-auto p-0 !h-[35px] !w-[35px] mr-3" variant={'ghost'}>
+                    <Button className="p-0 !h-[35px] !w-[35px] mx-2" variant={'ghost'}>
                       <Icon
                         src={`img/assets/farm_filter_${mode}.svg`}
                         size={'md'}
@@ -252,7 +252,7 @@ export const FarmContainer: FC = () => {
                 ) : (
                   <DropdownMenu open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
                     <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-                      <Button className="ml-auto p-0 !h-[35px] !w-[35px] mr-3" variant={'ghost'}>
+                      <Button className="p-0 !h-[35px] !w-[35px] mx-3" variant={'ghost'}>
                         <Icon
                           src={`img/assets/farm_filter_${mode}.svg`}
                           size={'md'}
@@ -283,7 +283,7 @@ export const FarmContainer: FC = () => {
                       <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={setCurrentSort}>
                         <div className={'grid grid-cols-1 gap-1.5 items-center'}>
                           {GAMMA_SORT_CONFIG.map((s) => (
-                            <DropdownMenuItem  isActive={currentSort == s.id} asChild key={s.id}>
+                            <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
                               <DropdownMenuRadioItem value={s.id}>
                                 <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
                                   <RadioGroup value={currentSort}>
@@ -314,7 +314,7 @@ export const FarmContainer: FC = () => {
                       />
                       <div
                         className="h-full text-tiny text-left dark:text-grey-2 text-grey-1 
-                        font-semibold ml-2 hidden min-lg:block"
+                        font-semibold ml-2 leading-1 py-1"
                       >
                         Show <br /> Deposited
                       </div>
@@ -324,6 +324,7 @@ export const FarmContainer: FC = () => {
               </div>
             </div>
           </div>
+
           <FarmItems
             tokens={filteredPools}
             numberOfTokensDeposited={numberOfTokensDeposited}
