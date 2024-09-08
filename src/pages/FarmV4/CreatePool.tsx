@@ -1,7 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 import Slider from 'react-slick'
-import { usePriceFeedFarm } from '../../context'
-import { getPriceObject } from '@/web3'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
 import Step1 from './Step1'
@@ -28,13 +26,12 @@ export const CreatePool: FC<{
 }> = ({ isCreatePool, setIsCreatePool }): JSX.Element => {
   const slider = React.useRef<Slider>(null)
   const breakpoint = useBreakPoint()
-  const { prices } = usePriceFeedFarm()
   const [currentSlide, setCurrentSlide] = useState<number>(0)
   const [tokenA, setTokenA] = useState(null)
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
-  const [feeTier, setFeeTier] = useState<string>("0.01")
+  const [feeTier, setFeeTier] = useState<string>('0.01')
   const { connected } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
   const [localPoolType, setLocalPoolType] = useState<string>('')
@@ -83,15 +80,15 @@ export const CreatePool: FC<{
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
-        <DialogHeader
-          className={`relative`}
-        >
-          <DialogCloseDefault className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'} />
+        <DialogHeader className={`relative`}>
+          <DialogCloseDefault
+            className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'}
+          />
         </DialogHeader>
         <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
           <Slider ref={slider} {...settings}>
             <div className="slide">
-              <Step1 slider={slider} setIsCreatePool={setIsCreatePool} />
+              <Step1 slider={slider} setIsCreatePool={setIsCreatePool} setLocalPoolType={setLocalPoolType} />
             </div>
             <div className="slide">
               <Step2
@@ -104,13 +101,21 @@ export const CreatePool: FC<{
                 amountTokenB={amountTokenB}
                 feeTier={feeTier}
                 setFeeTier={setFeeTier}
-                liquidity={liquidity}
                 poolExists={poolExists}
                 setPoolExists={setPoolExists.set}
+                initialPrice={initialPrice}
+                setInitialPrice={setInitialPrice}
               />
             </div>
             <div className="slide">
-              <Step3 tokenA={tokenA} tokenB={tokenB} />
+              <Step3
+                tokenA={tokenA}
+                tokenB={tokenB}
+                amountTokenA={amountTokenA}
+                amountTokenB={amountTokenB}
+                localPoolType={localPoolType}
+                initialPrice={initialPrice}
+              />
             </div>
           </Slider>
           {currentSlide != 0 && (

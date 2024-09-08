@@ -12,7 +12,7 @@ const Step3: FC<{
 }> = ({ tokenA, tokenB, amountTokenA, amountTokenB, localPoolType, initialPrice }) => (
     <>
         <div className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4 
-              border-grey-4 p-2.5 h-16">
+              border-grey-4 p-2.5 h-17">
             <span className="text-purple-3">Step 3</span> of 3
             <div className="dark:text-grey-8 text-black-4 font-semibold font-sans text-[18px] mt-2">
                 Review & Confirm
