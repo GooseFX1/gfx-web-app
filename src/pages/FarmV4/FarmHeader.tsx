@@ -194,8 +194,10 @@ export const FarmHeader: FC = () => {
     <div className="mt-3">
       {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />}
       {openDepositWithdrawSlider && <DepositWithdrawSlider />}
-      <DocsBanner />
-      <div className="relative mb-3.75">
+      <div className={'max-sm:px-2.5 px-5'}>
+        <DocsBanner />
+      </div>
+      <div className="relative mb-3.75 max-sm:px-2.5 px-5">
         <div className="flex flex-row items-center mb-1.5">
           <Icon
             src={`img/assets/${isProMode ? `pro_${mode}` : `lite_${mode}`}.svg`}
