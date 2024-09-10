@@ -24,7 +24,7 @@ const noPoolsDeposited = {
 const FarmItems: FC<{
   numberOfTokensDeposited: number
   isCreatedActive: boolean
-}> = ({ tokens, numberOfTokensDeposited, isCreatedActive }) => {
+}> = ({ numberOfTokensDeposited, isCreatedActive }) => {
   const { pools, filteredLiquidityAccounts, currentPoolType, searchTokens, showDeposited } = useGamma()
   const { isProMode } = useRewardToggle()
 
@@ -97,7 +97,7 @@ const FarmItems: FC<{
             }
           ]}
         />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || pools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro

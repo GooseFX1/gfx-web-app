@@ -1,16 +1,10 @@
 // import apiClient from '../index'
-import { 
-    // GAMMA_API_BASE, 
-    // GAMMA_ENDPOINTS_V1, 
-    GAMMA_TOKENS 
-} from './constants'
 import {
   GAMMAConfig,
   GAMMAProtocolStats,
-//GAMMAPool,
   GAMMAUser,
-  UserPortfolioStats,
-  UserPortfolioLPPosition
+  UserPortfolioLPPosition,
+  UserPortfolioStats
 } from '../../types/gamma'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
@@ -35,16 +29,16 @@ const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
   }
 }
 
-const fetchPools = async (): Promise<any[] | null> => {
-  try {
-    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.POOLS)
-    // return response.data
-    return GAMMA_TOKENS
-  } catch (error) {
-    console.error('Error fetching pools:', error)
-    return null
-  }
-}
+// const fetchPools = async (): Promise<any[] | null> => {
+//   try {
+//     // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.POOLS)
+//     // return response.data
+//     return GAMMA_TOKENS
+//   } catch (error) {
+//     console.error('Error fetching pools:', error)
+//     return null
+//   }
+// }
 
 const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
   console.log(publicKey)
@@ -82,4 +76,4 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
   }
 }
 
-export { fetchGAMMAConfig, fetchAggregateStats, fetchPools, fetchUser, fetchPortfolioStats, fetchLpPositions }
+export { fetchGAMMAConfig, fetchAggregateStats, fetchUser, fetchPortfolioStats, fetchLpPositions }
