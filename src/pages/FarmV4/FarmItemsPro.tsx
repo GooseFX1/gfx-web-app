@@ -1,17 +1,10 @@
-/* eslint-disable */
-
-import React, { FC, useState } from 'react'
-import { Pool } from '@/pages/FarmV4/constants'
+import { FC } from 'react'
 import FarmFilter from '@/pages/FarmV4/FarmFilter'
-import { truncateBigString } from '@/utils'
 import FarmRow from '@/pages/FarmV4/FarmRow'
 import { useGamma } from '@/context'
 
-const FarmItemsPro: FC<{
-  filteredLiquidityAccounts: any
-}> = ({ filteredLiquidityAccounts }) => {
+const FarmItemsPro: FC = () => {
   const { pools, currentPoolType, showDeposited } = useGamma()
-
   return (
     <>
       <FarmFilter />
@@ -23,15 +16,9 @@ const FarmItemsPro: FC<{
               else return currentPoolType.name === token.type
             })
             .map((token, i) => {
-              if (!token || !filteredLiquidityAccounts) return null
-              const liqAcc = filteredLiquidityAccounts[token.sourceTokenMintAddress]
-              const userDepositedAmount = truncateBigString(
-                liqAcc?.amountDeposited.toString(),
-                token.sourceTokenMintDecimals
-              )
-
+              //TODO: Fetch the balance from contract/api
               const show =
-                (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
+                (showDeposited && Boolean(0)) || !showDeposited
 
               return show ? (
                 <FarmRow token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} />

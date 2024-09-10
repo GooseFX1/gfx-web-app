@@ -1,9 +1,7 @@
 import { FC, useMemo, useState } from 'react'
-import { useDarkMode, useGamma, usePriceFeedFarm, useRewardToggle } from '../../context'
+import { useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { truncateBigNumber } from '../../utils'
-import { POOL_TYPE, SSLToken } from './constants'
-import { getPriceObject } from '../../web3'
-import { isEmpty } from 'lodash'
+import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, cn, Container, ContainerTitle, Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -14,17 +12,7 @@ import { CreatePool } from './CreatePool'
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
-  const {
-    allPoolSslData,
-    sslTableData,
-    liquidityAmount,
-    sslAllVolume,
-    sslTotalFees,
-    allPoolFilteredLiquidityAcc,
-    setCurrentPoolType,
-    openDepositWithdrawSlider
-  } = useGamma()
-  const { prices } = usePriceFeedFarm()
+  const { setCurrentPoolType, openDepositWithdrawSlider } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
@@ -33,120 +21,44 @@ export const FarmHeader: FC = () => {
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
 
   const TVL = useMemo(() => {
-    if (allPoolSslData == null || liquidityAmount == null || isEmpty(prices)) return `$0.00`
-
-    const totalLiquidity = allPoolSslData
-      .map((token: SSLToken) => {
-        const nativeLiquidity = liquidityAmount[token?.mint?.toBase58()]
-        return prices?.[getPriceObject(token?.token)]?.current * nativeLiquidity
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalLiquidity)
-  }, [allPoolSslData, liquidityAmount, prices])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const totalEarnings = useMemo(() => {
-    if (!allPoolSslData || !allPoolFilteredLiquidityAcc) return `$0.00`
-
-    const totalEarned = allPoolSslData
-      .map((token: SSLToken) => {
-        const totalEarnedInNative =
-          allPoolFilteredLiquidityAcc?.[token?.mint?.toBase58()]?.totalEarned?.toNumber() /
-          Math.pow(10, token?.mintDecimals)
-        return totalEarnedInNative ? prices?.[getPriceObject(token?.token)]?.current * totalEarnedInNative : 0
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    if (!totalEarned) return `$0.00`
-
-    return '$' + truncateBigNumber(totalEarned)
-  }, [allPoolFilteredLiquidityAcc, prices, allPoolSslData, userPubKey])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const V24H = useMemo(() => {
-    if (allPoolSslData == null) return `$0.00`
-
-    const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const volume = sslTableData?.[key]?.volume
-        return volume / 1_000_000
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalVolume)
-  }, [allPoolSslData, sslTableData])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const V7D = useMemo(() => {
-    if (allPoolSslData == null) return `$0.00`
-
-    const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const volume = sslAllVolume?.[key]?.volume7D
-        return volume / 1_000_000
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalVolume)
-  }, [allPoolSslData, sslAllVolume])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const totalVolumeTraded = useMemo(() => {
-    if (allPoolSslData == null) return `$0.00`
-
-    const totalVolume = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const volume = sslAllVolume?.[key]?.totalTokenVolume
-        return volume / 1_000_000
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalVolume)
-  }, [allPoolSslData, sslAllVolume])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const F24H = useMemo(() => {
-    if (allPoolSslData == null) return `$0.00`
-
-    const totalFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const fee = sslTableData?.[key]?.fee
-        const feeInNative = fee / 10 ** token.mintDecimals
-        const fees = feeInNative * prices?.[getPriceObject(token?.token)]?.current
-        return fees
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalFees)
-  }, [allPoolSslData, sslTableData])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const F7D = useMemo(() => {
-    if (allPoolSslData == null || !sslTotalFees) return `$0.00`
-
-    const totalWeeklyFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const fees = sslTotalFees?.[key]?.fees7D
-        return fees / 1_000_00 // As fees is coming with 5 decimal places
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalWeeklyFees)
-  }, [allPoolSslData, sslTotalFees])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const totalFees = useMemo(() => {
-    if (allPoolSslData == null || !sslTotalFees) return `$0.00`
-
-    const totalFees = allPoolSslData
-      .map((token: SSLToken) => {
-        const key = token.token === 'SOL' ? 'WSOL' : token.token
-        const fees = sslTotalFees?.[key]?.totalTokenFees
-        return fees / 1_000_00 // As fees is coming with 5 decimal places
-      })
-      .reduce((acc, curValue) => acc + curValue, 0)
-
-    return '$' + truncateBigNumber(totalFees)
-  }, [allPoolSslData, sslTotalFees])
+    const number = 0.00
+    return '$' + truncateBigNumber(number)
+  }, [])
 
   const infoCards = useMemo(() => {
     const data = [

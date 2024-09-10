@@ -62,14 +62,16 @@ const Step3: FC<{
                 <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">
                     Inital Price
                 </span>
-                <span className="text-regular font-semibold dark:text-grey-8 text-black-4">${initialPrice}</span>
+                <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
+                    ${initialPrice}
+                </span>
             </div>
             <div className="flex justify-between mb-2">
                 <span className="text-regular font-semibold dark:text-grey-2 text-grey-1">
                     {`Token A (${tokenA?.symbol})`}
                 </span>
                 <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                    {`${amountTokenA} ${tokenA?.symbol}`}
+                    {amountTokenA} {tokenA?.symbol}
                 </span>
             </div>
             <div className="flex justify-between mb-2">
@@ -77,7 +79,7 @@ const Step3: FC<{
                     {`Token B (${tokenB?.symbol})`}
                 </span>
                 <span className="text-regular font-semibold dark:text-grey-8 text-black-4">
-                    {`${amountTokenB} ${tokenB?.symbol}`}
+                    {amountTokenB} {tokenB?.symbol}
                 </span>
             </div>
             {/* <div className="flex justify-between mb-2">

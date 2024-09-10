@@ -304,13 +304,13 @@ function TokenSelectionInput({
                   <DropdownMenuItem
                     className={'group gap-2 cursor-pointer'}
                     onClick={() => setToken(item)}
-                    key={`${item.symbol}`}
+                    key={item?.symbol}
                   >
                     <Icon
-                      src={item.logoURI ?? `img/crypto/${item.symbol}.svg`}
+                      src={item?.logoURI ?? `img/crypto/${item?.symbol}.svg`}
                       size={'sm'}
                     />
-                    <span>{item.symbol}</span>
+                    <span>{item?.symbol}</span>
                   </DropdownMenuItem>
                 )}
               />

@@ -13,9 +13,12 @@ import {
     SYSTEM,
     MEMO_ID,
     AMM_CONFIG,
-    POOL_SEED
+    POOL_SEED,
+    GAMMA_FEE_ACCOUNT
 } from './ids'
 import { convertToNativeValue, withdrawBigString } from "@/utils"
+import { JupToken } from "@/pages/FarmV4/constants"
+import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token"
 
 enum TokenType {
     Token0,
@@ -94,7 +97,7 @@ export const getpoolId = async (selectedCard: any): Promise<PublicKey> => {
     const configIdKey = await getAmmConfigId(programId, 0)
     const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
     const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
-    const poolIdKey = getPoolIdKey(
+    const poolIdKey = await getPoolIdKey(
         programId,
         configIdKey,
         vaultAMintKey,
@@ -161,70 +164,46 @@ const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: 
     return slippageAmount?.toString()
 }
 
-export const deposit = async (
-    userSourceDepositAmount: string,
-    userTargetDepositAmount: string,
-    lpAmount: BN,
-    slippage: number,
-    selectedCard: any,
-    userPublicKey: PublicKey,
-    program: Program<Idl>,
-    connection: Connection
-): Promise<Transaction> => {
-    const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
-    const depositInstructionAccount = { ...depositAccounts }
-    const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
-    let liquidityAccIX = undefined
-    if (!liqAccData) {
-        liquidityAccIX = await createLiquidityAccountIX(
-            userPublicKey,
-            depositAccounts?.poolState,
-            depositAccounts?.userPoolLiquidity,
-            program
-        )
-    }
-    const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
-    const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
-    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
-    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
-    const depositIX: TransactionInstruction = await program.instruction.deposit(
-        lpAmount,
-        new BN(token0Amount),
-        new BN(token1Amount), {
-        accounts: depositInstructionAccount
-    })
-    const depositAmountTX = new Transaction()
-    if (liquidityAccIX !== undefined) {
-        depositAmountTX.add(liquidityAccIX)
-    }
-    depositAmountTX.add(depositIX)
-    return depositAmountTX
-}
+const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, userPubKey: PublicKey) => {
 
-export const withdraw = async (
-    userSourceWithdrawAmount: string,
-    userTargetWithdrawAmount: string,
-    lpAmount: BN,
-    slippage: number,
-    selectedCard: any,
-    userPublicKey: PublicKey,
-    program: Program<Idl>
-): Promise<Transaction> => {
-    const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
-    const withdrawInstructionAccount = { ...withdrawAccounts }
-    const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
-    const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
-    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
-    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
-    const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
-        lpAmount,
-        new BN(token0Amount),
-        new BN(token1Amount), {
-        accounts: withdrawInstructionAccount
-    })
-    const withdrawAmountTX = new Transaction()
-    withdrawAmountTX.add(withdrawIX)
-    return withdrawAmountTX
+    const programId = new PublicKey(GAMMA_PROGRAM_ID)
+    const configIdKey = await getAmmConfigId(programId, 0)
+    const authorityKey = await getAuthorityKey()
+    const token0 = new PublicKey(tokenA?.address)
+    const token1 =  new PublicKey(tokenB?.address)
+    const token0ata = await getAssociatedTokenAddress(token0, userPubKey)
+    const token1ata = await getAssociatedTokenAddress(token1, userPubKey)
+    const poolIdKey = await getPoolIdKey(programId, 
+        configIdKey, 
+        new PublicKey(tokenA?.address), 
+        new PublicKey(tokenB?.address)
+    )
+    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, tokenA?.address)
+    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, tokenB?.address)
+    const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
+
+    const accountObj = {
+        creator: userPubKey,
+        ammConfig: configIdKey,
+        authority: authorityKey,
+        poolState: poolIdKey,
+        token0Mint: token0,
+        token1Mint: token1, 
+        creatorToken0: token0ata,
+        creatorToken1: token1ata,
+        token0Vault: poolVaultKeyA,
+        token1Vault: poolVaultKeyB,
+        createPoolFee: poolFeeAcc,
+        observationState: poolIdKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        token0Program: TOKEN_2022_PROGRAM_ID,
+        token1Program: TOKEN_2022_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: SYSTEM,
+        rent: SYSTEM
+    }
+
+    return accountObj
 }
 
 export const calculateOtherTokenAndLPAmount = async (
@@ -269,6 +248,92 @@ export const calculateOtherTokenAndLPAmount = async (
     return { lpTokenAmount, otherTokenAmountInString }
 }
 
-export const createPool = (tokenA, tokenB, amountTokenA, amountTokenB) => {
-    console.log('create pool is being called', tokenA, tokenB, amountTokenA, amountTokenB)
+//Instruction - 1
+export const deposit = async (
+    userSourceDepositAmount: string,
+    userTargetDepositAmount: string,
+    lpAmount: BN,
+    slippage: number,
+    selectedCard: any,
+    userPublicKey: PublicKey,
+    program: Program<Idl>,
+    connection: Connection
+): Promise<Transaction> => {
+    const depositAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, true)
+    const depositInstructionAccount = { ...depositAccounts }
+    const liqAccData = await connection.getAccountInfo(depositAccounts?.userPoolLiquidity)
+    let liquidityAccIX = undefined
+    if (!liqAccData) {
+        liquidityAccIX = await createLiquidityAccountIX(
+            userPublicKey,
+            depositAccounts?.poolState,
+            depositAccounts?.userPoolLiquidity,
+            program
+        )
+    }
+    const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
+    const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
+    const depositIX: TransactionInstruction = await program.instruction.deposit(
+        lpAmount,
+        new BN(token0Amount),
+        new BN(token1Amount), {
+        accounts: depositInstructionAccount
+    })
+    const depositAmountTX = new Transaction()
+    if (liquidityAccIX !== undefined) {
+        depositAmountTX.add(liquidityAccIX)
+    }
+    depositAmountTX.add(depositIX)
+    return depositAmountTX
+}
+
+//Instruction - 2
+export const withdraw = async (
+    userSourceWithdrawAmount: string,
+    userTargetWithdrawAmount: string,
+    lpAmount: BN,
+    slippage: number,
+    selectedCard: any,
+    userPublicKey: PublicKey,
+    program: Program<Idl>
+): Promise<Transaction> => {
+    const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
+    const withdrawInstructionAccount = { ...withdrawAccounts }
+    const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
+    const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
+    const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
+        lpAmount,
+        new BN(token0Amount),
+        new BN(token1Amount), {
+        accounts: withdrawInstructionAccount
+    })
+    const withdrawAmountTX = new Transaction()
+    withdrawAmountTX.add(withdrawIX)
+    return withdrawAmountTX
+}
+
+//Instruction - 3
+export const createPool = async (
+    tokenA: JupToken,
+    tokenB: JupToken,
+    amountTokenA: string,
+    amountTokenB: string,
+    userPubKey: PublicKey,
+    program: Program
+) => {
+    const getAccsForCreatePool = await getAccountsForCreatePool(tokenA, tokenB, userPubKey)
+    const createPoolAcc = { ...getAccsForCreatePool }
+    const createPoolIX: TransactionInstruction = await program.instruction.initialize(
+        new BN(1),
+        new BN(2),
+        new BN(+new Date()), {
+        accounts: createPoolAcc
+    })
+    const createPoolTxn = new Transaction()
+    createPoolTxn.add(createPoolIX)
+    return createPoolTxn
 }
