@@ -135,6 +135,21 @@ interface UserPortfolioLPPosition {
   totalYieldUSD: string
   apr: number
 }
+type GAMMAAPIPaginatedResponse = {
+  currentPage: number
+  pageSize: number
+  totalPages: number
+  totalItems: number
+  count: number
+}
+type GAMMAAPIBaseResponse<T> = {
+  success: boolean
+  data: T
+}
+
+type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
+  pools: GAMMAPool[]
+} & GAMMAAPIPaginatedResponse>
 
 export type {
   GAMMAConfig,
@@ -150,5 +165,6 @@ export type {
   GAMMAPoolStats,
   GAMMAUser,
   UserPortfolioStats,
-  UserPortfolioLPPosition
+  UserPortfolioLPPosition,
+  GAMMAPoolsResponse
 }

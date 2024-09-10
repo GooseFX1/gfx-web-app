@@ -16,6 +16,7 @@ export type Faq = {
 export type Pool = {
   index: number
   name: string
+  type: 'hyper' | 'primary' | 'migrate'
 }
 
 export type LiquidityAccount = {
@@ -61,19 +62,26 @@ export type SSLTableData = {
   volume: number
   totalVolume: number
 }
-
-export const POOL_TYPE = {
+export type PoolType = {
+  primary: Pool
+  hyper: Pool
+  migrate: Pool
+}
+export const POOL_TYPE: PoolType = {
   primary: {
     index: 1,
-    name: 'Primary'
+    name: 'Primary',
+    type: 'primary'
   },
   hyper: {
     index: 2,
-    name: 'Hyper'
+    name: 'Hyper',
+    type: 'hyper'
   },
   migrate: {
     index: 3,
-    name: 'Migrate'
+    name: 'Migrate',
+    type: 'migrate'
   }
 }
 
@@ -474,3 +482,4 @@ export const GAMMA_SORT_CONFIG = [
 ]
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
+export const POOL_LIST_PAGE_SIZE = 10
