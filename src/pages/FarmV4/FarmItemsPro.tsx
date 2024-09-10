@@ -8,18 +8,16 @@ import FarmRow from '@/pages/FarmV4/FarmRow'
 import { useGamma } from '@/context'
 
 const FarmItemsPro: FC<{
-  tokens: any
   filteredLiquidityAccounts: any
-}> = ({ tokens, filteredLiquidityAccounts }) => {
-  const { currentPoolType, showDeposited } = useGamma()
-  const [sort, setSort] = useState<string>('ASC')
-  const [sortType, setSortType] = useState<string>(null)
+}> = ({ filteredLiquidityAccounts }) => {
+  const { pools, currentPoolType, showDeposited } = useGamma()
+
   return (
     <>
-      <FarmFilter sort={sort} sortType={sortType} />
+      <FarmFilter />
       <div>
         <div>
-          {tokens
+          {pools
             .filter((token: any) => {
               if (currentPoolType.name === 'All') return true
               else return currentPoolType.name === token.type

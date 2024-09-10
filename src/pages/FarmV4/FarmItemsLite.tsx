@@ -8,10 +8,9 @@ import { useGamma } from '@/context'
 const FarmItemsLite: FC<{
   openPositionImages: string[]
   openPositionsAcrossPrograms: number
-  tokens: any
   filteredLiquidityAccounts: any
-}> = ({ openPositionImages, openPositionsAcrossPrograms, tokens, filteredLiquidityAccounts }) => {
-  const { currentPoolType, searchTokens, showDeposited } = useGamma()
+}> = ({ openPositionImages, openPositionsAcrossPrograms, filteredLiquidityAccounts }) => {
+  const { pools, currentPoolType, searchTokens, showDeposited } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
   return (
     <div className="border-top grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -21,7 +20,7 @@ const FarmItemsLite: FC<{
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
         />
       )}
-      {tokens
+      {pools
         .filter((token: any) => {
           if (currentPoolType.name === 'All') return true
           else return currentPoolType.name === token.type

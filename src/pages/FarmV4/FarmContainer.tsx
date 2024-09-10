@@ -35,7 +35,6 @@ export const FarmContainer: FC = () => {
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
   const {
-    pools,
     GAMMA_SORT_CONFIG,
     currentPoolType,
     openDepositWithdrawSlider,
@@ -71,49 +70,6 @@ export const FarmContainer: FC = () => {
 
   //TODO: need to change the calculation upon getting onchain data
   const numberOfTokensDeposited = 0
-
-  const filteredPools = useMemo(() => {
-    const filterPools = (pools) =>
-      pools
-        ?.filter((item) => item?.type === currentPoolType?.name)
-        ?.filter((curPool) => {
-          const matchesSearch =
-            !searchTokens ||
-            curPool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
-            curPool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
-          const matchesCreated = !showCreatedPools || curPool.isOwner === true
-          return matchesSearch && matchesCreated
-        })
-
-    const sortPools = (filteredPools) => {
-      const sort = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
-      if (!sort) return filteredPools
-      return filteredPools.sort((a, b) => {
-        switch (sort.name) {
-          case GAMMA_SORT_CONFIG[0].name:
-            return b.liquidity - a.liquidity
-          case GAMMA_SORT_CONFIG[1].name:
-            return a.liquidity - b.liquidity
-          case GAMMA_SORT_CONFIG[2].name:
-            return b.volume - a.volume
-          case GAMMA_SORT_CONFIG[3].name:
-            return a.volume - b.volume
-          case GAMMA_SORT_CONFIG[4].name:
-            return b.fees - a.fees
-          case GAMMA_SORT_CONFIG[5].name:
-            return a.fees - b.fees
-          case GAMMA_SORT_CONFIG[6].name:
-            return b.apr - a.apr
-          case GAMMA_SORT_CONFIG[7].name:
-            return a.apr - b.apr
-          default:
-            return 0
-        }
-      })
-    }
-
-    return sortPools(filterPools(pools))
-  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG, currentPoolType])
 
   useEffect(() => {
     if (pubKey === null && userCache.gamma.showDepositedFilter)
@@ -336,7 +292,6 @@ export const FarmContainer: FC = () => {
           </div>
 
           <FarmItems
-            tokens={filteredPools}
             numberOfTokensDeposited={numberOfTokensDeposited}
             isCreatedActive={showCreatedPools}
           />

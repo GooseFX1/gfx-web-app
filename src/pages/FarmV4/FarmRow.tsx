@@ -44,6 +44,11 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
             0.2%
           </div>
         )}
+        {token?.isOwner && (
+          <Badge size="sm" variant="default" className={'ml-1'}>
+            Owner
+          </Badge>
+        )}
         <Icon src={`img/assets/farm_${token?.type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">

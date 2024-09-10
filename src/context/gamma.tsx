@@ -18,7 +18,13 @@ import {
   fetchPortfolioStats,
   fetchUser
 } from '../api/gamma'
-import { GAMMAConfig, GAMMAProtocolStats, GAMMAUser, UserPortfolioLPPosition, UserPortfolioStats } from '../types/gamma'
+import {
+  GAMMAConfig,
+  GAMMAProtocolStats,
+  GAMMAUser,
+  UserPortfolioLPPosition,
+  UserPortfolioStats
+} from '../types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   ADDRESSES,
@@ -90,15 +96,15 @@ interface GAMMADataModel {
   setShowDeposited: Dispatch<SetStateAction<boolean>>
 }
 export type TokenListToken = {
-  "address": string,
-  "name": string,
-  "symbol": string,
-  "decimals": number,
-  "logoURI": string,
-  "tags": string[],
-  "daily_volume": number|null,
-  "freeze_authority": string|null,
-  "mint_authority": string|null
+  address: string
+  name: string
+  symbol: string
+  decimals: number
+  logoURI: string
+  tags: string[]
+  daily_volume: number | null
+  freeze_authority: string | null
+  mint_authority: string | null
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
@@ -135,40 +141,39 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [currentSort, setCurrentSort] = useState<string>('1')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
 
-  const isCustomSlippage = useMemo(() =>
-    !BASE_SLIPPAGE.includes(slippage)
-    , [slippage])
+  const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
 
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
   const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
-  useEffect(()=>{
+  useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
       setIsLoadingTokenList(true)
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
     }
-  },[])
+  }, [])
 
   const fetchTokenList = async (page: number, pageSize: number) => {
     setIsLoadingTokenList(true)
     return fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
-      .then(async (res) => res.json()).catch((e) => {
+      .then(async (res) => res.json())
+      .catch((e) => {
         console.log('Error fetching token list', e)
         return null
-      }).finally(()=>setIsLoadingTokenList(false))
-
+      })
+      .finally(() => setIsLoadingTokenList(false))
   }
   const updateTokenList = async (page: number, pageSize: number) => {
-    const response = await fetchTokenList(page, pageSize) as {
+    const response = (await fetchTokenList(page, pageSize)) as {
       data: {
-        tokens: TokenListToken[],
-        count: number,
-        currentPage: number,
-        pageSize: number,
-        totalItems: number,
+        tokens: TokenListToken[]
+        count: number
+        currentPage: number
+        pageSize: number
+        totalItems: number
         totalPages
-      },
+      }
       success: boolean
     }
     if (!response || !response.success) {
@@ -178,18 +183,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const currentTokenList = tokenList
     const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
-      if (hasSetOfTokens.has(token.address)){continue}
+      if (hasSetOfTokens.has(token.address)) {
+        continue
+      }
       hasSetOfTokens.add(token.address)
       currentTokenList.push(token)
     }
     console.log({ currentTokenList })
     setTokenList([...currentTokenList])
   }
-  useLayoutEffect(()=>{
-    updateTokenList(page,TOKEN_LIST_PAGE_SIZE)
-  },[page])
+  useLayoutEffect(() => {
+    updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
+  }, [page])
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (SSLProgram) {
         const liquidityAmountsArray = {}
         for (const token of allPoolSslData) {
@@ -294,7 +301,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchLpPositions, user])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -308,7 +315,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (SSLProgram) {
         try {
           const sslPoolEntries = []
@@ -349,7 +356,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [currentPoolType])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       try {
         if (allPoolLiquidityAcc) {
           const filteredData = {}
@@ -373,7 +380,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [allPoolLiquidityAcc])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       try {
         if (liquidityAccounts) {
           const filteredData = {}
@@ -397,7 +404,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [liquidityAccounts])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (SSLProgram) {
         const liquidityData = []
         if (publicKey !== null) {
@@ -417,7 +424,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [publicKey, sslData])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (SSLProgram) {
         const liquidityData = []
         if (publicKey !== null) {
@@ -436,6 +443,57 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [publicKey, allPoolSslData])
 
+  useEffect(
+    () => {      
+      const filterPools = (p) =>
+        p
+          ?.filter((item) => item?.type === currentPoolType?.name)
+          ?.filter((curPool) => {
+            const matchesSearch =
+              !searchTokens ||
+              curPool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
+              curPool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
+            const matchesCreated = !showCreatedPools || curPool.isOwner === true
+            return matchesSearch && matchesCreated
+          })
+
+      const sortPools = (filteredPools) => {
+        const sort = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
+        if (!sort) return filteredPools
+        return filteredPools.sort((a, b) => {
+          switch (sort.name) {
+            case GAMMA_SORT_CONFIG[0].name:
+              return b.liquidity - a.liquidity
+            case GAMMA_SORT_CONFIG[1].name:
+              return a.liquidity - b.liquidity
+            case GAMMA_SORT_CONFIG[2].name:
+              return b.volume - a.volume
+            case GAMMA_SORT_CONFIG[3].name:
+              return a.volume - b.volume
+            case GAMMA_SORT_CONFIG[4].name:
+              return b.fees - a.fees
+            case GAMMA_SORT_CONFIG[5].name:
+              return a.fees - b.fees
+            case GAMMA_SORT_CONFIG[6].name:
+              return b.apr - a.apr
+            case GAMMA_SORT_CONFIG[7].name:
+              return a.apr - b.apr
+            default:
+              return 0
+          }
+        })
+      }
+
+      if (pools !== null) {
+        // should be replaced by api call with query params sort filter
+        fetchPools().then((sortFilterData) => {
+          if (sortFilterData) setPools(sortPools(filterPools(sortFilterData)))
+        })
+      }
+    },
+    [searchTokens, showCreatedPools, currentSort, currentPoolType],
+  )
+  
   return (
     <GAMMAContext.Provider
       value={{

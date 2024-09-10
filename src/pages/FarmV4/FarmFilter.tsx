@@ -1,19 +1,20 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
+import { useGamma } from '@/context'
 
 const FarmRowItem: FC<{
   title: string
-  //onClick: () => void
+  onClick: () => void
   className?: string
   invert?: boolean
   tooltip?: React.ReactNode
-}> = ({ title, className, invert, tooltip }) => {
+}> = ({ title, className, invert, onClick, tooltip }) => {
   const Comp = (
     <Button
       variant={'default'}
-      //onClick={onClick}
+      onClick={onClick}
       className={cn(
         `justify-center p-0 break-words text-h4 text-text-lightmode-secondary
       dark:text-text-darkmode-secondary
@@ -34,11 +35,20 @@ const FarmRowItem: FC<{
     Comp
   )
 }
-const FarmFilter: FC<{
-  sort: string
-  sortType: string
-}> = ({ sort, sortType }) => {
+const FarmFilter: FC = () => {
   const { isMobile, isTablet, isDesktop } = useBreakPoint()
+  const { currentSort, setCurrentSort } = useGamma()
+
+
+  const handleColumnSort = useCallback(
+    (id: string) => () => {
+      console.log(id);
+      
+      setCurrentSort(id)
+    },
+    [setCurrentSort]
+  )
+
   return (
     <div
       className={cn(
@@ -48,39 +58,27 @@ const FarmFilter: FC<{
         isTablet && `grid-cols-4`
       )}
     >
-      <FarmRowItem
-        title={'Name'}
-        //onClick={handleSort('token')}
-        className={'justify-start'}
-        invert={sort == 'DESC' && sortType == 'token'}
-      />
+      <FarmRowItem title={'Name'} onClick={handleColumnSort('1')} className={'justify-start'} invert={false} />
       <FarmRowItem
         title={'Liquidity'}
-        //onClick={handleSort('liquidity')}
-        invert={sort == 'DESC' && sortType == 'liquidity'}
+        onClick={handleColumnSort(currentSort === '1' ? '2' : '1')}
+        invert={currentSort == '1'}
       />
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={'24H Volume'}
           tooltip={'24H Volume is reset daily at 10PM UTC'}
-          //onClick={handleSort('volume')}
-          invert={sort == 'DESC' && sortType == 'volume'}
+          onClick={handleColumnSort(currentSort === '3' ? '4' : '3')}
+          invert={currentSort == '3'}
         />
       )}
-      {isDesktop && (
-        <FarmRowItem
-          title={'24H Fees'}
-          //onClick={handleSort('fee')}
-          invert={sort == 'DESC' && sortType == 'fee'}
-        />
-      )}
-      {console.log(isMobile, isTablet, isDesktop)}
+      {isDesktop && <FarmRowItem title={'24H Fees'} onClick={handleColumnSort('5')} invert={currentSort == '5'} />}
       {(isTablet || isDesktop) && (
         <FarmRowItem
           title={'24H APR'}
           tooltip={'Values are displayed in native token'}
-          //onClick={handleSort('balance')}
-          invert={sort == 'DESC' && sortType == 'balance'}
+          onClick={handleColumnSort(currentSort === '7' ? '8' : '7')}
+          invert={currentSort == '7'}
         />
       )}
     </div>

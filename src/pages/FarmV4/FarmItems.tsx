@@ -22,11 +22,10 @@ const noPoolsDeposited = {
 // }
 
 const FarmItems: FC<{
-  tokens: any
   numberOfTokensDeposited: number
   isCreatedActive: boolean
 }> = ({ tokens, numberOfTokensDeposited, isCreatedActive }) => {
-  const { filteredLiquidityAccounts, currentPoolType, searchTokens, showDeposited } = useGamma()
+  const { pools, filteredLiquidityAccounts, currentPoolType, searchTokens, showDeposited } = useGamma()
   const { isProMode } = useRewardToggle()
 
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
@@ -102,20 +101,18 @@ const FarmItems: FC<{
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro
-          tokens={tokens}
           filteredLiquidityAccounts={filteredLiquidityAccounts}
         />
       ) : currentPoolType.name != POOL_TYPE?.migrate?.name ? (
         <FarmItemsLite
           openPositionImages={openPositionImages}
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
-          tokens={tokens}
           filteredLiquidityAccounts={filteredLiquidityAccounts}
         />
       ) : (
         <></>
       )}
-      {(numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
+      {(numberOfTokensDeposited === 0 && showDeposited) || pools?.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>
