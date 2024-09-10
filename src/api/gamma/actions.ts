@@ -76,4 +76,4 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
   }
 }
 
-export { fetchGAMMAConfig, fetchAggregateStats, fetchPools, fetchUser, fetchPortfolioStats, fetchLpPositions }
+export { fetchGAMMAConfig, fetchAggregateStats, fetchUser, fetchPortfolioStats, fetchLpPositions }

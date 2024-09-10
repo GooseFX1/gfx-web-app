@@ -47,7 +47,7 @@ import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
-  pools: any[]
+  pools: GAMMAPool[]
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
   lpPositions: UserPortfolioLPPosition[]
@@ -112,7 +112,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
-  const [pools, setPools] = useState<GAMMAPool[] | null>(null)
+  const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
