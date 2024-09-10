@@ -1,15 +1,13 @@
 import { FC, useMemo } from 'react'
 import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import MigrateCard from '@/pages/FarmV4/MigrateCard'
-import { truncateBigString } from '@/utils'
 import FarmCard from '@/pages/FarmV4/FarmCard'
 import { useGamma } from '@/context'
 
 const FarmItemsLite: FC<{
   openPositionImages: string[]
   openPositionsAcrossPrograms: number
-  filteredLiquidityAccounts: any
-}> = ({ openPositionImages, openPositionsAcrossPrograms, filteredLiquidityAccounts }) => {
+}> = ({ openPositionImages, openPositionsAcrossPrograms }) => {
   const { pools, currentPoolType, searchTokens, showDeposited } = useGamma()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
   return (
@@ -26,15 +24,9 @@ const FarmItemsLite: FC<{
           else return currentPoolType.name === token.type
         })
         .map((token, i) => {
-          if (!token || !filteredLiquidityAccounts) return null
-          const liqAcc = filteredLiquidityAccounts[token.sourceTokenMintAddress]
-          const userDepositedAmount = truncateBigString(
-            liqAcc?.amountDeposited.toString(),
-            token.sourceTokenMintDecimals
-          )
-
+          //TODO: Fetch the balance from contract/api
           const show =
-            (showDeposited && Boolean(userDepositedAmount) && userDepositedAmount != '0.00') || !showDeposited
+            (showDeposited && Boolean(0)) || !showDeposited
 
           return show ? <FarmCard token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} /> : null
         })}

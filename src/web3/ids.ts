@@ -599,6 +599,8 @@ export const AH_TREASURY_BUMP = 255
 
 export const GAMMA_PROGRAM_ID = 'GaMMAt2scxuGJu3esLfLsJZaC482MPEKswdx8DfUsHCR'
 
+export const GAMMA_FEE_ACCOUNT = '2EGutuSu6BMjw2fKuU5q5fVTH1S5c4tsTgEwQZDn1N45'
+
 export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
 
 export const AUTHORITY_PREFIX = 'vault_and_lp_mint_auth_seed'

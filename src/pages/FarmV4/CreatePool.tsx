@@ -1,4 +1,5 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useState, useMemo } from 'react'
+import 'styled-components/macro'
 import Slider from 'react-slick'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Connect } from '@/layouts'
@@ -19,6 +20,8 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
+import { useGamma, usePriceFeedFarm } from '@/context'
+import useTransaction from '@/hooks/useTransaction'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -31,11 +34,15 @@ export const CreatePool: FC<{
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
-  const [feeTier, setFeeTier] = useState<string>('0.01')
-  const { connected } = useWallet()
+  const [feeTier, setFeeTier] = useState<string>("0.01")
+  const { connected, wallet } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
   const [localPoolType, setLocalPoolType] = useState<string>('')
   const [initialPrice, setInitialPrice] = useState<string>('')
+  const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
+  const { GammaProgram } = usePriceFeedFarm()
+  const { sendTransaction, createTransactionBuilder } = useTransaction()
+  const { setSendingTransaction } = useGamma()
 
   const settings = {
     dots: false,
@@ -59,10 +66,29 @@ export const CreatePool: FC<{
     }
   }
 
-  const next = () => {
-    if(currentSlide !==2) slider?.current?.slickNext()
-    else createPool(tokenA, tokenB, amountTokenA, amountTokenB)
+  const next = async () => {
+    if (currentSlide !== 2) slider?.current?.slickNext()
+    else {
+      try {
+        const txBuilder = createTransactionBuilder()
+        const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram)
+        txBuilder.add(tx)
+        setSendingTransaction(true)
+        const { success } = await sendTransaction(txBuilder)
+
+        if (!success) {
+          console.log('failure')
+          setSendingTransaction(false)
+          return
+        } else {
+          setSendingTransaction(false)
+        }
+      } catch (e) {
+        console.log('error while creating a new pool', e)
+      }
+    }
   }
+
   const prev = () => {
     slider?.current?.slickPrev()
     if (currentSlide == 1) {

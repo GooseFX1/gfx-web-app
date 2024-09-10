@@ -259,53 +259,61 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   const handleDeposit = async () => {
-    const txBuilder = createTransactionBuilder()
-    const tx = await deposit(userSourceDepositAmount,
-      userTargetDepositAmount,
-      transactionLPAmount,
-      slippage,
-      selectedCard,
-      userPublicKey,
-      GammaProgram,
-      connection
-    )
-    txBuilder.add(tx)
-    setSendingTransaction(true)
-    const { success } = await sendTransaction(txBuilder)
-
-    if (!success) {
-      console.log('failure')
-      setSendingTransaction(false)
-      return
-    } else {
-      setSendingTransaction(false)
-      setUserSourceDepositAmount('')
-      setUserTargetDepositAmount('')
+    try {
+      const txBuilder = createTransactionBuilder()
+      const tx = await deposit(userSourceDepositAmount,
+        userTargetDepositAmount,
+        transactionLPAmount,
+        slippage,
+        selectedCard,
+        userPublicKey,
+        GammaProgram,
+        connection
+      )
+      txBuilder.add(tx)
+      setSendingTransaction(true)
+      const { success } = await sendTransaction(txBuilder)
+  
+      if (!success) {
+        console.log('failure')
+        setSendingTransaction(false)
+        return
+      } else {
+        setSendingTransaction(false)
+        setUserSourceDepositAmount('')
+        setUserTargetDepositAmount('')
+      }
+    } catch (e) {
+      console.log('error while depositing into pool', e)
     }
   }
 
   const handleWithdraw = async () => {
-    const txBuilder = createTransactionBuilder()
-    const tx = await withdraw(
-      userSourceWithdrawAmount,
-      userTargetWithdrawAmount,
-      transactionLPAmount,
-      slippage,
-      selectedCard,
-      userPublicKey,
-      GammaProgram
-    )
-    txBuilder.add(tx)
-    const { success } = await sendTransaction(txBuilder)
-
-    if (!success) {
-      console.log('failure')
-      setSendingTransaction(false)
-      return
-    } else {
-      setSendingTransaction(false)
-      setUserSourceWithdrawAmount('')
-      setUserTargetWithdrawAmount('')
+    try {
+      const txBuilder = createTransactionBuilder()
+      const tx = await withdraw(
+        userSourceWithdrawAmount,
+        userTargetWithdrawAmount,
+        transactionLPAmount,
+        slippage,
+        selectedCard,
+        userPublicKey,
+        GammaProgram
+      )
+      txBuilder.add(tx)
+      const { success } = await sendTransaction(txBuilder)
+  
+      if (!success) {
+        console.log('failure')
+        setSendingTransaction(false)
+        return
+      } else {
+        setSendingTransaction(false)
+        setUserSourceWithdrawAmount('')
+        setUserTargetWithdrawAmount('')
+      }
+    } catch (e) {
+      console.log('error while withdrawing from pool', e)
     }
   }
 

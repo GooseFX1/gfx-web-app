@@ -23,28 +23,19 @@ import {
 } from '../types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
-  ADDRESSES,
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
-  GET_24_CHANGES,
   ModeOfOperation,
   Pool,
   POOL_LIST_PAGE_SIZE,
   POOL_TYPE,
-  SSLTableData,
-  SSLToken,
-  TOKEN_LIST_PAGE_SIZE,
-  TOTAL_FEES,
-  TOTAL_VOLUME
+  TOKEN_LIST_PAGE_SIZE
 } from '../pages/FarmV4/constants'
-import { getLiquidityAccountKey, getPoolRegistryAccountKeys, getsslPoolSignerKey } from '../web3/sslV2'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
-import { httpClient } from '../api'
 import { getpoolId } from '@/web3/Farm'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
-
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
@@ -62,15 +53,6 @@ interface GAMMADataModel {
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   currentPoolType: Pool
   setCurrentPoolType: Dispatch<SetStateAction<Pool>>
-  allPoolSslData: SSLToken[]
-  sslData: SSLToken[]
-  sslTableData: SSLTableData
-  sslAllVolume: any
-  sslTotalFees: string
-  allPoolFilteredLiquidityAcc: any
-  liquidityAmount: any
-  filteredLiquidityAccounts: any
-  setFilteredLiquidityAccounts: any
   selectedCardPool: any
   setSelectedCardPool: Dispatch<SetStateAction<any>>
   modeOfOperation: string
@@ -109,7 +91,7 @@ export type TokenListToken = {
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { network, connection, userCache } = useConnectionConfig()
+  const { userCache } = useConnectionConfig()
   const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
@@ -121,17 +103,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
-  const [sslData, setSslData] = useState<SSLToken[]>([])
-  const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
-  const { SSLProgram, GammaProgram } = usePriceFeedFarm()
-  const [sslTableData, setTableData] = useState<SSLTableData>(null)
-  const [sslAllVolume, setSslAllVolume] = useState<any>(null)
-  const [sslTotalFees, setSslTotalFees] = useState<string>(null)
-  const [allPoolFilteredLiquidityAcc, setAllPoolFilteredLiquidityAcc] = useState({})
-  const [liquidityAccounts, setLiquidityAccounts] = useState([])
-  const [filteredLiquidityAccounts, setFilteredLiquidityAccounts] = useState({})
-  const [allPoolLiquidityAcc, setAllPoolLiquidityAcc] = useState([])
-  const [liquidityAmount, setLiquidityAmount] = useState({})
+  const { GammaProgram } = usePriceFeedFarm()
   const [selectedCardPool, setSelectedCardPool] = useState({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [maxTokensReached, setMaxTokensReached] = useState(false)
@@ -140,15 +112,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [showCreatedPools, setShowCreatedPools] = useBoolean(false)
   const [currentSort, setCurrentSort] = useState<string>('1')
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
-
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
-
   const [tokenList, setTokenList] = useState<TokenListToken[]>([])
   const [page, setPage] = useState(1)
   const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
-
 
   useEffect(() => {
     // first render only
@@ -211,68 +180,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
     updatePools(poolPage, TOKEN_LIST_PAGE_SIZE, currentPoolType.type)
   }, [poolPage, currentPoolType])
-  useEffect(() => {
-    ;(async () => {
-      if (SSLProgram) {
-        const liquidityAmountsArray = {}
-        for (const token of allPoolSslData) {
-          try {
-            const sslAccountKey = await getsslPoolSignerKey(token.mint)
-            const response = await connection.getParsedTokenAccountsByOwner(sslAccountKey, {
-              mint: token.mint
-            })
-            const liquidityAmount = response?.value[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount
-            liquidityAmountsArray[token?.mint?.toBase58()] = liquidityAmount
-          } catch (e) {
-            console.error('Error fetching liquidity values', e)
-            liquidityAmountsArray[token?.mint?.toBase58()] = 0
-          }
-        }
-        setLiquidityAmount(liquidityAmountsArray)
-      }
-    })()
-  }, [allPoolSslData])
-
-  //Call API to get ssl table data. Need to run only once
-  useEffect(() => {
-    const getSSLTableData = async () => {
-      try {
-        const res = await httpClient('api-services').post(`${GET_24_CHANGES}`, {
-          devnet: false
-        })
-        const data = res.data
-        setTableData(data)
-      } catch (e) {
-        setTableData(null)
-      }
-    }
-
-    const getAllVolume = async () => {
-      try {
-        const res = await httpClient('api-services').post(`${TOTAL_VOLUME}`, {
-          devnet: false
-        })
-        const data = res.data
-        setSslAllVolume(data)
-      } catch (e) {
-        setSslAllVolume(null)
-      }
-    }
-
-    const getTotalFees = async () => {
-      try {
-        const res = await httpClient('api-services').post(`${TOTAL_FEES}`, {
-          devnet: false
-        })
-        const data = res.data
-        setSslTotalFees(data)
-      } catch (e) {
-        setSslTotalFees(null)
-      }
-    }
-
-    getSSLTableData(), getAllVolume(), getTotalFees()
-  }, [])
 
   useEffect(() => {
     fetchGAMMAConfig().then((config) => {
@@ -310,6 +217,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [fetchLpPositions, user])
 
+  //TODO: remove this check (Object.keys(selectedCard)?.length > 0 
+  //& make sure it's there at contract level)
+
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
@@ -323,135 +233,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     })()
   }, [GammaProgram, selectedCard])
-
-  useEffect(() => {
-    ;(async () => {
-      if (SSLProgram) {
-        try {
-          const sslPoolEntries = []
-          const allPoolentries = []
-          const poolRegistryAccountKey = await getPoolRegistryAccountKeys()
-          const sslPool = await SSLProgram.account.poolRegistry.fetch(poolRegistryAccountKey)
-          sslPool.entries.forEach((token: any) =>
-            ADDRESSES[network].forEach((farm) => {
-              if (token?.mint?.toBase58() === farm?.address?.toBase58()) {
-                const sslToken = {
-                  ...token,
-                  token: farm.token,
-                  name: farm.name,
-                  cappedDeposit: farm.cappedDeposit
-                }
-                allPoolentries.push(sslToken)
-                if (token.assetType === currentPoolType.index) sslPoolEntries.push(sslToken)
-                else if (currentPoolType.index === 4) sslPoolEntries.push(sslToken)
-              }
-            })
-          )
-          setSslData(sslPoolEntries)
-          setAllPoolSslData(allPoolentries)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [SSLProgram])
-
-  useEffect(() => {
-    const filteredPoolData = []
-    allPoolSslData.forEach((token: any) => {
-      if (token.assetType === currentPoolType.index) filteredPoolData.push(token)
-      else if (currentPoolType.index === 4) filteredPoolData.push(token)
-    })
-    setSslData(filteredPoolData)
-  }, [currentPoolType])
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (allPoolLiquidityAcc) {
-          const filteredData = {}
-          ADDRESSES[network].forEach((pool: any) => {
-            let found = false
-            for (let i = 0; i < allPoolLiquidityAcc.length; i++) {
-              const account = allPoolLiquidityAcc[i]
-              if (account?.mint?.toBase58() === pool?.address?.toBase58()) {
-                filteredData[pool.address] = account
-                found = true
-              }
-            }
-            if (!found) filteredData[pool.address] = null
-          })
-          setAllPoolFilteredLiquidityAcc(filteredData)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    })()
-  }, [allPoolLiquidityAcc])
-
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (liquidityAccounts) {
-          const filteredData = {}
-          ADDRESSES[network].forEach((pool: any) => {
-            let found = false
-            for (let i = 0; i < liquidityAccounts.length; i++) {
-              const account = liquidityAccounts[i]
-              if (account?.mint?.toBase58() === pool?.address?.toBase58()) {
-                filteredData[pool.address] = account
-                found = true
-              }
-            }
-            if (!found) filteredData[pool.address] = null
-          })
-          setFilteredLiquidityAccounts(filteredData)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    })()
-  }, [liquidityAccounts])
-
-  useEffect(() => {
-    ;(async () => {
-      if (SSLProgram) {
-        const liquidityData = []
-        if (publicKey !== null) {
-          for (const token of sslData) {
-            try {
-              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
-              const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-              liquidityData.push(liquidityAccount)
-            } catch (e) {
-              console.error('SetLiquidityAccounts', e)
-            }
-          }
-        }
-        setLiquidityAccounts(liquidityData)
-      }
-    })()
-  }, [publicKey, sslData])
-
-  useEffect(() => {
-    ;(async () => {
-      if (SSLProgram) {
-        const liquidityData = []
-        if (publicKey !== null) {
-          for (const token of allPoolSslData) {
-            try {
-              const liquidityAccountKey = await getLiquidityAccountKey(publicKey, token?.mint)
-              const liquidityAccount = await SSLProgram?.account?.liquidityAccount?.fetch(liquidityAccountKey)
-              liquidityData.push(liquidityAccount)
-            } catch (e) {
-              console.error('SetAllPoolLiquidityAcc', e)
-            }
-          }
-        }
-        setAllPoolLiquidityAcc(liquidityData)
-      }
-    })()
-  }, [publicKey, allPoolSslData])
 
   useEffect(
     () => {      
@@ -501,7 +282,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         })
       }
     },
-    [searchTokens, showCreatedPools, currentSort, currentPoolType, currentPoolType],
+    [searchTokens, showCreatedPools, currentSort, currentPoolType, currentPoolType]
   )
   
   return (
@@ -523,15 +304,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setOpenDepositWithdrawSlider: setOpenDepositWithdrawSlider,
         currentPoolType: currentPoolType,
         setCurrentPoolType: setCurrentPoolType,
-        sslData: sslData,
-        allPoolSslData: allPoolSslData,
-        sslTableData: sslTableData,
-        sslAllVolume: sslAllVolume,
-        sslTotalFees: sslTotalFees,
-        allPoolFilteredLiquidityAcc: allPoolFilteredLiquidityAcc,
-        liquidityAmount: liquidityAmount,
-        filteredLiquidityAccounts: filteredLiquidityAccounts,
-        setFilteredLiquidityAccounts: setFilteredLiquidityAccounts,
         selectedCardPool: selectedCardPool,
         modeOfOperation: modeOfOperation,
         setModeOfOperation: setModeOfOperation,
