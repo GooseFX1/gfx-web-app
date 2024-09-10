@@ -1,11 +1,11 @@
 import { FC, ReactNode } from 'react'
-import { faqs, faqsMigrate, poolType } from './constants'
+import { faqs, faqsMigrate, POOL_TYPE } from './constants'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, cn } from 'gfx-component-lib'
 import { useGamma, useRewardToggle } from '../../context'
 
 
 export const Faqs: FC = () => {
-  const {pool} = useGamma()
+  const {currentPoolType} = useGamma()
 
   const { isPortfolio } = useRewardToggle()
   return !isPortfolio && (
@@ -24,7 +24,7 @@ export const Faqs: FC = () => {
       </a>
     </div>
     <Accordion collapsible="true" type={'multiple'}>
-      {(pool.name === poolType.migrate.name ? faqsMigrate : faqs).map((item) => (
+      {(currentPoolType.name === POOL_TYPE.migrate.name ? faqsMigrate : faqs).map((item) => (
         <FAQItem key={item.question} {...item} />
       ))}
     </Accordion>

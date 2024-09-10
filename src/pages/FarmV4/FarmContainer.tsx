@@ -1,7 +1,7 @@
-import { FC, useCallback, useEffect, useMemo, useState, useLayoutEffect } from 'react'
+import { FC, useCallback, useEffect, useMemo, useLayoutEffect } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { poolType } from './constants'
+import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Button,
@@ -34,14 +34,24 @@ export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
-  const { pools, GAMMA_SORT_CONFIG, pool, openDepositWithdrawSlider, setPool } = useGamma()
+  const {
+    pools,
+    GAMMA_SORT_CONFIG,
+    currentPoolType,
+    openDepositWithdrawSlider,
+    setCurrentPoolType,
+    searchTokens,
+    setSearchTokens,
+    showCreatedPools,
+    setShowCreatedPools,
+    currentSort,
+    setCurrentSort,
+    showDeposited,
+    setShowDeposited
+  } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
-  const [searchTokens, setSearchTokens] = useState<string>('')
-  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const { isPortfolio } = useRewardToggle()
-  const [currentSort, setCurrentSort] = useState<string>('1')
-  const [showCreatedPools, setShowCreatedPools] = useBoolean(false)
 
   const pubKey: PublicKey | null = useMemo(
     () => (wallet?.adapter?.publicKey ? wallet?.adapter?.publicKey : null),
@@ -65,15 +75,15 @@ export const FarmContainer: FC = () => {
   const filteredPools = useMemo(() => {
     const filterPools = (pools) =>
       pools
-        ?.filter(item => item?.type === pool?.name)
-        ?.filter((pool) => {
-        const matchesSearch =
-          !searchTokens ||
-          pool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
-          pool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
-        const matchesCreated = !showCreatedPools || pool.isOwner === true
-        return matchesSearch && matchesCreated
-      })
+        ?.filter((item) => item?.type === currentPoolType?.name)
+        ?.filter((curPool) => {
+          const matchesSearch =
+            !searchTokens ||
+            curPool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
+            curPool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
+          const matchesCreated = !showCreatedPools || curPool.isOwner === true
+          return matchesSearch && matchesCreated
+        })
 
     const sortPools = (filteredPools) => {
       const sort = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
@@ -103,7 +113,7 @@ export const FarmContainer: FC = () => {
     }
 
     return sortPools(filterPools(pools))
-  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG, pool])
+  }, [searchTokens, showCreatedPools, pools, currentSort, GAMMA_SORT_CONFIG, currentPoolType])
 
   useEffect(() => {
     if (pubKey === null && userCache.gamma.showDepositedFilter)
@@ -146,24 +156,24 @@ export const FarmContainer: FC = () => {
           <div className="flex items-center max-sm:flex-col max-sm:gap-">
             <RadioOptionGroup
               defaultValue={'All'}
-              value={pool.name}
+              value={currentPoolType.name}
               className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 mb-4'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
-                  value: poolType.primary.name,
+                  value: POOL_TYPE.primary.name,
                   label: 'Primary',
-                  onClick: () => setPool(poolType.primary)
+                  onClick: () => setCurrentPoolType(POOL_TYPE.primary)
                 },
                 {
-                  value: poolType.hyper.name,
+                  value: POOL_TYPE.hyper.name,
                   label: 'Hyper',
-                  onClick: () => setPool(poolType.hyper)
+                  onClick: () => setCurrentPoolType(POOL_TYPE.hyper)
                 },
                 {
-                  value: poolType.migrate.name,
+                  value: POOL_TYPE.migrate.name,
                   label: 'Migrate',
-                  onClick: () => setPool(poolType.migrate)
+                  onClick: () => setCurrentPoolType(POOL_TYPE.migrate)
                 }
               ]}
             />
@@ -328,8 +338,6 @@ export const FarmContainer: FC = () => {
           <FarmItems
             tokens={filteredPools}
             numberOfTokensDeposited={numberOfTokensDeposited}
-            isSearchActive={searchTokens}
-            isDepositedActive={showDeposited}
             isCreatedActive={showCreatedPools}
           />
         </>

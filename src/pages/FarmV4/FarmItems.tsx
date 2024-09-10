@@ -1,9 +1,9 @@
 /* eslint-disable */
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
 import { Button } from 'gfx-component-lib'
-import { poolType } from '@/pages/FarmV4/constants'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
@@ -24,49 +24,49 @@ const noPoolsDeposited = {
 const FarmItems: FC<{
   tokens: any
   numberOfTokensDeposited: number
-  isSearchActive: string
-  isDepositedActive: boolean
   isCreatedActive: boolean
-}> = ({ tokens, numberOfTokensDeposited, isDepositedActive, isSearchActive, isCreatedActive }) => {
-  const { filteredLiquidityAccounts, pool, setPool } = useGamma()
+}> = ({ tokens, numberOfTokensDeposited, isCreatedActive }) => {
+  const { filteredLiquidityAccounts, currentPoolType, searchTokens, showDeposited } = useGamma()
   const { isProMode } = useRewardToggle()
+
+  const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
 
   let noResultsTitle = ''
   let noResultsSubText = ''
   switch (true) {
-    case !Boolean(isSearchActive) && !isDepositedActive && !isCreatedActive:
+    case !Boolean(isSearchActive) && !showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
-    case Boolean(isSearchActive) && isDepositedActive && isCreatedActive:
+    case Boolean(isSearchActive) && showDeposited && isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
-    case Boolean(isSearchActive) && !isDepositedActive && !isCreatedActive:
+    case Boolean(isSearchActive) && !showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
-    case Boolean(isSearchActive) && !isDepositedActive && isCreatedActive:
+    case Boolean(isSearchActive) && !showDeposited && isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
-    case Boolean(isSearchActive) && isDepositedActive && !isCreatedActive:
+    case Boolean(isSearchActive) && showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
-    case !Boolean(isSearchActive) && isDepositedActive && isCreatedActive:
+    case !Boolean(isSearchActive) && showDeposited && isCreatedActive:
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
-    case !Boolean(isSearchActive) && isDepositedActive && !isCreatedActive:
+    case !Boolean(isSearchActive) && showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
-    case !Boolean(isSearchActive) && !isDepositedActive && isCreatedActive:
+    case !Boolean(isSearchActive) && !showDeposited && isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
-    case !isDepositedActive && isCreatedActive:
+    case !showDeposited && isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
       break
@@ -79,41 +79,43 @@ const FarmItems: FC<{
   ]
   return (
     <div>
-      {pool.name === poolType?.migrate?.name ? (
-        <FarmItemsMigrate openPositionsAcrossPrograms={[{
-          tokenA: {
-            name: 'SOL',
-            balance: '0.24',
-            symbol: 'SOL',
-            src: '/img/crypto/SOL.svg'
-          },
-          tokenB: {
-            name: 'USDC',
-            balance: '0.24',
-            symbol: 'USDC',
-            src: '/img/crypto/USDC.svg'
-          }
-        }]} />
-      ) : (numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
-        <NoResultsFound requestPool={!isDepositedActive} str={noResultsTitle} subText={noResultsSubText} />
+      {currentPoolType.name === POOL_TYPE?.migrate?.name ? (
+        <FarmItemsMigrate
+          openPositionsAcrossPrograms={[
+            {
+              tokenA: {
+                name: 'SOL',
+                balance: '0.24',
+                symbol: 'SOL',
+                src: '/img/crypto/SOL.svg'
+              },
+              tokenB: {
+                name: 'USDC',
+                balance: '0.24',
+                symbol: 'USDC',
+                src: '/img/crypto/USDC.svg'
+              }
+            }
+          ]}
+        />
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
+        <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro
           tokens={tokens}
           filteredLiquidityAccounts={filteredLiquidityAccounts}
-          isDepositedActive={isDepositedActive}
-          pool={pool}
         />
-      ) : pool.name != poolType?.migrate?.name ? <FarmItemsLite
-        pool={pool}
-        openPositionImages={openPositionImages}
-        openPositionsAcrossPrograms={openPositionsAcrossPrograms}
-        setPool={setPool}
-        tokens={tokens}
-        filteredLiquidityAccounts={filteredLiquidityAccounts}
-        isDepositedActive={isDepositedActive}
-        isSearchActive={isSearchActive}
-      /> : <></>}
-      {(numberOfTokensDeposited === 0 && isDepositedActive) || tokens?.length === 0 ? (
+      ) : currentPoolType.name != POOL_TYPE?.migrate?.name ? (
+        <FarmItemsLite
+          openPositionImages={openPositionImages}
+          openPositionsAcrossPrograms={openPositionsAcrossPrograms}
+          tokens={tokens}
+          filteredLiquidityAccounts={filteredLiquidityAccounts}
+        />
+      ) : (
+        <></>
+      )}
+      {(numberOfTokensDeposited === 0 && showDeposited) || tokens?.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>

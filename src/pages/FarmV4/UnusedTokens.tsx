@@ -1,16 +1,16 @@
 import { useGamma, useRewardToggle } from '@/context'
 import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { FC } from 'react'
-import { poolType } from './constants'
+import { POOL_TYPE } from './constants'
 
 const ExplorePools: FC = () => {
     const { setIsPortfolio } = useRewardToggle()
-    const { setPool } = useGamma()
+    const { setCurrentPoolType } = useGamma()
     
     return (
         <div onClick={() => {
             setIsPortfolio.off()
-            setPool(poolType?.primary)
+            setCurrentPoolType(POOL_TYPE?.primary)
         }}
             className='text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer'>
             Explore Pools

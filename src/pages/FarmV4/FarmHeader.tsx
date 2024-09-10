@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react'
 import { useDarkMode, useGamma, usePriceFeedFarm, useRewardToggle } from '../../context'
 import { truncateBigNumber } from '../../utils'
-import { poolType, SSLToken } from './constants'
+import { POOL_TYPE, SSLToken } from './constants'
 import { getPriceObject } from '../../web3'
 import { isEmpty } from 'lodash'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -21,7 +21,7 @@ export const FarmHeader: FC = () => {
     sslAllVolume,
     sslTotalFees,
     allPoolFilteredLiquidityAcc,
-    setPool,
+    setCurrentPoolType,
     openDepositWithdrawSlider
   } = useGamma()
   const { prices } = usePriceFeedFarm()
@@ -215,7 +215,7 @@ export const FarmHeader: FC = () => {
               )}
               onClick={() => {
                 setIsPortfolio.off()
-                setPool(poolType?.primary)
+                setCurrentPoolType(POOL_TYPE?.primary)
               }}
             >
               Pools
@@ -227,7 +227,7 @@ export const FarmHeader: FC = () => {
               )}
               onClick={() => {
                 setIsPortfolio.on()
-                setPool(poolType?.primary)
+                setCurrentPoolType(POOL_TYPE?.primary)
               }}
             >
               Portfolio
@@ -300,7 +300,7 @@ export const FarmHeader: FC = () => {
                   className="text-regular font-semibold dark:text-white text-blue-1 underline cursor-pointer"
                   onClick={() => {
                     setIsPortfolio.on()
-                    setPool(poolType?.primary)
+                    setCurrentPoolType(POOL_TYPE?.primary)
                   }}
                 >
                   Go to Portfolio

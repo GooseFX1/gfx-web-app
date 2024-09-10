@@ -62,7 +62,7 @@ export type SSLTableData = {
   totalVolume: number
 }
 
-export const poolType = {
+export const POOL_TYPE = {
   primary: {
     index: 1,
     name: 'Primary'
@@ -463,14 +463,14 @@ export const ALLOWED_WALLETS = [
   '3UkKMebXhKsGavP62sMW6ERD3zXHCFiL6RcwwnpK6ggf'
 ]
 export const GAMMA_SORT_CONFIG = [
-  { id: '1', name: 'Liquidity: High to Low' },
-  { id: '2', name: 'Liquidity: Low to High' },
-  { id: '3', name: 'Volume: High to Low' },
-  { id: '4', name: 'Volume: Low to High' },
-  { id: '5', name: 'Fees: High to Low' },
-  { id: '6', name: 'Fees: Low to High' },
-  { id: '7', name: 'APR: High to Low' },
-  { id: '8', name: 'APR: Low to High' }
+  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC' },
+  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC' },
+  { id: '3', name: 'Volume: High to Low', direction: 'DESC' },
+  { id: '4', name: 'Volume: Low to High', direction: 'ASC' },
+  { id: '5', name: 'Fees: High to Low', direction: 'DESC' },
+  { id: '6', name: 'Fees: Low to High', direction: 'ASC' },
+  { id: '7', name: 'APR: High to Low', direction: 'DESC' },
+  { id: '8', name: 'APR: Low to High', direction: 'ASC' }
 ]
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50

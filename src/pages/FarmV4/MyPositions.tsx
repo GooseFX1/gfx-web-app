@@ -4,11 +4,11 @@ import { useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
 
 const MyPositions: FC<{ tokens: any }> = ({ tokens }) => {
-    const { pool, setSelectedCard, setOpenDepositWithdrawSlider, setModeOfOperation } = useGamma()
+    const { currentPoolType, setSelectedCard, setOpenDepositWithdrawSlider, setModeOfOperation } = useGamma()
     return (
         <div>
             {tokens
-                .filter((token: any) => pool.name === token.type)
+                .filter((token: any) => currentPoolType.name === token.type)
                 .map((token, index) => (
                     <div
                         className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 dark:bg-black-2 px-2.5 

@@ -1,20 +1,20 @@
-import React, { Dispatch, FC, SetStateAction } from 'react'
+import React, { FC } from 'react'
 import { Button, cn, Container, Icon } from 'gfx-component-lib'
-import { Pool, poolType } from '@/pages/FarmV4/constants'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import { Connect } from '@/layouts'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useGamma } from '@/context'
 
 type MigrateCardProps = {
   openPositionsAcrossPrograms: number
   openPositionImages: string[]
-  setPool: Dispatch<SetStateAction<Pool>>
 }
 const MigrateCard: FC<MigrateCardProps> = ({
   openPositionsAcrossPrograms,
-  openPositionImages,
-  setPool
+  openPositionImages
 }) => {
   const { connected } = useWallet()
+  const { setCurrentPoolType } = useGamma()
   return (
     <Container className={`flex flex-col flex-1 gap-2.5 p-2.5 bg-background-lightmode-secondary 
     dark:bg-background-darkmode-secondary rounded-[8px] before:rounded-[8px]`}>
@@ -42,7 +42,7 @@ const MigrateCard: FC<MigrateCardProps> = ({
         <Button
           className={`w-max`}
           colorScheme={'blue'}
-          onClick={() => setPool(poolType?.migrate)}
+          onClick={() => setCurrentPoolType(POOL_TYPE?.migrate)}
           disabled={openPositionsAcrossPrograms === 0}
         >
           {openPositionsAcrossPrograms > 0 ? 'Migrate Now' : 'No Open Positions'}

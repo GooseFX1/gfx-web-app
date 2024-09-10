@@ -27,7 +27,7 @@ import {
   GET_24_CHANGES,
   ModeOfOperation,
   Pool,
-  poolType,
+  POOL_TYPE,
   SSLTableData,
   SSLToken,
   TOKEN_LIST_PAGE_SIZE,
@@ -40,6 +40,7 @@ import { useConnectionConfig } from './settings'
 import { httpClient } from '../api'
 import { getpoolId } from '@/web3/Farm'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
+import useBoolean from '@/hooks/useBoolean'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -48,7 +49,7 @@ interface GAMMADataModel {
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
   lpPositions: UserPortfolioLPPosition[]
-  GAMMA_SORT_CONFIG: { id: string, name: string }[]
+  GAMMA_SORT_CONFIG: { id: string; name: string }[]
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -56,8 +57,8 @@ interface GAMMADataModel {
   setSelectedCard: Dispatch<SetStateAction<any>>
   openDepositWithdrawSlider: boolean
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
-  pool: Pool
-  setPool: Dispatch<SetStateAction<Pool>>
+  currentPoolType: Pool
+  setCurrentPoolType: Dispatch<SetStateAction<Pool>>
   allPoolSslData: SSLToken[]
   sslData: SSLToken[]
   sslTableData: SSLTableData
@@ -79,6 +80,14 @@ interface GAMMADataModel {
   maxTokensReached: boolean
   sendingTransaction: boolean
   setSendingTransaction: Dispatch<SetStateAction<boolean>>
+  searchTokens: string
+  setSearchTokens: Dispatch<SetStateAction<string>>
+  showCreatedPools: boolean
+  setShowCreatedPools: Dispatch<SetStateAction<boolean>>
+  currentSort: string
+  setCurrentSort: Dispatch<SetStateAction<string>>
+  showDeposited: boolean
+  setShowDeposited: Dispatch<SetStateAction<boolean>>
 }
 export type TokenListToken = {
   "address": string,
@@ -94,6 +103,7 @@ export type TokenListToken = {
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { network, connection, userCache } = useConnectionConfig()
   const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
@@ -104,11 +114,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
-  const [pool, setPool] = useState<Pool>(poolType.primary)
+  const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
   const [sslData, setSslData] = useState<SSLToken[]>([])
   const [allPoolSslData, setAllPoolSslData] = useState<SSLToken[]>([])
   const { SSLProgram, GammaProgram } = usePriceFeedFarm()
-  const { network, connection } = useConnectionConfig()
   const [sslTableData, setTableData] = useState<SSLTableData>(null)
   const [sslAllVolume, setSslAllVolume] = useState<any>(null)
   const [sslTotalFees, setSslTotalFees] = useState<string>(null)
@@ -121,6 +130,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [maxTokensReached, setMaxTokensReached] = useState(false)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
+  const [searchTokens, setSearchTokens] = useState<string>('')
+  const [showCreatedPools, setShowCreatedPools] = useBoolean(false)
+  const [currentSort, setCurrentSort] = useState<string>('1')
+  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
 
   const isCustomSlippage = useMemo(() =>
     !BASE_SLIPPAGE.includes(slippage)
@@ -312,8 +325,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
                   cappedDeposit: farm.cappedDeposit
                 }
                 allPoolentries.push(sslToken)
-                if (token.assetType === pool.index) sslPoolEntries.push(sslToken)
-                else if (pool.index === 4) sslPoolEntries.push(sslToken)
+                if (token.assetType === currentPoolType.index) sslPoolEntries.push(sslToken)
+                else if (currentPoolType.index === 4) sslPoolEntries.push(sslToken)
               }
             })
           )
@@ -329,11 +342,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const filteredPoolData = []
     allPoolSslData.forEach((token: any) => {
-      if (token.assetType === pool.index) filteredPoolData.push(token)
-      else if (pool.index === 4) filteredPoolData.push(token)
+      if (token.assetType === currentPoolType.index) filteredPoolData.push(token)
+      else if (currentPoolType.index === 4) filteredPoolData.push(token)
     })
     setSslData(filteredPoolData)
-  }, [pool])
+  }, [currentPoolType])
 
   useEffect(() => {
     ; (async () => {
@@ -440,9 +453,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setSelectedCard: setSelectedCard,
         openDepositWithdrawSlider: openDepositWithdrawSlider,
         setOpenDepositWithdrawSlider: setOpenDepositWithdrawSlider,
+        currentPoolType: currentPoolType,
+        setCurrentPoolType: setCurrentPoolType,
         sslData: sslData,
-        setPool: setPool,
-        pool: pool,
         allPoolSslData: allPoolSslData,
         sslTableData: sslTableData,
         sslAllVolume: sslAllVolume,
@@ -462,7 +475,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         updateTokenList,
         maxTokensReached,
         sendingTransaction: sendingTransaction,
-        setSendingTransaction: setSendingTransaction
+        setSendingTransaction: setSendingTransaction,
+        searchTokens,
+        setSearchTokens,
+        showCreatedPools,
+        setShowCreatedPools,
+        currentSort,
+        setCurrentSort,
+        showDeposited,
+        setShowDeposited
       }}
     >
       {children}
