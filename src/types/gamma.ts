@@ -1,3 +1,5 @@
+import { TokenListToken } from '@/context'
+
 interface GAMMAConfig {
   id: string
   index: number
@@ -135,6 +137,7 @@ interface UserPortfolioLPPosition {
   totalYieldUSD: string
   apr: number
 }
+
 type GAMMAAPIPaginatedResponse = {
   currentPage: number
   pageSize: number
@@ -150,7 +153,9 @@ type GAMMAAPIBaseResponse<T> = {
 type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
   pools: GAMMAPool[]
 } & GAMMAAPIPaginatedResponse>
-
+type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
+  tokens: TokenListToken[]
+} & GAMMAAPIPaginatedResponse>
 export type {
   GAMMAConfig,
   GAMMAProtocolStats,
@@ -166,5 +171,6 @@ export type {
   GAMMAUser,
   UserPortfolioStats,
   UserPortfolioLPPosition,
-  GAMMAPoolsResponse
+  GAMMAPoolsResponse,
+  GAMMAListTokenResponse
 }

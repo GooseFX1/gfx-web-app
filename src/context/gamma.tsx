@@ -13,6 +13,7 @@ import {
 import { fetchAggregateStats, fetchGAMMAConfig, fetchLpPositions, fetchPortfolioStats, fetchUser } from '../api/gamma'
 import {
   GAMMAConfig,
+  GAMMAListTokenResponse,
   GAMMAPool,
   GAMMAPoolsResponse,
   GAMMAProtocolStats,
@@ -168,17 +169,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       .finally(() => setIsLoadingTokenList(false))
   }
   const updateTokenList = async (page: number, pageSize: number) => {
-    const response = (await fetchTokenList(page, pageSize)) as {
-      data: {
-        tokens: TokenListToken[]
-        count: number
-        currentPage: number
-        pageSize: number
-        totalItems: number
-        totalPages
-      }
-      success: boolean
-    }
+    const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
     if (!response || !response.success) {
       return
     }
