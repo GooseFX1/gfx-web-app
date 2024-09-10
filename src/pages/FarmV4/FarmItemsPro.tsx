@@ -21,7 +21,7 @@ const FarmItemsPro: FC = () => {
                 (showDeposited && Boolean(0)) || !showDeposited
 
               return show ? (
-                <FarmRow token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} />
+                <FarmRow token={token} key={`${token?.mintA.name}-${token?.mintB.name}-${i}`} />
               ) : null
             })}
         </div>

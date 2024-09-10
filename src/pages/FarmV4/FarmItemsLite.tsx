@@ -28,7 +28,7 @@ const FarmItemsLite: FC<{
           const show =
             (showDeposited && Boolean(0)) || !showDeposited
 
-          return show ? <FarmCard token={token} key={`${token?.sourceToken}-${token?.targetToken}-${i}`} /> : null
+          return show ? <FarmCard token={token} key={`${token?.mintA.name}-${token?.mintB.name}-${i}`} /> : null
         })}
     </div>
   )
