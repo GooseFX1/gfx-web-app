@@ -11,9 +11,9 @@ const FarmItemsPro: FC = () => {
       <div>
         <div>
           {pools
-            .filter((token: any) => {
+            .filter((pool) => {
               if (currentPoolType.name === 'All') return true
-              else return currentPoolType.name === token.type
+              else return currentPoolType.name === pool.type
             })
             .map((token, i) => {
               //TODO: Fetch the balance from contract/api

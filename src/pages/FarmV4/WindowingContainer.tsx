@@ -49,7 +49,7 @@ const WindowingContainer: FC<WindowContainerProps<unknown>> =
       }
     };
   }, [items, itemHeight, containerHeight, rootElement]);
-  console.log(rootElement)
+
   const totalHeight = items.length * itemHeight;
 
   return (
