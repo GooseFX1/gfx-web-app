@@ -1,11 +1,12 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
+import { Adapter, WalletName, WalletReadyState } from '@solana/wallet-adapter-base'
 import { initializeWhenDetected } from '@solflare-wallet/metamask-wallet-standard'
 import { TermsOfService } from './TermsOfService'
 import { useConnectionConfig, useWalletModal } from '../context'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
+  Badge,
   Button,
   cn,
   Dialog,
@@ -69,19 +70,34 @@ export const WalletsModal: FC = () => {
 
   // organizes and de-duplicates wallets
   const renderWallets = useMemo(() => {
-    const detectedWallets = wallets
-      .filter(({ readyState }) => readyState === WalletReadyState.Installed)
-      .filter((value, index, self) => self.findIndex((item) => item.adapter.name === value.adapter.name) === index)
-      .map((w) => ({ ...w, detected: true }))
+    const walletsToReturn: {
+      detected: boolean;
+      adapter: Adapter;
+      readyState: WalletReadyState;
+      isRecommended: boolean
+    }[] = [];
 
-    const undetectedWallets = wallets
-      .filter(
-        ({ readyState }) =>
-          readyState !== WalletReadyState.Unsupported && readyState !== WalletReadyState.Installed
-      )
-      .map((w) => ({ ...w, detected: false }))
+    for (const wallet of wallets) {
+      const walletToAdd = {
+        ...wallet,
+        detected: wallet.readyState === WalletReadyState.Installed,
+        isRecommended: false
+      }
+      switch (wallet.adapter.name){
+        case 'Phantom':
+          walletToAdd.isRecommended = true
+          break
+        default:
+          break
+      }
+      if (walletToAdd.isRecommended) {
+        walletsToReturn.unshift(walletToAdd);
+      } else {
+        walletsToReturn.push(walletToAdd);
+      }
+    }
 
-    return [...detectedWallets, ...undetectedWallets]
+    return walletsToReturn;
   }, [wallets])
 
   return !userCache.hasSignedTC && termsOfServiceVisible ? (
@@ -135,7 +151,13 @@ export const WalletsModal: FC = () => {
                     {wallet.adapter.name.replace('(Extension)', '')}
                   </p>
                 </div>
-                {wallet.detected && <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>}
+                {
+                  wallet.detected && !wallet.isRecommended &&
+                  <span className="text-green-4 pr-5 font-poppins text-tiny">Detected</span>
+                }
+                {wallet.isRecommended && <Badge
+                  size={'lg'}
+                  className={`mr-5 font-poppins text-h5 h-[23px]`}>Recommended</Badge>}
               </Button>
             ))}
           </div>
