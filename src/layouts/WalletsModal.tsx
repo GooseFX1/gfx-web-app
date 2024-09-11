@@ -26,7 +26,7 @@ export const WalletsModal: FC = () => {
   const { wallets, select, connecting, publicKey } = useWallet()
 
   const { setVisible, visible } = useWalletModal()
-  const {userCache} = useConnectionConfig()
+  const { userCache } = useConnectionConfig()
 
   const [termsOfServiceVisible, setTermsOfServiceVisible] = useState<boolean>(false)
   const [selectedWallet, setSelectedWallet] = useState<string>('')
@@ -75,7 +75,7 @@ export const WalletsModal: FC = () => {
       adapter: Adapter;
       readyState: WalletReadyState;
       isRecommended: boolean
-    }[] = [];
+    }[] = []
 
     for (const wallet of wallets) {
       const walletToAdd = {
@@ -83,7 +83,7 @@ export const WalletsModal: FC = () => {
         detected: wallet.readyState === WalletReadyState.Installed,
         isRecommended: false
       }
-      switch (wallet.adapter.name){
+      switch (wallet.adapter.name) {
         case 'Phantom':
           walletToAdd.isRecommended = true
           break
@@ -91,13 +91,13 @@ export const WalletsModal: FC = () => {
           break
       }
       if (walletToAdd.isRecommended) {
-        walletsToReturn.unshift(walletToAdd);
+        walletsToReturn.unshift(walletToAdd)
       } else {
-        walletsToReturn.push(walletToAdd);
+        walletsToReturn.push(walletToAdd)
       }
     }
 
-    return walletsToReturn;
+    return walletsToReturn
   }, [wallets])
 
   return !userCache.hasSignedTC && termsOfServiceVisible ? (
@@ -136,7 +136,12 @@ export const WalletsModal: FC = () => {
                 dark:hover:before:from-brand-secondaryGradient-primary
                 rounded-[4px] before:rounded-[4px] last:mb-2
                 `,
-                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between'
+                  connecting && wallet.adapter.name === selectedWallet ? 'justify-center' : 'justify-between',
+                  wallet.isRecommended && `
+                  before:to-brand-secondaryGradient-secondary before:from-brand-secondaryGradient-primary
+                dark:before:to-brand-secondaryGradient-secondary
+                dark:before:from-brand-secondaryGradient-primary
+                  `
                 )}
               >
                 <div className="flex items-center">
