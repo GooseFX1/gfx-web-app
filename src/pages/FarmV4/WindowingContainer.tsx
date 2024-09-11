@@ -4,10 +4,11 @@ type WindowContainerProps<T> = {
   rootElement?: HTMLElement;
   items: T[];
   render: (item: T, index: number) => JSX.Element;
+  itemClassName?: string;
 } & HTMLAttributes<HTMLDivElement>;
 
 const WindowingContainer: FC<WindowContainerProps<unknown>> =
-  ({ items, render, rootElement, ...rest }): JSX.Element => {
+  ({ items, render, rootElement, className, itemClassName, ...rest }): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 });
   const [itemHeight, setItemHeight] = useState(0);
@@ -53,9 +54,12 @@ const WindowingContainer: FC<WindowContainerProps<unknown>> =
   const totalHeight = items.length * itemHeight;
 
   return (
-    <div ref={ref} {...rest} style={{ overflowY: 'auto', position: 'relative', height: totalHeight }}>
+    <div
+      className={className}
+      ref={ref} {...rest} style={{ overflowY: 'auto', position: 'relative', height: totalHeight }}>
         {items.slice(visibleRange.start, visibleRange.end).map((item, index) => (
           <div
+            className={itemClassName}
             key={visibleRange.start + index}
             data-item
             style={{ position: 'absolute', top: (visibleRange.start + index) * itemHeight, width: '100%' }}

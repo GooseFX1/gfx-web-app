@@ -1,12 +1,14 @@
 import { FC } from 'react'
-import { cn, Icon, Badge } from 'gfx-component-lib'
+import { Badge, cn, Icon } from 'gfx-component-lib'
 import { useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
+import { GAMMAPool } from '@/types/gamma'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
-const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element => {
+const FarmRow: FC<{ token: GAMMAPool, key: string }> = ({ token, key }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
-
+  const {publicKey} = useWalletBalance()
   return (
     <div
       className={cn(
@@ -23,17 +25,17 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
     >
       <div className="flex flex-row items-center min-w-[210px]">
         <Icon
-          src={`img/crypto/${token?.sourceToken}.svg`}
+          src={`img/crypto/${token.mintA.logoURI}.svg`}
           className="border-solid dark:border-black-2 border-white 
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={`img/crypto/${token?.targetToken}.svg`}
+          src={`img/crypto/${token.mintB.logoURI}.svg`}
           className="relative right-[10px] border-solid dark:border-black-2 
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.sourceToken} - {token.targetToken}
+          {token.mintA.name} - {token.mintB.name}
         </div>
         {isDesktop && (
           <div
@@ -44,30 +46,30 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
             0.2%
           </div>
         )}
-        {token?.isOwner && (
+        {token.config.fundOwner == publicKey.toBase58() && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner
           </Badge>
         )}
-        <Icon src={`img/assets/farm_${token?.type}.svg`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${token.type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {token.liquidity}
+        {token.tvl}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.volume}
+          {token.stats.day.volume}
         </div>
       )}
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.fees}
+          {token.stats.day.volumeFee}
         </div>
       )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{token?.apr}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>{token.stats.day.apr}%</span>
           </Badge>
         </div>
       )}

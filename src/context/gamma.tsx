@@ -78,6 +78,7 @@ interface GAMMADataModel {
   poolPage: number
   isLoadingPools: boolean
   setPoolPage: Dispatch<SetStateAction<number>>
+  isSearchActive: boolean
 }
 
 export type TokenListToken = {
@@ -288,7 +289,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [searchTokens, showCreatedPools, currentSort, currentPoolType, currentPoolType]
   )
-
+  const isSearchActive = searchTokens.trim().length > 0
   return (
     <GAMMAContext.Provider
       value={{
@@ -330,7 +331,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setShowDeposited,
         isLoadingPools,
         poolPage,
-        setPoolPage
+        setPoolPage,
+        isSearchActive
       }}
     >
       {children}

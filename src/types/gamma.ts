@@ -7,6 +7,8 @@ interface GAMMAConfig {
   tradeFeeRate: number
   fundFeeRate: number
   createPoolFee: string
+  protocolOwner: string
+  fundOwner: string
 }
 
 interface GAMMAProtocolStats {
@@ -94,13 +96,16 @@ interface GAMMAPool {
   feeRate: number
   openTime: string
   tvl: number
-  day: GAMMAPoolStats
-  week: GAMMAPoolStats
-  month: GAMMAPoolStats
+  stats: {
+    day: GAMMAPoolStats
+    week: GAMMAPoolStats
+    month: GAMMAPoolStats
+  }
   lpMint: GAMMAToken
   lpPrice: number
   lpAmount: number
   config: GAMMAConfig
+  type: 'primary' | 'hyper'
 }
 
 interface GAMMAPoolStats {

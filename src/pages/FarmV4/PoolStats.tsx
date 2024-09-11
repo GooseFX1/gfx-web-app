@@ -1,8 +1,9 @@
 /* eslint-disable */
 import { FC, ReactElement } from 'react'
 import { Badge, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
+import { GAMMAPool } from '@/types/gamma'
 
-export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
+export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => {
   return (
     <>
       <div className="flex justify-between mb-2">
@@ -18,7 +19,7 @@ export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
           </TooltipTrigger>
           <TooltipContent>The current liquidity in this pool</TooltipContent>
         </Tooltip>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token?.liquidity}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.tvl}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -28,7 +29,7 @@ export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
         >
           Volume
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token?.volume}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.stats.day.volume}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -38,7 +39,7 @@ export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
         >
           Fees
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token?.fees}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.stats.day.volumeFee}</span>
       </div>
       <div className="flex justify-between mb-2">
         <Tooltip>
@@ -56,7 +57,7 @@ export const PoolStats: FC<{ token: any }> = ({ token }): ReactElement => {
         </Tooltip>
         <div>
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{token?.apr}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>{token.stats.day.apr}%</span>
           </Badge>
         </div>
       </div>

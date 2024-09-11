@@ -3,10 +3,11 @@ import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
 import { Button } from 'gfx-component-lib'
-import { POOL_TYPE } from '@/pages/FarmV4/constants'
+import { GAMMA_SORT_CONFIG_MAP, POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
+import { GAMMAPool } from '@/types/gamma'
 
 const noPoolsFound = {
   title: 'Oops, no pools found',
@@ -76,9 +77,41 @@ const FarmItems: FC<{
     '/img/crypto/raydium.svg',
     '/img/crypto/meteora.svg'
   ]
+
+  const poolsToRender = useMemo(() => {
+    const poolsToShow: GAMMAPool[] = []
+    const tokens = searchTokens.toLowerCase()
+    for (const pool of pools) {
+      let addPool = true
+      if (isSearchActive &&
+        !tokens.includes(pool.mintA.name.toLowerCase()) && !tokens.includes(pool.mintB.name.toLowerCase())
+      ) {
+        addPool = false
+      }
+
+      // TODO: add deposit value for user to show/hide
+      if (showDeposited) {
+        addPool = false
+      }
+      if (currentPoolType.type == POOL_TYPE.primary.type) {
+        if (!GAMMA_SORT_CONFIG_MAP.has(pool.mintA.address) && !GAMMA_SORT_CONFIG_MAP.has(pool.mintB.address)) {
+          addPool = false
+        }
+      } else if (currentPoolType.type == POOL_TYPE.hyper.type) {
+        if (GAMMA_SORT_CONFIG_MAP.has(pool.mintA.address) || GAMMA_SORT_CONFIG_MAP.has(pool.mintB.address)) {
+          addPool = false
+        }
+      }
+      if (addPool) {
+        poolsToShow.push(pool)
+      }
+    }
+
+    return poolsToShow
+  }, [isSearchActive, searchTokens, showDeposited, currentPoolType])
   return (
     <div>
-      {currentPoolType.name === POOL_TYPE?.migrate?.name ? (
+      {currentPoolType.name === POOL_TYPE.migrate.name ? (
         <FarmItemsMigrate
           openPositionsAcrossPrograms={[
             {
@@ -97,19 +130,19 @@ const FarmItems: FC<{
             }
           ]}
         />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || pools.length === 0 ? (
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || poolsToRender.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
-        <FarmItemsPro />
-      ) : currentPoolType.name != POOL_TYPE?.migrate?.name ? (
-        <FarmItemsLite
-          openPositionImages={openPositionImages}
-          openPositionsAcrossPrograms={openPositionsAcrossPrograms}
+        <FarmItemsPro
+          poolsToRender={poolsToRender}
         />
-      ) : (
-        <></>
-      )}
-      {(numberOfTokensDeposited === 0 && showDeposited) || pools?.length === 0 ? (
+      ) : <FarmItemsLite
+        poolsToRender={poolsToRender}
+        openPositionImages={openPositionImages}
+        openPositionsAcrossPrograms={openPositionsAcrossPrograms}
+      />
+      }
+      {(numberOfTokensDeposited === 0 && showDeposited) || poolsToRender.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>
