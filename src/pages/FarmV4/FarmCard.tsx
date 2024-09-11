@@ -51,7 +51,7 @@ const FarmCard: FC<{
             dark:text-grey-8 text-black-4 mb-2"
       >
         {`${token.mintA.name} - ${token.mintB.name}`}
-        <Icon src={`img/assets/farm_${token.type}.svg`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${token.pool_type}.svg`} size="sm" className="ml-1.5" />
         {token.config.fundOwner == publicKey.toBase58() && (
           <Badge size="sm" variant="default">
             Owner

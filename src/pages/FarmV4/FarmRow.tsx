@@ -51,7 +51,7 @@ const FarmRow: FC<{ token: GAMMAPool, key: string }> = ({ token, key }): JSX.Ele
             Owner
           </Badge>
         )}
-        <Icon src={`img/assets/farm_${token.type}.svg`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${token.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
         {token.tvl}

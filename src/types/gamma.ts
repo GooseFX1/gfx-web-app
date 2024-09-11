@@ -105,7 +105,7 @@ interface GAMMAPool {
   lpPrice: number
   lpAmount: number
   config: GAMMAConfig
-  type: 'primary' | 'hyper'
+  pool_type: 'primary' | 'hyper'
 }
 
 interface GAMMAPoolStats {
