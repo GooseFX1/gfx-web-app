@@ -162,9 +162,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
   const fetchPools = async (page: number, pageSize: number, poolType: 'all' | 'hyper' | 'primary' = 'primary') => (
     await fetch(
-      `${GAMMA_API_BASE}
-      ${GAMMA_ENDPOINTS_V1.POOLS}
-    ?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig.direction}&sortBy=${sortConfig.key}`
+      // eslint-disable-next-line max-len
+      `${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL}?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig.direction.toLowerCase()}&sortBy=${sortConfig.key.toLowerCase()}`
     ).then(async (res) => res.json()).catch((e) => {
       console.error('Error fetching pools:', e)
       return null
@@ -183,7 +182,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
   useLayoutEffect(() => {
-    updatePools(poolPage, TOKEN_LIST_PAGE_SIZE, currentPoolType.type)
+    updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
   }, [poolPage, currentPoolType])
 
   useEffect(() => {

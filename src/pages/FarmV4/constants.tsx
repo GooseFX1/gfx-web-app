@@ -491,7 +491,7 @@ export const GAMMA_SORT_CONFIG = [
 export const GAMMA_SORT_CONFIG_MAP = new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
-export const POOL_LIST_PAGE_SIZE = 10
+export const POOL_LIST_PAGE_SIZE = 200
 
 export const GAMMA_PRIMARY_POOL_TYPES = {
   'So11111111111111111111111111111111111111112': 'SOL',
