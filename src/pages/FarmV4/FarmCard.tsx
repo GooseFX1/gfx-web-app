@@ -11,9 +11,10 @@ const FarmCard: FC<{
   className?: string
 }> = ({ pool, key, className }): ReactElement => {
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
-  const {publicKey} = useWalletBalance()
+  const {base58PublicKey} = useWalletBalance()
   // TODO: implement to check if deposited in pool
   const hasDeposit = false;
+  console.log(pool)
   return (
     <div
       className={cn(`h-[207px] w-full border 
@@ -25,12 +26,12 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5">
         <div className="flex relative">
           <Icon
-            src={`img/crypto/${pool.mintA.logoURI}.svg`}
+            src={pool.mintA.logoURI ?? `img/crypto/fallback.svg`}
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={`img/crypto/${pool.mintB.logoURI}.svg`}
+            src={pool.mintA.logoURI ?? `img/crypto/fallback.svg`}
             size="lg"
             className={
               'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -59,7 +60,7 @@ const FarmCard: FC<{
       >
         {`${pool.mintA.name} - ${pool.mintB.name}`}
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
-        {pool.config.fundOwner == publicKey.toBase58() && (
+        {pool.config.fundOwner == base58PublicKey && (
           <Badge size="sm" variant="default">
             Owner
           </Badge>

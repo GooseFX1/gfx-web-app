@@ -97,9 +97,9 @@ interface GAMMAPool {
   openTime: string
   tvl: number
   stats: {
-    day: GAMMAPoolStats
-    week: GAMMAPoolStats
-    month: GAMMAPoolStats
+    daily: GAMMAPoolStats
+    weekly: GAMMAPoolStats
+    monthly: GAMMAPoolStats
   }
   lpMint: GAMMAToken
   lpPrice: number
@@ -109,14 +109,12 @@ interface GAMMAPool {
 }
 
 interface GAMMAPoolStats {
-  volume: number
-  volumeQuote: number
-  volumeFee: number
-  apr: number
-  feeApr: number
-  priceMin: number
-  priceMax: number
-  rewardApr: number[]
+  range: '24H' | '7D' | '30D'
+  tradeFeesUSD: number
+  volumeTokenAUSD: number
+  volumeTokenBUSD: number
+  feesAprUSD: number
+  volumeAprUSD: number
 }
 
 // user model

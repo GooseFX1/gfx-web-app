@@ -128,8 +128,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
-      setIsLoadingTokenList(true)
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+    }
+    if (pools.length == 0) {
+      updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type)
     }
   }, [])
 
@@ -176,7 +178,18 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     setIsLoadingPools.on()
     fetchPools(page, pageSize, poolType).then((poolsData: GAMMAPoolsResponse) => {
-      if (poolsData && poolsData.success) setPools(poolsData.data.pools)
+      if (poolsData && poolsData.success) {
+        const existingPools = pools
+        const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
+        for (const pool of poolsData.data.pools) {
+          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
+            continue
+          }
+          hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
+          existingPools.push(pool)
+        }
+        setPools([...existingPools])
+      }
     }).finally(() => setIsLoadingPools.off())
   }
   useLayoutEffect(() => {
@@ -239,56 +252,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  useEffect(
-    () => {
-      const filterPools = (p) =>
-        p
-          ?.filter((item) => item?.type === currentPoolType?.name)
-          ?.filter((curPool) => {
-            const matchesSearch =
-              !searchTokens ||
-              curPool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
-              curPool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
-            const matchesCreated = !showCreatedPools || curPool.isOwner === true
-            return matchesSearch && matchesCreated
-          })
-
-      const sortPools = (filteredPools) => {
-        const sort = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
-        if (!sort) return filteredPools
-        return filteredPools.sort((a, b) => {
-          switch (sort.name) {
-            case GAMMA_SORT_CONFIG[0].name:
-              return b.liquidity - a.liquidity
-            case GAMMA_SORT_CONFIG[1].name:
-              return a.liquidity - b.liquidity
-            case GAMMA_SORT_CONFIG[2].name:
-              return b.volume - a.volume
-            case GAMMA_SORT_CONFIG[3].name:
-              return a.volume - b.volume
-            case GAMMA_SORT_CONFIG[4].name:
-              return b.fees - a.fees
-            case GAMMA_SORT_CONFIG[5].name:
-              return a.fees - b.fees
-            case GAMMA_SORT_CONFIG[6].name:
-              return b.apr - a.apr
-            case GAMMA_SORT_CONFIG[7].name:
-              return a.apr - b.apr
-            default:
-              return 0
-          }
-        })
-      }
-
-      if (pools !== null) {
-        // should be replaced by api call with query params sort filter
-        fetchPools(1, POOL_LIST_PAGE_SIZE).then((sortFilterData) => {
-          if (sortFilterData) setPools(sortPools(filterPools(sortFilterData)))
-        })
-      }
-    },
-    [searchTokens, showCreatedPools, currentSort, currentPoolType, currentPoolType]
-  )
   const isSearchActive = searchTokens.trim().length > 0
   return (
     <GAMMAContext.Provider

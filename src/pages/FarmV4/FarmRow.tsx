@@ -4,11 +4,12 @@ import { useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPool } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { numberFormatter } from '@/utils'
 
 const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
-  const {publicKey} = useWalletBalance()
+  const { base58PublicKey } = useWalletBalance()
   return (
     <div
       className={cn(
@@ -46,7 +47,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
             0.2%
           </div>
         )}
-        {pool.config.fundOwner == publicKey.toBase58() && (
+        {pool.config.fundOwner == base58PublicKey && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner
           </Badge>
@@ -58,18 +59,18 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {pool.stats.day.volume}
+          {numberFormatter(pool.stats.daily.volumeTokenAUSD+pool.stats.daily.volumeTokenBUSD)}
         </div>
       )}
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {pool.stats.day.volumeFee}
+          {numberFormatter(pool.stats.daily.tradeFeesUSD)}
         </div>
       )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{pool.stats.day.apr}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>{numberFormatter(pool.stats.daily.feesAprUSD)}%</span>
           </Badge>
         </div>
       )}

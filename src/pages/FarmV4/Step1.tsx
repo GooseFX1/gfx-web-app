@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction } from 'react'
 
 const Step1: FC<{
   slider: any
@@ -24,7 +24,7 @@ const Step1: FC<{
         }}
       >
         <div className="flex flex-row">
-          <img src="img/assets/farm_Primary.svg" alt="primary" height={20} width={20} className="mr-1.5" />
+          <img src="img/assets/farm_primary.svg" alt="primary" height={20} width={20} className="mr-1.5" />
           <span className="text-[18px] font-sans font-semibold dark:text-grey-8 text-black-4">Primary</span>
         </div>
         <div className="mt-2.5 text-regular font-semibold text-grey-1 dark:text-grey-2">
@@ -43,7 +43,7 @@ const Step1: FC<{
         }}
       >
         <div className="flex flex-row">
-          <img src="img/assets/farm_Hyper.svg" alt="hyper" height={20} width={20} className="mr-1.5" />
+          <img src="img/assets/farm_hyper.svg" alt="hyper" height={20} width={20} className="mr-1.5" />
           <span className="text-[18px] font-sans font-semibold dark:text-grey-8 text-black-4">Hyper</span>
         </div>
         <div className="mt-2.5 text-regular font-semibold text-grey-1 dark:text-grey-2">

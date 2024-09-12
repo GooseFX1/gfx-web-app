@@ -88,27 +88,18 @@ const FarmItems: FC<{
        * 2. If showDeposited is active, check if user has deposited in pool
        * 3. Check if pool type matches current pool type
        */
-      let addPool = true
-      if (isSearchActive &&
+      const searchNotFound = isSearchActive &&
         !tokens.includes(pool.mintA.name.toLowerCase()) && !tokens.includes(pool.mintB.name.toLowerCase())
-      ) {
-        addPool = false
-      }
 
-      // TODO: add deposit value for user to show/hide
-      if (showDeposited) {
-        addPool = false
-      }
+      const isMatchingPoolType = pool.pool_type === currentPoolType.type
 
-      addPool = pool.pool_type === currentPoolType.type
-      
-      if (addPool) {
-        poolsToShow.push(pool)
-      }
+      if (searchNotFound || !isMatchingPoolType) continue
+      poolsToShow.push(pool)
     }
 
     return poolsToShow
-  }, [isSearchActive, searchTokens, showDeposited, currentPoolType])
+  }, [pools, isSearchActive, searchTokens, showDeposited, currentPoolType])
+
   return (
     <div>
       {currentPoolType.name === POOL_TYPE.migrate.name ? (
