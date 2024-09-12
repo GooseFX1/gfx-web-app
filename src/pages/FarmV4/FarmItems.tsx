@@ -7,7 +7,6 @@ import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
-import { GAMMAPool } from '@/types/gamma'
 
 const noPoolsFound = {
   title: 'Oops, no pools found',
@@ -26,7 +25,7 @@ const FarmItems: FC<{
   numberOfTokensDeposited: number
   isCreatedActive: boolean
 }> = ({ numberOfTokensDeposited, isCreatedActive }) => {
-  const { pools, currentPoolType, searchTokens, showDeposited } = useGamma()
+  const { filteredPools, currentPoolType, searchTokens, showDeposited } = useGamma()
   const { isProMode } = useRewardToggle()
 
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
@@ -78,28 +77,6 @@ const FarmItems: FC<{
     '/img/crypto/meteora.svg'
   ]
 
-  const poolsToRender = useMemo(() => {
-    const poolsToShow: GAMMAPool[] = []
-    const tokens = searchTokens.toLowerCase()
-    for (const pool of pools) {
-      // three stage filter:
-      /**
-       * 1. If search is active, check if pool contains search tokens
-       * 2. If showDeposited is active, check if user has deposited in pool
-       * 3. Check if pool type matches current pool type
-       */
-      const searchNotFound = isSearchActive &&
-        !tokens.includes(pool.mintA.name.toLowerCase()) && !tokens.includes(pool.mintB.name.toLowerCase())
-
-      const isMatchingPoolType = pool.pool_type === currentPoolType.type
-
-      if (searchNotFound || !isMatchingPoolType) continue
-      poolsToShow.push(pool)
-    }
-
-    return poolsToShow
-  }, [pools, isSearchActive, searchTokens, showDeposited, currentPoolType])
-
   return (
     <div>
       {currentPoolType.name === POOL_TYPE.migrate.name ? (
@@ -121,19 +98,19 @@ const FarmItems: FC<{
             }
           ]}
         />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || poolsToRender.length === 0 ? (
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro
-          poolsToRender={poolsToRender}
+          poolsToRender={filteredPools}
         />
       ) : <FarmItemsLite
-        poolsToRender={poolsToRender}
+        poolsToRender={filteredPools}
         openPositionImages={openPositionImages}
         openPositionsAcrossPrograms={openPositionsAcrossPrograms}
       />
       }
-      {(numberOfTokensDeposited === 0 && showDeposited) || poolsToRender.length === 0 ? (
+      {(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>

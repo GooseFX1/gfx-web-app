@@ -79,6 +79,7 @@ interface GAMMADataModel {
   isLoadingPools: boolean
   setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
+  filteredPools: GAMMAPool[]
 }
 
 export type TokenListToken = {
@@ -123,7 +124,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
 
-  const sortConfig = GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0]
+  const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
 
   useEffect(() => {
     // first render only
@@ -195,9 +196,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
+
   useLayoutEffect(() => {
     updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
-  }, [poolPage, currentPoolType])
+  }, [poolPage, currentPoolType, sortConfig])
 
   useEffect(() => {
     fetchGAMMAConfig().then((config) => {
@@ -252,6 +254,40 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
+  const filteredPools = useMemo(() => {
+    const tokens = searchTokens.toLowerCase()
+    return pools.filter(pool => {
+      const searchFound = searchTokens.length === 0 ||
+       ( pool.mintA.name.toLowerCase().includes(tokens) || pool.mintB.name.toLowerCase().includes(tokens))
+      const isMatchingPoolType = pool.pool_type === currentPoolType.type
+      return searchFound && isMatchingPoolType
+    }).sort((a, b) => {
+      switch (sortConfig.name) {
+        case GAMMA_SORT_CONFIG[0].name:
+          return b.tvl - a.tvl
+        case GAMMA_SORT_CONFIG[1].name:
+          return a.tvl - b.tvl
+        case GAMMA_SORT_CONFIG[2].name:
+          return (b.stats.daily.volumeTokenAUSD + b.stats.daily.volumeTokenBUSD)
+            -
+            (a.stats.daily.volumeTokenAUSD + a.stats.daily.volumeTokenBUSD)
+        case GAMMA_SORT_CONFIG[3].name:
+          return (a.stats.daily.volumeTokenAUSD + a.stats.daily.volumeTokenBUSD)
+            -
+            (b.stats.daily.volumeTokenAUSD + b.stats.daily.volumeTokenBUSD)
+        case GAMMA_SORT_CONFIG[4].name:
+          return b.stats.daily.tradeFeesUSD - a.stats.daily.tradeFeesUSD
+        case GAMMA_SORT_CONFIG[5].name:
+          return a.stats.daily.tradeFeesUSD - b.stats.daily.tradeFeesUSD
+        case GAMMA_SORT_CONFIG[6].name:
+          return b.stats.daily.feesAprUSD - a.stats.daily.feesAprUSD
+        case GAMMA_SORT_CONFIG[7].name:
+          return a.stats.daily.feesAprUSD - b.stats.daily.feesAprUSD
+        default:
+          return 0
+      }
+    })
+  }, [pools, searchTokens, sortConfig])
   const isSearchActive = searchTokens.trim().length > 0
   return (
     <GAMMAContext.Provider
@@ -295,7 +331,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isLoadingPools,
         poolPage,
         setPoolPage,
-        isSearchActive
+        isSearchActive,
+        filteredPools
       }}
     >
       {children}
