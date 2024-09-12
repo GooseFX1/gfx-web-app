@@ -47,7 +47,7 @@ interface TransferFeeDataBaseType {
 }
 
 type GAMMAToken = {
-  chainId: number
+  chainId: string
   address: string
   programId: string
   logoURI: string

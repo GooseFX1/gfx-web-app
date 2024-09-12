@@ -10,7 +10,15 @@ import {
   useMemo,
   useState
 } from 'react'
-import { fetchAggregateStats, fetchGAMMAConfig, fetchLpPositions, fetchPortfolioStats, fetchUser } from '../api/gamma'
+import {
+  fetchAggregateStats,
+  fetchGAMMAConfig,
+  fetchLpPositions,
+  fetchPortfolioStats,
+  fetchUser,
+  fetchAllPools,
+  fetchTokenList
+} from '../api/gamma'
 import {
   GAMMAConfig,
   GAMMAListTokenResponse,
@@ -35,7 +43,6 @@ import {
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
-import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
 
 interface GAMMADataModel {
@@ -136,18 +143,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [])
 
-  const fetchTokenList = async (page: number, pageSize: number) => {
-    setIsLoadingTokenList(true)
-    return fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
-      .then(async (res) => res.json())
-      .catch((e) => {
-        console.log('Error fetching token list', e)
-        return null
-      })
-      .finally(() => setIsLoadingTokenList(false))
-  }
   const updateTokenList = async (page: number, pageSize: number) => {
+    setIsLoadingTokenList(true)
     const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
+    setIsLoadingTokenList(false)
+    console.log(response)
     if (!response || !response.success) {
       return
     }
