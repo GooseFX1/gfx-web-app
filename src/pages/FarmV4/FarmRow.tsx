@@ -5,7 +5,7 @@ import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPool } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
-const FarmRow: FC<{ token: GAMMAPool, key: string }> = ({ token, key }): JSX.Element => {
+const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const {publicKey} = useWalletBalance()
@@ -19,23 +19,23 @@ const FarmRow: FC<{ token: GAMMAPool, key: string }> = ({ token, key }): JSX.Ele
       )}
       key={key}
       onClick={() => {
-        setSelectedCard(token)
+        setSelectedCard(pool)
         setOpenDepositWithdrawSlider(true)
       }}
     >
       <div className="flex flex-row items-center min-w-[210px]">
         <Icon
-          src={`img/crypto/${token.mintA.logoURI}.svg`}
+          src={`img/crypto/${pool.mintA.logoURI}.svg`}
           className="border-solid dark:border-black-2 border-white 
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={`img/crypto/${token.mintB.logoURI}.svg`}
+          src={`img/crypto/${pool.mintB.logoURI}.svg`}
           className="relative right-[10px] border-solid dark:border-black-2 
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.mintA.name} - {token.mintB.name}
+          {pool.mintA.name} - {pool.mintB.name}
         </div>
         {isDesktop && (
           <div
@@ -46,30 +46,30 @@ const FarmRow: FC<{ token: GAMMAPool, key: string }> = ({ token, key }): JSX.Ele
             0.2%
           </div>
         )}
-        {token.config.fundOwner == publicKey.toBase58() && (
+        {pool.config.fundOwner == publicKey.toBase58() && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner
           </Badge>
         )}
-        <Icon src={`img/assets/farm_${token.pool_type}.svg`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {token.tvl}
+        {pool.tvl}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.stats.day.volume}
+          {pool.stats.day.volume}
         </div>
       )}
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.stats.day.volumeFee}
+          {pool.stats.day.volumeFee}
         </div>
       )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{token.stats.day.apr}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>{pool.stats.day.apr}%</span>
           </Badge>
         </div>
       )}

@@ -14,11 +14,11 @@ const FarmItemsPro: FC<{
     <div>
       <WindowingContainer
         items={poolsToRender}
-        render={(token: GAMMAPool, i) =>
-          <FarmRow token={token} key={`${token?.mintA.name}-${token?.mintB.name}-${i}`} />}
+        render={(pool: GAMMAPool, i) =>
+          <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />}
       />
     </div>
   </>
-  
+
 
 export default FarmItemsPro

@@ -3,7 +3,7 @@ import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
 import { Button } from 'gfx-component-lib'
-import { GAMMA_SORT_CONFIG_MAP, POOL_TYPE } from '@/pages/FarmV4/constants'
+import { POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
@@ -82,6 +82,12 @@ const FarmItems: FC<{
     const poolsToShow: GAMMAPool[] = []
     const tokens = searchTokens.toLowerCase()
     for (const pool of pools) {
+      // three stage filter:
+      /**
+       * 1. If search is active, check if pool contains search tokens
+       * 2. If showDeposited is active, check if user has deposited in pool
+       * 3. Check if pool type matches current pool type
+       */
       let addPool = true
       if (isSearchActive &&
         !tokens.includes(pool.mintA.name.toLowerCase()) && !tokens.includes(pool.mintB.name.toLowerCase())
@@ -93,15 +99,9 @@ const FarmItems: FC<{
       if (showDeposited) {
         addPool = false
       }
-      if (currentPoolType.type == POOL_TYPE.primary.type) {
-        if (!GAMMA_SORT_CONFIG_MAP.has(pool.mintA.address) && !GAMMA_SORT_CONFIG_MAP.has(pool.mintB.address)) {
-          addPool = false
-        }
-      } else if (currentPoolType.type == POOL_TYPE.hyper.type) {
-        if (GAMMA_SORT_CONFIG_MAP.has(pool.mintA.address) || GAMMA_SORT_CONFIG_MAP.has(pool.mintB.address)) {
-          addPool = false
-        }
-      }
+
+      addPool = pool.pool_type === currentPoolType.type
+      
       if (addPool) {
         poolsToShow.push(pool)
       }

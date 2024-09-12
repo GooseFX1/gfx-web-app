@@ -3,7 +3,7 @@ import { FC, ReactElement } from 'react'
 import { Badge, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { GAMMAPool } from '@/types/gamma'
 
-export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => {
+export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
   return (
     <>
       <div className="flex justify-between mb-2">
@@ -19,7 +19,7 @@ export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => 
           </TooltipTrigger>
           <TooltipContent>The current liquidity in this pool</TooltipContent>
         </Tooltip>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.tvl}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{pool.tvl}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -29,7 +29,7 @@ export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => 
         >
           Volume
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.stats.day.volume}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{pool.stats.day.volume}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -39,7 +39,7 @@ export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => 
         >
           Fees
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{token.stats.day.volumeFee}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">{pool.stats.day.volumeFee}</span>
       </div>
       <div className="flex justify-between mb-2">
         <Tooltip>
@@ -55,11 +55,9 @@ export const PoolStats: FC<{ token: GAMMAPool }> = ({ token }): ReactElement => 
           </TooltipTrigger>
           <TooltipContent>This is the yield generated on a 24H basis annualized</TooltipContent>
         </Tooltip>
-        <div>
-          <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{token.stats.day.apr}%</span>
-          </Badge>
-        </div>
+        <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
+          <span className={'font-poppins font-semibold my-0.5'}>{pool.stats.day.apr}%</span>
+        </Badge>
       </div>
     </>
   )

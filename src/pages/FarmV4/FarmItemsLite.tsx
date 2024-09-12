@@ -19,8 +19,8 @@ const FarmItemsLite: FC<{
           openPositionsAcrossPrograms={openPositionsAcrossPrograms}
         />
       )}
-      {poolsToRender.map((token,i) => <FarmCard
-        token={token} key={`${token?.mintA.name}-${token?.mintB.name}-${i}`} />)}
+      {poolsToRender.map((pool,i) => <FarmCard
+        pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />)}
 
     </div>
   )
