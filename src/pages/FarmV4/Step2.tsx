@@ -15,7 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger
 } from 'gfx-component-lib'
-import { useAccounts, useDarkMode, useGamma } from '../../context'
+import { useDarkMode, useGamma } from '../../context'
 import { JupToken, SSL_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
@@ -37,6 +37,8 @@ const Step2: FC<{
   setPoolExists: (b: boolean) => void
   initialPrice: string
   setInitialPrice: Dispatch<SetStateAction<string>>
+  walletTokenA: string
+  walletTokenB: string
 }> = ({
   tokenA,
   setTokenA,
@@ -50,14 +52,14 @@ const Step2: FC<{
   poolExists,
   setPoolExists,
   initialPrice,
-  setInitialPrice
+  setInitialPrice,
+  walletTokenA,
+  walletTokenB
 }) => {
-    const { getUIAmount } = useAccounts()
     const { mode } = useDarkMode()
     const { setSelectedCard } = useGamma()
-    const tokenAamount = tokenA ? getUIAmount(tokenA.address).toFixed(2) : '0.00'
-    const tokenBamount = tokenB ? getUIAmount(tokenB.address).toFixed(2) : '0.00'
     const [priceSwitch, setPriceSwitch] = useState(false)
+
     useEffect(() => {
       if (+amountTokenA && +amountTokenB) {
         !priceSwitch ? setInitialPrice((+amountTokenA / +amountTokenB)?.toString())
@@ -66,6 +68,7 @@ const Step2: FC<{
         setInitialPrice('')
       }
     }, [amountTokenA, amountTokenB, priceSwitch])
+
     const navigateToPool = () => {
       if (!tokenA || !tokenB) return
       for (const token of SSL_TOKENS) {
@@ -76,6 +79,7 @@ const Step2: FC<{
         }
       }
     }
+
     useLayoutEffect(() => {
       if (!tokenA || !tokenB) return
       // API Req
@@ -88,6 +92,7 @@ const Step2: FC<{
       }
       setPoolExists(false)
     }, [tokenA, tokenB, setPoolExists])
+
     return (
       <>
         <div className="text-regular !text-grey-2 dark:!text-grey-1 border-b border-solid dark:border-black-4
@@ -97,7 +102,7 @@ const Step2: FC<{
             Pool Settings
           </h2>
         </div>
-        <div className="p-3 flex flex-col overflow-scroll border-b border-solid 
+        <div className="p-3 flex flex-col overflow-scroll border-b-none border-solid 
           dark:border-black-4 border-grey-4 gap-5">
           <div>
             <div className="flex flex-row justify-between items-center mb-2.5">
@@ -105,15 +110,15 @@ const Step2: FC<{
                 1. Select Token A
               </div>
               <div className={cn('flex flex-row items-center', !tokenA && 'invisible')}>
-                <img src={`/img/assets/wallet-${mode}-${tokenAamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
+                <img src={`/img/assets/wallet-${mode}-${walletTokenA !== '0.00' ? 'enabled' : 'disabled'}.svg`}
                   alt="wallet" className="mr-1.5" />
                 <span className={
                   cn(
                     'text-regular font-semibold dark:text-grey-2 text-black-4',
-                    tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                    walletTokenA === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                   )
                 }>
-                  {tokenAamount} {tokenA?.symbol}
+                  {walletTokenA} {tokenA?.symbol}
                 </span>
               </div>
             </div>
@@ -130,15 +135,15 @@ const Step2: FC<{
                 2. Select Token B
               </div>
               <div className={cn('flex flex-row items-center', !tokenB && 'invisible')}>
-                <img src={`/img/assets/wallet-${mode}-${tokenBamount != '0.00' ? 'enabled' : 'disabled'}.svg`}
+                <img src={`/img/assets/wallet-${mode}-${walletTokenB !== '0.00' ? 'enabled' : 'disabled'}.svg`}
                   alt="wallet" className="mr-1.5" />
                 <span className={
                   cn(
                     'text-regular font-semibold dark:text-grey-2 text-black-4',
-                    tokenAamount === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
+                    walletTokenB === '0.00' && 'text-text-lightmode-secondary dark:text-text-darkmode-secondary'
                   )
                 }>
-                  {tokenBamount} {tokenB?.symbol}
+                  {walletTokenB} {tokenB?.symbol}
                 </span>
               </div>
             </div>
@@ -157,7 +162,6 @@ const Step2: FC<{
                 </TooltipTrigger>
                 <TooltipContent className={'z-[1001]'} align={'start'}>
                   The initial price is based on the ratio of tokens you deposit for initial liquidity.
-                  If the token is already trading on GooseFx, we'll automatically use the current price.
                 </TooltipContent>
               </Tooltip>
               <div className={cn('flex flex-row items-center',
@@ -219,6 +223,13 @@ const Step2: FC<{
               ]}
             />
           </div>
+          {/* We need the swap component here but later */}
+          {(+amountTokenA && +amountTokenB) && (tokenA && tokenB)
+             && (+amountTokenA > +walletTokenA) && (+amountTokenB > +walletTokenB) ? (
+            <span className='text-red-1 font-sembold text-regular'>
+              You don't have enough tokens in the wallet!
+            </span>
+          ) : <></>}
           {poolExists && <div>
             <Container className={'flex flex-col gap-2.5 p-2.5'}>
               <Text as={'h3'}>Existing Pool!</Text>
@@ -250,92 +261,101 @@ function TokenSelectionInput({
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
+  
+  const loadImage = (symbol: string) => {
+    const image = new Image()
+    let imageUrl = `/img/crypto/${symbol}.svg`
+    image.src = imageUrl
+    if (image.width === 0) imageUrl = '/img/assets/fallback-token.svg'
+    return imageUrl
+  }
+
   return <InputGroup
-  leftItem={
-    <InputElementLeft>
-      <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropdownOpen.set}>
-        <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-          <Button
-            colorScheme={'secondaryGradient'}
-            variant={'outline'}
-            isLoading={false}
-            className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
-            iconLeft={
-              token ? (
+    leftItem={
+      <InputElementLeft>
+        <DropdownMenu open={isDropDownOpen} onOpenChange={setIsDropdownOpen.set}>
+          <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
+            <Button
+              colorScheme={'secondaryGradient'}
+              variant={'outline'}
+              isLoading={false}
+              className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
+              iconLeft={
+                token ? (
+                  <Icon
+                    src={token.logoURI ? token.logoURI : loadImage(token.symbol)}
+                    size={'sm'}
+                  />
+                ) : null
+              }
+              iconRight={
                 <Icon
-                  src={token.logoURI ?? `img/crypto/${token.symbol}.svg`}
+                  style={{
+                    transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
+                    transition: 'transform 0.2s ease-in-out'
+                  }}
+                  src={`/img/assets/farm-chevron-${mode}.svg`}
+                  className={cn(!isDarkMode ? 'stroke-background-blue' : '')}
                   size={'sm'}
                 />
-              ) : null
-            }
-            iconRight={
-              <Icon
-                style={{
-                  transform: `rotate(${isDropDownOpen ? '180deg' : '0deg'})`,
-                  transition: 'transform 0.2s ease-in-out'
-                }}
-                src={`/img/assets/farm-chevron-${mode}.svg`}
-                className={cn(!isDarkMode ? 'stroke-background-blue' : '')}
-                size={'sm'}
-              />
-            }
+              }
+            >
+              {token ? token.symbol : 'Select Token'}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
+            portal={true}
           >
-            {token ? token.symbol : 'Select Token'}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'}
-          portal={true}
-        >
-          <ScrollingHydrateContainer
-            ref={(ref) => setScrollingContainerRef(ref)}
-            callback={() => {
-              if (tokenList.length <= 0 && maxTokensReached) return;
-              updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() =>
-                setPage(page + 1)
-              );
-            }}
-          >
-            {tokenList.length > 0 ? (
-              <WindowingContainer
-                rootElement={scrollingContainerRef}
-                items={tokenList}
-                render={(item: JupToken) => (
-                  <DropdownMenuItem
-                    className={'group gap-2 cursor-pointer'}
-                    onClick={() => setToken(item)}
-                    key={item?.symbol}
-                  >
-                    <Icon
-                      src={item?.logoURI ?? `img/crypto/${item?.symbol}.svg`}
-                      size={'sm'}
-                    />
-                    <span>{item?.symbol}</span>
-                  </DropdownMenuItem>
-                )}
-              />
-            ) : (
-              <DropdownMenuItem disabled={true}>
-                No Tokens Found
-              </DropdownMenuItem>
-            )}
-            {isLoadingTokenList ? (
-              <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>
-            ) : null}
-          </ScrollingHydrateContainer>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </InputElementLeft>
-  }
->
-  <Input
-    type="text"
-    placeholder={`0.00 ${token ? token.symbol : ''}`}
-    onChange={(e) => handleChange(e, true)}
-    value={amountToken}
-    className={'h-[45px] text-right'}
-  />
-</InputGroup>
+            <ScrollingHydrateContainer
+              ref={(ref) => setScrollingContainerRef(ref)}
+              callback={() => {
+                if (tokenList.length <= 0 && maxTokensReached) return;
+                updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() =>
+                  setPage(page + 1)
+                );
+              }}
+            >
+              {tokenList.length > 0 ? (
+                <WindowingContainer
+                  rootElement={scrollingContainerRef}
+                  items={tokenList}
+                  render={(item: JupToken) => (
+                    <DropdownMenuItem
+                      className={'group gap-2 cursor-pointer'}
+                      onClick={() => setToken(item)}
+                      key={item?.symbol}
+                    >
+                      <Icon
+                        src={item?.logoURI ? item?.logoURI : loadImage(item?.symbol)}
+                        size={'sm'}
+                      />
+                      <span>{item?.symbol}</span>
+                    </DropdownMenuItem>
+                  )}
+                />
+              ) : (
+                <DropdownMenuItem disabled={true}>
+                  No Tokens Found
+                </DropdownMenuItem>
+              )}
+              {isLoadingTokenList ? (
+                <DropdownMenuItem disabled={true}>LOADING</DropdownMenuItem>
+              ) : null}
+            </ScrollingHydrateContainer>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </InputElementLeft>
+    }
+  >
+    <Input
+      type="text"
+      placeholder={`0.00 ${token ? token.symbol : ''}`}
+      onChange={(e) => handleChange(e, true)}
+      value={amountToken}
+      className={'h-[45px] text-right'}
+    />
+  </InputGroup>
 }
 
 export default Step2

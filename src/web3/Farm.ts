@@ -13,8 +13,10 @@ import {
     SYSTEM,
     MEMO_ID,
     AMM_CONFIG,
-    POOL_SEED,
-    GAMMA_FEE_ACCOUNT
+    POOL_SEED_PRFIX,
+    GAMMA_FEE_ACCOUNT,
+    OBSERVATION_PREFIX,
+    SYS_VAR_RENT
 } from './ids'
 import { convertToNativeValue, withdrawBigString } from "@/utils"
 import { JupToken } from "@/pages/FarmV4/constants"
@@ -66,11 +68,11 @@ const u16ToBytes = (num: number): Uint8Array => {
     return new Uint8Array(arr);
 }
 
-const getAmmConfigId = async (programId: PublicKey, index: number): Promise<undefined | PublicKey> => {
+const getAmmConfigId = async (index: number): Promise<undefined | PublicKey> => {
     try {
         const ammConfigId: [PublicKey, number] = await PublicKey.findProgramAddress(
             [Buffer.from(AMM_CONFIG), u16ToBytes(index)],
-            programId
+            new PublicKey(GAMMA_PROGRAM_ID)
         )
         return ammConfigId[0]
     } catch (err) {
@@ -78,12 +80,12 @@ const getAmmConfigId = async (programId: PublicKey, index: number): Promise<unde
     }
 }
 
-const getPoolIdKey = async (programId: PublicKey, ammConfigId: PublicKey, mintA: PublicKey, mintB: PublicKey)
+const getPoolIdKey = async (ammConfigId: PublicKey, mintA: PublicKey, mintB: PublicKey)
     : Promise<undefined | PublicKey> => {
     try {
         const getPoolIdKey: [PublicKey, number] = await PublicKey.findProgramAddress(
-            [Buffer.from(POOL_SEED), ammConfigId?.toBuffer(), mintA?.toBuffer(), mintB?.toBuffer()],
-            programId
+            [Buffer.from(POOL_SEED_PRFIX), ammConfigId?.toBuffer(), mintA?.toBuffer(), mintB?.toBuffer()],
+            new PublicKey(GAMMA_PROGRAM_ID)
         )
         return getPoolIdKey[0]
     } catch (err) {
@@ -91,18 +93,25 @@ const getPoolIdKey = async (programId: PublicKey, ammConfigId: PublicKey, mintA:
     }
 }
 
+const getObservationStateKey = async (poolId: PublicKey)
+    : Promise<undefined | PublicKey> => {
+    try {
+        const observationStateKey: [PublicKey, number] = await PublicKey.findProgramAddress(
+            [Buffer.from(OBSERVATION_PREFIX), poolId?.toBuffer()],
+            new PublicKey(GAMMA_PROGRAM_ID)
+        )
+        return observationStateKey[0]
+    } catch (err) {
+        return undefined
+    }
+}
+
 export const getpoolId = async (selectedCard: any): Promise<PublicKey> => {
     if (!selectedCard) return
-    const programId = new PublicKey(GAMMA_PROGRAM_ID)
-    const configIdKey = await getAmmConfigId(programId, 0)
+    const configIdKey = await getAmmConfigId(0)
     const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
     const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
-    const poolIdKey = await getPoolIdKey(
-        programId,
-        configIdKey,
-        vaultAMintKey,
-        vaultBMintKey
-    )
+    const poolIdKey = await getPoolIdKey(configIdKey, vaultAMintKey, vaultBMintKey)
     return poolIdKey
 }
 
@@ -166,18 +175,21 @@ const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: 
 
 const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, userPubKey: PublicKey) => {
 
-    const programId = new PublicKey(GAMMA_PROGRAM_ID)
-    const configIdKey = await getAmmConfigId(programId, 0)
+    let token0 = new PublicKey(tokenA?.address)
+    let token1 = new PublicKey(tokenB?.address)
+    
+    const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
+
+    if(compare === 1){
+        token0 = new PublicKey(tokenB?.address)
+        token1 = new PublicKey(tokenA?.address)
+    }
+    const configIdKey = await getAmmConfigId(0)
     const authorityKey = await getAuthorityKey()
-    const token0 = new PublicKey(tokenA?.address)
-    const token1 =  new PublicKey(tokenB?.address)
     const token0ata = await getAssociatedTokenAddress(token0, userPubKey)
     const token1ata = await getAssociatedTokenAddress(token1, userPubKey)
-    const poolIdKey = await getPoolIdKey(programId, 
-        configIdKey, 
-        new PublicKey(tokenA?.address), 
-        new PublicKey(tokenB?.address)
-    )
+    const poolIdKey = await getPoolIdKey(configIdKey, token0, token1)
+    const observationStateKey = await getObservationStateKey(poolIdKey)
     const poolVaultKeyA = await getPoolVaultKey(poolIdKey, tokenA?.address)
     const poolVaultKeyB = await getPoolVaultKey(poolIdKey, tokenB?.address)
     const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
@@ -194,13 +206,13 @@ const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, user
         token0Vault: poolVaultKeyA,
         token1Vault: poolVaultKeyB,
         createPoolFee: poolFeeAcc,
-        observationState: poolIdKey,
+        observationState: observationStateKey,
         tokenProgram: TOKEN_PROGRAM_ID,
-        token0Program: TOKEN_2022_PROGRAM_ID,
-        token1Program: TOKEN_2022_PROGRAM_ID,
+        token0Program: TOKEN_PROGRAM_ID,
+        token1Program: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         systemProgram: SYSTEM,
-        rent: SYSTEM
+        rent: SYS_VAR_RENT
     }
 
     return accountObj

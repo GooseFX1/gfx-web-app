@@ -536,6 +536,8 @@ export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4C
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
 
+export const SYS_VAR_RENT = new PublicKey('SysvarRent111111111111111111111111111111111')
+
 // SSL-V2 CONSTANTS
 
 export const STAKE_PREFIX = 'GFX-STAKINGACCOUNT'
@@ -609,4 +611,6 @@ export const USER_POOL_LIQUIDITY_PREFIX =  "user-pool-liquidity"
 
 export const AMM_CONFIG = 'amm_config'
 
-export const POOL_SEED = 'pool'
+export const POOL_SEED_PRFIX = 'pool'
+
+export const OBSERVATION_PREFIX = 'observation'
