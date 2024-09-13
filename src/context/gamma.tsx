@@ -12,12 +12,12 @@ import {
 } from 'react'
 import {
   fetchAggregateStats,
+  fetchAllPools,
   fetchGAMMAConfig,
   fetchLpPositions,
   fetchPortfolioStats,
-  fetchUser,
-  fetchAllPools,
   fetchTokenList,
+  fetchUser,
   sortAndFilterPools
 } from '../api/gamma'
 import {
@@ -87,6 +87,8 @@ interface GAMMADataModel {
   setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
   filteredPools: GAMMAPool[]
+  updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
+  poolsHasMoreData: boolean
 }
 
 export type TokenListToken = {
@@ -130,7 +132,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingTokenList, setIsLoadingTokenList] = useState(false)
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
-
+  const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
 
   useEffect(() => {
@@ -173,6 +175,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     fetchAllPools(page, pageSize, poolType, sortConfig.direction.toLowerCase(), sortConfig.key.toLowerCase())
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
+          setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           const existingPools = pools
           const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
           for (const pool of poolsData.data.pools) {
@@ -297,7 +300,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         poolPage,
         setPoolPage,
         isSearchActive,
-        filteredPools
+        filteredPools,
+        updatePools,
+        poolsHasMoreData
       }}
     >
       {children}
