@@ -35,12 +35,14 @@ const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
 const fetchAllPools = async (
   page: number,
   pageSize: number,
-  poolType: 'all' | 'hyper' | 'primary' = 'all'
+  poolType: 'all' | 'hyper' | 'primary' = 'all',
+  sortConfig: 'asc' | 'desc',
+  sortKey: string
 ): Promise<GAMMAPoolsResponse | null> => {
   try {
     const response = await customClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.POOLS +
-        `/info/all?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=desc&sortBy=liquidity`
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
+        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}`
     )
     return response.data
   } catch (error) {

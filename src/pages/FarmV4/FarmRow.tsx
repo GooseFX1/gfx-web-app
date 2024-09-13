@@ -26,17 +26,17 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
     >
       <div className="flex flex-row items-center min-w-[210px]">
         <Icon
-          src={`img/crypto/${pool.mintA.logoURI}.svg`}
+          src={pool.mintA.logoURI ?? `/img/crypto/fallback.svg`}
           className="border-solid dark:border-black-2 border-white 
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={`img/crypto/${pool.mintB.logoURI}.svg`}
+          src={pool.mintB.logoURI ?? `/img/crypto/fallback.svg`}
           className="relative right-[10px] border-solid dark:border-black-2 
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
-          {pool.mintA.name} - {pool.mintB.name}
+          {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
         {isDesktop && (
           <div
@@ -59,7 +59,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {numberFormatter(pool.stats.daily.volumeTokenAUSD+pool.stats.daily.volumeTokenBUSD)}
+          {numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)}
         </div>
       )}
       {isDesktop && (
@@ -70,7 +70,9 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{numberFormatter(pool.stats.daily.feesAprUSD)}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>
+              {numberFormatter(pool.stats.daily.feesAprUSD)}%
+            </span>
           </Badge>
         </div>
       )}

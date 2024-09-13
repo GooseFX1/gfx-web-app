@@ -358,17 +358,18 @@ export const DepositWithdrawSlider: FC = () => {
 
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
-      <div className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
+      <div
+        className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
       />
-      <DialogContent className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
+      <DialogContent
+        className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
       `}
         fullScreen={true}
         placement={isMobile ? 'bottom' : 'right'}
         onInteractOutside={(e) => e.preventDefault()}
-
       >
         <GammaActionModal
           isOpen={actionType != '' && actionType != 'deposit'}
@@ -382,24 +383,26 @@ export const DepositWithdrawSlider: FC = () => {
           onActionClick={!isDeposit ? handleWithdraw : isClaim ? handleClaim : handleDeposit}
           actionType={actionType}
         >
-          <GammaActionModalContentStack options={[
-            {
-              textLeft: 'SOL Amount',
-              textRight: '≈ 0.5 SOL'
-            },
-            {
-              textLeft: 'USDC Amount',
-              textRight: '$12.0'
-            },
-            {
-              textLeft: 'Claim Reward',
-              textRight: '2500 GOFX'
-            },
-            {
-              textLeft: 'Total USDC',
-              textRight: '≈ $90.00'
-            }
-          ]} />
+          <GammaActionModalContentStack
+            options={[
+              {
+                textLeft: 'SOL Amount',
+                textRight: '≈ 0.5 SOL'
+              },
+              {
+                textLeft: 'USDC Amount',
+                textRight: '$12.0'
+              },
+              {
+                textLeft: 'Claim Reward',
+                textRight: '2500 GOFX'
+              },
+              {
+                textLeft: 'Total USDC',
+                textRight: '≈ $90.00'
+              }
+            ]}
+          />
         </GammaActionModal>
         <DialogBody className={`bg-white dark:bg-black-2 relative w-full py-2 block overflow-y-hidden`}>
           <DepositWithdrawHeader handleClose={handleClose} />
@@ -412,7 +415,8 @@ export const DepositWithdrawSlider: FC = () => {
             />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
-            <TokenRow token={selectedCard?.sourceToken} balance={userSourceTokenBal} />
+            {console.log("selectedCard",selectedCard)}
+            <TokenRow token={selectedCard?.mintA} balance={userSourceTokenBal} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, true)}
@@ -423,7 +427,7 @@ export const DepositWithdrawSlider: FC = () => {
               userSourceTokenBal={userSourceTokenBal}
               sourceToken={true}
             />
-            <TokenRow token={selectedCard?.targetToken} balance={userTargetTokenBal} />
+            <TokenRow token={selectedCard?.mintB} balance={userTargetTokenBal} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, false)}

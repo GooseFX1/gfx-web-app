@@ -14,7 +14,7 @@ const FarmCard: FC<{
   const {base58PublicKey} = useWalletBalance()
   // TODO: implement to check if deposited in pool
   const hasDeposit = false;
-  console.log(pool)
+
   return (
     <div
       className={cn(`h-[207px] w-full border 
