@@ -262,11 +262,19 @@ function TokenSelectionInput({
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   
-  const loadImage = (symbol: string) => {
+  const loadUriImage = (uri: string): boolean => {
     const image = new Image()
-    let imageUrl = `/img/crypto/${symbol}.svg`
-    image.src = imageUrl
-    if (image.width === 0) imageUrl = '/img/assets/fallback-token.svg'
+    image.src = uri
+    if (image.width === 0) return false
+    else return true
+  }
+
+  const loadBackUpImage = (symbol: string): string => {
+    const image = new Image()
+    image.src = `/img/crypto/${symbol}.svg`
+    let imageUrl: string
+    if (image.width === 0) imageUrl = `/img/assets/fallback-token-${mode}.svg`
+    else imageUrl = `/img/crypto/${symbol}.svg`
     return imageUrl
   }
 
@@ -283,7 +291,7 @@ function TokenSelectionInput({
               iconLeft={
                 token ? (
                   <Icon
-                    src={token.logoURI ? token.logoURI : loadImage(token.symbol)}
+                    src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol)}
                     size={'sm'}
                   />
                 ) : null
@@ -327,7 +335,7 @@ function TokenSelectionInput({
                       key={item?.symbol}
                     >
                       <Icon
-                        src={item?.logoURI ? item?.logoURI : loadImage(item?.symbol)}
+                        src={loadUriImage(item?.logoURI) ? item?.logoURI : loadBackUpImage(item?.symbol)}
                         size={'sm'}
                       />
                       <span>{item?.symbol}</span>
