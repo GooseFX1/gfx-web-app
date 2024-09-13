@@ -132,7 +132,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolPage, setPoolPage] = useState(1)
 
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
-  console.log(sortConfig)
 
   useEffect(() => {
     // first render only
