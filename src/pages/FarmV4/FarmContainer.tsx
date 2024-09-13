@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useMemo, useLayoutEffect } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { POOL_TYPE } from './constants'
+import { POOL_TYPE, GAMMA_SORT_CONFIG } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import {
   Button,
@@ -35,7 +35,6 @@ export const FarmContainer: FC = () => {
   const breakpoint = useBreakPoint()
   const { userCache, updateUserCache } = useConnectionConfig()
   const {
-    GAMMA_SORT_CONFIG,
     currentPoolType,
     openDepositWithdrawSlider,
     setCurrentPoolType,

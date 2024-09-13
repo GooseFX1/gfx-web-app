@@ -41,12 +41,12 @@ const SwapNow: FC = (): ReactElement => {
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>
                 <Icon
-                  src={`img/crypto/${selectedCard.targetToken}.svg`}
+                  src={selectedCard?.mintB.logoURI ?? `/img/crypto/fallback.svg`}
                   size="sm"
                   className={'border-solid border-white border-1 rounded-full mr-1'}
                 />
                 Swap
-                <span className={'font-bold mx-1'}>{selectedCard?.targetToken}</span>
+                <span className={'font-bold mx-1'}>{selectedCard?.mintB.symbol}</span>
                 Now!
               </span>
             ) : (

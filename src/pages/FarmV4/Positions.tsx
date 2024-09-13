@@ -1,6 +1,6 @@
 /* eslint-disable */
-import { FC, useState, useMemo } from "react"
-import { Container, Button, Icon } from "gfx-component-lib"
+import { FC, useMemo, useState } from 'react'
+import { Button, Container, Icon } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useDarkMode, useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
@@ -19,8 +19,8 @@ const Positions: FC = () => {
             searchTokens
                 ? pools.filter(
                     (token) =>
-                        token?.sourceToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
-                        token?.targetToken?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+                        token?.mintA?.name.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase()) ||
+                        token?.mintB?.name.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
                 )
                 : [...pools],
         [searchTokens, pools]

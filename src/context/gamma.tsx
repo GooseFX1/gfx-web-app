@@ -10,7 +10,16 @@ import {
   useMemo,
   useState
 } from 'react'
-import { fetchAggregateStats, fetchGAMMAConfig, fetchLpPositions, fetchPortfolioStats, fetchUser } from '../api/gamma'
+import {
+  fetchAggregateStats,
+  fetchGAMMAConfig,
+  fetchLpPositions,
+  fetchPortfolioStats,
+  fetchUser,
+  fetchAllPools,
+  fetchTokenList,
+  sortAndFilterPools
+} from '../api/gamma'
 import {
   GAMMAConfig,
   GAMMAListTokenResponse,
@@ -25,6 +34,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
   GAMMA_SORT_CONFIG,
+  GAMMA_SORT_CONFIG_MAP,
   ModeOfOperation,
   Pool,
   POOL_LIST_PAGE_SIZE,
@@ -34,8 +44,8 @@ import {
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
-import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
@@ -43,7 +53,6 @@ interface GAMMADataModel {
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
   lpPositions: UserPortfolioLPPosition[]
-  GAMMA_SORT_CONFIG: { id: string; name: string }[]
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -72,11 +81,14 @@ interface GAMMADataModel {
   currentSort: string
   setCurrentSort: Dispatch<SetStateAction<string>>
   showDeposited: boolean
-  setShowDeposited:  Dispatch<SetStateAction<boolean>>
+  setShowDeposited: Dispatch<SetStateAction<boolean>>
   poolPage: number
   isLoadingPools: boolean
   setPoolPage: Dispatch<SetStateAction<number>>
+  isSearchActive: boolean
+  filteredPools: GAMMAPool[]
 }
+
 export type TokenListToken = {
   address: string
   name: string
@@ -119,26 +131,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoadingPools, setIsLoadingPools] = useBoolean(false)
   const [poolPage, setPoolPage] = useState(1)
 
+  const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
+
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
-      setIsLoadingTokenList(true)
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+    }
+    if (pools.length == 0) {
+      updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type)
     }
   }, [])
 
-  const fetchTokenList = async (page: number, pageSize: number) => {
-    setIsLoadingTokenList(true)
-    return fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.TOKEN_LIST}?pageSize=${pageSize}&page=${page}`)
-      .then(async (res) => res.json())
-      .catch((e) => {
-        console.log('Error fetching token list', e)
-        return null
-      })
-      .finally(() => setIsLoadingTokenList(false))
-  }
   const updateTokenList = async (page: number, pageSize: number) => {
+    setIsLoadingTokenList(true)
     const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
+    setIsLoadingTokenList(false)
+    console.log(response)
     if (!response || !response.success) {
       return
     }
@@ -155,31 +164,36 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     console.log({ currentTokenList })
     setTokenList([...currentTokenList])
   }
-  const fetchPools = async (page: number, pageSize: number, poolType:'all'|'hyper'|'primary' = 'primary') => (
-     await fetch(
-      `${GAMMA_API_BASE}
-      ${GAMMA_ENDPOINTS_V1.POOLS}
-      ?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=desc&sortBy=liquidity`
-    ).then(async (res) => res.json()).catch((e)=>{
-      console.error('Error fetching pools:', e)
-      return null
-    }))
 
-  const updatePools = (page: number, pageSize: number, poolType: Pool['type'] |'all' = 'all') => {
+  const updatePools = (page: number, pageSize: number, poolType: Pool['type'] | 'all' = 'all') => {
     if (poolType === 'migrate') {
       return
     }
     setIsLoadingPools.on()
-    fetchPools(page,pageSize,poolType).then((poolsData: GAMMAPoolsResponse) => {
-      if (poolsData && poolsData.success) setPools(poolsData.data.pools)
-    }).finally(() => setIsLoadingPools.off())
+    fetchAllPools(page, pageSize, poolType, sortConfig.direction.toLowerCase(), sortConfig.key.toLowerCase())
+      .then((poolsData: GAMMAPoolsResponse) => {
+        if (poolsData && poolsData.success) {
+          const existingPools = pools
+          const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
+          for (const pool of poolsData.data.pools) {
+            if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
+              continue
+            }
+            hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
+            existingPools.push(pool)
+          }
+          setPools([...existingPools])
+        }
+      })
+      .finally(() => setIsLoadingPools.off())
   }
   useLayoutEffect(() => {
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
+
   useLayoutEffect(() => {
-    updatePools(poolPage, TOKEN_LIST_PAGE_SIZE, currentPoolType.type)
-  }, [poolPage, currentPoolType])
+    updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
+  }, [poolPage, currentPoolType, sortConfig])
 
   useEffect(() => {
     fetchGAMMAConfig().then((config) => {
@@ -217,7 +231,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [fetchLpPositions, user])
 
-  //TODO: remove this check (Object.keys(selectedCard)?.length > 0 
+  //TODO: remove this check (Object.keys(selectedCard)?.length > 0
   //& make sure it's there at contract level)
 
   useEffect(() => {
@@ -234,57 +248,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  useEffect(
-    () => {      
-      const filterPools = (p) =>
-        p
-          ?.filter((item) => item?.type === currentPoolType?.name)
-          ?.filter((curPool) => {
-            const matchesSearch =
-              !searchTokens ||
-              curPool?.sourceToken?.toLowerCase()?.includes(searchTokens?.toLowerCase()) ||
-              curPool?.targetToken?.toLowerCase()?.includes(searchTokens?.toLowerCase())
-            const matchesCreated = !showCreatedPools || curPool.isOwner === true
-            return matchesSearch && matchesCreated
-          })
-
-      const sortPools = (filteredPools) => {
-        const sort = GAMMA_SORT_CONFIG.find((config) => config.id === currentSort)
-        if (!sort) return filteredPools
-        return filteredPools.sort((a, b) => {
-          switch (sort.name) {
-            case GAMMA_SORT_CONFIG[0].name:
-              return b.liquidity - a.liquidity
-            case GAMMA_SORT_CONFIG[1].name:
-              return a.liquidity - b.liquidity
-            case GAMMA_SORT_CONFIG[2].name:
-              return b.volume - a.volume
-            case GAMMA_SORT_CONFIG[3].name:
-              return a.volume - b.volume
-            case GAMMA_SORT_CONFIG[4].name:
-              return b.fees - a.fees
-            case GAMMA_SORT_CONFIG[5].name:
-              return a.fees - b.fees
-            case GAMMA_SORT_CONFIG[6].name:
-              return b.apr - a.apr
-            case GAMMA_SORT_CONFIG[7].name:
-              return a.apr - b.apr
-            default:
-              return 0
-          }
-        })
-      }
-
-      if (pools !== null) {
-        // should be replaced by api call with query params sort filter
-        fetchPools(1, POOL_LIST_PAGE_SIZE).then((sortFilterData) => {
-          if (sortFilterData) setPools(sortPools(filterPools(sortFilterData)))
-        })
-      }
-    },
-    [searchTokens, showCreatedPools, currentSort, currentPoolType, currentPoolType]
+  const filteredPools = useMemo(
+    () => sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig),
+    [pools, searchTokens, sortConfig, currentPoolType]
   )
-  
+
+  const isSearchActive = searchTokens.trim().length > 0
+
   return (
     <GAMMAContext.Provider
       value={{
@@ -294,7 +264,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         user,
         portfolioStats,
         lpPositions,
-        GAMMA_SORT_CONFIG,
         slippage,
         setSlippage,
         isCustomSlippage,
@@ -326,7 +295,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setShowDeposited,
         isLoadingPools,
         poolPage,
-        setPoolPage
+        setPoolPage,
+        isSearchActive,
+        filteredPools
       }}
     >
       {children}

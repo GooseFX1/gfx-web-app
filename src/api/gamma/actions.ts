@@ -1,10 +1,13 @@
-// import apiClient from '../index'
+import { customClient } from '../index'
+import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
   GAMMAProtocolStats,
+  GAMMAPoolsResponse,
   GAMMAUser,
   UserPortfolioLPPosition,
-  UserPortfolioStats
+  UserPortfolioStats,
+  GAMMAListTokenResponse
 } from '../../types/gamma'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
@@ -29,16 +32,24 @@ const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
   }
 }
 
-// const fetchPools = async (): Promise<any[] | null> => {
-//   try {
-//     // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.POOLS)
-//     // return response.data
-//     return GAMMA_TOKENS
-//   } catch (error) {
-//     console.error('Error fetching pools:', error)
-//     return null
-//   }
-// }
+const fetchAllPools = async (
+  page: number,
+  pageSize: number,
+  poolType: 'all' | 'hyper' | 'primary' = 'all',
+  sortConfig: 'asc' | 'desc',
+  sortKey: string
+): Promise<GAMMAPoolsResponse | null> => {
+  try {
+    const response = await customClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
+        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}`
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching gamma pools:', error)
+    return null
+  }
+}
 
 const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
   console.log(publicKey)
@@ -76,4 +87,24 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
   }
 }
 
-export { fetchGAMMAConfig, fetchAggregateStats, fetchUser, fetchPortfolioStats, fetchLpPositions }
+const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAListTokenResponse | null> => {
+  try {
+    const response = await customClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}`
+    )    
+    return await response.data
+  } catch (error) {
+    console.log('Error fetching token list', error)
+    return null
+  }
+}
+
+export {
+  fetchGAMMAConfig,
+  fetchAggregateStats,
+  fetchUser,
+  fetchPortfolioStats,
+  fetchLpPositions,
+  fetchAllPools,
+  fetchTokenList
+}

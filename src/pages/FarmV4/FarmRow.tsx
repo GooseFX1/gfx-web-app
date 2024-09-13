@@ -1,12 +1,15 @@
 import { FC } from 'react'
-import { cn, Icon, Badge } from 'gfx-component-lib'
+import { Badge, cn, Icon } from 'gfx-component-lib'
 import { useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
+import { GAMMAPool } from '@/types/gamma'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import { numberFormatter } from '@/utils'
 
-const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element => {
+const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
-
+  const { base58PublicKey } = useWalletBalance()
   return (
     <div
       className={cn(
@@ -17,23 +20,23 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
       )}
       key={key}
       onClick={() => {
-        setSelectedCard(token)
+        setSelectedCard(pool)
         setOpenDepositWithdrawSlider(true)
       }}
     >
       <div className="flex flex-row items-center min-w-[210px]">
         <Icon
-          src={`img/crypto/${token?.sourceToken}.svg`}
+          src={pool.mintA.logoURI ?? `/img/crypto/fallback.svg`}
           className="border-solid dark:border-black-2 border-white 
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={`img/crypto/${token?.targetToken}.svg`}
+          src={pool.mintB.logoURI ?? `/img/crypto/fallback.svg`}
           className="relative right-[10px] border-solid dark:border-black-2 
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.sourceToken} - {token.targetToken}
+          {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
         {isDesktop && (
           <div
@@ -44,30 +47,32 @@ const FarmRow: FC<{ token: any, key: string }> = ({ token, key }): JSX.Element =
             0.2%
           </div>
         )}
-        {token?.isOwner && (
+        {pool.config.fundOwner == base58PublicKey && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner
           </Badge>
         )}
-        <Icon src={`img/assets/farm_${token?.type}.svg`} size="sm" className="ml-1.5" />
+        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {token.liquidity}
+        {pool.tvl}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.volume}
+          {numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)}
         </div>
       )}
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {token.fees}
+          {numberFormatter(pool.stats.daily.tradeFeesUSD)}
         </div>
       )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-            <span className={'font-poppins font-semibold my-0.5'}>{token?.apr}%</span>
+            <span className={'font-poppins font-semibold my-0.5'}>
+              {numberFormatter(pool.stats.daily.feesAprUSD)}%
+            </span>
           </Badge>
         </div>
       )}

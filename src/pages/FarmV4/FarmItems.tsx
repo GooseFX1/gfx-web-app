@@ -25,7 +25,7 @@ const FarmItems: FC<{
   numberOfTokensDeposited: number
   isCreatedActive: boolean
 }> = ({ numberOfTokensDeposited, isCreatedActive }) => {
-  const { pools, currentPoolType, searchTokens, showDeposited } = useGamma()
+  const { filteredPools, currentPoolType, searchTokens, showDeposited } = useGamma()
   const { isProMode } = useRewardToggle()
 
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
@@ -76,9 +76,10 @@ const FarmItems: FC<{
     '/img/crypto/raydium.svg',
     '/img/crypto/meteora.svg'
   ]
+
   return (
     <div>
-      {currentPoolType.name === POOL_TYPE?.migrate?.name ? (
+      {currentPoolType.name === POOL_TYPE.migrate.name ? (
         <FarmItemsMigrate
           openPositionsAcrossPrograms={[
             {
@@ -97,19 +98,19 @@ const FarmItems: FC<{
             }
           ]}
         />
-      ) : (numberOfTokensDeposited === 0 && showDeposited) || pools.length === 0 ? (
+      ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
-        <FarmItemsPro />
-      ) : currentPoolType.name != POOL_TYPE?.migrate?.name ? (
-        <FarmItemsLite
-          openPositionImages={openPositionImages}
-          openPositionsAcrossPrograms={openPositionsAcrossPrograms}
+        <FarmItemsPro
+          poolsToRender={filteredPools}
         />
-      ) : (
-        <></>
-      )}
-      {(numberOfTokensDeposited === 0 && showDeposited) || pools?.length === 0 ? (
+      ) : <FarmItemsLite
+        poolsToRender={filteredPools}
+        openPositionImages={openPositionImages}
+        openPositionsAcrossPrograms={openPositionsAcrossPrograms}
+      />
+      }
+      {(numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <></>
       ) : (
         <div className={'w-full flex items-center mt-4'}>

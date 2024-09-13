@@ -470,16 +470,33 @@ export const ALLOWED_WALLETS = [
   'SmWd75HVb9tESGmvyAe7c1jGAB51SNtnQYMvA9Zs1X1',
   '3UkKMebXhKsGavP62sMW6ERD3zXHCFiL6RcwwnpK6ggf'
 ]
+// current supported sort oreder
+// 'liquidity',
+//   'volume24h',
+//   'volume7d',
+//   'fee24h',
+//   'fee7d',
+//   'apr24h',
+//   'apr7d'
 export const GAMMA_SORT_CONFIG = [
-  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC' },
-  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC' },
-  { id: '3', name: 'Volume: High to Low', direction: 'DESC' },
-  { id: '4', name: 'Volume: Low to High', direction: 'ASC' },
-  { id: '5', name: 'Fees: High to Low', direction: 'DESC' },
-  { id: '6', name: 'Fees: Low to High', direction: 'ASC' },
-  { id: '7', name: 'APR: High to Low', direction: 'DESC' },
-  { id: '8', name: 'APR: Low to High', direction: 'ASC' }
+  { id: '1', name: 'Liquidity: High to Low', direction: 'DESC', key: 'liquidity' },
+  { id: '2', name: 'Liquidity: Low to High', direction: 'ASC', key: 'liquidity' },
+  { id: '3', name: 'Volume: High to Low', direction: 'DESC', key: 'volume24h' },
+  { id: '4', name: 'Volume: Low to High', direction: 'ASC', key: 'volume24h' },
+  { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fees24h' },
+  { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fees24h' },
+  { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr24h' },
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' }
 ]
+export const GAMMA_SORT_CONFIG_MAP = new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
-export const POOL_LIST_PAGE_SIZE = 10
+export const POOL_LIST_PAGE_SIZE = 200
+
+export const GAMMA_PRIMARY_POOL_TYPES = {
+  'So11111111111111111111111111111111111111112': 'SOL',
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': 'USDC',
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB': 'USDT',
+  'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So': 'MSOL',
+  'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn': 'JITOSOL'
+}

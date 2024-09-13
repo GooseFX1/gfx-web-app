@@ -13,12 +13,12 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
     >
       <div className="flex relative w-[80px]">
         <Icon
-          src={`img/crypto/${selectedCard?.sourceToken}.svg`}
+          src={selectedCard?.mintA.logoURI ?? `/img/crypto/fallback.svg`}
           size="lg"
           className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
         />
         <Icon
-          src={`img/crypto/${selectedCard?.targetToken}.svg`}
+          src={selectedCard?.mintB.logoURI ?? `/img/crypto/fallback.svg`}
           size="lg"
           className={
             'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -26,7 +26,7 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
         />
       </div>
       <div className="font-poppins font-semibold text-average text-black-4 dark:text-grey-8 ">
-        {selectedCard?.sourceToken + ' - ' + selectedCard?.targetToken}
+        {selectedCard?.mintA.symbol + ' - ' + selectedCard?.mintB.symbol}
       </div>
       <Button
         onClick={handleClose}

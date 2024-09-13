@@ -7,6 +7,8 @@ interface GAMMAConfig {
   tradeFeeRate: number
   fundFeeRate: number
   createPoolFee: string
+  protocolOwner: string
+  fundOwner: string
 }
 
 interface GAMMAProtocolStats {
@@ -45,7 +47,7 @@ interface TransferFeeDataBaseType {
 }
 
 type GAMMAToken = {
-  chainId: number
+  chainId: string
   address: string
   programId: string
   logoURI: string
@@ -94,24 +96,25 @@ interface GAMMAPool {
   feeRate: number
   openTime: string
   tvl: number
-  day: GAMMAPoolStats
-  week: GAMMAPoolStats
-  month: GAMMAPoolStats
+  stats: {
+    daily: GAMMAPoolStats
+    weekly: GAMMAPoolStats
+    monthly: GAMMAPoolStats
+  }
   lpMint: GAMMAToken
   lpPrice: number
   lpAmount: number
   config: GAMMAConfig
+  pool_type: 'primary' | 'hyper'
 }
 
 interface GAMMAPoolStats {
-  volume: number
-  volumeQuote: number
-  volumeFee: number
-  apr: number
-  feeApr: number
-  priceMin: number
-  priceMax: number
-  rewardApr: number[]
+  range: '24H' | '7D' | '30D'
+  tradeFeesUSD: number
+  volumeTokenAUSD: number
+  volumeTokenBUSD: number
+  feesAprUSD: number
+  volumeAprUSD: number
 }
 
 // user model
