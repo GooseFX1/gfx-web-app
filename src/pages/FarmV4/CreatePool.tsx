@@ -20,7 +20,7 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
-import { useGamma, usePriceFeedFarm } from '@/context'
+import { useAccounts, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
 
 export const CreatePool: FC<{
@@ -43,6 +43,9 @@ export const CreatePool: FC<{
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { setSendingTransaction } = useGamma()
+  const { getUIAmount } = useAccounts()
+  const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
+  const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
 
   const settings = {
     dots: false,
@@ -94,9 +97,19 @@ export const CreatePool: FC<{
     if (currentSlide == 1) {
       setTokenA(null)
       setTokenB(null)
+      setAmountTokenA('')
+      setAmountTokenB('')
       setPoolExists.off()
     }
   }
+
+  const checkButtonStatus = useMemo(() => {
+    if(currentSlide !== 1) return false
+    else {
+      if(!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
+      if((+amountTokenA && +amountTokenB) && 
+        (+amountTokenA > +walletTokenA) && (+amountTokenB > +walletTokenB)) return true
+    }}, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB]) 
 
   return (
     <Dialog onOpenChange={setIsCreatePool} open={isCreatePool}>
@@ -131,6 +144,8 @@ export const CreatePool: FC<{
                 setPoolExists={setPoolExists.set}
                 initialPrice={initialPrice}
                 setInitialPrice={setInitialPrice}
+                walletTokenA={walletTokenA}
+                walletTokenB={walletTokenB}
               />
             </div>
             <div className="slide">
@@ -153,8 +168,7 @@ export const CreatePool: FC<{
               {currentSlide > 0 && (
                 <Button
                   variant={'link'}
-                  className={`prev-btn font-bold dark:text-white text-blue-1 text-regular 
-                                        cursor-pointer `}
+                  className={`prev-btn font-bold dark:text-white text-blue-1 text-regular cursor-pointer `}
                   colorScheme={'white'}
                   disabled={currentSlide == 0}
                   onClick={prev}
@@ -166,7 +180,7 @@ export const CreatePool: FC<{
                 <Button
                   colorScheme={'blue'}
                   className={'w-[157px] font-bold next-btn'}
-                  disabled={currentSlide == 1 ? !tokenA || !tokenB : !amountTokenA || !amountTokenB}
+                  disabled={checkButtonStatus}
                   onClick={next}
                 >
                   {currentSlide === 1 ? 'Next' : 'Create & Deposit'}
