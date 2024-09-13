@@ -1,9 +1,10 @@
-import { useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import { Badge, Button, cn, Icon } from 'gfx-component-lib'
 import { FC, ReactElement } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPool } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
 const FarmCard: FC<{
   pool: GAMMAPool,
@@ -11,9 +12,10 @@ const FarmCard: FC<{
   className?: string
 }> = ({ pool, key, className }): ReactElement => {
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
-  const {base58PublicKey} = useWalletBalance()
+  const { base58PublicKey } = useWalletBalance()
+  const { mode } = useDarkMode()
   // TODO: implement to check if deposited in pool
-  const hasDeposit = false;
+  const hasDeposit = false
 
   return (
     <div
@@ -26,12 +28,12 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5">
         <div className="flex relative">
           <Icon
-            src={pool.mintA.logoURI ?? `/img/crypto/fallback.svg`}
+            src={loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)}
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={pool.mintB.logoURI ?? `/img/crypto/fallback.svg`}
+            src={loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)}
             size="lg"
             className={
               'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -40,19 +42,19 @@ const FarmCard: FC<{
         </div>
         {hasDeposit ?
           <Button>
-            <Icon src={'/img/assets/plus.svg'}/>
+            <Icon src={'/img/assets/plus.svg'} />
           </Button>
           :
           <Button
-          className="cursor-pointer bg-blue-1 text-white h-[30px]"
-          variant={'secondary'}
-          onClick={() => {
-            setSelectedCard(pool)
-            setOpenDepositWithdrawSlider(true)
-          }}
-        >
-          Deposit
-        </Button>}
+            className="cursor-pointer bg-blue-1 text-white h-[30px]"
+            variant={'secondary'}
+            onClick={() => {
+              setSelectedCard(pool)
+              setOpenDepositWithdrawSlider(true)
+            }}
+          >
+            Deposit
+          </Button>}
       </div>
       <div
         className="flex flex-row items-center text-average font-semibold font-poppins 

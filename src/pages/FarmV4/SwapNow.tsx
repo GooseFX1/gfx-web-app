@@ -1,12 +1,13 @@
 import { FC, ReactElement, useCallback } from 'react'
-import { useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import { Button, Icon } from 'gfx-component-lib'
-import useBreakPoint from "../../hooks/useBreakPoint";
+import useBreakPoint from '../../hooks/useBreakPoint'
+import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
 const SwapNow: FC = (): ReactElement => {
   const { selectedCard } = useGamma()
   const { isMobile } = useBreakPoint()
-
+  const {mode} = useDarkMode()
   const handleInitSwap = useCallback(() => {
     if (isMobile) {
       window.open('https://jup.ag/swap', '_blank')
@@ -41,7 +42,8 @@ const SwapNow: FC = (): ReactElement => {
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>
                 <Icon
-                  src={selectedCard?.mintB.logoURI ?? `/img/crypto/fallback.svg`}
+                  src={loadUriImage(selectedCard.mintB.logoURI) ?
+                    selectedCard.mintB.logoURI : loadBackUpImage(selectedCard.mintB.symbol, mode)}
                   size="sm"
                   className={'border-solid border-white border-1 rounded-full mr-1'}
                 />

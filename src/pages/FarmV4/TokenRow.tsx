@@ -1,9 +1,10 @@
 import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode } from '@/context'
-import { Icon, Badge, cn } from 'gfx-component-lib'
+import { Badge, cn, Icon } from 'gfx-component-lib'
 import { truncateAddress } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { GAMMAToken } from '@/types'
+import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { GAMMAToken } from '@/types/gamma'
 
 export const TokenRow: FC<{ token: GAMMAToken; balance: number }> = ({ token, balance }): ReactElement => {
   const { mode } = useDarkMode()
@@ -22,7 +23,8 @@ export const TokenRow: FC<{ token: GAMMAToken; balance: number }> = ({ token, ba
     <div className="flex flex-row justify-between items-center mx-2.5">
       <div className="flex flex-row">
         <Icon
-          src={token.logoURI ?? `/img/crypto/fallback.svg`}
+          src={loadUriImage(token.logoURI) ?
+            token.logoURI : loadBackUpImage(token.symbol, mode)}
           size="sm"
           className={`mr-2 border border-solid rounded-circle 
                 dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
