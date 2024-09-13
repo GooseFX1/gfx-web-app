@@ -26,12 +26,12 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5">
         <div className="flex relative">
           <Icon
-            src={pool.mintA.logoURI ?? `img/crypto/fallback.svg`}
+            src={pool.mintA.logoURI ?? `/img/crypto/fallback.svg`}
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={pool.mintA.logoURI ?? `img/crypto/fallback.svg`}
+            src={pool.mintB.logoURI ?? `/img/crypto/fallback.svg`}
             size="lg"
             className={
               'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -58,7 +58,7 @@ const FarmCard: FC<{
         className="flex flex-row items-center text-average font-semibold font-poppins 
             dark:text-grey-8 text-black-4 mb-2"
       >
-        {`${pool.mintA.name} - ${pool.mintB.name}`}
+        {`${pool.mintA.symbol} - ${pool.mintB.symbol}`}
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.config.fundOwner == base58PublicKey && (
           <Badge size="sm" variant="default">
