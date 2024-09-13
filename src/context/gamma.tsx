@@ -88,7 +88,8 @@ interface GAMMADataModel {
   isSearchActive: boolean
   filteredPools: GAMMAPool[]
   updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
-  poolsHasMoreData: boolean
+  poolsHasMoreData: boolean,
+  sortConfig: { id: string, name: string, direction: string, key: string }
 }
 
 export type TokenListToken = {
@@ -302,7 +303,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isSearchActive,
         filteredPools,
         updatePools,
-        poolsHasMoreData
+        poolsHasMoreData,
+        sortConfig
       }}
     >
       {children}

@@ -1,34 +1,16 @@
-import { FC, useCallback, useEffect, useMemo, useLayoutEffect } from 'react'
+import { FC, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useConnectionConfig, useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { POOL_TYPE, GAMMA_SORT_CONFIG } from './constants'
+import { GAMMA_SORT_CONFIG, POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogOverlay,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuItemIndicator,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-  Icon,
-  RadioGroup,
-  RadioGroupItemAsIndicator,
-  Switch,
-  Badge,
-  cn
-} from 'gfx-component-lib'
+import { Badge, Button, cn, Dialog, DialogBody, DialogContent, DialogOverlay, Icon, Switch } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import SearchBar from '@/components/common/SearchBar'
 import useBoolean from '@/hooks/useBoolean'
 import FarmItems from './FarmItems'
 import Portfolio from './Portfolio'
 import useBreakPoint from '../../hooks/useBreakPoint'
+import FarmSort from '@/pages/FarmV4/FarmSort'
 
 export const FarmContainer: FC = () => {
   const { mode } = useDarkMode()
@@ -95,7 +77,7 @@ export const FarmContainer: FC = () => {
       return !prev
     })
   }
-
+  
   const handleFilterByCreated = useCallback(
     (e: any) => {
       console.log(e)
@@ -103,7 +85,6 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools]
   )
-
   return (
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
@@ -215,56 +196,7 @@ export const FarmContainer: FC = () => {
                     </Dialog>
                   </div>
                 ) : (
-                  <DropdownMenu open={isSortFilterOpen} onOpenChange={setIsSortFilterOpen.set}>
-                    <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
-                      <Button className="p-0 !h-[35px] !w-[35px] mx-3" variant={'ghost'}>
-                        <Icon
-                          src={`img/assets/farm_filter_${mode}.svg`}
-                          size={'md'}
-                          className={'!max-h-[35px] !max-w-[35px] !h-[35px] !w-[35px]'}
-                        />
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent portal={false} align={'end'}>
-                      <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
-                      <div className="flex items-center justify-between ">
-                        <span
-                          className="h-full text-regular text-left dark:text-grey-2 text-grey-1 
-                        font-semibold mr-3"
-                        >
-                          Show created pools
-                        </span>
-                        <Switch
-                          variant={'default'}
-                          size={'sm'}
-                          colorScheme={'primary'}
-                          checked={showCreatedPools}
-                          onClick={handleFilterByCreated}
-                        />
-                      </div>
-                      <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
-
-                      <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={setCurrentSort}>
-                        <div className={'grid grid-cols-1 gap-1.5 items-center'}>
-                          {GAMMA_SORT_CONFIG.map((s) => (
-                            <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
-                              <DropdownMenuRadioItem value={s.id}>
-                                <DropdownMenuItemIndicator asChild forceMount className={'hidden'}>
-                                  <RadioGroup value={currentSort}>
-                                    <RadioGroupItemAsIndicator value={s.id} />
-                                  </RadioGroup>
-                                </DropdownMenuItemIndicator>
-                                <div className={'w-full text-center'}>
-                                  <p className={'text-b3 px-2 font-bold'}>{s.name}</p>
-                                </div>
-                              </DropdownMenuRadioItem>
-                            </DropdownMenuItem>
-                          ))}
-                        </div>
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <FarmSort isOpen={isSortFilterOpen} setIsOpen={setIsSortFilterOpen.set} />
                 )}
 
                 <div className={'flex flex-row ml-auto gap-3.75'}>

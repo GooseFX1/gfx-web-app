@@ -46,7 +46,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
             font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
             border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] w-10 h-[25px] px-1 ml-2"
           >
-            0.2%
+            {numberFormatter(0.2)}%
           </div>
         )}
         {pool.config.fundOwner == base58PublicKey && (
@@ -57,7 +57,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {pool.tvl}
+        {numberFormatter(pool.tvl)}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">

@@ -486,7 +486,7 @@ export const GAMMA_SORT_CONFIG = [
   { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fees24h' },
   { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fees24h' },
   { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr24h' },
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' }
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' },
 ]
 export const GAMMA_SORT_CONFIG_MAP = new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]

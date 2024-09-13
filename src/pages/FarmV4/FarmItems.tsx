@@ -8,11 +8,11 @@ import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
 import FarmItemsPro from '@/pages/FarmV4/FarmItemsPro'
 
-const noPoolsFound = {
+export const noPoolsFound = {
   title: 'Oops, no pools found',
   subText: 'Don’t worry, there are more pools coming soon...'
 }
-const noPoolsDeposited = {
+export const noPoolsDeposited = {
   title: 'Oops, no pools deposited',
   subText: 'Don’t worry, explore our pools and start earning!'
 }
