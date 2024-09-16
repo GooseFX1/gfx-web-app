@@ -1,15 +1,17 @@
 import { FC } from 'react'
 import { Badge, cn, Icon } from 'gfx-component-lib'
-import { useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPool } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { numberFormatter } from '@/utils'
+import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
 const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
+  const {mode} = useDarkMode()
   return (
     <div
       className={cn(
@@ -26,13 +28,13 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
     >
       <div className="flex flex-row items-center min-w-[210px]">
         <Icon
-          src={pool.mintA.logoURI ?? `/img/crypto/fallback.svg`}
-          className="border-solid dark:border-black-2 border-white 
+          src={loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)}
+          className="border-solid dark:border-black-2 border-white
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={pool.mintB.logoURI ?? `/img/crypto/fallback.svg`}
-          className="relative right-[10px] border-solid dark:border-black-2 
+          src={loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)}
+          className="relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
@@ -44,7 +46,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
             font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
             border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] w-10 h-[25px] px-1 ml-2"
           >
-            0.2%
+            {numberFormatter(0.2)}%
           </div>
         )}
         {pool.config.fundOwner == base58PublicKey && (
@@ -55,7 +57,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {pool.tvl}
+        {numberFormatter(pool.tvl)}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">

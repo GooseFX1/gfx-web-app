@@ -1,11 +1,12 @@
-import { useGamma } from '@/context'
+import { useDarkMode, useGamma } from '@/context'
 import { FC } from 'react'
 import { Button, DialogTitle, Icon } from 'gfx-component-lib'
 import RewardsClose from '@/assets/rewards_close.svg?react'
+import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
 export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleClose }): JSX.Element => {
   const { selectedCard } = useGamma()
-
+  const {mode} = useDarkMode()
   return (
     <DialogTitle
       className="w-full h-14 flex flex-row items-center border-b 
@@ -13,12 +14,14 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
     >
       <div className="flex relative w-[80px]">
         <Icon
-          src={selectedCard?.mintA.logoURI ?? `/img/crypto/fallback.svg`}
+          src={loadUriImage(selectedCard.mintA.logoURI) ?
+            selectedCard.mintA.logoURI : loadBackUpImage(selectedCard.mintA.symbol, mode)}
           size="lg"
           className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
         />
         <Icon
-          src={selectedCard?.mintB.logoURI ?? `/img/crypto/fallback.svg`}
+          src={loadUriImage(selectedCard.mintB.logoURI) ?
+            selectedCard.mintB.logoURI : loadBackUpImage(selectedCard.mintB.symbol, mode)}
           size="lg"
           className={
             'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'

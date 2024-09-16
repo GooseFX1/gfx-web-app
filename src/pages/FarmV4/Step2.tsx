@@ -245,7 +245,21 @@ const Step2: FC<{
       </>
     )
   }
+export const loadUriImage = (uri: string): boolean => {
+  const image = new Image()
+  image.src = uri
+  if (image.width === 0) return false
+  else return true
+}
 
+export const loadBackUpImage = (symbol: string, mode: string): string => {
+  const image = new Image()
+  image.src = `/img/crypto/${symbol}.svg`
+  let imageUrl: string
+  if (image.width === 0) imageUrl = `/img/assets/fallback-token-${mode}.svg`
+  else imageUrl = `/img/crypto/${symbol}.svg`
+  return imageUrl
+}
 function TokenSelectionInput({
   token,
   handleChange,
@@ -261,22 +275,6 @@ function TokenSelectionInput({
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
-  
-  const loadUriImage = (uri: string): boolean => {
-    const image = new Image()
-    image.src = uri
-    if (image.width === 0) return false
-    else return true
-  }
-
-  const loadBackUpImage = (symbol: string): string => {
-    const image = new Image()
-    image.src = `/img/crypto/${symbol}.svg`
-    let imageUrl: string
-    if (image.width === 0) imageUrl = `/img/assets/fallback-token-${mode}.svg`
-    else imageUrl = `/img/crypto/${symbol}.svg`
-    return imageUrl
-  }
 
   return <InputGroup
     leftItem={
@@ -291,7 +289,7 @@ function TokenSelectionInput({
               iconLeft={
                 token ? (
                   <Icon
-                    src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol)}
+                    src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol, mode)}
                     size={'sm'}
                   />
                 ) : null
@@ -335,7 +333,7 @@ function TokenSelectionInput({
                       key={item?.symbol}
                     >
                       <Icon
-                        src={loadUriImage(item?.logoURI) ? item?.logoURI : loadBackUpImage(item?.symbol)}
+                        src={loadUriImage(item?.logoURI) ? item?.logoURI : loadBackUpImage(item?.symbol, mode)}
                         size={'sm'}
                       />
                       <span>{item?.symbol}</span>
