@@ -6,19 +6,19 @@ import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 
 const FarmItemsPro: FC<{
   poolsToRender: GAMMAPool[]
-}> = ({
-        poolsToRender
-      }) =>
+}> = ({ poolsToRender }) => (
   <>
     <FarmFilter />
     <div>
       <WindowingContainer
         items={poolsToRender}
-        render={(pool: GAMMAPool, i) =>
-          <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />}
+        render={(pool: GAMMAPool, i) => (
+          <FarmRow pool={pool} key={`${pool?.mintA.name}-${pool?.mintB.name}-${i}`} />
+        )}
       />
     </div>
   </>
+)
 
 
 export default FarmItemsPro

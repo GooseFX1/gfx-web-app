@@ -16,7 +16,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
     <div
       className={cn(
         `grid grid-flow-col grid-cols-5 dark:bg-black-2 px-2.5 cursor-pointer
-      h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75 my-3.75`,
+      h-15 border border-solid dark:border-black-4 border-grey-4 bg-white rounded-tiny py-3.75`,
         isMobile && `grid-cols-2`,
         isTablet && `grid-cols-4`
       )}
