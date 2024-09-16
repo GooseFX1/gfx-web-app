@@ -8,6 +8,9 @@ type UserFarmConfig = {
 type UserGAMMAConfig = {
   hasGAMMAOnboarded: boolean
   showDepositedFilter: boolean
+  showCreatedFilter: boolean
+  docsBanner: boolean
+  currentSort: string
 }
 
 export interface USER_CONFIG_CACHE {

@@ -193,7 +193,10 @@ function newCache(): USER_CONFIG_CACHE {
     },
     gamma: {
       hasGAMMAOnboarded: false,
-      showDepositedFilter: false
+      showDepositedFilter: false,
+      showCreatedFilter: false,
+      docsBanner: true,
+      currentSort: '1'
     },
     hasSignedTC: false,
     endpointName: 'QuickNode',
