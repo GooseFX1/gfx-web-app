@@ -85,6 +85,24 @@ export const FarmContainer: FC = () => {
     },
     [showCreatedPools]
   )
+  
+  const handleSort = useCallback(
+    (id: string) => {
+      // persists current sort in local storage
+      setCurrentSort(() => {
+        updateUserCache({
+          gamma: {
+            ...userCache.gamma,
+            currentSort: id
+          }
+        })
+        // sets value to context
+        return id
+      })
+    },
+    [setCurrentSort, userCache]
+  )
+
   return (
     <div className={'flex flex-col gap-3.75'}>
       {!isPortfolio ? (
@@ -183,7 +201,7 @@ export const FarmContainer: FC = () => {
                                     name="sort"
                                     value={s.id}
                                     checked={currentSort === s.id}
-                                    onChange={() => setCurrentSort(s.id)}
+                                    onChange={() => handleSort(s.id)}
                                     className={'hidden'}
                                   />
                                   <span className="m-0 text-regular font-bold pl-2">{s.name}</span>
@@ -222,10 +240,7 @@ export const FarmContainer: FC = () => {
             </div>
           </div>
 
-          <FarmItems
-            numberOfTokensDeposited={numberOfTokensDeposited}
-            isCreatedActive={showCreatedPools}
-          />
+          <FarmItems numberOfTokensDeposited={numberOfTokensDeposited} isCreatedActive={showCreatedPools} />
         </>
       ) : (
         <Portfolio />

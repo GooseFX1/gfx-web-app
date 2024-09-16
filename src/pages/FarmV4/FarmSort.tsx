@@ -14,14 +14,16 @@ import {
   Switch
 } from 'gfx-component-lib'
 import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
-import { useDarkMode, useGamma } from '@/context'
+import { useDarkMode, useGamma, useConnectionConfig } from '@/context'
 
 function FarmSort({isOpen, setIsOpen}:{
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
 }) {
+  const { userCache, updateUserCache } = useConnectionConfig()
   const {showCreatedPools, setShowCreatedPools, currentSort, setCurrentSort} = useGamma()
   const {mode} = useDarkMode()
+  
   const handleFilterByCreated = useCallback(
     (e: any) => {
       console.log(e)
@@ -29,6 +31,24 @@ function FarmSort({isOpen, setIsOpen}:{
     },
     [showCreatedPools]
   )
+
+  const handleSort = useCallback(
+    (id: string) => {
+      // persists current sort in local storage
+      setCurrentSort(() => {
+        updateUserCache({
+          gamma: {
+            ...userCache.gamma,
+            currentSort: id
+          }
+        })
+        // sets value to context
+        return id
+      })
+    },
+    [setCurrentSort, userCache]
+  )
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
@@ -44,12 +64,12 @@ function FarmSort({isOpen, setIsOpen}:{
       <DropdownMenuContent portal={false} align={'end'}>
         <h4 className="dark:text-white text-black-4 pb-2">Filters</h4>
         <div className="flex items-center justify-between ">
-                        <span
-                          className="h-full text-regular text-left dark:text-grey-2 text-grey-1
+          <span
+            className="h-full text-regular text-left dark:text-grey-2 text-grey-1
                         font-semibold mr-3"
-                        >
-                          Show created pools
-                        </span>
+          >
+            Show created pools
+          </span>
           <Switch
             variant={'default'}
             size={'sm'}
@@ -60,7 +80,7 @@ function FarmSort({isOpen, setIsOpen}:{
         </div>
         <h4 className="dark:text-white text-black-4 py-2">Sort By</h4>
 
-        <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={setCurrentSort}>
+        <DropdownMenuRadioGroup asChild value={currentSort} onValueChange={(id) => handleSort(id)}>
           <div className={'grid grid-cols-1 gap-1.5 items-center'}>
             {GAMMA_SORT_CONFIG.map((s) => (
               <DropdownMenuItem isActive={currentSort == s.id} asChild key={s.id}>
@@ -80,7 +100,6 @@ function FarmSort({isOpen, setIsOpen}:{
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-
   )
 }
 
