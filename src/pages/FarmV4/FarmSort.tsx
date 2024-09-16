@@ -25,11 +25,19 @@ function FarmSort({isOpen, setIsOpen}:{
   const {mode} = useDarkMode()
   
   const handleFilterByCreated = useCallback(
-    (e: any) => {
-      console.log(e)
-      showCreatedPools ? setShowCreatedPools.off() : setShowCreatedPools.on()
+    () => {
+      setShowCreatedPools((prev) => {
+        updateUserCache({
+          gamma: {
+            ...userCache.gamma,
+            showCreatedFilter: !prev
+          }
+        })
+
+        return !prev
+      })
     },
-    [showCreatedPools]
+    [showCreatedPools, userCache]
   )
 
   const handleSort = useCallback(

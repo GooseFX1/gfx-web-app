@@ -79,11 +79,19 @@ export const FarmContainer: FC = () => {
   }
   
   const handleFilterByCreated = useCallback(
-    (e: any) => {
-      console.log(e)
-      showCreatedPools ? setShowCreatedPools.off() : setShowCreatedPools.on()
+    () => {
+      setShowCreatedPools((prev) => {
+        updateUserCache({
+          gamma: {
+            ...userCache.gamma,
+            showCreatedFilter: !prev
+          }
+        })
+
+        return !prev
+      })
     },
-    [showCreatedPools]
+    [showCreatedPools, userCache]
   )
   
   const handleSort = useCallback(

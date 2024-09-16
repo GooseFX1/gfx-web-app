@@ -124,7 +124,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [maxTokensReached, setMaxTokensReached] = useState(false)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
   const [searchTokens, setSearchTokens] = useState<string>('')
-  const [showCreatedPools, setShowCreatedPools] = useBoolean(userCache.gamma.showCreatedFilter)
+  const [showCreatedPools, setShowCreatedPools] = useState<boolean>(userCache.gamma.showCreatedFilter)
   const [currentSort, setCurrentSort] = useState<string>(userCache.gamma.currentSort)
   const [showDeposited, setShowDeposited] = useState<boolean>(userCache.gamma.showDepositedFilter)
   const isCustomSlippage = useMemo(() => !BASE_SLIPPAGE.includes(slippage), [slippage])
@@ -135,8 +135,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolPage, setPoolPage] = useState(1)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
-  console.log(sortConfig)
-  
 
   useEffect(() => {
     // first render only
