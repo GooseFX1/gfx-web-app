@@ -83,7 +83,7 @@ const MyPositions: FC<{ pools: GAMMAPool[] }> = ({ pools }) => {
                   />
                   <div className="font-poppins text-regular font-semibold
                                     dark:text-grey-8 text-black-4">
-                    {pool.mintA.name} - {pool.mintB.name}
+                    {pool.mintA.symbol} - {pool.mintB.symbol}
                   </div>
                 </div>
                 <div className="flex items-center justify-center text-regular
@@ -97,7 +97,7 @@ const MyPositions: FC<{ pools: GAMMAPool[] }> = ({ pools }) => {
                 </div>
                 <div className="flex items-center justify-center text-black-4
                                     text-regular font-semibold dark:text-grey-8 w-[120%]">
-                  {numberFormatter(0.61)} {pool.mintA.name} / {numberFormatter(74.55)} {pool.mintB.name}
+                  {numberFormatter(0.61)} {pool.mintA.symbol} / {numberFormatter(74.55)} {pool.mintB.symbol}
                 </div>
                 <div className="flex items-center justify-center text-black-4
                                     text-regular font-semibold dark:text-grey-8">
