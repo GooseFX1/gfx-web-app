@@ -2,7 +2,10 @@ import React, { FC, useCallback } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { useGamma, useConnectionConfig } from '@/context'
+import { 
+  useGamma, 
+  // useConnectionConfig
+} from '@/context'
 
 const FarmRowItem: FC<{
   title: string
@@ -36,25 +39,29 @@ const FarmRowItem: FC<{
   )
 }
 const FarmFilter: FC = () => {
-  const { userCache, updateUserCache } = useConnectionConfig()
+  // const { userCache, updateUserCache } = useConnectionConfig()
   const { isMobile, isTablet, isDesktop } = useBreakPoint()
   const { currentSort, setCurrentSort } = useGamma()
 
   const handleColumnSort = useCallback(
     (id: string) => {
+      console.log('fix column sort');
+      
+      return id
       // persists current sort in local storage
-      setCurrentSort(() => {
-        updateUserCache({
-          gamma: {
-            ...userCache.gamma,
-            currentSort: id
-          }
-        })
-        // sets value to context
-        return id
-      })
+      // setCurrentSort(id)
+      // setCurrentSort(() => {
+      //   updateUserCache({
+      //     gamma: {
+      //       ...userCache.gamma,
+      //       currentSort: id
+      //     }
+      //   })
+      //   // sets value to context
+      //   return id
+      // })
     },
-    [setCurrentSort, userCache]
+    [setCurrentSort]
   )
 
   return (

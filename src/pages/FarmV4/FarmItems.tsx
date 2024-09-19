@@ -113,7 +113,6 @@ const FarmItems: FC<{
           poolsToRender={filteredPools}
         />
       ) : <FarmItemsLite
-        poolsToRender={filteredPools}
         openPositionImages={openPositionImages}
         openPositionsAcrossPrograms={openPositionsAcrossPrograms}
       />

@@ -88,14 +88,17 @@ interface GAMMAPoolKeys {
 interface GAMMAPool {
   programId: string
   id: string
+  authority: string
   mintA: GAMMAToken
   mintB: GAMMAToken
   price: number
   mintAmountA: number
   mintAmountB: number
+  mintAVault: string
+  mintBVault: string
   feeRate: number
   openTime: string
-  tvl: number
+  tvl: string
   stats: {
     daily: GAMMAPoolStats
     weekly: GAMMAPoolStats
@@ -106,6 +109,8 @@ interface GAMMAPool {
   lpAmount: number
   config: GAMMAConfig
   pool_type: 'primary' | 'hyper'
+  price: string
+  poolCreator: string
 }
 
 interface GAMMAPoolStats {
@@ -159,6 +164,7 @@ type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
 type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
   tokens: TokenListToken[]
 } & GAMMAAPIPaginatedResponse>
+
 export type {
   GAMMAConfig,
   GAMMAProtocolStats,

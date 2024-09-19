@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Badge, cn, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
@@ -7,11 +7,23 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import { numberFormatter } from '@/utils'
 import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
-const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Element => {
+const FarmRow: FC<{ pool: GAMMAPool }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
-  const {mode} = useDarkMode()
+  const { mode } = useDarkMode()
+
+  const formattedTVL = useMemo(() => {
+      const liquidity = parseFloat(pool.tvl)
+      return liquidity ? numberFormatter(liquidity) : '0.00'
+    }, [pool])
+  const formattedVolume = useMemo(
+    () => numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD),
+    [pool.stats.daily.volumeTokenAUSD, pool.stats.daily.volumeTokenBUSD]
+  )
+  const formattedFees = useMemo(() => numberFormatter(pool.stats.daily.tradeFeesUSD), [pool.stats.daily.tradeFeesUSD])
+  const formattedAPR = useMemo(() => numberFormatter(pool.stats.daily.feesAprUSD), [pool.stats.daily.feesAprUSD])
+
   return (
     <div
       className={cn(
@@ -20,7 +32,7 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
         isMobile && `grid-cols-2`,
         isTablet && `grid-cols-4`
       )}
-      key={key}
+      {...props}
       onClick={() => {
         setSelectedCard(pool)
         setOpenDepositWithdrawSlider(true)
@@ -57,24 +69,23 @@ const FarmRow: FC<{ pool: GAMMAPool, key: string }> = ({ pool, key }): JSX.Eleme
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-        {numberFormatter(pool.tvl)}
+        {formattedTVL}
       </div>
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {numberFormatter(pool.stats.daily.volumeTokenAUSD + pool.stats.daily.volumeTokenBUSD)}
+          {formattedVolume}
         </div>
       )}
       {isDesktop && (
         <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
-          {numberFormatter(pool.stats.daily.tradeFeesUSD)}
+          {formattedFees}
         </div>
       )}
       {(isTablet || isDesktop) && (
         <div className="flex items-center justify-center">
           <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
             <span className={'font-poppins font-semibold my-0.5'}>
-              {numberFormatter(pool.stats.daily.feesAprUSD)}%
-            </span>
+              {formattedAPR}%</span>
           </Badge>
         </div>
       )}
