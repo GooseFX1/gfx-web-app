@@ -19,9 +19,11 @@ const Positions: FC = () => {
     searchTokens,
     setSearchTokens,
     sortConfig,
-    setCurrentSort
+    setCurrentSort,
+    userLiquidityCache
   } = useGamma()
   const [isOpen, setIsOpen] = useBoolean(false)
+  const userPositions = filteredPools.filter((pool) => userLiquidityCache[pool.id] != null)
   return (
     <div>
       <div className="flex flex-row justify-between items-center mb-3.75">
@@ -78,7 +80,7 @@ const Positions: FC = () => {
         </div>
       </div>
       <PositionHeader sort={sortConfig.direction} sortType={sortConfig.key} />
-      <MyPositions pools={filteredPools} />
+      <MyPositions pools={userPositions} />
     </div>
   )
 }

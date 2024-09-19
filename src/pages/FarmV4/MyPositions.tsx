@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Badge, Container, Icon } from 'gfx-component-lib'
+import { Badge, Button, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
 import { GAMMAPool } from '@/types/gamma'
@@ -15,7 +15,7 @@ const MyPositions: FC<{ pools: GAMMAPool[] }> = ({ pools }) => {
     setModeOfOperation,
     showDeposited,
     isSearchActive,
-    showCreatedPools
+    showCreatedPools,
   } = useGamma()
   const { mode } = useDarkMode()
   let noResultsTitle = ''
@@ -58,6 +58,8 @@ const MyPositions: FC<{ pools: GAMMAPool[] }> = ({ pools }) => {
       noResultsSubText = noPoolsFound.subText
       break
   }
+  //TODO : once we can detect user claim
+  const canClaim = false
   return (
     <div>
       {pools.length > 0 ? pools
@@ -115,33 +117,35 @@ const MyPositions: FC<{ pools: GAMMAPool[] }> = ({ pools }) => {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-evenly">
-                  <Container
-                    className="h-[30px] w-[61px] cursor-pointer flex flex-row
+                  <div className={'flex gap-2.5'}>
+                    <Button
+                      className="h-[30px] w-[61px] cursor-pointer flex flex-row
                             justify-center items-center !rounded-[200px]"
-                    colorScheme={'primaryGradient'}
-                    size={'lg'}
-                  >
-                    Claim
-                  </Container>
-                  <div className="h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px]
-                            border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 rounded-tiny 
-                            cursor-pointer text-black-4 dark:text-white text-regular font-bold"
-                       onClick={() => {
-                         setSelectedCard(pool)
-                         setOpenDepositWithdrawSlider(true)
-                         setModeOfOperation(ModeOfOperation?.DEPOSIT)
-                       }}>
-                    +
-                  </div>
-                  <div className="h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px]
-                            border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 
-                            rounded-tiny cursor-pointer text-black-4 dark:text-white text-regular font-bold"
-                       onClick={() => {
-                         setSelectedCard(pool)
-                         setOpenDepositWithdrawSlider(true)
-                         setModeOfOperation(ModeOfOperation?.WITHDRAW)
-                       }}>
-                    -
+                      colorScheme={'secondaryGradient'}
+                      variant={'outline'}
+                      aria-disabled={!canClaim}
+                    >
+                      Claim
+                    </Button>
+                    <Button
+                      colorScheme={'blue'}
+                      className={'h-7.5 w-7.5'}
+                      onClick={() => {
+                        setSelectedCard(pool)
+                        setOpenDepositWithdrawSlider(true)
+                        setModeOfOperation(ModeOfOperation?.DEPOSIT)
+                      }}>
+                      +
+                    </Button>
+                    <Button colorScheme={'blue'}
+                            className={'h-7.5 w-7.5'}
+                            onClick={() => {
+                              setSelectedCard(pool)
+                              setOpenDepositWithdrawSlider(true)
+                              setModeOfOperation(ModeOfOperation?.WITHDRAW)
+                            }}>
+                      -
+                    </Button>
                   </div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
-import { truncateAddress } from '@/utils'
+import { numberFormatter, truncateAddress } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 import { GAMMAToken } from '@/types/gamma'
@@ -52,7 +52,7 @@ export const TokenRow: FC<{ token: GAMMAToken; balance: number }> = ({ token, ba
             userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
           )}
         >
-          {`${balance} ${token.symbol}`}
+          {`${numberFormatter(balance)} ${token.symbol}`}
         </div>
       </div>
     </div>

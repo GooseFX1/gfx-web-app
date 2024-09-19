@@ -10,12 +10,13 @@ const FarmCard: FC<{
   pool: GAMMAPool
   className?: string
 }> = ({ pool, className, ...props }): ReactElement => {
-  const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
+  const { setOpenDepositWithdrawSlider, setSelectedCard, userLiquidityCache } = useGamma()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
-  // TODO: implement to check if deposited in pool
-  const hasDeposit = false
-
+  const userDeposit = userLiquidityCache[pool.id]
+  const hasDeposit = userDeposit != null
+  //TODO : once we can detect user claim
+  const canClaim = false
   return (
     <div
       {...props}
@@ -40,22 +41,27 @@ const FarmCard: FC<{
             }
           />
         </div>
-        {hasDeposit ? (
-          <Button>
-            <Icon src={'/img/assets/plus.svg'} />
-          </Button>
-        ) : (
-          <Button
-            className="cursor-pointer bg-blue-1 text-white h-[30px]"
-            variant={'secondary'}
-            onClick={() => {
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
-            }}
-          >
-            Deposit
-          </Button>
-        )}
+        {canClaim && <Button
+          onClick={() => {
+            setSelectedCard(pool)
+            setOpenDepositWithdrawSlider(true)
+          }}
+          variant={'outline'}
+          colorScheme={'secondaryGradient'}
+        >
+          Claim
+        </Button>}
+
+        <Button
+          className="cursor-pointer bg-blue-1 text-white h-[30px]"
+          variant={'secondary'}
+          onClick={() => {
+            setSelectedCard(pool)
+            setOpenDepositWithdrawSlider(true)
+          }}
+        >
+          {!hasDeposit ? 'Deposit' : 'Withdraw'}
+        </Button>
       </div>
       <div
         className="flex flex-row items-center text-average font-semibold font-poppins 

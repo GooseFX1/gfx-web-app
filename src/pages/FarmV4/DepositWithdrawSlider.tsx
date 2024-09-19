@@ -18,7 +18,7 @@ import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { deposit, withdraw, calculateOtherTokenAndLPAmount } from '@/web3/Farm'
+import { calculateOtherTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
 import BN from 'bn.js'
 
 export const DepositWithdrawSlider: FC = () => {
@@ -37,7 +37,8 @@ export const DepositWithdrawSlider: FC = () => {
     setSelectedCardPool,
     slippage,
     sendingTransaction,
-    setSendingTransaction
+    setSendingTransaction,
+    getUserLiquidityForPool
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
@@ -75,10 +76,10 @@ export const DepositWithdrawSlider: FC = () => {
 
   useEffect(() => {
     if (selectedCard) {
-      if (selectedCard.sourceToken === 'SOL') setUserSourceTokenBal(userSolBalance)
-      else setUserSourceTokenBal(getUIAmount(selectedCard.sourceTokenMintAddress))
-      if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(userSolBalance)
-      else setUserTargetTokenBal(getUIAmount(selectedCard.targetTokenMintAddress))
+      if (selectedCard.mintA.symbol === 'SOL') setUserSourceTokenBal(userSolBalance)
+      else setUserSourceTokenBal(getUIAmount(selectedCard.mintA.address))
+      if (selectedCard.mintB.symbol === 'SOL') setUserTargetTokenBal(userSolBalance)
+      else setUserTargetTokenBal(getUIAmount(selectedCard.mintB.address))
     }
   }, [selectedCard, userSolBalance])
 
@@ -87,8 +88,8 @@ export const DepositWithdrawSlider: FC = () => {
     setUserSourceWithdrawAmount('')
     setUserTargetDepositAmount('')
     setUserTargetWithdrawAmount('')
-    setSelectedCard({})
-    setSelectedCardPool({})
+    setSelectedCard(null)
+    setSelectedCardPool(null)
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
     setOpenDepositWithdrawSlider(false)
   }
@@ -169,8 +170,8 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   const actionButtonText = useMemo(() => {
-    if(!userSourceTokenBal) return `Insufficient ${selectedCard?.sourceToken}`
-    else if(!userTargetTokenBal) return `Insufficient ${selectedCard?.targetToken}`
+    if(!userSourceTokenBal) return `Insufficient ${selectedCard?.mintA.name}`
+    else if(!userTargetTokenBal) return `Insufficient ${selectedCard?.mintB.name}`
     else if(isDeposit && (!+userSourceDepositAmount || !+userTargetDepositAmount)) return `Enter Amounts`
     else if(!isDeposit && (!+userSourceWithdrawAmount || !+userTargetWithdrawAmount)) return `Enter Amounts`
     else if(isDeposit)  return `Deposit`
@@ -345,8 +346,8 @@ export const DepositWithdrawSlider: FC = () => {
 
   const { actionLabel, actionModalTitle } = useMemo(() => {
     let actionModalTitle = 'Withdraw'
-    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.sourceToken} +
-     ${userTargetWithdrawAmount} ${selectedCard?.targetToken}`
+    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.mintA.symbol} +
+     ${userTargetWithdrawAmount} ${selectedCard?.mintB.symbol}`
 
     if (isClaim) {
       actionModalTitle = 'Claim'
@@ -355,7 +356,7 @@ export const DepositWithdrawSlider: FC = () => {
 
     return { actionLabel, actionModalTitle }
   }, [isDeposit, isClaim])
-
+  const userLiquidityForPool = useMemo(() => getUserLiquidityForPool(selectedCard), [selectedCard?.id])
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <div
@@ -415,8 +416,8 @@ export const DepositWithdrawSlider: FC = () => {
             />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
-            {console.log("selectedCard",selectedCard)}
-            <TokenRow token={selectedCard?.mintA} balance={userSourceTokenBal} />
+            <TokenRow token={selectedCard.mintA}
+                      balance={isDeposit?userSourceTokenBal:userLiquidityForPool.mintALiquidity.toNumber()}/>
             <DepositWithdrawInput
               isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, true)}
@@ -424,10 +425,10 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              userSourceTokenBal={userSourceTokenBal}
-              sourceToken={true}
+              disabled={userSourceTokenBal<=0}
             />
-            <TokenRow token={selectedCard?.mintB} balance={userTargetTokenBal} />
+            <TokenRow token={selectedCard.mintB}
+                      balance={isDeposit?userTargetTokenBal:userLiquidityForPool.mintBLiquidity.toNumber()} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
               onChange={(e) => handleInputChange(e.target.value, false)}
@@ -435,7 +436,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              userTargetTokenBal={userTargetTokenBal}
+              disabled={userTargetTokenBal<=0}
             />
             <ReviewConfirm />
             {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
@@ -447,7 +448,7 @@ export const DepositWithdrawSlider: FC = () => {
             isLoading={sendingTransaction}
             onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
             isDeposit={isDeposit}
-            canClaim={true || isClaim}
+            canClaim={isClaim}
             claimText={'Claim 0.5 SOL + 12.0 USDC'}
             onClaimClick={handleProcessStart('claim')}
             actionButtonText={actionButtonText}

@@ -91,7 +91,6 @@ interface GAMMAPool {
   authority: string
   mintA: GAMMAToken
   mintB: GAMMAToken
-  price: number
   mintAmountA: number
   mintAmountB: number
   mintAVault: string
@@ -145,7 +144,19 @@ interface UserPortfolioLPPosition {
   totalYieldUSD: string
   apr: number
 }
-
+type GAMMAUserLiquidityPosition = {
+  pdaPublicKey: string,
+  userPublicKey: string,
+  poolStatePublicKey: string,
+  tokenADeposited: string,
+  tokenBDeposited: string,
+  tokenAWithdrawn: string,
+  tokenBWithdrawn: string,
+  lpTokensOwned: string
+}
+type GAMMAUserLiquidityPositionMap = {
+  [key: string]: GAMMAUserLiquidityPositionMap
+}
 type GAMMAAPIPaginatedResponse = {
   currentPage: number
   pageSize: number
@@ -161,9 +172,13 @@ type GAMMAAPIBaseResponse<T> = {
 type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
   pools: GAMMAPool[]
 } & GAMMAAPIPaginatedResponse>
+
 type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
   tokens: TokenListToken[]
 } & GAMMAAPIPaginatedResponse>
+type GAMMAUserLiquidityResponse = GAMMAAPIBaseResponse<{
+  accounts: GAMMAUserLiquidityPosition[]
+}>
 
 export type {
   GAMMAConfig,
@@ -181,5 +196,8 @@ export type {
   UserPortfolioStats,
   UserPortfolioLPPosition,
   GAMMAPoolsResponse,
-  GAMMAListTokenResponse
+  GAMMAListTokenResponse,
+  GAMMAUserLiquidityResponse,
+  GAMMAUserLiquidityPosition,
+  GAMMAUserLiquidityPositionMap
 }

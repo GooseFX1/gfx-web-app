@@ -4,6 +4,7 @@ import {
   FC,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -18,6 +19,7 @@ import {
   fetchPortfolioStats,
   fetchTokenList,
   fetchUser,
+  fetchUserLiquidity,
   sortAndFilterPools
 } from '../api/gamma'
 import {
@@ -27,6 +29,7 @@ import {
   GAMMAPoolsResponse,
   GAMMAProtocolStats,
   GAMMAUser,
+  GAMMAUserLiquidityPosition,
   UserPortfolioLPPosition,
   UserPortfolioStats
 } from '../types/gamma'
@@ -44,7 +47,8 @@ import {
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
-import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
+import useBoolean from '@/hooks/useBoolean'
+import Decimal from 'decimal.js-light'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -56,8 +60,8 @@ interface GAMMADataModel {
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
-  selectedCard: any
-  setSelectedCard: Dispatch<SetStateAction<any>>
+  selectedCard: GAMMAPool
+  setSelectedCard: Dispatch<SetStateAction<GAMMAPool>>
   openDepositWithdrawSlider: boolean
   setOpenDepositWithdrawSlider: Dispatch<SetStateAction<boolean>>
   currentPoolType: Pool
@@ -77,7 +81,7 @@ interface GAMMADataModel {
   searchTokens: string
   setSearchTokens: Dispatch<SetStateAction<string>>
   showCreatedPools: boolean
-  setShowCreatedPools: UseBooleanSetter
+  setShowCreatedPools: Dispatch<SetStateAction<boolean>>
   currentSort: string
   setCurrentSort: Dispatch<SetStateAction<string>>
   showDeposited: boolean
@@ -90,6 +94,14 @@ interface GAMMADataModel {
   updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
+  userLiquidity: GAMMAUserLiquidityPosition[]
+  userLiquidityCache: { [key: string]: GAMMAUserLiquidityPosition }
+  getUserLiquidityForPool: (pool: GAMMAPool) => {
+    mintALiquidity: Decimal
+    mintBLiquidity: Decimal
+    mintAWithdrawn: Decimal
+    mintBWithdrawn: Decimal
+  }
 }
 
 export type TokenListToken = {
@@ -115,7 +127,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
   const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
   const [slippage, setSlippage] = useState<number>(0.1)
-  const [selectedCard, setSelectedCard] = useState<any>({})
+  const [selectedCard, setSelectedCard] = useState<GAMMAPool>()
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
   const { GammaProgram } = usePriceFeedFarm()
@@ -135,6 +147,26 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolPage, setPoolPage] = useState(1)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
+  const [userLiquidity, setUserLiquidity] = useState<GAMMAUserLiquidityPosition[]>([])
+  const { base58PublicKey } = useWalletBalance()
+
+  useEffect(() => {
+    if (!base58PublicKey) return
+    let interval: NodeJS.Timeout | undefined;
+    fetchUserLiquidity(base58PublicKey).then((userData) => {
+      if (userData) setUserLiquidity(userData)
+    }).finally(()=>{
+      interval = setInterval(() => {
+        fetchUserLiquidity(base58PublicKey).then((userData) => {
+          if (userData) setUserLiquidity(userData)
+        })
+      }, 5000)
+    })
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [base58PublicKey])
 
   useEffect(() => {
     // first render only
@@ -173,7 +205,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     setIsLoadingPools.on()
-    fetchAllPools(page, pageSize, poolType, sortConfig.direction.toLowerCase(), sortConfig.key.toLowerCase())
+    fetchAllPools(page, pageSize, poolType, sortConfig.direction.toLowerCase() as 'asc' | 'desc',
+      sortConfig.key.toLowerCase())
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
@@ -240,10 +273,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     ;(async () => {
-      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
+      if (GammaProgram && selectedCard!=null) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
-          const gammaPool = await GammaProgram?.account?.poolState?.fetch(poolIdKey)
+          const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
           console.log(e)
@@ -258,7 +291,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const isSearchActive = searchTokens.trim().length > 0
-
+  const userLiquidityCache = useMemo(() =>
+    userLiquidity.reduce((acc, icc) => acc[icc.poolStatePublicKey] = icc, {}), [userLiquidity])
+  const getUserLiquidityForPool = useCallback((pool: GAMMAPool)=>{
+    const data = userLiquidityCache[pool.id]
+    if (!data) return {
+      mintALiquidity: new Decimal('0'),
+      mintBLiquidity: new Decimal('0'),
+      mintAWithdrawn: new Decimal('0'),
+      mintBWithdrawn: new Decimal('0'),
+    }
+    return {
+      mintALiquidity: new Decimal(data.tokenADeposited).div(Math.pow(10,pool.mintA.decimals)),
+      mintBLiquidity: new Decimal(data.tokenBDeposited).div(Math.pow(10,pool.mintB.decimals)),
+      mintAWithdrawn: new Decimal(data.tokenAWithdrawn).div(Math.pow(10,pool.mintA.decimals)),
+      mintBWithdrawn: new Decimal(data.tokenBWithdrawn).div(Math.pow(10,pool.mintB.decimals)),
+    }
+  },[userLiquidityCache])
   return (
     <GAMMAContext.Provider
       value={{
@@ -273,22 +322,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isCustomSlippage,
         selectedCard: selectedCard,
         setSelectedCard: setSelectedCard,
-        openDepositWithdrawSlider: openDepositWithdrawSlider,
-        setOpenDepositWithdrawSlider: setOpenDepositWithdrawSlider,
-        currentPoolType: currentPoolType,
-        setCurrentPoolType: setCurrentPoolType,
-        selectedCardPool: selectedCardPool,
+        openDepositWithdrawSlider,
+        setOpenDepositWithdrawSlider,
+        currentPoolType,
+        setCurrentPoolType,
+        selectedCardPool,
         modeOfOperation: modeOfOperation,
-        setModeOfOperation: setModeOfOperation,
-        setSelectedCardPool: setSelectedCardPool,
+        setModeOfOperation,
+        setSelectedCardPool,
         page,
         setPage,
         tokenList,
         isLoadingTokenList,
         updateTokenList,
         maxTokensReached,
-        sendingTransaction: sendingTransaction,
-        setSendingTransaction: setSendingTransaction,
+        sendingTransaction,
+        setSendingTransaction,
         searchTokens,
         setSearchTokens,
         showCreatedPools,
@@ -304,7 +353,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         filteredPools,
         updatePools,
         poolsHasMoreData,
-        sortConfig
+        sortConfig,
+        userLiquidity,
+        userLiquidityCache,
+        getUserLiquidityForPool
       }}
     >
       {children}

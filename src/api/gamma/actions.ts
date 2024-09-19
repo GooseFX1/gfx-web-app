@@ -2,12 +2,14 @@ import { customClient } from '../index'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
-  GAMMAProtocolStats,
+  GAMMAListTokenResponse,
   GAMMAPoolsResponse,
+  GAMMAProtocolStats,
   GAMMAUser,
+  GAMMAUserLiquidityPosition,
+  GAMMAUserLiquidityResponse,
   UserPortfolioLPPosition,
-  UserPortfolioStats,
-  GAMMAListTokenResponse
+  UserPortfolioStats
 } from '../../types/gamma'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
@@ -62,7 +64,17 @@ const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
     return null
   }
 }
-
+const fetchUserLiquidity = async (publicKey: string): Promise<GAMMAUserLiquidityPosition[]> => {
+  console.log(publicKey)
+  try {
+    const response = await fetch(`${GAMMA_API_BASE}${GAMMA_ENDPOINTS_V1.USER_LIQUIDITY}/${publicKey}`)
+      .then((res) => res.json()) as GAMMAUserLiquidityResponse
+    return response.data.accounts
+  } catch (error) {
+    console.error('Error fetching user:', error)
+    return null
+  }
+}
 const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats | null> => {
   console.log(userId)
   try {
@@ -106,5 +118,6 @@ export {
   fetchPortfolioStats,
   fetchLpPositions,
   fetchAllPools,
-  fetchTokenList
+  fetchTokenList,
+  fetchUserLiquidity
 }
