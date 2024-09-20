@@ -1,5 +1,5 @@
 import { Button, cn, Input, InputAddonRight, InputGroup } from 'gfx-component-lib'
-import { FC, useCallback, useMemo, useRef } from 'react'
+import { FC, useCallback, useRef } from 'react'
 import { useDarkMode } from '@/context'
 
 const DepositWithdrawInput: FC<{
@@ -9,9 +9,7 @@ const DepositWithdrawInput: FC<{
   withdrawAmount: string
   handleHalf: any
   handleMax: any
-  userSourceTokenBal?: number
-  userTargetTokenBal?: number
-  sourceToken?: boolean
+  disabled: boolean
 }> = ({
   isDeposit,
   onChange,
@@ -19,9 +17,7 @@ const DepositWithdrawInput: FC<{
   withdrawAmount,
   handleHalf,
   handleMax,
-  userSourceTokenBal,
-  userTargetTokenBal,
-  sourceToken
+  disabled
 })
     : JSX.Element => {
     const { isDarkMode } = useDarkMode()
@@ -30,12 +26,6 @@ const DepositWithdrawInput: FC<{
     const focusInput = useCallback(() => {
       inputRef.current?.focus()
     }, [inputRef])
-
-    const disabled = useMemo(() => {
-      if(sourceToken && userSourceTokenBal <= 0) return true
-      else if(!sourceToken && userTargetTokenBal <= 0) return true
-      else return false
-    }, [sourceToken, userSourceTokenBal, userTargetTokenBal])
     
     return (
       <div className="m-2.5">

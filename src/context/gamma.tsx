@@ -115,7 +115,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
-  const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[] | null>(null)
+  const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[]>([])
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)

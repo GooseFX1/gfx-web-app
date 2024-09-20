@@ -2,12 +2,12 @@ import { customClient } from '../index'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
-  GAMMAProtocolStats,
+  GAMMAListTokenResponse,
   GAMMAPoolsResponse,
+  GAMMAProtocolStats,
   GAMMAUser,
   UserPortfolioLPPosition,
-  UserPortfolioStats,
-  GAMMAListTokenResponse
+  UserPortfolioStats
 } from '../../types/gamma'
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
@@ -80,7 +80,7 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
     const response = await customClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
     console.log(response)
     
-    return response.data.success ? response.data.data.accounts : null
+    return response.data.success ? response.data.data.accounts : []
   } catch (error) {
     console.error('Error fetching LP positions:', error)
     return null

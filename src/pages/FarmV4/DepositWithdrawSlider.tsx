@@ -18,7 +18,7 @@ import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { deposit, withdraw, calculateOtherTokenAndLPAmount } from '@/web3/Farm'
+import { calculateOtherTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
 import BN from 'bn.js'
 
 export const DepositWithdrawSlider: FC = () => {
@@ -424,8 +424,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              userSourceTokenBal={userSourceTokenBal}
-              sourceToken={true}
+              disabled={userSourceTokenBal<=0}
             />
             <TokenRow token={selectedCard?.mintB} balance={userTargetTokenBal} />
             <DepositWithdrawInput
@@ -435,7 +434,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              userTargetTokenBal={userTargetTokenBal}
+              disabled={userTargetTokenBal<=0}
             />
             <ReviewConfirm />
             {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}

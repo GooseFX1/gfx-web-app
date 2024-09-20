@@ -1,6 +1,6 @@
 import { useDarkMode, useGamma } from '@/context'
 import { Badge, Button, cn, Icon } from 'gfx-component-lib'
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useMemo } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPool } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -10,12 +10,14 @@ const FarmCard: FC<{
   pool: GAMMAPool
   className?: string
 }> = ({ pool, className, ...props }): ReactElement => {
-  const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
+  const { setOpenDepositWithdrawSlider, setSelectedCard, lpPositions } = useGamma()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
-  // TODO: implement to check if deposited in pool
-  const hasDeposit = false
 
+  const hasDeposit = useMemo(() =>
+    lpPositions.filter((p) => p.poolStatePublicKey === pool.id).length > 0
+    , [lpPositions, pool])
+  const canClaim = false
   return (
     <div
       {...props}
@@ -40,22 +42,26 @@ const FarmCard: FC<{
             }
           />
         </div>
-        {hasDeposit ? (
-          <Button>
-            <Icon src={'/img/assets/plus.svg'} />
-          </Button>
-        ) : (
-          <Button
-            className="cursor-pointer bg-blue-1 text-white h-[30px]"
-            variant={'secondary'}
-            onClick={() => {
-              setSelectedCard(pool)
-              setOpenDepositWithdrawSlider(true)
-            }}
-          >
-            Deposit
-          </Button>
-        )}
+        {canClaim && <Button
+          onClick={() => {
+            setSelectedCard(pool)
+            setOpenDepositWithdrawSlider(true)
+          }}
+          variant={'outline'}
+          colorScheme={'secondaryGradient'}
+        >
+          Claim
+        </Button>}
+        <Button
+          className="cursor-pointer bg-blue-1 text-white h-[30px]"
+          variant={'secondary'}
+          onClick={() => {
+            setSelectedCard(pool)
+            setOpenDepositWithdrawSlider(true)
+          }}
+        >
+          {!hasDeposit ? 'Deposit' : 'Withdraw'}
+        </Button>
       </div>
       <div
         className="flex flex-row items-center text-average font-semibold font-poppins 
