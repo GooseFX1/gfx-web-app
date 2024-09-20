@@ -1,11 +1,11 @@
 import { FC, useCallback } from 'react'
-import { Badge, Container, Icon } from 'gfx-component-lib'
+import { Badge, Button, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
 import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
-import { numberFormatter, truncateBigString, commafy } from '@/utils'
+import { commafy, numberFormatter, truncateBigString } from '@/utils'
 import { UserPortfolioLPPosition } from '@/types/gamma'
 
 const MyPositions: FC = () => {
@@ -50,7 +50,7 @@ const MyPositions: FC = () => {
       noResultsSubText = noPoolsFound.subText
       break
   }
-
+  const canClaim = false
   return (
     <div>
       {lpPositions && lpPositions.length > 0 ? (
@@ -123,46 +123,42 @@ const MyPositions: FC = () => {
               </Badge>
             </div>
             <div className="flex items-center justify-evenly">
-              <Container
-                className="h-[30px] w-[61px] cursor-pointer flex flex-row
+                <Button
+                  className="h-[30px] w-[61px] cursor-pointer flex flex-row
                             justify-center items-center !rounded-[200px]"
-                colorScheme={'primaryGradient'}
-                size={'lg'}
-              >
-                Claim
-              </Container>
-              <div
-                className="h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px]
-                            border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 rounded-tiny 
-                            cursor-pointer text-black-4 dark:text-white text-regular font-bold"
-                onClick={() => {
-                  setSelectedCard(pool)
-                  setOpenDepositWithdrawSlider(true)
-                  setModeOfOperation(ModeOfOperation?.DEPOSIT)
-                }}
-              >
-                +
-              </div>
-              <div
-                className="h-[30px] w-[30px] flex flex-row justify-center items-center border-[1.5px]
-                            border-solid dark:border-grey-8 border-blue-1 bg-grey-5 dark:bg-black-2 
-                            rounded-tiny cursor-pointer text-black-4 dark:text-white text-regular font-bold"
-                onClick={() => {
-                  setSelectedCard(pool)
-                  setOpenDepositWithdrawSlider(true)
-                  setModeOfOperation(ModeOfOperation?.WITHDRAW)
-                }}
-              >
-                -
+                  colorScheme={'secondaryGradient'}
+                  variant={'outline'}
+                  aria-disabled={!canClaim}
+                >
+                  Claim
+                </Button>
+                <Button
+                  colorScheme={'blue'}
+                  className={'h-7.5 w-7.5'}
+                  onClick={() => {
+                    setSelectedCard(pool)
+                    setOpenDepositWithdrawSlider(true)
+                    setModeOfOperation(ModeOfOperation?.DEPOSIT)
+                  }}>
+                  +
+                </Button>
+                <Button colorScheme={'blue'}
+                        className={'h-7.5 w-7.5'}
+                        onClick={() => {
+                          setSelectedCard(pool)
+                          setOpenDepositWithdrawSlider(true)
+                          setModeOfOperation(ModeOfOperation?.WITHDRAW)
+                        }}>
+                  -
+                </Button>
               </div>
             </div>
+            ))
+            ) : (
+            <NoResultsFound requestPool={false} str={noResultsTitle} subText={noResultsSubText} />
+            )}
           </div>
-        ))
-      ) : (
-        <NoResultsFound requestPool={false} str={noResultsTitle} subText={noResultsSubText} />
-      )}
-    </div>
-  )
-}
+        )
+      }
 
-export default MyPositions
+      export default MyPositions
