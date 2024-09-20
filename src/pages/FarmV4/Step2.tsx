@@ -16,7 +16,7 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '../../context'
-import { JupToken, SSL_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, TOKEN_LIST_PAGE_SIZE } from './constants'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
@@ -57,7 +57,7 @@ const Step2: FC<{
   walletTokenB
 }) => {
     const { mode } = useDarkMode()
-    const { setSelectedCard } = useGamma()
+    const { setSelectedCard, pools } = useGamma()
     const [priceSwitch, setPriceSwitch] = useState(false)
 
     useEffect(() => {
@@ -69,11 +69,12 @@ const Step2: FC<{
       }
     }, [amountTokenA, amountTokenB, priceSwitch])
 
+    //TODO: We need to check in all the pools
     const navigateToPool = () => {
       if (!tokenA || !tokenB) return
-      for (const token of SSL_TOKENS) {
-        if (token.sourceTokenMintAddress == tokenA.address &&
-          token.targetTokenMintAddress == tokenB.address) {
+      for (const token of pools) {
+        if (token?.mintA?.address == tokenA.address &&
+          token?.mintB?.address == tokenB.address) {
           setSelectedCard(token)
           break
         }
@@ -82,10 +83,9 @@ const Step2: FC<{
 
     useLayoutEffect(() => {
       if (!tokenA || !tokenB) return
-      // API Req
-      for (const token of SSL_TOKENS) {
-        if (token.sourceTokenMintAddress == tokenA.address &&
-          token.targetTokenMintAddress == tokenB.address) {
+      for (const token of pools) {
+        if (token?.mintA?.address == tokenA.address &&
+          token?.mintB?.address == tokenB.address) {
           setPoolExists(true)
           return
         }

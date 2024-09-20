@@ -109,9 +109,9 @@ const getObservationStateKey = async (poolId: PublicKey)
 export const getpoolId = async (selectedCard: any): Promise<PublicKey> => {
     if (!selectedCard) return
     const configIdKey = await getAmmConfigId(0)
-    const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
-    const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
-    const poolIdKey = await getPoolIdKey(configIdKey, vaultAMintKey, vaultBMintKey)
+    const mintA = new PublicKey(selectedCard?.mintA?.address)
+    const mintB = new PublicKey(selectedCard?.mintB?.address)
+    const poolIdKey = await getPoolIdKey(configIdKey, mintA, mintB)
     return poolIdKey
 }
 
@@ -136,14 +136,14 @@ const createLiquidityAccountIX = async (
 const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: PublicKey, isDeposit: boolean) => {
 
     const poolIdKey = await getpoolId(selectedCard)
-    const vaultAMintKey = new PublicKey(selectedCard?.sourceTokenMintAddress)
-    const vaultBMintKey = new PublicKey(selectedCard?.targetTokenMintAddress)
-    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, selectedCard?.sourceTokenMintAddress)
-    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, selectedCard?.targetTokenMintAddress)
+    const mintA = new PublicKey(selectedCard?.mintA?.address)
+    const mintB = new PublicKey(selectedCard?.mintB?.address)
+    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, selectedCard?.mintA?.address)
+    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, selectedCard?.mintB?.address)
     const authorityKey = await getAuthorityKey()
     const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-    const tokenAccountAKey = await getAssociatedTokenAddress(vaultAMintKey, userPublicKey)
-    const tokenAccountBKey = await getAssociatedTokenAddress(vaultBMintKey, userPublicKey)
+    const tokenAccountAKey = await getAssociatedTokenAddress(mintA, userPublicKey)
+    const tokenAccountBKey = await getAssociatedTokenAddress(mintB, userPublicKey)
 
     const accountObj = {
         owner: userPublicKey,
@@ -156,8 +156,8 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
         token1Vault: poolVaultKeyB,
         tokenProgram: TOKEN_PROGRAM_ID,
         tokenProgram2022: TOKEN_2022_PROGRAM_ID,
-        vault0Mint: vaultAMintKey,
-        vault1Mint: vaultBMintKey
+        vault0Mint: mintA,
+        vault1Mint: mintB
     }
 
     if (!isDeposit) accountObj["memoProgram"] = MEMO_ID
@@ -285,8 +285,8 @@ export const deposit = async (
     }
     const token0SlippageAmount = handleSlippageCalculation(userSourceDepositAmount, slippage, true)
     const token1SlippageAmount = handleSlippageCalculation(userTargetDepositAmount, slippage, true)
-    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
-    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
     const depositIX: TransactionInstruction = await program.instruction.deposit(
         lpAmount,
         new BN(token0Amount),
@@ -315,8 +315,8 @@ export const withdraw = async (
     const withdrawInstructionAccount = { ...withdrawAccounts }
     const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
     const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
-    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.sourceTokenMintDecimals)
-    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.targetTokenMintDecimals)
+    const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
+    const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
     const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
         lpAmount,
         new BN(token0Amount),

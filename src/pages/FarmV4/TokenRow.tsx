@@ -11,13 +11,10 @@ export const TokenRow: FC<{ token: GAMMAToken; balance: number }> = ({ token, ba
   const { wallet } = useWallet()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
 
-  const getWalletIcon = () => {
-    if (userPublicKey && balance > 0) {
-      return `img/assets/wallet-${mode}-enabled.svg`
-    } else {
-      return `img/assets/wallet-${mode}-disabled.svg`
-    }
-  }
+  const getWalletIcon = () =>
+    (userPublicKey && balance > 0) ?
+      `img/assets/wallet-${mode}-enabled.svg` :
+      `img/assets/wallet-${mode}-disabled.svg`
 
   return (
     <div className="flex flex-row justify-between items-center mx-2.5">
@@ -52,7 +49,7 @@ export const TokenRow: FC<{ token: GAMMAToken; balance: number }> = ({ token, ba
             userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
           )}
         >
-          {`${balance} ${token.symbol}`}
+          {`${balance?.toFixed(2)} ${token.symbol}`}
         </div>
       </div>
     </div>

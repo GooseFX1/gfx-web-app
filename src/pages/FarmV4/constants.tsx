@@ -1,5 +1,4 @@
 import { SuccessClaimAll, SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 
@@ -30,24 +29,7 @@ export type LiquidityAccount = {
   space?: number[]
   totalEarned?: BN
 }
-export type SSLToken = {
-  token: string
-  name: string
-  address: PublicKey
-  assetType?: number
-  bump?: number
-  mathParams?: any
-  mint?: PublicKey
-  mintDecimals?: number
-  oraclePriceHistories?: number[]
-  pad0?: number[]
-  pad1?: number[]
-  space?: number[]
-  status?: number
-  totalAccumulatedLpReward?: BN
-  totalLiquidityDeposits?: BN
-  cappedDeposit?: number
-}
+
 export type JupToken = {
   "address": string,
   "name": string,
@@ -56,12 +38,6 @@ export type JupToken = {
   "logoURI": string,
 }
 
-export type SSLTableData = {
-  apy: string
-  fee: number
-  volume: number
-  totalVolume: number
-}
 export type PoolType = {
   primary: Pool
   hyper: Pool
@@ -83,114 +59,6 @@ export const POOL_TYPE: PoolType = {
     name: 'Migrate',
     type: 'migrate'
   }
-}
-
-export const ADDRESSES: {
-  [network in WalletAdapterNetwork]: SSLToken[]
-} = {
-  'mainnet-beta': [
-    {
-      token: 'SOL',
-      name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'USDC',
-      name: 'USDC coin',
-      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'USDT',
-      name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'MSOL',
-      name: 'MSOL',
-      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'BONK',
-      name: 'BONK',
-      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'JITOSOL',
-      name: 'Jito Staked SOL',
-      address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 500000
-    }
-  ],
-  devnet: [
-    {
-      token: 'USDT',
-      name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'USDC',
-      name: 'USDC coin',
-      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'SOL',
-      name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'MSOL',
-      name: 'MSOL',
-      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'BONK',
-      name: 'BONK',
-      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
-      cappedDeposit: 500000
-    },
-    {
-      token: 'JITOSOL',
-      name: 'Jito Staked SOL',
-      address: new PublicKey('J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn'),
-      cappedDeposit: 500000
-    }
-  ],
-  testnet: [
-    {
-      token: 'USDT',
-      name: 'USDT Coin',
-      address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB')
-    },
-    {
-      token: 'USDC',
-      name: 'USDC coin',
-      address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
-    },
-    {
-      token: 'SOL',
-      name: 'Solana',
-      address: new PublicKey('So11111111111111111111111111111111111111112')
-    },
-    {
-      token: 'MSOL',
-      name: 'MSOL',
-      address: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So')
-    },
-    {
-      token: 'BONK',
-      name: 'BONK',
-      address: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
-    }
-  ]
 }
 
 export const faqs = [
@@ -283,124 +151,6 @@ export const faqsMigrate = [
     </div>
   }
 ]
-export const SSL_TOKENS: {
-  sourceToken: string
-  targetToken: string
-  liquidity: string
-  volume: string
-  fees: string
-  apr: number
-  sourceTokenMintAddress: string
-  sourceTokenMintDecimals: number
-  targetTokenMintAddress: string
-  targetTokenMintDecimals: number
-  type: string
-}[] = [
-  {
-    sourceToken: 'USDT',
-    targetToken: 'USDC',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'M1N29VNS1mEmqK83VyEyXcrJ6A39c2NB3NSCXJhXsiL',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'm1n13267SbQXczvpsbWGEYw5pBEscGWoduJf5J1PVy7',
-    targetTokenMintDecimals: 6,
-    type: 'Primary'
-  },
-  {
-    sourceToken: 'JITOSOL',
-    targetToken: 'BONK',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'M1N4uXEQxqGNmFK5jgEcfUtHM1hz59vNNxtM48QK7Ar',
-    sourceTokenMintDecimals: 6,
-    targetTokenMintAddress: 'M1N3AoeSDNHXFB8hL7951Ubf77o9STpdz8W9VhqUT3L',
-    targetTokenMintDecimals: 9,
-    type: 'Hyper'
-  },
-  {
-    sourceToken: 'SOL',
-    targetToken: 'JITOSOL',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn',
-    targetTokenMintDecimals: 9,
-    type: 'Primary'
-  },
-  {
-    sourceToken: 'SOL',
-    targetToken: 'HXRO',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    sourceTokenMintDecimals: 9,
-    targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    targetTokenMintDecimals: 6,
-    type: 'Hyper'
-  },
-  {
-    sourceToken: 'USDC',
-    targetToken: 'SOL',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    sourceTokenMintDecimals: 6,
-    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    targetTokenMintDecimals: 9,
-    type: 'Primary'
-  },
-  {
-    sourceToken: 'BONK',
-    targetToken: 'SOL',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-    sourceTokenMintDecimals: 5,
-    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    targetTokenMintDecimals: 9,
-    type: 'Hyper'
-  },
-  {
-    sourceToken: 'BONK',
-    targetToken: 'USDC',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-    sourceTokenMintDecimals: 5,
-    targetTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    targetTokenMintDecimals: 6,
-    type: 'Hyper'
-  },
-  {
-    sourceToken: 'USDC',
-    targetToken: 'SOL',
-    liquidity: '$5.17M',
-    volume: '$111.18K',
-    fees: '$50.21K',
-    apr: 185,
-    sourceTokenMintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    sourceTokenMintDecimals: 6,
-    targetTokenMintAddress: 'So11111111111111111111111111111111111111112',
-    targetTokenMintDecimals: 9,
-    type: 'Primary'
-  }
-]
 
 export const ModeOfOperation = {
   DEPOSIT: 'Deposit',
@@ -432,12 +182,6 @@ export const genericErrMsg = (error: string): Message => ({
   message: error
 })
 
-// export const depositCapError = (token: SSLToken, liquidity: number): Message => ({
-//   type: 'error',
-//   message: `You cannot deposit more than $${truncateBigNumber(token?.cappedDeposit - liquidity)}
-//   ${token.token} because the ${token.token} pool is capped at $${truncateBigNumber(token?.cappedDeposit)}!`
-// })
-
 export const claimAllSuccess = (): Message => ({
   message: <SuccessClaimAll />
 })
@@ -456,20 +200,6 @@ export const sslErrorMessage = (): Message => ({
   message: <TransactionErrorMsgSSL />
 })
 
-export const GET_24_CHANGES = '/ssl-apis/get24hChanges'
-export const TOTAL_VOLUME = 'ssl-apis/getTotalVolumeSSL'
-export const TOTAL_FEES = 'ssl-apis/getTotalFeesSSL'
-export const IS_WHITELIST = '/wallet-apis/isWhitelist'
-export const SSL_CHARTS = '/ssl-apis/charts/prices/'
-export const BONK_MINT = 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'
-export const ALL_PAIRS = 'ssl-apis/getSSLPairs'
-export const ALLOWED_WALLETS = [
-  'DXuH9hNWkL7ev2rw9fyC9xG9jBfUkp3HBWuAaSAu4oKV',
-  'HUko8TzqwEzhBceAKwHwKpoerUvYZ2zvLD88Rk3hF3uv',
-  'CrFs1vtZ2gAtVsXLUEoesLPruLkpkhNRxSLKNTYfdzuC',
-  'SmWd75HVb9tESGmvyAe7c1jGAB51SNtnQYMvA9Zs1X1',
-  '3UkKMebXhKsGavP62sMW6ERD3zXHCFiL6RcwwnpK6ggf'
-]
 // current supported sort oreder
 // 'liquidity',
 //   'volume24h',
@@ -486,17 +216,101 @@ export const GAMMA_SORT_CONFIG = [
   { id: '5', name: 'Fees: High to Low', direction: 'DESC', key: 'fee24h' },
   { id: '6', name: 'Fees: Low to High', direction: 'ASC', key: 'fee24h' },
   { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr24h' },
-  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' },
+  { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' }
 ]
+
 export const GAMMA_SORT_CONFIG_MAP = new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 200
 
-export const GAMMA_PRIMARY_POOL_TYPES = {
-  'So11111111111111111111111111111111111111112': 'SOL',
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v': 'USDC',
-  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB': 'USDT',
-  'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So': 'MSOL',
-  'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn': 'JITOSOL'
-}
+export const DEVNET_NEW_TOKENS = [
+  {
+    "address": "7FRQvjgX2VDqVJQRpXdpfdZCNgqdBHH5hwzJFnE6wj7k",
+    "daily_volume": 474232.9597861851,
+    "decimals": 6,
+    "freeze_authority": "Q6XprfkF8RQQKoQVG33xT88H7wi8Uk1B1CC7YAs69Gi",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmXoj9Jp29JNYLMWQ4Z4AZASVPZXnJjJjSCcYsyaTqZj4v",
+    "mint_authority": null,
+    "tags": ["unknown"],
+    "name": "cpmint1",
+    "symbol": "CPMINT1"
+  },
+  {
+    "address": "5a7H92vpeAkVruej7cnfCN1aRUi1an3xGdoSVYR9gE4b",
+    "daily_volume": 346781.3214512356,
+    "decimals": 9,
+    "freeze_authority": "Z4xAptL9BPT2GXi8SM1QA8fk8dJZ4bJrZvNxQ1S4i8Fp",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmW34Zv8k4N1A9Ht5P8S5YHsZ3DQsfdlPQJ6CpP9YXWxA",
+    "tags": ["unknown"],
+    "mint_authority": "ZyMvD3xG9PgkZQmA47JD6W3mV41W3CVgCfSxYqXJ91Xb",
+    "name": "cpmint1",
+    "symbol": "CPMINT2"
+  },
+  {
+    "address": "FEi9VrHaE8bRkwUPzoeADwx1yECWCchAHcY83Bs2HRzH",
+    "daily_volume": 256982.4983128795,
+    "decimals": 6,
+    "freeze_authority": null,
+    "logoURI": "https://cf-ipfs.com/ipfs/QmT98JhF4Wq7Mn7Wr7WwZQaDmGYXA7Jj3dW3bHpJYQyVrZ",
+    "tags": ["unknown"],
+    "mint_authority": "P8T2H2fR4vZ3ZbLv5jW5tQwQ8PnPfXgJZ8HkSgK2L1fL",
+    "name": "cpmint3",
+    "symbol": "CPMINT3"
+  },
+  {
+    "address": "DLwsBn662NHFLkgb81VrvKyXQX89aEF2TMka7iH6RKUV",
+    "daily_volume": 198372.6548723124,
+    "decimals": 9,
+    "freeze_authority": "Q9B1yDkC3mV4F9Js5FJ4LzU9pK4KzV5LfP1H9F2Y1Z7S",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmU9X5YkJ3Z4NpYy5S5K8QYjF9CjXh4XwGpJzWmR4X9p7V",
+    "tags": ["unknown"],
+    "mint_authority": null,
+    "name": "cpmint4",
+    "symbol": "CPMINT4"
+  },
+  {
+    "address": "A1qhLMWoZJ8fPLFcXobYyciXCynEij9SnDgES5pV1rqt",
+    "daily_volume": 587293.8923418752,
+    "decimals": 9,
+    "freeze_authority": "P7G2RqJ5X3w4yKxFw8L3ZsQ2Vp5TzLwM8F2J6T4Z6Q5D",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmXkJ4HfX4R5N8Ls5W5X5Y3ZyY9YxJh7RrH9W8R8Z9dX6J",
+    "tags": ["unknown"],
+    "mint_authority": null,
+    "name": "cpmint5",
+    "symbol": "CPMINT5"
+  },
+  {
+    "address": "D8cZrC9F5N1VfGw6LjS7Lp7VmW6KmXpW7Y5J8QnF3Z1K",
+    "daily_volume": 134872.7859217463,
+    "decimals": 6,
+    "freeze_authority": "Z8X2JmP6F7d9QkZtW8L4XsN2Fw3XkJ5TqJ5Z9N7X9Q2F",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmW8P9JxV5B2F4Lr5Y6W5P7YjY7Yh4VjK5T8L3R3V2X1H3",
+    "tags": ["unknown"],
+    "mint_authority": "Q5Y2L3K6P9F7RqKxFw6P7YfT5F2S7LqZtX6J9X8R4F5K",
+    "name": "cpmint6",
+    "symbol": "CPMINT6"
+  },
+  {
+    "address": "H3j9vF6vW5LxCpHqP1L9Rh6FfT4K9YkXqS6J8F7Z1J4K",
+    "daily_volume": 472389.8659423178,
+    "decimals": 8,
+    "freeze_authority": null,
+    "logoURI": "https://cf-ipfs.com/ipfs/QmT8G9N6X8P5K7RqVw9X8W7Y4N7ZfH7L8S6R5Y4R6Z3L1P",
+    "tags": ["unknown"],
+    "mint_authority": "P8T3Y5L9V7K5FwL9F7W5ZrK9V7L9S7Y8T9Q2F5S9Q3X7",
+    "name": "cpmint7",
+    "symbol": "CPMINT7"
+  },
+  {
+    "address": "C5p7TzN3V8M1XkTwG9R2KqH6T4J6XpY9Z8F3N5S1J9X3",
+    "daily_volume": 235891.4512391874,
+    "decimals": 9,
+    "freeze_authority": "Y8X4KqR7W5P7KxZtX6J7T9L7F4LqYtP9Q2R3V5S7Q6X",
+    "logoURI": "https://cf-ipfs.com/ipfs/QmX2Y3K5N6J7L4RqT5F5W7Y7N6F9T7ZkS5T9X6R9Z3V5X9",
+    "tags": ["unknown"],
+    "mint_authority": null,
+    "name": "cpmint8",
+    "symbol": "CPMINT8"
+  }
+]

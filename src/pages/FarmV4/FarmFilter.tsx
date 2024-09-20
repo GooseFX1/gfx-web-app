@@ -2,10 +2,7 @@ import React, { FC, useCallback } from 'react'
 import { Button, cn, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { CircularArrow } from '@/components/common/Arrow'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { 
-  useGamma, 
-  // useConnectionConfig
-} from '@/context'
+import { useGamma } from '@/context'
 
 const FarmRowItem: FC<{
   title: string
