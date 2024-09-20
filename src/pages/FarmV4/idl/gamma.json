@@ -941,11 +941,6 @@
                     "docs": [
                         "The program account for the most recent oracle observation"
                     ]
-                },
-                {
-                    "name": "clock",
-                    "isMut": false,
-                    "isSigner": false
                 }
             ],
             "args": [
@@ -1072,11 +1067,6 @@
                     "docs": [
                         "The program account for the most recent oracle observation"
                     ]
-                },
-                {
-                    "name": "clock",
-                    "isMut": false,
-                    "isSigner": false
                 }
             ],
             "args": [
@@ -1375,14 +1365,14 @@
                         "type": "u64"
                     },
                     {
-                        "name": "tradeFeesToken0",
+                        "name": "cumulativeTradeFeesToken0",
                         "docs": [
                             "Trade fees of token_0 after every swap"
                         ],
                         "type": "u128"
                     },
                     {
-                        "name": "tradeFeesToken1",
+                        "name": "cumulativeTradeFeesToken1",
                         "docs": [
                             "Trade fees of token_1 after every swap"
                         ],
@@ -1493,6 +1483,10 @@
                     {
                         "name": "lpTokensOwned",
                         "type": "u128"
+                    },
+                    {
+                        "name": "referrer",
+                        "type": "publicKey"
                     }
                 ]
             }
@@ -1766,6 +1760,11 @@
             "code": 6009,
             "name": "InitLpAmountTooLess",
             "msg": "Init lp amount is too less(Because 100 amount lp will be locked)"
+        },
+        {
+            "code": 6010,
+            "name": "MathError",
+            "msg": "Math error"
         }
     ],
     "metadata": {

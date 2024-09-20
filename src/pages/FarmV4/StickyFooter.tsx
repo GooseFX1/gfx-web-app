@@ -23,8 +23,8 @@ const StickyFooter: FC<StickyFooterProps> = ({
   isLoading,
   onActionClick,
   canClaim,
-  claimText,
-  onClaimClick,
+  // claimText,
+  // onClaimClick,
   actionButtonText
 }): ReactElement => {
   const { connected } = useWallet()
@@ -123,7 +123,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
           </PopoverContent>
         </Popover>
       </div>
-      <Button
+      {/* <Button
         variant={'outline'}
         colorScheme={'secondaryGradient'}
         disabled={!canClaim}
@@ -131,7 +131,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
         onClick={onClaimClick}
       >
         {claimText}
-      </Button>
+      </Button> */}
     </div>
   )
 }

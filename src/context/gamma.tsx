@@ -33,6 +33,7 @@ import {
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
+  DEVNET_NEW_TOKENS,
   GAMMA_SORT_CONFIG,
   GAMMA_SORT_CONFIG_MAP,
   ModeOfOperation,
@@ -45,6 +46,7 @@ import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
 import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -106,7 +108,7 @@ export type TokenListToken = {
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { userCache } = useConnectionConfig()
+  const { userCache, network } = useConnectionConfig()
   const { publicKey: publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
@@ -147,6 +149,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   const updateTokenList = async (page: number, pageSize: number) => {
+    if(network === WalletAdapterNetwork.Devnet) {
+      setTokenList(DEVNET_NEW_TOKENS)
+      return
+    }
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)

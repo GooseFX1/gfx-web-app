@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useEffect, useRef, useState } from 'react'
 import tw, { styled } from 'twin.macro'
 import { PopupCustom } from '../../components'
@@ -119,6 +118,7 @@ const GammaOnboard: FC = (): JSX.Element => {
     }
   }
 
+  //eslint-disable-next-line
   useEffect(() => {
     return () => handleUserOnboarding();
   }, [])
@@ -150,7 +150,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       width={checkMobile() ? '95%' : '400px'}
       title={null}
       centered={true}
-      visible={!userCache.gamma.hasGAMMAOnboarded}
+      open={!userCache.gamma.hasGAMMAOnboarded}
       onCancel={() => handleUserOnboarding()}
       footer={null}
       currentSlide={currentSlide}

@@ -75,10 +75,10 @@ export const DepositWithdrawSlider: FC = () => {
 
   useEffect(() => {
     if (selectedCard) {
-      if (selectedCard.sourceToken === 'SOL') setUserSourceTokenBal(userSolBalance)
-      else setUserSourceTokenBal(getUIAmount(selectedCard.sourceTokenMintAddress))
-      if (selectedCard?.targetToken === 'SOL') setUserTargetTokenBal(userSolBalance)
-      else setUserTargetTokenBal(getUIAmount(selectedCard.targetTokenMintAddress))
+      if (selectedCard?.mintA?.symbol === 'SOL') setUserSourceTokenBal(userSolBalance)
+      else setUserSourceTokenBal(getUIAmount(selectedCard?.mintA?.address))
+      if (selectedCard?.mintB?.symbol === 'SOL') setUserTargetTokenBal(userSolBalance)
+      else setUserTargetTokenBal(getUIAmount(selectedCard?.mintB?.address))
     }
   }, [selectedCard, userSolBalance])
 
@@ -169,8 +169,8 @@ export const DepositWithdrawSlider: FC = () => {
   )
 
   const actionButtonText = useMemo(() => {
-    if(!userSourceTokenBal) return `Insufficient ${selectedCard?.sourceToken}`
-    else if(!userTargetTokenBal) return `Insufficient ${selectedCard?.targetToken}`
+    if(!userSourceTokenBal) return `Insufficient ${selectedCard?.mintA?.symbol}`
+    else if(!userTargetTokenBal) return `Insufficient ${selectedCard?.mintB?.symbol}`
     else if(isDeposit && (!+userSourceDepositAmount || !+userTargetDepositAmount)) return `Enter Amounts`
     else if(!isDeposit && (!+userSourceWithdrawAmount || !+userTargetWithdrawAmount)) return `Enter Amounts`
     else if(isDeposit)  return `Deposit`
@@ -345,8 +345,8 @@ export const DepositWithdrawSlider: FC = () => {
 
   const { actionLabel, actionModalTitle } = useMemo(() => {
     let actionModalTitle = 'Withdraw'
-    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.sourceToken} +
-     ${userTargetWithdrawAmount} ${selectedCard?.targetToken}`
+    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.mintA?.symbol} +
+     ${userTargetWithdrawAmount} ${selectedCard?.mintB?.symbol}`
 
     if (isClaim) {
       actionModalTitle = 'Claim'
@@ -370,6 +370,7 @@ export const DepositWithdrawSlider: FC = () => {
         fullScreen={true}
         placement={isMobile ? 'bottom' : 'right'}
         onInteractOutside={(e) => e.preventDefault()}
+        aria-describedby={null}
       >
         <GammaActionModal
           isOpen={actionType != '' && actionType != 'deposit'}
@@ -415,7 +416,6 @@ export const DepositWithdrawSlider: FC = () => {
             />
             <DepositWithdrawAccordion />
             <DepositWithdrawLabel text={`1. Add ${isDeposit ? 'Deposit' : 'Withdraw'}`} />
-            {console.log("selectedCard",selectedCard)}
             <TokenRow token={selectedCard?.mintA} balance={userSourceTokenBal} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
