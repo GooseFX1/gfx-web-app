@@ -212,7 +212,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchAggregateStats])
 
   useEffect(() => {
-    if (publicKey !== null) {
+    if (publicKey === 'no user yet') {
       fetchUser(publicKey.toBase58()).then((userData) => {
         if (userData) setUser(userData)
       })
@@ -228,12 +228,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchPortfolioStats, user])
 
   useEffect(() => {
-    if (user) {
-      fetchLpPositions(user.id).then((positions) => {
+    if (publicKey) {
+      fetchLpPositions('GAUT8jcHoYoiygCQV5MQHYceGCxc9NKMhQsDs4t9jJed').then((positions) => {
         if (positions) setLpPositions(positions)
       })
     }
-  }, [fetchLpPositions, user])
+  }, [fetchLpPositions, publicKey])
 
   //TODO: remove this check (Object.keys(selectedCard)?.length > 0
   //& make sure it's there at contract level)

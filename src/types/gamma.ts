@@ -135,15 +135,37 @@ interface UserPortfolioStats {
 }
 
 interface UserPortfolioLPPosition {
-  id: string
-  tokenA: GAMMAToken
-  tokenB: GAMMAToken
-  positionValueUSD: string
-  tokenAQuantity: string
-  tokenBQuantity: string
-  pendingYieldUSD: string
-  totalYieldUSD: string
-  apr: number
+  pdaPublicKey: string
+  userPublicKey: string
+  poolStatePublicKey: string
+  tokenADeposited: string
+  tokenBDeposited: string
+  tokenAWithdrawn: string
+  tokenBWithdrawn: string
+  lpTokensOwned: string
+  stats: {
+    daily: GAMMAPoolStats
+    weekly: GAMMAPoolStats
+    monthly: GAMMAPoolStats
+  }
+  mintA: {
+    address: string
+    name: string
+    symbol: string
+    decimals: string
+    logoURI: string
+    freezeAuthority: string | null
+    mintAuthority: string | null
+  }
+  mintB: {
+    address: string
+    name: string
+    symbol: string
+    decimals: string
+    logoURI: string
+    freezeAuthority: string | null
+    mintAuthority: string | null
+  }
 }
 
 type GAMMAAPIPaginatedResponse = {
@@ -177,7 +199,7 @@ export type {
   GAMMAPool,
   GAMMAPoolCategory,
   GAMMAPoolStats,
-  GAMMAUser,
+  GAMMAUserPortfolio,
   UserPortfolioStats,
   UserPortfolioLPPosition,
   GAMMAPoolsResponse,

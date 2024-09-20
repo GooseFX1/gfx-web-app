@@ -15,7 +15,6 @@ const Positions: FC = () => {
   const {
     currentPoolType,
     setCurrentPoolType,
-    filteredPools,
     searchTokens,
     setSearchTokens,
     sortConfig,
@@ -78,7 +77,7 @@ const Positions: FC = () => {
         </div>
       </div>
       <PositionHeader sort={sortConfig.direction} sortType={sortConfig.key} />
-      <MyPositions pools={filteredPools} />
+      <MyPositions />
     </div>
   )
 }

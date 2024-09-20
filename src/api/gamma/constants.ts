@@ -7,7 +7,7 @@ export enum GAMMA_ENDPOINTS_V1 {
   POOLS_INFO_ALL = '/pool/info/all',
   USER = `/user`,
   PORTFOLIO_STATS = `/portfolio-stats`,
-  LP_POSITIONS = `/lp-positions`,
+  LP_POSITIONS = `/user-liquidity`,
   TOKEN_LIST = '/token-list'
 }
 

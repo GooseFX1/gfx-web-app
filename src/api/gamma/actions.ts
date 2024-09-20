@@ -76,11 +76,11 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 }
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
-  console.log(userId)
   try {
-    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
-    // return response.data
-    return null
+    const response = await customClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
+    console.log(response)
+    
+    return response.data.success ? response.data.data.accounts : null
   } catch (error) {
     console.error('Error fetching LP positions:', error)
     return null
