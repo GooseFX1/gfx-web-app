@@ -208,7 +208,7 @@ export const sslErrorMessage = (): Message => ({
 //   'fee7d',
 //   'apr24h',
 //   'apr7d'
-export const GAMMA_SORT_CONFIG = [
+export const GAMMA_SORT_CONFIG: GAMMASortConfig[] = [
   { id: '1', name: 'Liquidity: High to Low', direction: 'DESC', key: 'liquidity' },
   { id: '2', name: 'Liquidity: Low to High', direction: 'ASC', key: 'liquidity' },
   { id: '3', name: 'Volume: High to Low', direction: 'DESC', key: 'volume24h' },
@@ -218,8 +218,14 @@ export const GAMMA_SORT_CONFIG = [
   { id: '7', name: 'APR: High to Low', direction: 'DESC', key: 'apr24h' },
   { id: '8', name: 'APR: Low to High', direction: 'ASC', key: 'apr24h' }
 ]
-
-export const GAMMA_SORT_CONFIG_MAP = new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
+export type GAMMASortConfig = {
+  id: string
+  name: string
+  direction: 'ASC' | 'DESC'
+  key: string
+}
+export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
+  new Map(GAMMA_SORT_CONFIG.map((item) => [item.id, item]))
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 200

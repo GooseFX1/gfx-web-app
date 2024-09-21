@@ -91,14 +91,13 @@ interface GAMMAPool {
   authority: string
   mintA: GAMMAToken
   mintB: GAMMAToken
-  price: number
   mintAmountA: number
   mintAmountB: number
   mintAVault: string
   mintBVault: string
   feeRate: number
   openTime: string
-  tvl: string
+  tvl?: string
   stats: {
     daily: GAMMAPoolStats
     weekly: GAMMAPoolStats
@@ -109,10 +108,12 @@ interface GAMMAPool {
   lpAmount: number
   config: GAMMAConfig
   pool_type: 'primary' | 'hyper'
-  price: string
+  price?: string
   poolCreator: string
 }
-
+export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
+  userLpPosition: UserPortfolioLPPosition
+}
 interface GAMMAPoolStats {
   range: '24H' | '7D' | '30D'
   tradeFeesUSD: number
@@ -199,9 +200,9 @@ export type {
   GAMMAPool,
   GAMMAPoolCategory,
   GAMMAPoolStats,
-  GAMMAUserPortfolio,
   UserPortfolioStats,
   UserPortfolioLPPosition,
   GAMMAPoolsResponse,
-  GAMMAListTokenResponse
+  GAMMAListTokenResponse,
+  GAMMAUser
 }

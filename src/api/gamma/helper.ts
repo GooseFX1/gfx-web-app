@@ -1,11 +1,11 @@
-import { GAMMAPool, Pool  } from "@/types/gamma";
-import { GAMMA_SORT_CONFIG } from '@/pages/FarmV4/constants'
+import { GAMMAPool, Pool } from '@/types/gamma'
+import { GAMMA_SORT_CONFIG, GAMMASortConfig } from '@/pages/FarmV4/constants'
 
 const sortAndFilterPools = (
   pools: GAMMAPool[],
   searchTokens: string,
   currentPoolType: Pool,
-  sortConfig: unknown
+  sortConfig: GAMMASortConfig
 ) => {
   const tokens = searchTokens.toLowerCase()
 
