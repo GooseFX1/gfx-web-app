@@ -20,7 +20,6 @@ const renderPosition = (p: GAMMAPoolWithUserLiquidity) => {
 }
 const MyPositions: FC = () => {
   const {
-    lpPositions,
     setSelectedCard,
     setOpenDepositWithdrawSlider,
     setModeOfOperation,
@@ -28,7 +27,7 @@ const MyPositions: FC = () => {
     showCreatedPools,
     filteredPools
   } = useGamma()
-  console.log({ lpPositions })
+
   const { mode } = useDarkMode()
 
   const positions = useMemo(() => filteredPools.filter((pool) => pool.userLpPosition), [filteredPools])

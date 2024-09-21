@@ -174,6 +174,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const tokenAccounts = {}
     accounts.forEach((account) => {
       const data = account.account.data as ParsedAccountData
+      console.log({ data })
       if (data.parsed.info.mint in SUPPORTED_TOKENS) {
         const supportedToken = SUPPORTED_TOKENS[data.parsed.info.mint]
         tokenAccounts[supportedToken.symbol] = {
@@ -246,7 +247,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         return target[prop.toUpperCase()]
       }
       return {
-        sumbol: '',
+        symbol: '',
         name: '',
         logoURI: '',
         decimals: 0,
