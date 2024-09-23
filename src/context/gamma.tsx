@@ -25,6 +25,7 @@ import {
   GAMMAListTokenResponse,
   GAMMAPool,
   GAMMAPoolsResponse,
+  GAMMAPoolWithUserLiquidity,
   GAMMAProtocolStats,
   GAMMAUser,
   UserPortfolioLPPosition,
@@ -45,7 +46,7 @@ import {
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
-import useBoolean, { UseBooleanSetter } from '@/hooks/useBoolean'
+import useBoolean from '@/hooks/useBoolean'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 
 interface GAMMADataModel {
@@ -79,7 +80,7 @@ interface GAMMADataModel {
   searchTokens: string
   setSearchTokens: Dispatch<SetStateAction<string>>
   showCreatedPools: boolean
-  setShowCreatedPools: UseBooleanSetter
+  setShowCreatedPools: Dispatch<SetStateAction<boolean>>
   currentSort: string
   setCurrentSort: Dispatch<SetStateAction<string>>
   showDeposited: boolean
@@ -88,7 +89,7 @@ interface GAMMADataModel {
   isLoadingPools: boolean
   setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
-  filteredPools: GAMMAPool[]
+  filteredPools: GAMMAPoolWithUserLiquidity[]
   updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
@@ -109,7 +110,7 @@ export type TokenListToken = {
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, network } = useConnectionConfig()
-  const { publicKey: publicKey } = useWalletBalance()
+  const { base58PublicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
@@ -149,7 +150,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   const updateTokenList = async (page: number, pageSize: number) => {
-    if(network === WalletAdapterNetwork.Devnet) {
+    if (network === WalletAdapterNetwork.Devnet) {
       setTokenList(DEVNET_NEW_TOKENS)
       return
     }
@@ -179,7 +180,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     setIsLoadingPools.on()
-    fetchAllPools(page, pageSize, poolType, sortConfig.direction.toLowerCase(), sortConfig.key.toLowerCase())
+    fetchAllPools(page, pageSize, poolType,
+      sortConfig.direction.toLowerCase() as 'desc' | 'asc', sortConfig.key.toLowerCase())
       .then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
@@ -218,12 +220,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchAggregateStats])
 
   useEffect(() => {
-    if (publicKey === 'no user yet') {
-      fetchUser(publicKey.toBase58()).then((userData) => {
+    if (base58PublicKey) {
+      fetchUser(base58PublicKey).then((userData) => {
         if (userData) setUser(userData)
       })
     }
-  }, [fetchUser, user])
+  }, [fetchUser, user,base58PublicKey])
 
   useEffect(() => {
     if (user) {
@@ -234,12 +236,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchPortfolioStats, user])
 
   useEffect(() => {
-    if (publicKey) {
+    if (base58PublicKey) {
       fetchLpPositions('GAUT8jcHoYoiygCQV5MQHYceGCxc9NKMhQsDs4t9jJed').then((positions) => {
         if (positions) setLpPositions(positions)
       })
     }
-  }, [fetchLpPositions, publicKey])
+  }, [fetchLpPositions, base58PublicKey])
 
   //TODO: remove this check (Object.keys(selectedCard)?.length > 0
   //& make sure it's there at contract level)
@@ -259,8 +261,19 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard])
 
   const filteredPools = useMemo(
-    () => sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig),
-    [pools, searchTokens, sortConfig, currentPoolType]
+    () => {
+      const result = sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig)
+
+      const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
+      return result.map((pool) => {
+        const userLpPosition = userLpPositions.get(pool.id)
+        return {
+          ...pool,
+          userLpPosition: userLpPosition
+        }
+      })
+    },
+    [pools, searchTokens, sortConfig, currentPoolType, lpPositions]
   )
 
   const isSearchActive = searchTokens.trim().length > 0
