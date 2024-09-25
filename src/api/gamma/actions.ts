@@ -98,7 +98,17 @@ const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAList
     return null
   }
 }
-
+const fetchWalletTokens = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
+  try {
+    const response = await customClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST+`?ids=${tokens}`
+    )
+    return await response.data
+  } catch(e) {
+    console.log('Error fetching token list', e)
+    return null
+  }
+}
 export {
   fetchGAMMAConfig,
   fetchAggregateStats,
@@ -106,5 +116,6 @@ export {
   fetchPortfolioStats,
   fetchLpPositions,
   fetchAllPools,
-  fetchTokenList
+  fetchTokenList,
+  fetchWalletTokens
 }

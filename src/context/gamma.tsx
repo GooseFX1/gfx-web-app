@@ -105,6 +105,7 @@ export type TokenListToken = {
   daily_volume: number | null
   freeze_authority: string | null
   mint_authority: string | null
+  price: number
 }
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
