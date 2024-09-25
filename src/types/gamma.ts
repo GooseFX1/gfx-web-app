@@ -168,7 +168,11 @@ interface UserPortfolioLPPosition {
     mintAuthority: string | null
   }
 }
-
+type GAMMAUserLPPositionWithPrice = UserPortfolioLPPosition & {
+  totalValue: string
+  valueA: string
+  valueB: string
+}
 type GAMMAAPIPaginatedResponse = {
   currentPage: number
   pageSize: number
@@ -204,5 +208,6 @@ export type {
   UserPortfolioLPPosition,
   GAMMAPoolsResponse,
   GAMMAListTokenResponse,
-  GAMMAUser
+  GAMMAUser,
+  GAMMAUserLPPositionWithPrice
 }

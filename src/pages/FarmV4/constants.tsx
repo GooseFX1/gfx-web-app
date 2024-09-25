@@ -240,7 +240,8 @@ export const DEVNET_NEW_TOKENS = [
     "mint_authority": null,
     "tags": ["unknown"],
     "name": "cpmint1",
-    "symbol": "CPMINT1"
+    "symbol": "CPMINT1",
+    "price": 0.0
   },
   {
     "address": "5a7H92vpeAkVruej7cnfCN1aRUi1an3xGdoSVYR9gE4b",
@@ -251,7 +252,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": "ZyMvD3xG9PgkZQmA47JD6W3mV41W3CVgCfSxYqXJ91Xb",
     "name": "cpmint1",
-    "symbol": "CPMINT2"
+    "symbol": "CPMINT2",
+    "price": 0.0
   },
   {
     "address": "FEi9VrHaE8bRkwUPzoeADwx1yECWCchAHcY83Bs2HRzH",
@@ -262,7 +264,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": "P8T2H2fR4vZ3ZbLv5jW5tQwQ8PnPfXgJZ8HkSgK2L1fL",
     "name": "cpmint3",
-    "symbol": "CPMINT3"
+    "symbol": "CPMINT3",
+    "price": 0.0
   },
   {
     "address": "DLwsBn662NHFLkgb81VrvKyXQX89aEF2TMka7iH6RKUV",
@@ -273,7 +276,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": null,
     "name": "cpmint4",
-    "symbol": "CPMINT4"
+    "symbol": "CPMINT4",
+    "price": 0.0
   },
   {
     "address": "A1qhLMWoZJ8fPLFcXobYyciXCynEij9SnDgES5pV1rqt",
@@ -284,7 +288,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": null,
     "name": "cpmint5",
-    "symbol": "CPMINT5"
+    "symbol": "CPMINT5",
+    "price": 0.0
   },
   {
     "address": "D8cZrC9F5N1VfGw6LjS7Lp7VmW6KmXpW7Y5J8QnF3Z1K",
@@ -295,7 +300,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": "Q5Y2L3K6P9F7RqKxFw6P7YfT5F2S7LqZtX6J9X8R4F5K",
     "name": "cpmint6",
-    "symbol": "CPMINT6"
+    "symbol": "CPMINT6",
+    "price": 0.0
   },
   {
     "address": "H3j9vF6vW5LxCpHqP1L9Rh6FfT4K9YkXqS6J8F7Z1J4K",
@@ -306,7 +312,8 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": "P8T3Y5L9V7K5FwL9F7W5ZrK9V7L9S7Y8T9Q2F5S9Q3X7",
     "name": "cpmint7",
-    "symbol": "CPMINT7"
+    "symbol": "CPMINT7",
+    "price": 0.0
   },
   {
     "address": "C5p7TzN3V8M1XkTwG9R2KqH6T4J6XpY9Z8F3N5S1J9X3",
@@ -317,6 +324,7 @@ export const DEVNET_NEW_TOKENS = [
     "tags": ["unknown"],
     "mint_authority": null,
     "name": "cpmint8",
-    "symbol": "CPMINT8"
+    "symbol": "CPMINT8",
+    "price": 0.0
   }
 ]
