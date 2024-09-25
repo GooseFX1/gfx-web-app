@@ -16,7 +16,7 @@ import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
-import { fetchWalletTokens } from '@/api/gamma'
+import { fetchTokensByPublicKey } from '@/api/gamma'
 import Decimal from 'decimal.js-light'
 
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
@@ -219,7 +219,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       value: new Decimal(0.0)
     }
     let currentWalletValue = new Decimal(0.0)
-    const tokenListResponse = await fetchWalletTokens(addresses)
+    const tokenListResponse = await fetchTokensByPublicKey(addresses)
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data

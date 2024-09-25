@@ -17,6 +17,7 @@ import {
   fetchLpPositions,
   fetchPortfolioStats,
   fetchTokenList,
+  fetchTokensByPublicKey,
   fetchUser,
   sortAndFilterPools
 } from '../api/gamma'
@@ -28,6 +29,7 @@ import {
   GAMMAPoolWithUserLiquidity,
   GAMMAProtocolStats,
   GAMMAUser,
+  GAMMAUserLPPositionWithPrice,
   UserPortfolioLPPosition,
   UserPortfolioStats
 } from '../types/gamma'
@@ -48,6 +50,7 @@ import { useConnectionConfig } from './settings'
 import { getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
+import Decimal from 'decimal.js-light'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -55,7 +58,7 @@ interface GAMMADataModel {
   pools: GAMMAPool[]
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
-  lpPositions: UserPortfolioLPPosition[]
+  lpPositions: GAMMAUserLPPositionWithPrice[]
   slippage: number
   setSlippage: Dispatch<SetStateAction<number>>
   isCustomSlippage: boolean
@@ -117,7 +120,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
-  const [lpPositions, setLpPositions] = useState<UserPortfolioLPPosition[]>([])
+  const [lpPositions, setLpPositions] = useState<GAMMAUserLPPositionWithPrice[]>([])
   const [slippage, setSlippage] = useState<number>(0.1)
   const [selectedCard, setSelectedCard] = useState<any>({})
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
@@ -226,7 +229,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (userData) setUser(userData)
       })
     }
-  }, [fetchUser, user,base58PublicKey])
+  }, [fetchUser, user, base58PublicKey])
 
   useEffect(() => {
     if (user) {
@@ -238,9 +241,36 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (base58PublicKey) {
-      fetchLpPositions('GAUT8jcHoYoiygCQV5MQHYceGCxc9NKMhQsDs4t9jJed').then((positions) => {
-        if (positions) setLpPositions(positions)
-      })
+      fetchLpPositions('GAUT8jcHoYoiygCQV5MQHYceGCxc9NKMhQsDs4t9jJed').then(
+        async (positions: UserPortfolioLPPosition[]) => {
+          if (positions) {
+            let positionsToSet = [];
+            const tokenListResponse = await fetchTokensByPublicKey(
+              positions.reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '').slice(0, -1)
+            )
+            if (tokenListResponse.success) {
+              const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
+              positionsToSet = positions.map((position) => {
+                const tokenAPrice = priceMap.get(position.mintA.address)
+                const tokenBPrice = priceMap.get(position.mintB.address)
+                const valueA = new Decimal(position.tokenADeposited).mul(tokenAPrice)
+                const valueB = new Decimal(position.tokenBDeposited).mul(tokenBPrice)
+                const totalValue = valueA.add(valueB)
+                return {
+                  ...position,
+                  totalValue: totalValue.toString(),
+                  valueA: valueA.toString(),
+                  valueB: valueB.toString()
+                }
+              })
+            } else {
+              positionsToSet = positions.map((position) => (
+                {...position, totalValue: '0.0', valueA: '0.0', valueB: '0.0'}
+              ));
+            }
+            setLpPositions(positionsToSet)
+          }
+        })
     }
   }, [fetchLpPositions, base58PublicKey])
 

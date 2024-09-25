@@ -98,7 +98,11 @@ const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAList
     return null
   }
 }
-const fetchWalletTokens = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
+/**
+ *
+ * @param tokens comma separated string for token e.g SOL1111,EFAC22141
+ */
+const fetchTokensByPublicKey = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
   try {
     const response = await customClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.TOKEN_LIST+`?ids=${tokens}`
@@ -106,7 +110,10 @@ const fetchWalletTokens = async (tokens: string) :Promise<GAMMAListTokenResponse
     return await response.data
   } catch(e) {
     console.log('Error fetching token list', e)
-    return null
+    return {
+      success: false,
+      data: null
+    }
   }
 }
 export {
@@ -117,5 +124,5 @@ export {
   fetchLpPositions,
   fetchAllPools,
   fetchTokenList,
-  fetchWalletTokens
+  fetchTokensByPublicKey
 }
