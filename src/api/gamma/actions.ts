@@ -1,4 +1,4 @@
-import { customClient } from '../index'
+import { httpClient } from '../index'
 import { GAMMA_API_BASE, GAMMA_ENDPOINTS_V1 } from '@/api/gamma/constants'
 import {
   GAMMAConfig,
@@ -12,7 +12,7 @@ import {
 
 const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   try {
-    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.CONFIG)
+    // const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.CONFIG)
     // return response.data
     return null
   } catch (error) {
@@ -23,7 +23,7 @@ const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
 
 const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
   try {
-    // const response = await apiClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
+    // const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
     // return response.data
     return null
   } catch (error) {
@@ -40,7 +40,7 @@ const fetchAllPools = async (
   sortKey: string
 ): Promise<GAMMAPoolsResponse | null> => {
   try {
-    const response = await customClient(GAMMA_API_BASE).get(
+    const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
         `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}`
     )
@@ -54,7 +54,7 @@ const fetchAllPools = async (
 const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
   console.log(publicKey)
   try {
-    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
+    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.USER}/${publicKey}`)
     // return response.data
     return null
   } catch (error) {
@@ -66,7 +66,7 @@ const fetchUser = async (publicKey: string): Promise<GAMMAUser | null> => {
 const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats | null> => {
   console.log(userId)
   try {
-    // const response = await apiClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
+    // const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.PORTFOLIO_STATS}/${userId}`)
     // return response.data
     return null
   } catch (error) {
@@ -77,7 +77,7 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
   try {
-    const response = await customClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
+    const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
     console.log(response)
     
     return response.data.success ? response.data.data.accounts : []
@@ -89,7 +89,7 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
 
 const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAListTokenResponse | null> => {
   try {
-    const response = await customClient(GAMMA_API_BASE).get(
+    const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}`
     )    
     return await response.data
@@ -104,7 +104,7 @@ const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAList
  */
 const fetchTokensByPublicKey = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
   try {
-    const response = await customClient(GAMMA_API_BASE).get(
+    const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.TOKEN_LIST+`?ids=${tokens}`
     )
     return await response.data
