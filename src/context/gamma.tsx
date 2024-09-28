@@ -20,7 +20,7 @@ import {
   fetchTokensByPublicKey,
   fetchUser,
   sortAndFilterPools
-} from '../api/gamma'
+} from '@/api/gamma'
 import {
   GAMMAConfig,
   GAMMAListTokenResponse,
@@ -32,7 +32,7 @@ import {
   GAMMAUserLPPositionWithPrice,
   UserPortfolioLPPosition,
   UserPortfolioStats
-} from '../types/gamma'
+} from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
@@ -44,7 +44,7 @@ import {
   POOL_LIST_PAGE_SIZE,
   POOL_TYPE,
   TOKEN_LIST_PAGE_SIZE
-} from '../pages/FarmV4/constants'
+} from '@/pages/FarmV4/constants'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
@@ -55,6 +55,9 @@ import Decimal from 'decimal.js-light'
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   aggregateStats: GAMMAProtocolStats
+  /**
+   * @deprecated use filteredPools instead - this is the raw response and should ideally not be used
+   */
   pools: GAMMAPool[]
   user: GAMMAUser
   portfolioStats: UserPortfolioStats
@@ -154,6 +157,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (pools.length == 0) {
       updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type)
     }
+    if (!gammaConfig) {
+      fetchGAMMAConfig().then((config) => {
+        if (config) setGammaConfig(config)
+      })
+    }
+    if (!aggregateStats) {
+      fetchAggregateStats().then((stats) => {
+        if (stats) setAggregateStats(stats)
+      })
+    }
+
   }, [])
 
   const updateTokenList = async (page: number, pageSize: number) => {
@@ -213,36 +227,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
   }, [poolPage, currentPoolType, sortConfig])
 
-  useEffect(() => {
-    fetchGAMMAConfig().then((config) => {
-      if (config) setGammaConfig(config)
-    })
-  }, [fetchGAMMAConfig])
-
-  useEffect(() => {
-    fetchAggregateStats().then((stats) => {
-      if (stats) setAggregateStats(stats)
-    })
-  }, [fetchAggregateStats])
-
-  useEffect(() => {
-    if (base58PublicKey === false) {
-      fetchUser(base58PublicKey).then((userData) => {
-        if (userData) setUser(userData)
-      })
-    }
-  }, [fetchUser, user, base58PublicKey])
-
-  useEffect(() => {
-    if (user) {
-      fetchPortfolioStats(user.id).then((stats) => {
-        if (stats) setPortfolioStats(stats)
-      })
-    }
-  }, [fetchPortfolioStats, user])
 
   useEffect(() => {
     if (base58PublicKey) {
+      // user data and portfolio stat fetching
+      fetchUser(base58PublicKey).then((userData) => {
+        if (userData) {
+          setUser(userData)
+
+          fetchPortfolioStats(userData.id).then((stats) => {
+            if (stats) setPortfolioStats(stats)
+          })
+        }
+      })
+      // lp position fet
       fetchLpPositions('shirLjMLJRhJVPb7n6FZG3xw9PkcDSgZ3KX1ZMWS3sP').then(
         async (positions: UserPortfolioLPPosition[] | null) => {
           if (positions) {
@@ -251,7 +249,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               positions
                 .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
                 .slice(0, -1)
-            )            
+            )
             if (tokenListResponse.success) {
               const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
               positionsToSet = positions.map((position) => {
@@ -277,18 +275,23 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             }
             setLpPositions(positionsToSet)
           }
-        }
-      )
+        })
+    } else {
+      setUser(null)
+      setPortfolioStats(null)
+      setLpPositions([])
     }
-  }, [fetchLpPositions, base58PublicKey])
+  }, [base58PublicKey])
 
+  //TODO: remove this check (Object.keys(selectedCard)?.length > 0
+  //& make sure it's there at contract level)
 
   useEffect(() => {
     ; (async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
-          const gammaPool = await GammaProgram?.account?.poolState?.fetch(poolIdKey)
+          const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
           setSelectedCardPool(gammaPool)
         } catch (e) {
           console.log(e)
@@ -297,7 +300,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  useEffect(() => {
+  useEffect(() => {//????
     ; (async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
@@ -315,6 +318,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const filteredPools = useMemo(
     () => {
       const result = sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig)
+      // maps users lp positions onto pools for easier access!
       const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
       return result.map((pool) => {
         const userLpPosition = userLpPositions.get(pool.id)
@@ -341,24 +345,24 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         slippage,
         setSlippage,
         isCustomSlippage,
-        selectedCard: selectedCard,
-        setSelectedCard: setSelectedCard,
-        openDepositWithdrawSlider: openDepositWithdrawSlider,
-        setOpenDepositWithdrawSlider: setOpenDepositWithdrawSlider,
-        currentPoolType: currentPoolType,
-        setCurrentPoolType: setCurrentPoolType,
-        selectedCardPool: selectedCardPool,
-        modeOfOperation: modeOfOperation,
-        setModeOfOperation: setModeOfOperation,
-        setSelectedCardPool: setSelectedCardPool,
+        selectedCard,
+        setSelectedCard,
+        openDepositWithdrawSlider,
+        setOpenDepositWithdrawSlider,
+        currentPoolType,
+        setCurrentPoolType,
+        selectedCardPool,
+        modeOfOperation,
+        setModeOfOperation,
+        setSelectedCardPool,
         page,
         setPage,
         tokenList,
         isLoadingTokenList,
         updateTokenList,
         maxTokensReached,
-        sendingTransaction: sendingTransaction,
-        setSendingTransaction: setSendingTransaction,
+        sendingTransaction,
+        setSendingTransaction,
         searchTokens,
         setSearchTokens,
         showCreatedPools,
