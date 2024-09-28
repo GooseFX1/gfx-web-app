@@ -34,7 +34,8 @@ const DepositWithdrawInput: FC<{
           aria-disabled={disabled}
           onClick={focusInput}
           rightItem={
-            <InputAddonRight className={`border-1 border-solid !outline-none border-l-0
+            <InputAddonRight
+              className={`border-1 border-solid !outline-none border-l-0
             group-focus-within:border-border-lightmode-primary group-focus-within:dark:border-white
             dark:border-border-darkmode-secondary border-border-lightmode-secondary
             disabled:dark:border-border-darkmode-secondary disabled:border-border-lightmode-secondary
@@ -47,6 +48,9 @@ const DepositWithdrawInput: FC<{
                 size={'xs'}
                 onClick={handleHalf}
                 disabled={disabled}
+                onMouseDown={(e)=> {
+                  e.preventDefault()
+                }}
               >
                 Half
               </Button>
@@ -57,6 +61,9 @@ const DepositWithdrawInput: FC<{
                 colorScheme={isDarkMode ? 'white' : 'blue'}
                 onClick={handleMax}
                 disabled={disabled}
+                onMouseDown={(e)=> {
+                  e.preventDefault()
+                }}
               >
                 Max
               </Button>
