@@ -2,7 +2,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { useConnectionConfig, useDarkMode } from '../../context'
 import { OrderbookTabs } from './OrderbookTabs'
-import { TVChartContainer } from '../Crypto/TradingView/TradingView'
 import { Responsive, WidthProvider } from 'react-grid-layout'
 import { map, range } from 'lodash'
 import { InfoBanner } from './InfoBanner'
@@ -140,16 +139,7 @@ const CryptoContent: FC = () => {
   const { blacklisted } = useConnectionConfig()
   const { height, width } = useWindowSize()
   const { mode } = useDarkMode()
-  const [chartContainer, setChartContainer] = useState<any>()
   const isInitialRender = useRef(true)
-
-  useEffect(() => {
-    setChartContainer(<TVChartContainer visible={true} />)
-    setTimeout(() => {
-      setChartContainer(<></>)
-      setChartContainer(<TVChartContainer visible={true} />)
-    }, 300)
-  }, [mode])
 
   useEffect(() => {
     if (!isInitialRender.current) {
@@ -175,7 +165,6 @@ const CryptoContent: FC = () => {
       if (i === 0)
         return (
           <div key={i} className="space-cont">
-            {chartContainer}
             {!isLocked ? (
               <UnlockedOverlay/>
             ) : null}
