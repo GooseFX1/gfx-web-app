@@ -43,6 +43,7 @@ export const DepositWithdrawSlider: FC = () => {
     selectedCardLiquidityAcc,
     setSelectedCardLiquidityAcc
   } = useGamma()
+
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()

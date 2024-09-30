@@ -54,7 +54,7 @@ export const RewardsPopup: FC = () => {
   const { rewardToggle, rewardModal } = useRewardToggle()
   const { panelIndex } = useRewardToggle()
   const breakpoint = useBreakPoint()
-  const isMobile = breakpoint.isMobile || breakpoint.isTablet
+  const isMobile = breakpoint.isMobile
   return (
     <Dialog open={rewardModal} onOpenChange={rewardToggle}>
       <DialogOverlay />
