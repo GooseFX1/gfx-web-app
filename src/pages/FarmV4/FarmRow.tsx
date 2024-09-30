@@ -2,12 +2,12 @@ import { FC, useMemo } from 'react'
 import { Badge, cn, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import useBreakpoint from '../../hooks/useBreakPoint'
-import { GAMMAPool } from '@/types/gamma'
+import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { numberFormatter } from '@/utils'
 import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
-const FarmRow: FC<{ pool: GAMMAPool }> = ({ pool, ...props }): JSX.Element => {
+const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
   const { isMobile, isTablet, isDesktop } = useBreakpoint()
   const { base58PublicKey } = useWalletBalance()
