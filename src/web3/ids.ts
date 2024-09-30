@@ -599,7 +599,7 @@ export const AH_TREASURY_BUMP = 255
 
 // GAMMA CONSTANTS:
 
-export const GAMMA_PROGRAM_ID = 'GaMMAt2scxuGJu3esLfLsJZaC482MPEKswdx8DfUsHCR'
+export const GAMMA_PROGRAM_ID = 'gaMmp8CxTCKFbtpoGrcxccDtJJSRyF7hzTkKcuPDbRG'
 
 export const GAMMA_FEE_ACCOUNT = '2EGutuSu6BMjw2fKuU5q5fVTH1S5c4tsTgEwQZDn1N45'
 

@@ -281,6 +281,7 @@ export const truncateBigString = (nativeString: string, mintDecimals: number): s
   if (nativeStringLen > mintDecimals) {
     usdString =
       nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
       nativeString.substring(nativeStringLen - mintDecimals, nativeStringLen - mintDecimals + 2)
   } else {
     let i = 0
@@ -415,7 +416,30 @@ export const formatUserBalance = (nativeBN: string, mintDecimals: number): any =
   It is used to show entire deposited value when the user clicks 'Max' in 'withdraw' mode. This is to make sure that 
   the user can see the entire deposited amount and then withdraw the cryto dust as well.
 */
-export const withdrawBigString = (nativeString: string, mintDecimals: number): string => {
+export const withdrawBigStringSSL = (nativeString: string, mintDecimals: number): string => {
+  if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
+    return '0.00'
+
+  let usdString = ''
+  const nativeStringLen = nativeString.length
+  if (nativeStringLen > mintDecimals) {
+    usdString =
+      nativeString.substring(0, nativeStringLen - mintDecimals) +
+      '.' +
+      nativeString.substring(nativeStringLen - mintDecimals)
+  } else {
+    let i = 0
+    let result = '0.'
+    while (i < mintDecimals - nativeStringLen) {
+      result += '0'
+      i++
+    }
+    usdString = result + nativeString
+  }
+  return usdString
+}
+
+export const withdrawBigStringFarm = (nativeString: string, mintDecimals: number): string => {
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
     return '0.00'
 

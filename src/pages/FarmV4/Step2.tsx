@@ -17,7 +17,7 @@ import {
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '../../context'
 import { JupToken, TOKEN_LIST_PAGE_SIZE } from './constants'
-import RadioOptionGroup from '@/components/common/RadioOptionGroup'
+//import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
@@ -47,8 +47,8 @@ const Step2: FC<{
   handleChange,
   amountTokenA,
   amountTokenB,
-  feeTier,
-  setFeeTier,
+  // feeTier,
+  // setFeeTier,
   poolExists,
   setPoolExists,
   initialPrice,
@@ -62,8 +62,8 @@ const Step2: FC<{
 
     useEffect(() => {
       if (+amountTokenA && +amountTokenB) {
-        !priceSwitch ? setInitialPrice((+amountTokenA / +amountTokenB)?.toString())
-          : setInitialPrice((+amountTokenB / +amountTokenA)?.toString())
+        !priceSwitch ? setInitialPrice((+amountTokenA / +amountTokenB)?.toFixed(2))
+          : setInitialPrice((+amountTokenB / +amountTokenA)?.toFixed(2))
       } else {
         setInitialPrice('')
       }
@@ -190,7 +190,7 @@ const Step2: FC<{
               </span>
             </div>
           </div>
-          <div>
+          {/* <div>
             <div className="font-sans text-regular font-semibold dark:text-grey-8 text-black-4">
               4. Fee Tier
             </div>
@@ -222,7 +222,7 @@ const Step2: FC<{
                 }
               ]}
             />
-          </div>
+          </div> */}
           {/* We need the swap component here but later */}
           {(+amountTokenA && +amountTokenB) && (tokenA && tokenB)
              && (+amountTokenA > +walletTokenA) && (+amountTokenB > +walletTokenB) ? (

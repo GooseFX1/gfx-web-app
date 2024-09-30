@@ -18,7 +18,7 @@ import {
     OBSERVATION_PREFIX,
     SYS_VAR_RENT
 } from './ids'
-import { convertToNativeValue, withdrawBigString } from "@/utils"
+import { convertToNativeValue, withdrawBigStringFarm } from "@/utils"
 import { JupToken } from "@/pages/FarmV4/constants"
 import { ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token"
 
@@ -50,7 +50,8 @@ const getAuthorityKey = async (): Promise<undefined | PublicKey> => {
     }
 }
 
-const getLiquidityPoolKey = async (poolIdKey: PublicKey, userPublicKey: PublicKey): Promise<undefined | PublicKey> => {
+export const getLiquidityPoolKey = async (poolIdKey: PublicKey, userPublicKey: PublicKey):
+    Promise<undefined | PublicKey> => {
     try {
         const getLiquidityPoolKey: [PublicKey, number] = await PublicKey.findProgramAddress(
             [Buffer.from(USER_POOL_LIQUIDITY_PREFIX), poolIdKey?.toBuffer(), userPublicKey?.toBuffer()],
@@ -169,7 +170,7 @@ const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: 
 
     let slippageAmount = 0
     if (isDeposit) slippageAmount = Math.ceil(+amount + ((slippage / 100) * +amount))
-    else slippageAmount = Math.floor(+amount + ((slippage / 100) * +amount))
+    else slippageAmount = Math.floor(+amount - ((slippage / 100) * +amount))
     return slippageAmount?.toString()
 }
 
@@ -177,10 +178,10 @@ const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, user
 
     let token0 = new PublicKey(tokenA?.address)
     let token1 = new PublicKey(tokenB?.address)
-    
+
     const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
 
-    if(compare === 1){
+    if (compare === 1) {
         token0 = new PublicKey(tokenB?.address)
         token1 = new PublicKey(tokenA?.address)
     }
@@ -200,7 +201,7 @@ const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, user
         authority: authorityKey,
         poolState: poolIdKey,
         token0Mint: token0,
-        token1Mint: token1, 
+        token1Mint: token1,
         creatorToken0: token0ata,
         creatorToken1: token1ata,
         token0Vault: poolVaultKeyA,
@@ -249,16 +250,17 @@ export const calculateOtherTokenAndLPAmount = async (
         const inputToken0 = convertToNativeValue(givenTokenAmount, poolState?.mint0Decimals)
         lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
         const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
-        otherTokenAmountInString = withdrawBigString(otherTokenAmount?.toString(), poolState?.mint1Decimals)
+        otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint1Decimals)
     } else {
         const inputToken1 = convertToNativeValue(givenTokenAmount, poolState?.mint1Decimals)
         lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
         const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
-        otherTokenAmountInString = withdrawBigString(otherTokenAmount?.toString(), poolState?.mint0Decimals)
+        otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint0Decimals)
     }
 
     return { lpTokenAmount, otherTokenAmountInString }
 }
+
 
 //Instruction - 1
 export const deposit = async (

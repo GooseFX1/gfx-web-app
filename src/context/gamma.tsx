@@ -47,7 +47,7 @@ import {
 } from '../pages/FarmV4/constants'
 import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
-import { getpoolId } from '@/web3/Farm'
+import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import Decimal from 'decimal.js-light'
@@ -96,6 +96,8 @@ interface GAMMADataModel {
   updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
+  selectedCardLiquidityAcc: any
+  setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
 }
 
 export type TokenListToken = {
@@ -114,7 +116,7 @@ export type TokenListToken = {
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, network } = useConnectionConfig()
-  const { base58PublicKey } = useWalletBalance()
+  const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
@@ -142,6 +144,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolPage, setPoolPage] = useState(1)
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
+  const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
 
   useEffect(() => {
     // first render only
@@ -161,7 +164,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)
-    console.log(response)
     if (!response || !response.success) {
       return
     }
@@ -175,7 +177,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       hasSetOfTokens.add(token.address)
       currentTokenList.push(token)
     }
-    console.log({ currentTokenList })
     setTokenList([...currentTokenList])
   }
 
@@ -203,6 +204,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       })
       .finally(() => setIsLoadingPools.off())
   }
+
   useLayoutEffect(() => {
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
@@ -241,7 +243,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (base58PublicKey) {
-      fetchLpPositions('GAUT8jcHoYoiygCQV5MQHYceGCxc9NKMhQsDs4t9jJed').then(
+      fetchLpPositions('shirLjMLJRhJVPb7n6FZG3xw9PkcDSgZX1ZMWS3sP').then(
         async (positions: UserPortfolioLPPosition[]) => {
           if (positions) {
             let positionsToSet = [];
@@ -265,7 +267,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               })
             } else {
               positionsToSet = positions.map((position) => (
-                {...position, totalValue: '0.0', valueA: '0.0', valueB: '0.0'}
+                { ...position, totalValue: '0.0', valueA: '0.0', valueB: '0.0' }
               ));
             }
             setLpPositions(positionsToSet)
@@ -274,11 +276,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [fetchLpPositions, base58PublicKey])
 
-  //TODO: remove this check (Object.keys(selectedCard)?.length > 0
-  //& make sure it's there at contract level)
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -291,10 +291,24 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
+  useEffect(() => {
+    ; (async () => {
+      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
+        try {
+          const poolIdKey = await getpoolId(selectedCard)
+          const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
+          const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
+          setSelectedCardLiquidityAcc(liquidityAccount)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    })()
+  }, [GammaProgram, selectedCard])
+
   const filteredPools = useMemo(
     () => {
       const result = sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig)
-
       const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
       return result.map((pool) => {
         const userLpPosition = userLpPositions.get(pool.id)
@@ -354,7 +368,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         filteredPools,
         updatePools,
         poolsHasMoreData,
-        sortConfig
+        sortConfig,
+        selectedCardLiquidityAcc,
+        setSelectedCardLiquidityAcc
       }}
     >
       {children}

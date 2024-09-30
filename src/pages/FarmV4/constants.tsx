@@ -1,6 +1,4 @@
 import { SuccessClaimAll, SuccessSSLMessage, TransactionErrorMsgSSL } from '../../components'
-import { PublicKey } from '@solana/web3.js'
-import BN from 'bn.js'
 
 interface Message {
   type?: string
@@ -16,18 +14,6 @@ export type Pool = {
   index: number
   name: string
   type: 'hyper' | 'primary' | 'migrate'
-}
-
-export type LiquidityAccount = {
-  amountDeposited: BN
-  createdAt: BN
-  lastClaimed: BN
-  lastObservedTap?: BN
-  mint?: PublicKey
-  owner?: PublicKey
-  poolRegistry?: PublicKey
-  space?: number[]
-  totalEarned?: BN
 }
 
 export type JupToken = {

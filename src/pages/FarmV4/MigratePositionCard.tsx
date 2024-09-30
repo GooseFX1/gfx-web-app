@@ -4,12 +4,11 @@ import { Badge, Button, cn, Container, Icon } from 'gfx-component-lib'
 type MigratePositionCardProps = {
   //TODO: type this
   position: any
-  key: string
   positionsOnOtherPrograms: string[]
   apr: number
 }
-const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, key, positionsOnOtherPrograms, apr }) => (
-  <div key={key} className={`
+const MigratePositionCard: FC<MigratePositionCardProps> = ({ position, positionsOnOtherPrograms, apr }) => (
+  <div className={`
     flex flex-col gap-2.5 border-solid border-1 border-border-lightmode-secondary dark:border-border-darkmode-secondary
     rounded-[8px] p-2.5 bg-white dark:bg-background-darkmode-primary flex-1
     `}>

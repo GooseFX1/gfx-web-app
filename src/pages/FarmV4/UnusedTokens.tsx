@@ -50,7 +50,8 @@ const UnusedTokens: FC = () => {
             text-black-4 dark:text-grey-8 mb-3.75">${walletValue}
       </div>
       {
-        topBalances.map((balance) => <div className="flex flex-row justify-between items-center mb-3">
+        topBalances.map((balance) => <div className="flex flex-row justify-between items-center mb-3" 
+          key={balance.symbol}>
           <div className="flex flex-row items-center">
             <Icon
               src={loadUriImage(balance.logoURI) ?
