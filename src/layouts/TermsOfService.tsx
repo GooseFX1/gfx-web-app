@@ -21,7 +21,7 @@ export const TermsOfService: FC<{
 }> = ({ setVisible, visible }) => {
   const { blacklisted, userCache, updateUserCache } = useConnectionConfig()
   const breakpoint = useBreakPoint()
-  const isMobile = breakpoint.isMobile || breakpoint.isTablet
+  const isMobile = breakpoint.isMobile
   const isOnAmm = window.location.pathname.includes('farm')
   const [toShow, setToShow] = useState<boolean>(!!visible || (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || !isOnAmm)
   const [checked, setChecked] = useState<boolean>(false)

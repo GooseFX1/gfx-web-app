@@ -32,7 +32,7 @@ export const WalletsModal: FC = () => {
   const [selectedWallet, setSelectedWallet] = useState<string>('')
   const base58PublicKey = useMemo(() => publicKey?.toBase58(), [publicKey])
   const breakpoint = useBreakPoint()
-  const isMobile = breakpoint.isMobile || breakpoint.isTablet
+  const isMobile = breakpoint.isMobile
   const [hasRequestedConnect, setHasRequestedConnect] = useBoolean(false)
 
   useEffect(() => {

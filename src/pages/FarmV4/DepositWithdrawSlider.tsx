@@ -43,6 +43,7 @@ export const DepositWithdrawSlider: FC = () => {
     selectedCardLiquidityAcc,
     setSelectedCardLiquidityAcc
   } = useGamma()
+
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -446,9 +447,9 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, isClaim])
 
   return (
-    <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+    <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <div
-        className={cn(`absolute top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
+        className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
       />

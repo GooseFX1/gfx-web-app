@@ -113,7 +113,6 @@ const FarmItems: FC<{
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
       ) : isProMode ? (
         <FarmItemsPro
-          poolsToRender={filteredPools}
         />
       ) : <FarmItemsLite
         openPositionImages={openPositionImages}
