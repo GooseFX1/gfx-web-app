@@ -78,9 +78,7 @@ const fetchPortfolioStats = async (userId: string): Promise<UserPortfolioStats |
 const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition[] | null> => {
   try {
     const response = await httpClient(GAMMA_API_BASE).get(`${GAMMA_ENDPOINTS_V1.LP_POSITIONS}/${userId}`)
-    console.log(response)
-    
-    return response.data.success ? response.data.data.accounts : []
+    return response.status === 200 ? response.data.data.accounts : []
   } catch (error) {
     console.error('Error fetching LP positions:', error)
     return null
@@ -103,6 +101,7 @@ const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAList
  * @param tokens comma separated string for token e.g SOL1111,EFAC22141
  */
 const fetchTokensByPublicKey = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
+  if (tokens?.length === 0) return null
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.TOKEN_LIST+`?ids=${tokens}`

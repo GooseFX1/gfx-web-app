@@ -226,7 +226,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [fetchAggregateStats])
 
   useEffect(() => {
-    if (base58PublicKey) {
+    if (base58PublicKey === false) {
       fetchUser(base58PublicKey).then((userData) => {
         if (userData) setUser(userData)
       })
@@ -243,13 +243,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (base58PublicKey) {
-      fetchLpPositions('shirLjMLJRhJVPb7n6FZG3xw9PkcDSgZX1ZMWS3sP').then(
-        async (positions: UserPortfolioLPPosition[]) => {
+      fetchLpPositions('shirLjMLJRhJVPb7n6FZG3xw9PkcDSgZ3KX1ZMWS3sP').then(
+        async (positions: UserPortfolioLPPosition[] | null) => {
           if (positions) {
-            let positionsToSet = [];
+            let positionsToSet = []
             const tokenListResponse = await fetchTokensByPublicKey(
-              positions.reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '').slice(0, -1)
-            )
+              positions
+                .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
+                .slice(0, -1)
+            )            
             if (tokenListResponse.success) {
               const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
               positionsToSet = positions.map((position) => {
@@ -266,13 +268,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 }
               })
             } else {
-              positionsToSet = positions.map((position) => (
-                { ...position, totalValue: '0.0', valueA: '0.0', valueB: '0.0' }
-              ));
+              positionsToSet = positions.map((position) => ({
+                ...position,
+                totalValue: '0.0',
+                valueA: '0.0',
+                valueB: '0.0'
+              }))
             }
             setLpPositions(positionsToSet)
           }
-        })
+        }
+      )
     }
   }, [fetchLpPositions, base58PublicKey])
 
