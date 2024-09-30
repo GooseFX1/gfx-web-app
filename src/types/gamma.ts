@@ -112,7 +112,8 @@ interface GAMMAPool {
   poolCreator: string
 }
 export type GAMMAPoolWithUserLiquidity = GAMMAPool & {
-  userLpPosition: UserPortfolioLPPosition
+  userLpPosition: UserPortfolioLPPosition,
+  hasDeposit: boolean
 }
 interface GAMMAPoolStats {
   range: '24H' | '7D' | '30D'

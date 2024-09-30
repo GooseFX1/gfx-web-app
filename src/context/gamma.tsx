@@ -287,7 +287,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   //& make sure it's there at contract level)
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -301,7 +301,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard])
 
   useEffect(() => {//????
-    ; (async () => {
+    ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -324,7 +324,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
-          userLpPosition: userLpPosition
+          userLpPosition: userLpPosition,
+          hasDeposit: userLpPosition ?
+            (new Decimal(userLpPosition.tokenADeposited).gt(0) || new Decimal(userLpPosition.tokenBDeposited).gt(0)) :
+            false
         }
       })
     },

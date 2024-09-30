@@ -1,6 +1,6 @@
 import { useDarkMode, useGamma } from '@/context'
 import { Badge, Button, cn, Icon } from 'gfx-component-lib'
-import { FC, ReactElement, useMemo } from 'react'
+import { FC, ReactElement } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
@@ -10,17 +10,13 @@ const FarmCard: FC<{
   pool: GAMMAPoolWithUserLiquidity
   className?: string
 }> = ({ pool, className, ...props }): ReactElement => {
-  const { setOpenDepositWithdrawSlider, setSelectedCard, lpPositions } = useGamma()
+  const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
 
-  const hasDeposit = useMemo(() =>
-    lpPositions.filter((p) => p.poolStatePublicKey === pool.id).length > 0
-    , [lpPositions, pool])
-
   //TODO: Need to change this as per on chain data, setting to true for testing ui.
   const canClaim = true
-  console.log({ pool, hasDeposit, lpPositions })
+
   return (
     <div
       {...props}
@@ -61,7 +57,7 @@ const FarmCard: FC<{
               setOpenDepositWithdrawSlider(true)
             }}
           >
-            {!hasDeposit ? 'Deposit' : '+'}
+            {!pool.hasDeposit ? 'Deposit' : '+'}
           </Button>
         </div>
       </div>
