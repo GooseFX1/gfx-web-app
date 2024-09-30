@@ -31,7 +31,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
           </TooltipTrigger>
           <TooltipContent>The current liquidity in this pool</TooltipContent>
         </Tooltip>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">$ {poolTVL}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">${poolTVL}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -41,7 +41,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
         >
           Volume
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">$ {dailyVolume}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">${dailyVolume}</span>
       </div>
       <div className="flex justify-between mb-2">
         <span
@@ -51,7 +51,7 @@ export const PoolStats: FC<{ pool: GAMMAPool }> = ({ pool }): ReactElement => {
         >
           Fees
         </span>
-        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">$ {dailyFees}</span>
+        <span className="!text-regular font-semibold dark:text-grey-8 text-black-4">${dailyFees}</span>
       </div>
       <div className="flex justify-between mb-2">
         <Tooltip>

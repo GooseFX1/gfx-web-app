@@ -223,20 +223,22 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
-        tokenAccounts[data.symbol].mint = address
-        tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
-        tokenAccounts[data.symbol].price = data.price
-        const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price);
-        tokenAccounts[data.symbol].value = value
-        currentWalletValue = currentWalletValue.add(value)
+        if(tokenAccounts && tokenAccounts[data.symbol]) {
+          tokenAccounts[data.symbol].mint = address
+          tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
+          tokenAccounts[data.symbol].price = data.price
+          const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price);
+          tokenAccounts[data.symbol].value = value
+          currentWalletValue = currentWalletValue.add(value)
+          console.log('balance', currentWalletValue.toString(), value.toString())
 
-        console.log('balance', currentWalletValue.toString(), value.toString())
-        if (rest.symbol != 'SOL') {
-          tokenAccounts[data.symbol].pda = findProgramAddressSync(
-            [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
-            ASSOCIATED_TOKEN_PROGRAM_ID
-          )[0]
-          tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
+          if (rest.symbol != 'SOL') {
+            tokenAccounts[data.symbol].pda = findProgramAddressSync(
+              [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
+              ASSOCIATED_TOKEN_PROGRAM_ID
+            )[0]
+            tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
+          }
         }
       }
     }

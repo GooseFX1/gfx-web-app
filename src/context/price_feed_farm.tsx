@@ -11,8 +11,9 @@ import React, {
 } from 'react'
 import { getFarmTokenPrices } from '../api/SSL'
 import { Program, Provider } from '@project-serum/anchor'
+import { Program as coralProgram, AnchorProvider } from "@coral-xyz/anchor"
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react'
-import { getStakingAccountKey, SSL_PROGRAM_ID, GAMMA_PROGRAM_ID } from '../web3'
+import { getStakingAccountKey, SSL_PROGRAM_ID } from '../web3'
 import { useConnectionConfig } from './settings'
 import { PublicKey } from '@solana/web3.js'
 import sslJson from '../pages/FarmV3/idl/sslv2.json'
@@ -50,7 +51,7 @@ interface IPriceFeedConfig {
   SSLProgram: Program
   stakeAccountKey: PublicKey
   solPrice: number
-  GammaProgram: Program | undefined
+  GammaProgram: any
 }
 
 const PriceFeedFarmContext = createContext<IPriceFeedConfig | null>(null)
@@ -97,12 +98,11 @@ export const PriceFeedFarmProvider: FC<{ children: ReactNode }> = ({ children })
     [connection]
   )
 
-  const GammaProgram: Program | undefined = useMemo(
+  const GammaProgram: any = useMemo(
     () =>
-      new Program(
+      new coralProgram(
         GammaJson as any,
-        GAMMA_PROGRAM_ID,
-        new Provider(connection, wal as WalletContextState, { commitment: 'finalized' })
+        new AnchorProvider(connection, wal as WalletContextState, { commitment: 'finalized' })
       ),
     [connection]
   )

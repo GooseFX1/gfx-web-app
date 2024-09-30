@@ -17,7 +17,10 @@ const FarmCard: FC<{
   const hasDeposit = useMemo(() =>
     lpPositions.filter((p) => p.poolStatePublicKey === pool.id).length > 0
     , [lpPositions, pool])
-  const canClaim = false
+
+  //TODO: Need to change this as per on chain data, setting to true for testing ui.
+  const canClaim = true
+
   return (
     <div
       {...props}
@@ -27,7 +30,7 @@ const FarmCard: FC<{
         className
       )}
     >
-      <div className="flex flex-row justify-between mb-2.5">
+      <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
           <Icon
             src={loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)}
@@ -37,31 +40,30 @@ const FarmCard: FC<{
           <Icon
             src={loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)}
             size="lg"
-            className={
-              'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
-            }
+            className={'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
+          {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />}
         </div>
-        {canClaim && <Button
-          onClick={() => {
-            setSelectedCard(pool)
-            setOpenDepositWithdrawSlider(true)
-          }}
-          variant={'outline'}
-          colorScheme={'secondaryGradient'}
-        >
-          Claim
-        </Button>}
-        <Button
-          className="cursor-pointer bg-blue-1 text-white h-[30px]"
-          variant={'secondary'}
-          onClick={() => {
-            setSelectedCard(pool)
-            setOpenDepositWithdrawSlider(true)
-          }}
-        >
-          {!hasDeposit ? 'Deposit' : 'Withdraw'}
-        </Button>
+        <div>
+          {canClaim && <Button
+            onClick={() => setSelectedCard(pool)}
+            variant={'outline'}
+            colorScheme={'secondaryGradient'}
+            className='h-[30px] mr-2.5'
+          >
+            Claim
+          </Button>}
+          <Button
+            className="cursor-pointer bg-blue-1 text-white h-[30px]"
+            variant={'secondary'}
+            onClick={() => {
+              setSelectedCard(pool)
+              setOpenDepositWithdrawSlider(true)
+            }}
+          >
+            {!hasDeposit ? 'Deposit' : '+'}
+          </Button>
+        </div>
       </div>
       <div
         className="flex flex-row items-center text-average font-semibold font-poppins 

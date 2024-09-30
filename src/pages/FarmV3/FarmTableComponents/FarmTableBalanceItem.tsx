@@ -15,7 +15,7 @@ import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import useSolSub from '@/hooks/useSolSub'
 import useBreakPoint from '@/hooks/useBreakPoint'
 import { executeClaimRewards, executeDeposit, executeWithdraw, getPriceObject } from '@/web3'
-import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigString } from '@/utils'
+import { bigNumberFormatter, numberFormatter, truncateBigString, withdrawBigStringSSL } from '@/utils'
 import { SkeletonCommon } from '@/components'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import TokenInput from '@/components/common/TokenInput'
@@ -104,7 +104,7 @@ const FarmContent: FC<PropsWithKey<{ coin: SSLToken }>> = ({ coin }) => {
   }, [filteredLiquidityAccounts, tokenMintAddress, isTxnSuccessfull])
 
   const userDepositInUSD = useMemo(
-    () => withdrawBigString(userDepositedAmount?.toString(), coin?.mintDecimals),
+    () => withdrawBigStringSSL(userDepositedAmount?.toString(), coin?.mintDecimals),
     [userDepositedAmount, coin?.mintDecimals]
   )
 

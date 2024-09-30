@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
 import { useGamma, useRewardToggle } from '@/context'
@@ -41,6 +40,7 @@ const FarmItems: FC<{
   let noResultsTitle = ''
   let noResultsSubText = ''
   switch (true) {
+    //eslint-disable-next-line
     case !Boolean(isSearchActive) && !showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
@@ -61,14 +61,17 @@ const FarmItems: FC<{
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
+    //eslint-disable-next-line
     case !Boolean(isSearchActive) && showDeposited && isCreatedActive:
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
+    //eslint-disable-next-line
     case !Boolean(isSearchActive) && showDeposited && !isCreatedActive:
       noResultsTitle = noPoolsDeposited.title
       noResultsSubText = noPoolsDeposited.subText
       break
+    //eslint-disable-next-line
     case !Boolean(isSearchActive) && !showDeposited && isCreatedActive:
       noResultsTitle = noPoolsFound.title
       noResultsSubText = noPoolsFound.subText
