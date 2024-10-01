@@ -237,7 +237,7 @@ export const DEVNET_NEW_TOKENS = [
     "logoURI": "https://cf-ipfs.com/ipfs/QmW34Zv8k4N1A9Ht5P8S5YHsZ3DQsfdlPQJ6CpP9YXWxA",
     "tags": ["unknown"],
     "mint_authority": "ZyMvD3xG9PgkZQmA47JD6W3mV41W3CVgCfSxYqXJ91Xb",
-    "name": "cpmint1",
+    "name": "cpmint2",
     "symbol": "CPMINT2",
     "price": 0.0
   },

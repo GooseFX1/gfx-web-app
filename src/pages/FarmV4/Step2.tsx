@@ -59,6 +59,7 @@ const Step2: FC<{
     const { mode } = useDarkMode()
     const { setSelectedCard, pools } = useGamma()
     const [priceSwitch, setPriceSwitch] = useState(false)
+    const [poolExistsText, setPoolExistsText] = useState<string>('')
 
     useEffect(() => {
       if (+amountTokenA && +amountTokenB) {
@@ -83,10 +84,16 @@ const Step2: FC<{
 
     useLayoutEffect(() => {
       if (!tokenA || !tokenB) return
-      for (const token of pools) {
-        if (token?.mintA?.address == tokenA.address &&
-          token?.mintB?.address == tokenB.address) {
+      //TODO: We need to check in all the pools
+      for (const pool of pools) {
+        if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
           setPoolExists(true)
+          setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
+          return
+        }
+        if (pool?.mintA?.address == tokenB?.address && pool?.mintB?.address == tokenA?.address) {
+          setPoolExists(true)
+          setPoolExistsText(`${tokenB?.symbol} - ${tokenA?.symbol}`)
           return
         }
       }
@@ -224,21 +231,24 @@ const Step2: FC<{
             />
           </div> */}
           {/* We need the swap component here but later */}
-          {(+amountTokenA && +amountTokenB) && (tokenA && tokenB)
-             && (+amountTokenA > +walletTokenA) && (+amountTokenB > +walletTokenB) ? (
+          {(tokenA && tokenB) && (+amountTokenA && +amountTokenB)
+            && (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
             <span className='text-red-1 font-sembold text-regular'>
               You don't have enough tokens in the wallet!
             </span>
-          ) : <></>}
+          ) : tokenA && tokenB && (tokenA?.symbol === tokenB?.symbol) ?
+            <span className='text-red-1 font-sembold text-regular'>
+              Token A and Token B cannot be same! Please create a pool for 2 different mints!
+            </span> : <></>}
           {poolExists && <div>
             <Container className={'flex flex-col gap-2.5 p-2.5'}>
               <Text as={'h3'}>Existing Pool!</Text>
-              <Text as={'p'}>The SOL-USDC exists. Start adding your funds now!</Text>
+              <Text as={'p'}>The {poolExistsText} pool exists. Start adding your funds now!</Text>
               <Button
                 fullWidth
                 colorScheme={'blue'}
                 onClick={navigateToPool}
-              >Goto {tokenA?.symbol}/{tokenB?.symbol} Pool</Button>
+              >Go to {poolExistsText} Pool</Button>
             </Container>
           </div>}
         </div>

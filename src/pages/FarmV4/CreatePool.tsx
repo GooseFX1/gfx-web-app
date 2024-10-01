@@ -108,8 +108,10 @@ export const CreatePool: FC<{
     else {
       if(!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
       if((+amountTokenA && +amountTokenB) && 
-        (+amountTokenA > +walletTokenA) && (+amountTokenB > +walletTokenB)) return true
-    }}, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB]) 
+        (+amountTokenA > +walletTokenA) || (+amountTokenB > +walletTokenB)) return true
+      if(tokenA?.symbol === tokenB?.symbol) return true
+      if(poolExists) return true
+    }}, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB])
 
   return (
     <Dialog onOpenChange={setIsCreatePool} open={isCreatePool}>

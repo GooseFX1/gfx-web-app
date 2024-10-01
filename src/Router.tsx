@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, lazy, Suspense } from 'react'
+import { CSSProperties, FC, lazy, Suspense } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
@@ -124,7 +124,7 @@ export const Router: FC = () => {
                               <Farm />
                             </PriceFeedFarmProvider>
                           </Route>
-                          <Route exact path={['/farm', '/farm/temp-withdraw']}>
+                          <Route exact path={['/farm']}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
                                 <FarmV4 />

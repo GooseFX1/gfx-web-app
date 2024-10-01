@@ -223,7 +223,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
-        if(tokenAccounts && tokenAccounts[data.symbol]) {
+        if (tokenAccounts && tokenAccounts[data.symbol]) {
           tokenAccounts[data.symbol].mint = address
           tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
           tokenAccounts[data.symbol].price = data.price
@@ -281,7 +281,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
 
   const balanceProxyHandler = {
-    get: function(target: Balance, prop: string) {
+    get: function (target: Balance, prop: string) {
       if (prop in target) {
         return target[prop]
       } else if (prop.toLowerCase() in target) {

@@ -1,8 +1,7 @@
-/* eslint-disable */
 import { FC } from 'react'
 import { Container } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
-import { useDarkMode, useGamma } from '@/context'
+import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
 import SearchBar from '@/components/common/SearchBar'
 import PositionHeader from './PositionHeader'
@@ -11,14 +10,12 @@ import FarmSort from '@/pages/FarmV4/FarmSort'
 import useBoolean from '@/hooks/useBoolean'
 
 const Positions: FC = () => {
-  const { mode } = useDarkMode()
   const {
     currentPoolType,
     setCurrentPoolType,
     searchTokens,
     setSearchTokens,
-    sortConfig,
-    setCurrentSort
+    sortConfig
   } = useGamma()
   const [isOpen, setIsOpen] = useBoolean(false)
   return (
