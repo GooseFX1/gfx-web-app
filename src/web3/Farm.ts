@@ -174,25 +174,16 @@ const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: 
     return slippageAmount?.toString()
 }
 
-const getAccountsForCreatePool = async (tokenA: JupToken, tokenB: JupToken, userPubKey: PublicKey) => {
+const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, userPubKey: PublicKey) => {
 
-    let token0 = new PublicKey(tokenA?.address)
-    let token1 = new PublicKey(tokenB?.address)
-
-    const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
-
-    if (compare === 1) {
-        token0 = new PublicKey(tokenB?.address)
-        token1 = new PublicKey(tokenA?.address)
-    }
     const configIdKey = await getAmmConfigId(0)
     const authorityKey = await getAuthorityKey()
     const token0ata = await getAssociatedTokenAddress(token0, userPubKey)
     const token1ata = await getAssociatedTokenAddress(token1, userPubKey)
     const poolIdKey = await getPoolIdKey(configIdKey, token0, token1)
     const observationStateKey = await getObservationStateKey(poolIdKey)
-    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, tokenA?.address)
-    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, tokenB?.address)
+    const poolVaultKeyA = await getPoolVaultKey(poolIdKey, token0?.toBase58())
+    const poolVaultKeyB = await getPoolVaultKey(poolIdKey, token1?.toBase58())
     const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
 
     const accountObj = {
@@ -339,11 +330,31 @@ export const createPool = async (
     userPubKey: PublicKey,
     program: Program
 ) => {
-    const getAccsForCreatePool = await getAccountsForCreatePool(tokenA, tokenB, userPubKey)
+    let token0 = new PublicKey(tokenA?.address)
+    let token1 = new PublicKey(tokenB?.address)
+    let amountToken0 = amountTokenA
+    let amountToken1 = amountTokenB
+    let decimalsToken0 = tokenA?.decimals
+    let decimalsToken1 = tokenB?.decimals
+
+    const compare = new PublicKey(tokenA?.address)?.toBuffer()?.compare(new PublicKey(tokenB?.address)?.toBuffer())
+
+    if (compare > 0) {
+        token0 = new PublicKey(tokenB?.address)
+        token1 = new PublicKey(tokenA?.address)
+        amountToken0 = amountTokenB
+        amountToken1 = amountTokenA
+        decimalsToken0 = tokenB?.decimals
+        decimalsToken1 = tokenA?.decimals
+    }
+
+    const getAccsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
     const createPoolAcc = { ...getAccsForCreatePool }
+    const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
+    const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
     const createPoolIX: TransactionInstruction = await program.instruction.initialize(
-        new BN(1),
-        new BN(2),
+        new BN(amountTokenABN),
+        new BN(amountTokenBBN),
         new BN(+new Date()), {
         accounts: createPoolAcc
     })

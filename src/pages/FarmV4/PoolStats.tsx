@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, ReactElement, useMemo } from 'react'
 import { Badge, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
 import { GAMMAPool } from '@/types/gamma'
