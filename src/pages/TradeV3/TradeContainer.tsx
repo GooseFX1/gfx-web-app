@@ -13,7 +13,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { checkMobileDex } from '../../utils'
 import { DexhomeMobi } from './mobile/DexhomeMobi'
-import { Alert, AlertDescription, AlertTitle } from "gfx-component-lib"
+import { Alert, AlertDescription } from "gfx-component-lib"
 const ReactGridLayout = WidthProvider(Responsive)
 
 const componentDimensionsLg = [
