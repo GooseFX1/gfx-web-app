@@ -506,7 +506,7 @@ export const DepositWithdrawSlider: FC = () => {
               setUserTargetWithdrawAmount={setUserTargetWithdrawAmount}
             />
             <DepositWithdrawAccordion />
-            <DepositWithdrawLabel text={'Enter Amounts'} />
+            <DepositWithdrawLabel text={'1. Enter Amounts'} />
             <TokenRow isMintA={true} token={selectedCard?.mintA} balance={userSourceTokenBal} />
             <DepositWithdrawInput
               isDeposit={isDeposit}
