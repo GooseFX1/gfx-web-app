@@ -24,8 +24,8 @@ export function JupWidget(): JSX.Element {
         size: 'sm'
       },
       formProps: {
-        initialInputMint: selectedCard?.mintA.address || NATIVE_MINT.toBase58(),
-        initialOutputMint: selectedCard?.mintB.address,
+        initialInputMint: selectedCard?.mintA?.address || NATIVE_MINT.toBase58(),
+        initialOutputMint: selectedCard?.mintB?.address,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         swapMode: 'ExactInOrOut'

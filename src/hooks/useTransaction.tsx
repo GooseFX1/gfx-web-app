@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
 import { useConnectionConfig } from '@/context'
 import { BlockheightBasedTransactionConfirmationStrategy, Commitment, Connection, Transaction } from '@solana/web3.js'
@@ -18,6 +18,7 @@ type useTransactionReturn = {
     txn: Transaction | TransactionBuilder,
     connectionData?: SendTxnOptions
   ) => Promise<{ success: boolean; txSig: string }>
+  errorCode: number
 }
 const baseSet = new Set()
 
@@ -26,6 +27,7 @@ function useTransaction(): useTransactionReturn {
   const { sendTransaction: sendTransactionOriginal, wallet } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
+  const [errorCode, setErrorCode] = useState<number>(0)
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
@@ -51,6 +53,7 @@ function useTransaction(): useTransactionReturn {
         return { txSig: '', success: false }
       }
       const exec = async () => {
+        setErrorCode(0)
         blockHash = await connection.getLatestBlockhash()
         console.log('blockhash', blockHash)
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
@@ -65,9 +68,11 @@ function useTransaction(): useTransactionReturn {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
             if (res.value.err != null) {
               console.log('Transaction failed', res.value.err)
+              setErrorCode((res?.value?.err as any).InstructionError[1]?.Custom)
               throw new Error('Transaction failed')
             }
             const response = { ...res, txid: txSig }
+            setErrorCode(0)
             console.log('RESPONSE', response)
             return response
           })
@@ -84,7 +89,8 @@ function useTransaction(): useTransactionReturn {
   )
   return {
     createTransactionBuilder,
-    sendTransaction
+    sendTransaction,
+    errorCode
   }
 }
 
