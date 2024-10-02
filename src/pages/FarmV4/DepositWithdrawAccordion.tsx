@@ -7,8 +7,10 @@ const DepositWithdrawAccordion: FC = (): ReactElement => {
   const { selectedCard } = useGamma()
     return(
         <Accordion collapsible='true' type={'multiple'} variant='default'
-                   className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 !rounded-[4px]">
-        <AccordionItem value="pool-stats" >
+                   className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 !rounded-[4px]"
+                   defaultValue={['pool-stats']}
+        >
+        <AccordionItem value="pool-stats">
           <AccordionTrigger><h4>Pool Stats</h4></AccordionTrigger>
           <AccordionContent>
             <PoolStats pool={selectedCard} />

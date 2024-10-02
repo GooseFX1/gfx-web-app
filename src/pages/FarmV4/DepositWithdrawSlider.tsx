@@ -69,7 +69,7 @@ export const DepositWithdrawSlider: FC = () => {
   }, [])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (userPublicKey) {
         const solAmount = await connection.getBalance(userPublicKey)
         setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
@@ -100,7 +100,7 @@ export const DepositWithdrawSlider: FC = () => {
 
   const handleInputChange = useCallback(
     async (input: string, sourceToken: boolean) => {
-      
+
       if (input === '') {
         if (isDeposit) {
           setUserSourceDepositAmount('')
@@ -153,8 +153,7 @@ export const DepositWithdrawSlider: FC = () => {
               setTransactionLPAmount(lpTokenAmount)
               setUserTargetWithdrawAmount(otherTokenAmountInString)
             }
-          }
-          else {
+          } else {
             setUserTargetWithdrawAmount(input)
             if (Object.keys(selectedCardPool)?.length) {
               const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
@@ -196,14 +195,16 @@ export const DepositWithdrawSlider: FC = () => {
     else if (isDeposit && (new BigNumber(userSourceDepositAmount)?.isGreaterThan(new BigNumber(userSourceTokenBal))
       || new BigNumber(userTargetDepositAmount)?.isGreaterThan(new BigNumber(userTargetTokenBal)))) return true
     else if (!isDeposit &&
-      new BigNumber(userSourceWithdrawAmount)?.
-        isGreaterThan(new BigNumber(withdrawBigStringFarm(((selectedCardLiquidityAcc?.token0Deposited)?.
-          sub(selectedCardLiquidityAcc?.token0Withdrawn))?.toString(), selectedCardPool?.mint0Decimals)
-        ))
-      || new BigNumber(userTargetWithdrawAmount)?.
-        isGreaterThan(new BigNumber(withdrawBigStringFarm(((selectedCardLiquidityAcc?.token1Deposited)?.
-          sub(selectedCardLiquidityAcc?.token1Withdrawn))?.toString(), selectedCardPool?.mint1Decimals)
-        )))
+      new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
+        new BigNumber(withdrawBigStringFarm(
+          ((selectedCardLiquidityAcc?.token0Deposited)?.sub(selectedCardLiquidityAcc?.token0Withdrawn))
+            ?.toString(), selectedCardPool?.mint0Decimals)
+      ))
+      || new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
+        new BigNumber(withdrawBigStringFarm(
+          ((selectedCardLiquidityAcc?.token1Deposited)?.sub(selectedCardLiquidityAcc?.token1Withdrawn))
+            ?.toString(), selectedCardPool?.mint1Decimals)
+      )))
       return true
   }, [userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount, userSourceDepositAmount,
     userTargetDepositAmount, isDeposit, userSourceWithdrawAmount, selectedCardLiquidityAcc, selectedCardPool])
@@ -240,9 +241,9 @@ export const DepositWithdrawSlider: FC = () => {
         if (sourceToken) {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
             !selectedCardLiquidityAcc?.token0Deposited?.isZero() ?
-              withdrawBigStringFarm(selectedCardLiquidityAcc?.token0Deposited?.
-                sub(selectedCardLiquidityAcc?.token0Withdrawn)?.
-                div(new BN(2))?.toString(), selectedCardPool?.mint0Decimals) : '0' : '0'
+              withdrawBigStringFarm(
+                selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn)
+                  ?.div(new BN(2))?.toString(), selectedCardPool?.mint0Decimals) : '0' : '0'
           setUserSourceWithdrawAmount(withdraw0Amount)
           if (Object.keys(selectedCardPool)?.length) {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
@@ -257,9 +258,9 @@ export const DepositWithdrawSlider: FC = () => {
         } else {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
             !selectedCardLiquidityAcc?.token1Deposited?.isZero() ?
-              withdrawBigStringFarm(selectedCardLiquidityAcc?.token1Deposited?.
-                sub(selectedCardLiquidityAcc?.token1Withdrawn)?.
-                div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals) : '0' : '0'
+              withdrawBigStringFarm(
+                selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)
+                  ?.div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals) : '0' : '0'
           setUserTargetWithdrawAmount(withdraw1Amount)
           if (Object.keys(selectedCardPool)?.length) {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
@@ -309,8 +310,8 @@ export const DepositWithdrawSlider: FC = () => {
         if (sourceToken) {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
             !selectedCardLiquidityAcc?.token0Deposited?.isZero() ?
-              withdrawBigStringFarm((selectedCardLiquidityAcc?.token0Deposited)?.
-                sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
+              withdrawBigStringFarm((selectedCardLiquidityAcc?.token0Deposited)
+                  ?.sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
                 , selectedCardPool?.mint0Decimals) : '0' : '0'
           setUserSourceWithdrawAmount(withdraw0Amount)
           if (Object.keys(selectedCardPool)?.length) {
@@ -326,8 +327,8 @@ export const DepositWithdrawSlider: FC = () => {
         } else {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
             !selectedCardLiquidityAcc?.token1Deposited?.isZero() ?
-              withdrawBigStringFarm((selectedCardLiquidityAcc?.token1Deposited)?.
-                sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
+              withdrawBigStringFarm((selectedCardLiquidityAcc?.token1Deposited)
+                  ?.sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
                 selectedCardPool?.mint1Decimals) : '0' : '0'
           setUserTargetWithdrawAmount(withdraw1Amount)
           if (Object.keys(selectedCardPool)?.length) {
@@ -361,7 +362,7 @@ export const DepositWithdrawSlider: FC = () => {
       txBuilder.add(tx)
       setSendingTransaction(true)
       const { success } = await sendTransaction(txBuilder)
-  
+
       if (!success) {
         console.log('failure')
         setSendingTransaction(false)
@@ -391,7 +392,7 @@ export const DepositWithdrawSlider: FC = () => {
       )
       txBuilder.add(tx)
       const { success } = await sendTransaction(txBuilder)
-  
+
       if (!success) {
         console.log('failure')
         setSendingTransaction(false)
@@ -447,7 +448,7 @@ export const DepositWithdrawSlider: FC = () => {
   }, [isDeposit, isClaim])
 
   return (
-    <Dialog open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
+    <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
       <div
         className={cn(`fixed top-0 left-0 w-screen h-screen z-10 bg-black-4 dark:bg-black-4 bg-opacity-50
       dark:bg-opacity-50 backdrop-blur-sm

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import useBoolean from '@/hooks/useBoolean'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import { useConnectionConfig, useWalletModal } from '@/context'
+import { useConnectionConfig, useGamma, useWalletModal } from '@/context'
 import { NATIVE_MINT } from '@solana/spl-token-v2'
 import { useLocation } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ export function JupWidget(): JSX.Element {
   const { setVisible } = useWalletModal()
   const { pathname } = useLocation()
   const intervalId = useRef<NodeJS.Timeout | null>()
+  const {selectedCard} = useGamma()
   const launchWidget = useCallback(() => {
     window.Jupiter.init({
       connectionObj: connection,
@@ -23,7 +24,8 @@ export function JupWidget(): JSX.Element {
         size: 'sm'
       },
       formProps: {
-        initialInputMint: NATIVE_MINT.toBase58(),
+        initialInputMint: selectedCard?.mintA.address || NATIVE_MINT.toBase58(),
+        initialOutputMint: selectedCard?.mintB.address,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         swapMode: 'ExactInOrOut'
@@ -34,7 +36,7 @@ export function JupWidget(): JSX.Element {
       endpoint,
       defaultExplorer: 'Solscan'
     })
-  }, [passthroughWalletContextState, endpoint, setVisible, connection])
+  }, [passthroughWalletContextState, endpoint, setVisible, connection, selectedCard])
 
   useEffect(() => {
     if (!isLoaded || !window.Jupiter.init || !intervalId.current) {
@@ -57,7 +59,7 @@ export function JupWidget(): JSX.Element {
     return () => {
       clearTimeout(timeout)
     }
-  }, [isLoaded, launchWidget, pathname, isFarmOrSSL, isDesktop])
+  }, [isLoaded, launchWidget, pathname, isFarmOrSSL, isDesktop, selectedCard])
   useLayoutEffect(() => {
     if (!isFarmOrSSL) {
       window.Jupiter.close()

@@ -148,7 +148,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
-
+  // TODO:
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
@@ -333,7 +333,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     [pools, searchTokens, sortConfig, currentPoolType, lpPositions]
   )
-
+  console.log({pools,filteredPools})
   const isSearchActive = searchTokens.trim().length > 0
 
   return (
