@@ -77,13 +77,6 @@ const PositionHeader: FC<{
                                 iconRight={true}
 
                             />
-                            <FarmRowItem
-                                title={'Token A/B'}
-                                //onClick={handleSort('fee')}
-                                tooltip={'Total amount of your position in the pool.'}
-                                invert={sort == 'DESC' && sortType == 'fee'}
-                                iconRight={false}
-                            />
                         </>
                     )}
                     <FarmRowItem

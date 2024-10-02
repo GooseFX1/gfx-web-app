@@ -78,8 +78,6 @@ export const Router: FC = () => {
       {window.location.pathname === '/' && (
         <Redirect from="/" to={{ search: window.location.search, pathname: APP_DEFAULT_ROUTE }} />
       )}
-      <JupWidget />
-
       <TokenRegistryProvider>
         <AccountsProvider>
           <RewardToggleProvider>
@@ -127,6 +125,7 @@ export const Router: FC = () => {
                           <Route exact path={['/farm']}>
                             <PriceFeedFarmProvider>
                               <GammaProvider>
+                                <JupWidget />
                                 <FarmV4 />
                               </GammaProvider>
                             </PriceFeedFarmProvider>

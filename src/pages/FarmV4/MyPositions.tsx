@@ -101,12 +101,6 @@ const MyPositions: FC = () => {
               </div>
               <div
                 className="flex items-center justify-center text-black-4
-                                    text-regular font-semibold dark:text-grey-8 w-[120%]"
-              >
-                {'---'} {pool.mintA.symbol} / {'---'} {pool.mintB.symbol}
-              </div>
-              <div
-                className="flex items-center justify-center text-black-4
                                     text-regular font-semibold dark:text-grey-8"
               >
                 ${numberFormatter(0)}
