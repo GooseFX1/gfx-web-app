@@ -4,7 +4,7 @@ import {
   GAMMAConfig,
   GAMMAListTokenResponse,
   GAMMAPoolsResponse,
-  GAMMAProtocolStats,
+  GAMMAStats,
   GAMMAUser,
   UserPortfolioLPPosition,
   UserPortfolioStats
@@ -21,11 +21,10 @@ const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
   }
 }
 
-const fetchAggregateStats = async (): Promise<GAMMAProtocolStats | null> => {
+const fetchAggregateStats = async (): Promise<GAMMAStats | null> => {
   try {
-    // const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
-    // return response.data
-    return null
+    const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
+    return response.data as GAMMAStats
   } catch (error) {
     console.error('Error fetching aggregate stats:', error)
     return null
