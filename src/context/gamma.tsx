@@ -1,15 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -18,8 +7,7 @@ import {
   fetchPortfolioStats,
   fetchTokenList,
   fetchTokensByPublicKey,
-  fetchUser,
-  sortAndFilterPools
+  fetchUser
 } from '@/api/gamma'
 import {
   GAMMAConfig,
@@ -194,14 +182,24 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenList([...currentTokenList])
   }
 
-  const updatePools = (page: number, pageSize: number, poolType: Pool['type'] | 'all' = 'all') => {
+  const updatePools = (
+    page: number,
+    pageSize: number,
+    poolType: Pool['type'] | 'all' = 'all',
+    searchTokens: string = ''
+  ) => {
     if (poolType === 'migrate') {
       return
     }
     setIsLoadingPools.on()
-    fetchAllPools(page, pageSize, poolType,
-      sortConfig.direction.toLowerCase() as 'desc' | 'asc', sortConfig.key.toLowerCase())
-      .then((poolsData: GAMMAPoolsResponse) => {
+    fetchAllPools(
+      page,
+      pageSize,
+      poolType,
+      sortConfig.direction.toLowerCase() as 'desc' | 'asc',
+      sortConfig.key.toLowerCase(),
+      searchTokens
+    ).then((poolsData: GAMMAPoolsResponse) => {
         if (poolsData && poolsData.success) {
           setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
           const existingPools = pools
@@ -219,15 +217,26 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       .finally(() => setIsLoadingPools.off())
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
   }, [poolPage, currentPoolType, sortConfig])
 
+  useEffect(() => {
+      const timeout = setTimeout(()=>{
+        //debounced search
+        setPoolPage(1)
+        setPools([])
+        updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type, searchTokens)
+      },233)
 
+    return ()=>{
+        clearTimeout(timeout)
+    }
+  }, [searchTokens])
   useEffect(() => {
     if (base58PublicKey) {
       // user data and portfolio stat fetching
@@ -317,10 +326,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const filteredPools = useMemo(
     () => {
-      const result = sortAndFilterPools(pools, searchTokens, currentPoolType, sortConfig)
-      // maps users lp positions onto pools for easier access!
       const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
-      return result.map((pool) => {
+      return pools.map((pool) => {
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
@@ -329,11 +336,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             (new Decimal(userLpPosition.tokenADeposited).gt(0) || new Decimal(userLpPosition.tokenBDeposited).gt(0)) :
             false
         }
-      })
+      }).filter((pool)=>pool.hasDeposit)
     },
-    [pools, searchTokens, sortConfig, currentPoolType, lpPositions]
+    [pools, lpPositions, showDeposited]
   )
-  console.log({pools,filteredPools})
+
   const isSearchActive = searchTokens.trim().length > 0
 
   return (
@@ -384,7 +391,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         sortConfig,
         selectedCardLiquidityAcc,
         setSelectedCardLiquidityAcc
-      }}
+    }}
     >
       {children}
     </GAMMAContext.Provider>

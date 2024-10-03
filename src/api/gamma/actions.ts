@@ -37,12 +37,31 @@ const fetchAllPools = async (
   pageSize: number,
   poolType: 'all' | 'hyper' | 'primary' = 'all',
   sortConfig: 'asc' | 'desc',
-  sortKey: string
+  sortKey: string,
+  searchTokens: string
 ): Promise<GAMMAPoolsResponse | null> => {
+  let search = searchTokens.trim().toLowerCase()
+  search = search.length === 0 ? '' : `&search=${search}`
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}`
+        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching gamma pools:', error)
+    return null
+  }
+}
+const fetchPoolsByMints = async (
+  mintA: string,
+  mintB: string
+): Promise<GAMMAPoolsResponse | null> => {
+  try {
+    // hardcoded for now
+    const response = await httpClient(GAMMA_API_BASE).get(
+      GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
+        `?mint1=${mintA}&mint2=${mintB}&page=1&pageSize=200`
     )
     return response.data
   } catch (error) {
@@ -123,5 +142,6 @@ export {
   fetchLpPositions,
   fetchAllPools,
   fetchTokenList,
-  fetchTokensByPublicKey
+  fetchTokensByPublicKey,
+  fetchPoolsByMints
 }
