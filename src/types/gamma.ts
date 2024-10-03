@@ -11,17 +11,6 @@ interface GAMMAConfig {
   fundOwner: string
 }
 
-interface GAMMAProtocolStats {
-  userTotalEarningsUSD: string
-  tvlUSD: string
-  volume24hrUSD: string
-  fee24hrUSD: string
-  volume7dUSD: string
-  fee7dUSD: string
-  allTimeVolumeUSD: string
-  allTimeFeesUSD: string
-}
-
 // Token Models
 // TODO - marry with web3js types
 type ExtensionsItem = {
@@ -192,10 +181,23 @@ type GAMMAPoolsResponse = GAMMAAPIBaseResponse<{
 type GAMMAListTokenResponse = GAMMAAPIBaseResponse<{
   tokens: TokenListToken[]
 } & GAMMAAPIPaginatedResponse>
-
+type GAMMAStats = {
+  tvl: string
+  stats24h: {
+    volume: string
+    fees: string
+  },
+  stats7d: {
+    volume: string
+    fees: string
+  },
+  stats30d: {
+    volume: string
+    fees: string
+  }
+}
 export type {
   GAMMAConfig,
-  GAMMAProtocolStats,
   GAMMATokenList,
   GAMMAToken,
   ExtensionsItem,
@@ -210,5 +212,6 @@ export type {
   GAMMAPoolsResponse,
   GAMMAListTokenResponse,
   GAMMAUser,
-  GAMMAUserLPPositionWithPrice
+  GAMMAUserLPPositionWithPrice,
+   GAMMAStats
 }

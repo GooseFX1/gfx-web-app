@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react'
 import { useDarkMode, useGamma, useRewardToggle } from '../../context'
-import { truncateBigNumber } from '../../utils'
+import { bigNumberFormatter, truncateBigNumber } from '../../utils'
 import { POOL_TYPE } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button, cn, Container, ContainerTitle, Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
@@ -9,10 +9,11 @@ import { DepositWithdrawSlider } from '../FarmV4/DepositWithdrawSlider'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import DocsBanner from './DocsBanner'
 import { CreatePool } from './CreatePool'
+import BigNumber from 'bignumber.js'
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
-  const { setCurrentPoolType, openDepositWithdrawSlider } = useGamma()
+  const { setCurrentPoolType, openDepositWithdrawSlider, stats } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
@@ -20,63 +21,37 @@ export const FarmHeader: FC = () => {
   const { mode } = useDarkMode()
   const [isCreatePool, setIsCreatePool] = useState<boolean>(false)
 
-  const TVL = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
   const totalEarnings = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const V24H = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const V7D = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const totalVolumeTraded = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const F24H = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const F7D = useMemo(() => {
-    const number = 0.00
-    return '$' + truncateBigNumber(number)
-  }, [])
-
-  const totalFees = useMemo(() => {
     const number = 0.00
     return '$' + truncateBigNumber(number)
   }, [])
 
   const infoCards = useMemo(() => {
     const data = [
-      { name: 'TVL', value: TVL,
-        tooltip: 'TVL represents the total USD value of all assets deposited in our pools' },
+      {
+        name: 'TVL', value: bigNumberFormatter(new BigNumber(stats.tvl)),
+        tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
+      },
       {
         name: '24H Volume',
-        value: range === 0 ? V24H : range === 1 ? V7D : totalVolumeTraded,
+        value: range === 0 ? bigNumberFormatter(new BigNumber(stats.stats24h.volume)) :
+          range === 1 ? bigNumberFormatter(new BigNumber(stats.stats7d.volume)) :
+            bigNumberFormatter(new BigNumber(stats.stats30d.volume)),
         tooltip: ''
       },
       {
-        name: '24H Fees', value: range === 0 ? F24H : range === 1 ? F7D : totalFees,
+        name: '24H Fees', value: range === 0 ?
+          bigNumberFormatter(new BigNumber(stats.stats24h.fees)) : range === 1 ?
+            bigNumberFormatter(new BigNumber(stats.stats7d.fees)) :
+            bigNumberFormatter(new BigNumber(stats.stats30d.fees)),
         tooltip: ''
       }
     ]
     if (userPubKey) {
-      data.unshift({ name: 'Total Earned', value: totalEarnings,
-        tooltip: '' })
+      data.unshift({
+        name: 'Total Earned', value: totalEarnings,
+        tooltip: ''
+      })
     }
     return data
   }, [userPubKey])

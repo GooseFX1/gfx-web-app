@@ -15,7 +15,7 @@ import {
   GAMMAPool,
   GAMMAPoolsResponse,
   GAMMAPoolWithUserLiquidity,
-  GAMMAProtocolStats,
+  GAMMAStats,
   GAMMAUser,
   GAMMAUserLPPositionWithPrice,
   UserPortfolioLPPosition,
@@ -42,7 +42,6 @@ import Decimal from 'decimal.js-light'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
-  aggregateStats: GAMMAProtocolStats
   /**
    * @deprecated use filteredPools instead - this is the raw response and should ideally not be used
    */
@@ -89,6 +88,7 @@ interface GAMMADataModel {
   sortConfig: { id: string, name: string, direction: string, key: string }
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
+  stats: GAMMAStats
 }
 
 export type TokenListToken = {
@@ -109,7 +109,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { userCache, network } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
-  const [aggregateStats, setAggregateStats] = useState<GAMMAProtocolStats | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
   const [user, setUser] = useState<GAMMAUser | null>(null)
   const [portfolioStats, setPortfolioStats] = useState<UserPortfolioStats | null>(null)
@@ -136,6 +135,21 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [poolsHasMoreData, setPoolsHasMoreData] = useState(true)
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
+  const [stats, setStats] = useState<GAMMAStats>({
+    tvl: "0",
+    stats24h: {
+      volume: "0",
+      fees: "0"
+    },
+    stats7d: {
+      volume: "0",
+      fees: "0"
+    },
+    stats30d: {
+      volume: "0",
+      fees: "0"
+    }
+  })
   // TODO:
   useEffect(() => {
     // first render only
@@ -150,12 +164,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (config) setGammaConfig(config)
       })
     }
-    if (!aggregateStats) {
+    fetchAggregateStats().then((stats) => {
+      if (stats) setStats(stats)
+    })
+    const statsInterval = setInterval(() => {
       fetchAggregateStats().then((stats) => {
-        if (stats) setAggregateStats(stats)
+        if (stats) setStats(stats)
       })
-    }
-
+    }, 60000)
+    return () => clearInterval(statsInterval)
   }, [])
 
   const updateTokenList = async (page: number, pageSize: number) => {
@@ -347,7 +364,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <GAMMAContext.Provider
       value={{
         gammaConfig,
-        aggregateStats,
+        stats,
         pools,
         user,
         portfolioStats,
