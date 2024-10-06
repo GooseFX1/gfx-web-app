@@ -24,7 +24,7 @@ const fetchGAMMAConfig = async (): Promise<GAMMAConfig | null> => {
 const fetchAggregateStats = async (): Promise<GAMMAStats | null> => {
   try {
     const response = await httpClient(GAMMA_API_BASE).get(GAMMA_ENDPOINTS_V1.STATS)
-    return response.data as GAMMAStats
+    return response.data.data.stats as GAMMAStats
   } catch (error) {
     console.error('Error fetching aggregate stats:', error)
     return null
