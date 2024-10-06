@@ -44,7 +44,7 @@ const fetchAllPools = async (
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-        `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`
+      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`
     )
     return response.data
   } catch (error) {
@@ -60,7 +60,7 @@ const fetchPoolsByMints = async (
     // hardcoded for now
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
-        `?mint1=${mintA}&mint2=${mintB}&page=1&pageSize=200`
+      `?mint1=${mintA}&mint2=${mintB}&page=1&pageSize=200`
     )
     return response.data
   } catch (error) {
@@ -103,11 +103,15 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
   }
 }
 
-const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAListTokenResponse | null> => {
+const fetchTokenList = async (
+  page: number,
+  pageSize: number,
+  poolType: string
+): Promise<GAMMAListTokenResponse | null> => {
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}`
-    )    
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}`
+    )
     return await response.data
   } catch (error) {
     console.log('Error fetching token list', error)
@@ -118,14 +122,14 @@ const fetchTokenList = async (page: number, pageSize: number): Promise<GAMMAList
  *
  * @param tokens comma separated string for token e.g SOL1111,EFAC22141
  */
-const fetchTokensByPublicKey = async (tokens: string) :Promise<GAMMAListTokenResponse | null> => {
+const fetchTokensByPublicKey = async (tokens: string): Promise<GAMMAListTokenResponse | null> => {
   if (tokens?.length === 0) return null
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST+`?ids=${tokens}`
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${tokens}`
     )
     return await response.data
-  } catch(e) {
+  } catch (e) {
     console.log('Error fetching token list', e)
     return {
       success: false,
