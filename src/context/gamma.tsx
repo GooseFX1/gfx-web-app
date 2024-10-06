@@ -83,12 +83,19 @@ interface GAMMADataModel {
   setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
   filteredPools: GAMMAPoolWithUserLiquidity[]
-  updatePools: (page: number, pageSize: number, poolType: Pool['type'] | 'all') => void
+  updatePools: (data: {
+    page: number,
+    pageSize: number,
+    poolType?: Pool['type'] | 'all'
+    searchTokens?: string
+  }, append: boolean) => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
-  stats: GAMMAStats
+  stats: GAMMAStats,
+  createPoolType: string
+  setCreatePoolType: Dispatch<SetStateAction<string>>
 }
 
 export type TokenListToken = {
@@ -136,20 +143,21 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const sortConfig = useMemo(() => GAMMA_SORT_CONFIG_MAP.get(currentSort) ?? GAMMA_SORT_CONFIG[0], [currentSort])
   const [selectedCardLiquidityAcc, setSelectedCardLiquidityAcc] = useState<any>({})
   const [stats, setStats] = useState<GAMMAStats>({
-    tvl: "0",
+    tvl: '0',
     stats24h: {
-      volume: "0",
-      fees: "0"
+      volume: '0',
+      fees: '0'
     },
     stats7d: {
-      volume: "0",
-      fees: "0"
+      volume: '0',
+      fees: '0'
     },
     stats30d: {
-      volume: "0",
-      fees: "0"
+      volume: '0',
+      fees: '0'
     }
   })
+  const [createPoolType, setCreatePoolType] = useState<string>('')
   // TODO:
   useEffect(() => {
     // first render only
@@ -157,7 +165,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
     }
     if (pools.length == 0) {
-      updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type)
+      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
     }
     if (!gammaConfig) {
       fetchGAMMAConfig().then((config) => {
@@ -177,11 +185,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const updateTokenList = async (page: number, pageSize: number) => {
     if (network === WalletAdapterNetwork.Devnet) {
-      setTokenList(DEVNET_NEW_TOKENS)
-      return
+      console.log(DEVNET_NEW_TOKENS)
+      // setTokenList(DEVNET_NEW_TOKENS)
+      // return
     }
     setIsLoadingTokenList(true)
-    const response = (await fetchTokenList(page, pageSize)) as GAMMAListTokenResponse | null
+    const response = (await fetchTokenList(page, pageSize, createPoolType.toLowerCase())) as
+      GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)
     if (!response || !response.success) {
       return
@@ -200,10 +210,19 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   const updatePools = (
-    page: number,
-    pageSize: number,
-    poolType: Pool['type'] | 'all' = 'all',
-    searchTokens: string = ''
+    {
+      page,
+      pageSize,
+      poolType = 'all',
+      searchTokens = ''
+    }:
+      {
+        page: number,
+        pageSize: number,
+        poolType?: Pool['type'] | 'all'
+        searchTokens?: string
+      },
+    append = true
   ) => {
     if (poolType === 'migrate') {
       return
@@ -217,43 +236,64 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       sortConfig.key.toLowerCase(),
       searchTokens
     ).then((poolsData: GAMMAPoolsResponse) => {
-        if (poolsData && poolsData.success) {
-          setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
-          const existingPools = pools
-          const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
-          for (const pool of poolsData.data.pools) {
-            if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
-              continue
-            }
-            hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
-            existingPools.push(pool)
+      if (poolsData && poolsData.success) {
+        setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
+        const existingPools = append ? pools : []
+        const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
+        for (const pool of poolsData.data.pools) {
+          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
+            continue
           }
-          setPools([...existingPools])
+          hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
+          existingPools.push(pool)
         }
-      })
+        setPools([...existingPools])
+      }
+    })
       .finally(() => setIsLoadingPools.off())
   }
 
   useEffect(() => {
+    //update token on next pagination
     updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
   }, [page])
 
   useEffect(() => {
-    updatePools(poolPage, POOL_LIST_PAGE_SIZE, currentPoolType.type)
-  }, [poolPage, currentPoolType, sortConfig])
+    // on create pool request new data
+    // will trigger above useEffect
+    setTokenList([])
+    setPage(1)
+    if (page == 1) {
+      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+    }
+
+  }, [createPoolType])
 
   useEffect(() => {
-      const timeout = setTimeout(()=>{
-        //debounced search
-        setPoolPage(1)
-        setPools([])
-        updatePools(1, POOL_LIST_PAGE_SIZE, currentPoolType.type, searchTokens)
-      },233)
+    setPoolPage(1)
+    setPools([])
+    // same page
+    if (poolPage == 1) {
+      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
+    }
+  }, [currentPoolType])
+  useEffect(() => {
+    updatePools({ page: poolPage, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
+  }, [poolPage, sortConfig])
 
-    return ()=>{
-        clearTimeout(timeout)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      //debounced search
+      setPoolPage(1)
+      setPools([])
+      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type, searchTokens })
+    }, 233)
+
+    return () => {
+      clearTimeout(timeout)
     }
   }, [searchTokens])
+
   useEffect(() => {
     if (base58PublicKey) {
       // user data and portfolio stat fetching
@@ -318,22 +358,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         try {
           const poolIdKey = await getpoolId(selectedCard)
           const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
-          setSelectedCardPool(gammaPool)
-        } catch (e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [GammaProgram, selectedCard])
-
-  useEffect(() => {//????
-    ;(async () => {
-      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
-        try {
-          const poolIdKey = await getpoolId(selectedCard)
           const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
           const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
           setSelectedCardLiquidityAcc(liquidityAccount)
+          setSelectedCardPool(gammaPool)
         } catch (e) {
           console.log(e)
         }
@@ -353,13 +381,18 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             (new Decimal(userLpPosition.tokenADeposited).gt(0) || new Decimal(userLpPosition.tokenBDeposited).gt(0)) :
             false
         }
-      }).filter((pool)=>pool.hasDeposit)
+      }).filter((pool) => {
+        if (showDeposited) {
+          return pool.hasDeposit
+        }
+        return true
+      })
     },
     [pools, lpPositions, showDeposited]
   )
 
   const isSearchActive = searchTokens.trim().length > 0
-
+  console.log({ pools, lpPositions, filteredPools })
   return (
     <GAMMAContext.Provider
       value={{
@@ -407,8 +440,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         poolsHasMoreData,
         sortConfig,
         selectedCardLiquidityAcc,
-        setSelectedCardLiquidityAcc
-    }}
+        setSelectedCardLiquidityAcc,
+        createPoolType,
+        setCreatePoolType
+      }}
     >
       {children}
     </GAMMAContext.Provider>

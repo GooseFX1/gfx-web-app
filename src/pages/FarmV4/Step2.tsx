@@ -326,7 +326,7 @@ function TokenSelectionInput({
             <ScrollingHydrateContainer
               ref={(ref) => setScrollingContainerRef(ref)}
               callback={() => {
-                if (tokenList.length <= 0 && maxTokensReached) return;
+                if (maxTokensReached) return;
                 updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() =>
                   setPage(page + 1)
                 );

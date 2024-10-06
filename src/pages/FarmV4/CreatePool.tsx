@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState, useMemo } from 'react'
+import React, { Dispatch, FC, SetStateAction, useMemo, useState } from 'react'
 import 'styled-components/macro'
 import Slider from 'react-slick'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -34,15 +34,14 @@ export const CreatePool: FC<{
   const [amountTokenA, setAmountTokenA] = useState<string>('')
   const [tokenB, setTokenB] = useState(null)
   const [amountTokenB, setAmountTokenB] = useState<string>('')
-  const [feeTier, setFeeTier] = useState<string>("0.01")
+  const [feeTier, setFeeTier] = useState<string>('0.01')
   const { connected, wallet } = useWallet()
   const [poolExists, setPoolExists] = useBoolean(false)
-  const [localPoolType, setLocalPoolType] = useState<string>('')
   const [initialPrice, setInitialPrice] = useState<string>('')
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { setSendingTransaction } = useGamma()
+  const { setSendingTransaction, createPoolType, setCreatePoolType } = useGamma()
   const { getUIAmount } = useAccounts()
   const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
   const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
@@ -104,17 +103,23 @@ export const CreatePool: FC<{
   }
 
   const checkButtonStatus = useMemo(() => {
-    if(currentSlide !== 1) return false
+    if (currentSlide !== 1) return false
     else {
-      if(!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
-      if((+amountTokenA && +amountTokenB) && 
+      if (!tokenA || !tokenB || !+amountTokenA || !+amountTokenB) return true
+      if ((+amountTokenA && +amountTokenB) &&
         (+amountTokenA > +walletTokenA) || (+amountTokenB > +walletTokenB)) return true
-      if(tokenA?.symbol === tokenB?.symbol) return true
-      if(poolExists) return true
-    }}, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB])
+      if (tokenA?.symbol === tokenB?.symbol) return true
+      if (poolExists) return true
+    }
+  }, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB])
 
   return (
-    <Dialog onOpenChange={setIsCreatePool} open={isCreatePool}>
+    <Dialog onOpenChange={(b) => {
+      setIsCreatePool(b)
+      if (!b) {
+        setCreatePoolType('')
+      }
+    }} open={isCreatePool}>
       <DialogOverlay />
       <DialogContent
         className={`flex flex-col gap-0 max-h-[700px] border-1 border-solid z-[1001] overflow-hidden
@@ -129,7 +134,7 @@ export const CreatePool: FC<{
         <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
           <Slider ref={slider} {...settings}>
             <div className="slide">
-              <Step1 slider={slider} setIsCreatePool={setIsCreatePool} setLocalPoolType={setLocalPoolType} />
+              <Step1 slider={slider} setIsCreatePool={setIsCreatePool} setLocalPoolType={setCreatePoolType} />
             </div>
             <div className="slide">
               <Step2
@@ -156,7 +161,7 @@ export const CreatePool: FC<{
                 tokenB={tokenB}
                 amountTokenA={amountTokenA}
                 amountTokenB={amountTokenB}
-                localPoolType={localPoolType}
+                localPoolType={createPoolType}
                 initialPrice={initialPrice}
               />
             </div>
