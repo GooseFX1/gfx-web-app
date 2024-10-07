@@ -56,7 +56,7 @@ export const DepositWithdrawSlider: FC = () => {
   //eslint-disable-next-line
   const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
-  const [isClaim, setIsClaim] = useBoolean(false)
+  //const [isClaim, setIsClaim] = useBoolean(false)
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
@@ -350,7 +350,8 @@ export const DepositWithdrawSlider: FC = () => {
   const handleDeposit = async () => {
     try {
       const txBuilder = createTransactionBuilder()
-      const tx = await deposit(userSourceDepositAmount,
+      const tx = await deposit(
+        userSourceDepositAmount,
         userTargetDepositAmount,
         transactionLPAmount,
         slippage,
@@ -408,19 +409,19 @@ export const DepositWithdrawSlider: FC = () => {
     }
   }
 
-  const handleClaim = () => {
-    console.log('withdraw')
-    setIsButtonLoading.on()
-    setActionType('claim')
-  }
+  // const handleClaim = () => {
+  //   console.log('withdraw')
+  //   setIsButtonLoading.on()
+  //   setActionType('claim')
+  // }
 
   //eslint-disable-next-line
   const handleProcessStart = (type: 'claim' | 'withdraw') => {
     return () => {
-      if (type === 'claim') {
-        setIsClaim.on()
-      }
-      console.log('performing', type)
+      // if (type === 'claim') {
+      //   setIsClaim.on()
+      // }
+      //console.log('performing', type)
       setOpenDepositWithdrawSlider(true)
       setActionType(type)
     }
@@ -428,24 +429,24 @@ export const DepositWithdrawSlider: FC = () => {
 
   const handleActionCancel = () => {
     setActionType('')
-    setIsClaim.off()
+    //setIsClaim.off()
     setIsButtonLoading.off()
   }
 
-  const claimableReward = 0
+  //const claimableReward = 0
 
   const { actionLabel, actionModalTitle } = useMemo(() => {
-    let actionModalTitle = 'Withdraw'
-    let actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.mintA?.symbol} +
+    const actionModalTitle = 'Withdraw'
+    const actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.mintA?.symbol} +
      ${userTargetWithdrawAmount} ${selectedCard?.mintB?.symbol}`
 
-    if (isClaim) {
-      actionModalTitle = 'Claim'
-      actionLabel = `Claim ${claimableReward} SOME REWARD HERE`
-    }
+    // if (isClaim) {
+    //   actionModalTitle = 'Claim'
+    //   actionLabel = `Claim ${claimableReward} SOME REWARD HERE`
+    // }
 
     return { actionLabel, actionModalTitle }
-  }, [isDeposit, isClaim])
+  }, [isDeposit])
 
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
@@ -472,7 +473,7 @@ export const DepositWithdrawSlider: FC = () => {
           }}
           title={actionModalTitle}
           actionLabel={actionLabel}
-          onActionClick={!isDeposit ? handleWithdraw : isClaim ? handleClaim : handleDeposit}
+          onActionClick={!isDeposit ? handleWithdraw : handleDeposit}
           actionType={actionType}
         >
           <GammaActionModalContentStack
@@ -537,9 +538,9 @@ export const DepositWithdrawSlider: FC = () => {
             isLoading={sendingTransaction}
             onActionClick={isDeposit ? handleDeposit : handleProcessStart('withdraw')}
             isDeposit={isDeposit}
-            canClaim={true || isClaim}
-            claimText={'Claim 0.5 SOL + 12.0 USDC'}
-            onClaimClick={handleProcessStart('claim')}
+            // canClaim={true || isClaim}
+            // claimText={'Claim 0.5 SOL + 12.0 USDC'}
+            // onClaimClick={handleProcessStart('claim')}
             actionButtonText={actionButtonText}
           />
         </DialogFooter>

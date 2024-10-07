@@ -767,6 +767,46 @@
                     }
                 },
                 {
+                    "name": "user_pool_liquidity",
+                    "writable": true,
+                    "pda": {
+                        "seeds": [
+                            {
+                                "kind": "const",
+                                "value": [
+                                    117,
+                                    115,
+                                    101,
+                                    114,
+                                    45,
+                                    112,
+                                    111,
+                                    111,
+                                    108,
+                                    45,
+                                    108,
+                                    105,
+                                    113,
+                                    117,
+                                    105,
+                                    100,
+                                    105,
+                                    116,
+                                    121
+                                ]
+                            },
+                            {
+                                "kind": "account",
+                                "path": "pool_state"
+                            },
+                            {
+                                "kind": "account",
+                                "path": "creator"
+                            }
+                        ]
+                    }
+                },
+                {
                     "name": "token_0_mint",
                     "docs": [
                         "Token_0 mint, the key must smaller than token_1 mint."
@@ -794,9 +834,6 @@
                 },
                 {
                     "name": "token_0_vault",
-                    "docs": [
-                        "creator lp token account"
-                    ],
                     "writable": true,
                     "pda": {
                         "seeds": [
@@ -863,7 +900,7 @@
                         "create pool fee account"
                     ],
                     "writable": true,
-                    "address": "2EGutuSu6BMjw2fKuU5q5fVTH1S5c4tsTgEwQZDn1N45"
+                    "address": "8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY"
                 },
                 {
                     "name": "observation_state",
@@ -1432,7 +1469,6 @@
                 {
                     "name": "user_pool_liquidity",
                     "docs": [
-                        "Owner lp token account",
                         "User pool liquidity account"
                     ],
                     "writable": true,
@@ -1530,7 +1566,6 @@
                 {
                     "name": "memo_program",
                     "docs": [
-                        "Pool lp token mint",
                         "memo program"
                     ],
                     "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"

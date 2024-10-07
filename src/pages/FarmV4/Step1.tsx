@@ -19,7 +19,7 @@ const Step1: FC<{
           dark:bg-black-1 bg-grey-5 rounded-tiny p-2.5 cursor-pointer
           hover:border-grey-1 dark:hover:border-grey-4"
         onClick={() => {
-          setLocalPoolType('Primary')
+          setLocalPoolType('primary')
           slider.current.slickGoTo(1)
         }}
       >
@@ -38,7 +38,7 @@ const Step1: FC<{
           dark:bg-black-1 bg-grey-5 rounded-tiny p-2.5 cursor-pointer
           hover:border-grey-1 dark:hover:border-grey-4"
         onClick={() => {
-          setLocalPoolType('Hyper')
+          setLocalPoolType('hyper')
           slider.current.slickGoTo(1)
         }}
       >

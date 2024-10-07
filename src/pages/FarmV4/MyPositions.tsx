@@ -52,14 +52,14 @@ const MyPositions: FC = () => {
       noResultsSubText = noPoolsFound.subText
       break
   }
-  const canClaim = false
+  //const canClaim = false
 
   return (
     <div>
       {positions.length > 0 ?
         positions.map((pool: GAMMAPoolWithUserLiquidity) => (
             <div
-              className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 dark:bg-black-2 px-2.5
+              className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 dark:bg-black-2 px-2.5
                                 my-3.75 h-15 border border-solid dark:border-black-4 border-grey-4 bg-white 
                                 rounded-tiny py-3.75"
               key={pool.id}
@@ -99,7 +99,7 @@ const MyPositions: FC = () => {
               >
                 {numberFormatter(pool.stats.monthly.tradeFeesUSD)}%
               </div>
-              <div
+              {/* <div
                 className="flex items-center justify-center text-black-4
                                     text-regular font-semibold dark:text-grey-8"
               >
@@ -110,7 +110,7 @@ const MyPositions: FC = () => {
                                     text-regular font-semibold dark:text-grey-8"
               >
                 ${numberFormatter(0)}
-              </div>
+              </div> */}
               <div className="flex items-center justify-center">
                 <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
                 <span className={'font-poppins font-semibold my-0.5'}>
@@ -118,8 +118,8 @@ const MyPositions: FC = () => {
                 </span>
                 </Badge>
               </div>
-              <div className="flex items-center justify-evenly">
-                <Button
+              <div className="flex items-center justify-center">
+                {/* <Button
                   className="h-[30px] w-[61px] cursor-pointer flex flex-row
                             justify-center items-center !rounded-[200px]"
                   colorScheme={'secondaryGradient'}
@@ -127,10 +127,10 @@ const MyPositions: FC = () => {
                   aria-disabled={!canClaim}
                 >
                   Claim
-                </Button>
+                </Button> */}
                 <Button
                   colorScheme={'blue'}
-                  className={'h-7.5 w-7.5'}
+                  className={'h-7.5 w-7.5 mr-4'}
                   onClick={() => {
                     setSelectedCard(pool)
                     setOpenDepositWithdrawSlider(true)

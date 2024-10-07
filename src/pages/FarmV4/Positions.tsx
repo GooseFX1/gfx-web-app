@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Container } from 'gfx-component-lib'
+//import { Container } from 'gfx-component-lib'
 import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import { useGamma } from '@/context'
 import { POOL_TYPE } from './constants'
@@ -22,7 +22,7 @@ const Positions: FC = () => {
     <div>
       <div className="flex flex-row justify-between items-center mb-3.75">
         <h4 className="font-poppins text-average font-semibold dark:text-grey-8 text-black-4">My Positions</h4>
-        <div
+        {/* <div
           className="h-[42px] w-[274px] rounded-[4px] border border-solid items-center justify-between
                     dark:border-black-4 border-grey-4 dark:bg-black-2 bg-white flex flex-row p-2"
         >
@@ -40,7 +40,7 @@ const Positions: FC = () => {
           >
             Claim All
           </Container>
-        </div>
+        </div> */}
       </div>
       <div className="flex items-center max-sm:flex-col max-sm:gap-4 mb-3.75">
         <RadioOptionGroup

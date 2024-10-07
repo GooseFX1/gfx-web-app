@@ -57,7 +57,6 @@ const fetchPoolsByMints = async (
   mintB: string
 ): Promise<GAMMAPoolsResponse | null> => {
   try {
-    // hardcoded for now
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_MINTS +
       `?mint1=${mintA}&mint2=${mintB}&page=1&pageSize=200`

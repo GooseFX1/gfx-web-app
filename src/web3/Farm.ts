@@ -185,12 +185,14 @@ const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, us
     const poolVaultKeyA = await getPoolVaultKey(poolIdKey, token0?.toBase58())
     const poolVaultKeyB = await getPoolVaultKey(poolIdKey, token1?.toBase58())
     const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
+    const userPoolLiquidityAcc =  await getLiquidityPoolKey(poolIdKey, userPubKey)
 
     const accountObj = {
         creator: userPubKey,
         ammConfig: configIdKey,
         authority: authorityKey,
         poolState: poolIdKey,
+        userPoolLiquidity: userPoolLiquidityAcc,
         token0Mint: token0,
         token1Mint: token1,
         creatorToken0: token0ata,
@@ -347,9 +349,9 @@ export const createPool = async (
         decimalsToken0 = tokenB?.decimals
         decimalsToken1 = tokenA?.decimals
     }
-
-    const getAccsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
-    const createPoolAcc = { ...getAccsForCreatePool }
+    console.log('token0', token0?.toString(), token1.toString())
+    const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
+    const createPoolAcc = { ...accsForCreatePool }
     const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
     const amountTokenBBN = convertToNativeValue(amountToken1, decimalsToken1)
     const createPoolIX: TransactionInstruction = await program.instruction.initialize(

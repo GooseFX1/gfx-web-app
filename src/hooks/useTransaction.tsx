@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import TransactionBuilder, { TXN } from '@/web3/Builders/transaction.builder'
 import { useConnectionConfig } from '@/context'
 import { BlockheightBasedTransactionConfirmationStrategy, Commitment, Connection, Transaction } from '@solana/web3.js'
@@ -16,9 +16,9 @@ type useTransactionReturn = {
   createTransactionBuilder: (txn?: TXN) => TransactionBuilder
   sendTransaction: (
     txn: Transaction | TransactionBuilder,
-    connectionData?: SendTxnOptions
+    connectionData?: SendTxnOptions,
+    notify?: (promise: Promise<unknown>) => Promise<boolean>
   ) => Promise<{ success: boolean; txSig: string }>
-  errorCode: number
 }
 const baseSet = new Set()
 
@@ -27,7 +27,6 @@ function useTransaction(): useTransactionReturn {
   const { sendTransaction: sendTransactionOriginal, wallet } = useWallet()
   const { connection: originalConnection } = useConnectionConfig()
   const { publicKey } = useWalletBalance()
-  const [errorCode, setErrorCode] = useState<number>(0)
   const createTransactionBuilder = useCallback(
     (txn?: TXN) => new TransactionBuilder(txn).setPriorityFee(priorityFeeValue),
     [priorityFeeValue]
@@ -35,7 +34,7 @@ function useTransaction(): useTransactionReturn {
   const supportedTransactionTypes = useMemo(() =>
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction = useCallback(
-    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions) => {
+    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
 
       const connection = connectionData?.connection ?? originalConnection
       const options = { ...connectionData?.options, skipPreflight: true }
@@ -53,7 +52,6 @@ function useTransaction(): useTransactionReturn {
         return { txSig: '', success: false }
       }
       const exec = async () => {
-        setErrorCode(0)
         blockHash = await connection.getLatestBlockhash()
         console.log('blockhash', blockHash)
         const blockHeightConfirmationStrategy: BlockheightBasedTransactionConfirmationStrategy = {
@@ -67,30 +65,33 @@ function useTransaction(): useTransactionReturn {
           .then((res) => {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
             if (res.value.err != null) {
+              if((res?.value?.err as any).InstructionError[1]?.Custom == 6005){
+                throw new Error("6005")
+              }
               console.log('Transaction failed', res.value.err)
-              setErrorCode((res?.value?.err as any).InstructionError[1]?.Custom)
               throw new Error('Transaction failed')
             }
             const response = { ...res, txid: txSig }
-            setErrorCode(0)
             console.log('RESPONSE', response)
             return response
           })
           .catch((err) => {
-            console.log('[ERROR] Transaction failed', err)
+            console.log('[ERROR] Transaction failed', err?.message)
+            if(err?.message == 6005){
+              throw new Error("6005")
+            }
             throw new Error('Transaction failed', err)
           })
       }
       const promise = promiseBuilder<Awaited<ReturnType<typeof exec>>>(exec())
-      const success = await notifyUsingPromise(promise, null, txSig)
+      const success = await notify(promise, null, txSig)
       return { txSig, success }
     },
     [originalConnection, sendTransactionOriginal, supportedTransactionTypes, publicKey]
   )
   return {
     createTransactionBuilder,
-    sendTransaction,
-    errorCode
+    sendTransaction
   }
 }
 

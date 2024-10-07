@@ -13,16 +13,16 @@ type StickyFooterProps = {
   disableActionButton: boolean
   isLoading: boolean
   onActionClick: () => void
-  canClaim: boolean
-  claimText: string
-  onClaimClick: () => void
+  // canClaim: boolean
+  // claimText: string
+  //onClaimClick: () => void
   actionButtonText: string
 }
 const StickyFooter: FC<StickyFooterProps> = ({
   disableActionButton,
   isLoading,
   onActionClick,
-  canClaim,
+  //canClaim,
   // claimText,
   // onClaimClick,
   actionButtonText
@@ -73,9 +73,7 @@ const StickyFooter: FC<StickyFooterProps> = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent className={`flex flex-col max-sm:w-screen max-sm:rounded-b-none gap-2.5`}
-            sideOffset={isMobile ?
-              canClaim ? -90 : -44 :
-              5}
+            sideOffset={isMobile ? -44 : 5}
             align={isMobile ? 'center' : 'end'}
             alignOffset={0}
           >

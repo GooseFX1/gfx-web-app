@@ -44,7 +44,7 @@ const PositionHeader: FC<{
     return (
         <div
             className={cn(
-                `grid grid-cols-8 border-b-1 border-solid border-border-lightmode-secondary 
+                `grid grid-cols-5 border-b-1 border-solid border-border-lightmode-secondary 
       dark:border-border-darkmode-secondary h-10 px-2 items-center`,
                 isMobile && `grid-cols-3`,
                 isTablet && `grid-cols-4`
@@ -79,7 +79,7 @@ const PositionHeader: FC<{
                             />
                         </>
                     )}
-                    <FarmRowItem
+                    {/* <FarmRowItem
                         title={'Pending'}
                         tooltip={'Unclaimed interest generated from your deposits in the pool.'}
                         //onClick={handleSort('balance')}
@@ -94,7 +94,7 @@ const PositionHeader: FC<{
                         invert={sort == 'DESC' && sortType == 'balance'}
                         iconRight={true}
 
-                    />
+                    /> */}
                     <FarmRowItem
                         title={'APR'}
                         //onClick={handleSort('balance')}
@@ -106,7 +106,7 @@ const PositionHeader: FC<{
                         title={'Actions'}
                         //onClick={handleSort('balance')}
                         iconRight={false}
-                        className='justify-end'
+                        //className='justify-end'
                     />
                 </>
             )}
