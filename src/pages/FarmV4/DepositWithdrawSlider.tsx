@@ -372,6 +372,7 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
+        setOpenDepositWithdrawSlider(false)
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -402,6 +403,8 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
+        setOpenDepositWithdrawSlider(false)
+        setModeOfOperation(ModeOfOperation.DEPOSIT)
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -437,8 +440,8 @@ export const DepositWithdrawSlider: FC = () => {
 
   const { actionLabel, actionModalTitle } = useMemo(() => {
     const actionModalTitle = 'Withdraw'
-    const actionLabel = `Withdraw ${userSourceWithdrawAmount} ${selectedCard?.mintA?.symbol} +
-     ${userTargetWithdrawAmount} ${selectedCard?.mintB?.symbol}`
+    const actionLabel = `Withdraw ${(+userSourceWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintA?.symbol} +
+     ${(+userTargetWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintB?.symbol}`
 
     // if (isClaim) {
     //   actionModalTitle = 'Claim'
@@ -446,7 +449,7 @@ export const DepositWithdrawSlider: FC = () => {
     // }
 
     return { actionLabel, actionModalTitle }
-  }, [isDeposit])
+  }, [isDeposit, userSourceWithdrawAmount, userTargetWithdrawAmount])
 
   return (
     <Dialog modal={false} open={openDepositWithdrawSlider} onOpenChange={setOpenDepositWithdrawSlider}>
@@ -479,19 +482,19 @@ export const DepositWithdrawSlider: FC = () => {
           <GammaActionModalContentStack
             options={[
               {
-                textLeft: 'SOL Amount',
-                textRight: '≈ 0.5 SOL'
+                textLeft: `${selectedCard?.mintA?.symbol} Amount`,
+                textRight: `≈ ${(+userSourceWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintA?.symbol}`
               },
               {
-                textLeft: 'USDC Amount',
-                textRight: '$12.0'
+                textLeft: `${selectedCard?.mintB?.symbol} Amount`,
+                textRight: `≈ ${(+userTargetWithdrawAmount)?.toFixed(2)} ${selectedCard?.mintB?.symbol}`
               },
+              // {
+              //   textLeft: 'Claim Reward',
+              //   textRight: '2500 GOFX'
+              // },
               {
-                textLeft: 'Claim Reward',
-                textRight: '2500 GOFX'
-              },
-              {
-                textLeft: 'Total USDC',
+                textLeft: 'Total Amount in USDC',
                 textRight: '≈ $90.00'
               }
             ]}
