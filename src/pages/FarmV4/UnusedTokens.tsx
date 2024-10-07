@@ -15,7 +15,7 @@ const ExplorePools: FC = () => {
       setIsPortfolio.off()
       setCurrentPoolType(POOL_TYPE?.primary)
     }}
-         className="text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer">
+      className="text-regular font-bold text-blue-1 dark:text-grey-8 underline cursor-pointer">
       Explore Pools
     </div>
   )
@@ -50,7 +50,7 @@ const UnusedTokens: FC = () => {
             text-black-4 dark:text-grey-8 mb-3.75">${walletValue}
       </div>
       {
-        topBalances.map((balance) => <div className="flex flex-row justify-between items-center mb-3" 
+        topBalances.map((balance) => <div className="flex flex-row justify-between items-center mb-3"
           key={balance.symbol}>
           <div className="flex flex-row items-center">
             <Icon
@@ -60,11 +60,11 @@ const UnusedTokens: FC = () => {
               size="sm"
               className="mr-1.5" />
             <span className="text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-2.5">
-                    {balance.symbol}
-                </span>
+              {balance.symbol}
+            </span>
             <span className="text-[13px] font-semibold text-black-4 dark:text-grey-8 mr-1">
-                          {numberFormatter(balance.tokenAmount.uiAmount)}
-                      </span>
+              {numberFormatter(balance.tokenAmount.uiAmount)}
+            </span>
             <span
               className="text-[13px] font-semibold text-grey-9 dark:text-grey-1">
               (~${numberFormatter(balance.value.toNumber())})
