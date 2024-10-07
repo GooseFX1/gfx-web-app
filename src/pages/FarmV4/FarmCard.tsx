@@ -14,8 +14,8 @@ const FarmCard: FC<{
   const { base58PublicKey } = useWalletBalance()
   const { mode } = useDarkMode()
 
-  //TODO: Need to change this as per on chain data, setting to true for testing ui.
-  const canClaim = true
+  // Need to change this as per on chain data, setting to true for testing ui.
+  // const canClaim = true
 
   return (
     <div
@@ -38,17 +38,17 @@ const FarmCard: FC<{
             size="lg"
             className={'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
-          {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />}
+          {/* {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />} */}
         </div>
         <div>
-          {canClaim && <Button
+          {/* {canClaim && <Button
             onClick={() => setSelectedCard(pool)}
             variant={'outline'}
             colorScheme={'secondaryGradient'}
             className='h-[30px] mr-2.5'
           >
             Claim
-          </Button>}
+          </Button>} */}
           <Button
             className="cursor-pointer bg-blue-1 text-white h-[30px]"
             variant={'secondary'}

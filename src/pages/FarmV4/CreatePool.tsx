@@ -22,6 +22,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import { createPool } from '@/web3/Farm'
 import { useAccounts, useGamma, usePriceFeedFarm } from '@/context'
 import useTransaction from '@/hooks/useTransaction'
+import { notifyUsingPromiseForCreatePool } from '@/utils/perpsNotifications'
 
 export const CreatePool: FC<{
   isCreatePool: boolean
@@ -41,7 +42,7 @@ export const CreatePool: FC<{
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-  const { setSendingTransaction, createPoolType, setCreatePoolType } = useGamma()
+  const { setSendingTransaction, createPoolType, setCreatePoolType, setIsConfettiVisible } = useGamma()
   const { getUIAmount } = useAccounts()
   const walletTokenA = useMemo(() => tokenA ? getUIAmount(tokenA?.address).toFixed(2) : '0.00', [tokenA, userPublicKey])
   const walletTokenB = useMemo(() => tokenB ? getUIAmount(tokenB?.address).toFixed(2) : '0.00', [tokenB, userPublicKey])
@@ -76,17 +77,28 @@ export const CreatePool: FC<{
         const tx = await createPool(tokenA, tokenB, amountTokenA, amountTokenB, userPublicKey, GammaProgram)
         txBuilder.add(tx)
         setSendingTransaction(true)
-        const { success } = await sendTransaction(txBuilder)
-
+        const { success } = await sendTransaction(txBuilder, null, notifyUsingPromiseForCreatePool)
         if (!success) {
-          console.log('failure')
           setSendingTransaction(false)
+          setTokenA(null)
+          setTokenB(null)
+          setAmountTokenA('')
+          setAmountTokenB('')
+          slider.current.slickGoTo(0)
           return
         } else {
+          setIsConfettiVisible(true)
           setSendingTransaction(false)
+          setIsCreatePool(false)
         }
       } catch (e) {
-        console.log('error while creating a new pool', e)
+        console.log('Error while creating a new pool.', e)
+        setSendingTransaction(false)
+        setTokenA(null)
+        setTokenB(null)
+        setAmountTokenA('')
+        setAmountTokenB('')
+        slider.current.slickGoTo(0)
       }
     }
   }
@@ -127,9 +139,7 @@ export const CreatePool: FC<{
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
       >
         <DialogHeader className={`relative`}>
-          <DialogCloseDefault
-            className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'}
-          />
+          <DialogCloseDefault className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'} />
         </DialogHeader>
         <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
           <Slider ref={slider} {...settings}>
@@ -153,6 +163,7 @@ export const CreatePool: FC<{
                 setInitialPrice={setInitialPrice}
                 walletTokenA={walletTokenA}
                 walletTokenB={walletTokenB}
+                setIsCreatePool={setIsCreatePool}
               />
             </div>
             <div className="slide">

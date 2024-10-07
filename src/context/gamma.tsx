@@ -93,9 +93,11 @@ interface GAMMADataModel {
   sortConfig: { id: string, name: string, direction: string, key: string }
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
-  stats: GAMMAStats,
   createPoolType: string
   setCreatePoolType: Dispatch<SetStateAction<string>>
+  stats: GAMMAStats
+  isConfettiVisible: boolean
+  setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
 }
 
 export type TokenListToken = {
@@ -158,6 +160,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   })
   const [createPoolType, setCreatePoolType] = useState<string>('')
+  const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
+
   // TODO:
   useEffect(() => {
     // first render only
@@ -183,6 +187,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
+  console.log('selectedCard', selectedCard)
+  
   const updateTokenList = async (page: number, pageSize: number) => {
     if (network === WalletAdapterNetwork.Devnet) {
       console.log(DEVNET_NEW_TOKENS)
@@ -442,7 +448,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         selectedCardLiquidityAcc,
         setSelectedCardLiquidityAcc,
         createPoolType,
-        setCreatePoolType
+        setCreatePoolType,
+        isConfettiVisible,
+        setIsConfettiVisible
       }}
     >
       {children}

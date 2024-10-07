@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
@@ -29,21 +30,21 @@ export const FarmHeader: FC = () => {
   const infoCards = useMemo(() => {
     const data = [
       {
-        name: 'TVL', value: bigNumberFormatter(new BigNumber(stats.tvl)),
+        name: 'TVL', value: bigNumberFormatter(new BigNumber(stats?.tvl)),
         tooltip: 'TVL represents the total USD value of all assets deposited in our pools'
       },
       {
         name: '24H Volume',
-        value: range === 0 ? bigNumberFormatter(new BigNumber(stats.stats24h.volume)) :
-          range === 1 ? bigNumberFormatter(new BigNumber(stats.stats7d.volume)) :
-            bigNumberFormatter(new BigNumber(stats.stats30d.volume)),
+        value: range === 0 ? bigNumberFormatter(new BigNumber(stats?.stats24h?.volume)) :
+          range === 1 ? bigNumberFormatter(new BigNumber(stats?.stats7d?.volume)) :
+            bigNumberFormatter(new BigNumber(stats?.stats30d?.volume)),
         tooltip: ''
       },
       {
         name: '24H Fees', value: range === 0 ?
-          bigNumberFormatter(new BigNumber(stats.stats24h.fees)) : range === 1 ?
-            bigNumberFormatter(new BigNumber(stats.stats7d.fees)) :
-            bigNumberFormatter(new BigNumber(stats.stats30d.fees)),
+          bigNumberFormatter(new BigNumber(stats?.stats24h?.fees)) : range === 1 ?
+            bigNumberFormatter(new BigNumber(stats?.stats7d?.fees)) :
+            bigNumberFormatter(new BigNumber(stats?.stats30d?.fees)),
         tooltip: ''
       }
     ]

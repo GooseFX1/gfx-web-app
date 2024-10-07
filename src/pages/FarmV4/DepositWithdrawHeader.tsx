@@ -14,14 +14,14 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
     >
       <div className="flex relative w-[80px]">
         <Icon
-          src={loadUriImage(selectedCard.mintA.logoURI) ?
-            selectedCard.mintA.logoURI : loadBackUpImage(selectedCard.mintA.symbol, mode)}
+          src={loadUriImage(selectedCard?.mintA?.logoURI) ?
+            selectedCard?.mintA?.logoURI : loadBackUpImage(selectedCard?.mintA?.symbol, mode)}
           size="lg"
           className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
         />
         <Icon
-          src={loadUriImage(selectedCard.mintB.logoURI) ?
-            selectedCard.mintB.logoURI : loadBackUpImage(selectedCard.mintB.symbol, mode)}
+          src={loadUriImage(selectedCard?.mintB?.logoURI) ?
+            selectedCard?.mintB?.logoURI : loadBackUpImage(selectedCard?.mintB?.symbol, mode)}
           size="lg"
           className={
             'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -29,7 +29,7 @@ export const DepositWithdrawHeader: FC<{ handleClose: () => void }> = ({ handleC
         />
       </div>
       <div className="font-poppins font-semibold text-average text-black-4 dark:text-grey-8 ">
-        {selectedCard?.mintA.symbol + ' - ' + selectedCard?.mintB.symbol}
+        {selectedCard?.mintA?.symbol + ' - ' + selectedCard?.mintB?.symbol}
       </div>
       <Button
         onClick={handleClose}

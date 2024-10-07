@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useLayoutEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import {
   Button,
   cn,
@@ -22,6 +22,8 @@ import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
 import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
+import { fetchPoolsByMints } from '@/api/gamma'
+import { GAMMAPool } from '@/types/gamma'
 
 const Step2: FC<{
   tokenA: JupToken
@@ -39,6 +41,7 @@ const Step2: FC<{
   setInitialPrice: Dispatch<SetStateAction<string>>
   walletTokenA: string
   walletTokenB: string
+  setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({
   tokenA,
   setTokenA,
@@ -54,12 +57,14 @@ const Step2: FC<{
   initialPrice,
   setInitialPrice,
   walletTokenA,
-  walletTokenB
+  walletTokenB,
+  setIsCreatePool
 }) => {
     const { mode } = useDarkMode()
-    const { setSelectedCard, pools } = useGamma()
     const [priceSwitch, setPriceSwitch] = useState(false)
     const [poolExistsText, setPoolExistsText] = useState<string>('')
+    const [existingPool, setExistingPool] = useState<GAMMAPool>()
+    const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
 
     useEffect(() => {
       if (+amountTokenA && +amountTokenB) {
@@ -70,34 +75,34 @@ const Step2: FC<{
       }
     }, [amountTokenA, amountTokenB, priceSwitch])
 
-    //TODO: We need to check in all the pools
-    const navigateToPool = () => {
+    const navigateToPool = useCallback(async () => {
       if (!tokenA || !tokenB) return
-      for (const token of pools) {
-        if (token?.mintA?.address == tokenA.address &&
-          token?.mintB?.address == tokenB.address) {
-          setSelectedCard(token)
-          break
-        }
-      }
-    }
+      setSelectedCard(existingPool)
+      setIsCreatePool(false)
+      setOpenDepositWithdrawSlider(true)
+    }, [tokenA, tokenB, existingPool, setSelectedCard])
 
     useLayoutEffect(() => {
-      if (!tokenA || !tokenB) return
-      //TODO: We need to check in all the pools
-      for (const pool of pools) {
-        if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
-          setPoolExists(true)
-          setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
-          return
+      ; (async () => {
+        if (!tokenA || !tokenB) return
+        const response = await fetchPoolsByMints(tokenA?.address, tokenB?.address)
+        if(!response || !response?.data?.pools || response?.data?.pools?.length <=0 || !response?.success) return
+        for (const pool of response?.data?.pools) {
+          if (pool?.mintA?.address == tokenA?.address && pool?.mintB?.address == tokenB?.address) {
+            setPoolExists(true)
+            setPoolExistsText(`${tokenA?.symbol} - ${tokenB?.symbol}`)
+            setExistingPool(pool)
+            return
+          }
+          if (pool?.mintA?.address == tokenB?.address && pool?.mintB?.address == tokenA?.address) {
+            setPoolExists(true)
+            setPoolExistsText(`${tokenB?.symbol} - ${tokenA?.symbol}`)
+            setExistingPool(pool)
+            return
+          }
         }
-        if (pool?.mintA?.address == tokenB?.address && pool?.mintB?.address == tokenA?.address) {
-          setPoolExists(true)
-          setPoolExistsText(`${tokenB?.symbol} - ${tokenA?.symbol}`)
-          return
-        }
-      }
-      setPoolExists(false)
+        setPoolExists(false)
+      })()
     }, [tokenA, tokenB, setPoolExists])
 
     return (
@@ -238,7 +243,7 @@ const Step2: FC<{
             </span>
           ) : tokenA && tokenB && (tokenA?.symbol === tokenB?.symbol) ?
             <span className='text-red-1 font-sembold text-regular'>
-              Token A and Token B cannot be same! Please create a pool for 2 different mints!
+              Token A and Token B cannot be same! Please create a pool with two different mints!
             </span> : <></>}
           {poolExists && <div>
             <Container className={'flex flex-col gap-2.5 p-2.5'}>

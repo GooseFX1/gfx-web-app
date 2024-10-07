@@ -27,7 +27,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
         header="Total Earned"
         tooltip={'Total Earned is the total rewards you\'ve claimed from all your pools since your first deposit.'}
         subHeader="Track the history of all your earnings across different time periods."
-        value="21.31"
+        value="0.00"
         image="graph"
       />
       <UnusedTokens />
