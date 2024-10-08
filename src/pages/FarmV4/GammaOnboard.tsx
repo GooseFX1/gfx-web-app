@@ -151,7 +151,7 @@ const GammaOnboard: FC = (): JSX.Element => {
       title={null}
       centered={true}
       open={!userCache.gamma.hasGAMMAOnboarded}
-      onCancel={() => handleUserOnboarding()}
+      onCancel={handleUserOnboarding}
       footer={null}
       currentSlide={currentSlide}
       mode={mode}

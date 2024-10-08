@@ -125,7 +125,7 @@ const FarmItems: FC<{
           className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
             dark:bg-black-1 dark:text-white bg-grey-5 mx-auto font-bold text-regular text-black-4"
           variant={'primary'}
-          onClick={() => updatePools(poolPage + 1, POOL_LIST_PAGE_SIZE, currentPoolType.type)}
+          onClick={() => updatePools({page: poolPage +1, pageSize:POOL_LIST_PAGE_SIZE, poolType:currentPoolType.type })}
         >
           Load More
         </Button>

@@ -14,7 +14,7 @@ import BigNumber from 'bignumber.js'
 
 export const FarmHeader: FC = () => {
   const [range, setRange] = useState<number>(0)
-  const { setCurrentPoolType, openDepositWithdrawSlider, stats } = useGamma()
+  const { setCurrentPoolType, stats } = useGamma()
   const { wallet } = useWallet()
   const userPubKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
   const { isMobile } = useBreakPoint()
@@ -80,8 +80,8 @@ export const FarmHeader: FC = () => {
 
   return (
     <div className="mt-3">
-      {isCreatePool && <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />}
-      {openDepositWithdrawSlider && <DepositWithdrawSlider />}
+      <CreatePool isCreatePool={isCreatePool} setIsCreatePool={setIsCreatePool} />
+      <DepositWithdrawSlider />
       <div className={'max-sm:px-2.5 px-5'}>
         <DocsBanner />
       </div>
@@ -176,7 +176,7 @@ export const FarmHeader: FC = () => {
                   </Tooltip>
                   &nbsp;
                 </ContainerTitle>
-                <h2> {card.value}</h2>
+                <h2>$ {card.value}</h2>
               </Container>
             ))}
             {isProMode && (

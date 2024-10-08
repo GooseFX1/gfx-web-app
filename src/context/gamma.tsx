@@ -88,7 +88,7 @@ interface GAMMADataModel {
     pageSize: number,
     poolType?: Pool['type'] | 'all'
     searchTokens?: string
-  }, append: boolean) => void
+  }, append?: boolean) => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
   selectedCardLiquidityAcc: any
@@ -458,11 +458,5 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useGamma = (): GAMMADataModel => {
-  const context = useContext(GAMMAContext)
-  if (!context) {
-    throw new Error('Missing gamma context')
-  }
+export const useGamma = (): GAMMADataModel => useContext(GAMMAContext)
 
-  return context
-}
