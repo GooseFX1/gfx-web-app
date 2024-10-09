@@ -132,11 +132,11 @@ export const FarmContainer: FC = () => {
                   label: 'Hyper',
                   onClick: () => setCurrentPoolType(POOL_TYPE.hyper)
                 },
-                {
-                  value: POOL_TYPE.migrate.name,
-                  label: 'Migrate',
-                  onClick: () => setCurrentPoolType(POOL_TYPE.migrate)
-                }
+                // {
+                //   value: POOL_TYPE.migrate.name,
+                //   label: 'Migrate',
+                //   onClick: () => setCurrentPoolType(POOL_TYPE.migrate)
+                // }
               ]}
             />
             <div className="flex items-center w-full justify-between">

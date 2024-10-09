@@ -41,10 +41,8 @@ const FarmFilter: FC = () => {
   const { currentSort, setCurrentSort } = useGamma()
 
   const handleColumnSort = useCallback(
-    (id: string) => {
-      console.log('fix column sort');
-      
-      return id
+    (id: string) => 
+      // TODO: reinstate this
       // persists current sort in local storage
       // setCurrentSort(id)
       // setCurrentSort(() => {
@@ -57,17 +55,19 @@ const FarmFilter: FC = () => {
       //   // sets value to context
       //   return id
       // })
-    },
+
+      id
+    ,
     [setCurrentSort]
   )
 
   return (
     <div
       className={cn(
-        `grid grid-flow-col grid-cols-5 border-b-1 border-solid border-border-lightmode-secondary 
-      dark:border-border-darkmode-secondary h-10 px-2 items-center`,
-        isMobile && `grid-cols-2`,
-        isTablet && `grid-cols-4`
+        `grid grid-flow-col grid-cols-[1.5fr_1fr_1fr_1fr_0.5fr] border-b-1 border-solid 
+        border-border-lightmode-secondary dark:border-border-darkmode-secondary h-10 px-2 items-center`,
+        isMobile && `grid-cols-[1.5fr_0.5fr]`,
+        isTablet && `grid-cols-[1.5fr_1fr_1fr_0.5fr]`
       )}
     >
       <FarmRowItem title={'Name'} onClick={handleColumnSort('1')} className={'justify-start'} invert={false} />
