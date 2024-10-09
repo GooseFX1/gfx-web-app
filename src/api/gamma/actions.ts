@@ -37,14 +37,16 @@ const fetchAllPools = async (
   poolType: 'all' | 'hyper' | 'primary' = 'all',
   sortConfig: 'asc' | 'desc',
   sortKey: string,
-  searchTokens: string
+  searchTokens: string,
+  abortSignal?: AbortSignal
 ): Promise<GAMMAPoolsResponse | null> => {
   let search = searchTokens.trim().toLowerCase()
   search = search.length === 0 ? '' : `&search=${search}`
   try {
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
-      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`
+      `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`,
+      {signal: abortSignal}
     )
     return response.data
   } catch (error) {

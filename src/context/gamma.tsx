@@ -39,6 +39,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import Decimal from 'decimal.js-light'
+import { aborter } from '@/utils'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -188,7 +189,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   console.log('selectedCard', selectedCard)
-  
+
   const updateTokenList = async (page: number, pageSize: number) => {
     if (network === WalletAdapterNetwork.Devnet) {
       console.log(DEVNET_NEW_TOKENS)
@@ -220,13 +221,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       page,
       pageSize,
       poolType = 'all',
-      searchTokens = ''
+      searchTokens = '',
+      signal
     }:
       {
         page: number,
         pageSize: number,
         poolType?: Pool['type'] | 'all'
         searchTokens?: string
+        signal?: AbortSignal
       },
     append = true
   ) => {
@@ -240,7 +243,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       poolType,
       sortConfig.direction.toLowerCase() as 'desc' | 'asc',
       sortConfig.key.toLowerCase(),
-      searchTokens
+      searchTokens,
+      signal
     ).then((poolsData: GAMMAPoolsResponse) => {
       if (poolsData && poolsData.success) {
         setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
@@ -292,10 +296,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       //debounced search
       setPoolPage(1)
       setPools([])
-      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type, searchTokens })
+      updatePools({
+        page: 1,
+        pageSize: POOL_LIST_PAGE_SIZE,
+        poolType: currentPoolType.type,
+        searchTokens,
+        signal: aborter.addSignal('update-gamma-pools')
+      }, false)
     }, 233)
 
     return () => {
+      aborter.abortSignal('update-gamma-pools')
       clearTimeout(timeout)
     }
   }, [searchTokens])
