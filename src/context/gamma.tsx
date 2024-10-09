@@ -251,7 +251,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         const existingPools = append ? pools : []
         const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
         for (const pool of poolsData.data.pools) {
-          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
+          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`) && append) {
             continue
           }
           hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
@@ -295,7 +295,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const timeout = setTimeout(() => {
       //debounced search
       setPoolPage(1)
-      setPools([])
       updatePools({
         page: 1,
         pageSize: POOL_LIST_PAGE_SIZE,
@@ -409,7 +408,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const isSearchActive = searchTokens.trim().length > 0
-  console.log({ pools, lpPositions, filteredPools })
+
   return (
     <GAMMAContext.Provider
       value={{
