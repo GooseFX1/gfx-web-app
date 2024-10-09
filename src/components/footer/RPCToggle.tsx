@@ -28,12 +28,12 @@ type RPCToggleProps = Omit<FooterItemProps, 'title'>
 const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
-  const { endpointName, setEndpointName, latency } = useConnectionConfig()
+  const { endpointName, setEndpointName, latency, updateUserCache } = useConnectionConfig()
   const [RPC, setRPC] = useState<EndPointName>(endpointName)
   const [rpcUrl, setRpcUrl] = useState('')
   const [error, setError] = useState('')
   const [isOpen, setIsOpen] = useBoolean(false)
-  const {updateUserCache} = useConnectionConfig()
+
   const providerSrc = useMemo(
     () => `/img/mainnav/provider_${endpointName.toLowerCase()}_${mode}.svg`,
     [endpointName, mode]
@@ -42,7 +42,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     if (RPC === 'Custom') {
       testRPC(rpcUrl).then((res) => {
         if (res) {
-          updateUserCache({endpoint: rpcUrl})
+          updateUserCache({endpoint: rpcUrl, endpointName: "Custom"})
           setEndpointName(RPC)
           setError('')
           setIsOpen.off()
@@ -62,7 +62,7 @@ const RPCToggle: FC<RPCToggleProps> = ({ ...rest }) => {
     setRpcUrl('')
   }, [])
 
-  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && rpcUrl.trim() === '')
+  const saveDisabled = endpointName == RPC || (RPC == 'Custom' && (rpcUrl.trim() === ''))
   const content = useMemo(() => {
     const trigger = (
       <FooterItemContent className={'gap-0 cursor-pointer'}>
