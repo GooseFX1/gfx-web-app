@@ -7,7 +7,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
 
 const FarmCard: FC<{
-  pool: GAMMAPoolWithUserLiquidity
+  pool: GAMMAPoolWithUserLiquidity | undefined
   className?: string
 }> = ({ pool, className, ...props }): ReactElement => {
   const { setOpenDepositWithdrawSlider, setSelectedCard } = useGamma()
@@ -29,14 +29,16 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
           <Icon
-            src={loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)}
+            src={loadUriImage(pool?.mintA?.logoURI) ? pool?.mintA?.logoURI : loadBackUpImage(pool?.mintA?.symbol, mode)}
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)}
+            src={loadUriImage(pool?.mintB?.logoURI) ? pool?.mintB?.logoURI : loadBackUpImage(pool?.mintB?.symbol, mode)}
             size="lg"
-            className={'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
+            className={
+              'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
+            }
           />
           {/* {canClaim && <span className={'absolute rounded-full bg-red-2 w-3 h-3 top-[-4px] left-[-4px]'} />} */}
         </div>
@@ -65,7 +67,7 @@ const FarmCard: FC<{
         className="flex flex-row items-center text-average font-semibold font-poppins 
             dark:text-grey-8 text-black-4 mb-2"
       >
-        {`${pool.mintA.symbol} - ${pool.mintB.symbol}`}
+        {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.config.fundOwner == base58PublicKey && (
           <Badge size="sm" variant="default">

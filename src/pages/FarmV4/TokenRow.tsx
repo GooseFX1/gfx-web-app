@@ -36,23 +36,25 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
         `img/assets/wallet-${mode}-enabled.svg` :
         `img/assets/wallet-${mode}-disabled.svg`
 
+    if (token == undefined) return <></>
     return (
       <div className="flex flex-row justify-between items-center mx-2.5">
         <div className="flex flex-row">
           <Icon
-            src={loadUriImage(token.logoURI) ?
-              token.logoURI : loadBackUpImage(token.symbol, mode)}
+            src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol, mode)}
             size="sm"
             className={`mr-2 border border-solid rounded-circle 
                 dark:border-border-darkmode-secondary border-border-lightmode-secondary`}
           />
           <span className="text-regular font-semibold font-poppins dark:text-grey-8 text-black-4 mr-2">
-            {token.symbol}
+            {token?.symbol}
           </span>
           <div className="w-[89px] px-1">
-            <a href={`https://solscan.io/account/${token.address}`} target="_blank" rel="noreferrer">
+            <a href={`https://solscan.io/account/${token?.address}`} target="_blank" rel="noreferrer">
               <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
-                <span className={'font-poppins font-semibold my-0.5 mr-2'}>{truncateAddress(token.address, 3)}</span>
+                <span className={'font-poppins font-semibold my-0.5 mr-2'}>
+                  {truncateAddress(token?.address, 3)}
+                </span>
                 <Icon
                   src={`/img/assets/arrowcircle-${mode}.svg`}
                   className={'!h-[18px] !w-[18px] !min-h-[18px] !min-w-[18px]'}
@@ -69,7 +71,7 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
               userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
             )}
           >
-            {calculateUIAmount()} {token.symbol}
+            {calculateUIAmount()} {token?.symbol}
           </div>
         </div>
       </div>
