@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
 import React, { Component } from 'react'
-import { Loader, loaders } from 'gfx-component-lib'
+import { Button, Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
 import { resetUserCache, validateUserCache } from '@/context'
 
@@ -83,6 +83,13 @@ class ErrorBoundary extends Component {
             </a>
             </p>
           </div>
+          <Button onClick={()=>{
+            resetUserCache()
+            window.location.reload()
+            window.sessionStorage.setItem('error-count',0)
+          }}>
+            Retry
+          </Button>
         </div>
       </div>
     }
