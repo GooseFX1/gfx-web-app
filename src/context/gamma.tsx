@@ -39,6 +39,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import Decimal from 'decimal.js-light'
+import { aborter } from '@/utils'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -88,7 +89,7 @@ interface GAMMADataModel {
     pageSize: number,
     poolType?: Pool['type'] | 'all'
     searchTokens?: string
-  }, append: boolean) => void
+  }, append?: boolean) => void
   poolsHasMoreData: boolean,
   sortConfig: { id: string, name: string, direction: string, key: string }
   selectedCardLiquidityAcc: any
@@ -188,7 +189,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   console.log('selectedCard', selectedCard)
-  
+
   const updateTokenList = async (page: number, pageSize: number) => {
     if (network === WalletAdapterNetwork.Devnet) {
       console.log(DEVNET_NEW_TOKENS)
@@ -220,13 +221,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       page,
       pageSize,
       poolType = 'all',
-      searchTokens = ''
+      searchTokens = '',
+      signal
     }:
       {
         page: number,
         pageSize: number,
         poolType?: Pool['type'] | 'all'
         searchTokens?: string
+        signal?: AbortSignal
       },
     append = true
   ) => {
@@ -240,14 +243,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       poolType,
       sortConfig.direction.toLowerCase() as 'desc' | 'asc',
       sortConfig.key.toLowerCase(),
-      searchTokens
+      searchTokens,
+      signal
     ).then((poolsData: GAMMAPoolsResponse) => {
       if (poolsData && poolsData.success) {
         setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
         const existingPools = append ? pools : []
         const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
         for (const pool of poolsData.data.pools) {
-          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`)) {
+          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`) && append) {
             continue
           }
           hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
@@ -291,11 +295,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const timeout = setTimeout(() => {
       //debounced search
       setPoolPage(1)
-      setPools([])
-      updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type, searchTokens })
+      updatePools({
+        page: 1,
+        pageSize: POOL_LIST_PAGE_SIZE,
+        poolType: currentPoolType.type,
+        searchTokens,
+        signal: aborter.addSignal('update-gamma-pools')
+      }, false)
     }, 233)
 
     return () => {
+      aborter.abortSignal('update-gamma-pools')
       clearTimeout(timeout)
     }
   }, [searchTokens])
@@ -398,7 +408,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 
   const isSearchActive = searchTokens.trim().length > 0
-  console.log({ pools, lpPositions, filteredPools })
+
   return (
     <GAMMAContext.Provider
       value={{
@@ -458,11 +468,5 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 
-export const useGamma = (): GAMMADataModel => {
-  const context = useContext(GAMMAContext)
-  if (!context) {
-    throw new Error('Missing gamma context')
-  }
+export const useGamma = (): GAMMADataModel => useContext(GAMMAContext)
 
-  return context
-}

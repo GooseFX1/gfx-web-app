@@ -151,7 +151,7 @@ export const HELIUS_RPC: RPC = {
 const CUSTOM_RPC: RPC = {
   chainId: ENV.MainnetBeta,
   name: 'Custom',
-  endpoint: '',
+  endpoint: 'https://yearling-adorne-fast-mainnet.helius-rpc.com/', // fallback for first set
   network: WalletAdapterNetwork.Mainnet
 }
 export const RPCs = {
@@ -164,7 +164,7 @@ interface ISettingsConfig {
   chainId: ENV
   connection: Connection
   perpsConnection: Connection
-  endpoint: string
+  endpoint?: string | null
   endpointName: EndPointName
   network: WalletAdapterNetwork
   setEndpointName: Dispatch<SetStateAction<EndPointName>>
@@ -208,26 +208,38 @@ function newCache(): USER_CONFIG_CACHE {
 export function resetUserCache(): void {
   window.localStorage.setItem('gfx-user-cache', JSON.stringify(newCache()))
 }
-function migrateCache(cache: USER_CONFIG_CACHE) : USER_CONFIG_CACHE{
-  const migratedCache = structuredClone(cache);
-  const opCache = newCache();
-
+function shouldMatchOpCache(key: string) {
+  switch (key) {
+    case 'endpoint':
+      return false;
+    default:
+      return true;
+  }
+}
+function migrateCache(cache: USER_CONFIG_CACHE): USER_CONFIG_CACHE {
+  const migratedCache = structuredClone(cache)
+  const opCache = newCache()
   for (const key in opCache) {
-    if (!(key in migratedCache) || typeof migratedCache[key] !== typeof opCache[key]) {
-      migratedCache[key] = opCache[key];
+    if (!(key in migratedCache) || (typeof migratedCache[key] !== typeof opCache[key] && shouldMatchOpCache(key))) {
+      console.log('MIGRATING CACHE KEY', key, {
+        inMigrated: (key in migratedCache),
+        typeMatch: typeof migratedCache[key] !== typeof opCache[key],
+      })
+      migratedCache[key] = opCache[key]
     }
   }
   for (const key in migratedCache) {
     if (!(key in opCache)) {
-      delete migratedCache[key];
+      delete migratedCache[key]
     }
   }
+
   if (JSON.stringify(migratedCache) !== JSON.stringify(cache)) {
-    console.log('MIGRATED CACHE', migratedCache)
-    window.localStorage.setItem('gfx-user-cache', JSON.stringify(migratedCache));
+    window.localStorage.setItem(USER_CACHE, JSON.stringify(migratedCache))
   }
-  return migratedCache;
+  return migratedCache
 }
+
 export function getOrCreateCache(): USER_CONFIG_CACHE {
   const rawCache = window.localStorage.getItem('gfx-user-cache')
   if (rawCache) {
@@ -239,7 +251,7 @@ export function getOrCreateCache(): USER_CONFIG_CACHE {
     }
   }
   const cache = newCache()
-  localStorage.setItem('gfx-user-cache', JSON.stringify(cache))
+  localStorage.setItem(USER_CACHE, JSON.stringify(cache))
   return cache
 }
 
@@ -288,14 +300,34 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const setCache = useCallback((cache: USER_CONFIG_CACHE) => {
     setUserCache(cache)
   }, [])
+  const [cacheUpdateQueue, setCacheUpdateQueue] = useState<Partial<USER_CONFIG_CACHE>>({})
 
   const updateUserCache = useCallback((cache: Partial<USER_CONFIG_CACHE>) => {
-    console.log('TOS USER CACHE UPDATE', cache)
-    setUserCache((prevCache) => ({ ...prevCache, ...cache }))
+    // predicts multiple sets to prevent race condition overwriting sets instead takes latest and merges
+    setCacheUpdateQueue((prevCache) => ({ ...prevCache, ...cache }))
   }, [])
+
   useEffect(() => {
-    window.localStorage.setItem('gfx-user-cache', JSON.stringify(userCache))
-  }, [userCache])
+    if (Object.keys(cacheUpdateQueue).length === 0) return
+    const timeout = setTimeout(() => {
+      setUserCache((prevCache) => {
+        const newCache ={
+        ...prevCache,
+        ...cacheUpdateQueue
+        }
+        if (newCache.endpointName !== 'Custom' && newCache.endpoint !== null) {
+          newCache.endpoint = null
+        }
+        window.localStorage.setItem(USER_CACHE, JSON.stringify(newCache))
+        return newCache;
+      })
+      setCacheUpdateQueue({})
+    }, 500)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [cacheUpdateQueue])
+  
   const { priorityFeeInstruction, priorityFeeValue } = useMemo(() => {
     let fee = 0.0
     switch (priorityFee) {
@@ -328,47 +360,44 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const network = useMemo(() => RPCs[endpointName ?? 'QuickNode'].network, [endpointName])
   const endpoint = useMemo(
     () => (userCache.endpoint !== null ? userCache.endpoint : RPCs[endpointName].endpoint),
-    [endpointName]
+    [endpointName, userCache]
   )
 
   useEffect(
-    () => updateUserCache({
-      endpointName: endpointName,
-      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
-      priorityFee: priorityFee
-    }),
+    () => {
+      const payload: Partial<USER_CONFIG_CACHE> = {}
+      // WHY?! -_- .. need smarter way to handle this
+      if (endpoint !== userCache.endpoint) {
+        payload.endpoint = endpoint
+      }
+      if (endpointName !== userCache.endpointName) {
+        payload.endpointName = endpointName
+      }
+      if (priorityFee !== userCache.priorityFee) {
+        payload.priorityFee = priorityFee
+      }
+      if (Object.keys(payload).length > 0) {
+        updateUserCache(payload)
+      }
+      },
     [priorityFee, endpointName, endpoint]
   )
 
-  const perpsConnection = useMemo(() => {
-    updateUserCache({
-      endpointName: endpointName,
-      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null
-    })
-
-    // creates connection - temp ws url
-    return new Connection(endpoint, {
+  const { connection, perpsConnection } = useMemo(() => {
+    const perpsConnection = new Connection(endpoint, {
       async fetch(input, init?) {
         return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
       },
       commitment: 'processed'
     })
-  }, [endpointName, endpoint])
-
-  const connection = useMemo(() => {
-    updateUserCache({
-      endpointName: endpointName,
-      endpoint: endpointName === CUSTOM_RPC.name ? endpoint : null,
-      priorityFee
-    })
-
     // creates connection - temp ws url
-    return new Connection(endpoint, {
+    const connection = new Connection(endpoint, {
       async fetch(input, init?) {
         return await axiosFetchWithRetries(input, init, RETRY_ATTEMPTS)
       },
       commitment: 'confirmed'
     })
+    return { connection, perpsConnection }
   }, [endpointName, endpoint])
 
   const getAndSetLatency = useCallback(async () => {
@@ -399,7 +428,6 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   useEffect(() => {
     if (endpointName === null) {
-
       setEndpointName(
         userCache.endpointName === null || userCache.endpoint === null
           ? RPCs[endpointName].name

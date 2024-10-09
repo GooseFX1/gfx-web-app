@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react'
 import NoResultsFound from './NoResultsFound'
-import { useGamma, useRewardToggle } from '@/context'
-import { Button } from 'gfx-component-lib'
+import { useDarkMode, useGamma, useRewardToggle } from '@/context'
+import { Button, Icon } from 'gfx-component-lib'
 import { POOL_LIST_PAGE_SIZE, POOL_TYPE } from '@/pages/FarmV4/constants'
 import FarmItemsMigrate from '@/pages/FarmV4/FarmItemsMigrate'
 import FarmItemsLite from '@/pages/FarmV4/FarmItemsLite'
@@ -31,10 +31,11 @@ const FarmItems: FC<{
     showDeposited,
     updatePools,
     poolPage,
-    poolsHasMoreData
+    poolsHasMoreData,
+    isLoadingPools
   } = useGamma()
   const { isProMode } = useRewardToggle()
-
+  const { mode } = useDarkMode()
   const isSearchActive = useMemo(() => searchTokens.length > 0, [searchTokens])
 
   let noResultsTitle = ''
@@ -111,7 +112,12 @@ const FarmItems: FC<{
         />
       ) : (numberOfTokensDeposited === 0 && showDeposited) || filteredPools.length === 0 ? (
         <NoResultsFound requestPool={!showDeposited} str={noResultsTitle} subText={noResultsSubText} />
-      ) : isProMode ? (
+      ) : isLoadingPools ? <div className={'w-full justify-center items-center flex'}>
+        <Icon
+          className={'animate-spin'}
+          src={`img/assets/refresh_${mode}.svg`} size="sm"
+        />
+      </div>: isProMode ? (
         <FarmItemsPro
         />
       ) : <FarmItemsLite
@@ -125,7 +131,11 @@ const FarmItems: FC<{
           className="cursor-pointer rounded-full border-[1.5px] border-solid border-purple-5
             dark:bg-black-1 dark:text-white bg-grey-5 mx-auto font-bold text-regular text-black-4"
           variant={'primary'}
-          onClick={() => updatePools(poolPage + 1, POOL_LIST_PAGE_SIZE, currentPoolType.type)}
+          onClick={() => updatePools({
+            page: poolPage + 1,
+            pageSize: POOL_LIST_PAGE_SIZE,
+            poolType: currentPoolType.type
+          })}
         >
           Load More
         </Button>
