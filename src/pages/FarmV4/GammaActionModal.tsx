@@ -23,7 +23,7 @@ type GammaActionModalProps = {
   onActionClick: () => void
   actionType: string
 }
-const GammaActionModal:FC<GammaActionModalProps> = ({
+const GammaActionModal: FC<GammaActionModalProps> = ({
   isOpen,
   setIsOpen,
   title,
@@ -31,17 +31,17 @@ const GammaActionModal:FC<GammaActionModalProps> = ({
   actionLabel,
   onActionClick,
   actionType
-                             }) => {
-  const {mode} = useDarkMode()
-  const {isMobile} = useBreakPoint()
+}) => {
+  const { mode } = useDarkMode()
+  const { isMobile } = useBreakPoint()
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogOverlay/>
+      <DialogOverlay />
       <DialogContent
         size={'sm'}
         className={`p-2.5 pt-3 gap-1.25 border-1 border-solid border-border-lightmode-secondary 
         dark:border-border-darkmode-secondary z-[1002]`}
-      placement={isMobile?'bottom':'default'}
+        placement={isMobile ? 'bottom' : 'default'}
       >
         <DialogHeader className={'flex-row justify-between pb-1.25'}>
           <h3 className={'text-start text-text-lightmode-primary dark:text-text-darkmode-primary'}>
@@ -49,7 +49,7 @@ const GammaActionModal:FC<GammaActionModalProps> = ({
           </h3>
           <DialogClose className={'ml-auto'}><Icon
             className={'min-w-4 min-h-4 max-w-4 max-h-4'}
-            src={`/img/assets/close-${mode}.svg`}/></DialogClose>
+            src={`/img/assets/close-${mode}.svg`} /></DialogClose>
         </DialogHeader>
         <DialogBody>
           {children}
@@ -65,7 +65,7 @@ const GammaActionModal:FC<GammaActionModalProps> = ({
           <p
             className={`text-b3 text-text-darkmode-secondary`}
           >
-            By selecting “{actionType}” you agree to
+            By clicking on, “{actionType}” you agree to
             <Button
               variant={'link'}
               onClick={navigateToCurried(NAV_LINKS.terms, '_blank')}
