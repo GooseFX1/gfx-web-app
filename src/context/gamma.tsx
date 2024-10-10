@@ -365,9 +365,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [base58PublicKey])
 
-  //TODO: remove this check (Object.keys(selectedCard)?.length > 0
-  //& make sure it's there at contract level)
-
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
