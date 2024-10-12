@@ -599,9 +599,9 @@ export const AH_TREASURY_BUMP = 255
 
 // GAMMA CONSTANTS:
 
-export const GAMMA_PROGRAM_ID = 'gaMmp8CxTCKFbtpoGrcxccDtJJSRyF7hzTkKcuPDbRG'
+export const GAMMA_PROGRAM_ID = 'GAMMA7meSFWaBXF25oSUgmGRwaW6sCMFLmBNiMSdbHVT'
 
-export const GAMMA_FEE_ACCOUNT = '2EGutuSu6BMjw2fKuU5q5fVTH1S5c4tsTgEwQZDn1N45'
+export const GAMMA_FEE_ACCOUNT = '8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY'
 
 export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
 

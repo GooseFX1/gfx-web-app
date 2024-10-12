@@ -1,5 +1,5 @@
 {
-    "address": "gaMmp8CxTCKFbtpoGrcxccDtJJSRyF7hzTkKcuPDbRG",
+    "address": "GAMMA7meSFWaBXF25oSUgmGRwaW6sCMFLmBNiMSdbHVT",
     "metadata": {
         "name": "gamma",
         "version": "0.1.0",
@@ -900,7 +900,7 @@
                         "create pool fee account"
                     ],
                     "writable": true,
-                    "address": "2EGutuSu6BMjw2fKuU5q5fVTH1S5c4tsTgEwQZDn1N45"
+                    "address": "8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY"
                 },
                 {
                     "name": "observation_state",
