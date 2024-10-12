@@ -34,7 +34,6 @@ import {
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import {
   BASE_SLIPPAGE,
-  DEVNET_NEW_TOKENS,
   GAMMA_SORT_CONFIG,
   GAMMA_SORT_CONFIG_MAP,
   ModeOfOperation,
@@ -47,10 +46,8 @@ import { usePriceFeedFarm } from '.'
 import { useConnectionConfig } from './settings'
 import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
-
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -129,7 +126,7 @@ export type TokenListToken = {
 
 const GAMMAContext = createContext<GAMMADataModel | null>(null)
 export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { userCache, network } = useConnectionConfig()
+  const { userCache } = useConnectionConfig()
   const { base58PublicKey, publicKey } = useWalletBalance()
   const [gammaConfig, setGammaConfig] = useState<GAMMAConfig | null>(null)
   const [pools, setPools] = useState<GAMMAPool[]>([])
@@ -201,14 +198,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
-  console.log('selectedCard', selectedCard)
-
   const updateTokenList = async (page: number, pageSize: number) => {
-    if (network === WalletAdapterNetwork.Devnet) {
-      console.log(DEVNET_NEW_TOKENS)
-      // setTokenList(DEVNET_NEW_TOKENS)
-      // return
-    }
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(
       page,
@@ -349,7 +339,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
               .slice(0, -1)
           )
-          if (tokenListResponse.success) {
+          if (tokenListResponse && tokenListResponse.success) {
             const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
             positionsToSet = positions.map((position) => {
               const tokenAPrice = priceMap.get(position.mintA.address)
