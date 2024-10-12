@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import {
+  Badge,
   Button,
   cn,
   Container,
@@ -25,6 +26,7 @@ import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 import { fetchPoolsByMints } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { truncateAddress } from '@/utils'
 
 const Step2: FC<{
   tokenA: JupToken
@@ -355,7 +357,11 @@ function TokenSelectionInput({
                 {token ? token.symbol : 'Select Token'}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className={'mt-3.75 z-[1001] max-h-[200px] overflow-auto'} portal={true}>
+            <DropdownMenuContent
+              className={'mt-1 z-[1001] max-h-[300px] overflow-auto w-[364px]'}
+              portal={true}
+              align={'start'}
+            >
               <ScrollingHydrateContainer
                 ref={(ref) => setScrollingContainerRef(ref)}
                 callback={() => {
@@ -369,16 +375,39 @@ function TokenSelectionInput({
                     items={tokenList}
                     render={(item: JupToken) => (
                       <DropdownMenuItem
-                        className={'group gap-2 cursor-pointer'}
+                        className={' cursor-pointer'}
                         onClick={() => setToken(item)}
                         key={item?.symbol}
                         disabled={otherToken?.symbol === item?.symbol}
                       >
                         <Icon
+                          className={'rounded-circle h-[24px] w-[24px]'}
                           src={loadUriImage(item?.logoURI) ? item?.logoURI : loadBackUpImage(item?.symbol, mode)}
-                          size={'sm'}
                         />
-                        <span>{item?.symbol}</span>
+                        <p className={'ml-2 font-bold'}>{item?.symbol}</p>
+                        <div className={'ml-2 max-w-[118px] '}>
+                          <p className={'text-grey-3 truncate'}>{item?.name}</p>
+                        </div>
+                        <a
+                          href={`https://solscan.io/account/${token?.address}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={'ml-auto'}
+                        >
+                          <Badge
+                            variant="default"
+                            size={'lg'}
+                            className={'to-brand-secondaryGradient-secondary/50'}
+                          >
+                            <span className={'font-poppins font-semibold my-0.5 mr-2'}>
+                              {truncateAddress(item?.address, 3)}
+                            </span>
+                            <Icon
+                              src={`/img/assets/arrowcircle-${mode}.svg`}
+                              className={'!h-[18px] !w-[18px] !min-h-[18px] !min-w-[18px]'}
+                            />
+                          </Badge>
+                        </a>
                       </DropdownMenuItem>
                     )}
                   />
