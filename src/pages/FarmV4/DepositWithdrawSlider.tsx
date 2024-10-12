@@ -520,7 +520,7 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userSourceWithdrawAmount}
               handleHalf={() => handleHalf(true)}
               handleMax={() => handleMax(true)}
-              disabled={userSourceTokenBal <= 0}
+              disabled={isDeposit && userSourceTokenBal <= 0}
             />
             <TokenRow isMintA={false} token={selectedCard?.mintB} balance={userTargetTokenBal} />
             <DepositWithdrawInput
@@ -530,10 +530,10 @@ export const DepositWithdrawSlider: FC = () => {
               withdrawAmount={userTargetWithdrawAmount}
               handleHalf={() => handleHalf(false)}
               handleMax={() => handleMax(false)}
-              disabled={userTargetTokenBal <= 0}
+              disabled={isDeposit && userTargetTokenBal <= 0}
             />
             <ReviewConfirm />
-            {userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
+            {isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
           </div>
         </DialogBody>
         <DialogFooter>

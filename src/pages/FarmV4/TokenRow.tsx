@@ -64,14 +64,14 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
           </div>
         </div>
         <div className={'flex flex-row items-center'}>
-          <Icon src={getWalletIcon()} size="sm" />
+          {isDeposit && (<Icon src={getWalletIcon()} size="sm" />)}
           <div
             className={cn(
               'ml-1.5 text-regular font-semibold dark:text-grey-8 text-black-4',
               userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
             )}
           >
-            {calculateUIAmount()} {token?.symbol}
+            {calculateUIAmount()} {!isDeposit && 'in pool'}
           </div>
         </div>
       </div>
