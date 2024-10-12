@@ -1,4 +1,14 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -84,14 +94,17 @@ interface GAMMADataModel {
   setPoolPage: Dispatch<SetStateAction<number>>
   isSearchActive: boolean
   filteredPools: GAMMAPoolWithUserLiquidity[]
-  updatePools: (data: {
-    page: number,
-    pageSize: number,
-    poolType?: Pool['type'] | 'all'
-    searchTokens?: string
-  }, append?: boolean) => void
-  poolsHasMoreData: boolean,
-  sortConfig: { id: string, name: string, direction: string, key: string }
+  updatePools: (
+    data: {
+      page: number
+      pageSize: number
+      poolType?: Pool['type'] | 'primary'
+      searchTokens?: string
+    },
+    append?: boolean
+  ) => void
+  poolsHasMoreData: boolean
+  sortConfig: { id: string; name: string; direction: string; key: string }
   selectedCardLiquidityAcc: any
   setSelectedCardLiquidityAcc: Dispatch<SetStateAction<any>>
   createPoolType: string
@@ -197,8 +210,11 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       // return
     }
     setIsLoadingTokenList(true)
-    const response = (await fetchTokenList(page, pageSize, createPoolType.toLowerCase())) as
-      GAMMAListTokenResponse | null
+    const response = (await fetchTokenList(
+      page,
+      pageSize,
+      createPoolType.toLowerCase()
+    )) as GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)
     if (!response || !response.success) {
       return
@@ -213,6 +229,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       hasSetOfTokens.add(token.address)
       currentTokenList.push(token)
     }
+
     setTokenList([...currentTokenList])
   }
 
@@ -223,14 +240,13 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       poolType = 'all',
       searchTokens = '',
       signal
-    }:
-      {
-        page: number,
-        pageSize: number,
-        poolType?: Pool['type'] | 'all'
-        searchTokens?: string
-        signal?: AbortSignal
-      },
+    }: {
+      page: number
+      pageSize: number
+      poolType?: Pool['type'] | 'all'
+      searchTokens?: string
+      signal?: AbortSignal
+    },
     append = true
   ) => {
     if (poolType === 'migrate') {
@@ -245,21 +261,22 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       sortConfig.key.toLowerCase(),
       searchTokens,
       signal
-    ).then((poolsData: GAMMAPoolsResponse) => {
-      if (poolsData && poolsData.success) {
-        setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
-        const existingPools = append ? pools : []
-        const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
-        for (const pool of poolsData.data.pools) {
-          if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`) && append) {
-            continue
+    )
+      .then((poolsData: GAMMAPoolsResponse) => {
+        if (poolsData && poolsData.success) {
+          setPoolsHasMoreData(poolsData.data.totalPages > poolsData.data.currentPage)
+          const existingPools = append ? pools : []
+          const hasSetOfPools = new Set(pools.map((pool) => `${pool.mintA.address}_${pool.mintB.address}`))
+          for (const pool of poolsData.data.pools) {
+            if (hasSetOfPools.has(`${pool.mintA.address}_${pool.mintB.address}`) && append) {
+              continue
+            }
+            hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
+            existingPools.push(pool)
           }
-          hasSetOfPools.add(`${pool.mintA.address}_${pool.mintB.address}`)
-          existingPools.push(pool)
+          setPools([...existingPools])
         }
-        setPools([...existingPools])
-      }
-    })
+      })
       .finally(() => setIsLoadingPools.off())
   }
 
@@ -276,12 +293,10 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (page == 1) {
       updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
     }
-
   }, [createPoolType])
 
   useEffect(() => {
     setPoolPage(1)
-    setPools([])
     // same page
     if (poolPage == 1) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type }, false)
@@ -295,13 +310,16 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const timeout = setTimeout(() => {
       //debounced search
       setPoolPage(1)
-      updatePools({
-        page: 1,
-        pageSize: POOL_LIST_PAGE_SIZE,
-        poolType: currentPoolType.type,
-        searchTokens,
-        signal: aborter.addSignal('update-gamma-pools')
-      }, false)
+      updatePools(
+        {
+          page: 1,
+          pageSize: POOL_LIST_PAGE_SIZE,
+          poolType: currentPoolType.type,
+          searchTokens,
+          signal: aborter.addSignal('update-gamma-pools')
+        },
+        false
+      )
     }, 233)
 
     return () => {
@@ -323,41 +341,40 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       })
       // lp position fet
-      fetchLpPositions('shirLjMLJRhJVPb7n6FZG3xw9PkcDSgZ3KX1ZMWS3sP').then(
-        async (positions: UserPortfolioLPPosition[] | null) => {
-          if (positions) {
-            let positionsToSet = []
-            const tokenListResponse = await fetchTokensByPublicKey(
-              positions
-                .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
-                .slice(0, -1)
-            )
-            if (tokenListResponse.success) {
-              const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
-              positionsToSet = positions.map((position) => {
-                const tokenAPrice = priceMap.get(position.mintA.address)
-                const tokenBPrice = priceMap.get(position.mintB.address)
-                const valueA = new Decimal(position.tokenADeposited).mul(tokenAPrice)
-                const valueB = new Decimal(position.tokenBDeposited).mul(tokenBPrice)
-                const totalValue = valueA.add(valueB)
-                return {
-                  ...position,
-                  totalValue: totalValue.toString(),
-                  valueA: valueA.toString(),
-                  valueB: valueB.toString()
-                }
-              })
-            } else {
-              positionsToSet = positions.map((position) => ({
+      fetchLpPositions(base58PublicKey).then(async (positions: UserPortfolioLPPosition[] | null) => {
+        if (positions) {
+          let positionsToSet = []
+          const tokenListResponse = await fetchTokensByPublicKey(
+            positions
+              .reduce((acc, icc) => acc + icc.mintA.address + ',' + icc.mintB.address + ',', '')
+              .slice(0, -1)
+          )
+          if (tokenListResponse.success) {
+            const priceMap = new Map(tokenListResponse.data.tokens.map((token) => [token.address, token.price]))
+            positionsToSet = positions.map((position) => {
+              const tokenAPrice = priceMap.get(position.mintA.address)
+              const tokenBPrice = priceMap.get(position.mintB.address)
+              const valueA = new Decimal(position.tokenADeposited).mul(tokenAPrice)
+              const valueB = new Decimal(position.tokenBDeposited).mul(tokenBPrice)
+              const totalValue = valueA.add(valueB)
+              return {
                 ...position,
-                totalValue: '0.0',
-                valueA: '0.0',
-                valueB: '0.0'
-              }))
-            }
-            setLpPositions(positionsToSet)
+                totalValue: totalValue.toString(),
+                valueA: valueA.toString(),
+                valueB: valueB.toString()
+              }
+            })
+          } else {
+            positionsToSet = positions.map((position) => ({
+              ...position,
+              totalValue: '0.0',
+              valueA: '0.0',
+              valueB: '0.0'
+            }))
           }
-        })
+          setLpPositions(positionsToSet)
+        }
+      })
     } else {
       setUser(null)
       setPortfolioStats(null)
@@ -371,9 +388,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         try {
           const poolIdKey = await getpoolId(selectedCard)
           const gammaPool = await GammaProgram.account.poolState.fetch(poolIdKey)
-          const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
-          const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
-          setSelectedCardLiquidityAcc(liquidityAccount)
           setSelectedCardPool(gammaPool)
         } catch (e) {
           console.log(e)
@@ -382,27 +396,42 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
-  const filteredPools = useMemo(
-    () => {
-      const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
-      return pools.map((pool) => {
+  useEffect(() => {
+    ;(async () => {
+      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
+        try {
+          const poolIdKey = await getpoolId(selectedCard)
+          const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
+          const liquidityAccount = await GammaProgram?.account?.userPoolLiquidity?.fetch(liquidityAccountKey)
+          setSelectedCardLiquidityAcc(liquidityAccount)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    })()
+  }, [GammaProgram, selectedCard])
+
+  const filteredPools = useMemo(() => {
+    const userLpPositions = new Map(lpPositions.map((lp) => [lp.poolStatePublicKey, lp]))
+    return pools
+      .map((pool) => {
         const userLpPosition = userLpPositions.get(pool.id)
         return {
           ...pool,
           userLpPosition: userLpPosition,
-          hasDeposit: userLpPosition ?
-            (new Decimal(userLpPosition.tokenADeposited).gt(0) || new Decimal(userLpPosition.tokenBDeposited).gt(0)) :
-            false
+          hasDeposit: userLpPosition
+            ? new Decimal(userLpPosition.tokenADeposited).gt(0) ||
+              new Decimal(userLpPosition.tokenBDeposited).gt(0)
+            : false
         }
-      }).filter((pool) => {
+      })
+      .filter((pool) => {
         if (showDeposited) {
           return pool.hasDeposit
         }
         return true
       })
-    },
-    [pools, lpPositions, showDeposited]
-  )
+  }, [pools, lpPositions, showDeposited])
 
   const isSearchActive = searchTokens.trim().length > 0
 
@@ -466,4 +495,3 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 }
 
 export const useGamma = (): GAMMADataModel => useContext(GAMMAContext)
-
