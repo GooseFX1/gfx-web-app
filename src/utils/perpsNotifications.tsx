@@ -180,7 +180,23 @@ export const notifyUsingPromise = async (
           </IntemediaryToast>
         )
       },
-      error: () => {
+      error: (err) => {
+        console.log('error', err)
+        if(err.message === "6005"){
+        reject(false)
+          return (
+            <IntemediaryToast className={cn(`w-[290px]`)}>
+              <IntemediaryToastHeading stage={'error'}>Slippage error!</IntemediaryToastHeading>
+              <p>
+                The transaction could not go through because slippage exceeded your fixed slippage. 
+                Please try again!
+              </p>
+              <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+                Contact Us
+              </OpenToastLink>
+            </IntemediaryToast>
+          )
+        }
         reject(false)
         return (
           <IntemediaryToast className={cn(`w-[290px]`)}>
@@ -274,3 +290,40 @@ export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): P
       }
     })
   })
+
+  export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>): Promise<boolean> =>
+    new Promise((resolve, reject) => {
+      toast.promise(promise, {
+        loading: (
+          <IntemediaryToast className={cn(`w-[290px]`)}>
+            <IntemediaryToastHeading stage={'loading'}>Creating pool...</IntemediaryToastHeading>
+            <p className={cn(`text-[13px]`)}>
+              Please wait a few moments for the new <br />
+              pool to be created!
+            </p>
+          </IntemediaryToast>
+        ),
+        success: (response: SuccessResponse) => {
+          resolve(true)
+          return (
+            <IntemediaryToast className={cn(`w-[290px]`)}>
+              <IntemediaryToastHeading stage={'success'}>Pool Created Successfully!</IntemediaryToastHeading>
+              <p className={cn(`pt-1 text-[13px]`)}>It may take a few minutes for your pool to appear on the platform. 
+                Please refresh the page.</p>
+            </IntemediaryToast>
+          )
+        },
+        error: () => {
+          reject(false)
+          return (
+            <IntemediaryToast className={cn(`w-[290px]`)}>
+              <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
+              <p>Sorry, a problem occurred, please try again. If the issue persists contact support.</p>
+              <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
+                Contact Us
+              </OpenToastLink>
+            </IntemediaryToast>
+          )
+        }
+      })
+    })

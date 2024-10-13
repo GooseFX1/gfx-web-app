@@ -27,16 +27,18 @@ interface MenuItemProps {
   customMenuListItemsContainerStyle?: string
   customButtonStyle?: string
   customButtonWrapperStyle?: string
+  fullWidth?: boolean
 }
 
 export const Connect: FC<MenuItemProps> = ({
-                                             customButtonStyle,
-                                             customMenuListItemsContainerStyle,
-                                             customMenuListItemStyle
-                                           }) => {
+  customButtonStyle,
+  customMenuListItemsContainerStyle,
+  customMenuListItemStyle,
+  fullWidth
+}) => {
   const { wallet, connected, disconnect, connecting, disconnecting }
     = useWallet()
-  const { base58PublicKey} = useWalletBalance()
+  const { base58PublicKey } = useWalletBalance()
   const isAttempting = connecting || disconnecting
   const { blacklisted } = useConnectionConfig()
   const [isOpen, setIsOpen] = useBoolean(false)
@@ -58,7 +60,7 @@ export const Connect: FC<MenuItemProps> = ({
 
   useEffect(() => {
     if ((geoBlocked) && visible) setWalletModalVisible(false)
-  }, [geoBlocked, base58PublicKey,visible])
+  }, [geoBlocked, base58PublicKey, visible])
 
   const connectLabel = useMemo(() => {
     if (!connected || isAttempting) {
@@ -67,7 +69,7 @@ export const Connect: FC<MenuItemProps> = ({
 
     const leftRightSize = breakpoint.isMobile || breakpoint.isTablet ? 3 : 4
     return truncateAddress(base58PublicKey, leftRightSize)
-  }, [base58PublicKey, connected, adapterName, wallet, breakpoint,isAttempting])
+  }, [base58PublicKey, connected, adapterName, wallet, breakpoint, isAttempting])
 
   // watches for a selected wallet returned from modal
   if (base58PublicKey && !canConnect && !geoBlocked) {
@@ -123,20 +125,20 @@ export const Connect: FC<MenuItemProps> = ({
   }, [base58PublicKey])
   // Note: not passing asChild to tooltiptrigger as styling goes missing believe its prop inheritance overwriting
   return (
-    <
-    >
+    <>
       {geoBlocked && <GeorestrictionModal geoBlocked={geoBlocked} setGeoBlocked={setGeoBlocked} />}
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen.set}>
         <DropdownMenuTrigger asChild className={'focus-visible:outline-none'}>
           <Button
             colorScheme={!connected ? 'purple' : 'primaryGradient'}
-            size={breakpoint.isMobile || breakpoint.isTablet ? 'default' : 'sm'}
+            size={'sm'}
             className={cn(
-              `flex min-w-[129px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
+              `flex min-w-[120px] min-md:min-w-[143px] px-1 py-1.75 focus-visible:outline-none`,
               connected && !isAttempting ? 'justify-between' : 'justify-center',
               customButtonStyle
             )}
-            onClick={() => (!connected||isAttempting) && handleConnect()}
+            fullWidth={fullWidth}
+            onClick={() => (!connected || isAttempting) && handleConnect()}
             isLoading={isAttempting}
           >
             {connected && (
@@ -161,7 +163,11 @@ export const Connect: FC<MenuItemProps> = ({
           </Button>
         </DropdownMenuTrigger>
         {connected && (
-          <DropdownMenuContent className={cn('mt-3.75', customMenuListItemsContainerStyle)} portal={false}>
+          <DropdownMenuContent
+            className={cn('mt-1', customMenuListItemsContainerStyle)}
+            portal={false}
+            align={'end'}
+          >
             <div
               className={cn(`flex flex-row gap-2 items-center border-b border-solid pb-2 mb-2
               border-border-darkmode-primary

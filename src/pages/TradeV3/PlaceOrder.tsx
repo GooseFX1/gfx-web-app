@@ -707,7 +707,7 @@ const LeverageRatioTile: FC<{ sliderValue }> = ({ sliderValue }) => (
         <InfoLabel> SOL-PERP </InfoLabel>
       </div>
       <div className="w-[43px] h-[23px]">
-        <Badge variant="default" size={'lg'}>
+        <Badge variant="default" size={'lg'} className={'to-brand-secondaryGradient-secondary/50'}>
           <InfoLabel>
             <h5 className={'!dark:text-white mt-0.5'}> {sliderValue}x </h5>
           </InfoLabel>

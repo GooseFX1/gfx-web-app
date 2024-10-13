@@ -1,51 +1,49 @@
 /* eslint-disable */
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useLayoutEffect, useState } from 'react'
 import { useConnectionConfig } from '../context'
-import { USER_CONFIG_CACHE } from '../types/app_params'
 import useBreakPoint from '../hooks/useBreakPoint'
 import {
   Button,
   Checkbox,
   Dialog,
-  DialogTitle,
   DialogBody,
   DialogCloseDefault,
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay
+  DialogOverlay,
+  DialogTitle
 } from 'gfx-component-lib'
 
 export const TermsOfService: FC<{
   setVisible?: Dispatch<SetStateAction<boolean>>
   visible?: boolean
 }> = ({ setVisible, visible }) => {
-  const { blacklisted } = useConnectionConfig()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const { blacklisted, userCache, updateUserCache } = useConnectionConfig()
   const breakpoint = useBreakPoint()
-  const isMobile = breakpoint.isMobile || breakpoint.isTablet
-  const [toShow, setToShow] = useState<boolean>(!!visible && true)
+  const isMobile = breakpoint.isMobile
+  const isOnAmm = window.location.pathname.includes('farm')
+  const [toShow, setToShow] = useState<boolean>(!!visible || (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || !isOnAmm)
   const [checked, setChecked] = useState<boolean>(false)
   // const [isRead, setRead] = useState<boolean>(false)
+  console.log('TOS USER CACHE', userCache)
+  useLayoutEffect(() => {
+    if (blacklisted) {
+      setToShow(false)
+      return;
+    }
+    const isOnAmm = window.location.pathname.includes('farm');
+    const canShowTos = (isOnAmm && userCache.gamma.hasGAMMAOnboarded) || (!isOnAmm && !userCache.hasSignedTC);
 
-  useEffect(() => {
-    setToShow(blacklisted ? false : !existingUserCache.hasSignedTC && true)
-  }, [])
-
-  useEffect(() => {
-    if (visible && !blacklisted) {
+    if (visible || canShowTos) {
       setToShow(true)
     }
-  }, [visible])
+  }, [visible, userCache.gamma.hasGAMMAOnboarded, userCache.hasSignedTC, blacklisted])
 
   const accept = () => {
-    window.localStorage.setItem(
-      'gfx-user-cache',
-      JSON.stringify({
-        ...existingUserCache,
-        hasSignedTC: checked
-      })
-    )
+    updateUserCache({
+      hasSignedTC: checked
+    })
 
     setToShow(false)
     setVisible?.(false)
@@ -61,7 +59,7 @@ export const TermsOfService: FC<{
       <DialogOverlay />
       <DialogContent
         className={`flex flex-col gap-0 max-h-[464px] border-1 border-solid
-        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
+        dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none z-[1001]`}
         fullScreen={isMobile}
         placement={isMobile ? 'bottom' : 'default'}
       >

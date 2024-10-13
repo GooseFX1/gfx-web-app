@@ -14,7 +14,8 @@
     "lint": "eslint src",
     "lint:fix": "eslint src --fix && yarn format:fix",
     "lint:strict": "eslint --max-warnings=0 src",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false",
+    "submod:init": "git submodule update --init && rm -rf ./external/eslintrc.js && cd external && yarn &$ cd .."
   },
   "dependencies": {
     "@ant-design/plots": "^1.2.5",
@@ -24,10 +25,15 @@
     "@jup-ag/api": "^6.0.6",
     "@jup-ag/react-hook": "^6.0.0-beta.2",
     "@ladderlabs/buddy-sdk": "0.2.17",
+    "@mercurial-finance/dynamic-amm-sdk": "^1.1.2",
+    "@meteora-ag/dlmm": "^1.2.2",
     "@moongate/moongate-adapter": "^0.0.99",
+    "@orca-so/common-sdk": "^0.6.3",
+    "@orca-so/whirlpools-sdk": "^0.13.5",
     "@project-serum/anchor": "^0.17.1-beta.1",
     "@project-serum/borsh": "^0.2.5",
     "@pythnetwork/client": "^2.2.0",
+    "@raydium-io/raydium-sdk-v2": "^0.1.68-alpha",
     "@rive-app/react-canvas": "^4.2.1",
     "@solana-mobile/wallet-adapter-mobile": "^2.0.1",
     "@solana/buffer-layout": "^4.0.0",
@@ -47,6 +53,7 @@
     "borsh": "^0.6.0",
     "bs58": "^4.0.1",
     "coingecko-api": "^1.0.10",
+    "decimal.js": "^10.4.3",
     "gfx-component-lib": "^1.13.0",
     "gfx-perp-sdk": "https://github.com/GooseFX1/gfx-perp-ts-sdk/releases/download/5/gfx-perp-sdk.tar.gz",
     "gfx_stocks_pool": "file:./wasm",
@@ -151,12 +158,13 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-error-overlay": "6.0.9",
-    "@coral-xyz/anchor": "0.26.0",
+    "@coral-xyz/anchor": "0.30.1",
     "typescript": "^5.4.5",
     "@ethereumjs/tx": "4.2.0",
     "@ethereumjs/util": "8.1.0",
     "node-addon-api": "7.1.0",
     "commander": "11.0.0",
     "@walletconnect/sign-client": "2.13.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,14 +1,21 @@
+import useBoolean from '@/hooks/useBoolean'
 import React, { FC, useState, ReactNode, createContext, useContext, Dispatch, SetStateAction } from 'react'
 interface IRewardToggleConfig {
   rewardModal: boolean
   rewardToggle: Dispatch<SetStateAction<boolean>>
   panelIndex: number
   changePanel: (index: number) => void
+  isProMode: boolean
+  setIsProMode: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  isPortfolio: boolean,
+  setIsPortfolio: { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
 }
 const RewardToggleContext = createContext<IRewardToggleConfig | null>(null)
 export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<boolean>(false)
   const [panelIndex, setPanelIndex] = useState<number>(0)
+  const [isProMode, setIsProMode] = useBoolean(false)
+  const [isPortfolio, setIsPortfolio] = useBoolean(false)
   const closeModalBox = (val: boolean) => {
     if (val) {
       setMode(val)
@@ -25,7 +32,11 @@ export const RewardToggleProvider: FC<{ children: ReactNode }> = ({ children }) 
         rewardModal: mode,
         rewardToggle: closeModalBox,
         panelIndex: panelIndex,
-        changePanel: changePanel
+        changePanel: changePanel,
+        isProMode: isProMode,
+        setIsProMode: setIsProMode,
+        isPortfolio: isPortfolio,
+        setIsPortfolio: setIsPortfolio
       }}
     >
       {children}

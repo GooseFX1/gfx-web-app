@@ -512,6 +512,8 @@ export const WRAPPED_SOL_MINT = new PublicKey('So1111111111111111111111111111111
 
 export const TOKEN_PROGRAM_ID = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
 
+export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb')
+
 export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
 )
@@ -533,6 +535,8 @@ export const PACK_CREATE_ID = new PublicKey('packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6p
 export const ORACLE_ID = new PublicKey('rndshKFf48HhGaPbaCd3WQYtgCNKzRgVQ3U2we4Cvf9')
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111')
+
+export const SYS_VAR_RENT = new PublicKey('SysvarRent111111111111111111111111111111111')
 
 // SSL-V2 CONSTANTS
 
@@ -592,3 +596,21 @@ export const AH_BUMP = 253
 export const AH_FEE_BUMP = 251
 
 export const AH_TREASURY_BUMP = 255
+
+// GAMMA CONSTANTS:
+
+export const GAMMA_PROGRAM_ID = 'GAMMA7meSFWaBXF25oSUgmGRwaW6sCMFLmBNiMSdbHVT'
+
+export const GAMMA_FEE_ACCOUNT = '8PhehuioLjhJ35A5eavazJSwoXcA4J7WwzgoWDBDFSuY'
+
+export const POOL_VAULT_SEED_PREFIX = 'pool_vault'
+
+export const AUTHORITY_PREFIX = 'vault_and_lp_mint_auth_seed'
+
+export const USER_POOL_LIQUIDITY_PREFIX =  "user-pool-liquidity"
+
+export const AMM_CONFIG = 'amm_config'
+
+export const POOL_SEED_PRFIX = 'pool'
+
+export const OBSERVATION_PREFIX = 'observation'

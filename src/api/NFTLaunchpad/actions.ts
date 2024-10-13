@@ -1,7 +1,42 @@
 import { customClient } from '../../api'
-import { ICreatorData } from '../../types/nft_launchpad'
 import { NFT_LAUNCHPAD_API_BASE, NFT_LAUNCHPAD_API_ENDPOINTS } from '../NFTLaunchpad/constants'
 import axios from 'axios'
+
+type legality = 'author' | 'permission' | 'no'
+type currency = 'SOL' | 'USDC'
+type vesting = false | [50, 25, 25] | [40, 30, 30]
+
+export interface ICreatorData {
+  0: null
+  1: {
+    legality: legality
+    projectName: string
+    collectionName: string
+    collectionDescription: string
+  } | null
+  2: {
+    items: number
+    currency: currency
+    price: number
+    image: string
+  } | null
+  3: {
+    vesting: vesting
+    date: string
+    time: string
+  } | null
+  4: {
+    delayedReveal: boolean
+    uploadedFiles: string
+  } | null
+  5: {
+    discord: string
+    website?: string
+    twitter: string
+    roadmap: { heading: string; subHeading: string }[] | null
+    team: { name: string; twitterUsername: string; dp_url?: null | string }[] | [] | null
+  } | null
+}
 
 export const fetchAllNFTLaunchpadData = async (): Promise<any> => {
   try {

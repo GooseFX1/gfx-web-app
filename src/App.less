@@ -958,3 +958,20 @@ body.dark {
     }
   }
 }
+
+#jupiter-terminal-instance {
+  width: 0;
+  height: 0;
+}
+#jupiter-terminal-instance > div {
+  position: absolute;
+  @apply border-1 border-solid dark:border-border-darkmode-primary border-border-lightmode-primary rounded-full !bottom-16;
+}
+
+#jupiter-terminal-instance > div, #jupiter-terminal-instance > div > div, #jupiter-terminal {
+  z-index: 99999;
+}
+
+img[src='/img/assets/fallback-token-dark.svg'], img[src='/img/assets/fallback-token-lite.svg'] {
+  border-radius: 0px;
+}

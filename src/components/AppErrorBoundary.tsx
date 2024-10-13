@@ -1,8 +1,9 @@
 /* eslint-disable */
 // @ts-nocheck
 import React, { Component } from 'react'
-import { Loader, loaders } from 'gfx-component-lib'
+import { Button, Loader, loaders } from 'gfx-component-lib'
 import { SOCIAL_MEDIAS } from '@/constants'
+import { resetUserCache, validateUserCache } from '@/context'
 
 const sessionStorageErrorCount = 'error-count' as const
 
@@ -23,9 +24,9 @@ class ErrorBoundary extends Component {
     const errorCount = parseInt((sessionStorage.getItem(sessionStorageErrorCount) ?? '0')) + 1
 
     sessionStorage.setItem(sessionStorageErrorCount, errorCount)
-
-    if (localStorage.getItem('gfx-user-cache')) {
-      localStorage.removeItem('gfx-user-cache')
+    const isCacheValid = validateUserCache();
+    if (!isCacheValid) {
+      resetUserCache();
     }
     let reloadRef = null
     if (errorCount < 2) {
@@ -48,14 +49,14 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       if (this.state.errorCount < 2) {
         // You can render any custom fallback UI
-        return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
+        return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto text-center'}>
           <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
           <h1 className={'dark:text-text-darkmode-primary mb-5'}>Sorry, Something Went Wrong...</h1>
           <p>Attempting Recovery, Hold Tight!</p>
           <Loader animationData={loaders.loader_generic} className={'w-20 h-20'} />
         </div>
       }
-      return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto'}>
+      return <div className={'w-full h-screen flex flex-col justify-center items-center m-auto text-center'}>
         <div className={'flex flex-col gap-5 items-center justify-center'}>
           <img src={'/img/assets/error_egg.svg'} className={'h-40'} />
           <h1 className={'dark:text-text-darkmode-primary'}>Sorry, Something Went Wrong...</h1>
@@ -82,6 +83,13 @@ class ErrorBoundary extends Component {
             </a>
             </p>
           </div>
+          <Button onClick={()=>{
+            resetUserCache()
+            window.location.reload()
+            window.sessionStorage.setItem('error-count',0)
+          }}>
+            Retry
+          </Button>
         </div>
       </div>
     }

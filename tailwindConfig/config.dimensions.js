@@ -31,7 +31,8 @@ const margin = {
   2.75: '11px',
   3.75: '15px',
   4.5: '18px',
-  7.5: '30px'
+  7.5: '30px',
+  11.5: '46px'
 }
 
 const height = {

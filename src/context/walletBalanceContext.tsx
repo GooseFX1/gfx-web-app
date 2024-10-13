@@ -11,11 +11,13 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
-import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
+import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
+import { fetchTokensByPublicKey } from '@/api/gamma'
+import Decimal from 'decimal.js-light'
 
 const NATIVE_MINT = new PublicKey('So11111111111111111111111111111111111111112')
 
@@ -27,6 +29,8 @@ interface UserTokenAccounts {
   mint: PublicKey
   pda: PublicKey
   tokenAmount: TokenAmount
+  value: Decimal
+  price: number
 }
 
 type Balance = Record<string, UserTokenAccounts>
@@ -40,9 +44,10 @@ interface IWalletBalanceContext {
   createTokenAccountInstructions: (data: CreateTokenAccountParams[]) => TransactionInstruction[]
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
   createTokenAccounts: (data: CreateTokenAccountParams[]) => Promise<void>
+  walletValue: string
 }
 
-const SUPPORTED_TOKENS: Record<string, Omit<UserTokenAccounts, 'mint' | 'pda' | 'tokenAmount'>> = {
+const SUPPORTED_TOKENS: Record<string, Omit<UserTokenAccounts, 'mint' | 'pda' | 'tokenAmount' | 'price' | 'value'>> = {
   So11111111111111111111111111111111111111112: {
     symbol: 'SOL',
     name: 'Solana',
@@ -108,7 +113,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const { network, connection } = useConnectionConfig()
   const [balance, setBalance] = useState<Balance>({})
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
-
+  const [walletValue, setWalletValue] = useState<string>('0.0')
   useSolSubActivityMulti({
     subType: SubType.AccountChange,
     publicKeys: tokenAccounts.map((account) => {
@@ -155,6 +160,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   async function getTokenAccounts() {
     if (!publicKey) return
+
     const filters: GetProgramAccountsFilter[] = [
       {
         dataSize: 165 //size of account (bytes)
@@ -172,20 +178,30 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       { filters: filters }
     )
     const tokenAccounts = {}
+    const tokenInfo = {}
+    let addresses = NATIVE_MINT.toBase58() + ','
     accounts.forEach((account) => {
       const data = account.account.data as ParsedAccountData
-      if (data.parsed.info.mint in SUPPORTED_TOKENS) {
-        const supportedToken = SUPPORTED_TOKENS[data.parsed.info.mint]
-        tokenAccounts[supportedToken.symbol] = {
-          ...data.parsed.info,
-          ...supportedToken,
-          pda: findProgramAddressSync(
-            [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(data.parsed.info.mint).toBuffer()],
-            ASSOCIATED_TOKEN_PROGRAM_ID
-          )[0]
-        }
-      }
+      addresses += data.parsed.info.mint + ','
+      tokenInfo[data.parsed.info.mint] = data.parsed.info
+      // if (data.parsed.info.mint in SUPPORTED_TOKENS) {
+      //   const supportedToken = SUPPORTED_TOKENS[data.parsed.info.mint]
+      //   tokenAccounts[supportedToken.symbol] = {
+      //     ...data.parsed.info,
+      //     ...supportedToken,
+      //     pda: findProgramAddressSync(
+      //       [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(data.parsed.info.mint).toBuffer()],
+      //       ASSOCIATED_TOKEN_PROGRAM_ID
+      //     )[0],
+      //     value: 0.0,
+      //     price: 0.0
+      //   }
+      // }
     })
+
+    addresses = addresses.slice(0, -1)
+
+
     const solBalance = await connection.getBalance(publicKey)
     const solUIAmount = solBalance / 10 ** 9
 
@@ -198,10 +214,38 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         decimals: 9,
         uiAmountString: solUIAmount.toFixed(2),
         uiAmount: solUIAmount
+      },
+      price: 0.0,
+      value: new Decimal(0.0)
+    }
+    let currentWalletValue = new Decimal(0.0)
+    const tokenListResponse = await fetchTokensByPublicKey(addresses)
+    if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
+      for (const data of tokenListResponse.data.tokens) {
+        const { address, ...rest } = data
+        if (tokenAccounts && tokenAccounts[data.symbol]) {
+          tokenAccounts[data.symbol].mint = address
+          tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
+          tokenAccounts[data.symbol].price = data.price
+          const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price);
+          tokenAccounts[data.symbol].value = value
+          currentWalletValue = currentWalletValue.add(value)
+          console.log('balance', currentWalletValue.toString(), value.toString())
+
+          if (rest.symbol != 'SOL') {
+            tokenAccounts[data.symbol].pda = findProgramAddressSync(
+              [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
+              ASSOCIATED_TOKEN_PROGRAM_ID
+            )[0]
+            tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
+          }
+        }
       }
     }
+
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
+    setWalletValue(currentWalletValue.toFixed(2))
   }
 
   function createTokenAccountInstruction(data: CreateTokenAccountParams) {
@@ -246,7 +290,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         return target[prop.toUpperCase()]
       }
       return {
-        sumbol: '',
+        symbol: '',
         name: '',
         logoURI: '',
         decimals: 0,
@@ -257,7 +301,9 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           decimals: 0,
           uiAmount: 0,
           uiAmountString: '0'
-        }
+        },
+        price: 0.0,
+        value: new Decimal(0.0)
       }
     }
   }
@@ -271,7 +317,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         createTokenAccountInstruction,
         createTokenAccountInstructions,
         createTokenAccount,
-        createTokenAccounts
+        createTokenAccounts,
+        walletValue
       }}
     >
       {children}

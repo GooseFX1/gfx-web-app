@@ -16,7 +16,8 @@ type useTransactionReturn = {
   createTransactionBuilder: (txn?: TXN) => TransactionBuilder
   sendTransaction: (
     txn: Transaction | TransactionBuilder,
-    connectionData?: SendTxnOptions
+    connectionData?: SendTxnOptions,
+    notify?: (promise: Promise<unknown>) => Promise<boolean>
   ) => Promise<{ success: boolean; txSig: string }>
 }
 const baseSet = new Set()
@@ -33,7 +34,7 @@ function useTransaction(): useTransactionReturn {
   const supportedTransactionTypes = useMemo(() =>
     wallet?.adapter?.supportedTransactionVersions ?? baseSet, [wallet])
   const sendTransaction = useCallback(
-    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions) => {
+    async (txnIn: Transaction | TransactionBuilder, connectionData?: SendTxnOptions, notify = notifyUsingPromise) => {
 
       const connection = connectionData?.connection ?? originalConnection
       const options = { ...connectionData?.options, skipPreflight: true }
@@ -64,6 +65,9 @@ function useTransaction(): useTransactionReturn {
           .then((res) => {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
             if (res.value.err != null) {
+              if((res?.value?.err as any).InstructionError[1]?.Custom == 6005){
+                throw new Error("6005")
+              }
               console.log('Transaction failed', res.value.err)
               throw new Error('Transaction failed')
             }
@@ -72,12 +76,15 @@ function useTransaction(): useTransactionReturn {
             return response
           })
           .catch((err) => {
-            console.log('[ERROR] Transaction failed', err)
+            console.log('[ERROR] Transaction failed', err?.message)
+            if(err?.message == 6005){
+              throw new Error("6005")
+            }
             throw new Error('Transaction failed', err)
           })
       }
       const promise = promiseBuilder<Awaited<ReturnType<typeof exec>>>(exec())
-      const success = await notifyUsingPromise(promise, null, txSig)
+      const success = await notify(promise, null, txSig)
       return { txSig, success }
     },
     [originalConnection, sendTransactionOriginal, supportedTransactionTypes, publicKey]

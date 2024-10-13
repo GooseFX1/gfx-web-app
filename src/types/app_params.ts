@@ -5,10 +5,20 @@ type UserFarmConfig = {
   showDepositedFilter: boolean
 }
 
+type UserGAMMAConfig = {
+  hasGAMMAOnboarded: boolean
+  showDepositedFilter: boolean
+  showCreatedFilter: boolean
+  docsBanner: boolean
+  currentSort: string
+}
+
 export interface USER_CONFIG_CACHE {
-  endpointName: EndPointName | null
-  endpoint: string | null
+  hasDexOnboarded: boolean
+  endpointName: EndPointName
+  endpoint: string
   farm: UserFarmConfig
+  gamma: UserGAMMAConfig
   hasSignedTC: boolean
   priorityFee: PriorityFeeName
 }

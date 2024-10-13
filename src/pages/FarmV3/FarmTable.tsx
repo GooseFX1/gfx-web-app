@@ -1,15 +1,13 @@
 import React, { FC, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { ShowDepositedToggle, SkeletonCommon } from '../../components'
-import { useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
+import { useConnectionConfig, useDarkMode, usePriceFeedFarm, useSSLContext } from '../../context'
 import { checkMobile, formatUserBalance, truncateBigString } from '../../utils'
 import useBreakPoint from '../../hooks/useBreakPoint'
 import { Pool, poolType, SSLToken } from './constants'
 import { useWallet } from '@solana/wallet-adapter-react'
 
 import { getPriceObject } from '../../web3'
-
-import { USER_CONFIG_CACHE } from '../../types/app_params'
 import BN from 'bn.js'
 import { AllClaimModal } from './AllClaimModal'
 import { Button, cn, Switch } from 'gfx-component-lib'
@@ -21,7 +19,7 @@ import { MIN_AMOUNT_CLAIM } from '@/pages/FarmV3/FarmTableComponents/FarmTableBa
 
 export const FarmTable: FC = () => {
   const { mode } = useDarkMode()
-  const existingUserCache: USER_CONFIG_CACHE = JSON.parse(window.localStorage.getItem('gfx-user-cache'))
+  const { userCache, updateUserCache } = useConnectionConfig()
 
   const breakpoint = useBreakPoint()
   const { wallet } = useWallet()
@@ -39,7 +37,7 @@ export const FarmTable: FC = () => {
   } = useSSLContext()
   const [searchTokens, setSearchTokens] = useState<string>('')
   const [initialLoad, setInitialLoad] = useState<boolean>(true)
-  const [showDeposited, setShowDeposited] = useState<boolean>(existingUserCache.farm.showDepositedFilter)
+  const [showDeposited, setShowDeposited] = useState<boolean>(userCache.farm.showDepositedFilter)
   const [sort, setSort] = useState<string>('ASC')
   const [sortType, setSortType] = useState<string>(null)
   const { prices } = usePriceFeedFarm()
@@ -96,25 +94,23 @@ export const FarmTable: FC = () => {
     () =>
       searchTokens
         ? farmTableRow.filter((token) =>
-            token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
-          )
+          token?.token?.toLocaleLowerCase().includes(searchTokens?.toLocaleLowerCase())
+        )
         : [...farmTableRow],
     [searchTokens, farmTableRow, sort]
   )
 
   useEffect(() => {
-    if (pubKey === null)
+    if (pubKey === null && userCache.farm.showDepositedFilter)
       setShowDeposited(() => {
-        window.localStorage.setItem(
-          'gfx-user-cache',
-          JSON.stringify({
-            ...existingUserCache,
-            farm: { ...existingUserCache.farm, showDepositedFilter: false }
-          })
-        )
+        updateUserCache({
+          farm: {
+            ...userCache.farm,showDepositedFilter:false
+          }
+        })
         return false
       })
-  }, [pubKey])
+  }, [pubKey, userCache])
 
   useEffect(() => {
     sslData?.length && setInitialLoad(false)
@@ -164,13 +160,13 @@ export const FarmTable: FC = () => {
 
   const handleShowDepositedToggle = () => {
     setShowDeposited((prev) => {
-      window.localStorage.setItem(
-        'gfx-user-cache',
-        JSON.stringify({
-          ...existingUserCache,
-          farm: { ...existingUserCache.farm, showDepositedFilter: !prev }
-        })
-      )
+      updateUserCache({
+        farm: {
+          ...userCache.farm,
+          showDepositedFilter: !prev
+        }
+      })
+
       return !prev
     })
     setIsFirstPoolOpen(false)

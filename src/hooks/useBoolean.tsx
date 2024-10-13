@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
+
 type useBooleanReturn = [
   boolean,
-  { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
+  UseBooleanSetter
 ]
+export type UseBooleanSetter = { toggle: () => void; on: () => void; off: () => void; set: (value: boolean) => void }
 function useBoolean(initialValue = false): useBooleanReturn {
   const [val, setVal] = useState(initialValue)
   const toggle = useCallback(() => setVal((prev) => !prev), [])

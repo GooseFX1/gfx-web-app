@@ -1,21 +1,29 @@
-import React, { CSSProperties, FC, lazy, Suspense } from 'react'
+import { CSSProperties, FC, lazy, Suspense } from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import { AppLayout } from './layouts'
 import {
-  NavCollapseProvider,
-  PriceFeedProvider,
-  OrderBookProvider,
-  PriceFeedFarmProvider,
   AccountsProvider,
-  TokenRegistryProvider,
-  RewardToggleProvider,
-  OrderProvider,
   CryptoProvider,
+  GammaProvider,
+  NavCollapseProvider,
+  OrderBookProvider,
+  OrderProvider,
+  PriceFeedFarmProvider,
+  PriceFeedProvider,
+  RewardToggleProvider,
+  TokenRegistryProvider,
   useConnectionConfig,
   useDarkMode
 } from './context'
 import { APP_DEFAULT_ROUTE } from './constants'
 import Maintenance from './pages/Maintenance'
+import { JupWidget } from '@/components/JupWidget'
+import { TraderProvider } from './context/trader_risk_group'
+import { StatsProvider } from './context/stats'
+import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
+import { Toaster } from 'gfx-component-lib'
+import { RewardsProvider } from '@/context/rewardsContext'
+import { MarketProductGroupProvider } from './context/market_product_group'
 
 const Bridge = lazy(() => import('./pages/Bridge'))
 const GenericNotFound = lazy(() => import('./pages/InvalidUrl'))
@@ -25,12 +33,7 @@ const TradeAnalyticsWrapper = lazy(() => import('./pages/Analytics/trade/TradeAn
 const SSLAnalyticsDashboard = lazy(() => import('./pages/Analytics/ssl/SSLAnalyticsDashboard'))
 const LeaderBoard = lazy(() => import('./pages/Stats/LeaderBoard'))
 const Farm = lazy(() => import('./pages/FarmV3/Farm'))
-import { TraderProvider } from './context/trader_risk_group'
-import { StatsProvider } from './context/stats'
-import { Alignment, Fit, Layout, useRive } from '@rive-app/react-canvas'
-import { Toaster } from 'gfx-component-lib'
-import { RewardsProvider } from '@/context/rewardsContext'
-import { MarketProductGroupProvider } from './context/market_product_group'
+const FarmV4 = lazy(() => import('./pages/FarmV4/Farm'))
 
 const CoinGeckoPairs = lazy(() => import('./pages/Analytics/ssl/SSLPairs'))
 const Account = lazy(() => import('./pages/Account/Account'))
@@ -114,9 +117,17 @@ export const Router: FC = () => {
                               <LeaderBoard />
                             </StatsProvider>
                           </Route>
-                          <Route exact path={['/farm', '/farm/temp-withdraw']}>
+                          <Route exact path={['/ssl', '/ssl/temp-withdraw']}>
                             <PriceFeedFarmProvider>
                               <Farm />
+                            </PriceFeedFarmProvider>
+                          </Route>
+                          <Route exact path={['/farm']}>
+                            <PriceFeedFarmProvider>
+                              <GammaProvider>
+                                <JupWidget />
+                                <FarmV4 />
+                              </GammaProvider>
                             </PriceFeedFarmProvider>
                           </Route>
                           <Route exact path="/analytics">

@@ -9,7 +9,7 @@ import useBreakPoint from '../hooks/useBreakPoint'
 import { Connect } from './Connect'
 // import { More } from './More'
 import { ModalSlide } from '../components/ModalSlide'
-import { APP_DEFAULT_ROUTE, MODAL_TYPES } from '../constants'
+import { APP_DEFAULT_ROUTE, MODAL_TYPES, SOCIAL_MEDIAS } from '../constants'
 import { CircularArrow } from '../components/common/Arrow'
 import {
   Accordion,
@@ -40,6 +40,7 @@ import SocialLinks from '@/components/common/SocialLinks'
 import { NAV_LINKS, navigateTo, navigateToCurried } from '@/utils/requests'
 import { FooterDivider } from '@/layouts/Footer'
 import PriorityFee from '@/components/footer/PriorityFee'
+import { LiteProToggle } from '@/pages/FarmV4/LiteProToggle'
 
 export const MainNav: FC = () => {
   const { mode } = useDarkMode()
@@ -50,12 +51,25 @@ export const MainNav: FC = () => {
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const showRewardsModal = query.get('rewards')
+  const [isBannerActive] = useBoolean(false)
+  const { pathname } = useLocation()
 
   useEffect(() => {
     if (showRewardsModal) {
       rewardToggle(true)
     }
   }, [location])
+
+  const bannerInfo = (
+    <div>
+      Solana network is currently congested. Due to this some transactions may fail to confirm without retries and
+      volumes will be lower than usual. See our&nbsp;
+      <a href={SOCIAL_MEDIAS.twitter} target="_blank" rel="noreferrer">
+        Twitter
+      </a>
+      &nbsp; for further updates.
+    </div>
+  )
 
   return (
     <div className={`w-screen flex flex-col fixed top-0 z-[10]`}>
@@ -66,24 +80,25 @@ export const MainNav: FC = () => {
           rewardToggle={!breakpoint.isMobile && rewardToggle}
         />
       )}
+      {isBannerActive && breakpoint.isDesktop && (
+        <div className={'bg-[#FFB800] px-5 py-1 text-text-lightmode-primary'}>{bannerInfo}</div>
+      )}
+
       <div
         className={`h-[56px] px-5 items-center flex justify-between bg-grey-5 dark:bg-black-1
-      relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}
+        relative border-0 border-b-1 border-solid border-grey-2 dark:border-black-4`}
       >
         <div className={`flex items-center gap-1.5 absolute cursor-pointer`} onClick={navigateHome}>
-          <img
-            className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')}
-            src={`/img/mainnav/Icon.svg`}
-            alt="Main Navigation Icon"
-          />
+          <img className={cn(breakpoint.isMobile ? 'h-[28px]' : 'h-[22px]')} src={`/img/mainnav/Icon.svg`} />
           {(breakpoint.isDesktop || breakpoint.isLaptop) && (
-            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} alt="GooseFX Logo" />
+            <img className={`h-[15px]`} src={`/img/mainnav/goosefx-logo-${mode}.svg`} />
           )}
         </div>
 
         <DesktopNav />
         <div className={`flex items-center gap-2 absolute right-0 mr-2.5 min-md:mr-0 min-md:pr-[15px]`}>
           <RewardsButton />
+          {pathname.includes('farm') && <LiteProToggle />}
           <Connect />
           {/* <NotificationButton /> */}
           {/*<More />*/}
@@ -125,13 +140,8 @@ const MobileNav: FC = () => {
   const [isOpen, setIsOpen] = useBoolean(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
-  const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
 
-  const isMoreAccordianOpen =
-    pathname.includes('trade') ||
-    (rewardModal && panelIndex == 1) ||
-    pathname.includes('account') ||
-    pathname.includes('leaderboard')
+  const isLeaderboardOpen = pathname.includes('leaderboard')
 
   if (breakpoint.isLaptop || breakpoint.isDesktop) return null
   return (
@@ -152,25 +162,6 @@ const MobileNav: FC = () => {
               overflow-y-scroll`}
           >
             <ListItem
-              variant={pathname.includes('bridge') && 'primary'}
-              className={cn(
-                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
-                         dark:text-text-darkmode-tertiary h-[43px]`,
-                pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-              )}
-              onClick={() => {
-                setIsOpen.off()
-                history.push('/bridge')
-              }}
-            >
-              <img
-                className="h-[35px]"
-                src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-                alt="dark"
-              />
-              &nbsp;Bridge
-            </ListItem>
-            <ListItem
               variant={pathname.includes('farm') && 'primary'}
               className={cn(
                 `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
@@ -183,24 +174,39 @@ const MobileNav: FC = () => {
               }}
             >
               <img
-                className="h-[35px]"
-                src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+                className="h-[35px] w-[35px]"
+                src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
                 alt="dark"
               />
-              &nbsp;Farm
+              &nbsp;Pools
+            </ListItem>
+            <ListItem
+              variant={pathname.includes('ssl') && 'primary'}
+              className={cn(
+                `text-center text-h3 font-semibold font-poppins justify-start text-text-lightmode-tertiary
+                         dark:text-text-darkmode-tertiary h-[43px]`,
+                pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              )}
+              onClick={() => {
+                setIsOpen.off()
+                history.push('/ssl')
+              }}
+            >
+              <img
+                className="h-[35px]"
+                src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
+                alt="dark"
+              />
+              &nbsp;SSL
             </ListItem>
 
             <Accordion type={'single'} collapsible variant={'unset'}>
               <AccordionItem value={'leaderboard'} variant={'unset'}>
-                <AccordionTrigger
-                  variant={'primary'}
-                  isSelected={isMoreAccordianOpen}
-                  className={'text-h3  px-2.5'}
-                >
+                <AccordionTrigger variant={'primary'} isSelected={isLeaderboardOpen} className={'text-h3  px-1.25'}>
                   <span className={'inline-flex items-center font-poppins font-inherit text-inherit'}>
                     <img
                       className="h-[35px]"
-                      src={`/img/mainnav/more-${mode}${isMoreAccordianOpen ? '-active' : ''}.svg`}
+                      src={`/img/mainnav/more-${mode}${isLeaderboardOpen ? '-active' : ''}.svg`}
                       alt="dark"
                     />
                     &nbsp;More
@@ -226,14 +232,13 @@ const MobileNav: FC = () => {
                     isActive={pathname.includes('account')}
                   />
                   <MobileAccordionContent
-                    title={'Referrals'}
-                    description={'Refer your friends to earn a share of their fees.'}
+                    title={'Bridge'}
+                    description={'Bridge your assets to and from other chains'}
                     onClick={() => {
                       setIsOpen.off()
-                      changePanel(1)
-                      rewardToggle(!rewardModal)
+                      history.push('/bridge')
                     }}
-                    isActive={panelIndex == 1}
+                    isActive={pathname.includes('bridge')}
                   />
                   <MobileAccordionContent
                     title={'Leaderboard'}
@@ -260,7 +265,7 @@ const MobileNav: FC = () => {
                       navigateTo(NAV_LINKS.docs, '_blank')
                     }}
                   />
-                  <div className={'inline-flex items-center justify-center gap-8 mt-1'}>
+                  <div className={'inline-flex items-center justify-center gap-8 my-1'}>
                     <SocialLinks />
                   </div>
                 </AccordionContent>
@@ -288,95 +293,94 @@ const DesktopNav: FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const history = useHistory()
   const { pathname } = useLocation()
-  const { rewardToggle, changePanel, rewardModal, panelIndex } = useRewardToggle()
-  const [isMoreDropdownOpen, setMoreDropdownOpen] = useBoolean(false)
+  const [isLeaderboardOpen, setIsLeaderBoardOpen] = useBoolean(false)
+
   const { mode } = useDarkMode()
   if (breakpoint.isMobile || breakpoint.isTablet) return null
-  const isMoreTabActive =
-    pathname.includes('trade') ||
-    (rewardModal && panelIndex == 1) ||
-    pathname.includes('account') ||
-    pathname.includes('leaderboard')
 
   return (
     <div className={`flex items-center gap-6 mx-auto`}>
       <Button
         variant={'ghost'}
-        onClick={() => history.push('/bridge')}
-        className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
-          pathname.includes('bridge') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
-        )}
-      >
-        <img
-          className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/bridge-${mode}${pathname.includes('bridge') ? '-active' : ''}.svg`}
-          alt="dark"
-        />
-        Bridge
-      </Button>
-      <Button
-        variant={'ghost'}
         onClick={() => history.push('/farm')}
         className={cn(
-          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          `tracking-wider flex-col gap-1.5 p-0 text-center text-h6 font-semibold font-poppins`,
           pathname.includes('farm') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
         )}
       >
         <img
-          className="w-[26px] h-[26px] mb-0.5"
-          src={`/img/mainnav/farm-${mode}${pathname.includes('farm') ? '-active' : ''}.svg`}
+          className="!w-[26px] !h-[26px] mb-0.5"
+          src={`/img/mainnav/pool-${mode}${pathname.includes('farm') ? '-active' : '-inactive'}.svg`}
           alt="dark"
         />
-        Farm
+        Pools
+      </Button>
+      <Button
+        variant={'ghost'}
+        onClick={() => history.push('/ssl')}
+        className={cn(
+          `tracking-wider flex-col gap-0 p-0 text-center text-h6 font-semibold font-poppins`,
+          pathname.includes('ssl') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+        )}
+      >
+        <img
+          className="w-[26px] h-[26px] mb-0.5"
+          src={`/img/mainnav/bridge-${mode}${pathname.includes('ssl') ? '-active' : ''}.svg`}
+          alt="dark"
+        />
+        SSL
       </Button>
 
-      <DropdownMenu onOpenChange={setMoreDropdownOpen.toggle}>
+      <DropdownMenu onOpenChange={setIsLeaderBoardOpen.toggle}>
         <DropdownMenuTrigger asChild={true}>
           <Button
             variant={'ghost'}
             className={cn(
               `tracking-wider p-0 flex-col text-center justify-center items-center text-h6 [&>span]:inline-flex gap-0`,
-              isMoreTabActive ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
+              pathname.includes('leaderboard') ? 'text-text-lightmode-primary dark:text-text-darkmode-primary' : ''
             )}
           >
             <span className={`inline-flex justify-center items-center`}>
               <img
                 className="w-[26px] h-[26px] mb-0.5"
-                src={`/img/mainnav/more-${mode}${isMoreTabActive ? '-active' : ''}.svg`}
+                src={`/img/mainnav/more-${mode}${pathname.includes('leaderboard') ? '-active' : ''}.svg`}
                 alt="dark"
               />
               <CircularArrow
                 cssStyle={tw`w-[12px] h-[12px]`}
-                invert={isMoreDropdownOpen}
-                css={[isMoreTabActive || isMoreDropdownOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
+                invert={isLeaderboardOpen}
+                css={[pathname.includes('leaderboard') || isLeaderboardOpen ? tw`opacity-[1]` : tw`opacity-[0.6]`]}
               />
             </span>
             More
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent portal={false} className={'mt-3 w-[300px]'}>
-          <DropdownMenuItem onClick={() => history.push('/trade')} isActive={pathname.includes('trade')}>
+          <DropdownMenuItem
+            onClick={() => history.push('/trade')}
+            isActive={pathname.includes('trade')}
+          >
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Trade</h4>
               <p className={'text-b3'}>Trade perps on the fastest and most liquid DEX with 10x leverage</p>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => history.push('/account')} isActive={pathname.includes('account')}>
+          <DropdownMenuItem
+            onClick={() => history.push('/account')}
+            isActive={pathname.includes('account')}
+          >
             <div>
               <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Account</h4>
               <p className={'text-b3'}>View your deposits, trade history, funding, and more</p>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => {
-              changePanel(1)
-              rewardToggle(!rewardModal)
-            }}
+            onClick={() => history.push('/bridge')}
+            isActive={pathname.includes('bridge')}
           >
             <div>
-              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Referrals</h4>
-              <p className={'text-b3'}>Refer your friends to earn a share of their fees</p>
+              <h4 className={`text-text-lightmode-primary dark:text-text-darkmode-primary`}>Bridge</h4>
+              <p className={'text-b3'}>Bridge your assets to and from other chains</p>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem

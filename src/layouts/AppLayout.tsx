@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import { MainNav } from './MainNav'
 import { useRewardToggle, useDarkMode } from '../context'
-import { TermsOfService } from './TermsOfService'
 import { Footer } from '@/layouts/Footer'
 import { cn } from 'gfx-component-lib'
 
@@ -19,11 +18,7 @@ export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
       )}
     >
       <MainNav />
-      <TermsOfService />
-      <div
-        className={cn(`min-2xl:w-[2500px] m-auto min-md:mb-[45px] mt-[55px]`)}
-        id="gfx-app-layout"
-      >
+      <div className={`min-2xl:w-[2500px] m-auto mt-[55px] min-md:mb-[45px]`} id="gfx-app-layout">
         {children}
       </div>
       <Footer />
