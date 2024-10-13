@@ -13,7 +13,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { checkMobileDex } from '../../utils'
 import { DexhomeMobi } from './mobile/DexhomeMobi'
-
+import { Alert, AlertDescription } from "gfx-component-lib"
 const ReactGridLayout = WidthProvider(Responsive)
 
 const componentDimensionsLg = [
@@ -230,6 +230,16 @@ const CryptoContent: FC = () => {
   return !checkMobileDex() ? (
     <>
       <div className={'dex-container'} data-is-locked={isLocked}>
+        <div className="mt-4 px-3">
+          <Alert className="p-2 dark:border-white border-grey-2">
+            <AlertDescription className="dark:text-white text-black-4 ">
+              <h5 className="inline">Notice: </h5>
+              We are deprecating Perps for the time being to focus on AMM/SSL. Please close your positions and
+              withdraw by Sept 15, 2024 or they will automatically be settled. Thanks again for using our DEX and
+              we hope you enjoyed the experience! Follow our socials for more info.
+            </AlertDescription>
+          </Alert>
+        </div>
         <InfoBanner isLocked={isLocked} setIsLocked={setIsLocked} resetLayout={resetLayout} />
         <ReactGridLayout
           compactType="vertical"

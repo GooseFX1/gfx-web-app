@@ -7,7 +7,6 @@ import { cn } from 'gfx-component-lib'
 export const AppLayout: FC<{ children: ReactNode }> = ({ children }) => {
   const { rewardModal } = useRewardToggle()
   const { mode } = useDarkMode()
-
   // To enable dark mode using tailwind - using dark:classname
   return (
     <div
