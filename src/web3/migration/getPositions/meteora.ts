@@ -13,8 +13,7 @@ export const getMeteoraDynamicCLMMPositions = async (
 ): Promise<Array<MigratePosition>> => {
   DLMM.migratePosition
   return DLMM.getAllLbPairPositionsByUser(connection, user).then(
-    info => Array.from(info.values()).map(info => {
-    return info.lbPairPositionsData.map(position => {
+    info => Array.from(info.values()).map(info => info.lbPairPositionsData.map(position => {
       const amountTokenA = new BN(new Decimal(position.positionData.totalXAmount).floor().toString());
       const amountTokenB = new BN(new Decimal(position.positionData.totalYAmount).floor().toString());
       return {
@@ -22,8 +21,7 @@ export const getMeteoraDynamicCLMMPositions = async (
         tokenA: info.tokenX.publicKey,
         tokenB: info.tokenY.publicKey,
         amountTokenA,
-        amountTokenB,
+        amountTokenB
       }
-    })
-  }).flat())
+    })).flat())
 }

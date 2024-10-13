@@ -13,14 +13,10 @@ export type MigratePosition = {
 
 export const prettifyPositions = (positions: MigratePosition[]): {
   [K in keyof MigratePosition]: string;
-}[] => {
-  return positions.map(pos => {
-    return {
+}[] => positions.map(pos => ({
       source: pos.source,
       tokenA: pos.tokenA.toString(),
       tokenB: pos.tokenB.toString(),
       amountTokenA: pos.amountTokenA.toString(),
-      amountTokenB: pos.amountTokenB.toString(),
-    }
-  })
-}
+      amountTokenB: pos.amountTokenB.toString()
+    }))

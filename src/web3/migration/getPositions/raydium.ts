@@ -23,7 +23,7 @@ const getAllCLMMPoolsFromAPI = async(raydium: Raydium): Promise<Array<ApiV3PoolI
       sort: 'liquidity',
       order: 'desc',
       pageSize: 100,
-      page,
+      page
     });
     pools.push(...response.data);
     if (!response.hasNextPage) {
@@ -38,11 +38,7 @@ const getAllCLMMPoolsFromAPI = async(raydium: Raydium): Promise<Array<ApiV3PoolI
 const getCLMMPoolInfosFromAPI = async (
   raydium: Raydium, 
   poolIds: string[]
-): Promise<Array<ApiV3PoolInfoConcentratedItem>> => {
-  return await Promise.all(chunks(poolIds, 100).map(async (ids) => {
-    return ((await raydium.api.fetchPoolById({ ids: ids.join(',') })) as ApiV3PoolInfoConcentratedItem[]) 
-  })).then(pools => pools.flat())
-}
+): Promise<Array<ApiV3PoolInfoConcentratedItem>> => await Promise.all(chunks(poolIds, 100).map(async (ids) => ((await raydium.api.fetchPoolById({ ids: ids.join(',') })) as ApiV3PoolInfoConcentratedItem[]))).then(pools => pools.flat())
 
 const getCLMMPoolInfosFromRPC = async (
   raydium: Raydium, 
@@ -50,11 +46,11 @@ const getCLMMPoolInfosFromRPC = async (
 ): Promise<Array<ApiV3PoolInfoConcentratedItem>> => {
   const clmm = new Clmm({
     scope: raydium,
-    moduleName: "gfxMigrate",
+    moduleName: "gfxMigrate"
   });
   const rpcPools = await clmm.getRpcClmmPoolInfos({poolIds, config: {
     batchRequest: true,
-    chunkCount: 99,
+    chunkCount: 99
   }});
   const mints = new Set<PublicKey>();
 
@@ -115,7 +111,7 @@ export const getRaydiumCLMMPositions = async (
 
   const migratePositions = new Array<MigratePosition>();
   for (const ownerPosition of ownerPositions) {
-    let poolInfo = poolMap[ownerPosition.poolId.toString()];
+    const poolInfo = poolMap[ownerPosition.poolId.toString()];
     if (!poolInfo) {
       continue;
     }
@@ -132,7 +128,7 @@ export const getRaydiumCLMMPositions = async (
       tokenA: new PublicKey(poolInfo.mintA.address),
       tokenB: new PublicKey(poolInfo.mintB.address),
       amountTokenA: position.amountSlippageA.amount,
-      amountTokenB: position.amountSlippageB.amount,
+      amountTokenB: position.amountSlippageB.amount
     });
   }
 

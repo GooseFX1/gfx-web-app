@@ -27,7 +27,7 @@ export const getAllPositions = async() => {
   // Get Meteora positions
   positions.push(...await getMeteoraDynamicCLMMPositions(
     connection,
-    USER_ADDRESS,
+    USER_ADDRESS
   ));
 
   // Get Orca positions

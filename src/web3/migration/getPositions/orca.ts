@@ -4,7 +4,7 @@ import {
   WhirlpoolContext, 
   PDAUtil,
   TokenExtensionUtil,
-  IGNORE_CACHE,
+  IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk"
 import { BN } from "bn.js"
 import { Percentage, ReadOnlyWallet } from "@orca-so/common-sdk"
@@ -23,12 +23,10 @@ const getLikelyPositionMintsForUser = async (
   const token2022Accounts = await connection
     .getTokenAccountsByOwner(user, { programId: TOKEN_2022_PROGRAM_ID }, 'confirmed');
   const accountInfos = tokenAccounts.value.concat(token2022Accounts.value);
-  const mints = accountInfos.map(info => {
-    return {
+  const mints = accountInfos.map(info => ({
       pubkey: info.pubkey,
       account: AccountLayout.decode(Uint8Array.from(info.account.data))
-    }
-  }).filter(data => data.account.amount === BigInt(1))
+    })).filter(data => data.account.amount === BigInt(1))
   .map(data => data.account.mint);
   
   return mints
@@ -36,7 +34,7 @@ const getLikelyPositionMintsForUser = async (
 
 const getOrcaPositionAccountsForMints = async (
   whirlpoolCtx: WhirlpoolContext,
-  mints: PublicKey[], 
+  mints: PublicKey[] 
 ): Promise<Array<MigratePosition>> => {
   const addresses = mints.map(mint => PDAUtil.getPosition(whirlpoolCtx.program.programId, mint).publicKey);
   const positions = Array.from((
@@ -47,7 +45,7 @@ const getOrcaPositionAccountsForMints = async (
   
   const allPositions = new Array<MigratePosition>();
   for (const position of positions) {
-    let whirlpool = whirlpools.get(position.whirlpool.toString());
+    const whirlpool = whirlpools.get(position.whirlpool.toString());
     if (whirlpool === null || whirlpool === undefined) {
       continue;
     }

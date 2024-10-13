@@ -21,8 +21,6 @@ import { ENVS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
 import { INTERVALS } from '@/utils/time'
-import axios from 'axios'
-import * as https from 'node:https'
 import { USER_CONFIG_CACHE } from '@/types/app_params'
 
 
@@ -143,7 +141,7 @@ function migrateCache(cache: USER_CONFIG_CACHE): USER_CONFIG_CACHE {
     if (!(key in migratedCache) || (typeof migratedCache[key] !== typeof opCache[key] && shouldMatchOpCache(key))) {
       console.log('MIGRATING CACHE KEY', key, {
         inMigrated: (key in migratedCache),
-        typeMatch: typeof migratedCache[key] !== typeof opCache[key],
+        typeMatch: typeof migratedCache[key] !== typeof opCache[key]
       })
       migratedCache[key] = opCache[key]
     }
