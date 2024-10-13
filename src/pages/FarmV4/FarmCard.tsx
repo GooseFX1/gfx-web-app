@@ -29,12 +29,20 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
           <Icon
-            src={loadUriImage(pool?.mintA?.logoURI) ? pool?.mintA?.logoURI : loadBackUpImage(pool?.mintA?.symbol, mode)}
+            src={
+              loadUriImage(pool?.mintA?.logoURI)
+                ? pool?.mintA?.logoURI
+                : loadBackUpImage(pool?.mintA?.symbol, mode)
+            }
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={loadUriImage(pool?.mintB?.logoURI) ? pool?.mintB?.logoURI : loadBackUpImage(pool?.mintB?.symbol, mode)}
+            src={
+              loadUriImage(pool?.mintB?.logoURI)
+                ? pool?.mintB?.logoURI
+                : loadBackUpImage(pool?.mintB?.symbol, mode)
+            }
             size="lg"
             className={
               'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'
@@ -69,7 +77,7 @@ const FarmCard: FC<{
       >
         {`${pool?.mintA?.symbol} - ${pool?.mintB?.symbol}`}
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
-        {pool.config.fundOwner == base58PublicKey && (
+        {pool.poolCreator == base58PublicKey && (
           <Badge size="sm" variant="default">
             Owner
           </Badge>

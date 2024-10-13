@@ -52,21 +52,21 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
-        {isDesktop && (
-          <div
-            className="border border-solid dark:border-black-4 flex items-center
-            font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
-            border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1 ml-2"
-          >
-            {numberFormatter(0.2)}%
-          </div>
-        )}
-        {pool.config.fundOwner == base58PublicKey && (
+        
+        <div
+          className="border border-solid dark:border-black-4 flex items-center
+          font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
+          border-grey-1 bg-grey-5 dark:bg-black-2 rounded-[2.5px] h-[25px] px-1 ml-2"
+        >
+          {numberFormatter(0.2)}%
+        </div>
+        
+        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
+        {pool.poolCreator === base58PublicKey && (
           <Badge size="sm" variant="default" className={'ml-1'}>
             Owner
           </Badge>
         )}
-        <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
       </div>
       <div className="flex items-center justify-center text-regular font-semibold dark:text-grey-8 text-black-4">
         {formattedTVL}
