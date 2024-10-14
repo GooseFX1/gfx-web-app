@@ -43,7 +43,9 @@ export default function RewardsWalletBalanceAndBuyGofx({
 
       <Button
         colorScheme={'primaryGradient'}
-        onClick={() => window.open('https://jup.ag/swap/USDC-GOFX', '_blank')}
+        onClick={() =>
+          window.open('https://jup.ag/swap/USDC-GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD', '_blank')
+        }
         className={`ml-auto font-bold
          text-white min-w-[122px] min-md:py-2.5 py-1.875 px-2.5 min-md:px-1.5 box-border`}
         size={'lg'}

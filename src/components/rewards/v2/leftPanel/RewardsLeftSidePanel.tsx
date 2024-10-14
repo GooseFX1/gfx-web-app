@@ -14,7 +14,7 @@ import UnstakeConfirmationModal from '../../UnstakeConfirmationModal'
 import CombinedRewardsTopLinks from '../CombinedRewardsTopLinks'
 import HowItWorksButton from '../HowItWorksButton'
 import RewardsLeftLayout from '../../layout/RewardsLeftLayout'
-import TopLinks from '../TopLinks'
+// import TopLinks from '../TopLinks'
 import { Button, RadioGroup, RadioGroupItem } from 'gfx-component-lib'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 
@@ -88,7 +88,7 @@ export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Elem
         setStakeLoading={setIsStakeLoading.set}
       />
       <CombinedRewardsTopLinks>
-        <TopLinks />
+        {/* <TopLinks /> */}
         <HowItWorksButton link={'https://docs.goosefx.io/tokenomics/stake-rewards-and-fee-share'} />
       </CombinedRewardsTopLinks>
       <div className={`flex w-full flex-col max-w-[580px] items-center mb-0`}>
