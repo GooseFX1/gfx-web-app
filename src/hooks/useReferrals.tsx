@@ -18,9 +18,9 @@ export default function useReferrals(): IReferrals {
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   useEffect(() => {
-    if (connection && publicKey) {
+    // TODO: this client is not being set due to errors. must be resolved to turn on referrals
+    if (connection && client) {
       const client = new Client(connection, publicKey)
-
       setClient(client)
     }
   }, [connection, publicKey])
