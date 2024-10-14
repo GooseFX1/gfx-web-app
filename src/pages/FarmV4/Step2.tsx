@@ -26,7 +26,10 @@ import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 import { fetchPoolsByMints } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { truncateAddress, loadIconImage } from '@/utils'
+import { aborter, bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
+import SearchBar from '@/components/common/SearchBar'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import BigNumber from 'bignumber.js'
 
 const Step2: FC<{
   tokenA: JupToken
@@ -46,23 +49,23 @@ const Step2: FC<{
   walletTokenB: string
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({
-  tokenA,
-  setTokenA,
-  tokenB,
-  setTokenB,
-  handleChange,
-  amountTokenA,
-  amountTokenB,
-  // feeTier,
-  // setFeeTier,
-  poolExists,
-  setPoolExists,
-  initialPrice,
-  setInitialPrice,
-  walletTokenA,
-  walletTokenB,
-  setIsCreatePool
-}) => {
+        tokenA,
+        setTokenA,
+        tokenB,
+        setTokenB,
+        handleChange,
+        amountTokenA,
+        amountTokenB,
+        // feeTier,
+        // setFeeTier,
+        poolExists,
+        setPoolExists,
+        initialPrice,
+        setInitialPrice,
+        walletTokenA,
+        walletTokenB,
+        setIsCreatePool
+      }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
@@ -265,7 +268,7 @@ const Step2: FC<{
         +amountTokenB &&
         (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
           <span className="text-red-1 font-sembold text-regular">
-            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
+            {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
         ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
           <span className="text-red-1 font-sembold text-regular">
@@ -291,12 +294,12 @@ const Step2: FC<{
 }
 
 function TokenSelectionInput({
-  token,
-  handleChange,
-  amountToken,
-  setToken,
-  otherToken
-}: {
+                               token,
+                               handleChange,
+                               amountToken,
+                               setToken,
+                               otherToken
+                             }: {
   token: JupToken | null
   otherToken: JupToken | null
   handleChange: (e: any, boolean) => void
@@ -307,6 +310,30 @@ function TokenSelectionInput({
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
+  const [searchValue, setSearchValue] = useState<string>('')
+
+  const { balance } = useWalletBalance()
+
+  useEffect(() => {
+    const abortSignal = aborter.addSignal('tokenList')
+    // faking search
+    if (searchValue.trim().length == 0) {
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() => setPage(1))
+      return
+    }
+    const timeout = setTimeout(async () => {
+      updateTokenList({
+        page: 1,
+        pageSize: TOKEN_LIST_PAGE_SIZE,
+        searchValue,
+        signal: abortSignal
+      }, false)
+    }, 233)
+    return () => {
+      clearTimeout(timeout)
+      aborter.abortSignal('tokenList')
+    }
+  }, [searchValue])
 
   return (
     <InputGroup
@@ -343,56 +370,112 @@ function TokenSelectionInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={'mt-1 z-[1001] max-h-[300px] overflow-auto w-[364px]'}
+              className={'mt-1 z-[1001] max-h-[300px] overflow-auto w-[364px] relative'}
               portal={true}
               align={'start'}
             >
+              <SearchBar
+                groupClassName={'sticky'}
+                placeholder={'Search by token symbol'}
+                value={searchValue}
+                onKeyDown={(e) => e.stopPropagation()}
+                onChange={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setSearchValue(e.target.value)
+                }}
+                onClear={() => setSearchValue('')}
+              />
               <ScrollingHydrateContainer
                 ref={(ref) => setScrollingContainerRef(ref)}
                 callback={() => {
-                  if (maxTokensReached) return
-                  updateTokenList(page + 1, TOKEN_LIST_PAGE_SIZE).then(() => setPage(page + 1))
+                  if (isLoadingTokenList || maxTokensReached) return
+                  updateTokenList({
+                    page: page + 1,
+                    pageSize: TOKEN_LIST_PAGE_SIZE,
+                    searchValue
+                  }, false).then(() => setPage(page + 1))
                 }}
               >
                 {tokenList.length > 0 ? (
                   <WindowingContainer
+                    className={'h-full'}
                     rootElement={scrollingContainerRef}
                     items={tokenList}
                     render={(item: JupToken) => (
                       <DropdownMenuItem
-                        className={' cursor-pointer'}
-                        onClick={() => setToken(item)}
-                        key={item?.symbol}
+                        className={' cursor-pointer p-1.5 flex'}
+                        onClick={() => {
+                          setToken(item)
+                          setSearchValue('')
+                        }}
+                        key={item?.address}
                         disabled={otherToken?.symbol === item?.symbol}
                       >
-                        <Icon
-                          className={'rounded-circle h-[24px] w-[24px]'}
-                          src={loadIconImage(item?.logoURI ,mode)}
-                        />
-                        <p className={'ml-2 font-bold'}>{item?.symbol}</p>
-                        <div className={'ml-2 max-w-[118px] '}>
-                          <p className={'text-grey-3 truncate'}>{item?.name}</p>
-                        </div>
-                        <a
-                          href={`https://solscan.io/account/${token?.address}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={'ml-auto'}
-                        >
-                          <Badge
-                            variant="default"
-                            size={'lg'}
-                            className={'to-brand-secondaryGradient-secondary/50'}
-                          >
-                            <span className={'font-poppins font-semibold my-0.5 mr-2'}>
-                              {truncateAddress(item?.address, 3)}
-                            </span>
+                        <div className={'flex w-full flex-1'}>
+
+                          <div className={`flex gap-2`}>
                             <Icon
-                              src={`/img/assets/arrowcircle-${mode}.svg`}
-                              className={'!h-[18px] !w-[18px] !min-h-[18px] !min-w-[18px]'}
+                              className={'rounded-circle h-[24px] w-[24px]'}
+                              src={loadIconImage(item?.logoURI, mode)}
                             />
-                          </Badge>
-                        </a>
+                            <div>
+                              <p className={
+                                `text-b2 font-bold dark:text-text-darkmode-primary text-text-lightmode-primary`
+                              }>
+                                {item?.symbol}
+                              </p>
+                              <span className={'inline-flex gap-1'}>
+                            <span className={'max-w-[118px] self-center'}>
+                              <p className={
+                                `text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary truncate
+                                font-semibold
+                                `
+                              }>
+                                {item?.name}
+                              </p>
+                            </span>
+                            <a
+                              href={`https://solscan.io/account/${token?.address}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={'ml-auto'}
+                            >
+                              <Badge
+                                variant="default"
+                                size={'lg'}
+                                className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
+                              >
+                            <h6 className={''}>
+                              {truncateAddress(item?.address, 3)}
+                            </h6>
+                                <Icon
+                                  src={`/img/assets/arrowcircle-${mode}.svg`}
+                                  className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
+                                />
+                              </Badge>
+                            </a>
+                            </span>
+                            </div>
+                          </div>
+                          <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
+                            <p className={
+                              `text-b2 font-bold dark:text-text-darkmode-primary text-text-lightmode-primary`
+                            }>
+                              {numberFormatter(balance[item?.symbol].tokenAmount.uiAmount)}
+                            </p>
+                            <p className={
+                              `text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary truncate
+                                font-semibold
+                                `
+                            }>
+                              ${bigNumberFormatter(
+                              new BigNumber(balance[item?.symbol].value.toString()))
+                            }
+                            </p>
+                          </div>
+
+                        </div>
                       </DropdownMenuItem>
                     )}
                   />

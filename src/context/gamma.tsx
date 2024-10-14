@@ -65,7 +65,12 @@ interface GAMMADataModel {
   setPage: Dispatch<SetStateAction<number>>
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
-  updateTokenList: (page: number, pageSize: number) => Promise<void>
+  updateTokenList: ({ page, pageSize, searchValue }: {
+    page: number
+    pageSize: number
+    searchValue?: string,
+    signal?: AbortSignal
+  }, append?: boolean) => Promise<void>
   maxTokensReached: boolean
   sendingTransaction: boolean
   setSendingTransaction: Dispatch<SetStateAction<boolean>>
@@ -168,7 +173,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE, false)
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
     if (pools.length == 0) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
@@ -189,12 +194,27 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
-  const updateTokenList = async (page: number, pageSize: number, append = true) => {
+  const updateTokenList = async (
+    {
+      page,
+      pageSize,
+      searchValue = '',
+      signal
+    }: {
+      page: number
+      pageSize: number
+      searchValue?: string,
+      signal?: AbortSignal
+    }, append = true) => {
+    // initial loads prevent fetching
+    if (createPoolType.trim().length == 0) return
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(
       page,
       pageSize,
-      createPoolType.toLowerCase()
+      createPoolType.toLowerCase(),
+      searchValue,
+      signal
     )) as GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)
     if (!response || !response.success) {
@@ -263,7 +283,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     //update token on next pagination
-    updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
+    updateTokenList({ page, pageSize: TOKEN_LIST_PAGE_SIZE })
   }, [page])
 
   useEffect(() => {
@@ -272,7 +292,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenList([])
     setPage(1)
     if (page == 1) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE, false)
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
   }, [createPoolType])
 

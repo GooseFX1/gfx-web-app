@@ -130,6 +130,10 @@ export const CreatePool: FC<{
       setIsCreatePool(b)
       if (!b) {
         setCreatePoolType('')
+        setTokenA(null)
+        setTokenB(null)
+        setAmountTokenA('')
+        setAmountTokenB('')
       }
     }} open={isCreatePool}>
       <DialogOverlay />

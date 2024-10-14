@@ -220,29 +220,33 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
     let currentWalletValue = new Decimal(0.0)
     const tokenListResponse = await fetchTokensByPublicKey(addresses)
+
+    console.log('tokenListResponse', tokenListResponse, tokenInfo)
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
-        if (tokenAccounts && tokenAccounts[data.symbol]) {
-          tokenAccounts[data.symbol].mint = address
-          tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
-          tokenAccounts[data.symbol].price = data.price
-          const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price);
-          tokenAccounts[data.symbol].value = value
-          currentWalletValue = currentWalletValue.add(value)
-          console.log('balance', currentWalletValue.toString(), value.toString())
-
-          if (rest.symbol != 'SOL') {
-            tokenAccounts[data.symbol].pda = findProgramAddressSync(
-              [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
-              ASSOCIATED_TOKEN_PROGRAM_ID
-            )[0]
-            tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
-          }
+        if (!(data.symbol in tokenAccounts) && (data.address in tokenInfo)) {
+          tokenAccounts[data.symbol] = {...tokenInfo[data.address]}
         }
+        tokenAccounts[data.symbol].mint = address
+        tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
+        tokenAccounts[data.symbol].price = data.price
+        const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price)
+        tokenAccounts[data.symbol].value = value
+        currentWalletValue = currentWalletValue.add(value)
+        console.log('balance', currentWalletValue.toString(), value.toString())
+
+        if (rest.symbol != 'SOL') {
+          tokenAccounts[data.symbol].pda = findProgramAddressSync(
+            [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
+            ASSOCIATED_TOKEN_PROGRAM_ID
+          )[0]
+          tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
+        }
+
       }
     }
-
+    console.log('tokenListResponse end', tokenAccounts)
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
@@ -281,7 +285,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }
 
   const balanceProxyHandler = {
-    get: function (target: Balance, prop: string) {
+    get: function(target: Balance, prop: string) {
       if (prop in target) {
         return target[prop]
       } else if (prop.toLowerCase() in target) {

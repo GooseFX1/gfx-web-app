@@ -1,20 +1,19 @@
 import { cn, Icon, Input, InputElementLeft, InputElementRight, InputGroup } from 'gfx-component-lib'
-import React from 'react'
+import React, { InputHTMLAttributes } from 'react'
 import { useDarkMode } from '@/context'
 import useBoolean from '@/hooks/useBoolean'
 
-interface SearchBarProps {
+type SearchBarProps =  {
   onClear?: () => void
   value?: string | number
-  className?: string
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
-const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX.Element => {
+  groupClassName?: string
+} & InputHTMLAttributes<HTMLInputElement>
+const SearchBar = ({ onClear, value, groupClassName, className, onChange , ...rest }: SearchBarProps): JSX.Element => {
   const { mode } = useDarkMode()
   const [focus, setFocus] = useBoolean(false)
   return (
     <InputGroup
-      className={cn('min-w-[200px] w-full min-md:max-w-[400px]', className)}
+      className={cn('min-w-[200px] w-full min-md:max-w-[400px]', groupClassName)}
       leftItem={
         <InputElementLeft>
           <Icon size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`} alt="search-icon" />
@@ -35,6 +34,7 @@ const SearchBar = ({ onClear, value, className, onChange }: SearchBarProps): JSX
       }
     >
       <Input
+        {...rest}
         value={value}
         className={cn('min-w-[200px] w-full max-w-[400px]', className)}
         placeholder={'Search by token symbol'}
