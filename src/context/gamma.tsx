@@ -1,14 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -48,6 +38,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -177,7 +168,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+      updateTokenList(1, TOKEN_LIST_PAGE_SIZE, false)
     }
     if (pools.length == 0) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
@@ -198,7 +189,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
-  const updateTokenList = async (page: number, pageSize: number) => {
+  const updateTokenList = async (page: number, pageSize: number, append = true) => {
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(
       page,
@@ -210,7 +201,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
     setMaxTokensReached(response.data.totalPages <= response.data.currentPage)
-    const currentTokenList = tokenList
+    const currentTokenList = append ? tokenList : []
     const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
       if (hasSetOfTokens.has(token.address)) {
@@ -281,7 +272,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenList([])
     setPage(1)
     if (page == 1) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+      updateTokenList(1, TOKEN_LIST_PAGE_SIZE, false)
     }
   }, [createPoolType])
 
@@ -411,7 +402,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
             ? new Decimal(userLpPosition.tokenADeposited).gt(0) ||
-              new Decimal(userLpPosition.tokenBDeposited).gt(0)
+            new Decimal(userLpPosition.tokenBDeposited).gt(0)
             : false
         }
       })
