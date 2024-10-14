@@ -2,7 +2,7 @@ import { FC, ReactElement, useCallback } from 'react'
 import { useDarkMode, useGamma } from '@/context'
 import { Button, Icon } from 'gfx-component-lib'
 import useBreakPoint from '../../hooks/useBreakPoint'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 
 const SwapNow: FC = (): ReactElement => {
   const { selectedCard } = useGamma()
@@ -42,11 +42,7 @@ const SwapNow: FC = (): ReactElement => {
             {selectedCard ? (
               <span className={'flex align-center justify-center font-bold'}>
                 <Icon
-                  src={
-                    loadUriImage(selectedCard?.mintB?.logoURI)
-                      ? selectedCard?.mintB?.logoURI
-                      : loadBackUpImage(selectedCard?.mintB?.symbol, mode)
-                  }
+                  src={loadIconImage(selectedCard?.mintB?.logoURI, mode)}
                   size="sm"
                   className={'border-solid border-white border-1 rounded-full mr-1'}
                 />

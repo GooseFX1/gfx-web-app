@@ -4,7 +4,7 @@ import { FC, ReactElement } from 'react'
 import { PoolStats } from './PoolStats'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 
 const FarmCard: FC<{
   pool: GAMMAPoolWithUserLiquidity | undefined
@@ -29,20 +29,12 @@ const FarmCard: FC<{
       <div className="flex flex-row justify-between mb-2.5 items-center">
         <div className="flex relative">
           <Icon
-            src={
-              loadUriImage(pool?.mintA?.logoURI)
-                ? pool?.mintA?.logoURI
-                : loadBackUpImage(pool?.mintA?.symbol, mode)
-            }
+            src={loadIconImage(pool?.mintA?.logoURI, mode)}
             size="lg"
             className={'border-solid dark:border-black-2 border-white border-[3px] rounded-full'}
           />
           <Icon
-            src={
-              loadUriImage(pool?.mintB?.logoURI)
-                ? pool?.mintB?.logoURI
-                : loadBackUpImage(pool?.mintB?.symbol, mode)
-            }
+            src={loadIconImage(pool?.mintB?.logoURI, mode)}
             size="lg"
             className={
               'absolute left-[30px] border-solid dark:border-black-2 border-white border-[3px] rounded-full'

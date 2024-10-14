@@ -26,7 +26,7 @@ import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
 import { fetchPoolsByMints } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { truncateAddress } from '@/utils'
+import { truncateAddress, loadIconImage } from '@/utils'
 
 const Step2: FC<{
   tokenA: JupToken
@@ -289,21 +289,6 @@ const Step2: FC<{
     </>
   )
 }
-export const loadUriImage = (uri: string): boolean => {
-  const image = new Image()
-  image.src = uri
-  if (image.width === 0) return false
-  else return true
-}
-
-export const loadBackUpImage = (symbol: string, mode: string): string => {
-  const image = new Image()
-  image.src = `/img/crypto/${symbol}.svg`
-  let imageUrl: string
-  if (image.width === 0) imageUrl = `/img/assets/fallback-token-${mode}.svg`
-  else imageUrl = `/img/crypto/${symbol}.svg`
-  return imageUrl
-}
 
 function TokenSelectionInput({
   token,
@@ -337,7 +322,7 @@ function TokenSelectionInput({
                 iconLeft={
                   token ? (
                     <Icon
-                      src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol, mode)}
+                      src={loadIconImage(token?.logoURI, mode)}
                       size={'sm'}
                     />
                   ) : null
@@ -382,7 +367,7 @@ function TokenSelectionInput({
                       >
                         <Icon
                           className={'rounded-circle h-[24px] w-[24px]'}
-                          src={loadUriImage(item?.logoURI) ? item?.logoURI : loadBackUpImage(item?.symbol, mode)}
+                          src={loadIconImage(item?.logoURI ,mode)}
                         />
                         <p className={'ml-2 font-bold'}>{item?.symbol}</p>
                         <div className={'ml-2 max-w-[118px] '}>

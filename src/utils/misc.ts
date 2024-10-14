@@ -461,3 +461,6 @@ export const withdrawBigStringFarm = (nativeString: string, mintDecimals: number
   }
   return usdString
 }
+
+export const loadIconImage = (uri: string | undefined, mode: string): string =>
+  uri && uri?.length > 0 ? uri : `/img/assets/fallback-token-${mode}.svg`

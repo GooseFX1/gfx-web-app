@@ -3,7 +3,7 @@ import { useDarkMode, useGamma } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
 import { truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 import { GAMMAToken } from '@/types/gamma'
 import { ModeOfOperation } from './constants'
 
@@ -41,7 +41,7 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
       <div className="flex flex-row justify-between items-center mx-2.5">
         <div className="flex flex-row">
           <Icon
-            src={loadUriImage(token?.logoURI) ? token?.logoURI : loadBackUpImage(token?.symbol, mode)}
+            src={loadIconImage(token?.logoURI, mode)}
             size="sm"
             className={`mr-2 border border-solid rounded-circle 
                 dark:border-border-darkmode-secondary border-border-lightmode-secondary`}

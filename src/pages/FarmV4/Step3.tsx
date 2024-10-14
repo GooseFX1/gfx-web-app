@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { JupToken } from './constants'
 import { Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib'
-import { loadBackUpImage, loadUriImage } from './Step2'
+import { loadIconImage } from '@/utils'
 import { useDarkMode } from '@/context'
 
 const Step3: FC<{
@@ -46,16 +46,14 @@ const Step3: FC<{
                     <div className="text-regular font-semibold dark:text-grey-8 text-black-4 
                         flex flex-row items-center">
                         <img
-                            src={loadUriImage(tokenA?.logoURI) ?
-                                tokenA?.logoURI : loadBackUpImage(tokenA?.symbol, mode)}
+                            src={loadIconImage(tokenA?.logoURI, mode)}
                             alt={"token"} height={20}
                             width={20}
                             className='mr-[5px] rounded-half'
                         />
                         <span>{tokenA?.symbol}&nbsp;/&nbsp;</span>
                         <img
-                             src={loadUriImage(tokenB?.logoURI) ?
-                                tokenB?.logoURI : loadBackUpImage(tokenB?.symbol, mode)}
+                             src={loadIconImage(tokenB?.logoURI, mode)}
                             alt={"token"}
                             height={20}
                             width={20}

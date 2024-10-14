@@ -3,7 +3,7 @@ import { Icon, Tooltip, TooltipContent, TooltipTrigger } from 'gfx-component-lib
 import { FC, useMemo } from 'react'
 import { POOL_TYPE } from './constants'
 import { useWalletBalance } from '@/context/walletBalanceContext'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 import { numberFormatter } from '@/utils'
 
 const ExplorePools: FC = () => {
@@ -54,8 +54,7 @@ const UnusedTokens: FC = () => {
           key={balance.symbol}>
           <div className="flex flex-row items-center">
             <Icon
-              src={loadUriImage(balance.logoURI) ?
-                balance.logoURI : loadBackUpImage(balance.logoURI, mode)}
+              src={loadIconImage(balance.logoURI , mode)}
               alt="token"
               size="sm"
               className="mr-1.5" />

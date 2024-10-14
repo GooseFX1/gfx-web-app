@@ -5,7 +5,7 @@ import useBreakpoint from '../../hooks/useBreakPoint'
 import { GAMMAPoolWithUserLiquidity } from '@/types/gamma'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { numberFormatter } from '@/utils'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 
 const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): JSX.Element => {
   const { setSelectedCard, setOpenDepositWithdrawSlider } = useGamma()
@@ -40,19 +40,19 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
     >
       <div className="flex flex-row items-center">
         <Icon
-          src={loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)}
+          src={loadIconImage(pool.mintA.logoURI, mode)}
           className="border-solid dark:border-black-2 border-white
           border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <Icon
-          src={loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)}
+          src={loadIconImage(pool.mintB.logoURI, mode)}
           className="relative right-[10px] border-solid dark:border-black-2
           border-white border-[2px] rounded-full h-[25px] w-[25px]"
         />
         <div className="font-poppins text-regular font-semibold dark:text-grey-8 text-black-4">
           {pool.mintA.symbol} - {pool.mintB.symbol}
         </div>
-        
+
         <div
           className="border border-solid dark:border-black-4 flex items-center
           font-poppins text-tiny font-semibold dark:text-grey-8 text-black-4
@@ -60,7 +60,7 @@ const FarmRow: FC<{ pool: GAMMAPoolWithUserLiquidity }> = ({ pool, ...props }): 
         >
           {numberFormatter(0.2)}%
         </div>
-        
+
         <Icon src={`img/assets/farm_${pool.pool_type}.svg`} size="sm" className="ml-1.5" />
         {pool.poolCreator === base58PublicKey && (
           <Badge size="sm" variant="default" className={'ml-1'}>

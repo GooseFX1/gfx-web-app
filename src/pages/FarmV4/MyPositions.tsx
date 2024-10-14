@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react'
 import { Badge, Button, Icon } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '@/context'
 import { ModeOfOperation } from './constants'
-import { loadBackUpImage, loadUriImage } from '@/pages/FarmV4/Step2'
+import { loadIconImage } from '@/utils'
 import NoResultsFound from '@/pages/FarmV4/NoResultsFound'
 import { noPoolsFound } from '@/pages/FarmV4/FarmItems'
 import { numberFormatter } from '@/utils'
@@ -66,16 +66,12 @@ const MyPositions: FC = () => {
             >
               <div className="flex flex-row items-center">
                 <Icon
-                  src={
-                    loadUriImage(pool.mintA.logoURI) ? pool.mintA.logoURI : loadBackUpImage(pool.mintA.symbol, mode)
-                  }
+                  src={loadIconImage(pool.mintA.logoURI, mode)}
                   className="border-solid dark:border-black-2 border-white
                                   border-[2px] rounded-full h-[25px] w-[25px]"
                 />
                 <Icon
-                  src={
-                    loadUriImage(pool.mintB.logoURI) ? pool.mintB.logoURI : loadBackUpImage(pool.mintB.symbol, mode)
-                  }
+                  src={loadIconImage(pool.mintB.logoURI, mode)}
                   className="relative right-[10px] border-solid dark:border-black-2
                                   border-white border-[2px] rounded-full h-[25px] w-[25px]"
                 />
