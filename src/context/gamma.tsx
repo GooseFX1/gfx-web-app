@@ -1,14 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -48,6 +38,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -74,7 +65,12 @@ interface GAMMADataModel {
   setPage: Dispatch<SetStateAction<number>>
   tokenList: TokenListToken[]
   isLoadingTokenList: boolean
-  updateTokenList: (page: number, pageSize: number) => Promise<void>
+  updateTokenList: ({ page, pageSize, searchValue }: {
+    page: number
+    pageSize: number
+    searchValue?: string,
+    signal?: AbortSignal
+  }, append?: boolean) => Promise<void>
   maxTokensReached: boolean
   sendingTransaction: boolean
   setSendingTransaction: Dispatch<SetStateAction<boolean>>
@@ -177,7 +173,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     // first render only
     if (tokenList.length == 0) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
     if (pools.length == 0) {
       updatePools({ page: 1, pageSize: POOL_LIST_PAGE_SIZE, poolType: currentPoolType.type })
@@ -198,19 +194,34 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
-  const updateTokenList = async (page: number, pageSize: number) => {
+  const updateTokenList = async (
+    {
+      page,
+      pageSize,
+      searchValue = '',
+      signal
+    }: {
+      page: number
+      pageSize: number
+      searchValue?: string,
+      signal?: AbortSignal
+    }, append = true) => {
+    // initial loads prevent fetching
+    if (createPoolType.trim().length == 0) return
     setIsLoadingTokenList(true)
     const response = (await fetchTokenList(
       page,
       pageSize,
-      createPoolType.toLowerCase()
+      createPoolType.toLowerCase(),
+      searchValue,
+      signal
     )) as GAMMAListTokenResponse | null
     setIsLoadingTokenList(false)
     if (!response || !response.success) {
       return
     }
     setMaxTokensReached(response.data.totalPages <= response.data.currentPage)
-    const currentTokenList = tokenList
+    const currentTokenList = append ? tokenList : []
     const hasSetOfTokens = new Set(tokenList.map((token) => token.address))
     for (const token of response.data.tokens) {
       if (hasSetOfTokens.has(token.address)) {
@@ -272,7 +283,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     //update token on next pagination
-    updateTokenList(page, TOKEN_LIST_PAGE_SIZE)
+    updateTokenList({ page, pageSize: TOKEN_LIST_PAGE_SIZE })
   }, [page])
 
   useEffect(() => {
@@ -281,7 +292,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setTokenList([])
     setPage(1)
     if (page == 1) {
-      updateTokenList(1, TOKEN_LIST_PAGE_SIZE)
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
   }, [createPoolType])
 
@@ -411,7 +422,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
             ? new Decimal(userLpPosition.tokenADeposited).gt(0) ||
-              new Decimal(userLpPosition.tokenBDeposited).gt(0)
+            new Decimal(userLpPosition.tokenBDeposited).gt(0)
             : false
         }
       })

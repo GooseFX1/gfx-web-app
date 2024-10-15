@@ -46,7 +46,7 @@ const fetchAllPools = async (
     const response = await httpClient(GAMMA_API_BASE).get(
       GAMMA_ENDPOINTS_V1.POOLS_INFO_ALL +
       `?pageSize=${pageSize}&page=${page}&poolType=${poolType}&sortOrder=${sortConfig}&sortBy=${sortKey}${search}`,
-      {signal: abortSignal}
+      { signal: abortSignal }
     )
     return response.data
   } catch (error) {
@@ -107,11 +107,16 @@ const fetchLpPositions = async (userId: string): Promise<UserPortfolioLPPosition
 const fetchTokenList = async (
   page: number,
   pageSize: number,
-  poolType: string
+  poolType: string,
+  searchValue?: string,
+  signal?: AbortSignal
 ): Promise<GAMMAListTokenResponse | null> => {
   try {
+    const search = searchValue ? `&search=${searchValue}` : ''
     const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}`
+      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?pageSize=${pageSize}&page=${page}&tokenType=${poolType}${search}`, {
+        signal: signal
+      }
     )
     return await response.data
   } catch (error) {
@@ -119,17 +124,41 @@ const fetchTokenList = async (
     return null
   }
 }
+const attachTokenList = async (
+  tokens: string,
+  page: number,
+  pageSize: number,
+  currentResponse?: GAMMAListTokenResponse
+): Promise<GAMMAListTokenResponse | null> => {
+  // if no tokens passed terminate
+  if (tokens?.length === 0) throw new Error('No tokens passed')
+
+  const response = await httpClient(GAMMA_API_BASE).get(
+    GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${tokens}&pageSize=${pageSize}&page=${page}`
+  ).then(response => response.data)
+  // if not successful terminate
+  if (!response.success) throw new Error('Error fetching token list')
+  // if had a previous response, append the new tokens to the previous response
+  if (currentResponse) {
+    currentResponse.data.tokens = currentResponse.data.tokens.concat(response.data.tokens)
+  }
+  // if there are more pages, recursively call the function
+  if (response.data.currentPage < response.data.totalPages) {
+    return attachTokenList(tokens, response.data.currentPage + 1, pageSize, currentResponse ?? response)
+  }
+  // return the final response
+  return currentResponse ?? response
+}
 /**
  *
  * @param tokens comma separated string for token e.g SOL1111,EFAC22141
  */
 const fetchTokensByPublicKey = async (tokens: string): Promise<GAMMAListTokenResponse | null> => {
   if (tokens?.length === 0) return null
+
   try {
-    const response = await httpClient(GAMMA_API_BASE).get(
-      GAMMA_ENDPOINTS_V1.TOKEN_LIST + `?ids=${tokens}`
-    )
-    return await response.data
+    // recursively fetch all tokens in users wallet
+    return await attachTokenList(tokens, 1, 200)
   } catch (e) {
     console.log('Error fetching token list', e)
     return {
