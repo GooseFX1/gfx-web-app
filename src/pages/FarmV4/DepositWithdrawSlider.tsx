@@ -22,6 +22,7 @@ import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
+import { bigNumberFormatter } from '@/utils'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -483,7 +484,15 @@ export const DepositWithdrawSlider: FC = () => {
               // },
               {
                 textLeft: 'Total Amount in USDC',
-                textRight: '≈ $90.00'
+                textRight: `≈ $${bigNumberFormatter(
+                  new BigNumber(balance[selectedCard?.mintA?.symbol]?.price)
+                    .multipliedBy(userSourceWithdrawAmount)
+                    .plus(
+                      new BigNumber(balance[selectedCard?.mintB?.symbol]?.price)
+                        .multipliedBy(userTargetWithdrawAmount)
+                    ),
+                  4
+                )}`
               }
             ]}
           />
