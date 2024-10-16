@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import {
   GetProgramAccountsFilter,
   ParsedAccountData,
@@ -38,6 +38,7 @@ type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
 
 interface IWalletBalanceContext {
   balance: Balance
+  topBalances: Balance
   publicKey: PublicKey | null
   base58PublicKey: string
   createTokenAccountInstruction: (data: CreateTokenAccountParams) => TransactionInstruction
@@ -47,62 +48,7 @@ interface IWalletBalanceContext {
   walletValue: string
 }
 
-const SUPPORTED_TOKENS: Record<string, Omit<UserTokenAccounts, 'mint' | 'pda' | 'tokenAmount' | 'price' | 'value'>> = {
-  So11111111111111111111111111111111111111112: {
-    symbol: 'SOL',
-    name: 'Solana',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
-      'mainnet/So11111111111111111111111111111111111111112/logo.png',
-    decimals: 9
-  },
-  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: {
-    symbol: 'USDC',
-    name: 'USD Coin',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
-      'mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    decimals: 6
-  },
-  Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: {
-    symbol: 'USDT',
-    name: 'Tether',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
-      'mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
-    decimals: 6
-  },
-  DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263: {
-    symbol: 'BONK',
-    name: 'BONK',
-    logoURI:
-      'https://quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net/' +
-      'hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I',
-    decimals: 5
-  },
-  mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So: {
-    symbol: 'mSOL',
-    name: 'Marinade Staked SOL',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
-      'mainnet/mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So/logo.png',
-    decimals: 9
-  },
-  J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn: {
-    symbol: 'JitoSOL',
-    name: 'Raydium',
-    logoURI: 'https://storage.googleapis.com/token-metadata/JitoSOL-256.png',
-    decimals: 9
-  },
-  GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD: {
-    symbol: 'GOFX',
-    name: 'GooseFX',
-    logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
-      'mainnet/GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD/logo.png',
-    decimals: 9
-  }
-}
+
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
 
 function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JSX.Element {
@@ -114,23 +60,30 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const [balance, setBalance] = useState<Balance>({})
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
   const [walletValue, setWalletValue] = useState<string>('0.0')
+
+  const topBalances: UserTokenAccounts[] = useMemo(() => {
+    const values = Object.values(balance)
+    return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
+  }, [balance])
+
   useSolSubActivityMulti({
     subType: SubType.AccountChange,
     publicKeys: tokenAccounts.map((account) => {
       const callback = async () => {
         console.log('Setting balance for', account.symbol)
-        if (account.symbol == 'SOL') {
+        if (account.mint == NATIVE_MINT.toBase58()) {
           const t = await connection.getBalance(account.pda)
-          setBalanceBySymbol(account.symbol, {
+          const dec = account.decimals || 9
+          setBalanceBySymbol(account.mint, {
             amount: t.toString(),
-            decimals: 9,
-            uiAmount: t / 10 ** 9,
-            uiAmountString: (t / 10 ** 9).toFixed(2)
+            decimals: dec,
+            uiAmount: t / 10 ** dec,
+            uiAmountString: (t / 10 ** dec).toFixed(2)
           })
           return
         }
         const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-        setBalanceBySymbol(account.symbol, t.value)
+        setBalanceBySymbol(account.mint, t.value)
       }
       return {
         publicKey: account.pda,
@@ -148,11 +101,11 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     getTokenAccounts()
   }, [connection, network, publicKey])
 
-  function setBalanceBySymbol(symbol: string, amount: TokenAmount) {
+  function setBalanceBySymbol(mint: string, amount: TokenAmount) {
     setBalance((prev) => ({
       ...prev,
-      [symbol]: {
-        ...prev[symbol],
+      [mint]: {
+        ...prev[mint],
         tokenAmount: amount
       }
     }))
@@ -201,13 +154,18 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
     addresses = addresses.slice(0, -1)
 
-
     const solBalance = await connection.getBalance(publicKey)
     const solUIAmount = solBalance / 10 ** 9
 
-    tokenAccounts['SOL'] = {
-      ...SUPPORTED_TOKENS[NATIVE_MINT.toBase58()],
-      mint: NATIVE_MINT,
+    tokenAccounts[NATIVE_MINT.toBase58()] = {
+      isNative: true,
+      symbol: 'SOL',
+      name: 'Solana',
+      logoURI:
+        'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/' +
+        'mainnet/So11111111111111111111111111111111111111112/logo.png',
+      decimals: 9,
+      mint: NATIVE_MINT.toBase58(),
       pda: publicKey,
       tokenAmount: {
         amount: solBalance.toString(),
@@ -221,32 +179,28 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     let currentWalletValue = new Decimal(0.0)
     const tokenListResponse = await fetchTokensByPublicKey(addresses)
 
-    console.log('tokenListResponse', tokenListResponse, tokenInfo)
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
-        if (!(data.symbol in tokenAccounts) && (data.address in tokenInfo)) {
-          tokenAccounts[data.symbol] = {...tokenInfo[data.address]}
+        if (!(data.address in tokenAccounts) && (data.address in tokenInfo)) {
+          tokenAccounts[data.address] = {...tokenInfo[data.address]}
         }
-        tokenAccounts[data.symbol].mint = address
-        tokenAccounts[data.symbol] = Object.assign(tokenAccounts[data.symbol], rest)
-        tokenAccounts[data.symbol].price = data.price
-        const value = new Decimal(tokenAccounts[data.symbol].tokenAmount.uiAmount).mul(data.price)
-        tokenAccounts[data.symbol].value = value
+        tokenAccounts[data.address].mint = address
+        tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
+        tokenAccounts[data.address].price = data.price
+        const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
+        tokenAccounts[data.address].value = value
         currentWalletValue = currentWalletValue.add(value)
-        console.log('balance', currentWalletValue.toString(), value.toString())
 
-        if (rest.symbol != 'SOL') {
-          tokenAccounts[data.symbol].pda = findProgramAddressSync(
+        if (rest.address != 'SOL') {
+          tokenAccounts[data.address].pda = findProgramAddressSync(
             [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
             ASSOCIATED_TOKEN_PROGRAM_ID
           )[0]
-          tokenAccounts[data.symbol].tokenAmount = tokenInfo[data.address].tokenAmount
         }
-
       }
     }
-    console.log('tokenListResponse end', tokenAccounts)
+
     setTokenAccounts(Object.values(tokenAccounts))
     setBalance(tokenAccounts)
     setWalletValue(currentWalletValue.toFixed(2))
@@ -316,6 +270,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     <WalletBalanceContext.Provider
       value={{
         balance: balanceProxy,
+        topBalances,
         publicKey: publicKey,
         base58PublicKey,
         createTokenAccountInstruction,

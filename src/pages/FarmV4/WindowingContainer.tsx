@@ -19,7 +19,7 @@ const WindowingContainer: FC<WindowContainerProps<unknown>> = ({
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 10 })
   const [itemHeight, setItemHeight] = useState(0)
   const [containerHeight, setContainerHeight] = useState(0)
-  const ITEM_PADDING = useMemo(() => 15, [])
+  const ITEM_PADDING = useMemo(() => 8, [])
 
   useLayoutEffect(() => {
     const elementToTarget = rootElement || ref.current

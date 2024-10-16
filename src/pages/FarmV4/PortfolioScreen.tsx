@@ -5,11 +5,13 @@ import ComingSoon from './ComingSoon'
 import Positions from './Positions'
 import { useGamma } from '@/context'
 import Decimal from 'decimal.js-light'
+import { commafy } from '@/utils'
 
 const PortfolioScreen: FC = (): JSX.Element => {
   const { lpPositions } = useGamma()
   const totalValue = useMemo(() =>
-    lpPositions.reduce((acc, pos) => acc.add(pos.totalValue), new Decimal(0.0)).toFixed(2), [lpPositions])
+    lpPositions.reduce((acc, pos) => acc.add(pos.totalValue), new Decimal(0.0)), [lpPositions])
+
   return <div>
     <div className="flex items-center mb-3.75">
       <CircularArrow className={`h-5 w-5 rotate-180 mr-2`} />
@@ -20,7 +22,7 @@ const PortfolioScreen: FC = (): JSX.Element => {
         header="Portfolio Value"
         tooltip={'Portfolio Value is the total worth of all your investments across all pools.'}
         subHeader="Monitor your top pools and coin values with advanced, user-friendly graphs."
-        value={totalValue}
+        value={commafy(totalValue)}
         image="chart"
       />
       <ComingSoon

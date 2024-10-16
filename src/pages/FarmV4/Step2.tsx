@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import {
   Badge,
   Button,
@@ -17,13 +17,13 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '../../context'
-import { JupToken, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, TOKEN_LIST_PAGE_SIZE, POPULAR_TOKENS } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
 import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
-import { fetchPoolsByMints } from '@/api/gamma'
+import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { aborter, bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
@@ -49,23 +49,23 @@ const Step2: FC<{
   walletTokenB: string
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({
-        tokenA,
-        setTokenA,
-        tokenB,
-        setTokenB,
-        handleChange,
-        amountTokenA,
-        amountTokenB,
-        // feeTier,
-        // setFeeTier,
-        poolExists,
-        setPoolExists,
-        initialPrice,
-        setInitialPrice,
-        walletTokenA,
-        walletTokenB,
-        setIsCreatePool
-      }) => {
+  tokenA,
+  setTokenA,
+  tokenB,
+  setTokenB,
+  handleChange,
+  amountTokenA,
+  amountTokenB,
+  // feeTier,
+  // setFeeTier,
+  poolExists,
+  setPoolExists,
+  initialPrice,
+  setInitialPrice,
+  walletTokenA,
+  walletTokenB,
+  setIsCreatePool
+}) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
@@ -268,7 +268,7 @@ const Step2: FC<{
         +amountTokenB &&
         (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
           <span className="text-red-1 font-sembold text-regular">
-            {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
+            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
           </span>
         ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
           <span className="text-red-1 font-sembold text-regular">
@@ -294,46 +294,75 @@ const Step2: FC<{
 }
 
 function TokenSelectionInput({
-                               token,
-                               handleChange,
-                               amountToken,
-                               setToken,
-                               otherToken
-                             }: {
+  token,
+  handleChange,
+  amountToken,
+  setToken,
+  otherToken
+}: {
   token: JupToken | null
   otherToken: JupToken | null
   handleChange: (e: any, boolean) => void
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached } = useGamma()
+  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached, createPoolType } =
+    useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [searchValue, setSearchValue] = useState<string>('')
+  const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
+  const { balance, topBalances } = useWalletBalance()
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
-  const { balance } = useWalletBalance()
+  const topBalancesWithTokenList: JupToken[] = useMemo(
+    () => [
+      ...topBalances.map((b) => ({
+        ...b,
+        address: b.mint
+      })),
+      ...tokenList.filter((token) => balance[token.address] === undefined)
+    ],
+    [topBalances, tokenList, balance, searchValue]
+  )
+
+  console.log('TEST', topBalancesWithTokenList)
 
   useEffect(() => {
     const abortSignal = aborter.addSignal('tokenList')
     // faking search
     if (searchValue.trim().length == 0) {
-      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() => setPage(1))
+      updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE, signal: abortSignal }, false).then(() =>
+        setPage(1)
+      )
       return
     }
     const timeout = setTimeout(async () => {
-      updateTokenList({
-        page: 1,
-        pageSize: TOKEN_LIST_PAGE_SIZE,
-        searchValue,
-        signal: abortSignal
-      }, false)
+      updateTokenList(
+        {
+          page: 1,
+          pageSize: TOKEN_LIST_PAGE_SIZE,
+          searchValue,
+          signal: abortSignal
+        },
+        false
+      )
     }, 233)
     return () => {
       clearTimeout(timeout)
       aborter.abortSignal('tokenList')
     }
   }, [searchValue])
+
+  useEffect(() => {
+    fetchTokensByPublicKey([...POPULAR_TOKENS].join(',')).then((res) => {
+      if (res.success) {
+        setPopularTokens(res.data.tokens)
+      }
+    })
+  }, [])
 
   return (
     <InputGroup
@@ -348,10 +377,7 @@ function TokenSelectionInput({
                 className="min-w-[115px] h-[35px] rounded-full flex flex-row justify-between"
                 iconLeft={
                   token ? (
-                    <Icon
-                      src={loadIconImage(token?.logoURI, mode)}
-                      size={'sm'}
-                    />
+                    <Icon src={loadIconImage(token?.logoURI, mode)} size={'sm'} className={'rounded-circle'} />
                   ) : null
                 }
                 iconRight={
@@ -370,111 +396,148 @@ function TokenSelectionInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={'mt-1 z-[1001] max-h-[300px] overflow-auto w-[364px] relative'}
+              className={'flex flex-col mt-1 z-[1001] h-[396px] w-[464px] max-sm:w-[338px] relative'}
               portal={true}
               align={'start'}
             >
-              <SearchBar
-                groupClassName={'sticky'}
-                placeholder={'Search by token symbol'}
-                value={searchValue}
-                onKeyDown={(e) => e.stopPropagation()}
-                onChange={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setSearchValue(e.target.value)
-                }}
-                onClear={() => setSearchValue('')}
-              />
+              {createPoolType === 'hyper' && (
+                <SearchBar
+                  groupClassName={'sticky'}
+                  placeholder={'Search by token symbol'}
+                  value={searchValue}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onChange={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setSearchValue(e.target.value)
+                  }}
+                  onClear={() => setSearchValue('')}
+                />
+              )}
+              {createPoolType === 'hyper' && (
+                <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
+                  <h5
+                    className={`my-2 dark:text-text-darkmode-secondary 
+                                        text-text-lightmode-secondary`}
+                  >
+                    Popular
+                  </h5>
+                  <div className={'flex pb-2'}>
+                    {popularTokens.map((token) => (
+                      <div
+                        className={`border-solid dark:border-black-4 border-grey-4 border 
+                          cursor-pointer p-1 flex mr-1 rounded-[4px]`}
+                        key={token?.address}
+                      >
+                        <Icon
+                          src={loadIconImage(token?.logoURI, mode)}
+                          size={'sm'}
+                          className={'rounded-circle mr-1'}
+                        />
+                        <span
+                          className={`font-bold dark:text-text-darkmode-secondary 
+                                        text-text-lightmode-secondary`}
+                        >
+                          {token?.symbol}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <ScrollingHydrateContainer
                 ref={(ref) => setScrollingContainerRef(ref)}
                 callback={() => {
                   if (isLoadingTokenList || maxTokensReached) return
-                  updateTokenList({
-                    page: page + 1,
-                    pageSize: TOKEN_LIST_PAGE_SIZE,
-                    searchValue
-                  }, false).then(() => setPage(page + 1))
+                  updateTokenList(
+                    {
+                      page: page + 1,
+                      pageSize: TOKEN_LIST_PAGE_SIZE,
+                      searchValue
+                    },
+                    false
+                  ).then(() => setPage(page + 1))
                 }}
               >
-                {tokenList.length > 0 ? (
+                {tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (
                   <WindowingContainer
                     className={'h-full'}
                     rootElement={scrollingContainerRef}
-                    items={tokenList}
-                    render={(item: JupToken) => (
+                    items={
+                      searchValue.length > 0 || createPoolType === 'primary' || !publicKey
+                        ? tokenList
+                        : topBalancesWithTokenList
+                    }
+                    render={(curToken: JupToken) => (
                       <DropdownMenuItem
                         className={' cursor-pointer p-1.5 flex'}
                         onClick={() => {
-                          setToken(item)
+                          setToken(curToken)
                           setSearchValue('')
                         }}
-                        key={item?.address}
-                        disabled={otherToken?.symbol === item?.symbol}
+                        key={curToken?.address}
+                        disabled={otherToken?.address === curToken?.address}
                       >
                         <div className={'flex w-full flex-1'}>
-
                           <div className={`flex gap-2`}>
                             <Icon
-                              className={'rounded-circle h-[24px] w-[24px]'}
-                              src={loadIconImage(item?.logoURI, mode)}
+                              className={`rounded-circle h-[24px] w-[24px] border 
+                                border-solid dark:border-black-4 border-grey-4`}
+                              src={loadIconImage(curToken?.logoURI, mode)}
                             />
                             <div>
-                              <p className={
-                                `text-b2 font-bold dark:text-text-darkmode-primary text-text-lightmode-primary`
-                              }>
-                                {item?.symbol}
+                              <p
+                                className={`text-b2 font-bold 
+                                  dark:text-text-darkmode-primary text-text-lightmode-primary`}
+                              >
+                                {curToken?.symbol}
                               </p>
                               <span className={'inline-flex gap-1'}>
-                            <span className={'max-w-[118px] self-center'}>
-                              <p className={
-                                `text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary truncate
-                                font-semibold
-                                `
-                              }>
-                                {item?.name}
-                              </p>
-                            </span>
-                            <a
-                              href={`https://solscan.io/account/${token?.address}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className={'ml-auto'}
-                            >
-                              <Badge
-                                variant="default"
-                                size={'lg'}
-                                className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
-                              >
-                            <h6 className={''}>
-                              {truncateAddress(item?.address, 3)}
-                            </h6>
-                                <Icon
-                                  src={`/img/assets/arrowcircle-${mode}.svg`}
-                                  className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
-                                />
-                              </Badge>
-                            </a>
-                            </span>
+                                <span className={'max-w-[118px] self-center'}>
+                                  <p
+                                    className={`text-b3 dark:text-text-darkmode-secondary 
+                                      text-text-lightmode-secondary truncate font-semibold
+                                `}
+                                  >
+                                    {curToken?.name}
+                                  </p>
+                                </span>
+                                <a
+                                  href={`https://solscan.io/account/${curToken?.address}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={'ml-auto'}
+                                >
+                                  <Badge
+                                    variant="default"
+                                    size={'lg'}
+                                    className={'to-brand-secondaryGradient-secondary/50 gap-1 h-[18px]'}
+                                  >
+                                    <h6 className={''}>{truncateAddress(curToken?.address, 3)}</h6>
+                                    <Icon
+                                      src={`/img/assets/arrowcircle-${mode}.svg`}
+                                      className={'!h-[15px] !w-[15px] !min-h-[15px] !min-w-[15px]'}
+                                    />
+                                  </Badge>
+                                </a>
+                              </span>
                             </div>
                           </div>
                           <div className={'w-full ml-auto flex flex-col gap-1 items-end'}>
-                            <p className={
-                              `text-b2 font-bold dark:text-text-darkmode-primary text-text-lightmode-primary`
-                            }>
-                              {numberFormatter(balance[item?.symbol].tokenAmount.uiAmount)}
+                            <p
+                              className={`text-b2 font-bold dark:text-text-darkmode-primary 
+                                text-text-lightmode-primary`}
+                            >
+                              {numberFormatter(balance[curToken?.address].tokenAmount.uiAmount)}
                             </p>
-                            <p className={
-                              `text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary truncate
-                                font-semibold
-                                `
-                            }>
-                              ${bigNumberFormatter(
-                              new BigNumber(balance[item?.symbol].value.toString()))
-                            }
+                            <p
+                              className={`text-b3 dark:text-text-darkmode-secondary text-text-lightmode-secondary 
+                                truncate font-semibold
+                                `}
+                            >
+                              ${bigNumberFormatter(new BigNumber(balance[curToken?.address].value.toString()))}
                             </p>
                           </div>
-
                         </div>
                       </DropdownMenuItem>
                     )}
