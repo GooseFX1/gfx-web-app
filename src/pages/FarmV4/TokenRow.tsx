@@ -1,9 +1,8 @@
 import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode, useGamma } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
-import { truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
+import { loadIconImage, truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { loadIconImage } from '@/utils'
 import { GAMMAToken } from '@/types/gamma'
 import { ModeOfOperation } from './constants'
 

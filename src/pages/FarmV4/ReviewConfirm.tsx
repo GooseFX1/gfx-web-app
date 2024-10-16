@@ -1,11 +1,24 @@
 import { useGamma } from '@/context'
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useMemo } from 'react'
 import { Container } from 'gfx-component-lib'
 import DepositWithdrawLabel from './DepositWithdrawLabel'
-import { numberFormatter } from '@/utils'
+import { bigNumberFormatter, numberFormatter } from '@/utils'
+import { useWalletBalance } from '@/context/walletBalanceContext'
+import BigNumber from 'bignumber.js'
 
-export const ReviewConfirm: FC = (): ReactElement => {
+export const ReviewConfirm: FC<{
+  tokenAActionValue: string
+  tokenBActionValue: string
+}> = ({ tokenAActionValue, tokenBActionValue }): ReactElement => {
   const { selectedCard } = useGamma()
+  const { balance } = useWalletBalance()
+
+  const depositValue = useMemo(() => {
+    const depositAValue = new BigNumber(balance[selectedCard?.mintA?.symbol]?.price).multipliedBy(tokenAActionValue)
+    const depositBValue = new BigNumber(balance[selectedCard?.mintB?.symbol]?.price).multipliedBy(tokenBActionValue)
+
+    return depositAValue.plus(depositBValue)
+  }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
   return (
     <>
       <DepositWithdrawLabel text="2. Review and Confirm" />
@@ -18,7 +31,7 @@ export const ReviewConfirm: FC = (): ReactElement => {
             Est. 24H Fees
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {numberFormatter(selectedCard?.volume ?? 0.00)}
+            ${numberFormatter(selectedCard?.stats?.daily?.feesUSD ?? 0.00, 4)}
           </span>
         </div>
         <div className="flex justify-between mb-2">
@@ -29,7 +42,7 @@ export const ReviewConfirm: FC = (): ReactElement => {
             Pool Fee Rate
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {numberFormatter(selectedCard?.fees ?? 0.00)}
+            {numberFormatter(selectedCard?.config?.protocolFeeRate ?? 0.00)}
           </span>
         </div>
         <div className="flex justify-between mb-2">
@@ -40,7 +53,7 @@ export const ReviewConfirm: FC = (): ReactElement => {
             Total Deposit
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {numberFormatter(selectedCard?.fees ?? 0.00)}
+            ${bigNumberFormatter(depositValue, depositValue.gt(0) ? 4 : 2)}
           </span>
         </div>
       </Container>

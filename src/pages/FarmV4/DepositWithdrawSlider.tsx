@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { cn, Dialog, DialogBody, DialogContent, DialogFooter } from 'gfx-component-lib'
-import { useAccounts, useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
+import { useConnectionConfig, useGamma, usePriceFeedFarm } from '@/context'
 import DepositWithdrawInput from './DepositWithdrawInput'
 import DepositWithdrawToggle from './DepositWithdrawToggle'
 import DepositWithdrawAccordion from './DepositWithdrawAccordion'
@@ -10,7 +10,6 @@ import { TokenRow } from './TokenRow'
 import { ReviewConfirm } from './ReviewConfirm'
 import StickyFooter from './StickyFooter'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
@@ -22,11 +21,11 @@ import { calculateOtherTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
+import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
   const { isMobile } = useBreakPoint()
-  const { getUIAmount } = useAccounts()
   const { connection } = useConnectionConfig()
   const {
     selectedCard,
@@ -45,7 +44,6 @@ export const DepositWithdrawSlider: FC = () => {
   } = useGamma()
 
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-  const [userSolBalance, setUserSOLBalance] = useState<number>(0)
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
   const [userTargetTokenBal, setUserTargetTokenBal] = useState<number>()
   const [userSourceDepositAmount, setUserSourceDepositAmount] = useState<string>('')
@@ -60,7 +58,7 @@ export const DepositWithdrawSlider: FC = () => {
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
-
+  const { balance } = useWalletBalance()
   //eslint-disable-next-line
   useEffect(() => {
     return () => {
@@ -69,22 +67,11 @@ export const DepositWithdrawSlider: FC = () => {
   }, [])
 
   useEffect(() => {
-    ;(async () => {
-      if (userPublicKey) {
-        const solAmount = await connection.getBalance(userPublicKey)
-        setUserSOLBalance(solAmount / LAMPORTS_PER_SOL)
-      }
-    })()
-  }, [userPublicKey])
-
-  useEffect(() => {
     if (selectedCard) {
-      if (selectedCard?.mintA?.symbol === 'SOL') setUserSourceTokenBal(userSolBalance)
-      else setUserSourceTokenBal(getUIAmount(selectedCard?.mintA?.address))
-      if (selectedCard?.mintB?.symbol === 'SOL') setUserTargetTokenBal(userSolBalance)
-      else setUserTargetTokenBal(getUIAmount(selectedCard?.mintB?.address))
+      setUserSourceTokenBal(balance[selectedCard?.mintA?.symbol].tokenAmount.uiAmount)
+      setUserTargetTokenBal(balance[selectedCard?.mintB?.symbol].tokenAmount.uiAmount)
     }
-  }, [selectedCard, userSolBalance])
+  }, [selectedCard, balance])
 
   const handleClose = () => {
     setUserSourceDepositAmount('')
@@ -199,12 +186,12 @@ export const DepositWithdrawSlider: FC = () => {
         new BigNumber(withdrawBigStringFarm(
           ((selectedCardLiquidityAcc?.token0Deposited)?.sub(selectedCardLiquidityAcc?.token0Withdrawn))
             ?.toString(), selectedCardPool?.mint0Decimals)
-      ))
+        ))
       || new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
         new BigNumber(withdrawBigStringFarm(
           ((selectedCardLiquidityAcc?.token1Deposited)?.sub(selectedCardLiquidityAcc?.token1Withdrawn))
             ?.toString(), selectedCardPool?.mint1Decimals)
-      )))
+        )))
       return true
   }, [userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount, userSourceDepositAmount,
     userTargetDepositAmount, isDeposit, userSourceWithdrawAmount, selectedCardLiquidityAcc, selectedCardPool])
@@ -532,7 +519,9 @@ export const DepositWithdrawSlider: FC = () => {
               handleMax={() => handleMax(false)}
               disabled={isDeposit && userTargetTokenBal <= 0}
             />
-            <ReviewConfirm />
+            <ReviewConfirm
+              tokenAActionValue={isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount}
+              tokenBActionValue={isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount} />
             {isDeposit && userPublicKey && (userSourceTokenBal === 0 || userTargetTokenBal === 0) && <SwapNow />}
           </div>
         </DialogBody>
