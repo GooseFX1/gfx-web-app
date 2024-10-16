@@ -19,6 +19,7 @@ export const ReviewConfirm: FC<{
 
     return depositAValue.plus(depositBValue)
   }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
+
   return (
     <>
       <DepositWithdrawLabel text="2. Review and Confirm" />
@@ -31,7 +32,8 @@ export const ReviewConfirm: FC<{
             Est. 24H Fees
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            ${numberFormatter(selectedCard?.stats?.daily?.feesUSD ?? 0.00, 4)}
+            ${numberFormatter(selectedCard?.stats?.daily?.feesUSD || 0.00,
+            new BigNumber(selectedCard?.stats?.daily?.feesUSD || 0.00).gt(0) ? 4 : 2)}
           </span>
         </div>
         <div className="flex justify-between mb-2">
@@ -42,7 +44,7 @@ export const ReviewConfirm: FC<{
             Pool Fee Rate
           </span>
           <span className="!font-regular font-semibold dark:text-grey-8 text-black-4">
-            {numberFormatter(selectedCard?.config?.protocolFeeRate ?? 0.00)}
+            {bigNumberFormatter(new BigNumber(selectedCard?.config?.protocolFeeRate || 0.00).div(100e3), 2)}%
           </span>
         </div>
         <div className="flex justify-between mb-2">
