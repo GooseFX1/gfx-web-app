@@ -13,7 +13,7 @@ const SearchBar = ({ onClear, value, groupClassName, className, onChange , ...re
   const [focus, setFocus] = useBoolean(false)
   return (
     <InputGroup
-      className={cn('min-w-[200px] w-full min-md:max-w-[400px]', groupClassName)}
+      className={cn('min-w-[200px] w-full', groupClassName)}
       leftItem={
         <InputElementLeft>
           <Icon size={'sm'} src={`/img/assets/searchbar_${mode}${focus ? '_active' : ''}.svg`} alt="search-icon" />
@@ -36,7 +36,7 @@ const SearchBar = ({ onClear, value, groupClassName, className, onChange , ...re
       <Input
         {...rest}
         value={value}
-        className={cn('min-w-[200px] w-full max-w-[400px]', className)}
+        className={cn('min-w-[200px] w-full', className)}
         placeholder={'Search by token symbol'}
         onChange={onChange}
         onFocus={setFocus.on}

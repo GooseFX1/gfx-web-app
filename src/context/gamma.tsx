@@ -212,7 +212,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const response = (await fetchTokenList(
       page,
       pageSize,
-      createPoolType.toLowerCase(),
+      createPoolType.toLowerCase() === 'primary' ? 'primary' : 'all',
       searchValue,
       signal
     )) as GAMMAListTokenResponse | null

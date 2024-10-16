@@ -126,24 +126,30 @@ export const CreatePool: FC<{
   }, [currentSlide, tokenA, tokenB, amountTokenA, amountTokenB, walletTokenA, walletTokenB])
 
   return (
-    <Dialog onOpenChange={(b) => {
-      setIsCreatePool(b)
-      if (!b) {
-        setCreatePoolType('')
-        setTokenA(null)
-        setTokenB(null)
-        setAmountTokenA('')
-        setAmountTokenB('')
-      }
-    }} open={isCreatePool}>
+    <Dialog
+      onOpenChange={(b) => {
+        setIsCreatePool(b)
+        if (!b) {
+          setCreatePoolType('')
+          setTokenA(null)
+          setTokenB(null)
+          setAmountTokenA('')
+          setAmountTokenB('')
+        }
+      }}
+      open={isCreatePool}
+    >
       <DialogOverlay />
       <DialogContent
         className={`flex flex-col gap-0 max-h-[700px] border-1 border-solid z-[1001] overflow-hidden
         dark:border-border-darkmode-secondary border-border-lightmode-secondary max-sm:rounded-b-none`}
         placement={breakpoint.isMobile ? 'bottom' : 'default'}
+        size={'lg'}
       >
         <DialogHeader className={`relative`}>
-          <DialogCloseDefault className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'} />
+          <DialogCloseDefault
+            className={'top-2 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 z-[1000]'}
+          />
         </DialogHeader>
         <DialogBody className={'flex-col flex-[1 0] overflow-auto pb-0'}>
           <Slider ref={slider} {...settings}>
