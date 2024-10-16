@@ -61,9 +61,9 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   const [tokenAccounts, setTokenAccounts] = useState<UserTokenAccounts[]>([])
   const [walletValue, setWalletValue] = useState<string>('0.0')
 
-  const topBalances = useMemo(() => {
+  const topBalances: UserTokenAccounts[] = useMemo(() => {
     const values = Object.values(balance)
-    return values.sort((a, b) => (a.value.gte(b.value) ? -1 : 1)).slice(0, 6)
+    return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
 
   useSolSubActivityMulti({

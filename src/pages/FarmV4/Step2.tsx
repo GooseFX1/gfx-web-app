@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import {
   Badge,
   Button,
@@ -17,13 +17,13 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '../../context'
-import { JupToken, TOKEN_LIST_PAGE_SIZE } from './constants'
+import { JupToken, TOKEN_LIST_PAGE_SIZE, POPULAR_TOKENS } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
 import ScrollingHydrateContainer from '@/components/common/ScrollingHydrateContainer'
 import WindowingContainer from '@/pages/FarmV4/WindowingContainer'
-import { fetchPoolsByMints } from '@/api/gamma'
+import { fetchPoolsByMints, fetchTokensByPublicKey } from '@/api/gamma'
 import { GAMMAPool } from '@/types/gamma'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { aborter, bigNumberFormatter, loadIconImage, numberFormatter, truncateAddress } from '@/utils'
@@ -306,14 +306,29 @@ function TokenSelectionInput({
   amountToken: string
   setToken: Dispatch<SetStateAction<JupToken>>
 }) {
-  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached } = useGamma()
+  const { tokenList, isLoadingTokenList, updateTokenList, page, setPage, maxTokensReached, createPoolType } =
+    useGamma()
   const [isDropDownOpen, setIsDropdownOpen] = useBoolean(false)
   const { mode, isDarkMode } = useDarkMode()
   const [scrollingContainerRef, setScrollingContainerRef] = useState<HTMLDivElement>(null)
   const [searchValue, setSearchValue] = useState<string>('')
-
+  const [popularTokens, setPopularTokens] = useState<JupToken[]>([])
   const { balance, topBalances } = useWalletBalance()
-  console.log(topBalances, tokenList)
+  const { wallet } = useWallet()
+  const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
+
+  const topBalancesWithTokenList: JupToken[] = useMemo(
+    () => [
+      ...topBalances.map((b) => ({
+        ...b,
+        address: b.mint
+      })),
+      ...tokenList.filter((token) => balance[token.address] === undefined)
+    ],
+    [topBalances, tokenList, balance, searchValue]
+  )
+
+  console.log('TEST', topBalancesWithTokenList)
 
   useEffect(() => {
     const abortSignal = aborter.addSignal('tokenList')
@@ -340,6 +355,14 @@ function TokenSelectionInput({
       aborter.abortSignal('tokenList')
     }
   }, [searchValue])
+
+  useEffect(() => {
+    fetchTokensByPublicKey([...POPULAR_TOKENS].join(',')).then((res) => {
+      if (res.success) {
+        setPopularTokens(res.data.tokens)
+      }
+    })
+  }, [])
 
   return (
     <InputGroup
@@ -377,19 +400,51 @@ function TokenSelectionInput({
               portal={true}
               align={'start'}
             >
-              <SearchBar
-                groupClassName={'sticky'}
-                placeholder={'Search by token symbol'}
-                value={searchValue}
-                onKeyDown={(e) => e.stopPropagation()}
-                onChange={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  setSearchValue(e.target.value)
-                }}
-                onClear={() => setSearchValue('')}
-              />
-              <div></div>
+              {createPoolType === 'hyper' && (
+                <SearchBar
+                  groupClassName={'sticky'}
+                  placeholder={'Search by token symbol'}
+                  value={searchValue}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onChange={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setSearchValue(e.target.value)
+                  }}
+                  onClear={() => setSearchValue('')}
+                />
+              )}
+              {createPoolType === 'hyper' && (
+                <div className={'border-b border-solid dark:border-black-4 border-grey-4'}>
+                  <h5
+                    className={`my-2 dark:text-text-darkmode-secondary 
+                                        text-text-lightmode-secondary`}
+                  >
+                    Popular
+                  </h5>
+                  <div className={'flex pb-2'}>
+                    {popularTokens.map((token) => (
+                      <div
+                        className={`border-solid dark:border-black-4 border-grey-4 border 
+                          cursor-pointer p-1 flex mr-1 rounded-[4px]`}
+                        key={token?.address}
+                      >
+                        <Icon
+                          src={loadIconImage(token?.logoURI, mode)}
+                          size={'sm'}
+                          className={'rounded-circle mr-1'}
+                        />
+                        <span
+                          className={`font-bold dark:text-text-darkmode-secondary 
+                                        text-text-lightmode-secondary`}
+                        >
+                          {token?.symbol}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <ScrollingHydrateContainer
                 ref={(ref) => setScrollingContainerRef(ref)}
                 callback={() => {
@@ -404,11 +459,15 @@ function TokenSelectionInput({
                   ).then(() => setPage(page + 1))
                 }}
               >
-                {tokenList.length > 0 ? (
+                {tokenList.length > 0 || topBalancesWithTokenList.length > 0 ? (
                   <WindowingContainer
                     className={'h-full'}
                     rootElement={scrollingContainerRef}
-                    items={tokenList}
+                    items={
+                      searchValue.length > 0 || createPoolType === 'primary' || !publicKey
+                        ? tokenList
+                        : topBalancesWithTokenList
+                    }
                     render={(curToken: JupToken) => (
                       <DropdownMenuItem
                         className={' cursor-pointer p-1.5 flex'}
@@ -417,15 +476,13 @@ function TokenSelectionInput({
                           setSearchValue('')
                         }}
                         key={curToken?.address}
-                        disabled={otherToken?.symbol === curToken?.symbol}
+                        disabled={otherToken?.address === curToken?.address}
                       >
                         <div className={'flex w-full flex-1'}>
                           <div className={`flex gap-2`}>
                             <Icon
-                              className={
-                                `rounded-circle h-[24px] w-[24px] border 
-                                border-solid dark:border-black-4 border-grey-4`
-                              }
+                              className={`rounded-circle h-[24px] w-[24px] border 
+                                border-solid dark:border-black-4 border-grey-4`}
                               src={loadIconImage(curToken?.logoURI, mode)}
                             />
                             <div>

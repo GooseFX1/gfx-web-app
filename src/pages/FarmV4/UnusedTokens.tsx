@@ -49,7 +49,7 @@ const UnusedTokens: FC = () => {
         ${commafy(parseFloat(walletValue), 2)}
       </div>
       <div className={`overflow-scroll`}>
-        {topBalances.map((balance) => (
+        {topBalances.slice(0, 5).map((balance) => (
           <div className="flex flex-row justify-between items-center mb-3" key={balance.symbol}>
             <div className="flex flex-row items-center">
               <Icon

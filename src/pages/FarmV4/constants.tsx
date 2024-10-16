@@ -215,3 +215,10 @@ export const GAMMA_SORT_CONFIG_MAP: Map<string, GAMMASortConfig> =
 export const BASE_SLIPPAGE = [0.1, 0.5, 1.0]
 export const TOKEN_LIST_PAGE_SIZE = 50
 export const POOL_LIST_PAGE_SIZE = 200
+export const POPULAR_TOKENS = new Set([
+  'So11111111111111111111111111111111111111112',
+  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+  'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So',
+  '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
+])
