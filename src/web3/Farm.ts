@@ -1,5 +1,11 @@
-import { PublicKey, TransactionInstruction, Connection } from "@solana/web3.js"
-import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from '@solana/spl-token-v2'
+import { PublicKey, TransactionInstruction, Connection, SystemProgram } from "@solana/web3.js"
+import {
+    TOKEN_PROGRAM_ID,
+    getAssociatedTokenAddress,
+    createAssociatedTokenAccountInstruction,
+    createSyncNativeInstruction,
+    NATIVE_MINT
+} from '@solana/spl-token-v2'
 import { Idl, Program } from "@project-serum/anchor"
 import { Transaction } from "@solana/web3.js"
 import BN from 'bn.js'
@@ -166,7 +172,7 @@ const getAccountsForDepositWithdraw = async (selectedCard: any, userPublicKey: P
 }
 
 const handleSlippageCalculation = (amount: string, slippage: number, isDeposit: boolean): string => {
-    if (!amount || !slippage) return ''
+    if (!amount) return ''
 
     let slippageAmount = 0
     if (isDeposit) slippageAmount = Math.ceil(+amount + ((slippage / 100) * +amount))
@@ -185,7 +191,7 @@ const getAccountsForCreatePool = async (token0: PublicKey, token1: PublicKey, us
     const poolVaultKeyA = await getPoolVaultKey(poolIdKey, token0?.toBase58())
     const poolVaultKeyB = await getPoolVaultKey(poolIdKey, token1?.toBase58())
     const poolFeeAcc = new PublicKey(GAMMA_FEE_ACCOUNT)
-    const userPoolLiquidityAcc =  await getLiquidityPoolKey(poolIdKey, userPubKey)
+    const userPoolLiquidityAcc = await getLiquidityPoolKey(poolIdKey, userPubKey)
 
     const accountObj = {
         creator: userPubKey,
@@ -241,13 +247,21 @@ export const calculateOtherTokenAndLPAmount = async (
 
     if (tokenType === TokenType.Token0) {
         const inputToken0 = convertToNativeValue(givenTokenAmount, poolState?.mint0Decimals)
-        lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
-        const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
+        lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)
+        if (lpTokenAmount.eq(new BN(0))) lpTokenAmount = new BN(0) //to prevent divide by zero erro
+        else lpTokenAmount = new BN(inputToken0)?.mul(lpTokenSupply)?.div(swapTokenAmount0)
+        let otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)
+        if (otherTokenAmount.eq(new BN(0))) otherTokenAmount = new BN(0) //to prevent divide by zero error 
+        else otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount1)?.div(lpTokenSupply)
         otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint1Decimals)
     } else {
         const inputToken1 = convertToNativeValue(givenTokenAmount, poolState?.mint1Decimals)
-        lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
-        const otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
+        lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)
+        if (lpTokenAmount.eq(new BN(0))) lpTokenAmount = new BN(0) //to prevent divide by zero error
+        else lpTokenAmount = new BN(inputToken1)?.mul(lpTokenSupply)?.div(swapTokenAmount1)
+        let otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)
+        if (otherTokenAmount.eq(new BN(0))) otherTokenAmount = new BN(0) //to prevent divide by zero error       
+        else otherTokenAmount = lpTokenAmount?.mul(swapTokenAmount0)?.div(lpTokenSupply)
         otherTokenAmountInString = withdrawBigStringFarm(otherTokenAmount?.toString(), poolState?.mint0Decimals)
     }
 
@@ -288,7 +302,14 @@ export const deposit = async (
         new BN(token1Amount), {
         accounts: depositInstructionAccount
     })
-    const depositAmountTX = new Transaction()
+    let depositAmountTX: Transaction
+    if (selectedCard?.mintA?.symbol === 'SOL') {
+        depositAmountTX = await wrapSolToken(userPublicKey, connection, userSourceDepositAmount)
+    }
+    else if (selectedCard?.mintB?.symbol === 'SOL') {
+        depositAmountTX = await wrapSolToken(userPublicKey, connection, userTargetDepositAmount)
+    }
+    else depositAmountTX = new Transaction()
     if (liquidityAccIX !== undefined) {
         depositAmountTX.add(liquidityAccIX)
     }
@@ -304,7 +325,8 @@ export const withdraw = async (
     slippage: number,
     selectedCard: any,
     userPublicKey: PublicKey,
-    program: Program<Idl>
+    program: Program<Idl>,
+    connection: Connection
 ): Promise<Transaction> => {
     const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
     const withdrawInstructionAccount = { ...withdrawAccounts }
@@ -312,13 +334,28 @@ export const withdraw = async (
     const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
     const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
     const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
+    const withdrawAmountTX = new Transaction()
+
+    const mintAata = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+    const createTokenA = await checkIfTokenAccExists(new PublicKey(selectedCard?.mintA?.address),
+        userPublicKey,
+        connection,
+        mintAata)
+    if (createTokenA) withdrawAmountTX.add(createTokenA)
+
+    const mintBata = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+    const createTokenB = await checkIfTokenAccExists(new PublicKey(selectedCard?.mintB?.address),
+        userPublicKey,
+        connection,
+        mintBata)
+    if (createTokenB) withdrawAmountTX.add(createTokenB)
+
     const withdrawIX: TransactionInstruction = await program.instruction.withdraw(
         lpAmount,
         new BN(token0Amount),
         new BN(token1Amount), {
         accounts: withdrawInstructionAccount
     })
-    const withdrawAmountTX = new Transaction()
     withdrawAmountTX.add(withdrawIX)
     return withdrawAmountTX
 }
@@ -349,7 +386,6 @@ export const createPool = async (
         decimalsToken0 = tokenB?.decimals
         decimalsToken1 = tokenA?.decimals
     }
-    console.log('token0', token0?.toString(), token1.toString())
     const accsForCreatePool = await getAccountsForCreatePool(token0, token1, userPubKey)
     const createPoolAcc = { ...accsForCreatePool }
     const amountTokenABN = convertToNativeValue(amountToken0, decimalsToken0)
@@ -363,4 +399,56 @@ export const createPool = async (
     const createPoolTxn = new Transaction()
     createPoolTxn.add(createPoolIX)
     return createPoolTxn
+}
+
+const checkIfTokenAccExists = async (
+    tokenMintAddress: PublicKey,
+    wallet: PublicKey,
+    connection,
+    ataAddress: PublicKey
+) => {
+    const associatedTokenAccount = await connection.getAccountInfo(ataAddress)
+
+    // CHECK if the associated token account exists or not if not create one
+    if (!associatedTokenAccount) {
+        try {
+            const tr = createAssociatedTokenAccountInstruction(wallet, ataAddress, wallet, tokenMintAddress)
+            return tr
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    return null
+}
+
+const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, amount: string) => {
+    try {
+        const tx = new Transaction()
+        const nativeAmount = convertToNativeValue(amount, 9) //mint decimal of sol = 9
+        const associatedTokenAccount = await getAssociatedTokenAddress(NATIVE_MINT, walletPublicKey)
+        const accountExists = await connection.getAccountInfo(associatedTokenAccount)
+        // Create token account to hold your wrapped SOL
+        if (!accountExists)
+            tx.add(
+                createAssociatedTokenAccountInstruction(
+                    walletPublicKey,
+                    associatedTokenAccount,
+                    walletPublicKey,
+                    NATIVE_MINT
+                )
+            )
+        // Transfer SOL to associated token account and use SyncNative to update wrapped SOL balance
+        tx.add(
+            SystemProgram.transfer({
+                fromPubkey: walletPublicKey,
+                toPubkey: associatedTokenAccount,
+                lamports: +nativeAmount
+            }),
+            createSyncNativeInstruction(associatedTokenAccount)
+        )
+        return tx
+    } catch (e) {
+        console.log('There was an error while wrapping sol to wsol', e)
+        return null
+    }
 }

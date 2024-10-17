@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { FC, useMemo, useState } from 'react'
 import { useDarkMode, useGamma, useRewardToggle } from '../../context'
 import { bigNumberFormatter, truncateBigNumber } from '../../utils'
@@ -56,6 +55,7 @@ export const FarmHeader: FC = () => {
     }
     return data
   }, [userPubKey])
+
   const options = useMemo(
     () => [
       {

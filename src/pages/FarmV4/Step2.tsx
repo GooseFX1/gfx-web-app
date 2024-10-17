@@ -76,8 +76,8 @@ const Step2: FC<{
   useEffect(() => {
     if (+amountTokenA && +amountTokenB) {
       !priceSwitch
-        ? setInitialPrice((+amountTokenA / +amountTokenB)?.toFixed(2))
-        : setInitialPrice((+amountTokenB / +amountTokenA)?.toFixed(2))
+        ? setInitialPrice((+amountTokenA / +amountTokenB)?.toString())
+        : setInitialPrice((+amountTokenB / +amountTokenA)?.toString())
     } else {
       setInitialPrice('')
     }
