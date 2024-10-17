@@ -13,7 +13,7 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { ModeOfOperation } from './constants'
 import { DepositWithdrawHeader } from './DepositWithdrawHeader'
 import useBreakPoint from '@/hooks/useBreakPoint'
-import useBoolean from '@/hooks/useBoolean'
+//import useBoolean from '@/hooks/useBoolean'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
@@ -23,6 +23,7 @@ import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
+import useSolSub from '@/hooks/useSolSub'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -41,7 +42,9 @@ export const DepositWithdrawSlider: FC = () => {
     sendingTransaction,
     setSendingTransaction,
     selectedCardLiquidityAcc,
-    setSelectedCardLiquidityAcc
+    setSelectedCardLiquidityAcc,
+    liveBalanceTracking,
+    connectionId
   } = useGamma()
 
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
@@ -52,14 +55,15 @@ export const DepositWithdrawSlider: FC = () => {
   const [userSourceWithdrawAmount, setUserSourceWithdrawAmount] = useState<string>('')
   const [userTargetWithdrawAmount, setUserTargetWithdrawAmount] = useState<string>('')
   const [transactionLPAmount, setTransactionLPAmount] = useState<BN>()
-  //eslint-disable-next-line
-  const [isButtonLoading, setIsButtonLoading] = useBoolean()
+  //const [isButtonLoading, setIsButtonLoading] = useBoolean()
   const [actionType, setActionType] = useState<string>('')
   //const [isClaim, setIsClaim] = useBoolean(false)
   const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
+  const { off } = useSolSub()
+
   //eslint-disable-next-line
   useEffect(() => {
     return () => {
@@ -68,11 +72,11 @@ export const DepositWithdrawSlider: FC = () => {
   }, [])
 
   useEffect(() => {
-    if (selectedCard) {
+    if (selectedCard && userPublicKey) {
       setUserSourceTokenBal(balance[selectedCard?.mintA?.symbol].tokenAmount.uiAmount)
       setUserTargetTokenBal(balance[selectedCard?.mintB?.symbol].tokenAmount.uiAmount)
     }
-  }, [selectedCard, balance])
+  }, [selectedCard, balance, userPublicKey])
 
   const handleClose = () => {
     setUserSourceDepositAmount('')
@@ -228,7 +232,8 @@ export const DepositWithdrawSlider: FC = () => {
       } else {
         if (sourceToken) {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
-            !selectedCardLiquidityAcc?.token0Deposited?.isZero() ?
+            !selectedCardLiquidityAcc?.token0Deposited?.isZero() &&
+              !(selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn))?.isZero() ?
               withdrawBigStringFarm(
                 selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn)
                   ?.div(new BN(2))?.toString(), selectedCardPool?.mint0Decimals) : '0' : '0'
@@ -245,7 +250,8 @@ export const DepositWithdrawSlider: FC = () => {
           }
         } else {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
-            !selectedCardLiquidityAcc?.token1Deposited?.isZero() ?
+            !selectedCardLiquidityAcc?.token1Deposited?.isZero() &&
+              !(selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)).isZero() ?
               withdrawBigStringFarm(
                 selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)
                   ?.div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals) : '0' : '0'
@@ -299,7 +305,7 @@ export const DepositWithdrawSlider: FC = () => {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
             !selectedCardLiquidityAcc?.token0Deposited?.isZero() ?
               withdrawBigStringFarm((selectedCardLiquidityAcc?.token0Deposited)
-                  ?.sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
+                ?.sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
                 , selectedCardPool?.mint0Decimals) : '0' : '0'
           setUserSourceWithdrawAmount(withdraw0Amount)
           if (Object.keys(selectedCardPool)?.length) {
@@ -316,7 +322,7 @@ export const DepositWithdrawSlider: FC = () => {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
             !selectedCardLiquidityAcc?.token1Deposited?.isZero() ?
               withdrawBigStringFarm((selectedCardLiquidityAcc?.token1Deposited)
-                  ?.sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
+                ?.sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
                 selectedCardPool?.mint1Decimals) : '0' : '0'
           setUserTargetWithdrawAmount(withdraw1Amount)
           if (Object.keys(selectedCardPool)?.length) {
@@ -338,6 +344,7 @@ export const DepositWithdrawSlider: FC = () => {
   const handleDeposit = async () => {
     try {
       const txBuilder = createTransactionBuilder()
+      liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await deposit(
         userSourceDepositAmount,
         userTargetDepositAmount,
@@ -353,14 +360,15 @@ export const DepositWithdrawSlider: FC = () => {
       const { success } = await sendTransaction(txBuilder)
 
       if (!success) {
-        console.log('failure')
+        off(connectionId)
+        console.log('An error occurred while depositing. 1')
         setSendingTransaction(false)
         return
       } else {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        setOpenDepositWithdrawSlider(false)
+        //setOpenDepositWithdrawSlider(false)
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -371,6 +379,7 @@ export const DepositWithdrawSlider: FC = () => {
   const handleWithdraw = async () => {
     try {
       const txBuilder = createTransactionBuilder()
+      liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await withdraw(
         userSourceWithdrawAmount,
         userTargetWithdrawAmount,
@@ -378,13 +387,15 @@ export const DepositWithdrawSlider: FC = () => {
         slippage,
         selectedCard,
         userPublicKey,
-        GammaProgram
+        GammaProgram,
+        connection
       )
       txBuilder.add(tx)
       const { success } = await sendTransaction(txBuilder)
 
       if (!success) {
-        console.log('failure')
+        off(connectionId)
+        console.log('An error occurred while withdrawing 1.')
         setSendingTransaction(false)
         return
       } else {
@@ -422,7 +433,7 @@ export const DepositWithdrawSlider: FC = () => {
   const handleActionCancel = () => {
     setActionType('')
     //setIsClaim.off()
-    setIsButtonLoading.off()
+    //setIsButtonLoading.off()
   }
 
   //const claimableReward = 0

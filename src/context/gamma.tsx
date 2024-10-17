@@ -1,4 +1,15 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+  //useCallback
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -38,7 +49,8 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
-
+import { Connection, PublicKey } from '@solana/web3.js'
+//import useSolSub from '@/hooks/useSolSub'
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -105,6 +117,8 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
+  liveBalanceTracking: any
+  connectionId: string
 }
 
 export type TokenListToken = {
@@ -168,6 +182,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
+  //const { on, off } = useSolSub()
+  const [connectionId, setConnectionId] = useState<string>()
 
   // TODO:
   useEffect(() => {
@@ -194,6 +210,46 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
+  // const liveBalanceTracking = useCallback(
+  //   async (userPublicKey: PublicKey, selectedCard: any) => {
+  //     const id = `${selectedCard?.mintA?.address}-${selectedCard?.mintB?.address}`
+  //     const poolIdKey = await getpoolId(selectedCard)
+  //     const liquidityAcc = await getLiquidityPoolKey(userPublicKey, poolIdKey)
+  //     console.log('call', liquidityAcc?.toBase58())
+  //     on({
+  //       SubType: SubType.AccountChange,
+  //       id,
+  //       callback: async (info) => {
+  //         try{
+  //           console.log('calling callback', info.data)
+  //           const updatedLiqAcc = await GammaProgram.coder.accounts.decode('UserPoolLiquidity', info.data)
+  //           setConnectionId(id)
+  //           setSelectedCardLiquidityAcc(updatedLiqAcc)
+  //           off(id)
+  //         } catch(e) {
+  //           console.log('e', e)
+  //         }
+
+  //       },
+  //       publicKey: liquidityAcc
+  //     })
+  //   },
+  //   [on, GammaProgram, getpoolId, getLiquidityPoolKey]
+  // )
+
+  const liveBalanceTracking = async (connection: Connection, userPublicKey: PublicKey, selectedCard: any) => {
+    let id = null
+    const poolIdKey = await getpoolId(selectedCard)
+    const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
+    //console.log('depositAccounts in main', liquidityAcc?.toBase58(), poolIdKey?.toBase58())
+    id = connection.onAccountChange(liquidityAcc, async (info) => {
+      const updatedLiqAcc = await GammaProgram.coder.accounts.decode('UserPoolLiquidity', info.data)
+      setSelectedCardLiquidityAcc(updatedLiqAcc)
+      connection.removeAccountChangeListener(id)
+    })
+    setConnectionId(id)
+  }
+  
   const updateTokenList = async (
     {
       page,
@@ -399,7 +455,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     ;(async () => {
-      if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
+      if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
           const liquidityAccountKey = await getLiquidityPoolKey(poolIdKey, publicKey)
@@ -487,7 +543,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible
+        setIsConfettiVisible,
+        liveBalanceTracking,
+        connectionId
       }}
     >
       {children}
