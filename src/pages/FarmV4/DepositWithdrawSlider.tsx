@@ -77,12 +77,7 @@ export const DepositWithdrawSlider: FC = () => {
       setUserTargetTokenBal(balance[selectedCard?.mintB?.symbol].tokenAmount.uiAmount)
     }
   }, [selectedCard, balance, userPublicKey])
-  console.log({
-    balanceA: balance[selectedCard?.mintA?.symbol],
-    balanceB: balance[selectedCard?.mintB?.symbol],
-    mintA: selectedCard?.mintA,
-    mintB: selectedCard?.mintB
-  })
+
   const handleClose = () => {
     setUserSourceDepositAmount('')
     setUserSourceWithdrawAmount('')

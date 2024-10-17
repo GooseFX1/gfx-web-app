@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useState, useMemo } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import {
   Badge,
   Button,
@@ -17,7 +17,7 @@ import {
   TooltipTrigger
 } from 'gfx-component-lib'
 import { useDarkMode, useGamma } from '../../context'
-import { JupToken, TOKEN_LIST_PAGE_SIZE, POPULAR_TOKENS } from './constants'
+import { JupToken, POPULAR_TOKENS, TOKEN_LIST_PAGE_SIZE } from './constants'
 //import RadioOptionGroup from '@/components/common/RadioOptionGroup'
 import useBoolean from '@/hooks/useBoolean'
 import Text from '@/components/Text'
@@ -49,23 +49,23 @@ const Step2: FC<{
   walletTokenB: string
   setIsCreatePool: Dispatch<SetStateAction<boolean>>
 }> = ({
-  tokenA,
-  setTokenA,
-  tokenB,
-  setTokenB,
-  handleChange,
-  amountTokenA,
-  amountTokenB,
-  // feeTier,
-  // setFeeTier,
-  poolExists,
-  setPoolExists,
-  initialPrice,
-  setInitialPrice,
-  walletTokenA,
-  walletTokenB,
-  setIsCreatePool
-}) => {
+        tokenA,
+        setTokenA,
+        tokenB,
+        setTokenB,
+        handleChange,
+        amountTokenA,
+        amountTokenB,
+        // feeTier,
+        // setFeeTier,
+        poolExists,
+        setPoolExists,
+        initialPrice,
+        setInitialPrice,
+        walletTokenA,
+        walletTokenB,
+        setIsCreatePool
+      }) => {
   const { mode } = useDarkMode()
   const [priceSwitch, setPriceSwitch] = useState(false)
   const [poolExistsText, setPoolExistsText] = useState<string>('')
@@ -268,7 +268,7 @@ const Step2: FC<{
         +amountTokenB &&
         (+amountTokenA > +walletTokenA || +amountTokenB > +walletTokenB) ? (
           <span className="text-red-1 font-sembold text-regular">
-            {connected ? "You don't have enough tokens in the wallet!" : 'Please connect your wallet to proceed!'}
+            {connected ? 'You don\'t have enough tokens in the wallet!' : 'Please connect your wallet to proceed!'}
           </span>
         ) : tokenA && tokenB && tokenA?.symbol === tokenB?.symbol ? (
           <span className="text-red-1 font-sembold text-regular">
@@ -294,12 +294,12 @@ const Step2: FC<{
 }
 
 function TokenSelectionInput({
-  token,
-  handleChange,
-  amountToken,
-  setToken,
-  otherToken
-}: {
+                               token,
+                               handleChange,
+                               amountToken,
+                               setToken,
+                               otherToken
+                             }: {
   token: JupToken | null
   otherToken: JupToken | null
   handleChange: (e: any, boolean) => void
@@ -318,18 +318,28 @@ function TokenSelectionInput({
   const publicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter?.publicKey])
 
   const topBalancesWithTokenList: JupToken[] = useMemo(
-    () => [
-      ...topBalances.map((b) => ({
-        ...b,
-        address: b.mint
-      })),
-      ...tokenList.filter((token) => balance[token.address] === undefined)
-    ],
+    () => {
+      const data = []
+      const hasTokenSet = new Set()
+      for (const tokenBalance of topBalances) {
+        if (!hasTokenSet.has(tokenBalance.mint)) {
+          hasTokenSet.add(tokenBalance.mint)
+          data.push({
+            ...tokenBalance,
+            address: tokenBalance.mint
+          })
+        }
+      }
+      for (const token of tokenList) {
+        if (!hasTokenSet.has(token.address)) {
+          data.push(token)
+        }
+      }
+      return data.sort((a,b)=>balance[a.symbol].value.gt(balance[b.symbol].value)?-1:1)
+    },
     [topBalances, tokenList, balance, searchValue]
   )
-
-  console.log('TEST', topBalancesWithTokenList)
-
+  
   useEffect(() => {
     const abortSignal = aborter.addSignal('tokenList')
     // faking search
@@ -422,25 +432,30 @@ function TokenSelectionInput({
                   >
                     Popular
                   </h5>
-                  <div className={'flex pb-2'}>
+                  <div className={'flex pb-2 gap-1'}>
                     {popularTokens.map((token) => (
-                      <div
+                      <Button
                         className={`border-solid dark:border-black-4 border-grey-4 border 
-                          cursor-pointer p-1 flex mr-1 rounded-[4px]`}
+                          cursor-pointer p-1 flex rounded-[4px]`}
                         key={token?.address}
-                      >
-                        <Icon
+                        onClick={()=> {
+                          setToken(token)
+                          setIsDropdownOpen.off()
+                        }}
+                        disabled={otherToken?.address == token?.address}
+                        iconLeft={<Icon
                           src={loadIconImage(token?.logoURI, mode)}
                           size={'sm'}
-                          className={'rounded-circle mr-1'}
-                        />
+                          className={'rounded-circle'}
+                        />}
+                      >
                         <span
                           className={`font-bold dark:text-text-darkmode-secondary 
                                         text-text-lightmode-secondary`}
                         >
                           {token?.symbol}
                         </span>
-                      </div>
+                      </Button>
                     ))}
                   </div>
                 </div>

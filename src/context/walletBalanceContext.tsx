@@ -26,7 +26,7 @@ interface UserTokenAccounts {
   name: string
   logoURI: string
   decimals: number
-  mint: PublicKey
+  mint: string
   pda: PublicKey
   tokenAmount: TokenAmount
   value: Decimal
@@ -71,10 +71,10 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     publicKeys: tokenAccounts.map((account) => {
       const callback = async () => {
         console.log('Setting balance for', account.symbol)
-        if (account.mint.toBase58() == NATIVE_MINT.toBase58()) {
+        if (account.mint == NATIVE_MINT.toBase58()) {
           const t = await connection.getBalance(account.pda)
           const dec = account.decimals || 9
-          setBalanceBySymbol(account.mint.toBase58(), {
+          setBalanceBySymbol(account.mint, {
             amount: t.toString(),
             decimals: dec,
             uiAmount: t / 10 ** dec,
@@ -83,7 +83,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           return
         }
         const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-        setBalanceBySymbol(account.mint.toBase58(), t.value)
+        setBalanceBySymbol(account.mint, t.value)
       }
       return {
         publicKey: account.pda,
@@ -173,7 +173,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
     let currentWalletValue = new Decimal(0.0)
     const tokenListResponse = await fetchTokensByPublicKey(addresses)
-  console.log('tokenList A', { tokenListResponse })
+
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
