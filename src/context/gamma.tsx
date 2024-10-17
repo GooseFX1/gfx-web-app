@@ -51,6 +51,8 @@ import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import { Connection, PublicKey } from '@solana/web3.js'
 //import useSolSub from '@/hooks/useSolSub'
+import BN from 'bn.js'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -477,8 +479,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           ...pool,
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
-            ? new Decimal(userLpPosition.tokenADeposited).gt(0) ||
-            new Decimal(userLpPosition.tokenBDeposited).gt(0)
+            ? new BN(userLpPosition?.tokenADeposited)?.sub(new BN(userLpPosition?.tokenAWithdrawn))?.gt(new BN(0))
             : false
         }
       })
