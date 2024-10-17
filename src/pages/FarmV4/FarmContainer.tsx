@@ -27,7 +27,8 @@ export const FarmContainer: FC = () => {
     currentSort,
     setCurrentSort,
     showDeposited,
-    setShowDeposited
+    setShowDeposited,
+    filteredPools
   } = useGamma()
   const { wallet } = useWallet()
   const [isSortFilterOpen, setIsSortFilterOpen] = useBoolean(false)
@@ -49,8 +50,11 @@ export const FarmContainer: FC = () => {
     }
   }, [openDepositWithdrawSlider])
 
-  //TODO: need to change the calculation upon getting onchain data
-  const numberOfTokensDeposited = 0
+  const numberOfTokensDeposited = filteredPools.reduce((acc, data) => {
+    if(data?.hasDeposit) return acc + 1
+
+    return acc
+  }, 0)
 
   useEffect(() => {
     if (pubKey === null && userCache.gamma.showDepositedFilter)
