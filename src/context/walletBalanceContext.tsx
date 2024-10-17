@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   GetProgramAccountsFilter,
   ParsedAccountData,
@@ -38,7 +38,7 @@ type CreateTokenAccountParams = { pda: PublicKey; mint: PublicKey }
 
 interface IWalletBalanceContext {
   balance: Balance
-  topBalances: Balance
+  topBalances: UserTokenAccounts[]
   publicKey: PublicKey | null
   base58PublicKey: string
   createTokenAccountInstruction: (data: CreateTokenAccountParams) => TransactionInstruction
@@ -71,10 +71,10 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     publicKeys: tokenAccounts.map((account) => {
       const callback = async () => {
         console.log('Setting balance for', account.symbol)
-        if (account.mint == NATIVE_MINT.toBase58()) {
+        if (account.mint.toBase58() == NATIVE_MINT.toBase58()) {
           const t = await connection.getBalance(account.pda)
           const dec = account.decimals || 9
-          setBalanceBySymbol(account.mint, {
+          setBalanceBySymbol(account.mint.toBase58(), {
             amount: t.toString(),
             decimals: dec,
             uiAmount: t / 10 ** dec,
@@ -83,7 +83,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
           return
         }
         const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-        setBalanceBySymbol(account.mint, t.value)
+        setBalanceBySymbol(account.mint.toBase58(), t.value)
       }
       return {
         publicKey: account.pda,
@@ -102,13 +102,21 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }, [connection, network, publicKey])
 
   function setBalanceBySymbol(mint: string, amount: TokenAmount) {
-    setBalance((prev) => ({
-      ...prev,
-      [mint]: {
-        ...prev[mint],
-        tokenAmount: amount
+
+    setBalance((prev) => {
+      const originalValue = prev[mint];
+      return {
+        ...prev,
+        [mint]: {
+          ...prev[mint],
+          tokenAmount: amount
+        },
+        [originalValue.symbol]: {
+          ...prev[mint],
+          tokenAmount: amount
+        }
       }
-    }))
+    })
   }
 
   async function getTokenAccounts() {
@@ -137,19 +145,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       const data = account.account.data as ParsedAccountData
       addresses += data.parsed.info.mint + ','
       tokenInfo[data.parsed.info.mint] = data.parsed.info
-      // if (data.parsed.info.mint in SUPPORTED_TOKENS) {
-      //   const supportedToken = SUPPORTED_TOKENS[data.parsed.info.mint]
-      //   tokenAccounts[supportedToken.symbol] = {
-      //     ...data.parsed.info,
-      //     ...supportedToken,
-      //     pda: findProgramAddressSync(
-      //       [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(data.parsed.info.mint).toBuffer()],
-      //       ASSOCIATED_TOKEN_PROGRAM_ID
-      //     )[0],
-      //     value: 0.0,
-      //     price: 0.0
-      //   }
-      // }
     })
 
     addresses = addresses.slice(0, -1)
@@ -178,13 +173,14 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
     let currentWalletValue = new Decimal(0.0)
     const tokenListResponse = await fetchTokensByPublicKey(addresses)
-
+  console.log('tokenList A', { tokenListResponse })
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
         if (!(data.address in tokenAccounts) && (data.address in tokenInfo)) {
           tokenAccounts[data.address] = {...tokenInfo[data.address]}
         }
+
         tokenAccounts[data.address].mint = address
         tokenAccounts[data.address] = Object.assign(tokenAccounts[data.address], rest)
         tokenAccounts[data.address].price = data.price
@@ -192,12 +188,13 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         tokenAccounts[data.address].value = value
         currentWalletValue = currentWalletValue.add(value)
 
-        if (rest.address != 'SOL') {
+        if (address != 'SOL') {
           tokenAccounts[data.address].pda = findProgramAddressSync(
             [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
             ASSOCIATED_TOKEN_PROGRAM_ID
           )[0]
         }
+        tokenAccounts[data.symbol] = tokenAccounts[data.address]
       }
     }
 

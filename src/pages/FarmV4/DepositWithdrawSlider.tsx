@@ -77,7 +77,12 @@ export const DepositWithdrawSlider: FC = () => {
       setUserTargetTokenBal(balance[selectedCard?.mintB?.symbol].tokenAmount.uiAmount)
     }
   }, [selectedCard, balance, userPublicKey])
-
+  console.log({
+    balanceA: balance[selectedCard?.mintA?.symbol],
+    balanceB: balance[selectedCard?.mintB?.symbol],
+    mintA: selectedCard?.mintA,
+    mintB: selectedCard?.mintB
+  })
   const handleClose = () => {
     setUserSourceDepositAmount('')
     setUserSourceWithdrawAmount('')
@@ -233,7 +238,7 @@ export const DepositWithdrawSlider: FC = () => {
         if (sourceToken) {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
             !selectedCardLiquidityAcc?.token0Deposited?.isZero() &&
-              !(selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn))?.isZero() ?
+            !(selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn))?.isZero() ?
               withdrawBigStringFarm(
                 selectedCardLiquidityAcc?.token0Deposited?.sub(selectedCardLiquidityAcc?.token0Withdrawn)
                   ?.div(new BN(2))?.toString(), selectedCardPool?.mint0Decimals) : '0' : '0'
@@ -251,7 +256,7 @@ export const DepositWithdrawSlider: FC = () => {
         } else {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
             !selectedCardLiquidityAcc?.token1Deposited?.isZero() &&
-              !(selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)).isZero() ?
+            !(selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)).isZero() ?
               withdrawBigStringFarm(
                 selectedCardLiquidityAcc?.token1Deposited?.sub(selectedCardLiquidityAcc?.token1Withdrawn)
                   ?.div(new BN(2))?.toString(), selectedCardPool?.mint1Decimals) : '0' : '0'
@@ -305,7 +310,7 @@ export const DepositWithdrawSlider: FC = () => {
           const withdraw0Amount = selectedCardLiquidityAcc?.token0Deposited ?
             !selectedCardLiquidityAcc?.token0Deposited?.isZero() ?
               withdrawBigStringFarm((selectedCardLiquidityAcc?.token0Deposited)
-                ?.sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
+                  ?.sub(selectedCardLiquidityAcc?.token0Withdrawn)?.toString()
                 , selectedCardPool?.mint0Decimals) : '0' : '0'
           setUserSourceWithdrawAmount(withdraw0Amount)
           if (Object.keys(selectedCardPool)?.length) {
@@ -322,7 +327,7 @@ export const DepositWithdrawSlider: FC = () => {
           const withdraw1Amount = selectedCardLiquidityAcc?.token1Deposited ?
             !selectedCardLiquidityAcc?.token1Deposited?.isZero() ?
               withdrawBigStringFarm((selectedCardLiquidityAcc?.token1Deposited)
-                ?.sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
+                  ?.sub(selectedCardLiquidityAcc?.token1Withdrawn)?.toString(),
                 selectedCardPool?.mint1Decimals) : '0' : '0'
           setUserTargetWithdrawAmount(withdraw1Amount)
           if (Object.keys(selectedCardPool)?.length) {
