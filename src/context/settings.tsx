@@ -315,7 +315,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       async fetch(input, init?) {
         return await axiosFetchWithRetries(input, init)
       },
-      commitment: 'confirmed'
+      commitment: 'processed'
     })
     return { connection, perpsConnection }
   }, [endpointName, endpoint])
