@@ -403,9 +403,9 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
-        setOpenDepositWithdrawSlider(false)
+        //setOpenDepositWithdrawSlider(false)
         setActionType('')
-        setModeOfOperation(ModeOfOperation.DEPOSIT)
+        //setModeOfOperation(ModeOfOperation.DEPOSIT)
       }
     } catch (e) {
       setSendingTransaction(false)

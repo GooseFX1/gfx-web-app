@@ -4,7 +4,8 @@ import {
     getAssociatedTokenAddress,
     createAssociatedTokenAccountInstruction,
     createSyncNativeInstruction,
-    NATIVE_MINT
+    NATIVE_MINT,
+    createCloseAccountInstruction
 } from '@solana/spl-token-v2'
 import { Idl, Program } from "@project-serum/anchor"
 import { Transaction } from "@solana/web3.js"
@@ -316,6 +317,16 @@ export const deposit = async (
     }
     depositAmountTX.add(depositIX)
     console.log('depositAmountTX', depositAmountTX)
+    if (selectedCard?.mintA?.symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        depositAmountTX.add(tr)
+    }
+    if (selectedCard?.mintB?.symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        depositAmountTX.add(tr)
+    }
     return depositAmountTX
 }
 
@@ -359,6 +370,17 @@ export const withdraw = async (
         accounts: withdrawInstructionAccount
     })
     withdrawAmountTX.add(withdrawIX)
+
+    if (selectedCard?.mintA?.symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        withdrawAmountTX.add(tr)
+    }
+    if (selectedCard?.mintB?.symbol === 'SOL') {
+        const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
+        const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        withdrawAmountTX.add(tr)
+    }
     return withdrawAmountTX
 }
 
