@@ -358,6 +358,7 @@ export const DepositWithdrawSlider: FC = () => {
       txBuilder.add(tx)
       setSendingTransaction(true)
       const { success } = await sendTransaction(txBuilder)
+      console.log('success', success)
 
       if (!success) {
         off(connectionId)
