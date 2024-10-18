@@ -137,6 +137,7 @@ const createLiquidityAccountIX = async (
     const createLiquidityIX: TransactionInstruction = await program.instruction.initUserPoolLiquidity({
         accounts: createLiquidityInstructionAccount
     })
+    console.log('createLiquidityIX', createLiquidityIX, userPublicKey?.toBase58())
     return createLiquidityIX
 }
 
@@ -314,6 +315,7 @@ export const deposit = async (
         depositAmountTX.add(liquidityAccIX)
     }
     depositAmountTX.add(depositIX)
+    console.log('depositAmountTX', depositAmountTX)
     return depositAmountTX
 }
 
@@ -446,6 +448,7 @@ const wrapSolToken = async (walletPublicKey: PublicKey, connection: Connection, 
             }),
             createSyncNativeInstruction(associatedTokenAccount)
         )
+        console.log("nativeAmount", nativeAmount, tx)
         return tx
     } catch (e) {
         console.log('There was an error while wrapping sol to wsol', e)
