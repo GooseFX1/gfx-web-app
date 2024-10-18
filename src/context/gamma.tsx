@@ -1,15 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-  //useCallback
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -353,7 +342,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
   }, [createPoolType])
-
+  console.log({ tokenList })
   useEffect(() => {
     setPoolPage(1)
     // same page
