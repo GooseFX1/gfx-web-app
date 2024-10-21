@@ -1,4 +1,4 @@
-import { FC, ReactElement, useMemo } from 'react'
+import { FC, ReactElement, useCallback, useMemo } from 'react'
 import { useDarkMode, useGamma } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
@@ -14,21 +14,25 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
     const { selectedCardLiquidityAcc, modeOfOperation, selectedCardPool } = useGamma()
     const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
 
-    const calculateUIAmount = () => {
+    const calculateUIAmount = useCallback(() => {
       if (isDeposit) return truncateBigNumber(balance)
       if (isMintA) {
-        return truncateBigString(selectedCardLiquidityAcc?.token0Deposited?.
-          sub(selectedCardLiquidityAcc?.token0Withdrawn)?.
-          toString(),
-          selectedCardPool?.mint0Decimals)
+        return truncateBigString(
+          selectedCardLiquidityAcc?.token0Deposited?.sub(
+            selectedCardLiquidityAcc?.token0Withdrawn
+          )?.toString(),
+          selectedCardPool?.mint0Decimals
+        );
       }
       if (!isMintA) {
-        return truncateBigString(selectedCardLiquidityAcc?.token1Deposited?.
-          sub(selectedCardLiquidityAcc?.token1Withdrawn)?.
-          toString(),
-          selectedCardPool?.mint1Decimals)
+        return truncateBigString(
+          selectedCardLiquidityAcc?.token1Deposited?.sub(
+            selectedCardLiquidityAcc?.token1Withdrawn
+          )?.toString(),
+          selectedCardPool?.mint1Decimals
+        );
       }
-    }
+    }, [isDeposit, selectedCardLiquidityAcc]);
 
     const getWalletIcon = () =>
       (userPublicKey && balance > 0) ?

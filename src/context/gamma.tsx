@@ -1,4 +1,14 @@
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -39,9 +49,8 @@ import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import { Connection, PublicKey } from '@solana/web3.js'
-//import useSolSub from '@/hooks/useSolSub'
 import BN from 'bn.js'
-
+import { blob, struct, publicKey as pbk, u128 } from '@/utils/marshmallow'
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -173,7 +182,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
-  //const { on, off } = useSolSub()
   const [connectionId, setConnectionId] = useState<string>()
 
   // TODO:
@@ -201,44 +209,82 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => clearInterval(statsInterval)
   }, [])
 
+  const USER_POOL_LIQUIDITY_LAYOUT = struct([
+    blob(8, "discriminator"), // 8 bytes for the account discriminator
+    pbk("user"), // 32 bytes (Pubkey)
+    pbk("pool_state"), // 32 bytes (Pubkey)
+    u128("token_0_deposited"), // 16 bytes (u128)
+    u128("token_1_deposited"), // 16 bytes (u128)
+    u128("token_0_withdrawn"), // 16 bytes (u128)
+    u128("token_1_withdrawn"), // 16 bytes (u128)
+    u128("lp_tokens_owned") // 16 bytes (u128)
+  ]);
+
+  //lp_tokens_owned is not formatted properly but it is okay, we do not need it in the
+  //ui, if we need it then we can reverse and split the string
+  const toCamelCase = (str: string) => {
+    const firstUnderScoreIndex = str?.indexOf('_')
+    const camelCaseFirst = str?.[firstUnderScoreIndex + 1]?.toUpperCase()
+    const lastUnderScoreIndex = str?.lastIndexOf('_')
+    const camelCaseLast = str?.[lastUnderScoreIndex + 1]?.toUpperCase()
+    const newString = str?.replace(str?.[firstUnderScoreIndex + 1], camelCaseFirst)
+    const newString2 = newString?.replace(str?.[lastUnderScoreIndex + 1], camelCaseLast)
+    const resultString = newString2?.replaceAll('_', '')
+    return resultString
+  };
+
+  const convertSnakeToCamel = (obj) =>
+    Object.keys(obj).reduce((acc, key) => {
+      const camelCaseKey = toCamelCase(key)
+      acc[camelCaseKey] = obj[key]
+      return acc
+  }, {})
+
   // const liveBalanceTracking = useCallback(
   //   async (userPublicKey: PublicKey, selectedCard: any) => {
-  //     const id = `${selectedCard?.mintA?.address}-${selectedCard?.mintB?.address}`
-  //     const poolIdKey = await getpoolId(selectedCard)
-  //     const liquidityAcc = await getLiquidityPoolKey(userPublicKey, poolIdKey)
-  //     console.log('call', liquidityAcc?.toBase58())
-  //     on({
-  //       SubType: SubType.AccountChange,
-  //       id,
-  //       callback: async (info) => {
-  //         try{
-  //           console.log('calling callback', info.data)
-  //           const updatedLiqAcc = await GammaProgram.coder.accounts.decode('UserPoolLiquidity', info.data)
-  //           setConnectionId(id)
-  //           setSelectedCardLiquidityAcc(updatedLiqAcc)
-  //           off(id)
-  //         } catch(e) {
-  //           console.log('e', e)
-  //         }
-
-  //       },
-  //       publicKey: liquidityAcc
-  //     })
+  //     try{
+  //       const id = `${selectedCard?.mintA?.address}-${selectedCard?.mintB?.address}`
+  //       const poolIdKey = await getpoolId(selectedCard)
+  //       const liquidityAcc = await getLiquidityPoolKey(userPublicKey, poolIdKey)
+  //       console.log('call', liquidityAcc?.toBase58())
+  //       on({
+  //         SubType: SubType.AccountChange,
+  //         id,
+  //         callback: async (info) => {
+  //           try {
+  //             console.log('caught event at', liquidityAcc?.toString())
+  //             const updatedLiqAcc = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
+  //             setConnectionId(id)
+  //             console.log('updatedLiqAcc', updatedLiqAcc)
+  //             setSelectedCardLiquidityAcc(updatedLiqAcc)
+  //             off(id)
+  //           } catch (e) {
+  //             console.log('e', e)
+  //           }
+  //         },
+  //         publicKey: liquidityAcc
+  //       })
+  //     } catch(e){
+  //       console.log('e', e)
+  //     }
   //   },
   //   [on, GammaProgram, getpoolId, getLiquidityPoolKey]
   // )
 
   const liveBalanceTracking = async (connection: Connection, userPublicKey: PublicKey, selectedCard: any) => {
-    let id = null
-    const poolIdKey = await getpoolId(selectedCard)
-    const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-    //console.log('depositAccounts in main', liquidityAcc?.toBase58(), poolIdKey?.toBase58())
-    id = connection.onAccountChange(liquidityAcc, async (info) => {
-      const updatedLiqAcc = await GammaProgram.coder.accounts.decode('UserPoolLiquidity', info.data)
-      setSelectedCardLiquidityAcc(updatedLiqAcc)
-      connection.removeAccountChangeListener(id)
-    })
-    setConnectionId(id)
+    try {
+      let id = null
+      const poolIdKey = await getpoolId(selectedCard)
+      const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
+      id = connection.onAccountChange(liquidityAcc, async (info) => {
+        const updatedLiqAcc = convertSnakeToCamel(USER_POOL_LIQUIDITY_LAYOUT.decode(info.data))
+        setSelectedCardLiquidityAcc(updatedLiqAcc)
+        connection.removeAccountChangeListener(id)
+      })
+      setConnectionId(id)
+    } catch (e) {
+      console.log('e', e)
+    }
   }
   
   const updateTokenList = async (
@@ -431,7 +477,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [base58PublicKey])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -445,7 +491,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard])
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
