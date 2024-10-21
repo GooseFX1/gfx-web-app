@@ -2,6 +2,7 @@ import useSolSub, { SolsSubs, SubType } from '@/hooks/useSolSub'
 import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivityTracker'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect } from 'react'
+import useBoolean from '@/hooks/useBoolean'
 
 type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 
@@ -42,11 +43,19 @@ export default useSolSubActivity
 interface UseSolSubActivityMultiProps {
   subType: SubType
   publicKeys: { publicKey: PublicKey; callback: () => void; subType?: SubType }[]
+  callOnReactivation?: boolean
 }
-function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiProps): void {
+
+function useSolSubActivityMulti({
+                                  subType,
+                                  publicKeys,
+                                  callOnReactivation = false
+                                }: UseSolSubActivityMultiProps): void {
   const { on: hookOn, off: hookOff } = useSolSub()
+  const [firstMount, setFirstMount] = useBoolean(true)
   useActivityTracker({
     callbackOff: () => {
+      console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
       publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
         if (publicKey) {
           hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
@@ -54,8 +63,12 @@ function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiP
       })
     },
     callbackOn: () => {
+      console.log('TRACKING SOL SUB', subType, publicKeys)
       publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
         if (publicKey) {
+          if (callOnReactivation && !firstMount) {
+            callback()
+          }
           hookOn({
             callback,
             id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
@@ -64,27 +77,11 @@ function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiP
           })
         }
       })
+      if (firstMount) {
+        setFirstMount.off()
+      }
     }
   })
-
-  useEffect(() => {
-    const ids: string[] = []
-    publicKeys.forEach(({ publicKey, callback }) => {
-      if (publicKey) {
-        const id = `${subType}-${publicKey.toBase58()}`
-        ids.push(id)
-        console.log('TRACKING SOL SUB', id)
-        hookOn({ callback: callback, id, SubType: subType, publicKey })
-      }
-    })
-
-    return () => {
-      ids.forEach((id) => {
-        console.log('REMOVING TRACKING SOL SUB', id)
-        hookOff(id)
-      })
-    }
-  }, [subType, publicKeys])
 }
 
 export { useSolSubActivityMulti }

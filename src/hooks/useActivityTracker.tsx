@@ -9,6 +9,7 @@ export interface UseActivityTrackerProps {
   callOnMount?: boolean
   callOnUnmount?: boolean
 }
+
 const fifteenMinutes = INTERVALS.MINUTE * 15
 
 /**
@@ -18,27 +19,31 @@ const fifteenMinutes = INTERVALS.MINUTE * 15
 function useActivityTracker(props?: UseActivityTrackerProps): void {
   const { lifeTime, callbackOff, callbackOn, callOnMount = true, callOnUnmount = true } = props ?? {}
   const [isOff, setIsOff] = useBoolean(false)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
   useEffect(() => {
-    let timer: NodeJS.Timeout | null
     const handleMouseMove = () => {
-      if (timer) {
-        clearTimeout(timer)
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
         if (isOff) {
           setIsOff.off()
           callbackOn?.()
         }
       }
-      timer = setTimeout(() => {
+
+      timerRef.current = setTimeout(() => {
         callbackOff?.()
         setIsOff.on()
-      }, lifeTime ?? fifteenMinutes)
+      }, lifeTime || fifteenMinutes)
     }
     window.addEventListener('mousemove', handleMouseMove)
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
-      clearTimeout(timer)
+      if (timerRef.current && isOff) {
+        clearTimeout(timerRef.current)
+      }
     }
-  }, [callbackOn, callbackOff, lifeTime, callOnUnmount,isOff])
+  }, [callbackOn, callbackOff, lifeTime, callOnUnmount, isOff])
   useEffect(() => {
     if (callOnMount) {
       callbackOn?.()
@@ -52,11 +57,13 @@ function useActivityTracker(props?: UseActivityTrackerProps): void {
 }
 
 export default useActivityTracker
+
 interface UseActivityTrackerManualProps extends Omit<UseActivityTrackerProps, 'callbackOff'> {
   lifeTime?: number
   callback?: () => void
   startingValue?: boolean
 }
+
 interface UseActivityTrackerManualReturn {
   active: boolean
   startTracking: (callback: () => void) => void

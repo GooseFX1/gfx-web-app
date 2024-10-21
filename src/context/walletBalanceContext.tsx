@@ -70,7 +70,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     subType: SubType.AccountChange,
     publicKeys: tokenAccounts.map((account) => {
       const callback = async () => {
-        console.log('Setting balance for', account.symbol)
         if (account.mint == NATIVE_MINT.toBase58()) {
           const t = await connection.getBalance(account.pda)
           const dec = account.decimals || 9
@@ -89,7 +88,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         publicKey: account.pda,
         callback
       }
-    })
+    }),
+    callOnReactivation: true
   })
 
   useEffect(() => {
@@ -102,18 +102,19 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
   }, [connection, network, publicKey])
 
   function setBalanceBySymbol(mint: string, amount: TokenAmount) {
-
     setBalance((prev) => {
       const originalValue = prev[mint];
       return {
         ...prev,
         [mint]: {
           ...prev[mint],
-          tokenAmount: amount
+          tokenAmount: amount,
+          value: new Decimal(amount.uiAmount).mul(originalValue.price)
         },
         [originalValue.symbol]: {
           ...prev[mint],
-          tokenAmount: amount
+          tokenAmount: amount,
+          value: new Decimal(amount.uiAmount).mul(originalValue.price)
         }
       }
     })
