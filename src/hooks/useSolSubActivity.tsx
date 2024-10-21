@@ -3,6 +3,7 @@ import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivity
 import { PublicKey } from '@solana/web3.js'
 import { useEffect } from 'react'
 import useBoolean from '@/hooks/useBoolean'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 
@@ -53,6 +54,12 @@ function useSolSubActivityMulti({
                                 }: UseSolSubActivityMultiProps): void {
   const { on: hookOn, off: hookOff } = useSolSub()
   const [firstMount, setFirstMount] = useBoolean(true)
+  const {publicKey} = useWallet()
+  useEffect(() => {
+    if (!publicKey) {
+      setFirstMount.off()
+    }
+  }, [publicKey])
   useActivityTracker({
     callbackOff: () => {
       console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
