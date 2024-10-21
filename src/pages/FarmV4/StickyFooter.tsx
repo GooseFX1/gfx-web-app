@@ -53,12 +53,12 @@ const StickyFooter: FC<StickyFooterProps> = ({
         ) : (
           <Connect fullWidth containerStyle={'h-8.75 z-0'} customButtonStyle={'h-8.75'} />
         )}
-        <Button variant={'outline'}
+        {/* <Button variant={'outline'}
           colorScheme={isDarkMode ? 'default' : 'blue'}
           className={'p-1.5 bg-white'}
         >
           <Icon src={`img/assets/refresh_${mode}.svg`} size="sm" />
-        </Button>
+        </Button> */}
         <Popover modal={false}>
           <PopoverTrigger asChild>
             <Button

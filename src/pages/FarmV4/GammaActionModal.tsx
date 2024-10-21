@@ -22,6 +22,7 @@ type GammaActionModalProps = {
   actionLabel: string
   onActionClick: () => void
   actionType: string
+  loading: boolean
 }
 const GammaActionModal: FC<GammaActionModalProps> = ({
   isOpen,
@@ -30,7 +31,8 @@ const GammaActionModal: FC<GammaActionModalProps> = ({
   children,
   actionLabel,
   onActionClick,
-  actionType
+  actionType,
+  loading
 }) => {
   const { mode } = useDarkMode()
   const { isMobile } = useBreakPoint()
@@ -59,6 +61,8 @@ const GammaActionModal: FC<GammaActionModalProps> = ({
             fullWidth
             colorScheme={'blue'}
             onClick={onActionClick}
+            isLoading={loading}
+            disabled={loading}
           >
             {actionLabel}
           </Button>

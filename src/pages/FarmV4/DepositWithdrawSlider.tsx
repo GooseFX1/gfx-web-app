@@ -358,18 +358,19 @@ export const DepositWithdrawSlider: FC = () => {
       txBuilder.add(tx)
       setSendingTransaction(true)
       const { success } = await sendTransaction(txBuilder)
-      console.log('success', success)
+      //console.log('success', success)
 
       if (!success) {
         off(connectionId)
-        console.log('An error occurred while depositing. 1')
+        console.log('An error occurred while depositing!')
         setSendingTransaction(false)
         return
       } else {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        //setOpenDepositWithdrawSlider(false)
+        setOpenDepositWithdrawSlider(false)
+        setSelectedCardLiquidityAcc({})
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -392,20 +393,22 @@ export const DepositWithdrawSlider: FC = () => {
         connection
       )
       txBuilder.add(tx)
+      setSendingTransaction(true)
       const { success } = await sendTransaction(txBuilder)
 
       if (!success) {
         off(connectionId)
-        console.log('An error occurred while withdrawing 1.')
+        console.log('An error occurred while withdrawing!')
         setSendingTransaction(false)
         return
       } else {
         setSendingTransaction(false)
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
-        //setOpenDepositWithdrawSlider(false)
+        setOpenDepositWithdrawSlider(false)
+        setSelectedCardLiquidityAcc({})
         setActionType('')
-        //setModeOfOperation(ModeOfOperation.DEPOSIT)
+        setModeOfOperation(ModeOfOperation.DEPOSIT)
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -479,6 +482,7 @@ export const DepositWithdrawSlider: FC = () => {
           actionLabel={actionLabel}
           onActionClick={!isDeposit ? handleWithdraw : handleDeposit}
           actionType={actionType}
+          loading={sendingTransaction}
         >
           <GammaActionModalContentStack
             options={[
