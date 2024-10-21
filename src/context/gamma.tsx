@@ -220,8 +220,8 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     u128("lp_tokens_owned") // 16 bytes (u128)
   ]);
 
-  //lp_tokens_owned is not formatted properly but it is okay, we do not need it in the
-  //ui, if we need it then we can reverse and split the string
+  //lp_tokens_owned is not formatted properly but it is okay as we do not need 
+  //it in the ui, if we need it then we can reverse and split the string
   const toCamelCase = (str: string) => {
     const firstUnderScoreIndex = str?.indexOf('_')
     const camelCaseFirst = str?.[firstUnderScoreIndex + 1]?.toUpperCase()

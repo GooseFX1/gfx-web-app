@@ -320,13 +320,16 @@ export const deposit = async (
     if (selectedCard?.mintA?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress, depositAmountTX)
         depositAmountTX.add(tr)
     }
     if (selectedCard?.mintB?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress, depositAmountTX)
         depositAmountTX.add(tr)
     }
+    console.log("FINAL TX FOR DEPOSIT: ", depositAmountTX)
     return depositAmountTX
 }
 
@@ -374,13 +377,16 @@ export const withdraw = async (
     if (selectedCard?.mintA?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        console.log('mint a is SOL', selectedCard?.mintA?.symbol, ataAddress)
         withdrawAmountTX.add(tr)
     }
     if (selectedCard?.mintB?.symbol === 'SOL') {
         const ataAddress = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintB?.address), userPublicKey)
         const tr = createCloseAccountInstruction(ataAddress, userPublicKey, userPublicKey)
+        console.log('mint b is SOL', selectedCard?.mintB?.symbol, ataAddress)
         withdrawAmountTX.add(tr)
     }
+    console.log("FINAL TX FOR WITHDRAW: ", withdrawAmountTX)
     return withdrawAmountTX
 }
 
