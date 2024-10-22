@@ -188,14 +188,14 @@ export const DepositWithdrawSlider: FC = () => {
       || new BigNumber(userTargetDepositAmount)?.isGreaterThan(new BigNumber(userTargetTokenBal)))) return true
     else if (!isDeposit &&
       new BigNumber(userSourceWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(
+        new BigNumber(
           ((selectedCardLiquidityAcc?.token0Deposited)?.sub(selectedCardLiquidityAcc?.token0Withdrawn))
-            ?.toString(), selectedCardPool?.mint0Decimals)
+            ?.toString()
         ))
       || new BigNumber(userTargetWithdrawAmount)?.isGreaterThan(
-        new BigNumber(withdrawBigStringFarm(
+        new BigNumber(
           ((selectedCardLiquidityAcc?.token1Deposited)?.sub(selectedCardLiquidityAcc?.token1Withdrawn))
-            ?.toString(), selectedCardPool?.mint1Decimals)
+            ?.toString()
         )))
       return true
   }, [userSourceTokenBal, userTargetTokenBal, userTargetWithdrawAmount, userSourceDepositAmount,
@@ -369,8 +369,8 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        setOpenDepositWithdrawSlider(false)
-        setSelectedCardLiquidityAcc({})
+        //setOpenDepositWithdrawSlider(false)
+        //setSelectedCardLiquidityAcc({})
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -405,10 +405,10 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
-        setOpenDepositWithdrawSlider(false)
-        setSelectedCardLiquidityAcc({})
+        //setOpenDepositWithdrawSlider(false)
+        //setSelectedCardLiquidityAcc({})
         setActionType('')
-        setModeOfOperation(ModeOfOperation.DEPOSIT)
+        //setModeOfOperation(ModeOfOperation.DEPOSIT)
       }
     } catch (e) {
       setSendingTransaction(false)

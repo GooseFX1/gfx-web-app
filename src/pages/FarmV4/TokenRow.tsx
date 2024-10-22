@@ -15,8 +15,10 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
     const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
 
     const calculateUIAmount = useCallback(() => {
+      console.log('value while depositing', isMintA, balance)
       if (isDeposit) return truncateBigNumber(balance)
       if (isMintA) {
+      console.log('value while withdrawing token 0', isMintA, balance)
         return truncateBigString(
           selectedCardLiquidityAcc?.token0Deposited?.sub(
             selectedCardLiquidityAcc?.token0Withdrawn
@@ -25,6 +27,7 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
         );
       }
       if (!isMintA) {
+      console.log('value while withdrawing token 1', isMintA, balance)
         return truncateBigString(
           selectedCardLiquidityAcc?.token1Deposited?.sub(
             selectedCardLiquidityAcc?.token1Withdrawn
