@@ -6,57 +6,61 @@ export interface UseActivityTrackerProps {
   lifeTime?: number
   callbackOff?: () => void
   callbackOn?: () => void
-  callOnMount?: boolean
-  callOnUnmount?: boolean
 }
 
 const fifteenMinutes = INTERVALS.MINUTE * 15
 
 /**
- *
- * @param {Options} [props]
+ * Activity Tracker Hook
+ * @param {UseActivityTrackerProps} [props]
  */
 function useActivityTracker(props?: UseActivityTrackerProps): void {
-  const { lifeTime, callbackOff, callbackOn, callOnMount = true, callOnUnmount = true } = props ?? {}
+  const { lifeTime, callbackOff, callbackOn } = props ?? {}
   const [isOff, setIsOff] = useBoolean(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
   useEffect(() => {
-    const handleMouseMove = () => {
+    const handleActivity = () => {
+      // Clear any existing timer
       if (timerRef.current) {
         clearTimeout(timerRef.current)
         timerRef.current = null
-        if (isOff) {
-          setIsOff.off()
-          callbackOn?.()
-        }
       }
 
+      // If the system was in "off" state, trigger callbackOn
+      if (isOff) {
+        setIsOff.off()
+        callbackOn?.()
+      }
+
+      // Start a new timer to trigger callbackOff after inactivity
       timerRef.current = setTimeout(() => {
         callbackOff?.()
         setIsOff.on()
       }, lifeTime || fifteenMinutes)
     }
-    window.addEventListener('mousemove', handleMouseMove)
+
+    // Attach event listeners for different types of user activity
+    window.addEventListener('mousemove', handleActivity)
+    window.addEventListener('keydown', handleActivity)
+    window.addEventListener('scroll', handleActivity)
+    window.addEventListener('click', handleActivity)
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      if (timerRef.current && isOff) {
+      // Clean up event listeners and clear the timer on unmount
+      window.removeEventListener('mousemove', handleActivity)
+      window.removeEventListener('keydown', handleActivity)
+      window.removeEventListener('scroll', handleActivity)
+      window.removeEventListener('click', handleActivity)
+      if (timerRef.current) {
         clearTimeout(timerRef.current)
       }
     }
-  }, [callbackOn, callbackOff, lifeTime, callOnUnmount, isOff])
-  useEffect(() => {
-    if (callOnMount) {
-      callbackOn?.()
-    }
-    return () => {
-      if (callOnUnmount) {
-        callbackOff?.()
-      }
-    }
-  }, [callOnMount, callOnUnmount])
+  }, [callbackOn, callbackOff, lifeTime, isOff, setIsOff])
 }
 
 export default useActivityTracker
+
 
 interface UseActivityTrackerManualProps extends Omit<UseActivityTrackerProps, 'callbackOff'> {
   lifeTime?: number

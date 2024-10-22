@@ -5,11 +5,13 @@ import { SubType, Unsubs } from '../hooks/useSolSub'
 class SolanaSub {
   subs: Map<string, Unsubs>
   connection: Connection
+
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {
     this.subs = new Map()
     this.connection = new Connection(APP_RPC.endpoint, 'processed')
   }
+
   changeConnection = (endpoint: string) => {
     if (endpoint === this.connection.rpcEndpoint) return
     this.connection = new Connection(endpoint, 'processed')
@@ -18,7 +20,10 @@ class SolanaSub {
     if (this.subs.has(subId)) {
       await this.connection.removeAccountChangeListener(this.subs.get(subId).id)
     }
-    const id = await this.connection.onAccountChange(publicKey, callback, 'processed')
+    const id = await this.connection.onAccountChange(publicKey, callback, {
+      commitment: 'confirmed',
+      encoding: 'base64'
+    })
     this.subs.set(subId, {
       subId,
       id,
@@ -35,7 +40,10 @@ class SolanaSub {
     if (this.subs.has(subId)) {
       await this.connection.removeProgramAccountChangeListener(this.subs.get(subId).id)
     }
-    const id = await this.connection.onProgramAccountChange(programId, callback, 'processed')
+    const id = await this.connection.onProgramAccountChange(programId, callback, {
+      commitment: 'confirmed',
+      encoding: 'base64'
+    })
     this.subs.set(subId, {
       subId,
       id,

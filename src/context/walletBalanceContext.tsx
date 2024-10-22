@@ -9,7 +9,7 @@ import {
 } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
-import { useSolSubActivityMulti } from '@/hooks/useSolSubActivity'
+import { useSolSubMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
@@ -46,8 +46,8 @@ interface IWalletBalanceContext {
   createTokenAccount: (data: CreateTokenAccountParams) => Promise<void>
   createTokenAccounts: (data: CreateTokenAccountParams[]) => Promise<void>
   walletValue: string
+  refreshTokenBalance: () => void
 }
-
 
 const WalletBalanceContext = createContext<IWalletBalanceContext>(null)
 
@@ -65,35 +65,40 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const values = Object.values(balance)
     return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
+  const tokens = tokenAccounts.map((account) => ({
+    publicKey: account.pda,
+    callback: async () => {
+      console.log('updating balance for', account)
+      if (account.mint === NATIVE_MINT.toBase58()) {
+        const t = await connection.getBalance(account.pda)
+        const dec = account.decimals || 9
+        setBalanceBySymbol(account.mint, {
+          amount: t.toString(),
+          decimals: dec,
+          uiAmount: t / 10 ** dec,
+          uiAmountString: (t / 10 ** dec).toFixed(2)
+        })
+        console.log('updating balance for - sol', t)
+        return
+      }
+      const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
+      console.log('updating balance for - token', t)
 
-  useSolSubActivityMulti({
+      setBalanceBySymbol(account.mint, t.value)
+    }
+  }))
+  const { callbackOn, callbackOff } = useSolSubMulti({
     subType: SubType.AccountChange,
-    publicKeys: tokenAccounts.map((account) => {
-      const callback = async () => {
-        if (account.mint == NATIVE_MINT.toBase58()) {
-          const t = await connection.getBalance(account.pda)
-          const dec = account.decimals || 9
-          setBalanceBySymbol(account.mint, {
-            amount: t.toString(),
-            decimals: dec,
-            uiAmount: t / 10 ** dec,
-            uiAmountString: (t / 10 ** dec).toFixed(2)
-          })
-          return
-        }
-        const t = await connection.getTokenAccountBalance(account.pda, 'confirmed')
-        setBalanceBySymbol(account.mint, t.value)
-      }
-      return {
-        publicKey: account.pda,
-        callback
-      }
-    }),
-    callOnReactivation: true
+    publicKeys: tokens
   })
-
+  useEffect(() => {
+    if (tokenAccounts.length > 0) {
+      callbackOn()
+    }
+  }, [tokenAccounts])
   useEffect(() => {
     if (!publicKey) {
+      callbackOff
       setTokenAccounts([])
       setBalance({})
       return
@@ -103,7 +108,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
   function setBalanceBySymbol(mint: string, amount: TokenAmount) {
     setBalance((prev) => {
-      const originalValue = prev[mint];
+      const originalValue = prev[mint]
       return {
         ...prev,
         [mint]: {
@@ -125,20 +130,19 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
 
     const filters: GetProgramAccountsFilter[] = [
       {
-        dataSize: 165 //size of account (bytes)
+        dataSize: 165 // size of account (bytes)
       },
       {
         memcmp: {
-          offset: 32, //location of our query in the account (bytes)
-          bytes: publicKey.toBase58() //our search criteria, a base58 encoded string
+          offset: 32, // location of our query in the account (bytes)
+          bytes: publicKey.toBase58() // our search criteria, a base58 encoded string
         }
       }
     ]
 
-    const accounts = await connection.getParsedProgramAccounts(
-      TOKEN_PROGRAM_ID, //SPL Token Program, new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-      { filters: filters }
-    )
+    const accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {
+      filters: filters
+    })
     const tokenAccounts = {}
     const tokenInfo = {}
     let addresses = NATIVE_MINT.toBase58() + ','
@@ -178,8 +182,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     if (tokenListResponse.success && tokenListResponse.data.tokens.length > 0) {
       for (const data of tokenListResponse.data.tokens) {
         const { address, ...rest } = data
-        if (!(data.address in tokenAccounts) && (data.address in tokenInfo)) {
-          tokenAccounts[data.address] = {...tokenInfo[data.address]}
+        if (!(data.address in tokenAccounts) && data.address in tokenInfo) {
+          tokenAccounts[data.address] = { ...tokenInfo[data.address] }
         }
 
         tokenAccounts[data.address].mint = address
@@ -189,7 +193,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         tokenAccounts[data.address].value = value
         currentWalletValue = currentWalletValue.add(value)
 
-        if (address != 'SOL') {
+        if (address !== 'SOL') {
           tokenAccounts[data.address].pda = findProgramAddressSync(
             [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
             ASSOCIATED_TOKEN_PROGRAM_ID
@@ -264,6 +268,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     }
   }
   const balanceProxy = new Proxy(balance, balanceProxyHandler)
+
   return (
     <WalletBalanceContext.Provider
       value={{
@@ -275,7 +280,8 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         createTokenAccountInstructions,
         createTokenAccount,
         createTokenAccounts,
-        walletValue
+        walletValue,
+        refreshTokenBalance: getTokenAccounts
       }}
     >
       {children}
