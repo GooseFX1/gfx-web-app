@@ -335,11 +335,11 @@ function TokenSelectionInput({
           data.push(token)
         }
       }
-      return data.sort((a,b)=>balance[a.symbol].value.gt(balance[b.symbol].value)?-1:1)
+      return data.sort((a,b)=>balance[a.address].value.gt(balance[b.address].value)?-1:1)
     },
     [topBalances, tokenList, balance, searchValue]
   )
-  
+
   useEffect(() => {
     const abortSignal = aborter.addSignal('tokenList')
     // faking search
