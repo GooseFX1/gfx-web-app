@@ -162,6 +162,8 @@ type GAMMAUserLPPositionWithPrice = UserPortfolioLPPosition & {
   totalValue: string
   valueA: string
   valueB: string
+  uiValueA: string
+  uiValueB: string
 }
 type GAMMAAPIPaginatedResponse = {
   currentPage: number

@@ -1,14 +1,4 @@
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useMemo, useState } from 'react'
 import {
   fetchAggregateStats,
   fetchAllPools,
@@ -50,7 +40,8 @@ import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
 import { Connection, PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
-import { blob, struct, publicKey as pbk, u128 } from '@/utils/marshmallow'
+import { blob, publicKey as pbk, struct, u128 } from '@/utils/marshmallow'
+
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
   /**
@@ -210,15 +201,15 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   const USER_POOL_LIQUIDITY_LAYOUT = struct([
-    blob(8, "discriminator"), // 8 bytes for the account discriminator
-    pbk("user"), // 32 bytes (Pubkey)
-    pbk("pool_state"), // 32 bytes (Pubkey)
-    u128("token_0_deposited"), // 16 bytes (u128)
-    u128("token_1_deposited"), // 16 bytes (u128)
-    u128("token_0_withdrawn"), // 16 bytes (u128)
-    u128("token_1_withdrawn"), // 16 bytes (u128)
-    u128("lp_tokens_owned") // 16 bytes (u128)
-  ]);
+    blob(8, 'discriminator'), // 8 bytes for the account discriminator
+    pbk('user'), // 32 bytes (Pubkey)
+    pbk('pool_state'), // 32 bytes (Pubkey)
+    u128('token_0_deposited'), // 16 bytes (u128)
+    u128('token_1_deposited'), // 16 bytes (u128)
+    u128('token_0_withdrawn'), // 16 bytes (u128)
+    u128('token_1_withdrawn'), // 16 bytes (u128)
+    u128('lp_tokens_owned') // 16 bytes (u128)
+  ])
 
   //lp_tokens_owned is not formatted properly but it is okay as we do not need 
   //it in the ui, if we need it then we can reverse and split the string
@@ -231,14 +222,14 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const newString2 = newString?.replace(str?.[lastUnderScoreIndex + 1], camelCaseLast)
     const resultString = newString2?.replaceAll('_', '')
     return resultString
-  };
+  }
 
   const convertSnakeToCamel = (obj) =>
     Object.keys(obj).reduce((acc, key) => {
       const camelCaseKey = toCamelCase(key)
       acc[camelCaseKey] = obj[key]
       return acc
-  }, {})
+    }, {})
 
   // const liveBalanceTracking = useCallback(
   //   async (userPublicKey: PublicKey, selectedCard: any) => {
@@ -286,7 +277,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       console.log('e', e)
     }
   }
-  
+
   const updateTokenList = async (
     {
       page,
@@ -448,14 +439,20 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
             positionsToSet = positions.map((position) => {
               const tokenAPrice = priceMap.get(position.mintA.address)
               const tokenBPrice = priceMap.get(position.mintB.address)
-              const valueA = new Decimal(position.tokenADeposited).mul(tokenAPrice)
-              const valueB = new Decimal(position.tokenBDeposited).mul(tokenBPrice)
+              const uiValueA = new Decimal(position.tokenADeposited)
+                .div(Math.pow(10, parseInt(position.mintA.decimals)))
+              const valueA = uiValueA.mul(tokenAPrice)
+              const uiValueB = new Decimal(position.tokenBDeposited)
+                .div(Math.pow(10, parseInt(position.mintB.decimals)))
+              const valueB = uiValueB.mul(tokenBPrice)
               const totalValue = valueA.add(valueB)
               return {
                 ...position,
                 totalValue: totalValue.toString(),
                 valueA: valueA.toString(),
-                valueB: valueB.toString()
+                valueB: valueB.toString(),
+                uiValueA: uiValueA.toString(),
+                uiValueB: uiValueB.toString()
               }
             })
           } else {
@@ -463,7 +460,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
               ...position,
               totalValue: '0.0',
               valueA: '0.0',
-              valueB: '0.0'
+              valueB: '0.0',
+              uiValueA: '0.0',
+              uiValueB: '0.0'
             }))
           }
           setLpPositions(positionsToSet)
@@ -477,7 +476,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [base58PublicKey])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (GammaProgram && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -491,7 +490,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [GammaProgram, selectedCard])
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
         try {
           const poolIdKey = await getpoolId(selectedCard)
@@ -525,7 +524,12 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return true
       })
   }, [pools, lpPositions, showDeposited])
-
+  useEffect(()=>{
+    if (!base58PublicKey || filteredPools.length == 0 || !selectedCard?.id) return
+    const pool = filteredPools.filter(pool=>pool.id === selectedCard.id)
+    if (pool.length == 0) return
+    setSelectedCard(pool[0])
+  },[base58PublicKey,filteredPools])
   const isSearchActive = searchTokens.trim().length > 0
 
   return (

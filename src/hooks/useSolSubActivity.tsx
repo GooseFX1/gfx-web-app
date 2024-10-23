@@ -24,12 +24,12 @@ function useSolSubActivity({ callback, id, SubType, publicKey, lifeTime }: UseSo
   })
   useEffect(() => {
     if (publicKey && callback) {
-      console.log('TRACKING SOL SUB', id)
+      // console.log('TRACKING SOL SUB', id)
       on({ callback, id, SubType, publicKey })
     }
 
     return () => {
-      console.log('REMOVING TRACKING SOL SUB', id)
+      // console.log('REMOVING TRACKING SOL SUB', id)
       off(id)
     }
   }, [callback, id, SubType, publicKey, on, off])
@@ -56,10 +56,10 @@ function useSolSubMulti({
 
   const callbackOff = useCallback(() => {
     if (publicKeys.length == 0) {
-      console.log('REMOVING TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
+      // console.log('REMOVING TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
       return
     }
-    console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
+    // console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
     publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
       if (publicKey) {
         hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
@@ -68,10 +68,10 @@ function useSolSubMulti({
   }, [subType, publicKeys, hookOff])
   const callbackOn = useCallback(() => {
     if (publicKeys.length == 0) {
-      console.log('TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
+      // console.log('TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
       return
     }
-    console.log('TRACKING SOL SUB', subType, publicKeys)
+    // console.log('TRACKING SOL SUB', subType, publicKeys)
     publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
       if (publicKey) {
         hookOn({
