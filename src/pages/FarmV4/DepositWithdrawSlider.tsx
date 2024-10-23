@@ -73,8 +73,8 @@ export const DepositWithdrawSlider: FC = () => {
 
   useEffect(() => {
     if (selectedCard && userPublicKey) {
-      setUserSourceTokenBal(balance[selectedCard?.mintA?.symbol].tokenAmount.uiAmount)
-      setUserTargetTokenBal(balance[selectedCard?.mintB?.symbol].tokenAmount.uiAmount)
+      setUserSourceTokenBal(balance[selectedCard?.mintA?.address].tokenAmount.uiAmount)
+      setUserTargetTokenBal(balance[selectedCard?.mintB?.address].tokenAmount.uiAmount)
     }
   }, [selectedCard, balance, userPublicKey])
 
@@ -501,10 +501,10 @@ export const DepositWithdrawSlider: FC = () => {
               {
                 textLeft: 'Total Amount in USDC',
                 textRight: `≈ $${bigNumberFormatter(
-                  new BigNumber(balance[selectedCard?.mintA?.symbol]?.price)
+                  new BigNumber(balance[selectedCard?.mintA?.address]?.price)
                     .multipliedBy(userSourceWithdrawAmount)
                     .plus(
-                      new BigNumber(balance[selectedCard?.mintB?.symbol]?.price)
+                      new BigNumber(balance[selectedCard?.mintB?.address]?.price)
                         .multipliedBy(userTargetWithdrawAmount)
                     ),
                   4

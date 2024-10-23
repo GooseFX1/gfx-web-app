@@ -13,10 +13,7 @@ import { ENV } from '@solana/spl-token-registry'
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import { ComputeBudgetProgram, Connection, TransactionInstruction } from '@solana/web3.js'
 import { fetchBrowserCountryCode } from '../api/analytics'
-import {
-  fetchIsUnderMaintenance
-  // fetchGlobalBanner
-} from '../api/config'
+import { fetchIsUnderMaintenance } from '../api/config'
 import { ENVS } from '../constants'
 import useActivityTracker from '@/hooks/useActivityTracker'
 import { axiosFetchWithRetries } from '../api'
@@ -126,14 +123,16 @@ function newCache(): USER_CONFIG_CACHE {
 export function resetUserCache(): void {
   window.localStorage.setItem('gfx-user-cache', JSON.stringify(newCache()))
 }
+
 function shouldMatchOpCache(key: string) {
   switch (key) {
     case 'endpoint':
-      return false;
+      return false
     default:
-      return true;
+      return true
   }
 }
+
 function migrateCache(cache: USER_CONFIG_CACHE): USER_CONFIG_CACHE {
   const migratedCache = structuredClone(cache)
   const opCache = newCache()
@@ -230,15 +229,15 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (Object.keys(cacheUpdateQueue).length === 0) return
     const timeout = setTimeout(() => {
       setUserCache((prevCache) => {
-        const newCache ={
-        ...prevCache,
-        ...cacheUpdateQueue
+        const newCache = {
+          ...prevCache,
+          ...cacheUpdateQueue
         }
         if (newCache.endpointName !== 'Custom' && newCache.endpoint !== null) {
           newCache.endpoint = null
         }
         window.localStorage.setItem(USER_CACHE, JSON.stringify(newCache))
-        return newCache;
+        return newCache
       })
       setCacheUpdateQueue({})
     }, 500)
@@ -246,7 +245,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       clearTimeout(timeout)
     }
   }, [cacheUpdateQueue])
-  
+
   const { priorityFeeInstruction, priorityFeeValue } = useMemo(() => {
     let fee = 0.0
     switch (priorityFee) {
@@ -299,7 +298,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
       if (Object.keys(payload).length > 0) {
         updateUserCache(payload)
       }
-      },
+    },
     [priorityFee, endpointName, endpoint]
   )
 
@@ -339,12 +338,14 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     return () => clearInterval(timer)
   }, [shouldTrack, getAndSetLatency, endpoint, connection, endpointName])
+  const callbackOff = useCallback(() => setShouldTrack(false), [])
+  const callbackOn = useCallback(() => {
+    setShouldTrack(true)
+    getAndSetLatency
+  }, [])
   useActivityTracker({
-    callbackOff: () => setShouldTrack(false),
-    callbackOn: () => {
-      setShouldTrack(true)
-      getAndSetLatency()
-    }
+    callbackOff: callbackOff,
+    callbackOn: callbackOn
   })
   useEffect(() => {
     if (endpointName === null) {

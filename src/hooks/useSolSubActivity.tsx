@@ -1,7 +1,9 @@
 import useSolSub, { SolsSubs, SubType } from '@/hooks/useSolSub'
 import useActivityTracker, { UseActivityTrackerProps } from '@/hooks/useActivityTracker'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
+import useBoolean from '@/hooks/useBoolean'
+import { useWallet } from '@solana/wallet-adapter-react'
 
 type UseSolSubActivityProps = SolsSubs & Omit<UseActivityTrackerProps, 'callbackOff'>
 
@@ -35,56 +37,78 @@ function useSolSubActivity({ callback, id, SubType, publicKey, lifeTime }: UseSo
 
 export default useSolSubActivity
 
-/**
- * This hook is used to sub to multiple solana accounts and automates the removal
-
- */
 interface UseSolSubActivityMultiProps {
   subType: SubType
   publicKeys: { publicKey: PublicKey; callback: () => void; subType?: SubType }[]
 }
-function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiProps): void {
-  const { on: hookOn, off: hookOff } = useSolSub()
-  useActivityTracker({
-    callbackOff: () => {
-      publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
-        if (publicKey) {
-          hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
-        }
-      })
-    },
-    callbackOn: () => {
-      publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
-        if (publicKey) {
-          hookOn({
-            callback,
-            id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
-            SubType: individualSubType ?? subType,
-            publicKey
-          })
-        }
-      })
-    }
-  })
 
-  useEffect(() => {
-    const ids: string[] = []
-    publicKeys.forEach(({ publicKey, callback }) => {
+function useSolSubMulti({
+                          subType,
+                          publicKeys
+                        }: UseSolSubActivityMultiProps): {
+  callbackOn: () => void
+  callbackOff: () => void
+} {
+  const { on: hookOn, off: hookOff } = useSolSub()
+  const [firstMount, setFirstMount] = useBoolean(true)
+  const { publicKey } = useWallet()
+
+
+  const callbackOff = useCallback(() => {
+    if (publicKeys.length == 0) {
+      console.log('REMOVING TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
+      return
+    }
+    console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
+    publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
       if (publicKey) {
-        const id = `${subType}-${publicKey.toBase58()}`
-        ids.push(id)
-        console.log('TRACKING SOL SUB', id)
-        hookOn({ callback: callback, id, SubType: subType, publicKey })
+        hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
       }
     })
-
-    return () => {
-      ids.forEach((id) => {
-        console.log('REMOVING TRACKING SOL SUB', id)
-        hookOff(id)
-      })
+  }, [subType, publicKeys, hookOff])
+  const callbackOn = useCallback(() => {
+    if (publicKeys.length == 0) {
+      console.log('TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
+      return
     }
-  }, [subType, publicKeys])
+    console.log('TRACKING SOL SUB', subType, publicKeys)
+    publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
+      if (publicKey) {
+        hookOn({
+          callback,
+          id: `${individualSubType ?? subType}-${publicKey.toBase58()}`,
+          SubType: individualSubType ?? subType,
+          publicKey
+        })
+      }
+    })
+  }, [subType, publicKeys, hookOn])
+  useEffect(() => {
+    // already called initial sub call
+    if (!firstMount) return
+    // reset due to publicKey disconnect
+    if (!publicKey) {
+      setFirstMount.on()
+      return
+    }
+    callbackOn()
+    setFirstMount.off()
+  }, [callbackOn, publicKey])
+
+  return {
+    callbackOn,
+    callbackOff
+  }
+}
+
+export { useSolSubMulti }
+
+function useSolSubActivityMulti(props: UseSolSubActivityMultiProps): void {
+  const { callbackOn, callbackOff } = useSolSubMulti(props)
+  useActivityTracker({
+    callbackOff,
+    callbackOn
+  })
 }
 
 export { useSolSubActivityMulti }

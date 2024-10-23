@@ -14,8 +14,8 @@ export const ReviewConfirm: FC<{
   const { balance } = useWalletBalance()
 
   const depositValue = useMemo(() => {
-    const depositAValue = new BigNumber(balance[selectedCard?.mintA?.symbol]?.price).multipliedBy(tokenAActionValue)
-    const depositBValue = new BigNumber(balance[selectedCard?.mintB?.symbol]?.price).multipliedBy(tokenBActionValue)
+    const depositAValue = new BigNumber(balance[selectedCard?.mintA?.address]?.price).multipliedBy(tokenAActionValue)
+    const depositBValue = new BigNumber(balance[selectedCard?.mintB?.address]?.price).multipliedBy(tokenBActionValue)
 
     return depositAValue.plus(depositBValue)
   }, [balance, selectedCard, tokenBActionValue, tokenAActionValue])
