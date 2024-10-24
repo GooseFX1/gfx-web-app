@@ -406,7 +406,7 @@ function TokenSelectionInput({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className={'flex flex-col mt-1 z-[1001] h-[396px] w-[464px] max-sm:w-[338px] relative'}
+              className={'flex flex-col mt-1 z-[1001] h-[396px] w-[464px] max-sm:w-[338px] relative pb-0'}
               portal={true}
               align={'start'}
             >
@@ -485,7 +485,8 @@ function TokenSelectionInput({
                     }
                     render={(curToken: JupToken) => (
                       <DropdownMenuItem
-                        className={' cursor-pointer p-1.5 flex'}
+                        className={`cursor-pointer p-1.5 border-1 border-transparent flex 
+                        hover:border-border-lightmode-secondary dark:hover:border-border-darkmode-secondary`}
                         onClick={() => {
                           setToken(curToken)
                           setSearchValue('')

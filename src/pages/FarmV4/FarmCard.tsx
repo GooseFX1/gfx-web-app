@@ -52,7 +52,7 @@ const FarmCard: FC<{
             Claim
           </Button>} */}
           <Button
-            className="cursor-pointer bg-blue-1 text-white h-[30px]"
+            className={cn(`cursor-pointer bg-blue-1 text-white h-[30px]`, pool.hasDeposit && 'w-[30px] h-[30px]')}
             variant={'secondary'}
             onClick={() => {
               setSelectedCard(pool)

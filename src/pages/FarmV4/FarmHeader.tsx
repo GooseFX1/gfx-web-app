@@ -165,7 +165,7 @@ export const FarmHeader: FC = () => {
                     <TooltipTrigger
                       className={cn(
                         `text-grey-1 dark:text-grey-2 !cursor-pointer
-                    text-tiny font-semibold`,
+                    text-tiny font-semibold no-underline`,
                         card.tooltip.trim() && `underline decoration-dotted mb-1 underline-offset-4`
                       )}
                       disabled={!card.tooltip.trim()}

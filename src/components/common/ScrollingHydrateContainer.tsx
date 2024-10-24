@@ -26,7 +26,7 @@ const ScrollingHydrateContainer = forwardRef<
         callback?.()
       }
     }}
-    className={cn('max-h-[inherit] overflow-scroll w-full', className)}
+    className={cn('max-h-[inherit] overflow-auto w-full', className)}
     {...props}>
     {children}
   </div>

@@ -40,7 +40,7 @@ function useSolSub(): {
   SolanaSubscriber.updateConnection(connection)
   useEffect(() => SolanaSubscriber.changeConnection(endpoint), [endpoint])
   const on = useCallback(async (sub: SolsSubs) => {
-    console.log('ON SUB', sub)
+    // console.log('ON SUB', sub)
 
     const pubkey = sub.publicKey || (await sub?.pubKeyRetrieval?.())
     if (!pubkey) {
@@ -74,7 +74,7 @@ function useSolSub(): {
   }, [])
   const off = useCallback(
     async (id: string | string[]) => {
-      console.log('OFF SUBS', SolanaSubscriber.subs, { id })
+      // console.log('OFF SUBS', SolanaSubscriber.subs, { id })
       if (SolanaSubscriber.subs.size === 0) return
       if (Array.isArray(id)) {
         id.forEach((i) => {
