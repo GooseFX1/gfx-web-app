@@ -123,7 +123,7 @@ export const FarmContainer: FC = () => {
             <RadioOptionGroup
               defaultValue={'All'}
               value={currentPoolType.name}
-              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2'}
+              className={'w-full min-md:w-max gap-1.25 max-sm:gap-0 max-sm:grid-cols-3 min-md:mr-2 items-center'}
               optionClassName={`min-md:w-[85px]`}
               options={[
                 {
@@ -150,7 +150,7 @@ export const FarmContainer: FC = () => {
                 value={searchTokens}
                 className={'!max-w-full flex-1 bg-white dark:bg-black-2'}
               />
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 {breakpoint.isMobile ? (
                   <div>
                     <Button className="p-0 !h-[35px] !w-[35px] mx-2" variant={'ghost'}>

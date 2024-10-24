@@ -9,7 +9,7 @@ const DepositWithdrawAccordion: FC = (): ReactElement => {
     return(
         <Accordion collapsible='true' type={'multiple'} variant='default'
                    className="dark:bg-black-1 bg-grey-5 mx-2.5 my-3 !rounded-[4px]"
-                   defaultValue={['pool-stats']}
+                   defaultValue={['lp-stats']}
         >
           {selectedCard?.hasDeposit ? <AccordionItem value="lp-stats">
             <AccordionTrigger><h4>My Position</h4></AccordionTrigger>
