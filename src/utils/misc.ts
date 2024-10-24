@@ -272,7 +272,6 @@ export const truncateBigNumber = (bigNumber: number): string | number => {
   If the number is less than 1000, it simply returns it upto 2 decimal places.
 */
 export const truncateBigString = (nativeString: string, mintDecimals: number): string => {
-  // eslint-disable-next-line max-len
   if (!nativeString || nativeString === null || nativeString === '0' || typeof nativeString !== 'string')
     return '0.00'
 

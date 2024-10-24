@@ -17,14 +17,14 @@ const DepositWithdrawToggle: FC<{
   const { modeOfOperation, setModeOfOperation } = useGamma()
   return (
     <RadioOptionGroup
-      defaultValue={'deposit'}
-      value={modeOfOperation === ModeOfOperation?.DEPOSIT ? 'deposit' : 'withdraw'}
+      defaultValue={ModeOfOperation.DEPOSIT}
+      value={modeOfOperation === ModeOfOperation.DEPOSIT ? ModeOfOperation.DEPOSIT : ModeOfOperation.WITHDRAW}
       className={`w-full mt-3 max-sm:mt-1 px-2.5`}
       optionClassName={`w-full text-h5`}
       options={[
         {
-          value: 'deposit',
-          label: 'Deposit',
+          value: ModeOfOperation.DEPOSIT,
+          label:  ModeOfOperation.DEPOSIT,
           onClick: () => {
             setModeOfOperation(ModeOfOperation?.DEPOSIT)
             setUserTargetWithdrawAmount('')
@@ -32,8 +32,8 @@ const DepositWithdrawToggle: FC<{
           }
         },
         {
-          value: 'withdraw',
-          label: 'Withdraw',
+          value: ModeOfOperation.WITHDRAW,
+          label:  ModeOfOperation.WITHDRAW,
           onClick: () => {
             setModeOfOperation(ModeOfOperation?.WITHDRAW)
             setUserSourceDepositAmount('')

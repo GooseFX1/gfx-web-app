@@ -1,41 +1,25 @@
-import { FC, ReactElement, useCallback, useMemo } from 'react'
+import { FC, ReactElement, useMemo } from 'react'
 import { useDarkMode, useGamma } from '@/context'
 import { Badge, cn, Icon } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GAMMAToken } from '@/types/gamma'
-import { ModeOfOperation } from './constants'
 
-export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number }> =
-  ({ isMintA, token, balance }): ReactElement => {
+export const TokenRow: FC<{
+  isMintA: boolean
+  token: GAMMAToken
+  balance: number
+  isDeposit: boolean
+}> =
+  ({ isMintA,
+    token,
+    balance,
+    isDeposit
+  }): ReactElement => {
     const { mode } = useDarkMode()
     const { wallet } = useWallet()
     const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-    const { selectedCardLiquidityAcc, modeOfOperation, selectedCardPool } = useGamma()
-    const isDeposit = modeOfOperation === ModeOfOperation.DEPOSIT
-
-    const calculateUIAmount = useCallback(() => {
-      console.log('value while depositing', isMintA, balance)
-      if (isDeposit) return truncateBigNumber(balance)
-      if (isMintA) {
-      console.log('value while withdrawing token 0', isMintA, balance)
-        return truncateBigString(
-          selectedCardLiquidityAcc?.token0Deposited?.sub(
-            selectedCardLiquidityAcc?.token0Withdrawn
-          )?.toString(),
-          selectedCardPool?.mint0Decimals
-        );
-      }
-      if (!isMintA) {
-      console.log('value while withdrawing token 1', isMintA, balance)
-        return truncateBigString(
-          selectedCardLiquidityAcc?.token1Deposited?.sub(
-            selectedCardLiquidityAcc?.token1Withdrawn
-          )?.toString(),
-          selectedCardPool?.mint1Decimals
-        );
-      }
-    }, [isDeposit, selectedCardLiquidityAcc]);
+    const { withdrawableBalanceA, withdrawableBalanceB, selectedCardPool } = useGamma()
 
     const getWalletIcon = () =>
       (userPublicKey && balance > 0) ?
@@ -77,7 +61,11 @@ export const TokenRow: FC<{ isMintA: boolean; token: GAMMAToken; balance: number
               userPublicKey && balance > 0 ? 'opacity-100' : 'opacity-50'
             )}
           >
-            {calculateUIAmount()} {!isDeposit && 'in pool'}
+            {isDeposit ?
+              truncateBigNumber(balance) : isMintA ? truncateBigString(withdrawableBalanceA?.toString(),
+              selectedCardPool?.mint0Decimals) : truncateBigString(withdrawableBalanceB?.toString(),
+              selectedCardPool?.mint1Decimals)}
+            {!isDeposit && ' in pool'}
           </div>
         </div>
       </div>

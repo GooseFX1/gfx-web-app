@@ -61,7 +61,7 @@ function useTransaction(): useTransactionReturn {
         }
         console.log('PRE RESPONSE', txSig)
         return connection
-          .confirmTransaction(blockHeightConfirmationStrategy, connectionData?.confirmationWaitType ?? 'finalized')
+          .confirmTransaction(blockHeightConfirmationStrategy, connectionData?.confirmationWaitType ?? 'processed')
           .then((res) => {
             console.log('[INFO] Transaction Confirmation', res, res.value.err != null)
             if (res.value.err != null) {
