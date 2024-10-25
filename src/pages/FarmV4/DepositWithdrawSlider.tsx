@@ -452,7 +452,16 @@ export const DepositWithdrawSlider: FC = () => {
       )
       txBuilder.add(tx)
       setSendingTransaction(true)
-      const { success } = await sendTransaction(txBuilder)
+      const poolMessage = `(${selectedCard?.mintA?.symbol}-${selectedCard?.mintB?.symbol}) pool.`
+      // eslint-disable-next-line max-len
+      const sourceAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userSourceDepositAmount : userSourceWithdrawAmount))} ${selectedCard?.mintA?.symbol}`
+      // eslint-disable-next-line max-len
+      const targetAmount = `${bigNumberFormatter(new BigNumber(isDeposit ? userTargetDepositAmount : userTargetWithdrawAmount))} ${selectedCard?.mintB?.symbol}`
+      const type = isDeposit ? 'deposited' : 'withdrew'
+      const direction = isDeposit ? 'into' : 'from'
+      const { success } = await sendTransaction(txBuilder, {
+        successMessage: `You successfully ${type} ${sourceAmount}, ${targetAmount} ${direction} ${poolMessage}`
+      })
       //console.log('success', success)
 
       if (!success) {

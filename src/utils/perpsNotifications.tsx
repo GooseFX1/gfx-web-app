@@ -159,26 +159,28 @@ export function promiseBuilder<T>(promise: Promise<T>): Promise<T | Error> {
 export const notifyUsingPromise = async (
   promise: Promise<unknown>,
   onDismiss?: (toast: ToastT) => void,
-  tentativeTxId?: string
+  tentativeTxId?: string,
+  successMessage?: ReactNode,
+  errorMessage?: ReactNode
 ): Promise<boolean> => {
   const config = {
     dismissible: true,
     onDismiss: (t: ToastT) => {
       if (onDismiss) onDismiss(t)
       toast.dismiss(t.id)
-    }
+    },
   } as ExternalToast
   config.id = toast(<IntemediaryToast className={cn(`w-[290px]`)}>
     <IntemediaryToastHeading stage={'loading'}>Loading...</IntemediaryToastHeading>
     <p>Please wait a few moments for the transaction to confirm...</p>
     {Boolean(tentativeTxId) && <OpenSolScanLink link={`https://solscan.io/tx/${tentativeTxId}`} />}
-  </IntemediaryToast>, config)
+  </IntemediaryToast>, { ...config, duration: 60000 })
 
   try {
     const response = await promise as SuccessResponse
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'success'}>Success!</IntemediaryToastHeading>
-      <p className={cn(`pt-1`)}>Congratulations, your transaction was completed!</p>
+      <p className={cn(`pt-1`)}>{successMessage || 'Congratulations, your transaction was completed!'}</p>
       <OpenSolScanLink link={`https://solscan.io/tx/${response.txid}`} />
     </IntemediaryToast>, config)
   } catch (e) {
@@ -186,8 +188,8 @@ export const notifyUsingPromise = async (
       toast(<IntemediaryToast className={cn(`w-[290px]`)}>
         <IntemediaryToastHeading stage={'error'}>Slippage error!</IntemediaryToastHeading>
         <p>
-          The transaction could not go through because slippage exceeded your fixed slippage.
-          Please try again!
+          {errorMessage ?? `The transaction could not go through because slippage exceeded your fixed slippage.
+            Please try again!`}
         </p>
         <OpenToastLink link={'https://discord.com/channels/833693973687173121/833725691983822918'}>
           Contact Us
@@ -219,7 +221,7 @@ export const notifyUsingPromiseForFillTx = async (
     <p className={cn(`text-[13px]`)}>
       Please wait a few moments for the order to <br /> fill...
     </p>
-  </IntemediaryToast>, config)
+  </IntemediaryToast>, { ...config, duration: 60000 })
   try {
     const response = await promise as SuccessResponse
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
@@ -254,14 +256,14 @@ export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): P
       Please wait a few moments for the position to <br />
       be closed...
     </p>
-  </IntemediaryToast>, config)
+  </IntemediaryToast>, { ...config, duration: 60000 })
   try {
-    await promise;
+    await promise
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'success'}>Order Closed!</IntemediaryToastHeading>
       <p className={cn(`pt-1 text-[13px]`)}>Your position was closed successfully!</p>
     </IntemediaryToast>, config)
-    return true;
+    return true
   } catch (e) {
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -270,7 +272,7 @@ export const notifyUsingPromiseForCloseTx = async (promise: Promise<unknown>): P
         Contact Us
       </OpenToastLink>
     </IntemediaryToast>, config)
-    return false;
+    return false
   }
 
 }
@@ -287,7 +289,7 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
       Please wait a few moments for the new <br />
       pool to be created!
     </p>
-  </IntemediaryToast>, config)
+  </IntemediaryToast>, { ...config, duration: 60000 })
   try {
     await promise
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
@@ -295,7 +297,7 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
       <p className={cn(`pt-1 text-[13px]`)}>It may take a few minutes for your pool to appear on the platform.
         Please refresh the page.</p>
     </IntemediaryToast>, config)
-    return true;
+    return true
   } catch (e) {
     toast(<IntemediaryToast className={cn(`w-[290px]`)}>
       <IntemediaryToastHeading stage={'error'}>Error!</IntemediaryToastHeading>
@@ -304,6 +306,6 @@ export const notifyUsingPromiseForCreatePool = async (promise: Promise<unknown>)
         Contact Us
       </OpenToastLink>
     </IntemediaryToast>, config)
-    return false;
+    return false
   }
 }
