@@ -21,8 +21,7 @@ import {
   deposit,
   withdraw,
   getpoolId,
-  getLiquidityPoolKey,
-  lpTokensToTradingTokens
+  getLiquidityPoolKey
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
@@ -30,6 +29,8 @@ import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
 import { blob, struct, publicKey as pbk, u128, u8, u64, u32 } from '@/utils/marshmallow'
+import useBoolean from '@/hooks/useBoolean'
+import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -65,6 +66,7 @@ export const DepositWithdrawSlider: FC = () => {
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
+  const [showConfetti, setShowConfetti] = useBoolean(false)
   const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
   const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
   const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
@@ -462,8 +464,10 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        // setOpenDepositWithdrawSlider(false)
-        // setSelectedCardLiquidityAcc({})
+        setShowConfetti.on()
+        setTimeout(() => setShowConfetti.off(), 10000)
+        //setOpenDepositWithdrawSlider(false)
+        //setSelectedCardLiquidityAcc({})
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -555,6 +559,7 @@ export const DepositWithdrawSlider: FC = () => {
       dark:bg-opacity-50 backdrop-blur-sm
       `)}
       />
+      <LottieConfetti onClick={setShowConfetti.off} visible={showConfetti} />
       <DialogContent
         className={`sm:w-[393px] sm:max-h-screen border-1 border-solid sm:border-r-0 dark:border-black-4
       sm:rounded-none border-b-0 rounded-b-[0px] max-h-[calc(100vh-56px)] gap-0
