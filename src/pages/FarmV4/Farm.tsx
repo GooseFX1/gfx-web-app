@@ -34,7 +34,7 @@ const FarmV4: FC = () => {
       }
       <GammaOnboard />
       <FarmHeader />
-      <div className={'gap-7.5 mt-7.5 p-5 max-sm:px-2.5 max-sm:pb-3.75 pt-0'}>
+      <div className={'gap-7.5 p-5 max-sm:px-2.5 max-sm:pb-3.75 pt-0'}>
         <FarmContainer />
         <Faqs />
       </div>

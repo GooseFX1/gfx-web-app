@@ -5,15 +5,7 @@ import PortfolioScreen from './PortfolioScreen'
 
 const Portfolio: FC = () => {
   const { connected } = useWallet()
-  return (
-    <div>
-      {connected ? (
-        <PortfolioScreen />
-      ) : (
-        <PortfolioConnect />
-      )}
-    </div>
-  )
+  return <div>{connected ? <PortfolioScreen /> : <PortfolioConnect />}</div>
 }
 
 export default Portfolio

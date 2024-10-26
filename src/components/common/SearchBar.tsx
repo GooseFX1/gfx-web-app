@@ -37,7 +37,7 @@ const SearchBar = ({ onClear, value, groupClassName, className, onChange , ...re
         {...rest}
         value={value}
         className={cn('min-w-[200px] w-full', className)}
-        placeholder={'Search by token symbol'}
+        placeholder={'Search by token name symbol or address'}
         onChange={onChange}
         onFocus={setFocus.on}
         onBlur={setFocus.off}

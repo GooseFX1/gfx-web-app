@@ -413,7 +413,7 @@ function TokenSelectionInput({
               {createPoolType === 'hyper' && (
                 <SearchBar
                   groupClassName={'sticky'}
-                  placeholder={'Search by token symbol'}
+                  placeholder={'Search by token name symbol or address'}
                   value={searchValue}
                   onKeyDown={(e) => e.stopPropagation()}
                   onChange={(e) => {
@@ -438,16 +438,18 @@ function TokenSelectionInput({
                         className={`border-solid dark:border-black-4 border-grey-4 border 
                           cursor-pointer p-1 flex rounded-[4px]`}
                         key={token?.address}
-                        onClick={()=> {
+                        onClick={() => {
                           setToken(token)
                           setIsDropdownOpen.off()
                         }}
                         disabled={otherToken?.address == token?.address}
-                        iconLeft={<Icon
-                          src={loadIconImage(token?.logoURI, mode)}
-                          size={'sm'}
-                          className={'rounded-circle'}
-                        />}
+                        iconLeft={
+                          <Icon
+                            src={loadIconImage(token?.logoURI, mode)}
+                            size={'sm'}
+                            className={'rounded-circle'}
+                          />
+                        }
                       >
                         <span
                           className={`font-bold dark:text-text-darkmode-secondary 

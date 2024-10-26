@@ -20,8 +20,7 @@ import { useWalletBalance } from '@/context/walletBalanceContext'
 
 export default function RewardsLeftSidePanel({ apy }: { apy: number }): JSX.Element {
   const { balance } = useWalletBalance()
-  const userGoFxBalance = balance['GOFX'].tokenAmount
-  console.log(balance)
+  const userGoFxBalance = balance['GFX1ZjR2P15tmrSwow6FjyDYcEkoFb4p4gJCpLBjaxHD'].tokenAmount
   const [isStakeSelected, setIsStakeSelected] = useBoolean(true)
   const { connected, publicKey } = useWallet()
   const { connection } = useConnectionConfig()

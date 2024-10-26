@@ -11,11 +11,10 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnectionConfig } from '@/context/settings'
 import { useSolSubMulti } from '@/hooks/useSolSubActivity'
 import { SubType } from '@/hooks/useSolSub'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { createAssociatedTokenAccountInstruction } from '@solana/spl-token-v2'
 import { confirmTransaction } from '@/web3'
 import { toast } from 'sonner'
-import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey'
 import { fetchTokensByPublicKey } from '@/api/gamma'
 import Decimal from 'decimal.js-light'
 
@@ -65,6 +64,7 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
     const values = Object.values(balance)
     return values.filter((v) => v.value.gt(0)).sort((a, b) => (a.value.gte(b.value) ? -1 : 1))
   }, [balance])
+
   const tokens = tokenAccounts.map((account) => ({
     publicKey: account.pda,
     callback: async () => {
@@ -112,11 +112,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
       return {
         ...prev,
         [mint]: {
-          ...prev[mint],
-          tokenAmount: amount,
-          value: new Decimal(amount.uiAmount).mul(originalValue.price)
-        },
-        [originalValue.symbol]: {
           ...prev[mint],
           tokenAmount: amount,
           value: new Decimal(amount.uiAmount).mul(originalValue.price)
@@ -192,14 +187,6 @@ function WalletBalanceProvider({ children }: { children?: React.ReactNode }): JS
         const value = new Decimal(tokenAccounts[data.address].tokenAmount.uiAmount).mul(data.price)
         tokenAccounts[data.address].value = value
         currentWalletValue = currentWalletValue.add(value)
-
-        if (address !== 'SOL') {
-          tokenAccounts[data.address].pda = findProgramAddressSync(
-            [publicKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), new PublicKey(address).toBuffer()],
-            ASSOCIATED_TOKEN_PROGRAM_ID
-          )[0]
-        }
-        tokenAccounts[data.symbol] = tokenAccounts[data.address]
       }
     }
 
