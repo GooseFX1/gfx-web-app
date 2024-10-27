@@ -182,7 +182,7 @@ export const DepositWithdrawSlider: FC = () => {
             Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
             connection
           )
-          console.log("tokenAmount", tokenAmount0?.toNumber(), tokenAmount1?.toNumber())
+          //console.log("tokenAmount", tokenAmount0?.toNumber(), tokenAmount1?.toNumber())
           setWithdrawableBalanceA(tokenAmount0)
           setWithdrawableBalanceB(tokenAmount1)
         } else {
