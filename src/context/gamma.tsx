@@ -38,9 +38,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
-//import { Connection, PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
-import { blob, publicKey as pbk, struct, u128 } from '@/utils/marshmallow'
 
 interface GAMMADataModel {
   gammaConfig: GAMMAConfig
@@ -197,113 +195,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, 60000)
     return () => clearInterval(statsInterval)
   }, [])
-
-  const USER_POOL_LIQUIDITY_LAYOUT = struct([
-    blob(8, 'discriminator'), // 8 bytes for the account discriminator
-    pbk('user'), // 32 bytes (Pubkey)
-    pbk('pool_state'), // 32 bytes (Pubkey)
-    u128('token_0_deposited'), // 16 bytes (u128)
-    u128('token_1_deposited'), // 16 bytes (u128)
-    u128('token_0_withdrawn'), // 16 bytes (u128)
-    u128('token_1_withdrawn'), // 16 bytes (u128)
-    u128('lp_tokens_owned') // 16 bytes (u128)
-  ])
-
-  //lp_tokens_owned is not formatted properly but it is okay as we do not need 
-  //it in the ui, if we need it then we can reverse and split the string
-  const toCamelCase = (str: string) => {
-    const firstUnderScoreIndex = str?.indexOf('_')
-    const camelCaseFirst = str?.[firstUnderScoreIndex + 1]?.toUpperCase()
-    const lastUnderScoreIndex = str?.lastIndexOf('_')
-    const camelCaseLast = str?.[lastUnderScoreIndex + 1]?.toUpperCase()
-    const newString = str?.replace(str?.[firstUnderScoreIndex + 1], camelCaseFirst)
-    const newString2 = newString?.replace(str?.[lastUnderScoreIndex + 1], camelCaseLast)
-    const resultString = newString2?.replaceAll('_', '')
-    return resultString
-  }
-
-  const convertSnakeToCamel = (obj) =>
-    Object.keys(obj).reduce((acc, key) => {
-      const camelCaseKey = toCamelCase(key)
-      acc[camelCaseKey] = obj[key]
-      return acc
-    }, {})
-
-  // const liveBalanceTracking = useCallback(
-  //   async (userPublicKey: PublicKey, selectedCard: any) => {
-  //     try{
-  //       const id = `${selectedCard?.mintA?.address}-${selectedCard?.mintB?.address}`
-  //       const poolIdKey = await getpoolId(selectedCard)
-  //       const liquidityAcc = await getLiquidityPoolKey(userPublicKey, poolIdKey)
-  //       console.log('call', liquidityAcc?.toBase58())
-  //       on({
-  //         SubType: SubType.AccountChange,
-  //         id,
-  //         callback: async (info) => {
-  //           try {
-  //             console.log('caught event at', liquidityAcc?.toString())
-  //             const updatedLiqAcc = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
-  //             setConnectionId(id)
-  //             console.log('updatedLiqAcc', updatedLiqAcc)
-  //             setSelectedCardLiquidityAcc(updatedLiqAcc)
-  //             off(id)
-  //           } catch (e) {
-  //             console.log('e', e)
-  //           }
-  //         },
-  //         publicKey: liquidityAcc
-  //       })
-  //     } catch(e){
-  //       console.log('e', e)
-  //     }
-  //   },
-  //   [on, GammaProgram, getpoolId, getLiquidityPoolKey]
-  // )
-
-  const liveBalanceTracking = async (connection: Connection, userPublicKey: PublicKey, selectedCard: any) => {
-    try {
-      let id = null
-      const poolIdKey = await getpoolId(selectedCard)
-      const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-      id = connection.onAccountChange(liquidityAcc, async (info) => {
-        const updatedLiqAcc = convertSnakeToCamel(USER_POOL_LIQUIDITY_LAYOUT.decode(info.data))
-        setSelectedCardLiquidityAcc(updatedLiqAcc)
-        connection.removeAccountChangeListener(id)
-      })
-      setConnectionId(id)
-    } catch (e) {
-      console.log('e', e)
-    }
-  }
-
-  // const liveBalanceTracking = async (connection: Connection, userPublicKey: PublicKey, selectedCard: any) => {
-  //   try {
-  //     let id = null
-  //     const poolIdKey = await getpoolId(selectedCard)
-  //     // const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
-  //     // const authkey = await getAuthorityKey()
-  //     id = connection.onAccountChange(poolIdKey, async (info) => {
-  //       console.log(info)
-  //       // const decodedAccount = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
-  //       // const updatedLiqAcc = {
-  //       //   user: decodedAccount.user,
-  //       //   lpTokensOwned: decodedAccount.lp_tokens_owned,
-  //       //   poolState: decodedAccount.pool_state,
-  //       //   referrer: decodedAccount.referrer,
-  //       //   token0Deposited: decodedAccount.token_0_deposited,
-  //       //   token1Deposited: decodedAccount.token_1_deposited,
-  //       //   token0Withdrawn: decodedAccount.token_0_withdrawn,
-  //       //   token1Withdrawn: decodedAccount.token_1_withdrawn
-  //       // }
-  //       // setSelectedCardLiquidityAcc(updatedLiqAcc)
-  //       // connection.removeAccountChangeListener(id)
-  //       //console.log("POOL STATE TRIGGERED", info)
-  //     })
-  //     setConnectionId(id)
-  //   } catch (e) {
-  //     console.log('e', e)
-  //   }
-  // }
 
   const updateTokenList = async (
     {
