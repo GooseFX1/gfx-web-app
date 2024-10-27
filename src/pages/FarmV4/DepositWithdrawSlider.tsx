@@ -19,16 +19,17 @@ import useTransaction from '@/hooks/useTransaction'
 import {
   calculateOtherTokenAndLPAmount,
   deposit,
-  withdraw,
+  getLiquidityPoolKey,
   getpoolId,
-  getLiquidityPoolKey
+  lpTokensToTradingTokens,
+  withdraw
 } from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
-import { blob, struct, publicKey as pbk, u128, u8, u64, u32 } from '@/utils/marshmallow'
+import { blob, publicKey as pbk, struct, u128, u32, u64, u8 } from '@/utils/marshmallow'
 import useBoolean from '@/hooks/useBoolean'
 import LottieConfetti from '@/pages/FarmV4/LottieConfetti'
 
