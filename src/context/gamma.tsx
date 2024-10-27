@@ -38,7 +38,7 @@ import { getLiquidityPoolKey, getpoolId } from '@/web3/Farm'
 import useBoolean from '@/hooks/useBoolean'
 import Decimal from 'decimal.js-light'
 import { aborter } from '@/utils'
-import { Connection, PublicKey } from '@solana/web3.js'
+//import { Connection, PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 import { blob, publicKey as pbk, struct, u128 } from '@/utils/marshmallow'
 
@@ -108,8 +108,8 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
-  liveBalanceTracking: any
-  connectionId: string
+  //liveBalanceTracking: any
+  //connectionId: string
 }
 
 export type TokenListToken = {
@@ -139,7 +139,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [openDepositWithdrawSlider, setOpenDepositWithdrawSlider] = useState<boolean>(false)
   const [currentPoolType, setCurrentPoolType] = useState<Pool>(POOL_TYPE.primary)
   const { GammaProgram } = usePriceFeedFarm()
-  const [selectedCardPool, setSelectedCardPool] = useState({})
+  const [selectedCardPool, setSelectedCardPool] = useState<any>({})
   const [modeOfOperation, setModeOfOperation] = useState<string>(ModeOfOperation.DEPOSIT)
   const [maxTokensReached, setMaxTokensReached] = useState(false)
   const [sendingTransaction, setSendingTransaction] = useState<boolean>(false)
@@ -173,7 +173,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
   })
   const [createPoolType, setCreatePoolType] = useState<string>('')
   const [isConfettiVisible, setIsConfettiVisible] = useState<boolean>(false)
-  const [connectionId, setConnectionId] = useState<string>()
+  //const [connectionId, setConnectionId] = useState<string>()
 
   // TODO:
   useEffect(() => {
@@ -278,6 +278,35 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }
 
+  // const liveBalanceTracking = async (connection: Connection, userPublicKey: PublicKey, selectedCard: any) => {
+  //   try {
+  //     let id = null
+  //     const poolIdKey = await getpoolId(selectedCard)
+  //     // const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
+  //     // const authkey = await getAuthorityKey()
+  //     id = connection.onAccountChange(poolIdKey, async (info) => {
+  //       console.log(info)
+  //       // const decodedAccount = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
+  //       // const updatedLiqAcc = {
+  //       //   user: decodedAccount.user,
+  //       //   lpTokensOwned: decodedAccount.lp_tokens_owned,
+  //       //   poolState: decodedAccount.pool_state,
+  //       //   referrer: decodedAccount.referrer,
+  //       //   token0Deposited: decodedAccount.token_0_deposited,
+  //       //   token1Deposited: decodedAccount.token_1_deposited,
+  //       //   token0Withdrawn: decodedAccount.token_0_withdrawn,
+  //       //   token1Withdrawn: decodedAccount.token_1_withdrawn
+  //       // }
+  //       // setSelectedCardLiquidityAcc(updatedLiqAcc)
+  //       // connection.removeAccountChangeListener(id)
+  //       //console.log("POOL STATE TRIGGERED", info)
+  //     })
+  //     setConnectionId(id)
+  //   } catch (e) {
+  //     console.log('e', e)
+  //   }
+  // }
+
   const updateTokenList = async (
     {
       page,
@@ -379,7 +408,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
       updateTokenList({ page: 1, pageSize: TOKEN_LIST_PAGE_SIZE }, false)
     }
   }, [createPoolType])
-  console.log({ tokenList })
+  //console.log({ tokenList })
   useEffect(() => {
     setPoolPage(1)
     // same page
@@ -489,6 +518,17 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
     })()
   }, [GammaProgram, selectedCard])
 
+  console.log("POOL KA STATE",
+    selectedCardPool,
+    selectedCardPool?.lpSupply?.toNumber(),
+    selectedCardPool?.token0Vault?.toBase58(),
+    selectedCardPool?.token1Vault?.toBase58(),
+    selectedCardPool?.protocolFeesToken0?.toNumber(),
+    selectedCardPool?.protocolFeesToken1?.toNumber(),
+    selectedCardPool?.fundFeesToken0?.toNumber(),
+    selectedCardPool?.fundFeesToken1?.toNumber()
+  )
+
   useEffect(() => {
     ;(async () => {
       if (GammaProgram && publicKey && Object.keys(selectedCard)?.length > 0) {
@@ -513,7 +553,7 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
           ...pool,
           userLpPosition: userLpPosition,
           hasDeposit: userLpPosition
-            ? new BN(userLpPosition?.tokenADeposited)?.sub(new BN(userLpPosition?.tokenAWithdrawn))?.gt(new BN(0))
+            ? new BN(userLpPosition?.lpTokensOwned)?.gt(new BN(0))
             : false
         }
       })
@@ -583,9 +623,9 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         createPoolType,
         setCreatePoolType,
         isConfettiVisible,
-        setIsConfettiVisible,
-        liveBalanceTracking,
-        connectionId
+        setIsConfettiVisible
+        //liveBalanceTracking,
+        //connectionId
       }}
     >
       {children}

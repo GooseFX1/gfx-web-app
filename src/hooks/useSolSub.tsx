@@ -44,7 +44,7 @@ function useSolSub(): {
 
     const pubkey = sub.publicKey || (await sub?.pubKeyRetrieval?.())
     if (!pubkey) {
-      console.log('CANCELLING SUB FOR: ', sub.id, ' NO PUBKEY')
+      //console.log('CANCELLING SUB FOR: ', sub.id, ' NO PUBKEY')
       return
     }
     switch (sub.SubType) {
