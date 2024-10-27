@@ -108,8 +108,6 @@ interface GAMMADataModel {
   stats: GAMMAStats
   isConfettiVisible: boolean
   setIsConfettiVisible: Dispatch<SetStateAction<boolean>>
-  //liveBalanceTracking: any
-  //connectionId: string
 }
 
 export type TokenListToken = {
@@ -624,8 +622,6 @@ export const GammaProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setCreatePoolType,
         isConfettiVisible,
         setIsConfettiVisible
-        //liveBalanceTracking,
-        //connectionId
       }}
     >
       {children}

@@ -311,10 +311,10 @@ export const lpTokensToTradingTokens = async (
         const fundFees0 = poolState?.fundFeesToken0
         const swapTokenAmount0 = new BN(amount0)?.sub(protocolFees0?.add(fundFees0))
 
-        console.log('amount0', amount0)
-        console.log('protocolFees0', protocolFees0?.toNumber())
-        console.log('fundFees0', fundFees0?.toNumber())
-        console.log('swapTokenAmount0', swapTokenAmount0?.toNumber())
+        // console.log('amount0', amount0)
+        // console.log('protocolFees0', protocolFees0?.toNumber())
+        // console.log('fundFees0', fundFees0?.toNumber())
+        // console.log('swapTokenAmount0', swapTokenAmount0?.toNumber())
 
         const tokenAccountInfo1 = await connection.getParsedAccountInfo(poolState?.token1Vault)
         const amount1 = (tokenAccountInfo1?.value?.data as any).parsed?.info?.tokenAmount?.amount
@@ -322,14 +322,14 @@ export const lpTokensToTradingTokens = async (
         const fundFees1 = poolState?.fundFeesToken1
         const swapTokenAmount1 = new BN(amount1)?.sub(protocolFees1?.add(fundFees1))
 
-        console.log('amount1', amount1)
-        console.log('protocolFees1', protocolFees1?.toNumber())
-        console.log('fundFees1', fundFees1?.toNumber())
-        console.log('swapTokenAmount1', swapTokenAmount1?.toNumber())
+        // console.log('amount1', amount1)
+        // console.log('protocolFees1', protocolFees1?.toNumber())
+        // console.log('fundFees1', fundFees1?.toNumber())
+        // console.log('swapTokenAmount1', swapTokenAmount1?.toNumber())
 
         const lpTokenSupply = poolState?.lpSupply
 
-        console.log('lpTokenSupply', lpTokenSupply?.toNumber())
+        //console.log('lpTokenSupply', lpTokenSupply?.toNumber())
 
         const tokenAmount0 = lpTokenAmount.mul(swapTokenAmount0).div(lpTokenSupply)
         const tokenAmount1 = lpTokenAmount.mul(swapTokenAmount1).div(lpTokenSupply)
@@ -418,12 +418,14 @@ export const withdraw = async (
     program: Program<Idl>,
     connection: Connection
 ): Promise<Transaction> => {
+    //console.log('user withdraws', userSourceWithdrawAmount, userTargetWithdrawAmount)
     const withdrawAccounts = await getAccountsForDepositWithdraw(selectedCard, userPublicKey, false)
     const withdrawInstructionAccount = { ...withdrawAccounts }
     const token0SlippageAmount = handleSlippageCalculation(userSourceWithdrawAmount, slippage, false)
     const token1SlippageAmount = handleSlippageCalculation(userTargetWithdrawAmount, slippage, false)
     const token0Amount = convertToNativeValue(token0SlippageAmount, selectedCard?.mintA?.decimals)
     const token1Amount = convertToNativeValue(token1SlippageAmount, selectedCard?.mintB?.decimals)
+    //console.log('user withdraws of native value', token0Amount, token1Amount, lpAmount?.toNumber())
     const withdrawAmountTX = new Transaction()
 
     const mintAata = await getAssociatedTokenAddress(new PublicKey(selectedCard?.mintA?.address), userPublicKey)

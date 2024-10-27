@@ -383,7 +383,7 @@ export const DepositWithdrawSlider: FC = () => {
           }
         }
       } else {
-        setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned)
+        setTransactionLPAmount(selectedCardLiquidityAcc?.lpTokensOwned?.div(new BN(2)))
         setUserSourceWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceA?.div(new BN(2))?.toString(),
           selectedCardPool?.mint0Decimals))
         setUserTargetWithdrawAmount(withdrawBigStringFarm(withdrawableBalanceB?.div(new BN(2))?.toString(),
