@@ -62,14 +62,18 @@ function useSolSubMulti({
     // console.log('REMOVING TRACKING SOL SUB', subType, publicKeys)
     publicKeys.forEach(({ publicKey, subType: individualSubType }) => {
       if (publicKey) {
-        hookOff(`${individualSubType ?? subType}-${publicKey.toBase58()}`)
+        const id = `${subType}-${publicKey.toBase58()}`
+        ids.push(id)
+        //console.log('TRACKING SOL SUB', id)
+        hookOn({ callback: callback, id, SubType: subType, publicKey })
       }
     })
-  }, [subType, publicKeys, hookOff])
-  const callbackOn = useCallback(() => {
-    if (publicKeys.length == 0) {
-      // console.log('TRACKING SOL SUB - NO PUBLIC KEYS PARSED', publicKeys)
-      return
+
+    return () => {
+      ids.forEach((id) => {
+        //console.log('REMOVING TRACKING SOL SUB', id)
+        hookOff(id)
+      })
     }
     // console.log('TRACKING SOL SUB', subType, publicKeys)
     publicKeys.forEach(({ publicKey, callback, subType: individualSubType }) => {
