@@ -17,13 +17,21 @@ import useBreakPoint from '@/hooks/useBreakPoint'
 import GammaActionModal from '@/pages/FarmV4/GammaActionModal'
 import GammaActionModalContentStack from '@/pages/FarmV4/GammaActionModalContentStack'
 import useTransaction from '@/hooks/useTransaction'
-import { calculateOtherTokenAndLPAmount, deposit, withdraw } from '@/web3/Farm'
+import {
+  calculateOtherTokenAndLPAmount,
+  deposit,
+  withdraw,
+  getpoolId,
+  getLiquidityPoolKey,
+  lpTokensToTradingTokens
+} from '@/web3/Farm'
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { withdrawBigStringFarm } from '@/utils/misc'
 import { useWalletBalance } from '@/context/walletBalanceContext'
 import { bigNumberFormatter } from '@/utils'
-import useSolSub from '@/hooks/useSolSub'
+//import useSolSub from '@/hooks/useSolSub'
+import { blob, struct, publicKey as pbk, u128, u8, u64, u32 } from '@/utils/marshmallow'
 
 export const DepositWithdrawSlider: FC = () => {
   const { wallet } = useWallet()
@@ -42,11 +50,9 @@ export const DepositWithdrawSlider: FC = () => {
     sendingTransaction,
     setSendingTransaction,
     selectedCardLiquidityAcc,
-    setSelectedCardLiquidityAcc,
-    liveBalanceTracking,
-    connectionId,
-    withdrawableBalanceA,
-    withdrawableBalanceB
+    setSelectedCardLiquidityAcc
+    //liveBalanceTracking,
+    //connectionId
   } = useGamma()
   const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
   const [userSourceTokenBal, setUserSourceTokenBal] = useState<number>()
@@ -63,12 +69,170 @@ export const DepositWithdrawSlider: FC = () => {
   const { GammaProgram } = usePriceFeedFarm()
   const { sendTransaction, createTransactionBuilder } = useTransaction()
   const { balance } = useWalletBalance()
-  const { off } = useSolSub()
+  //const { off } = useSolSub()
+  //const [isOpenSubscription, setIsOpenDubscription] = useState<boolean>(false)
+  //const [subscriptionId, setSubscriptionId] = useState<number>()
+  const [updatedPoolState, setUpdatedPoolState] = useState<any>({})
+  const [withdrawableBalanceA, setWithdrawableBalanceA] = useState<BN>(new BN(0))
+  const [withdrawableBalanceB, setWithdrawableBalanceB] = useState<BN>(new BN(0))
+
+  const POOL_STATE_LAYOUT = struct([
+    blob(8, "discriminator"),
+    pbk("amm_config"),
+    pbk("pool_creator"),
+    pbk("token_0_vault"),
+    pbk("token_1_vault"),
+    blob(32, "_padding1"),
+    pbk("token_0_mint"),
+    pbk("token_1_mint"),
+    pbk("token_0_program"),
+    pbk("token_1_program"),
+    pbk("observation_key"),
+    u8("auth_bump"),
+    u8("status"),
+    u8("_padding2"),
+    u8("mint_0_decimals"),
+    u8("mint_1_decimals"),
+    u64("lp_supply"),
+    u64("protocol_fees_token_0"),
+    u64("protocol_fees_token_1"),
+    u64("fund_fees_token_0"),
+    u64("fund_fees_token_1"),
+    u64("open_time"),
+    u64("recent_epoch"),
+    u128("cumulative_trade_fees_token_0"),
+    u128("cumulative_trade_fees_token_1"),
+    u128("cumulative_volume_token_0"),
+    u128("cumulative_volume_token_1"),
+    u32("filter_period"),
+    u32("decay_period"),
+    u32("reduction_factor"),
+    u32("variable_fee_control"),
+    u64("volatility_v2_base_fee"),
+    u64("volatility_v2_max_fee"),
+    u64("volatility_v2_volatility_factor"),
+    u64("volatility_v2_imbalance_factor"),
+    blob(17 * 8, "padding")
+  ]);
+
+  const USER_POOL_LIQUIDITY_LAYOUT = struct([
+    blob(8, "discriminator"),
+    pbk("user"),
+    pbk("pool_state"),
+    u128("token_0_deposited"),
+    u128("token_1_deposited"),
+    u128("token_0_withdrawn"),
+    u128("token_1_withdrawn"),
+    u128("lp_tokens_owned"),
+    pbk("referrer")
+  ])
+
+  useEffect(() => {
+    ; (async () => {
+      if (Object.keys(selectedCardPool)?.length) {
+        try {
+          let id = null
+          const poolIdKey = await getpoolId(selectedCard)
+          const liquidityAcc = await getLiquidityPoolKey(poolIdKey, userPublicKey)
+          id = connection.onAccountChange(liquidityAcc, async (info) => {
+            const decodedAccount = USER_POOL_LIQUIDITY_LAYOUT.decode(info.data)
+            const updatedLiqAcc = {
+              user: decodedAccount.user,
+              lpTokensOwned: decodedAccount.lp_tokens_owned,
+              poolState: decodedAccount.pool_state,
+              referrer: decodedAccount.referrer,
+              token0Deposited: decodedAccount.token_0_deposited,
+              token1Deposited: decodedAccount.token_1_deposited,
+              token0Withdrawn: decodedAccount.token_0_withdrawn,
+              token1Withdrawn: decodedAccount.token_1_withdrawn
+            }
+            setSelectedCardLiquidityAcc(updatedLiqAcc)
+            connection.removeAccountChangeListener(id)
+          })
+          //setSubscriptionId(id)
+        } catch (e) {
+          console.log('Error in getting the updated liquidity account on account change', e)
+        }
+        try {
+          const poolIdKey = await getpoolId(selectedCard)
+          const id = connection.onAccountChange(poolIdKey, async (info) => {
+            const decodedAccount = POOL_STATE_LAYOUT.decode(info.data)
+            const updatedLiqAcc = {
+              lpSupply: decodedAccount.lp_supply,
+              protocolFeesToken0: decodedAccount.protocol_fees_token_0,
+              protocolFeesToken1: decodedAccount.protocol_fees_token_1,
+              fundFeesToken0: decodedAccount.fund_fees_token_0,
+              fundFeesToken1: decodedAccount.fund_fees_token_1,
+              token0Vault: decodedAccount.token_0_vault,
+              token1Vault: decodedAccount.token_1_vault
+            }
+            setUpdatedPoolState(updatedLiqAcc)
+            connection.removeAccountChangeListener(id)
+          })
+          //setSubscriptionId(id)
+        } catch (e) {
+          console.log('Error in getting the updated pool state account on account change', e)
+        }
+      }
+    })()
+  }, [selectedCardLiquidityAcc, updatedPoolState, selectedCardPool])
+
+  useEffect(() => {
+    ; (async () => {
+      try {
+        if (Object.keys(selectedCardLiquidityAcc)?.length > 0
+          && Object.keys(selectedCardPool)?.length > 0
+        ) {
+          const { tokenAmount0, tokenAmount1 } = await lpTokensToTradingTokens(
+            selectedCardLiquidityAcc?.lpTokensOwned,
+            Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+            connection
+          )
+          console.log("tokenAmount", tokenAmount0?.toNumber(), tokenAmount1?.toNumber())
+          setWithdrawableBalanceA(tokenAmount0)
+          setWithdrawableBalanceB(tokenAmount1)
+        } else {
+          setWithdrawableBalanceA(new BN(0))
+          setWithdrawableBalanceB(new BN(0))
+        }
+      } catch (e) {
+        console.log('Error while setting token amounts for withdrawing', e)
+      }
+    })()
+  }, [selectedCardLiquidityAcc, selectedCardPool, updatedPoolState])
+
+  console.log('selectedCardLiquidityAcc', 
+    selectedCardLiquidityAcc?.lpTokensOwned?.toNumber(),
+    selectedCardLiquidityAcc?.token0Deposited?.toNumber(),
+    selectedCardLiquidityAcc?.token0Withdrawn?.toNumber(),
+    selectedCardLiquidityAcc?.token1Deposited?.toNumber(),
+    selectedCardLiquidityAcc?.token1Withdrawn?.toNumber()
+  )
+
+  console.log('poolState',
+    selectedCardPool?.lpSupply?.toNumber(),
+    selectedCardPool?.token0Vault?.toBase58(),
+    selectedCardPool?.token1Vault?.toBase58(),
+    selectedCardPool?.protocolFeesToken0?.toNumber(),
+    selectedCardPool?.protocolFeesToken0?.toNumber(),
+    selectedCardPool?.fundFeesToken0?.toNumber(),
+    selectedCardPool?.fundFeesToken1?.toNumber()
+  )
+
+  console.log('updatedPoolstate',
+    updatedPoolState?.lpSupply?.toNumber(),
+    updatedPoolState?.token0Vault?.toBase58(),
+    updatedPoolState?.token1Vault?.toBase58(),
+    updatedPoolState?.protocolFeesToken0?.toNumber(),
+    updatedPoolState?.protocolFeesToken0?.toNumber(),
+    updatedPoolState?.fundFeesToken0?.toNumber(),
+    updatedPoolState?.fundFeesToken1?.toNumber()
+  )
 
   //eslint-disable-next-line
   useEffect(() => {
     return () => {
-      handleClose
+      handleClose()
     }
   }, [])
 
@@ -89,81 +253,78 @@ export const DepositWithdrawSlider: FC = () => {
     setSelectedCardLiquidityAcc({})
     setModeOfOperation(ModeOfOperation?.DEPOSIT)
     setOpenDepositWithdrawSlider(false)
+    setUpdatedPoolState({})
   }
 
-  const handleInputChange = useCallback(
-    async (input: string, sourceToken: boolean) => {
-
-      if (input === '') {
-        if (isDeposit) {
-          setUserSourceDepositAmount('')
-          setUserTargetDepositAmount('')
-        } else {
-          setUserSourceWithdrawAmount('')
-          setUserTargetWithdrawAmount('')
-        }
-        return
+  const handleInputChange = async (input: string, sourceToken: boolean) => {
+    if (input === '') {
+      if (isDeposit) {
+        setUserSourceDepositAmount('')
+        setUserTargetDepositAmount('')
+      } else {
+        setUserSourceWithdrawAmount('')
+        setUserTargetWithdrawAmount('')
       }
+      return
+    }
 
-      const inputValue = +input
-      if (!isNaN(inputValue)) {
-        if (isDeposit) {
-          if (sourceToken) {
-            setUserSourceDepositAmount(input)
-            if (Object.keys(selectedCardPool)?.length) {
-              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-                input,
-                0,
-                selectedCardPool,
-                connection
-              )
-              setTransactionLPAmount(lpTokenAmount)
-              setUserTargetDepositAmount(otherTokenAmountInString)
-            }
-          } else {
-            setUserTargetDepositAmount(input)
-            if (Object.keys(selectedCardPool)?.length) {
-              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-                input,
-                1,
-                selectedCardPool,
-                connection
-              )
-              setTransactionLPAmount(lpTokenAmount)
-              setUserSourceDepositAmount(otherTokenAmountInString)
-            }
+    const inputValue = +input
+    if (!isNaN(inputValue)) {
+      if (isDeposit) {
+        if (sourceToken) {
+          setUserSourceDepositAmount(input)
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              input,
+              0,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserTargetDepositAmount(otherTokenAmountInString)
           }
         } else {
-          if (sourceToken) {
-            setUserSourceWithdrawAmount(input)
-            if (Object.keys(selectedCardPool)?.length) {
-              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-                input,
-                0,
-                selectedCardPool,
-                connection
-              )
-              setTransactionLPAmount(lpTokenAmount)
-              setUserTargetWithdrawAmount(otherTokenAmountInString)
-            }
-          } else {
-            setUserTargetWithdrawAmount(input)
-            if (Object.keys(selectedCardPool)?.length) {
-              const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
-                input,
-                1,
-                selectedCardPool,
-                connection
-              )
-              setTransactionLPAmount(lpTokenAmount)
-              setUserSourceWithdrawAmount(otherTokenAmountInString)
-            }
+          setUserTargetDepositAmount(input)
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              input,
+              1,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserSourceDepositAmount(otherTokenAmountInString)
+          }
+        }
+      } else {
+        if (sourceToken) {
+          setUserSourceWithdrawAmount(input)
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              input,
+              0,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserTargetWithdrawAmount(otherTokenAmountInString)
+          }
+        } else {
+          setUserTargetWithdrawAmount(input)
+          if (Object.keys(selectedCardPool)?.length) {
+            const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
+              input,
+              1,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
+              connection
+            )
+            setTransactionLPAmount(lpTokenAmount)
+            setUserSourceWithdrawAmount(otherTokenAmountInString)
           }
         }
       }
-    },
-    [modeOfOperation, selectedCardPool]
-  )
+    }
+  }
 
   const actionButtonText = useMemo(() => {
     if (isDeposit && (!userSourceTokenBal && !userTargetTokenBal)) return `Insufficient Tokens`
@@ -208,7 +369,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               (userSourceTokenBal / 2)?.toString(),
               0,
-              selectedCardPool,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
             )
             setTransactionLPAmount(lpTokenAmount)
@@ -220,7 +381,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               (userTargetTokenBal / 2)?.toString(),
               1,
-              selectedCardPool,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
             )
             setTransactionLPAmount(lpTokenAmount)
@@ -235,7 +396,7 @@ export const DepositWithdrawSlider: FC = () => {
           selectedCardPool?.mint1Decimals))
       }
     },
-    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool,
+    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool, updatedPoolState,
       selectedCardLiquidityAcc, withdrawableBalanceA, withdrawableBalanceB]
   )
 
@@ -248,7 +409,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               userSourceTokenBal?.toString(),
               0,
-              selectedCardPool,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
             )
             setTransactionLPAmount(lpTokenAmount)
@@ -260,7 +421,7 @@ export const DepositWithdrawSlider: FC = () => {
             const { lpTokenAmount, otherTokenAmountInString } = await calculateOtherTokenAndLPAmount(
               userTargetTokenBal?.toString(),
               1,
-              selectedCardPool,
+              Object.keys(updatedPoolState)?.length > 0 ? updatedPoolState : selectedCardPool,
               connection
             )
             setTransactionLPAmount(lpTokenAmount)
@@ -275,14 +436,14 @@ export const DepositWithdrawSlider: FC = () => {
           selectedCardPool?.mint1Decimals))
       }
     },
-    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool,
+    [modeOfOperation, userSourceTokenBal, userTargetTokenBal, selectedCardPool, updatedPoolState,
       selectedCardLiquidityAcc, withdrawableBalanceA, withdrawableBalanceB]
   )
 
   const handleDeposit = async () => {
     try {
       const txBuilder = createTransactionBuilder()
-      liveBalanceTracking(connection, userPublicKey, selectedCard)
+      //liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await deposit(
         userSourceDepositAmount,
         userTargetDepositAmount,
@@ -299,7 +460,7 @@ export const DepositWithdrawSlider: FC = () => {
       //console.log('success', success)
 
       if (!success) {
-        off(connectionId)
+        //off(connectionId)
         console.log('An error occurred while depositing!')
         setSendingTransaction(false)
         return
@@ -307,8 +468,8 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceDepositAmount('')
         setUserTargetDepositAmount('')
-        //setOpenDepositWithdrawSlider(false)
-        //setSelectedCardLiquidityAcc({})
+        // setOpenDepositWithdrawSlider(false)
+        // setSelectedCardLiquidityAcc({})
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -319,7 +480,7 @@ export const DepositWithdrawSlider: FC = () => {
   const handleWithdraw = async () => {
     try {
       const txBuilder = createTransactionBuilder()
-      liveBalanceTracking(connection, userPublicKey, selectedCard)
+      //liveBalanceTracking(connection, userPublicKey, selectedCard)
       const tx = await withdraw(
         userSourceWithdrawAmount,
         userTargetWithdrawAmount,
@@ -335,7 +496,7 @@ export const DepositWithdrawSlider: FC = () => {
       const { success } = await sendTransaction(txBuilder)
 
       if (!success) {
-        off(connectionId)
+        //off(connectionId)
         console.log('An error occurred while withdrawing!')
         setSendingTransaction(false)
         return
@@ -343,10 +504,10 @@ export const DepositWithdrawSlider: FC = () => {
         setSendingTransaction(false)
         setUserSourceWithdrawAmount('')
         setUserTargetWithdrawAmount('')
-        //setOpenDepositWithdrawSlider(false)
-        //setSelectedCardLiquidityAcc({})
         setActionType('')
-        //setModeOfOperation(ModeOfOperation.DEPOSIT)
+        // setOpenDepositWithdrawSlider(false)
+        // setSelectedCardLiquidityAcc({})
+        // setModeOfOperation(ModeOfOperation.DEPOSIT)
       }
     } catch (e) {
       setSendingTransaction(false)
@@ -467,6 +628,7 @@ export const DepositWithdrawSlider: FC = () => {
               token={selectedCard?.mintA}
               balance={userSourceTokenBal}
               isDeposit={isDeposit}
+              withdrawableBalanceA={withdrawableBalanceA}
             />
             <DepositWithdrawInput
               isDeposit={isDeposit}
@@ -482,6 +644,7 @@ export const DepositWithdrawSlider: FC = () => {
               token={selectedCard?.mintB}
               balance={userTargetTokenBal}
               isDeposit={isDeposit}
+              withdrawableBalanceB={withdrawableBalanceB}
             />
             <DepositWithdrawInput
               isDeposit={isDeposit}

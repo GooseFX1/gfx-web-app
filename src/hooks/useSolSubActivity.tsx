@@ -22,12 +22,12 @@ function useSolSubActivity({ callback, id, SubType, publicKey, lifeTime }: UseSo
   })
   useEffect(() => {
     if (publicKey && callback) {
-      console.log('TRACKING SOL SUB', id)
+      //console.log('TRACKING SOL SUB', id)
       on({ callback, id, SubType, publicKey })
     }
 
     return () => {
-      console.log('REMOVING TRACKING SOL SUB', id)
+      //console.log('REMOVING TRACKING SOL SUB', id)
       off(id)
     }
   }, [callback, id, SubType, publicKey, on, off])
@@ -73,14 +73,14 @@ function useSolSubActivityMulti({ subType, publicKeys }: UseSolSubActivityMultiP
       if (publicKey) {
         const id = `${subType}-${publicKey.toBase58()}`
         ids.push(id)
-        console.log('TRACKING SOL SUB', id)
+        //console.log('TRACKING SOL SUB', id)
         hookOn({ callback: callback, id, SubType: subType, publicKey })
       }
     })
 
     return () => {
       ids.forEach((id) => {
-        console.log('REMOVING TRACKING SOL SUB', id)
+        //console.log('REMOVING TRACKING SOL SUB', id)
         hookOff(id)
       })
     }

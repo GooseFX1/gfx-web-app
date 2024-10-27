@@ -4,22 +4,27 @@ import { Badge, cn, Icon } from 'gfx-component-lib'
 import { loadIconImage, truncateAddress, truncateBigNumber, truncateBigString } from '@/utils'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { GAMMAToken } from '@/types/gamma'
+import BN from 'bn.js'
 
 export const TokenRow: FC<{
   isMintA: boolean
   token: GAMMAToken
   balance: number
   isDeposit: boolean
+  withdrawableBalanceA?: BN
+  withdrawableBalanceB?: BN
 }> =
   ({ isMintA,
     token,
     balance,
-    isDeposit
+    isDeposit,
+    withdrawableBalanceA,
+    withdrawableBalanceB
   }): ReactElement => {
     const { mode } = useDarkMode()
     const { wallet } = useWallet()
     const userPublicKey = useMemo(() => wallet?.adapter?.publicKey, [wallet?.adapter, wallet?.adapter?.publicKey])
-    const { withdrawableBalanceA, withdrawableBalanceB, selectedCardPool } = useGamma()
+    const { selectedCardPool } = useGamma()
 
     const getWalletIcon = () =>
       (userPublicKey && balance > 0) ?
